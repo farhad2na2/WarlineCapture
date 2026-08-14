@@ -1,0 +1,46 @@
+{
+  "item": "M01DC-029",
+  "status": "accepted",
+  "headBefore": "e35662b3f6ed1cf795c5c5338a4cbfbb8d8267cc",
+  "authority": {
+    "progressWriter": "Game.Runtime.CampaignMissionProgressStore",
+    "projectionWriter": "Game.UI.Shell.Ecs.UiCampaignMissionProjectionSystem",
+    "viewStoresProgress": false,
+    "binderUpdateLoop": false,
+    "savePollingPerFrame": false
+  },
+  "profiles": [
+    { "name": "new", "available": true, "action": "Start", "nextMissionRevealed": false },
+    { "name": "pendingResume", "available": true, "action": "Continue", "nextMissionRevealed": false },
+    { "name": "firstClear", "available": true, "action": "Replay", "nextMissionRevealed": true },
+    { "name": "replay", "available": true, "action": "Replay", "bestStars": 3, "bestCompletionMilliseconds": 75432 },
+    { "name": "explicitLock", "available": false, "action": "Locked", "routeAccepted": false }
+  ],
+  "captures": [
+    { "aspect": "16:9", "size": "1280x720", "sha256": "be434cdac54be17002cdd0db9581df1ef8006c7967877c1be5765c5cc5ad6a41" },
+    { "aspect": "20:9", "size": "1000x450", "sha256": "22f6c7f25bc96356d9c1c6d8a397cb51233a0085e0ebea46d4dde7352e40f8e1" },
+    { "aspect": "tablet 4:3", "size": "1024x768", "sha256": "dceced461bb5ca2befb9f3b9ab15a62f03d51ec6da58e37fa7c76a59af27c55a" }
+  ],
+  "visualReview": {
+    "result": "Passed",
+    "fullLayoutVisible": true,
+    "statusTextReadable": true,
+    "rejectedCandidates": ["screen-space capture cropped the 4800x2160 source", "initial status copy clipped at 16:9 and tablet widths"],
+    "fixesReplayed": ["aspect-aware world-space reference capture", "bounded TMP auto-sizing and concise status copy"]
+  },
+  "validation": [
+    { "marker": "[M01FirstContactCampaignUiValidation] result=Passed tests=10 captures=3", "sha256": "24e80db612018e5e4a9540b4cf071455796c2a2b4127f5400dabcd627b4c0c0c" },
+    { "marker": "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17", "sha256": "07e510d7c43629c7ce4d05bc1073594410c779f1b542583ccd581d3deb7dd085" },
+    { "marker": "[ArchitectureHardeningCloseoutValidation] result=Passed suites=23", "sha256": "17873757da35ec2a6c73e4a2b005b86a15c5b3b77be154e0b1cc29c7568357d3" }
+  ],
+  "sourceReview": {
+    "largestNewProductionFileLines": 204,
+    "exceptionAdded": false,
+    "compilerErrors": 0,
+    "diffCheck": "Passed",
+    "generatedOutputsRestored": true,
+    "protectedDenseCityOutputsChanged": false,
+    "packagesChanged": false,
+    "projectSettingsChanged": false
+  }
+}

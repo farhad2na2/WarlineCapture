@@ -64,6 +64,17 @@ namespace Game.UI.Runtime
             return current.TryReadMissionResult(out result);
         }
 
+        public static bool TryReadCampaignOperations(out UiCampaignOperationsModel campaign)
+        {
+            return current.TryReadCampaignOperations(out campaign);
+        }
+
+        public static bool TryEnqueueCampaignMissionAction(
+            UiCampaignMissionActionKind action, string missionId)
+        {
+            return current.TryEnqueueCampaignMissionAction(action, missionId);
+        }
+
         public static bool TryReadMatchHudSelection(out UiMatchHudSelectionPanelModel selection)
         {
             return current.TryReadMatchHudSelection(out selection);
@@ -215,6 +226,18 @@ namespace Game.UI.Runtime
             public bool TryReadMissionResult(out UiMissionResultPopupModel result)
             {
                 result = UiMissionResultPopupModel.VictoryDefault;
+                return false;
+            }
+
+            public bool TryReadCampaignOperations(out UiCampaignOperationsModel campaign)
+            {
+                campaign = default;
+                return false;
+            }
+
+            public bool TryEnqueueCampaignMissionAction(
+                UiCampaignMissionActionKind action, string missionId)
+            {
                 return false;
             }
 

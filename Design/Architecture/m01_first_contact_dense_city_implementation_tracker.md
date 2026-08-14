@@ -1,8 +1,8 @@
 # M01 First Contact Dense-City Implementation Tracker
 
 Date: 2026-08-12
-Status: Active; M01DC-028 accepted and M01DC-029 dependency-ready
-Progress: 28/43 accepted items (65.1%)
+Status: Active; M01DC-029 accepted and M01DC-030 dependency-ready
+Progress: 29/43 accepted items (67.4%)
 Parent design: `Design/M01_FirstContact_Dense_City_High_Level_Design.md`
 Technical architecture: `Design/Architecture/m01_first_contact_dense_city_technical_architecture.md`
 Mission: `saga.ch01.m01.first_contact`
@@ -422,13 +422,15 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
 
 ### Phase F - Campaign Operations, Briefing, HUD, And Result UI
 
-- [ ] **M01DC-029 - Make Campaign Operations data-driven for M01**
+- [x] **M01DC-029 - Make Campaign Operations data-driven for M01**
   **Depends on:** M01DC-008, M01DC-009, M01DC-024.
   **Deliverable:** M01 availability, continue/replay state, best stars/time, next-mission reveal, and selected mission read model from Campaign authority.
   **Acceptance:** UI stores no parallel progress; new/first-clear/replay profiles render correctly; locked/unavailable actions remain fail-closed.
   **Evidence:** read-model/route/profile-state tests and supported-aspect captures, clean pushed head.
 
   **Ownership amendment (2026-08-14):** add only this tracker and the exact-path matrix so M01DC-029 acceptance can be recorded after its already-authorized Campaign projection, gateway, binder, view, focused test, and compact evidence paths pass. Same-name metadata for newly accepted scripts remains covered by the frozen implicit-meta rule. No prefab, scene, Campaign progress mutation, launch payload construction, mission definition, dense-city output, source-growth exception, package, or project setting is authorized.
+
+  **Accepted evidence (2026-08-14):** immutable Campaign models and the sole `UiCampaignMissionProjectionSystem` now derive M01 new/pending-resume/first-clear/replay/explicit-lock state from the canonical catalog plus `CampaignMissionProgressStore`; the view stores no progress and the binder has no frame loop. Refresh, catalog change, settlement change, or typed selection is required before the store is read, so no save-file polling occurs per frame. The gateway rejects locked/unavailable briefing actions before routing. Focused projection/route/profile/view validation passes `10 / 10`; three fresh 16:9, 20:9, and tablet captures passed visual review after cropped framing and clipped status-copy candidates were rejected, fixed, and replayed. Source growth passes `17 / 17` without an exception, architecture passes `23` suites with compiler zero, Unity-regenerated outputs were restored, and no dense-city, prefab, scene, package, project-setting, reward, mission-definition, or Campaign progress writer changed. Exact markers and hashes are recorded in `m01dc_029_campaign_ui.json`.
 
 - [ ] **M01DC-030 - Activate Mission Briefing Deploy and replay tutorial choice**
   **Depends on:** M01DC-005, M01DC-009, M01DC-029.

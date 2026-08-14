@@ -36,6 +36,29 @@ namespace Game.UI.Shell.Ecs
             return true;
         }
 
+        public static bool TryEnqueueCampaignMissionAction(
+            UiCampaignMissionActionKind action, string missionId)
+        {
+            if (action == UiCampaignMissionActionKind.None || string.IsNullOrWhiteSpace(missionId) ||
+                missionId.Length > 60 || !TryGetBoundary(out EntityManager entityManager, out Entity boundary))
+                return false;
+
+            FixedString64Bytes fixedMissionId = new(missionId.Trim());
+            if (action != UiCampaignMissionActionKind.Refresh)
+            {
+                if (!entityManager.HasComponent<UiCampaignOperationsComponent>(boundary)) return false;
+                UiCampaignOperationsComponent campaign =
+                    entityManager.GetComponentData<UiCampaignOperationsComponent>(boundary);
+                if (campaign.Available == 0 || !campaign.SelectedMissionId.Equals(fixedMissionId)) return false;
+            }
+
+            if (!entityManager.HasBuffer<UiCampaignMissionActionRequestElement>(boundary))
+                entityManager.AddBuffer<UiCampaignMissionActionRequestElement>(boundary);
+            entityManager.GetBuffer<UiCampaignMissionActionRequestElement>(boundary).Add(
+                new UiCampaignMissionActionRequestElement { Action = action, MissionId = fixedMissionId });
+            return true;
+        }
+
         public static bool TryEnqueueAssistantCommandIntent(
             UiAssistantCommandIntentKind kind,
             bool fromTakeover)

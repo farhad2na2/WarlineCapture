@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Game.UI.Contracts;
 
 namespace Game.UI.Runtime
 {
@@ -36,5 +37,39 @@ namespace Game.UI.Runtime
         public Button StoryArchiveButton => storyArchiveButton;
         public Button ChapterIntelButton => chapterIntelButton;
         public Button LaunchMissionButton => launchMissionButton;
+
+        public void Apply(UiCampaignOperationsModel model)
+        {
+            UiCampaignMissionModel mission = model.SelectedMission;
+            screenTitle.enableAutoSizing = true;
+            screenTitle.fontSizeMin = 48f;
+            screenTitle.fontSizeMax = 118f;
+            missionName.enableAutoSizing = true;
+            missionName.fontSizeMin = 36f;
+            missionName.fontSizeMax = 84f;
+            screenTitle.text = model.NextMissionRevealed
+                ? "CAMPAIGN OPERATIONS  |  NEXT READY"
+                : "CAMPAIGN OPERATIONS";
+            missionName.text = FormatMissionSummary(mission);
+            launchMissionButton.interactable = mission.Available;
+            for (int index = 0; index < progressNodes.Length; index++)
+                progressNodes[index].gameObject.SetActive(index < mission.BestStars);
+        }
+
+        public void ApplyUnavailable()
+        {
+            missionName.text = "MISSION DATA UNAVAILABLE";
+            launchMissionButton.interactable = false;
+            for (int index = 0; index < progressNodes.Length; index++)
+                progressNodes[index].gameObject.SetActive(false);
+        }
+
+        private static string FormatMissionSummary(UiCampaignMissionModel mission)
+        {
+            string time = mission.BestCompletionMilliseconds > 0
+                ? $"  |  BEST {mission.BestCompletionMilliseconds / 60000:00}:{mission.BestCompletionMilliseconds / 1000 % 60:00}"
+                : string.Empty;
+            return $"{mission.DisplayName}  |  {mission.PrimaryActionLabel}  |  {mission.BestStars}/3{time}";
+        }
     }
 }

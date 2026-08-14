@@ -108,7 +108,40 @@ namespace Game.UI.Shell.Ecs
             return false;
         }
 
+        public static bool TryReadCampaignOperations(out UiCampaignOperationsModel campaign)
+        {
+            campaign = default;
+            if (!TryGetBoundary(out EntityManager entityManager, out Entity boundary) ||
+                !entityManager.HasComponent<UiCampaignOperationsComponent>(boundary))
+                return false;
 
+            UiCampaignOperationsComponent component =
+                entityManager.GetComponentData<UiCampaignOperationsComponent>(boundary);
+            if (component.Version == 0 || component.SelectedMissionId.IsEmpty)
+                return false;
+            UiCampaignMissionModel selected = new(
+                component.SelectedMissionId.ToString(), component.ScenarioId.ToString(),
+                component.OperationMapId.ToString(), component.DisplayName.ToString(),
+                component.Available != 0, component.FirstClearCompleted != 0, component.PendingResume != 0,
+                component.BestStars, component.BestCompletionMilliseconds, component.SuccessfulReplayCount,
+                component.PrimaryAction, component.PrimaryActionLabel.ToString());
+            campaign = new UiCampaignOperationsModel(
+                component.Version, component.CatalogSourceVersion, component.ProgressSourceVersion,
+                selected, component.NextMissionId.ToString(), component.NextMissionRevealed != 0);
+            return campaign.IsValid;
+        }
+
+        }
+
+        bool IUiShellRuntimeGateway.TryReadCampaignOperations(out UiCampaignOperationsModel campaign)
+        {
+            return UiShellReadModelAdapter.TryReadCampaignOperations(out campaign);
+        }
+
+        bool IUiShellRuntimeGateway.TryEnqueueCampaignMissionAction(
+            UiCampaignMissionActionKind action, string missionId)
+        {
+            return UiShellActionAdapter.TryEnqueueCampaignMissionAction(action, missionId);
         }
     }
 }

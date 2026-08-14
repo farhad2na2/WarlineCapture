@@ -514,6 +514,8 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
 
   **Exact-path metadata/tracker correction (2026-08-14):** the frozen M01DC-036 list names the planned PlayMode performance test and bounded instrumentation report but omits the test's mandatory deterministic Unity `.meta` file and the tracker/matrix paths required to record the item honestly. Add only those three exact paths. No production source, performance budget, dense-city/VRP capacity or threshold, mission/scenario/map data, scene, prefab, Addressables output, package, project setting, CI wrapper, or protected output changes.
 
+  **Bounded-query ownership correction (2026-08-14):** the first checked performance replay passed five of six cases and rejected `CampaignMissionAmbientPresentationSystem` because its missing/invalid-contract path constructs a new `EntityQuery` on every update. Add only that existing ambient presentation owner to M01DC-036. The correction may reuse its already-created `_ambientQuery` for transition cleanup; it may not change civilian count/cap, presentation behavior, gameplay components, mission truth, proxy capacity, thresholds, map/dense-city data, or introduce another query/state owner.
+
 - [ ] **M01DC-037 - Build, hash, and install a fresh checked Android package**
   **Depends on:** M01DC-036.
   **Deliverable:** exact-head gameplay-QA candidate Android package built through checked wrappers with provenance, SHA-256, package metadata, installation, launch, and device identity.

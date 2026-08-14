@@ -438,6 +438,8 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
   **Acceptance:** no hard-coded placeholder reward authority remains; first launch bypasses Campaign briefing but may show the compact live brief; Campaign launch emits the validated payload once.
   **Evidence:** briefing projection/payload/toggle/duplicate-click tests and captures, clean pushed head.
 
+  **Ownership amendment (2026-08-14):** add only the canonical catalog blob/component projection and the existing shared Campaign/briefing model, component, projection, gateway, tracker, and exact-path matrix needed to replace SCN-06 placeholder mission truth with the already-authored M01 definition. The mission asset remains read-only. The slice may project objective/display/reward keys, restrictions, hostile force summary, replay-toggle state, and one typed Campaign launch request; it may not invent rewards, mutate Campaign progress, copy configs into the view, alter FirstLaunch continuity, add a second launch/progress writer, edit a scene or dense-city output, change packages/project settings, or begin gameplay/HUD work owned by M01DC-031.
+
 - [ ] **M01DC-031 - Complete HUD and result routes**
   **Depends on:** M01DC-020, M01DC-023, M01DC-024, M01DC-030.
   **Deliverable:** objective HUD, guidance presentation, mission result, reward settlement display, retry/continue, first-clear debrief route, and replay Campaign-return route.

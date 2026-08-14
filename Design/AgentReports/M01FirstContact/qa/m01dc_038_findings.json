@@ -32,6 +32,19 @@
     "deviceReplayExecuted": true,
     "deviceState": "Installed and replayed on canonical Samsung; first route fix passed, second production catalog-binding P1 found"
   },
+  "secondCorrectionPackage": {
+    "applicationId": "com.warlinecapture.game",
+    "sourceHead": "5e14918d981fa6c517917ce0f657cdad623f1f90",
+    "bytes": 558887145,
+    "sha256": "12b242c0bda94eb3434ec7eaee8762d794065cafa5740b0caed71d29d29aadc2",
+    "buildMethod": "Game.Editor.BuildScript.BuildProductionAndroidApk",
+    "buildMarker": "[ProductionAndroidPackage] result=Passed",
+    "buildLogSha256": "fb788fc47705543dc29c1585806313d6dba11010293beed21b892d6fcf12d859",
+    "buildDirty": false,
+    "installExecuted": false,
+    "deviceReplayExecuted": false,
+    "deviceState": "Samsung endpoint 192.168.2.33:39901 remained TCP-open after the build, but the Unity SDK ADB daemon and handshake did not complete; no other device was contacted"
+  },
   "findings": [
     {
       "id": "M01DC038-P1-001",
@@ -68,7 +81,7 @@
         "playModeLogSha256": "fa94b5bda1abdbcc4ae3ecfae74e1086c2bd4329af7e9dd40a2ea2065e188879",
         "playModeResultsSha256": "8f2ed9b0ba1ad1693cbc1b7e9e21f3a43e9d1fc981d012e0a1e043a22ac4fb0f"
       },
-      "status": "corrected-source-validated-package-replay-pending",
+      "status": "fresh-package-built-device-replay-pending",
       "closureRequires": "Fresh exact-source APK build, Samsung install, and successful Full/Contextual/Minimal mission replay"
     }
   ],

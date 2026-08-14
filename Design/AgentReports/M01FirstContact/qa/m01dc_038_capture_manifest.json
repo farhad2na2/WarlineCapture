@@ -92,5 +92,18 @@
       "inconclusive": 0
     }
   },
+  "sourceCorrectionPackage": {
+    "sourceHead": "5e14918d981fa6c517917ce0f657cdad623f1f90",
+    "path": "Build/AndroidAPK/WarlineCapture.apk",
+    "bytes": 558887145,
+    "sha256": "12b242c0bda94eb3434ec7eaee8762d794065cafa5740b0caed71d29d29aadc2",
+    "buildLog": "%TEMP%/m01dc038-production-bootstrap-android.log",
+    "buildLogSha256": "fb788fc47705543dc29c1585806313d6dba11010293beed21b892d6fcf12d859",
+    "marker": "[ProductionAndroidPackage] result=Passed",
+    "dirty": false,
+    "installExecuted": false,
+    "replayExecuted": false,
+    "deviceConnection": "Samsung 192.168.2.33:39901 TCP-open; ADB daemon/handshake did not complete after Unity restarted ADB; no other device contacted"
+  },
   "acceptanceClaimed": false
 }

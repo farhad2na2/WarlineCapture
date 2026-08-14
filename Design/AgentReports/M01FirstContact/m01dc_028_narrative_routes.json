@@ -1,0 +1,33 @@
+{
+  "item": "M01DC-028",
+  "status": "accepted",
+  "headBefore": "8b83baa3b325169aec6b30ce697fed26f1b56cea",
+  "asset": {
+    "path": "Assets/Game/Configs/Narrative/Chapter01/M01_FirstContact_Narrative.asset",
+    "sha256": "762FF5605DDB62B073A7A0118CFC8EE5B413F30FA094F7683ED17E7FF922C81B",
+    "subSequences": 3,
+    "deterministicTwoPass": true
+  },
+  "routes": [
+    { "sequenceId": "seq.ch01.m01.brief", "request": "request.m01.interactive_brief.complete", "archiveReference": "story_archive.seq.ch01.m01.brief" },
+    { "sequenceId": "seq.ch01.m01.comms", "request": "request.m01.comms.complete", "archiveReference": "story_archive.seq.ch01.m01.comms" },
+    { "sequenceId": "seq.ch01.m01.debrief", "request": "request.m01.debrief.complete", "routeRole": "DebriefArrival", "archiveReference": "story_archive.seq.ch01.m01.debrief", "highlightMissionId": "saga.ch01.m02.establish_base" }
+  ],
+  "representativeTranscriptCapture": {
+    "threatProfiles": ["Courier", "Warden", "Broker"],
+    "debriefFinding": "fragment of a revoked civic-relay credential; source identity unresolved",
+    "qassemOrProxyReveal": false,
+    "completeProtocolReveal": false
+  },
+  "accessibility": { "skipToTypedCompletion": true, "reducedMotionSupported": true, "essentialCaptions": true },
+  "replay": { "firstLaunchColdOpenReferences": 0 },
+  "validation": [
+    { "marker": "[M01FirstContactNarrativeValidation] result=Passed tests=8", "sha256": "1B61C7F75886B22320B32197BAE03835AA138A8E6143D01AE596FA5A8F0B7ED8" },
+    { "marker": "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17", "sha256": "73F0ED224194BD2A43413FC293F16455E86A9A4848BCB82953731FFF9664259E" },
+    { "marker": "[ArchitectureHardeningCloseoutValidation] result=Passed suites=23", "sha256": "821A4263282BAE1D5530B65FB441F1A4C31CFFDAE8C45CBC22507A47564D6244" }
+  ],
+  "sourceGrowth": { "generalBuilderLines": 272, "narrativeBuilderLines": 118, "testLines": 123, "exceptionAdded": false },
+  "compilerErrors": 0,
+  "generatedOutputsRestored": true,
+  "protectedDenseCityOutputsChanged": false
+}

@@ -42,6 +42,7 @@ namespace Game.Editor
             PopulateScenario(scenario);
             PopulateCatalog(catalog, mission);
             PopulateOperationMapCatalog(operationMapCatalog, operationMap);
+            M01FirstContactNarrativeConfigBuilder.Build();
             EditorUtility.SetDirty(mission);
             EditorUtility.SetDirty(scenario);
             EditorUtility.SetDirty(catalog);

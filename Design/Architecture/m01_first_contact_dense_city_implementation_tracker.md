@@ -1,8 +1,8 @@
 # M01 First Contact Dense-City Implementation Tracker
 
 Date: 2026-08-12
-Status: Active; M01DC-027 accepted and M01DC-028 dependency-ready
-Progress: 27/43 accepted items (62.8%)
+Status: Active; M01DC-028 accepted and M01DC-029 dependency-ready
+Progress: 28/43 accepted items (65.1%)
 Parent design: `Design/M01_FirstContact_Dense_City_High_Level_Design.md`
 Technical architecture: `Design/Architecture/m01_first_contact_dense_city_technical_architecture.md`
 Mission: `saga.ch01.m01.first_contact`
@@ -408,7 +408,7 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
 
   **Accepted evidence (2026-08-14):** normal completion, skip, and persisted `HandoffPending` resume now create the same typed FirstLaunch-origin M01 payload and hold the startup cover in `EnterMission`; no Main Menu route is emitted. Correlation is persisted before publication, accepted results alone complete FirstLaunch, rejection retries are bounded at three, and restart reuses the same transition/session identity. Focused handoff passes `5 / 5`, inherited FirstLaunch Gate 89 passes, cross-frame PlayMode passes `1 / 1`, source growth passes `17 / 17` without an exception, and architecture passes `23` suites with compiler zero. Generated validation outputs were restored and protected dense-city outputs are unchanged; exact hashes are recorded in `m01dc_027_first_launch_handoff.json`.
 
-- [ ] **M01DC-028 - Integrate brief, comms, debrief, and command-base reveal**
+- [x] **M01DC-028 - Integrate brief, comms, debrief, and command-base reveal**
   **Depends on:** M01DC-020, M01DC-024, M01DC-027.
   **Deliverable:** compact interactive brief, in-mission comms, first-clear debrief, Story Archive references, and command-base arrival with M02 highlighted.
   **Acceptance:** narrative emits typed requests only; the brief continues the exact FirstLaunch Courier/Warden/Broker threat; the debrief reveals coordination and a revoked credential trace without revealing or proxying Qassem; skip/reduced-motion/subtitles work; first clear cannot return to Main Menu/Campaign by mistake; replay does not automatically replay the cold open.
@@ -417,6 +417,8 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
   **Ownership amendment (2026-08-14):** add only the deterministic `Assets/Game/Configs/Narrative/Chapter01.meta` required by the already-authorized narrative asset directory, plus this tracker and the exact-path matrix so M01DC-028 acceptance can be recorded. Same-name asset/test metadata remains covered by the frozen implicit-meta rule. No runtime owner, UI prefab, scene, map, reward, Campaign state, source-growth exception, package, project setting, or protected dense-city output is authorized.
 
   **Source-growth decomposition amendment (2026-08-14):** add one stateless Editor-only `M01FirstContactNarrativeConfigBuilder.cs` and its implicit same-name metadata so brief/comms/debrief serialization does not enlarge the existing 271-line mission/scenario/map builder into a mixed material responsibility. The existing builder may delegate one call to this seam. No runtime type, exception, ceiling increase, second narrative owner, production asset beyond the already-authorized M01 narrative asset, or protected output is authorized.
+
+  **Accepted evidence (2026-08-14):** one deterministic asset contains three separately identified brief/comms/debrief sub-sequences referenced by the canonical mission. The compact brief names only Courier, Warden, and Broker and protects civilians; in-mission comms remain typed mission-scoped completion data; the first-clear debrief reports coordination plus only a fragment of a revoked civic-relay credential with unresolved source identity, then emits `DebriefArrival` with canonical M02 highlight context. Every line is an essential caption, every state supports reduced motion, each sequence skips to its typed completion, Story Archive references are explicit, and no FirstLaunch cold-open reference, Qassem/Male 05/heavy-gunner proxy, or complete-Protocol confirmation exists. Two-pass generation is byte-identical; focused narrative passes `8 / 8`, source growth `17 / 17` without an exception, architecture `23` suites with compiler zero, and source/report diff checks are clean. Unity's canonical empty-value spacing is retained in the hash-bound generated YAML rather than rewritten after generation. Representative transcript, exact asset/log hashes, and restored-output audit are recorded in `m01dc_028_narrative_routes.json`; later in-game visual capture remains owned by M01DC-040.
 
 ### Phase F - Campaign Operations, Briefing, HUD, And Result UI
 
@@ -604,6 +606,7 @@ Unity licensing, wrapper, device connection, disk space, or bounded tool interru
 | 2026-08-13 | M01DC-025 | Added Full-mode mission guidance as one unmanaged projection reader over mission/objective/map state. Existing ARIA owners retain recommendation and typed Show Me/Do It command authority; guidance writes no gameplay truth. Guidance `7 / 7`, ARIA `10 / 10`, Phase 7 `19 / 19`, source growth `17 / 17`, architecture `23` suites, compiler zero, deterministic inventory, protected-path, and restored-output checks pass. | enclosing M01DC-025 acceptance commit | Accepted |
 | 2026-08-13 | M01DC-026 | Added Contextual cooldown-based hint escalation and mandatory-information-only Minimal projection through the existing sole guidance writer. Cross-mode equal-action gameplay truth is unchanged. Guidance `10 / 10`, source growth `17 / 17`, architecture `23` suites, compiler zero, protected-path, and restored-output checks pass. | enclosing M01DC-026 acceptance commit | Accepted |
 | 2026-08-14 | M01DC-027 | Replaced the FirstLaunch Main Menu handoff with a persisted, typed, correlated M01 request for normal, skip, and resume paths. Completion waits for the sole launch owner's accepted result; retries are bounded and restart-safe. Focused `5 / 5`, Gate 89, PlayMode `1 / 1`, source growth `17 / 17`, architecture `23` suites, compiler zero, protected-path, restored-output, and diff checks pass. | enclosing M01DC-027 acceptance commit | Accepted |
+| 2026-08-14 | M01DC-028 | Authored deterministic brief/comms/debrief sub-sequences with exact mission references, Courier/Warden/Broker continuity, typed completion payloads, essential captions, reduced motion, Story Archive references, fragmentary revoked-credential evidence, and canonical first-clear M02 highlight context. Focused `8 / 8`, source growth `17 / 17`, architecture `23` suites, compiler zero, protected-path, restored-output, source/report diff, and hash-stable Unity-YAML checks pass. | enclosing M01DC-028 acceptance commit | Accepted |
 
 Implementation entries are appended only after an item is accepted and pushed. The final row must record M01DC-043, the final main/origin head, 43/43 progress, Android package/device identities, agent-QA/finding closure, validation summary, and clean worktree state.
 

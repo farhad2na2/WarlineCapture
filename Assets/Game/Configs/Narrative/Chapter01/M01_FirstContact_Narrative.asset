@@ -1,0 +1,361 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-2468877828348347734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: M01_FirstContact_Comms
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch01.m01.comms
+  entryStateId: M01-COMMS-DIALOGUE
+  defaultSkipDestinationId: M01-COMMS-COMPLETE
+  states:
+  - stateId: M01-COMMS-DIALOGUE
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: m01-comms.line.1
+      textKey: narrative.m01.comms.dalia
+      englishFallback: Command squad, move to cover and confirm the armed patrol
+        before engaging.
+      speaker: 1
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 3.75
+      essentialCaption: 1
+    - lineId: m01-comms.line.2
+      textKey: narrative.m01.comms.aria
+      englishFallback: Courier, Warden, and Broker remain inside the marked corridor.
+        Objective updates reflect verified mission state.
+      speaker: 3
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 4
+      deadlineSeconds: 7.75
+      essentialCaption: 1
+    - lineId: m01-comms.line.3
+      textKey: narrative.m01.comms.samira
+      englishFallback: The evacuation path is holding. Keep the command squad intact.
+      speaker: 2
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 8
+      deadlineSeconds: 11.75
+      essentialCaption: 1
+    continueStateId: M01-COMMS-COMPLETE
+    skipStateId: M01-COMMS-COMPLETE
+    reducedMotionSupported: 1
+    durationSeconds: 12
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: M01-COMMS-COMPLETE
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.m01.comms.complete
+    evidenceIds:
+    - story_archive.seq.ch01.m01.comms
+    missionContextFlags:
+    - story.m01.corridor_active
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: M01_FirstContact_Narrative
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch01.m01.brief
+  entryStateId: M01-BRIEF-DIALOGUE
+  defaultSkipDestinationId: M01-BRIEF-COMPLETE
+  states:
+  - stateId: M01-BRIEF-DIALOGUE
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: m01-brief.line.1
+      textKey: narrative.m01.brief.dalia
+      englishFallback: 'First contact is confirmed: three armed Ash Line operatives
+        are blocking the clinic corridor in Old Market.'
+      speaker: 1
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 3.75
+      essentialCaption: 1
+    - lineId: m01-brief.line.2
+      textKey: narrative.m01.brief.aria
+      englishFallback: 'Threat profiles: Courier carries orders, Warden controls
+        the crossing, and Broker coordinates supplies.'
+      speaker: 3
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 4
+      deadlineSeconds: 7.75
+      essentialCaption: 1
+    - lineId: m01-brief.line.3
+      textKey: narrative.m01.brief.samira
+      englishFallback: Civilians are sheltering beyond the patrol. Clear the marked
+        corridor; do not pursue outside the district.
+      speaker: 2
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 8
+      deadlineSeconds: 11.75
+      essentialCaption: 1
+    continueStateId: M01-BRIEF-COMPLETE
+    skipStateId: M01-BRIEF-COMPLETE
+    reducedMotionSupported: 1
+    durationSeconds: 12
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: M01-BRIEF-COMPLETE
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.m01.interactive_brief.complete
+    evidenceIds:
+    - story_archive.seq.ch01.m01.brief
+    - evidence.first_launch.ash_patrol_profiles
+    missionContextFlags:
+    - story.m01.courier_warden_broker_confirmed
+--- !u!114 &4718798124290586976
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: M01_FirstContact_Debrief
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch01.m01.debrief
+  entryStateId: M01-DEBRIEF-DIALOGUE
+  defaultSkipDestinationId: M01-DEBRIEF-COMPLETE
+  states:
+  - stateId: M01-DEBRIEF-DIALOGUE
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: m01-debrief.line.1
+      textKey: narrative.m01.debrief.dalia
+      englishFallback: The corridor is secure. The patrol was coordinated, not opportunistic.
+      speaker: 1
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 3.75
+      essentialCaption: 1
+    - lineId: m01-debrief.line.2
+      textKey: narrative.m01.debrief.aria
+      englishFallback: Recovered traffic includes a fragment of a revoked civic-relay
+        credential. The source identity is unresolved.
+      speaker: 3
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 4
+      deadlineSeconds: 7.75
+      essentialCaption: 1
+    - lineId: m01-debrief.line.3
+      textKey: narrative.m01.debrief.samira
+      englishFallback: Civilians are moving to safety. Command Base is online; the
+        next operation is ready for review.
+      speaker: 2
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 8
+      deadlineSeconds: 11.75
+      essentialCaption: 1
+    continueStateId: M01-DEBRIEF-COMPLETE
+    skipStateId: M01-DEBRIEF-COMPLETE
+    reducedMotionSupported: 1
+    durationSeconds: 12
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: M01-DEBRIEF-COMPLETE
+    kind: 5
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 4
+    completionPayloadId: request.m01.debrief.complete
+    evidenceIds:
+    - story_archive.seq.ch01.m01.debrief
+    - evidence.aria.revoked_credential_fragment
+    missionContextFlags:
+    - story.m01.corridor_secured
+    - story.aria.revoked_credential_clue_found
+    - campaign.highlight.saga.ch01.m02.establish_base

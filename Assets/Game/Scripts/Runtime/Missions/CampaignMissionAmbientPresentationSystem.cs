@@ -40,7 +40,7 @@ namespace Game.Runtime
                 !catalog.Blob.IsCreated || !metadata.Blob.IsCreated ||
                 !CampaignMissionSpawnSystem.TryFindDefinition(in catalog, in runtime, out int definitionIndex))
             {
-                Cleanup(ref state, default, -1);
+                Cleanup(ref state, _ambientQuery, default, -1);
                 return;
             }
 
@@ -48,7 +48,7 @@ namespace Game.Runtime
             if (!TryResolveContract(ref definition, ref metadata.Blob.Value, out var ambient,
                     out OperationMapAnchorBlob safe, out OperationMapAnchorBlob evacuation))
             {
-                Cleanup(ref state, default, -1);
+                Cleanup(ref state, _ambientQuery, default, -1);
                 return;
             }
 
@@ -64,7 +64,7 @@ namespace Game.Runtime
                  (_capacityUnavailable != 0 && _ambientQuery.IsEmptyIgnoreFilter)))
                 return;
 
-            Cleanup(ref state, runtime.SessionToken, runtime.AttemptOrdinal);
+            Cleanup(ref state, _ambientQuery, runtime.SessionToken, runtime.AttemptOrdinal);
             _capacityUnavailable = EnsurePresentation(
                 ref state, _ambientQuery, _prefabRegistryQuery, in runtime,
                 ref ambient, in safe, in evacuation, evacuating) ? (byte)0 : (byte)1;
@@ -206,11 +206,10 @@ namespace Game.Runtime
         }
 
         private static void Cleanup(
-            ref SystemState state, FixedString64Bytes sessionToken, int attemptOrdinal)
+            ref SystemState state, EntityQuery query,
+            FixedString64Bytes sessionToken, int attemptOrdinal)
         {
             EntityManager em = state.EntityManager;
-            using EntityQuery query = em.CreateEntityQuery(
-                ComponentType.ReadOnly<CampaignMissionAmbientCivilianComponent>());
             using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
             using NativeArray<CampaignMissionAmbientCivilianComponent> civilians =
                 query.ToComponentDataArray<CampaignMissionAmbientCivilianComponent>(Allocator.Temp);

@@ -502,6 +502,8 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
   **Acceptance:** the live three-person patrol is visually continuous with the approved FirstLaunch patrol and remains distinct from civilians/JRC without profiling local identity; Qassem/Male 05 and the heavy gunner do not appear; readable at 16:9, 20:9, and tablet landscape; no refinery/proxy overlap artifact, hidden city, incorrect brown fallback, invalid road/water crossing, clipping, unreadable scale, or UI overlap in the M01 window.
   **Evidence:** capture manifest/contact sheet and project-owner visual review record, clean pushed head.
 
+  **Exact-path metadata/tracker correction (2026-08-14):** the frozen M01DC-035 list names the planned Editor capture utility and its two bounded evidence outputs but omits the utility's mandatory deterministic Unity `.meta` file and the tracker/matrix paths required to record the review honestly. Add only those three exact paths. Raw frame/video intermediates remain temporary validation output; the committed evidence boundary remains the manifest/review JSON and contact sheet. This correction does not authorize production source, FirstLaunch art, mission/map/dense-city/VRP content, scene, prefab, package, project-setting, CI, threshold, or protected-output changes.
+
 - [ ] **M01DC-036 - Pass Editor performance, allocation, and bounded-work gates**
   **Depends on:** M01DC-032 through M01DC-035.
   **Deliverable:** representative live mission instrumentation for allocations, structural changes, objective/guidance cadence, civilians, loading, unload/reload, proxy capacity, and bounded scans.

@@ -428,6 +428,8 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
   **Acceptance:** UI stores no parallel progress; new/first-clear/replay profiles render correctly; locked/unavailable actions remain fail-closed.
   **Evidence:** read-model/route/profile-state tests and supported-aspect captures, clean pushed head.
 
+  **Ownership amendment (2026-08-14):** add only this tracker and the exact-path matrix so M01DC-029 acceptance can be recorded after its already-authorized Campaign projection, gateway, binder, view, focused test, and compact evidence paths pass. Same-name metadata for newly accepted scripts remains covered by the frozen implicit-meta rule. No prefab, scene, Campaign progress mutation, launch payload construction, mission definition, dense-city output, source-growth exception, package, or project setting is authorized.
+
 - [ ] **M01DC-030 - Activate Mission Briefing Deploy and replay tutorial choice**
   **Depends on:** M01DC-005, M01DC-009, M01DC-029.
   **Deliverable:** definition-driven briefing, accurate objectives/conditions/enemy/rewards, functional Deploy, and replay-only tutorial toggle defaulting off and using current guidance when enabled.

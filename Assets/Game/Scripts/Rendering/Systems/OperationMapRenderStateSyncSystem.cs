@@ -91,9 +91,13 @@ namespace Game.Rendering
             Entity owner = _databaseQuery.GetSingletonEntity();
             OperationMapRenderDatabaseComponent database =
                 _databaseQuery.GetSingleton<OperationMapRenderDatabaseComponent>();
+            Entity activeMapEntity = _activeMapQuery.GetSingletonEntity();
             ActiveOperationMapComponent activeMap =
-                _activeMapQuery.GetSingleton<ActiveOperationMapComponent>();
-            ValidateDatabase(database, activeMap);
+                state.EntityManager.GetComponentData<ActiveOperationMapComponent>(activeMapEntity);
+            OperationMapRenderDatabaseIdentity.ValidateForStateSync(
+                database, activeMap,
+                OperationMapRenderDatabaseIdentity.ResolveMetadata(
+                    state.EntityManager, activeMapEntity));
             ref OperationMapRenderDatabaseBlob blob = ref database.Blob.Value;
             OperationMapRenderStateSyncStateComponent syncState =
                 state.EntityManager.GetComponentData<
@@ -408,19 +412,6 @@ namespace Game.Rendering
                             "Render state synchronization found an invalid cell membership.");
                     }
                 }
-            }
-        }
-
-        private static void ValidateDatabase(
-            OperationMapRenderDatabaseComponent database,
-            ActiveOperationMapComponent activeMap)
-        {
-            if (!database.Blob.IsCreated ||
-                activeMap.Generation <= 0 ||
-                !database.Blob.Value.OperationMapId.Equals(activeMap.OperationMapId))
-            {
-                throw new InvalidOperationException(
-                    "Render state synchronization received an invalid map database.");
             }
         }
 

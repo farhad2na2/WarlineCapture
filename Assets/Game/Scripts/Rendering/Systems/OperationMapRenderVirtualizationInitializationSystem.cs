@@ -115,8 +115,12 @@ namespace Game.Rendering
                     "The render database is missing its packed readiness, metrics, or state-change owner.");
             }
 
+            Entity activeMapEntity = _activeMapQuery.GetSingletonEntity();
             ActiveOperationMapComponent activeMap =
-                _activeMapQuery.GetSingleton<ActiveOperationMapComponent>();
+                entityManager.GetComponentData<ActiveOperationMapComponent>(activeMapEntity);
+            OperationMapMetadataComponent metadata =
+                OperationMapRenderDatabaseIdentity.ResolveMetadata(
+                    entityManager, activeMapEntity);
             if (activeMap.Generation <= 0)
             {
                 throw new InvalidOperationException(
@@ -147,7 +151,7 @@ namespace Game.Rendering
             OperationMapRenderPackedReadinessComponent readiness =
                 entityManager.GetComponentData<OperationMapRenderPackedReadinessComponent>(
                     databaseEntity);
-            ValidateDatabaseIdentity(database, readiness, activeMap);
+            ValidateDatabaseIdentity(database, readiness, activeMap, metadata);
 
             using NativeArray<OperationMapRenderProxySlotComponent> slots =
                 _slotQuery.ToComponentDataArray<OperationMapRenderProxySlotComponent>(
@@ -446,31 +450,10 @@ namespace Game.Rendering
         internal static void ValidateDatabaseIdentity(
             OperationMapRenderDatabaseComponent database,
             OperationMapRenderPackedReadinessComponent readiness,
-            ActiveOperationMapComponent activeMap)
-        {
-            if (!database.Blob.IsCreated)
-            {
-                throw new InvalidOperationException(
-                    "Render virtualization database blob is not created.");
-            }
-
-            ref OperationMapRenderDatabaseBlob blob = ref database.Blob.Value;
-            if (database.SchemaVersion <= 0 ||
-                database.SchemaVersion != blob.SchemaVersion ||
-                database.ContentHash.Length == 0 ||
-                !database.ContentHash.Equals(blob.ContentHash) ||
-                !blob.OperationMapId.Equals(activeMap.OperationMapId))
-            {
-                throw new InvalidOperationException(
-                    "Render virtualization database map, schema, or content identity is invalid.");
-            }
-            if (readiness.ResidencyMode !=
-                (byte)OperationMapRenderResidencyMode.VirtualizedProxyPool)
-            {
-                throw new InvalidOperationException(
-                    "Render virtualization initialization requires VirtualizedProxyPool residency.");
-            }
-        }
+            ActiveOperationMapComponent activeMap,
+            OperationMapMetadataComponent metadata = default) =>
+            OperationMapRenderDatabaseIdentity.ValidateForVirtualization(
+                database, readiness, activeMap, metadata);
 
         private void CompleteAndDispose(ref SystemState state)
         {

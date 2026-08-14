@@ -384,10 +384,20 @@ namespace Game.Configs
 
             using BlobBuilder builder = new(Allocator.Temp);
             ref OperationMapBlob root = ref builder.ConstructRoot<OperationMapBlob>();
+            string physicalOperationMapId = sourceBinding.IsConfigured
+                ? sourceBinding.SourceOperationMapId
+                : operationMapId;
+            string physicalContentHash = sourceBinding.IsConfigured
+                ? sourceBinding.SourceContentHash
+                : contentHash;
             root.OperationMapId = new FixedString64Bytes(operationMapId);
+            root.SourceOperationMapId =
+                new FixedString64Bytes(physicalOperationMapId);
             root.PlanningCameraId = new FixedString64Bytes(planningCameraId);
             root.BattleCameraId = new FixedString64Bytes(battleCameraId);
             root.SourceIdentityHash = new FixedString128Bytes(sourceIdentityHash);
+            root.SourceContentHash =
+                new FixedString128Bytes(physicalContentHash);
             root.ContentHash = new FixedString128Bytes(contentHash);
             root.GeneratedMetadataHash = new FixedString128Bytes(generatedMetadataHash);
             root.SchemaVersion = schemaVersion;

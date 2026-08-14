@@ -2,15 +2,17 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;
+using Game.Components;
 using Game.Configs;
 using NUnit.Framework;
+using Unity.Entities;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
 public sealed class M01FirstContactMapSourceBindingTests
 {
-    private const string PassMarker = "[M01FirstContactMapSourceBindingValidation] result=Passed tests=10";
+    private const string PassMarker = "[M01FirstContactMapSourceBindingValidation] result=Passed tests=11";
     private const string SourceDefinitionPath =
         "Assets/Game/Configs/OperationMaps/Candidates/" +
         "OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset";
@@ -30,6 +32,7 @@ public sealed class M01FirstContactMapSourceBindingTests
             tests.DenseCityPhysicalScenesHaveNoCampaignClone();
             tests.BlankBindingPreservesExistingSelfOwnedMap();
             tests.LogicalMapCanBindToExactAcceptedPhysicalSource();
+            tests.LogicalMetadataCarriesExactPhysicalRenderBinding();
             tests.UnresolvedPhysicalSourceFailsClosed();
             tests.StaleSourceIdentityHashFailsClosed();
             tests.StaleSourceContentHashFailsClosed();
@@ -109,6 +112,32 @@ public sealed class M01FirstContactMapSourceBindingTests
             Assert.AreEqual(source.SourceSceneReference.AssetGUID, logical.SourceSceneReference.AssetGUID);
         }
         finally { UnityEngine.Object.DestroyImmediate(logical); }
+    }
+
+    [Test]
+    public void LogicalMetadataCarriesExactPhysicalRenderBinding()
+    {
+        OperationMapDefinition logical = Logical(
+            Source(), SourceIdentityHash, SourceContentHash);
+        BlobAssetReference<OperationMapBlob> blob = default;
+        try
+        {
+            Assert.IsTrue(logical.TryCreatePersistentMetadataBlob(
+                out blob, out string error), error);
+            Assert.AreEqual(LogicalMapId, blob.Value.OperationMapId.ToString());
+            Assert.AreEqual(
+                SourceMapId, blob.Value.SourceOperationMapId.ToString());
+            Assert.AreEqual(
+                SourceIdentityHash, blob.Value.SourceIdentityHash.ToString());
+            Assert.AreEqual(
+                SourceContentHash, blob.Value.SourceContentHash.ToString());
+        }
+        finally
+        {
+            if (blob.IsCreated)
+                blob.Dispose();
+            UnityEngine.Object.DestroyImmediate(logical);
+        }
     }
 
     [Test]

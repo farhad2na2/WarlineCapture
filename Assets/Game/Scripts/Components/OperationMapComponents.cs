@@ -161,9 +161,11 @@ namespace Game.Components
     public struct OperationMapBlob
     {
         public FixedString64Bytes OperationMapId;
+        public FixedString64Bytes SourceOperationMapId;
         public FixedString64Bytes PlanningCameraId;
         public FixedString64Bytes BattleCameraId;
         public FixedString128Bytes SourceIdentityHash;
+        public FixedString128Bytes SourceContentHash;
         public FixedString128Bytes ContentHash;
         public FixedString128Bytes GeneratedMetadataHash;
         public int SchemaVersion;

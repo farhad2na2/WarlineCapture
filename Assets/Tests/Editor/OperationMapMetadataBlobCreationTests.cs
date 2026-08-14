@@ -24,7 +24,10 @@ public sealed class OperationMapMetadataBlobCreationTests
 
             ref OperationMapBlob metadata = ref blob.Value;
             Assert.That(metadata.OperationMapId.ToString(), Is.EqualTo("opmap.skirmish.desert_base_01"));
+            Assert.That(metadata.SourceOperationMapId.ToString(),
+                Is.EqualTo("opmap.skirmish.desert_base_01"));
             Assert.That(metadata.SourceIdentityHash.ToString(), Is.EqualTo(HashA));
+            Assert.That(metadata.SourceContentHash.ToString(), Is.EqualTo(HashB));
             Assert.That(metadata.ContentHash.ToString(), Is.EqualTo(HashB));
             Assert.That(metadata.GeneratedMetadataHash.ToString(), Is.EqualTo(HashC));
             Assert.That(metadata.SchemaVersion, Is.EqualTo(2));

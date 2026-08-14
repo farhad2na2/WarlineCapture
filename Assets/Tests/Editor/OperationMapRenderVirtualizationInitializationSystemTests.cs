@@ -16,6 +16,7 @@ public sealed class OperationMapRenderVirtualizationInitializationSystemTests
 
     private World _world;
     private BlobAssetReference<OperationMapRenderDatabaseBlob> _blob;
+    private BlobAssetReference<OperationMapBlob> _metadataBlob;
     private SystemHandle _system;
     private Entity _activeMapEntity;
     private Entity _databaseEntity;
@@ -40,13 +41,17 @@ public sealed class OperationMapRenderVirtualizationInitializationSystemTests
                 test => test.CameraSchedule_PublishesCommandsThenNoOpsInsideGuard());
             RunCase(tests, nameof(OperationMapMismatch_FailsClosed),
                 test => test.OperationMapMismatch_FailsClosed());
+            RunCase(tests, nameof(SourceBoundLogicalMap_ValidatesPhysicalDatabase),
+                test => test.SourceBoundLogicalMap_ValidatesPhysicalDatabase());
+            RunCase(tests, nameof(SourceBoundLogicalMap_RejectsStalePhysicalContent),
+                test => test.SourceBoundLogicalMap_RejectsStalePhysicalContent());
             RunCase(tests, nameof(DuplicateSlotIdentity_FailsClosed),
                 test => test.DuplicateSlotIdentity_FailsClosed());
             RunCase(tests, nameof(MissingStateOwner_FailsClosed),
                 test => test.MissingStateOwner_FailsClosed());
             Debug.Log(
                 "[OperationMapRenderVirtualizationInitializationFocusedValidation] " +
-                "result=Passed tests=9");
+                "result=Passed tests=11");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -112,6 +117,8 @@ public sealed class OperationMapRenderVirtualizationInitializationSystemTests
         }
         if (_blob.IsCreated)
             _blob.Dispose();
+        if (_metadataBlob.IsCreated)
+            _metadataBlob.Dispose();
     }
 
     [Test]
@@ -299,6 +306,75 @@ public sealed class OperationMapRenderVirtualizationInitializationSystemTests
         Assert.Throws<InvalidOperationException>(
             () => OperationMapRenderVirtualizationInitializationSystem
                 .ValidateDatabaseIdentity(database, readiness, active));
+    }
+
+    [Test]
+    public void SourceBoundLogicalMap_ValidatesPhysicalDatabase()
+    {
+        ActiveOperationMapComponent active = CreateLogicalActiveMap();
+        OperationMapMetadataComponent metadata = CreateLogicalMetadata(
+            ContentHash);
+        OperationMapRenderDatabaseComponent database =
+            _world.EntityManager.GetComponentData<
+                OperationMapRenderDatabaseComponent>(_databaseEntity);
+        OperationMapRenderPackedReadinessComponent readiness =
+            _world.EntityManager.GetComponentData<
+                OperationMapRenderPackedReadinessComponent>(_databaseEntity);
+
+        Assert.DoesNotThrow(
+            () => OperationMapRenderVirtualizationInitializationSystem
+                .ValidateDatabaseIdentity(
+                    database, readiness, active, metadata));
+    }
+
+    [Test]
+    public void SourceBoundLogicalMap_RejectsStalePhysicalContent()
+    {
+        ActiveOperationMapComponent active = CreateLogicalActiveMap();
+        OperationMapMetadataComponent metadata = CreateLogicalMetadata(
+            new string('f', 64));
+        OperationMapRenderDatabaseComponent database =
+            _world.EntityManager.GetComponentData<
+                OperationMapRenderDatabaseComponent>(_databaseEntity);
+        OperationMapRenderPackedReadinessComponent readiness =
+            _world.EntityManager.GetComponentData<
+                OperationMapRenderPackedReadinessComponent>(_databaseEntity);
+
+        Assert.Throws<InvalidOperationException>(
+            () => OperationMapRenderVirtualizationInitializationSystem
+                .ValidateDatabaseIdentity(
+                    database, readiness, active, metadata));
+    }
+
+    private static ActiveOperationMapComponent CreateLogicalActiveMap() =>
+        new()
+        {
+            OperationMapId = new FixedString64Bytes("opmap.ch01.test"),
+            SchemaVersion = 1,
+            Generation = 7
+        };
+
+    private OperationMapMetadataComponent CreateLogicalMetadata(
+        string sourceContentHash)
+    {
+        using var builder = new BlobBuilder(Allocator.Temp);
+        ref OperationMapBlob root =
+            ref builder.ConstructRoot<OperationMapBlob>();
+        root.OperationMapId =
+            new FixedString64Bytes("opmap.ch01.test");
+        root.SourceOperationMapId =
+            new FixedString64Bytes(OperationMapId);
+        root.SourceIdentityHash = new FixedString128Bytes(ContentHash);
+        root.SourceContentHash =
+            new FixedString128Bytes(sourceContentHash);
+        root.SchemaVersion = 1;
+        _metadataBlob = builder.CreateBlobAssetReference<OperationMapBlob>(
+            Allocator.Persistent);
+        return new OperationMapMetadataComponent
+        {
+            Blob = _metadataBlob,
+            Generation = 7
+        };
     }
 
     private static RuntimeCameraSnapshotComponent CreateCameraSnapshot(

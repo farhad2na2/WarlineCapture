@@ -416,6 +416,8 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
 
   **Ownership amendment (2026-08-14):** add only the deterministic `Assets/Game/Configs/Narrative/Chapter01.meta` required by the already-authorized narrative asset directory, plus this tracker and the exact-path matrix so M01DC-028 acceptance can be recorded. Same-name asset/test metadata remains covered by the frozen implicit-meta rule. No runtime owner, UI prefab, scene, map, reward, Campaign state, source-growth exception, package, project setting, or protected dense-city output is authorized.
 
+  **Source-growth decomposition amendment (2026-08-14):** add one stateless Editor-only `M01FirstContactNarrativeConfigBuilder.cs` and its implicit same-name metadata so brief/comms/debrief serialization does not enlarge the existing 271-line mission/scenario/map builder into a mixed material responsibility. The existing builder may delegate one call to this seam. No runtime type, exception, ceiling increase, second narrative owner, production asset beyond the already-authorized M01 narrative asset, or protected output is authorized.
+
 ### Phase F - Campaign Operations, Briefing, HUD, And Result UI
 
 - [ ] **M01DC-029 - Make Campaign Operations data-driven for M01**

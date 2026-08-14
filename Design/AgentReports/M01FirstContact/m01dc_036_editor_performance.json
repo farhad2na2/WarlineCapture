@@ -1,0 +1,138 @@
+{
+  "schema": "warline.m01.editor-performance-acceptance",
+  "schemaVersion": 1,
+  "artifactId": "m01dc-036-editor-performance-v1",
+  "taskId": "M01DC-036",
+  "status": "accepted",
+  "recordedAtUtcDate": "2026-08-14",
+  "implementationRevision": "b06d1fc17228c128714fcec725777c963b66cbab",
+  "validator": {
+    "type": "M01FirstContactPerformancePlayModeTests",
+    "wrapper": "Tools/CI/InvokeUnity.ps1",
+    "testPlatform": "PlayMode",
+    "testFilter": "M01FirstContactPerformancePlayModeTests",
+    "requiredMarker": "[M01FirstContactPerformancePlayMode] result=Passed tests=6",
+    "timeoutSeconds": 1800,
+    "result": "Passed",
+    "total": 6,
+    "passed": 6,
+    "failed": 0,
+    "inconclusive": 0,
+    "skipped": 0,
+    "durationSeconds": 0.5092695,
+    "compilerErrors": 0,
+    "compilerWarnings": 0,
+    "logPath": "%REPO%/Build/Logs/m01dc036-performance-playmode-exact.log",
+    "logSha256": "1587b189b368a45f953af0c476533a940d875fce668ba279e582f7d85d55e063",
+    "resultsPath": "%REPO%/Build/TestResults/m01dc036-performance-playmode-exact.xml",
+    "resultsSha256": "8944bcecaa0d9f11c00108c5a8add654a5366ceba4a244fe78472e84706b88ad"
+  },
+  "caseMatrix": [
+    {
+      "id": "M01PERF-01",
+      "test": "StableObjectiveProjectionAllocatesZeroBytesAndDoesNotChurn",
+      "observed": "128 post-warmup updates allocated 0 managed bytes; entity count, objective count, and projection version remained stable."
+    },
+    {
+      "id": "M01PERF-02",
+      "test": "StableGuidanceCadenceAllocatesZeroBytesAndDoesNotRepublish",
+      "observed": "256 post-warmup projection attempts allocated 0 managed bytes and produced no version change or redundant publication."
+    },
+    {
+      "id": "M01PERF-03",
+      "test": "AmbientCivilianCapFallbackAndSteadyStateAllocationRemainBounded",
+      "observed": "Eight authored civilians remain gameplay-inert, missing capacity falls back to zero, thirteen is rejected by the hard cap, valid presentation is 0 B, and 128 missing-contract updates allocate 0 managed bytes with stable entity count."
+    },
+    {
+      "id": "M01PERF-04",
+      "test": "RetryUnloadReloadAndAttemptLocalStateHaveStableCounts",
+      "observed": "Eight retries retain one current result and bounded entities/queues; catalog teardown and ambient teardown remove owned state without lifecycle growth."
+    },
+    {
+      "id": "M01PERF-05",
+      "test": "MissionHotPathsContainNoUnboundedOrPerFrameManagedWork",
+      "observed": "Six live mission owners contain no GameObject hierarchy search, global entity enumeration, Addressables load, LINQ materialization, or per-frame ambient query construction."
+    },
+    {
+      "id": "M01PERF-06",
+      "test": "DenseCitySourceCapacityCameraAndProxyEvidenceRemainInherited",
+      "observed": "The accepted database hashes, 7,784 fixed proxy slots, zero GC baseline, all-route pass, and clamped mission camera evidence remain exact."
+    }
+  ],
+  "boundedCorrection": {
+    "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionAmbientPresentationSystem.cs",
+    "before": "Cleanup constructed a temporary EntityQuery on every missing or invalid mission-contract update.",
+    "after": "Cleanup reuses the EntityQuery created and owned by OnCreate.",
+    "behaviorChanges": 0,
+    "civilianAuthoredCount": 8,
+    "civilianHardCap": 12,
+    "productionSourceBytes": 11508,
+    "productionSourceLines": 236,
+    "productionSourceSha256": "d2f08c56d3aee609e452438bba003706e72c43c0f8be53e39327a15b0e9affd8"
+  },
+  "inheritedDenseCityContract": {
+    "fixedProxySlots": 7784,
+    "proxyOverflow": 0,
+    "proxyDeficit": 0,
+    "databaseContentHash": "04681634c40403c8d30e1de2c44a64ac598403b7cd8f0574e1359a12f5758d73",
+    "databaseRecordOrderingSha256": "a931d70e9e04915285c805cdd70545edd1b1852cb47a5fbb4a6ca0e1e7812fe7",
+    "databaseConfigSha256": "2fb85fd03d4b82621ba9c9168a21560e2ba8df3350e45594c5b3785a58768b8d",
+    "finalEvidenceSha256": "82eff7cf5048166d4389f74c9f82863d9fa3676f41523e99f9ff51f5d3fc346b",
+    "m01ReuseEvidenceSha256": "a05606756b149b30ec7cea300809874599708fb2843d94b269f488e89dd153d6",
+    "m01CameraEvidenceSha256": "e4168434a43003e771dbaaf700dd4f718aca7ba021c02834bbccf44481117e47"
+  },
+  "architectureEvidence": {
+    "sourceGrowthMethod": "ProductionSourceGrowthArchitectureTests.RunFocusedValidation",
+    "sourceGrowthMarker": "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17",
+    "sourceGrowthLogPath": "%REPO%/Build/Logs/m01dc036-source-growth.log",
+    "sourceGrowthLogSha256": "9950ac4cbf38599db5c9fcc583caabf2d871e5b353c480dd136e5b1da021226e",
+    "architectureMethod": "ArchitectureHardeningCloseoutValidationRunner.RunFocusedValidation",
+    "architectureMarker": "[ArchitectureHardeningCloseoutValidation] result=Passed suites=23",
+    "architectureLogPath": "%REPO%/Build/Logs/m01dc036-architecture.log",
+    "architectureLogSha256": "c61aa4ea9f5a985585523e119ae1240cc4397790b16a094e1221f00f7d991e8b",
+    "sourceGrowthExceptionsAddedOrEnlarged": 0,
+    "compilerErrors": 0,
+    "compilerWarnings": 0
+  },
+  "rejectedRunDisposition": [
+    {
+      "run": "r1",
+      "logSha256": "84d19554baa4f7999e386058f1c6720f26a7f5ece706dd1123df10727a0cf5ee",
+      "reason": "Rejected before tests: generic Hub licensing channel failed; recovered through the authorized verified-client restart."
+    },
+    {
+      "run": "r2",
+      "logSha256": "1aec534fd78738d975cdd0fe56d21062a108bc61692a165f651fed5127cce7a1",
+      "reason": "Rejected compile: the new test omitted the Game.Narrative.Contracts import."
+    },
+    {
+      "run": "r3",
+      "logSha256": "b5e9b09e72cf1550e66b35113e666da18f59ecf51378673e04117160e015de62",
+      "reason": "Rejected command: an explicit -quit caused a clean Editor exit after compilation without results XML."
+    },
+    {
+      "run": "r4",
+      "logSha256": "f05029048ed42d3a0e193408cfb89710c0d71bf324ba2f8b752d5dc7e52c2ad8",
+      "resultsSha256": "a89d9dee41088ead13497347fd502b2d08f044203d8bcb6929a7206e8bf26d01",
+      "reason": "Rejected 5/6: exposed per-update ambient cleanup query construction."
+    },
+    {
+      "run": "r5",
+      "logSha256": "295999c2d4c6657b905123acf86c4d0cc83499bb1b1083fe5b3a288f555bbd3e",
+      "resultsSha256": "d81c9af8a2a512e1897af849e27c1600f946decb78dca54b226251e7159fc90a",
+      "reason": "Rejected 5/6: source audit incorrectly classified request-driven launch cleanup as per-frame work; the audit was narrowed and the missing-contract allocation path was measured directly."
+    }
+  ],
+  "scopeAudit": {
+    "productionSourceChanges": 1,
+    "testChanges": 2,
+    "denseCityPhysicalChanges": 0,
+    "vrpOrCapacityChanges": 0,
+    "missionScenarioOrMapDataChanges": 0,
+    "scenePrefabOrAddressablesChanges": 0,
+    "packageProjectSettingOrCiChanges": 0,
+    "performanceThresholdChanges": 0,
+    "protectedIncidentalOutputsRestored": 7,
+    "result": "Passed"
+  }
+}

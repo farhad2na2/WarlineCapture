@@ -40,6 +40,22 @@
     "mediaVolumeMusicSpeaker": 13,
     "mediaVolumeMusic": 7
   },
-  "correctedPackageReplay": "pending",
+  "correctedPackageReplay": {
+    "sourceHead": "893f07168c94391563cffadd91cc24d63b7c76af",
+    "bytes": 558883165,
+    "sha256": "ad667e6d770fdebe706707210881a3ecb3034761ed3b04d1fc552fe7cad873be",
+    "buildLog": "%TEMP%/m01dc038-exact-head-production-android.log",
+    "buildLogSha256": "925b1b14f0ac332a2cf960d3dc35dd43027a6872687e3e821181efb4bd4c2e50",
+    "buildMarker": "[ProductionAndroidPackage] result=Passed",
+    "installExecuted": false,
+    "replayExecuted": false,
+    "deviceConnection": {
+      "previousTransport": "192.168.2.33:35491",
+      "discoveredPairingGuid": "adb-R5CTC1J02VB-lJmfCF",
+      "discoveredTransport": "192.168.2.33:33675",
+      "result": "connection-refused"
+    },
+    "status": "pending-device-availability"
+  },
   "acceptanceClaimed": false
 }

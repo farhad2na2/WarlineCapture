@@ -20,6 +20,18 @@
     "sourceHead": "89865295b006a39680b75476ba7702d948acc51c",
     "sha256": "e2f02601c41efb9a6824038395e3db4d7f8ccb0b150a3b5201381530710719e2"
   },
+  "correctedPackage": {
+    "applicationId": "com.warlinecapture.game",
+    "sourceHead": "893f07168c94391563cffadd91cc24d63b7c76af",
+    "bytes": 558883165,
+    "sha256": "ad667e6d770fdebe706707210881a3ecb3034761ed3b04d1fc552fe7cad873be",
+    "buildMethod": "Game.Editor.BuildScript.BuildProductionAndroidApk",
+    "buildMarker": "[ProductionAndroidPackage] result=Passed",
+    "buildDirty": false,
+    "installExecuted": false,
+    "deviceReplayExecuted": false,
+    "deviceState": "Samsung pairing discovered by mDNS; current connect endpoint refused after ADB restart"
+  },
   "findings": [
     {
       "id": "M01DC038-P1-001",
@@ -35,7 +47,7 @@
         "m01Architecture": "Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23",
         "m01RuntimePlayMode": "Passed 18/18"
       },
-      "status": "corrected-editor-validation-passed-device-replay-pending",
+      "status": "corrected-package-built-device-replay-pending",
       "closureRequires": "Fresh exact-head APK install and successful Samsung FirstLaunch-to-M01 replay"
     }
   ],

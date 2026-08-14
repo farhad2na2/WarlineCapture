@@ -14,6 +14,8 @@ The language choice, narrative panels, identity choice, and Full-guidance select
 
 The bounded correction publishes exactly one existing `EnterMatch` request from the established FirstLaunch shell boundary. It adds no new route, payload bridge, mission writer, scene loader, or protected content change. Focused boundary validation passed 4/4, FirstLaunch Gate 8/9 passed 56/56, M01 source growth passed 17/17 inside the existing 87-line/3386-byte ceiling, consolidated M01 architecture passed, and M01 PlayMode lifecycle passed 18/18. The P1 remains open until the corrected exact-head APK is built, installed, and replayed on this Samsung.
 
+The corrected clean pushed head `893f07168c94391563cffadd91cc24d63b7c76af` subsequently built through `Game.Editor.BuildScript.BuildProductionAndroidApk` with `[ProductionAndroidPackage] result=Passed`. The APK is 558,883,165 bytes with SHA-256 `ad667e6d770fdebe706707210881a3ecb3034761ed3b04d1fc552fe7cad873be`; the build report recorded `dirty=false`, IL2CPP, ARM64, and that exact commit. Installation did not execute: after Unity restarted ADB, the Samsung's prior `192.168.2.33:35491` transport stopped responding; mDNS found the same pairing GUID and hardware serial at `192.168.2.33:33675`, but that endpoint actively refused the connection. No other device was contacted. The fresh package remains valid and device-only replay remains honestly open.
+
 ## Initial scores (1-5)
 
 | Dimension | Score | Observation |

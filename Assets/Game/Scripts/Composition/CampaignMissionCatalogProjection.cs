@@ -59,6 +59,10 @@ namespace Game.Composition
             definition.MissionId = new FixedString64Bytes(mission.MissionId);
             definition.ScenarioId = new FixedString64Bytes(scenario.ScenarioId);
             definition.OperationMapId = new FixedString64Bytes(mission.OperationMapId);
+            definition.DisplayNameKey = new FixedString64Bytes(mission.DisplayNameKey);
+            definition.DisplaySummaryKey = new FixedString64Bytes(mission.DisplaySummaryKey);
+            definition.LocationNameKey = new FixedString64Bytes(mission.LocationNameKey);
+            definition.BriefingSequenceId = new FixedString64Bytes(mission.BriefingSequenceId);
             definition.SchemaVersion = mission.SchemaVersion;
             definition.DeterministicSeed = scenario.DeterministicSeed;
             definition.EncounterStartMilliseconds = scenario.EncounterStartMilliseconds;
@@ -67,6 +71,9 @@ namespace Game.Composition
             definition.EconomyDisabled = scenario.Restrictions.EconomyDisabled ? (byte)1 : (byte)0;
             definition.TransportDisabled = scenario.Restrictions.TransportDisabled ? (byte)1 : (byte)0;
             definition.AirDisabled = scenario.Restrictions.AirDisabled ? (byte)1 : (byte)0;
+            definition.ReplayAllowed = mission.ReplayAllowed ? (byte)1 : (byte)0;
+            definition.ReplayTutorialDefaultEnabled = mission.ReplayTutorialDefaultEnabled ? (byte)1 : (byte)0;
+            ProjectObjectives(ref builder, ref definition, mission);
             ProjectForces(ref builder, ref definition, scenario);
             ProjectAmbient(ref builder, ref definition, scenario);
             ProjectStars(ref builder, ref definition, mission);
@@ -84,6 +91,26 @@ namespace Game.Composition
             });
             error = null;
             return true;
+        }
+
+        private static void ProjectObjectives(
+            ref BlobBuilder builder, ref CampaignMissionDefinitionBlob definition, MissionDefinitionConfig mission)
+        {
+            ReadOnlySpan<MissionObjectiveDefinitionConfig> source = mission.Objectives;
+            BlobBuilderArray<CampaignMissionObjectiveBlob> projected =
+                builder.Allocate(ref definition.Objectives, source.Length);
+            for (int i = 0; i < source.Length; i++)
+            {
+                projected[i] = new CampaignMissionObjectiveBlob
+                {
+                    ObjectiveId = new FixedString64Bytes(source[i].ObjectiveId),
+                    DisplayTextKey = new FixedString64Bytes(source[i].DisplayTextKey),
+                    MissionRoleId = new FixedString64Bytes(source[i].MissionRoleId),
+                    Rule = source[i].Rule,
+                    RequiredCount = source[i].RequiredCount,
+                    FailureOnRuleBreak = source[i].FailureOnRuleBreak ? (byte)1 : (byte)0
+                };
+            }
         }
 
         private static void ProjectForces(
@@ -215,6 +242,7 @@ namespace Game.Composition
                 {
                     Kind = source[i].Kind,
                     RewardConfigId = new FixedString64Bytes(source[i].RewardConfigId ?? string.Empty),
+                    DisplayTextKey = new FixedString64Bytes(source[i].DisplayTextKey),
                     Amount = source[i].Amount
                 };
             }

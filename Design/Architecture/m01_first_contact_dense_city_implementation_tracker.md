@@ -1,8 +1,8 @@
 # M01 First Contact Dense-City Implementation Tracker
 
 Date: 2026-08-12
-Status: Active; M01DC-029 accepted and M01DC-030 dependency-ready
-Progress: 29/43 accepted items (67.4%)
+Status: Active; M01DC-030 accepted and M01DC-031 dependency-ready
+Progress: 30/43 accepted items (69.8%)
 Parent design: `Design/M01_FirstContact_Dense_City_High_Level_Design.md`
 Technical architecture: `Design/Architecture/m01_first_contact_dense_city_technical_architecture.md`
 Mission: `saga.ch01.m01.first_contact`
@@ -432,13 +432,15 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
 
   **Accepted evidence (2026-08-14):** immutable Campaign models and the sole `UiCampaignMissionProjectionSystem` now derive M01 new/pending-resume/first-clear/replay/explicit-lock state from the canonical catalog plus `CampaignMissionProgressStore`; the view stores no progress and the binder has no frame loop. Refresh, catalog change, settlement change, or typed selection is required before the store is read, so no save-file polling occurs per frame. The gateway rejects locked/unavailable briefing actions before routing. Focused projection/route/profile/view validation passes `10 / 10`; three fresh 16:9, 20:9, and tablet captures passed visual review after cropped framing and clipped status-copy candidates were rejected, fixed, and replayed. Source growth passes `17 / 17` without an exception, architecture passes `23` suites with compiler zero, Unity-regenerated outputs were restored, and no dense-city, prefab, scene, package, project-setting, reward, mission-definition, or Campaign progress writer changed. Exact markers and hashes are recorded in `m01dc_029_campaign_ui.json`.
 
-- [ ] **M01DC-030 - Activate Mission Briefing Deploy and replay tutorial choice**
+- [x] **M01DC-030 - Activate Mission Briefing Deploy and replay tutorial choice**
   **Depends on:** M01DC-005, M01DC-009, M01DC-029.
   **Deliverable:** definition-driven briefing, accurate objectives/conditions/enemy/rewards, functional Deploy, and replay-only tutorial toggle defaulting off and using current guidance when enabled.
   **Acceptance:** no hard-coded placeholder reward authority remains; first launch bypasses Campaign briefing but may show the compact live brief; Campaign launch emits the validated payload once.
   **Evidence:** briefing projection/payload/toggle/duplicate-click tests and captures, clean pushed head.
 
   **Ownership amendment (2026-08-14):** add only the canonical catalog blob/component projection and the existing shared Campaign/briefing model, component, projection, gateway, tracker, and exact-path matrix needed to replace SCN-06 placeholder mission truth with the already-authored M01 definition. The mission asset remains read-only. The slice may project objective/display/reward keys, restrictions, hostile force summary, replay-toggle state, and one typed Campaign launch request; it may not invent rewards, mutate Campaign progress, copy configs into the view, alter FirstLaunch continuity, add a second launch/progress writer, edit a scene or dense-city output, change packages/project settings, or begin gameplay/HUD work owned by M01DC-031.
+
+  **Accepted evidence (2026-08-14):** the canonical mission catalog blob now carries M01 display keys, objectives, replay policy, and reward display keys; `UiCampaignMissionProjectionSystem` remains the sole Campaign/briefing projection writer and emits one existing launch request through the shared validated payload factory. First-clear briefing projects Commander XP `260` plus Credits `1200`; replay projects Credits `250`, exposes the tutorial toggle only on replay, defaults it off, and maps the current Assistant guidance into the launch payload. Duplicate Deploy input emits one request, pending state is correlated by transition token, and accepted or rejected terminal results clear the latch for later retry/replay. SCN-06 contains no legacy blackout/reward placeholder authority, uses the approved FirstLaunch `FL-P01` Old Market/bazaar art, and its validated builder reuses a current prefab byte-identically. Focused validation passes `11 / 11` with three fresh supported-aspect captures; the accepted Campaign UI regression remains `10 / 10`; source growth passes `17 / 17` without an exception; the final architecture entrypoint passes `23` suites with compiler zero. Protected mission definition, dense-city, scene, Addressables, package, project-setting, and CI paths are unchanged. Exact hashes and recovery details are recorded in `m01dc_030_mission_briefing.json`.
 
 - [ ] **M01DC-031 - Complete HUD and result routes**
   **Depends on:** M01DC-020, M01DC-023, M01DC-024, M01DC-030.

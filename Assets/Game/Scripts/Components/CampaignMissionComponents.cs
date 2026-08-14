@@ -194,6 +194,10 @@ namespace Game.Components
         public FixedString64Bytes MissionId;
         public FixedString64Bytes ScenarioId;
         public FixedString64Bytes OperationMapId;
+        public FixedString64Bytes DisplayNameKey;
+        public FixedString64Bytes DisplaySummaryKey;
+        public FixedString64Bytes LocationNameKey;
+        public FixedString64Bytes BriefingSequenceId;
         public int SchemaVersion;
         public int DeterministicSeed;
         public int EncounterStartMilliseconds;
@@ -202,12 +206,25 @@ namespace Game.Components
         public byte EconomyDisabled;
         public byte TransportDisabled;
         public byte AirDisabled;
+        public byte ReplayAllowed;
+        public byte ReplayTutorialDefaultEnabled;
+        public BlobArray<CampaignMissionObjectiveBlob> Objectives;
         public BlobArray<CampaignMissionForceGroupBlob> ForceGroups;
         public BlobArray<CampaignMissionPatrolRouteBlob> PatrolRoutes;
         public BlobArray<CampaignMissionAmbientPresentationBlob> AmbientPresentations;
         public BlobArray<CampaignMissionStarRuleBlob> StarRules;
         public BlobArray<CampaignMissionRewardBlob> FirstClearRewards;
         public BlobArray<CampaignMissionRewardBlob> ReplayRewards;
+    }
+
+    public struct CampaignMissionObjectiveBlob
+    {
+        public FixedString64Bytes ObjectiveId;
+        public FixedString64Bytes DisplayTextKey;
+        public FixedString64Bytes MissionRoleId;
+        public MissionObjectiveRuleKind Rule;
+        public int RequiredCount;
+        public byte FailureOnRuleBreak;
     }
 
     public struct CampaignMissionForceGroupBlob
@@ -255,6 +272,7 @@ namespace Game.Components
     {
         public MissionRewardKind Kind;
         public FixedString64Bytes RewardConfigId;
+        public FixedString64Bytes DisplayTextKey;
         public int Amount;
     }
 }

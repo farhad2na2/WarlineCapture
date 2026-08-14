@@ -1,0 +1,86 @@
+{
+  "item": "M01DC-030",
+  "status": "accepted",
+  "headBefore": "3c22b5f2418bf72b1844226082ae641b518c849d",
+  "authority": {
+    "catalogProjectionWriter": "Game.Composition.CampaignMissionCatalogProjection",
+    "briefingProjectionWriter": "Game.UI.Shell.Ecs.UiCampaignMissionProjectionSystem",
+    "launchWriter": "Game.Runtime.CampaignMissionLaunchSystem",
+    "progressWriter": "Game.Runtime.CampaignMissionProgressStore",
+    "missionDefinitionReadOnly": true,
+    "viewLoadsDefinitions": false,
+    "binderUpdateLoop": false
+  },
+  "briefing": {
+    "missionId": "saga.ch01.m01.first_contact",
+    "scenarioId": "scenario.ch01.m01.first_contact",
+    "operationMapId": "opmap.ch01.district_edge_01",
+    "firstClearRewards": [
+      { "rewardConfigId": "reward.commander_xp", "amount": 260 },
+      { "kind": "Credits", "amount": 1200 }
+    ],
+    "replayRewards": [
+      { "kind": "Credits", "amount": 250 }
+    ],
+    "hostilePatrolCount": 3,
+    "replayTutorialToggle": "replay-only/default-off",
+    "guidanceSource": "current AssistantSettingsComponent",
+    "duplicateDeployRequests": 1,
+    "terminalAcceptedAndRejectedRetryRecovery": true
+  },
+  "presentation": {
+    "approvedArt": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P01.png",
+    "legacyBlackoutPlaceholderPresent": false,
+    "legacyRewardPlaceholderPresent": false,
+    "canonicalLocalizationKeysProjected": true,
+    "prefabSha256": "a749d6121f0638e7e6cbe05dbd39e2c498c3d0a0ec87664517724abb3e840a93",
+    "deterministicReuse": {
+      "before": "a749d6121f0638e7e6cbe05dbd39e2c498c3d0a0ec87664517724abb3e840a93",
+      "after": "a749d6121f0638e7e6cbe05dbd39e2c498c3d0a0ec87664517724abb3e840a93",
+      "identical": true
+    }
+  },
+  "captures": [
+    { "state": "firstClear", "aspect": "16:9", "size": "1280x720", "sha256": "1e744d0c594d566bfa0aadc9871eb808eca7702bdef061105f3ff4a1e01c93ac" },
+    { "state": "replay", "aspect": "20:9", "size": "1000x450", "sha256": "93e91a9d3825107a12c11a2822315eba60bc14033f3271a50b430a5806142cfc" },
+    { "state": "replay", "aspect": "tablet 4:3", "size": "1024x768", "sha256": "e9b8b43f7f4244f50240269e10041a11f408cc4a5d7853fd2ccf5487ee883e8b" }
+  ],
+  "visualReview": {
+    "result": "Passed",
+    "fullLayoutVisible": true,
+    "approvedBazaarContinuity": true,
+    "firstClearAndReplayRewardStatesDistinct": true,
+    "replayToggleVisibleOnlyOnReplay": true,
+    "staleHiddenRewardTextCleared": true
+  },
+  "validation": [
+    { "marker": "[M01FirstContactMissionBriefingValidation] result=Passed tests=11 captures=3", "sha256": "41dbbcfd5788fd56401f24ab39f6aa357f3f568c5edd7e0bec7a5ff5da2bea7f" },
+    { "marker": "[M01FirstContactCampaignUiValidation] result=Passed tests=10 captures=3", "sha256": "bdefbd76246342d99bea3544d1e931e383b512ef3c4d3fcf59623743ee8106f6" },
+    { "marker": "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17", "sha256": "c4bc1c41715b7654a7e631f4b4b606cdd94f0547dad59898eaf347c51bed8190" },
+    { "marker": "[ArchitectureHardeningCloseoutValidation] result=Passed suites=23", "sha256": "5aa8a1c670cb60185dfa2b23e350f93f4052b4640c0b4c444d2dc863b0291232" },
+    { "marker": "[MissionBriefingPrefabBuilder] result=Passed scope=PrefabOnly reused=true", "sha256": "b0c516e672a6b3bb6ad96fb69681bfd162563549cc4ce09ac0e17932d1f73723" }
+  ],
+  "sourceReview": {
+    "productionSourceGrowthExceptionAdded": false,
+    "compilerErrors": 0,
+    "diffCheck": "Passed",
+    "generatedExcludedOutputsRestored": true,
+    "protectedDenseCityOutputsChanged": false,
+    "missionDefinitionChanged": false,
+    "scenesChanged": false,
+    "addressablesChanged": false,
+    "packagesChanged": false,
+    "projectSettingsChanged": false,
+    "toolsCiChanged": false
+  },
+  "windowsRecovery": {
+    "reason": "restricted sandbox could not use normal-integrity Unity licensing IPC",
+    "actions": [
+      "reran only the checked repository wrapper outside the restricted sandbox",
+      "stopped only verified wrapper-owned stuck Editor PID 23452 after a compile failure",
+      "removed only the verified stale WarlineCapture Temp/UnityLockfile after all Editors were closed"
+    ],
+    "unityHubStopped": false,
+    "directUnityInvocation": false
+  }
+}

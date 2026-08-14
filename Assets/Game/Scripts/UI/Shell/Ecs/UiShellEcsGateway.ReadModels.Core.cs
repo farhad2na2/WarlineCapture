@@ -131,6 +131,47 @@ namespace Game.UI.Shell.Ecs
             return campaign.IsValid;
         }
 
+        public static bool TryReadMissionBriefing(out UiMissionBriefingModel briefing)
+        {
+            briefing = default;
+            if (!TryGetBoundary(out EntityManager entityManager, out Entity boundary) ||
+                !entityManager.HasComponent<UiMissionBriefingComponent>(boundary))
+                return false;
+            UiMissionBriefingComponent component =
+                entityManager.GetComponentData<UiMissionBriefingComponent>(boundary);
+            if (component.Version == 0 || component.MissionId.IsEmpty)
+                return false;
+
+            UiMissionObjectiveModel[] objectives = new UiMissionObjectiveModel[component.Objectives.Length];
+            for (int index = 0; index < objectives.Length; index++)
+            {
+                UiMissionObjectiveProjectionData source = component.Objectives[index];
+                objectives[index] = new UiMissionObjectiveModel(
+                    source.ObjectiveId.ToString(), source.DisplayTextKey.ToString(),
+                    source.MissionRoleId.ToString(), source.Rule, source.RequiredCount,
+                    source.FailureOnRuleBreak != 0);
+            }
+            UiMissionRewardModel[] rewards = new UiMissionRewardModel[component.Rewards.Length];
+            for (int index = 0; index < rewards.Length; index++)
+            {
+                UiMissionRewardProjectionData source = component.Rewards[index];
+                rewards[index] = new UiMissionRewardModel(
+                    source.Kind, source.RewardConfigId.ToString(),
+                    source.DisplayTextKey.ToString(), source.Amount);
+            }
+            briefing = new UiMissionBriefingModel(
+                component.Version, component.MissionId.ToString(), component.ScenarioId.ToString(),
+                component.OperationMapId.ToString(), component.DisplayNameKey.ToString(),
+                component.DisplaySummaryKey.ToString(), component.LocationNameKey.ToString(),
+                objectives, rewards, component.HostileUnitCount,
+                component.BuildingDisabled != 0, component.ProductionDisabled != 0,
+                component.EconomyDisabled != 0, component.TransportDisabled != 0,
+                component.AirDisabled != 0, component.Replay != 0, component.ReplayAllowed != 0,
+                component.ReplayTutorialEnabled != 0, component.ReplayTutorialToggleVisible != 0,
+                component.DeployQueued != 0);
+            return briefing.IsValid;
+        }
+
         }
 
         bool IUiShellRuntimeGateway.TryReadCampaignOperations(out UiCampaignOperationsModel campaign)
@@ -138,10 +179,15 @@ namespace Game.UI.Shell.Ecs
             return UiShellReadModelAdapter.TryReadCampaignOperations(out campaign);
         }
 
-        bool IUiShellRuntimeGateway.TryEnqueueCampaignMissionAction(
-            UiCampaignMissionActionKind action, string missionId)
+        bool IUiShellRuntimeGateway.TryReadMissionBriefing(out UiMissionBriefingModel briefing)
         {
-            return UiShellActionAdapter.TryEnqueueCampaignMissionAction(action, missionId);
+            return UiShellReadModelAdapter.TryReadMissionBriefing(out briefing);
+        }
+
+        bool IUiShellRuntimeGateway.TryEnqueueCampaignMissionAction(
+            UiCampaignMissionActionKind action, string missionId, bool value)
+        {
+            return UiShellActionAdapter.TryEnqueueCampaignMissionAction(action, missionId, value);
         }
     }
 }

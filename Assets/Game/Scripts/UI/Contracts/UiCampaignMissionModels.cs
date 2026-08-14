@@ -15,7 +15,25 @@ namespace Game.UI.Contracts
         None = 0,
         Refresh = 1,
         Select = 2,
-        OpenBriefing = 3
+        OpenBriefing = 3,
+        SetReplayTutorial = 4,
+        Deploy = 5
+    }
+
+    public enum UiMissionObjectiveRuleKind : byte
+    {
+        None = 0,
+        DestroyMissionRole = 1,
+        ProtectMissionRole = 2
+    }
+
+    public enum UiMissionRewardKind : byte
+    {
+        None = 0,
+        Credits = 1,
+        Materials = 2,
+        Fuel = 3,
+        Intel = 4
     }
 
     public readonly struct UiCampaignMissionModel : IEquatable<UiCampaignMissionModel>
@@ -90,5 +108,100 @@ namespace Game.UI.Contracts
         public string NextMissionId { get; }
         public bool NextMissionRevealed { get; }
         public bool IsValid => Version != 0 && !string.IsNullOrWhiteSpace(SelectedMission.MissionId);
+    }
+
+    public readonly struct UiMissionObjectiveModel
+    {
+        public UiMissionObjectiveModel(
+            string objectiveId, string displayTextKey, string missionRoleId,
+            UiMissionObjectiveRuleKind rule, int requiredCount, bool failureOnRuleBreak)
+        {
+            ObjectiveId = objectiveId ?? string.Empty;
+            DisplayTextKey = displayTextKey ?? string.Empty;
+            MissionRoleId = missionRoleId ?? string.Empty;
+            Rule = rule;
+            RequiredCount = Math.Max(1, requiredCount);
+            FailureOnRuleBreak = failureOnRuleBreak;
+        }
+
+        public string ObjectiveId { get; }
+        public string DisplayTextKey { get; }
+        public string MissionRoleId { get; }
+        public UiMissionObjectiveRuleKind Rule { get; }
+        public int RequiredCount { get; }
+        public bool FailureOnRuleBreak { get; }
+    }
+
+    public readonly struct UiMissionRewardModel
+    {
+        public UiMissionRewardModel(
+            UiMissionRewardKind kind, string rewardConfigId, string displayTextKey, int amount)
+        {
+            Kind = kind;
+            RewardConfigId = rewardConfigId ?? string.Empty;
+            DisplayTextKey = displayTextKey ?? string.Empty;
+            Amount = Math.Max(0, amount);
+        }
+
+        public UiMissionRewardKind Kind { get; }
+        public string RewardConfigId { get; }
+        public string DisplayTextKey { get; }
+        public int Amount { get; }
+    }
+
+    public readonly struct UiMissionBriefingModel
+    {
+        public UiMissionBriefingModel(
+            uint version, string missionId, string scenarioId, string operationMapId,
+            string displayNameKey, string displaySummaryKey, string locationNameKey,
+            UiMissionObjectiveModel[] objectives, UiMissionRewardModel[] rewards,
+            int hostileUnitCount, bool buildingDisabled, bool productionDisabled,
+            bool economyDisabled, bool transportDisabled, bool airDisabled,
+            bool replay, bool replayAllowed, bool replayTutorialEnabled,
+            bool replayTutorialToggleVisible, bool deployQueued)
+        {
+            Version = version;
+            MissionId = missionId ?? string.Empty;
+            ScenarioId = scenarioId ?? string.Empty;
+            OperationMapId = operationMapId ?? string.Empty;
+            DisplayNameKey = displayNameKey ?? string.Empty;
+            DisplaySummaryKey = displaySummaryKey ?? string.Empty;
+            LocationNameKey = locationNameKey ?? string.Empty;
+            Objectives = objectives ?? Array.Empty<UiMissionObjectiveModel>();
+            Rewards = rewards ?? Array.Empty<UiMissionRewardModel>();
+            HostileUnitCount = Math.Max(0, hostileUnitCount);
+            BuildingDisabled = buildingDisabled;
+            ProductionDisabled = productionDisabled;
+            EconomyDisabled = economyDisabled;
+            TransportDisabled = transportDisabled;
+            AirDisabled = airDisabled;
+            Replay = replay;
+            ReplayAllowed = replayAllowed;
+            ReplayTutorialEnabled = replayTutorialEnabled;
+            ReplayTutorialToggleVisible = replayTutorialToggleVisible;
+            DeployQueued = deployQueued;
+        }
+
+        public uint Version { get; }
+        public string MissionId { get; }
+        public string ScenarioId { get; }
+        public string OperationMapId { get; }
+        public string DisplayNameKey { get; }
+        public string DisplaySummaryKey { get; }
+        public string LocationNameKey { get; }
+        public UiMissionObjectiveModel[] Objectives { get; }
+        public UiMissionRewardModel[] Rewards { get; }
+        public int HostileUnitCount { get; }
+        public bool BuildingDisabled { get; }
+        public bool ProductionDisabled { get; }
+        public bool EconomyDisabled { get; }
+        public bool TransportDisabled { get; }
+        public bool AirDisabled { get; }
+        public bool Replay { get; }
+        public bool ReplayAllowed { get; }
+        public bool ReplayTutorialEnabled { get; }
+        public bool ReplayTutorialToggleVisible { get; }
+        public bool DeployQueued { get; }
+        public bool IsValid => Version != 0 && !string.IsNullOrWhiteSpace(MissionId) && Objectives.Length > 0;
     }
 }

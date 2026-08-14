@@ -17,7 +17,7 @@ namespace Game.Editor
     {
         private const string PrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN06_MissionBriefingContent.prefab";
         private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
-        private const string MissionArtPath = "Assets/Game/Art/UI/Generated/CampaignOperations/TargetLockV01/scn05_blackout_relay_preview_v01.png";
+        private const string MissionArtPath = "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P01.png";
         private const string PanelSpritePath = "Assets/Game/Art/UI/Generated/ResourceExchange/LayeredOneGo/pop12_chrome_01_popup_outer_frame.png";
         private const string DetailPanelSpritePath = "Assets/Game/Art/UI/Generated/ResourceExchange/LayeredOneGo/pop12_chrome_03_detail_panel_frame.png";
         private const string SecondarySpritePath = "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_15_secondary_dark_cta_frame.png";
@@ -52,8 +52,29 @@ namespace Game.Editor
         [MenuItem("Game/UI/Build SCN-06 Mission Briefing")]
         public static void Build()
         {
+            GameObject prefab = BuildM01BriefingPrefab();
+            AssignMenuScenePrefab(prefab);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log($"[MissionBriefingPrefabBuilder] result=Passed prefab={PrefabPath} scene={MenuScenePath}");
+        }
+
+        public static void BuildM01BriefingPrefabOnly()
+        {
+            BuildM01BriefingPrefab();
+        }
+
+        private static GameObject BuildM01BriefingPrefab()
+        {
             ImportProductionArt();
             LoadStyleAssets();
+            GameObject existing = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+            if (IsCurrentM01BriefingPrefab(existing))
+            {
+                Debug.Log($"[MissionBriefingPrefabBuilder] result=Passed prefab={PrefabPath} scope=PrefabOnly reused=true");
+                return existing;
+            }
+
             GameObject root = BuildPrefabRoot();
             EnsureFolder("Assets/Game/Prefabs/UI/Shell/Content");
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
@@ -61,10 +82,35 @@ namespace Game.Editor
             if (prefab == null)
                 throw new InvalidOperationException($"Failed to save Mission Briefing prefab at {PrefabPath}.");
 
-            AssignMenuScenePrefab(prefab);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-            Debug.Log($"[MissionBriefingPrefabBuilder] result=Passed prefab={PrefabPath}");
+            Debug.Log($"[MissionBriefingPrefabBuilder] result=Passed prefab={PrefabPath} scope=PrefabOnly");
+            return prefab;
+        }
+
+        private static bool IsCurrentM01BriefingPrefab(GameObject prefab)
+        {
+            if (prefab == null) return false;
+            MissionBriefingScreenView view = prefab.GetComponent<MissionBriefingScreenView>();
+            if (view == null || prefab.GetComponent<CampaignMissionScreenBinder>() == null ||
+                view.MissionArtImage == null || view.MissionArtImage.texture == null ||
+                view.MissionTitle == null || view.DeployOperationButton == null ||
+                view.ReplayTutorialToggle == null ||
+                AssetDatabase.GetAssetPath(view.MissionArtImage.texture) != MissionArtPath)
+                return false;
+
+            TMP_Text[] text = prefab.GetComponentsInChildren<TMP_Text>(true);
+            for (int index = 0; index < text.Length; index++)
+            {
+                string value = text[index].text;
+                if (!string.IsNullOrEmpty(value) &&
+                    (value.Contains("BLACKOUT AT SAHRIN", StringComparison.Ordinal) ||
+                     value.Contains("RESTORE THE RELAY", StringComparison.Ordinal) ||
+                     value.Contains("+1,200", StringComparison.Ordinal)))
+                    return false;
+            }
+
+            return true;
         }
 
         [MenuItem("Game/UI/Capture SCN-06 Mission Briefing")]
@@ -116,12 +162,18 @@ namespace Game.Editor
             TMP_Text screenTitle = CreateText("ScreenTitle", root.transform, 690f, 292f, 2080f, 175f, "MISSION BRIEFING", 118f, Text, TextAlignmentOptions.MidlineLeft);
             CreateText("ScreenSubtitle", root.transform, 2970f, 335f, 1720f, 100f, "FIRST RESPONSE  /  MISSION 01", 40f, Muted, TextAlignmentOptions.MidlineRight);
 
-            RectTransform overview = BuildMissionOverview(root.transform, out RawImage missionArt, out TMP_Text missionTitle);
-            RectTransform objectives = BuildObjectives(root.transform);
-            RectTransform conditions = BuildConditions(root.transform);
-            RectTransform intel = BuildEnemyIntel(root.transform);
+            RectTransform overview = BuildMissionOverview(
+                root.transform, out RawImage missionArt, out TMP_Text missionTitle,
+                out TMP_Text missionSummary, out TMP_Text locationLabel);
+            RectTransform objectives = BuildObjectives(root.transform, out TMP_Text[] objectiveLabels);
+            RectTransform conditions = BuildConditions(root.transform, out TMP_Text[] conditionLabels);
+            RectTransform intel = BuildEnemyIntel(root.transform, out TMP_Text enemyIntelLabel);
             RectTransform progress = BuildChapterProgress(root.transform, out RectTransform[] progressNodes);
-            BuildFooter(root.transform, out RectTransform rewards, out Button deploy);
+            BuildFooter(
+                root.transform, out RectTransform rewards, out Button deploy,
+                out RectTransform[] rewardRows, out TMP_Text[] rewardLabels,
+                out TMP_Text[] rewardValues, out Toggle replayTutorialToggle,
+                out TMP_Text replayTutorialLabel);
 
             SerializedObject serialized = new(screen);
             SetReference(serialized, "backRouteButton", backRoute);
@@ -135,12 +187,26 @@ namespace Game.Editor
             SetReference(serialized, "missionArtImage", missionArt);
             SetReference(serialized, "screenTitle", screenTitle);
             SetReference(serialized, "missionTitle", missionTitle);
+            SetReference(serialized, "missionSummary", missionSummary);
+            SetReference(serialized, "locationLabel", locationLabel);
+            SetArray(serialized, "objectiveLabels", objectiveLabels);
+            SetArray(serialized, "conditionLabels", conditionLabels);
+            SetReference(serialized, "enemyIntelLabel", enemyIntelLabel);
+            SetArray(serialized, "rewardRows", rewardRows);
+            SetArray(serialized, "rewardLabels", rewardLabels);
+            SetArray(serialized, "rewardValues", rewardValues);
+            SetReference(serialized, "replayTutorialToggle", replayTutorialToggle);
+            SetReference(serialized, "replayTutorialLabel", replayTutorialLabel);
             SetReference(serialized, "deployOperationButton", deploy);
             serialized.ApplyModifiedPropertiesWithoutUndo();
+            CampaignMissionScreenBinder binder = root.AddComponent<CampaignMissionScreenBinder>();
+            binder.Configure(screen, "saga.ch01.m01.first_contact");
             return root;
         }
 
-        private static RectTransform BuildMissionOverview(Transform root, out RawImage missionArt, out TMP_Text missionTitle)
+        private static RectTransform BuildMissionOverview(
+            Transform root, out RawImage missionArt, out TMP_Text missionTitle,
+            out TMP_Text missionSummary, out TMP_Text locationLabel)
         {
             Transform panel = CreatePanel("MissionOverview", root, 80f, 500f, 2920f, 1060f);
             CreateFramed("MissionArtFrame", panel, 30f, 30f, 2860f, 1000f, DetailPanelSpritePath, Color.white);
@@ -148,57 +214,63 @@ namespace Game.Editor
 
             CreateSolid("IdentityScrim", panel, 54f, 52f, 1370f, 620f, new Color(0.006f, 0.009f, 0.008f, 0.82f));
             CreateText("MissionNumber", panel, 92f, 84f, 1000f, 64f, "MISSION 01", 54f, Gold, TextAlignmentOptions.MidlineLeft);
-            missionTitle = CreateText("MissionTitle", panel, 92f, 164f, 1260f, 112f, "BLACKOUT AT SAHRIN", 88f, Text, TextAlignmentOptions.MidlineLeft);
+            missionTitle = CreateText("MissionTitle", panel, 92f, 164f, 1260f, 112f, string.Empty, 88f, Text, TextAlignmentOptions.MidlineLeft);
             ConfigureAutoSize(missionTitle, 58f, 88f);
             CreateIcon("OperationIcon", panel, ObjectiveIconPath, 92f, 310f, 104f, 104f, Gold);
             CreateText("OperationCodename", panel, 224f, 310f, 1050f, 104f, "FIRST CONTACT", 56f, Olive, TextAlignmentOptions.MidlineLeft);
             CreateDivider(panel, 92f, 440f, 1050f, new Color(0.66f, 0.55f, 0.29f, 0.65f));
             CreateIcon("LocationIcon", panel, IntelIconPath, 92f, 480f, 92f, 92f, Muted);
-            CreateText("Location", panel, 220f, 476f, 1050f, 100f, "OLD MARKET DISTRICT", 48f, Text, TextAlignmentOptions.MidlineLeft);
+            locationLabel = CreateText("Location", panel, 220f, 476f, 1050f, 100f, string.Empty, 48f, Text, TextAlignmentOptions.MidlineLeft);
 
             CreateSolid("SituationScrim", panel, 54f, 720f, 1450f, 270f, new Color(0.006f, 0.009f, 0.008f, 0.86f));
             CreateText("SituationLabel", panel, 92f, 752f, 1260f, 54f, "SITUATION BRIEFING", 40f, Olive, TextAlignmentOptions.MidlineLeft);
-            TMP_Text situation = CreateText(
+            missionSummary = CreateText(
                 "SituationBody",
                 panel,
                 92f,
                 824f,
                 1300f,
                 130f,
-                "A coordinated bombing and blackout have cut command links across Sahrin. Intercept the armed patrol before it reaches civilians stranded beyond Old Market.",
+                string.Empty,
                 35f,
                 Text,
                 TextAlignmentOptions.TopLeft);
-            ConfigureWrappedText(situation, 30f, 35f);
+            ConfigureWrappedText(missionSummary, 30f, 35f);
             return panel as RectTransform;
         }
 
-        private static RectTransform BuildObjectives(Transform root)
+        private static RectTransform BuildObjectives(Transform root, out TMP_Text[] labels)
         {
             Transform panel = CreateDetailPanel("PrimaryObjectives", root, 3030f, 500f, 1690f, 470f);
             CreateSectionHeader(panel, "PRIMARY OBJECTIVES", ObjectiveIconPath, Olive);
-            CreateObjectiveRow(panel, "Objective_01", ObjectiveIconPath, "INTERCEPT HOSTILE PATROL", 146f, Gold);
-            CreateObjectiveRow(panel, "Objective_02", ShieldIconPath, "SECURE CIVILIAN ROUTE", 244f, Text);
-            CreateObjectiveRow(panel, "Objective_03", CivilianIconPath, "PRESERVE STARTING SQUAD", 342f, Text);
+            labels = new[]
+            {
+                CreateObjectiveRow(panel, "Objective_01", ObjectiveIconPath, "OBJECTIVE 01", 146f, Gold),
+                CreateObjectiveRow(panel, "Objective_02", ShieldIconPath, "OBJECTIVE 02", 244f, Text),
+                CreateObjectiveRow(panel, "Objective_03", CivilianIconPath, string.Empty, 342f, Text)
+            };
             return panel as RectTransform;
         }
 
-        private static RectTransform BuildConditions(Transform root)
+        private static RectTransform BuildConditions(Transform root, out TMP_Text[] labels)
         {
             Transform panel = CreateDetailPanel("TacticalConditions", root, 3030f, 1000f, 1690f, 330f);
             CreateSectionHeader(panel, "TACTICAL CONDITIONS", ShieldIconPath, Olive);
-            CreateMetricRow(panel, "CivilianRisk", CivilianIconPath, "CIVILIAN RISK", "MED", 148f, Gold);
-            CreateMetricRow(panel, "Visibility", IntelIconPath, "VISIBILITY REDUCED", "YES", 238f, Gold);
+            labels = new[]
+            {
+                CreateMetricRow(panel, "CommandRestrictions", CivilianIconPath, "BUILDING / PRODUCTION", "PENDING", 148f, Gold),
+                CreateMetricRow(panel, "SupportRestrictions", IntelIconPath, "ECONOMY / TRANSPORT / AIR", "PENDING", 238f, Gold)
+            };
             return panel as RectTransform;
         }
 
-        private static RectTransform BuildEnemyIntel(Transform root)
+        private static RectTransform BuildEnemyIntel(Transform root, out TMP_Text enemyIntelLabel)
         {
             Transform panel = CreateDetailPanel("EnemyIntel", root, 3030f, 1360f, 1690f, 420f);
             CreateSectionHeader(panel, "ENEMY INTEL", IntelIconPath, Olive);
-            CreateMetricRow(panel, "Infantry", ObjectiveIconPath, "ASH LINE INFANTRY", "MODERATE", 148f, Gold);
-            CreateMetricRow(panel, "Vehicles", VehicleIconPath, "LIGHT VEHICLES", "MODERATE", 238f, Gold);
-            CreateMetricRow(panel, "AirThreat", AirIconPath, "AIR THREAT", "LOW", 328f, Olive);
+            enemyIntelLabel = CreateMetricRow(panel, "HostileForce", ObjectiveIconPath, "HOSTILE FORCE", "PENDING", 148f, Gold);
+            CreateMetricRow(panel, "MissionRoles", VehicleIconPath, "SOURCE", "MISSION CATALOG", 238f, Gold);
+            CreateMetricRow(panel, "AirThreat", AirIconPath, "AIR SUPPORT", "DISABLED", 328f, Olive);
             return panel as RectTransform;
         }
 
@@ -213,24 +285,37 @@ namespace Game.Editor
             return panel as RectTransform;
         }
 
-        private static void BuildFooter(Transform root, out RectTransform rewards, out Button deploy)
+        private static void BuildFooter(
+            Transform root, out RectTransform rewards, out Button deploy,
+            out RectTransform[] rewardRows, out TMP_Text[] rewardLabels, out TMP_Text[] rewardValues,
+            out Toggle replayTutorialToggle, out TMP_Text replayTutorialLabel)
         {
             Transform rewardPanel = CreatePanel("Rewards", root, 80f, 1810f, 2920f, 305f);
             rewards = rewardPanel as RectTransform;
             SetBottomAnchored(rewards, 80f, 45f, 2920f, 305f);
             CreateText("Title", rewardPanel, 54f, 32f, 420f, 90f, "REWARDS", 56f, Olive, TextAlignmentOptions.MidlineLeft);
-            CreateRewardMetric(rewardPanel, "CommanderXp", RankIconPath, "COMMANDER XP", "+260", 520f, Gold);
+            rewardRows = new RectTransform[2];
+            rewardLabels = new TMP_Text[2];
+            rewardValues = new TMP_Text[2];
+            rewardRows[0] = CreateRewardMetric(rewardPanel, "Reward01", RankIconPath, "REWARD 01", "PENDING", 520f, Gold, out rewardLabels[0], out rewardValues[0]);
             CreateDivider(rewardPanel, 1290f, 40f, 1f, new Color(0.58f, 0.49f, 0.28f, 0.62f), 220f);
-            CreateRewardMetric(rewardPanel, "Credits", CreditsIconPath, "CREDITS", "+1,200", 1360f, Gold);
+            rewardRows[1] = CreateRewardMetric(rewardPanel, "Reward02", CreditsIconPath, "REWARD 02", "PENDING", 1360f, Gold, out rewardLabels[1], out rewardValues[1]);
             CreateDivider(rewardPanel, 2130f, 40f, 1f, new Color(0.58f, 0.49f, 0.28f, 0.62f), 220f);
-            CreateRewardMetric(rewardPanel, "Intel", IntelIconPath, "INTEL", "+1", 2200f, Olive);
+            RectTransform tutorialRoot = CreateRect("ReplayTutorial", rewardPanel, 2200f, 38f, 660f, 225f).GetComponent<RectTransform>();
+            Image toggleBackground = CreateSolid("ToggleBackground", tutorialRoot, 10f, 76f, 90f, 90f, new Color(0.12f, 0.14f, 0.11f, 1f));
+            Image toggleCheck = CreateSolid("ToggleCheck", toggleBackground.transform, 18f, 18f, 54f, 54f, Gold);
+            replayTutorialToggle = tutorialRoot.gameObject.AddComponent<Toggle>();
+            replayTutorialToggle.targetGraphic = toggleBackground;
+            replayTutorialToggle.graphic = toggleCheck;
+            replayTutorialToggle.isOn = false;
+            replayTutorialLabel = CreateText("Label", tutorialRoot, 130f, 62f, 500f, 120f, "REPLAY TUTORIAL", 38f, Text, TextAlignmentOptions.MidlineLeft);
 
             deploy = CreateButton("DeployOperationButton", root, 3030f, 1810f, 1690f, 305f, "DEPLOY OPERATION", GoldSpritePath, 98f, Muted, out _);
             SetBottomAnchored(deploy.GetComponent<RectTransform>(), 3030f, 45f, 1690f, 305f);
             CreateIcon("LeftChevron", deploy.transform, LeftChevronPath, 72f, 92f, 150f, 105f, new Color(0.82f, 0.61f, 0.17f, 0.62f));
             CreateIcon("RightChevron", deploy.transform, RightChevronPath, 1468f, 92f, 150f, 105f, new Color(0.82f, 0.61f, 0.17f, 0.62f));
             AddButtonBacking(deploy, new Color(0.17f, 0.13f, 0.045f, 0.985f));
-            SetUnavailable(deploy);
+            deploy.interactable = true;
         }
 
         private static void CreateSectionHeader(Transform panel, string label, string iconPath, Color iconTint)
@@ -240,29 +325,33 @@ namespace Game.Editor
             CreateDivider(panel, 52f, 126f, 1580f, new Color(0.56f, 0.48f, 0.29f, 0.62f));
         }
 
-        private static void CreateObjectiveRow(Transform panel, string name, string iconPath, string label, float y, Color color)
+        private static TMP_Text CreateObjectiveRow(Transform panel, string name, string iconPath, string label, float y, Color color)
         {
             Transform row = CreateRect(name, panel, 52f, y, 1580f, 86f).transform;
             CreateIcon("Icon", row, iconPath, 10f, 3f, 78f, 78f, color);
             TMP_Text text = CreateText("Label", row, 116f, 0f, 1430f, 86f, label, 41f, Text, TextAlignmentOptions.MidlineLeft);
             ConfigureAutoSize(text, 32f, 41f);
+            return text;
         }
 
-        private static void CreateMetricRow(Transform panel, string name, string iconPath, string label, string value, float y, Color valueColor)
+        private static TMP_Text CreateMetricRow(Transform panel, string name, string iconPath, string label, string value, float y, Color valueColor)
         {
             Transform row = CreateRect(name, panel, 52f, y, 1580f, 80f).transform;
             CreateIcon("Icon", row, iconPath, 10f, 1f, 76f, 76f, Muted);
             TMP_Text labelText = CreateText("Label", row, 116f, 0f, 1030f, 80f, label, 39f, Text, TextAlignmentOptions.MidlineLeft);
             ConfigureAutoSize(labelText, 30f, 39f);
-            CreateText("Value", row, 1190f, 0f, 350f, 80f, value, 38f, valueColor, TextAlignmentOptions.MidlineRight);
+            return CreateText("Value", row, 1190f, 0f, 350f, 80f, value, 38f, valueColor, TextAlignmentOptions.MidlineRight);
         }
 
-        private static void CreateRewardMetric(Transform panel, string name, string iconPath, string label, string value, float x, Color valueColor)
+        private static RectTransform CreateRewardMetric(
+            Transform panel, string name, string iconPath, string label, string value,
+            float x, Color valueColor, out TMP_Text labelText, out TMP_Text valueText)
         {
             Transform metric = CreateRect(name, panel, x, 38f, 750f, 225f).transform;
             CreateIcon("Icon", metric, iconPath, 12f, 34f, 150f, 150f, valueColor);
-            CreateText("Label", metric, 194f, 34f, 520f, 70f, label, 38f, Text, TextAlignmentOptions.MidlineLeft);
-            CreateText("Value", metric, 194f, 108f, 520f, 78f, value, 58f, valueColor, TextAlignmentOptions.MidlineLeft);
+            labelText = CreateText("Label", metric, 194f, 34f, 520f, 70f, label, 38f, Text, TextAlignmentOptions.MidlineLeft);
+            valueText = CreateText("Value", metric, 194f, 108f, 520f, 78f, value, 58f, valueColor, TextAlignmentOptions.MidlineLeft);
+            return metric as RectTransform;
         }
 
         private static RectTransform CreateProgressNode(Transform parent, int mission, float centerX, float centerY, bool active)

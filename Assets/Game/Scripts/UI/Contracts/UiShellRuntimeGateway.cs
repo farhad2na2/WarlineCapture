@@ -38,7 +38,14 @@ namespace Game.UI.Contracts
             return false;
         }
 
-        bool TryEnqueueCampaignMissionAction(UiCampaignMissionActionKind action, string missionId) => false;
+        bool TryReadMissionBriefing(out UiMissionBriefingModel briefing)
+        {
+            briefing = default;
+            return false;
+        }
+
+        bool TryEnqueueCampaignMissionAction(
+            UiCampaignMissionActionKind action, string missionId, bool value = false) => false;
 
         bool TryReadMatchHudSelection(out UiMatchHudSelectionPanelModel selection);
 

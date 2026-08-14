@@ -37,7 +37,7 @@ namespace Game.UI.Shell.Ecs
         }
 
         public static bool TryEnqueueCampaignMissionAction(
-            UiCampaignMissionActionKind action, string missionId)
+            UiCampaignMissionActionKind action, string missionId, bool value = false)
         {
             if (action == UiCampaignMissionActionKind.None || string.IsNullOrWhiteSpace(missionId) ||
                 missionId.Length > 60 || !TryGetBoundary(out EntityManager entityManager, out Entity boundary))
@@ -55,7 +55,12 @@ namespace Game.UI.Shell.Ecs
             if (!entityManager.HasBuffer<UiCampaignMissionActionRequestElement>(boundary))
                 entityManager.AddBuffer<UiCampaignMissionActionRequestElement>(boundary);
             entityManager.GetBuffer<UiCampaignMissionActionRequestElement>(boundary).Add(
-                new UiCampaignMissionActionRequestElement { Action = action, MissionId = fixedMissionId });
+                new UiCampaignMissionActionRequestElement
+                {
+                    Action = action,
+                    MissionId = fixedMissionId,
+                    Value = value ? (byte)1 : (byte)0
+                });
             return true;
         }
 

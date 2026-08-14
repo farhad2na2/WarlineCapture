@@ -69,10 +69,15 @@ namespace Game.UI.Runtime
             return current.TryReadCampaignOperations(out campaign);
         }
 
-        public static bool TryEnqueueCampaignMissionAction(
-            UiCampaignMissionActionKind action, string missionId)
+        public static bool TryReadMissionBriefing(out UiMissionBriefingModel briefing)
         {
-            return current.TryEnqueueCampaignMissionAction(action, missionId);
+            return current.TryReadMissionBriefing(out briefing);
+        }
+
+        public static bool TryEnqueueCampaignMissionAction(
+            UiCampaignMissionActionKind action, string missionId, bool value = false)
+        {
+            return current.TryEnqueueCampaignMissionAction(action, missionId, value);
         }
 
         public static bool TryReadMatchHudSelection(out UiMatchHudSelectionPanelModel selection)
@@ -235,8 +240,14 @@ namespace Game.UI.Runtime
                 return false;
             }
 
+            public bool TryReadMissionBriefing(out UiMissionBriefingModel briefing)
+            {
+                briefing = default;
+                return false;
+            }
+
             public bool TryEnqueueCampaignMissionAction(
-                UiCampaignMissionActionKind action, string missionId)
+                UiCampaignMissionActionKind action, string missionId, bool value = false)
             {
                 return false;
             }

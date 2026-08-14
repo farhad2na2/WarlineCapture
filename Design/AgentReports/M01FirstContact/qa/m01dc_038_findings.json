@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "taskId": "M01DC-038",
+  "date": "2026-08-14",
+  "operatorKind": "Agent",
+  "operator": "Codex",
+  "humanParticipant": false,
+  "status": "in-progress",
+  "device": {
+    "manufacturer": "Samsung",
+    "model": "SM-S918B",
+    "hardwareSerial": "R5CTC1J02VB",
+    "androidVersion": "16",
+    "apiLevel": 36
+  },
+  "testedPackage": {
+    "applicationId": "com.warlinecapture.game",
+    "versionName": "0.1.0",
+    "versionCode": 1,
+    "sourceHead": "89865295b006a39680b75476ba7702d948acc51c",
+    "sha256": "e2f02601c41efb9a6824038395e3db4d7f8ccb0b150a3b5201381530710719e2"
+  },
+  "findings": [
+    {
+      "id": "M01DC038-P1-001",
+      "severity": "P1",
+      "title": "FirstLaunch handoff never publishes the existing Match route",
+      "reproduction": "Clear app data; choose English and Full guidance; complete FirstLaunch; observe the loading cover indefinitely; cold restart and observe ResumeHandoff with the same cover.",
+      "cause": "FirstLaunchNarrativeShellCompositionSystemHelper persisted EnterMission/HandoffPending without adding the existing UiShellRouteIntent.EnterMatch request, so the existing Match lifecycle owner never loaded the Match world.",
+      "response": "Publish exactly one existing EnterMatch/Match route request from the existing handoff boundary, guarded by handoffPublished.",
+      "editorValidation": {
+        "focused": "Passed 4/4",
+        "firstLaunchGate89": "Passed 56/56",
+        "sourceGrowth": "Passed 17/17 at 84 lines / 3366 bytes within 87 / 3386",
+        "m01Architecture": "Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23",
+        "m01RuntimePlayMode": "Passed 18/18"
+      },
+      "status": "corrected-editor-validation-passed-device-replay-pending",
+      "closureRequires": "Fresh exact-head APK install and successful Samsung FirstLaunch-to-M01 replay"
+    }
+  ],
+  "severityCounts": {
+    "p0": 0,
+    "p1": 1,
+    "p2": 0,
+    "p3": 0,
+    "closed": 0,
+    "open": 1
+  },
+  "acceptanceClaimed": false
+}

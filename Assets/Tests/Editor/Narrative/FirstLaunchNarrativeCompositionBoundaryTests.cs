@@ -3,6 +3,7 @@ using System.IO;
 using Game.Composition;
 using Game.Narrative.Contracts;
 using Game.Runtime;
+using Game.UI.Contracts;
 using Game.UI.Shell.Contracts.Ecs;
 using NUnit.Framework;
 using Unity.Entities;
@@ -21,7 +22,7 @@ public sealed class FirstLaunchNarrativeCompositionBoundaryTests
             tests.ProfileBoundary_ProjectsStartupDispositionWithoutUiOrEcs();
             tests.ProfileBoundary_PersistsProductionChoicesAndHandoffState();
             tests.ProfileBoundary_ReviewerChoicesDoNotMutateSavedProfile();
-            tests.ShellBoundary_HoldsStartupForTypedMissionWithoutRouteRequest();
+            tests.ShellBoundary_QueuesExactlyOneMatchRouteForTypedMission();
             Debug.Log("[FirstLaunchNarrativeCompositionBoundaryValidation] result=Passed tests=4");
             ValidationExit.Passed();
         }
@@ -109,9 +110,9 @@ public sealed class FirstLaunchNarrativeCompositionBoundaryTests
     }
 
     [Test]
-    public void ShellBoundary_HoldsStartupForTypedMissionWithoutRouteRequest()
+    public void ShellBoundary_QueuesExactlyOneMatchRouteForTypedMission()
     {
-        using World world = new(nameof(ShellBoundary_HoldsStartupForTypedMissionWithoutRouteRequest));
+        using World world = new(nameof(ShellBoundary_QueuesExactlyOneMatchRouteForTypedMission));
         EntityManager entityManager = world.EntityManager;
         Entity boundary = entityManager.CreateEntity(typeof(UiShellStartupDispositionComponent));
         entityManager.AddBuffer<UiShellRouteRequestComponent>(boundary);
@@ -127,10 +128,13 @@ public sealed class FirstLaunchNarrativeCompositionBoundaryTests
             entityManager.GetComponentData<UiShellStartupDispositionComponent>(boundary).Value);
         DynamicBuffer<UiShellRouteRequestComponent> requests =
             entityManager.GetBuffer<UiShellRouteRequestComponent>(boundary);
-        Assert.AreEqual(0, requests.Length);
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(UiShellRouteIntent.EnterMatch, requests[0].Intent);
+        Assert.AreEqual(UIRoute.Match, requests[0].Route);
+        Assert.AreEqual(0, requests[0].PushHistory);
         Assert.AreEqual(UiShellStartupDisposition.EnterMission, shell.StartupDisposition);
         Assert.IsTrue(shell.IsHandoffPending);
-        Assert.IsFalse(shell.IsHandoffPublished);
+        Assert.IsTrue(shell.IsHandoffPublished);
 
         FirstLaunchNarrativeShellCompositionSystemHelper.ResetBoundary(entityManager, boundary);
         Assert.AreEqual(

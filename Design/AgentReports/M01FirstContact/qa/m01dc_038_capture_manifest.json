@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "taskId": "M01DC-038",
+  "date": "2026-08-14",
+  "operatorKind": "Agent",
+  "operator": "Codex",
+  "humanParticipant": false,
+  "sessionId": "m01dc038-samsung-full-before-fix",
+  "device": "Samsung SM-S918B / R5CTC1J02VB",
+  "transportAtCapture": "192.168.2.33:35491",
+  "captures": [
+    {
+      "path": "%TEMP%/m01qa-full-segment1.mp4",
+      "bytes": 175827849,
+      "sha256": "ad0f0923fe6f9314b870ea5e74c870daa80715b1b2e2bc890974534517969287",
+      "description": "Clean-profile language, identity, narrative, and Full-guidance real-input sequence"
+    },
+    {
+      "path": "%TEMP%/m01qa-full-segment2.mp4",
+      "bytes": 12862747,
+      "sha256": "16c59fa3f70ac18166edbcf283c4ad6cf960db200f6e44a5b75732f421f22b87",
+      "description": "Blocked post-guidance handoff"
+    },
+    {
+      "path": "%TEMP%/m01qa-full-20.png",
+      "bytes": 2532970,
+      "sha256": "92d40804839cc6c2dcffde14fef52f7643a3c0c76add0e92e0418e5f703f3660",
+      "description": "Persistent pre-restart handoff/loading state"
+    },
+    {
+      "path": "%TEMP%/m01qa-full-recovery.png",
+      "bytes": 23898,
+      "sha256": "c79c9bbffc4f6d693d184d2896fb2c6fb101350103c39d310501bf4340df584f",
+      "description": "Cold-restart ResumeHandoff loading cover"
+    }
+  ],
+  "runtimeEvidence": {
+    "startupDisposition": "ResumeHandoff",
+    "fatalOrAnrMatches": 0,
+    "mediaVolumeMusicSpeaker": 13,
+    "mediaVolumeMusic": 7
+  },
+  "correctedPackageReplay": "pending",
+  "acceptanceClaimed": false
+}

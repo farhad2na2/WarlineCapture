@@ -488,6 +488,8 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
   **Acceptance:** every transition occurs exactly once, no Main Menu appears in first-play handoff, no stale state/leak/double grant remains, and existing Skirmish/menu routes regress zero.
   **Evidence:** transition/equivalence/lifecycle manifest and checked wrapper logs, clean pushed head.
 
+  **Exact-path metadata correction (2026-08-14):** the frozen M01DC-034 list names the planned runtime PlayMode validator and evidence report but omits the validator's mandatory deterministic Unity `.meta` file and the tracker/matrix paths required to record the item honestly. Add only those three exact paths. No production source, transition/lifecycle case, pass count, behavior, ownership, exception, threshold, or protected content changes.
+
 - [ ] **M01DC-035 - Pass visual, camera, minimap, HUD, and accessibility review**
   **Depends on:** M01DC-015, M01DC-031, M01DC-034.
   **Deliverable:** reviewed captures/video for FL-P18 handoff, planning view, battle start, objectives, selected units, move/attack markers, the exact Courier/Warden/Broker patrol, civilians, result, debrief, Campaign replay, safe areas, text expansion, subtitles, and reduced motion.
@@ -645,6 +647,7 @@ Unity licensing, wrapper, device connection, disk space, or bounded tool interru
 | 2026-08-14 | M01DC-032 | Added the consolidated M01 contract and architecture entrypoints, corrected two stale nested/audit test seams, and made Campaign Operations regeneration byte-stable without changing content. Contract `23`, source growth `17 / 17`, architecture `23`, ownership `12 / 12`, compiler zero, eleven-artifact two-pass hashes, protected paths, and focused diff review pass with zero genuine/unclassified debt. | enclosing M01DC-032 acceptance commit | Accepted |
 | 2026-08-14 | M01DC-033 metadata/tracker correction | Added only the deterministic Unity `.meta` path paired with the planned gameplay validator and the tracker/matrix paths required by the per-item acceptance contract. No production code, gameplay case, gate, count, behavior, exception, threshold, protected content, or runtime ownership changed. | enclosing ownership-correction commit | Accepted |
 | 2026-08-14 | M01DC-033 | Added the deterministic gameplay/outcome gate and passed `10 / 10` cases with two internal repeats in each of two independent Unity processes. State hash `5F38538F...A2DD`, transitions, rewards, star boundaries, retry correlation, patrol, commands, and civilians match with zero correctness/compiler failures and zero production/protected-path changes. | enclosing M01DC-033 acceptance commit | Accepted |
+| 2026-08-14 | M01DC-034 metadata/tracker correction | Added only the deterministic Unity `.meta` path paired with the planned PlayMode validator and the tracker/matrix paths required by the per-item acceptance contract. No production code, transition/lifecycle case, gate, count, behavior, exception, threshold, protected content, or runtime ownership changed. | enclosing ownership-correction commit | Accepted |
 
 Implementation entries are appended only after an item is accepted and pushed. The final row must record M01DC-043, the final main/origin head, 43/43 progress, Android package/device identities, agent-QA/finding closure, validation summary, and clean worktree state.
 

@@ -1,0 +1,69 @@
+{
+  "artifactId": "m01dc-033-deterministic-gameplay-v1",
+  "taskId": "M01DC-033",
+  "status": "accepted",
+  "date": "2026-08-14",
+  "headBefore": "b19cd7d0ef7f921ad6a4ff921a92f556d282f84e",
+  "validator": {
+    "type": "M01FirstContactDeterministicGameplayTests",
+    "executeMethod": "M01FirstContactDeterministicGameplayTests.RunFocusedValidation",
+    "wrapper": "Tools/CI/InvokeUnityExecuteMethodValidation.ps1",
+    "licensingMode": "GuiLicensing",
+    "timeoutSeconds": 900,
+    "expectedMarker": "[M01FirstContactDeterministicGameplayValidation] result=Passed cases=10 repeats=2",
+    "caseCount": 10,
+    "internalRepeatCountPerRun": 2,
+    "independentProcessRuns": 2,
+    "correctnessFailureCount": 0,
+    "compilerErrorCount": 0,
+    "compilerWarningCount": 0
+  },
+  "caseMatrix": [
+    {"id": "M01DG-01", "concern": "command availability", "expected": "Select, Move, Attack, Hold, Stop only", "observed": "Passed"},
+    {"id": "M01DG-02", "concern": "patrol behavior", "expected": "one seeded hostile patrol, exact Courier/Warden/Broker group, three ordered anchors, authored start delay", "observed": "Passed"},
+    {"id": "M01DG-03", "concern": "victory", "expected": "Engage -> SecureCorridor -> Result/Victory/CommandBase with monotonic versions", "observed": "Passed"},
+    {"id": "M01DG-04", "concern": "failure", "expected": "command-squad destruction -> Result/Defeat/CampaignOperations", "observed": "Passed"},
+    {"id": "M01DG-05", "concern": "retry", "expected": "one correlated Retry launch, attempt 3, transition token 901, unchanged deterministic seed", "observed": "Passed"},
+    {"id": "M01DG-06", "concern": "under-four-minute star boundary", "expected": "239999 ms, zero losses -> 3 stars", "observed": "Passed"},
+    {"id": "M01DG-07", "concern": "exact-four-minute star boundary", "expected": "240000 ms, zero losses -> 2 stars and no mission failure", "observed": "Passed"},
+    {"id": "M01DG-08", "concern": "reward idempotency", "expected": "first clear grants 260 Commander XP and 1200 Credits once; duplicate token grants zero; Intel remains zero", "observed": "Passed"},
+    {"id": "M01DG-09", "concern": "civilians", "expected": "eight presentation-owned gameplay-inert civilians within hard cap twelve", "observed": "Passed"},
+    {"id": "M01DG-10", "concern": "equal-input determinism", "expected": "all ordered state results and SHA-256 match across repeats and independent Unity processes", "observed": "Passed"}
+  ],
+  "stateEvidence": {
+    "algorithm": "SHA-256",
+    "hash": "5F38538F1E9F5327C06FE70B43CA43FB47A2ECECDA10B0B3276F20BBA590A2DD",
+    "internalRepeatMismatchCount": 0,
+    "independentProcessMismatchCount": 0
+  },
+  "runs": [
+    {
+      "log": "%TEMP%/warline-m01dc033-deterministic.log",
+      "logSha256": "6B32F5CA3EFF3142399219F2EA5240789CFD6FEE78D03D0A2F4DE1E124D1D20B",
+      "marker": "[M01FirstContactDeterministicGameplayValidation] result=Passed cases=10 repeats=2 hash=5F38538F1E9F5327C06FE70B43CA43FB47A2ECECDA10B0B3276F20BBA590A2DD"
+    },
+    {
+      "log": "%TEMP%/warline-m01dc033-deterministic-pass2.log",
+      "logSha256": "3C863E2E4E69C01B7563F142DBD222B0EFD1B91CBA2DAC3F3C0BA80FF25DF933",
+      "marker": "[M01FirstContactDeterministicGameplayValidation] result=Passed cases=10 repeats=2 hash=5F38538F1E9F5327C06FE70B43CA43FB47A2ECECDA10B0B3276F20BBA590A2DD"
+    }
+  ],
+  "rejectedRun": {
+    "disposition": "not acceptance evidence",
+    "finding": "The first test-only fixture retained a DynamicBuffer handle across structural changes.",
+    "correction": "Acquire the request buffer only after all fixture buffers are installed; production code was unchanged.",
+    "replay": "Both fresh checked runs above passed."
+  },
+  "scopeAudit": {
+    "productionSourceChanges": 0,
+    "missionOrScenarioAssetChanges": 0,
+    "denseCityPhysicalChanges": 0,
+    "vrpOrCapacityChanges": 0,
+    "addressablesChanges": 0,
+    "packagesChanges": 0,
+    "projectSettingsChanges": 0,
+    "toolsCiChanges": 0,
+    "exceptionsAddedOrEnlarged": 0,
+    "result": "Passed"
+  }
+}

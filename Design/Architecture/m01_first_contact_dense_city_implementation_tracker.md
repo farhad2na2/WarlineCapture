@@ -1,8 +1,8 @@
 # M01 First Contact Dense-City Implementation Tracker
 
 Date: 2026-08-12
-Status: Active; M01DC-032 accepted and M01DC-033 dependency-ready
-Progress: 32/43 accepted items (74.4%)
+Status: Active; M01DC-033 accepted and M01DC-034 dependency-ready
+Progress: 33/43 accepted items (76.7%)
 Parent design: `Design/M01_FirstContact_Dense_City_High_Level_Design.md`
 Technical architecture: `Design/Architecture/m01_first_contact_dense_city_technical_architecture.md`
 Mission: `saga.ch01.m01.first_contact`
@@ -472,13 +472,15 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
 
   **Accepted evidence (2026-08-14):** the exact consolidated M01 contract passes `23` suites; the direct production source-growth entrypoint passes `17 / 17`; the full architecture closeout passes `23` suites; and the M01 architecture parent passes `3` groups with its frozen `23 / 17 / 23` counts. The compiler scan records zero C# errors and zero C# warnings. The corrected ownership audit passes `12 / 12` while proving one bounded Preparing/None initializer and one semantic mission writer. Canonical data, Campaign Operations, Mission Briefing, application canvas, HUD, and Mission Result outputs pass exact two-pass byte-hash comparison across eleven governed artifacts. The audit found only SCN05 local-file-ID churn, corrected the builder to reuse a fully bound current prefab, and its final two passes match at `FA5548BC2FE17FE82D7926146E192F49E0F69794EBFAE8A6DFB3790BACBFFD11`. No source-growth exception was added or enlarged; genuine and unclassified architecture debt are both zero. The exact ten-path allowlist, protected-path audit, commands, log hashes, pass markers, output hashes, and focused review are recorded in `m01dc_032_validation_manifest.json`.
 
-- [ ] **M01DC-033 - Pass deterministic gameplay and outcome validation**
+- [x] **M01DC-033 - Pass deterministic gameplay and outcome validation**
   **Depends on:** M01DC-019 through M01DC-024, M01DC-032.
   **Deliverable:** headless/focused scenarios for command availability, patrol behavior, victory, failure, retry, star boundaries, reward idempotency, civilians, and equal-input determinism.
   **Acceptance:** all expected cases pass with identical repeated hashes/state transitions and zero correctness failure.
   **Evidence:** exact case matrix, focused wrapper log, result manifest, clean pushed head.
 
   **Exact-path metadata correction (2026-08-14):** the frozen M01DC-033 list names the planned deterministic gameplay validator and evidence report but omits the validator's mandatory deterministic Unity `.meta` file and the tracker/matrix paths required to record the item honestly. Add only those three exact paths. No production source, gameplay case, pass count, behavior, ownership, exception, threshold, or protected content changes.
+
+  **Accepted evidence (2026-08-14):** the focused deterministic gameplay validator passes all `10 / 10` cases: exact command availability, seeded patrol identity/order/timing, victory, sole defeat, one correlated retry, 239999/240000 ms star boundaries, exactly-once first-clear rewards, bounded gameplay-inert civilians, and equal-input determinism. Each checked run executes the ordered state matrix twice, and two independent Unity processes produce the identical SHA-256 `5F38538F1E9F5327C06FE70B43CA43FB47A2ECECDA10B0B3276F20BBA590A2DD` with zero correctness failures and compiler zero. The first rejected test-only fixture exposed a stale ECS buffer handle after structural changes; the test reacquires the handle after fixture construction and both fresh replays pass. Production source, mission/scenario assets, dense-city/VRP/Addressables/package/project-setting/CI paths, thresholds, and architecture exceptions are unchanged. Exact cases, commands, log hashes, marker, state hash, rejected-run disposition, and protected scope are recorded in `m01dc_033_deterministic_gameplay.json`.
 
 - [ ] **M01DC-034 - Pass entry, guidance, replay, persistence, and lifecycle validation**
   **Depends on:** M01DC-025 through M01DC-031, M01DC-032.
@@ -642,6 +644,7 @@ Unity licensing, wrapper, device connection, disk space, or bounded tool interru
 | 2026-08-14 | M01DC-032 Campaign-prefab determinism correction | The exact two-pass audit rejected only Campaign Operations because rebuilding an already-current prefab churned Unity local file IDs. Added the same validated-current-prefab reuse boundary already accepted for Mission Briefing; stale/incomplete prefabs still rebuild, while current content remains byte-stable. | enclosing M01DC-032 acceptance commit | Accepted |
 | 2026-08-14 | M01DC-032 | Added the consolidated M01 contract and architecture entrypoints, corrected two stale nested/audit test seams, and made Campaign Operations regeneration byte-stable without changing content. Contract `23`, source growth `17 / 17`, architecture `23`, ownership `12 / 12`, compiler zero, eleven-artifact two-pass hashes, protected paths, and focused diff review pass with zero genuine/unclassified debt. | enclosing M01DC-032 acceptance commit | Accepted |
 | 2026-08-14 | M01DC-033 metadata/tracker correction | Added only the deterministic Unity `.meta` path paired with the planned gameplay validator and the tracker/matrix paths required by the per-item acceptance contract. No production code, gameplay case, gate, count, behavior, exception, threshold, protected content, or runtime ownership changed. | enclosing ownership-correction commit | Accepted |
+| 2026-08-14 | M01DC-033 | Added the deterministic gameplay/outcome gate and passed `10 / 10` cases with two internal repeats in each of two independent Unity processes. State hash `5F38538F...A2DD`, transitions, rewards, star boundaries, retry correlation, patrol, commands, and civilians match with zero correctness/compiler failures and zero production/protected-path changes. | enclosing M01DC-033 acceptance commit | Accepted |
 
 Implementation entries are appended only after an item is accepted and pushed. The final row must record M01DC-043, the final main/origin head, 43/43 progress, Android package/device identities, agent-QA/finding closure, validation summary, and clean worktree state.
 

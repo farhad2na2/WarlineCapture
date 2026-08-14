@@ -3,8 +3,10 @@ using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;
 using Game.Components;
+using Game.Composition;
 using Game.Configs;
 using NUnit.Framework;
+using Unity.Collections;
 using Unity.Entities;
 using UnityEditor;
 using UnityEngine;
@@ -12,7 +14,7 @@ using UnityEngine.AddressableAssets;
 
 public sealed class M01FirstContactMapSourceBindingTests
 {
-    private const string PassMarker = "[M01FirstContactMapSourceBindingValidation] result=Passed tests=11";
+    private const string PassMarker = "[M01FirstContactMapSourceBindingValidation] result=Passed tests=13";
     private const string SourceDefinitionPath =
         "Assets/Game/Configs/OperationMaps/Candidates/" +
         "OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset";
@@ -33,6 +35,8 @@ public sealed class M01FirstContactMapSourceBindingTests
             tests.BlankBindingPreservesExistingSelfOwnedMap();
             tests.LogicalMapCanBindToExactAcceptedPhysicalSource();
             tests.LogicalMetadataCarriesExactPhysicalRenderBinding();
+            tests.RuntimeReuseValidatesExactPhysicalSource();
+            tests.RuntimeReuseRejectsStalePhysicalContent();
             tests.UnresolvedPhysicalSourceFailsClosed();
             tests.StaleSourceIdentityHashFailsClosed();
             tests.StaleSourceContentHashFailsClosed();
@@ -141,6 +145,18 @@ public sealed class M01FirstContactMapSourceBindingTests
     }
 
     [Test]
+    public void RuntimeReuseValidatesExactPhysicalSource()
+    {
+        AssertRuntimeReuse(SourceContentHash, true);
+    }
+
+    [Test]
+    public void RuntimeReuseRejectsStalePhysicalContent()
+    {
+        AssertRuntimeReuse(new string('b', 64), false);
+    }
+
+    [Test]
     public void UnresolvedPhysicalSourceFailsClosed()
     {
         OperationMapDefinition logical = Logical(Source(), SourceIdentityHash, SourceContentHash);
@@ -225,6 +241,66 @@ public sealed class M01FirstContactMapSourceBindingTests
             StringAssert.Contains("stale or mismatched", error);
         }
         finally { UnityEngine.Object.DestroyImmediate(logical); }
+    }
+
+    private static void AssertRuntimeReuse(
+        string sourceContentHash,
+        bool expectedAccepted)
+    {
+        OperationMapDefinition physical = Source();
+        OperationMapDefinition logical = Logical(
+            physical, SourceIdentityHash, sourceContentHash);
+        BlobAssetReference<OperationMapBlob> blob = default;
+        using World world = new("m01-physical-source-reuse");
+        try
+        {
+            Assert.IsTrue(logical.TryCreatePersistentMetadataBlob(
+                out blob, out string error), error);
+            Entity mapRoot = world.EntityManager.CreateEntity(
+                typeof(OperationMapRootComponent),
+                typeof(ActiveOperationMapComponent),
+                typeof(OperationMapMetadataComponent));
+            world.EntityManager.SetComponentData(mapRoot,
+                new ActiveOperationMapComponent
+                {
+                    OperationMapId = new FixedString64Bytes(LogicalMapId),
+                    ScenarioId = new FixedString64Bytes("scenario.ch01.m01.first_contact"),
+                    MissionId = new FixedString64Bytes("saga.ch01.m01.first_contact"),
+                    SchemaVersion = 1,
+                    Generation = 7
+                });
+            world.EntityManager.SetComponentData(mapRoot,
+                new OperationMapMetadataComponent
+                {
+                    Blob = blob,
+                    Generation = 7,
+                    PhysicalSourceValidated = 1
+                });
+            Entity missionRoot = world.EntityManager.CreateEntity(
+                typeof(CampaignMissionRootComponent));
+            DynamicBuffer<CampaignMissionLaunchRequestElement> requests =
+                world.EntityManager.AddBuffer<CampaignMissionLaunchRequestElement>(missionRoot);
+            requests.Add(new CampaignMissionLaunchRequestElement
+            {
+                OperationMapId = new FixedString64Bytes(LogicalMapId),
+                ScenarioId = new FixedString64Bytes("scenario.ch01.m01.first_contact"),
+                MissionId = new FixedString64Bytes("saga.ch01.m01.first_contact")
+            });
+
+            bool accepted = CampaignMissionOperationMapReuseUtility.TryReuse(
+                world.EntityManager, physical, out Entity resolved, out error);
+            Assert.AreEqual(expectedAccepted, accepted, error);
+            Assert.AreEqual(expectedAccepted ? mapRoot : Entity.Null, resolved);
+            Assert.AreEqual(expectedAccepted ? 1 : 0,
+                world.EntityManager.GetComponentData<OperationMapMetadataComponent>(
+                    mapRoot).PhysicalSourceValidated);
+        }
+        finally
+        {
+            if (blob.IsCreated)
+                blob.Dispose();
+            UnityEngine.Object.DestroyImmediate(logical);
+        }
     }
 
     private static bool Validate(

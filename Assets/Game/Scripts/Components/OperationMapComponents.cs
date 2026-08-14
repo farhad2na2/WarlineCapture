@@ -124,6 +124,7 @@ namespace Game.Components
         public BlobAssetReference<OperationMapBlob> Blob;
         public FixedString128Bytes MetadataHash;
         public int Generation;
+        public byte PhysicalSourceValidated;
     }
 
     public struct OperationMapReadinessComponent : IComponentData

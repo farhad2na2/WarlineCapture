@@ -23,7 +23,8 @@ namespace Game.Rendering
             ref OperationMapRenderDatabaseBlob databaseBlob = ref database.Blob.Value;
             if (databaseBlob.OperationMapId.Equals(activeMap.OperationMapId))
                 return true;
-            if (!metadata.Blob.IsCreated || metadata.Generation != activeMap.Generation)
+            if (!metadata.Blob.IsCreated || metadata.Generation != activeMap.Generation ||
+                metadata.PhysicalSourceValidated != 1)
                 return false;
 
             ref OperationMapBlob logicalBlob = ref metadata.Blob.Value;
@@ -31,8 +32,8 @@ namespace Game.Rendering
                    logicalBlob.SchemaVersion == activeMap.SchemaVersion &&
                    logicalBlob.SchemaVersion == databaseBlob.SchemaVersion &&
                    !logicalBlob.SourceIdentityHash.IsEmpty &&
-                   logicalBlob.SourceOperationMapId.Equals(databaseBlob.OperationMapId) &&
-                   logicalBlob.SourceContentHash.Equals(databaseBlob.ContentHash);
+                   !logicalBlob.SourceContentHash.IsEmpty &&
+                   logicalBlob.SourceOperationMapId.Equals(databaseBlob.OperationMapId);
         }
 
         internal static void ValidateForStateSync(

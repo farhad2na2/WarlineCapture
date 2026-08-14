@@ -38,15 +38,24 @@ namespace Game.Composition
                 entityManager.GetComponentData<ActiveOperationMapComponent>(mapRoot);
             OperationMapMetadataComponent metadata =
                 entityManager.GetComponentData<OperationMapMetadataComponent>(mapRoot);
+            metadata.PhysicalSourceValidated = 0;
+            entityManager.SetComponentData(mapRoot, metadata);
             CampaignMissionLaunchRequestElement request = requests[0];
             if (!metadata.Blob.IsCreated || active.Generation != metadata.Generation ||
                 !active.OperationMapId.Equals(request.OperationMapId) ||
                 !active.ScenarioId.Equals(request.ScenarioId) ||
                 !active.MissionId.Equals(request.MissionId) ||
+                !metadata.Blob.Value.SourceOperationMapId.Equals(
+                    new Unity.Collections.FixedString64Bytes(physicalSource.OperationMapId)) ||
                 !metadata.Blob.Value.SourceIdentityHash.Equals(
-                    new Unity.Collections.FixedString128Bytes(physicalSource.SourceIdentityHash)))
+                    new Unity.Collections.FixedString128Bytes(physicalSource.SourceIdentityHash)) ||
+                !metadata.Blob.Value.SourceContentHash.Equals(
+                    new Unity.Collections.FixedString128Bytes(physicalSource.ContentHash)) ||
+                metadata.Blob.Value.SchemaVersion != physicalSource.SchemaVersion)
                 return false;
 
+            metadata.PhysicalSourceValidated = 1;
+            entityManager.SetComponentData(mapRoot, metadata);
             rootEntity = mapRoot;
             return true;
         }

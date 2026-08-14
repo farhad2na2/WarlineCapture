@@ -43,8 +43,8 @@ public sealed class OperationMapRenderVirtualizationInitializationSystemTests
                 test => test.OperationMapMismatch_FailsClosed());
             RunCase(tests, nameof(SourceBoundLogicalMap_ValidatesPhysicalDatabase),
                 test => test.SourceBoundLogicalMap_ValidatesPhysicalDatabase());
-            RunCase(tests, nameof(SourceBoundLogicalMap_RejectsStalePhysicalContent),
-                test => test.SourceBoundLogicalMap_RejectsStalePhysicalContent());
+            RunCase(tests, nameof(SourceBoundLogicalMap_RejectsUnvalidatedPhysicalSource),
+                test => test.SourceBoundLogicalMap_RejectsUnvalidatedPhysicalSource());
             RunCase(tests, nameof(DuplicateSlotIdentity_FailsClosed),
                 test => test.DuplicateSlotIdentity_FailsClosed());
             RunCase(tests, nameof(MissingStateOwner_FailsClosed),
@@ -313,7 +313,7 @@ public sealed class OperationMapRenderVirtualizationInitializationSystemTests
     {
         ActiveOperationMapComponent active = CreateLogicalActiveMap();
         OperationMapMetadataComponent metadata = CreateLogicalMetadata(
-            ContentHash);
+            new string('c', 64), true);
         OperationMapRenderDatabaseComponent database =
             _world.EntityManager.GetComponentData<
                 OperationMapRenderDatabaseComponent>(_databaseEntity);
@@ -328,11 +328,11 @@ public sealed class OperationMapRenderVirtualizationInitializationSystemTests
     }
 
     [Test]
-    public void SourceBoundLogicalMap_RejectsStalePhysicalContent()
+    public void SourceBoundLogicalMap_RejectsUnvalidatedPhysicalSource()
     {
         ActiveOperationMapComponent active = CreateLogicalActiveMap();
         OperationMapMetadataComponent metadata = CreateLogicalMetadata(
-            new string('f', 64));
+            new string('c', 64), false);
         OperationMapRenderDatabaseComponent database =
             _world.EntityManager.GetComponentData<
                 OperationMapRenderDatabaseComponent>(_databaseEntity);
@@ -355,7 +355,8 @@ public sealed class OperationMapRenderVirtualizationInitializationSystemTests
         };
 
     private OperationMapMetadataComponent CreateLogicalMetadata(
-        string sourceContentHash)
+        string sourceContentHash,
+        bool physicalSourceValidated)
     {
         using var builder = new BlobBuilder(Allocator.Temp);
         ref OperationMapBlob root =
@@ -373,7 +374,8 @@ public sealed class OperationMapRenderVirtualizationInitializationSystemTests
         return new OperationMapMetadataComponent
         {
             Blob = _metadataBlob,
-            Generation = 7
+            Generation = 7,
+            PhysicalSourceValidated = physicalSourceValidated ? (byte)1 : (byte)0
         };
     }
 

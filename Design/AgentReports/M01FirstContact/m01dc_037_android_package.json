@@ -1,8 +1,8 @@
 {
   "artifactId": "m01dc-037-android-package-v1",
   "taskId": "M01DC-037",
-  "status": "dependency_ready_partial",
-  "accepted": false,
+  "status": "accepted",
+  "accepted": true,
   "date": "2026-08-14",
   "head": "89865295b006a39680b75476ba7702d948acc51c",
   "originHead": "89865295b006a39680b75476ba7702d948acc51c",
@@ -36,17 +36,39 @@
   },
   "device": {
     "adbPath": "Editor/Data/PlaybackEngines/AndroidPlayer/SDK/platform-tools/adb.exe",
-    "probeResult": "zero_attached_devices",
+    "probeResult": "canonical_device_verified",
     "canonicalDevice": "Samsung SM-S918B R5CTC1J02VB",
-    "installExecuted": false,
-    "launchExecuted": false,
-    "identityVerified": false,
-    "acceptanceOpen": true
+    "transportSerial": "192.168.2.33:35491",
+    "pairingGuid": "adb-R5CTC1J02VB-lJmfCF",
+    "hardwareSerial": "R5CTC1J02VB",
+    "manufacturer": "samsung",
+    "model": "SM-S918B",
+    "deviceCodeName": "dm3q",
+    "androidVersion": "16",
+    "apiLevel": 36,
+    "installExecuted": true,
+    "installResult": "Success",
+    "installedVersionCode": 1,
+    "installedVersionName": "0.1.0",
+    "launchExecuted": true,
+    "launchActivity": "com.warlinecapture.game/com.unity3d.player.UnityPlayerGameActivity",
+    "launchState": "COLD",
+    "launchTotalTimeMs": 195,
+    "launchWaitTimeMs": 201,
+    "foregroundPid": 32071,
+    "foregroundResumed": true,
+    "fatalOrAnrMatches": 0,
+    "thermalStatus": 0,
+    "batteryLevelPercent": 100,
+    "batteryTemperatureTenthsC": 333,
+    "identityVerified": true,
+    "acceptanceOpen": false
   },
   "rejectedRuns": [
     "GUI-licensing focused validation timed out before project initialization and was rejected; the checked non-GUI fallback passed.",
     "Two PlayMode invocations exited before creating XML due to argument binding and an early -quit flag; neither launched an accepted test run.",
     "The first successful AOT package was built from the pre-commit correction tree and was rejected for exact-head provenance; the recorded package is the subsequent clean pushed-head rebuild."
+    ,"Before the owner narrowed device work to Samsung-only, the exact package installed and launched on the known Xiaomi 24090RA29G supplemental device; that run is not acceptance evidence and no further Redmi interaction was performed."
   ],
   "cleanup": {
     "restoredGeneratedTrackedPaths": [
@@ -58,5 +80,5 @@
     "denseCityOrVrpChanges": 0,
     "gateOrThresholdChanges": 0
   },
-  "openAcceptance": "Attach an authorized Android device, then install this exact package, launch it, verify package/head/device identity, and rerun if any production input changes."
+  "acceptance": "The exact verified package installed and cold-launched on canonical Samsung SM-S918B hardware serial R5CTC1J02VB with matching package metadata, foreground activity, zero fatal/ANR matches, and thermal status 0. Rebuild and rerun if any production package input changes."
 }

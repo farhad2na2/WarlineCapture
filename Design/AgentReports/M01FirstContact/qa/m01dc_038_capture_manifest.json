@@ -32,6 +32,18 @@
       "bytes": 23898,
       "sha256": "c79c9bbffc4f6d693d184d2896fb2c6fb101350103c39d310501bf4340df584f",
       "description": "Cold-restart ResumeHandoff loading cover"
+    },
+    {
+      "path": "%TEMP%/m01dc038_replay_full_01.mp4",
+      "bytes": 175669048,
+      "sha256": "95eef5048bbfdb278583b92db1890de8daee680f89d1e9be92301b536d74cbba",
+      "description": "First corrected-package Full-guidance replay proving Match start and exposing missing production catalog binding"
+    },
+    {
+      "path": "%TEMP%/m01dc038_replay_13.png",
+      "bytes": 2892626,
+      "sha256": "09365a8984c38155b9614f248221e3bdf7dc8190af290fc9c194a8c39f76e439",
+      "description": "Final FL-P18 presentation retained over live Match after the first correction"
     }
   ],
   "runtimeEvidence": {
@@ -47,15 +59,38 @@
     "buildLog": "%TEMP%/m01dc038-exact-head-production-android.log",
     "buildLogSha256": "925b1b14f0ac332a2cf960d3dc35dd43027a6872687e3e821181efb4bd4c2e50",
     "buildMarker": "[ProductionAndroidPackage] result=Passed",
-    "installExecuted": false,
-    "replayExecuted": false,
+    "installExecuted": true,
+    "replayExecuted": true,
     "deviceConnection": {
-      "previousTransport": "192.168.2.33:35491",
+      "previousTransport": "192.168.2.33:39901",
       "discoveredPairingGuid": "adb-R5CTC1J02VB-lJmfCF",
-      "discoveredTransport": "192.168.2.33:33675",
-      "result": "connection-refused"
+      "discoveredTransport": "192.168.2.33:39901",
+      "result": "connected-authorized-samsung-only"
     },
-    "status": "pending-device-availability"
+    "status": "rejected-second-p1-found"
+  },
+  "sourceCorrectionValidation": {
+    "focused": {
+      "log": "%TEMP%/m01dc038-production-bootstrap-focused-final.log",
+      "sha256": "d70c867cffc50729b8b642e8eca412406ffa6e0c1a4310061e99055d3796f18e",
+      "marker": "[M01FirstContactFirstLaunchHandoffValidation] result=Passed tests=7"
+    },
+    "architecture": {
+      "log": "%TEMP%/m01dc038-production-bootstrap-architecture-final.log",
+      "sha256": "1d626417b6759024bcb4550297052a0a28aa43ac8551525d5a21476e1ed788ae",
+      "marker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23"
+    },
+    "playMode": {
+      "log": "%TEMP%/m01dc038-production-bootstrap-playmode-final.log",
+      "logSha256": "fa94b5bda1abdbcc4ae3ecfae74e1086c2bd4329af7e9dd40a2ea2065e188879",
+      "results": "%TEMP%/m01dc038-production-bootstrap-playmode-final-results.xml",
+      "resultsSha256": "8f2ed9b0ba1ad1693cbc1b7e9e21f3a43e9d1fc981d012e0a1e043a22ac4fb0f",
+      "total": 18,
+      "passed": 18,
+      "failed": 0,
+      "skipped": 0,
+      "inconclusive": 0
+    }
   },
   "acceptanceClaimed": false
 }

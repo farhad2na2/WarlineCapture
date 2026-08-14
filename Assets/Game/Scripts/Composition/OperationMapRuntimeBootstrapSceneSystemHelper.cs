@@ -134,6 +134,10 @@ namespace Game.Composition
                 return false;
             }
 
+            if (CampaignMissionOperationMapReuseUtility.TryReuse(
+                    entityManager, definition, out rootEntity, out error))
+                return true;
+
             if (!OperationMapRuntimeRootContract.TryResolveSingle(
                     entityManager,
                     out rootEntity,

@@ -10,6 +10,7 @@ namespace Game.Composition
     public sealed class MenuBootstrapView : MonoBehaviour
     {
         private readonly MenuBootstrapCompositionSystemHelper menuBootstrapSystem = new();
+        private readonly CampaignMissionMenuBootstrapRuntime campaignMissionBootstrap = new();
 
         [SerializeField] private RuntimeUiConfig runtimeUiConfig;
         [SerializeField] private Camera uiCamera;
@@ -27,6 +28,10 @@ namespace Game.Composition
         [SerializeField] private NarrativePunctuationConfig firstLaunchPunctuationProfile;
         [SerializeField] private FirstLaunchLanguageChoiceView firstLaunchLanguageChoiceView;
         [SerializeField] private NarrativeLocaleConfig firstLaunchPersianLocale;
+        [Header("Campaign Mission Runtime")]
+        [SerializeField] private MissionDefinitionConfig campaignMissionDefinition;
+        [SerializeField] private ScenarioSetupConfig campaignScenarioSetup;
+        [SerializeField] private OperationMapCatalogConfig campaignOperationMapCatalog;
 
         public RuntimeUiConfig RuntimeUiConfig => runtimeUiConfig;
         public RuntimeUiMode UiMode => runtimeUiConfig != null ? runtimeUiConfig.Mode : RuntimeUiMode.Canvas;
@@ -42,6 +47,9 @@ namespace Game.Composition
         public NarrativePunctuationConfig FirstLaunchPunctuationProfile => firstLaunchPunctuationProfile;
         public FirstLaunchLanguageChoiceView FirstLaunchLanguageChoiceView => firstLaunchLanguageChoiceView;
         public NarrativeLocaleConfig FirstLaunchPersianLocale => firstLaunchPersianLocale;
+        public MissionDefinitionConfig CampaignMissionDefinition => campaignMissionDefinition;
+        public ScenarioSetupConfig CampaignScenarioSetup => campaignScenarioSetup;
+        public OperationMapCatalogConfig CampaignOperationMapCatalog => campaignOperationMapCatalog;
         public PerformanceDiagnosticsSystemHelper PerformanceDiagnostics => menuBootstrapSystem.PerformanceDiagnostics;
         public bool IsPerformanceDiagnosticsInitialized => menuBootstrapSystem.IsPerformanceDiagnosticsInitialized;
 
@@ -78,7 +86,10 @@ namespace Game.Composition
             NarrativeSpeakerCatalog configuredFirstLaunchSpeakerCatalog = null,
             NarrativePunctuationConfig configuredFirstLaunchPunctuationProfile = null,
             FirstLaunchLanguageChoiceView configuredFirstLaunchLanguageChoiceView = null,
-            NarrativeLocaleConfig configuredFirstLaunchPersianLocale = null)
+            NarrativeLocaleConfig configuredFirstLaunchPersianLocale = null,
+            MissionDefinitionConfig configuredCampaignMissionDefinition = null,
+            ScenarioSetupConfig configuredCampaignScenarioSetup = null,
+            OperationMapCatalogConfig configuredCampaignOperationMapCatalog = null)
         {
             if (configuredRuntimeUiConfig != null)
                 runtimeUiConfig = configuredRuntimeUiConfig;
@@ -100,6 +111,12 @@ namespace Game.Composition
                 firstLaunchLanguageChoiceView = configuredFirstLaunchLanguageChoiceView;
             if (configuredFirstLaunchPersianLocale != null)
                 firstLaunchPersianLocale = configuredFirstLaunchPersianLocale;
+            if (configuredCampaignMissionDefinition != null)
+                campaignMissionDefinition = configuredCampaignMissionDefinition;
+            if (configuredCampaignScenarioSetup != null)
+                campaignScenarioSetup = configuredCampaignScenarioSetup;
+            if (configuredCampaignOperationMapCatalog != null)
+                campaignOperationMapCatalog = configuredCampaignOperationMapCatalog;
         }
 
         public void ApplyRuntimeUiMode()
@@ -141,6 +158,7 @@ namespace Game.Composition
             {
     #endif
             menuBootstrapSystem.Update(this, Time.unscaledDeltaTime);
+            campaignMissionBootstrap.Update(this);
     #if UNITY_EDITOR
             }
             finally
@@ -168,6 +186,7 @@ namespace Game.Composition
 
         private void OnDisable()
         {
+            campaignMissionBootstrap.Shutdown();
             menuBootstrapSystem.Shutdown(this);
         }
     }

@@ -28,9 +28,9 @@
     "buildMethod": "Game.Editor.BuildScript.BuildProductionAndroidApk",
     "buildMarker": "[ProductionAndroidPackage] result=Passed",
     "buildDirty": false,
-    "installExecuted": false,
-    "deviceReplayExecuted": false,
-    "deviceState": "Samsung pairing discovered by mDNS; current connect endpoint refused after ADB restart"
+    "installExecuted": true,
+    "deviceReplayExecuted": true,
+    "deviceState": "Installed and replayed on canonical Samsung; first route fix passed, second production catalog-binding P1 found"
   },
   "findings": [
     {
@@ -47,16 +47,37 @@
         "m01Architecture": "Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23",
         "m01RuntimePlayMode": "Passed 18/18"
       },
-      "status": "corrected-package-built-device-replay-pending",
-      "closureRequires": "Fresh exact-head APK install and successful Samsung FirstLaunch-to-M01 replay"
+      "status": "closed-on-corrected-package",
+      "closureEvidence": "Samsung replay logged deferred Match scene/gameplay requests and LoadingGate gameplayInitialized=1 playRequested=1 simulationActive=1"
+    },
+    {
+      "id": "M01DC038-P1-002",
+      "severity": "P1",
+      "title": "Production never projects the M01 catalog or correlated logical map",
+      "reproduction": "Install the first corrected APK; clear app data; choose English and Full guidance; complete FirstLaunch; observe live Match start under an indefinitely retained FL-P18 final presentation.",
+      "cause": "CampaignMissionCatalogProjection had test-only callers. Production therefore had no campaign mission root/catalog or logical M01 operation-map metadata, so the typed launch could not be accepted after Match loaded.",
+      "response": "Project the already-authored M01 mission/scenario/Chapter01 map catalog from a bounded Menu runtime and let the existing Match map bootstrap reuse that logical metadata only for exact mission/scenario/map/source correlation while loading the unchanged compatibility physical source.",
+      "editorValidation": {
+        "focusedHandoff": "Passed 7/7",
+        "m01Contract": "Passed 23 suites",
+        "sourceGrowth": "Passed 17/17 without exception",
+        "architecture": "Passed 23 suites",
+        "m01RuntimePlayMode": "Passed 18/18; failed=0 skipped=0 inconclusive=0",
+        "focusedLogSha256": "d70c867cffc50729b8b642e8eca412406ffa6e0c1a4310061e99055d3796f18e",
+        "architectureLogSha256": "1d626417b6759024bcb4550297052a0a28aa43ac8551525d5a21476e1ed788ae",
+        "playModeLogSha256": "fa94b5bda1abdbcc4ae3ecfae74e1086c2bd4329af7e9dd40a2ea2065e188879",
+        "playModeResultsSha256": "8f2ed9b0ba1ad1693cbc1b7e9e21f3a43e9d1fc981d012e0a1e043a22ac4fb0f"
+      },
+      "status": "corrected-source-validated-package-replay-pending",
+      "closureRequires": "Fresh exact-source APK build, Samsung install, and successful Full/Contextual/Minimal mission replay"
     }
   ],
   "severityCounts": {
     "p0": 0,
-    "p1": 1,
+    "p1": 2,
     "p2": 0,
     "p3": 0,
-    "closed": 0,
+    "closed": 1,
     "open": 1
   },
   "acceptanceClaimed": false

@@ -35,13 +35,13 @@ public static class M01FirstContactLaunchBootstrapTests
             ReloadWithNewGeneration_ResetsAttemptDeterministically();
             WriteReport();
             Debug.Log(Marker);
-            EditorApplication.Exit(0);
+            ValidationExit.Exit(0);
         }
         catch (Exception exception)
         {
             Debug.LogException(exception);
             Debug.LogError("[M01FirstContactLaunchBootstrapValidation] result=Failed");
-            EditorApplication.Exit(1);
+            ValidationExit.Exit(1);
         }
     }
 

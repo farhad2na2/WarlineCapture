@@ -17,6 +17,8 @@ public static class M01FirstContactRuntimeOwnershipTests
     private const string Marker = "[M01FirstContactRuntimeOwnershipValidation] result=Passed tests=12";
     private const string RuntimePath =
         "Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.cs";
+    private const string LaunchPath =
+        "Assets/Game/Scripts/Runtime/Missions/CampaignMissionLaunchSystem.cs";
     private const string ReportPath =
         "Design/AgentReports/M01FirstContact/m01dc_017_runtime_owner.json";
 
@@ -67,13 +69,26 @@ public static class M01FirstContactRuntimeOwnershipTests
     private static void RuntimeSystem_IsSoleWriter()
     {
         string[] sources = Directory.GetFiles("Assets/Game/Scripts", "*.cs", SearchOption.AllDirectories);
-        string[] writers = sources.Where(path =>
+        string[] mutationSources = sources.Where(path =>
         {
             string text = File.ReadAllText(path);
             return text.Contains("RefRW<CampaignMissionRuntimeComponent>", StringComparison.Ordinal) ||
                    text.Contains("SetComponentData<CampaignMissionRuntimeComponent>", StringComparison.Ordinal) ||
-                   text.Contains("AddComponentData(new CampaignMissionRuntimeComponent", StringComparison.Ordinal);
+                   text.Contains("AddComponentData(new CampaignMissionRuntimeComponent", StringComparison.Ordinal) ||
+                   text.Contains("runtime.ValueRW =", StringComparison.Ordinal);
         }).Select(Normalize).ToArray();
+
+        string launchText = File.ReadAllText(LaunchPath);
+        Require(mutationSources.Contains(LaunchPath), "Campaign launch must remain the runtime initializer.");
+        Require(CountOccurrences(launchText, "runtime.ValueRW =") == 1 &&
+                launchText.Contains("runtime.ValueRW = CreateRuntime(", StringComparison.Ordinal) &&
+                launchText.Contains("Phase = MissionPhaseKind.Preparing", StringComparison.Ordinal) &&
+                launchText.Contains("Outcome = MissionOutcomeKind.None", StringComparison.Ordinal) &&
+                !launchText.Contains("TryTransition(", StringComparison.Ordinal) &&
+                !launchText.Contains("SetComponentData<CampaignMissionRuntimeComponent>", StringComparison.Ordinal),
+            "Campaign launch may initialize exactly one Preparing/None runtime and may not own transitions.");
+
+        string[] writers = mutationSources.Where(path => path != LaunchPath).ToArray();
         Require(writers.Length == 1 && writers[0] == RuntimePath,
             "CampaignMissionRuntimeComponent must have exactly one production writer: " + string.Join(", ", writers));
         Require(!File.ReadAllText(RuntimePath).Contains("static CampaignMissionRuntimeComponent", StringComparison.Ordinal),
@@ -264,6 +279,14 @@ public static class M01FirstContactRuntimeOwnershipTests
     }
 
     private static string Normalize(string path) => path.Replace('\\', '/');
+    private static int CountOccurrences(string text, string value)
+    {
+        int count = 0;
+        for (int index = 0; (index = text.IndexOf(value, index, StringComparison.Ordinal)) >= 0; index += value.Length)
+            count++;
+        return count;
+    }
+
     private static void Require(bool condition, string message)
     {
         if (!condition) throw new InvalidOperationException(message);

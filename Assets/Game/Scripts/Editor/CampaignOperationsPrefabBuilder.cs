@@ -56,8 +56,29 @@ namespace Game.Editor
         [MenuItem("Game/UI/Build SCN-05 Campaign Operations")]
         public static void Build()
         {
+            GameObject prefab = BuildM01CampaignPrefab();
+            AssignMenuScenePrefab(prefab);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log($"[CampaignOperationsPrefabBuilder] result=Passed prefab={PrefabPath} scene={MenuScenePath}");
+        }
+
+        public static void BuildM01CampaignPrefabOnly()
+        {
+            BuildM01CampaignPrefab();
+        }
+
+        private static GameObject BuildM01CampaignPrefab()
+        {
             ImportProductionArt();
             LoadStyleAssets();
+            GameObject existing = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+            if (IsCurrentM01CampaignPrefab(existing))
+            {
+                Debug.Log($"[CampaignOperationsPrefabBuilder] result=Passed prefab={PrefabPath} scope=PrefabOnly reused=true");
+                return existing;
+            }
+
             GameObject root = BuildPrefabRoot();
             EnsureFolder("Assets/Game/Prefabs/UI/Shell/Content");
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
@@ -65,10 +86,24 @@ namespace Game.Editor
             if (prefab == null)
                 throw new InvalidOperationException($"Failed to save Campaign prefab at {PrefabPath}.");
 
-            AssignMenuScenePrefab(prefab);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-            Debug.Log($"[CampaignOperationsPrefabBuilder] result=Passed prefab={PrefabPath}");
+            Debug.Log($"[CampaignOperationsPrefabBuilder] result=Passed prefab={PrefabPath} scope=PrefabOnly");
+            return prefab;
+        }
+
+        private static bool IsCurrentM01CampaignPrefab(GameObject prefab)
+        {
+            if (prefab == null) return false;
+            CampaignOperationsScreenView view = prefab.GetComponent<CampaignOperationsScreenView>();
+            return view != null && view.BackRouteButton != null && view.ChapterRail != null &&
+                   view.StrategicMap != null && view.MissionBriefing != null &&
+                   view.ChapterCards is { Length: > 0 } && view.MissionNodes is { Length: > 0 } &&
+                   view.ProgressNodes is { Length: 5 } && view.DistrictMapImage != null &&
+                   view.DistrictMapImage.texture != null && view.MissionPreviewImage != null &&
+                   view.MissionPreviewImage.texture != null && view.ScreenTitle != null &&
+                   view.MissionName != null && view.StoryArchiveButton != null &&
+                   view.ChapterIntelButton != null && view.LaunchMissionButton != null;
         }
 
         [MenuItem("Game/UI/Capture SCN-05 Campaign Operations")]

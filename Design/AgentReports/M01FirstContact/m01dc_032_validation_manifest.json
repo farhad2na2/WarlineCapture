@@ -1,0 +1,99 @@
+{
+  "artifactId": "m01dc-032-consolidated-validation-v1",
+  "taskId": "M01DC-032",
+  "status": "accepted",
+  "date": "2026-08-14",
+  "headBefore": "b4f1e88138f0f1afa1a3d3bda8ff26bda571b4d3",
+  "scope": {
+    "allowlistCount": 10,
+    "allowlist": [
+      "Assets/Game/Scripts/Editor/CampaignOperationsPrefabBuilder.cs",
+      "Assets/Tests/Editor/M01FirstContactArchitectureValidation.cs",
+      "Assets/Tests/Editor/M01FirstContactArchitectureValidation.cs.meta",
+      "Assets/Tests/Editor/M01FirstContactContractValidation.cs",
+      "Assets/Tests/Editor/M01FirstContactContractValidation.cs.meta",
+      "Assets/Tests/Editor/M01FirstContactLaunchBootstrapTests.cs",
+      "Assets/Tests/Editor/M01FirstContactRuntimeOwnershipTests.cs",
+      "Design/AgentReports/M01FirstContact/m01dc_003_ownership_evidence_rollback_matrix.json",
+      "Design/AgentReports/M01FirstContact/m01dc_032_validation_manifest.json",
+      "Design/Architecture/m01_first_contact_dense_city_implementation_tracker.md"
+    ],
+    "unexpectedPathCount": 0
+  },
+  "consolidatedValidation": {
+    "wrapper": "Tools/CI/InvokeUnityExecuteMethodValidation.ps1",
+    "executeMethod": "M01FirstContactArchitectureValidation.RunFocusedValidation",
+    "timeoutSeconds": 1200,
+    "licensingRecovery": "GUI-licensing run encountered the checked Qualcomm D3D12 guard; with Unity Hub kept open, the same checked wrapper was rerun without GuiLicensing as authorized by AGENTS.md.",
+    "log": "%TEMP%/warline-m01dc032-architecture-final.log",
+    "logSha256": "24F415B9188DEA3962E9B4A6990236B403A092ECAAD7EFE736FA09E10488CBD7",
+    "markers": [
+      "[M01FirstContactConsolidatedContractValidation] result=Passed suites=23",
+      "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17",
+      "[ArchitectureHardeningCloseoutValidation] result=Passed suites=23",
+      "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23"
+    ],
+    "compilerErrorCount": 0,
+    "compilerWarningCount": 0
+  },
+  "ownershipAudit": {
+    "missionInitializer": "CampaignMissionLaunchSystem.CreateRuntime creates exactly one Preparing/None runtime",
+    "semanticMissionWriter": "CampaignMissionRuntimeSystem",
+    "objectiveWriter": "CampaignMissionObjectiveProjectionSystem",
+    "log": "%TEMP%/warline-m01dc032-runtime-ownership.log",
+    "logSha256": "83C40F3A3F632E54CAB29C9832E34F7038158B1EBC8FD16DCDE6BCFCC6022B77",
+    "marker": "[M01FirstContactRuntimeOwnershipValidation] result=Passed tests=12"
+  },
+  "deterministicRegeneration": {
+    "passCount": 2,
+    "outputCount": 11,
+    "mismatchCount": 0,
+    "resolvedFinding": "The first audit found SCN05 Campaign Operations prefab local-file-ID churn. The builder now validates and reuses a fully bound current prefab; its final two-pass hash is stable.",
+    "logs": [
+      {"path": "%TEMP%/warline-m01dc032-regen-canonical-pass1.log", "sha256": "2C698275C51737F1E39F9FE7022F65CC4A7685FEE96968DDE69655D30AFED557", "marker": "[M01FirstContactCanonicalDataValidation] result=Passed tests=13"},
+      {"path": "%TEMP%/warline-m01dc032-regen-canonical-pass2.log", "sha256": "6E3135153C49BE6A0D9FB82922ADC424781BC2D4ACC514D2ED517634E0F1DFE4", "marker": "[M01FirstContactCanonicalDataValidation] result=Passed tests=13"},
+      {"path": "%TEMP%/warline-m01dc032-campaign-determinism-final-pass1.log", "sha256": "FFB4E8BD4FF283B25AC5F2A3403301443A838957FCC1E12A1E4C7CA8D60FFC77", "marker": "[CampaignOperationsPrefabBuilder] result=Passed prefab=Assets/Game/Prefabs/UI/Shell/Content/SCN05_CampaignOperationsContent.prefab scope=PrefabOnly reused=true"},
+      {"path": "%TEMP%/warline-m01dc032-campaign-determinism-final-pass2.log", "sha256": "AFBC5950E2A301272EA92628EEF7A6C97867962EB0D732D463E4CAEB13F19F18", "marker": "[CampaignOperationsPrefabBuilder] result=Passed prefab=Assets/Game/Prefabs/UI/Shell/Content/SCN05_CampaignOperationsContent.prefab scope=PrefabOnly reused=true"},
+      {"path": "%TEMP%/warline-m01dc032-regen-briefing-prefab-pass1.log", "sha256": "7FA131ECED3C2525EB5BB3B102F586398247B2699F90C072320CF689A5C6F1CA", "marker": "[MissionBriefingPrefabBuilder] result=Passed prefab=Assets/Game/Prefabs/UI/Shell/Content/SCN06_MissionBriefingContent.prefab scope=PrefabOnly reused=true"},
+      {"path": "%TEMP%/warline-m01dc032-regen-briefing-prefab-pass2.log", "sha256": "EC874C42C01048111B9E08878080CAD03C6860303E3B1CC856A3062BFD960077", "marker": "[MissionBriefingPrefabBuilder] result=Passed prefab=Assets/Game/Prefabs/UI/Shell/Content/SCN06_MissionBriefingContent.prefab scope=PrefabOnly reused=true"},
+      {"path": "%TEMP%/warline-m01dc032-regen-hud-result-pass1.log", "sha256": "FDA5DD2B6ACFF178339D1B8EB3AE0F9355B461AB60BECA741A90EFDF145AC1BA", "marker": "[M01HudResultPrefabBuilder] result=Passed prefabs=3"},
+      {"path": "%TEMP%/warline-m01dc032-regen-hud-result-pass2.log", "sha256": "A2B6215787ABDF6C1AA71A80451289585A05B2024705017B732686BE4A60AED4", "marker": "[M01HudResultPrefabBuilder] result=Passed prefabs=3"}
+    ],
+    "outputSha256": {
+      "Assets/Game/Configs/Campaign/CampaignMissionCatalog.asset": "8E6190B16C276452283BB1B013105443DD8896828249A6F0696022A9FECA23AB",
+      "Assets/Game/Configs/Missions/Chapter01/MissionDefinition_Ch01_M01_FirstContact.asset": "76FFEAF51E508C9848A69579408CD19E80DDFFF217E342EF8E9914384830A6C9",
+      "Assets/Game/Configs/Scenarios/Chapter01/ScenarioSetup_Ch01_M01_FirstContact.asset": "EA1D8AE2FB39F5D34F996C0E14D25422CD4B3555E23ED3254432A6B0A03EA6E9",
+      "Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_DistrictEdge01.asset": "263DDA3B686813467F033E715A40C2BB588364C56280A6E05E8930D570A53298",
+      "Assets/Game/Configs/OperationMaps/Chapter01/OperationMapCatalog_Chapter01.asset": "DE10AD6E8FC8F0841A4E596446CC10195A7C11B575FCA20F33F961F934822F25",
+      "Assets/Game/Configs/Narrative/Chapter01/M01_FirstContact_Narrative.asset": "762FF5605DDB62B073A7A0118CFC8EE5B413F30FA094F7683ED17E7FF922C81B",
+      "Assets/Game/Prefabs/UI/Shell/Content/SCN05_CampaignOperationsContent.prefab": "FA5548BC2FE17FE82D7926146E192F49E0F69794EBFAE8A6DFB3790BACBFFD11",
+      "Assets/Game/Prefabs/UI/Shell/Content/SCN06_MissionBriefingContent.prefab": "A749D6121F0638E7E6CBE05DBD39E2C498C3D0A0EC87664517724ABB3E840A93",
+      "Assets/Game/Prefabs/UI/Shell/UIShellAppCanvas.prefab": "EA140F4D1E74B8B67D371E534099481A9FE9A857F68F7032D4F17AB6E1B29D5A",
+      "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab": "AADD83CE04B5A246D2854D88D7E24BA9BEE3675C2261563E7CD1BBE36793E37B",
+      "Assets/Game/Prefabs/UI/Popups/MissionResultPopup.prefab": "EA23214681B7835548BB26117045B7DBE59B3146AACCF8FD02C2F9006FEF5BA3"
+    }
+  },
+  "architectureDebt": {
+    "genuineCount": 0,
+    "unclassifiedCount": 0,
+    "exceptionsAddedOrEnlarged": 0
+  },
+  "protectedPathAudit": {
+    "base": "b4f1e88138f0f1afa1a3d3bda8ff26bda571b4d3",
+    "denseCityPhysicalChanges": 0,
+    "vrpDatabaseOrCapacityChanges": 0,
+    "addressablesChanges": 0,
+    "packageChanges": 0,
+    "projectSettingsChanges": 0,
+    "toolsCiChanges": 0,
+    "result": "Passed"
+  },
+  "focusedReview": {
+    "productionBehaviorChanges": "Campaign Operations prefab construction now reuses a fully bound current prefab; rebuilt content and runtime behavior are unchanged.",
+    "secondTruthOwnerIntroduced": false,
+    "qassemOrHeavyGunnerLeak": false,
+    "firstLaunchNoMenuContinuityChanged": false,
+    "skirmishDefaultsChanged": false,
+    "result": "Passed"
+  }
+}

@@ -478,6 +478,8 @@ Only `[x]` contributes to progress. Documentation, code existence, partial test 
   **Acceptance:** all expected cases pass with identical repeated hashes/state transitions and zero correctness failure.
   **Evidence:** exact case matrix, focused wrapper log, result manifest, clean pushed head.
 
+  **Exact-path metadata correction (2026-08-14):** the frozen M01DC-033 list names the planned deterministic gameplay validator and evidence report but omits the validator's mandatory deterministic Unity `.meta` file and the tracker/matrix paths required to record the item honestly. Add only those three exact paths. No production source, gameplay case, pass count, behavior, ownership, exception, threshold, or protected content changes.
+
 - [ ] **M01DC-034 - Pass entry, guidance, replay, persistence, and lifecycle validation**
   **Depends on:** M01DC-025 through M01DC-031, M01DC-032.
   **Deliverable:** normal/skip/interrupted FirstLaunch, all guidance modes, Campaign first launch/replay tutorial off/on, first-clear/replay return, save migration, crash/restart, retry/exit, unload/reload, native/pool/event/allocation coverage.
@@ -639,6 +641,7 @@ Unity licensing, wrapper, device connection, disk space, or bounded tool interru
 | 2026-08-14 | M01DC-032 nested-exit correction | Replaced the sole remaining M01 validator's direct Editor process exit with the existing suppressible validation-exit helper so a passing child suite cannot terminate the consolidated parent. Standalone fail-closed behavior and all ten launch-bootstrap checks remain unchanged. | enclosing M01DC-032 acceptance commit | Accepted |
 | 2026-08-14 | M01DC-032 Campaign-prefab determinism correction | The exact two-pass audit rejected only Campaign Operations because rebuilding an already-current prefab churned Unity local file IDs. Added the same validated-current-prefab reuse boundary already accepted for Mission Briefing; stale/incomplete prefabs still rebuild, while current content remains byte-stable. | enclosing M01DC-032 acceptance commit | Accepted |
 | 2026-08-14 | M01DC-032 | Added the consolidated M01 contract and architecture entrypoints, corrected two stale nested/audit test seams, and made Campaign Operations regeneration byte-stable without changing content. Contract `23`, source growth `17 / 17`, architecture `23`, ownership `12 / 12`, compiler zero, eleven-artifact two-pass hashes, protected paths, and focused diff review pass with zero genuine/unclassified debt. | enclosing M01DC-032 acceptance commit | Accepted |
+| 2026-08-14 | M01DC-033 metadata/tracker correction | Added only the deterministic Unity `.meta` path paired with the planned gameplay validator and the tracker/matrix paths required by the per-item acceptance contract. No production code, gameplay case, gate, count, behavior, exception, threshold, protected content, or runtime ownership changed. | enclosing ownership-correction commit | Accepted |
 
 Implementation entries are appended only after an item is accepted and pushed. The final row must record M01DC-043, the final main/origin head, 43/43 progress, Android package/device identities, agent-QA/finding closure, validation summary, and clean worktree state.
 

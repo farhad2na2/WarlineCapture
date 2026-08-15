@@ -115,8 +115,8 @@
         "playModeLogSha256": "fa94b5bda1abdbcc4ae3ecfae74e1086c2bd4329af7e9dd40a2ea2065e188879",
         "playModeResultsSha256": "8f2ed9b0ba1ad1693cbc1b7e9e21f3a43e9d1fc981d012e0a1e043a22ac4fb0f"
       },
-      "status": "fresh-package-built-device-replay-pending",
-      "closureRequires": "Fresh exact-source APK build, Samsung install, and successful Full/Contextual/Minimal mission replay"
+      "status": "closed-on-fresh-package-device-replay",
+      "closureEvidence": "Exact squad-tray-correction APK source 89c328d7dafc2064afdd078dd76bb4b8093c4e38 installed on canonical Samsung and reached live M01 through Full FirstLaunch plus Contextual and Minimal settings/replay routes; Campaign briefing and live replay frames are recorded in the capture manifest"
     },
     {
       "id": "M01DC038-P2-006",
@@ -149,14 +149,26 @@
       },
       "status": "closed-on-fresh-package-device-replay",
       "closureEvidence": "%TEMP%/m01dc038_squad_after_live.png sha256=3913233e8ed568d7b903880750a2446f3a3f8d2aa7e07e55d74c271ecafafed0 proves one RIFLE SQUAD card, 4 SOLDIERS detail, preserved tactical commands/Civilian Risk/zoom, and no armor/air/transport cards; 180-second real-input recording sha256=cc87ecfdfb1107a4e70512ee1f4d426da66e95f5baadcd71ed04c82e92a3b1e3"
+    },
+    {
+      "id": "M01DC038-P1-008",
+      "severity": "P1",
+      "title": "Live mission facts never observe patrol destruction or settle victory",
+      "reproduction": "Install exact source 89c328d7dafc2064afdd078dd76bb4b8093c4e38 on canonical Samsung; launch M01 from Campaign with Minimal guidance and replay tutorial off; destroy all three hostile patrol members; observe every red minimap marker disappear, then wait indefinitely while the live HUD remains and no result/debrief appears.",
+      "cause": "CampaignMissionSpawnSystem initializes CampaignMissionAttemptFactsComponent, but no production path updates elapsed time, move/threat/attack facts, command-squad survival/losses, or HostileDefeatedCount from the already-tagged live mission units. CampaignMissionRuntimeSystem therefore never sees the existing Engage-to-SecureCorridor victory predicate.",
+      "evidence": "%TEMP%/m01_orange_target.png sha256=8fa4a357e2560d19df72613fdc8a93697ed11eb1f4aa760283621d1be5af35d7; %TEMP%/m01_after_clear.png sha256=34b8e75b28134adbefdbab23561630833d2261718fe1aea31446d7e37292d80e; %TEMP%/m01_current_after_wait.png sha256=8b8d9c4dca9fa3cda1fd99a72c8be9dd5df23b33383bf0fa8177f46c3c3c7f25",
+      "owner": "CampaignMissionRuntimeSystem (sole attempt-facts and mission phase/outcome writer)",
+      "response": "After existing movement/combat/death systems, sample only the active session's CampaignMissionUnitRoleComponent entities and monotonically project existing attempt facts from authoritative health/faction/position/command state plus the authored move-target anchor; preserve the existing phase/outcome/result/progress owners.",
+      "status": "open-authorized",
+      "closureRequires": "Focused integration regression, consolidated architecture/source-growth and runtime PlayMode validation, fresh exact-source APK, Samsung-only Full/Contextual/Minimal replay, patrol-clear result/debrief, and complete fresh-profile story-to-command-base evidence"
     }
   ],
   "severityCounts": {
     "p0": 0,
-    "p1": 2,
+    "p1": 3,
     "p2": 2,
     "p3": 0,
-    "closed": 3,
+    "closed": 4,
     "open": 1
   },
   "acceptanceClaimed": false

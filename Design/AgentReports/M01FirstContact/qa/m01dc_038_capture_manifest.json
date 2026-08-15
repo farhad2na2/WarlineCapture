@@ -92,6 +92,54 @@
       "bytes": 347916301,
       "sha256": "cc87ecfdfb1107a4e70512ee1f4d426da66e95f5baadcd71ed04c82e92a3b1e3",
       "description": "180-second agent-operated real-input Full-guidance Samsung replay on the exact squad-tray correction package"
+    },
+    {
+      "path": "%TEMP%/m01dc038_hints_full.mp4",
+      "bytes": 176326518,
+      "sha256": "4f8262ca7c2a159e1a93ae2a18aa88622839e8766e99f3d6040351dab5ef4dd8",
+      "description": "Agent-operated Contextual/Hints session with delayed input, wrong ATTACK feedback, recovery, move, camera, zoom, and scan"
+    },
+    {
+      "path": "%TEMP%/m01_hints_wrong_attack.png",
+      "bytes": 1725049,
+      "sha256": "c5db2b029e07880a55f190c35e52ace1642ca44e130fc2d85212c8f482d45489",
+      "description": "Contextual/Hints wrong-action recovery frame with explicit Tap hostile target feedback"
+    },
+    {
+      "path": "%TEMP%/m01_campaign_briefing.png",
+      "bytes": 2044288,
+      "sha256": "52dbad29e189f9c153e2df9cc67cffc416d4622b01b9bac0f3d7071e4b00c208",
+      "description": "Readable M01 Campaign briefing with objectives, restrictions, and rewards"
+    },
+    {
+      "path": "%TEMP%/m01dc038_minimal_replay_live.mp4",
+      "bytes": 123098272,
+      "sha256": "a3f46fc05f9bb2cccec32f5c3225d4f456de899727817d2cd87bcac5c518116d",
+      "description": "Agent-operated Minimal Campaign replay with replay tutorial default off, tactical input, camera, zoom, scan, and map use"
+    },
+    {
+      "path": "%TEMP%/m01_tactical_focus.png",
+      "bytes": 1106270,
+      "sha256": "f12b5c0b18c7b44d2de71054a8c3bceade7350d908b5317a460a0ad0cc13a99f",
+      "description": "Minimal replay tactical map focus and zoom surface"
+    },
+    {
+      "path": "%TEMP%/m01_orange_target.png",
+      "bytes": 1455806,
+      "sha256": "8fa4a357e2560d19df72613fdc8a93697ed11eb1f4aa760283621d1be5af35d7",
+      "description": "Final visible patrol target under commanded attack"
+    },
+    {
+      "path": "%TEMP%/m01_after_clear.png",
+      "bytes": 1455497,
+      "sha256": "34b8e75b28134adbefdbab23561630833d2261718fe1aea31446d7e37292d80e",
+      "description": "Post-patrol-clear frame with no red minimap markers and no result transition"
+    },
+    {
+      "path": "%TEMP%/m01_current_after_wait.png",
+      "bytes": 1725575,
+      "sha256": "8b8d9c4dca9fa3cda1fd99a72c8be9dd5df23b33383bf0fa8177f46c3c3c7f25",
+      "description": "Long-wait reproduction proving the live HUD remained after patrol clear without result or debrief"
     }
   ],
   "runtimeEvidence": {
@@ -241,6 +289,16 @@
     },
     "deviceReplayExecuted": true,
     "status": "p2-007-closed-on-fresh-package-samsung-replay"
+  },
+  "liveAttemptFactsFinding": {
+    "packageSourceHead": "89c328d7dafc2064afdd078dd76bb4b8093c4e38",
+    "packageSha256": "9b4d9bd3fc5a42c5a5b275b78f0947cc142c4efdf38e9749df77d7f34c7c818f",
+    "contextualSessionExecuted": true,
+    "minimalCampaignReplayExecuted": true,
+    "patrolCleared": true,
+    "resultPresented": false,
+    "fatalOrAnrMatches": 0,
+    "status": "p1-008-open-authorized"
   },
   "acceptanceClaimed": false
 }

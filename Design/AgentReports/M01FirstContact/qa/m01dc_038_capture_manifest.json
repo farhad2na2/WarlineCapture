@@ -56,6 +56,24 @@
       "bytes": 1654742,
       "sha256": "efb101b2ba26e7c2f4831c228df1876d85f7039c5e76d7ef40a57721da91263f",
       "description": "Live M01 HUD finding frame showing forbidden Materials/Oil/Fuel and BUILD/SUPPORT presentation"
+    },
+    {
+      "path": "%TEMP%/m01dc038_full_step06.png",
+      "bytes": 1613221,
+      "sha256": "b5758b76818d0c5965c8ecf4befdfb33a84842a62a406e30c0a58336c206245d",
+      "description": "Fresh exact-source Samsung after frame closing P2-006 with preserved Civilian Risk, zoom, and tactical commands"
+    },
+    {
+      "path": "%TEMP%/m01dc038_full_step08.png",
+      "bytes": 1853922,
+      "sha256": "5fe9dc2aa07dd28c9fc4d3e792c5f162675997a4917b84d9b75687227be00c35",
+      "description": "Fresh exact-source Samsung frame exposing P2-007 false armor, air, and transport squad cards"
+    },
+    {
+      "path": "%TEMP%/m01dc038_hud_after_full_01.mp4",
+      "bytes": 180365357,
+      "sha256": "b89d4a46aa0c05ad857dd3929d12b51e7426c17188e491da3d157b0b8c857826",
+      "description": "Agent-operated real-input Full-guidance Samsung session closing P2-006 and reproducing P2-007"
     }
   ],
   "runtimeEvidence": {
@@ -158,17 +176,17 @@
       "packageType": "APK",
       "scriptingBackend": "IL2CPP",
       "targetArchitecture": "ARM64",
-      "installExecuted": false,
-      "replayExecuted": false,
-      "deviceConnection": "Canonical Samsung not connected after build; no other device contacted"
+      "installExecuted": true,
+      "replayExecuted": true,
+      "deviceConnection": "Samsung SM-S918B / R5CTC1J02VB at 192.168.2.33:39901; no other device contacted"
     },
     "restoredBuildGeneratedTrackedOutputs": [
       "Design/AgentReports/architecture_performance_android_apk_build_report.json",
       "Design/AgentReports/architecture_performance_android_apk_build_report.md",
       "Design/AgentReports/operation_map_addressables_build_report.json"
     ],
-    "deviceReplayExecuted": false,
-    "status": "source-corrected-validation-and-fresh-package-passed-samsung-replay-pending"
+    "deviceReplayExecuted": true,
+    "status": "p2-006-closed-on-samsung-replay-p2-007-found"
   },
   "acceptanceClaimed": false
 }

@@ -62,9 +62,9 @@
     "buildMarker": "[ProductionAndroidPackage] result=Passed",
     "buildLogSha256": "626c44cad8a6169913706f121e9956f3715293cb23b81b9a9fa9cb63e4cd79c6",
     "buildDirty": false,
-    "installExecuted": false,
-    "deviceReplayExecuted": false,
-    "deviceState": "Canonical Samsung was not connected after the build; no other device was contacted"
+    "installExecuted": true,
+    "deviceReplayExecuted": true,
+    "deviceState": "Installed and cold-replayed on canonical Samsung only; P2-006 closed and P2-007 found"
   },
   "findings": [
     {
@@ -118,16 +118,27 @@
         "m01Architecture": "Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23; log sha256=b3f42eca9c4b4b407aac9db62520cb407504b823d9999f882956a7b086d45219",
         "m01RuntimePlayMode": "Passed 18/18 failed=0 skipped=0; log sha256=bb1882174c231c517de51c8643322674e6804a169e7caffe4436cab2b6f513eb; xml sha256=2ac27baa92c73c2f7d7274aea058941e656a888e8a57affe7a8b4b69037f3081"
       },
-      "status": "fresh-package-built-device-replay-pending",
-      "closureRequires": "Fresh exact-source APK build, Samsung-only install/replay, and after capture proving hidden economy/build/support with preserved Civilian Risk/zoom/tactical commands"
+      "status": "closed-on-fresh-package-device-replay",
+      "closureEvidence": "%TEMP%/m01dc038_full_step06.png sha256=b5758b76818d0c5965c8ecf4befdfb33a84842a62a406e30c0a58336c206245d proves hidden economy/build/support with preserved Civilian Risk/zoom/tactical commands"
+    },
+    {
+      "id": "M01DC038-P2-007",
+      "severity": "P2",
+      "title": "M01 squad tray exposes false armor, air, and transport choices",
+      "reproduction": "Install the HUD-correction APK on canonical Samsung; clear app data; complete Full-guidance FirstLaunch into live M01; select ARMOR and observe 2 VEHICLES while ARMOR, GUNSHIP, JET WING, and TRANSPORT cards remain available.",
+      "cause": "The shared Match squad tray hard-codes unrestricted Skirmish categories and does not consume the active Campaign mission restrictions or authored force composition.",
+      "evidence": "%TEMP%/m01dc038_full_step08.png sha256=5fe9dc2aa07dd28c9fc4d3e792c5f162675997a4917b84d9b75687227be00c35",
+      "response": "Read the existing optional mission restriction projection in the presentation-only tray; preserve the soldier card and hide vehicle, air, and transport cards for active M01 while retaining unrestricted no-Campaign/Skirmish defaults.",
+      "status": "open-authorized",
+      "closureRequires": "Focused and architecture validation, fresh exact-source APK, Samsung-only replay, and after capture proving only the authored soldier card remains without tactical-command regression"
     }
   ],
   "severityCounts": {
     "p0": 0,
     "p1": 2,
-    "p2": 1,
+    "p2": 2,
     "p3": 0,
-    "closed": 1,
+    "closed": 2,
     "open": 2
   },
   "acceptanceClaimed": false

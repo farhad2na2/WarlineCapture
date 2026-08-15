@@ -140,6 +140,53 @@ public sealed class M01FirstContactRuntimePlayModeTests
     }
 
     [Test]
+    public void LiveMissionRoleDeathsDrivePatrolClearIntoVictoryResult()
+    {
+        using World world = new(nameof(LiveMissionRoleDeathsDrivePatrolClearIntoVictoryResult));
+        EntityManager em = world.EntityManager;
+        Entity root = em.CreateEntity(
+            typeof(CampaignMissionRootComponent), typeof(CampaignMissionRuntimeComponent),
+            typeof(CampaignMissionAttemptFactsComponent));
+        CampaignMissionRuntimeComponent runtime = GuidanceRuntime(NarrativeGuidanceMode.Minimal);
+        runtime.Phase = MissionPhaseKind.Engage;
+        runtime.LaunchOrigin = MissionLaunchOriginKind.CampaignOperations;
+        runtime.RunKind = MissionRunKind.Replay;
+        runtime.ReplayTutorialEnabled = 0;
+        em.SetComponentData(root, runtime);
+        em.SetComponentData(root, GuidanceFacts());
+        em.AddBuffer<CampaignMissionActionRequestElement>(root);
+        em.AddBuffer<CampaignMissionActionResultElement>(root);
+
+        FixedString64Bytes session = runtime.SessionToken;
+        for (int index = 0; index < 4; index++)
+            CreateMissionUnit(em, session, 1);
+        Entity[] patrol = new Entity[3];
+        for (int index = 0; index < patrol.Length; index++)
+            patrol[index] = CreateMissionUnit(em, session, 2);
+
+        SystemHandle handle = world.GetOrCreateSystem<CampaignMissionRuntimeSystem>();
+        Update(world, handle);
+        Assert.That(em.GetComponentData<CampaignMissionAttemptFactsComponent>(root).HostileDefeatedCount,
+            Is.Zero);
+        for (int patrolIndex = 0; patrolIndex < patrol.Length; patrolIndex++)
+            em.DestroyEntity(patrol[patrolIndex]);
+
+        Update(world, handle);
+        CampaignMissionAttemptFactsComponent facts =
+            em.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
+        Assert.That(facts.HostileDefeatedCount, Is.EqualTo(3));
+        Assert.That(facts.CommandSquadAlive, Is.EqualTo(1));
+        Assert.That(em.GetComponentData<CampaignMissionRuntimeComponent>(root).Phase,
+            Is.EqualTo(MissionPhaseKind.SecureCorridor));
+
+        Update(world, handle);
+        CampaignMissionRuntimeComponent result = em.GetComponentData<CampaignMissionRuntimeComponent>(root);
+        Assert.That(result.Phase, Is.EqualTo(MissionPhaseKind.Result));
+        Assert.That(result.Outcome, Is.EqualTo(MissionOutcomeKind.Victory));
+        Assert.That(result.ReturnDestination, Is.EqualTo(MissionReturnDestinationKind.CampaignOperations));
+    }
+
+    [Test]
     public void MigrationRestartAndSettlementRemainExactlyOnce()
     {
         string root = Path.Combine(Path.GetTempPath(), "M01DC034", Guid.NewGuid().ToString("N"));
@@ -293,6 +340,27 @@ public sealed class M01FirstContactRuntimePlayModeTests
     {
         while (test.MoveNext()) yield return test.Current;
     }
+
+    private static Entity CreateMissionUnit(EntityManager em, FixedString64Bytes session, byte faction)
+    {
+        Entity entity = em.CreateEntity(
+            typeof(CampaignMissionUnitRoleComponent), typeof(Faction), typeof(UnitHealth),
+            typeof(Unity.Transforms.LocalTransform));
+        em.SetComponentData(entity, new CampaignMissionUnitRoleComponent
+        {
+            MissionRoleId = new FixedString64Bytes(faction > 1 ? "role.ash.patrol" : "role.jrc.command_squad"),
+            UnitGroupId = new FixedString64Bytes(faction > 1 ? "group.ash.patrol" : "group.jrc.command_squad"),
+            SessionToken = session
+        });
+        em.SetComponentData(entity, new Faction { Id = faction });
+        em.SetComponentData(entity, new UnitHealth { Current = 100, Max = 100 });
+        em.SetComponentData(entity, Unity.Transforms.LocalTransform.Identity);
+        return entity;
+    }
+
+    private static void Update(World world, SystemHandle handle) =>
+        world.Unmanaged.GetUnsafeSystemRef<CampaignMissionRuntimeSystem>(handle)
+            .OnUpdate(ref world.Unmanaged.ResolveSystemStateRef(handle));
 
     private static World HandoffWorld(out Entity root)
     {

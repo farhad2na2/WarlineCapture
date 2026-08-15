@@ -4,11 +4,14 @@ using Game.Missions.Contracts;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
 
 namespace Game.Runtime
 {
     [BurstCompile]
     [UpdateInGroup(typeof(SimulationSystemGroup))]
+    [UpdateAfter(typeof(UnitDeathSystem))]
     public partial struct CampaignMissionRuntimeSystem : ISystem
     {
         private static readonly FixedString64Bytes StaleResultActionReason = "stale-result-action";
@@ -17,6 +20,7 @@ namespace Game.Runtime
         private static readonly FixedString64Bytes InvalidResultTransitionReason = "invalid-result-transition";
         private static readonly FixedString64Bytes RetryUnavailableReason = "retry-unavailable";
         private static readonly FixedString64Bytes RetryAlreadyQueuedReason = "retry-already-queued";
+        private static readonly FixedString64Bytes MoveTargetAnchorId = "anchor.ch01.m01.move_target";
 
         [BurstCompile]
         public void OnCreate(ref SystemState state)
@@ -34,6 +38,99 @@ namespace Game.Runtime
                 TryConsumeAction(state.EntityManager, root))
                 return;
 
+            if (!SystemAPI.TryGetSingleton(out CampaignMissionRuntimeComponent activeRuntime) ||
+                !SystemAPI.TryGetSingleton(out CampaignMissionAttemptFactsComponent _))
+                return;
+
+            RefRW<CampaignMissionAttemptFactsComponent> factsRw =
+                SystemAPI.GetSingletonRW<CampaignMissionAttemptFactsComponent>();
+            CampaignMissionAttemptFactsComponent projectedFacts = factsRw.ValueRO;
+            if (activeRuntime.Outcome == MissionOutcomeKind.None &&
+                activeRuntime.Phase is >= MissionPhaseKind.FindSquad and <= MissionPhaseKind.SecureCorridor &&
+                projectedFacts.CommandSquadSpawned != 0)
+            {
+                float3 moveTarget = default;
+                float moveRadius = 0f;
+                OperationMapAnchorBlob moveAnchor = default;
+                bool hasMoveTarget = SystemAPI.TryGetSingleton(out OperationMapMetadataComponent metadata) &&
+                    metadata.Blob.IsCreated && CampaignMissionSpawnSystem.TryFindAnchor(
+                        ref metadata.Blob.Value, MoveTargetAnchorId, out moveAnchor);
+                if (hasMoveTarget)
+                {
+                    moveTarget = moveAnchor.Position;
+                    moveRadius = math.max(0.25f, moveAnchor.Radius);
+                }
+                ComponentLookup<EngageTarget> engageTargets = SystemAPI.GetComponentLookup<EngageTarget>(true);
+                ComponentLookup<CampaignMissionUnitRoleComponent> roles =
+                    SystemAPI.GetComponentLookup<CampaignMissionUnitRoleComponent>(true);
+                ComponentLookup<Faction> factions = SystemAPI.GetComponentLookup<Faction>(true);
+                ComponentLookup<UnitHealth> health = SystemAPI.GetComponentLookup<UnitHealth>(true);
+                int aliveFriendly = 0;
+                int aliveHostile = 0;
+                int expectedFriendly = 0;
+                bool moveTargetReached = false;
+                bool commandedHostileAttack = false;
+
+                if (SystemAPI.TryGetSingleton(out CampaignMissionCatalogComponent catalog) &&
+                    CampaignMissionSpawnSystem.TryFindDefinition(in catalog, in activeRuntime, out int definitionIndex))
+                {
+                    ref CampaignMissionDefinitionBlob definition = ref catalog.Blob.Value.Missions[definitionIndex];
+                    expectedFriendly = CountFriendlyUnits(ref definition);
+                }
+
+                foreach ((RefRO<CampaignMissionUnitRoleComponent> role,
+                          RefRO<Faction> faction,
+                          RefRO<UnitHealth> unitHealth,
+                          RefRO<LocalTransform> transform,
+                          Entity entity)
+                         in SystemAPI.Query<RefRO<CampaignMissionUnitRoleComponent>, RefRO<Faction>,
+                             RefRO<UnitHealth>, RefRO<LocalTransform>>().WithEntityAccess())
+                {
+                    if (!role.ValueRO.SessionToken.Equals(activeRuntime.SessionToken) || unitHealth.ValueRO.Current <= 0)
+                        continue;
+                    if (faction.ValueRO.Id > 1)
+                    {
+                        aliveHostile++;
+                        continue;
+                    }
+
+                    aliveFriendly++;
+                    float2 offset = transform.ValueRO.Position.xz - moveTarget.xz;
+                    if (hasMoveTarget && math.lengthsq(offset) <= moveRadius * moveRadius)
+                        moveTargetReached = true;
+                    if (!engageTargets.HasComponent(entity))
+                        continue;
+                    EngageTarget target = engageTargets[entity];
+                    if (target.IsCommanded == 0 || target.Target == Entity.Null ||
+                        !roles.HasComponent(target.Target) || !factions.HasComponent(target.Target) ||
+                        !health.HasComponent(target.Target) || health[target.Target].Current <= 0 ||
+                        !roles[target.Target].SessionToken.Equals(activeRuntime.SessionToken) ||
+                        factions[target.Target].Id <= 1)
+                        continue;
+                    commandedHostileAttack = true;
+                }
+
+                projectedFacts.ElapsedMilliseconds = SaturatingAddMilliseconds(
+                    projectedFacts.ElapsedMilliseconds, SystemAPI.Time.DeltaTime);
+                projectedFacts.CommandSquadAlive = aliveFriendly > 0 ? (byte)1 : (byte)0;
+                if (expectedFriendly > 0)
+                {
+                    projectedFacts.SquadLossCount = math.max(
+                        projectedFacts.SquadLossCount, math.max(0, expectedFriendly - aliveFriendly));
+                }
+                int defeated = math.clamp(projectedFacts.HostileTotalCount - aliveHostile,
+                    0, projectedFacts.HostileTotalCount);
+                projectedFacts.HostileDefeatedCount = math.max(projectedFacts.HostileDefeatedCount, defeated);
+                if (moveTargetReached)
+                    projectedFacts.MoveToCoverComplete = 1;
+                if (commandedHostileAttack)
+                {
+                    projectedFacts.ThreatConfirmed = 1;
+                    projectedFacts.AttackIssued = 1;
+                }
+                factsRw.ValueRW = projectedFacts;
+            }
+
             foreach ((RefRW<CampaignMissionRuntimeComponent> runtime,
                       RefRO<CampaignMissionAttemptFactsComponent> facts)
                      in SystemAPI.Query<RefRW<CampaignMissionRuntimeComponent>,
@@ -44,6 +141,26 @@ namespace Game.Runtime
                     continue;
                 runtime.ValueRW = next;
             }
+        }
+
+        private static int SaturatingAddMilliseconds(int current, float deltaSeconds)
+        {
+            int delta = (int)math.min(int.MaxValue, math.max(0f, math.round(deltaSeconds * 1000f)));
+            return current >= int.MaxValue - delta ? int.MaxValue : current + delta;
+        }
+
+        private static int CountFriendlyUnits(ref CampaignMissionDefinitionBlob definition)
+        {
+            int count = 0;
+            for (int groupIndex = 0; groupIndex < definition.ForceGroups.Length; groupIndex++)
+            {
+                ref CampaignMissionForceGroupBlob group = ref definition.ForceGroups[groupIndex];
+                if (group.FactionId > 1)
+                    continue;
+                for (int unitIndex = 0; unitIndex < group.Units.Length; unitIndex++)
+                    count += group.Units[unitIndex].Count;
+            }
+            return count;
         }
 
         internal static bool TryConsumeAction(EntityManager entityManager, Entity root)

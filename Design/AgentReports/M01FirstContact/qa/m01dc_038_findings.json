@@ -269,15 +269,31 @@
       },
       "status": "source-validated-pending-fresh-package-device-replay",
       "closureRequires": "Commit and push the validated correction, build a fresh exact-head APK, install on canonical Samsung only, and replay real input proving that selected visible soldiers retain a mesh visual through the farthest camera zoom while unselected-unit impostors remain active."
+    },
+    {
+      "id": "M01DC038-P2-011",
+      "severity": "P2",
+      "title": "Mission 1 announces a ground-vehicle attack when no hostile vehicle exists",
+      "reproduction": "Enter live Mission 1 with its authored Courier, Warden, and Broker infantry patrol; hear `Ground vehicle attack detected` although no hostile ground vehicle is present or visible.",
+      "cause": "ThreatDetectionWarningSystem excluded only player-faction entities before classifying threat candidates, so neutral authored map vehicles could enter the close-contact ground-threat set and emit the hostile warning audio.",
+      "evidence": "Direct project-owner real-input audio feedback recorded in this task; source inspection confirmed M01 authors only three hostile infantry while operation-map vehicles use the established neutral faction.",
+      "owner": "Existing ThreatDetectionWarningSystem warning candidate boundary",
+      "response": "Require the established FactionIdentity.IsHostileToPlayer predicate before any candidate can emit a ground or air warning; retain player units as close-contact sensors and ignore neutral map vehicles. Preserve real hostile vehicle and air warnings.",
+      "editorValidation": {
+        "focused": "Passed including close neutral ground vehicle does not warn; log sha256=d6de7f486328467a9eb65225728770d7e5fd028a35b7e7d1d527f77714f12cec",
+        "m01Architecture": "Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23; log sha256=1f3b755509eeb02dc10aa5bfabeb6d020a40b5e82c13c08ec92eafdac7957ba7"
+      },
+      "status": "source-validated-pending-fresh-package-device-replay",
+      "closureRequires": "Commit and push the validated correction, build a fresh exact-head APK, install on canonical Samsung only, and replay Mission 1 proving that neutral map vehicles produce no ground-attack popup or audio while a hostile-warning regression remains covered."
     }
   ],
   "severityCounts": {
     "p0": 0,
     "p1": 4,
-    "p2": 5,
+    "p2": 6,
     "p3": 0,
     "closed": 4,
-    "open": 5
+    "open": 6
   },
   "acceptanceClaimed": false
 }

@@ -33,6 +33,7 @@ public sealed class ThreatWarningValidationTests
             tests.ThreatDetectionWarningSystem_IgnoresVehiclesMovingAwayFromSensor();
             tests.ThreatDetectionWarningSystem_CloseAirThreatWarnsWithoutDetectorOrApproachOrder();
             tests.ThreatDetectionWarningSystem_CloseGroundVehicleWarnsWithoutDetectorButIgnoresSoldiers();
+            tests.ThreatDetectionWarningSystem_CloseNeutralGroundVehicleDoesNotWarn();
             tests.ThreatDetectionWarningSystem_SatelliteWarnsOnlyForAirThreats();
             tests.ThreatDetectionWarningSystem_PrefiltersEligibleThreatsBeforeSensorScans();
             tests.ThreatDetectionWarningSystem_CompletesPendingUnitGridWriterBeforeChunkRead();
@@ -61,7 +62,8 @@ public sealed class ThreatWarningValidationTests
         const string sourcePath = "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs";
         string source = System.IO.File.ReadAllText(sourcePath);
         StringAssert.Contains("BuildThreatCandidates(ref factionType, ref gridType, ref healthType);", source);
-        StringAssert.Contains("targetFactions[targetIndex].Id == PlayerFactionId", source);
+        StringAssert.Contains("FactionIdentity.IsHostileToPlayer(faction)", source);
+        StringAssert.Contains("faction == PlayerFactionId", source);
         StringAssert.Contains("!isAirTarget && !IsGroundVehicle(TargetLookups, target)", source);
 
         int scanStart = source.IndexOf("private void ScanTargetsForSensor(", System.StringComparison.Ordinal);
@@ -488,6 +490,31 @@ public sealed class ThreatWarningValidationTests
             Assert.IsTrue(HasPendingWarning(em));
             Assert.AreEqual(ThreatWarningType.Ground, ReadWarning(em).PendingType);
             Assert.That(ReadWarning(em).PendingEtaSeconds, Is.EqualTo(0f).Within(0.01f));
+        }
+        finally
+        {
+            RuntimeGameplayStateTestHelper.SetPlayRequested(false);
+            ThreatWarningRuntimeState.Reset(em);
+        }
+    }
+
+    [Test]
+    public void ThreatDetectionWarningSystem_CloseNeutralGroundVehicleDoesNotWarn()
+    {
+        using var world = new World("ThreatDetectionWarningSystem_CloseNeutralGroundVehicle");
+        EntityManager em = world.EntityManager;
+        CreateUnit(em, FactionIdentity.PlayerFactionId, new int2(20, 20), false, 100, 0f);
+        CreateUnit(em, FactionIdentity.NeutralFactionId, new int2(22, 20), false, 100, 0f, true);
+
+        SystemHandle system = world.CreateSystem<ThreatDetectionWarningSystem>();
+        try
+        {
+            RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
+            ThreatWarningRuntimeState.Reset(em);
+
+            system.Update(world.Unmanaged);
+
+            Assert.IsFalse(HasPendingWarning(em));
         }
         finally
         {

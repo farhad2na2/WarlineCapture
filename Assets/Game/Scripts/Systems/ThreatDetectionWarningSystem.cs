@@ -456,21 +456,20 @@ namespace Game.Runtime
                     {
                         Entity target = targetEntities[targetIndex];
                         UnitHealth targetHealth = targetHealths[targetIndex];
-                        if (targetFactions[targetIndex].Id == PlayerFactionId)
+                        byte faction = targetFactions[targetIndex].Id;
+                        if (faction == PlayerFactionId && targetHealth.Current > 0)
                         {
-                            if (targetHealth.Current > 0)
+                            int2 sensorCell = targetGrids[targetIndex].Cell;
+                            if (CloseContactSensorCells.Add(sensorCell))
                             {
-                                int2 sensorCell = targetGrids[targetIndex].Cell;
-                                if (CloseContactSensorCells.Add(sensorCell))
+                                CloseContactSensors.Add(new ThreatSensor
                                 {
-                                    CloseContactSensors.Add(new ThreatSensor
-                                    {
-                                        Cell = sensorCell
-                                    });
-                                }
+                                    Cell = sensorCell
+                                });
                             }
-                            continue;
                         }
+                        if (!FactionIdentity.IsHostileToPlayer(faction))
+                            continue;
 
                         if (targetHealth.Current <= 0 ||
                             TargetLookups.BuildingLookup.HasComponent(target))

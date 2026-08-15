@@ -440,5 +440,26 @@
     "deviceReplayExecuted": false,
     "status": "source-validated-pending-fresh-package-samsung-replay"
   },
+  "neutralVehicleThreatAudioCorrection": {
+    "findingId": "M01DC038-P2-011",
+    "projectOwnerFeedback": "Mission 1 played `Ground vehicle attack detected` although no hostile vehicle was observed and the authored hostile force contains only infantry.",
+    "implementedResponse": "Require the established hostile-to-player faction predicate before any threat candidate can emit warning presentation; keep player units as sensors and exclude neutral authored map vehicles.",
+    "authoredM01HostileForceChanged": false,
+    "warningStringsOrAudioAssetsChanged": false,
+    "realHostileVehicleAndAirWarningsPreserved": true,
+    "focusedValidation": {
+      "log": "%TEMP%/warline-m01dc038-neutral-vehicle-threat-focused.log",
+      "logSha256": "d6de7f486328467a9eb65225728770d7e5fd028a35b7e7d1d527f77714f12cec",
+      "marker": "[ThreatWarningValidation] result=Passed"
+    },
+    "architectureValidation": {
+      "log": "%TEMP%/warline-m01dc038-neutral-vehicle-threat-architecture.log",
+      "logSha256": "1f3b755509eeb02dc10aa5bfabeb6d020a40b5e82c13c08ec92eafdac7957ba7",
+      "marker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23"
+    },
+    "freshPackageBuilt": false,
+    "deviceReplayExecuted": false,
+    "status": "source-validated-pending-fresh-package-samsung-replay"
+  },
   "acceptanceClaimed": false
 }

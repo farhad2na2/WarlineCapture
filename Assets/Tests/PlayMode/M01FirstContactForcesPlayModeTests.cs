@@ -49,17 +49,32 @@ public sealed class M01FirstContactForcesPlayModeTests
                 RuntimeCameraFocusRequestComponent>(fixture.CameraFocus);
             Assert.That(focus.Requested, Is.EqualTo(1));
             float3 friendlyCenter = float3.zero;
+            float3 hostileCenter = float3.zero;
             int friendlyCount = 0;
+            int hostileCount = 0;
             for (int i = 0; i < entities.Length; i++)
             {
-                if (world.EntityManager.GetComponentData<Faction>(entities[i]).Id !=
-                    FactionIdentity.PlayerFactionId)
-                    continue;
-                friendlyCenter += world.EntityManager.GetComponentData<LocalTransform>(entities[i]).Position;
-                friendlyCount++;
+                float3 position = world.EntityManager.GetComponentData<LocalTransform>(entities[i]).Position;
+                if (world.EntityManager.GetComponentData<Faction>(entities[i]).Id == FactionIdentity.PlayerFactionId)
+                {
+                    friendlyCenter += position;
+                    friendlyCount++;
+                }
+                else
+                {
+                    hostileCenter += position;
+                    hostileCount++;
+                }
             }
             Assert.That(friendlyCount, Is.EqualTo(4));
-            Assert.That(math.distance(focus.World, friendlyCenter / friendlyCount), Is.LessThan(0.001f));
+            Assert.That(hostileCount, Is.EqualTo(3));
+            Assert.That(focus.Smooth, Is.Zero);
+            Assert.That(math.distance(focus.World, hostileCenter / hostileCount), Is.LessThan(0.001f));
+            CampaignMissionOpeningPresentationComponent opening = world.EntityManager.GetComponentData<
+                CampaignMissionOpeningPresentationComponent>(fixture.Root);
+            Assert.That(opening.Stage, Is.EqualTo(1));
+            Assert.That(opening.SessionToken, Is.EqualTo(Session));
+            Assert.That(math.distance(opening.FriendlyFocus, friendlyCenter / friendlyCount), Is.LessThan(0.001f));
             yield break;
         }
         finally { fixture.Dispose(); }
@@ -75,12 +90,26 @@ public sealed class M01FirstContactForcesPlayModeTests
             Update<CampaignMissionSpawnSystem>(world);
             CampaignMissionAttemptFactsComponent facts = world.EntityManager.GetComponentData<
                 CampaignMissionAttemptFactsComponent>(fixture.Root);
-            facts.ElapsedMilliseconds = 3000;
+            world.EntityManager.SetComponentData(fixture.CameraFocus, default(RuntimeCameraFocusRequestComponent));
+            facts.ElapsedMilliseconds = 2000;
             world.EntityManager.SetComponentData(fixture.Root, facts);
             Update<CampaignMissionPatrolOrderSystem>(world);
+            RuntimeCameraFocusRequestComponent focus = world.EntityManager.GetComponentData<
+                RuntimeCameraFocusRequestComponent>(fixture.CameraFocus);
+            Assert.That(focus.Requested, Is.EqualTo(1));
+            Assert.That(focus.Smooth, Is.EqualTo(1));
+            CampaignMissionOpeningPresentationComponent opening = world.EntityManager.GetComponentData<
+                CampaignMissionOpeningPresentationComponent>(fixture.Root);
+            Assert.That(opening.Stage, Is.EqualTo(2));
+            Assert.That(math.distance(focus.World, opening.FriendlyFocus), Is.LessThan(0.001f));
             Entity queue = UnitMoveOrderRequestSystem.EnsureQueueEntity(world.EntityManager);
             DynamicBuffer<UnitMoveOrderRequestElement> requests = world.EntityManager.GetBuffer<
                 UnitMoveOrderRequestElement>(queue);
+            Assert.That(requests.Length, Is.Zero);
+            facts.ElapsedMilliseconds = 3000;
+            world.EntityManager.SetComponentData(fixture.Root, facts);
+            Update<CampaignMissionPatrolOrderSystem>(world);
+            requests = world.EntityManager.GetBuffer<UnitMoveOrderRequestElement>(queue);
             Assert.That(requests.Length, Is.EqualTo(3));
             for (int i = 0; i < requests.Length; i++)
             {

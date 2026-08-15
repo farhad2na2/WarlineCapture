@@ -10,8 +10,12 @@ namespace Game.Runtime
     [UpdateBefore(typeof(CampaignMissionRuntimeSystem))]
     public partial struct CampaignMissionPatrolOrderSystem : ISystem
     {
+        private const int SquadReturnFocusMilliseconds = 2000;
+        private EntityQuery _cameraFocusQuery;
+
         public void OnCreate(ref SystemState state)
         {
+            _cameraFocusQuery = state.GetEntityQuery(ComponentType.ReadWrite<RuntimeCameraFocusRequestComponent>());
             state.RequireForUpdate<CampaignMissionCatalogComponent>();
             state.RequireForUpdate<CampaignMissionRuntimeComponent>();
             state.RequireForUpdate<CampaignMissionAttemptFactsComponent>();
@@ -27,6 +31,31 @@ namespace Game.Runtime
             if (!metadata.Blob.IsCreated || facts.CommandSquadSpawned == 0 ||
                 !CampaignMissionSpawnSystem.TryFindDefinition(in catalog, in runtime, out int definitionIndex))
                 return;
+            if (facts.ElapsedMilliseconds >= SquadReturnFocusMilliseconds &&
+                _cameraFocusQuery.CalculateEntityCount() == 1)
+            {
+                Entity focusEntity = _cameraFocusQuery.GetSingletonEntity();
+                RuntimeCameraFocusRequestComponent focus =
+                    state.EntityManager.GetComponentData<RuntimeCameraFocusRequestComponent>(focusEntity);
+                if (focus.Requested == 0)
+                {
+                    foreach (RefRW<CampaignMissionOpeningPresentationComponent> opening in
+                             SystemAPI.Query<RefRW<CampaignMissionOpeningPresentationComponent>>())
+                    {
+                        CampaignMissionOpeningPresentationComponent current = opening.ValueRO;
+                        if (current.Stage != 1 || !current.SessionToken.Equals(runtime.SessionToken)) continue;
+                        state.EntityManager.SetComponentData(focusEntity, new RuntimeCameraFocusRequestComponent
+                        {
+                            Requested = 1,
+                            Smooth = 1,
+                            World = current.FriendlyFocus
+                        });
+                        current.Stage = 2;
+                        opening.ValueRW = current;
+                        break;
+                    }
+                }
+            }
             ref CampaignMissionDefinitionBlob definition = ref catalog.Blob.Value.Missions[definitionIndex];
             NativeList<Entity> targets = new(Allocator.Temp);
             NativeList<int2> goals = new(Allocator.Temp);

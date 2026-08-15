@@ -24,6 +24,7 @@ namespace Game.Components
     public struct RuntimeCameraFocusRequestComponent : IComponentData
     {
         public byte Requested;
+        public byte Smooth;
         public float3 World;
     }
 

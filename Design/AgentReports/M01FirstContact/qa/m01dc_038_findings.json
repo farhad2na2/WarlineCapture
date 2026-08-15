@@ -79,6 +79,19 @@
     "deviceReplayExecuted": true,
     "deviceState": "Installed, cold-launched, and Full-guidance replayed on canonical Samsung only; P2-007 closed"
   },
+  "cameraModelCorrectionPackage": {
+    "applicationId": "com.warlinecapture.game",
+    "sourceHead": "22c8af8410c5069538caa3a761941500660f9ab4",
+    "bytes": 558927365,
+    "sha256": "86bd773f9f76d3f1e8b99a9e708d45381fadb81d24e64e6ebbe7bda2ec1a221b",
+    "buildMethod": "Game.Editor.BuildScript.BuildProductionAndroidApk",
+    "buildMarker": "[ProductionAndroidPackage] result=Passed",
+    "buildLogSha256": "e5a271f8326465266310801313574bdadbfc6f48bf123a2628389697946b00ea",
+    "buildDirty": false,
+    "installExecuted": false,
+    "deviceReplayExecuted": false,
+    "deviceState": "Superseded before install by additional owner findings covering tutorial encounter reveal, patrol occlusion, selected-unit impostors, false vehicle audio, and ARIA action behavior"
+  },
   "findings": [
     {
       "id": "M01DC038-P1-001",
@@ -202,15 +215,53 @@
       },
       "status": "source-validated-pending-fresh-package-device-replay",
       "closureRequires": "Commit and push the validated correction, build a fresh exact-head APK, install on canonical Samsung only, and replay real-input combat proving squad-centered opening framing, blue circular selection, and immediately distinguishable cyan friendly versus coral hostile infantry"
+    },
+    {
+      "id": "M01DC038-P1-013",
+      "severity": "P1",
+      "title": "Tutorial opening does not reveal the patrol and stages enemies behind the civic hall",
+      "reproduction": "Enter live Mission 1; observe no tutorial camera introduction of the enemy patrol; search the battlefield and find enemies behind or visually inside the civic hall, with their positions becoming obvious mainly through the minimap.",
+      "cause": "CampaignMissionSpawnSystem emitted only a friendly-center focus, while the authored patrol spawn and route used the civic hall centerline instead of the already-validated open Old Market contact corridor.",
+      "evidence": "Direct project-owner real-input feedback recorded in this task; logical anchor/source inspection at clean source head 22c8af8410c5069538caa3a761941500660f9ab4.",
+      "owner": "M01 logical anchor authoring plus existing mission spawn/patrol presentation request boundaries",
+      "response": "Move only M01 logical anchors onto the accepted five-point open contact corridor; show the actual three-hostile center first; then publish one delayed smooth existing focus request to the actual four-friendly center before the unchanged patrol start. Preserve shared dense-city geometry and the shell camera request owner.",
+      "editorValidation": {
+        "anchor": {
+          "log": "%TEMP%/warline-m01dc038-tutorial-anchor.log",
+          "logSha256": "91a174ba1b6abc02f84d8830fa3637c6346a209b00e21b4c233e3a09c55c271c",
+          "marker": "[M01FirstContactAnchorValidation] result=Passed tests=13"
+        },
+        "cameraState": {
+          "log": "%TEMP%/warline-m01dc038-tutorial-runtime-state.log",
+          "logSha256": "322c3b33b9348da305efecd2e14ca6573f9b6d2a5ea189fe9058675d75de78bc",
+          "marker": "[RuntimeGameplayStateValidation] result=Passed tests=9"
+        },
+        "forcesPlayMode": {
+          "log": "%TEMP%/warline-m01dc038-tutorial-forces-playmode-final.log",
+          "logSha256": "7d48419806cd33b3fa18e1c20051b615ad15abdefa82adb42e247d13981291f2",
+          "results": "%TEMP%/warline-m01dc038-tutorial-forces-playmode-final.xml",
+          "resultsSha256": "7d6a60fe315e652dc1ddd610c15e7450fc97577e0435d0d5bbec7935d3b650e1",
+          "total": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "architecture": {
+          "log": "%TEMP%/warline-m01dc038-tutorial-architecture-rerun.log",
+          "logSha256": "9b59b3742c1bdadabc2636cc52951fcd1f2567876074d24354fc20d1d018cc10",
+          "marker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23"
+        }
+      },
+      "status": "source-validated-pending-fresh-package-device-replay",
+      "closureRequires": "Commit and push the validated correction, build a fresh exact-head APK, install on canonical Samsung only, and replay real input proving the hostile reveal, smooth squad return, exposed patrol, and immediate battlefield comprehension."
     }
   ],
   "severityCounts": {
     "p0": 0,
-    "p1": 3,
+    "p1": 4,
     "p2": 4,
     "p3": 0,
     "closed": 4,
-    "open": 3
+    "open": 4
   },
   "acceptanceClaimed": false
 }

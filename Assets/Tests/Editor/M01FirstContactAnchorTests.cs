@@ -26,14 +26,14 @@ public static class M01FirstContactAnchorTests
 
     private static readonly AnchorSpec[] Specs =
     {
-        new("anchor.ch01.m01.player_spawn", OperationMapAnchorKind.Deployment, new int2(1792, 716), 5f, 0f),
+        new("anchor.ch01.m01.player_spawn", OperationMapAnchorKind.Deployment, new int2(1746, 736), 5f, 0f),
         new("anchor.ch01.m01.camera_start", OperationMapAnchorKind.Camera, new int2(1792, 768), 1f, 0f),
-        new("anchor.ch01.m01.move_target", OperationMapAnchorKind.Objective, new int2(1792, 744), 3f, 0f),
-        new("anchor.ch01.m01.patrol_spawn", OperationMapAnchorKind.Spawn, new int2(1792, 806), 4f, 180f),
-        new("anchor.ch01.m01.patrol_route_a", OperationMapAnchorKind.Lane, new int2(1792, 792), 2f, 180f),
-        new("anchor.ch01.m01.patrol_route_b", OperationMapAnchorKind.Lane, new int2(1792, 778), 2f, 180f),
-        new("anchor.ch01.m01.patrol_route_c", OperationMapAnchorKind.Lane, new int2(1792, 764), 2f, 180f),
-        new("anchor.ch01.m01.patrol_objective", OperationMapAnchorKind.Hostile, new int2(1792, 754), 3f, 180f),
+        new("anchor.ch01.m01.move_target", OperationMapAnchorKind.Objective, new int2(1770, 748), 3f, 0f),
+        new("anchor.ch01.m01.patrol_spawn", OperationMapAnchorKind.Spawn, new int2(1854, 794), 4f, 225f),
+        new("anchor.ch01.m01.patrol_route_a", OperationMapAnchorKind.Lane, new int2(1846, 786), 2f, 225f),
+        new("anchor.ch01.m01.patrol_route_b", OperationMapAnchorKind.Lane, new int2(1826, 772), 2f, 225f),
+        new("anchor.ch01.m01.patrol_route_c", OperationMapAnchorKind.Lane, new int2(1798, 760), 2f, 225f),
+        new("anchor.ch01.m01.patrol_objective", OperationMapAnchorKind.Hostile, new int2(1784, 754), 3f, 225f),
         new("anchor.ch01.m01.civilian_safe_zone", OperationMapAnchorKind.Civilian, new int2(1840, 824), 7f, 45f),
         new("anchor.ch01.m01.civilian_evacuation", OperationMapAnchorKind.Civilian, new int2(1870, 842), 7f, 45f),
         new("anchor.ch01.m01.minimap_start", OperationMapAnchorKind.Minimap, new int2(1792, 768), 1f, 0f)
@@ -219,14 +219,23 @@ public static class M01FirstContactAnchorTests
             "Patrol begins before the encounter grants player context.");
         OperationMapAnchorConfig patrol = Find(anchors, "anchor.ch01.m01.patrol_spawn");
         OperationMapAnchorConfig civilian = Find(anchors, "anchor.ch01.m01.civilian_safe_zone");
+        Require(InsideContactCorridor(patrol), "Patrol spawn left the exposed Old Market contact corridor.");
         float directSeconds = Vector3.Distance(patrol.Position, civilian.Position) / ConservativePatrolSpeed;
         float earliestCivilianSeconds = route.StartDelayMilliseconds / 1000f + directSeconds;
         Require(earliestCivilianSeconds >= scenario.EncounterStartMilliseconds / 1000f + RequiredPostContextSeconds,
             "Patrol could reach civilian presentation before sufficient player-control context.");
         foreach (string anchorId in route.AnchorIds)
-            Require(Vector3.Distance(Find(anchors, anchorId).Position, civilian.Position) >= 36f,
+        {
+            OperationMapAnchorConfig waypoint = Find(anchors, anchorId);
+            Require(InsideContactCorridor(waypoint), $"Patrol waypoint {anchorId} left the exposed corridor.");
+            Require(Vector3.Distance(waypoint.Position, civilian.Position) >= 36f,
                 $"Patrol waypoint {anchorId} violates the civilian separation boundary.");
+        }
     }
+
+    private static bool InsideContactCorridor(OperationMapAnchorConfig anchor) =>
+        anchor.Position.x >= 1728f && anchor.Position.x < 1856f &&
+        anchor.Position.z >= 720f && anchor.Position.z < 800f;
 
     private static void WriteReport(
         OperationMapDefinition map,

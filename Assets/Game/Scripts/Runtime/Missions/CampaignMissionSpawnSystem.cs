@@ -69,9 +69,16 @@ namespace Game.Runtime
                 ref definition,
                 ref metadata.Blob.Value,
                 in rootRuntime,
-                out float3 playerFocus);
+                out float3 playerFocus,
+                out float3 hostileFocus);
             prefabs.Dispose();
-            RequestInitialSquadCameraFocus(em, playerFocus);
+            RequestOpeningHostileCameraFocus(em, hostileFocus);
+            SetOrAdd(em, root, new CampaignMissionOpeningPresentationComponent
+            {
+                SessionToken = rootRuntime.SessionToken,
+                FriendlyFocus = playerFocus,
+                Stage = 1
+            });
             rootFacts.CommandSquadSpawned = 1;
             rootFacts.CommandSquadAlive = 1;
             rootFacts.HostileTotalCount = CountHostiles(ref definition);
@@ -104,11 +111,14 @@ namespace Game.Runtime
             EntityManager em, NativeArray<Entity> prefabs,
             ref CampaignMissionDefinitionBlob definition, ref OperationMapBlob map,
             in CampaignMissionRuntimeComponent runtime,
-            out float3 playerFocus)
+            out float3 playerFocus,
+            out float3 hostileFocus)
         {
             int ordinal = 0;
             float3 playerPositionSum = float3.zero;
+            float3 hostilePositionSum = float3.zero;
             int playerCount = 0;
+            int hostileCount = 0;
             for (int groupIndex = 0; groupIndex < definition.ForceGroups.Length; groupIndex++)
             {
                 ref CampaignMissionForceGroupBlob group = ref definition.ForceGroups[groupIndex];
@@ -143,6 +153,11 @@ namespace Game.Runtime
                             playerPositionSum += position;
                             playerCount++;
                         }
+                        else
+                        {
+                            hostilePositionSum += position;
+                            hostileCount++;
+                        }
                     }
                 }
             }
@@ -150,9 +165,12 @@ namespace Game.Runtime
             playerFocus = playerCount > 0
                 ? playerPositionSum / playerCount
                 : float3.zero;
+            hostileFocus = hostileCount > 0
+                ? hostilePositionSum / hostileCount
+                : playerFocus;
         }
 
-        private void RequestInitialSquadCameraFocus(EntityManager em, float3 playerFocus)
+        private void RequestOpeningHostileCameraFocus(EntityManager em, float3 hostileFocus)
         {
             if (_cameraFocusQuery.CalculateEntityCount() != 1)
                 return;
@@ -161,7 +179,8 @@ namespace Game.Runtime
             em.SetComponentData(focusEntity, new RuntimeCameraFocusRequestComponent
             {
                 Requested = 1,
-                World = playerFocus
+                Smooth = 0,
+                World = hostileFocus
             });
         }
 

@@ -686,8 +686,7 @@ namespace Game.Runtime
             if (!context.TryGetDefaultEntityManager(out EntityManager em))
                 return;
 
-            context.CameraRequestSystem.QueueMoveGroundCenterTo(em, runtime.InitialCameraFocusWorld);
-            context.CameraRequestSystem.QueueClearSmoothFocusTarget(em);
+            RuntimeCameraFocusRequestUtility.Queue(context.CameraRequestSystem, em, runtime.ReadCameraFocusRequest(), runtime.InitialCameraFocusWorld);
             ProcessCameraRequests(context, em);
             runtime.InitialCameraFocusRequested = false;
         }

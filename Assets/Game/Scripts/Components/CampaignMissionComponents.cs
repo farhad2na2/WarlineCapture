@@ -148,6 +148,13 @@ namespace Game.Components
         public uint PatrolOrderVersion;
     }
 
+    public struct CampaignMissionOpeningPresentationComponent : IComponentData
+    {
+        public FixedString64Bytes SessionToken;
+        public float3 FriendlyFocus;
+        public byte Stage;
+    }
+
     public struct CampaignMissionAmbientCivilianComponent : IComponentData
     {
         public FixedString64Bytes PresentationId;

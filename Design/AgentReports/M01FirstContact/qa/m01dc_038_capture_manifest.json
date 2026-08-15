@@ -386,5 +386,39 @@
     "deviceReplayExecuted": false,
     "status": "source-validated-pending-fresh-package-samsung-replay"
   },
+  "tutorialEncounterRevealCorrection": {
+    "findingId": "M01DC038-P1-013",
+    "findingSourceHead": "22c8af8410c5069538caa3a761941500660f9ab4",
+    "implementedResponse": "Move only M01 logical anchors onto the already-validated open diagonal contact corridor, show the arithmetic center of the three actual hostiles first, then issue one delayed smooth request through the existing shell camera owner back to the arithmetic center of the four actual friendly units before the unchanged three-second patrol start.",
+    "sharedDenseCityPhysicalSourceChanged": false,
+    "patrolCompositionOrIdentityChanged": false,
+    "anchorValidation": {
+      "log": "%TEMP%/warline-m01dc038-tutorial-anchor.log",
+      "logSha256": "91a174ba1b6abc02f84d8830fa3637c6346a209b00e21b4c233e3a09c55c271c",
+      "marker": "[M01FirstContactAnchorValidation] result=Passed tests=13"
+    },
+    "cameraStateValidation": {
+      "log": "%TEMP%/warline-m01dc038-tutorial-runtime-state.log",
+      "logSha256": "322c3b33b9348da305efecd2e14ca6573f9b6d2a5ea189fe9058675d75de78bc",
+      "marker": "[RuntimeGameplayStateValidation] result=Passed tests=9"
+    },
+    "forcesPlayModeValidation": {
+      "log": "%TEMP%/warline-m01dc038-tutorial-forces-playmode-final.log",
+      "logSha256": "7d48419806cd33b3fa18e1c20051b615ad15abdefa82adb42e247d13981291f2",
+      "results": "%TEMP%/warline-m01dc038-tutorial-forces-playmode-final.xml",
+      "resultsSha256": "7d6a60fe315e652dc1ddd610c15e7450fc97577e0435d0d5bbec7935d3b650e1",
+      "total": 3,
+      "passed": 3,
+      "failed": 0
+    },
+    "architectureValidation": {
+      "log": "%TEMP%/warline-m01dc038-tutorial-architecture-rerun.log",
+      "logSha256": "9b59b3742c1bdadabc2636cc52951fcd1f2567876074d24354fc20d1d018cc10",
+      "marker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23"
+    },
+    "freshPackageBuilt": false,
+    "deviceReplayExecuted": false,
+    "status": "source-validated-pending-fresh-package-samsung-replay"
+  },
   "acceptanceClaimed": false
 }

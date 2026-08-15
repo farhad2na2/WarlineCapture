@@ -24,4 +24,6 @@ namespace Game.Components
     }
 
     public struct FactionTintTarget : IComponentData { }
+
+    public struct FactionUnitModelTintTarget : IComponentData { }
 }

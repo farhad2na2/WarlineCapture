@@ -11,11 +11,13 @@ namespace Game.Runtime
     public partial struct CampaignMissionSpawnSystem : ISystem
     {
         private EntityQuery _registryQuery;
+        private EntityQuery _cameraFocusQuery;
 
         public void OnCreate(ref SystemState state)
         {
             _registryQuery = state.GetEntityQuery(
                 ComponentType.ReadOnly<UnitPrefabRegistryTag>(), ComponentType.ReadOnly<UnitPrefabRegistryEntry>());
+            _cameraFocusQuery = state.GetEntityQuery(ComponentType.ReadWrite<RuntimeCameraFocusRequestComponent>());
             state.RequireForUpdate<CampaignMissionRootComponent>();
             state.RequireForUpdate<OperationMapMetadataComponent>();
         }
@@ -61,8 +63,15 @@ namespace Game.Runtime
                 prefabs.Dispose();
                 return;
             }
-            SpawnAll(em, prefabs, ref definition, ref metadata.Blob.Value, in rootRuntime);
+            SpawnAll(
+                em,
+                prefabs,
+                ref definition,
+                ref metadata.Blob.Value,
+                in rootRuntime,
+                out float3 playerFocus);
             prefabs.Dispose();
+            RequestInitialSquadCameraFocus(em, playerFocus);
             rootFacts.CommandSquadSpawned = 1;
             rootFacts.CommandSquadAlive = 1;
             rootFacts.HostileTotalCount = CountHostiles(ref definition);
@@ -94,9 +103,12 @@ namespace Game.Runtime
         private static void SpawnAll(
             EntityManager em, NativeArray<Entity> prefabs,
             ref CampaignMissionDefinitionBlob definition, ref OperationMapBlob map,
-            in CampaignMissionRuntimeComponent runtime)
+            in CampaignMissionRuntimeComponent runtime,
+            out float3 playerFocus)
         {
             int ordinal = 0;
+            float3 playerPositionSum = float3.zero;
+            int playerCount = 0;
             for (int groupIndex = 0; groupIndex < definition.ForceGroups.Length; groupIndex++)
             {
                 ref CampaignMissionForceGroupBlob group = ref definition.ForceGroups[groupIndex];
@@ -126,9 +138,31 @@ namespace Game.Runtime
                             MissionRoleId = unit.MissionRoleId, UnitGroupId = group.GroupId, RouteId = routeId,
                             SessionToken = runtime.SessionToken
                         });
+                        if (FactionIdentity.IsPlayerControlled(group.FactionId))
+                        {
+                            playerPositionSum += position;
+                            playerCount++;
+                        }
                     }
                 }
             }
+
+            playerFocus = playerCount > 0
+                ? playerPositionSum / playerCount
+                : float3.zero;
+        }
+
+        private void RequestInitialSquadCameraFocus(EntityManager em, float3 playerFocus)
+        {
+            if (_cameraFocusQuery.CalculateEntityCount() != 1)
+                return;
+
+            Entity focusEntity = _cameraFocusQuery.GetSingletonEntity();
+            em.SetComponentData(focusEntity, new RuntimeCameraFocusRequestComponent
+            {
+                Requested = 1,
+                World = playerFocus
+            });
         }
 
         internal static bool TryFindDefinition(

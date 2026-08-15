@@ -2,7 +2,7 @@
 
 - Task: `APH-500`
 - Status: `complete`
-- Exact commit: `6068e8c8f2882c726a6c791cf26c87b63adbb7eb`
+- Exact commit: `00de33779eed4e41f392b8fa215b77d8df34db40`
 - Dirty: `false`
 - Unity: `6000.5.2f1`
 - Build: `release APK`
@@ -12,28 +12,28 @@
 - Frame Timing Stats: `enabled`
 - Detailed BuildReport: `true`
 - Artifact: `Build/AndroidAPK/WarlineCapture.apk`
-- Artifact SHA-256: `00587e2b7a2b2bf94f4af9f490e91b9839f9f5b2e975268cf4abccf18f43a709`
+- Artifact SHA-256: `eed7340d6c9c2527f1a42aa1d1df7fe2e63731888dc1fc5caaab649b1fc9e0d3`
 
 ## Size Accounting
 
 | Measure | Bytes | Meaning |
 |---|---:|---|
-| Attributed packed assets | 465,554,278 | Sum of BuildReport packed entries with a normalized sourceAssetPath |
-| Unattributed packed content | 79,023 | Sum of BuildReport packed entries without a sourceAssetPath |
-| Packed file overhead | 668,479 | Sum of PackedAssets.overhead header bytes |
-| Accounted packed files | 466,301,780 | Attributed + unattributed + packed file overhead |
-| BuildReport summary total size | 3,327,470,493 | BuildSummary.totalSize for all build output |
-| BuildReport summary unaccounted | 2,861,168,713 | Summary total minus accounted packed files; signed |
-| Compressed package file length | 558,910,685 | APK/AAB artifact file length on disk |
+| Attributed packed assets | 465,554,741 | Sum of BuildReport packed entries with a normalized sourceAssetPath |
+| Unattributed packed content | 79,083 | Sum of BuildReport packed entries without a sourceAssetPath |
+| Packed file overhead | 668,660 | Sum of PackedAssets.overhead header bytes |
+| Accounted packed files | 466,302,484 | Attributed + unattributed + packed file overhead |
+| BuildReport summary total size | 3,327,419,884 | BuildSummary.totalSize for all build output |
+| BuildReport summary unaccounted | 2,861,117,400 | Summary total minus accounted packed files; signed |
+| Compressed package file length | 558,925,749 | APK/AAB artifact file length on disk |
 
 Packed contributions and packed-file overhead come from `BuildReport.packedAssets`. The artifact file length is the compressed APK/AAB package size and is not a per-asset compressed-byte attribution.
 
 ## Top 100 Included Assets
 
-- Distinct attributed assets: `5766`
+- Distinct attributed assets: `5767`
 - Rows reported: `100`
 - Packed files: `40`
-- Packed entries: `21954`
+- Packed entries: `21959`
 
 | Rank | Packed bytes | MiB | Object types | Source asset path |
 |---:|---:|---:|---|---|

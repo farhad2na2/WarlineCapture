@@ -45,6 +45,21 @@ public sealed class M01FirstContactForcesPlayModeTests
                 CampaignMissionAttemptFactsComponent>(fixture.Root);
             Assert.That(facts.CommandSquadSpawned, Is.EqualTo(1));
             Assert.That(facts.HostileTotalCount, Is.EqualTo(3));
+            RuntimeCameraFocusRequestComponent focus = world.EntityManager.GetComponentData<
+                RuntimeCameraFocusRequestComponent>(fixture.CameraFocus);
+            Assert.That(focus.Requested, Is.EqualTo(1));
+            float3 friendlyCenter = float3.zero;
+            int friendlyCount = 0;
+            for (int i = 0; i < entities.Length; i++)
+            {
+                if (world.EntityManager.GetComponentData<Faction>(entities[i]).Id !=
+                    FactionIdentity.PlayerFactionId)
+                    continue;
+                friendlyCenter += world.EntityManager.GetComponentData<LocalTransform>(entities[i]).Position;
+                friendlyCount++;
+            }
+            Assert.That(friendlyCount, Is.EqualTo(4));
+            Assert.That(math.distance(focus.World, friendlyCenter / friendlyCount), Is.LessThan(0.001f));
             yield break;
         }
         finally { fixture.Dispose(); }
@@ -115,6 +130,7 @@ public sealed class M01FirstContactForcesPlayModeTests
         });
         Entity mapEntity = em.CreateEntity(typeof(OperationMapMetadataComponent));
         em.SetComponentData(mapEntity, new OperationMapMetadataComponent { Blob = map, Generation = 1 });
+        Entity cameraFocus = em.CreateEntity(typeof(RuntimeCameraFocusRequestComponent));
         Entity registryEntity = em.CreateEntity(typeof(UnitPrefabRegistryTag));
         DynamicBuffer<UnitPrefabRegistryEntry> registry = em.AddBuffer<UnitPrefabRegistryEntry>(registryEntity);
         FixedString64Bytes[] keys = RuntimeKeys();
@@ -126,7 +142,7 @@ public sealed class M01FirstContactForcesPlayModeTests
             em.SetComponentData(prefab, LocalTransform.Identity);
             registry.Add(new UnitPrefabRegistryEntry { Prefab = prefab });
         }
-        return new Fixture { Catalog = catalog, Map = map, Root = root };
+        return new Fixture { Catalog = catalog, Map = map, Root = root, CameraFocus = cameraFocus };
     }
 
     private static BlobAssetReference<CampaignMissionCatalogBlob> CreateCatalog()
@@ -227,6 +243,7 @@ public sealed class M01FirstContactForcesPlayModeTests
         public BlobAssetReference<CampaignMissionCatalogBlob> Catalog;
         public BlobAssetReference<OperationMapBlob> Map;
         public Entity Root;
+        public Entity CameraFocus;
 
         public void Dispose()
         {

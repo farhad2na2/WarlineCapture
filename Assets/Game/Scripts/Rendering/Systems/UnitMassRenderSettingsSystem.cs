@@ -175,6 +175,7 @@ namespace Game.Rendering
                 if (!em.HasComponent<FactionTintTarget>(entity))
                 {
                     ecb.AddComponent<FactionTintTarget>(entity);
+                    ecb.AddComponent<FactionUnitModelTintTarget>(entity);
                     ecb.AddComponent(entity, new FactionTintColor
                     {
                         Value = new float4(1f)
@@ -183,6 +184,10 @@ namespace Game.Rendering
                     {
                         Value = new float4(1f)
                     });
+                }
+                else if (!em.HasComponent<FactionUnitModelTintTarget>(entity))
+                {
+                    ecb.AddComponent<FactionUnitModelTintTarget>(entity);
                 }
                 if (em.HasComponent<SelectionObjectOutlineTag>(entity) ||
                     !em.HasComponent<RenderFilterSettings>(entity))

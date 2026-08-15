@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "buildResultHash": "c5c0a130867f272492902aed2da0cc0a",
+  "buildResultHash": "37881724f190d1294af9ac38d58e89ad",
   "buildTarget": "Android",
-  "aggregateBundleBytes": 135349004,
+  "aggregateBundleBytes": 135351128,
   "maps": [
-    { "mapId": "opmap.skirmish.desert_base_01", "bundleCount": 5, "bundleBytes": 135349004 }
+    { "mapId": "opmap.skirmish.desert_base_01", "bundleCount": 5, "bundleBytes": 135351128 }
   ],
   "partitions": [  ],
   "requiredAddresses": [

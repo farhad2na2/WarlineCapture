@@ -57,6 +57,7 @@ namespace Game.Rendering
                     continue;
 
                 em.AddComponent<FactionTintTarget>(target);
+                em.AddComponent<FactionUnitModelTintTarget>(target);
                 em.AddComponentData(target, new FactionTintColor
                 {
                     Value = new float4(1f, 1f, 1f, 1f)

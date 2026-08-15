@@ -91,7 +91,8 @@ public sealed class VehicleVisualAdornmentsSystemTests
             tests.UnitSelectionMarkerSystemSplitsReferenceMarkerPrefabForVehiclesAndInfantry();
             tests.UnitSelectionMarkerSystemUsesAuthoredBlueRingForGpuAnimatedCharacterWithoutBindPoseOverlay();
             tests.UnitFactionTintTargetBackfillFindsDeepCharacterRenderHierarchy();
-            Debug.Log("[UnitReadabilityFocusedValidation] result=Passed tests=4");
+            tests.M01FactionVisualSystemBrightensUnitModelsWithoutChangingSelectionMarkerColor();
+            Debug.Log("[UnitReadabilityFocusedValidation] result=Passed tests=5");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -945,6 +946,55 @@ public sealed class VehicleVisualAdornmentsSystemTests
     }
 
     [Test]
+    public void M01FactionVisualSystemBrightensUnitModelsWithoutChangingSelectionMarkerColor()
+    {
+        using var world = new World(nameof(M01FactionVisualSystemBrightensUnitModelsWithoutChangingSelectionMarkerColor));
+        EntityManager em = world.EntityManager;
+        float4 playerColor = new(0.12f, 0.72f, 1f, 1f);
+        float4 enemyColor = new(1f, 0.35f, 0.2f, 1f);
+        Entity config = em.CreateEntity(typeof(FactionVisualConfig));
+        em.SetComponentData(config, new FactionVisualConfig
+        {
+            NeutralColor = new float4(0.82f, 0.82f, 0.82f, 1f),
+            PlayerColor = playerColor,
+            EnemyColor = enemyColor
+        });
+        Entity mission = em.CreateEntity(typeof(ActiveOperationMapComponent));
+        em.SetComponentData(mission, new ActiveOperationMapComponent
+        {
+            MissionId = new FixedString64Bytes("saga.ch01.m01.first_contact")
+        });
+        Assert.IsTrue(FactionVisualSystem.IsM01MissionId(
+            new FixedString64Bytes("saga.ch01.m01.first_contact")));
+        Assert.IsFalse(FactionVisualSystem.IsM01MissionId(
+            new FixedString64Bytes("saga.ch01.m01.first_contacu")));
+
+        Entity player = CreateCharacter(em, health: 100);
+        em.AddComponentData(player, new Faction { Id = FactionIdentity.PlayerFactionId });
+        Entity playerModel = CreateTintTarget(em, player, unitModel: true);
+        Entity playerMarker = CreateTintTarget(em, player, unitModel: false);
+        Entity enemy = CreateCharacter(em, health: 100);
+        em.AddComponentData(enemy, new Faction { Id = FactionIdentity.EnemyFactionId });
+        Entity enemyModel = CreateTintTarget(em, enemy, unitModel: true);
+
+        SystemHandle system = world.CreateSystem<FactionVisualSystem>();
+        system.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
+
+        float4 expectedPlayerModel = FactionVisualSystem.ResolveM01UnitReadableColor(playerColor);
+        float4 expectedEnemyModel = FactionVisualSystem.ResolveM01UnitReadableColor(enemyColor);
+        Assert.AreEqual(expectedPlayerModel, em.GetComponentData<FactionTintColor>(playerModel).Value);
+        Assert.AreEqual(expectedEnemyModel, em.GetComponentData<FactionTintColor>(enemyModel).Value);
+        Assert.Greater(expectedPlayerModel.x, playerColor.x);
+        Assert.Greater(expectedPlayerModel.y, playerColor.y);
+        Assert.Greater(expectedEnemyModel.y, enemyColor.y);
+        Assert.AreEqual(
+            playerColor,
+            em.GetComponentData<FactionTintColor>(playerMarker).Value,
+            "The authored selection marker keeps its canonical blue instead of receiving the model readability lift.");
+    }
+
+    [Test]
     public void UnitFactionTintTargetBackfillFindsDeepCharacterRenderHierarchy()
     {
         using var world = new World(nameof(UnitFactionTintTargetBackfillFindsDeepCharacterRenderHierarchy));
@@ -1247,6 +1297,21 @@ public sealed class VehicleVisualAdornmentsSystemTests
     {
         Entity entity = em.CreateEntity(typeof(LocalTransform));
         em.SetComponentData(entity, LocalTransform.FromPositionRotationScale(float3.zero, quaternion.identity, 1f));
+        return entity;
+    }
+
+    private static Entity CreateTintTarget(EntityManager em, Entity parent, bool unitModel)
+    {
+        Entity entity = em.CreateEntity(
+            typeof(FactionTintTarget),
+            typeof(FactionTintColor),
+            typeof(FactionSnivelerBaseColor),
+            typeof(Parent));
+        em.SetComponentData(entity, new Parent { Value = parent });
+        em.SetComponentData(entity, new FactionTintColor { Value = new float4(1f) });
+        em.SetComponentData(entity, new FactionSnivelerBaseColor { Value = new float4(1f) });
+        if (unitModel)
+            em.AddComponent<FactionUnitModelTintTarget>(entity);
         return entity;
     }
 }

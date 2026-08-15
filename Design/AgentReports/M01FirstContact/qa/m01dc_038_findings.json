@@ -66,6 +66,19 @@
     "deviceReplayExecuted": true,
     "deviceState": "Installed and cold-replayed on canonical Samsung only; P2-006 closed and P2-007 found"
   },
+  "squadTrayCorrectionPackage": {
+    "applicationId": "com.warlinecapture.game",
+    "sourceHead": "89c328d7dafc2064afdd078dd76bb4b8093c4e38",
+    "bytes": 558889657,
+    "sha256": "9b4d9bd3fc5a42c5a5b275b78f0947cc142c4efdf38e9749df77d7f34c7c818f",
+    "buildMethod": "Game.Editor.BuildScript.BuildProductionAndroidApk",
+    "buildMarker": "[ProductionAndroidPackage] result=Passed",
+    "buildLogSha256": "348dcdc397e69712e8496bf61bf0c1cba0c8a39ad0125b54ad6b5c66f75cff19",
+    "buildDirty": false,
+    "installExecuted": false,
+    "deviceReplayExecuted": false,
+    "deviceState": "Fresh exact-head package built; canonical Samsung install/replay pending; no other device contacted"
+  },
   "findings": [
     {
       "id": "M01DC038-P1-001",

@@ -201,9 +201,25 @@
     "playModeResultsSha256": "560aa0fc6fa35584aa91795e0c44da985a414572c8f67e95a928188ca17d2ad9",
     "playModeTotal": 18,
     "playModePassed": 18,
-    "freshPackageBuilt": false,
+    "freshPackageBuilt": true,
+    "freshPackage": {
+      "sourceHead": "89c328d7dafc2064afdd078dd76bb4b8093c4e38",
+      "path": "Build/AndroidAPK/WarlineCapture.apk",
+      "bytes": 558889657,
+      "sha256": "9b4d9bd3fc5a42c5a5b275b78f0947cc142c4efdf38e9749df77d7f34c7c818f",
+      "buildLog": "%TEMP%/warline-m01dc038-squad-tray-production-android.log",
+      "buildLogSha256": "348dcdc397e69712e8496bf61bf0c1cba0c8a39ad0125b54ad6b5c66f75cff19",
+      "marker": "[ProductionAndroidPackage] result=Passed",
+      "dirty": false,
+      "packageType": "APK",
+      "scriptingBackend": "IL2CPP",
+      "targetArchitecture": "ARM64",
+      "installExecuted": false,
+      "replayExecuted": false,
+      "deviceConnection": "Canonical Samsung install/replay pending; no other device contacted"
+    },
     "deviceReplayExecuted": false,
-    "status": "source-corrected-and-editor-validated-fresh-package-pending"
+    "status": "fresh-exact-head-package-built-samsung-replay-pending"
   },
   "acceptanceClaimed": false
 }

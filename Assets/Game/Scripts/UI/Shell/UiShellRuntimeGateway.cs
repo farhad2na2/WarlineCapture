@@ -3,7 +3,7 @@ using Game.UI.Contracts;
 
 namespace Game.UI.Runtime
 {
-    public static class UiShellRuntimeGateway
+    public static partial class UiShellRuntimeGateway
     {
         private static IUiShellRuntimeGateway current = NullUiShellRuntimeGateway.Instance;
 

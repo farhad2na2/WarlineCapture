@@ -45,6 +45,14 @@
     "deviceReplayExecuted": false,
     "deviceState": "Samsung endpoint 192.168.2.33:39901 remained TCP-open after the build, but the Unity SDK ADB daemon and handshake did not complete; no other device was contacted"
   },
+  "hudFindingPackage": {
+    "applicationId": "com.warlinecapture.game",
+    "sourceHead": "9e1fc42ca",
+    "bytes": 558884777,
+    "sha256": "f67cb1520c2fc8d542faf37a50f54acf1270372c30a1bb0b2220efa67078362c",
+    "deviceReplayExecuted": true,
+    "device": "Samsung SM-S918B / R5CTC1J02VB"
+  },
   "findings": [
     {
       "id": "M01DC038-P1-001",
@@ -83,15 +91,31 @@
       },
       "status": "fresh-package-built-device-replay-pending",
       "closureRequires": "Fresh exact-source APK build, Samsung install, and successful Full/Contextual/Minimal mission replay"
+    },
+    {
+      "id": "M01DC038-P2-006",
+      "severity": "P2",
+      "title": "M01 HUD exposes disabled economy, build, and support features",
+      "reproduction": "Launch M01 from Campaign on the canonical Samsung; reach the live tactical HUD; observe Materials, Oil, Fuel, BUILD, and SUPPORT despite the mission-definition restriction flags.",
+      "cause": "The shared Match HUD projected unrestricted Skirmish presentation and did not consume the active Campaign mission-definition restrictions.",
+      "evidence": "%TEMP%/m01dc038_campaign_route_live2.png sha256=efb101b2ba26e7c2f4831c228df1876d85f7039c5e76d7ef40a57721da91263f",
+      "response": "Project authoritative restriction flags read-only through an optional UI gateway; hide economy slots and disable their exchange action, hide BUILD/SUPPORT, preserve Civilian Risk, zoom, tactical commands, and Skirmish defaults.",
+      "editorValidation": {
+        "focused": "Passed 3/3; log sha256=e3d58e13de651903f8f7fc211bc55e2bd9a2a94b637066f205cd33a9117840f",
+        "m01Architecture": "Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23; log sha256=b3f42eca9c4b4b407aac9db62520cb407504b823d9999f882956a7b086d45219",
+        "m01RuntimePlayMode": "Passed 18/18 failed=0 skipped=0; log sha256=bb1882174c231c517de51c8643322674e6804a169e7caffe4436cab2b6f513eb; xml sha256=2ac27baa92c73c2f7d7274aea058941e656a888e8a57affe7a8b4b69037f3081"
+      },
+      "status": "source-corrected-device-replay-pending",
+      "closureRequires": "Fresh exact-source APK build, Samsung-only install/replay, and after capture proving hidden economy/build/support with preserved Civilian Risk/zoom/tactical commands"
     }
   ],
   "severityCounts": {
     "p0": 0,
     "p1": 2,
-    "p2": 0,
+    "p2": 1,
     "p3": 0,
     "closed": 1,
-    "open": 1
+    "open": 2
   },
   "acceptanceClaimed": false
 }

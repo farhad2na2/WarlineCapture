@@ -44,6 +44,18 @@
       "bytes": 2892626,
       "sha256": "09365a8984c38155b9614f248221e3bdf7dc8190af290fc9c194a8c39f76e439",
       "description": "Final FL-P18 presentation retained over live Match after the first correction"
+    },
+    {
+      "path": "%TEMP%/m01dc038_campaign_route_corrected.mp4",
+      "bytes": 393342839,
+      "sha256": "9e823ab077f457cac6aa72e4a5faf50dededd3150a00200d2ef7e3988aa9e735",
+      "description": "Samsung-only agent-operated Campaign route replay reaching live M01"
+    },
+    {
+      "path": "%TEMP%/m01dc038_campaign_route_live2.png",
+      "bytes": 1654742,
+      "sha256": "efb101b2ba26e7c2f4831c228df1876d85f7039c5e76d7ef40a57721da91263f",
+      "description": "Live M01 HUD finding frame showing forbidden Materials/Oil/Fuel and BUILD/SUPPORT presentation"
     }
   ],
   "runtimeEvidence": {
@@ -104,6 +116,38 @@
     "installExecuted": false,
     "replayExecuted": false,
     "deviceConnection": "Samsung 192.168.2.33:39901 TCP-open; ADB daemon/handshake did not complete after Unity restarted ADB; no other device contacted"
+  },
+  "hudRestrictionCorrection": {
+    "findingPackageSourceHead": "9e1fc42ca",
+    "findingPackageBytes": 558884777,
+    "findingPackageSha256": "f67cb1520c2fc8d542faf37a50f54acf1270372c30a1bb0b2220efa67078362c",
+    "focusedLog": "%TEMP%/warline-m01dc038-hud-restrictions.log",
+    "focusedLogSha256": "e3d58e13de651903f8f7fc211bc55e2bd9a2a94b637066f205cd33a9117840f",
+    "architectureLog": "%TEMP%/warline-m01dc038-hud-architecture.log",
+    "architectureLogSha256": "b3f42eca9c4b4b407aac9db62520cb407504b823d9999f882956a7b086d45219",
+    "playModeLog": "%TEMP%/warline-m01dc038-hud-playmode.log",
+    "playModeLogSha256": "bb1882174c231c517de51c8643322674e6804a169e7caffe4436cab2b6f513eb",
+    "playModeResults": "%TEMP%/warline-m01dc038-hud-playmode.xml",
+    "playModeResultsSha256": "2ac27baa92c73c2f7d7274aea058941e656a888e8a57affe7a8b4b69037f3081",
+    "playModeTotal": 18,
+    "playModePassed": 18,
+    "restoredIncidentalTrackedOutputs": [
+      "Assets/AddressableAssetsData/AddressableAssetSettings.asset",
+      "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_aria.png.meta",
+      "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_radio_dispatch.png.meta",
+      "Assets/Game/Art/UI/Fonts/NotoSansArabic/NotoSansArabic-Narrative SDF.asset",
+      "Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchLanguageChoice.prefab",
+      "Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab",
+      "Assets/Game/Scenes/Menu.unity",
+      "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium SDF.asset",
+      "Design/AgentReports/M01FirstContact/m01dc_015_camera_continuity.json",
+      "Design/AgentReports/M01FirstContact/m01dc_015_camera_continuity_contact_sheet.png",
+      "Design/AgentReports/M01FirstContact/m01dc_017_runtime_owner.json",
+      "Design/AgentReports/M01FirstContact/m01dc_018_launch_bootstrap.json"
+    ],
+    "freshPackageBuilt": false,
+    "deviceReplayExecuted": false,
+    "status": "source-corrected-validation-passed-fresh-package-and-samsung-replay-pending"
   },
   "acceptanceClaimed": false
 }

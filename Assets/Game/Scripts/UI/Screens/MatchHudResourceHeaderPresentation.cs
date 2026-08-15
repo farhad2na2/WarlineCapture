@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using Game.UI.Contracts;
 
 namespace Game.UI.Runtime
@@ -8,7 +9,10 @@ namespace Game.UI.Runtime
     {
         private const float RefreshIntervalSeconds = 0.2f;
 
+        private GameObject _materialsSlotRoot;
         private GameObject _oilSlotRoot;
+        private GameObject _fuelSlotRoot;
+        private Button _resourceStripButton;
         private TMP_Text _materialsSlotLabel;
         private TMP_Text _materialsSlotValue;
         private TMP_Text _oilSlotLabel;
@@ -26,7 +30,8 @@ namespace Game.UI.Runtime
         private bool _lastOilWasNumeric;
         private bool _lastFuelWasNumeric;
         private bool _lastShowOil;
-        private bool _oilVisibilityApplied;
+        private bool _lastHideEconomyResources;
+        private bool _resourceVisibilityApplied;
         private bool _labelsApplied;
         private float _nextRefreshTime;
 
@@ -52,13 +57,20 @@ namespace Game.UI.Runtime
             _fuelSlotValue = fuelSlotValue;
             _civilianRiskSlotLabel = civilianRiskSlotLabel;
             _civilianRiskSlotValue = civilianRiskSlotValue;
+            _materialsSlotRoot = materialsSlotLabel != null ? materialsSlotLabel.transform.parent.gameObject : null;
+            _fuelSlotRoot = fuelSlotLabel != null ? fuelSlotLabel.transform.parent.gameObject : null;
+            Transform resourceStrip = _materialsSlotRoot != null ? _materialsSlotRoot.transform.parent : null;
+            _resourceStripButton = resourceStrip != null ? resourceStrip.GetComponent<Button>() : null;
             RefreshNow();
             _nextRefreshTime = now + RefreshIntervalSeconds;
         }
 
         public void Clear()
         {
+            _materialsSlotRoot = null;
             _oilSlotRoot = null;
+            _fuelSlotRoot = null;
+            _resourceStripButton = null;
             _materialsSlotLabel = null;
             _materialsSlotValue = null;
             _oilSlotLabel = null;
@@ -76,7 +88,8 @@ namespace Game.UI.Runtime
             _lastOilWasNumeric = false;
             _lastFuelWasNumeric = false;
             _lastShowOil = false;
-            _oilVisibilityApplied = false;
+            _lastHideEconomyResources = false;
+            _resourceVisibilityApplied = false;
             _labelsApplied = false;
             _nextRefreshTime = 0f;
         }
@@ -94,6 +107,11 @@ namespace Game.UI.Runtime
         {
             if (_materialsSlotValue == null && _oilSlotValue == null && _fuelSlotValue == null)
                 return;
+
+            if (UiShellRuntimeGateway.TryReadMissionHudRestrictions(
+                    out UiMissionHudRestrictionsModel restrictions) &&
+                restrictions.EconomyDisabled)
+                ApplyVisibility(showOil: false);
 
             bool appliedNumericValues = false;
             if (UiShellRuntimeGateway.TryReadMatchHudResourceValues(
@@ -167,12 +185,28 @@ namespace Game.UI.Runtime
 
         private void ApplyVisibility(bool showOil)
         {
-            if (_oilSlotRoot == null || (_oilVisibilityApplied && _lastShowOil == showOil))
+            bool hideEconomyResources =
+                UiShellRuntimeGateway.TryReadMissionHudRestrictions(
+                    out UiMissionHudRestrictionsModel restrictions) &&
+                restrictions.EconomyDisabled;
+            if (_resourceVisibilityApplied && _lastShowOil == showOil &&
+                _lastHideEconomyResources == hideEconomyResources)
                 return;
 
-            _oilSlotRoot.SetActive(showOil);
+            SetVisible(_materialsSlotRoot, !hideEconomyResources);
+            SetVisible(_oilSlotRoot, showOil && !hideEconomyResources);
+            SetVisible(_fuelSlotRoot, !hideEconomyResources);
+            if (_resourceStripButton != null)
+                _resourceStripButton.interactable = !hideEconomyResources;
             _lastShowOil = showOil;
-            _oilVisibilityApplied = true;
+            _lastHideEconomyResources = hideEconomyResources;
+            _resourceVisibilityApplied = true;
+        }
+
+        private static void SetVisible(GameObject target, bool visible)
+        {
+            if (target != null && target.activeSelf != visible)
+                target.SetActive(visible);
         }
 
         private void ApplyLabels()

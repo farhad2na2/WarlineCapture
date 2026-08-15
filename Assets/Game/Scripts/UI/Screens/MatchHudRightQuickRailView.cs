@@ -14,6 +14,11 @@ namespace Game.UI.Runtime
         [SerializeField] private Button zoomInButton;
         [SerializeField] private Button zoomOutButton;
 
+        private Button _supportButton;
+        private bool _missionRestrictionVisibilityApplied;
+        private bool _lastBuildDisabled;
+        private bool _lastSupportDisabled;
+
         private Action _buildCommandClicked;
         private Action _zoomInClicked;
         private Action _zoomOutClicked;
@@ -49,6 +54,7 @@ namespace Game.UI.Runtime
         private void OnEnable()
         {
             ResolveZoomButtonsFromChildren();
+            RefreshMissionRestrictions();
             InstallBuildButtonListener();
             InstallZoomButtonListeners();
             ClearButtonSelection(buildButton);
@@ -134,6 +140,7 @@ namespace Game.UI.Runtime
         public void RefreshZoomControls()
         {
             ResolveZoomButtonsFromChildren();
+            RefreshMissionRestrictions();
             MatchHudZoomControlState state = _zoomStateProvider != null
                 ? _zoomStateProvider.Invoke()
                 : MatchHudZoomControlState.Disabled;
@@ -259,7 +266,7 @@ namespace Game.UI.Runtime
 
         private void ResolveZoomButtonsFromChildren()
         {
-            if (zoomInButton != null && zoomOutButton != null)
+            if (zoomInButton != null && zoomOutButton != null && _supportButton != null)
                 return;
 
             Button[] buttons = GetComponentsInChildren<Button>(true);
@@ -273,7 +280,43 @@ namespace Game.UI.Runtime
                     zoomInButton = button;
                 else if (zoomOutButton == null && button.name == "ZoomOutButton")
                     zoomOutButton = button;
+                else if (_supportButton == null && button.name == "SupportCommand")
+                    _supportButton = button;
             }
+        }
+
+        internal void RefreshMissionRestrictions()
+        {
+            bool buildDisabled = false;
+            bool supportDisabled = false;
+            if (UiShellRuntimeGateway.TryReadMissionHudRestrictions(
+                    out UiMissionHudRestrictionsModel restrictions))
+            {
+                buildDisabled = restrictions.BuildingDisabled || restrictions.ProductionDisabled;
+                supportDisabled = restrictions.AirDisabled || restrictions.TransportDisabled;
+            }
+
+            ApplyMissionRestrictionVisibility(buildDisabled, supportDisabled);
+        }
+
+        internal void ApplyMissionRestrictionVisibility(bool buildDisabled, bool supportDisabled)
+        {
+            ResolveZoomButtonsFromChildren();
+            if (_missionRestrictionVisibilityApplied &&
+                _lastBuildDisabled == buildDisabled && _lastSupportDisabled == supportDisabled)
+                return;
+
+            SetButtonVisible(buildButton, !buildDisabled);
+            SetButtonVisible(_supportButton, !supportDisabled);
+            _lastBuildDisabled = buildDisabled;
+            _lastSupportDisabled = supportDisabled;
+            _missionRestrictionVisibilityApplied = true;
+        }
+
+        private static void SetButtonVisible(Button button, bool visible)
+        {
+            if (button != null && button.gameObject.activeSelf != visible)
+                button.gameObject.SetActive(visible);
         }
 
         private Camera ResolveEventCamera()

@@ -129,6 +129,11 @@
       "cause": "The shared Match squad tray hard-codes unrestricted Skirmish categories and does not consume the active Campaign mission restrictions or authored force composition.",
       "evidence": "%TEMP%/m01dc038_full_step08.png sha256=5fe9dc2aa07dd28c9fc4d3e792c5f162675997a4917b84d9b75687227be00c35",
       "response": "Read the existing optional mission restriction projection in the presentation-only tray; preserve the soldier card and hide vehicle, air, and transport cards for active M01 while retaining unrestricted no-Campaign/Skirmish defaults.",
+      "editorValidation": {
+        "focused": "Passed 4/4; log sha256=4e5d1d01fc109ab3db5737213384ea66fa53ed074b98ff334c23ac750a9380e3",
+        "m01Architecture": "Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23; log sha256=ccb17491d66fc44dddd92adf92a346a94544f19e9876f43a36a5f2f8ad61c575",
+        "m01RuntimePlayMode": "Passed 18/18 failed=0 skipped=0 inconclusive=0; log sha256=fc4752cc42b6cda25bee899fe22aa255865b128b783ac44565361e154c91ee14; xml sha256=560aa0fc6fa35584aa91795e0c44da985a414572c8f67e95a928188ca17d2ad9"
+      },
       "status": "open-authorized",
       "closureRequires": "Focused and architecture validation, fresh exact-source APK, Samsung-only replay, and after capture proving only the authored soldier card remains without tactical-command regression"
     }

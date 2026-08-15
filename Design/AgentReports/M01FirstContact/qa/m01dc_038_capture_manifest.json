@@ -188,5 +188,22 @@
     "deviceReplayExecuted": true,
     "status": "p2-006-closed-on-samsung-replay-p2-007-found"
   },
+  "squadTrayCorrection": {
+    "focusedLog": "%TEMP%/warline-m01dc038-squad-tray-focused-escalated.log",
+    "focusedLogSha256": "4e5d1d01fc109ab3db5737213384ea66fa53ed074b98ff334c23ac750a9380e3",
+    "focusedMarker": "[M01FirstContactHudRestrictionValidation] result=Passed tests=4",
+    "architectureLog": "%TEMP%/warline-m01dc038-squad-tray-architecture.log",
+    "architectureLogSha256": "ccb17491d66fc44dddd92adf92a346a94544f19e9876f43a36a5f2f8ad61c575",
+    "architectureMarker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23",
+    "playModeLog": "%TEMP%/warline-m01dc038-squad-tray-playmode-batch.log",
+    "playModeLogSha256": "fc4752cc42b6cda25bee899fe22aa255865b128b783ac44565361e154c91ee14",
+    "playModeResults": "%TEMP%/warline-m01dc038-squad-tray-playmode-batch.xml",
+    "playModeResultsSha256": "560aa0fc6fa35584aa91795e0c44da985a414572c8f67e95a928188ca17d2ad9",
+    "playModeTotal": 18,
+    "playModePassed": 18,
+    "freshPackageBuilt": false,
+    "deviceReplayExecuted": false,
+    "status": "source-corrected-and-editor-validated-fresh-package-pending"
+  },
   "acceptanceClaimed": false
 }

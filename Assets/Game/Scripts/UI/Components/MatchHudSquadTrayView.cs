@@ -48,6 +48,11 @@ namespace Game.UI.Runtime
             SetSelectedSlot(MatchHudSquadTraySlot.Soldiers);
         }
 
+        private void OnEnable()
+        {
+            RefreshMissionRestrictions();
+        }
+
         private void CreateCardLabels()
         {
             for (int i = 0; i < cards.Length && i < CardLabels.Length; i++)
@@ -121,6 +126,7 @@ namespace Game.UI.Runtime
         {
             Unbind();
             _cardClicked = cardClicked;
+            RefreshMissionRestrictions();
 
             for (int i = 0; i < cards.Length; i++)
             {
@@ -130,6 +136,33 @@ namespace Game.UI.Runtime
                 int index = i;
                 card.Button.onClick.AddListener(() => OnCardClicked(index));
             }
+        }
+
+        internal void RefreshMissionRestrictions()
+        {
+            bool combatVehiclesDisabled = false;
+            bool airDisabled = false;
+            bool transportDisabled = false;
+            if (UiShellRuntimeGateway.TryReadMissionHudRestrictions(out UiMissionHudRestrictionsModel restrictions))
+            {
+                combatVehiclesDisabled = restrictions.ProductionDisabled;
+                airDisabled = restrictions.AirDisabled;
+                transportDisabled = restrictions.TransportDisabled;
+            }
+
+            ApplyMissionRestrictionVisibility(combatVehiclesDisabled, airDisabled, transportDisabled);
+        }
+
+        internal void ApplyMissionRestrictionVisibility(
+            bool combatVehiclesDisabled,
+            bool airDisabled,
+            bool transportDisabled)
+        {
+            SetCardVisible(0, visible: true);
+            SetCardVisible(1, visible: !combatVehiclesDisabled);
+            SetCardVisible(2, visible: !airDisabled);
+            SetCardVisible(3, visible: !airDisabled);
+            SetCardVisible(4, visible: !transportDisabled);
         }
 
         public void Unbind()
@@ -226,6 +259,12 @@ namespace Game.UI.Runtime
 
             card = cards[index];
             return card != null;
+        }
+
+        private void SetCardVisible(int index, bool visible)
+        {
+            if (TryGetCard(index, out Card card) && card.Button != null && card.Button.gameObject.activeSelf != visible)
+                card.Button.gameObject.SetActive(visible);
         }
 
         private void OnCardClicked(int index)

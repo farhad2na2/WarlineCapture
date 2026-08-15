@@ -14,7 +14,7 @@ using UnityEngine.UI;
 
 public sealed class M01FirstContactHudRestrictionTests
 {
-    private const string Marker = "[M01FirstContactHudRestrictionValidation] result=Passed tests=3";
+    private const string Marker = "[M01FirstContactHudRestrictionValidation] result=Passed tests=4";
 
     public static void RunFocusedValidation()
     {
@@ -24,6 +24,7 @@ public sealed class M01FirstContactHudRestrictionTests
             Run(CanonicalMissionRestrictionsProjectReadOnly, ref passed);
             Run(RightRailHidesOnlyBuildAndSupport, ref passed);
             Run(ResourceHeaderHidesEconomyButPreservesCivilianRisk, ref passed);
+            Run(SquadTrayHidesNonAuthoredCategoriesButPreservesDefaults, ref passed);
             Debug.Log(Marker);
             ValidationExit.Passed();
         }
@@ -118,6 +119,51 @@ public sealed class M01FirstContactHudRestrictionTests
             World.DefaultGameObjectInjectionWorld = previous;
             UiShellEcsGateway.RegisterAsRuntimeGateway();
             blob.Dispose();
+            UnityEngine.Object.DestroyImmediate(root);
+        }
+    }
+
+    [Test]
+    public static void SquadTrayHidesNonAuthoredCategoriesButPreservesDefaults()
+    {
+        GameObject root = new("SquadTray", typeof(RectTransform));
+        root.SetActive(false);
+        try
+        {
+            MatchHudSquadTrayView view = root.AddComponent<MatchHudSquadTrayView>();
+            var cards = new MatchHudSquadTrayView.Card[5];
+            for (int i = 0; i < cards.Length; i++)
+            {
+                Button button = CreateButton(root.transform, $"Card{i}");
+                cards[i] = new MatchHudSquadTrayView.Card
+                {
+                    Button = button,
+                    FrameImage = button.GetComponent<Image>()
+                };
+            }
+
+            typeof(MatchHudSquadTrayView)
+                .GetField("cards", BindingFlags.Instance | BindingFlags.NonPublic)
+                ?.SetValue(view, cards);
+            root.SetActive(true);
+
+            view.ApplyMissionRestrictionVisibility(
+                combatVehiclesDisabled: true,
+                airDisabled: true,
+                transportDisabled: true);
+            Assert.That(cards[0].Button.gameObject.activeSelf, Is.True, "The authored soldier command squad must remain available.");
+            for (int i = 1; i < cards.Length; i++)
+                Assert.That(cards[i].Button.gameObject.activeSelf, Is.False, $"Restricted card {i} must be hidden.");
+
+            view.ApplyMissionRestrictionVisibility(
+                combatVehiclesDisabled: false,
+                airDisabled: false,
+                transportDisabled: false);
+            for (int i = 0; i < cards.Length; i++)
+                Assert.That(cards[i].Button.gameObject.activeSelf, Is.True, "Skirmish/default presentation must remain unchanged.");
+        }
+        finally
+        {
             UnityEngine.Object.DestroyImmediate(root);
         }
     }

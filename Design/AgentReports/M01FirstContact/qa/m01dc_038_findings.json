@@ -75,9 +75,9 @@
     "buildMarker": "[ProductionAndroidPackage] result=Passed",
     "buildLogSha256": "348dcdc397e69712e8496bf61bf0c1cba0c8a39ad0125b54ad6b5c66f75cff19",
     "buildDirty": false,
-    "installExecuted": false,
-    "deviceReplayExecuted": false,
-    "deviceState": "Fresh exact-head package built; canonical Samsung install/replay pending; no other device contacted"
+    "installExecuted": true,
+    "deviceReplayExecuted": true,
+    "deviceState": "Installed, cold-launched, and Full-guidance replayed on canonical Samsung only; P2-007 closed"
   },
   "findings": [
     {
@@ -147,8 +147,8 @@
         "m01Architecture": "Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23; log sha256=ccb17491d66fc44dddd92adf92a346a94544f19e9876f43a36a5f2f8ad61c575",
         "m01RuntimePlayMode": "Passed 18/18 failed=0 skipped=0 inconclusive=0; log sha256=fc4752cc42b6cda25bee899fe22aa255865b128b783ac44565361e154c91ee14; xml sha256=560aa0fc6fa35584aa91795e0c44da985a414572c8f67e95a928188ca17d2ad9"
       },
-      "status": "open-authorized",
-      "closureRequires": "Focused and architecture validation, fresh exact-source APK, Samsung-only replay, and after capture proving only the authored soldier card remains without tactical-command regression"
+      "status": "closed-on-fresh-package-device-replay",
+      "closureEvidence": "%TEMP%/m01dc038_squad_after_live.png sha256=3913233e8ed568d7b903880750a2446f3a3f8d2aa7e07e55d74c271ecafafed0 proves one RIFLE SQUAD card, 4 SOLDIERS detail, preserved tactical commands/Civilian Risk/zoom, and no armor/air/transport cards; 180-second real-input recording sha256=cc87ecfdfb1107a4e70512ee1f4d426da66e95f5baadcd71ed04c82e92a3b1e3"
     }
   ],
   "severityCounts": {
@@ -156,8 +156,8 @@
     "p1": 2,
     "p2": 2,
     "p3": 0,
-    "closed": 2,
-    "open": 2
+    "closed": 3,
+    "open": 1
   },
   "acceptanceClaimed": false
 }

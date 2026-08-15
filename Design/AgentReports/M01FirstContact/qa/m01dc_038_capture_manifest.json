@@ -74,6 +74,24 @@
       "bytes": 180365357,
       "sha256": "b89d4a46aa0c05ad857dd3929d12b51e7426c17188e491da3d157b0b8c857826",
       "description": "Agent-operated real-input Full-guidance Samsung session closing P2-006 and reproducing P2-007"
+    },
+    {
+      "path": "%TEMP%/m01dc038_squad_after_live.png",
+      "bytes": 1707629,
+      "sha256": "3913233e8ed568d7b903880750a2446f3a3f8d2aa7e07e55d74c271ecafafed0",
+      "description": "Fresh squad-tray correction package on Samsung proving only RIFLE SQUAD with 4 SOLDIERS detail and preserved tactical HUD controls"
+    },
+    {
+      "path": "%TEMP%/m01dc038_squad_after_move.png",
+      "bytes": 1708330,
+      "sha256": "076df3d9afbe719634f2670bd1e0e966ef78bc7f2f28d08a3b0e6901e70a3022",
+      "description": "Post-input live M01 frame preserving the single authored squad card, details, tactical controls, Civilian Risk, zoom, and minimap"
+    },
+    {
+      "path": "%TEMP%/m01dc038_squad_after_full.mp4",
+      "bytes": 347916301,
+      "sha256": "cc87ecfdfb1107a4e70512ee1f4d426da66e95f5baadcd71ed04c82e92a3b1e3",
+      "description": "180-second agent-operated real-input Full-guidance Samsung replay on the exact squad-tray correction package"
     }
   ],
   "runtimeEvidence": {
@@ -214,12 +232,15 @@
       "packageType": "APK",
       "scriptingBackend": "IL2CPP",
       "targetArchitecture": "ARM64",
-      "installExecuted": false,
-      "replayExecuted": false,
-      "deviceConnection": "Canonical Samsung install/replay pending; no other device contacted"
+      "installExecuted": true,
+      "replayExecuted": true,
+      "deviceConnection": "Samsung SM-S918B / R5CTC1J02VB at 192.168.2.33:39901; no other device contacted",
+      "launchState": "COLD",
+      "launchTotalTimeMs": 300,
+      "fatalOrAnrMatches": 0
     },
-    "deviceReplayExecuted": false,
-    "status": "fresh-exact-head-package-built-samsung-replay-pending"
+    "deviceReplayExecuted": true,
+    "status": "p2-007-closed-on-fresh-package-samsung-replay"
   },
   "acceptanceClaimed": false
 }

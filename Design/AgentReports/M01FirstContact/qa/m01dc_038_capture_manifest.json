@@ -145,9 +145,30 @@
       "Design/AgentReports/M01FirstContact/m01dc_017_runtime_owner.json",
       "Design/AgentReports/M01FirstContact/m01dc_018_launch_bootstrap.json"
     ],
-    "freshPackageBuilt": false,
+    "freshPackageBuilt": true,
+    "freshPackage": {
+      "sourceHead": "306b129af348f2030dfdb8db63e9e8d61f37bc75",
+      "path": "Build/AndroidAPK/WarlineCapture.apk",
+      "bytes": 558889905,
+      "sha256": "2b7d8f7cc2952c57c1e1270cc1f6094d8b080e2d7c2cdf10e9711b3c19a25c9d",
+      "buildLog": "%TEMP%/warline-m01dc038-hud-production-android.log",
+      "buildLogSha256": "626c44cad8a6169913706f121e9956f3715293cb23b81b9a9fa9cb63e4cd79c6",
+      "marker": "[ProductionAndroidPackage] result=Passed",
+      "dirty": false,
+      "packageType": "APK",
+      "scriptingBackend": "IL2CPP",
+      "targetArchitecture": "ARM64",
+      "installExecuted": false,
+      "replayExecuted": false,
+      "deviceConnection": "Canonical Samsung not connected after build; no other device contacted"
+    },
+    "restoredBuildGeneratedTrackedOutputs": [
+      "Design/AgentReports/architecture_performance_android_apk_build_report.json",
+      "Design/AgentReports/architecture_performance_android_apk_build_report.md",
+      "Design/AgentReports/operation_map_addressables_build_report.json"
+    ],
     "deviceReplayExecuted": false,
-    "status": "source-corrected-validation-passed-fresh-package-and-samsung-replay-pending"
+    "status": "source-corrected-validation-and-fresh-package-passed-samsung-replay-pending"
   },
   "acceptanceClaimed": false
 }

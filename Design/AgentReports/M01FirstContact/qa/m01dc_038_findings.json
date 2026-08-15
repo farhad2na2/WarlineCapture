@@ -53,6 +53,19 @@
     "deviceReplayExecuted": true,
     "device": "Samsung SM-S918B / R5CTC1J02VB"
   },
+  "hudCorrectionPackage": {
+    "applicationId": "com.warlinecapture.game",
+    "sourceHead": "306b129af348f2030dfdb8db63e9e8d61f37bc75",
+    "bytes": 558889905,
+    "sha256": "2b7d8f7cc2952c57c1e1270cc1f6094d8b080e2d7c2cdf10e9711b3c19a25c9d",
+    "buildMethod": "Game.Editor.BuildScript.BuildProductionAndroidApk",
+    "buildMarker": "[ProductionAndroidPackage] result=Passed",
+    "buildLogSha256": "626c44cad8a6169913706f121e9956f3715293cb23b81b9a9fa9cb63e4cd79c6",
+    "buildDirty": false,
+    "installExecuted": false,
+    "deviceReplayExecuted": false,
+    "deviceState": "Canonical Samsung was not connected after the build; no other device was contacted"
+  },
   "findings": [
     {
       "id": "M01DC038-P1-001",
@@ -105,7 +118,7 @@
         "m01Architecture": "Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23; log sha256=b3f42eca9c4b4b407aac9db62520cb407504b823d9999f882956a7b086d45219",
         "m01RuntimePlayMode": "Passed 18/18 failed=0 skipped=0; log sha256=bb1882174c231c517de51c8643322674e6804a169e7caffe4436cab2b6f513eb; xml sha256=2ac27baa92c73c2f7d7274aea058941e656a888e8a57affe7a8b4b69037f3081"
       },
-      "status": "source-corrected-device-replay-pending",
+      "status": "fresh-package-built-device-replay-pending",
       "closureRequires": "Fresh exact-source APK build, Samsung-only install/replay, and after capture proving hidden economy/build/support with preserved Civilian Risk/zoom/tactical commands"
     }
   ],

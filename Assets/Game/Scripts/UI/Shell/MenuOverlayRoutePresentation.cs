@@ -47,7 +47,11 @@ namespace Game.UI.Runtime
 
         internal static void InstallMissionBriefingBody(this UIShellContentView contentView)
         {
-            InstallBody(contentView, contentView.MissionBriefingContentPrefab);
+            GameObject body = InstallBody(contentView, contentView.MissionBriefingContentPrefab);
+            MissionBriefingScreenView view = body != null
+                ? body.GetComponentInChildren<MissionBriefingScreenView>(true)
+                : null;
+            view?.BindGameTextResolver(contentView.GameTextResolver);
         }
 
         internal static void InstallOperationsBody(this UIShellContentView contentView)

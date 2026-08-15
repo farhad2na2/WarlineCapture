@@ -31,6 +31,7 @@ namespace Game.UI.Runtime
         [SerializeField] private Toggle replayTutorialToggle;
         [SerializeField] private TMP_Text replayTutorialLabel;
         [SerializeField] private Button deployOperationButton;
+        private IGameTextResolver _gameTextResolver = FallbackGameTextResolver.Instance;
 
         public UIShellRouteButtonView BackRouteButton => backRouteButton;
         public RectTransform MissionOverview => missionOverview;
@@ -46,6 +47,11 @@ namespace Game.UI.Runtime
         public Button DeployOperationButton => deployOperationButton;
         public Toggle ReplayTutorialToggle => replayTutorialToggle;
 
+        public void BindGameTextResolver(IGameTextResolver gameTextResolver)
+        {
+            _gameTextResolver = gameTextResolver ?? FallbackGameTextResolver.Instance;
+        }
+
         public void Apply(in UiMissionBriefingModel model)
         {
             if (!model.IsValid)
@@ -54,12 +60,13 @@ namespace Game.UI.Runtime
                 return;
             }
 
-            Set(missionTitle, MissionTitleFromId(model.MissionId));
-            Set(missionSummary, $"BRIEFING: {model.DisplaySummaryKey}");
-            Set(locationLabel, $"LOCATION: {model.LocationNameKey}");
+            string title = _gameTextResolver.Get(model.DisplayNameKey, MissionTitleFromId(model.MissionId));
+            Set(missionTitle, title.ToUpperInvariant());
+            Set(missionSummary, $"BRIEFING: {_gameTextResolver.Get(model.DisplaySummaryKey, "Secure the Old Market corridor and protect the civilian route.")}");
+            Set(locationLabel, $"LOCATION: {_gameTextResolver.Get(model.LocationNameKey, "Old Market, Sahrin")}");
             for (int index = 0; index < (objectiveLabels?.Length ?? 0); index++)
                 Set(objectiveLabels[index], index < model.Objectives.Length
-                    ? FormatObjective(in model.Objectives[index])
+                    ? FormatObjective(in model.Objectives[index], _gameTextResolver)
                     : string.Empty);
             if (conditionLabels != null && conditionLabels.Length > 0)
                 Set(conditionLabels[0], Restriction(model.BuildingDisabled || model.ProductionDisabled));
@@ -79,7 +86,7 @@ namespace Game.UI.Runtime
                     continue;
                 }
                 UiMissionRewardModel reward = model.Rewards[index];
-                Set(rewardLabels[index], RewardLabel(in reward));
+                Set(rewardLabels[index], RewardLabel(in reward, _gameTextResolver));
                 if (rewardValues != null && index < rewardValues.Length)
                     Set(rewardValues[index], $"+{reward.Amount:N0}");
             }
@@ -113,22 +120,27 @@ namespace Game.UI.Runtime
             return "MISSION 01 - " + token.Replace('_', ' ').ToUpperInvariant();
         }
 
-        private static string FormatObjective(in UiMissionObjectiveModel objective)
+        private static string FormatObjective(
+            in UiMissionObjectiveModel objective,
+            IGameTextResolver gameTextResolver)
         {
-            string role = objective.MissionRoleId.Replace('_', ' ').ToUpperInvariant();
-            return objective.Rule switch
+            string fallback = objective.Rule switch
             {
-                UiMissionObjectiveRuleKind.DestroyMissionRole => $"INTERCEPT {objective.RequiredCount} {role}",
-                UiMissionObjectiveRuleKind.ProtectMissionRole => $"KEEP {role} ALIVE",
-                _ => objective.DisplayTextKey
+                UiMissionObjectiveRuleKind.DestroyMissionRole => $"DESTROY THE HOSTILE PATROL ({objective.RequiredCount})",
+                UiMissionObjectiveRuleKind.ProtectMissionRole => "KEEP THE COMMAND SQUAD ALIVE",
+                _ => "MISSION OBJECTIVE"
             };
+            return gameTextResolver.Get(objective.DisplayTextKey, fallback).ToUpperInvariant();
         }
 
-        private static string RewardLabel(in UiMissionRewardModel reward)
+        private static string RewardLabel(
+            in UiMissionRewardModel reward,
+            IGameTextResolver gameTextResolver)
         {
-            return reward.Kind != UiMissionRewardKind.None
+            string fallback = reward.Kind != UiMissionRewardKind.None
                 ? reward.Kind.ToString().ToUpperInvariant()
-                : reward.RewardConfigId.Replace('_', ' ').ToUpperInvariant();
+                : "COMMANDER XP";
+            return gameTextResolver.Get(reward.DisplayTextKey, fallback).ToUpperInvariant();
         }
 
         private static string Restriction(bool disabled) => disabled ? "DISABLED" : "ENABLED";

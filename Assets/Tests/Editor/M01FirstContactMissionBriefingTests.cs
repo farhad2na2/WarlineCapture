@@ -308,8 +308,16 @@ public static class M01FirstContactMissionBriefingTests
                 replay: false);
             view.Apply(firstClear);
             Assert.That(view.ReplayTutorialToggle.gameObject.activeSelf, Is.False);
-            Assert.That(AllText(instance), Does.Contain("INTERCEPT 3 HOSTILE PATROL"));
-            Assert.That(AllText(instance), Does.Contain("+1,200"));
+            string firstClearText = AllText(instance);
+            Assert.That(firstClearText, Does.Contain("DESTROY THE HOSTILE PATROL (3)"));
+            Assert.That(firstClearText, Does.Contain("KEEP THE COMMAND SQUAD ALIVE"));
+            Assert.That(firstClearText, Does.Contain("Old Market, Sahrin"));
+            Assert.That(firstClearText, Does.Contain("COMMANDER XP"));
+            Assert.That(firstClearText, Does.Contain("+1,200"));
+            Assert.That(firstClearText, Does.Not.Contain("mission.m01"));
+            Assert.That(firstClearText, Does.Not.Contain("role.hostile"));
+            Assert.That(firstClearText, Does.Not.Contain("role.friendly"));
+            Assert.That(firstClearText, Does.Not.Contain("reward.commander"));
             Capture(instance, 1280, 720, "first_clear_16x9");
 
             UiMissionBriefingModel replay = Briefing(

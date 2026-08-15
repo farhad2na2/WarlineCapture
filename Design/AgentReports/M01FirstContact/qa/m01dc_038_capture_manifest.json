@@ -420,5 +420,25 @@
     "deviceReplayExecuted": false,
     "status": "source-validated-pending-fresh-package-samsung-replay"
   },
+  "selectedUnitImpostorCorrection": {
+    "findingId": "M01DC038-P2-014",
+    "projectOwnerFeedback": "Soldiers change to an unrelated impostor look while selected and still framed by the camera, including at the farthest zoom-out distance.",
+    "implementedResponse": "Exclude visible selected characters from only the far-impostor decision while retaining the nearest safe mesh LOD or detail fallback and preserving all unselected-unit impostor thresholds and render budgets.",
+    "sharedDenseCityPhysicalSourceChanged": false,
+    "unselectedUnitImpostorThresholdsChanged": false,
+    "focusedValidation": {
+      "log": "%TEMP%/warline-m01dc038-selected-impostor-focused-pass.log",
+      "logSha256": "f10dfbf55cff3d023c4c18baf1f45ab349ea1703fc709b35d3d960e9a55f7fb5",
+      "marker": "[SelectedUnitImpostorValidation] result=Passed tests=1"
+    },
+    "architectureValidation": {
+      "log": "%TEMP%/warline-m01dc038-selected-impostor-architecture.log",
+      "logSha256": "023e8cfb36cb158d9ccdeadee54fcac42de1cb6e4b05199b0d6b98f7e58b740c",
+      "marker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23"
+    },
+    "freshPackageBuilt": false,
+    "deviceReplayExecuted": false,
+    "status": "source-validated-pending-fresh-package-samsung-replay"
+  },
   "acceptanceClaimed": false
 }

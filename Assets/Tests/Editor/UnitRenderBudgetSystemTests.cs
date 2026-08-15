@@ -71,6 +71,22 @@ public sealed partial class UnitRenderBudgetSystemTests
         }
     }
 
+    public static void RunSelectedUnitImpostorValidation()
+    {
+        try
+        {
+            new UnitRenderBudgetSystemTests()
+                .SelectedVisibleCharacterNeverUsesFarImpostorAtZoomedOutDistance();
+            Debug.Log("[SelectedUnitImpostorValidation] result=Passed tests=1");
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[SelectedUnitImpostorValidation] result=Failed");
+            throw;
+        }
+    }
+
     public static void RunVrp054SteadyStateValidation()
     {
         try
@@ -798,6 +814,44 @@ public sealed partial class UnitRenderBudgetSystemTests
         Assert.IsFalse(result.ShouldShowDetail);
         Assert.IsFalse(result.ShouldShowMid);
         Assert.IsFalse(result.ShouldShowLow);
+    }
+
+    [Test]
+    public void SelectedVisibleCharacterNeverUsesFarImpostorAtZoomedOutDistance()
+    {
+        using var world = new World(nameof(SelectedVisibleCharacterNeverUsesFarImpostorAtZoomedOutDistance));
+        using var ecb = new EntityCommandBuffer(Allocator.Temp);
+        using var readyTaggedThisFrame = new NativeHashSet<Entity>(1, Allocator.Temp);
+
+        UnitRenderBudgetVisualPlan.Result result = new UnitRenderBudgetVisualPlan().CreateDesiredVisualPlan(
+            world.EntityManager,
+            ecb,
+            readyTaggedThisFrame,
+            default,
+            new UnitRenderBudgetVisualPlan.Request
+            {
+                Unit = TestEntity(2),
+                IsCharacter = true,
+                IsSelectedUnit = true,
+                Visible = 1,
+                DistanceSq = 100f * 100f,
+                LowBand = true,
+                HasLowLodInstance = true,
+                LowRootSafe = true,
+                LowRootAnimatable = true,
+                AlwaysDetailedDistanceSq = 18f * 18f,
+                VisibleCharacterLowDistanceSq = 32f * 32f,
+                VisibleCharacterImpostorNearDistance = 48f,
+                VisibleCharacterImpostorFarDistance = 48f
+            },
+            new UnitRenderBudgetCharacterPolicy(),
+            new UnitRenderBudgetReadiness(),
+            new UnitRenderBudgetAnimationReadiness(),
+            new UnitRenderBudgetRenderableState());
+
+        Assert.AreEqual(UnitRenderVisualKind.Detail, result.DesiredVisual);
+        Assert.IsTrue(result.ShouldShowDetail);
+        Assert.IsFalse(result.ShouldShowFar);
     }
 
     [Test]

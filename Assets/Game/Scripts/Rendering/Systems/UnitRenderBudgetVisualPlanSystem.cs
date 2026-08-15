@@ -189,8 +189,9 @@ namespace Game.Rendering
                     counters.VisibleCharacterSafeLowInstances++;
 
                 bool farEnoughForImpostor =
-                    enemyShouldUseImpostor ||
-                    request.DistanceSq >= request.VisibleCharacterImpostorFarDistance * request.VisibleCharacterImpostorFarDistance;
+                    !request.IsSelectedUnit &&
+                    (enemyShouldUseImpostor ||
+                     request.DistanceSq >= request.VisibleCharacterImpostorFarDistance * request.VisibleCharacterImpostorFarDistance);
                 bool lowEnoughForSafeLow =
                     enemyLowEnoughForSafeLow ||
                     request.DistanceSq >= request.VisibleCharacterLowDistanceSq;

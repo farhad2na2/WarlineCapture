@@ -253,15 +253,31 @@
       },
       "status": "source-validated-pending-fresh-package-device-replay",
       "closureRequires": "Commit and push the validated correction, build a fresh exact-head APK, install on canonical Samsung only, and replay real input proving the hostile reveal, smooth squad return, exposed patrol, and immediate battlefield comprehension."
+    },
+    {
+      "id": "M01DC038-P2-014",
+      "severity": "P2",
+      "title": "Selected soldiers switch to unrelated impostor visuals while still camera-framed",
+      "reproduction": "Select a soldier in live Mission 1, keep the camera framing that selected unit, and zoom out; observe the selected soldier switch to a visually unrelated far-impostor billboard.",
+      "cause": "The visible-character visual plan exempted selected enemies from the enemy-specific impostor threshold but still allowed the generic far-distance threshold to select the far impostor for any selected visible character.",
+      "evidence": "Direct project-owner real-input feedback recorded in this task; source-path reproduction in UnitRenderBudgetVisualPlan.CreateDesiredVisualPlan.",
+      "owner": "Existing UnitRenderBudgetVisualPlan presentation decision boundary",
+      "response": "Prevent a visible selected character from choosing the far-impostor visual at any distance while retaining the nearest safe mesh LOD or detail fallback. Preserve all existing impostor thresholds and render budgets for unselected units.",
+      "editorValidation": {
+        "focused": "Passed 1/1; log sha256=f10dfbf55cff3d023c4c18baf1f45ab349ea1703fc709b35d3d960e9a55f7fb5",
+        "m01Architecture": "Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23; log sha256=023e8cfb36cb158d9ccdeadee54fcac42de1cb6e4b05199b0d6b98f7e58b740c"
+      },
+      "status": "source-validated-pending-fresh-package-device-replay",
+      "closureRequires": "Commit and push the validated correction, build a fresh exact-head APK, install on canonical Samsung only, and replay real input proving that selected visible soldiers retain a mesh visual through the farthest camera zoom while unselected-unit impostors remain active."
     }
   ],
   "severityCounts": {
     "p0": 0,
     "p1": 4,
-    "p2": 4,
+    "p2": 5,
     "p3": 0,
     "closed": 4,
-    "open": 4
+    "open": 5
   },
   "acceptanceClaimed": false
 }

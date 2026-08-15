@@ -187,6 +187,29 @@ public sealed class M01FirstContactRuntimePlayModeTests
     }
 
     [Test]
+    public void CampaignMissionDisablesDayNightWhileSkirmishKeepsItsDefault()
+    {
+        using World world = new(nameof(CampaignMissionDisablesDayNightWhileSkirmishKeepsItsDefault));
+        EntityManager em = world.EntityManager;
+        Assert.That(MissionDayNightPolicyUtility.ShouldEnableDayNightVisuals(em), Is.True);
+
+        Entity map = em.CreateEntity(typeof(ActiveOperationMapComponent));
+        em.SetComponentData(map, new ActiveOperationMapComponent
+        {
+            OperationMapId = new FixedString64Bytes("opmap.skirmish.desert_base_01")
+        });
+        Assert.That(MissionDayNightPolicyUtility.ShouldEnableDayNightVisuals(em), Is.True);
+
+        em.SetComponentData(map, new ActiveOperationMapComponent
+        {
+            OperationMapId = new FixedString64Bytes("opmap.ch01.district_edge_01"),
+            ScenarioId = new FixedString64Bytes("scenario.ch01.m01.first_contact"),
+            MissionId = new FixedString64Bytes(M01)
+        });
+        Assert.That(MissionDayNightPolicyUtility.ShouldEnableDayNightVisuals(em), Is.False);
+    }
+
+    [Test]
     public void MigrationRestartAndSettlementRemainExactlyOnce()
     {
         string root = Path.Combine(Path.GetTempPath(), "M01DC034", Guid.NewGuid().ToString("N"));

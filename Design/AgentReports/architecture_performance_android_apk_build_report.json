@@ -2,8 +2,8 @@
   "taskId": "APH-500",
   "schemaVersion": 1,
   "status": "complete",
-  "exactCommit": "8f93dafe06098e62ef029260ed4c6a732ba2ee1b",
-  "dirty": true,
+  "exactCommit": "6068e8c8f2882c726a6c791cf26c87b63adbb7eb",
+  "dirty": false,
   "unityVersion": "6000.5.2f1",
   "releaseBuildType": "release",
   "packageType": "APK",
@@ -13,22 +13,22 @@
   "frameTimingStatsEnabled": true,
   "detailedBuildReport": true,
   "artifactPath": "Build/AndroidAPK/WarlineCapture.apk",
-  "artifactBytes": 459188380,
-  "artifactSha256": "dab470fd296b9f2ca2866ba6042940137cce36beabaa886bdf2ce7dab9f8bc44",
+  "artifactBytes": 558910685,
+  "artifactSha256": "00587e2b7a2b2bf94f4af9f490e91b9839f9f5b2e975268cf4abccf18f43a709",
   "artifactSizeSemantics": "Compressed APK/AAB package file length. This is not a sum of per-asset packed contributions.",
   "buildReportSizeSemantics": "Unity BuildReport bytes. Included-asset rows are serialized packed contributions; packed file overhead and summary-unaccounted bytes are reported separately.",
   "packedFileCount": 40,
-  "packedAssetEntryCount": 21726,
+  "packedAssetEntryCount": 21954,
   "unattributedPackedEntryCount": 3,
-  "totalIncludedAssetCount": 5671,
+  "totalIncludedAssetCount": 5766,
   "reportedIncludedAssetCount": 100,
-  "attributedPackedAssetBytes": 464572994,
-  "unattributedPackedAssetBytes": 78927,
-  "packedContentBytes": 464651921,
-  "packedFileOverheadBytes": 660979,
-  "accountedPackedFileBytes": 465312900,
-  "buildReportSummaryTotalSizeBytes": 3048884439,
-  "buildReportSummaryUnaccountedBytes": 2583571539,
+  "attributedPackedAssetBytes": 465554278,
+  "unattributedPackedAssetBytes": 79023,
+  "packedContentBytes": 465633301,
+  "packedFileOverheadBytes": 668479,
+  "accountedPackedFileBytes": 466301780,
+  "buildReportSummaryTotalSizeBytes": 3327470493,
+  "buildReportSummaryUnaccountedBytes": 2861168713,
   "buildReportIncludedAssets": [
     {
       "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_A.png",
@@ -130,7 +130,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Audio/Music/music_match_calm_loop_01.wav",
-      "packedBytes": 3870252,
+      "packedBytes": 3870220,
       "objectTypes": [
         "UnityEngine.AudioClip"
       ]
@@ -144,7 +144,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Audio/Music/music_menu_loop_01.wav",
-      "packedBytes": 3533448,
+      "packedBytes": 3533480,
       "objectTypes": [
         "UnityEngine.AudioClip"
       ]
@@ -173,7 +173,7 @@
     },
     {
       "sourceAssetPath": "Assets/Game/Audio/Music/music_match_combat_loop_01.wav",
-      "packedBytes": 3258160,
+      "packedBytes": 3258128,
       "objectTypes": [
         "UnityEngine.AudioClip"
       ]
@@ -757,10 +757,10 @@
       ]
     },
     {
-      "sourceAssetPath": "Assets/Game/GeneratedCombinedMeshes/Model_PolygonMilitary_Mat_Land_Vehicles_3_Combined.asset",
-      "packedBytes": 907500,
+      "sourceAssetPath": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P01.png",
+      "packedBytes": 921720,
       "objectTypes": [
-        "UnityEngine.Mesh"
+        "UnityEngine.Texture2D"
       ]
     }
   ],
@@ -819,6 +819,13 @@
       "packedBytes": 262720,
       "objectTypes": [
         "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P01.png",
+      "packedBytes": 921720,
+      "objectTypes": [
         "UnityEngine.Texture2D"
       ]
     },
@@ -2171,14 +2178,6 @@
       ]
     },
     {
-      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_menu_list.png",
-      "packedBytes": 6760,
-      "objectTypes": [
-        "UnityEngine.Sprite",
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
       "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_move_chevrons.png",
       "packedBytes": 10064,
       "objectTypes": [
@@ -2938,14 +2937,6 @@
       ]
     },
     {
-      "sourceAssetPath": "Assets/Game/Art/UI/Panels/scn09_panel_card_frame_default_a.png",
-      "packedBytes": 18524,
-      "objectTypes": [
-        "UnityEngine.Sprite",
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
       "sourceAssetPath": "Assets/Game/Art/UI/Panels/scn09_panel_detail_tall_frame.png",
       "packedBytes": 60420,
       "objectTypes": [
@@ -2972,14 +2963,6 @@
     {
       "sourceAssetPath": "Assets/Game/Art/UI/Panels/scn09_panel_small_gold_button_bg.png",
       "packedBytes": 4176,
-      "objectTypes": [
-        "UnityEngine.Sprite",
-        "UnityEngine.Texture2D"
-      ]
-    },
-    {
-      "sourceAssetPath": "Assets/Game/Art/UI/Panels/scn09_panel_small_status_chip_bg.png",
-      "packedBytes": 4608,
       "objectTypes": [
         "UnityEngine.Sprite",
         "UnityEngine.Texture2D"

@@ -30,13 +30,10 @@ namespace Game.Runtime
         private static readonly ProfilerMarker EndUpdateMarker = new("GameplayRuntimeUpdate.EndUpdate");
         private static readonly ProfilerMarker UnitAttackTraceLateUpdateMarker = new("GameplayRuntimeLateUpdate.UnitAttackTrace");
         private static readonly ProfilerMarker UnitImpostorLateUpdateMarker = new("GameplayRuntimeLateUpdate.UnitImpostors");
-        private int _nextLoadingGateDiagnosticFrame;
-        private int _loadingGateStartedFrame = -1;
+        private int _nextLoadingGateDiagnosticFrame, _loadingGateStartedFrame = -1;
         private World _initialSpawnQueryWorld;
-        private EntityQuery _initialSpawnConfigQuery;
-        private EntityQuery _initialSpawnInitializedQuery;
-        private EntityQuery _initialSpawnProgressQuery;
-        private bool _hasInitialSpawnQueries;
+        private EntityQuery _initialSpawnConfigQuery, _initialSpawnInitializedQuery, _initialSpawnProgressQuery;
+        private bool _hasSpawnQueries;
         private readonly ThreatWarningPresentationState _threatWarningPresentation = new();
 
         public void Update(
@@ -62,6 +59,7 @@ namespace Game.Runtime
             bool simulationActive = gameplayInitialized && runtimeGameplayStateSystem.SimulationActive;
             bool startupActive = gameplayInitialized && playRequested && !simulationActive;
             bool runtimeRequested = gameplayInitialized && playRequested;
+            if (!_hasSpawnQueries) MissionDayNightPolicyUtility.Apply(dayNight, runtimeWorld.EntityManager);
             using (BeginUpdateMarker.Auto())
             {
                 performanceDiagnosticsSystem.BeginUpdate(simulationActive);
@@ -258,8 +256,7 @@ namespace Game.Runtime
         public void Dispose()
         {
             _threatWarningPresentation.Dispose();
-
-            if (!_hasInitialSpawnQueries)
+            if (!_hasSpawnQueries)
                 return;
 
             if (_initialSpawnQueryWorld != null && _initialSpawnQueryWorld.IsCreated)
@@ -270,7 +267,7 @@ namespace Game.Runtime
             }
 
             _initialSpawnQueryWorld = null;
-            _hasInitialSpawnQueries = false;
+            _hasSpawnQueries = false;
         }
 
         public void LateUpdate(
@@ -418,10 +415,10 @@ namespace Game.Runtime
         private void EnsureInitialSpawnQueries(EntityManager entityManager)
         {
             Unity.Entities.World world = entityManager.World;
-            if (_hasInitialSpawnQueries && _initialSpawnQueryWorld == world)
+            if (_hasSpawnQueries && _initialSpawnQueryWorld == world)
                 return;
 
-            if (_hasInitialSpawnQueries)
+            if (_hasSpawnQueries)
                 Dispose();
 
             _initialSpawnQueryWorld = world;
@@ -432,7 +429,7 @@ namespace Game.Runtime
             _initialSpawnProgressQuery = entityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<InitialUnitsSpawnConfig>(),
                 ComponentType.ReadOnly<InitialUnitsSpawnProgress>());
-            _hasInitialSpawnQueries = true;
+            _hasSpawnQueries = true;
         }
     }
 }

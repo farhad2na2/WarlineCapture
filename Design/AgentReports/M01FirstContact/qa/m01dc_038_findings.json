@@ -159,17 +159,39 @@
       "evidence": "%TEMP%/m01_orange_target.png sha256=8fa4a357e2560d19df72613fdc8a93697ed11eb1f4aa760283621d1be5af35d7; %TEMP%/m01_after_clear.png sha256=34b8e75b28134adbefdbab23561630833d2261718fe1aea31446d7e37292d80e; %TEMP%/m01_current_after_wait.png sha256=8b8d9c4dca9fa3cda1fd99a72c8be9dd5df23b33383bf0fa8177f46c3c3c7f25",
       "owner": "CampaignMissionRuntimeSystem (sole attempt-facts and mission phase/outcome writer)",
       "response": "After existing movement/combat/death systems, sample only the active session's CampaignMissionUnitRoleComponent entities and monotonically project existing attempt facts from authoritative health/faction/position/command state plus the authored move-target anchor; preserve the existing phase/outcome/result/progress owners.",
-      "status": "open-authorized",
-      "closureRequires": "Focused integration regression, consolidated architecture/source-growth and runtime PlayMode validation, fresh exact-source APK, Samsung-only Full/Contextual/Minimal replay, patrol-clear result/debrief, and complete fresh-profile story-to-command-base evidence"
+      "editorValidation": {
+        "m01RuntimePlayMode": "Passed 19/19 failed=0 skipped=0 inconclusive=0; log sha256=460597c255f46582f1222e56fd71768a9f527746c74f1fcf328ddcb63e9419f5; xml sha256=638c8fde73283e7a8f5e3880669b0cef5e30a5be058c68934aa0f339867a8220",
+        "m01Architecture": "Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23; log sha256=6ee5bffd8a88c314288866bfe9e665b5ccacebae3c50a009ddeeb54d5e12b0bb",
+        "burstAot": "Passed 3/3; log sha256=c397404f1fb67ba46124fe275fff86551640457331e799b68d1696a29238c2ec"
+      },
+      "correctedPackage": "sourceHead=6068e8c8f2882c726a6c791cf26c87b63adbb7eb bytes=558910685 sha256=00587e2b7a2b2bf94f4af9f490e91b9839f9f5b2e975268cf4abccf18f43a709 buildLogSha256=e8934fc649cdbf594d42f8eb1e3a21d5036b5b6b105a382f5ae6c930498163de",
+      "status": "source-fixed-device-replay-incomplete",
+      "closureRequires": "Samsung-only patrol-clear result/debrief, complete fresh-profile story-to-command-base evidence, and regression replay after the mission-lighting correction"
+    },
+    {
+      "id": "M01DC038-P2-009",
+      "severity": "P2",
+      "title": "Day/night progression makes active M01 combat near-black",
+      "reproduction": "Install exact source 6068e8c8f2882c726a6c791cf26c87b63adbb7eb on canonical Samsung; launch Campaign M01; continue real-input combat as the shared day/night presentation advances; observe the battlefield and units become materially unreadable while the HUD remains visible.",
+      "cause": "The shared DayNightSystem remained enabled for an active mission, so a bounded first-gameplay route could advance into near-black lighting despite M01's fixed readability and pacing contract.",
+      "evidence": "%TEMP%/m01dc038_6068e8c8f_live_start.png sha256=9715e09c37077e7549729685a6cd13f6d1dd39258ee0fae6292001ab80db222c; %TEMP%/m01dc038_6068e8c8f_attack2.png sha256=9c4c98b950b5cd64179562c22500cef4c4a0050df817dd9f7452577ae0a048e0",
+      "owner": "GameplayRuntimeUpdateCompositionSystemHelper through stateless MissionDayNightPolicyUtility",
+      "response": "Apply the existing DayNightSystem runtime-visual boundary once when the authoritative active operation map or mission runtime carries a mission identity; keep the no-mission and Skirmish default enabled.",
+      "editorValidation": {
+        "m01RuntimePlayMode": "Passed 20/20 failed=0 skipped=0 inconclusive=0; log sha256=cfbd426a03409bbe807716b0d26d90ecc270832e768d9d0b6aa9d20eecf01b5a; xml sha256=dd7de1f7f0d6a494028921b06b65c2024024d88f1a4f420233c5aad030ca8d44",
+        "m01Architecture": "Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23; log sha256=b83ee4d7b2a4b2678d279f441e09ee3f4e969bf91ea0678ecbc0a16e77170914"
+      },
+      "status": "source-fixed-pending-fresh-package-device-replay",
+      "closureRequires": "Commit and push the validated correction, build a fresh exact-head APK, install on canonical Samsung only, and replay active combat long enough to prove stable readable mission lighting plus result/debrief"
     }
   ],
   "severityCounts": {
     "p0": 0,
     "p1": 3,
-    "p2": 2,
+    "p2": 3,
     "p3": 0,
     "closed": 4,
-    "open": 1
+    "open": 2
   },
   "acceptanceClaimed": false
 }

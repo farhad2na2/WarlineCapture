@@ -2,8 +2,8 @@
 
 - Task: `APH-500`
 - Status: `complete`
-- Exact commit: `8f93dafe06098e62ef029260ed4c6a732ba2ee1b`
-- Dirty: `true`
+- Exact commit: `6068e8c8f2882c726a6c791cf26c87b63adbb7eb`
+- Dirty: `false`
 - Unity: `6000.5.2f1`
 - Build: `release APK`
 - Target: `Android`
@@ -12,28 +12,28 @@
 - Frame Timing Stats: `enabled`
 - Detailed BuildReport: `true`
 - Artifact: `Build/AndroidAPK/WarlineCapture.apk`
-- Artifact SHA-256: `dab470fd296b9f2ca2866ba6042940137cce36beabaa886bdf2ce7dab9f8bc44`
+- Artifact SHA-256: `00587e2b7a2b2bf94f4af9f490e91b9839f9f5b2e975268cf4abccf18f43a709`
 
 ## Size Accounting
 
 | Measure | Bytes | Meaning |
 |---|---:|---|
-| Attributed packed assets | 464,572,994 | Sum of BuildReport packed entries with a normalized sourceAssetPath |
-| Unattributed packed content | 78,927 | Sum of BuildReport packed entries without a sourceAssetPath |
-| Packed file overhead | 660,979 | Sum of PackedAssets.overhead header bytes |
-| Accounted packed files | 465,312,900 | Attributed + unattributed + packed file overhead |
-| BuildReport summary total size | 3,048,884,439 | BuildSummary.totalSize for all build output |
-| BuildReport summary unaccounted | 2,583,571,539 | Summary total minus accounted packed files; signed |
-| Compressed package file length | 459,188,380 | APK/AAB artifact file length on disk |
+| Attributed packed assets | 465,554,278 | Sum of BuildReport packed entries with a normalized sourceAssetPath |
+| Unattributed packed content | 79,023 | Sum of BuildReport packed entries without a sourceAssetPath |
+| Packed file overhead | 668,479 | Sum of PackedAssets.overhead header bytes |
+| Accounted packed files | 466,301,780 | Attributed + unattributed + packed file overhead |
+| BuildReport summary total size | 3,327,470,493 | BuildSummary.totalSize for all build output |
+| BuildReport summary unaccounted | 2,861,168,713 | Summary total minus accounted packed files; signed |
+| Compressed package file length | 558,910,685 | APK/AAB artifact file length on disk |
 
 Packed contributions and packed-file overhead come from `BuildReport.packedAssets`. The artifact file length is the compressed APK/AAB package size and is not a per-asset compressed-byte attribution.
 
 ## Top 100 Included Assets
 
-- Distinct attributed assets: `5671`
+- Distinct attributed assets: `5766`
 - Rows reported: `100`
 - Packed files: `40`
-- Packed entries: `21726`
+- Packed entries: `21954`
 
 | Rank | Packed bytes | MiB | Object types | Source asset path |
 |---:|---:|---:|---|---|
@@ -51,13 +51,13 @@ Packed contributions and packed-file overhead come from `BuildReport.packedAsset
 | 12 | 5,592,564 | 5.33 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Air_Vehicle_Burnt.png` |
 | 13 | 5,592,552 | 5.33 | UnityEngine.Texture2D | `Assets/PolygonMilitary/Textures/Signs 1.png` |
 | 14 | 4,507,444 | 4.30 | UnityEngine.Mesh | `Assets/Game/GeneratedCombinedMeshes/Model_PolygonMilitary_Mat_01_A_Combined 10.asset` |
-| 15 | 3,870,252 | 3.69 | UnityEngine.AudioClip | `Assets/Game/Audio/Music/music_match_calm_loop_01.wav` |
+| 15 | 3,870,220 | 3.69 | UnityEngine.AudioClip | `Assets/Game/Audio/Music/music_match_calm_loop_01.wav` |
 | 16 | 3,563,224 | 3.40 | UnityEngine.Mesh | `Assets/Game/GeneratedCombinedMeshes/Model_PolygonMilitary_Mat_Gold_A_Combined 3.asset` |
-| 17 | 3,533,448 | 3.37 | UnityEngine.AudioClip | `Assets/Game/Audio/Music/music_menu_loop_01.wav` |
+| 17 | 3,533,480 | 3.37 | UnityEngine.AudioClip | `Assets/Game/Audio/Music/music_menu_loop_01.wav` |
 | 18 | 3,457,940 | 3.30 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Frames/dialogue_frame_body.png` |
 | 19 | 3,263,132 | 3.11 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Female_01_Alt_01_CombinedSkinned_19_lod0.asset` |
 | 20 | 3,261,992 | 3.11 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Male_01_Alt_01_CombinedSkinned_25_lod0.asset` |
-| 21 | 3,258,160 | 3.11 | UnityEngine.AudioClip | `Assets/Game/Audio/Music/music_match_combat_loop_01.wav` |
+| 21 | 3,258,128 | 3.11 | UnityEngine.AudioClip | `Assets/Game/Audio/Music/music_match_combat_loop_01.wav` |
 | 22 | 3,073,976 | 2.93 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Male_01_Alt_02_CombinedSkinned_26_lod0.asset` |
 | 23 | 3,071,860 | 2.93 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Female_01_CombinedSkinned_21_lod0.asset` |
 | 24 | 2,815,140 | 2.68 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Male_02_CombinedSkinned_32_lod0.asset` |
@@ -136,4 +136,4 @@ Packed contributions and packed-file overhead come from `BuildReport.packedAsset
 | 97 | 969,884 | 0.92 | UnityEngine.Mesh | `Assets/PolygonMilitary/Models/SM_Veh_Truck_01.fbx` |
 | 98 | 966,304 | 0.92 | UnityEngine.Sprite, UnityEngine.Texture2D | `Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_02_commander_identity_panel_frame.png` |
 | 99 | 958,636 | 0.91 | UnityEngine.Mesh | `Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Pilot_Male_01_CombinedSkinned_18_lod0.asset` |
-| 100 | 907,500 | 0.87 | UnityEngine.Mesh | `Assets/Game/GeneratedCombinedMeshes/Model_PolygonMilitary_Mat_Land_Vehicles_3_Combined.asset` |
+| 100 | 921,720 | 0.88 | UnityEngine.Texture2D | `Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P01.png` |

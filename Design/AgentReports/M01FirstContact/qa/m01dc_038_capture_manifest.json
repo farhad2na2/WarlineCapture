@@ -140,6 +140,18 @@
       "bytes": 1725575,
       "sha256": "8b8d9c4dca9fa3cda1fd99a72c8be9dd5df23b33383bf0fa8177f46c3c3c7f25",
       "description": "Long-wait reproduction proving the live HUD remained after patrol clear without result or debrief"
+    },
+    {
+      "path": "%TEMP%/m01dc038_6068e8c8f_live_start.png",
+      "bytes": 1466312,
+      "sha256": "9715e09c37077e7549729685a6cd13f6d1dd39258ee0fae6292001ab80db222c",
+      "description": "Fresh live-attempt-facts package mission start on canonical Samsung before the day/night readability regression"
+    },
+    {
+      "path": "%TEMP%/m01dc038_6068e8c8f_attack2.png",
+      "bytes": 1403581,
+      "sha256": "9c4c98b950b5cd64179562c22500cef4c4a0050df817dd9f7452577ae0a048e0",
+      "description": "Canonical Samsung active-combat frame exposing the near-black mission-lighting finding"
     }
   ],
   "runtimeEvidence": {
@@ -298,7 +310,32 @@
     "patrolCleared": true,
     "resultPresented": false,
     "fatalOrAnrMatches": 0,
-    "status": "p1-008-open-authorized"
+    "correctedPackageSourceHead": "6068e8c8f2882c726a6c791cf26c87b63adbb7eb",
+    "correctedPackageBytes": 558910685,
+    "correctedPackageSha256": "00587e2b7a2b2bf94f4af9f490e91b9839f9f5b2e975268cf4abccf18f43a709",
+    "correctedPackageInstalledOnSamsung": true,
+    "deviceReplayStarted": true,
+    "status": "source-fixed-device-replay-incomplete-lighting-finding-open"
+  },
+  "missionLightingCorrection": {
+    "findingId": "M01DC038-P2-009",
+    "ownerAuthority": "Project owner explicitly authorized disabling the day/night cycle for missions",
+    "findingPackageSourceHead": "6068e8c8f2882c726a6c791cf26c87b63adbb7eb",
+    "findingPackageSha256": "00587e2b7a2b2bf94f4af9f490e91b9839f9f5b2e975268cf4abccf18f43a709",
+    "findingDevice": "Samsung SM-S918B / R5CTC1J02VB",
+    "focusedPlayModeLog": "%TEMP%/warline-m01dc038-mission-lighting-playmode-20260815-1002.log",
+    "focusedPlayModeLogSha256": "cfbd426a03409bbe807716b0d26d90ecc270832e768d9d0b6aa9d20eecf01b5a",
+    "focusedPlayModeResults": "%TEMP%/warline-m01dc038-mission-lighting-playmode-20260815-1002.xml",
+    "focusedPlayModeResultsSha256": "dd7de1f7f0d6a494028921b06b65c2024024d88f1a4f420233c5aad030ca8d44",
+    "focusedPlayModeTotal": 20,
+    "focusedPlayModePassed": 20,
+    "architectureLog": "%TEMP%/warline-m01dc038-mission-lighting-architecture-20260815-1005.log",
+    "architectureLogSha256": "b83ee4d7b2a4b2678d279f441e09ee3f4e969bf91ea0678ecbc0a16e77170914",
+    "architectureMarker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23",
+    "skirmishDefaultPreservedByTest": true,
+    "freshPackageBuilt": false,
+    "deviceReplayExecuted": false,
+    "status": "source-fixed-pending-fresh-package-samsung-replay"
   },
   "acceptanceClaimed": false
 }

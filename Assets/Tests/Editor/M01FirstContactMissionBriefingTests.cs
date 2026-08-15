@@ -150,6 +150,12 @@ public static class M01FirstContactMissionBriefingTests
         UpdateProjection(world);
         Assert.That(world.EntityManager.GetBuffer<CampaignMissionLaunchRequestElement>(missionRoot).Length, Is.EqualTo(1));
         Assert.That(world.EntityManager.GetComponentData<UiMissionBriefingComponent>(uiRoot).DeployQueued, Is.EqualTo(1));
+        DynamicBuffer<UiShellRouteRequestComponent> routes =
+            world.EntityManager.GetBuffer<UiShellRouteRequestComponent>(uiRoot);
+        Assert.That(routes.Length, Is.EqualTo(1));
+        Assert.That(routes[0].Intent, Is.EqualTo(UiShellRouteIntent.EnterMatch));
+        Assert.That(routes[0].Route, Is.EqualTo(UIRoute.Match));
+        Assert.That(routes[0].PushHistory, Is.Zero);
         DisposeCatalog(world.EntityManager, missionRoot);
     }
 
@@ -432,6 +438,7 @@ public static class M01FirstContactMissionBriefingTests
     {
         World world = Project(out missionRoot);
         uiRoot = world.EntityManager.CreateEntity(typeof(UiShellRootComponent));
+        world.EntityManager.AddBuffer<UiShellRouteRequestComponent>(uiRoot);
         return world;
     }
 

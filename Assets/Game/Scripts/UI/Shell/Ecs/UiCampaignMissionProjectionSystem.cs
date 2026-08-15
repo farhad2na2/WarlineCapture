@@ -107,6 +107,7 @@ namespace Game.UI.Shell.Ecs
                 nextBriefing.DeployQueued = 1;
                 nextBriefing.DeployTransitionToken = transitionToken;
                 nextBriefing.Version = NextVersion(nextBriefing.Version);
+                CampaignMissionDeployRouteUtility.TryPublish(entityManager, uiRoot);
             }
 
             bool sourceChanged = current.Version == 0 || current.CatalogSourceVersion != catalog.SourceVersion ||

@@ -40,7 +40,7 @@ public sealed class VehicleVisualAdornmentsSystemTests
             tests.UnitSelectionMarkerSystemKeepsAirVehicleObjectOutlineWhileGroundMarkerIsHidden();
             tests.UnitSelectionMarkerSystemOutlinesReferencedAirVehicleVisualRoot();
             tests.UnitSelectionMarkerSystemSuppressesHelicopterBladeOutlineSourcesByBakedBladeReference();
-            tests.UnitSelectionMarkerSystemCreatesSafeSelectionVolumeForGpuAnimatedCharacterWithoutBindPoseOverlay();
+            tests.UnitSelectionMarkerSystemUsesAuthoredBlueRingForGpuAnimatedCharacterWithoutBindPoseOverlay();
             tests.UnitSelectionOutlineGraphicsResourcesAreReleasedWithTheirWorld();
             tests.UnitSelectionMarkerSystemHidesMarkersForTransportedCharactersButKeepsCulledSelectedCharactersVisible();
             tests.SelectionMarkerVisibilitySystemTogglesVisualChildScaleFromSelectionState();
@@ -78,6 +78,26 @@ public sealed class VehicleVisualAdornmentsSystemTests
         {
             Debug.LogException(exception);
             Debug.LogError("[FactionTintFocusedValidation] result=Failed");
+            ValidationExit.Exit(1);
+        }
+    }
+
+    public static void RunUnitReadabilityFocusedValidation()
+    {
+        try
+        {
+            var tests = new VehicleVisualAdornmentsSystemTests();
+            tests.UnitSelectionMarkerSystemCreatesMarkerForSelectedCharacterUnit();
+            tests.UnitSelectionMarkerSystemSplitsReferenceMarkerPrefabForVehiclesAndInfantry();
+            tests.UnitSelectionMarkerSystemUsesAuthoredBlueRingForGpuAnimatedCharacterWithoutBindPoseOverlay();
+            tests.UnitFactionTintTargetBackfillFindsDeepCharacterRenderHierarchy();
+            Debug.Log("[UnitReadabilityFocusedValidation] result=Passed tests=4");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[UnitReadabilityFocusedValidation] result=Failed");
             ValidationExit.Exit(1);
         }
     }
@@ -468,9 +488,23 @@ public sealed class VehicleVisualAdornmentsSystemTests
     }
 
     [Test]
-    public void UnitSelectionMarkerSystemCreatesSafeSelectionVolumeForGpuAnimatedCharacterWithoutBindPoseOverlay()
+    public void UnitSelectionMarkerSystemUsesAuthoredBlueRingForGpuAnimatedCharacterWithoutBindPoseOverlay()
     {
-        using var world = new World(nameof(UnitSelectionMarkerSystemCreatesSafeSelectionVolumeForGpuAnimatedCharacterWithoutBindPoseOverlay));
+        GameObject authoredMarker = AssetDatabase.LoadAssetAtPath<GameObject>(
+            "Assets/Game/Prefabs/Vehicles/VehicleSelectionMarker.prefab");
+        Assert.IsNotNull(authoredMarker);
+        Transform infantryRing = authoredMarker.transform.Find("Model/InfantryGroundRing");
+        Assert.IsNotNull(infantryRing, "The shared marker must retain the circular infantry ground treatment.");
+        MeshFilter ringMesh = infantryRing.GetComponent<MeshFilter>();
+        MeshRenderer ringRenderer = infantryRing.GetComponent<MeshRenderer>();
+        Assert.IsNotNull(ringMesh);
+        Assert.IsNotNull(ringMesh.sharedMesh);
+        Assert.AreEqual("Premium_Unit_CapsuleAura", ringMesh.sharedMesh.name);
+        Assert.IsNotNull(ringRenderer);
+        Assert.IsNotNull(ringRenderer.sharedMaterial);
+        Assert.AreEqual("Mat_Selection_Player_Hologram", ringRenderer.sharedMaterial.name);
+
+        using var world = new World(nameof(UnitSelectionMarkerSystemUsesAuthoredBlueRingForGpuAnimatedCharacterWithoutBindPoseOverlay));
         EntityManager em = world.EntityManager;
         Entity markerPrefab = CreateVisualPrefab(em);
         Entity character = CreateCharacter(em, health: 100);
@@ -515,7 +549,10 @@ public sealed class VehicleVisualAdornmentsSystemTests
         Entity marker = em.GetComponentData<UnitSelectionMarkerInstanceReference>(character).Instance;
         Assert.IsTrue(em.Exists(marker));
         Assert.IsTrue(em.HasBuffer<SelectionObjectOutlineInstanceElement>(marker));
-        AssertSafeGpuAnimatedSelectionVolume(em, character, renderer);
+        Assert.AreEqual(
+            0,
+            em.GetBuffer<SelectionObjectOutlineInstanceElement>(marker).Length,
+            "GPU-animated infantry must rely on the authored blue circle instead of the Android-fragmented generated overlay.");
     }
 
     [Test]
@@ -1016,56 +1053,6 @@ public sealed class VehicleVisualAdornmentsSystemTests
         em.SetComponentData(entity, new UnitFootprint { Size = new int2(1, 1) });
         em.SetComponentData(entity, LocalTransform.Identity);
         return entity;
-    }
-
-    private static Entity AssertSafeGpuAnimatedSelectionVolume(EntityManager em, Entity unit, Entity sourceRenderer)
-    {
-        Assert.IsTrue(em.HasComponent<UnitSelectionMarkerInstanceReference>(unit));
-        Entity marker = em.GetComponentData<UnitSelectionMarkerInstanceReference>(unit).Instance;
-        Assert.IsTrue(em.HasBuffer<SelectionObjectOutlineInstanceElement>(marker), "GPU-animated selected units must own a safe selection volume from their marker instance.");
-        DynamicBuffer<SelectionObjectOutlineInstanceElement> outlines = em.GetBuffer<SelectionObjectOutlineInstanceElement>(marker);
-        Assert.Greater(outlines.Length, 0);
-
-        Entity volume = outlines[0].Value;
-        Assert.IsTrue(em.Exists(volume));
-        Assert.IsTrue(em.HasComponent<SelectionObjectOutlineTag>(volume));
-        Assert.AreEqual(unit, em.GetComponentData<SelectionMarkerOwner>(volume).Value);
-        Assert.AreEqual(unit, em.GetComponentData<Parent>(volume).Value);
-        Assert.AreEqual(LocalTransform.Identity.Position, em.GetComponentData<LocalTransform>(volume).Position);
-        Assert.IsTrue(em.HasComponent<PostTransformMatrix>(volume));
-        float4x4 volumeScale = em.GetComponentData<PostTransformMatrix>(volume).Value;
-        Assert.LessOrEqual(volumeScale.c0.x, 0.86f, "Oversized animated renderer bounds must not inflate the soldier selection volume.");
-        Assert.LessOrEqual(volumeScale.c1.y, 2.05f, "Oversized animated renderer bounds must not inflate the soldier selection volume.");
-        Assert.LessOrEqual(volumeScale.c2.z, 0.86f, "Oversized animated renderer bounds must not inflate the soldier selection volume.");
-        Assert.GreaterOrEqual(volumeScale.c0.x, 0.56f);
-        Assert.GreaterOrEqual(volumeScale.c1.y, 1.2f);
-        Assert.GreaterOrEqual(volumeScale.c2.z, 0.56f);
-        Assert.IsFalse(em.HasComponent<MeshLODComponent>(volume), "GPU-animated soldiers must not use duplicated render mesh outlines by default.");
-        Assert.IsFalse(em.HasComponent<MaterialPropertyRenderPixel>(volume));
-        Assert.IsFalse(em.HasComponent<MaterialPropertyShowModel>(volume));
-        Assert.IsFalse(em.HasComponent<MaterialPropertyAlphaEnabled>(volume));
-
-        RenderMeshArray renderMeshArray = em.GetSharedComponentManaged<RenderMeshArray>(volume);
-        MaterialMeshInfo materialMeshInfo = em.GetComponentData<MaterialMeshInfo>(volume);
-        Mesh mesh = renderMeshArray.GetMesh(materialMeshInfo);
-        Assert.IsNotNull(mesh);
-        Assert.Greater(mesh.vertexCount, 0);
-        Assert.IsTrue(mesh.HasVertexAttribute(VertexAttribute.TexCoord0), "Safe soldier selection volume must provide UVs because SelectionHologram uses UVs for visibility.");
-        Assert.IsTrue(mesh.HasVertexAttribute(VertexAttribute.Color), "Safe soldier selection volume must provide vertex color for SelectionHologram modulation.");
-        Material material = renderMeshArray.GetMaterial(materialMeshInfo);
-        Assert.IsNotNull(material);
-        Assert.IsTrue(material.enableInstancing);
-        Assert.AreEqual("WarlineCapture/Markers/SelectionHologram", material.shader.name);
-        StringAssert.Contains("CharacterSelectionVolume", em.GetName(volume));
-        Assert.IsTrue(em.HasComponent<RenderFilterSettings>(volume));
-        RenderFilterSettings settings = em.GetSharedComponentManaged<RenderFilterSettings>(volume);
-        Assert.AreEqual(ShadowCastingMode.Off, settings.ShadowCastingMode);
-        Assert.IsFalse(settings.ReceiveShadows);
-        Assert.AreEqual(MotionVectorGenerationMode.ForceNoMotion, settings.MotionMode);
-        Assert.AreEqual(7, settings.Layer);
-        Assert.AreEqual(0x00000004u, settings.RenderingLayerMask);
-        Assert.IsTrue(em.HasComponent<Unity.Rendering.RenderBounds>(sourceRenderer));
-        return volume;
     }
 
     private static Entity AssertSelectionObjectOutline(EntityManager em, Entity unit, Entity sourceRenderer, string expectedKind, Entity expectedParent = default)

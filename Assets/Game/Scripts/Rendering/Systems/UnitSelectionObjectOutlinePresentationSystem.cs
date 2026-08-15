@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Entities.Graphics;
@@ -16,21 +15,11 @@ namespace Game.Rendering
     [UpdateAfter(typeof(UnitSelectionMarkerSystem))]
     public sealed partial class UnitSelectionObjectOutlinePresentationSystem : SystemBase
     {
-        private const float CharacterSelectionVolumeDefaultRadius = 0.68f;
-        private const float CharacterSelectionVolumeMinRadius = 0.56f;
-        private const float CharacterSelectionVolumeMaxRadius = 0.86f;
-        private const float CharacterSelectionVolumeDefaultHeight = 1.5f;
-        private const float CharacterSelectionVolumeMinHeight = 1.2f;
-        private const float CharacterSelectionVolumeMaxHeight = 2.05f;
         private const int MaxSelectionObjectOutlineRenderers = 48;
         private const int MaxSelectionObjectOutlineParentDepth = 64;
         private const string SelectionObjectOutlineShaderName = "WarlineCapture/Markers/SelectionObjectOutline";
-        private const string SelectionHologramShaderName = "WarlineCapture/Markers/SelectionHologram";
         private const string BaseColorProperty = "_BaseColor";
-        private const string LegacyColorProperty = "_Color";
         private const string EmissionColorProperty = "_EmissionColor";
-        private const string AccentColorProperty = "_AccentColor";
-        private const string AlphaProperty = "_Alpha";
         private const string OutlineWidthProperty = "_OutlineWidth";
         private const string OutlineAlphaProperty = "_OutlineAlpha";
         private const string RimAlphaProperty = "_RimAlpha";
@@ -41,8 +30,6 @@ namespace Game.Rendering
         private static readonly Color SelectionObjectOutlineEmissionColor = new(0.05f, 1f, 1f, 1f);
         private Material _characterSelectionObjectOutlineMaterial;
         private Material _vehicleSelectionObjectOutlineMaterial;
-        private Material _characterSelectionVolumeMaterial;
-        private Mesh _characterSelectionVolumeMesh;
         private EntityQuery _unitRenderEntityQuery;
 
         protected override void OnCreate()
@@ -70,12 +57,8 @@ namespace Game.Rendering
         {
             DestroyRuntimeObject(_characterSelectionObjectOutlineMaterial);
             DestroyRuntimeObject(_vehicleSelectionObjectOutlineMaterial);
-            DestroyRuntimeObject(_characterSelectionVolumeMaterial);
-            DestroyRuntimeObject(_characterSelectionVolumeMesh);
             _characterSelectionObjectOutlineMaterial = null;
             _vehicleSelectionObjectOutlineMaterial = null;
-            _characterSelectionVolumeMaterial = null;
-            _characterSelectionVolumeMesh = null;
         }
 
         protected override void OnUpdate()
@@ -147,7 +130,6 @@ namespace Game.Rendering
             CollectRenderableDescendantsByAncestryScan(em, unit, renderEntityQuery, sources);
             CollectReferencedVisualRootRenderSources(em, unit, renderEntityQuery, sources);
 
-            bool createdGpuAnimatedCharacterVolume = false;
             for (int i = 0; i < sources.Length && GetSelectionObjectOutlineCount(em, marker) < MaxSelectionObjectOutlineRenderers; i++)
             {
                 Entity source = sources[i];
@@ -157,12 +139,10 @@ namespace Game.Rendering
                 bool isGpuAnimatedCharacter = !usesVehicleMarker && IsGpuAnimatedSelectionObjectOutlineSource(em, source, unit);
                 if (isGpuAnimatedCharacter)
                 {
-                    if (!createdGpuAnimatedCharacterVolume)
-                    {
-                        CreateGpuAnimatedCharacterSelectionVolume(em, unit, marker, source);
-                        createdGpuAnimatedCharacterVolume = true;
-                    }
-
+                    // GPU-skinned meshes cannot be copied safely for an object outline. The
+                    // authored infantry ground ring is the sole selection treatment here;
+                    // the former generated arc overlay fragmented into white square-like
+                    // corners on Android and obscured faction recognition.
                     continue;
                 }
 
@@ -618,76 +598,6 @@ namespace Game.Rendering
             em.GetBuffer<SelectionObjectOutlineInstanceElement>(marker).Add(new SelectionObjectOutlineInstanceElement { Value = outline });
         }
 
-        private void CreateGpuAnimatedCharacterSelectionVolume(EntityManager em, Entity unit, Entity marker, Entity source)
-        {
-            Material material = GetCharacterSelectionVolumeMaterial();
-            Mesh mesh = GetCharacterSelectionVolumeMesh();
-            if (material == null || mesh == null || GetSelectionObjectOutlineCount(em, marker) >= MaxSelectionObjectOutlineRenderers)
-                return;
-
-            Entity volume = em.CreateEntity();
-            em.SetName(volume, "UnitSelectionCharacterSelectionVolume");
-            em.AddComponent<SelectionObjectOutlineTag>(volume);
-            em.AddComponentData(volume, new SelectionMarkerOwner { Value = unit });
-            em.AddComponentData(volume, new Parent { Value = unit });
-            em.AddComponentData(volume, LocalTransform.Identity);
-            em.AddComponentData(volume, new SelectionObjectOutlineVisibleScale { Value = 1f });
-
-            float3 volumeScale = ResolveGpuAnimatedCharacterSelectionVolumeScale(em, unit, source);
-            em.AddComponentData(volume, new PostTransformMatrix
-            {
-                Value = float4x4.Scale(volumeScale)
-            });
-
-            RenderMeshDescription description = CreateSelectionObjectOutlineRenderDescription(em, source);
-            RenderMeshArray renderMeshArray = new(new[] { material }, new[] { mesh });
-            RenderMeshUtility.AddComponents(
-                volume,
-                em,
-                description,
-                renderMeshArray,
-                MaterialMeshInfo.FromRenderMeshArrayIndices(0, 0));
-
-            if (em.HasComponent<Unity.Rendering.RenderBounds>(volume))
-            {
-                em.SetComponentData(volume, new Unity.Rendering.RenderBounds
-                {
-                    Value = new AABB
-                    {
-                        Center = new float3(0f, 0.55f, 0f),
-                        Extents = new float3(1.1f, 0.65f, 1.1f)
-                    }
-                });
-            }
-
-            em.GetBuffer<SelectionObjectOutlineInstanceElement>(marker).Add(new SelectionObjectOutlineInstanceElement { Value = volume });
-        }
-
-        private static float3 ResolveGpuAnimatedCharacterSelectionVolumeScale(EntityManager em, Entity unit, Entity source)
-        {
-            float radius = CharacterSelectionVolumeDefaultRadius;
-            float height = CharacterSelectionVolumeDefaultHeight;
-            if (em.HasComponent<UnitFootprint>(unit))
-            {
-                int2 footprint = em.GetComponentData<UnitFootprint>(unit).Size;
-                radius = math.max(radius, math.max(footprint.x, footprint.y) * 0.48f);
-            }
-
-            if (source != Entity.Null && em.Exists(source) && em.HasComponent<Unity.Rendering.RenderBounds>(source))
-            {
-                AABB bounds = em.GetComponentData<Unity.Rendering.RenderBounds>(source).Value;
-                float sourceScale = em.HasComponent<LocalTransform>(source)
-                    ? math.max(0.0001f, em.GetComponentData<LocalTransform>(source).Scale)
-                    : 1f;
-                radius = math.max(radius, math.cmax(new float2(bounds.Extents.x, bounds.Extents.z)) * sourceScale * 0.72f);
-                height = math.max(height, bounds.Extents.y * sourceScale * 1.7f);
-            }
-
-            radius = math.clamp(radius, CharacterSelectionVolumeMinRadius, CharacterSelectionVolumeMaxRadius);
-            height = math.clamp(height, CharacterSelectionVolumeMinHeight, CharacterSelectionVolumeMaxHeight);
-            return new float3(radius, height, radius);
-        }
-
         private static int GetSelectionObjectOutlineCount(EntityManager em, Entity marker)
         {
             return marker != Entity.Null &&
@@ -732,40 +642,6 @@ namespace Game.Rendering
             return _characterSelectionObjectOutlineMaterial;
         }
 
-        private Material GetCharacterSelectionVolumeMaterial()
-        {
-            if (_characterSelectionVolumeMaterial != null)
-                return _characterSelectionVolumeMaterial;
-
-            Shader shader = Shader.Find(SelectionHologramShaderName);
-            if (shader == null)
-                shader = Shader.Find(SelectionObjectOutlineShaderName);
-            if (shader == null)
-                return null;
-
-            Material material = new(shader)
-            {
-                name = "Mat_Selection_ECS_Character_SafeVolume",
-                hideFlags = HideFlags.HideAndDontSave,
-                enableInstancing = true,
-                renderQueue = (int)RenderQueue.Transparent + 6
-            };
-
-            SetMaterialColorIfPresent(material, BaseColorProperty, new Color(0.02f, 0.88f, 1f, 0.9f));
-            SetMaterialColorIfPresent(material, LegacyColorProperty, new Color(0.02f, 0.88f, 1f, 0.9f));
-            SetMaterialColorIfPresent(material, EmissionColorProperty, new Color(0.01f, 0.22f, 0.28f, 1f));
-            SetMaterialColorIfPresent(material, AccentColorProperty, new Color(0.56f, 0.98f, 1f, 0.9f));
-            SetMaterialFloatIfPresent(material, AlphaProperty, 0.78f);
-            SetMaterialFloatIfPresent(material, "_PulseStrength", 0.08f);
-            SetMaterialFloatIfPresent(material, "_PulseSpeed", 0.42f);
-            SetMaterialFloatIfPresent(material, ScanStrengthProperty, 0.1f);
-            SetMaterialFloatIfPresent(material, ScanSpeedProperty, 0.24f);
-            SetMaterialFloatIfPresent(material, "_EdgeSoftness", 0.16f);
-
-            _characterSelectionVolumeMaterial = material;
-            return _characterSelectionVolumeMaterial;
-        }
-
         private static Material CreateSelectionObjectOutlineMaterial(string name, float outlineWidth, float outlineAlpha, float rimAlpha)
         {
             Shader shader = Shader.Find(SelectionObjectOutlineShaderName);
@@ -790,45 +666,6 @@ namespace Game.Rendering
             return material;
         }
 
-        private static void SetMaterialColorIfPresent(Material material, string property, Color value)
-        {
-            if (material.HasProperty(property))
-                material.SetColor(property, value);
-        }
-
-        private static void SetMaterialFloatIfPresent(Material material, string property, float value)
-        {
-            if (material.HasProperty(property))
-                material.SetFloat(property, value);
-        }
-
-        private Mesh GetCharacterSelectionVolumeMesh()
-        {
-            if (_characterSelectionVolumeMesh != null)
-                return _characterSelectionVolumeMesh;
-
-            const int segments = 40;
-            List<Vector3> vertices = new(segments * 8 + 64);
-            List<Vector2> uvs = new(segments * 8 + 64);
-            List<Color> colors = new(segments * 8 + 64);
-            List<int> triangles = new(segments * 12 + 96);
-            Color bright = Color.white;
-            AddFlatArc(vertices, uvs, colors, triangles, 0.04f, 0.74f, 1.0f, segments, 0f, 360f, bright);
-
-            _characterSelectionVolumeMesh = new Mesh
-            {
-                name = "Selection_Character_SafeVolume",
-                hideFlags = HideFlags.HideAndDontSave
-            };
-            _characterSelectionVolumeMesh.SetVertices(vertices);
-            _characterSelectionVolumeMesh.SetUVs(0, uvs);
-            _characterSelectionVolumeMesh.SetColors(colors);
-            _characterSelectionVolumeMesh.SetTriangles(triangles, 0);
-            _characterSelectionVolumeMesh.RecalculateNormals();
-            _characterSelectionVolumeMesh.RecalculateBounds();
-            return _characterSelectionVolumeMesh;
-        }
-
         private static void DestroyRuntimeObject(UnityEngine.Object target)
         {
             if (target == null)
@@ -838,50 +675,6 @@ namespace Game.Rendering
                 UnityEngine.Object.Destroy(target);
             else
                 UnityEngine.Object.DestroyImmediate(target);
-        }
-
-        private static void AddFlatArc(
-            List<Vector3> vertices,
-            List<Vector2> uvs,
-            List<Color> colors,
-            List<int> triangles,
-            float y,
-            float innerRadius,
-            float outerRadius,
-            int segments,
-            float startDegrees,
-            float endDegrees,
-            Color color)
-        {
-            int segmentCount = math.max(2, (int)math.round(segments * math.abs(endDegrees - startDegrees) / 360f));
-            int start = vertices.Count;
-            for (int i = 0; i <= segmentCount; i++)
-            {
-                float t = i / (float)segmentCount;
-                float angle = math.radians(math.lerp(startDegrees, endDegrees, t));
-                float sin = math.sin(angle);
-                float cos = math.cos(angle);
-                vertices.Add(new Vector3(cos * outerRadius, y, sin * outerRadius));
-                uvs.Add(new Vector2(0.02f, t));
-                colors.Add(color);
-                vertices.Add(new Vector3(cos * innerRadius, y, sin * innerRadius));
-                uvs.Add(new Vector2(0.98f, t));
-                colors.Add(color);
-            }
-
-            for (int i = 0; i < segmentCount; i++)
-            {
-                int outerA = start + i * 2;
-                int innerA = outerA + 1;
-                int outerB = outerA + 2;
-                int innerB = outerB + 1;
-                triangles.Add(outerA);
-                triangles.Add(outerB);
-                triangles.Add(innerA);
-                triangles.Add(innerA);
-                triangles.Add(outerB);
-                triangles.Add(innerB);
-            }
         }
 
         private static float ResolveSelectionObjectOutlineScanStrength(float outlineWidth)

@@ -302,13 +302,20 @@ public sealed class UnitHelicopterBladeSpinSystemTests
     [Test]
     public void FactionVisualSystemProjectsConfiguredFactionVisualColorsToEcs()
     {
+        FactionVisualSettingsSceneConfigAsset authoredConfig =
+            AssetDatabase.LoadAssetAtPath<FactionVisualSettingsSceneConfigAsset>(
+                "Assets/Game/Configs/Scene/Game_FactionVisualSettings_Config.asset");
+        Assert.IsNotNull(authoredConfig);
+        Assert.AreEqual(new Color(0.12f, 0.72f, 1f, 1f), authoredConfig.PlayerColor);
+        Assert.AreEqual(new Color(1f, 0.35f, 0.2f, 1f), authoredConfig.EnemyColor);
+
         using var world = new World(nameof(FactionVisualSystemProjectsConfiguredFactionVisualColorsToEcs));
         FactionVisualSettingsSceneConfigAsset config = ScriptableObject.CreateInstance<FactionVisualSettingsSceneConfigAsset>();
         try
         {
             SerializedObject serialized = new(config);
-            serialized.FindProperty("playerColor").colorValue = Color.white;
-            serialized.FindProperty("enemyColor").colorValue = new Color(1f, 0.8f, 0.75f, 1f);
+            serialized.FindProperty("playerColor").colorValue = new Color(0.12f, 0.72f, 1f, 1f);
+            serialized.FindProperty("enemyColor").colorValue = new Color(1f, 0.35f, 0.2f, 1f);
             serialized.FindProperty("neutralColor").colorValue = new Color(0.82f, 0.82f, 0.82f, 1f);
             serialized.ApplyModifiedPropertiesWithoutUndo();
 
@@ -316,8 +323,8 @@ public sealed class UnitHelicopterBladeSpinSystemTests
 
             using EntityQuery query = world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<FactionVisualConfig>());
             FactionVisualConfig projected = query.GetSingleton<FactionVisualConfig>();
-            Assert.AreEqual(new float4(1f, 1f, 1f, 1f), projected.PlayerColor);
-            Assert.AreEqual(new float4(1f, 0.8f, 0.75f, 1f), projected.EnemyColor);
+            Assert.AreEqual(new float4(0.12f, 0.72f, 1f, 1f), projected.PlayerColor);
+            Assert.AreEqual(new float4(1f, 0.35f, 0.2f, 1f), projected.EnemyColor);
             Assert.AreEqual(new float4(0.82f, 0.82f, 0.82f, 1f), projected.NeutralColor);
         }
         finally

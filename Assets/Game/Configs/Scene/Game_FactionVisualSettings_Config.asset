@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a101000000000000000000000000000a, type: 3}
   m_Name: Game_FactionVisualSettings_Config
   m_EditorClassIdentifier: 
-  playerColor: {r: 1, g: 1, b: 1, a: 1}
-  enemyColor: {r: 1, g: 0.796875, b: 0.75, a: 1}
+  playerColor: {r: 0.12, g: 0.72, b: 1, a: 1}
+  enemyColor: {r: 1, g: 0.35, b: 0.2, a: 1}
   neutralColor: {r: 0.82, g: 0.82, b: 0.82, a: 1}
   buildingFactionTintStrength: 0.45

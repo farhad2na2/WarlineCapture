@@ -145,7 +145,7 @@ namespace Game.Editor
             Mesh rectFrame = SaveMesh("Premium_Rect_FootprintFrame", CreateRectFrameMesh(1f, 1f, 0.018f));
             Mesh rectFill = SaveMesh("Premium_Rect_FootprintFill", CreateRectFillMesh(1f, 1f));
             Mesh rectBrackets = SaveMesh("Premium_Rect_CornerBrackets", CreateRectCornerBracketMesh(1f, 1f, 0.22f, 0.026f, 0.34f));
-            SaveMesh("Premium_Unit_CapsuleAura", CreateEllipseRingMesh(0.55f, 0.55f, 0.05f, 128, 360f));
+            Mesh unitCapsuleAura = SaveMesh("Premium_Unit_CapsuleAura", CreateEllipseRingMesh(0.55f, 0.55f, 0.05f, 128, 360f));
             SaveMesh("Premium_Unit_OuterArcs", CreateEllipseRingMesh(0.62f, 0.62f, 0.02f, 128, 360f));
             Mesh vehicleFill = SaveMesh("Premium_Vehicle_FootprintFill", CreateRectFillMesh(1.18f, 0.76f));
             Mesh vehiclePlate = SaveMesh("Premium_Vehicle_FootprintPlate", CreateRectFrameMesh(1.18f, 0.76f, 0.026f));
@@ -163,7 +163,14 @@ namespace Game.Editor
             Mesh targetBrackets = SaveMesh("Premium_TargetLock_CornerBrackets", CreateRectCornerBracketMesh(1f, 1f, 0.24f, 0.046f, 0.38f));
 
             BuildBuildingSelectionPrefab(selectionMaterial, selectionFillMaterial, rectFrame, rectFill, rectBrackets);
-            BuildVehicleSelectionPrefab(vehicleMaterial, vehicleFillMaterial, vehicleFill, vehiclePlate, vehicleBrackets);
+            BuildVehicleSelectionPrefab(
+                selectionMaterial,
+                unitCapsuleAura,
+                vehicleMaterial,
+                vehicleFillMaterial,
+                vehicleFill,
+                vehiclePlate,
+                vehicleBrackets);
             BuildMoveMarkerPrefab(moveMaterial, moveFillMaterial, moveFill, moveOuterRing, moveInnerRing, moveCenterDot);
             BuildAttackMarkerPrefab(attackMaterial, attackFillMaterial, attackFill, attackCrosshair, attackChevrons, attackBrackets, attackBeacon);
             BuildAttackTargetPrefab(targetLockMaterial, targetLockFillMaterial, targetFrame, rectFill, targetBrackets);
@@ -197,6 +204,8 @@ namespace Game.Editor
         }
 
         private static void BuildVehicleSelectionPrefab(
+            Material infantryMaterial,
+            Mesh infantryRing,
             Material material,
             Material fillMaterial,
             Mesh vehicleFill,
@@ -212,6 +221,7 @@ namespace Game.Editor
                 model.localPosition = new Vector3(0f, 0.12f, 0f);
                 model.localRotation = Quaternion.identity;
                 model.localScale = Vector3.one;
+                AddMeshChild(model, "InfantryGroundRing", infantryRing, infantryMaterial, new Vector3(0f, 0.01f, 0f), Vector3.one, sortingOrder: 4);
                 AddMeshChild(model, "VehicleFootprintFill", vehicleFill, fillMaterial, new Vector3(0f, 0.02f, 0f), Vector3.one, sortingOrder: -1);
                 AddMeshChild(model, "VehicleBoundsFrame", vehiclePlate, material, new Vector3(0f, 0.04f, 0f), Vector3.one, sortingOrder: 2);
                 AddMeshChild(model, "VehicleCornerBrackets", vehicleBrackets, material, new Vector3(0f, 0.075f, 0f), Vector3.one, sortingOrder: 3);

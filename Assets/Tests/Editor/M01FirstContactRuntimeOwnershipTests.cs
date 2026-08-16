@@ -113,6 +113,9 @@ public static class M01FirstContactRuntimeOwnershipTests
             "Ready mission did not enter InteractiveBrief.");
         Require(next.Phase == MissionPhaseKind.InteractiveBrief && next.Version == 2,
             "Preparing transition published the wrong phase/version.");
+        Require(CampaignMissionRuntimeSystem.TryEvaluate(in next, in facts, out next) &&
+                next.Phase == MissionPhaseKind.FindSquad && next.Version == 3,
+            "InteractiveBrief did not enter the first guided FindSquad phase.");
     }
 
     private static void GuidedPhases_AdvanceFromFacts()

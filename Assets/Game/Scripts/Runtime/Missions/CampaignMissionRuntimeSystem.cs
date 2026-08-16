@@ -382,8 +382,6 @@ namespace Game.Runtime
                 !IsValidOutcome(phase, outcome, destination) || current.Version == uint.MaxValue)
                 return false;
 
-            // A published result is immutable, but its presentation may advance to the
-            // matching debrief/return phase while preserving the exact outcome and route.
             if (current.Outcome != MissionOutcomeKind.None &&
                 (current.Phase != MissionPhaseKind.Result || phase == MissionPhaseKind.Result ||
                  outcome != current.Outcome || destination != current.ReturnDestination))
@@ -433,6 +431,8 @@ namespace Game.Runtime
             if (current.Phase == MissionPhaseKind.Preparing &&
                 (current.ReadyReadiness & current.RequiredReadiness) == current.RequiredReadiness)
                 phase = MissionPhaseKind.InteractiveBrief;
+            else if (current.Phase == MissionPhaseKind.InteractiveBrief)
+                phase = MissionPhaseKind.FindSquad;
             else if (current.Phase == MissionPhaseKind.FindSquad &&
                      (facts.CommandSquadSpawned == 0 || facts.CommandSquadAlive == 0))
                 return ResolveDefeat(out phase, out outcome, out destination);

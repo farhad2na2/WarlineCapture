@@ -291,10 +291,10 @@
       "severity": "P2",
       "title": "ARIA duplicates DO IT and does not visibly select the four-soldier command squad",
       "reproduction": "Open ARIA during Mission 1 Find Squad guidance; observe two controls labelled DO IT; press each and observe that the requested four-unit command squad is not visibly selected.",
-      "cause": "The ARIA popup reused RecommendationActionLabel for SHOW ME and initially treated the representative squad entity as a single-unit focus request. Fresh package replay proved mission truth also left FindSquad merely because the squad was alive and FocusSquad was omitted from the existing selection input summary. Exact bb757 replay after those fixes then proved authored runtime prefabs carried transient SelectedUnitTag into mission instances long enough for FindSquad to auto-advance before player-visible selection cleared.",
-      "evidence": "Direct project-owner feedback plus canonical-Samsung operatorKind=Agent replays. Exact bb757 evidence: recording sha256=3d78025a7369cdf117e0d2948e0c2b0f0bbbe953c599d51680bd1371867e2c82; generic-ARIA frame sha256=2e9fedb73cb2754a3be8477d051f2037387162c47764ab4f55ddf1a7ea9e9532; SHOW ME frame sha256=a642b83684ec2a12835482945d9b97264818cf6f2e03a49bf11693198cadce5d; post-DO IT frame sha256=8b53ab02547c574972191a8ddf9b07dca09b62fb4516f21654ffe227d00f4fbb; device-log sha256=95cdf8290d6d31baaeb6a6de6846f000839c274693bb88fc7f1e55547869d20a.",
+      "cause": "The ARIA popup reused RecommendationActionLabel for SHOW ME and initially treated the representative squad entity as a single-unit focus request. Fresh package replay also proved FocusSquad was omitted from the selection input summary. Exact 8888d267e replay after the runtime and spawn-hygiene fixes established the final lifecycle gap: the sole mission writer advances Preparing to InteractiveBrief but never automatically advances InteractiveBrief to FindSquad, so mission guidance never owns the recommendation and generic targetless Select a unit remains visible.",
+      "evidence": "Direct project-owner feedback plus canonical-Samsung operatorKind=Agent replays. Exact 8888d267e evidence: recording sha256=c3f06c98b7263fa262236ada2752e224ea016cb083eda35e06f8ffd95a944c9e; generic-ARIA frame sha256=6bb389d3ffc28b9f021a618d291585642df00ed2287d7e26dd3d7f9e6f135897; SHOW-ME frame sha256=d835e27a8099a4628121e14fc1a3974d7eccecc15ced721001e1b6c25d13040b; post-DO-IT frame sha256=10316553d69d680804d48de21e68050acecbee860edcc84f0c5ddd4bc14a8463; device-log sha256=80ce41cb26d78345d72d9b47972ba51435d1b1cea825532abb26767ac29ed592; zero content-pack, fatal, and ANR matches.",
       "owner": "Existing ARIA presentation boundary and existing RTS selection command owner",
-      "response": "Present distinct SHOW ME and DO IT labels, project Find Squad as a typed squad target, keep guided FindSquad active until all alive correlated command-squad members are selected, classify FocusSquad for the existing external selection consumer, and scrub only inherited SelectedUnitTag from freshly instantiated correlated mission units before publication.",
+      "response": "Present distinct SHOW ME and DO IT labels, project Find Squad as a typed squad target, classify FocusSquad for the existing external selection consumer, scrub inherited SelectedUnitTag from fresh mission units, and let the sole mission writer publish the already-valid InteractiveBrief-to-FindSquad lifecycle transition before selection-dependent guidance can advance.",
       "editorValidation": {
         "assistantIntent": {
           "log": "Logs/m01dc038-aria-selection-assistant-intent-final2.log",
@@ -337,6 +337,14 @@
           "focusedMarker": "[M01FirstContactForcesPlayModeValidation] result=Passed tests=3",
           "architectureLog": "Logs/m01dc038-aria-spawn-selection-hygiene-architecture.log",
           "architectureLogSha256": "fe214a6ebd8136d5dac6633106fb8c44423ace7d9f6da82581a64194346a38a4",
+          "architectureMarker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23"
+        },
+        "interactiveBriefLifecycle": {
+          "focusedLog": "Logs/m01dc038-interactive-brief-runtime.log",
+          "focusedLogSha256": "dd17a3c2b547a526a9a857cc2866983528d50db003adcc0263efd174ccea1bfd",
+          "focusedMarker": "[M01FirstContactRuntimeOwnershipValidation] result=Passed tests=12",
+          "architectureLog": "Logs/m01dc038-interactive-brief-architecture.log",
+          "architectureLogSha256": "f404c1248cad84ab6d969e9737d4bef06461cd50a39483b6cf01391eaed9c0ce",
           "architectureMarker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23"
         }
       },
@@ -383,9 +391,23 @@
         "fatalOrAnrMatches": 0,
         "result": "Reached live M01 but reproduced generic targetless ARIA and no visible squad selection."
       },
-      "deviceAvailability": "The prior canonical-Samsung bb757 replay exposed inherited selection-state auto-advance. For the exact 8888d267e spawn-hygiene package, Unity's bundled ADB returned no connected devices or discovered mDNS services and the prior hardware-verified Samsung endpoint did not reconnect; installation and replay did not execute and no other device was contacted.",
-      "status": "spawn-hygiene-corrected-and-validated-pending-new-package-replay",
-      "closureRequires": "Install the already-built exact 8888d267e package on canonical Samsung only, then replay ARIA with real input proving SHOW ME previews the squad and DO IT visibly selects all four alive command-squad soldiers."
+      "spawnHygieneDeviceReplay": {
+        "operatorKind": "Agent",
+        "humanParticipant": false,
+        "canonicalDevice": "Samsung SM-S918B R5CTC1J02VB",
+        "androidVersion": "16",
+        "apiLevel": 36,
+        "endpoint": "192.168.2.33:45137",
+        "evidenceDirectory": "Build/DeviceEvidence/M01DC038_8888d",
+        "recordingSha256": "c3f06c98b7263fa262236ada2752e224ea016cb083eda35e06f8ffd95a944c9e",
+        "deviceLogSha256": "80ce41cb26d78345d72d9b47972ba51435d1b1cea825532abb26767ac29ed592",
+        "contentPackHashErrors": 0,
+        "fatalOrAnrMatches": 0,
+        "result": "Exact package reached live M01, but ARIA remained generic because runtime stayed in InteractiveBrief; SHOW ME had no target and DO IT selected no squad."
+      },
+      "deviceAvailability": "Canonical Samsung SM-S918B R5CTC1J02VB reappeared at hardware-verified endpoint 192.168.2.33:45137; exact 8888d267e package installed after app-data clear and operatorKind=Agent replay exposed the InteractiveBrief lifecycle gap.",
+      "status": "interactive-brief-lifecycle-corrected-and-validated-pending-new-package-replay",
+      "closureRequires": "Build and install a fresh exact-head lifecycle-corrected package on canonical Samsung only, then replay ARIA with real input proving Find your squad, SHOW ME preview, and visible four-soldier DO IT selection."
     },
     {
       "id": "M01DC038-P1-015",

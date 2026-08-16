@@ -697,5 +697,65 @@
     },
     "status": "validated-pending-fresh-exact-head-package-canonical-samsung-replay"
   },
+  "ariaInteractiveBriefLifecycleCorrection": {
+    "findingId": "M01DC038-P2-012",
+    "freshPackageReplaySourceHead": "8888d267e0cca3eefdc3a5a725dce30d81572ed1",
+    "deviceReplay": {
+      "operatorKind": "Agent",
+      "humanParticipant": false,
+      "canonicalDevice": "Samsung SM-S918B R5CTC1J02VB",
+      "hardwareSerial": "R5CTC1J02VB",
+      "androidVersion": "16",
+      "apiLevel": 36,
+      "endpoint": "192.168.2.33:45137",
+      "installResult": "Success",
+      "appDataCleared": true,
+      "evidenceDirectory": "Build/DeviceEvidence/M01DC038_8888d",
+      "recording": {
+        "path": "Build/DeviceEvidence/M01DC038_8888d/m01dc038_8888d_replay.mp4",
+        "bytes": 206458810,
+        "sha256": "c3f06c98b7263fa262236ada2752e224ea016cb083eda35e06f8ffd95a944c9e"
+      },
+      "genericAriaFrame": {
+        "path": "Build/DeviceEvidence/M01DC038_8888d/m01dc038_8888d_step05.png",
+        "bytes": 2026743,
+        "sha256": "6bb389d3ffc28b9f021a618d291585642df00ed2287d7e26dd3d7f9e6f135897"
+      },
+      "showMeFrame": {
+        "path": "Build/DeviceEvidence/M01DC038_8888d/m01dc038_8888d_step06.png",
+        "bytes": 2032024,
+        "sha256": "d835e27a8099a4628121e14fc1a3974d7eccecc15ced721001e1b6c25d13040b"
+      },
+      "doItFrame": {
+        "path": "Build/DeviceEvidence/M01DC038_8888d/m01dc038_8888d_step07.png",
+        "bytes": 2032174,
+        "sha256": "10316553d69d680804d48de21e68050acecbee860edcc84f0c5ddd4bc14a8463"
+      },
+      "deviceLog": {
+        "path": "Build/DeviceEvidence/M01DC038_8888d/m01dc038_8888d_logcat.txt",
+        "bytes": 5422335,
+        "sha256": "80ce41cb26d78345d72d9b47972ba51435d1b1cea825532abb26767ac29ed592"
+      },
+      "contentPackHashErrors": 0,
+      "fatalOrAnrMatches": 0,
+      "observedResponse": "ARIA retained generic Select a unit; SHOW ME reported no preview target and DO IT selected no command-squad units."
+    },
+    "diagnosis": "The sole mission writer had no automatic InteractiveBrief-to-FindSquad transition, while existing focused tests began directly in FindSquad.",
+    "implementedResponse": "Publish the already-valid InteractiveBrief-to-FindSquad transition through the sole mission writer and assert it in the focused runtime lifecycle test.",
+    "runtimeLinesBefore": 500,
+    "runtimeLinesAfter": 500,
+    "runtimeBytesAfter": 26418,
+    "focusedValidation": {
+      "log": "Logs/m01dc038-interactive-brief-runtime.log",
+      "logSha256": "dd17a3c2b547a526a9a857cc2866983528d50db003adcc0263efd174ccea1bfd",
+      "marker": "[M01FirstContactRuntimeOwnershipValidation] result=Passed tests=12"
+    },
+    "architectureValidation": {
+      "log": "Logs/m01dc038-interactive-brief-architecture.log",
+      "logSha256": "f404c1248cad84ab6d969e9737d4bef06461cd50a39483b6cf01391eaed9c0ce",
+      "marker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23"
+    },
+    "status": "validated-pending-fresh-exact-head-package-canonical-samsung-replay"
+  },
   "acceptanceClaimed": false
 }

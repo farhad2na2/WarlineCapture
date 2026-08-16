@@ -25,6 +25,8 @@ public sealed class AssistantCommandIntentSystemTests
             passed++;
             RunCase(test => test.AssistantCommandIntentSystem_QueuesCameraPreviewFromOperationMapObjectiveAnchor());
             passed++;
+            RunCase(test => test.AssistantCommandIntentSystem_QueuesObjectivePreviewFromNamedHostileAnchor());
+            passed++;
             RunCase(test => test.AssistantCommandIntentSystem_RejectsPreviewWithoutWorldTarget());
             passed++;
             RunCase(test => test.AssistantCommandIntentSystem_QueuesSelectionModeFromUiSurfaceDoIt());
@@ -520,6 +522,46 @@ public sealed class AssistantCommandIntentSystemTests
     }
 
     [Test]
+    public void AssistantCommandIntentSystem_QueuesObjectivePreviewFromNamedHostileAnchor()
+    {
+        Entity boundary = CreateBoundary();
+        FixedString64Bytes anchorId = new("anchor.ch01.m01.patrol_objective");
+        CreateActiveOperationMap(anchorId, new float3(1784f, 0.009f, 754f), OperationMapAnchorKind.Hostile);
+        DynamicBuffer<AssistantRecommendationElement> recommendations =
+            _entityManager.AddBuffer<AssistantRecommendationElement>(boundary);
+        recommendations.Add(new AssistantRecommendationElement
+        {
+            RecommendationId = 3202,
+            SourceVersion = 10,
+            Kind = AssistantRecommendationKind.CameraFocus,
+            TargetKind = AssistantTargetKind.Objective,
+            TargetId = anchorId,
+            CanShow = 1
+        });
+        _entityManager.GetBuffer<AssistantCommandIntentRequestElement>(boundary).Add(
+            new AssistantCommandIntentRequestElement
+            {
+                RequestId = 9,
+                Frame = UnityEngine.Time.frameCount,
+                RecommendationId = 3202,
+                RecommendationSourceVersion = 10,
+                Kind = AssistantCommandIntentKind.ShowRecommendation,
+                TargetKind = AssistantTargetKind.Objective,
+                TargetId = anchorId
+            });
+
+        _intentSystem.Update(_world.Unmanaged);
+
+        using EntityQuery cameraQuery = _entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<RtsCameraRequestQueueComponent>(),
+            ComponentType.ReadOnly<RtsCameraRequestElement>());
+        DynamicBuffer<RtsCameraRequestElement> cameraRequests =
+            _entityManager.GetBuffer<RtsCameraRequestElement>(cameraQuery.GetSingletonEntity());
+        Assert.AreEqual(2, cameraRequests.Length);
+        Assert.AreEqual(new float3(1784f, 0.009f, 754f), cameraRequests[0].WorldPosition);
+    }
+
+    [Test]
     public void AssistantCommandIntentSystem_RejectsPreviewWithoutWorldTarget()
     {
         Entity boundary = CreateBoundary();
@@ -693,7 +735,10 @@ public sealed class AssistantCommandIntentSystemTests
         return source;
     }
 
-    private void CreateActiveOperationMap(FixedString64Bytes anchorId, float3 position)
+    private void CreateActiveOperationMap(
+        FixedString64Bytes anchorId,
+        float3 position,
+        OperationMapAnchorKind kind = OperationMapAnchorKind.Objective)
     {
         FixedString64Bytes operationMapId = new("opmap.skirmish.desert_base_01");
         using BlobBuilder builder = new(Allocator.Temp);
@@ -703,7 +748,7 @@ public sealed class AssistantCommandIntentSystemTests
         anchors[0] = new OperationMapAnchorBlob
         {
             Id = anchorId,
-            Kind = OperationMapAnchorKind.Objective,
+            Kind = kind,
             Position = position,
             Rotation = quaternion.identity,
             FactionId = -1,

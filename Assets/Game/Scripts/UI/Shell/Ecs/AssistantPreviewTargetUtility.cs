@@ -40,14 +40,14 @@ namespace Game.UI.Shell.Ecs
 
             return request.TargetKind == AssistantTargetKind.Objective &&
                    !request.TargetId.IsEmpty &&
-                   TryResolveObjectiveAnchor(
+                   TryResolveNamedAnchor(
                        entityManager,
                        operationMapMetadataQuery,
                        in request.TargetId,
                        out position);
         }
 
-        private static bool TryResolveObjectiveAnchor(
+        private static bool TryResolveNamedAnchor(
             EntityManager entityManager,
             EntityQuery operationMapMetadataQuery,
             in FixedString64Bytes anchorId,
@@ -79,7 +79,6 @@ namespace Game.UI.Shell.Ecs
                     ref operationMap,
                     in anchorId,
                     out OperationMapAnchorBlob anchor) ||
-                anchor.Kind != OperationMapAnchorKind.Objective ||
                 !IsFinite(anchor.Position))
             {
                 return false;

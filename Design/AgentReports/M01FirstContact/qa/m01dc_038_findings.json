@@ -440,6 +440,22 @@
       "closureRequires": "Fulfilled: exact package 15da2155 displayed Find your squad, SHOW ME previewed a valid friendly target, and DO IT selected the four-soldier squad and advanced to Move to cover."
     },
     {
+      "id": "M01DC038-P1-016",
+      "severity": "P1",
+      "title": "Confirm Threat SHOW ME cannot resolve the authored hostile patrol anchor",
+      "reproduction": "On canonical Samsung with exact package SHA-256 15da2155555bfc84d1fb1a4dcbf24e2cf38f304dd906d5a4e8765b987677e713, select the four-soldier squad through ARIA, complete Move to cover, open Confirm the threat, and press SHOW ME; ARIA reports that it needs a map target and that no preview target is available.",
+      "cause": "AssistantPreviewTargetUtility treated semantic AssistantTargetKind.Objective as a requirement that the exact named operation-map anchor also use OperationMapAnchorKind.Objective. M01 correctly names anchor.ch01.m01.patrol_objective, whose authored map kind is Hostile, so resolution rejected a valid ready finite target.",
+      "evidence": "Codex operatorKind=Agent canonical-Samsung replay recording SHA-256 c65a6651099948263b993e31eac1640c6eefb743e4fcc55ae8bdd0e96dbd3ba8; blocked Confirm Threat frame SHA-256 287e85a1f24a13fa045a20f510396e11c57687c6ff6eb73ca0bf69646d49aba5; device-log SHA-256 d57e9bc9926cf21f7a045a0cf1bbb186d6cf2aa33ed1dd7add192221c3ec2c7d; zero content-pack, fatal, ANR, and ground-vehicle warning matches.",
+      "owner": "Existing ARIA preview target resolution boundary",
+      "response": "Resolve an exact semantic objective target through any named operation-map anchor that passes the existing map readiness, generation, presence, and finite-position checks; retain fail-closed rejection for missing or invalid targets.",
+      "editorValidation": {
+        "assistantIntent": "Passed 14/14; log sha256=f313093b3a99eb3a622cb389eb6c33a3ff0334ae208d00226a53c55017369c9d",
+        "m01Architecture": "Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23; log sha256=62689e5eec9c973e50bce4283a946e1d7b7174aaf314b1ac22db4b654914891c"
+      },
+      "status": "corrected-source-pending-fresh-exact-head-package-device-replay",
+      "closureRequires": "Build and install a fresh exact-head package on canonical Samsung, then prove Confirm Threat SHOW ME smoothly focuses the exposed hostile patrol and the real-input route can continue through Engage, result, debrief, and the required return destination."
+    },
+    {
       "id": "M01DC038-P1-015",
       "severity": "P1",
       "title": "Fresh package remains white because persisted M01 content-pack hash is stale",

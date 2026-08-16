@@ -809,5 +809,47 @@
     },
     "status": "closed-on-fresh-exact-head-canonical-samsung-replay"
   },
+  "ariaPatrolPreviewTargetCorrection": {
+    "findingId": "M01DC038-P1-016",
+    "reproductionSourceHead": "092c7d6a91dbe12745d1203d15c3767d3f5c1a1d",
+    "operatorKind": "Agent",
+    "humanParticipant": false,
+    "canonicalDevice": "Samsung SM-S918B R5CTC1J02VB",
+    "endpoint": "192.168.2.33:45137",
+    "packageSha256": "15da2155555bfc84d1fb1a4dcbf24e2cf38f304dd906d5a4e8765b987677e713",
+    "evidenceDirectory": "Build/DeviceEvidence/M01DC038_092c_followthrough",
+    "recording": {
+      "path": "Build/DeviceEvidence/M01DC038_092c_followthrough/m01dc038_followthrough.mp4",
+      "bytes": 148236466,
+      "sha256": "c65a6651099948263b993e31eac1640c6eefb743e4fcc55ae8bdd0e96dbd3ba8"
+    },
+    "blockedFrame": {
+      "path": "Build/DeviceEvidence/M01DC038_092c_followthrough/confirm_show.png",
+      "bytes": 2267120,
+      "sha256": "287e85a1f24a13fa045a20f510396e11c57687c6ff6eb73ca0bf69646d49aba5"
+    },
+    "selectedFarZoomFrame": {
+      "path": "Build/DeviceEvidence/M01DC038_092c_followthrough/selected_far_zoom.png",
+      "bytes": 1743682,
+      "sha256": "2016af4c71af907d6707432b766b5083da6d103137cc0ee50bb1153e4f65f9db"
+    },
+    "deviceLog": {
+      "path": "Build/DeviceEvidence/M01DC038_092c_followthrough/m01dc038_followthrough_logcat.txt",
+      "bytes": 3019685,
+      "sha256": "d57e9bc9926cf21f7a045a0cf1bbb186d6cf2aa33ed1dd7add192221c3ec2c7d"
+    },
+    "observedResponse": "Move to cover completed and guidance advanced, but Confirm the threat SHOW ME reported no map/preview target and could not continue the tutorial.",
+    "focusedValidation": {
+      "log": "Logs/m01dc038-confirm-threat-preview-focused.log",
+      "logSha256": "f313093b3a99eb3a622cb389eb6c33a3ff0334ae208d00226a53c55017369c9d",
+      "marker": "[AssistantCommandIntentSystemValidation] result=Passed tests=14"
+    },
+    "architectureValidation": {
+      "log": "Logs/m01dc038-confirm-threat-preview-architecture.log",
+      "logSha256": "62689e5eec9c973e50bce4283a946e1d7b7174aaf314b1ac22db4b654914891c",
+      "marker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23"
+    },
+    "status": "validated-pending-fresh-exact-head-package-canonical-samsung-replay"
+  },
   "acceptanceClaimed": false
 }

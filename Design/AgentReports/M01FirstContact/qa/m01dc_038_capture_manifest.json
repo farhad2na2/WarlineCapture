@@ -333,9 +333,9 @@
     "architectureLogSha256": "b83ee4d7b2a4b2678d279f441e09ee3f4e969bf91ea0678ecbc0a16e77170914",
     "architectureMarker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23",
     "skirmishDefaultPreservedByTest": true,
-    "freshPackageBuilt": false,
+    "freshPackageBuilt": true,
     "deviceReplayExecuted": false,
-    "status": "source-fixed-pending-fresh-package-samsung-replay"
+    "status": "fresh-corrected-package-built-pending-samsung-replay"
   },
   "unitReadabilityCorrection": {
     "findingId": "M01DC038-P2-010",
@@ -382,9 +382,9 @@
       "skipped": 0,
       "inconclusive": 0
     },
-    "freshPackageBuilt": false,
+    "freshPackageBuilt": true,
     "deviceReplayExecuted": false,
-    "status": "source-validated-pending-fresh-package-samsung-replay"
+    "status": "fresh-corrected-package-built-pending-samsung-replay"
   },
   "tutorialEncounterRevealCorrection": {
     "findingId": "M01DC038-P1-013",
@@ -416,9 +416,9 @@
       "logSha256": "9b59b3742c1bdadabc2636cc52951fcd1f2567876074d24354fc20d1d018cc10",
       "marker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23"
     },
-    "freshPackageBuilt": false,
+    "freshPackageBuilt": true,
     "deviceReplayExecuted": false,
-    "status": "source-validated-pending-fresh-package-samsung-replay"
+    "status": "fresh-corrected-package-built-pending-samsung-replay"
   },
   "selectedUnitImpostorCorrection": {
     "findingId": "M01DC038-P2-014",
@@ -436,9 +436,9 @@
       "logSha256": "023e8cfb36cb158d9ccdeadee54fcac42de1cb6e4b05199b0d6b98f7e58b740c",
       "marker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23"
     },
-    "freshPackageBuilt": false,
+    "freshPackageBuilt": true,
     "deviceReplayExecuted": false,
-    "status": "source-validated-pending-fresh-package-samsung-replay"
+    "status": "fresh-corrected-package-built-pending-samsung-replay"
   },
   "neutralVehicleThreatAudioCorrection": {
     "findingId": "M01DC038-P2-011",
@@ -457,9 +457,9 @@
       "logSha256": "1f3b755509eeb02dc10aa5bfabeb6d020a40b5e82c13c08ec92eafdac7957ba7",
       "marker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23"
     },
-    "freshPackageBuilt": false,
+    "freshPackageBuilt": true,
     "deviceReplayExecuted": false,
-    "status": "source-validated-pending-fresh-package-samsung-replay"
+    "status": "fresh-corrected-package-built-pending-samsung-replay"
   },
   "ariaSquadSelectionCorrection": {
     "findingId": "M01DC038-P2-012",
@@ -543,9 +543,27 @@
       "logSha256": "2dbdd30127b268464c8c67247f875c5c8cb8aa87382e66287518f3afe535aa6c",
       "marker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23"
     },
-    "freshCorrectedPackageBuilt": false,
+    "freshCorrectedPackageBuilt": true,
+    "freshCorrectedPackage": {
+      "sourceHead": "b660813535b8697edfa561f65de7a29a71c77c1d",
+      "dirty": false,
+      "path": "Build/AndroidAPK/WarlineCapture.apk",
+      "bytes": 558935377,
+      "sha256": "5f70d4700107acbcd76ca59fa6d7905c65c6e254f47945ee85d1cf3d4c62b0b5",
+      "releaseBuildType": "release",
+      "scriptingBackend": "IL2CPP",
+      "targetArchitecture": "ARM64",
+      "buildLog": "Logs/m01dc038-b66081353-production-apk.log",
+      "buildLogSha256": "f43b8cc2953958ff33c69a15d7000caf7bd56aa150c010415080867cf04284fa",
+      "marker": "[ProductionAndroidPackage] result=Passed"
+    },
+    "authorizedDeviceCheck": {
+      "canonicalDevice": "Samsung SM-S918B R5CTC1J02VB",
+      "adbResult": "No connected devices and no discovered mDNS services",
+      "otherDeviceContacted": false
+    },
     "correctedDeviceReplayExecuted": false,
-    "status": "source-validated-pending-fresh-package-samsung-replay"
+    "status": "fresh-corrected-package-built-pending-samsung-replay"
   },
   "acceptanceClaimed": false
 }

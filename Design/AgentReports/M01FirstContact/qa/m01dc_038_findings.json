@@ -178,7 +178,7 @@
         "burstAot": "Passed 3/3; log sha256=c397404f1fb67ba46124fe275fff86551640457331e799b68d1696a29238c2ec"
       },
       "correctedPackage": "sourceHead=6068e8c8f2882c726a6c791cf26c87b63adbb7eb bytes=558910685 sha256=00587e2b7a2b2bf94f4af9f490e91b9839f9f5b2e975268cf4abccf18f43a709 buildLogSha256=e8934fc649cdbf594d42f8eb1e3a21d5036b5b6b105a382f5ae6c930498163de",
-      "status": "source-fixed-device-replay-incomplete",
+      "status": "fresh-corrected-package-built-device-replay-incomplete",
       "closureRequires": "Samsung-only patrol-clear result/debrief, complete fresh-profile story-to-command-base evidence, and regression replay after the mission-lighting correction"
     },
     {
@@ -194,8 +194,8 @@
         "m01RuntimePlayMode": "Passed 20/20 failed=0 skipped=0 inconclusive=0; log sha256=cfbd426a03409bbe807716b0d26d90ecc270832e768d9d0b6aa9d20eecf01b5a; xml sha256=dd7de1f7f0d6a494028921b06b65c2024024d88f1a4f420233c5aad030ca8d44",
         "m01Architecture": "Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23; log sha256=b83ee4d7b2a4b2678d279f441e09ee3f4e969bf91ea0678ecbc0a16e77170914"
       },
-      "status": "source-fixed-pending-fresh-package-device-replay",
-      "closureRequires": "Commit and push the validated correction, build a fresh exact-head APK, install on canonical Samsung only, and replay active combat long enough to prove stable readable mission lighting plus result/debrief"
+      "status": "fresh-corrected-package-built-pending-device-replay",
+      "closureRequires": "Install exact package 5f70d470 on canonical Samsung only and replay active combat long enough to prove stable readable mission lighting plus result/debrief"
     },
     {
       "id": "M01DC038-P2-010",
@@ -213,8 +213,8 @@
         "m01Architecture": "Passed 23 contracts / 17 source-growth / 23 architecture suites; log sha256=957ca8e2e79e3ddf5ec5747a132ba10450b0a6a93ac295d6f37e801bdcb5f08c",
         "m01RuntimePlayMode": "Passed 20/20 failed=0 skipped=0 inconclusive=0; log sha256=18437af9b028c6269130e3895cb933327f3e303908c90e1101bafafe4a06e7cb; xml sha256=e1c43a0d6d2c9aab67449ccd22d25b2a6f36ff7f889d574a46bd957c6521aefc"
       },
-      "status": "source-validated-pending-fresh-package-device-replay",
-      "closureRequires": "Commit and push the validated correction, build a fresh exact-head APK, install on canonical Samsung only, and replay real-input combat proving squad-centered opening framing, blue circular selection, and immediately distinguishable cyan friendly versus coral hostile infantry"
+      "status": "fresh-corrected-package-built-pending-device-replay",
+      "closureRequires": "Install exact package 5f70d470 on canonical Samsung only and replay real-input combat proving squad-centered opening framing, blue circular selection, and immediately distinguishable cyan friendly versus coral hostile infantry"
     },
     {
       "id": "M01DC038-P1-013",
@@ -251,8 +251,8 @@
           "marker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23"
         }
       },
-      "status": "source-validated-pending-fresh-package-device-replay",
-      "closureRequires": "Commit and push the validated correction, build a fresh exact-head APK, install on canonical Samsung only, and replay real input proving the hostile reveal, smooth squad return, exposed patrol, and immediate battlefield comprehension."
+      "status": "fresh-corrected-package-built-pending-device-replay",
+      "closureRequires": "Install exact package 5f70d470 on canonical Samsung only and replay real input proving the hostile reveal, smooth squad return, exposed patrol, and immediate battlefield comprehension."
     },
     {
       "id": "M01DC038-P2-014",
@@ -267,8 +267,8 @@
         "focused": "Passed 1/1; log sha256=f10dfbf55cff3d023c4c18baf1f45ab349ea1703fc709b35d3d960e9a55f7fb5",
         "m01Architecture": "Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23; log sha256=023e8cfb36cb158d9ccdeadee54fcac42de1cb6e4b05199b0d6b98f7e58b740c"
       },
-      "status": "source-validated-pending-fresh-package-device-replay",
-      "closureRequires": "Commit and push the validated correction, build a fresh exact-head APK, install on canonical Samsung only, and replay real input proving that selected visible soldiers retain a mesh visual through the farthest camera zoom while unselected-unit impostors remain active."
+      "status": "fresh-corrected-package-built-pending-device-replay",
+      "closureRequires": "Install exact package 5f70d470 on canonical Samsung only and replay real input proving that selected visible soldiers retain a mesh visual through the farthest camera zoom while unselected-unit impostors remain active."
     },
     {
       "id": "M01DC038-P2-011",
@@ -283,8 +283,8 @@
         "focused": "Passed including close neutral ground vehicle does not warn; log sha256=d6de7f486328467a9eb65225728770d7e5fd028a35b7e7d1d527f77714f12cec",
         "m01Architecture": "Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23; log sha256=1f3b755509eeb02dc10aa5bfabeb6d020a40b5e82c13c08ec92eafdac7957ba7"
       },
-      "status": "source-validated-pending-fresh-package-device-replay",
-      "closureRequires": "Commit and push the validated correction, build a fresh exact-head APK, install on canonical Samsung only, and replay Mission 1 proving that neutral map vehicles produce no ground-attack popup or audio while a hostile-warning regression remains covered."
+      "status": "fresh-corrected-package-built-pending-device-replay",
+      "closureRequires": "Install exact package 5f70d470 on canonical Samsung only and replay Mission 1 proving that neutral map vehicles produce no ground-attack popup or audio while a hostile-warning regression remains covered."
     },
     {
       "id": "M01DC038-P2-012",
@@ -323,17 +323,17 @@
         }
       },
       "freshPackage": {
-        "sourceHead": "d44980a9df4db5f0508797d37d84a02a067ca251",
+        "sourceHead": "b660813535b8697edfa561f65de7a29a71c77c1d",
         "dirty": false,
         "path": "Build/AndroidAPK/WarlineCapture.apk",
-        "bytes": 558935429,
-        "sha256": "65a4401cd95cf0a34118efa57ff8f7f26868c207305bd5097970885f03ab8971",
-        "buildLogSha256": "35530a45eed363e46dcbe8a907051acf3e3c096ff99d488b730181b96ad06bad",
+        "bytes": 558935377,
+        "sha256": "5f70d4700107acbcd76ca59fa6d7905c65c6e254f47945ee85d1cf3d4c62b0b5",
+        "buildLogSha256": "f43b8cc2953958ff33c69a15d7000caf7bd56aa150c010415080867cf04284fa",
         "marker": "[ProductionAndroidPackage] result=Passed"
       },
-      "deviceAvailability": "Canonical Samsung was not connected; Unity-bundled ADB returned an empty authorized device list and no other device was contacted.",
-      "status": "fresh-package-superseded-by-m01dc038-p1-015",
-      "closureRequires": "Build and install a fresh exact-head package containing the persisted catalog correction on canonical Samsung only, then replay ARIA with real input proving SHOW ME previews the squad and DO IT visibly selects all four alive command-squad soldiers."
+      "deviceAvailability": "Canonical Samsung was not connected; Unity-bundled ADB returned no connected devices or discovered mDNS services and no other device was contacted.",
+      "status": "fresh-corrected-package-built-pending-device-replay",
+      "closureRequires": "Install exact package 5f70d470 on canonical Samsung only, then replay ARIA with real input proving SHOW ME previews the squad and DO IT visibly selects all four alive command-squad soldiers."
     },
     {
       "id": "M01DC038-P1-015",
@@ -348,8 +348,18 @@
         "focused": "Passed tests=13; log sha256=aea19bc00185548aef11a2d6ea1a95644c72c0e3f231e4549fa8e84d69c433ee",
         "architecture": "Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23; log sha256=2dbdd30127b268464c8c67247f875c5c8cb8aa87382e66287518f3afe535aa6c"
       },
-      "status": "source-validated-pending-fresh-package-device-replay",
-      "closureRequires": "Commit and push the correction, build a fresh exact-head APK, install on canonical Samsung only, and replay the direct FirstLaunch-to-M01 path past the white screen before continuing ARIA acceptance."
+      "freshPackage": {
+        "sourceHead": "b660813535b8697edfa561f65de7a29a71c77c1d",
+        "dirty": false,
+        "path": "Build/AndroidAPK/WarlineCapture.apk",
+        "bytes": 558935377,
+        "sha256": "5f70d4700107acbcd76ca59fa6d7905c65c6e254f47945ee85d1cf3d4c62b0b5",
+        "buildLogSha256": "f43b8cc2953958ff33c69a15d7000caf7bd56aa150c010415080867cf04284fa",
+        "marker": "[ProductionAndroidPackage] result=Passed"
+      },
+      "deviceAvailability": "Canonical Samsung was not connected; Unity-bundled ADB returned no connected devices or discovered mDNS services and no other device was contacted.",
+      "status": "fresh-corrected-package-built-pending-device-replay",
+      "closureRequires": "Install exact package 5f70d470 on canonical Samsung only and replay the direct FirstLaunch-to-M01 path past the white screen before continuing ARIA acceptance."
     }
   ],
   "severityCounts": {

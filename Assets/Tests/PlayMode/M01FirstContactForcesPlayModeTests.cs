@@ -1,6 +1,7 @@
 #if UNITY_INCLUDE_TESTS
 using System.Collections;
 using Game.Components;
+using Game.Missions.Contracts;
 using Game.Runtime;
 using NUnit.Framework;
 using Unity.Collections;
@@ -117,8 +118,18 @@ public sealed class M01FirstContactForcesPlayModeTests
             DynamicBuffer<UnitMoveOrderRequestElement> requests = world.EntityManager.GetBuffer<
                 UnitMoveOrderRequestElement>(queue);
             Assert.That(requests.Length, Is.Zero);
+            using EntityQuery combatUnits = world.EntityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<CampaignMissionUnitRoleComponent>(), ComponentType.ReadOnly<UnitCombat>());
+            using NativeArray<Entity> combatEntities = combatUnits.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < combatEntities.Length; i++)
+                Assert.That(world.EntityManager.GetComponentData<UnitCombat>(combatEntities[i]).AutoEngage, Is.Zero,
+                    "M01 units must not auto-engage before the explicit Engage phase.");
             facts.ElapsedMilliseconds = 3000;
             world.EntityManager.SetComponentData(fixture.Root, facts);
+            CampaignMissionRuntimeComponent runtime = world.EntityManager.GetComponentData<
+                CampaignMissionRuntimeComponent>(fixture.Root);
+            runtime.Phase = MissionPhaseKind.Engage;
+            world.EntityManager.SetComponentData(fixture.Root, runtime);
             Update<CampaignMissionPatrolOrderSystem>(world);
             requests = world.EntityManager.GetBuffer<UnitMoveOrderRequestElement>(queue);
             Assert.That(requests.Length, Is.EqualTo(3));
@@ -127,9 +138,18 @@ public sealed class M01FirstContactForcesPlayModeTests
                 Assert.That(requests[i].Kind, Is.EqualTo(UnitMoveOrderRequestKind.TargetPathOnly));
                 Assert.That(requests[i].Goal, Is.EqualTo(new int2(12, 12)));
             }
+            opening = world.EntityManager.GetComponentData<CampaignMissionOpeningPresentationComponent>(fixture.Root);
+            Assert.That(opening.Stage, Is.EqualTo(3));
+            for (int i = 0; i < combatEntities.Length; i++)
+                Assert.That(world.EntityManager.GetComponentData<UnitCombat>(combatEntities[i]).AutoEngage, Is.EqualTo(1));
+            UnitCombat stopped = world.EntityManager.GetComponentData<UnitCombat>(combatEntities[0]);
+            stopped.AutoEngage = 0;
+            world.EntityManager.SetComponentData(combatEntities[0], stopped);
             Update<CampaignMissionPatrolOrderSystem>(world);
             requests = world.EntityManager.GetBuffer<UnitMoveOrderRequestElement>(queue);
             Assert.That(requests.Length, Is.EqualTo(3));
+            Assert.That(world.EntityManager.GetComponentData<UnitCombat>(combatEntities[0]).AutoEngage, Is.Zero,
+                "The one-shot Engage release must not override a later player STOP command.");
             yield break;
         }
         finally { fixture.Dispose(); }
@@ -178,9 +198,11 @@ public sealed class M01FirstContactForcesPlayModeTests
         for (int i = 0; i < count; i++)
         {
             Entity prefab = em.CreateEntity(
-                typeof(Prefab), typeof(UnitSourcePrefabKey), typeof(LocalTransform), typeof(SelectedUnitTag));
+                typeof(Prefab), typeof(UnitSourcePrefabKey), typeof(LocalTransform), typeof(SelectedUnitTag),
+                typeof(UnitCombat));
             em.SetComponentData(prefab, new UnitSourcePrefabKey { Value = keys[i] });
             em.SetComponentData(prefab, LocalTransform.Identity);
+            em.SetComponentData(prefab, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
             registry.Add(new UnitPrefabRegistryEntry { Prefab = prefab });
         }
         return new Fixture { Catalog = catalog, Map = map, Root = root, CameraFocus = cameraFocus };

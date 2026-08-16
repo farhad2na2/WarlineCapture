@@ -917,9 +917,50 @@
       "logSha256": "b46e8c9253d7401666653a78194ef72bef45bad3ebc949639dd1c858122713cc",
       "marker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23"
     },
+    "freshPackageBuilt": true,
+    "deviceReplayExecuted": true,
+    "freshExactHeadReplay": {
+      "sourceHead": "ae37b42bc3e70e556f5af2babe6e8fb42a226e9c",
+      "packageBytes": 558943413,
+      "packageSha256": "d9f3a944c9f5b6308c3dd9ea137394d500c8069d9531d12da92e7879dde1e77b",
+      "buildLogSha256": "5502821ffa462d87204f22548e7ce0bc14e8836a3d7a3331573a8d467aedefe6",
+      "canonicalDevice": "Samsung SM-S918B R5CTC1J02VB",
+      "operatorKind": "Agent",
+      "humanParticipant": false,
+      "recordingSha256": "1c2d8636c5192325e201400e1758caf02f206e2b759d8db695defdc96fd2b82f",
+      "findSquadFrameSha256": "153c3ed0096bbb6d02b62c105c0929a40a14c7dca7e899d9267a014f28482af4",
+      "selectedSquadFrameSha256": "34d1d181942156ee85db2d6106967d6ef2c71ea1ffc628b16f7d7ce1d5edd95f",
+      "prematureCombatFrameSha256": "260840681ed22517641aa16afb13a37e1e2df07d39c9fe24fc625f257ad34756",
+      "unavailablePreviewFrameSha256": "e1a070d033d2f51240568eb92f636826fcae189915384b3d4c151e987ea27a92",
+      "appLogSha256": "b0cc8405d2043f55d100518e9c017590dc409947eac949c1fa0f3c55d6cce60d",
+      "contentPackHashErrors": 0,
+      "fatalOrAnrMatches": 0,
+      "falseGroundVehicleWarningMatches": 0,
+      "result": "Find Squad and visible four-soldier DO IT selection passed, but autonomous combat removed the patrol before Confirm Threat/Engage; P1-018 opened and P1-013/P2-017 remain open."
+    },
+    "status": "fresh-device-replay-exposed-p1-018"
+  },
+  "tutorialCombatReleaseCorrection": {
+    "findingId": "M01DC038-P1-018",
+    "operatorKind": "Agent",
+    "humanParticipant": false,
+    "sourceResponse": "Hold only correlated M01 UnitCombat.AutoEngage before Engage; release once at Engage; preserve later STOP and the three-second patrol route.",
+    "checkedValidation": {
+      "status": "passed",
+      "focused": {
+        "method": "M01FirstContactForcesPlayModeTests.RunFocusedValidation",
+        "marker": "[M01FirstContactForcesPlayModeValidation] result=Passed tests=3",
+        "logSha256": "a05a6727cb530960495fe05475de86cc68bc59521a8c09fa216db46dfd87bb50"
+      },
+      "m01Architecture": {
+        "method": "M01FirstContactArchitectureValidation.RunFocusedValidation",
+        "marker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23",
+        "logSha256": "1ab32e32b35c464f715799b72b5b61fd13825a7f8862c9e5a20830a71a2342d2"
+      }
+    },
     "freshPackageBuilt": false,
     "deviceReplayExecuted": false,
-    "status": "source-corrected-pending-clean-push-package-and-samsung-replay"
+    "status": "source-validated-pending-fresh-package-device-replay"
   },
   "acceptanceClaimed": false
 }

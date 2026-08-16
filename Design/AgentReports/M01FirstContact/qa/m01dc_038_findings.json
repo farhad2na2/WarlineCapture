@@ -492,6 +492,24 @@
       "closureRequires": "Fresh exact-head canonical-Samsung replay must show an unambiguous hostile patrol/objective target label during Confirm Threat."
     },
     {
+      "id": "M01DC038-P1-018",
+      "severity": "P1",
+      "title": "Automatic combat destroys the patrol before the tutorial reaches Confirm Threat and Engage",
+      "reproduction": "Install exact package SHA-256 d9f3a944c9f5b6308c3dd9ea137394d500c8069d9531d12da92e7879dde1e77b on canonical Samsung, clear app data, run English / SKIP INTRO, open ARIA at Find your squad, and press DO IT. While the panel is still teaching selection/move, observe Patrol neutralized advance to 2/3, then the final red contact disappear before Confirm Threat can be previewed or the player can issue the taught attack.",
+      "cause": "The authored three-second patrol movement release leaves the generic UnitCombat.AutoEngage state active for both correlated forces. Once the route closes distance, generic engagement legitimately acquires targets even though the M01 mission phase is still FindSquad or MoveToCover, bypassing the authored tutorial lifecycle.",
+      "evidence": "operatorKind=Agent; humanParticipant=false; canonical Samsung SM-S918B R5CTC1J02VB; evidence directory Build/DeviceEvidence/M01DC038_ae37b42bc; recording sha256=1c2d8636c5192325e201400e1758caf02f206e2b759d8db695defdc96fd2b82f; Find-Squad frame sha256=153c3ed0096bbb6d02b62c105c0929a40a14c7dca7e899d9267a014f28482af4; selected/2-of-3 frame sha256=34d1d181942156ee85db2d6106967d6ef2c71ea1ffc628b16f7d7ce1d5edd95f; unavailable-preview frame sha256=e1a070d033d2f51240568eb92f636826fcae189915384b3d4c151e987ea27a92; app log sha256=b0cc8405d2043f55d100518e9c017590dc409947eac949c1fa0f3c55d6cce60d with zero content-pack hash, fatal, ANR, and false ground-vehicle-warning matches.",
+      "owner": "Existing M01 patrol-order/tutorial release boundary; generic engagement remains unchanged",
+      "response": "Before Engage, suppress auto-engagement only for units correlated to the active M01 session while retaining the authored patrol route and camera sequence. Release auto-engagement once on first Engage entry, and never overwrite a later player STOP state.",
+      "editorValidation": {
+        "status": "passed",
+        "focused": "Passed 3/3; marker=[M01FirstContactForcesPlayModeValidation] result=Passed tests=3; log sha256=a05a6727cb530960495fe05475de86cc68bc59521a8c09fa216db46dfd87bb50",
+        "m01Architecture": "Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23; log sha256=1ab32e32b35c464f715799b72b5b61fd13825a7f8862c9e5a20830a71a2342d2",
+        "licensingRecovery": "The identical checked GUI wrapper passed when launched through the required GUI-process escalation outside the restricted shell; Unity arguments and pass-marker gates were unchanged."
+      },
+      "status": "source-validated-pending-fresh-package-device-replay",
+      "closureRequires": "Checked focused and aggregate validation, a fresh exact-head release package, and canonical-Samsung agent replay proving all three patrol members remain available through Find Squad, Move to Cover, and Confirm Threat, then combat begins only after Engage and completes through result/debrief/return."
+    },
+    {
       "id": "M01DC038-P1-015",
       "severity": "P1",
       "title": "Fresh package remains white because persisted M01 content-pack hash is stale",
@@ -529,11 +547,11 @@
   ],
   "severityCounts": {
     "p0": 0,
-    "p1": 6,
+    "p1": 7,
     "p2": 8,
     "p3": 0,
     "closed": 6,
-    "open": 8
+    "open": 9
   },
   "acceptanceClaimed": false
 }

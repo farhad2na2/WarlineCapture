@@ -1,4 +1,5 @@
 using Game.Components;
+using Game.Missions.Contracts;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -7,6 +8,7 @@ namespace Game.Runtime
 {
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     [UpdateBefore(typeof(UnitMoveOrderRequestSystem))]
+    [UpdateBefore(typeof(UnitEngagementSystem))]
     [UpdateBefore(typeof(CampaignMissionRuntimeSystem))]
     public partial struct CampaignMissionPatrolOrderSystem : ISystem
     {
@@ -31,6 +33,36 @@ namespace Game.Runtime
             if (!metadata.Blob.IsCreated || facts.CommandSquadSpawned == 0 ||
                 !CampaignMissionSpawnSystem.TryFindDefinition(in catalog, in runtime, out int definitionIndex))
                 return;
+            if (runtime.Outcome == MissionOutcomeKind.None)
+            {
+                bool holdCombat = runtime.Phase < MissionPhaseKind.Engage;
+                bool releaseCombat = false;
+                if (runtime.Phase == MissionPhaseKind.Engage)
+                {
+                    foreach (RefRW<CampaignMissionOpeningPresentationComponent> opening in
+                             SystemAPI.Query<RefRW<CampaignMissionOpeningPresentationComponent>>())
+                    {
+                        CampaignMissionOpeningPresentationComponent current = opening.ValueRO;
+                        if (!current.SessionToken.Equals(runtime.SessionToken) || current.Stage >= 3)
+                            continue;
+                        current.Stage = 3;
+                        opening.ValueRW = current;
+                        releaseCombat = true;
+                    }
+                }
+                if (holdCombat || releaseCombat)
+                {
+                    foreach ((RefRW<UnitCombat> combat, RefRO<CampaignMissionUnitRoleComponent> role) in
+                             SystemAPI.Query<RefRW<UnitCombat>, RefRO<CampaignMissionUnitRoleComponent>>())
+                    {
+                        if (!role.ValueRO.SessionToken.Equals(runtime.SessionToken))
+                            continue;
+                        UnitCombat current = combat.ValueRO;
+                        current.AutoEngage = (byte)(releaseCombat && current.CanAttack != 0 ? 1 : 0);
+                        combat.ValueRW = current;
+                    }
+                }
+            }
             if (facts.ElapsedMilliseconds >= SquadReturnFocusMilliseconds &&
                 _cameraFocusQuery.CalculateEntityCount() == 1)
             {

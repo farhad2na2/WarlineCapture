@@ -849,7 +849,45 @@
       "logSha256": "62689e5eec9c973e50bce4283a946e1d7b7174aaf314b1ac22db4b654914891c",
       "marker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23"
     },
-    "status": "validated-pending-fresh-exact-head-package-canonical-samsung-replay"
+    "freshExactHeadReplay": {
+      "sourceHead": "4deecf0e7377bdc5e8808220dd1daf4d5925eb3f",
+      "packageBytes": 558948505,
+      "packageSha256": "9e2e3c448479ae16a8918c59b882f82470ef332c3fe647f4047ba4668555a257",
+      "buildLog": "Logs/m01dc038-4deecf0e7-production-apk.log",
+      "buildLogSha256": "676ebb393af4d8d30feb98bc0aa086e9fc046b2e0606ad5f5eb53299d78961e5",
+      "canonicalDevice": "Samsung SM-S918B R5CTC1J02VB",
+      "operatorKind": "Agent",
+      "humanParticipant": false,
+      "installResult": "Success",
+      "appDataCleared": true,
+      "evidenceDirectory": "Build/DeviceEvidence/M01DC038_4deecf0e7",
+      "recordingPart1": {
+        "bytes": 138098583,
+        "sha256": "504d997216a0b5dff4716cb6485fb65172233660b1a875ef96bfd179c7c254e6"
+      },
+      "recordingPart2": {
+        "bytes": 103775253,
+        "sha256": "dae442b88a350f315d691ea7695520b2fe8a59769abb6e77e9c8c2539072e7b8"
+      },
+      "confirmPreviewFrame": {
+        "bytes": 2291634,
+        "sha256": "29dd2fda80f4b57e1d29174c1d78e97a0961028319964e049f465c794b3dcef3"
+      },
+      "patrolFocusFrameSha256": "ed2ea583ae342bcaad94a801498362d96c4b9d874ff21d1926e0510968df15b2",
+      "patrolZoomFrameSha256": "d2cd129aa9299e728e276a49c385ed3dbc6cd57904e6b01d59450dac69e46d34",
+      "tacticalMapFrameSha256": "f520f1612797e98879bc76592bc8ad20bb6437f2c074a8dd99779cfe2088b15c",
+      "routeAWorldFocusFrameSha256": "26f9d7f908ac07c8f51d4fe6f83e08dc24801a74a9c4472a210b74e9156a24f7",
+      "routeAZoomFrameSha256": "528dfca43ab4e24eafad3c140f733fbd756d7cac7f82e5a4548375adf4686055",
+      "deviceLog": {
+        "bytes": 9923610,
+        "sha256": "cf65412b3350f70aa0395ff59321cd0a0f6001c556391c07d356674041d0ae7c",
+        "contentPackHashErrors": 0,
+        "fatalOrAnrMatches": 0,
+        "falseGroundVehicleWarningMatches": 0
+      },
+      "result": "Confirm Threat SHOW ME entered PREVIEW, closing the resolver defect. The target card incorrectly said FRIENDLY UNIT and the camera/zoom evidence showed the patrol focus inside the civic hall roof, so tutorial and end-to-end acceptance remain open."
+    },
+    "status": "resolver-closed-on-fresh-canonical-samsung-replay-route-blocked-by-p1-013"
   },
   "acceptanceClaimed": false
 }

@@ -222,7 +222,7 @@
       "title": "Tutorial opening does not reveal the patrol and stages enemies behind the civic hall",
       "reproduction": "Enter live Mission 1; observe no tutorial camera introduction of the enemy patrol; search the battlefield and find enemies behind or visually inside the civic hall, with their positions becoming obvious mainly through the minimap.",
       "cause": "CampaignMissionSpawnSystem emitted only a friendly-center focus, while the authored patrol spawn and route used the civic hall centerline instead of the already-validated open Old Market contact corridor.",
-      "evidence": "Direct project-owner real-input feedback recorded in this task; logical anchor/source inspection at clean source head 22c8af8410c5069538caa3a761941500660f9ab4.",
+      "evidence": "Direct project-owner real-input feedback recorded in this task; logical anchor/source inspection at clean source head 22c8af8410c5069538caa3a761941500660f9ab4. Fresh exact-head package 9e2e3c448479ae16a8918c59b882f82470ef332c3fe647f4047ba4668555a257 replay on canonical Samsung reproduced the remaining failure: patrol-focus frame ed2ea583ae342bcaad94a801498362d96c4b9d874ff21d1926e0510968df15b2 and zoom frame d2cd129aa9299e728e276a49c385ed3dbc6cd57904e6b01d59450dac69e46d34 show the hall/roof instead of an exposed patrol; tactical-map/world-focus evidence f520f1612797e98879bc76592bc8ad20bb6437f2c074a8dd99779cfe2088b15c / 26f9d7f908ac07c8f51d4fe6f83e08dc24801a74a9c4472a210b74e9156a24f7 resolves the red patrol to route A, and zooming that exact focus enters the building roof (528dfca43ab4e24eafad3c140f733fbd756d7cac7f82e5a4548375adf4686055).",
       "owner": "M01 logical anchor authoring plus existing mission spawn/patrol presentation request boundaries",
       "response": "Move only M01 logical anchors onto the accepted five-point open contact corridor; show the actual three-hostile center first; then publish one delayed smooth existing focus request to the actual four-friendly center before the unchanged patrol start. Preserve shared dense-city geometry and the shell camera request owner.",
       "editorValidation": {
@@ -251,8 +251,8 @@
           "marker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23"
         }
       },
-      "status": "fresh-corrected-package-built-pending-device-replay",
-      "closureRequires": "Install exact package 5f70d470 on canonical Samsung only and replay real input proving the hostile reveal, smooth squad return, exposed patrol, and immediate battlefield comprehension."
+      "status": "fresh-exact-head-device-replay-failed-occluded-patrol",
+      "closureRequires": "Correct the logical patrol presentation without modifying the protected dense-city source, then install a fresh exact-head package on canonical Samsung and replay real input proving a visible hostile reveal, smooth squad return, exposed patrol, and immediate battlefield comprehension."
     },
     {
       "id": "M01DC038-P2-014",
@@ -452,8 +452,35 @@
         "assistantIntent": "Passed 14/14; log sha256=f313093b3a99eb3a622cb389eb6c33a3ff0334ae208d00226a53c55017369c9d",
         "m01Architecture": "Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23; log sha256=62689e5eec9c973e50bce4283a946e1d7b7174aaf314b1ac22db4b654914891c"
       },
-      "status": "corrected-source-pending-fresh-exact-head-package-device-replay",
-      "closureRequires": "Build and install a fresh exact-head package on canonical Samsung, then prove Confirm Threat SHOW ME smoothly focuses the exposed hostile patrol and the real-input route can continue through Engage, result, debrief, and the required return destination."
+      "deviceReplay": {
+        "sourceHead": "4deecf0e7377bdc5e8808220dd1daf4d5925eb3f",
+        "packageSha256": "9e2e3c448479ae16a8918c59b882f82470ef332c3fe647f4047ba4668555a257",
+        "canonicalDevice": "Samsung SM-S918B R5CTC1J02VB",
+        "operatorKind": "Agent",
+        "humanParticipant": false,
+        "confirmPreviewFrameSha256": "29dd2fda80f4b57e1d29174c1d78e97a0961028319964e049f465c794b3dcef3",
+        "recordingPart1Sha256": "504d997216a0b5dff4716cb6485fb65172233660b1a875ef96bfd179c7c254e6",
+        "recordingPart2Sha256": "dae442b88a350f315d691ea7695520b2fe8a59769abb6e77e9c8c2539072e7b8",
+        "deviceLogSha256": "cf65412b3350f70aa0395ff59321cd0a0f6001c556391c07d356674041d0ae7c",
+        "contentPackHashErrors": 0,
+        "fatalOrAnrMatches": 0,
+        "falseGroundVehicleWarningMatches": 0,
+        "result": "Resolver defect closed: Confirm Threat SHOW ME entered PREVIEW. Broader route remains blocked because the fixed anchor focuses the hall/roof rather than an exposed hostile patrol."
+      },
+      "status": "resolver-closed-on-fresh-device-replay-route-blocked-by-p1-013",
+      "closureRequires": "Resolver requirement is fulfilled on exact package 9e2e3c44. End-to-end Confirm Threat acceptance remains coupled to M01DC038-P1-013: a fresh package must visibly focus the exposed patrol and continue through Engage, result, debrief, and the required return destination."
+    },
+    {
+      "id": "M01DC038-P2-017",
+      "severity": "P2",
+      "title": "Confirm Threat target card labels the hostile objective as FRIENDLY UNIT",
+      "reproduction": "On canonical Samsung with exact package SHA-256 9e2e3c448479ae16a8918c59b882f82470ef332c3fe647f4047ba4668555a257, reach Confirm the threat and press SHOW ME; the recommendation describes an armed hostile patrol but the target card simultaneously says FRIENDLY UNIT.",
+      "cause": "The popup reuses the selected friendly squad target-lock read model when the recommendation has a semantic operation-map objective without a target entity, so its target summary does not represent the active recommendation.",
+      "evidence": "Build/DeviceEvidence/M01DC038_4deecf0e7/confirm_preview.png bytes=2291634 sha256=29dd2fda80f4b57e1d29174c1d78e97a0961028319964e049f465c794b3dcef3; recording part1 sha256=504d997216a0b5dff4716cb6485fb65172233660b1a875ef96bfd179c7c254e6; operatorKind=Agent; humanParticipant=false.",
+      "owner": "Existing ARIA recommendation/target-summary presentation boundary",
+      "response": "Pending bounded correction: present the semantic recommendation target as a hostile patrol/objective without changing target resolution, target-lock gameplay truth, guidance policy, or selection ownership.",
+      "status": "open-source-fix-pending",
+      "closureRequires": "Fresh exact-head canonical-Samsung replay must show an unambiguous hostile patrol/objective target label during Confirm Threat."
     },
     {
       "id": "M01DC038-P1-015",
@@ -493,11 +520,11 @@
   ],
   "severityCounts": {
     "p0": 0,
-    "p1": 5,
-    "p2": 7,
+    "p1": 6,
+    "p2": 8,
     "p3": 0,
     "closed": 6,
-    "open": 6
+    "open": 8
   },
   "acceptanceClaimed": false
 }

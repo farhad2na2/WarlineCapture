@@ -34,6 +34,16 @@ public static class M01FirstContactOperationMapTests
     {
         try
         {
+            OperationMapCatalogConfig persistedCatalog = Load<OperationMapCatalogConfig>(CatalogPath);
+            OperationMapDefinition persistedMap = Load<OperationMapDefinition>(MapPath);
+            Require(persistedCatalog != null && persistedMap != null,
+                "Persisted M01 catalog or logical map is missing before regeneration.");
+            Require(persistedCatalog.TryResolveEntry(
+                        persistedMap.OperationMapId,
+                        out OperationMapCatalogEntryConfig persistedEntry) &&
+                    persistedEntry.ContentPack.ContentVersion == persistedMap.ContentVersion &&
+                    persistedEntry.ContentPack.ContentHash == persistedMap.ContentHash,
+                "Persisted M01 content-pack version/hash drifted from the logical definition.");
             Game.Editor.M01FirstContactConfigBuilder.Build();
             OperationMapCatalogConfig catalog = Load<OperationMapCatalogConfig>(CatalogPath);
             OperationMapDefinition map = Load<OperationMapDefinition>(MapPath);

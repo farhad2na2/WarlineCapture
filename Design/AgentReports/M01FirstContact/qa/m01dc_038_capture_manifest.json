@@ -512,7 +512,40 @@
       "otherDeviceContacted": false
     },
     "deviceReplayExecuted": false,
-    "status": "fresh-package-built-pending-canonical-samsung-replay"
+    "status": "fresh-package-superseded-by-m01dc038-p1-015"
+  },
+  "persistedContentPackBindingCorrection": {
+    "findingId": "M01DC038-P1-015",
+    "rejectedPackageSourceHead": "d44980a9df4db5f0508797d37d84a02a067ca251",
+    "canonicalDevice": "Samsung SM-S918B R5CTC1J02VB",
+    "operatorKind": "Agent",
+    "deviceReplayExecuted": true,
+    "observedResponse": "Direct FirstLaunch skip handoff remained on a white screen while production repeatedly rejected the persisted Chapter01 content-pack version/hash.",
+    "recording": {
+      "path": "Temp/M01DC038Replay/m01dc038_aria_agent_replay.mp4",
+      "bytes": 58983559,
+      "sha256": "85bebb079eda78a09101765fa18c20f28c441883ab131de2c0f2cd171e571f03"
+    },
+    "whiteScreenFrame": {
+      "path": "Temp/M01DC038Replay/m01dc038_step05.png",
+      "bytes": 12363,
+      "sha256": "f8ad5d677103ca985f5f570fa0000e8d844644b5304d5d3086d7aa977581ade2"
+    },
+    "implementedResponse": "Synchronize the authored Chapter01 catalog entry to the accepted logical M01 content hash and validate persisted parity before any config-builder regeneration.",
+    "logicalOrPhysicalMapChanged": false,
+    "focusedValidation": {
+      "log": "Logs/m01dc038-catalog-hash-focused.log",
+      "logSha256": "aea19bc00185548aef11a2d6ea1a95644c72c0e3f231e4549fa8e84d69c433ee",
+      "marker": "[M01FirstContactOperationMapValidation] result=Passed tests=13"
+    },
+    "architectureValidation": {
+      "log": "Logs/m01dc038-catalog-hash-architecture.log",
+      "logSha256": "2dbdd30127b268464c8c67247f875c5c8cb8aa87382e66287518f3afe535aa6c",
+      "marker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23"
+    },
+    "freshCorrectedPackageBuilt": false,
+    "correctedDeviceReplayExecuted": false,
+    "status": "source-validated-pending-fresh-package-samsung-replay"
   },
   "acceptanceClaimed": false
 }

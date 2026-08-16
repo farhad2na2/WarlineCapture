@@ -332,17 +332,33 @@
         "marker": "[ProductionAndroidPackage] result=Passed"
       },
       "deviceAvailability": "Canonical Samsung was not connected; Unity-bundled ADB returned an empty authorized device list and no other device was contacted.",
-      "status": "fresh-package-built-pending-canonical-samsung-replay",
-      "closureRequires": "Install the exact fresh package on canonical Samsung only and replay ARIA with real input proving SHOW ME previews the squad and DO IT visibly selects all four alive command-squad soldiers."
+      "status": "fresh-package-superseded-by-m01dc038-p1-015",
+      "closureRequires": "Build and install a fresh exact-head package containing the persisted catalog correction on canonical Samsung only, then replay ARIA with real input proving SHOW ME previews the squad and DO IT visibly selects all four alive command-squad soldiers."
+    },
+    {
+      "id": "M01DC038-P1-015",
+      "severity": "P1",
+      "title": "Fresh package remains white because persisted M01 content-pack hash is stale",
+      "reproduction": "Install clean package 65a4401c on canonical Samsung, clear app data, select English, choose SKIP INTRO, and observe a persistent white screen while production repeatedly rejects the Chapter01 catalog.",
+      "cause": "The tutorial anchor correction updated the logical M01 map content hash but omitted the persisted Chapter01 catalog entry. Editor validation called M01FirstContactConfigBuilder.Build before checking the entry, temporarily repairing the asset and masking the shipped drift.",
+      "evidence": "Canonical-Samsung agent-operated recording SHA-256 85bebb079eda78a09101765fa18c20f28c441883ab131de2c0f2cd171e571f03; white-screen frame SHA-256 f8ad5d677103ca985f5f570fa0000e8d844644b5304d5d3086d7aa977581ade2; device log repeated `Content-pack version and hash must match its operation-map definition.`",
+      "owner": "Authored Chapter01 operation-map catalog and existing M01 operation-map validation",
+      "response": "Synchronize the persisted built-in-local catalog entry with the accepted logical map content hash and assert persisted parity before the config builder runs.",
+      "editorValidation": {
+        "focused": "Passed tests=13; log sha256=aea19bc00185548aef11a2d6ea1a95644c72c0e3f231e4549fa8e84d69c433ee",
+        "architecture": "Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23; log sha256=2dbdd30127b268464c8c67247f875c5c8cb8aa87382e66287518f3afe535aa6c"
+      },
+      "status": "source-validated-pending-fresh-package-device-replay",
+      "closureRequires": "Commit and push the correction, build a fresh exact-head APK, install on canonical Samsung only, and replay the direct FirstLaunch-to-M01 path past the white screen before continuing ARIA acceptance."
     }
   ],
   "severityCounts": {
     "p0": 0,
-    "p1": 4,
+    "p1": 5,
     "p2": 7,
     "p3": 0,
     "closed": 4,
-    "open": 7
+    "open": 8
   },
   "acceptanceClaimed": false
 }

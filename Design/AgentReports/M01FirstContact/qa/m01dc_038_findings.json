@@ -251,7 +251,12 @@
           "marker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23"
         }
       },
-      "status": "fresh-exact-head-device-replay-failed-occluded-patrol",
+      "followUpEditorValidation": {
+        "anchor": "Passed 13/13; log sha256=4040d85db8db3cafa1405281ae0f4a03e8fccfb17413e22dab193d893c42d12b",
+        "guidance": "Passed 11/11; log sha256=c0aa23fcf2fef9c6bd6c1b21403c1c1269777e7d5b8a702ffb36f52ceeae2252",
+        "m01Architecture": "Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23; log sha256=b46e8c9253d7401666653a78194ef72bef45bad3ebc949639dd1c858122713cc"
+      },
+      "status": "source-corrected-pending-fresh-package-device-replay",
       "closureRequires": "Correct the logical patrol presentation without modifying the protected dense-city source, then install a fresh exact-head package on canonical Samsung and replay real input proving a visible hostile reveal, smooth squad return, exposed patrol, and immediate battlefield comprehension."
     },
     {
@@ -475,11 +480,15 @@
       "severity": "P2",
       "title": "Confirm Threat target card labels the hostile objective as FRIENDLY UNIT",
       "reproduction": "On canonical Samsung with exact package SHA-256 9e2e3c448479ae16a8918c59b882f82470ef332c3fe647f4047ba4668555a257, reach Confirm the threat and press SHOW ME; the recommendation describes an armed hostile patrol but the target card simultaneously says FRIENDLY UNIT.",
-      "cause": "The popup reuses the selected friendly squad target-lock read model when the recommendation has a semantic operation-map objective without a target entity, so its target summary does not represent the active recommendation.",
+      "cause": "Confirm Threat projected a semantic operation-map objective without the correlated hostile entity, so the target-lock read model fell back to the selected friendly squad and its summary did not represent the active recommendation.",
       "evidence": "Build/DeviceEvidence/M01DC038_4deecf0e7/confirm_preview.png bytes=2291634 sha256=29dd2fda80f4b57e1d29174c1d78e97a0961028319964e049f465c794b3dcef3; recording part1 sha256=504d997216a0b5dff4716cb6485fb65172233660b1a875ef96bfd179c7c254e6; operatorKind=Agent; humanParticipant=false.",
       "owner": "Existing ARIA recommendation/target-summary presentation boundary",
-      "response": "Pending bounded correction: present the semantic recommendation target as a hostile patrol/objective without changing target resolution, target-lock gameplay truth, guidance policy, or selection ownership.",
-      "status": "open-source-fix-pending",
+      "response": "Project the already-correlated live hostile as the semantic Confirm Threat target while retaining the authored patrol-objective ID/world fallback. The existing target-lock projection then derives the hostile relation without changing target resolution, guidance policy, or selection ownership.",
+      "editorValidation": {
+        "guidance": "Passed 11/11; log sha256=c0aa23fcf2fef9c6bd6c1b21403c1c1269777e7d5b8a702ffb36f52ceeae2252",
+        "m01Architecture": "Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23; log sha256=b46e8c9253d7401666653a78194ef72bef45bad3ebc949639dd1c858122713cc"
+      },
+      "status": "source-corrected-pending-fresh-package-device-replay",
       "closureRequires": "Fresh exact-head canonical-Samsung replay must show an unambiguous hostile patrol/objective target label during Confirm Threat."
     },
     {

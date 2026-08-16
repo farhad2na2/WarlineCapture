@@ -74,10 +74,13 @@ public sealed class M01FirstContactGuidanceTests
     [Test] public static void AccessibilitySettingsAreProjectedWithoutChangingGameplay()
     {
         var settings = Settings(); settings.LargeTextEnabled = 1; settings.HighContrastEnabled = 1;
+        Entity hostile = new Entity { Index = 7, Version = 1 };
         CampaignMissionGuidanceProjectionSystem.TryBuildProjection(default, Runtime(MissionPhaseKind.ConfirmThreat), Facts(), settings,
-            Entity.Null, Entity.Null, default, new float3(3), out var projected);
+            Entity.Null, hostile, default, new float3(3), out var projected);
         Assert.That(projected.SubtitlesEnabled + projected.LargeTextEnabled + projected.HighContrastEnabled, Is.EqualTo(3));
         Assert.That(projected.RecommendationKind, Is.EqualTo(AssistantRecommendationKind.CameraFocus));
+        Assert.That(projected.TargetKind, Is.EqualTo(AssistantTargetKind.Entity));
+        Assert.That(projected.TargetEntity, Is.EqualTo(hostile));
     }
 
     [Test] public static void ReplayTutorialOffSuppressesGuidance()

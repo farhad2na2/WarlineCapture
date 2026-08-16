@@ -889,5 +889,37 @@
     },
     "status": "resolver-closed-on-fresh-canonical-samsung-replay-route-blocked-by-p1-013"
   },
+  "liveHostileSouthernCorridorCorrection": {
+    "findingIds": ["M01DC038-P1-013", "M01DC038-P2-017"],
+    "sourceBaseHead": "ceb582f1dcf72b22b92c14b8170bcd4e4e3084c5",
+    "operatorKind": "Agent",
+    "humanParticipant": false,
+    "logicalMapContentHash": "a00b2c1b257f2348c96ec749f8d172a17bfe1bd6320b66753cd2d8344b92865a",
+    "patrolAnchorPositions": {
+      "routeA": [1814, 740],
+      "routeB": [1806, 742],
+      "routeC": [1798, 744],
+      "objective": [1790, 748]
+    },
+    "confirmThreatTarget": "live correlated hostile entity with authored patrol-objective ID/world fallback",
+    "anchorValidation": {
+      "log": "%TEMP%/warline-m01dc038-anchor-retry-20260816.log",
+      "logSha256": "4040d85db8db3cafa1405281ae0f4a03e8fccfb17413e22dab193d893c42d12b",
+      "marker": "[M01FirstContactAnchorValidation] result=Passed tests=13"
+    },
+    "guidanceValidation": {
+      "log": "%TEMP%/warline-m01dc038-guidance-retry-20260816.log",
+      "logSha256": "c0aa23fcf2fef9c6bd6c1b21403c1c1269777e7d5b8a702ffb36f52ceeae2252",
+      "marker": "[M01FirstContactGuidanceValidation] result=Passed tests=11"
+    },
+    "architectureValidation": {
+      "log": "%TEMP%/warline-m01dc038-architecture-retry-20260816.log",
+      "logSha256": "b46e8c9253d7401666653a78194ef72bef45bad3ebc949639dd1c858122713cc",
+      "marker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23"
+    },
+    "freshPackageBuilt": false,
+    "deviceReplayExecuted": false,
+    "status": "source-corrected-pending-clean-push-package-and-samsung-replay"
+  },
   "acceptanceClaimed": false
 }

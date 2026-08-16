@@ -358,6 +358,19 @@
         "buildLogSha256": "24ef974cb6892e5eb10f4eddd3f58272927823b8e5863c2b509bbeca1315ef06",
         "marker": "[ProductionAndroidPackage] result=Passed"
       },
+      "spawnHygienePackage": {
+        "sourceHead": "8888d267e0cca3eefdc3a5a725dce30d81572ed1",
+        "dirty": false,
+        "path": "Build/AndroidAPK/WarlineCapture.apk",
+        "bytes": 558944237,
+        "sha256": "0259317a4ee5199f5ab0b4cd1a1109c12af3d449630aafe3b19c47be4f88c43b",
+        "buildLog": "Logs/m01dc038-8888d267e-production-apk.log",
+        "buildLogSha256": "7d4e20be037dfb219803e5761adb6719432a39f7d2529c5ba68d81ab5d1285f1",
+        "releaseBuildType": "release",
+        "scriptingBackend": "IL2CPP",
+        "targetArchitecture": "ARM64",
+        "marker": "[ProductionAndroidPackage] result=Passed"
+      },
       "runtimeIntegrationDeviceReplay": {
         "operatorKind": "Agent",
         "humanParticipant": false,
@@ -370,9 +383,9 @@
         "fatalOrAnrMatches": 0,
         "result": "Reached live M01 but reproduced generic targetless ARIA and no visible squad selection."
       },
-      "deviceAvailability": "Canonical Samsung SM-S918B R5CTC1J02VB connected at hardware-verified endpoint 192.168.2.33:45137; exact bb757 package installed and operatorKind=Agent replay exposed inherited selection-state auto-advance.",
+      "deviceAvailability": "The prior canonical-Samsung bb757 replay exposed inherited selection-state auto-advance. For the exact 8888d267e spawn-hygiene package, Unity's bundled ADB returned no connected devices or discovered mDNS services and the prior hardware-verified Samsung endpoint did not reconnect; installation and replay did not execute and no other device was contacted.",
       "status": "spawn-hygiene-corrected-and-validated-pending-new-package-replay",
-      "closureRequires": "Build and install the new exact-head package on canonical Samsung only, then replay ARIA with real input proving SHOW ME previews the squad and DO IT visibly selects all four alive command-squad soldiers."
+      "closureRequires": "Install the already-built exact 8888d267e package on canonical Samsung only, then replay ARIA with real input proving SHOW ME previews the squad and DO IT visibly selects all four alive command-squad soldiers."
     },
     {
       "id": "M01DC038-P1-015",

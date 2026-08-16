@@ -675,6 +675,26 @@
       "logSha256": "fe214a6ebd8136d5dac6633106fb8c44423ace7d9f6da82581a64194346a38a4",
       "marker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23"
     },
+    "freshExactHeadPackage": {
+      "sourceHead": "8888d267e0cca3eefdc3a5a725dce30d81572ed1",
+      "dirty": false,
+      "path": "Build/AndroidAPK/WarlineCapture.apk",
+      "bytes": 558944237,
+      "sha256": "0259317a4ee5199f5ab0b4cd1a1109c12af3d449630aafe3b19c47be4f88c43b",
+      "releaseBuildType": "release",
+      "scriptingBackend": "IL2CPP",
+      "targetArchitecture": "ARM64",
+      "buildLog": "Logs/m01dc038-8888d267e-production-apk.log",
+      "buildLogSha256": "7d4e20be037dfb219803e5761adb6719432a39f7d2529c5ba68d81ab5d1285f1",
+      "marker": "[ProductionAndroidPackage] result=Passed"
+    },
+    "freshPackageDeviceCheck": {
+      "canonicalDevice": "Samsung SM-S918B R5CTC1J02VB",
+      "adbResult": "No connected devices and no discovered mDNS services after resetting only the verified Unity SDK ADB daemon; prior hardware-verified endpoint did not reconnect.",
+      "installExecuted": false,
+      "deviceReplayExecuted": false,
+      "otherDeviceContacted": false
+    },
     "status": "validated-pending-fresh-exact-head-package-canonical-samsung-replay"
   },
   "acceptanceClaimed": false

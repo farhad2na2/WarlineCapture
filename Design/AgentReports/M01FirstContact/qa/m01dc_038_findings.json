@@ -322,8 +322,18 @@
           "marker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23"
         }
       },
-      "status": "source-validated-pending-fresh-package-device-replay",
-      "closureRequires": "Commit and push the validated correction, build a fresh exact-head APK, install on canonical Samsung only, and replay ARIA with real input proving SHOW ME previews the squad and DO IT visibly selects all four alive command-squad soldiers."
+      "freshPackage": {
+        "sourceHead": "d44980a9df4db5f0508797d37d84a02a067ca251",
+        "dirty": false,
+        "path": "Build/AndroidAPK/WarlineCapture.apk",
+        "bytes": 558935429,
+        "sha256": "65a4401cd95cf0a34118efa57ff8f7f26868c207305bd5097970885f03ab8971",
+        "buildLogSha256": "35530a45eed363e46dcbe8a907051acf3e3c096ff99d488b730181b96ad06bad",
+        "marker": "[ProductionAndroidPackage] result=Passed"
+      },
+      "deviceAvailability": "Canonical Samsung was not connected; Unity-bundled ADB returned an empty authorized device list and no other device was contacted.",
+      "status": "fresh-package-built-pending-canonical-samsung-replay",
+      "closureRequires": "Install the exact fresh package on canonical Samsung only and replay ARIA with real input proving SHOW ME previews the squad and DO IT visibly selects all four alive command-squad soldiers."
     }
   ],
   "severityCounts": {

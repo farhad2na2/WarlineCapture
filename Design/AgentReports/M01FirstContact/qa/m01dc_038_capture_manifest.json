@@ -493,9 +493,26 @@
       "logSha256": "ab39c0f55c81941d3c91eac11865be109b41b7b54103c6e778fc4f75f822cc2f",
       "marker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23"
     },
-    "freshPackageBuilt": false,
+    "freshPackageBuilt": true,
+    "freshPackage": {
+      "sourceHead": "d44980a9df4db5f0508797d37d84a02a067ca251",
+      "dirty": false,
+      "path": "Build/AndroidAPK/WarlineCapture.apk",
+      "bytes": 558935429,
+      "sha256": "65a4401cd95cf0a34118efa57ff8f7f26868c207305bd5097970885f03ab8971",
+      "scriptingBackend": "IL2CPP",
+      "targetArchitecture": "ARM64",
+      "buildLog": "Logs/m01dc038-d44980a9d-production-apk.log",
+      "buildLogSha256": "35530a45eed363e46dcbe8a907051acf3e3c096ff99d488b730181b96ad06bad",
+      "marker": "[ProductionAndroidPackage] result=Passed"
+    },
+    "authorizedDeviceCheck": {
+      "canonicalDevice": "Samsung SM-S918B R5CTC1J02VB",
+      "adbResult": "No connected devices after Unity-bundled ADB daemon restart",
+      "otherDeviceContacted": false
+    },
     "deviceReplayExecuted": false,
-    "status": "source-validated-pending-fresh-package-samsung-replay"
+    "status": "fresh-package-built-pending-canonical-samsung-replay"
   },
   "acceptanceClaimed": false
 }

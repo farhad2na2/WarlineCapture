@@ -958,9 +958,20 @@
         "logSha256": "1ab32e32b35c464f715799b72b5b61fd13825a7f8862c9e5a20830a71a2342d2"
       }
     },
-    "freshPackageBuilt": false,
+    "freshPackage": {
+      "sourceHead": "03cb943b38508704a6341b3a3a9d20ade86328d7",
+      "dirty": false,
+      "path": "Build/AndroidAPK/WarlineCapture.apk",
+      "bytes": 558947805,
+      "sha256": "c1cd6ba79c89b2f6a225c93e6328153d8c951cfcbaff810cc26beba937b763d4",
+      "buildLogSha256": "a9b7a03e7eb2916dc38bce1643dd677196a63dc1a30298305e96dd7e0bd887c6",
+      "scriptingBackend": "IL2CPP",
+      "targetArchitecture": "ARM64",
+      "marker": "[ProductionAndroidPackage] result=Passed"
+    },
+    "deviceAvailability": "Unity bundled ADB restarted successfully but returned no attached devices and no discovered mDNS services; install and replay did not execute.",
     "deviceReplayExecuted": false,
-    "status": "source-validated-pending-fresh-package-device-replay"
+    "status": "fresh-package-built-pending-canonical-device-replay"
   },
   "acceptanceClaimed": false
 }

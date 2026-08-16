@@ -506,7 +506,19 @@
         "m01Architecture": "Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23; log sha256=1ab32e32b35c464f715799b72b5b61fd13825a7f8862c9e5a20830a71a2342d2",
         "licensingRecovery": "The identical checked GUI wrapper passed when launched through the required GUI-process escalation outside the restricted shell; Unity arguments and pass-marker gates were unchanged."
       },
-      "status": "source-validated-pending-fresh-package-device-replay",
+      "freshPackage": {
+        "sourceHead": "03cb943b38508704a6341b3a3a9d20ade86328d7",
+        "dirty": false,
+        "path": "Build/AndroidAPK/WarlineCapture.apk",
+        "bytes": 558947805,
+        "sha256": "c1cd6ba79c89b2f6a225c93e6328153d8c951cfcbaff810cc26beba937b763d4",
+        "buildLogSha256": "a9b7a03e7eb2916dc38bce1643dd677196a63dc1a30298305e96dd7e0bd887c6",
+        "scriptingBackend": "IL2CPP",
+        "targetArchitecture": "ARM64",
+        "marker": "[ProductionAndroidPackage] result=Passed"
+      },
+      "deviceAvailability": "Unity bundled ADB restarted successfully but returned no attached devices and no discovered mDNS services; installation and replay did not execute.",
+      "status": "fresh-package-built-pending-canonical-device-replay",
       "closureRequires": "Checked focused and aggregate validation, a fresh exact-head release package, and canonical-Samsung agent replay proving all three patrol members remain available through Find Squad, Move to Cover, and Confirm Threat, then combat begins only after Engage and completes through result/debrief/return."
     },
     {

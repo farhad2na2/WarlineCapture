@@ -16,6 +16,15 @@ public sealed class M01FirstContactForcesPlayModeTests
     private static readonly FixedString64Bytes MapId = new("opmap.ch01.district_edge_01");
     private static readonly FixedString64Bytes Session = new("m01-force-test");
 
+    public static void RunFocusedValidation()
+    {
+        M01FirstContactForcesPlayModeTests tests = new();
+        RunToCompletion(tests.SpawnCreatesExactDeterministicFourVersusThreeForce());
+        RunToCompletion(tests.PatrolQueuesExactThreeOrdersOnceAfterDelay());
+        RunToCompletion(tests.MissingRuntimePrefabFailsClosedWithoutPartialSpawn());
+        UnityEngine.Debug.Log("[M01FirstContactForcesPlayModeValidation] result=Passed tests=3");
+    }
+
     [UnityTest]
     public IEnumerator SpawnCreatesExactDeterministicFourVersusThreeForce()
     {
@@ -32,6 +41,8 @@ public sealed class M01FirstContactForcesPlayModeTests
             int hostile = 0;
             for (int i = 0; i < entities.Length; i++)
             {
+                Assert.That(world.EntityManager.HasComponent<SelectedUnitTag>(entities[i]), Is.False,
+                    "Mission spawn must scrub selection state inherited from runtime prefabs.");
                 Faction faction = world.EntityManager.GetComponentData<Faction>(entities[i]);
                 if (faction.Id == 1) friendly++;
                 if (faction.Id == 2) hostile++;
@@ -166,7 +177,8 @@ public sealed class M01FirstContactForcesPlayModeTests
         int count = omitLastPrefab ? keys.Length - 1 : keys.Length;
         for (int i = 0; i < count; i++)
         {
-            Entity prefab = em.CreateEntity(typeof(Prefab), typeof(UnitSourcePrefabKey), typeof(LocalTransform));
+            Entity prefab = em.CreateEntity(
+                typeof(Prefab), typeof(UnitSourcePrefabKey), typeof(LocalTransform), typeof(SelectedUnitTag));
             em.SetComponentData(prefab, new UnitSourcePrefabKey { Value = keys[i] });
             em.SetComponentData(prefab, LocalTransform.Identity);
             registry.Add(new UnitPrefabRegistryEntry { Prefab = prefab });
@@ -265,6 +277,12 @@ public sealed class M01FirstContactForcesPlayModeTests
     {
         SystemHandle handle = world.GetOrCreateSystem<T>();
         world.Unmanaged.GetUnsafeSystemRef<T>(handle).OnUpdate(ref world.Unmanaged.ResolveSystemStateRef(handle));
+    }
+
+    private static void RunToCompletion(IEnumerator test)
+    {
+        while (test.MoveNext())
+            Assert.That(test.Current, Is.Null, "Focused validation accepts only synchronous PlayMode test steps.");
     }
 
     private struct Fixture

@@ -608,5 +608,74 @@
     },
     "status": "validated-pending-fresh-package-canonical-samsung-replay"
   },
+  "ariaInheritedSelectionSpawnHygieneCorrection": {
+    "findingId": "M01DC038-P2-012",
+    "freshPackageReplaySourceHead": "bb757149d1d7b80651f6b7ff64a88b23c61cf86f",
+    "freshPackage": {
+      "path": "Build/AndroidAPK/WarlineCapture.apk",
+      "bytes": 558933089,
+      "sha256": "e3fb0fb9d8f9a9b7a07f5831cf2a9ff28dc7e3a05f54d01ce5974d2a18da998d",
+      "buildLogSha256": "24ef974cb6892e5eb10f4eddd3f58272927823b8e5863c2b509bbeca1315ef06",
+      "dirty": false,
+      "releaseBuildType": "release",
+      "scriptingBackend": "IL2CPP",
+      "targetArchitecture": "ARM64",
+      "marker": "[ProductionAndroidPackage] result=Passed"
+    },
+    "deviceReplay": {
+      "operatorKind": "Agent",
+      "humanParticipant": false,
+      "canonicalDevice": "Samsung SM-S918B R5CTC1J02VB",
+      "endpoint": "192.168.2.33:45137",
+      "recording": {
+        "path": "Build/DeviceEvidence/M01DC038_bb757/m01dc038_bb757_aria_replay.mp4",
+        "bytes": 95621434,
+        "sha256": "3d78025a7369cdf117e0d2948e0c2b0f0bbbe953c599d51680bd1371867e2c82"
+      },
+      "liveM01Frame": {
+        "path": "Build/DeviceEvidence/M01DC038_bb757/m01dc038_bb757_step04_live_m01.png",
+        "bytes": 1532576,
+        "sha256": "d94eb0b383a08e6a0ba27a1ebae168516de3b1953817cbb49e09083d4cd9f491"
+      },
+      "genericAriaFrame": {
+        "path": "Build/DeviceEvidence/M01DC038_bb757/m01dc038_bb757_step05_aria_find_squad.png",
+        "bytes": 2026290,
+        "sha256": "2e9fedb73cb2754a3be8477d051f2037387162c47764ab4f55ddf1a7ea9e9532"
+      },
+      "showMeFrame": {
+        "path": "Build/DeviceEvidence/M01DC038_bb757/m01dc038_bb757_step06_show_me.png",
+        "bytes": 2031777,
+        "sha256": "a642b83684ec2a12835482945d9b97264818cf6f2e03a49bf11693198cadce5d"
+      },
+      "doItFrame": {
+        "path": "Build/DeviceEvidence/M01DC038_bb757/m01dc038_bb757_step07_do_it.png",
+        "bytes": 2032017,
+        "sha256": "8b53ab02547c574972191a8ddf9b07dca09b62fb4516f21654ffe227d00f4fbb"
+      },
+      "deviceLog": {
+        "path": "Build/DeviceEvidence/M01DC038_bb757/m01dc038_bb757_logcat.txt",
+        "bytes": 6639935,
+        "sha256": "95cdf8290d6d31baaeb6a6de6846f000839c274693bb88fc7f1e55547869d20a"
+      },
+      "contentPackHashErrors": 0,
+      "fatalOrAnrMatches": 0,
+      "observedResponse": "Reached live M01 but ARIA still fell back to generic Select a unit; SHOW ME had no squad target and DO IT did not visibly select the command squad."
+    },
+    "implementedResponse": "Remove only inherited SelectedUnitTag from each freshly instantiated correlated mission unit before publication, while retaining the existing sole interactive selection writer.",
+    "selectionWriterAdded": false,
+    "missionWriterAdded": false,
+    "authoredForceChanged": false,
+    "focusedValidation": {
+      "log": "Logs/m01dc038-aria-spawn-selection-hygiene-focused.log",
+      "logSha256": "74d53fc23c85952d1592490a614ef9b0e12236fcdfecf69975edd5fc9d415a5e",
+      "marker": "[M01FirstContactForcesPlayModeValidation] result=Passed tests=3"
+    },
+    "architectureValidation": {
+      "log": "Logs/m01dc038-aria-spawn-selection-hygiene-architecture.log",
+      "logSha256": "fe214a6ebd8136d5dac6633106fb8c44423ace7d9f6da82581a64194346a38a4",
+      "marker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23"
+    },
+    "status": "validated-pending-fresh-exact-head-package-canonical-samsung-replay"
+  },
   "acceptanceClaimed": false
 }

@@ -133,6 +133,8 @@ namespace Game.Runtime
                     for (int count = 0; count < unit.Count; count++)
                     {
                         Entity instance = em.Instantiate(prefab);
+                        if (em.HasComponent<SelectedUnitTag>(instance))
+                            em.RemoveComponent<SelectedUnitTag>(instance);
                         float3 position = OffsetInsideAnchor(
                             anchor.Position, anchor.Radius, ordinal++, runtime.DeterministicSeed);
                         SetOrAdd(

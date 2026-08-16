@@ -52,15 +52,22 @@ namespace Game.Runtime
                 }
                 if (holdCombat || releaseCombat)
                 {
-                    foreach ((RefRW<UnitCombat> combat, RefRO<CampaignMissionUnitRoleComponent> role) in
-                             SystemAPI.Query<RefRW<UnitCombat>, RefRO<CampaignMissionUnitRoleComponent>>())
+                    EntityCommandBuffer preEngageCleanup = new(Allocator.Temp);
+                    foreach ((RefRW<UnitCombat> combat, RefRO<CampaignMissionUnitRoleComponent> role, Entity entity) in
+                             SystemAPI.Query<RefRW<UnitCombat>, RefRO<CampaignMissionUnitRoleComponent>>()
+                                 .WithEntityAccess())
                     {
                         if (!role.ValueRO.SessionToken.Equals(runtime.SessionToken))
                             continue;
                         UnitCombat current = combat.ValueRO;
+                        current.CanAttack = (byte)(releaseCombat ? 1 : 0);
                         current.AutoEngage = (byte)(releaseCombat && current.CanAttack != 0 ? 1 : 0);
                         combat.ValueRW = current;
+                        if (holdCombat && state.EntityManager.HasComponent<EngageTarget>(entity))
+                            preEngageCleanup.RemoveComponent<EngageTarget>(entity);
                     }
+                    preEngageCleanup.Playback(state.EntityManager);
+                    preEngageCleanup.Dispose();
                 }
             }
             if (facts.ElapsedMilliseconds >= SquadReturnFocusMilliseconds &&

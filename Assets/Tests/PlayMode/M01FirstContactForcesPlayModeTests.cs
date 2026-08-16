@@ -105,6 +105,17 @@ public sealed class M01FirstContactForcesPlayModeTests
             world.EntityManager.SetComponentData(fixture.CameraFocus, default(RuntimeCameraFocusRequestComponent));
             facts.ElapsedMilliseconds = 2000;
             world.EntityManager.SetComponentData(fixture.Root, facts);
+            using EntityQuery combatUnits = world.EntityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<CampaignMissionUnitRoleComponent>(), ComponentType.ReadOnly<UnitCombat>());
+            using NativeArray<Entity> combatEntities = combatUnits.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < combatEntities.Length; i++)
+            {
+                world.EntityManager.AddComponentData(combatEntities[i], new EngageTarget
+                {
+                    Target = combatEntities[(i + 1) % combatEntities.Length],
+                    IsCommanded = 0
+                });
+            }
             Update<CampaignMissionPatrolOrderSystem>(world);
             RuntimeCameraFocusRequestComponent focus = world.EntityManager.GetComponentData<
                 RuntimeCameraFocusRequestComponent>(fixture.CameraFocus);
@@ -118,12 +129,15 @@ public sealed class M01FirstContactForcesPlayModeTests
             DynamicBuffer<UnitMoveOrderRequestElement> requests = world.EntityManager.GetBuffer<
                 UnitMoveOrderRequestElement>(queue);
             Assert.That(requests.Length, Is.Zero);
-            using EntityQuery combatUnits = world.EntityManager.CreateEntityQuery(
-                ComponentType.ReadOnly<CampaignMissionUnitRoleComponent>(), ComponentType.ReadOnly<UnitCombat>());
-            using NativeArray<Entity> combatEntities = combatUnits.ToEntityArray(Allocator.Temp);
             for (int i = 0; i < combatEntities.Length; i++)
+            {
+                Assert.That(world.EntityManager.GetComponentData<UnitCombat>(combatEntities[i]).CanAttack, Is.Zero,
+                    "M01 units must be unable to inflict damage before the explicit Engage phase.");
                 Assert.That(world.EntityManager.GetComponentData<UnitCombat>(combatEntities[i]).AutoEngage, Is.Zero,
                     "M01 units must not auto-engage before the explicit Engage phase.");
+                Assert.That(world.EntityManager.HasComponent<EngageTarget>(combatEntities[i]), Is.False,
+                    "M01 must scrub inherited or AI-issued combat targets before Engage.");
+            }
             facts.ElapsedMilliseconds = 3000;
             world.EntityManager.SetComponentData(fixture.Root, facts);
             CampaignMissionRuntimeComponent runtime = world.EntityManager.GetComponentData<
@@ -141,7 +155,10 @@ public sealed class M01FirstContactForcesPlayModeTests
             opening = world.EntityManager.GetComponentData<CampaignMissionOpeningPresentationComponent>(fixture.Root);
             Assert.That(opening.Stage, Is.EqualTo(3));
             for (int i = 0; i < combatEntities.Length; i++)
+            {
+                Assert.That(world.EntityManager.GetComponentData<UnitCombat>(combatEntities[i]).CanAttack, Is.EqualTo(1));
                 Assert.That(world.EntityManager.GetComponentData<UnitCombat>(combatEntities[i]).AutoEngage, Is.EqualTo(1));
+            }
             UnitCombat stopped = world.EntityManager.GetComponentData<UnitCombat>(combatEntities[0]);
             stopped.AutoEngage = 0;
             world.EntityManager.SetComponentData(combatEntities[0], stopped);

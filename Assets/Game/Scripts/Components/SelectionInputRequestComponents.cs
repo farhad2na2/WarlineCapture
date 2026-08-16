@@ -46,7 +46,8 @@ namespace Game.Components
         BoardSelectedTransportPassenger,
         CancelActiveCommandMode,
         BoardAllSelectedTransport,
-        DisembarkTransportPassenger
+        DisembarkTransportPassenger,
+        FocusSquad
     }
 
     public enum BoardCommandModeDirection : byte

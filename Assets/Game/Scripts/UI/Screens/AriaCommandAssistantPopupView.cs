@@ -362,11 +362,7 @@ namespace Game.UI.Runtime
                 _doItButton.interactable = model.CanExecute;
             if (_stopButton != null)
                 _stopButton.interactable = model.CanStop;
-            SetText(
-                _showMeButtonLabel,
-                string.IsNullOrWhiteSpace(model.RecommendationActionLabel)
-                    ? "SHOW ME"
-                    : model.RecommendationActionLabel);
+            SetText(_showMeButtonLabel, "SHOW ME");
             SetText(_doItButtonLabel, "DO IT");
             SetText(_stopButtonLabel, "STOP");
         }

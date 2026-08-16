@@ -73,6 +73,23 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         }
     }
 
+    public static void RunActionLabelValidation()
+    {
+        MatchHudAssistantUiSystemHelperTests tests = new();
+        try
+        {
+            tests.BindMatchHudAssistant_AppliesStructuredRowsWithoutCreatingPopupObjects();
+            Debug.Log("[MatchHudAssistantActionLabelValidation] result=Passed tests=1");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[MatchHudAssistantActionLabelValidation] result=Failed passed=0");
+            ValidationExit.Exit(1);
+        }
+    }
+
     private static void RunCase(Action<MatchHudAssistantUiSystemHelperTests> testCase)
     {
         var tests = new MatchHudAssistantUiSystemHelperTests();
@@ -259,6 +276,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.IsTrue(FindNamed(popup.transform, "ShowMeButton").GetComponent<Button>().interactable);
         Assert.IsTrue(FindNamed(popup.transform, "DoItButton").GetComponent<Button>().interactable);
         Assert.IsTrue(FindNamed(popup.transform, "StopButton").GetComponent<Button>().interactable);
+        Assert.AreEqual("SHOW ME", Text(popup.transform, "ShowMeButtonLabel"));
         Assert.AreEqual("DO IT", Text(popup.transform, "DoItButtonLabel"));
 
         FindNamed(popup.transform, "ShowMeButton").GetComponent<Button>().onClick.Invoke();

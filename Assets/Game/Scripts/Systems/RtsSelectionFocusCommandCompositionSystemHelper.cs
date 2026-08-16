@@ -89,6 +89,7 @@ namespace Game.Runtime
         }
 
         private readonly List<RtsSelectionCommandIntentRequestElement> _externalSelectionCommandScratch = new();
+        private readonly RtsSelectionExternalCommandUtility _externalCommandUtility = new();
 
         public bool QueueFocusUnitCommand(Context context, Vector2 screenPosition)
         {
@@ -231,7 +232,7 @@ namespace Game.Runtime
 
         public TacticalCommandResult TrySelectRuntimeEntity(Context context, Entity entity)
         {
-            TacticalCommandResult result = ValidateControllableEntity(context, entity);
+            TacticalCommandResult result = _externalCommandUtility.ValidateControllableEntity(context, entity);
             if (!result.Accepted)
             {
                 context.ApplyHudCommandResult?.Invoke(result);
@@ -245,35 +246,11 @@ namespace Game.Runtime
             return result;
         }
 
-        private static TacticalCommandResult ValidateControllableEntity(Context context, Entity entity)
-        {
-            if (entity == Entity.Null ||
-                context.TryGetEntityManager == null ||
-                !context.TryGetEntityManager(out EntityManager em))
-            {
-                return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
-            }
-
-            if (!em.Exists(entity) ||
-                !em.HasComponent<Faction>(entity) ||
-                !em.HasComponent<UnitMove>(entity))
-            {
-                return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
-            }
-
-            if (!FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id))
-                return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
-
-            if (em.HasComponent<UnitHealth>(entity) && em.GetComponentData<UnitHealth>(entity).Current <= 0)
-                return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
-
-            return TacticalCommandResult.Success();
-        }
-
         private static bool IsExternalSelectionCommand(RtsSelectionCommandIntentKind kind)
         {
             return kind == RtsSelectionCommandIntentKind.SelectAll ||
                    kind == RtsSelectionCommandIntentKind.FocusUnit ||
+                   kind == RtsSelectionCommandIntentKind.FocusSquad ||
                    kind == RtsSelectionCommandIntentKind.SelectAllSoldiers ||
                    kind == RtsSelectionCommandIntentKind.SelectAllVehicles ||
                    kind == RtsSelectionCommandIntentKind.EnterSelectionMode ||
@@ -291,6 +268,9 @@ namespace Game.Runtime
 
                     return request.HasScreenPosition != 0 &&
                            context.TryFocusScreenPosition?.Invoke(new Vector2(request.ScreenPosition.x, request.ScreenPosition.y)) == true;
+                case RtsSelectionCommandIntentKind.FocusSquad:
+                    return request.HasTargetEntity != 0 &&
+                           _externalCommandUtility.SelectMissionSquad(context, request.TargetEntity);
                 case RtsSelectionCommandIntentKind.SelectAll:
                     SelectAllVisiblePlayerUnits(context, VisibleUnitSelectionCameraSystemHelper.Filter.All);
                     return true;

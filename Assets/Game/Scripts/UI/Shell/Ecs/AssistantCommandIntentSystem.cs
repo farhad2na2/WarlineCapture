@@ -360,56 +360,9 @@ namespace Game.UI.Shell.Ecs
             AssistantCommandIntentRequestElement request,
             out int downstreamRequestId)
         {
-            downstreamRequestId = 0;
             Entity selectionInput = EnsureSelectionInputEntity(ref state);
-            RtsSelectionInputRequestQueueComponent queue =
-                state.EntityManager.GetComponentData<RtsSelectionInputRequestQueueComponent>(selectionInput);
-            DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests =
-                state.EntityManager.GetBuffer<RtsSelectionCommandIntentRequestElement>(selectionInput);
-
-            if (request.TargetKind == AssistantTargetKind.Entity)
-            {
-                Entity target = ResolveExistingEntity(ref state, request.TargetEntity);
-                if (target == Entity.Null)
-                    target = ResolveExistingEntity(ref state, request.SourceEntity);
-                if (target == Entity.Null)
-                    return false;
-
-                queue.LastRequestId++;
-                downstreamRequestId = queue.LastRequestId;
-                commandRequests.Add(new RtsSelectionCommandIntentRequestElement
-                {
-                    Kind = RtsSelectionCommandIntentKind.FocusUnit,
-                    RequestId = queue.LastRequestId,
-                    Frame = request.Frame,
-                    SourceEntity = request.SourceEntity,
-                    TargetEntity = target,
-                    TargetKind = RtsSelectionCommandTargetKind.Entity,
-                    WorldPosition = request.WorldPosition,
-                    HasSourceEntity = request.SourceEntity != Entity.Null ? (byte)1 : (byte)0,
-                    HasTargetEntity = 1,
-                    HasWorldPosition = IsFinite(request.WorldPosition) ? (byte)1 : (byte)0
-                });
-                state.EntityManager.SetComponentData(selectionInput, queue);
-                return true;
-            }
-
-            if (request.TargetKind == AssistantTargetKind.UiSurface ||
-                request.TargetKind == AssistantTargetKind.None)
-            {
-                queue.LastRequestId++;
-                downstreamRequestId = queue.LastRequestId;
-                commandRequests.Add(new RtsSelectionCommandIntentRequestElement
-                {
-                    Kind = RtsSelectionCommandIntentKind.EnterSelectionMode,
-                    RequestId = queue.LastRequestId,
-                    Frame = request.Frame
-                });
-                state.EntityManager.SetComponentData(selectionInput, queue);
-                return true;
-            }
-
-            return false;
+            return AssistantSelectionCommandUtility.TryQueue(
+                state.EntityManager, selectionInput, in request, out downstreamRequestId);
         }
 
         private static bool TryValidateRecommendation(

@@ -86,7 +86,7 @@ namespace Game.Runtime
             switch (prompt)
             {
                 case CampaignMissionGuidancePromptKind.FindSquad:
-                    Set(ref next, AssistantRecommendationKind.Select, AssistantTargetKind.Entity, FindSquadTitle, FindSquadBody, DoItAction);
+                    Set(ref next, AssistantRecommendationKind.Select, AssistantTargetKind.Squad, FindSquadTitle, FindSquadBody, DoItAction);
                     next.TargetEntity = friendly; next.CanExecute = friendly != Entity.Null ? (byte)1 : (byte)0; break;
                 case CampaignMissionGuidancePromptKind.MoveToCover:
                     Set(ref next, AssistantRecommendationKind.Move, AssistantTargetKind.WorldPosition, MoveToCoverTitle, MoveToCoverBody, DoItAction);

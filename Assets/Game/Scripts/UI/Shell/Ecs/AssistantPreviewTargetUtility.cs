@@ -22,7 +22,8 @@ namespace Game.UI.Shell.Ecs
                 return true;
             }
 
-            if (request.TargetKind == AssistantTargetKind.Entity)
+            if (request.TargetKind == AssistantTargetKind.Entity ||
+                request.TargetKind == AssistantTargetKind.Squad)
             {
                 if (TryReadEntityPosition(entityManager, request.TargetEntity, out position) ||
                     TryReadEntityPosition(entityManager, request.SourceEntity, out position))

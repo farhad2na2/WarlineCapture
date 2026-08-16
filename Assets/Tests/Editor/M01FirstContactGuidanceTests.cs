@@ -20,6 +20,7 @@ public sealed class M01FirstContactGuidanceTests
         try
         {
             FullGuidanceProjectsAllFivePhases(); passed++; ShowMeAndDoItStayInsideAriaAuthority(); passed++;
+            FindSquadUsesTypedSquadSelectionTarget(); passed++;
             StablePhaseHonorsCooldownAndAcknowledgement(); passed++; AccessibilitySettingsAreProjectedWithoutChangingGameplay(); passed++;
             ReplayTutorialOffSuppressesGuidance(); passed++; StableProjectionAllocatesZeroManagedBytes(); passed++;
             ExactlyOneGuidanceProjectionWriterExists(); passed++; ContextualEscalatesWithoutUnsafeExecution(); passed++;
@@ -46,6 +47,18 @@ public sealed class M01FirstContactGuidanceTests
         Assert.That(recommendation.ActionLabel.ToString(), Is.EqualTo("DO IT"));
         string source = File.ReadAllText("Assets/Game/Scripts/Runtime/Missions/CampaignMissionGuidanceProjectionSystem.cs");
         Assert.That(source, Does.Not.Contain("AssistantCommandIntentRequestElement")); Assert.That(source, Does.Not.Contain("UnitMoveOrder"));
+    }
+
+    [Test] public static void FindSquadUsesTypedSquadSelectionTarget()
+    {
+        Entity representative = new Entity { Index = 4, Version = 1 };
+        CampaignMissionGuidanceProjectionSystem.TryBuildProjection(
+            default, Runtime(MissionPhaseKind.FindSquad), Facts(), Settings(),
+            representative, Entity.Null, default, default, out var projected);
+        Assert.That(projected.TargetKind, Is.EqualTo(AssistantTargetKind.Squad));
+        Assert.That(projected.TargetEntity, Is.EqualTo(representative));
+        Assert.That(projected.CanExecute, Is.EqualTo(1));
+        Assert.That(projected.ActionLabel.ToString(), Is.EqualTo("DO IT"));
     }
 
     [Test] public static void StablePhaseHonorsCooldownAndAcknowledgement()

@@ -31,6 +31,8 @@ public sealed class AssistantCommandIntentSystemTests
             passed++;
             RunCase(test => test.AssistantCommandIntentSystem_QueuesTakeoverSelectionModeFromUiSurfaceDoIt());
             passed++;
+            RunCase(test => test.AssistantCommandIntentSystem_QueuesSelectAllSoldiersFromSquadDoIt());
+            passed++;
             RunCase(test => test.AssistantCommandIntentSystem_QueuesFocusUnitFromEntityDoIt());
             passed++;
             RunCase(test => test.AssistantCommandIntentSystem_WritesRecoveryMessageForInvalidSelectTarget());
@@ -376,6 +378,40 @@ public sealed class AssistantCommandIntentSystemTests
         Assert.AreEqual(1, selectionRequests[0].HasTargetEntity);
         Assert.AreEqual(new float3(4f, 0f, 9f), selectionRequests[0].WorldPosition);
         Assert.AreEqual(1, selectionRequests[0].HasWorldPosition);
+    }
+
+    [Test]
+    public void AssistantCommandIntentSystem_QueuesSelectAllSoldiersFromSquadDoIt()
+    {
+        Entity boundary = CreateBoundary();
+        Entity target = CreateTarget(new float3(2f, 0f, 6f));
+        _entityManager.GetBuffer<AssistantCommandIntentRequestElement>(boundary).Add(
+            new AssistantCommandIntentRequestElement
+            {
+                RequestId = 21,
+                Frame = 38,
+                RecommendationId = 3301,
+                Kind = AssistantCommandIntentKind.SelectEntity,
+                TargetKind = AssistantTargetKind.Squad,
+                TargetEntity = target
+            });
+
+        _intentSystem.Update(_world.Unmanaged);
+
+        DynamicBuffer<AssistantCommandIntentResultElement> results =
+            _entityManager.GetBuffer<AssistantCommandIntentResultElement>(boundary);
+        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(AssistantCommandIntentStatus.Accepted, results[0].Status);
+
+        using EntityQuery selectionQuery = _entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<RtsSelectionInputStateComponent>(),
+            ComponentType.ReadOnly<RtsSelectionCommandIntentRequestElement>());
+        DynamicBuffer<RtsSelectionCommandIntentRequestElement> selectionRequests =
+            _entityManager.GetBuffer<RtsSelectionCommandIntentRequestElement>(selectionQuery.GetSingletonEntity());
+        Assert.AreEqual(1, selectionRequests.Length);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.FocusSquad, selectionRequests[0].Kind);
+        Assert.AreEqual(target, selectionRequests[0].TargetEntity);
+        Assert.AreEqual(1, selectionRequests[0].HasTargetEntity);
     }
 
     [Test]

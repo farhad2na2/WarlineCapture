@@ -81,7 +81,8 @@ namespace Game.Components
         Cell = 2,
         WorldPosition = 3,
         UiSurface = 4,
-        Objective = 5
+        Objective = 5,
+        Squad = 6
     }
 
     public enum AssistantGoalState : byte

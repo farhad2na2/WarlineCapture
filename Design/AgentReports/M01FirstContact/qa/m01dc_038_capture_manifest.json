@@ -461,5 +461,41 @@
     "deviceReplayExecuted": false,
     "status": "source-validated-pending-fresh-package-samsung-replay"
   },
+  "ariaSquadSelectionCorrection": {
+    "findingId": "M01DC038-P2-012",
+    "projectOwnerFeedback": "ARIA showed two DO IT buttons during Find Squad, and neither visibly selected the requested units.",
+    "implementedResponse": "Label the preview and execution controls distinctly as SHOW ME and DO IT, project Find Squad as a typed squad target, and let the existing selection owner select every alive player-controlled member of the representative's active mission command-squad group.",
+    "singleSelectionWriterPreserved": true,
+    "missionTruthWriterAdded": false,
+    "authoredM01ForceChanged": false,
+    "assistantIntentValidation": {
+      "log": "Logs/m01dc038-aria-selection-assistant-intent-final2.log",
+      "logSha256": "cfcd0eb5b36bb9c073ac84ab22f168c4a55e1eff1d7f04fa504c441e2092ae77",
+      "marker": "[AssistantCommandIntentSystemValidation] result=Passed tests=13"
+    },
+    "actionLabelValidation": {
+      "log": "Logs/m01dc038-aria-selection-action-label-rerun.log",
+      "logSha256": "04b8d36a901387d39faebe27724cf7fc7c09e95a27cba2bd2b3160eb085ed605",
+      "marker": "[MatchHudAssistantActionLabelValidation] result=Passed tests=1"
+    },
+    "guidanceValidation": {
+      "log": "Logs/m01dc038-aria-selection-guidance.log",
+      "logSha256": "569f03703c235c219fbe62be148bdf415a34857ddd0a56a1bb4dae73be30bdd3",
+      "marker": "[M01FirstContactGuidanceValidation] result=Passed tests=11"
+    },
+    "selectionRegressionValidation": {
+      "log": "Logs/m01dc038-aria-selection-selection-regression-final.log",
+      "logSha256": "67b82d493d3fd57af7a5fa7abc97fae3a164c546564e359a689ae9a8de3334e1",
+      "marker": "[EcsBurstSelectionCommandValidation] result=Passed tests=192"
+    },
+    "architectureValidation": {
+      "log": "Logs/m01dc038-aria-selection-architecture-final3.log",
+      "logSha256": "ab39c0f55c81941d3c91eac11865be109b41b7b54103c6e778fc4f75f822cc2f",
+      "marker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23"
+    },
+    "freshPackageBuilt": false,
+    "deviceReplayExecuted": false,
+    "status": "source-validated-pending-fresh-package-samsung-replay"
+  },
   "acceptanceClaimed": false
 }

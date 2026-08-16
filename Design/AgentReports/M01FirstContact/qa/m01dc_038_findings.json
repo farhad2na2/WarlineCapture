@@ -285,15 +285,54 @@
       },
       "status": "source-validated-pending-fresh-package-device-replay",
       "closureRequires": "Commit and push the validated correction, build a fresh exact-head APK, install on canonical Samsung only, and replay Mission 1 proving that neutral map vehicles produce no ground-attack popup or audio while a hostile-warning regression remains covered."
+    },
+    {
+      "id": "M01DC038-P2-012",
+      "severity": "P2",
+      "title": "ARIA duplicates DO IT and does not visibly select the four-soldier command squad",
+      "reproduction": "Open ARIA during Mission 1 Find Squad guidance; observe two controls labelled DO IT; press each and observe that the requested four-unit command squad is not visibly selected.",
+      "cause": "The ARIA popup reused RecommendationActionLabel for SHOW ME while M01 authored that label as DO IT, and the assistant selection path treated the representative squad entity as a single-unit focus command rather than a typed squad target.",
+      "evidence": "Direct project-owner real-input feedback recorded in this task; source inspection confirmed the duplicate label projection and single-representative selection dispatch.",
+      "owner": "Existing ARIA presentation boundary and existing RTS selection command owner",
+      "response": "Present distinct SHOW ME and DO IT labels, project Find Squad as a typed squad target, and route DO IT through the existing selection owner to select every alive player-controlled unit in the representative's active mission session and command-squad group.",
+      "editorValidation": {
+        "assistantIntent": {
+          "log": "Logs/m01dc038-aria-selection-assistant-intent-final2.log",
+          "logSha256": "cfcd0eb5b36bb9c073ac84ab22f168c4a55e1eff1d7f04fa504c441e2092ae77",
+          "marker": "[AssistantCommandIntentSystemValidation] result=Passed tests=13"
+        },
+        "actionLabels": {
+          "log": "Logs/m01dc038-aria-selection-action-label-rerun.log",
+          "logSha256": "04b8d36a901387d39faebe27724cf7fc7c09e95a27cba2bd2b3160eb085ed605",
+          "marker": "[MatchHudAssistantActionLabelValidation] result=Passed tests=1"
+        },
+        "guidance": {
+          "log": "Logs/m01dc038-aria-selection-guidance.log",
+          "logSha256": "569f03703c235c219fbe62be148bdf415a34857ddd0a56a1bb4dae73be30bdd3",
+          "marker": "[M01FirstContactGuidanceValidation] result=Passed tests=11"
+        },
+        "selectionRegression": {
+          "log": "Logs/m01dc038-aria-selection-selection-regression-final.log",
+          "logSha256": "67b82d493d3fd57af7a5fa7abc97fae3a164c546564e359a689ae9a8de3334e1",
+          "marker": "[EcsBurstSelectionCommandValidation] result=Passed tests=192"
+        },
+        "architecture": {
+          "log": "Logs/m01dc038-aria-selection-architecture-final3.log",
+          "logSha256": "ab39c0f55c81941d3c91eac11865be109b41b7b54103c6e778fc4f75f822cc2f",
+          "marker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23"
+        }
+      },
+      "status": "source-validated-pending-fresh-package-device-replay",
+      "closureRequires": "Commit and push the validated correction, build a fresh exact-head APK, install on canonical Samsung only, and replay ARIA with real input proving SHOW ME previews the squad and DO IT visibly selects all four alive command-squad soldiers."
     }
   ],
   "severityCounts": {
     "p0": 0,
     "p1": 4,
-    "p2": 6,
+    "p2": 7,
     "p3": 0,
     "closed": 4,
-    "open": 6
+    "open": 7
   },
   "acceptanceClaimed": false
 }

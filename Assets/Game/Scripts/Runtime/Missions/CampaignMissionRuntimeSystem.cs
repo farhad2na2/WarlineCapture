@@ -45,6 +45,7 @@ namespace Game.Runtime
             RefRW<CampaignMissionAttemptFactsComponent> factsRw =
                 SystemAPI.GetSingletonRW<CampaignMissionAttemptFactsComponent>();
             CampaignMissionAttemptFactsComponent projectedFacts = factsRw.ValueRO;
+            bool commandSquadSelected = projectedFacts.CommandSquadSpawned != 0;
             if (activeRuntime.Outcome == MissionOutcomeKind.None &&
                 activeRuntime.Phase is >= MissionPhaseKind.FindSquad and <= MissionPhaseKind.SecureCorridor &&
                 projectedFacts.CommandSquadSpawned != 0)
@@ -65,6 +66,7 @@ namespace Game.Runtime
                     SystemAPI.GetComponentLookup<CampaignMissionUnitRoleComponent>(true);
                 ComponentLookup<Faction> factions = SystemAPI.GetComponentLookup<Faction>(true);
                 ComponentLookup<UnitHealth> health = SystemAPI.GetComponentLookup<UnitHealth>(true);
+                ComponentLookup<SelectedUnitTag> selectedUnits = SystemAPI.GetComponentLookup<SelectedUnitTag>(true);
                 int aliveFriendly = 0;
                 int aliveHostile = 0;
                 int expectedFriendly = 0;
@@ -93,8 +95,8 @@ namespace Game.Runtime
                         aliveHostile++;
                         continue;
                     }
-
                     aliveFriendly++;
+                    commandSquadSelected &= selectedUnits.HasComponent(entity);
                     float2 offset = transform.ValueRO.Position.xz - moveTarget.xz;
                     if (hasMoveTarget && math.lengthsq(offset) <= moveRadius * moveRadius)
                         moveTargetReached = true;
@@ -128,27 +130,25 @@ namespace Game.Runtime
                     projectedFacts.ThreatConfirmed = 1;
                     projectedFacts.AttackIssued = 1;
                 }
+                commandSquadSelected &= aliveFriendly > 0;
                 factsRw.ValueRW = projectedFacts;
             }
-
             foreach ((RefRW<CampaignMissionRuntimeComponent> runtime,
                       RefRO<CampaignMissionAttemptFactsComponent> facts)
                      in SystemAPI.Query<RefRW<CampaignMissionRuntimeComponent>,
                          RefRO<CampaignMissionAttemptFactsComponent>>())
             {
                 CampaignMissionRuntimeComponent next = runtime.ValueRO;
-                if (!TryEvaluate(in runtime.ValueRO, in facts.ValueRO, out next))
+                if (!TryEvaluate(in runtime.ValueRO, in facts.ValueRO, commandSquadSelected, out next))
                     continue;
                 runtime.ValueRW = next;
             }
         }
-
         private static int SaturatingAddMilliseconds(int current, float deltaSeconds)
         {
             int delta = (int)math.min(int.MaxValue, math.max(0f, math.round(deltaSeconds * 1000f)));
             return current >= int.MaxValue - delta ? int.MaxValue : current + delta;
         }
-
         private static int CountFriendlyUnits(ref CampaignMissionDefinitionBlob definition)
         {
             int count = 0;
@@ -162,7 +162,6 @@ namespace Game.Runtime
             }
             return count;
         }
-
         internal static bool TryConsumeAction(EntityManager entityManager, Entity root)
         {
             if (!entityManager.HasComponent<CampaignMissionRuntimeComponent>(root) ||
@@ -206,7 +205,6 @@ namespace Game.Runtime
                 });
             return true;
         }
-
         [BurstDiscard]
         public static void TryConsumeActionManaged(
             EntityManager entityManager, Entity root, ref bool consumed)
@@ -246,7 +244,6 @@ namespace Game.Runtime
                 });
             consumed = true;
         }
-
         private static bool TryExit(
             EntityManager entityManager, Entity root, in CampaignMissionRuntimeComponent runtime,
             out FixedString64Bytes reason)
@@ -282,7 +279,6 @@ namespace Game.Runtime
             entityManager.SetComponentData(root, default(CampaignMissionRuntimeComponent));
             return true;
         }
-
         private static bool TryContinue(
             EntityManager entityManager, Entity root, ref CampaignMissionRuntimeComponent runtime,
             out FixedString64Bytes reason)
@@ -321,7 +317,6 @@ namespace Game.Runtime
             }
             return true;
         }
-
         private static bool TryQueueRetry(
             EntityManager entityManager, Entity root, in CampaignMissionRuntimeComponent runtime,
             in CampaignMissionActionRequestElement action, out FixedString64Bytes reason)
@@ -358,19 +353,23 @@ namespace Game.Runtime
             });
             return true;
         }
-
         public static bool TryEvaluate(
             in CampaignMissionRuntimeComponent current,
             in CampaignMissionAttemptFactsComponent facts,
             out CampaignMissionRuntimeComponent next)
+            => TryEvaluate(in current, in facts, false, out next);
+
+        public static bool TryEvaluate(
+            in CampaignMissionRuntimeComponent current, in CampaignMissionAttemptFactsComponent facts,
+            bool commandSquadSelected, out CampaignMissionRuntimeComponent next)
         {
             next = current;
-            if (!TryResolveAutomaticTransition(in current, in facts, out MissionPhaseKind phase,
+            if (!TryResolveAutomaticTransition(in current, in facts, commandSquadSelected,
+                    out MissionPhaseKind phase,
                     out MissionOutcomeKind outcome, out MissionReturnDestinationKind destination))
                 return false;
             return TryTransition(in current, phase, outcome, destination, out next);
         }
-
         public static bool TryTransition(
             in CampaignMissionRuntimeComponent current,
             MissionPhaseKind phase,
@@ -423,6 +422,7 @@ namespace Game.Runtime
         private static bool TryResolveAutomaticTransition(
             in CampaignMissionRuntimeComponent current,
             in CampaignMissionAttemptFactsComponent facts,
+            bool commandSquadSelected,
             out MissionPhaseKind phase,
             out MissionOutcomeKind outcome,
             out MissionReturnDestinationKind destination)
@@ -439,7 +439,7 @@ namespace Game.Runtime
             else if (current.Phase == MissionPhaseKind.FindSquad &&
                      current.ReplayTutorialEnabled == 0)
                 phase = MissionPhaseKind.Engage;
-            else if (current.Phase == MissionPhaseKind.FindSquad && facts.CommandSquadAlive != 0)
+            else if (current.Phase == MissionPhaseKind.FindSquad && commandSquadSelected)
                 phase = MissionPhaseKind.MoveToCover;
             else if (current.Phase == MissionPhaseKind.MoveToCover && facts.CommandSquadAlive == 0)
                 return ResolveDefeat(out phase, out outcome, out destination);

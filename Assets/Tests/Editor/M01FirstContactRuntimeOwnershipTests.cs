@@ -119,7 +119,9 @@ public static class M01FirstContactRuntimeOwnershipTests
     {
         CampaignMissionRuntimeComponent state = Create(MissionPhaseKind.FindSquad);
         CampaignMissionAttemptFactsComponent facts = Facts();
-        Require(CampaignMissionRuntimeSystem.TryEvaluate(in state, in facts, out state) &&
+        Require(!CampaignMissionRuntimeSystem.TryEvaluate(in state, in facts, out state),
+            "FindSquad advanced before the command squad was selected.");
+        Require(CampaignMissionRuntimeSystem.TryEvaluate(in state, in facts, true, out state) &&
                 state.Phase == MissionPhaseKind.MoveToCover, "FindSquad did not advance.");
         facts.MoveToCoverComplete = 1;
         Require(CampaignMissionRuntimeSystem.TryEvaluate(in state, in facts, out state) &&

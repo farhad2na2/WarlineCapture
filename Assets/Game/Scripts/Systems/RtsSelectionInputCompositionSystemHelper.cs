@@ -714,10 +714,8 @@ namespace Game.Runtime
             return _inputStateSystem.TryGetCommandBuffers(out em, out entity, out commandRequests, out commandResults);
         }
 
-        public bool HasPendingExternalSelectionCommandRequests()
-        {
-            return GetPendingCommandSummary().HasExternalSelectionCommandRequests;
-        }
+        public bool HasPendingExternalSelectionCommandRequests() =>
+            GetPendingCommandSummary().HasExternalSelectionCommandRequests;
 
         public bool HasPendingSelectionRectangleRequests()
         {
@@ -736,10 +734,8 @@ namespace Game.Runtime
             return false;
         }
 
-        public bool HasPendingTransportCommandRequests()
-        {
-            return GetPendingCommandSummary().HasTransportCommandRequestsOrResults;
-        }
+        public bool HasPendingTransportCommandRequests() =>
+            GetPendingCommandSummary().HasTransportCommandRequestsOrResults;
 
         private static bool IsTransportCommandIntent(RtsSelectionCommandIntentKind kind)
         {
@@ -752,15 +748,11 @@ namespace Game.Runtime
                    kind == RtsSelectionCommandIntentKind.DisembarkTransportPassenger;
         }
 
-        public bool HasPendingAttackCommandRequestsOrResults()
-        {
-            return GetPendingCommandSummary().HasAttackCommandRequestsOrResults;
-        }
+        public bool HasPendingAttackCommandRequestsOrResults() =>
+            GetPendingCommandSummary().HasAttackCommandRequestsOrResults;
 
-        public bool HasPendingMoveCommandRequestsOrResults()
-        {
-            return GetPendingCommandSummary().HasMoveCommandRequestsOrResults;
-        }
+        public bool HasPendingMoveCommandRequestsOrResults() =>
+            GetPendingCommandSummary().HasMoveCommandRequestsOrResults;
 
         public bool HasPendingScanCommandRequestsOrResults()
         {
@@ -812,6 +804,7 @@ namespace Game.Runtime
                     summary.HasScanCommandRequestsOrResults = true;
                     break;
                 case RtsSelectionCommandIntentKind.FocusUnit:
+                case RtsSelectionCommandIntentKind.FocusSquad:
                     summary.HasExternalSelectionCommandRequests = true;
                     break;
                 case RtsSelectionCommandIntentKind.SelectAll:

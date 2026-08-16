@@ -511,8 +511,9 @@
       "adbResult": "No connected devices after Unity-bundled ADB daemon restart",
       "otherDeviceContacted": false
     },
-    "deviceReplayExecuted": false,
-    "status": "fresh-package-superseded-by-m01dc038-p1-015"
+    "deviceReplayExecuted": true,
+    "deviceReplayStatus": "Distinct labels passed, but generic targetless fallback and unconsumed FocusSquad reproduced; runtime integration correction pending new package replay.",
+    "status": "runtime-integration-corrected-pending-new-package-replay"
   },
   "persistedContentPackBindingCorrection": {
     "findingId": "M01DC038-P1-015",
@@ -559,11 +560,53 @@
     },
     "authorizedDeviceCheck": {
       "canonicalDevice": "Samsung SM-S918B R5CTC1J02VB",
-      "adbResult": "No connected devices and no discovered mDNS services",
+      "adbResult": "Connected through hardware-verified mDNS endpoint 192.168.2.33:45137; exact package installed after app-data clear",
       "otherDeviceContacted": false
     },
-    "correctedDeviceReplayExecuted": false,
-    "status": "fresh-corrected-package-built-pending-samsung-replay"
+    "correctedDeviceReplayExecuted": true,
+    "correctedDeviceReplay": {
+      "operatorKind": "Agent",
+      "humanParticipant": false,
+      "recording": {
+        "path": "Temp/M01DC038Replay/m01dc038_b660_agent_replay.mp4",
+        "bytes": 149268865,
+        "sha256": "1a4fe210532fb2d9e840705f68c9d09bba751e0928447761b51251add13713d4"
+      },
+      "liveM01Frame": {
+        "path": "Temp/M01DC038Replay/step04_live_m01.png",
+        "bytes": 1533066,
+        "sha256": "60d652a7305399b8950f915457f47b80a478f1a56fb12cef9ba40cdc1591201a"
+      },
+      "deviceLogSha256": "1e393a06248cd96c3c355096ce6a1315fe0fb019c673517cde976f32c8c3f93d",
+      "contentPackHashErrors": 0,
+      "fatalOrAnrMatches": 0
+    },
+    "status": "closed-on-fresh-corrected-package-device-replay"
+  },
+  "ariaSquadRuntimeIntegrationCorrection": {
+    "findingId": "M01DC038-P2-012",
+    "freshPackageReplaySourceHead": "b660813535b8697edfa561f65de7a29a71c77c1d",
+    "observedResponse": "ARIA labels were distinct, but FindSquad had already auto-advanced to a generic targetless recommendation; SHOW ME had no target and DO IT queued FocusSquad without waking the external selection consumer.",
+    "implementedResponse": "Keep guided FindSquad active until every alive correlated command-squad member is selected and classify FocusSquad for the existing external selection consumer; retain tutorial-off replay skip.",
+    "missionWriterAdded": false,
+    "selectionWriterAdded": false,
+    "sourceGrowthExceptionAdded": false,
+    "runtimeValidation": {
+      "log": "Logs/m01dc038-aria-runtime-integration-rerun.log",
+      "logSha256": "b3d2bdb7acabcdbd90ce3f514c43f2658ecf88e8bbed59d1383beca24439947e",
+      "marker": "[M01FirstContactRuntimeOwnershipValidation] result=Passed tests=12"
+    },
+    "selectionValidation": {
+      "log": "Logs/m01dc038-aria-focus-squad-selection-regression.log",
+      "logSha256": "37dbe67ec95f014cd85912b2065195a4305e05609dc6e3a400318eb465e6f981",
+      "marker": "[EcsBurstSelectionCommandValidation] result=Passed tests=192"
+    },
+    "architectureValidation": {
+      "log": "Logs/m01dc038-aria-runtime-integration-architecture-rerun.log",
+      "logSha256": "d16104681fb94f97ce8e602529922bd5ea52693389a3f4d2d85d50f1137123b5",
+      "marker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23"
+    },
+    "status": "validated-pending-fresh-package-canonical-samsung-replay"
   },
   "acceptanceClaimed": false
 }

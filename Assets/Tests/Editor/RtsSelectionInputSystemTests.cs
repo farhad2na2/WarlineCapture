@@ -724,6 +724,11 @@ public sealed class RtsSelectionInputSystemTests
             out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
             out DynamicBuffer<RtsSelectionCommandResultElement> results));
 
+        requests.Add(new RtsSelectionCommandIntentRequestElement { Kind = RtsSelectionCommandIntentKind.FocusSquad });
+        Assert.IsTrue(inputSystem.GetPendingCommandSummary().HasExternalSelectionCommandRequests,
+            "FocusSquad must wake the existing external selection command consumer.");
+        requests.Clear();
+
         inputSystem.ArmCommandMode(TacticalCommandMode.Attack, frame: 10, oneShot: true, requiresWorldTarget: true);
         inputSystem.QueueMoveOrder(new Vector2(16f, 24f), executeFrame: 11);
         requests.Add(new RtsSelectionCommandIntentRequestElement { Kind = RtsSelectionCommandIntentKind.EnterMoveTargetMode });

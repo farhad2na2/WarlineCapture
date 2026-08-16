@@ -405,9 +405,39 @@
         "fatalOrAnrMatches": 0,
         "result": "Exact package reached live M01, but ARIA remained generic because runtime stayed in InteractiveBrief; SHOW ME had no target and DO IT selected no squad."
       },
-      "deviceAvailability": "Canonical Samsung SM-S918B R5CTC1J02VB reappeared at hardware-verified endpoint 192.168.2.33:45137; exact 8888d267e package installed after app-data clear and operatorKind=Agent replay exposed the InteractiveBrief lifecycle gap.",
-      "status": "interactive-brief-lifecycle-corrected-and-validated-pending-new-package-replay",
-      "closureRequires": "Build and install a fresh exact-head lifecycle-corrected package on canonical Samsung only, then replay ARIA with real input proving Find your squad, SHOW ME preview, and visible four-soldier DO IT selection."
+      "lifecycleCorrectedPackage": {
+        "sourceHead": "092c7d6a91dbe12745d1203d15c3767d3f5c1a1d",
+        "dirty": false,
+        "path": "Build/AndroidAPK/WarlineCapture.apk",
+        "bytes": 558941977,
+        "sha256": "15da2155555bfc84d1fb1a4dcbf24e2cf38f304dd906d5a4e8765b987677e713",
+        "buildLog": "Logs/m01dc038-092c7d6a9-production-apk.log",
+        "buildLogSha256": "d79b151cd20f840af873f257fe83bf069bfb7a1a34fcd9ed9c49a7bc10885354",
+        "releaseBuildType": "release",
+        "scriptingBackend": "IL2CPP",
+        "targetArchitecture": "ARM64",
+        "marker": "[ProductionAndroidPackage] result=Passed"
+      },
+      "successfulDeviceReplay": {
+        "operatorKind": "Agent",
+        "humanParticipant": false,
+        "canonicalDevice": "Samsung SM-S918B R5CTC1J02VB",
+        "androidVersion": "16",
+        "apiLevel": 36,
+        "endpoint": "192.168.2.33:45137",
+        "evidenceDirectory": "Build/DeviceEvidence/M01DC038_092c",
+        "recordingSha256": "4681601a28ed744f093f68a3bf6e34c4ccd675d8e833a56f2d6a94ea88626f05",
+        "findSquadFrameSha256": "ec8e54fb9280b6af76c8988fca12049d89543d5b7b9781010914a4c52d526ad4",
+        "showMeFrameSha256": "712c0d111e9921995c7fc18e8a25adfa2745f84bf1911798c1402c4c3b78f273",
+        "doItFrameSha256": "e71953ed1f9717d8eecbdb2c04232e217f1c8c5996e58fff9065371b88ee4659",
+        "deviceLogSha256": "83120dcb95ed1fb279830a37ec4087b298794fec8bdbd354ddf24cbcf88e5188",
+        "contentPackHashErrors": 0,
+        "fatalOrAnrMatches": 0,
+        "result": "ARIA displayed Find your squad; SHOW ME entered PREVIEW with a valid friendly target; DO IT displayed the 4 SOLDIERS squad panel and advanced guidance to Move to cover."
+      },
+      "deviceAvailability": "Canonical Samsung SM-S918B R5CTC1J02VB remained available at hardware-verified endpoint 192.168.2.33:45137; exact 092c7d6a9 package installed after app-data clear and operatorKind=Agent replay closed the ARIA squad-selection finding.",
+      "status": "closed-on-fresh-lifecycle-corrected-package-device-replay",
+      "closureRequires": "Fulfilled: exact package 15da2155 displayed Find your squad, SHOW ME previewed a valid friendly target, and DO IT selected the four-soldier squad and advanced to Move to cover."
     },
     {
       "id": "M01DC038-P1-015",
@@ -450,8 +480,8 @@
     "p1": 5,
     "p2": 7,
     "p3": 0,
-    "closed": 5,
-    "open": 7
+    "closed": 6,
+    "open": 6
   },
   "acceptanceClaimed": false
 }

@@ -755,7 +755,59 @@
       "logSha256": "f404c1248cad84ab6d969e9737d4bef06461cd50a39483b6cf01391eaed9c0ce",
       "marker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23"
     },
-    "status": "validated-pending-fresh-exact-head-package-canonical-samsung-replay"
+    "freshExactHeadPackage": {
+      "sourceHead": "092c7d6a91dbe12745d1203d15c3767d3f5c1a1d",
+      "dirty": false,
+      "path": "Build/AndroidAPK/WarlineCapture.apk",
+      "bytes": 558941977,
+      "sha256": "15da2155555bfc84d1fb1a4dcbf24e2cf38f304dd906d5a4e8765b987677e713",
+      "releaseBuildType": "release",
+      "scriptingBackend": "IL2CPP",
+      "targetArchitecture": "ARM64",
+      "buildLog": "Logs/m01dc038-092c7d6a9-production-apk.log",
+      "buildLogSha256": "d79b151cd20f840af873f257fe83bf069bfb7a1a34fcd9ed9c49a7bc10885354",
+      "marker": "[ProductionAndroidPackage] result=Passed"
+    },
+    "successfulDeviceReplay": {
+      "operatorKind": "Agent",
+      "humanParticipant": false,
+      "canonicalDevice": "Samsung SM-S918B R5CTC1J02VB",
+      "hardwareSerial": "R5CTC1J02VB",
+      "androidVersion": "16",
+      "apiLevel": 36,
+      "endpoint": "192.168.2.33:45137",
+      "installResult": "Success",
+      "appDataCleared": true,
+      "recording": {
+        "path": "Build/DeviceEvidence/M01DC038_092c/m01dc038_092c_replay.mp4",
+        "bytes": 81563423,
+        "sha256": "4681601a28ed744f093f68a3bf6e34c4ccd675d8e833a56f2d6a94ea88626f05"
+      },
+      "findSquadFrame": {
+        "path": "Build/DeviceEvidence/M01DC038_092c/m01dc038_092c_step05.png",
+        "bytes": 2054038,
+        "sha256": "ec8e54fb9280b6af76c8988fca12049d89543d5b7b9781010914a4c52d526ad4"
+      },
+      "showMeFrame": {
+        "path": "Build/DeviceEvidence/M01DC038_092c/m01dc038_092c_step06.png",
+        "bytes": 2074921,
+        "sha256": "712c0d111e9921995c7fc18e8a25adfa2745f84bf1911798c1402c4c3b78f273"
+      },
+      "doItFrame": {
+        "path": "Build/DeviceEvidence/M01DC038_092c/m01dc038_092c_step07.png",
+        "bytes": 2270700,
+        "sha256": "e71953ed1f9717d8eecbdb2c04232e217f1c8c5996e58fff9065371b88ee4659"
+      },
+      "deviceLog": {
+        "path": "Build/DeviceEvidence/M01DC038_092c/m01dc038_092c_logcat.txt",
+        "bytes": 5035641,
+        "sha256": "83120dcb95ed1fb279830a37ec4087b298794fec8bdbd354ddf24cbcf88e5188"
+      },
+      "contentPackHashErrors": 0,
+      "fatalOrAnrMatches": 0,
+      "observedResponse": "Find your squad appeared; SHOW ME entered PREVIEW with a valid friendly target; DO IT displayed 4 SOLDIERS and advanced guidance to Move to cover."
+    },
+    "status": "closed-on-fresh-exact-head-canonical-samsung-replay"
   },
   "acceptanceClaimed": false
 }

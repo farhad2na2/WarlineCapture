@@ -54,15 +54,15 @@ MonoBehaviour:
     supportsDynamicOccupancy: 1
   cameras:
   - cameraId: camera.ch01.m01.planning
-    position: {x: 1835, y: 70, z: 783}
-    eulerAngles: {x: 85, y: 0, z: 0}
+    position: {x: 1831.3, y: 34, z: 762.1}
+    eulerAngles: {x: 58, y: 10, z: 0}
     orthographic: 0
     fieldOfView: 40
     orthographicSize: 5
     clampToCameraBounds: 1
   - cameraId: camera.ch01.m01.battle_start
-    position: {x: 1845, y: 12, z: 782.7}
-    eulerAngles: {x: 85, y: 0, z: 0}
+    position: {x: 1843.5, y: 14, z: 774.4}
+    eulerAngles: {x: 58, y: 10, z: 0}
     orthographic: 0
     fieldOfView: 38
     orthographicSize: 5

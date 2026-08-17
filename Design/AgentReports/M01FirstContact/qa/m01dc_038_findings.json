@@ -549,6 +549,27 @@
       "closureRequires": "Checked focused and aggregate validation, a fresh exact-head release package, and canonical-Samsung agent replay proving all three patrol members remain available through Find Squad, Move to Cover, and Confirm Threat, then combat begins only after Engage and completes through result/debrief/return."
     },
     {
+      "id": "M01DC038-P2-019",
+      "severity": "P2",
+      "title": "M01 reveal camera uses the full-map top-down style instead of the normal gameplay perspective",
+      "reproduction": "Review the exposed-avenue planning, hostile reveal, squad return, and ARIA SHOW ME camera. The M01-specific poses and runtime reveal requests use pitch 85/yaw 0, making the mission read as a near-vertical tactical map instead of the final game's angled RTS view.",
+      "cause": "The M01 framing correction hard-coded an 85-degree pitch for both authored cameras and RuntimeCameraFocusRequestUtility. The shared gameplay camera contract uses a 58-degree pitch and 10-degree yaw; 82-85 degrees belongs to fullscreen map/isometric presentation.",
+      "evidence": "Direct project-owner gameplay review on 2026-08-17; previous authored cameras were planning [1835,70,783]/[85,0,0] and battle [1845,12,782.7]/[85,0,0]. operatorKind=Agent; humanParticipant=false.",
+      "owner": "Existing logical M01 camera metadata and shell-owned runtime camera request utility",
+      "response": "Use the established 58-degree/10-degree perspective for planning, battle start, hostile reveal, squad return, and SHOW ME. Preserve the open bazaar avenue, multi-aspect safe framing, smooth focus ownership, and readable zoom changes; add a fail-closed assertion rejecting top-down drift.",
+      "editorValidation": {
+        "cameraMinimap": "Passed 12/12; log sha256=61fd361ad04eb8e88c3d942884e06e916d7ff9d655b9d8b083891f2be0e201b0",
+        "cameraContinuity": "Passed 14/14; log sha256=1523f5dc392f30252c56b8765f10f25a67b72b3a3facda823e77cb763de96ccf; contact-sheet sha256=4eef3f95787972406510e439be0a86917a161380bbb88d8441861c615dad8cef",
+        "anchorSightlines": "Passed 13/13; log sha256=b0f3dbff04e44cc5e9ff35003074fa00814329f1756812b385876a5dc022b51c",
+        "operationMap": "Passed 13/13; log sha256=32f0b87ca94a0897b719578d557915cc9fa851cd5ad0ff2b6aa1d7589f667627",
+        "forcesOpening": "Passed 5/5; log sha256=b8b09ea03568e9d3df0d116ea18163c4b13aa5e86e2ef64bc3850ab0c29cc840",
+        "ariaIntent": "Passed 14/14; log sha256=8aa852b2298bd28ce14f04a3cd85361b64ae8f2b94818473d5218bb87009ad48",
+        "m01Architecture": "Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23; log sha256=de3091835fed09ca0a8ec9df39eeb6f13772d02aaf1d88ac658d9f5f084e5dd2"
+      },
+      "status": "editor-corrected-pending-later-exact-package-device-replay",
+      "closureRequires": "Later fresh exact-package supported-Android replay must confirm the oblique view, visible friendlies/hostiles, unobstructed avenue, camera motion, and SHOW ME/DO IT comprehension; no Android run is claimed for this gameplay iteration."
+    },
+    {
       "id": "M01DC038-P1-015",
       "severity": "P1",
       "title": "Fresh package remains white because persisted M01 content-pack hash is stale",
@@ -587,10 +608,10 @@
   "severityCounts": {
     "p0": 0,
     "p1": 7,
-    "p2": 8,
+    "p2": 9,
     "p3": 0,
     "closed": 6,
-    "open": 9
+    "open": 10
   },
   "acceptanceClaimed": false
 }

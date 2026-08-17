@@ -16,10 +16,10 @@ public static class M01FirstContactCameraMinimapTests
         "Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_DistrictEdge01.asset";
     private const string Marker = "[M01FirstContactCameraMinimapValidation] result=Passed tests=12";
     private static readonly OperationMapCameraConfig Planning = new(
-        "camera.ch01.m01.planning", new Vector3(1835f, 70f, 783f), new Vector3(85f, 0f, 0f),
+        "camera.ch01.m01.planning", new Vector3(1831.3f, 34f, 762.1f), new Vector3(58f, 10f, 0f),
         false, 40f, 5f, true);
     private static readonly OperationMapCameraConfig Battle = new(
-        "camera.ch01.m01.battle_start", new Vector3(1845f, 12f, 782.7f), new Vector3(85f, 0f, 0f),
+        "camera.ch01.m01.battle_start", new Vector3(1843.5f, 14f, 774.4f), new Vector3(58f, 10f, 0f),
         false, 38f, 5f, true);
     private static readonly OperationMapMinimapConfig Minimap = new(
         "minimap.ch01.m01.projection", new Vector3(1672f, 0f, 680f), new Vector2(240f, 176f), 0f);
@@ -87,7 +87,15 @@ public static class M01FirstContactCameraMinimapTests
                 $"{camera.CameraId} lies outside M01 camera bounds.");
             Require(!camera.Orthographic && camera.FieldOfView >= 30f && camera.FieldOfView <= 50f,
                 $"{camera.CameraId} zoom is outside the readable perspective envelope.");
+            Require(camera.EulerAngles.x >= 45f && camera.EulerAngles.x <= 70f,
+                $"{camera.CameraId} must use the normal angled gameplay pitch, not a top-down/full-map pitch.");
+            Require(Mathf.Abs(Mathf.DeltaAngle(camera.EulerAngles.y, 10f)) <= 0.01f,
+                $"{camera.CameraId} yaw drifted from the established gameplay camera style.");
         }
+        Require(Mathf.Approximately(RuntimeCameraFocusRequestUtility.TacticalRevealPitch, 58f) &&
+                Mathf.Approximately(RuntimeCameraFocusRequestUtility.SquadRevealPitch, 58f) &&
+                Mathf.Approximately(RuntimeCameraFocusRequestUtility.TacticalRevealYaw, 10f),
+            "Tutorial focus requests must preserve the normal angled gameplay camera, not full-map top-down mode.");
     }
 
     private static void ValidateAspectFraming(OperationMapDefinition map)

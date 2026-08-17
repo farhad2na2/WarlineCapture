@@ -21,6 +21,8 @@ public sealed class M01FirstContactGuidanceTests
         {
             FullGuidanceProjectsAllFivePhases(); passed++; ShowMeAndDoItStayInsideAriaAuthority(); passed++;
             FindSquadUsesTypedSquadSelectionTarget(); passed++;
+            MissingOptionalUiSettingsPreserveMissionGuidance(); passed++;
+            LiveSystemProjectsFirstClearGuidanceWithoutOptionalSettings(); passed++;
             StablePhaseHonorsCooldownAndAcknowledgement(); passed++; AccessibilitySettingsAreProjectedWithoutChangingGameplay(); passed++;
             ReplayTutorialOffSuppressesGuidance(); passed++; StableProjectionAllocatesZeroManagedBytes(); passed++;
             ExactlyOneGuidanceProjectionWriterExists(); passed++; ContextualEscalatesWithoutUnsafeExecution(); passed++;
@@ -59,6 +61,52 @@ public sealed class M01FirstContactGuidanceTests
         Assert.That(projected.TargetEntity, Is.EqualTo(representative));
         Assert.That(projected.CanExecute, Is.EqualTo(1));
         Assert.That(projected.ActionLabel.ToString(), Is.EqualTo("DO IT"));
+    }
+
+    [Test] public static void MissingOptionalUiSettingsPreserveMissionGuidance()
+    {
+        Entity representative = new Entity { Index = 4, Version = 1 };
+        Assert.That(CampaignMissionGuidanceProjectionSystem.TryBuildProjection(
+            default, Runtime(MissionPhaseKind.FindSquad), Facts(), default,
+            representative, Entity.Null, default, default, out var projected), Is.True);
+        Assert.That(projected.Title.ToString(), Is.EqualTo("Find your squad"));
+        Assert.That(projected.TargetKind, Is.EqualTo(AssistantTargetKind.Squad));
+        Assert.That(projected.TargetEntity, Is.EqualTo(representative));
+        Assert.That(projected.CanExecute, Is.EqualTo(1));
+        Assert.That(projected.SubtitlesEnabled + projected.LargeTextEnabled + projected.HighContrastEnabled, Is.Zero);
+    }
+
+    [Test] public static void LiveSystemProjectsFirstClearGuidanceWithoutOptionalSettings()
+    {
+        using World world = new("M01 guidance live-system test");
+        EntityManager em = world.EntityManager;
+        Entity root = em.CreateEntity(
+            typeof(CampaignMissionRootComponent),
+            typeof(CampaignMissionRuntimeComponent),
+            typeof(CampaignMissionAttemptFactsComponent),
+            typeof(CampaignMissionGuidanceProjectionComponent));
+        em.AddBuffer<CampaignMissionGuidanceAcknowledgementRequestElement>(root);
+        em.SetComponentData(root, Runtime(MissionPhaseKind.FindSquad));
+        em.SetComponentData(root, Facts());
+        Entity representative = em.CreateEntity(
+            typeof(CampaignMissionUnitRoleComponent), typeof(Faction));
+        em.SetComponentData(representative, new CampaignMissionUnitRoleComponent
+        {
+            MissionRoleId = new FixedString64Bytes("role.command_squad"),
+            SessionToken = new FixedString64Bytes("session")
+        });
+        em.SetComponentData(representative, new Faction { Id = FactionIdentity.PlayerFactionId });
+
+        SystemHandle system = world.CreateSystem<CampaignMissionGuidanceProjectionSystem>();
+        system.Update(world.Unmanaged);
+
+        CampaignMissionGuidanceProjectionComponent projected =
+            em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root);
+        Assert.That(projected.Active, Is.EqualTo(1));
+        Assert.That(projected.Title.ToString(), Is.EqualTo("Find your squad"));
+        Assert.That(projected.TargetKind, Is.EqualTo(AssistantTargetKind.Squad));
+        Assert.That(projected.TargetEntity, Is.EqualTo(representative));
+        Assert.That(projected.CanExecute, Is.EqualTo(1));
     }
 
     [Test] public static void StablePhaseHonorsCooldownAndAcknowledgement()

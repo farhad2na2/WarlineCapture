@@ -12,7 +12,7 @@ namespace Game.Runtime
     [UpdateBefore(typeof(CampaignMissionRuntimeSystem))]
     public partial struct CampaignMissionPatrolOrderSystem : ISystem
     {
-        private const int SquadReturnFocusMilliseconds = 10000;
+        private const int SquadReturnFocusMilliseconds = 20000;
         private EntityQuery _cameraFocusQuery;
 
         public void OnCreate(ref SystemState state)
@@ -41,9 +41,9 @@ namespace Game.Runtime
                      SystemAPI.Query<RefRO<CampaignMissionOpeningPresentationComponent>>())
             {
                 CampaignMissionOpeningPresentationComponent current = opening.ValueRO;
-                if (current.SessionToken.Equals(runtime.SessionToken) && current.Stage is 1 or 2)
+                if (current.SessionToken.Equals(runtime.SessionToken) && current.Stage is 0 or 1 or 2)
                 {
-                    routeElapsedMilliseconds = current.ElapsedMilliseconds;
+                    routeElapsedMilliseconds = current.Stage < 2 ? 0 : current.ElapsedMilliseconds;
                     break;
                 }
             }
@@ -62,6 +62,7 @@ namespace Game.Runtime
                         current.Stage = 3;
                         opening.ValueRW = current;
                         releaseCombat = true;
+                        routeElapsedMilliseconds = 0;
                     }
                 }
                 if (holdCombat || releaseCombat)
@@ -93,11 +94,23 @@ namespace Game.Runtime
                          SystemAPI.Query<RefRW<CampaignMissionOpeningPresentationComponent>>())
                 {
                     CampaignMissionOpeningPresentationComponent current = opening.ValueRO;
-                    if (current.Stage is not (1 or 2) || !current.SessionToken.Equals(runtime.SessionToken))
+                    if (current.Stage is not (0 or 1 or 2) || !current.SessionToken.Equals(runtime.SessionToken))
                         continue;
 
-                    current.ElapsedMilliseconds = SaturatingAddMilliseconds(
-                        current.ElapsedMilliseconds, SystemAPI.Time.DeltaTime);
+                    if (current.Stage == 0 && focus.Requested == 0)
+                    {
+                        state.EntityManager.SetComponentData(focusEntity, new RuntimeCameraFocusRequestComponent
+                        {
+                            Requested = 1,
+                            Smooth = 0,
+                            UseTacticalRevealZoom = 1,
+                            World = current.HostileFocus
+                        });
+                        current.Stage = 1;
+                    }
+                    if (current.Stage == 1)
+                        current.ElapsedMilliseconds = SaturatingAddMilliseconds(
+                            current.ElapsedMilliseconds, SystemAPI.Time.DeltaTime);
                     if (current.Stage == 1 && current.ElapsedMilliseconds >= SquadReturnFocusMilliseconds &&
                         focus.Requested == 0)
                     {
@@ -105,7 +118,7 @@ namespace Game.Runtime
                         {
                             Requested = 1,
                             Smooth = 1,
-                            UseTacticalRevealZoom = 1,
+                            UseTacticalRevealZoom = 2,
                             World = current.FriendlyFocus
                         });
                         current.Stage = 2;

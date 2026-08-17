@@ -7,9 +7,12 @@ namespace Game.Runtime
     public static class RuntimeCameraFocusRequestUtility
     {
         public const float TacticalRevealHeight = 12f;
-        public const float TacticalRevealPitch = 68f;
+        public const float TacticalRevealPitch = 85f;
         public const float TacticalRevealYaw = 0f;
         public const float TacticalRevealFieldOfView = 38f;
+        public const float SquadRevealHeight = 11f;
+        public const float SquadRevealPitch = 85f;
+        public const float SquadRevealFieldOfView = 36f;
 
         public static Vector3 GetInitialBuildingFootprintCenterWorld(
             Vector2Int originCell,
@@ -35,15 +38,16 @@ namespace Game.Runtime
 
         public static void QueueTacticalRevealZoom(
             RtsCameraRequestSystem camera,
-            EntityManager entityManager)
+            EntityManager entityManager,
+            bool showSquad = false)
         {
             camera.QueueSetMatchIntroZoomSettlePending(entityManager, false);
             camera.QueueApplyPerspectiveModeInstant(
                 entityManager,
-                TacticalRevealHeight,
-                TacticalRevealPitch,
+                showSquad ? SquadRevealHeight : TacticalRevealHeight,
+                showSquad ? SquadRevealPitch : TacticalRevealPitch,
                 TacticalRevealYaw,
-                TacticalRevealFieldOfView);
+                showSquad ? SquadRevealFieldOfView : TacticalRevealFieldOfView);
             camera.QueueCompleteZoomTransition(entityManager);
         }
 
@@ -54,7 +58,7 @@ namespace Game.Runtime
             Vector3 focusWorldPosition)
         {
             if (request.UseTacticalRevealZoom != 0)
-                QueueTacticalRevealZoom(camera, entityManager);
+                QueueTacticalRevealZoom(camera, entityManager, request.UseTacticalRevealZoom == 2);
 
             if (request.Smooth != 0)
             {

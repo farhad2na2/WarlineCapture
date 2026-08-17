@@ -76,13 +76,14 @@ namespace Game.Runtime
                 out float3 playerFocus,
                 out float3 hostileFocus);
             prefabs.Dispose();
-            RequestOpeningHostileCameraFocus(em, hostileFocus);
+            bool openingFocusRequested = RequestOpeningHostileCameraFocus(em, hostileFocus);
             SetOrAdd(em, root, new CampaignMissionOpeningPresentationComponent
             {
                 SessionToken = rootRuntime.SessionToken,
                 FriendlyFocus = playerFocus,
+                HostileFocus = hostileFocus,
                 ElapsedMilliseconds = 0,
-                Stage = 1
+                Stage = (byte)(openingFocusRequested ? 1 : 0)
             });
             rootFacts.CommandSquadSpawned = 1;
             rootFacts.CommandSquadAlive = 1;
@@ -177,10 +178,10 @@ namespace Game.Runtime
                 : playerFocus;
         }
 
-        private void RequestOpeningHostileCameraFocus(EntityManager em, float3 hostileFocus)
+        private bool RequestOpeningHostileCameraFocus(EntityManager em, float3 hostileFocus)
         {
             if (_cameraFocusQuery.CalculateEntityCount() != 1)
-                return;
+                return false;
 
             Entity focusEntity = _cameraFocusQuery.GetSingletonEntity();
             em.SetComponentData(focusEntity, new RuntimeCameraFocusRequestComponent
@@ -190,6 +191,7 @@ namespace Game.Runtime
                 UseTacticalRevealZoom = 1,
                 World = hostileFocus
             });
+            return true;
         }
 
         internal static bool TryFindDefinition(
@@ -264,9 +266,11 @@ namespace Game.Runtime
 
         private static float3 OffsetInsideAnchor(float3 center, float radius, int ordinal, int seed)
         {
-            uint hash = math.hash(new int2(seed, ordinal + 1));
-            float angle = (hash & 1023u) * (2f * math.PI / 1024f);
-            float distance = math.min(math.max(0.35f, radius * 0.45f), math.max(0.35f, radius - 0.25f));
+            const float GoldenAngleRadians = 2.39996323f;
+            uint seedHash = math.hash(new int2(seed, 1701));
+            float angleOffset = (seedHash & 1023u) * (2f * math.PI / 1024f);
+            float angle = angleOffset + ordinal * GoldenAngleRadians;
+            float distance = math.min(math.max(0.35f, radius * 0.66f), math.max(0.35f, radius - 0.5f));
             return center + new float3(math.cos(angle) * distance, 0f, math.sin(angle) * distance);
         }
 

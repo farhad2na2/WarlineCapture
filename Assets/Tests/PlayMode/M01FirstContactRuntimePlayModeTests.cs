@@ -80,6 +80,23 @@ public sealed class M01FirstContactRuntimePlayModeTests
     }
 
     [Test]
+    public void FindSquadWaitsForSpawnAndDefeatsOnlyAfterSpawnedSquadDies()
+    {
+        CampaignMissionRuntimeComponent runtime = GuidanceRuntime(NarrativeGuidanceMode.Full);
+        CampaignMissionAttemptFactsComponent pendingSpawn = GuidanceFacts();
+        pendingSpawn.CommandSquadSpawned = 0;
+        pendingSpawn.CommandSquadAlive = 0;
+        Assert.That(CampaignMissionRuntimeSystem.TryEvaluate(in runtime, in pendingSpawn, out _), Is.False,
+            "FindSquad must wait for the asynchronous force registry instead of declaring a pre-spawn defeat.");
+
+        CampaignMissionAttemptFactsComponent deadSquad = pendingSpawn;
+        deadSquad.CommandSquadSpawned = 1;
+        Assert.That(CampaignMissionRuntimeSystem.TryEvaluate(in runtime, in deadSquad, out var defeat), Is.True);
+        Assert.That(defeat.Phase, Is.EqualTo(MissionPhaseKind.Result));
+        Assert.That(defeat.Outcome, Is.EqualTo(MissionOutcomeKind.Defeat));
+    }
+
+    [Test]
     public void ContextualGuidanceEscalatesOnlyPresentation()
     {
         CampaignMissionRuntimeComponent runtime = GuidanceRuntime(NarrativeGuidanceMode.Contextual);

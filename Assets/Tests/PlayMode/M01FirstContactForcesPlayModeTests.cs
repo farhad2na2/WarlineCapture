@@ -21,10 +21,44 @@ public sealed class M01FirstContactForcesPlayModeTests
     {
         M01FirstContactForcesPlayModeTests tests = new();
         RunToCompletion(tests.SpawnWaitsForGameplayStartBeforePublishingOpeningCamera());
+        RunToCompletion(tests.SpawnDoesNotWaitForCameraChannel());
         RunToCompletion(tests.SpawnCreatesExactDeterministicFourVersusThreeForce());
         RunToCompletion(tests.PatrolQueuesExactThreeOrdersOnceAfterDelay());
         RunToCompletion(tests.MissingRuntimePrefabFailsClosedWithoutPartialSpawn());
-        UnityEngine.Debug.Log("[M01FirstContactForcesPlayModeValidation] result=Passed tests=4");
+        UnityEngine.Debug.Log("[M01FirstContactForcesPlayModeValidation] result=Passed tests=5");
+    }
+
+    [UnityTest]
+    public IEnumerator SpawnDoesNotWaitForCameraChannel()
+    {
+        using World world = new(nameof(SpawnDoesNotWaitForCameraChannel));
+        Fixture fixture = CreateFixture(world, includeCameraFocus: false);
+        try
+        {
+            Update<CampaignMissionSpawnSystem>(world);
+            CampaignMissionAttemptFactsComponent facts = world.EntityManager.GetComponentData<
+                CampaignMissionAttemptFactsComponent>(fixture.Root);
+            Assert.That(facts.CommandSquadSpawned, Is.EqualTo(1),
+                "Mission forces must exist before FindSquad evaluates even if the camera channel is still booting.");
+            Assert.That(world.EntityManager.HasComponent<CampaignMissionOpeningPresentationComponent>(fixture.Root),
+                Is.True);
+            CampaignMissionOpeningPresentationComponent opening = world.EntityManager.GetComponentData<
+                CampaignMissionOpeningPresentationComponent>(fixture.Root);
+            Assert.That(opening.Stage, Is.Zero,
+                "The opening hostile reveal must remain pending until the one camera channel appears.");
+
+            fixture.CameraFocus = world.EntityManager.CreateEntity(typeof(RuntimeCameraFocusRequestComponent));
+            Update<CampaignMissionPatrolOrderSystem>(world);
+
+            facts = world.EntityManager.GetComponentData<CampaignMissionAttemptFactsComponent>(fixture.Root);
+            Assert.That(facts.CommandSquadSpawned, Is.EqualTo(1));
+            opening = world.EntityManager.GetComponentData<CampaignMissionOpeningPresentationComponent>(fixture.Root);
+            Assert.That(opening.Stage, Is.EqualTo(1));
+            Assert.That(world.EntityManager.GetComponentData<RuntimeCameraFocusRequestComponent>(fixture.CameraFocus)
+                .Requested, Is.EqualTo(1));
+            yield break;
+        }
+        finally { fixture.Dispose(); }
     }
 
     [UnityTest]
@@ -112,6 +146,18 @@ public sealed class M01FirstContactForcesPlayModeTests
                     hostileCount++;
                 }
             }
+            for (int i = 0; i < entities.Length; i++)
+            for (int j = i + 1; j < entities.Length; j++)
+            {
+                Faction firstFaction = world.EntityManager.GetComponentData<Faction>(entities[i]);
+                Faction secondFaction = world.EntityManager.GetComponentData<Faction>(entities[j]);
+                if (firstFaction.Id != secondFaction.Id)
+                    continue;
+                float3 first = world.EntityManager.GetComponentData<LocalTransform>(entities[i]).Position;
+                float3 second = world.EntityManager.GetComponentData<LocalTransform>(entities[j]).Position;
+                Assert.That(math.distance(first, second), Is.GreaterThanOrEqualTo(2.25f),
+                    "Opening formations must keep same-faction actors visually distinct in the reveal camera.");
+            }
             Assert.That(friendlyCount, Is.EqualTo(4));
             Assert.That(hostileCount, Is.EqualTo(3));
             Assert.That(focus.Smooth, Is.Zero,
@@ -122,6 +168,7 @@ public sealed class M01FirstContactForcesPlayModeTests
                 CampaignMissionOpeningPresentationComponent>(fixture.Root);
             Assert.That(opening.Stage, Is.EqualTo(1));
             Assert.That(opening.SessionToken, Is.EqualTo(Session));
+            Assert.That(math.distance(opening.HostileFocus, hostileCenter / hostileCount), Is.LessThan(0.001f));
             Assert.That(math.distance(opening.FriendlyFocus, friendlyCenter / friendlyCount), Is.LessThan(0.001f));
             yield break;
         }
@@ -141,7 +188,7 @@ public sealed class M01FirstContactForcesPlayModeTests
             world.EntityManager.SetComponentData(fixture.CameraFocus, default(RuntimeCameraFocusRequestComponent));
             CampaignMissionOpeningPresentationComponent opening = world.EntityManager.GetComponentData<
                 CampaignMissionOpeningPresentationComponent>(fixture.Root);
-            opening.ElapsedMilliseconds = 10000;
+            opening.ElapsedMilliseconds = 20000;
             world.EntityManager.SetComponentData(fixture.Root, opening);
             using EntityQuery combatUnits = world.EntityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<CampaignMissionUnitRoleComponent>(), ComponentType.ReadOnly<UnitCombat>());
@@ -159,7 +206,7 @@ public sealed class M01FirstContactForcesPlayModeTests
                 RuntimeCameraFocusRequestComponent>(fixture.CameraFocus);
             Assert.That(focus.Requested, Is.EqualTo(1));
             Assert.That(focus.Smooth, Is.EqualTo(1));
-            Assert.That(focus.UseTacticalRevealZoom, Is.EqualTo(1));
+            Assert.That(focus.UseTacticalRevealZoom, Is.EqualTo(2));
             opening = world.EntityManager.GetComponentData<CampaignMissionOpeningPresentationComponent>(fixture.Root);
             Assert.That(opening.Stage, Is.EqualTo(2));
             Assert.That(math.distance(focus.World, opening.FriendlyFocus), Is.LessThan(0.001f));
@@ -236,7 +283,8 @@ public sealed class M01FirstContactForcesPlayModeTests
     private static Fixture CreateFixture(
         World world,
         bool omitLastPrefab = false,
-        bool includeGameplayState = false)
+        bool includeGameplayState = false,
+        bool includeCameraFocus = true)
     {
         EntityManager em = world.EntityManager;
         BlobAssetReference<CampaignMissionCatalogBlob> catalog = CreateCatalog();
@@ -252,7 +300,9 @@ public sealed class M01FirstContactForcesPlayModeTests
         });
         Entity mapEntity = em.CreateEntity(typeof(OperationMapMetadataComponent));
         em.SetComponentData(mapEntity, new OperationMapMetadataComponent { Blob = map, Generation = 1 });
-        Entity cameraFocus = em.CreateEntity(typeof(RuntimeCameraFocusRequestComponent));
+        Entity cameraFocus = includeCameraFocus
+            ? em.CreateEntity(typeof(RuntimeCameraFocusRequestComponent))
+            : Entity.Null;
         Entity gameplayState = Entity.Null;
         if (includeGameplayState)
             gameplayState = em.CreateEntity(typeof(RuntimeGameplayStateComponent));

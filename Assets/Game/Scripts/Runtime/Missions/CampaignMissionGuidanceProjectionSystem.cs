@@ -35,8 +35,9 @@ namespace Game.Runtime
         {
             if (!SystemAPI.TryGetSingletonEntity<CampaignMissionRootComponent>(out Entity root) ||
                 !SystemAPI.TryGetSingleton(out CampaignMissionRuntimeComponent runtime) ||
-                !SystemAPI.TryGetSingleton(out CampaignMissionAttemptFactsComponent facts) ||
-                !SystemAPI.TryGetSingleton(out AssistantSettingsComponent settings)) return;
+                !SystemAPI.TryGetSingleton(out CampaignMissionAttemptFactsComponent facts)) return;
+            AssistantSettingsComponent settings = default;
+            SystemAPI.TryGetSingleton(out settings);
             EntityManager em = state.EntityManager;
             CampaignMissionGuidanceProjectionComponent current = em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root);
             DynamicBuffer<CampaignMissionGuidanceAcknowledgementRequestElement> acknowledgements = em.GetBuffer<CampaignMissionGuidanceAcknowledgementRequestElement>(root);

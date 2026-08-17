@@ -152,6 +152,7 @@ namespace Game.Components
     {
         public FixedString64Bytes SessionToken;
         public float3 FriendlyFocus;
+        public float3 HostileFocus;
         public int ElapsedMilliseconds;
         public byte Stage;
     }

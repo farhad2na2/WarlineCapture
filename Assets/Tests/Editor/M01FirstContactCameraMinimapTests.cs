@@ -16,11 +16,11 @@ public static class M01FirstContactCameraMinimapTests
         "Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_DistrictEdge01.asset";
     private const string Marker = "[M01FirstContactCameraMinimapValidation] result=Passed tests=12";
     private static readonly OperationMapCameraConfig Planning = new(
-        "camera.ch01.m01.planning", new Vector3(1792f, 6f, 684f), new Vector3(4f, 0f, 0f),
-        false, 50f, 5f, true);
+        "camera.ch01.m01.planning", new Vector3(1835f, 70f, 783f), new Vector3(85f, 0f, 0f),
+        false, 40f, 5f, true);
     private static readonly OperationMapCameraConfig Battle = new(
-        "camera.ch01.m01.battle_start", new Vector3(1792f, 8f, 692f), new Vector3(6f, 0f, 0f),
-        false, 48f, 5f, true);
+        "camera.ch01.m01.battle_start", new Vector3(1845f, 12f, 782.7f), new Vector3(85f, 0f, 0f),
+        false, 38f, 5f, true);
     private static readonly OperationMapMinimapConfig Minimap = new(
         "minimap.ch01.m01.projection", new Vector3(1672f, 0f, 680f), new Vector2(240f, 176f), 0f);
     private static readonly Vector2[] Aspects =
@@ -94,11 +94,11 @@ public static class M01FirstContactCameraMinimapTests
     {
         Vector3[] planningSubjects =
         {
-            new(1792f, 0f, 716f), new(1792f, 0f, 746f), new(1792f, 0f, 776f), new(1792f, 0f, 806f)
+            new(1825f, 0f, 773f), new(1825f, 0f, 783f), new(1835f, 0f, 783f), new(1845f, 0f, 783f)
         };
         Vector3[] battleSubjects =
         {
-            new(1792f, 0f, 720f), new(1792f, 0f, 768f), new(1792f, 0f, 806f)
+            new(1843.5f, 0f, 782.5f), new(1845f, 0f, 783f), new(1846.5f, 0f, 784.5f)
         };
         foreach (Vector2 resolution in Aspects)
         {

@@ -1009,5 +1009,68 @@
     "deviceAvailability": "Post-build Samsung endpoints refused connection and the supplemental Redmi endpoint timed out; exact d46088d9 package did not install or execute.",
     "status": "fresh-package-built-pending-canonical-device-replay"
   },
+  "openBazaarDesktopReplay": {
+    "sourceHead": "74fa7f9182247f4ffb29c516648f0d0bd38aac7a",
+    "operatorKind": "Agent",
+    "humanParticipant": false,
+    "platform": "Windows Unity Editor desktop",
+    "realInput": true,
+    "androidBuildExecuted": false,
+    "deviceReplayExecuted": false,
+    "androidAcceptanceClaimed": false,
+    "logicalMapContentHash": "0816c57b4de44736108efc016cbfd9f055a3e4c2d697d98c5c24393f732e9860",
+    "observations": {
+      "hostileReveal": "All three red hostile infantry were visible together on the open bazaar avenue with no building between camera and units.",
+      "squadReturn": "The camera smoothly returned to all four green friendly infantry with no civic-hall roof, wall, or building obstructing the shot.",
+      "showMe": "ARIA closed and exposed the cyan squad-area preview.",
+      "doIt": "ARIA closed, selected all four soldiers, rendered four selection markers, and opened the 4 SOLDIERS card.",
+      "preEngageCombat": "The desktop opening and ARIA actions completed without autonomous patrol progress or command-squad loss.",
+      "falseGroundVehicleWarning": "No false ground-vehicle warning was observed."
+    },
+    "checkedValidation": {
+      "anchorSightlines": {
+        "marker": "[M01FirstContactAnchorValidation] result=Passed tests=13",
+        "logSha256": "37c29b7ef0177ef9e3527f269797fb417a768bfba10d36ec56d18c72d62d79c6"
+      },
+      "operationMap": {
+        "result": "Passed 13/13",
+        "logSha256": "c1a233bf6012e304215c520c9ec0669223be6cf2311a7732f8d6bf0e93b12b42"
+      },
+      "forcesCameraPatrol": {
+        "result": "Passed 4/4",
+        "logSha256": "cecf6e3ac8a005efd7e14b5899a7bb28ca2114f144ff69fbc156605f070eafe4"
+      },
+      "ariaCommandIntent": {
+        "marker": "[AssistantCommandIntentSystemValidation] result=Passed tests=14",
+        "logSha256": "e0996225513f4feed98d3d4aac7416c626d45874b0f6d12baf34ecc84fcd877f"
+      },
+      "ariaPopupHud": {
+        "marker": "[MatchHudAssistantUiValidation] result=Passed tests=9",
+        "logSha256": "c47f8563ca7a8ff1d596ba823124b73df9fb74a8f417e2c0d1cacd8d2374a5fc"
+      },
+      "threatWarnings": {
+        "result": "Passed",
+        "logSha256": "55832470fad5c32bb59fee1f344a36f5878a31825458652f51ed6df13053fe57"
+      },
+      "sourceGrowth": {
+        "marker": "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17",
+        "logSha256": "57d50ed32086c5cf5f9e1bfca366d54d1313bb05295df4a2095cd55e52bc507b"
+      },
+      "m01Architecture": {
+        "marker": "[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23",
+        "logSha256": "6a9b0c35ba4c58439ba37eee7b717368a838301853f076bebf7e81ba5017a1bf"
+      }
+    },
+    "findingDisposition": {
+      "M01DC038-P1-013": "desktop-replayed-clear-sightlines; supported-Android end-to-end closure still required",
+      "M01DC038-P1-018": "desktop pre-Engage hold replayed; supported-Android full tutorial route still required",
+      "M01DC038-P2-010": "desktop readability and four-marker selection replayed; Android visual closure still required",
+      "M01DC038-P2-011": "zero false warning observed on desktop; Android audio/log closure still required",
+      "M01DC038-P2-012": "previously closed on canonical Samsung and preserved by desktop replay",
+      "M01DC038-P2-014": "selected-unit far-zoom device replay still required",
+      "M01DC038-P2-017": "final Confirm Threat hostile-label device replay still required"
+    },
+    "status": "desktop-correction-replayed-android-acceptance-open"
+  },
   "acceptanceClaimed": false
 }

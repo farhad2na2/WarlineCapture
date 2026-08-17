@@ -213,8 +213,14 @@
         "m01Architecture": "Passed 23 contracts / 17 source-growth / 23 architecture suites; log sha256=957ca8e2e79e3ddf5ec5747a132ba10450b0a6a93ac295d6f37e801bdcb5f08c",
         "m01RuntimePlayMode": "Passed 20/20 failed=0 skipped=0 inconclusive=0; log sha256=18437af9b028c6269130e3895cb933327f3e303908c90e1101bafafe4a06e7cb; xml sha256=e1c43a0d6d2c9aab67449ccd22d25b2a6f36ff7f889d574a46bd957c6521aefc"
       },
-      "status": "fresh-corrected-package-built-pending-device-replay",
-      "closureRequires": "Install exact package 5f70d470 on canonical Samsung only and replay real-input combat proving squad-centered opening framing, blue circular selection, and immediately distinguishable cyan friendly versus coral hostile infantry"
+      "desktopReplay": {
+        "sourceHead": "74fa7f9182247f4ffb29c516648f0d0bd38aac7a",
+        "operatorKind": "Agent",
+        "humanParticipant": false,
+        "result": "All four friendly soldiers were readable in the returned open-bazaar shot; ARIA DO IT rendered four visible selection markers and opened the 4 SOLDIERS card. No Android visual closure is claimed."
+      },
+      "status": "desktop-replayed-pending-supported-android-visual-closure",
+      "closureRequires": "Build a fresh exact-head package after gameplay approval, install it on canonical Samsung, and replay real-input combat proving squad-centered opening framing, blue circular selection, and immediately distinguishable cyan friendly versus coral hostile infantry"
     },
     {
       "id": "M01DC038-P1-013",
@@ -256,8 +262,15 @@
         "guidance": "Passed 11/11; log sha256=c0aa23fcf2fef9c6bd6c1b21403c1c1269777e7d5b8a702ffb36f52ceeae2252",
         "m01Architecture": "Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23; log sha256=b46e8c9253d7401666653a78194ef72bef45bad3ebc949639dd1c858122713cc"
       },
-      "status": "source-corrected-pending-fresh-package-device-replay",
-      "closureRequires": "Correct the logical patrol presentation without modifying the protected dense-city source, then install a fresh exact-head package on canonical Samsung and replay real input proving a visible hostile reveal, smooth squad return, exposed patrol, and immediate battlefield comprehension."
+      "desktopReplay": {
+        "sourceHead": "74fa7f9182247f4ffb29c516648f0d0bd38aac7a",
+        "operatorKind": "Agent",
+        "humanParticipant": false,
+        "result": "The live desktop opening held all three red hostiles unobstructed, then smoothly returned to all four green friendlies without a building between camera and either group.",
+        "sightlineValidation": "Passed 13/13 with one-metre camera-to-squad/patrol/objective physical-surface samples; log sha256=37c29b7ef0177ef9e3527f269797fb417a768bfba10d36ec56d18c72d62d79c6"
+      },
+      "status": "desktop-replayed-clear-sightlines-pending-supported-android-end-to-end",
+      "closureRequires": "After gameplay approval, build and install a fresh exact-head package on canonical Samsung and replay real input proving a visible hostile reveal, smooth squad return, exposed patrol, and immediate battlefield comprehension."
     },
     {
       "id": "M01DC038-P2-014",
@@ -288,8 +301,15 @@
         "focused": "Passed including close neutral ground vehicle does not warn; log sha256=d6de7f486328467a9eb65225728770d7e5fd028a35b7e7d1d527f77714f12cec",
         "m01Architecture": "Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23; log sha256=1f3b755509eeb02dc10aa5bfabeb6d020a40b5e82c13c08ec92eafdac7957ba7"
       },
-      "status": "fresh-corrected-package-built-pending-device-replay",
-      "closureRequires": "Install exact package 5f70d470 on canonical Samsung only and replay Mission 1 proving that neutral map vehicles produce no ground-attack popup or audio while a hostile-warning regression remains covered."
+      "desktopReplay": {
+        "sourceHead": "74fa7f9182247f4ffb29c516648f0d0bd38aac7a",
+        "operatorKind": "Agent",
+        "humanParticipant": false,
+        "result": "No false ground-vehicle warning was observed during the open-bazaar desktop replay.",
+        "focusedValidation": "Passed; log sha256=55832470fad5c32bb59fee1f344a36f5878a31825458652f51ed6df13053fe57"
+      },
+      "status": "desktop-replayed-zero-false-warning-pending-supported-android-audio-log-closure",
+      "closureRequires": "After gameplay approval, build and install a fresh exact-head package on canonical Samsung and replay Mission 1 proving that neutral map vehicles produce no ground-attack popup or audio while a hostile-warning regression remains covered."
     },
     {
       "id": "M01DC038-P2-012",
@@ -518,7 +538,14 @@
         "marker": "[ProductionAndroidPackage] result=Passed"
       },
       "deviceAvailability": "After the 211bd36 package build restarted ADB, the Samsung advertised endpoints 192.168.2.33:45137 and 192.168.2.33:33675 but both refused connection; supplemental Redmi endpoint 192.168.2.171:39049 timed out. The d46088d9 package did not install or execute on a device.",
-      "status": "second-source-correction-fresh-package-built-pending-canonical-device-replay",
+      "desktopReplay": {
+        "sourceHead": "74fa7f9182247f4ffb29c516648f0d0bd38aac7a",
+        "operatorKind": "Agent",
+        "humanParticipant": false,
+        "result": "The desktop opening and ARIA selection actions completed without autonomous patrol progress or command-squad loss. Confirm Threat through result/debrief/return was not completed, and no Android closure is claimed.",
+        "forcesCameraPatrolValidation": "Passed 4/4; log sha256=cecf6e3ac8a005efd7e14b5899a7bb28ca2114f144ff69fbc156605f070eafe4"
+      },
+      "status": "desktop-pre-engage-hold-replayed-pending-canonical-device-full-route",
       "closureRequires": "Checked focused and aggregate validation, a fresh exact-head release package, and canonical-Samsung agent replay proving all three patrol members remain available through Find Squad, Move to Cover, and Confirm Threat, then combat begins only after Engage and completes through result/debrief/return."
     },
     {

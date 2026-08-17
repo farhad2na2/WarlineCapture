@@ -152,6 +152,7 @@ public sealed class M01FirstContactCampaignUiTests
         {
             CampaignOperationsScreenView view = instance.GetComponent<CampaignOperationsScreenView>();
             Assert.NotNull(view);
+            Assert.NotNull(instance.GetComponent<CampaignMissionScreenBinder>());
             UiCampaignOperationsModel model = ToContract(Project(new[]
             {
                 new CampaignMissionProgressSaveData

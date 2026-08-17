@@ -51,6 +51,22 @@ namespace Game.Editor
             AssetDatabase.Refresh();
         }
 
+        public static void RefreshOperationMapCatalogContentPack()
+        {
+            OperationMapDefinition operationMap =
+                AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(OperationMapPath);
+            OperationMapCatalogConfig operationMapCatalog =
+                AssetDatabase.LoadAssetAtPath<OperationMapCatalogConfig>(OperationMapCatalogPath);
+            if (operationMap == null || operationMapCatalog == null)
+                throw new InvalidOperationException("M01 operation map or chapter catalog is missing.");
+
+            PopulateOperationMapCatalog(operationMapCatalog, operationMap);
+            EditorUtility.SetDirty(operationMapCatalog);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log("[M01FirstContactConfigBuilder] result=Passed scope=OperationMapCatalog");
+        }
+
         private static void PopulateMission(MissionDefinitionConfig target)
         {
             SerializedObject serialized = new(target);

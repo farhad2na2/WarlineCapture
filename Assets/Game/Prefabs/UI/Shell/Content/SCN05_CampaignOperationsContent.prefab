@@ -11058,6 +11058,7 @@ GameObject:
   m_Component:
   - component: {fileID: 238142687283848464}
   - component: {fileID: 8005741229782783414}
+  - component: {fileID: 6646724071730817572}
   m_Layer: 0
   m_Name: SCN05_CampaignOperationsContent
   m_TagString: Untagged
@@ -11135,6 +11136,21 @@ MonoBehaviour:
   storyArchiveButton: {fileID: 1063633536941562092}
   chapterIntelButton: {fileID: 8625392800019869646}
   launchMissionButton: {fileID: 9061217917028309360}
+--- !u!114 &6646724071730817572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7801727726565815370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b482147b933fc241a6dd1809830e4b2, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.CampaignMissionScreenBinder
+  campaignOperationsView: {fileID: 8005741229782783414}
+  missionBriefingView: {fileID: 0}
+  missionId: saga.ch01.m01.first_contact
 --- !u!1 &7815940887391288535
 GameObject:
   m_ObjectHideFlags: 0

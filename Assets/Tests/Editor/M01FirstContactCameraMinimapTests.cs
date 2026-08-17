@@ -16,11 +16,11 @@ public static class M01FirstContactCameraMinimapTests
         "Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_DistrictEdge01.asset";
     private const string Marker = "[M01FirstContactCameraMinimapValidation] result=Passed tests=12";
     private static readonly OperationMapCameraConfig Planning = new(
-        "camera.ch01.m01.planning", new Vector3(1831.3f, 34f, 762.1f), new Vector3(58f, 10f, 0f),
+        "camera.ch01.m01.planning", new Vector3(1840.8f, 20f, 764.2f), new Vector3(45f, 340f, 0f),
         false, 40f, 5f, true);
     private static readonly OperationMapCameraConfig Battle = new(
-        "camera.ch01.m01.battle_start", new Vector3(1843.5f, 14f, 774.4f), new Vector3(58f, 10f, 0f),
-        false, 38f, 5f, true);
+        "camera.ch01.m01.battle_start", new Vector3(1848.1f, 9f, 774.5f), new Vector3(45f, 340f, 0f),
+        false, 32f, 5f, true);
     private static readonly OperationMapMinimapConfig Minimap = new(
         "minimap.ch01.m01.projection", new Vector3(1672f, 0f, 680f), new Vector2(240f, 176f), 0f);
     private static readonly Vector2[] Aspects =
@@ -87,15 +87,20 @@ public static class M01FirstContactCameraMinimapTests
                 $"{camera.CameraId} lies outside M01 camera bounds.");
             Require(!camera.Orthographic && camera.FieldOfView >= 30f && camera.FieldOfView <= 50f,
                 $"{camera.CameraId} zoom is outside the readable perspective envelope.");
-            Require(camera.EulerAngles.x >= 45f && camera.EulerAngles.x <= 70f,
-                $"{camera.CameraId} must use the normal angled gameplay pitch, not a top-down/full-map pitch.");
-            Require(Mathf.Abs(Mathf.DeltaAngle(camera.EulerAngles.y, 10f)) <= 0.01f,
-                $"{camera.CameraId} yaw drifted from the established gameplay camera style.");
+            Require(camera.EulerAngles.x >= 40f && camera.EulerAngles.x <= 50f,
+                $"{camera.CameraId} must keep a clearly oblique gameplay pitch, not a top-down/full-map pitch.");
+            Require(Mathf.Abs(Mathf.DeltaAngle(camera.EulerAngles.y, 340f)) <= 0.01f,
+                $"{camera.CameraId} must approach the bazaar street from the unobstructed east side.");
         }
-        Require(Mathf.Approximately(RuntimeCameraFocusRequestUtility.TacticalRevealPitch, 58f) &&
-                Mathf.Approximately(RuntimeCameraFocusRequestUtility.SquadRevealPitch, 58f) &&
-                Mathf.Approximately(RuntimeCameraFocusRequestUtility.TacticalRevealYaw, 10f),
-            "Tutorial focus requests must preserve the normal angled gameplay camera, not full-map top-down mode.");
+        Require(Mathf.Approximately(RuntimeCameraFocusRequestUtility.TacticalRevealPitch, 45f) &&
+                Mathf.Approximately(RuntimeCameraFocusRequestUtility.SquadRevealPitch, 45f) &&
+                Mathf.Approximately(RuntimeCameraFocusRequestUtility.TacticalRevealYaw, 270f),
+            "Tutorial focus requests must look down the bazaar street from the east, not across building rows.");
+        Require(RuntimeCameraFocusRequestUtility.TacticalRevealHeight <= 10f &&
+                RuntimeCameraFocusRequestUtility.SquadRevealHeight <= 8f &&
+                RuntimeCameraFocusRequestUtility.TacticalRevealFieldOfView <= 34f &&
+                RuntimeCameraFocusRequestUtility.SquadRevealFieldOfView <= 32f,
+            "Tutorial reveal zoom must keep soldiers large enough to identify without the tactical map.");
     }
 
     private static void ValidateAspectFraming(OperationMapDefinition map)

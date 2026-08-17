@@ -6,13 +6,13 @@ namespace Game.Runtime
 {
     public static class RuntimeCameraFocusRequestUtility
     {
-        public const float TacticalRevealHeight = 14f;
-        public const float TacticalRevealPitch = 58f;
-        public const float TacticalRevealYaw = 10f;
-        public const float TacticalRevealFieldOfView = 38f;
-        public const float SquadRevealHeight = 12f;
-        public const float SquadRevealPitch = 58f;
-        public const float SquadRevealFieldOfView = 36f;
+        public const float TacticalRevealHeight = 10f;
+        public const float TacticalRevealPitch = 45f;
+        public const float TacticalRevealYaw = 270f;
+        public const float TacticalRevealFieldOfView = 34f;
+        public const float SquadRevealHeight = 8f;
+        public const float SquadRevealPitch = 45f;
+        public const float SquadRevealFieldOfView = 32f;
 
         public static Vector3 GetInitialBuildingFootprintCenterWorld(
             Vector2Int originCell,

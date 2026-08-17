@@ -232,10 +232,25 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             out RectTransform objectives);
         var ui = new MainMenuPlayUI();
         ui.Init(null, new FakeMatchRuntimeState());
-        LogAssert.Expect(
-            LogType.Error,
-            "[ARIA] Match HUD prefab is missing HeaderContent/AriaAssistantButton; runtime button creation is disabled.");
-        ui.BindMatchHudAssistant(header.gameObject, overlay, LoadPopupPrefab());
+        const string expectedError =
+            "[ARIA] Match HUD prefab is missing HeaderContent/AriaAssistantButton; runtime button creation is disabled.";
+        string capturedError = null;
+        Application.LogCallback captureError = (condition, _, logType) =>
+        {
+            if (logType == LogType.Error && string.Equals(condition, expectedError, StringComparison.Ordinal))
+                capturedError = condition;
+        };
+        Application.logMessageReceived += captureError;
+        try
+        {
+            ui.BindMatchHudAssistant(header.gameObject, overlay, LoadPopupPrefab());
+        }
+        finally
+        {
+            Application.logMessageReceived -= captureError;
+        }
+
+        Assert.AreEqual(expectedError, capturedError);
 
         RectTransform button = header.Find("AriaAssistantButton") as RectTransform;
         Assert.IsNull(button, "Runtime binding must not recreate a missing prefab button.");
@@ -248,7 +263,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
     [Test]
     public void BindMatchHudAssistant_AppliesStructuredRowsWithoutCreatingPopupObjects()
     {
-        CreateHudHarness(true, out RectTransform overlay, out RectTransform header, out _);
+        CreateHudHarness(true, out RectTransform overlay, out RectTransform header, out RectTransform objectives);
         var gateway = new FakeAssistantPanelGateway(CreateStructuredModel(42), CreateHighlightModel(88));
         UiShellRuntimeGateway.Register(gateway);
         var ui = new MainMenuPlayUI();
@@ -280,7 +295,10 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.AreEqual("DO IT", Text(popup.transform, "DoItButtonLabel"));
 
         FindNamed(popup.transform, "ShowMeButton").GetComponent<Button>().onClick.Invoke();
+        Assert.IsFalse(popup.IsOpen, "SHOW ME must close ARIA so the camera reveal is visible.");
+        objectives.parent.Find("AriaAssistantButton").GetComponent<Button>().onClick.Invoke();
         FindNamed(popup.transform, "DoItButton").GetComponent<Button>().onClick.Invoke();
+        Assert.IsFalse(popup.IsOpen, "DO IT must close ARIA so selection or movement feedback is visible.");
         Assert.AreEqual(2, gateway.AssistantIntentRequestCount);
         Assert.AreEqual(UiAssistantCommandIntentKind.ExecuteRecommendation, gateway.LastAssistantIntentKind);
         Assert.IsTrue(gateway.LastAssistantIntentFromTakeover);

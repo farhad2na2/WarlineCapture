@@ -248,7 +248,6 @@ namespace Game.Runtime
             requests.Clear();
 
             DynamicBuffer<UnitMoveOrderResultElement> results = em.GetBuffer<UnitMoveOrderResultElement>(queueEntity);
-            results.Clear();
 
             var moveOrderSystem = new UnitMoveOrderSystem();
             NativeArray<UnitMoveOrderRequestElement> pendingRequestArray = pendingRequests.AsArray();
@@ -261,6 +260,7 @@ namespace Game.Runtime
 
                 results = em.GetBuffer<UnitMoveOrderResultElement>(queueEntity);
                 results.Add(ToResult(request, commandResult));
+                while (results.Length > 32) results.RemoveAt(0);
             }
         }
 

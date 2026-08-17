@@ -14,6 +14,34 @@ public sealed class AssistantTargetLockReadModelSystemTests
     private EntityManager _entityManager;
     private SystemHandle _system;
 
+    public static void RunFocusedValidation()
+    {
+        int passed = 0;
+        try
+        {
+            RunCase(test => test.PublishesExecutableTargetTelemetryFromRecommendation());
+            passed++;
+            RunCase(test => test.PreviewChangesLockStateWithoutChangingTarget());
+            passed++;
+            UnityEngine.Debug.Log($"[AssistantTargetLockReadModelValidation] result=Passed tests={passed}");
+            ValidationExit.Exit(0);
+        }
+        catch (System.Exception exception)
+        {
+            UnityEngine.Debug.LogException(exception);
+            UnityEngine.Debug.LogError($"[AssistantTargetLockReadModelValidation] result=Failed passed={passed}");
+            ValidationExit.Exit(1);
+        }
+    }
+
+    private static void RunCase(System.Action<AssistantTargetLockReadModelSystemTests> testCase)
+    {
+        AssistantTargetLockReadModelSystemTests tests = new();
+        tests.SetUp();
+        try { testCase(tests); }
+        finally { tests.TearDown(); }
+    }
+
     [SetUp]
     public void SetUp()
     {
@@ -88,6 +116,10 @@ public sealed class AssistantTargetLockReadModelSystemTests
         Assert.AreEqual(
             AssistantTargetLockState.Preview,
             _entityManager.GetComponentData<AssistantTargetLockReadModelComponent>(boundary).State);
+        Assert.AreEqual(
+            string.Empty,
+            _entityManager.GetComponentData<AssistantTargetLockReadModelComponent>(boundary).SourceName.ToString(),
+            "A target-only hostile preview must not be mislabeled as a friendly source.");
     }
 
     private Entity CreateBoundary()

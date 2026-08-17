@@ -5,6 +5,26 @@ namespace Game.Runtime
 {
     public sealed partial class TacticalFollowCameraModeSystemHelper
     {
+        public bool YieldToExternalCameraPresentation(EntityManager em, Context context)
+        {
+            Entity modeEntity = EnsureModeEntity(em);
+            TacticalFollowCameraModeComponent mode =
+                em.GetComponentData<TacticalFollowCameraModeComponent>(modeEntity);
+            bool ownsCamera = mode.Enabled != 0 ||
+                              TryReadPose(em, out TacticalFollowCameraPoseComponent pose) && pose.Valid != 0;
+            if (!ownsCamera)
+                return false;
+
+            mode.RestorePoseValid = 0;
+            ExitFollowMode(
+                em,
+                modeEntity,
+                mode,
+                context,
+                TacticalFollowCameraFeedbackCode.None);
+            return true;
+        }
+
         public void Dispose()
         {
             ReleaseSingletonQueries();

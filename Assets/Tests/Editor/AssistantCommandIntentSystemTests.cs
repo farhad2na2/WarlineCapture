@@ -1,5 +1,6 @@
 using System;
 using Game.Components;
+using Game.Runtime;
 using Game.UI.Shell.Contracts.Ecs;
 using Game.UI.Shell.Ecs;
 using NUnit.Framework;
@@ -468,11 +469,17 @@ public sealed class AssistantCommandIntentSystemTests
         Entity cameraEntity = cameraQuery.GetSingletonEntity();
         DynamicBuffer<RtsCameraRequestElement> cameraRequests =
             _entityManager.GetBuffer<RtsCameraRequestElement>(cameraEntity);
-        Assert.AreEqual(2, cameraRequests.Length);
-        Assert.AreEqual(RtsCameraRequestKind.SetSmoothFocusTarget, cameraRequests[0].Kind);
-        Assert.AreEqual(new float3(18f, 2f, 32f), cameraRequests[0].WorldPosition);
-        Assert.AreEqual(1, cameraRequests[0].Flag);
-        Assert.AreEqual(RtsCameraRequestKind.ClearDragging, cameraRequests[1].Kind);
+        Assert.AreEqual(4, cameraRequests.Length);
+        Assert.AreEqual(RtsCameraRequestKind.ApplyPerspectiveModeInstant, cameraRequests[0].Kind);
+        Assert.AreEqual(RuntimeCameraFocusRequestUtility.TacticalRevealHeight, cameraRequests[0].Value);
+        Assert.AreEqual(RuntimeCameraFocusRequestUtility.TacticalRevealPitch, cameraRequests[0].Value2);
+        Assert.AreEqual(RuntimeCameraFocusRequestUtility.TacticalRevealYaw, cameraRequests[0].Value3);
+        Assert.AreEqual(RuntimeCameraFocusRequestUtility.TacticalRevealFieldOfView, cameraRequests[0].Value4);
+        Assert.AreEqual(RtsCameraRequestKind.CompleteZoomTransition, cameraRequests[1].Kind);
+        Assert.AreEqual(RtsCameraRequestKind.SetSmoothFocusTarget, cameraRequests[2].Kind);
+        Assert.AreEqual(new float3(18f, 2f, 32f), cameraRequests[2].WorldPosition);
+        Assert.AreEqual(1, cameraRequests[2].Flag);
+        Assert.AreEqual(RtsCameraRequestKind.ClearDragging, cameraRequests[3].Kind);
     }
 
     [Test]
@@ -511,9 +518,11 @@ public sealed class AssistantCommandIntentSystemTests
             ComponentType.ReadOnly<RtsCameraRequestElement>());
         DynamicBuffer<RtsCameraRequestElement> cameraRequests =
             _entityManager.GetBuffer<RtsCameraRequestElement>(cameraQuery.GetSingletonEntity());
-        Assert.AreEqual(2, cameraRequests.Length);
-        Assert.AreEqual(RtsCameraRequestKind.SetSmoothFocusTarget, cameraRequests[0].Kind);
-        Assert.AreEqual(new float3(44f, 3f, 71f), cameraRequests[0].WorldPosition);
+        Assert.AreEqual(4, cameraRequests.Length);
+        Assert.AreEqual(RtsCameraRequestKind.ApplyPerspectiveModeInstant, cameraRequests[0].Kind);
+        Assert.AreEqual(RtsCameraRequestKind.CompleteZoomTransition, cameraRequests[1].Kind);
+        Assert.AreEqual(RtsCameraRequestKind.SetSmoothFocusTarget, cameraRequests[2].Kind);
+        Assert.AreEqual(new float3(44f, 3f, 71f), cameraRequests[2].WorldPosition);
         DynamicBuffer<AssistantPreviewHighlightElement> highlights =
             _entityManager.GetBuffer<AssistantPreviewHighlightElement>(boundary);
         Assert.AreEqual(1, highlights.Length);
@@ -557,8 +566,10 @@ public sealed class AssistantCommandIntentSystemTests
             ComponentType.ReadOnly<RtsCameraRequestElement>());
         DynamicBuffer<RtsCameraRequestElement> cameraRequests =
             _entityManager.GetBuffer<RtsCameraRequestElement>(cameraQuery.GetSingletonEntity());
-        Assert.AreEqual(2, cameraRequests.Length);
-        Assert.AreEqual(new float3(1784f, 0.009f, 754f), cameraRequests[0].WorldPosition);
+        Assert.AreEqual(4, cameraRequests.Length);
+        Assert.AreEqual(RtsCameraRequestKind.ApplyPerspectiveModeInstant, cameraRequests[0].Kind);
+        Assert.AreEqual(RtsCameraRequestKind.CompleteZoomTransition, cameraRequests[1].Kind);
+        Assert.AreEqual(new float3(1784f, 0.009f, 754f), cameraRequests[2].WorldPosition);
     }
 
     [Test]

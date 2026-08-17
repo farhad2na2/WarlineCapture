@@ -62,6 +62,7 @@ public sealed class InitialUnitsSpawnFocusedTests
             nameof(InitialUnitsSpawnSystem_RejectsReservedFootprint),
             nameof(InitialUnitsSpawnSystem_ResolvesConfiguredHelipadSlot),
             nameof(InitialUnitsSpawnSystem_PreservesBlockerProgressIncrement),
+            nameof(InitialUnitsSpawnSystem_DoesNotOverrideActiveCampaignCameraPresentation),
             nameof(InitialUnitsSpawnSystem_WaitsForInitialBuildingCompletionWithoutFailOpen),
             nameof(InitialUnitsSpawnSystem_QueuesPendingFuelSeedWhenStorageIsUnavailableAtCompletion),
             nameof(InitialUnitsSpawnSystem_AppliesPendingFuelSeedWhenStorageAppears)
@@ -113,6 +114,22 @@ public sealed class InitialUnitsSpawnFocusedTests
         Assert.IsFalse(policyQuery.IsEmptyIgnoreFilter);
         FactionEconomyPolicy policy = em.GetComponentData<FactionEconomyPolicy>(policyQuery.GetSingletonEntity());
         Assert.AreEqual(0, policy.Enabled);
+    }
+
+    [Test]
+    public void InitialUnitsSpawnSystem_DoesNotOverrideActiveCampaignCameraPresentation()
+    {
+        using World world = new(nameof(InitialUnitsSpawnSystem_DoesNotOverrideActiveCampaignCameraPresentation));
+        Assert.IsFalse(RuntimeCameraFocusRequestUtility.HasActiveCampaignMission(world.EntityManager));
+
+        CampaignMissionRuntimeComponent activeCampaign = new()
+        {
+            MissionId = new FixedString64Bytes("m01_first_contact"),
+            SessionToken = new FixedString64Bytes("m01-session")
+        };
+        Entity runtime = world.EntityManager.CreateEntity(typeof(CampaignMissionRuntimeComponent));
+        world.EntityManager.SetComponentData(runtime, activeCampaign);
+        Assert.IsTrue(RuntimeCameraFocusRequestUtility.HasActiveCampaignMission(world.EntityManager));
     }
 
     [Test]

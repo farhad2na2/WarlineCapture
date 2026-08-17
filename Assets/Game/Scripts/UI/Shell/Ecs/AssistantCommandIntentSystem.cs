@@ -24,7 +24,6 @@ namespace Game.UI.Shell.Ecs
         private const int ReasonCancelled = (int)TacticalCommandReasonCode.None;
         private const int ReasonTimedOut = (int)TacticalCommandReasonCode.CommandUnavailable;
         private const int RecoveryMessageBaseId = 700000;
-
         private EntityQuery boundaryQuery;
         private EntityQuery cameraRequestQuery;
         private EntityQuery selectionInputQuery;
@@ -77,7 +76,7 @@ namespace Game.UI.Shell.Ecs
                 }
 
                 if (pending.Kind == AssistantCommandIntentKind.SelectEntity)
-                    needsSelectionCommand = true;
+                    needsSelectionCommand = needsCameraPreview = true;
                 else if (pending.Kind == AssistantCommandIntentKind.MoveToWorldPosition)
                     needsMoveCommand = true;
                 else if (pending.Kind == AssistantCommandIntentKind.AttackEntity)
@@ -201,6 +200,8 @@ namespace Game.UI.Shell.Ecs
                         AssistantDownstreamCommandKind.Selection,
                         downstreamRequestId,
                         now);
+                    AssistantPreviewTargetUtility.TryQueueResolvedCameraPreview(
+                        state.EntityManager, operationMapMetadataQuery, cameraRequestQuery, in request);
                     assistantState.ControlState = request.FromTakeover != 0
                         ? AssistantControlState.AssistantTakeover
                         : AssistantControlState.Guided;
@@ -316,7 +317,8 @@ namespace Game.UI.Shell.Ecs
                     continue;
                 }
 
-                QueueCameraPreview(ref state, focusWorldPosition);
+                AssistantPreviewTargetUtility.QueueCameraPreview(
+                    state.EntityManager, EnsureCameraRequestEntity(ref state), focusWorldPosition);
                 AddResult(results, request, AssistantCommandIntentStatus.Accepted, ReasonAccepted, new FixedString64Bytes("Preview queued."));
                 AddResult(results, request, AssistantCommandIntentStatus.Completed, ReasonAccepted, new FixedString64Bytes("Preview active."));
                 SetPreviewHighlight(highlights, request, focusWorldPosition);
@@ -588,33 +590,6 @@ namespace Game.UI.Shell.Ecs
         private static bool IsFinite(float3 value)
         {
             return math.all(math.isfinite(value));
-        }
-
-        private void QueueCameraPreview(ref SystemState state, float3 focusWorldPosition)
-        {
-            Entity cameraEntity = EnsureCameraRequestEntity(ref state);
-            RtsCameraRequestQueueComponent queue =
-                state.EntityManager.GetComponentData<RtsCameraRequestQueueComponent>(cameraEntity);
-            DynamicBuffer<RtsCameraRequestElement> cameraRequests =
-                state.EntityManager.GetBuffer<RtsCameraRequestElement>(cameraEntity);
-
-            queue.LastRequestId++;
-            cameraRequests.Add(new RtsCameraRequestElement
-            {
-                Kind = RtsCameraRequestKind.SetSmoothFocusTarget,
-                RequestId = queue.LastRequestId,
-                WorldPosition = focusWorldPosition,
-                Flag = 1
-            });
-
-            queue.LastRequestId++;
-            cameraRequests.Add(new RtsCameraRequestElement
-            {
-                Kind = RtsCameraRequestKind.ClearDragging,
-                RequestId = queue.LastRequestId
-            });
-
-            state.EntityManager.SetComponentData(cameraEntity, queue);
         }
 
         private Entity EnsureCameraRequestEntity(ref SystemState state)

@@ -6,7 +6,6 @@ using Unity.Entities;
 namespace Game.Runtime
 {
     [UpdateInGroup(typeof(InitializationSystemGroup))]
-    [UpdateBefore(typeof(CampaignMissionRuntimeSystem))]
     public partial struct CampaignMissionLaunchSystem : ISystem
     {
         public void OnCreate(ref SystemState state) => state.RequireForUpdate<CampaignMissionRootComponent>();

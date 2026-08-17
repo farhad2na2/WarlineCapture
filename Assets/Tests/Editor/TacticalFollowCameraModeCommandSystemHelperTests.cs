@@ -55,6 +55,8 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
             passed++;
             RunCase(test => test.ToggleExitPublishesRestorePoseWhenRestoreWasCaptured());
             passed++;
+            RunCase(test => test.ExternalCameraPresentationClearsFollowAndRestorePose());
+            passed++;
             RunCase(test => test.SelectedBuildingPublishesBuildingTargetAndPoseWhenNoUnitsSelected());
             passed++;
             RunCase(test => test.SelectedUnitTakesPriorityOverSelectedBuildingTarget());
@@ -548,6 +550,33 @@ public sealed class TacticalFollowCameraModeCommandSystemHelperTests
             Assert.AreEqual(1, pose.Orthographic);
             Assert.AreEqual(46f, pose.FieldOfView, 0.001f);
             Assert.AreEqual(9f, pose.OrthographicSize, 0.001f);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(cameraObject);
+        }
+    }
+
+    [Test]
+    public void ExternalCameraPresentationClearsFollowAndRestorePose()
+    {
+        GameObject cameraObject = new GameObject("TacticalFollowExternalPresentationCamera");
+        try
+        {
+            Camera camera = cameraObject.AddComponent<Camera>();
+            camera.transform.position = new Vector3(20f, 14f, -30f);
+            camera.transform.rotation = Quaternion.Euler(35f, 20f, 0f);
+            CreateSelectedUnit(new float3(4f, 0f, 6f), quaternion.identity);
+            QueueRequest(TacticalFollowCameraRequestKind.ToggleFollowMode);
+            Assert.IsTrue(_system.ProcessPendingRequests(_em, camera));
+
+            Assert.IsTrue(_system.YieldToExternalCameraPresentation(_em, default));
+
+            Assert.IsTrue(_system.TryReadMode(_em, out TacticalFollowCameraModeComponent mode));
+            Assert.AreEqual(0, mode.Enabled);
+            Assert.AreEqual(0, mode.PanInputLocked);
+            Assert.AreEqual(0, mode.RestorePoseValid);
+            Assert.IsFalse(_system.TryReadPose(_em, out _));
         }
         finally
         {

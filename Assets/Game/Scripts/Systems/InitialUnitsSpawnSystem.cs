@@ -183,7 +183,6 @@ namespace Game.Runtime
             var queueEntity = RespawnQueueUtility.GetOrCreateQueue(ref state);
             var em = state.EntityManager;
             Entity boundaryEntity = startupGate.BoundaryEntity;
-
             ProcessPendingInitialFuelStorageSeeds(em, _pendingFuelSeedQuery);
 
             InitializeInitialSpawnProgress(em, _pendingInitQuery);
@@ -1528,11 +1527,10 @@ namespace Game.Runtime
                     continue;
                 }
 
-                if (request.Status == BuildingRuntimeSpawnRequest.Succeeded &&
-                    FactionIdentity.IsPlayerControlled(request.FactionId) &&
-                    request.EntryIndex == initialBaseCoreRequestEntryIndex)
+                if (request.Status == BuildingRuntimeSpawnRequest.Succeeded && FactionIdentity.IsPlayerControlled(request.FactionId) &&
+                    request.EntryIndex == initialBaseCoreRequestEntryIndex && !RuntimeCameraFocusRequestUtility.HasActiveCampaignMission(em))
                 {
-                    Vector3 coreFocus = GetInitialBuildingFootprintCenterWorld(
+                    Vector3 coreFocus = RuntimeCameraFocusRequestUtility.GetInitialBuildingFootprintCenterWorld(
                         new Vector2Int(request.ActualOrigin.x, request.ActualOrigin.y),
                         new Vector2Int(request.ActualFootprint.x, request.ActualFootprint.y),
                         grid);
@@ -1566,14 +1564,6 @@ namespace Game.Runtime
                 BuildingRuntimeSpawnRequest.Blocked => "Blocked",
                 _ => $"Unknown({resultCode})"
             };
-        }
-
-        private static Vector3 GetInitialBuildingFootprintCenterWorld(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid)
-        {
-            return new Vector3(
-                grid.Origin.x + (originCell.x + footprintCells.x * 0.5f) * grid.CellSize,
-                grid.Origin.y,
-                grid.Origin.z + (originCell.y + footprintCells.y * 0.5f) * grid.CellSize);
         }
 
         internal static bool UpdateInitialSpawnCompletion(

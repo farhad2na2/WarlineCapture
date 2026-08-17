@@ -25,6 +25,7 @@ public sealed class AssistantMessagePrioritySystemTests
             RunCase(test => test.RemovesExpiredThreatMessage()); passed++;
             RunCase(test => test.UpdatesThreatWithoutDuplicating()); passed++;
             RunCase(test => test.UsesAirWarningVoiceForAirThreat()); passed++;
+            RunCase(test => test.DoesNotUseVehicleVoiceForInfantryThreat()); passed++;
             RunCase(test => test.SuppressesMessagesOutsideActiveMatch()); passed++;
             Debug.Log($"[AssistantMessagePrioritySystemValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -120,6 +121,19 @@ public sealed class AssistantMessagePrioritySystemTests
 
         AssistantMessageElement message = _entityManager.GetBuffer<AssistantMessageElement>(boundary)[0];
         Assert.AreEqual(AudioEventIds.VOARIAMessageWarningAirAttackType, message.AudioEventId.ToString());
+    }
+
+    [Test]
+    public void DoesNotUseVehicleVoiceForInfantryThreat()
+    {
+        Entity boundary = CreateBoundary();
+        AddThreat(boundary, AssistantThreatKind.FriendlyUnderAttack, 10, 4f);
+
+        _messageSystem.Update(_world.Unmanaged);
+
+        AssistantMessageElement message = _entityManager.GetBuffer<AssistantMessageElement>(boundary)[0];
+        Assert.AreEqual(0, message.AudioEventId.Length);
+        Assert.AreEqual(0, message.RequiresNarration);
     }
 
     [Test]

@@ -22,11 +22,11 @@ namespace Game.Rendering
         private const int UpdateIntervalFrames = 10;
         private const float AlwaysDetailedDistanceSq = 12f * 12f;
         private const float VisibleCharacterLowDistanceSq = 24f * 24f;
-        private const float VisibleCharacterImpostorNearDistance = 32f;
-        private const float VisibleCharacterImpostorFarDistance = 32f;
+        private const float VisibleCharacterImpostorNearDistance = 80f;
+        private const float VisibleCharacterImpostorFarDistance = 80f;
         private const float EnemyAlwaysDetailedDistanceSq = 10f * 10f;
         private const float EnemyLowLodDistanceSq = 14f * 14f;
-        private const float EnemyImpostorDistanceSq = 20f * 20f;
+        private const float EnemyImpostorDistanceSq = 64f * 64f;
         private const float VisibleCharacterViewportPadding = 0.35f;
         private const float VisibleCharacterEdgeSafetyMargin = 0.18f;
 

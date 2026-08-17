@@ -26,17 +26,17 @@ public static class M01FirstContactAnchorTests
 
     private static readonly AnchorSpec[] Specs =
     {
-        new("anchor.ch01.m01.player_spawn", OperationMapAnchorKind.Deployment, new int2(1746, 736), 5f, 0f),
-        new("anchor.ch01.m01.camera_start", OperationMapAnchorKind.Camera, new int2(1792, 768), 1f, 0f),
-        new("anchor.ch01.m01.move_target", OperationMapAnchorKind.Objective, new int2(1770, 748), 3f, 0f),
-        new("anchor.ch01.m01.patrol_spawn", OperationMapAnchorKind.Spawn, new int2(1854, 794), 4f, 225f),
-        new("anchor.ch01.m01.patrol_route_a", OperationMapAnchorKind.Lane, new int2(1814, 740), 2f, 225f),
-        new("anchor.ch01.m01.patrol_route_b", OperationMapAnchorKind.Lane, new int2(1806, 742), 2f, 225f),
-        new("anchor.ch01.m01.patrol_route_c", OperationMapAnchorKind.Lane, new int2(1798, 744), 2f, 225f),
-        new("anchor.ch01.m01.patrol_objective", OperationMapAnchorKind.Hostile, new int2(1790, 748), 3f, 225f),
+        new("anchor.ch01.m01.player_spawn", OperationMapAnchorKind.Deployment, new int2(1792, 720), 5f, 0f),
+        new("anchor.ch01.m01.camera_start", OperationMapAnchorKind.Camera, new int2(1792, 728), 1f, 0f),
+        new("anchor.ch01.m01.move_target", OperationMapAnchorKind.Objective, new int2(1792, 730), 3f, 0f),
+        new("anchor.ch01.m01.patrol_spawn", OperationMapAnchorKind.Spawn, new int2(1792, 736), 4f, 225f),
+        new("anchor.ch01.m01.patrol_route_a", OperationMapAnchorKind.Lane, new int2(1792, 738), 2f, 180f),
+        new("anchor.ch01.m01.patrol_route_b", OperationMapAnchorKind.Lane, new int2(1792, 734), 2f, 180f),
+        new("anchor.ch01.m01.patrol_route_c", OperationMapAnchorKind.Lane, new int2(1792, 732), 2f, 180f),
+        new("anchor.ch01.m01.patrol_objective", OperationMapAnchorKind.Hostile, new int2(1792, 730), 3f, 180f),
         new("anchor.ch01.m01.civilian_safe_zone", OperationMapAnchorKind.Civilian, new int2(1840, 824), 7f, 45f),
         new("anchor.ch01.m01.civilian_evacuation", OperationMapAnchorKind.Civilian, new int2(1870, 842), 7f, 45f),
-        new("anchor.ch01.m01.minimap_start", OperationMapAnchorKind.Minimap, new int2(1792, 768), 1f, 0f)
+        new("anchor.ch01.m01.minimap_start", OperationMapAnchorKind.Minimap, new int2(1792, 728), 1f, 0f)
     };
 
     public static void RunFocusedValidation()
@@ -56,6 +56,7 @@ public static class M01FirstContactAnchorTests
                 ValidateScenarioRequirements(scenario, anchors);
                 ValidateMetadataAndUniqueness(map, anchors);
                 ValidateSurfaceClearance(ref blob.Value, map, anchors);
+                ValidateTutorialSightlines(ref blob.Value, anchors);
                 ValidateUnitSpacing(anchors);
                 ValidatePatrolTiming(scenario, anchors);
                 WriteReport(map, scenario, anchors);
@@ -208,6 +209,34 @@ public static class M01FirstContactAnchorTests
             OperationMapAnchorConfig b = Find(anchors, unitAnchors[j]);
             Require(Vector3.Distance(a.Position, b.Position) > a.Radius + b.Radius + 4f,
                 $"Unit-bearing anchors overlap: {a.AnchorId} and {b.AnchorId}.");
+        }
+    }
+
+    private static void ValidateTutorialSightlines(
+        ref MapSurfaceBlob blob,
+        OperationMapAnchorConfig[] anchors)
+    {
+        OperationMapAnchorConfig camera = Find(anchors, "anchor.ch01.m01.camera_start");
+        RequireClearSightline(ref blob, camera, Find(anchors, "anchor.ch01.m01.player_spawn"), "squad");
+        RequireClearSightline(ref blob, camera, Find(anchors, "anchor.ch01.m01.patrol_spawn"), "patrol");
+        RequireClearSightline(ref blob, camera, Find(anchors, "anchor.ch01.m01.patrol_objective"), "objective");
+    }
+
+    private static void RequireClearSightline(
+        ref MapSurfaceBlob blob,
+        OperationMapAnchorConfig from,
+        OperationMapAnchorConfig to,
+        string label)
+    {
+        float2 start = new(from.Position.x, from.Position.z);
+        float2 end = new(to.Position.x, to.Position.z);
+        int steps = Mathf.Max(1, Mathf.CeilToInt(math.distance(start, end)));
+        for (int step = 0; step <= steps; step++)
+        {
+            float2 point = math.lerp(start, end, step / (float)steps);
+            int2 cell = new(Mathf.RoundToInt(point.x), Mathf.RoundToInt(point.y));
+            Require(HasClearDisk(ref blob, cell, 1f),
+                $"Tutorial camera-to-{label} sightline intersects blocked physical surface at {cell}.");
         }
     }
 

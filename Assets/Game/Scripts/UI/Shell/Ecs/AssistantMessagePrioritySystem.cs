@@ -344,9 +344,11 @@ namespace Game.UI.Shell.Ecs
 
         private static FixedString64Bytes ThreatAudioEventId(AssistantThreatKind kind)
         {
-            return kind == AssistantThreatKind.AirAttack
-                ? new FixedString64Bytes(AudioEventIds.VOARIAMessageWarningAirAttackType)
-                : new FixedString64Bytes(AudioEventIds.VOARIAMessageWarningGroundAttackType);
+            if (kind == AssistantThreatKind.AirAttack)
+                return new FixedString64Bytes(AudioEventIds.VOARIAMessageWarningAirAttackType);
+            if (kind == AssistantThreatKind.GroundAttack)
+                return new FixedString64Bytes(AudioEventIds.VOARIAMessageWarningGroundAttackType);
+            return default;
         }
 
         private static FixedString128Bytes CopyTo128(FixedString64Bytes source)

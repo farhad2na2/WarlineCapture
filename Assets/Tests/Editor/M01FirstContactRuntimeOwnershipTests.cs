@@ -14,7 +14,7 @@ using UnityEngine;
 
 public static class M01FirstContactRuntimeOwnershipTests
 {
-    private const string Marker = "[M01FirstContactRuntimeOwnershipValidation] result=Passed tests=12";
+    private const string Marker = "[M01FirstContactRuntimeOwnershipValidation] result=Passed tests=13";
     private const string RuntimePath =
         "Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.cs";
     private const string LaunchPath =
@@ -31,6 +31,7 @@ public static class M01FirstContactRuntimeOwnershipTests
             InitialRuntime_IsValidAndStable();
             Preparing_AdvancesOnlyWhenReady();
             GuidedPhases_AdvanceFromFacts();
+            FirstClearWithoutReplayFlag_KeepsGuidedPhases();
             ReplayWithoutTutorial_SkipsGuidedPhases();
             PatrolDefeat_ProducesVictoryResult();
             CommandSquadLoss_ProducesDefeatResult();
@@ -142,6 +143,16 @@ public static class M01FirstContactRuntimeOwnershipTests
         CampaignMissionAttemptFactsComponent facts = Facts();
         Require(CampaignMissionRuntimeSystem.TryEvaluate(in state, in facts, out CampaignMissionRuntimeComponent next) &&
                 next.Phase == MissionPhaseKind.Engage, "Replay tutorial-off did not skip presentation phases.");
+    }
+
+    private static void FirstClearWithoutReplayFlag_KeepsGuidedPhases()
+    {
+        CampaignMissionRuntimeComponent state = Create(MissionPhaseKind.FindSquad);
+        state.RunKind = MissionRunKind.FirstClear;
+        state.ReplayTutorialEnabled = 0;
+        CampaignMissionAttemptFactsComponent facts = Facts();
+        Require(!CampaignMissionRuntimeSystem.TryEvaluate(in state, in facts, out _),
+            "First-clear Mission 1 skipped the mandatory FindSquad tutorial phase.");
     }
 
     private static void PatrolDefeat_ProducesVictoryResult()

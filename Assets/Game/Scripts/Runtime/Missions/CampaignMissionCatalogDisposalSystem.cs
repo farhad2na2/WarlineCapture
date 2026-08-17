@@ -1,5 +1,6 @@
 using Game.Components;
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 
 namespace Game.Runtime
@@ -42,7 +43,14 @@ namespace Game.Runtime
                 catalog.ValueRW = owned;
             }
             if (!_missionUnits.IsEmptyIgnoreFilter)
-                state.EntityManager.DestroyEntity(_missionUnits);
+            {
+                using NativeArray<Entity> missionUnits = _missionUnits.ToEntityArray(Allocator.Temp);
+                for (int i = 0; i < missionUnits.Length; i++)
+                {
+                    if (state.EntityManager.Exists(missionUnits[i]))
+                        state.EntityManager.DestroyEntity(missionUnits[i]);
+                }
+            }
         }
 
         public static void DisposeOwned(ref CampaignMissionCatalogComponent catalog)

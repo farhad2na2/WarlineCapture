@@ -172,7 +172,9 @@ namespace Game.UI.Shell.Ecs
                 model.HasWorldPosition = 1;
             }
 
-            model.SourceName = ResolveName(entityManager, model.SourceEntity, new FixedString64Bytes("FRIENDLY UNIT"));
+            model.SourceName = model.SourceEntity == Entity.Null
+                ? default
+                : ResolveName(entityManager, model.SourceEntity, new FixedString64Bytes("FRIENDLY UNIT"));
             model.TargetName = ResolveName(entityManager, model.TargetEntity, new FixedString64Bytes("TARGET"));
             model.FactionRelation = ResolveFactionRelation(entityManager, model.TargetEntity);
             if (model.TargetEntity != Entity.Null && model.TargetName.Equals(new FixedString64Bytes("TARGET")))

@@ -35,6 +35,8 @@ public sealed class CombatDamageObservationTelemetryTests
             passed++;
             RunCase(test => test.ThreatReadModel_ConsumesNewPlayerDamageCoalescesAndExpires());
             passed++;
+            RunCase(test => test.ThreatReadModel_ClassifiesOnlyVehicleDirectFireAsGroundAttack());
+            passed++;
             RunCase(test => test.ThreatReadModel_AcceptsObjectiveProtectedNeutralTarget());
             passed++;
             RunCase(test => test.ThreatReadModel_GatesInactiveRoutesAndSkipsRetainedEventsOnReentry());
@@ -318,7 +320,8 @@ public sealed class CombatDamageObservationTelemetryTests
         AssistantThreatReadModelElement threat = threats[0];
         Assert.AreEqual(playerTarget, threat.FriendlyTarget);
         Assert.AreEqual(source, threat.HostileSource);
-        Assert.AreEqual(AssistantThreatKind.GroundAttack, threat.Kind);
+        Assert.AreEqual(AssistantThreatKind.FriendlyUnderAttack, threat.Kind,
+            "Infantry direct fire must not announce a ground-vehicle attack.");
         Assert.AreEqual(AssistantMessagePriority.Critical, threat.Priority);
         Assert.AreEqual("Alpha Squad", threat.FriendlyName.ToString());
         Assert.AreEqual("Raider", threat.HostileName.ToString());
@@ -337,6 +340,40 @@ public sealed class CombatDamageObservationTelemetryTests
         system.Update(world.Unmanaged);
         Assert.AreEqual(0, threats.Length);
         Assert.Greater(em.GetComponentData<AssistantThreatReadModelStateComponent>(boundary).Version, version);
+    }
+
+    [Test]
+    public void ThreatReadModel_ClassifiesOnlyVehicleDirectFireAsGroundAttack()
+    {
+        using var world = new World(nameof(ThreatReadModel_ClassifiesOnlyVehicleDirectFireAsGroundAttack));
+        EntityManager em = world.EntityManager;
+        Entity queue = CreateQueue(em);
+        Entity source = CreateNamedHealthEntity(
+            em, FactionIdentity.EnemyFactionId, float3.zero, "Hostile Vehicle", 100, 100);
+        em.AddComponentData(source, new UnitMovementBehavior
+        {
+            AllowIdleWander = 0,
+            UsesVehicleMotion = 1
+        });
+        Entity target = CreateNamedHealthEntity(
+            em, FactionIdentity.PlayerFactionId, new float3(4f, 0f, 0f), "Alpha Squad", 100, 100);
+        Entity boundary = CreateAssistantBoundary(em, active: true);
+        CreateStartedMatch(em);
+        SystemHandle system = world.CreateSystem<AssistantThreatReadModelSystem>();
+
+        world.SetTime(new TimeData(0.5d, 0.1f));
+        system.Update(world.Unmanaged);
+        CombatDamageObservationUtility.Append(
+            em, queue, source, target, CombatDamageSourceKind.DirectFire,
+            100, 90, 100, 1f, float3.zero, new float3(4f, 0f, 0f));
+
+        world.SetTime(new TimeData(1d, 0.1f));
+        system.Update(world.Unmanaged);
+
+        DynamicBuffer<AssistantThreatReadModelElement> threats =
+            em.GetBuffer<AssistantThreatReadModelElement>(boundary);
+        Assert.AreEqual(1, threats.Length);
+        Assert.AreEqual(AssistantThreatKind.GroundAttack, threats[0].Kind);
     }
 
     [Test]
@@ -396,6 +433,7 @@ public sealed class CombatDamageObservationTelemetryTests
         Entity protectedTarget = CreateNamedHealthEntity(
             em, FactionIdentity.NeutralFactionId, new float3(2f, 0f, 0f), "Civilian Relay", 100, 100);
         Entity boundary = CreateAssistantBoundary(em, active: true);
+        em.AddBuffer<MatchObjectiveRuntimeElement>(boundary);
         CreateStartedMatch(em);
         SystemHandle system = world.CreateSystem<AssistantThreatReadModelSystem>();
 

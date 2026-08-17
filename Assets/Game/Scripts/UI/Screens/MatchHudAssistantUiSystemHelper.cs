@@ -231,16 +231,12 @@ namespace Game.UI.Runtime
 
         private void ShowRecommendation()
         {
-            CaptureUiOnly();
-            UiShellRuntimeGateway.TryEnqueueAssistantCommandIntent(UiAssistantCommandIntentKind.ShowRecommendation);
+            CaptureUiOnly(); if (UiShellRuntimeGateway.TryEnqueueAssistantCommandIntent(UiAssistantCommandIntentKind.ShowRecommendation)) SetPanelOpen(false);
         }
 
         private void ExecuteRecommendation()
         {
-            CaptureUiOnly();
-            UiShellRuntimeGateway.TryEnqueueAssistantCommandIntent(
-                UiAssistantCommandIntentKind.ExecuteRecommendation,
-                fromTakeover: true);
+            CaptureUiOnly(); if (UiShellRuntimeGateway.TryEnqueueAssistantCommandIntent(UiAssistantCommandIntentKind.ExecuteRecommendation, fromTakeover: true)) SetPanelOpen(false);
         }
 
         private void StopAssistantControl()

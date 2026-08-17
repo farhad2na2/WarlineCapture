@@ -8,7 +8,6 @@ using Unity.Transforms;
 namespace Game.Runtime
 {
     [UpdateInGroup(typeof(PresentationSystemGroup))]
-    [UpdateAfter(typeof(CampaignMissionObjectiveProjectionSystem))]
     public partial struct CampaignMissionAmbientPresentationSystem : ISystem
     {
         internal const int MaxCivilianPresentations = 12;
@@ -77,7 +76,7 @@ namespace Game.Runtime
         public void OnDestroy(ref SystemState state)
         {
             if (!_ambientQuery.IsEmptyIgnoreFilter)
-                state.EntityManager.DestroyEntity(_ambientQuery);
+                DestroyIndividually(state.EntityManager, _ambientQuery);
         }
 
         private static bool TryResolveContract(
@@ -120,7 +119,7 @@ namespace Game.Runtime
             }
 
             if (!query.IsEmptyIgnoreFilter)
-                em.DestroyEntity(query);
+                DestroyIndividually(em, query);
             FixedList128Bytes<Entity> prefabs = ResolveOptionalPrefabs(em, prefabRegistryQuery);
             if (prefabs.IsEmpty)
                 return false;
@@ -220,9 +219,22 @@ namespace Game.Runtime
                     civilians[i].AttemptOrdinal != attemptOrdinal)
                     stale.Add(entities[i]);
             }
-            if (stale.Length > 0)
-                em.DestroyEntity(stale.AsArray());
+            for (int i = 0; i < stale.Length; i++)
+            {
+                if (em.Exists(stale[i]))
+                    em.DestroyEntity(stale[i]);
+            }
             stale.Dispose();
+        }
+
+        private static void DestroyIndividually(EntityManager entityManager, EntityQuery query)
+        {
+            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                if (entityManager.Exists(entities[i]))
+                    entityManager.DestroyEntity(entities[i]);
+            }
         }
 
         private static float3 Position(float3 center, float radius, int ordinal, int seed)

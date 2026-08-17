@@ -52,8 +52,10 @@ namespace Game.UI.Shell.Ecs
                 : default;
             DynamicBuffer<AssistantThreatReadModelElement> threats =
                 em.GetBuffer<AssistantThreatReadModelElement>(boundary);
-            DynamicBuffer<MatchObjectiveRuntimeElement> objectives =
-                em.GetBuffer<MatchObjectiveRuntimeElement>(boundary, true);
+            bool hasObjectives = em.HasBuffer<MatchObjectiveRuntimeElement>(boundary);
+            DynamicBuffer<MatchObjectiveRuntimeElement> objectives = hasObjectives
+                ? em.GetBuffer<MatchObjectiveRuntimeElement>(boundary, true)
+                : default;
             AssistantThreatReadModelStateComponent threatState =
                 em.GetComponentData<AssistantThreatReadModelStateComponent>(boundary);
 
@@ -96,7 +98,13 @@ namespace Game.UI.Shell.Ecs
                         continue;
                     }
 
-                    rowsChanged |= TryUpsertThreat(em, threats, objectives, observation, now);
+                    rowsChanged |= TryUpsertThreat(
+                        em,
+                        threats,
+                        objectives,
+                        hasObjectives,
+                        observation,
+                        now);
                 }
             }
 
@@ -122,6 +130,7 @@ namespace Game.UI.Shell.Ecs
             EntityManager em,
             DynamicBuffer<AssistantThreatReadModelElement> threats,
             DynamicBuffer<MatchObjectiveRuntimeElement> objectives,
+            bool hasObjectives,
             CombatDamageObservationElement observation,
             float now)
         {
@@ -137,7 +146,8 @@ namespace Game.UI.Shell.Ecs
                 ? em.GetComponentData<Faction>(observation.TargetEntity).Id
                 : FactionIdentity.NeutralFactionId;
             bool playerOwned = FactionIdentity.IsPlayerControlled(targetFactionId);
-            bool objectiveProtected = IsObjectiveProtectedTarget(objectives, observation.TargetEntity);
+            bool objectiveProtected = hasObjectives &&
+                                      IsObjectiveProtectedTarget(objectives, observation.TargetEntity);
             if (!playerOwned && !objectiveProtected)
                 return false;
 
@@ -248,9 +258,19 @@ namespace Game.UI.Shell.Ecs
             if (HasSourceComponent<UnitAirComponent>(em, observation.SourceEntity))
                 return AssistantThreatKind.AirAttack;
 
-            return observation.SourceKind == CombatDamageSourceKind.DirectFire
+            return observation.SourceKind == CombatDamageSourceKind.DirectFire &&
+                   IsGroundVehicle(em, observation.SourceEntity)
                 ? AssistantThreatKind.GroundAttack
                 : AssistantThreatKind.FriendlyUnderAttack;
+        }
+
+        private static bool IsGroundVehicle(EntityManager em, Entity source)
+        {
+            return source != Entity.Null &&
+                   em.Exists(source) &&
+                   em.HasComponent<UnitMovementBehavior>(source) &&
+                   em.GetComponentData<UnitMovementBehavior>(source).UsesVehicleMotion != 0 &&
+                   !em.HasComponent<UnitAirComponent>(source);
         }
 
         private static bool HasSourceComponent<T>(EntityManager em, Entity source)

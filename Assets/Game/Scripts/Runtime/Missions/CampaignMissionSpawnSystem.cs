@@ -24,6 +24,10 @@ namespace Game.Runtime
 
         public void OnUpdate(ref SystemState state)
         {
+            if (SystemAPI.TryGetSingleton(out RuntimeGameplayStateComponent gameplayState) &&
+                gameplayState.PlayRequested == 0)
+                return;
+
             if (_registryQuery.IsEmptyIgnoreFilter ||
                 !SystemAPI.TryGetSingleton(out OperationMapMetadataComponent metadata) || !metadata.Blob.IsCreated)
                 return;
@@ -77,6 +81,7 @@ namespace Game.Runtime
             {
                 SessionToken = rootRuntime.SessionToken,
                 FriendlyFocus = playerFocus,
+                ElapsedMilliseconds = 0,
                 Stage = 1
             });
             rootFacts.CommandSquadSpawned = 1;
@@ -182,6 +187,7 @@ namespace Game.Runtime
             {
                 Requested = 1,
                 Smooth = 0,
+                UseTacticalRevealZoom = 1,
                 World = hostileFocus
             });
         }

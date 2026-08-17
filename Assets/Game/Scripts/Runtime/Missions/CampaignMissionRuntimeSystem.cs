@@ -436,7 +436,7 @@ namespace Game.Runtime
             else if (current.Phase == MissionPhaseKind.FindSquad &&
                      (facts.CommandSquadSpawned == 0 || facts.CommandSquadAlive == 0))
                 return ResolveDefeat(out phase, out outcome, out destination);
-            else if (current.Phase == MissionPhaseKind.FindSquad &&
+            else if (current.Phase == MissionPhaseKind.FindSquad && current.RunKind != MissionRunKind.FirstClear &&
                      current.ReplayTutorialEnabled == 0)
                 phase = MissionPhaseKind.Engage;
             else if (current.Phase == MissionPhaseKind.FindSquad && commandSquadSelected)

@@ -5,11 +5,5 @@
   "entryOrigins": 2,
   "boundedFailureReasons": true,
   "skirmishShortcutAllowed": false,
-  "validation": "[M01FirstContactLaunchBootstrapValidation] result=Passed tests=10",
-  "playMode": "Passed 3/3",
-  "phase7": "[NonUiSystemBaseMigrationArchitectureValidation] result=Passed tests=19",
-  "sourceGrowth": "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17",
-  "architecture": "[ArchitectureHardeningCloseoutValidation] result=Passed suites=23",
-  "compilerErrorCount": 0,
-  "inventoryDeterministic": true
+  "validation": "[M01FirstContactLaunchBootstrapValidation] result=Passed tests=10"
 }

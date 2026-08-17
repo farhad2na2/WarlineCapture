@@ -32,6 +32,7 @@ public sealed class UnitMoveOrderSystemTests
             RunCase(test => test.IssueGroupedManualMoveOrder_StaggeredGroundUnitUsesRetryCooldownInsteadOfPathRequest());
             RunCase(test => test.IssueGroupedManualMoveOrder_StaggeredGroundUnitReplacesExistingRetryCooldown());
             RunCase(test => test.UnitMoveOrderRequestSystem_GroupedManualRequestWritesResultAndMoveComponents());
+            RunCase(test => test.UnitMoveOrderRequestSystem_RetainsEarlierResultAcrossLaterRequestBatch());
             RunCase(test => test.UnitMoveOrderRequestSystem_GroupedManualFuelConsumerRejectsAtZeroUsableFuel());
             RunCase(test => test.UnitMoveOrderRequestSystem_TargetPathRequestWritesOnlyTargetAndPath());
             RunCase(test => test.ClearMovementOrderComponents_RemovesSharedMoveOrderComponents());
@@ -43,7 +44,7 @@ public sealed class UnitMoveOrderSystemTests
             RunCase(test => test.SelectedMoveOrderCommand_PreResolvedRequestPathfindsAndMovesSelectedUnit());
             RunCase(test => test.SelectedMoveOrderCommand_RefreshesCommandBuffersAfterStructuralMoveOrder());
             RunCase(test => test.BuildingTargetMoveOrder_IssuesApproachCellMoveOrderForSelectedUnit());
-            UnityEngine.Debug.Log("[UnitMoveOrderFocusedValidation] result=Passed tests=18");
+            UnityEngine.Debug.Log("[UnitMoveOrderFocusedValidation] result=Passed tests=19");
         }
         catch (System.Exception ex)
         {
@@ -279,6 +280,28 @@ public sealed class UnitMoveOrderSystemTests
         Assert.AreEqual(42, _entityManager.GetComponentData<UnitPathRetryCooldown>(unit).ResumeFrame);
         Assert.IsTrue(_entityManager.HasComponent<ManualMoveGroupMemberTag>(unit));
         Assert.IsTrue(_entityManager.HasComponent<ManualMoveOrderTag>(unit));
+    }
+
+    [Test]
+    public void UnitMoveOrderRequestSystem_RetainsEarlierResultAcrossLaterRequestBatch()
+    {
+        Entity first = _entityManager.CreateEntity(typeof(UnitPathRequest));
+        Entity second = _entityManager.CreateEntity(typeof(UnitPathRequest));
+        SystemHandle requestSystem = _world.CreateSystem<UnitMoveOrderRequestSystem>();
+
+        int firstRequest = UnitMoveOrderRequestSystem.EnqueueImmediateMoveOrder(
+            _entityManager, first, new int2(4, 5));
+        requestSystem.Update(_world.Unmanaged);
+        int secondRequest = UnitMoveOrderRequestSystem.EnqueueImmediateMoveOrder(
+            _entityManager, second, new int2(8, 9));
+        requestSystem.Update(_world.Unmanaged);
+
+        Assert.IsTrue(UnitMoveOrderRequestSystem.TryGetResult(
+            _entityManager, firstRequest, out UnitMoveOrderResultElement firstResult));
+        Assert.IsTrue(UnitMoveOrderRequestSystem.TryGetResult(
+            _entityManager, secondRequest, out UnitMoveOrderResultElement secondResult));
+        Assert.AreEqual(1, firstResult.Issued);
+        Assert.AreEqual(1, secondResult.Issued);
     }
 
     [Test]

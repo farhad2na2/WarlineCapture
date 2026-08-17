@@ -10,9 +10,9 @@ namespace Game.Runtime
         public const float TacticalRevealPitch = 45f;
         public const float TacticalRevealYaw = 270f;
         public const float TacticalRevealFieldOfView = 34f;
-        public const float SquadRevealHeight = 8f;
+        public const float SquadRevealHeight = 10f;
         public const float SquadRevealPitch = 45f;
-        public const float SquadRevealFieldOfView = 32f;
+        public const float SquadRevealFieldOfView = 34f;
 
         public static Vector3 GetInitialBuildingFootprintCenterWorld(
             Vector2Int originCell,

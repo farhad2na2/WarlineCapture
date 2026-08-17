@@ -612,14 +612,41 @@
       },
       "status": "closed-on-fresh-corrected-package-device-replay",
       "closureRequires": "Fulfilled: the exact package reached live M01 through direct FirstLaunch handoff with zero content-pack hash errors."
+    },
+    {
+      "id": "M01DC038-P2-020",
+      "severity": "P2",
+      "title": "Squad-return camera clips the fourth soldier and selection marker behind the command tray",
+      "reproduction": "Run the Windows Editor Campaign M01 route through the hostile hold and squad return, then use ARIA DO IT. At squad-return height 8 and FOV 32, the fourth soldier and its selection marker intersect the bottom command tray.",
+      "cause": "The final street-facing squad-return zoom was tighter than the available gameplay viewport above the persistent command tray.",
+      "evidence": "Windows Unity Editor real-input replay on 2026-08-17; operatorKind=Agent; humanParticipant=false. The corrected replay showed all four soldiers and all four DO-IT markers fully above the tray, plus the SHOW-ME cyan area.",
+      "owner": "Existing shell-owned RuntimeCameraFocusRequestUtility squad-return request",
+      "response": "Raise only the squad-return height from 8 to 10 and field of view from 32 to 34 while preserving the 45-degree street-facing perspective and all hostile/map/source/HUD truth.",
+      "editorValidation": {
+        "cameraMinimap": "Passed 12/12; log sha256=787952f4f253fd22a5886051b043fd8ac05679d0519e94a130ed20d35d23e973",
+        "catalogSync": "Passed; log sha256=5dfe1abb520bf5d4cb19e481c3eb09309629d62176308dc6dcac5d003a385264",
+        "m01Architecture": "Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23; log sha256=d91fd48309e48c32e84eb03d5eeffc23d9cc25526ca5dcc8f0795cf5c16b4732"
+      },
+      "editorRealInputReplay": {
+        "operatorKind": "Agent",
+        "humanParticipant": false,
+        "hostilesVisible": 3,
+        "friendliesFullyAboveTray": 4,
+        "showMeCyanAreaVisible": true,
+        "doItSelectionMarkersVisible": 4,
+        "androidInteractionExecuted": false,
+        "ownerGameplayApprovalClaimed": false
+      },
+      "status": "closed-on-corrected-editor-real-input-replay",
+      "closureRequires": "Fulfilled for the desktop clipping defect; project-owner gameplay approval remains a separate gate before Android work."
     }
   ],
   "severityCounts": {
     "p0": 0,
     "p1": 7,
-    "p2": 9,
+    "p2": 10,
     "p3": 0,
-    "closed": 6,
+    "closed": 7,
     "open": 10
   },
   "acceptanceClaimed": false

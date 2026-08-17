@@ -96,11 +96,11 @@ public static class M01FirstContactCameraMinimapTests
                 Mathf.Approximately(RuntimeCameraFocusRequestUtility.SquadRevealPitch, 45f) &&
                 Mathf.Approximately(RuntimeCameraFocusRequestUtility.TacticalRevealYaw, 270f),
             "Tutorial focus requests must look down the bazaar street from the east, not across building rows.");
-        Require(RuntimeCameraFocusRequestUtility.TacticalRevealHeight <= 10f &&
-                RuntimeCameraFocusRequestUtility.SquadRevealHeight <= 8f &&
-                RuntimeCameraFocusRequestUtility.TacticalRevealFieldOfView <= 34f &&
-                RuntimeCameraFocusRequestUtility.SquadRevealFieldOfView <= 32f,
-            "Tutorial reveal zoom must keep soldiers large enough to identify without the tactical map.");
+        Require(Mathf.Approximately(RuntimeCameraFocusRequestUtility.TacticalRevealHeight, 10f) &&
+                Mathf.Approximately(RuntimeCameraFocusRequestUtility.SquadRevealHeight, 10f) &&
+                Mathf.Approximately(RuntimeCameraFocusRequestUtility.TacticalRevealFieldOfView, 34f) &&
+                Mathf.Approximately(RuntimeCameraFocusRequestUtility.SquadRevealFieldOfView, 34f),
+            "Tutorial reveal zoom must keep soldiers identifiable while fitting the full squad above the command tray.");
     }
 
     private static void ValidateAspectFraming(OperationMapDefinition map)

@@ -1131,5 +1131,27 @@
     "humanParticipant": false,
     "status": "fresh-package-built-pending-canonical-device-replay"
   },
+  "commandTraySafeSquadReturn": {
+    "findingId": "M01DC038-P2-020",
+    "operatorKind": "Agent",
+    "humanParticipant": false,
+    "platform": "Windows Unity Editor",
+    "realInput": true,
+    "cameraStyle": {"pitchDegrees":45,"squadHeight":10,"squadFieldOfView":34,"perspective":true},
+    "observations": {
+      "hostileReveal": "All three hostiles remained readable and unobstructed on the exposed bazaar avenue.",
+      "squadReturn": "All four friendly soldiers were fully visible above the command tray.",
+      "showMe": "SHOW ME closed ARIA and rendered the cyan squad-area preview.",
+      "doIt": "DO IT closed ARIA, opened the 4 SOLDIERS card, and rendered four complete selection markers above the tray."
+    },
+    "checkedValidation": {
+      "cameraMinimap": {"marker":"[M01FirstContactCameraMinimapValidation] result=Passed tests=12","logSha256":"787952f4f253fd22a5886051b043fd8ac05679d0519e94a130ed20d35d23e973"},
+      "catalogSync": {"marker":"[M01FirstContactConfigBuilder] result=Passed scope=OperationMapCatalog","logSha256":"5dfe1abb520bf5d4cb19e481c3eb09309629d62176308dc6dcac5d003a385264"},
+      "m01Architecture": {"marker":"[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23","logSha256":"d91fd48309e48c32e84eb03d5eeffc23d9cc25526ca5dcc8f0795cf5c16b4732"}
+    },
+    "androidInteractionExecuted": false,
+    "ownerGameplayApprovalClaimed": false,
+    "status": "desktop-clipping-finding-closed-owner-approval-pending"
+  },
   "acceptanceClaimed": false
 }

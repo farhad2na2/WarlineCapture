@@ -1094,6 +1094,24 @@
       "ariaIntent": {"marker":"[AssistantCommandIntentSystemValidation] result=Passed tests=14","logSha256":"8aa852b2298bd28ce14f04a3cd85361b64ae8f2b94818473d5218bb87009ad48"},
       "m01Architecture": {"marker":"[M01FirstContactArchitectureValidation] result=Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23","logSha256":"de3091835fed09ca0a8ec9df39eeb6f13772d02aaf1d88ac658d9f5f084e5dd2"}
     },
+    "editorRealInputReplay": {
+      "sourceHead": "2842a1e5b59b31e9d60d5850b78da85f51361530",
+      "operatorKind": "Agent",
+      "humanParticipant": false,
+      "realInput": true,
+      "firstLaunchProfileReset": "Only SaveService.ResetFirstLaunchProgress-owned fields were restored to their defaults; unrelated profile data and mission transition/session tokens were preserved.",
+      "firstLaunchToM01NoMenu": true,
+      "observations": {
+        "hostileReveal": "The live oblique camera held all three hostile soldiers together on the exposed avenue with no building occlusion.",
+        "squadReturn": "The camera moved back to all four friendly soldiers at a closer oblique framing with no unit hidden by a building.",
+        "showMe": "SHOW ME closed ARIA and rendered the cyan squad-area preview while all four soldiers remained visible.",
+        "doIt": "DO IT closed ARIA, selected all four soldiers, rendered four selection markers, opened the 4 SOLDIERS card, and advanced the recommendation to Move to cover.",
+        "cameraStyle": "Perspective gameplay framing remained oblique and did not return to the rejected fullscreen-map/top-down presentation."
+      },
+      "androidBuildExecuted": false,
+      "deviceReplayExecuted": false,
+      "androidAcceptanceClaimed": false
+    },
     "status": "editor-corrected-later-exact-package-device-replay-open"
   },
   "acceptanceClaimed": false

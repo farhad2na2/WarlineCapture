@@ -566,6 +566,15 @@
         "ariaIntent": "Passed 14/14; log sha256=8aa852b2298bd28ce14f04a3cd85361b64ae8f2b94818473d5218bb87009ad48",
         "m01Architecture": "Passed suites=3 contractSuites=23 sourceGrowthTests=17 architectureSuites=23; log sha256=de3091835fed09ca0a8ec9df39eeb6f13772d02aaf1d88ac658d9f5f084e5dd2"
       },
+      "editorRealInputReplay": {
+        "sourceHead": "2842a1e5b59b31e9d60d5850b78da85f51361530",
+        "operatorKind": "Agent",
+        "humanParticipant": false,
+        "result": "A genuine reset-profile FirstLaunch English / SKIP INTRO route entered live M01 without a menu. The oblique camera held all three hostiles, moved to all four friendlies without building occlusion, SHOW ME closed ARIA and drew the cyan area, and DO IT closed ARIA, selected four soldiers, opened the 4 SOLDIERS card, and advanced to Move to cover.",
+        "androidBuildExecuted": false,
+        "deviceReplayExecuted": false,
+        "androidAcceptanceClaimed": false
+      },
       "status": "editor-corrected-pending-later-exact-package-device-replay",
       "closureRequires": "Later fresh exact-package supported-Android replay must confirm the oblique view, visible friendlies/hostiles, unobstructed avenue, camera motion, and SHOW ME/DO IT comprehension; no Android run is claimed for this gameplay iteration."
     },

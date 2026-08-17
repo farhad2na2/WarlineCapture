@@ -1114,5 +1114,22 @@
     },
     "status": "editor-corrected-later-exact-package-device-replay-open"
   },
+  "freshObliqueGameplayPackage": {
+    "sourceHead": "c4f36008cde5fd9af052ee229548750c055b8cf6",
+    "dirty": false,
+    "path": "Build/AndroidAPK/WarlineCapture.apk",
+    "bytes": 558949525,
+    "sha256": "990b424786b733b7e31d79e0fa2869ada8346c3c3fc4f70c037a5d30bba02acd",
+    "buildLogSha256": "bf75e438116eb349fd49e8f415b69f9d115d2888d3bb2e39f4f77b5a3e9db629",
+    "scriptingBackend": "IL2CPP",
+    "targetArchitecture": "ARM64",
+    "marker": "[ProductionAndroidPackage] result=Passed",
+    "canonicalEndpoint": "192.168.2.33:45675",
+    "deviceReplayExecuted": false,
+    "deviceAvailability": "Unity bundled ADB reported no attached devices and the owner-provided canonical Samsung endpoint was not TCP-reachable; install and replay did not execute.",
+    "operatorKind": "Agent",
+    "humanParticipant": false,
+    "status": "fresh-package-built-pending-canonical-device-replay"
+  },
   "acceptanceClaimed": false
 }

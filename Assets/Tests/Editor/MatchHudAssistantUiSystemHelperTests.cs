@@ -49,6 +49,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             passed++;
             RunCase(test => test.FirstShowMe_SelectSquad_ShowsImmediateUiCueBeforeEcsHighlight());
             passed++;
+            RunCase(test => test.MissionReplay_ResetClearsCompletedGuidanceState());
+            passed++;
             RunCase(test => test.DiagnosticSuppressionState_IsOwnedByEachHudInstance());
             passed++;
 
@@ -565,6 +567,26 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         ui.Dispose();
     }
 
+    [Test]
+    public void MissionReplay_ResetClearsCompletedGuidanceState()
+    {
+        var presentation = new AssistantHighlightPresentationSystemHelper();
+        presentation.ApplyReadModel(CreateHighlightModel(601u, recommendationKind: 2));
+        SetPrivateField(presentation, "_selectSquadCompleted", true);
+        SetPrivateField(presentation, "_commandGuidanceArmed", true);
+        SetPrivateField(presentation, "_awaitingNextShowMe", true);
+        SetPrivateField(presentation, "_worldTargetShowRequested", true);
+
+        presentation.ResetForMissionAttempt();
+
+        Assert.IsFalse(GetPrivateField<bool>(presentation, "_selectSquadCompleted"));
+        Assert.IsFalse(GetPrivateField<bool>(presentation, "_commandGuidanceArmed"));
+        Assert.IsFalse(GetPrivateField<bool>(presentation, "_awaitingNextShowMe"));
+        Assert.IsFalse(GetPrivateField<bool>(presentation, "_worldTargetShowRequested"));
+        Assert.IsFalse(presentation.LastAppliedModel.Active,
+            "A replay must not reuse the previous attempt's squad centroid or command step.");
+    }
+
     private static void AssertGuidedCommandHighlight(
         byte recommendationKind,
         TacticalCommandMode commandMode,
@@ -745,6 +767,13 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         FieldInfo field = target.GetType().GetField(name, BindingFlags.Instance | BindingFlags.NonPublic);
         Assert.NotNull(field, name);
         field.SetValue(target, value);
+    }
+
+    private static T GetPrivateField<T>(object target, string name)
+    {
+        FieldInfo field = target.GetType().GetField(name, BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.NotNull(field, name);
+        return (T)field.GetValue(target);
     }
 
     private static void CreateHudHarness(

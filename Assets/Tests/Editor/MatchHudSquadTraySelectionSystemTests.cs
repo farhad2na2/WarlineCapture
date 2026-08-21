@@ -1,5 +1,6 @@
 using Game.UI.Contracts;
 using Game.Components;
+using Game.Missions.Contracts;
 using Game.Runtime;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System;
@@ -30,7 +31,8 @@ public sealed class MatchHudSquadTraySelectionUiSystemHelperTests
             RunCase(test => test.SelectCombatVehiclesSlot_SelectsTwoGroundCombatVehiclesOnly());
             RunCase(test => test.SelectAircraftAndTransportSlots_SelectsExpectedUnitKinds());
             RunCase(test => test.SelectSoldiersSlot_RebindsAfterWorldReplacement());
-            UnityEngine.Debug.Log("[MatchHudSquadTraySelectionFocusedValidation] result=Passed tests=4");
+            RunCase(test => test.SelectSoldiersSlot_ReplaySelectsExactlyCurrentMissionSquad());
+            UnityEngine.Debug.Log("[MatchHudSquadTraySelectionFocusedValidation] result=Passed tests=5");
         }
         catch (Exception exception)
         {
@@ -174,6 +176,32 @@ public sealed class MatchHudSquadTraySelectionUiSystemHelperTests
         }
     }
 
+    [Test]
+    public void SelectSoldiersSlot_ReplaySelectsExactlyCurrentMissionSquad()
+    {
+        FixedString64Bytes firstSession = new("m01-tray-first");
+        Entity runtime = _entityManager.CreateEntity(typeof(CampaignMissionRuntimeComponent));
+        _entityManager.SetComponentData(runtime, CreateGuidedRuntime(firstSession));
+        Entity[] firstSquad = CreateMissionSquad(firstSession, "First");
+        CreatePlayerUnit("Unit_Chr_Soldier_Unrelated", new float3(30f, 0f, 30f));
+
+        _system.SelectSlot(CreateContext(), _view, MatchHudSquadTraySlot.Soldiers);
+        CollectionAssert.AreEquivalent(firstSquad, SelectedEntities());
+
+        for (int i = 0; i < firstSquad.Length; i++)
+            _entityManager.DestroyEntity(firstSquad[i]);
+        FixedString64Bytes replaySession = new("m01-tray-replay");
+        _entityManager.SetComponentData(runtime, CreateGuidedRuntime(replaySession));
+        Entity[] replaySquad = CreateMissionSquad(replaySession, "Replay");
+
+        _system.SelectSlot(CreateContext(), _view, MatchHudSquadTraySlot.Soldiers);
+
+        CollectionAssert.AreEquivalent(replaySquad, SelectedEntities(),
+            "A replay must ignore the previous tray cycle and select all four current-session soldiers.");
+        Assert.AreEqual(4, _selectionState.CachedSelectedMoveEntities.Count);
+        Assert.AreEqual(4, _lastHudSquadCount);
+    }
+
     private MatchHudSquadTraySelectionUiSystemHelper.Context CreateContext()
     {
         return new MatchHudSquadTraySelectionUiSystemHelper.Context(
@@ -251,6 +279,36 @@ public sealed class MatchHudSquadTraySelectionUiSystemHelperTests
 
         return entity;
     }
+
+    private Entity[] CreateMissionSquad(FixedString64Bytes session, string suffix)
+    {
+        var squad = new Entity[4];
+        for (int i = 0; i < squad.Length; i++)
+        {
+            Entity entity = CreatePlayerUnit(
+                $"Unit_Chr_Soldier_{suffix}_{i}", new float3(i + 1f, 0f, i + 1f));
+            _entityManager.AddComponentData(entity, new CampaignMissionUnitRoleComponent
+            {
+                MissionRoleId = new FixedString64Bytes("role.friendly.command_squad"),
+                UnitGroupId = new FixedString64Bytes("group.ch01.m01.command_squad"),
+                SessionToken = session
+            });
+            squad[i] = entity;
+        }
+        return squad;
+    }
+
+    private static CampaignMissionRuntimeComponent CreateGuidedRuntime(FixedString64Bytes session) => new()
+    {
+        MissionId = new FixedString64Bytes("saga.ch01.m01.first_contact"),
+        SessionToken = session,
+        Phase = MissionPhaseKind.FindSquad,
+        Outcome = MissionOutcomeKind.None,
+        Version = 1,
+        SourceVersion = 1,
+        AttemptOrdinal = 1,
+        DeterministicSeed = 1001001
+    };
 
     private sealed class TestSquadTrayView : IMatchHudSquadTrayView
     {

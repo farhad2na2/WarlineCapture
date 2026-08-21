@@ -89,6 +89,23 @@ namespace Game.UI.Runtime
             LastAppliedModel = UiAssistantHighlightModel.Empty;
         }
 
+        public void ResetForMissionAttempt()
+        {
+            _squadTrayView?.ClearAssistantGuidance();
+            _screenTargetActive = false;
+            _commandCueActive = false;
+            _commandGuidanceArmed = false;
+            _awaitingNextShowMe = false;
+            _worldTargetShowRequested = false;
+            _pendingFirstShowMe = false;
+            _selectSquadCompleted = false;
+            _activeCommandMode = TacticalCommandMode.None;
+            _awaitingWorldTargetMode = TacticalCommandMode.None;
+            _lastVersion = uint.MaxValue;
+            LastAppliedModel = UiAssistantHighlightModel.Empty;
+            ApplyVisual(LastAppliedModel);
+        }
+
         public void BindSquadTray(MatchHudSquadTrayView squadTrayView)
         {
             DetachSquadGuidanceButton();

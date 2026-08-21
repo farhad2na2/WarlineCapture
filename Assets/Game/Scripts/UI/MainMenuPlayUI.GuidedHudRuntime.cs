@@ -29,7 +29,7 @@ namespace Game.UI.Runtime
             MatchOverlayCommandControlsView boundCommandControls)
         {
             RecoverLateCommandControls(owner, boundCommandControls);
-            RefreshCinematicInteractionLock();
+            RefreshCinematicInteractionLock(owner);
         }
 
         internal void BindShellContent(UIShellContentView shellContent)
@@ -70,7 +70,7 @@ namespace Game.UI.Runtime
             owner.BindMatchHudCommandControls(discovered);
         }
 
-        private void RefreshCinematicInteractionLock()
+        private void RefreshCinematicInteractionLock(MainMenuPlayUI owner)
         {
             bool shouldLock =
                 UiShellRuntimeGateway.TryReadMissionHudRestrictions(
@@ -87,6 +87,8 @@ namespace Game.UI.Runtime
             if (!_cinematicHudLocked || _lockedContentVersion != _shellContent.ContentVersion)
             {
                 RestoreCinematicHudInteraction();
+                owner?._matchHudAssistantUiSystem.ResetForMissionAttempt();
+                owner?._matchHudSquadTrayView?.ClearActiveSlot();
                 CaptureAndDisableMatchHudSelectables();
                 _cinematicHudLocked = true;
                 _lockedContentVersion = _shellContent.ContentVersion;

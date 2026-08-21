@@ -82,10 +82,15 @@ namespace Game.Runtime
             context.EnsureSelectionDependencies?.Invoke(em);
             EnsureEntityQueries(em);
 
-            bool cycling = _activeSlot == slot;
-            if (!TryBuildSelection(context, em, slot, cycling, _selected))
+            bool guidedMissionSquad = slot == MatchHudSquadTraySlot.Soldiers &&
+                                      CampaignMissionGuidedMoveRouteUtility.IsGuidedMovePhaseActive(em);
+            bool cycling = !guidedMissionSquad && _activeSlot == slot;
+            bool selectionReady = guidedMissionSquad
+                ? TryBuildGuidedMissionSquad(em, _selected)
+                : TryBuildSelection(context, em, slot, cycling, _selected);
+            if (!selectionReady)
             {
-                if (cycling && TryBuildSelection(context, em, slot, false, _selected))
+                if (!guidedMissionSquad && cycling && TryBuildSelection(context, em, slot, false, _selected))
                     cycling = false;
                 else
                 {
@@ -104,6 +109,27 @@ namespace Game.Runtime
 
             view.SetSelectedSlot(slot);
             context.LogSelectionDiagnostic?.Invoke($"result=SquadTraySelect slot={slot} selected={_selected.Count} cycling={cycling}");
+        }
+
+        private static bool TryBuildGuidedMissionSquad(EntityManager em, List<Entity> selected)
+        {
+            selected.Clear();
+            using EntityQuery runtimeQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<CampaignMissionRuntimeComponent>());
+            if (runtimeQuery.CalculateEntityCount() != 1)
+                return false;
+
+            CampaignMissionRuntimeComponent runtime =
+                runtimeQuery.GetSingleton<CampaignMissionRuntimeComponent>();
+            CampaignMissionGuidedMoveRouteUtility.Context context =
+                new(runtime.SessionToken, default, 0);
+            using NativeList<Entity> squad = new(Allocator.Temp);
+            if (!CampaignMissionGuidedMoveRouteUtility.TryCollectFullFriendlySquad(em, context, squad))
+                return false;
+
+            for (int i = 0; i < squad.Length; i++)
+                selected.Add(squad[i]);
+            return true;
         }
 
         private bool TryBuildSelection(

@@ -140,6 +140,13 @@ namespace Game.UI.Runtime
             _highlightPresentationSystem.ApplyReadModel(model);
         }
 
+        public void ResetForMissionAttempt()
+        {
+            _lastHighlightModel = UiAssistantHighlightModel.Empty;
+            _highlightPresentationSystem.ResetForMissionAttempt();
+            ClosePanelWithoutInputCapture();
+        }
+
         public void BindSquadTray(MatchHudSquadTrayView squadTrayView)
         {
             _highlightPresentationSystem.BindSquadTray(squadTrayView);

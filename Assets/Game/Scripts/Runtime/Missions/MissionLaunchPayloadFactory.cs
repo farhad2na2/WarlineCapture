@@ -7,6 +7,7 @@ namespace Game.Runtime
     public static class MissionLaunchPayloadFactory
     {
         public const int CurrentSchemaVersion = 1;
+        private const string AlwaysGuidedMissionId = "saga.ch01.m01.first_contact";
 
         public static MissionLaunchPayload Create(
             string missionId,
@@ -22,6 +23,10 @@ namespace Game.Runtime
             int deterministicSeed)
         {
             ValidateGuidance(guidance);
+            replayTutorialEnabled |= string.Equals(
+                missionId,
+                AlwaysGuidedMissionId,
+                StringComparison.Ordinal);
             return new MissionLaunchPayload(
                 CurrentSchemaVersion,
                 missionId,

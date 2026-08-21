@@ -8,7 +8,7 @@ using UnityEngine;
 
 public sealed class M01FirstContactLaunchPayloadTests
 {
-    private const string PassMarker = "[M01FirstContactLaunchPayloadValidation] result=Passed tests=9";
+    private const string PassMarker = "[M01FirstContactLaunchPayloadValidation] result=Passed tests=10";
 
     public static void RunFocusedValidation()
     {
@@ -18,6 +18,7 @@ public sealed class M01FirstContactLaunchPayloadTests
             tests.EqualInputsProduceEqualPayloads();
             tests.FirstLaunchAndCampaignUseOneFactory();
             tests.RetryPreservesIdentityAndIncrementsOnlyAttempt();
+            tests.MissionOneAlwaysEnablesTutorialAcrossReplayAndRetry();
             tests.ChangedCorrelationChangesEquality();
             tests.InvalidIdentityFailsClosed();
             tests.InvalidOriginFailsClosed();
@@ -71,6 +72,29 @@ public sealed class M01FirstContactLaunchPayloadTests
         Assert.AreEqual(previous.AttemptOrdinal + 1, retry.AttemptOrdinal);
         Assert.AreEqual(MissionRunKind.Retry, retry.RunKind);
         Assert.AreEqual(778UL, retry.TransitionToken);
+    }
+
+    [Test]
+    public void MissionOneAlwaysEnablesTutorialAcrossReplayAndRetry()
+    {
+        MissionLaunchPayload replay = MissionLaunchPayloadFactory.Create(
+            "saga.ch01.m01.first_contact",
+            "scenario.ch01.m01.first_contact",
+            "opmap.ch01.district_edge_01",
+            MissionLaunchOriginKind.CampaignOperations,
+            MissionRunKind.Replay,
+            NarrativeGuidanceMode.Contextual,
+            replayTutorialEnabled: false,
+            transitionToken: 777UL,
+            sessionToken: "session.m01.replay",
+            attemptOrdinal: 4,
+            deterministicSeed: 104729);
+
+        Assert.IsTrue(replay.ReplayTutorialEnabled,
+            "Saved completion or briefing state must never disable the Mission 1 tutorial flow.");
+        MissionLaunchPayload retry = MissionLaunchPayloadFactory.CreateRetry(replay, 778UL);
+        Assert.IsTrue(retry.ReplayTutorialEnabled,
+            "A Mission 1 retry must preserve the same tutorial behavior as its first attempt.");
     }
 
     [Test]

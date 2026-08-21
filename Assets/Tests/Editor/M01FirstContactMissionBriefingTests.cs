@@ -37,7 +37,7 @@ public static class M01FirstContactMissionBriefingTests
         {
             Run(CatalogProjectsCanonicalBriefingAuthority, ref passed);
             Run(FirstClearBriefingUsesCanonicalRewardsAndNoReplayToggle, ref passed);
-            Run(ReplayBriefingUsesReplayRewardAndDefaultOffToggle, ref passed);
+            Run(ReplayBriefingUsesReplayRewardAndRequiredTutorial, ref passed);
             Run(CurrentGuidanceMapsIntoCampaignPayload, ref passed);
             Run(DuplicateDeployClicksPublishExactlyOneLaunch, ref passed);
             Run(TerminalLaunchClearsQueuedStateForRetry, ref passed);
@@ -85,7 +85,7 @@ public static class M01FirstContactMissionBriefingTests
         UiMissionBriefingComponent briefing = UiCampaignMissionProjectionSystem.ProjectBriefing(
             ref mission, in operations, true, default);
         Assert.That(briefing.Replay, Is.Zero);
-        Assert.That(briefing.ReplayTutorialEnabled, Is.Zero);
+        Assert.That(briefing.ReplayTutorialEnabled, Is.EqualTo(1));
         Assert.That(briefing.ReplayTutorialToggleVisible, Is.Zero);
         Assert.That(briefing.Rewards.Length, Is.EqualTo(2));
         Assert.That(briefing.Rewards[0].Amount, Is.EqualTo(260));
@@ -94,7 +94,7 @@ public static class M01FirstContactMissionBriefingTests
         DisposeCatalog(world.EntityManager, root);
     }
 
-    [Test] public static void ReplayBriefingUsesReplayRewardAndDefaultOffToggle()
+    [Test] public static void ReplayBriefingUsesReplayRewardAndRequiredTutorial()
     {
         using World world = Project(out Entity root);
         ref CampaignMissionDefinitionBlob mission = ref Definition(world.EntityManager, root);
@@ -102,8 +102,8 @@ public static class M01FirstContactMissionBriefingTests
         UiMissionBriefingComponent briefing = UiCampaignMissionProjectionSystem.ProjectBriefing(
             ref mission, in operations, false, default);
         Assert.That(briefing.Replay, Is.EqualTo(1));
-        Assert.That(briefing.ReplayTutorialToggleVisible, Is.EqualTo(1));
-        Assert.That(briefing.ReplayTutorialEnabled, Is.Zero);
+        Assert.That(briefing.ReplayTutorialToggleVisible, Is.Zero);
+        Assert.That(briefing.ReplayTutorialEnabled, Is.EqualTo(1));
         Assert.That(briefing.Rewards.Length, Is.EqualTo(1));
         Assert.That(briefing.Rewards[0].Amount, Is.EqualTo(250));
         DisposeCatalog(world.EntityManager, root);
@@ -130,7 +130,7 @@ public static class M01FirstContactMissionBriefingTests
         Assert.That(launches[0].LaunchOrigin, Is.EqualTo(MissionLaunchOriginKind.CampaignOperations));
         Assert.That(launches[0].RunKind, Is.EqualTo(MissionRunKind.FirstClear));
         Assert.That(launches[0].Guidance, Is.EqualTo(NarrativeGuidanceMode.Contextual));
-        Assert.That(launches[0].ReplayTutorialEnabled, Is.Zero);
+        Assert.That(launches[0].ReplayTutorialEnabled, Is.EqualTo(1));
         Assert.That(launches[0].AttemptOrdinal, Is.Zero);
         DisposeCatalog(world.EntityManager, missionRoot);
     }
@@ -330,8 +330,7 @@ public static class M01FirstContactMissionBriefingTests
                 },
                 replay: true);
             view.Apply(replay);
-            Assert.That(view.ReplayTutorialToggle.gameObject.activeSelf, Is.True);
-            Assert.That(view.ReplayTutorialToggle.isOn, Is.False);
+            Assert.That(view.ReplayTutorialToggle.gameObject.activeSelf, Is.False);
             Assert.That(AllText(instance), Does.Contain("+250"));
             Assert.That(AllText(instance), Does.Not.Contain("+1,200"));
             Capture(instance, 1000, 450, "replay_20x9");
@@ -362,8 +361,8 @@ public static class M01FirstContactMissionBriefingTests
         airDisabled: true,
         replay,
         replayAllowed: true,
-        replayTutorialEnabled: false,
-        replayTutorialToggleVisible: replay,
+        replayTutorialEnabled: true,
+        replayTutorialToggleVisible: false,
         deployQueued: false);
 
     private static string AllText(GameObject root) => string.Join(

@@ -189,6 +189,8 @@ namespace Game.UI.Shell.Ecs
             in UiMissionBriefingComponent current)
         {
             bool replay = operations.FirstClearCompleted != 0;
+            FixedString64Bytes m01MissionId = new(M01MissionId);
+            bool tutorialRequired = definition.MissionId.Equals(m01MissionId);
             UiMissionBriefingComponent next = new()
             {
                 MissionId = definition.MissionId,
@@ -204,8 +206,10 @@ namespace Game.UI.Shell.Ecs
                 AirDisabled = definition.AirDisabled,
                 Replay = replay ? (byte)1 : (byte)0,
                 ReplayAllowed = definition.ReplayAllowed,
-                ReplayTutorialEnabled = replay && replayTutorial ? (byte)1 : (byte)0,
-                ReplayTutorialToggleVisible = replay && definition.ReplayAllowed != 0 ? (byte)1 : (byte)0,
+                ReplayTutorialEnabled = tutorialRequired || replay && replayTutorial ? (byte)1 : (byte)0,
+                ReplayTutorialToggleVisible = replay && definition.ReplayAllowed != 0 && !tutorialRequired
+                    ? (byte)1
+                    : (byte)0,
                 DeployQueued = current.DeployQueued,
                 DeployTransitionToken = current.DeployTransitionToken
             };

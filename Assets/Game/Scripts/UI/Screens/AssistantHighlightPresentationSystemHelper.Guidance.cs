@@ -236,14 +236,19 @@ namespace Game.UI.Runtime
             }
             if (!model.Active && (_pendingFirstShowMe || _awaitingNextShowMe))
                 return;
-            if (_lastVersion == model.Version)
+            bool appliedStateMatchesReadModel =
+                LastAppliedModel.Active == model.Active &&
+                (!model.Active ||
+                 LastAppliedModel.RequestId == model.RequestId &&
+                 LastAppliedModel.RecommendationId == model.RecommendationId);
+            if (_lastVersion == model.Version && appliedStateMatchesReadModel)
                 return;
 
             if (model.Active)
             {
                 _pendingFirstShowMe = false;
             }
-            bool changedGuidance = _lastVersion != model.Version;
+            bool changedGuidance = _lastVersion != model.Version || !appliedStateMatchesReadModel;
             _lastVersion = model.Version;
             LastAppliedModel = model;
             if (changedGuidance)

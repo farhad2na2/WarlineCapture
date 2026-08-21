@@ -53,6 +53,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             passed++;
             RunCase(test => test.MissionReplay_ContentVersionChangeClearsPendingGuidanceState());
             passed++;
+            RunCase(test => test.MissionReplay_MissingEcsHighlightClearsLocalDestinationPlaceholder());
+            passed++;
             RunCase(test => test.DiagnosticSuppressionState_IsOwnedByEachHudInstance());
             passed++;
 
@@ -617,6 +619,26 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.IsFalse(presentation.LastAppliedModel.Active,
             "A reinstalled Match HUD must clear destination guidance from the previous mission attempt.");
         UnityEngine.Object.DestroyImmediate(shellObject);
+    }
+
+    [Test]
+    public void MissionReplay_MissingEcsHighlightClearsLocalDestinationPlaceholder()
+    {
+        var presentation = new AssistantHighlightPresentationSystemHelper();
+        presentation.ApplyReadModel(UiAssistantHighlightModel.Empty);
+
+        presentation.BeginPendingShowMe(recommendationKind: 2, targetKind: 1);
+        presentation.AcknowledgeCommandMode(TacticalCommandMode.Move);
+        presentation.BeginPendingShowMe(recommendationKind: 2, targetKind: 1);
+        Assert.IsTrue(presentation.LastAppliedModel.Active,
+            "The second Show Me click should reproduce the local destination placeholder.");
+
+        presentation.ApplyReadModel(UiAssistantHighlightModel.Empty);
+
+        Assert.IsFalse(presentation.LastAppliedModel.Active,
+            "An authoritative empty ECS read must clear a local placeholder even when version zero was already cached.");
+        Assert.IsFalse(GetPrivateField<bool>(presentation, "_commandGuidanceArmed"));
+        Assert.IsFalse(GetPrivateField<bool>(presentation, "_worldTargetShowRequested"));
     }
 
     private static void AssertGuidedCommandHighlight(

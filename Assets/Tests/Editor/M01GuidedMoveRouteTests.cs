@@ -853,7 +853,8 @@ internal static class M01OwnerFeedbackValidation
             $"squadLosses={facts.SquadLossCount} friendlyState={friendlyState} " +
             $"hostiles={facts.HostileDefeatedCount}/{facts.HostileTotalCount} " +
             $"hasResult={(hasResult ? 1 : 0)} resultVersion={result.SourceVersion} " +
-            $"resultOutcome={result.Outcome} runKind={runtime.RunKind} launchOrigin={runtime.LaunchOrigin} " +
+            $"resultOutcome={result.Outcome} runKind={runtime.RunKind} " +
+            $"replayTutorial={runtime.ReplayTutorialEnabled} launchOrigin={runtime.LaunchOrigin} " +
             $"runtimeReturn={runtime.ReturnDestination} resultReturn={result.ReturnDestination} " +
             $"settlements={settlementCount} settlementVersion={settlement.SourceVersion} " +
             $"settlementAccepted={settlement.Accepted} settlementReason={settlement.ReasonCode}");

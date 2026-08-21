@@ -65,7 +65,11 @@ namespace Game.Runtime
         }
 
         [BurstCompile]
-        [WithNone(typeof(StaticGridBlocker), typeof(UnitDeathAnimationComponent), typeof(UnitAirMovement))]
+        [WithNone(
+            typeof(StaticGridBlocker),
+            typeof(UnitDeathAnimationComponent),
+            typeof(UnitAirMovement),
+            typeof(CampaignMissionStationaryUnitTag))]
         private partial struct EngagedMoveJob : IJobEntity
         {
             public GridConfig Grid;

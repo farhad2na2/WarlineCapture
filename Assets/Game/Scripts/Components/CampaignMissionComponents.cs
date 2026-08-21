@@ -148,6 +148,10 @@ namespace Game.Components
         public uint PatrolOrderVersion;
     }
 
+    public struct CampaignMissionStationaryUnitTag : IComponentData
+    {
+    }
+
     public struct CampaignMissionGuidedMoveInProgressTag : IComponentData
     {
     }

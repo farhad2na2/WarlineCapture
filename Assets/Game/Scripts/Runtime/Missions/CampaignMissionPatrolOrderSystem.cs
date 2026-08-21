@@ -14,6 +14,7 @@ namespace Game.Runtime
     [UpdateBefore(typeof(CampaignMissionRuntimeSystem))]
     public partial struct CampaignMissionPatrolOrderSystem : ISystem
     {
+        private static readonly FixedString64Bytes FirstContactMissionId = "saga.ch01.m01.first_contact";
         private const int InitialRtsHoldMilliseconds = 2500;
         private const int EstablishingArrivalMilliseconds = 5500;
         private const int EstablishingHoldMilliseconds = 7000;
@@ -188,7 +189,7 @@ namespace Game.Runtime
                      SystemAPI.Query<RefRW<CampaignMissionUnitRoleComponent>>().WithEntityAccess())
             {
                 CampaignMissionUnitRoleComponent current = role.ValueRO;
-                if (!ShouldIssuePatrolRoute(runtime.Phase) ||
+                if (!ShouldIssuePatrolRoute(runtime.MissionId, runtime.Phase) ||
                     current.RouteId.IsEmpty || !current.SessionToken.Equals(runtime.SessionToken) ||
                     current.PatrolOrderVersion != 0 ||
                     !TryFindRoute(ref definition, current.RouteId, out int routeIndex)) continue;
@@ -220,10 +221,12 @@ namespace Game.Runtime
         internal static bool ShouldReleaseCombat(MissionPhaseKind phase) =>
             phase is MissionPhaseKind.Engage or MissionPhaseKind.SecureCorridor;
 
-        internal static bool ShouldIssuePatrolRoute(MissionPhaseKind phase) =>
-            // Holding at the civic-hall staging anchor is one of the authored patrol
-            // behaviours. Do not let a player who is reading or asking ARIA for help watch
-            // the enemies drift into the tutorial move target before Attack is confirmed.
+        internal static bool ShouldIssuePatrolRoute(
+            in FixedString64Bytes missionId,
+            MissionPhaseKind phase) =>
+            // First Contact presents the hostile trio as a fixed firing line. They may attack
+            // in place after Engage, but never consume their legacy authored patrol route.
+            !missionId.Equals(FirstContactMissionId) &&
             phase is MissionPhaseKind.Engage or MissionPhaseKind.SecureCorridor;
 
         internal static bool ShouldRemovePreEngageTarget(in EngageTarget target, byte sourceFactionId)

@@ -23,7 +23,7 @@ public sealed class M01FirstContactForcesPlayModeTests
         RunToCompletion(tests.SpawnWaitsForGameplayStartBeforePublishingOpeningCamera());
         RunToCompletion(tests.SpawnDoesNotWaitForCameraChannel());
         RunToCompletion(tests.SpawnCreatesExactDeterministicFourVersusThreeForce());
-        RunToCompletion(tests.PatrolQueuesExactThreeOrdersOnceAfterDelay());
+        RunToCompletion(tests.HostilesRemainStationaryThroughoutMission());
         RunToCompletion(tests.MissingRuntimePrefabFailsClosedWithoutPartialSpawn());
         UnityEngine.Debug.Log("[M01FirstContactForcesPlayModeValidation] result=Passed tests=5");
     }
@@ -121,6 +121,10 @@ public sealed class M01FirstContactForcesPlayModeTests
                 Faction faction = world.EntityManager.GetComponentData<Faction>(entities[i]);
                 if (faction.Id == 1) friendly++;
                 if (faction.Id == 2) hostile++;
+                Assert.That(
+                    world.EntityManager.HasComponent<CampaignMissionStationaryUnitTag>(entities[i]),
+                    Is.EqualTo(faction.Id == FactionIdentity.EnemyFactionId),
+                    "Only the three First Contact hostiles must receive the permanent stationary contract.");
                 LocalTransform transform = world.EntityManager.GetComponentData<LocalTransform>(entities[i]);
                 float3 center = faction.Id == 1 ? new float3(8f, 0f, 8f) : new float3(20f, 0f, 20f);
                 Assert.That(math.distance(transform.Position, center), Is.LessThanOrEqualTo(4f));
@@ -199,9 +203,9 @@ public sealed class M01FirstContactForcesPlayModeTests
     }
 
     [UnityTest]
-    public IEnumerator PatrolQueuesExactThreeOrdersOnceAfterDelay()
+    public IEnumerator HostilesRemainStationaryThroughoutMission()
     {
-        using World world = new(nameof(PatrolQueuesExactThreeOrdersOnceAfterDelay));
+        using World world = new(nameof(HostilesRemainStationaryThroughoutMission));
         Fixture fixture = CreateFixture(world);
         try
         {
@@ -294,30 +298,28 @@ public sealed class M01FirstContactForcesPlayModeTests
             Update<CampaignMissionPatrolOrderSystem>(world);
             requests = world.EntityManager.GetBuffer<UnitMoveOrderRequestElement>(queue);
             Assert.That(requests.Length, Is.Zero,
-                "Entering Engage must finish the camera presentation before releasing patrol movement.");
+                "Entering Engage must not release First Contact patrol movement.");
             Update<CampaignMissionPatrolOrderSystem>(world);
             requests = world.EntityManager.GetBuffer<UnitMoveOrderRequestElement>(queue);
-            Assert.That(requests.Length, Is.EqualTo(3));
-            for (int i = 0; i < requests.Length; i++)
-            {
-                Assert.That(requests[i].Kind, Is.EqualTo(UnitMoveOrderRequestKind.TargetPathOnly));
-                Assert.That(requests[i].Goal, Is.EqualTo(new int2(12, 12)));
-            }
+            Assert.That(requests.Length, Is.Zero,
+                "First Contact enemies must never consume the legacy authored patrol route.");
             opening = world.EntityManager.GetComponentData<CampaignMissionOpeningPresentationComponent>(fixture.Root);
             Assert.That(opening.Stage, Is.EqualTo(7));
             for (int i = 0; i < combatEntities.Length; i++)
             {
                 Assert.That(world.EntityManager.GetComponentData<UnitCombat>(combatEntities[i]).CanAttack, Is.EqualTo(1));
                 Assert.That(world.EntityManager.GetComponentData<UnitCombat>(combatEntities[i]).AutoEngage, Is.EqualTo(1));
+                Faction faction = world.EntityManager.GetComponentData<Faction>(combatEntities[i]);
+                if (faction.Id == FactionIdentity.EnemyFactionId)
+                {
+                    Assert.That(world.EntityManager.HasComponent<CampaignMissionStationaryUnitTag>(combatEntities[i]),
+                        Is.True,
+                        "Hostiles must retain the stationary movement exclusion after Engage.");
+                    CampaignMissionUnitRoleComponent role = world.EntityManager.GetComponentData<
+                        CampaignMissionUnitRoleComponent>(combatEntities[i]);
+                    Assert.That(role.PatrolOrderVersion, Is.Zero);
+                }
             }
-            UnitCombat stopped = world.EntityManager.GetComponentData<UnitCombat>(combatEntities[0]);
-            stopped.AutoEngage = 0;
-            world.EntityManager.SetComponentData(combatEntities[0], stopped);
-            Update<CampaignMissionPatrolOrderSystem>(world);
-            requests = world.EntityManager.GetBuffer<UnitMoveOrderRequestElement>(queue);
-            Assert.That(requests.Length, Is.EqualTo(3));
-            Assert.That(world.EntityManager.GetComponentData<UnitCombat>(combatEntities[0]).AutoEngage, Is.Zero,
-                "The one-shot Engage release must not override a later player STOP command.");
             yield break;
         }
         finally { fixture.Dispose(); }

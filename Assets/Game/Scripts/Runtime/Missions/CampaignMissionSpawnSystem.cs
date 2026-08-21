@@ -10,6 +10,7 @@ namespace Game.Runtime
     [UpdateAfter(typeof(CampaignMissionLaunchSystem))]
     public partial struct CampaignMissionSpawnSystem : ISystem
     {
+        private static readonly FixedString64Bytes FirstContactMissionId = "saga.ch01.m01.first_contact";
         private EntityQuery _registryQuery;
 
         public void OnCreate(ref SystemState state)
@@ -168,6 +169,11 @@ namespace Game.Runtime
                             MissionRoleId = unit.MissionRoleId, UnitGroupId = group.GroupId, RouteId = routeId,
                             SessionToken = runtime.SessionToken
                         });
+                        if (ShouldKeepStationary(runtime.MissionId, group.FactionId) &&
+                            !em.HasComponent<CampaignMissionStationaryUnitTag>(instance))
+                        {
+                            em.AddComponent<CampaignMissionStationaryUnitTag>(instance);
+                        }
                         if (FactionIdentity.IsPlayerControlled(group.FactionId))
                         {
                             playerPositionSum += position;
@@ -189,6 +195,9 @@ namespace Game.Runtime
                 ? hostilePositionSum / hostileCount
                 : playerFocus;
         }
+
+        internal static bool ShouldKeepStationary(in FixedString64Bytes missionId, byte factionId) =>
+            missionId.Equals(FirstContactMissionId) && !FactionIdentity.IsPlayerControlled(factionId);
 
         internal static bool TryFindDefinition(
             in CampaignMissionCatalogComponent catalog, in CampaignMissionRuntimeComponent runtime, out int index)

@@ -18,6 +18,12 @@ using UnityEngine;
 
 public sealed class M01GuidedMoveRouteTests
 {
+    public static void RunStationaryEnemyValidation()
+    {
+        new M01GuidedMoveRouteTests().GuidedArrivalAdvancesAndCommandedAttackSurvivesPreEngageHold();
+        Debug.Log("[M01StationaryEnemyEditModeValidation] result=Passed tests=1");
+    }
+
     [Test]
     public void GuidedMoveUsesValidatedStreetCellsWithoutPathRequest()
     {
@@ -476,12 +482,26 @@ public sealed class M01GuidedMoveRouteTests
         UnitCombat combat = new() { CanAttack = 1, AutoEngage = 0 };
         Assert.That(CampaignMissionPatrolOrderSystem.ShouldReleaseCombat(MissionPhaseKind.ConfirmThreat), Is.False);
         Assert.That(CampaignMissionPatrolOrderSystem.ShouldReleaseCombat(MissionPhaseKind.Engage), Is.True);
-        Assert.That(CampaignMissionPatrolOrderSystem.ShouldIssuePatrolRoute(MissionPhaseKind.MoveToCover), Is.False,
+        FixedString64Bytes firstContactMissionId = new("saga.ch01.m01.first_contact");
+        FixedString64Bytes otherMissionId = new("saga.ch01.m02.test");
+        Assert.That(CampaignMissionPatrolOrderSystem.ShouldIssuePatrolRoute(
+                firstContactMissionId, MissionPhaseKind.MoveToCover), Is.False,
             "The civic-hall patrol must hold while the player learns the move flow.");
-        Assert.That(CampaignMissionPatrolOrderSystem.ShouldIssuePatrolRoute(MissionPhaseKind.ConfirmThreat), Is.False,
+        Assert.That(CampaignMissionPatrolOrderSystem.ShouldIssuePatrolRoute(
+                firstContactMissionId, MissionPhaseKind.ConfirmThreat), Is.False,
             "The enemies must remain staged until the player confirms an attack target.");
-        Assert.That(CampaignMissionPatrolOrderSystem.ShouldIssuePatrolRoute(MissionPhaseKind.Engage), Is.True,
-            "The patrol route may release only after the explicit attack advances the mission.");
+        Assert.That(CampaignMissionPatrolOrderSystem.ShouldIssuePatrolRoute(
+                firstContactMissionId, MissionPhaseKind.Engage), Is.False,
+            "First Contact enemies must remain stationary after combat begins.");
+        Assert.That(CampaignMissionPatrolOrderSystem.ShouldIssuePatrolRoute(
+                otherMissionId, MissionPhaseKind.Engage), Is.True,
+            "The First Contact override must not disable patrol routes in other missions.");
+        Assert.That(CampaignMissionSpawnSystem.ShouldKeepStationary(
+                firstContactMissionId, FactionIdentity.EnemyFactionId), Is.True);
+        Assert.That(CampaignMissionSpawnSystem.ShouldKeepStationary(
+                firstContactMissionId, FactionIdentity.PlayerFactionId), Is.False);
+        Assert.That(CampaignMissionSpawnSystem.ShouldKeepStationary(
+                otherMissionId, FactionIdentity.EnemyFactionId), Is.False);
         CampaignMissionPatrolOrderSystem.ApplyTutorialCombatPolicy(
             ref combat,
             CampaignMissionPatrolOrderSystem.ShouldReleaseCombat(MissionPhaseKind.Engage));

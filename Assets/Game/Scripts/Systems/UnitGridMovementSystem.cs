@@ -10,7 +10,11 @@ using Game.Components;
 namespace Game.Runtime
 {
     [BurstCompile]
-    [WithNone(typeof(EngageTarget), typeof(UnitDeathAnimationComponent), typeof(UnitAirMovement))]
+    [WithNone(
+        typeof(EngageTarget),
+        typeof(UnitDeathAnimationComponent),
+        typeof(UnitAirMovement),
+        typeof(CampaignMissionStationaryUnitTag))]
     public partial struct UnitGridMoveJob : IJobEntity
     {
         private const int VehicleOccupancyPaddingCells = 1;

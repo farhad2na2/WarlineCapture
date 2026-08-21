@@ -374,6 +374,35 @@ namespace Game.Runtime
                 : (byte)0;
             bool advancesAlongZ = math.abs(context.TargetCell.y - start.y) >=
                                   math.abs(context.TargetCell.x - start.x);
+
+            // Finish the authored move as a readable four-soldier firing line across the
+            // road. The former all-cells search favored a single-file column on the road
+            // axis; in the RTS camera one soldier could be hidden directly behind another
+            // and the move looked like a three-soldier order. Every preferred slot remains
+            // inside the validated move-target disk and every route is still the direct
+            // authored street route.
+            if (CampaignMissionGuidedStreetPathUtility.TryResolvePreferredFormationGoal(
+                    entityManager,
+                    gridEntity,
+                    grid,
+                    moveOrderSystem,
+                    walkable,
+                    blocked,
+                    friendlyPassFactionIds,
+                    occupied,
+                    selectedCurrentCells,
+                    surfaceContext,
+                    start,
+                    footprintSize,
+                    factionId,
+                    context,
+                    advancesAlongZ,
+                    reservedGoalCells,
+                    out resolvedGoal))
+            {
+                return true;
+            }
+
             int bestScore = int.MaxValue;
 
             using NativeList<int2> route = new(Allocator.Temp);

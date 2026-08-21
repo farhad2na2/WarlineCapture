@@ -1,5 +1,7 @@
 #if UNITY_INCLUDE_TESTS
 using System;
+using System.IO;
+using System.Text;
 using Game.Components;
 using Game.Missions.Contracts;
 using Game.Rendering;
@@ -185,6 +187,15 @@ public sealed class M01GuidedMoveRouteTests
                 "All four tutorial soldiers must reserve a direct street goal before any order is issued.");
             Assert.That(new System.Collections.Generic.HashSet<int2>(formationGoals).Count, Is.EqualTo(4),
                 "Every tutorial soldier needs a distinct destination so none is rejected or left behind.");
+            var lateralOffsets = new System.Collections.Generic.HashSet<int>();
+            for (int index = 0; index < formationGoals.Length; index++)
+            {
+                Assert.That(formationGoals[index].y, Is.EqualTo(context.TargetCell.y),
+                    "The four soldiers must finish on one readable firing line across the road.");
+                lateralOffsets.Add(formationGoals[index].x - context.TargetCell.x);
+            }
+            Assert.That(lateralOffsets.SetEquals(new[] { -3, -1, 1, 3 }), Is.True,
+                "The authored formation must expose all four soldiers instead of hiding one in a single-file column.");
 
             entityManager.AddComponent<SelectedUnitTag>(unit);
             using (EntityQuery selectedMoveQuery = entityManager.CreateEntityQuery(
@@ -257,14 +268,8 @@ public sealed class M01GuidedMoveRouteTests
                 "The authored tutorial move must not enter the general city A* pathfinder.");
             Assert.That(entityManager.HasComponent<CampaignMissionGuidedMoveInProgressTag>(unit), Is.True,
                 "The authored tutorial corridor must remain authoritative until this soldier arrives.");
-            UnitPathRange range = entityManager.GetComponentData<UnitPathRange>(unit);
-            Assert.That(range.Length, Is.EqualTo(10));
-            NativeList<int2> cells = entityManager.GetComponentData<PathPoolComponent>(gridEntity).Cells;
-            for (int index = range.Start; index < range.Start + range.Length; index++)
-                Assert.That(cells[index].x, Is.EqualTo(10), "The tutorial route must remain on the street.");
-            Assert.That(cells[range.Start + 4].y, Is.EqualTo(15),
-                "Sparse shared road metadata must not force the authored tutorial route into the houses.");
-            Assert.That(cells[range.Start + range.Length - 1], Is.EqualTo(formationGoals[0]));
+            AssertStoredDirectStreetRoute(
+                entityManager, gridEntity, unit, new int2(10, 10), formationGoals[0]);
 
             Assert.That(CampaignMissionGuidedMoveRouteUtility.TryIssueStreetRoute(
                 entityManager,
@@ -279,11 +284,8 @@ public sealed class M01GuidedMoveRouteTests
                 "A structural change on the first soldier must not invalidate the next soldier's route.");
             Assert.That(secondResult.Issued, Is.True);
             Assert.That(entityManager.HasComponent<UnitPathRequest>(secondUnit), Is.False);
-            UnitPathRange secondRange = entityManager.GetComponentData<UnitPathRange>(secondUnit);
-            cells = entityManager.GetComponentData<PathPoolComponent>(gridEntity).Cells;
-            for (int index = secondRange.Start; index < secondRange.Start + secondRange.Length; index++)
-                Assert.That(cells[index].x, Is.EqualTo(10), "Every squad member must stay on the street.");
-            Assert.That(cells[secondRange.Start + secondRange.Length - 1], Is.EqualTo(formationGoals[1]));
+            AssertStoredDirectStreetRoute(
+                entityManager, gridEntity, secondUnit, new int2(10, 11), formationGoals[1]);
 
             AssertDirectStreetRoute(entityManager, gridEntity, grid, moveOrderSystem, thirdUnit, formationGoals[2], context);
             AssertDirectStreetRoute(entityManager, gridEntity, grid, moveOrderSystem, fourthUnit, formationGoals[3], context);
@@ -406,6 +408,48 @@ public sealed class M01GuidedMoveRouteTests
     [Test]
     public void GuidedArrivalAdvancesAndCommandedAttackSurvivesPreEngageHold()
     {
+        Assert.That(CampaignMissionRuntimeSystem.IsRosterProjectionReady(
+                expectedCount: 4, observedCount: 0, phase: MissionPhaseKind.FindSquad), Is.False,
+            "A spawn frame before health initialization must not settle a false squad defeat.");
+        Assert.That(CampaignMissionRuntimeSystem.IsRosterProjectionReady(
+                expectedCount: 4, observedCount: 3, phase: MissionPhaseKind.MoveToCover), Is.False,
+            "A partial pre-combat roster must wait for the authored fourth soldier.");
+        Assert.That(CampaignMissionRuntimeSystem.IsRosterProjectionReady(
+                expectedCount: 4, observedCount: 4, phase: MissionPhaseKind.MoveToCover), Is.True);
+        Assert.That(CampaignMissionRuntimeSystem.IsRosterProjectionReady(
+                expectedCount: 4, observedCount: 0, phase: MissionPhaseKind.Engage), Is.True,
+            "Once combat begins, removed entities represent real losses and must remain authoritative.");
+
+        CampaignMissionRuntimeComponent initializingMove = new()
+        {
+            Version = 4,
+            SourceVersion = 1,
+            MissionId = new FixedString64Bytes("saga.ch01.m01.first_contact"),
+            ScenarioId = new FixedString64Bytes("scenario.ch01.m01.first_contact"),
+            OperationMapId = new FixedString64Bytes("opmap.ch01.district_edge_01"),
+            SessionToken = new FixedString64Bytes("m01-initializing-roster"),
+            AttemptOrdinal = 1,
+            DeterministicSeed = 1234,
+            Phase = MissionPhaseKind.MoveToCover,
+            Outcome = MissionOutcomeKind.None,
+            LaunchOrigin = MissionLaunchOriginKind.CampaignOperations
+        };
+        CampaignMissionAttemptFactsComponent initializingFacts = new()
+        {
+            CommandSquadSpawned = 1,
+            CommandSquadAlive = 0,
+            SquadLossCount = 0
+        };
+        Assert.That(CampaignMissionRuntimeSystem.TryEvaluate(
+                in initializingMove, in initializingFacts, commandSquadSelected: true, out _), Is.False,
+            "A transient zero-alive initialization frame without a recorded loss cannot settle defeat.");
+        initializingFacts.SquadLossCount = 4;
+        Assert.That(CampaignMissionRuntimeSystem.TryEvaluate(
+                in initializingMove, in initializingFacts, commandSquadSelected: true,
+                out CampaignMissionRuntimeComponent defeated), Is.True);
+        Assert.That(defeated.Outcome, Is.EqualTo(MissionOutcomeKind.Defeat),
+            "A real four-soldier loss must still settle defeat.");
+
         Assert.That(CampaignMissionRuntimeProgressUtility.IsAtMoveTarget(
                 new float3(100f, 0f, 100f),
                 hasUnitGrid: true,
@@ -432,6 +476,12 @@ public sealed class M01GuidedMoveRouteTests
         UnitCombat combat = new() { CanAttack = 1, AutoEngage = 0 };
         Assert.That(CampaignMissionPatrolOrderSystem.ShouldReleaseCombat(MissionPhaseKind.ConfirmThreat), Is.False);
         Assert.That(CampaignMissionPatrolOrderSystem.ShouldReleaseCombat(MissionPhaseKind.Engage), Is.True);
+        Assert.That(CampaignMissionPatrolOrderSystem.ShouldIssuePatrolRoute(MissionPhaseKind.MoveToCover), Is.False,
+            "The civic-hall patrol must hold while the player learns the move flow.");
+        Assert.That(CampaignMissionPatrolOrderSystem.ShouldIssuePatrolRoute(MissionPhaseKind.ConfirmThreat), Is.False,
+            "The enemies must remain staged until the player confirms an attack target.");
+        Assert.That(CampaignMissionPatrolOrderSystem.ShouldIssuePatrolRoute(MissionPhaseKind.Engage), Is.True,
+            "The patrol route may release only after the explicit attack advances the mission.");
         CampaignMissionPatrolOrderSystem.ApplyTutorialCombatPolicy(
             ref combat,
             CampaignMissionPatrolOrderSystem.ShouldReleaseCombat(MissionPhaseKind.Engage));
@@ -638,6 +688,16 @@ public sealed class M01GuidedMoveRouteTests
             out UnitMoveOrderSystem.MoveOrderCommandResult result), Is.True);
         Assert.That(result.Issued, Is.True);
         Assert.That(entityManager.HasComponent<UnitPathRequest>(unit), Is.False);
+        AssertStoredDirectStreetRoute(entityManager, gridEntity, unit, start, goal);
+    }
+
+    private static void AssertStoredDirectStreetRoute(
+        EntityManager entityManager,
+        Entity gridEntity,
+        Entity unit,
+        int2 start,
+        int2 goal)
+    {
         UnitPathRange range = entityManager.GetComponentData<UnitPathRange>(unit);
         NativeList<int2> cells = entityManager.GetComponentData<PathPoolComponent>(gridEntity).Cells;
         int previousDistance = math.csum(math.abs(goal - start));
@@ -654,7 +714,7 @@ public sealed class M01GuidedMoveRouteTests
 
 internal static class M01OwnerFeedbackValidation
 {
-    private const string Marker = "[M01OwnerFeedbackValidation] result=Passed tests=7";
+    private const string Marker = "[M01OwnerFeedbackValidation] result=Passed tests=9";
 
     [MenuItem("Game/Missions/M01/Log Live Owner Feedback State _F9")]
     public static void LogLiveState()
@@ -691,9 +751,42 @@ internal static class M01OwnerFeedbackValidation
             ? entityManager.GetBuffer<CampaignMissionSettlementResultElement>(root, true)[settlementCount - 1]
             : default;
 
+        int friendlyEntities = 0;
+        int friendlyAlive = 0;
+        StringBuilder friendlyState = new();
+        using (EntityQuery friendlyQuery = entityManager.CreateEntityQuery(
+                   ComponentType.ReadOnly<CampaignMissionUnitRoleComponent>(),
+                   ComponentType.ReadOnly<Faction>(),
+                   ComponentType.ReadOnly<UnitHealth>(),
+                   ComponentType.ReadOnly<UnitGrid>()))
+        using (NativeArray<Entity> friendlies = friendlyQuery.ToEntityArray(Allocator.Temp))
+        {
+            for (int index = 0; index < friendlies.Length; index++)
+            {
+                Entity entity = friendlies[index];
+                CampaignMissionUnitRoleComponent role =
+                    entityManager.GetComponentData<CampaignMissionUnitRoleComponent>(entity);
+                Faction faction = entityManager.GetComponentData<Faction>(entity);
+                if (!role.SessionToken.Equals(runtime.SessionToken) ||
+                    !FactionIdentity.IsPlayerControlled(faction.Id))
+                    continue;
+                UnitHealth unitHealth = entityManager.GetComponentData<UnitHealth>(entity);
+                UnitGrid unitGrid = entityManager.GetComponentData<UnitGrid>(entity);
+                friendlyEntities++;
+                if (unitHealth.Current > 0) friendlyAlive++;
+                if (friendlyState.Length > 0) friendlyState.Append(';');
+                friendlyState.Append(entity.Index).Append('@').Append(unitGrid.Cell)
+                    .Append(" hp=").Append(unitHealth.Current)
+                    .Append(" guided=").Append(
+                        entityManager.HasComponent<CampaignMissionGuidedMoveInProgressTag>(entity) ? 1 : 0);
+            }
+        }
+
         Debug.Log(
             $"[M01LiveState] phase={runtime.Phase} outcome={runtime.Outcome} " +
             $"runtimeVersion={runtime.Version} squadAlive={facts.CommandSquadAlive} " +
+            $"friendlyEntities={friendlyEntities} friendlyAlive={friendlyAlive} " +
+            $"squadLosses={facts.SquadLossCount} friendlyState={friendlyState} " +
             $"hostiles={facts.HostileDefeatedCount}/{facts.HostileTotalCount} " +
             $"hasResult={(hasResult ? 1 : 0)} resultVersion={result.SourceVersion} " +
             $"resultOutcome={result.Outcome} runKind={runtime.RunKind} launchOrigin={runtime.LaunchOrigin} " +
@@ -708,6 +801,12 @@ internal static class M01OwnerFeedbackValidation
         int passed = 0;
         try
         {
+            M01FirstContactAnchorTests.RunFocusedValidation();
+            Game.Editor.M01FirstContactConfigBuilder.RefreshOperationMapCatalogContentPack();
+            passed++;
+            RunFocused(ProductionSourceGrowthArchitectureTests.RunFocusedValidation,
+                nameof(ProductionSourceGrowthArchitectureTests));
+            passed++;
             new M01GuidedMoveRouteTests().GuidedMoveUsesValidatedStreetCellsWithoutPathRequest();
             new M01GuidedMoveRouteTests().InfantrySelectionOutlineResolutionIsCachedWhenNoOutlineCanBeCreated();
             new M01GuidedMoveRouteTests().FirstContactSkipsUnrelatedBuildingSimulation();
@@ -754,6 +853,16 @@ internal static class M01OwnerFeedbackValidation
             Debug.LogException(exception);
             Debug.LogError($"[M01OwnerFeedbackValidation] result=Failed passed={passed}");
         }
+    }
+
+    [MenuItem("Game/Missions/M01/Capture Live Owner Feedback _F10")]
+    public static void CaptureLiveState()
+    {
+        string directory = Path.GetFullPath("Temp/AgentQa");
+        Directory.CreateDirectory(directory);
+        string path = Path.Combine(directory, "m01-live-owner-feedback.png");
+        ScreenCapture.CaptureScreenshot(path);
+        Debug.Log($"[M01LiveCapture] requested={path}");
     }
 
     private static void RunFocused(Action validation, string label)

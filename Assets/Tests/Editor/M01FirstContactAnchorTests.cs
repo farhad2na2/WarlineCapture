@@ -28,7 +28,7 @@ public static class M01FirstContactAnchorTests
     {
         new("anchor.ch01.m01.player_spawn", OperationMapAnchorKind.Deployment, new int2(1792, 690), 5f, 0f),
         new("anchor.ch01.m01.camera_start", OperationMapAnchorKind.Camera, new int2(1792, 682), 1f, 0f),
-        new("anchor.ch01.m01.move_target", OperationMapAnchorKind.Objective, new int2(1792, 710), 3f, 0f),
+        new("anchor.ch01.m01.move_target", OperationMapAnchorKind.Objective, new int2(1792, 719), 3f, 0f),
         new("anchor.ch01.m01.patrol_spawn", OperationMapAnchorKind.Spawn, new int2(1792, 735), 4f, 180f),
         new("anchor.ch01.m01.patrol_route_a", OperationMapAnchorKind.Lane, new int2(1792, 725), 2f, 180f),
         new("anchor.ch01.m01.patrol_route_b", OperationMapAnchorKind.Lane, new int2(1792, 715), 2f, 180f),
@@ -212,7 +212,12 @@ public static class M01FirstContactAnchorTests
         }
 
         OperationMapAnchorConfig squad = Find(anchors, "anchor.ch01.m01.player_spawn");
+        OperationMapAnchorConfig moveTarget = Find(anchors, "anchor.ch01.m01.move_target");
         OperationMapAnchorConfig patrol = Find(anchors, "anchor.ch01.m01.patrol_spawn");
+        Require(Vector3.Distance(squad.Position, moveTarget.Position) >= 26f,
+            "The guided move must advance the squad far enough to teach a meaningful road movement.");
+        Require(Vector3.Distance(moveTarget.Position, patrol.Position) >= 12f,
+            "The guided move target must preserve readable separation from the civic-hall patrol.");
         Require(Vector3.Distance(squad.Position, patrol.Position) >= 40f,
             "The civic-hall face-off must preserve at least forty metres of readable street distance.");
         Require(Mathf.Abs(Mathf.DeltaAngle(squad.EulerAngles.y, patrol.EulerAngles.y)) >= 179f,

@@ -126,5 +126,69 @@ namespace Game.Runtime
             }
             return true;
         }
+
+        internal static bool TryResolveAutomaticTransition(
+            in CampaignMissionRuntimeComponent current,
+            in CampaignMissionAttemptFactsComponent facts,
+            bool commandSquadSelected,
+            out MissionPhaseKind phase,
+            out MissionOutcomeKind outcome,
+            out MissionReturnDestinationKind destination)
+        {
+            phase = current.Phase;
+            outcome = current.Outcome;
+            destination = current.ReturnDestination;
+            if (current.Phase == MissionPhaseKind.Preparing &&
+                (current.ReadyReadiness & current.RequiredReadiness) == current.RequiredReadiness)
+                phase = MissionPhaseKind.InteractiveBrief;
+            else if (current.Phase == MissionPhaseKind.InteractiveBrief)
+                phase = MissionPhaseKind.FindSquad;
+            else if (current.Phase == MissionPhaseKind.FindSquad &&
+                     facts.CommandSquadSpawned != 0 && facts.CommandSquadAlive == 0 &&
+                     facts.SquadLossCount > 0)
+                return ResolveDefeat(out phase, out outcome, out destination);
+            else if (current.Phase == MissionPhaseKind.FindSquad && current.RunKind != MissionRunKind.FirstClear &&
+                     current.ReplayTutorialEnabled == 0)
+                phase = MissionPhaseKind.Engage;
+            else if (current.Phase == MissionPhaseKind.FindSquad && commandSquadSelected)
+                phase = MissionPhaseKind.MoveToCover;
+            else if (current.Phase == MissionPhaseKind.MoveToCover && facts.CommandSquadAlive == 0 &&
+                     facts.SquadLossCount > 0)
+                return ResolveDefeat(out phase, out outcome, out destination);
+            else if (current.Phase == MissionPhaseKind.MoveToCover && facts.MoveToCoverComplete != 0)
+                phase = MissionPhaseKind.ConfirmThreat;
+            else if (current.Phase == MissionPhaseKind.ConfirmThreat && facts.CommandSquadAlive == 0 &&
+                     facts.SquadLossCount > 0)
+                return ResolveDefeat(out phase, out outcome, out destination);
+            else if (current.Phase == MissionPhaseKind.ConfirmThreat && facts.ThreatConfirmed != 0)
+                phase = MissionPhaseKind.Engage;
+            else if (current.Phase == MissionPhaseKind.Engage && facts.CommandSquadAlive == 0 &&
+                     facts.SquadLossCount > 0)
+                return ResolveDefeat(out phase, out outcome, out destination);
+            else if (current.Phase == MissionPhaseKind.Engage && facts.HostileTotalCount > 0 &&
+                     facts.HostileDefeatedCount >= facts.HostileTotalCount)
+                phase = MissionPhaseKind.SecureCorridor;
+            else if (current.Phase == MissionPhaseKind.SecureCorridor)
+            {
+                phase = MissionPhaseKind.Result;
+                outcome = MissionOutcomeKind.Victory;
+                destination = current.LaunchOrigin == MissionLaunchOriginKind.FirstLaunch
+                    ? MissionReturnDestinationKind.CommandBase
+                    : MissionReturnDestinationKind.CampaignOperations;
+            }
+            return phase != current.Phase || outcome != current.Outcome ||
+                   destination != current.ReturnDestination;
+        }
+
+        private static bool ResolveDefeat(
+            out MissionPhaseKind phase,
+            out MissionOutcomeKind outcome,
+            out MissionReturnDestinationKind destination)
+        {
+            phase = MissionPhaseKind.Result;
+            outcome = MissionOutcomeKind.Defeat;
+            destination = MissionReturnDestinationKind.CampaignOperations;
+            return true;
+        }
     }
 }

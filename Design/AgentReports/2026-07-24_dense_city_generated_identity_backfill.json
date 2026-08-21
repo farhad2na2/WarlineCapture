@@ -1,10 +1,11 @@
 {
     "schema": "warline.dense-city.generated-presentation-identity-backfill",
-    "schemaVersion": 1,
+    "schemaVersion": 2,
     "status": "Passed",
-    "buildings": 4971,
-    "renderOnly": 31975,
+    "buildings": 4545,
+    "renderOnly": 31759,
     "added": 0,
-    "existing": 36946,
-    "candidateEntitySceneSha256": "a78eb6d8e6457820963c46813a7834ad09584acceb1f382584b154464bad5fc1"
+    "existing": 36304,
+    "debugNamesNormalized": 36304,
+    "candidateEntitySceneSha256": "52b30f735209fbde2911f6bebf7dd397ed66c2fd1355f420ce7db22c7ac85b4f"
 }

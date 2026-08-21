@@ -29,6 +29,8 @@ namespace Game.Editor
 
     internal static class DenseCityBuildingPresentationRealizer
     {
+        internal const string SharedBuildingDebugName = "DenseCityBuilding";
+
         internal static DenseCityRealizedBuildingPresentation Realize(
             string operationMapId,
             DenseCityBuildingBakeRecord building,
@@ -79,7 +81,7 @@ namespace Game.Editor
             GameObject owner = null;
             try
             {
-                owner = new GameObject($"Building_{placementIndex:D6}");
+                owner = new GameObject(SharedBuildingDebugName);
                 owner.transform.SetParent(parent, false);
                 DenseCityRenderOnlyPresentationRealizer.ApplyWorldMatrix(
                     owner.transform,

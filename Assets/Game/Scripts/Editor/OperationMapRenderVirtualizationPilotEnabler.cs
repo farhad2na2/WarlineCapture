@@ -18,7 +18,8 @@ namespace Game.Editor
     internal static class OperationMapRenderVirtualizationPilotEnabler
     {
         private const int CurrentAcceptedIdentityCount = 9544;
-        private const int CurrentVirtualizedGeneratedIdentityCount = 36304;
+        private const int CurrentVirtualizedGeneratedIdentityCount =
+            OperationMapEntityPresentationCandidateBakeValidator.ExpectedDenseGeneratedIdentities;
 
         private const string CandidateDefinitionPath =
             "Assets/Game/Configs/OperationMaps/Candidates/" +

@@ -55,7 +55,8 @@ public sealed class DenseCityBakeReadinessValidatorTests
             suite.AuthoringOwnership_AcceptsOwnedIntactBuildingAttachment,
             suite.AuthoringOwnership_RejectsAttachmentUnderWrongVisualState,
             suite.AuthoringOwnership_RejectsAttachmentWithIndependentPresentationOwner,
-            suite.AuthoringOwnership_RejectsNestedAttachmentOwnership
+            suite.AuthoringOwnership_RejectsNestedAttachmentOwnership,
+            suite.GeneratedDebugNames_RejectsUniqueNameBudgetOverflow
         };
 
         for (int index = 0; index < tests.Length; index++)
@@ -792,6 +793,29 @@ public sealed class DenseCityBakeReadinessValidatorTests
         }, "duplicate attachment ownership");
     }
 
+    [Test]
+    public void GeneratedDebugNames_RejectsUniqueNameBudgetOverflow()
+    {
+        var root = new GameObject("GeneratedRoot");
+        try
+        {
+            new GameObject("SharedPrefabName").transform.SetParent(root.transform, false);
+            new GameObject("SequenceSpecificName_000001").transform.SetParent(root.transform, false);
+
+            Assert.That(
+                DenseCityBakeReadinessValidator.TryValidateGeneratedDebugNameBudget(
+                    root.transform,
+                    2,
+                    out string error),
+                Is.False);
+            StringAssert.Contains("unique entity debug-name budget", error);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(root);
+        }
+    }
+
     private static void AssertGeneratedBuildingMutationAccepted(Action<OperationMapBuildingAuthoring> mutate)
     {
         (Scene mapScene, Scene entityScene) = CreateScenePair();
@@ -855,7 +879,7 @@ public sealed class DenseCityBakeReadinessValidatorTests
             42,
             Hash);
         Transform parent = roots.EntityPresentationSource.transform.Find("GameplayBuildings/Buildings");
-        var owner = new GameObject("GeneratedBuilding");
+        var owner = new GameObject(DenseCityBuildingPresentationRealizer.SharedBuildingDebugName);
         owner.transform.SetParent(parent, false);
         var intact = new GameObject("IntactVisual");
         intact.transform.SetParent(owner.transform, false);

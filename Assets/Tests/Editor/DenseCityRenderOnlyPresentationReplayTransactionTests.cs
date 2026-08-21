@@ -83,8 +83,8 @@ public sealed class DenseCityRenderOnlyPresentationReplayTransactionTests
                 DenseCityRenderOnlyPresentationReplayTransaction.Realize(records, hierarchy);
 
             Assert.That(realized, Has.Count.EqualTo(2));
-            Assert.That(realized[0].name, Does.EndWith("000000"));
-            Assert.That(realized[1].name, Does.EndWith("000001"));
+            Assert.That(realized[0].name, Is.EqualTo(prefab.name));
+            Assert.That(realized[1].name, Is.EqualTo(prefab.name));
             Assert.That(
                 realized[0].parent,
                 Is.SameAs(hierarchy.ResolveIndependentParent(DenseCityPresentationCategory.Prop)));

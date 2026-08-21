@@ -33,10 +33,13 @@ namespace Game.Editor
         internal const int ExpectedPresentationRoots = 3;
         internal const int ExpectedRenderOnlyOwners = 9090;
         internal const int ExpectedPresentationIdentities = 9544;
-        internal const int ExpectedDenseGameplayBuildings = 5403;
-        internal const int ExpectedDenseGeneratedGameplayBuildings = 4971;
-        internal const int ExpectedDenseGeneratedRenderOnlyOwners = 31975;
-        internal const int ExpectedDenseGeneratedIdentities = 36946;
+        internal const int ExpectedDenseGameplayBuildings = 4977;
+        internal const int ExpectedDenseGeneratedGameplayBuildings = 4545;
+        internal const int ExpectedDenseGeneratedRenderOnlyOwners = 31759;
+        internal const int ExpectedDenseGeneratedIdentities = 36304;
+        internal const int ExpectedDenseVirtualizedGameplayBuildings = 4530;
+        internal const int ExpectedDenseResidentGameplayBuildings =
+            ExpectedDenseGameplayBuildings - ExpectedDenseVirtualizedGameplayBuildings;
 
         private const string DenseCandidateBakeReportPath =
             "Design/AgentReports/2026-07-24_dense_city_generated_candidate_bake_validation.json";
@@ -190,6 +193,8 @@ namespace Game.Editor
                     $"generatedIdentities={report.denseIdentityCount} " +
                     $"generatedBuildingIdentities={report.denseGameplayBuildingIdentityCount} " +
                     $"generatedRenderOnlyIdentities={report.denseRenderOnlyIdentityCount} " +
+                    $"residentBuildingPresentations={report.buildingPresentationCount} " +
+                    $"virtualizedBuildingPresentations={report.virtualizedBuildingPresentationCount} " +
                     $"renderMeshEntities={report.renderMeshEntityCount} " +
                     $"transformParityRows={parity.candidateIdentityCount} " +
                     $"runtimeParityManifestBytes={runtimeParityManifest.manifestBytes} " +
@@ -669,7 +674,7 @@ namespace Game.Editor
             var report = new DenseCandidateBakeReport
             {
                 schema = "warline.dense-city.generated-candidate-bake-validation",
-                schemaVersion = 1,
+                schemaVersion = 2,
                 operationMapId = OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
                 checkpoint = "accepted-editor-to-dense-candidate-subscene-to-in-memory-baked-ecs",
                 result = "DenseCandidateBakeValidationFailed",
@@ -687,6 +692,10 @@ namespace Game.Editor
                     entityManager.CreateEntityQuery(typeof(DenseCityPresentationIdentity)).CalculateEntityCount(),
                 buildingPresentationCount =
                     entityManager.CreateEntityQuery(typeof(OperationMapBuildingPresentation)).CalculateEntityCount(),
+                virtualizedBuildingPresentationCount =
+                    entityManager.CreateEntityQuery(
+                        typeof(OperationMapVirtualizedBuildingPresentationComponent))
+                        .CalculateEntityCount(),
                 renderMeshEntityCount = renderQuery.CalculateEntityCount(),
                 totalEntityCount = entityManager.UniversalQuery.CalculateEntityCount(),
                 entityChunkCount = entityManager.UniversalQuery.CalculateChunkCount(),
@@ -759,9 +768,14 @@ namespace Game.Editor
             else if (report.duplicateDenseIdentityCount != 0)
                 report.rejectionReason =
                     $"duplicate-dense-presentation-identity-count:{report.duplicateDenseIdentityCount}";
-            else if (report.buildingPresentationCount != ExpectedDenseGameplayBuildings)
+            else if (report.buildingPresentationCount != ExpectedDenseResidentGameplayBuildings ||
+                     report.virtualizedBuildingPresentationCount !=
+                     ExpectedDenseVirtualizedGameplayBuildings ||
+                     report.buildingPresentationCount +
+                     report.virtualizedBuildingPresentationCount != ExpectedDenseGameplayBuildings)
                 report.rejectionReason =
-                    $"building-presentation-count:{report.buildingPresentationCount}";
+                    $"building-presentation-count:{report.buildingPresentationCount}:" +
+                    $"{report.virtualizedBuildingPresentationCount}";
             else if (report.renderMeshEntityCount <
                      ExpectedRenderOnlyOwners + ExpectedDenseGeneratedRenderOnlyOwners)
                 report.rejectionReason =
@@ -778,7 +792,7 @@ namespace Game.Editor
                     $"{report.sharedRenderMeshArrayIdentityCount}:" +
                     $"{report.sharedMeshAssetIdentityCount}:" +
                     $"{report.sharedMaterialAssetIdentityCount}";
-            else if (report.intactVisualRootCount != ExpectedDenseGameplayBuildings ||
+            else if (report.intactVisualRootCount != ExpectedDenseResidentGameplayBuildings ||
                      report.missingIntactVisualRootCount != 0 ||
                      report.sharedIntactDestroyedVisualRootCount != 0 ||
                      report.destroyedVisualRootCount + report.missingDestroyedVisualRootCount !=
@@ -1300,6 +1314,7 @@ namespace Game.Editor
             public int denseUnknownRoleIdentityCount;
             public int duplicateDenseIdentityCount;
             public int buildingPresentationCount;
+            public int virtualizedBuildingPresentationCount;
             public int renderMeshEntityCount;
             public int totalEntityCount;
             public int entityArchetypeCount;

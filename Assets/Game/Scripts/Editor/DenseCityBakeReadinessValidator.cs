@@ -16,6 +16,8 @@ namespace Game.Editor
 {
     public static class DenseCityBakeReadinessValidator
     {
+        internal const int MaxGeneratedUniqueDebugNames = 8 << 10;
+
         internal readonly struct ProtectedRootContract
         {
             internal ProtectedRootContract(
@@ -274,6 +276,47 @@ namespace Game.Editor
                     out error))
             {
                 return false;
+            }
+            if (!TryValidateGeneratedDebugNameBudget(
+                    entityGeneratedRoot.transform,
+                    MaxGeneratedUniqueDebugNames,
+                    out error))
+            {
+                return false;
+            }
+
+            error = null;
+            return true;
+        }
+
+        internal static bool TryValidateGeneratedDebugNameBudget(
+            Transform generatedRoot,
+            int maxUniqueNames,
+            out string error)
+        {
+            if (generatedRoot == null)
+            {
+                error = "Dense-city generated debug-name validation requires a generated root.";
+                return false;
+            }
+            if (maxUniqueNames <= 0)
+            {
+                error = "Dense-city generated debug-name budget must be positive.";
+                return false;
+            }
+
+            Transform[] transforms = generatedRoot.GetComponentsInChildren<Transform>(true);
+            var uniqueNames = new HashSet<string>(StringComparer.Ordinal);
+            for (int index = 0; index < transforms.Length; index++)
+            {
+                if (uniqueNames.Add(transforms[index].name) && uniqueNames.Count > maxUniqueNames)
+                {
+                    error =
+                        $"Dense-city generated hierarchy exceeds its unique entity debug-name budget: " +
+                        $"count>{maxUniqueNames}. Reuse prefab/shared names and keep stable identity in " +
+                        "authoring components instead of sequence-suffixed GameObject names.";
+                    return false;
+                }
             }
 
             error = null;

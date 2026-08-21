@@ -67,14 +67,17 @@ public sealed class DenseCityBuildingPresentationReplayTransactionTests
                 DenseCityBuildingDefinitionLibrary.LoadExisting());
 
             Assert.That(realized, Has.Count.EqualTo(1));
+            Assert.That(
+                realized[0].Authoring.name,
+                Is.EqualTo(DenseCityBuildingPresentationRealizer.SharedBuildingDebugName));
             Assert.That(realized[0].IntactVisualRoot.childCount, Is.EqualTo(1));
             Assert.That(realized[0].DestroyedVisualRoot.childCount, Is.EqualTo(1));
             Assert.That(
                 realized[0].IntactVisualRoot.GetChild(0).name,
-                Does.StartWith("intact-attachment_"));
+                Is.EqualTo("intact-attachment"));
             Assert.That(
                 realized[0].DestroyedVisualRoot.GetChild(0).name,
-                Does.StartWith("destroyed-attachment_"));
+                Is.EqualTo("destroyed-attachment"));
             OperationMapBuildingAttachmentAuthoring intactAttachment =
                 realized[0].IntactVisualRoot.GetChild(0)
                     .GetComponent<OperationMapBuildingAttachmentAuthoring>();

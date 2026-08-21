@@ -34,7 +34,7 @@ namespace Game.Editor
             {
                 instance =
                     DenseCityPhysicsComponentStripper.InstantiatePrefabWithoutPhysics(prefab, parent);
-                instance.name = $"{prefab.name}_{presentation.Identity.DeterministicSequence:D6}";
+                instance.name = GetSharedDebugName(prefab);
                 ApplyWorldMatrix(instance.transform, presentation.WorldMatrix);
                 ApplyRecordedSingleMaterialOverride(instance, presentation);
                 RequireMaterialIdentity(instance, presentation);
@@ -83,7 +83,7 @@ namespace Game.Editor
             {
                 instance =
                     DenseCityPhysicsComponentStripper.InstantiatePrefabWithoutPhysics(prefab, parent);
-                instance.name = $"{prefab.name}_{presentation.Identity.DeterministicSequence:D6}";
+                instance.name = GetSharedDebugName(prefab);
                 ApplyWorldMatrix(instance.transform, presentation.WorldMatrix);
                 ApplyRecordedSingleMaterialOverride(instance, presentation);
                 RequireMaterialIdentity(instance, presentation);
@@ -143,6 +143,13 @@ namespace Game.Editor
                     $"'{presentation.Identity.StableKey}'.");
             }
             return prefab;
+        }
+
+        internal static string GetSharedDebugName(GameObject prefab)
+        {
+            if (prefab == null || string.IsNullOrWhiteSpace(prefab.name))
+                throw new ArgumentException("A named persistent prefab is required.", nameof(prefab));
+            return prefab.name;
         }
 
         private static void ApplyRecordedSingleMaterialOverride(

@@ -32,8 +32,11 @@ namespace Game.Editor
         private const string OperationMapId = "opmap.skirmish.desert_base_01";
         private const string EntitySceneGuid = "c00140f2e94a04c3084c8dcb0c18cbd0";
         private const int ExpectedLegacyIdentityCount = 9544;
-        private const int ExpectedDenseIdentityCount = 36946;
-        private const int ExpectedRenderRowCount = 82797;
+        private const int ExpectedDenseIdentityCount = 36304;
+        private const int ExpectedBakedRenderEntityCount = 76517;
+        private const int ExpectedFixedProxySlotCount = 7784;
+        private const int ExpectedRenderRowCount =
+            ExpectedBakedRenderEntityCount + ExpectedFixedProxySlotCount;
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
 
         internal static DenseRuntimeParityManifestSummary Write(

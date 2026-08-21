@@ -11,9 +11,9 @@ namespace Game.UI.Runtime
     {
         private const string WorldRingName = "AriaAssistantPreviewHighlightRuntime";
         private const int WorldRingSegments = 48;
-        private const float WorldRingRadius = 2.35f;
+        private const float WorldRingRadius = 4f;
         private const float WorldRingHeightOffset = 0.38f;
-        private const float WorldRingWidth = 0.18f;
+        private const float WorldRingWidth = 0.38f;
         private const byte SelectRecommendationKind = 1;
         private const byte MoveRecommendationKind = 2;
         private const byte AttackRecommendationKind = 3;
@@ -266,35 +266,30 @@ namespace Game.UI.Runtime
             Camera worldCamera = _worldCamera;
             if (worldCamera == null || !worldCamera.isActiveAndEnabled)
             {
-                _screenTargetIndicator.gameObject.SetActive(false);
-                return;
+                worldCamera = Camera.main;
+                if (worldCamera != null && worldCamera.isActiveAndEnabled)
+                    _worldCamera = worldCamera;
             }
 
-            Vector3 screen = worldCamera.WorldToScreenPoint(_screenTargetWorld + Vector3.up * 2.8f);
-            if (screen.z <= 0f || !(_screenTargetCanvas.transform is RectTransform canvasRect))
+            if (worldCamera == null || !worldCamera.isActiveAndEnabled)
             {
-                _screenTargetIndicator.gameObject.SetActive(false);
+                ShowScreenTargetFallback();
                 return;
             }
 
-            Camera eventCamera = _screenTargetCanvas.renderMode == RenderMode.ScreenSpaceOverlay
-                ? null
-                : _screenTargetCanvas.worldCamera;
-            if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                    canvasRect,
-                    screen,
-                    eventCamera,
-                    out Vector2 localPoint))
+            Vector3 viewport = worldCamera.WorldToViewportPoint(
+                _screenTargetWorld + Vector3.up * 2.8f);
+            if (viewport.z <= 0f)
             {
-                _screenTargetIndicator.gameObject.SetActive(false);
+                ShowScreenTargetFallback();
                 return;
             }
 
-            Vector2 half = _screenTargetIndicator.sizeDelta * 0.5f;
-            Rect bounds = canvasRect.rect;
-            localPoint.x = Mathf.Clamp(localPoint.x, bounds.xMin + half.x, bounds.xMax - half.x);
-            localPoint.y = Mathf.Clamp(localPoint.y, bounds.yMin + half.y, bounds.yMax - half.y);
-            SetAnchoredPositionIfChanged(_screenTargetIndicator, localPoint);
+            Vector2 viewportAnchor = new(
+                Mathf.Clamp(viewport.x, 0.08f, 0.92f),
+                Mathf.Clamp(viewport.y, 0.26f, 0.88f));
+            SetAnchorsIfChanged(_screenTargetIndicator, viewportAnchor);
+            SetAnchoredPositionIfChanged(_screenTargetIndicator, Vector2.zero);
             _screenTargetIndicator.localScale = Vector3.one;
             if (!_screenTargetIndicator.gameObject.activeSelf)
                 _screenTargetIndicator.gameObject.SetActive(true);
@@ -354,6 +349,7 @@ namespace Game.UI.Runtime
             Rect bounds = canvasRect.rect;
             localPoint.x = Mathf.Clamp(localPoint.x, bounds.xMin + half.x, bounds.xMax - half.x);
             localPoint.y = Mathf.Clamp(localPoint.y, bounds.yMin, bounds.yMax - _screenTargetIndicator.sizeDelta.y);
+            SetAnchorsIfChanged(_screenTargetIndicator, new Vector2(0.5f, 0.5f));
             SetAnchoredPositionIfChanged(_screenTargetIndicator, localPoint);
             _screenTargetIndicator.localScale = Vector3.one;
             if (!_screenTargetIndicator.gameObject.activeSelf)

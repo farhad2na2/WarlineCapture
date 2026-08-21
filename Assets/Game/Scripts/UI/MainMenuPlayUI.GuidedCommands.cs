@@ -6,17 +6,31 @@ namespace Game.UI.Runtime
     public sealed partial class MainMenuPlayUI
     {
         private readonly GuidedHudRuntime _guidedHudRuntime = new();
+        private UnityEngine.Camera _guidanceWorldCamera;
 
-        private void TickGuidedHudRuntime() =>
+        private void TickGuidedHudRuntime()
+        {
+            UnityEngine.Camera activeCamera = _selectionUiCameraSystem?.WorldCamera;
+            if (activeCamera != null)
+                _guidanceWorldCamera = activeCamera;
+            _matchHudAssistantUiSystem.BindWorldCamera(_guidanceWorldCamera);
             _guidedHudRuntime.Tick(this, _matchHudCommandControlsView);
+        }
 
-        private void DisposeGuidedHudRuntime() => _guidedHudRuntime.Dispose();
+        private void DisposeGuidedHudRuntime()
+        {
+            _guidedHudRuntime.Dispose();
+            _guidanceWorldCamera = null;
+        }
 
         public void BindGuidedHudRuntime(UIShellContentView shellContent) =>
             _guidedHudRuntime.BindShellContent(shellContent);
 
-        public void BindGuidanceWorldCamera(UnityEngine.Camera worldCamera) =>
+        public void BindGuidanceWorldCamera(UnityEngine.Camera worldCamera)
+        {
+            _guidanceWorldCamera = worldCamera;
             _matchHudAssistantUiSystem.BindWorldCamera(worldCamera);
+        }
 
         public void BindMatchHudCommandControls(
             MatchOverlayCommandControlsView commandControlsView)

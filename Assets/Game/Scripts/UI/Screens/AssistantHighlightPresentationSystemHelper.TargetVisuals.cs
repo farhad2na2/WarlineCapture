@@ -48,7 +48,7 @@ namespace Game.UI.Runtime
             _screenTargetIndicator.anchorMin = new Vector2(0.5f, 0.5f);
             _screenTargetIndicator.anchorMax = new Vector2(0.5f, 0.5f);
             _screenTargetIndicator.pivot = new Vector2(0.5f, 0f);
-            _screenTargetIndicator.sizeDelta = new Vector2(310f, 96f);
+            _screenTargetIndicator.sizeDelta = new Vector2(620f, 160f);
 
             Canvas isolatedCanvas = indicator.GetComponent<Canvas>();
             isolatedCanvas.overrideSorting = true;
@@ -73,10 +73,10 @@ namespace Game.UI.Runtime
             _screenTargetLabel = labelObject.GetComponent<TextMeshProUGUI>();
             _screenTargetLabel.text = "ARIA TARGET\n\u25bc";
             _screenTargetLabel.fontStyle = FontStyles.Bold;
-            _screenTargetLabel.fontSize = 28f;
+            _screenTargetLabel.fontSize = 44f;
             _screenTargetLabel.enableAutoSizing = true;
-            _screenTargetLabel.fontSizeMin = 18f;
-            _screenTargetLabel.fontSizeMax = 30f;
+            _screenTargetLabel.fontSizeMin = 32f;
+            _screenTargetLabel.fontSizeMax = 52f;
             _screenTargetLabel.color = new Color(0.38f, 1f, 0.96f, 1f);
             _screenTargetLabel.alignment = TextAlignmentOptions.Center;
             _screenTargetLabel.textWrappingMode = TextWrappingModes.NoWrap;
@@ -110,6 +110,28 @@ namespace Game.UI.Runtime
         {
             if ((target.anchoredPosition - position).sqrMagnitude > 0.25f)
                 target.anchoredPosition = position;
+        }
+
+        private static void SetAnchorsIfChanged(RectTransform target, Vector2 anchor)
+        {
+            if ((target.anchorMin - anchor).sqrMagnitude <= 0.000001f &&
+                (target.anchorMax - anchor).sqrMagnitude <= 0.000001f)
+                return;
+
+            target.anchorMin = anchor;
+            target.anchorMax = anchor;
+        }
+
+        private void ShowScreenTargetFallback()
+        {
+            if (_screenTargetIndicator == null)
+                return;
+
+            SetAnchorsIfChanged(_screenTargetIndicator, new Vector2(0.5f, 0.26f));
+            SetAnchoredPositionIfChanged(_screenTargetIndicator, Vector2.zero);
+            _screenTargetIndicator.localScale = Vector3.one;
+            if (!_screenTargetIndicator.gameObject.activeSelf)
+                _screenTargetIndicator.gameObject.SetActive(true);
         }
 
         private void EnsureWorldRing()

@@ -45,4 +45,28 @@ public sealed class WindowsQualcommGraphicsBackendGuardTests
             "Qualcomm(R) Adreno(TM) X1-85 GPU",
             isBatchMode: true));
     }
+
+    [Test]
+    public void RequiresPersistentD3D11Preference_DefaultGraphicsApis_ReturnsTrue()
+    {
+        Assert.IsTrue(WindowsQualcommGraphicsBackendGuard.RequiresPersistentD3D11Preference(
+            useDefaultGraphicsApis: true,
+            new[] { GraphicsDeviceType.Direct3D11 }));
+    }
+
+    [Test]
+    public void RequiresPersistentD3D11Preference_D3D12First_ReturnsTrue()
+    {
+        Assert.IsTrue(WindowsQualcommGraphicsBackendGuard.RequiresPersistentD3D11Preference(
+            useDefaultGraphicsApis: false,
+            new[] { GraphicsDeviceType.Direct3D12, GraphicsDeviceType.Direct3D11 }));
+    }
+
+    [Test]
+    public void RequiresPersistentD3D11Preference_D3D11First_ReturnsFalse()
+    {
+        Assert.IsFalse(WindowsQualcommGraphicsBackendGuard.RequiresPersistentD3D11Preference(
+            useDefaultGraphicsApis: false,
+            new[] { GraphicsDeviceType.Direct3D11 }));
+    }
 }

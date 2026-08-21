@@ -19,19 +19,22 @@ namespace Game.Editor
 
         static WindowsQualcommGraphicsBackendGuard()
         {
-            if (!RequiresD3D11(
+            if (Application.isBatchMode ||
+                !IsQualcommAdrenoWindowsDevice(
                     SystemInfo.operatingSystemFamily,
-                    SystemInfo.graphicsDeviceType,
-                    SystemInfo.graphicsDeviceName,
-                    Application.isBatchMode))
+                    SystemInfo.graphicsDeviceName))
             {
                 return;
             }
 
-            EditorApplication.delayCall += ReopenWithD3D11;
-            Debug.LogWarning(
-                "[GraphicsBackendGuard] Qualcomm Adreno D3D12 was detected. " +
-                "Reopening the project with D3D11 to avoid the native Match-scene heap-corruption crash.");
+            EditorApplication.delayCall += ConfigureAndReopenWithD3D11;
+            if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Direct3D12)
+            {
+                Debug.LogWarning(
+                    "[GraphicsBackendGuard] Qualcomm Adreno D3D12 was detected. " +
+                    "Persisting D3D11 for Windows before reopening the project to avoid the native " +
+                    "Match-scene heap-corruption crash.");
+            }
         }
 
         internal static bool RequiresD3D11(
@@ -40,9 +43,19 @@ namespace Game.Editor
             string graphicsDeviceName,
             bool isBatchMode)
         {
-            if (isBatchMode ||
-                operatingSystemFamily != OperatingSystemFamily.Windows ||
-                graphicsDeviceType != GraphicsDeviceType.Direct3D12 ||
+            if (isBatchMode || graphicsDeviceType != GraphicsDeviceType.Direct3D12)
+            {
+                return false;
+            }
+
+            return IsQualcommAdrenoWindowsDevice(operatingSystemFamily, graphicsDeviceName);
+        }
+
+        internal static bool IsQualcommAdrenoWindowsDevice(
+            OperatingSystemFamily operatingSystemFamily,
+            string graphicsDeviceName)
+        {
+            if (operatingSystemFamily != OperatingSystemFamily.Windows ||
                 string.IsNullOrWhiteSpace(graphicsDeviceName))
             {
                 return false;
@@ -52,10 +65,24 @@ namespace Game.Editor
                 graphicsDeviceName.IndexOf("Adreno", StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
-        private static void ReopenWithD3D11()
+        internal static bool RequiresPersistentD3D11Preference(
+            bool useDefaultGraphicsApis,
+            GraphicsDeviceType[] graphicsApis)
         {
-            EditorApplication.delayCall -= ReopenWithD3D11;
+            return useDefaultGraphicsApis ||
+                graphicsApis == null ||
+                graphicsApis.Length == 0 ||
+                graphicsApis[0] != GraphicsDeviceType.Direct3D11;
+        }
+
+        private static void ConfigureAndReopenWithD3D11()
+        {
+            EditorApplication.delayCall -= ConfigureAndReopenWithD3D11;
             if (restartQueued || EditorApplication.isPlayingOrWillChangePlaymode)
+                return;
+
+            PersistD3D11Preference();
+            if (SystemInfo.graphicsDeviceType != GraphicsDeviceType.Direct3D12)
                 return;
 
             restartQueued = true;
@@ -77,6 +104,22 @@ namespace Game.Editor
             }
 
             openProject.Invoke(null, new object[] { projectPath, new[] { ForceD3D11Argument } });
+        }
+
+        private static void PersistD3D11Preference()
+        {
+            const BuildTarget target = BuildTarget.StandaloneWindows64;
+            bool useDefaultGraphicsApis = PlayerSettings.GetUseDefaultGraphicsAPIs(target);
+            GraphicsDeviceType[] graphicsApis = PlayerSettings.GetGraphicsAPIs(target);
+            if (!RequiresPersistentD3D11Preference(useDefaultGraphicsApis, graphicsApis))
+                return;
+
+            PlayerSettings.SetUseDefaultGraphicsAPIs(target, false);
+            PlayerSettings.SetGraphicsAPIs(target, new[] { GraphicsDeviceType.Direct3D11 });
+            AssetDatabase.SaveAssets();
+            Debug.Log(
+                "[GraphicsBackendGuard] Windows graphics API preference set to D3D11 for Qualcomm Adreno. " +
+                "Future Hub launches will no longer need the D3D12 close/reopen cycle.");
         }
     }
 }

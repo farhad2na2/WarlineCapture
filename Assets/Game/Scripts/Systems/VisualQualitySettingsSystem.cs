@@ -25,9 +25,11 @@ namespace Game.Runtime
         private bool _hasOriginalCameraData;
         private float _originalLowRenderScale;
         private float _originalMediumRenderScale;
+        private float _originalHighRenderScale;
         private float _originalPremiumRenderScale;
         private bool _hasOriginalLowRenderScale;
         private bool _hasOriginalMediumRenderScale;
+        private bool _hasOriginalHighRenderScale;
         private bool _hasOriginalPremiumRenderScale;
         private VisualQualityRuntimeMode _appliedMode;
         private float _appliedShadowStrengthCap = 1f;
@@ -77,6 +79,12 @@ namespace Game.Runtime
                     _hasOriginalMediumRenderScale = true;
                 }
 
+                if (premiumProfile.HighRenderPipelineAsset != null)
+                {
+                    _originalHighRenderScale = premiumProfile.HighRenderPipelineAsset.renderScale;
+                    _hasOriginalHighRenderScale = true;
+                }
+
                 if (premiumProfile.RenderPipelineAsset != null)
                 {
                     _originalPremiumRenderScale = premiumProfile.RenderPipelineAsset.renderScale;
@@ -117,6 +125,7 @@ namespace Game.Runtime
             _hasOriginalCameraData = false;
             _hasOriginalLowRenderScale = false;
             _hasOriginalMediumRenderScale = false;
+            _hasOriginalHighRenderScale = false;
             _hasOriginalPremiumRenderScale = false;
             _hasAppliedMode = false;
             _appliedShadowStrengthCap = 1f;
@@ -173,7 +182,7 @@ namespace Game.Runtime
             {
                 VisualQualityRuntimeMode.Low => _premiumProfile.LowSunShadowStrength,
                 VisualQualityRuntimeMode.Medium => _premiumProfile.MediumSunShadowStrength,
-                VisualQualityRuntimeMode.High => _premiumProfile.MediumSunShadowStrength,
+                VisualQualityRuntimeMode.High => _premiumProfile.HighSunShadowStrength,
                 VisualQualityRuntimeMode.Ultra => _premiumProfile.PremiumSunShadowStrength,
                 _ => 1f
             };
@@ -213,7 +222,7 @@ namespace Game.Runtime
             if (_worldCamera != null && _worldCamera.TryGetComponent(out UniversalAdditionalCameraData cameraData))
             {
                 cameraData.renderPostProcessing = false;
-                cameraData.antialiasing = AntialiasingMode.None;
+                cameraData.antialiasing = _premiumProfile.CameraAntialiasingMode;
             }
 
             _overrideApplied = true;
@@ -221,18 +230,18 @@ namespace Game.Runtime
 
         private void ApplyHighStaticSettings()
         {
-            if (_premiumProfile.MediumRenderPipelineAsset != null)
+            if (_premiumProfile.HighRenderPipelineAsset != null)
             {
-                QualitySettings.renderPipeline = _premiumProfile.MediumRenderPipelineAsset;
-                _premiumProfile.MediumRenderPipelineAsset.renderScale = Mathf.Clamp(_premiumProfile.MediumRenderScaleOverride, MinimumHighRenderScale, 1f);
+                QualitySettings.renderPipeline = _premiumProfile.HighRenderPipelineAsset;
+                _premiumProfile.HighRenderPipelineAsset.renderScale = Mathf.Clamp(_premiumProfile.HighRenderScaleOverride, MinimumHighRenderScale, 1f);
             }
 
-            if (_globalVolume != null)
-                _globalVolume.sharedProfile = _originalVolumeProfile;
+            if (_globalVolume != null && _premiumProfile.HighVolumeProfile != null)
+                _globalVolume.sharedProfile = _premiumProfile.HighVolumeProfile;
 
             if (_worldCamera != null && _worldCamera.TryGetComponent(out UniversalAdditionalCameraData cameraData))
             {
-                cameraData.renderPostProcessing = false;
+                cameraData.renderPostProcessing = _premiumProfile.EnableHighCameraPostProcessing;
                 cameraData.antialiasing = _premiumProfile.CameraAntialiasingMode;
             }
 
@@ -291,6 +300,9 @@ namespace Game.Runtime
 
             if (_hasOriginalMediumRenderScale && _premiumProfile.MediumRenderPipelineAsset != null)
                 _premiumProfile.MediumRenderPipelineAsset.renderScale = _originalMediumRenderScale;
+
+            if (_hasOriginalHighRenderScale && _premiumProfile.HighRenderPipelineAsset != null)
+                _premiumProfile.HighRenderPipelineAsset.renderScale = _originalHighRenderScale;
 
             if (_hasOriginalPremiumRenderScale && _premiumProfile.RenderPipelineAsset != null)
                 _premiumProfile.RenderPipelineAsset.renderScale = _originalPremiumRenderScale;

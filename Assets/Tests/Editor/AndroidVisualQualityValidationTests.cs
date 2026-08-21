@@ -17,11 +17,13 @@ using UnityEngine;
 public sealed class AndroidVisualQualityValidationTests
 {
     private const string MobileRenderPipelinePath = "Assets/Settings/Mobile_RPAsset.asset";
+    private const string HighMobileRenderPipelinePath = "Assets/Game/Rendering/Mobile_RPAsset_MobileCandidate.asset";
     private const string MobileRendererPath = "Assets/Settings/Mobile_Renderer.asset";
     private const string VisualQualityProfilePath = "Assets/Game/Rendering/VisualQualityConfig.asset";
     private const string MainMenuPlayUiPath = "Assets/Game/Scripts/UI/MainMenuPlayUI.cs";
     private const float MinimumLowRenderScale = 0.50f;
     private const float BalancedMobileRenderScale = 0.50f;
+    private const float HighMobileRenderScale = 0.75f;
     private const int BalancedMobileMsaa = 1;
     private const int BalancedMobileUpscalingFilter = 3;
     private const float BalancedMobileFsrSharpness = 0.72f;
@@ -34,14 +36,15 @@ public sealed class AndroidVisualQualityValidationTests
         {
             int passed = 0;
             RunCase(() => MobileRenderPipelineUsesBalancedScaleAndMsaa(), ref passed);
+            RunCase(() => HighMobileRenderPipelineUsesSharperScaleAndExtendedShadows(), ref passed);
             RunCase(() => MobileRenderPipelineUsesGpuInstancedDrawingDefaults(), ref passed);
             RunCase(() => MobileRendererUsesForwardPlusForEntitiesGraphics(), ref passed);
             RunCase(() => GraphicsSettingsRetainsBatchRendererGroupShaderVariants(), ref passed);
             RunCase(() => UniversalRenderPipelineGlobalSettingsRetainRuntimeResources(), ref passed);
             RunCase(() => AndroidBuildDisablesStaticBatchingForGpuResidentDrawer(), ref passed);
             RunCase(() => AndroidBuildEnablesOptimizedFramePacing(), ref passed);
-            RunCase(() => VisualQualityProfileUsesBalancedAndroidMatchRendering(), ref passed);
-            RunCase(() => HighModeKeepsCameraPostProcessingDisabled(), ref passed);
+            RunCase(() => VisualQualityProfileDefinesDistinctMediumAndHighRendering(), ref passed);
+            RunCase(() => HighModeEnablesConfiguredMobilePostProcessing(), ref passed);
             RunCase(() => MobileQualityTierUsesBalancedMsaaAndShadows(), ref passed);
             RunCase(() => AndroidFrameRatePolicyClampsOneTwentyToSixty(), ref passed);
             RunCase(() => AndroidFrameRatePolicyPreservesThirtyAndSixty(), ref passed);
@@ -97,6 +100,32 @@ public sealed class AndroidVisualQualityValidationTests
         Assert.That(shadowDistance.floatValue, Is.EqualTo(BalancedMobileShadowDistance).Within(0.001f), "Android/mobile shadows should stay bounded for 60 FPS.");
         Assert.AreEqual(DisabledMobileLightingFeature, lightCookies.intValue, "Android/mobile pipeline should not carry light-cookie support when additional lights are disabled.");
         Assert.AreEqual(DisabledMobileLightingFeature, lightLayers.intValue, "Android/mobile pipeline should not carry light-layer support when additional lights are disabled.");
+    }
+
+    [Test]
+    public static void HighMobileRenderPipelineUsesSharperScaleAndExtendedShadows()
+    {
+        UnityEngine.Object asset =
+            AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(HighMobileRenderPipelinePath);
+        Assert.NotNull(asset, $"Missing High mobile render pipeline asset at {HighMobileRenderPipelinePath}.");
+
+        SerializedObject serializedAsset = new(asset);
+        SerializedProperty hdr = serializedAsset.FindProperty("m_SupportsHDR");
+        SerializedProperty msaa = serializedAsset.FindProperty("m_MSAA");
+        SerializedProperty renderScale = serializedAsset.FindProperty("m_RenderScale");
+        SerializedProperty upscalingFilter = serializedAsset.FindProperty("m_UpscalingFilter");
+        SerializedProperty shadowDistance = serializedAsset.FindProperty("m_ShadowDistance");
+
+        Assert.NotNull(hdr, "High mobile URP asset is missing serialized m_SupportsHDR.");
+        Assert.NotNull(msaa, "High mobile URP asset is missing serialized m_MSAA.");
+        Assert.NotNull(renderScale, "High mobile URP asset is missing serialized m_RenderScale.");
+        Assert.NotNull(upscalingFilter, "High mobile URP asset is missing serialized m_UpscalingFilter.");
+        Assert.NotNull(shadowDistance, "High mobile URP asset is missing serialized m_ShadowDistance.");
+        Assert.AreEqual(0, hdr.intValue, "High mobile must keep HDR disabled to avoid unnecessary bandwidth cost.");
+        Assert.AreEqual(BalancedMobileMsaa, msaa.intValue, "High mobile must keep MSAA disabled and use FSR plus camera AA.");
+        Assert.That(renderScale.floatValue, Is.EqualTo(HighMobileRenderScale).Within(0.001f), "High mobile must render the world at 75% resolution.");
+        Assert.AreEqual(BalancedMobileUpscalingFilter, upscalingFilter.intValue, "High mobile must retain FSR upscaling.");
+        Assert.That(shadowDistance.floatValue, Is.EqualTo(48f).Within(0.001f), "High mobile must keep useful RTS shadows visible farther than Medium.");
     }
 
     [Test]
@@ -260,7 +289,7 @@ public sealed class AndroidVisualQualityValidationTests
     }
 
     [Test]
-    public static void VisualQualityProfileUsesBalancedAndroidMatchRendering()
+    public static void VisualQualityProfileDefinesDistinctMediumAndHighRendering()
     {
         VisualQualityProfileAsset profile =
             AssetDatabase.LoadAssetAtPath<VisualQualityProfileAsset>(VisualQualityProfilePath);
@@ -268,7 +297,13 @@ public sealed class AndroidVisualQualityValidationTests
 
         SerializedObject serializedProfile = new(profile);
         SerializedProperty cameraAntialiasingMode = serializedProfile.FindProperty("cameraAntialiasingMode");
+        SerializedProperty mediumPipeline = serializedProfile.FindProperty("mediumRenderPipelineAsset");
+        SerializedProperty highPipeline = serializedProfile.FindProperty("highRenderPipelineAsset");
+        SerializedProperty highVolume = serializedProfile.FindProperty("highVolumeProfile");
         Assert.NotNull(cameraAntialiasingMode, "Visual quality profile is missing serialized cameraAntialiasingMode.");
+        Assert.NotNull(mediumPipeline, "Visual quality profile is missing serialized mediumRenderPipelineAsset.");
+        Assert.NotNull(highPipeline, "Visual quality profile is missing serialized highRenderPipelineAsset.");
+        Assert.NotNull(highVolume, "Visual quality profile is missing serialized highVolumeProfile.");
 
         Assert.GreaterOrEqual(
             profile.LowRenderScaleOverride,
@@ -277,7 +312,19 @@ public sealed class AndroidVisualQualityValidationTests
         Assert.That(
             profile.MediumRenderScaleOverride,
             Is.EqualTo(BalancedMobileRenderScale).Within(0.001f),
-            "Match High mode uses the balanced mobile render scale on Android.");
+            "Medium must preserve the former High tier's balanced mobile render scale.");
+        Assert.That(
+            profile.HighRenderScaleOverride,
+            Is.EqualTo(HighMobileRenderScale).Within(0.001f),
+            "High must use the sharper mobile render scale.");
+        Assert.NotNull(mediumPipeline.objectReferenceValue, "Medium requires its mobile render pipeline.");
+        Assert.NotNull(highPipeline.objectReferenceValue, "High requires its dedicated mobile render pipeline.");
+        Assert.AreNotSame(
+            mediumPipeline.objectReferenceValue,
+            highPipeline.objectReferenceValue,
+            "High must not silently reuse Medium's lower-resolution render pipeline.");
+        Assert.NotNull(highVolume.objectReferenceValue, "High requires a configured color-grading volume profile.");
+        Assert.True(profile.EnableHighCameraPostProcessing, "High must enable its configured mobile color treatment.");
         Assert.AreEqual(
             1,
             cameraAntialiasingMode.intValue,
@@ -289,7 +336,7 @@ public sealed class AndroidVisualQualityValidationTests
     }
 
     [Test]
-    public static void HighModeKeepsCameraPostProcessingDisabled()
+    public static void HighModeEnablesConfiguredMobilePostProcessing()
     {
         VisualQualityProfileAsset profile = ScriptableObject.CreateInstance<VisualQualityProfileAsset>();
         GameObject cameraObject = new("AndroidVisualQualityCamera", typeof(Camera));
@@ -300,6 +347,7 @@ public sealed class AndroidVisualQualityValidationTests
             SerializedObject serializedProfile = new(profile);
             serializedProfile.FindProperty("runtimeMode").intValue = (int)VisualQualityRuntimeMode.High;
             serializedProfile.FindProperty("cameraAntialiasingMode").intValue = 1;
+            serializedProfile.FindProperty("enableHighCameraPostProcessing").boolValue = true;
             serializedProfile.ApplyModifiedPropertiesWithoutUndo();
 
             Type cameraDataType = Type.GetType(
@@ -323,13 +371,13 @@ public sealed class AndroidVisualQualityValidationTests
             Assert.NotNull(initialize, "VisualQualitySettingsSystem is missing Initialize.");
             initialize.Invoke(system, new object[] { profile, cameraObject.GetComponent<Camera>(), null, null });
 
-            Assert.False(
+            Assert.True(
                 (bool)renderPostProcessing.GetValue(cameraData),
-                "Match High mode must keep camera post processing disabled on Android to avoid color grading and FPS regressions.");
+                "Match High mode must enable its configured mobile color treatment.");
             Assert.AreEqual(
                 1,
                 Convert.ToInt32(antialiasing.GetValue(cameraData)),
-                "Match High mode may retain the configured camera AA enum, but it must not force the post-processing path.");
+                "Match High mode must retain the configured camera AA enum.");
         }
         finally
         {
@@ -725,12 +773,16 @@ public sealed class AndroidVisualQualityValidationTests
         SerializedObject serializedProfile = new(profile);
         UnityEngine.Object lowPipeline = serializedProfile.FindProperty("lowRenderPipelineAsset").objectReferenceValue;
         UnityEngine.Object mediumPipeline = serializedProfile.FindProperty("mediumRenderPipelineAsset").objectReferenceValue;
+        UnityEngine.Object highPipeline = serializedProfile.FindProperty("highRenderPipelineAsset").objectReferenceValue;
         UnityEngine.Object ultraPipeline = serializedProfile.FindProperty("renderPipelineAsset").objectReferenceValue;
+        UnityEngine.Object highVolumeProfile = serializedProfile.FindProperty("highVolumeProfile").objectReferenceValue;
         UnityEngine.Object ultraVolumeProfile = serializedProfile.FindProperty("globalVolumeProfile").objectReferenceValue;
         int configuredAntialiasing = serializedProfile.FindProperty("cameraAntialiasingMode").intValue;
         Assert.NotNull(lowPipeline);
         Assert.NotNull(mediumPipeline);
+        Assert.NotNull(highPipeline);
         Assert.NotNull(ultraPipeline);
+        Assert.NotNull(highVolumeProfile);
         Assert.NotNull(ultraVolumeProfile);
 
         Type cameraDataType = Type.GetType(
@@ -787,19 +839,19 @@ public sealed class AndroidVisualQualityValidationTests
                 cameraData,
                 volume,
                 expectedPostProcessing: false,
-                expectedAntialiasing: 0,
+                expectedAntialiasing: configuredAntialiasing,
                 expectedShadowStrengthCap: profile.MediumSunShadowStrength);
             AssertRuntimeQualityTier(
                 system,
                 VisualQualityRuntimeMode.High,
-                mediumPipeline,
-                profile.MediumRenderScaleOverride,
-                baselineVolumeProfile,
+                highPipeline,
+                profile.HighRenderScaleOverride,
+                highVolumeProfile,
                 cameraData,
                 volume,
-                expectedPostProcessing: false,
+                expectedPostProcessing: profile.EnableHighCameraPostProcessing,
                 expectedAntialiasing: configuredAntialiasing,
-                expectedShadowStrengthCap: profile.MediumSunShadowStrength);
+                expectedShadowStrengthCap: profile.HighSunShadowStrength);
             AssertRuntimeQualityTier(
                 system,
                 VisualQualityRuntimeMode.Ultra,

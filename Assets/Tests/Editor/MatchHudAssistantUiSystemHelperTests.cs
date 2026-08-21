@@ -51,6 +51,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             passed++;
             RunCase(test => test.MissionReplay_ResetClearsCompletedGuidanceState());
             passed++;
+            RunCase(test => test.MissionReplay_ContentVersionChangeClearsPendingGuidanceState());
+            passed++;
             RunCase(test => test.DiagnosticSuppressionState_IsOwnedByEachHudInstance());
             passed++;
 
@@ -585,6 +587,36 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.IsFalse(GetPrivateField<bool>(presentation, "_worldTargetShowRequested"));
         Assert.IsFalse(presentation.LastAppliedModel.Active,
             "A replay must not reuse the previous attempt's squad centroid or command step.");
+    }
+
+    [Test]
+    public void MissionReplay_ContentVersionChangeClearsPendingGuidanceState()
+    {
+        var shellObject = new GameObject("MissionReplayShell");
+        var shellContent = shellObject.AddComponent<UIShellContentView>();
+        var ui = new MainMenuPlayUI();
+        ui.BindGuidedHudRuntime(shellContent);
+
+        MatchHudAssistantUiSystemHelper assistant =
+            GetPrivateField<MatchHudAssistantUiSystemHelper>(ui, "_matchHudAssistantUiSystem");
+        AssistantHighlightPresentationSystemHelper presentation =
+            GetPrivateField<AssistantHighlightPresentationSystemHelper>(
+                assistant,
+                "_highlightPresentationSystem");
+        presentation.ApplyReadModel(CreateHighlightModel(701u, recommendationKind: 2));
+        SetPrivateField(presentation, "_commandGuidanceArmed", true);
+        SetPrivateField(presentation, "_awaitingNextShowMe", true);
+        SetPrivateField(presentation, "_worldTargetShowRequested", true);
+
+        shellContent.MarkContentChanged();
+        ui.BindGuidedHudRuntime(shellContent);
+
+        Assert.IsFalse(GetPrivateField<bool>(presentation, "_commandGuidanceArmed"));
+        Assert.IsFalse(GetPrivateField<bool>(presentation, "_awaitingNextShowMe"));
+        Assert.IsFalse(GetPrivateField<bool>(presentation, "_worldTargetShowRequested"));
+        Assert.IsFalse(presentation.LastAppliedModel.Active,
+            "A reinstalled Match HUD must clear destination guidance from the previous mission attempt.");
+        UnityEngine.Object.DestroyImmediate(shellObject);
     }
 
     private static void AssertGuidedCommandHighlight(

@@ -773,12 +773,14 @@ internal static class M01OwnerFeedbackValidation
 
         int friendlyEntities = 0;
         int friendlyAlive = 0;
+        float3 friendlyWorldPositionSum = float3.zero;
         StringBuilder friendlyState = new();
         using (EntityQuery friendlyQuery = entityManager.CreateEntityQuery(
                    ComponentType.ReadOnly<CampaignMissionUnitRoleComponent>(),
                    ComponentType.ReadOnly<Faction>(),
                    ComponentType.ReadOnly<UnitHealth>(),
-                   ComponentType.ReadOnly<UnitGrid>()))
+                   ComponentType.ReadOnly<UnitGrid>(),
+                   ComponentType.ReadOnly<LocalTransform>()))
         using (NativeArray<Entity> friendlies = friendlyQuery.ToEntityArray(Allocator.Temp))
         {
             for (int index = 0; index < friendlies.Length; index++)
@@ -792,13 +794,52 @@ internal static class M01OwnerFeedbackValidation
                     continue;
                 UnitHealth unitHealth = entityManager.GetComponentData<UnitHealth>(entity);
                 UnitGrid unitGrid = entityManager.GetComponentData<UnitGrid>(entity);
+                LocalTransform localTransform = entityManager.GetComponentData<LocalTransform>(entity);
                 friendlyEntities++;
                 if (unitHealth.Current > 0) friendlyAlive++;
+                friendlyWorldPositionSum += localTransform.Position;
                 if (friendlyState.Length > 0) friendlyState.Append(';');
                 friendlyState.Append(entity.Index).Append('@').Append(unitGrid.Cell)
+                    .Append(" world=").Append(localTransform.Position)
                     .Append(" hp=").Append(unitHealth.Current)
                     .Append(" guided=").Append(
                         entityManager.HasComponent<CampaignMissionGuidedMoveInProgressTag>(entity) ? 1 : 0);
+            }
+        }
+
+        float3 friendlyCentroid = friendlyEntities > 0
+            ? friendlyWorldPositionSum / friendlyEntities
+            : float3.zero;
+        float3 moveTarget = float3.zero;
+        using (EntityQuery metadataQuery = entityManager.CreateEntityQuery(
+                   ComponentType.ReadOnly<OperationMapMetadataComponent>()))
+        {
+            if (metadataQuery.CalculateEntityCount() == 1)
+            {
+                OperationMapMetadataComponent metadata = metadataQuery.GetSingleton<OperationMapMetadataComponent>();
+                if (metadata.Blob.IsCreated && CampaignMissionSpawnSystem.TryFindAnchor(
+                        ref metadata.Blob.Value,
+                        CampaignMissionGuidedMoveRouteUtility.AuthoredMoveTargetAnchorId,
+                        out OperationMapAnchorBlob anchor))
+                {
+                    moveTarget = anchor.Position;
+                }
+            }
+        }
+
+        int highlightCount = 0;
+        float3 highlightPosition = float3.zero;
+        using (EntityQuery highlightQuery = entityManager.CreateEntityQuery(
+                   ComponentType.ReadOnly<AssistantPreviewHighlightElement>()))
+        {
+            highlightCount = highlightQuery.CalculateEntityCount();
+            if (highlightCount == 1)
+            {
+                DynamicBuffer<AssistantPreviewHighlightElement> highlights =
+                    entityManager.GetBuffer<AssistantPreviewHighlightElement>(highlightQuery.GetSingletonEntity());
+                highlightCount = highlights.Length;
+                if (highlights.Length > 0)
+                    highlightPosition = highlights[highlights.Length - 1].WorldPosition;
             }
         }
 
@@ -806,6 +847,9 @@ internal static class M01OwnerFeedbackValidation
             $"[M01LiveState] phase={runtime.Phase} outcome={runtime.Outcome} " +
             $"runtimeVersion={runtime.Version} squadAlive={facts.CommandSquadAlive} " +
             $"friendlyEntities={friendlyEntities} friendlyAlive={friendlyAlive} " +
+            $"friendlyCentroid={friendlyCentroid} moveTarget={moveTarget} " +
+            $"targetDistance={math.distance(friendlyCentroid, moveTarget):F2} " +
+            $"highlightCount={highlightCount} highlightPosition={highlightPosition} " +
             $"squadLosses={facts.SquadLossCount} friendlyState={friendlyState} " +
             $"hostiles={facts.HostileDefeatedCount}/{facts.HostileTotalCount} " +
             $"hasResult={(hasResult ? 1 : 0)} resultVersion={result.SourceVersion} " +

@@ -13,6 +13,7 @@ namespace Game.UI.Runtime
         private UIShellContentView _shellContent;
         private MatchOverlayCommandControlsView _recoveredCommandControls;
         private bool _cinematicHudLocked;
+        private int _boundContentVersion = -1;
         private int _lockedContentVersion = -1;
 
         private sealed class SelectableState
@@ -32,20 +33,24 @@ namespace Game.UI.Runtime
             RefreshCinematicInteractionLock(owner);
         }
 
-        internal void BindShellContent(UIShellContentView shellContent)
+        internal bool BindShellContent(UIShellContentView shellContent)
         {
-            if (_shellContent == shellContent)
-                return;
+            int contentVersion = shellContent != null ? shellContent.ContentVersion : -1;
+            if (_shellContent == shellContent && _boundContentVersion == contentVersion)
+                return false;
 
             RestoreCinematicHudInteraction();
             _shellContent = shellContent;
+            _boundContentVersion = contentVersion;
             _recoveredCommandControls = null;
+            return true;
         }
 
         internal void Dispose()
         {
             RestoreCinematicHudInteraction();
             _shellContent = null;
+            _boundContentVersion = -1;
             _recoveredCommandControls = null;
         }
 

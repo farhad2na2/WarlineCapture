@@ -23,8 +23,14 @@ namespace Game.UI.Runtime
             _guidanceWorldCamera = null;
         }
 
-        public void BindGuidedHudRuntime(UIShellContentView shellContent) =>
-            _guidedHudRuntime.BindShellContent(shellContent);
+        public void BindGuidedHudRuntime(UIShellContentView shellContent)
+        {
+            if (!_guidedHudRuntime.BindShellContent(shellContent))
+                return;
+
+            _matchHudAssistantUiSystem.ResetForMissionAttempt();
+            _matchHudSquadTrayView?.ClearActiveSlot();
+        }
 
         public void BindGuidanceWorldCamera(UnityEngine.Camera worldCamera)
         {

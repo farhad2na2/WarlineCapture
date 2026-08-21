@@ -67,17 +67,23 @@ namespace Game.Runtime
                 ComponentLookup<Faction> factions = SystemAPI.GetComponentLookup<Faction>(true);
                 ComponentLookup<UnitHealth> health = SystemAPI.GetComponentLookup<UnitHealth>(true);
                 ComponentLookup<SelectedUnitTag> selectedUnits = SystemAPI.GetComponentLookup<SelectedUnitTag>(true);
+                ComponentLookup<UnitGrid> unitGrids = SystemAPI.GetComponentLookup<UnitGrid>(true);
+                GridConfig grid = default;
+                bool hasGrid = SystemAPI.TryGetSingleton(out grid);
+                CampaignMissionRuntimeProgressUtility.MoveTargetContext moveContext =
+                    CampaignMissionRuntimeProgressUtility.CreateMoveTargetContext(
+                        moveTarget, moveRadius, hasGrid, in grid);
                 int aliveFriendly = 0;
                 int aliveHostile = 0;
                 int expectedFriendly = 0;
-                bool moveTargetReached = false;
+                int friendliesAtMoveTarget = 0;
                 bool commandedHostileAttack = false;
 
                 if (SystemAPI.TryGetSingleton(out CampaignMissionCatalogComponent catalog) &&
                     CampaignMissionSpawnSystem.TryFindDefinition(in catalog, in activeRuntime, out int definitionIndex))
                 {
                     ref CampaignMissionDefinitionBlob definition = ref catalog.Blob.Value.Missions[definitionIndex];
-                    expectedFriendly = CountFriendlyUnits(ref definition);
+                    expectedFriendly = CampaignMissionRuntimeProgressUtility.CountFriendlyUnits(ref definition);
                 }
 
                 foreach ((RefRO<CampaignMissionUnitRoleComponent> role,
@@ -97,9 +103,12 @@ namespace Game.Runtime
                     }
                     aliveFriendly++;
                     commandSquadSelected &= selectedUnits.HasComponent(entity);
-                    float2 offset = transform.ValueRO.Position.xz - moveTarget.xz;
-                    if (hasMoveTarget && math.lengthsq(offset) <= moveRadius * moveRadius)
-                        moveTargetReached = true;
+                    if (hasMoveTarget && CampaignMissionRuntimeProgressUtility.IsAtMoveTarget(
+                            transform.ValueRO.Position,
+                            unitGrids.HasComponent(entity),
+                            unitGrids.HasComponent(entity) ? unitGrids[entity].Cell : default,
+                            in moveContext))
+                        friendliesAtMoveTarget++;
                     if (!engageTargets.HasComponent(entity))
                         continue;
                     EngageTarget target = engageTargets[entity];
@@ -123,7 +132,8 @@ namespace Game.Runtime
                 int defeated = math.clamp(projectedFacts.HostileTotalCount - aliveHostile,
                     0, projectedFacts.HostileTotalCount);
                 projectedFacts.HostileDefeatedCount = math.max(projectedFacts.HostileDefeatedCount, defeated);
-                if (moveTargetReached)
+                if (CampaignMissionRuntimeProgressUtility.AllAliveFriendliesReachedMoveTarget(
+                        aliveFriendly, friendliesAtMoveTarget))
                     projectedFacts.MoveToCoverComplete = 1;
                 if (commandedHostileAttack)
                 {
@@ -139,7 +149,8 @@ namespace Game.Runtime
                          RefRO<CampaignMissionAttemptFactsComponent>>())
             {
                 CampaignMissionRuntimeComponent next = runtime.ValueRO;
-                if (!TryEvaluate(in runtime.ValueRO, in facts.ValueRO, commandSquadSelected, out next))
+                if (!CampaignMissionRuntimeProgressUtility.TryEvaluateSettled(
+                        in runtime.ValueRO, in facts.ValueRO, commandSquadSelected, out next))
                     continue;
                 runtime.ValueRW = next;
             }
@@ -148,19 +159,6 @@ namespace Game.Runtime
         {
             int delta = (int)math.min(int.MaxValue, math.max(0f, math.round(deltaSeconds * 1000f)));
             return current >= int.MaxValue - delta ? int.MaxValue : current + delta;
-        }
-        private static int CountFriendlyUnits(ref CampaignMissionDefinitionBlob definition)
-        {
-            int count = 0;
-            for (int groupIndex = 0; groupIndex < definition.ForceGroups.Length; groupIndex++)
-            {
-                ref CampaignMissionForceGroupBlob group = ref definition.ForceGroups[groupIndex];
-                if (group.FactionId > 1)
-                    continue;
-                for (int unitIndex = 0; unitIndex < group.Units.Length; unitIndex++)
-                    count += group.Units[unitIndex].Count;
-            }
-            return count;
         }
         internal static bool TryConsumeAction(EntityManager entityManager, Entity root)
         {
@@ -370,6 +368,7 @@ namespace Game.Runtime
                 return false;
             return TryTransition(in current, phase, outcome, destination, out next);
         }
+
         public static bool TryTransition(
             in CampaignMissionRuntimeComponent current,
             MissionPhaseKind phase,

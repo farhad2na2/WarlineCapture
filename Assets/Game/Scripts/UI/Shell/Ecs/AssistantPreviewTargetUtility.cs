@@ -29,26 +29,25 @@ namespace Game.UI.Shell.Ecs
                 entityManager.GetComponentData<RtsCameraRequestQueueComponent>(cameraEntity);
             DynamicBuffer<RtsCameraRequestElement> requests =
                 entityManager.GetBuffer<RtsCameraRequestElement>(cameraEntity);
+            // Show Me must preserve the player's RTS height. Dropping to the tactical
+            // reveal height over the dense civic-hall geometry forces high-detail rendering
+            // and made the Editor fall to single-digit FPS. Center the target immediately
+            // at the current RTS framing instead.
             requests.Add(new RtsCameraRequestElement
             {
-                Kind = RtsCameraRequestKind.ApplyPerspectiveModeInstant,
+                Kind = RtsCameraRequestKind.MoveGroundCenterTo,
                 RequestId = ++queue.LastRequestId,
-                Value = RuntimeCameraFocusRequestUtility.TacticalRevealHeight,
-                Value2 = RuntimeCameraFocusRequestUtility.TacticalRevealPitch,
-                Value3 = RuntimeCameraFocusRequestUtility.TacticalRevealYaw,
-                Value4 = RuntimeCameraFocusRequestUtility.TacticalRevealFieldOfView
+                WorldPosition = focusWorldPosition
             });
             requests.Add(new RtsCameraRequestElement
             {
-                Kind = RtsCameraRequestKind.CompleteZoomTransition,
+                Kind = RtsCameraRequestKind.ClearSmoothFocusTarget,
                 RequestId = ++queue.LastRequestId
             });
             requests.Add(new RtsCameraRequestElement
             {
-                Kind = RtsCameraRequestKind.SetSmoothFocusTarget,
-                RequestId = ++queue.LastRequestId,
-                WorldPosition = focusWorldPosition,
-                Flag = 1
+                Kind = RtsCameraRequestKind.ClearSmoothPerspectiveTarget,
+                RequestId = ++queue.LastRequestId
             });
             requests.Add(new RtsCameraRequestElement
             {

@@ -24,8 +24,8 @@ namespace Game.Editor
         private const string Marker = "[M01FirstContactOldMarketWindowValidation] result=Passed tests=9";
 
         private static readonly RectInt Window = new(1672, 680, 240, 176);
-        private static readonly RectInt Corridor = new(1728, 720, 128, 80);
-        private static int2[] Route = { new(1746, 736), new(1770, 748), new(1798, 760), new(1826, 772), new(1846, 786) };
+        private static readonly RectInt Corridor = new(1784, 680, 16, 64);
+        private static int2[] Route = { new(1792, 690), new(1792, 705), new(1792, 715), new(1792, 725), new(1792, 735) };
 
         [MenuItem("Game/Campaign/Validate M01 Old Market Window")]
         public static void RunFocusedValidation()
@@ -138,7 +138,8 @@ namespace Game.Editor
             Require(analysis.ReachableCells >= 28000, "Old Market contact corridor is not broadly connected.");
             Require(analysis.RoadCells == 0 && analysis.PlazaCells == 0, "Accepted civic-bazaar navigation contract drifted.");
             Require(analysis.BridgeCells == 0, "Old Market window intersects bridge/water traversal.");
-            Require(Window.xMin > 1600 && Window.yMin > 640, "Window left the accepted civic-bazaar core.");
+            Require(Window.xMin == 1672 && Window.yMin == 680,
+                "Window left the authored shop-lined bazaar core.");
             Require(Corridor.xMin >= Window.xMin && Corridor.xMax <= Window.xMax &&
                 Corridor.yMin >= Window.yMin && Corridor.yMax <= Window.yMax, "Contact corridor must remain inside the playable window.");
         }

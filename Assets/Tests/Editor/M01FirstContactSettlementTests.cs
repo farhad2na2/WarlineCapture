@@ -19,7 +19,9 @@ public sealed class M01FirstContactSettlementTests
         try
         {
             Run(test => test.FirstClearGrantsConfiguredRewardsAndRevealsM02()); passed++;
+            Run(test => test.CampaignOriginFirstClearSettlesAndReturnsToCampaign()); passed++;
             Run(test => test.RepeatedCurrentTokenReturnsPriorSuccessWithoutGrant()); passed++;
+            Run(test => test.RecoveredFirstClearCanExitWithoutGrantingAgain()); passed++;
             Run(test => test.OlderTokenAfterNewerReplayCannotGrantAgain()); passed++;
             Run(test => test.ReplayUsesReducedConfiguredReward()); passed++;
             Run(test => test.RestartPreservesSettlementHistoryAndBestMetrics()); passed++;
@@ -64,6 +66,18 @@ public sealed class M01FirstContactSettlementTests
     }
 
     [Test]
+    public void CampaignOriginFirstClearSettlesAndReturnsToCampaign()
+    {
+        CampaignMissionSettlementResultElement response = _fixture.Settle(
+            "campaign-first", 1, MissionRunKind.FirstClear,
+            MissionLaunchOriginKind.CampaignOperations,
+            MissionReturnDestinationKind.CampaignOperations, 3, 90000);
+        Assert.That(response.Accepted, Is.EqualTo(1));
+        Assert.That(response.ReasonCode.ToString(), Is.EqualTo("settled"));
+        Assert.That(_fixture.Service.LoadProfile().credits, Is.EqualTo(1200));
+    }
+
+    [Test]
     public void RepeatedCurrentTokenReturnsPriorSuccessWithoutGrant()
     {
         _fixture.Settle("repeat", 1, MissionRunKind.FirstClear,
@@ -73,6 +87,22 @@ public sealed class M01FirstContactSettlementTests
         Assert.That(repeated.Accepted, Is.EqualTo(1));
         Assert.That(repeated.ReasonCode.ToString(), Is.EqualTo("already-settled"));
         Assert.That(_fixture.Service.LoadProfile().credits, Is.EqualTo(1200));
+    }
+
+    [Test]
+    public void RecoveredFirstClearCanExitWithoutGrantingAgain()
+    {
+        _fixture.Settle("settled-before-ui", 1, MissionRunKind.FirstClear,
+            MissionLaunchOriginKind.FirstLaunch, MissionReturnDestinationKind.CommandBase, 2, 120000);
+        CampaignMissionSettlementResultElement recovered = _fixture.Settle(
+            "recovered-result", 2, MissionRunKind.FirstClear,
+            MissionLaunchOriginKind.CampaignOperations,
+            MissionReturnDestinationKind.CampaignOperations, 3, 60000);
+        Assert.That(recovered.Accepted, Is.EqualTo(1),
+            "A recovered first-clear result must remain dismissible after its one-time reward was settled.");
+        Assert.That(recovered.ReasonCode.ToString(), Is.EqualTo("already-settled"));
+        Assert.That(_fixture.Service.LoadProfile().credits, Is.EqualTo(1200),
+            "Recovery must never grant the first-clear reward twice.");
     }
 
     [Test]

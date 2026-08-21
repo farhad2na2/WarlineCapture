@@ -14,7 +14,7 @@ using UnityEngine.AddressableAssets;
 
 public sealed class M01FirstContactMapSourceBindingTests
 {
-    private const string PassMarker = "[M01FirstContactMapSourceBindingValidation] result=Passed tests=13";
+    private const string PassMarker = "[M01FirstContactMapSourceBindingValidation] result=Passed tests=14";
     private const string SourceDefinitionPath =
         "Assets/Game/Configs/OperationMaps/Candidates/" +
         "OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset";
@@ -36,6 +36,7 @@ public sealed class M01FirstContactMapSourceBindingTests
             tests.LogicalMapCanBindToExactAcceptedPhysicalSource();
             tests.LogicalMetadataCarriesExactPhysicalRenderBinding();
             tests.RuntimeReuseValidatesExactPhysicalSource();
+            tests.RuntimeReuseAcceptsExactLogicalDefinition();
             tests.RuntimeReuseRejectsStalePhysicalContent();
             tests.UnresolvedPhysicalSourceFailsClosed();
             tests.StaleSourceIdentityHashFailsClosed();
@@ -151,6 +152,12 @@ public sealed class M01FirstContactMapSourceBindingTests
     }
 
     [Test]
+    public void RuntimeReuseAcceptsExactLogicalDefinition()
+    {
+        AssertRuntimeReuse(SourceContentHash, true, reuseLogicalDefinition: true);
+    }
+
+    [Test]
     public void RuntimeReuseRejectsStalePhysicalContent()
     {
         AssertRuntimeReuse(new string('b', 64), false);
@@ -245,7 +252,8 @@ public sealed class M01FirstContactMapSourceBindingTests
 
     private static void AssertRuntimeReuse(
         string sourceContentHash,
-        bool expectedAccepted)
+        bool expectedAccepted,
+        bool reuseLogicalDefinition = false)
     {
         OperationMapDefinition physical = Source();
         OperationMapDefinition logical = Logical(
@@ -266,7 +274,8 @@ public sealed class M01FirstContactMapSourceBindingTests
                     OperationMapId = new FixedString64Bytes(LogicalMapId),
                     ScenarioId = new FixedString64Bytes("scenario.ch01.m01.first_contact"),
                     MissionId = new FixedString64Bytes("saga.ch01.m01.first_contact"),
-                    SchemaVersion = 1,
+                    SchemaVersion = logical.SchemaVersion,
+                    ContentVersion = logical.ContentVersion,
                     Generation = 7
                 });
             world.EntityManager.SetComponentData(mapRoot,
@@ -288,10 +297,13 @@ public sealed class M01FirstContactMapSourceBindingTests
             });
 
             bool accepted = CampaignMissionOperationMapReuseUtility.TryReuse(
-                world.EntityManager, physical, out Entity resolved, out error);
+                world.EntityManager,
+                reuseLogicalDefinition ? logical : physical,
+                out Entity resolved,
+                out error);
             Assert.AreEqual(expectedAccepted, accepted, error);
             Assert.AreEqual(expectedAccepted ? mapRoot : Entity.Null, resolved);
-            Assert.AreEqual(expectedAccepted ? 1 : 0,
+            Assert.AreEqual(1,
                 world.EntityManager.GetComponentData<OperationMapMetadataComponent>(
                     mapRoot).PhysicalSourceValidated);
         }

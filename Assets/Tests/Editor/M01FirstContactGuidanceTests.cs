@@ -38,7 +38,9 @@ public sealed class M01FirstContactGuidanceTests
         for (int i = 0; i < phases.Length; i++)
         { var runtime = Runtime(phases[i]); Assert.That(CampaignMissionGuidanceProjectionSystem.TryBuildProjection(default, runtime, Facts(), Settings(),
               new Entity { Index = 10, Version = 1 }, new Entity { Index = 11, Version = 1 }, new float3(1), new float3(2), out var next), Is.True);
-          Assert.That((int)next.Prompt, Is.EqualTo(i + 1)); Assert.That(next.Active, Is.EqualTo(1)); }
+          Assert.That((int)next.Prompt, Is.EqualTo(i + 1)); Assert.That(next.Active, Is.EqualTo(1));
+          Assert.That(next.CanExecute, Is.EqualTo(1), $"Full-guidance Do It must remain available for {phases[i]}.");
+          Assert.That(next.ActionLabel.ToString(), Is.EqualTo("DO IT")); }
     }
 
     [Test] public static void ShowMeAndDoItStayInsideAriaAuthority()
@@ -122,12 +124,14 @@ public sealed class M01FirstContactGuidanceTests
     [Test] public static void AccessibilitySettingsAreProjectedWithoutChangingGameplay()
     {
         var settings = Settings(); settings.LargeTextEnabled = 1; settings.HighContrastEnabled = 1;
+        Entity friendly = new Entity { Index = 6, Version = 1 };
         Entity hostile = new Entity { Index = 7, Version = 1 };
         CampaignMissionGuidanceProjectionSystem.TryBuildProjection(default, Runtime(MissionPhaseKind.ConfirmThreat), Facts(), settings,
-            Entity.Null, hostile, default, new float3(3), out var projected);
+            friendly, hostile, default, new float3(3), out var projected);
         Assert.That(projected.SubtitlesEnabled + projected.LargeTextEnabled + projected.HighContrastEnabled, Is.EqualTo(3));
-        Assert.That(projected.RecommendationKind, Is.EqualTo(AssistantRecommendationKind.CameraFocus));
+        Assert.That(projected.RecommendationKind, Is.EqualTo(AssistantRecommendationKind.Attack));
         Assert.That(projected.TargetKind, Is.EqualTo(AssistantTargetKind.Entity));
+        Assert.That(projected.SourceEntity, Is.EqualTo(friendly));
         Assert.That(projected.TargetEntity, Is.EqualTo(hostile));
     }
 

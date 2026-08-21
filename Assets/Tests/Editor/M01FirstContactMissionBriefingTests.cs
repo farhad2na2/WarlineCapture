@@ -9,6 +9,7 @@ using Game.Composition;
 using Game.Configs;
 using Game.Missions.Contracts;
 using Game.Narrative.Contracts;
+using Game.Runtime;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
 using Game.UI.Shell.Contracts.Ecs;
@@ -445,6 +446,16 @@ public static class M01FirstContactMissionBriefingTests
     private static World CreateProjectionWorld(out Entity missionRoot, out Entity uiRoot)
     {
         World world = Project(out missionRoot);
+        string saveRoot = Path.Combine(
+            Path.GetTempPath(), "WarlineCapture", "M01MissionBriefingTests", Guid.NewGuid().ToString("N"));
+        CampaignMissionProgressStoreReferenceComponent progressStore = world.EntityManager
+            .GetComponentObject<CampaignMissionProgressStoreReferenceComponent>(missionRoot);
+        progressStore.Store = new CampaignMissionProgressStore(
+            new SaveService(new JsonSaveRepository(saveRoot)));
+        world.EntityManager.AddComponentObject(missionRoot, new TestProgressStoreRootComponent
+        {
+            Root = saveRoot
+        });
         uiRoot = world.EntityManager.CreateEntity(typeof(UiShellRootComponent));
         world.EntityManager.AddBuffer<UiShellRouteRequestComponent>(uiRoot);
         return world;
@@ -485,6 +496,17 @@ public static class M01FirstContactMissionBriefingTests
         catalog.Blob = default;
         catalog.OwnsBlob = 0;
         manager.SetComponentData(root, catalog);
+        if (manager.HasComponent<TestProgressStoreRootComponent>(root))
+        {
+            string saveRoot = manager.GetComponentObject<TestProgressStoreRootComponent>(root).Root;
+            if (!string.IsNullOrWhiteSpace(saveRoot) && Directory.Exists(saveRoot))
+                Directory.Delete(saveRoot, true);
+        }
+    }
+
+    private sealed class TestProgressStoreRootComponent : IComponentData
+    {
+        public string Root;
     }
 
     private static void Run(Action test, ref int passed)

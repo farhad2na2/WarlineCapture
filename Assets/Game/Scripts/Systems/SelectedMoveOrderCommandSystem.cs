@@ -185,7 +185,7 @@ namespace Game.Runtime
 
         private static Result TryIssueMoveOrderToCell(
             EntityManager em,
-            NativeArray<Entity> entities,
+            NativeArray<Entity> selectedEntities,
             EntityQuery gridConfigQuery,
             EntityQuery mapSurfaceQuery,
             UnitMoveOrderSystem moveOrderSystem,
@@ -199,6 +199,10 @@ namespace Game.Runtime
 
             Entity gridEntity = gridConfigQuery.GetSingletonEntity();
             GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
+            if (TryIssueCampaignGuidedMove(
+                    em, grid, selectedEntities, goal, currentFrame, factionId, out Result guidedResult))
+                return guidedResult;
+
             NativeArray<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
             DynamicBlockerComponent blockerData = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
             NativeBitArray blocked = blockerData.Blocked;
@@ -209,6 +213,7 @@ namespace Game.Runtime
                 surfaceReadSystem.TryCreateContext(em, mapSurfaceQuery, out MapSurfacePathfindingSnapshot.Context resolvedSurfaceContext)
                     ? resolvedSurfaceContext
                     : surfaceReadSystem.CreateFlatFallbackContext();
+            NativeArray<Entity> entities = selectedEntities;
             var reservedGoalCells = new HashSet<int>();
             HashSet<int> selectedCurrentCells = moveOrderSystem.BuildSelectedCurrentFootprintCells(em, grid, entities);
             var issuedGoals = new int2[entities.Length];
@@ -280,16 +285,12 @@ namespace Game.Runtime
                     : 0;
 
                 int moveRequestId = UnitMoveOrderRequestSystem.EnqueueGroupedManualMoveOrder(
-                    em,
-                    entity,
-                    issuedGoal,
-                    issuePathNow,
-                    groundUnit && !issuePathNow,
-                    resumeFrame,
-                    currentFrame);
+                    em, entity, issuedGoal, issuePathNow, groundUnit && !issuePathNow,
+                    resumeFrame, currentFrame);
                 UnitMoveOrderRequestSystem.ProcessPendingRequests(em);
                 UnitMoveOrderSystem.MoveOrderCommandResult commandResult =
-                    UnitMoveOrderRequestSystem.TryGetResult(em, moveRequestId, out UnitMoveOrderResultElement moveOrderResult)
+                    UnitMoveOrderRequestSystem.TryGetResult(
+                        em, moveRequestId, out UnitMoveOrderResultElement moveOrderResult)
                         ? ToMoveOrderCommandResult(moveOrderResult)
                         : default;
                 if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace && i < 12)
@@ -725,22 +726,5 @@ namespace Game.Runtime
             }
         }
 
-        private static bool IsAlreadyMovingToGoal(EntityManager em, Entity entity, int2 goal)
-        {
-            if (!em.Exists(entity))
-                return false;
-
-            bool sameTarget =
-                em.HasComponent<UnitTarget>(entity) &&
-                em.GetComponentData<UnitTarget>(entity).Cell.Equals(goal);
-            bool samePendingRequest =
-                em.HasComponent<UnitPathRequest>(entity) &&
-                em.GetComponentData<UnitPathRequest>(entity).Goal.Equals(goal);
-            bool hasActiveMovement =
-                em.HasComponent<UnitPathFollow>(entity) ||
-                em.HasComponent<UnitPathRequest>(entity);
-
-            return sameTarget && (samePendingRequest || hasActiveMovement);
-        }
     }
 }

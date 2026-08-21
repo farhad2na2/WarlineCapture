@@ -29,7 +29,10 @@ namespace Game.Components
         ClearSmoothFocusTarget = 22,
         UpdateSmoothFocus = 23,
         UpdateTacticalFollowPose = 24,
-        SetMatchIntroZoomSettlePending = 25
+        SetMatchIntroZoomSettlePending = 25,
+        SetSmoothPerspectiveTarget = 26,
+        ClearSmoothPerspectiveTarget = 27,
+        UpdateSmoothPerspective = 28
     }
 
     public struct RtsCameraRequestQueueComponent : IComponentData
@@ -42,6 +45,7 @@ namespace Game.Components
         public byte IsDragging;
         public byte HasSmoothFocusTarget;
         public float3 SmoothFocusTarget;
+        public byte HasSmoothPerspectiveTarget;
         public byte WasPlayRequested;
         public byte WasBuildModeActive;
         public byte IsZoomTransitionActive;

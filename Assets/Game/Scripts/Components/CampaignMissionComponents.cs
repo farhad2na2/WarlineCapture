@@ -148,11 +148,16 @@ namespace Game.Components
         public uint PatrolOrderVersion;
     }
 
+    public struct CampaignMissionGuidedMoveInProgressTag : IComponentData
+    {
+    }
+
     public struct CampaignMissionOpeningPresentationComponent : IComponentData
     {
         public FixedString64Bytes SessionToken;
         public float3 FriendlyFocus;
         public float3 HostileFocus;
+        public float3 EstablishingFocus;
         public int ElapsedMilliseconds;
         public byte Stage;
     }

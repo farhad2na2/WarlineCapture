@@ -83,6 +83,8 @@ namespace Game.UI.Shell.Ecs
                     needsAttackCommand = true;
 
                 if (IsPreviewIntent(pending.Kind) &&
+                    pending.RecommendationKind != AssistantRecommendationKind.Move &&
+                    pending.RecommendationKind != AssistantRecommendationKind.Attack &&
                     AssistantPreviewTargetUtility.TryResolve(
                         state.EntityManager,
                         operationMapMetadataQuery,
@@ -138,6 +140,7 @@ namespace Game.UI.Shell.Ecs
                 state.EntityManager.GetBuffer<AssistantRecommendationElement>(boundary, true);
 
             bool assistantStateChanged = false;
+            bool continueMissionSquadAttack = false;
             float now = (float)SystemAPI.Time.ElapsedTime;
             for (int i = 0; i < requests.Length; i++)
             {
@@ -262,6 +265,7 @@ namespace Game.UI.Shell.Ecs
 
                     AddResult(results, request, AssistantCommandIntentStatus.Accepted, ReasonAccepted, new FixedString64Bytes("Attack order queued."));
                     AddDispatch(dispatches, request, AssistantDownstreamCommandKind.AttackOrder, downstreamRequestId, now);
+                    continueMissionSquadAttack = true;
                     assistantState.ControlState = request.FromTakeover != 0
                         ? AssistantControlState.AssistantTakeover
                         : AssistantControlState.Guided;
@@ -317,8 +321,16 @@ namespace Game.UI.Shell.Ecs
                     continue;
                 }
 
-                AssistantPreviewTargetUtility.QueueCameraPreview(
-                    state.EntityManager, EnsureCameraRequestEntity(ref state), focusWorldPosition);
+                // Guided command previews teach the next input before changing the view.
+                // The command-button cue advances to the world target after the player
+                // enters Move or Attack mode, so camera motion here would hide both the
+                // button and the player's current battlefield context.
+                if (request.RecommendationKind != AssistantRecommendationKind.Move &&
+                    request.RecommendationKind != AssistantRecommendationKind.Attack)
+                {
+                    AssistantPreviewTargetUtility.QueueCameraPreview(
+                        state.EntityManager, EnsureCameraRequestEntity(ref state), focusWorldPosition);
+                }
                 AddResult(results, request, AssistantCommandIntentStatus.Accepted, ReasonAccepted, new FixedString64Bytes("Preview queued."));
                 AddResult(results, request, AssistantCommandIntentStatus.Completed, ReasonAccepted, new FixedString64Bytes("Preview active."));
                 SetPreviewHighlight(highlights, request, focusWorldPosition);
@@ -344,6 +356,12 @@ namespace Game.UI.Shell.Ecs
 
             if (assistantStateChanged)
                 state.EntityManager.SetComponentData(boundary, assistantState);
+
+            // Group attack adds EngageTarget components to squad members. Do that structural
+            // work only after every assistant boundary buffer has been consumed and written;
+            // otherwise Unity invalidates the live result/dispatch handles before AddResult.
+            if (continueMissionSquadAttack)
+                CampaignMissionGroupAttackUtility.TryContinueActiveMissionSquadAttack(state.EntityManager);
         }
 
         private static bool IsPreviewIntent(AssistantCommandIntentKind kind)
@@ -406,51 +424,6 @@ namespace Game.UI.Shell.Ecs
             }
 
             return true;
-        }
-
-        private bool TryQueueMoveCommand(
-            ref SystemState state,
-            AssistantCommandIntentRequestElement request,
-            out int downstreamRequestId,
-            out TacticalCommandReasonCode reason)
-        {
-            downstreamRequestId = 0;
-            reason = TacticalCommandReasonCode.None;
-            if (!TryValidatePlayerSource(state.EntityManager, request.SourceEntity, out reason))
-                return false;
-            if (gridQuery.IsEmptyIgnoreFilter)
-            {
-                reason = TacticalCommandReasonCode.CommandUnavailable;
-                return false;
-            }
-
-            GridConfig grid = gridQuery.GetSingleton<GridConfig>();
-            int2 targetCell;
-            if (request.TargetKind == AssistantTargetKind.Cell)
-            {
-                targetCell = request.TargetCell;
-            }
-            else if (request.TargetKind == AssistantTargetKind.WorldPosition && IsFinite(request.WorldPosition))
-            {
-                targetCell = GridUtils.WorldToCell(grid, request.WorldPosition);
-            }
-            else
-            {
-                reason = TacticalCommandReasonCode.TargetOutOfBounds;
-                return false;
-            }
-
-            if (targetCell.x < 0 || targetCell.y < 0 || targetCell.x >= grid.Width || targetCell.y >= grid.Height)
-            {
-                reason = TacticalCommandReasonCode.TargetOutOfBounds;
-                return false;
-            }
-
-            downstreamRequestId = UnitMoveOrderRequestSystem.EnqueueImmediateMoveOrder(
-                state.EntityManager,
-                request.SourceEntity,
-                targetCell);
-            return downstreamRequestId > 0;
         }
 
         private static bool TryQueueAttackCommand(
@@ -713,6 +686,7 @@ namespace Game.UI.Shell.Ecs
                 RequestId = request.RequestId,
                 Frame = request.Frame,
                 RecommendationId = request.RecommendationId,
+                RecommendationKind = request.RecommendationKind,
                 TargetKind = request.TargetKind,
                 SourceEntity = request.SourceEntity,
                 TargetEntity = request.TargetEntity,

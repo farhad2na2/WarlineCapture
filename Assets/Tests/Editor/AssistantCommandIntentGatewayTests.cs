@@ -28,6 +28,8 @@ public sealed class AssistantCommandIntentGatewayTests
             passed++;
             RunCase(test => test.TryReadMatchHudAssistantHighlight_ConvertsActivePreviewRow());
             passed++;
+            RunCase(test => test.TryReadMatchHudAssistantHighlight_NewFrameInvalidatesReplayCache());
+            passed++;
 
             Debug.Log($"[AssistantCommandIntentGatewayValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -255,6 +257,33 @@ public sealed class AssistantCommandIntentGatewayTests
         Assert.AreEqual(13f, highlight.WorldZ);
         Assert.AreEqual(0.75f, highlight.Strength);
         Assert.Greater(highlight.Version, 0u);
+    }
+
+    [Test]
+    public void TryReadMatchHudAssistantHighlight_NewFrameInvalidatesReplayCache()
+    {
+        Entity boundary = _entityManager.CreateEntity(typeof(UiShellRootComponent));
+        DynamicBuffer<AssistantPreviewHighlightElement> highlights =
+            _entityManager.AddBuffer<AssistantPreviewHighlightElement>(boundary);
+        highlights.Add(new AssistantPreviewHighlightElement
+        {
+            RequestId = 1,
+            Frame = 100,
+            RecommendationId = 3101,
+            RecommendationKind = AssistantRecommendationKind.Move,
+            TargetKind = AssistantTargetKind.WorldPosition,
+            WorldPosition = new float3(21f, 0f, 13f),
+            Strength = 1f,
+            Active = 1
+        });
+
+        Assert.IsTrue(UiShellEcsGateway.TryReadMatchHudAssistantHighlight(out UiAssistantHighlightModel first));
+        AssistantPreviewHighlightElement replay = highlights[0];
+        replay.Frame = 200;
+        highlights[0] = replay;
+        Assert.IsTrue(UiShellEcsGateway.TryReadMatchHudAssistantHighlight(out UiAssistantHighlightModel second));
+        Assert.AreNotEqual(first.Version, second.Version,
+            "A replayed Show Me request must not be hidden by the previous mission attempt's cache.");
     }
 
     private Entity CreateActiveBoundary()

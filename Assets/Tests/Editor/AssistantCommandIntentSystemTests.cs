@@ -24,6 +24,8 @@ public sealed class AssistantCommandIntentSystemTests
         {
             RunCase(test => test.AssistantCommandIntentSystem_QueuesCameraPreviewFromEntityTarget());
             passed++;
+            RunCase(test => test.AssistantCommandIntentSystem_GuidedMoveHighlightsTargetWithoutMovingCamera());
+            passed++;
             RunCase(test => test.AssistantCommandIntentSystem_QueuesCameraPreviewFromOperationMapObjectiveAnchor());
             passed++;
             RunCase(test => test.AssistantCommandIntentSystem_QueuesObjectivePreviewFromNamedHostileAnchor());
@@ -228,7 +230,7 @@ public sealed class AssistantCommandIntentSystemTests
         requests.Add(new AssistantCommandIntentRequestElement
         {
             RequestId = 15,
-            Frame = 31,
+            Frame = UnityEngine.Time.frameCount,
             RecommendationId = 3202,
             Kind = AssistantCommandIntentKind.SelectEntity,
             TargetKind = AssistantTargetKind.Entity,
@@ -269,7 +271,7 @@ public sealed class AssistantCommandIntentSystemTests
         requests.Add(new AssistantCommandIntentRequestElement
         {
             RequestId = 11,
-            Frame = 25,
+            Frame = UnityEngine.Time.frameCount,
             RecommendationId = 3001,
             Kind = AssistantCommandIntentKind.SelectEntity,
             TargetKind = AssistantTargetKind.UiSurface
@@ -300,7 +302,7 @@ public sealed class AssistantCommandIntentSystemTests
         Assert.AreEqual(1, selectionRequests.Length);
         Assert.AreEqual(RtsSelectionCommandIntentKind.EnterSelectionMode, selectionRequests[0].Kind);
         Assert.AreEqual(1, selectionRequests[0].RequestId);
-        Assert.AreEqual(25, selectionRequests[0].Frame);
+        Assert.AreEqual(UnityEngine.Time.frameCount, selectionRequests[0].Frame);
     }
 
     [Test]
@@ -312,7 +314,7 @@ public sealed class AssistantCommandIntentSystemTests
         requests.Add(new AssistantCommandIntentRequestElement
         {
             RequestId = 19,
-            Frame = 35,
+            Frame = UnityEngine.Time.frameCount,
             RecommendationId = 3001,
             Kind = AssistantCommandIntentKind.SelectEntity,
             TargetKind = AssistantTargetKind.UiSurface,
@@ -352,7 +354,7 @@ public sealed class AssistantCommandIntentSystemTests
         requests.Add(new AssistantCommandIntentRequestElement
         {
             RequestId = 12,
-            Frame = 26,
+            Frame = UnityEngine.Time.frameCount,
             RecommendationId = 3201,
             Kind = AssistantCommandIntentKind.SelectEntity,
             TargetKind = AssistantTargetKind.Entity,
@@ -392,7 +394,7 @@ public sealed class AssistantCommandIntentSystemTests
             new AssistantCommandIntentRequestElement
             {
                 RequestId = 21,
-                Frame = 38,
+                Frame = UnityEngine.Time.frameCount,
                 RecommendationId = 3301,
                 Kind = AssistantCommandIntentKind.SelectEntity,
                 TargetKind = AssistantTargetKind.Squad,
@@ -427,7 +429,7 @@ public sealed class AssistantCommandIntentSystemTests
         requests.Add(new AssistantCommandIntentRequestElement
         {
             RequestId = 7,
-            Frame = 19,
+            Frame = UnityEngine.Time.frameCount,
             RecommendationId = 3101,
             Kind = AssistantCommandIntentKind.ShowRecommendation,
             TargetKind = AssistantTargetKind.Entity,
@@ -441,7 +443,10 @@ public sealed class AssistantCommandIntentSystemTests
 
         DynamicBuffer<AssistantCommandIntentResultElement> results =
             _entityManager.GetBuffer<AssistantCommandIntentResultElement>(boundary);
-        Assert.AreEqual(2, results.Length);
+        Assert.AreEqual(2, results.Length,
+            results.Length == 0
+                ? "No command-intent result was emitted."
+                : $"Unexpected sole result status={results[0].Status} message={results[0].Message} frame={results[0].Frame} currentFrame={UnityEngine.Time.frameCount}.");
         Assert.AreEqual(7, results[0].RequestId);
         Assert.AreEqual(AssistantCommandIntentStatus.Accepted, results[0].Status);
         Assert.AreEqual("Preview queued.", results[0].Message.ToString());
@@ -470,16 +475,42 @@ public sealed class AssistantCommandIntentSystemTests
         DynamicBuffer<RtsCameraRequestElement> cameraRequests =
             _entityManager.GetBuffer<RtsCameraRequestElement>(cameraEntity);
         Assert.AreEqual(4, cameraRequests.Length);
-        Assert.AreEqual(RtsCameraRequestKind.ApplyPerspectiveModeInstant, cameraRequests[0].Kind);
-        Assert.AreEqual(RuntimeCameraFocusRequestUtility.TacticalRevealHeight, cameraRequests[0].Value);
-        Assert.AreEqual(RuntimeCameraFocusRequestUtility.TacticalRevealPitch, cameraRequests[0].Value2);
-        Assert.AreEqual(RuntimeCameraFocusRequestUtility.TacticalRevealYaw, cameraRequests[0].Value3);
-        Assert.AreEqual(RuntimeCameraFocusRequestUtility.TacticalRevealFieldOfView, cameraRequests[0].Value4);
-        Assert.AreEqual(RtsCameraRequestKind.CompleteZoomTransition, cameraRequests[1].Kind);
-        Assert.AreEqual(RtsCameraRequestKind.SetSmoothFocusTarget, cameraRequests[2].Kind);
-        Assert.AreEqual(new float3(18f, 2f, 32f), cameraRequests[2].WorldPosition);
-        Assert.AreEqual(1, cameraRequests[2].Flag);
+        Assert.AreEqual(RtsCameraRequestKind.MoveGroundCenterTo, cameraRequests[0].Kind);
+        Assert.AreEqual(new float3(18f, 2f, 32f), cameraRequests[0].WorldPosition);
+        Assert.AreEqual(RtsCameraRequestKind.ClearSmoothFocusTarget, cameraRequests[1].Kind);
+        Assert.AreEqual(RtsCameraRequestKind.ClearSmoothPerspectiveTarget, cameraRequests[2].Kind);
         Assert.AreEqual(RtsCameraRequestKind.ClearDragging, cameraRequests[3].Kind);
+    }
+
+    [Test]
+    public void AssistantCommandIntentSystem_GuidedMoveHighlightsTargetWithoutMovingCamera()
+    {
+        Entity boundary = CreateBoundary();
+        Entity target = CreateTarget(new float3(18f, 2f, 32f));
+        _entityManager.GetBuffer<AssistantCommandIntentRequestElement>(boundary).Add(
+            new AssistantCommandIntentRequestElement
+            {
+                RequestId = 71,
+                Frame = UnityEngine.Time.frameCount,
+                RecommendationId = 3102,
+                RecommendationKind = AssistantRecommendationKind.Move,
+                Kind = AssistantCommandIntentKind.ShowRecommendation,
+                TargetKind = AssistantTargetKind.Entity,
+                TargetEntity = target
+            });
+
+        _intentSystem.Update(_world.Unmanaged);
+
+        DynamicBuffer<AssistantPreviewHighlightElement> highlights =
+            _entityManager.GetBuffer<AssistantPreviewHighlightElement>(boundary);
+        Assert.AreEqual(1, highlights.Length);
+        Assert.AreEqual(AssistantRecommendationKind.Move, highlights[0].RecommendationKind);
+        Assert.AreEqual(new float3(18f, 2f, 32f), highlights[0].WorldPosition);
+        using EntityQuery cameraQuery = _entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<RtsCameraRequestQueueComponent>(),
+            ComponentType.ReadOnly<RtsCameraRequestElement>());
+        Assert.IsTrue(cameraQuery.IsEmptyIgnoreFilter,
+            "Move guidance must preserve the player's RTS camera and teach the command button first.");
     }
 
     [Test]
@@ -519,10 +550,10 @@ public sealed class AssistantCommandIntentSystemTests
         DynamicBuffer<RtsCameraRequestElement> cameraRequests =
             _entityManager.GetBuffer<RtsCameraRequestElement>(cameraQuery.GetSingletonEntity());
         Assert.AreEqual(4, cameraRequests.Length);
-        Assert.AreEqual(RtsCameraRequestKind.ApplyPerspectiveModeInstant, cameraRequests[0].Kind);
-        Assert.AreEqual(RtsCameraRequestKind.CompleteZoomTransition, cameraRequests[1].Kind);
-        Assert.AreEqual(RtsCameraRequestKind.SetSmoothFocusTarget, cameraRequests[2].Kind);
-        Assert.AreEqual(new float3(44f, 3f, 71f), cameraRequests[2].WorldPosition);
+        Assert.AreEqual(RtsCameraRequestKind.MoveGroundCenterTo, cameraRequests[0].Kind);
+        Assert.AreEqual(new float3(44f, 3f, 71f), cameraRequests[0].WorldPosition);
+        Assert.AreEqual(RtsCameraRequestKind.ClearSmoothFocusTarget, cameraRequests[1].Kind);
+        Assert.AreEqual(RtsCameraRequestKind.ClearSmoothPerspectiveTarget, cameraRequests[2].Kind);
         DynamicBuffer<AssistantPreviewHighlightElement> highlights =
             _entityManager.GetBuffer<AssistantPreviewHighlightElement>(boundary);
         Assert.AreEqual(1, highlights.Length);
@@ -567,9 +598,10 @@ public sealed class AssistantCommandIntentSystemTests
         DynamicBuffer<RtsCameraRequestElement> cameraRequests =
             _entityManager.GetBuffer<RtsCameraRequestElement>(cameraQuery.GetSingletonEntity());
         Assert.AreEqual(4, cameraRequests.Length);
-        Assert.AreEqual(RtsCameraRequestKind.ApplyPerspectiveModeInstant, cameraRequests[0].Kind);
-        Assert.AreEqual(RtsCameraRequestKind.CompleteZoomTransition, cameraRequests[1].Kind);
-        Assert.AreEqual(new float3(1784f, 0.009f, 754f), cameraRequests[2].WorldPosition);
+        Assert.AreEqual(RtsCameraRequestKind.MoveGroundCenterTo, cameraRequests[0].Kind);
+        Assert.AreEqual(new float3(1784f, 0.009f, 754f), cameraRequests[0].WorldPosition);
+        Assert.AreEqual(RtsCameraRequestKind.ClearSmoothFocusTarget, cameraRequests[1].Kind);
+        Assert.AreEqual(RtsCameraRequestKind.ClearSmoothPerspectiveTarget, cameraRequests[2].Kind);
     }
 
     [Test]
@@ -589,7 +621,7 @@ public sealed class AssistantCommandIntentSystemTests
         requests.Add(new AssistantCommandIntentRequestElement
         {
             RequestId = 3,
-            Frame = 11,
+            Frame = UnityEngine.Time.frameCount,
             RecommendationId = 3001,
             Kind = AssistantCommandIntentKind.ShowRecommendation,
             TargetKind = AssistantTargetKind.UiSurface
@@ -643,9 +675,11 @@ public sealed class AssistantCommandIntentSystemTests
             new AssistantCommandIntentRequestElement
             {
                 RequestId = 51,
+                Frame = UnityEngine.Time.frameCount,
                 RecommendationId = 5101,
                 RecommendationSourceVersion = 17,
                 Kind = AssistantCommandIntentKind.MoveToWorldPosition,
+                RecommendationKind = AssistantRecommendationKind.Move,
                 TargetKind = AssistantTargetKind.Cell,
                 SourceEntity = source,
                 TargetCell = new int2(6, 7)
@@ -693,9 +727,11 @@ public sealed class AssistantCommandIntentSystemTests
             new AssistantCommandIntentRequestElement
             {
                 RequestId = 52,
+                Frame = UnityEngine.Time.frameCount,
                 RecommendationId = 5201,
                 RecommendationSourceVersion = 19,
                 Kind = AssistantCommandIntentKind.AttackEntity,
+                RecommendationKind = AssistantRecommendationKind.Attack,
                 TargetKind = AssistantTargetKind.Entity,
                 SourceEntity = source,
                 TargetEntity = target

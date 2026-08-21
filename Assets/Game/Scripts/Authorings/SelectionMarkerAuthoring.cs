@@ -34,6 +34,26 @@ namespace Game.Authoring
                     VisibleScaleX = visibleScale,
                     VisibleScaleZ = visibleScale
                 });
+
+                AddComponent(entity, new SelectionMarkerVariantVisuals
+                {
+                    InfantryGroundRing = GetOptionalVisualEntity(visualChild, "InfantryGroundRing"),
+                    VehicleFootprintFill = GetOptionalVisualEntity(visualChild, "VehicleFootprintFill"),
+                    VehicleCornerBrackets = GetOptionalVisualEntity(visualChild, "VehicleCornerBrackets"),
+                    VehicleBoundsFrame = GetOptionalVisualEntity(visualChild, "VehicleBoundsFrame")
+                });
+            }
+
+            private Entity GetOptionalVisualEntity(Transform visualRoot, string exactName)
+            {
+                for (int index = 0; index < visualRoot.childCount; index++)
+                {
+                    Transform child = visualRoot.GetChild(index);
+                    if (child != null && child.name == exactName)
+                        return GetEntity(child, TransformUsageFlags.Dynamic);
+                }
+
+                return Entity.Null;
             }
         }
     }

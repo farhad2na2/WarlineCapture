@@ -10,6 +10,8 @@ namespace Game.UI.Contracts
 
         void ApplyMatchHudCommandMode(TacticalCommandMode mode);
 
+        void CompleteMatchHudGuidedWorldTarget(TacticalCommandMode mode);
+
         bool CanTriggerSelectionModeFromHold();
 
         void ClearMatchHudCommandMode();

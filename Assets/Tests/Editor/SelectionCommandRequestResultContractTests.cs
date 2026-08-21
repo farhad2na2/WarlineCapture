@@ -5010,6 +5010,7 @@ public sealed class SelectionCommandRequestResultContractTests
             ensureEntityQueries,
             clearCurrentSelection,
             applyHudCommandMode,
+            null,
             applyHudBoardCommandMode,
             applyHudCommandResult,
             clearHudSelection,

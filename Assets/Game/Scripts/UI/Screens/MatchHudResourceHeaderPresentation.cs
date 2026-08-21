@@ -21,6 +21,7 @@ namespace Game.UI.Runtime
         private TMP_Text _fuelSlotValue;
         private TMP_Text _civilianRiskSlotLabel;
         private TMP_Text _civilianRiskSlotValue;
+        private CanvasGroup _resourceStripCanvasGroup;
         private string _lastMaterialsText;
         private string _lastOilText;
         private string _lastFuelText;
@@ -61,6 +62,13 @@ namespace Game.UI.Runtime
             _fuelSlotRoot = fuelSlotLabel != null ? fuelSlotLabel.transform.parent.gameObject : null;
             Transform resourceStrip = _materialsSlotRoot != null ? _materialsSlotRoot.transform.parent : null;
             _resourceStripButton = resourceStrip != null ? resourceStrip.GetComponent<Button>() : null;
+            _resourceStripCanvasGroup = null;
+            if (resourceStrip != null)
+            {
+                _resourceStripCanvasGroup = resourceStrip.GetComponent<CanvasGroup>();
+                if (_resourceStripCanvasGroup == null)
+                    _resourceStripCanvasGroup = resourceStrip.gameObject.AddComponent<CanvasGroup>();
+            }
             RefreshNow();
             _nextRefreshTime = now + RefreshIntervalSeconds;
         }
@@ -71,6 +79,7 @@ namespace Game.UI.Runtime
             _oilSlotRoot = null;
             _fuelSlotRoot = null;
             _resourceStripButton = null;
+            _resourceStripCanvasGroup = null;
             _materialsSlotLabel = null;
             _materialsSlotValue = null;
             _oilSlotLabel = null;
@@ -193,11 +202,35 @@ namespace Game.UI.Runtime
                 _lastHideEconomyResources == hideEconomyResources)
                 return;
 
-            SetVisible(_materialsSlotRoot, !hideEconomyResources);
-            SetVisible(_oilSlotRoot, showOil && !hideEconomyResources);
-            SetVisible(_fuelSlotRoot, !hideEconomyResources);
+            SetVisible(_materialsSlotRoot, true);
+            SetVisible(_oilSlotRoot, showOil || hideEconomyResources);
+            SetVisible(_fuelSlotRoot, true);
             if (_resourceStripButton != null)
+            {
+                UiDisabledMaterialUtility.SetSelectableDisabled(
+                    _resourceStripButton,
+                    UiDisabledVisualReason.MissionRestriction,
+                    hideEconomyResources);
                 _resourceStripButton.interactable = !hideEconomyResources;
+            }
+            if (_resourceStripCanvasGroup != null)
+            {
+                _resourceStripCanvasGroup.alpha = 1f;
+                _resourceStripCanvasGroup.interactable = !hideEconomyResources;
+                _resourceStripCanvasGroup.blocksRaycasts = !hideEconomyResources;
+            }
+            UiDisabledMaterialUtility.SetDisabled(
+                _materialsSlotRoot,
+                UiDisabledVisualReason.MissionRestriction,
+                hideEconomyResources);
+            UiDisabledMaterialUtility.SetDisabled(
+                _oilSlotRoot,
+                UiDisabledVisualReason.MissionRestriction,
+                hideEconomyResources);
+            UiDisabledMaterialUtility.SetDisabled(
+                _fuelSlotRoot,
+                UiDisabledVisualReason.MissionRestriction,
+                hideEconomyResources);
             _lastShowOil = showOil;
             _lastHideEconomyResources = hideEconomyResources;
             _resourceVisibilityApplied = true;

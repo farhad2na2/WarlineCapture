@@ -18,7 +18,7 @@ namespace Game.UI.Runtime
         ResourceExchange = 3
     }
 
-    public sealed class MainMenuPlayUI : IMatchRuntimeUi
+    public sealed partial class MainMenuPlayUI : IMatchRuntimeUi
     {
         private const float CompactMinimapUpdateIntervalSeconds = 0.1f;
         private const float AssistantPanelRefreshIntervalSeconds = 0.1f;
@@ -94,6 +94,7 @@ namespace Game.UI.Runtime
 
         public void Dispose()
         {
+            DisposeGuidedHudRuntime();
             _matchHudMinimapInputSystem.Dispose();
             _matchHudFullMapInputSystem.Dispose();
             _matchHudAssistantUiSystem.Unbind();
@@ -161,6 +162,8 @@ namespace Game.UI.Runtime
             RefreshZoomControlsIfDue(now);
             _matchHudResourceHeaderPresentation.RefreshIfDue(now);
             ApplyMatchHudAssistantPanelReadModelIfDue(now);
+            _matchHudAssistantUiSystem.TickHighlight();
+            TickGuidedHudRuntime();
             TickMatchHudThreatWarning(now);
         }
 
@@ -223,11 +226,6 @@ namespace Game.UI.Runtime
             _matchHudFullMapInputSystem.Update();
         }
 
-        public void BindMatchHudCommandControls(MatchOverlayCommandControlsView commandControlsView)
-        {
-            _matchHudCommandControlsView = commandControlsView;
-        }
-
         public void BindMatchHudRightQuickRail(MatchHudRightQuickRailView rightQuickRailView)
         {
             _matchHudRightQuickRailView?.UnbindZoomControls();
@@ -264,30 +262,6 @@ namespace Game.UI.Runtime
         {
             _matchHudRuntimeFeedbackView = runtimeFeedbackView;
             _bindMatchHudRuntimeFeedback?.Invoke(new BattleHudRuntimeFeedbackSink(_matchHudRuntimeFeedbackView, _gameTextResolver));
-        }
-
-        public void ApplyMatchHudCommandMode(TacticalCommandMode mode)
-        {
-            BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandMode(_matchHudRuntimeFeedbackView, mode, _gameTextResolver);
-        }
-
-        public void ClearMatchHudCommandMode()
-        {
-            BattleHudRuntimeFeedbackUiSystemHelper.ClearCommandMode(_matchHudRuntimeFeedbackView, _gameTextResolver);
-        }
-
-        public void ConfigureMatchHudSquadTrayBinding(System.Action<IMatchHudSquadTrayView> bindMatchHudSquadTray)
-        {
-            _bindMatchHudSquadTray = bindMatchHudSquadTray;
-            if (_matchHudSquadTrayView != null)
-                _bindMatchHudSquadTray?.Invoke(_matchHudSquadTrayView);
-        }
-
-        public void BindMatchHudSquadTray(MatchHudSquadTrayView squadTrayView)
-        {
-            _matchHudSquadTrayView?.Unbind();
-            _matchHudSquadTrayView = squadTrayView;
-            _bindMatchHudSquadTray?.Invoke(_matchHudSquadTrayView);
         }
 
         public void BindMatchHudThreatJumpPanel(GameObject headerContent)

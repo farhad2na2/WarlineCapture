@@ -40,10 +40,10 @@ namespace Game.Composition
         public MatchSceneView SceneView => sceneView;
         public bool HasSceneView => sceneView != null;
 
-        public Camera WorldCamera => sceneView != null ? sceneView.WorldCamera : null;
-        public Light DirectionalLight => sceneView != null ? sceneView.DirectionalLight : null;
-        public Volume GlobalVolume => sceneView != null ? sceneView.GlobalVolume : null;
-        public VisualQualityProfileAsset VisualQualityProfile => sceneView != null ? sceneView.VisualQualityProfile : null;
+        public Camera WorldCamera => sceneView?.WorldCamera;
+        public Light DirectionalLight => sceneView?.DirectionalLight;
+        public Volume GlobalVolume => sceneView?.GlobalVolume;
+        public VisualQualityProfileAsset VisualQualityProfile => sceneView?.VisualQualityProfile;
         public CombinedMeshBaker DecorationCombinedMeshBaker => sceneView != null ? sceneView.DecorationCombinedMeshBaker : null;
         public Transform DecorationRoot => sceneView != null ? sceneView.DecorationRoot : null;
 
@@ -447,8 +447,8 @@ namespace Game.Composition
             if (SelectionUiCommand == null)
                 return MainMenu;
 
-            if (MainMenu == null)
-                MainMenu = new MainMenuPlayUI();
+            if (MainMenu == null) MainMenu = new MainMenuPlayUI();
+            MainMenu.BindGuidanceWorldCamera(WorldCamera);
 
             if (!resetRuntimeState && AreMainMenuRuntimeDependenciesCurrent())
                 return MainMenu;

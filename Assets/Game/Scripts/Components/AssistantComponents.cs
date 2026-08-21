@@ -300,6 +300,7 @@ namespace Game.Components
         public int RecommendationId;
         public int RecommendationSourceVersion;
         public AssistantCommandIntentKind Kind;
+        public AssistantRecommendationKind RecommendationKind;
         public AssistantTargetKind TargetKind;
         public Entity SourceEntity;
         public Entity TargetEntity;
@@ -332,6 +333,7 @@ namespace Game.Components
         public int RequestId;
         public int Frame;
         public int RecommendationId;
+        public AssistantRecommendationKind RecommendationKind;
         public AssistantTargetKind TargetKind;
         public Entity SourceEntity;
         public Entity TargetEntity;

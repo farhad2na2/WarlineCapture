@@ -168,6 +168,7 @@ namespace Game.UI.Shell.Ecs
                 RecommendationId = recommendation.RecommendationId,
                 RecommendationSourceVersion = recommendation.SourceVersion,
                 Kind = ecsKind,
+                RecommendationKind = recommendation.Kind,
                 TargetKind = recommendation.TargetKind,
                 SourceEntity = recommendation.SourceEntity,
                 TargetEntity = recommendation.TargetEntity,

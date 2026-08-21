@@ -306,6 +306,7 @@ namespace Game.Runtime
     {
         private const string AndroidLogTag = "WarlineSelection";
 
+        [System.Diagnostics.Conditional("WARLINE_SELECTION_CLICK_DIAGNOSTICS")]
         public static void Log(string message)
         {
             Debug.Log(message);

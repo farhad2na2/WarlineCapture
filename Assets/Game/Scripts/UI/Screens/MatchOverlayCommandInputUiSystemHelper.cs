@@ -7,7 +7,7 @@ using Game.UI.Contracts;
 
 namespace Game.UI.Runtime
 {
-    public sealed class MatchOverlayCommandInputUiSystemHelper
+    public sealed partial class MatchOverlayCommandInputUiSystemHelper
     {
         private readonly Dictionary<MatchOverlayCommandControlsView, Binding> _bindings = new();
 
@@ -20,7 +20,8 @@ namespace Game.UI.Runtime
             ISelectionDiagnosticsSink diagnosticsSink = null,
             ISelectionUiReadModel selectionUiReadModel = null,
             Action captureGameplayUiClick = null,
-            IGameTextResolver gameTextResolver = null)
+            IGameTextResolver gameTextResolver = null,
+            Action<TacticalCommandMode> commandModeQueued = null)
         {
             if (view == null)
                 return;
@@ -37,7 +38,8 @@ namespace Game.UI.Runtime
                 diagnosticsSink,
                 selectionUiReadModel,
                 captureGameplayUiClick,
-                gameTextResolver);
+                gameTextResolver,
+                commandModeQueued);
             binding.Bind();
             _bindings.Add(view, binding);
         }
@@ -82,7 +84,7 @@ namespace Game.UI.Runtime
             button?.onClick.RemoveAllListeners();
         }
 
-        private sealed class Binding
+        private sealed partial class Binding
         {
             private readonly MatchOverlayCommandControlsView _view;
             private readonly ISelectionUiCommand _selectionUiCommandSystem;
@@ -93,6 +95,7 @@ namespace Game.UI.Runtime
             private readonly ISelectionUiReadModel _selectionUiReadModel;
             private readonly Action _captureGameplayUiClick;
             private readonly IGameTextResolver _gameTextResolver;
+            private readonly Action<TacticalCommandMode> _commandModeQueued;
             private readonly List<(Button Button, UnityEngine.Events.UnityAction Action)> _commandTabRuntimeListeners = new();
             private bool _buildDrawerOpen;
             private bool _hasAppliedVersionedCommandState;
@@ -107,7 +110,8 @@ namespace Game.UI.Runtime
                 ISelectionDiagnosticsSink diagnosticsSink,
                 ISelectionUiReadModel selectionUiReadModel,
                 Action captureGameplayUiClick,
-                IGameTextResolver gameTextResolver)
+                IGameTextResolver gameTextResolver,
+                Action<TacticalCommandMode> commandModeQueued)
             {
                 _view = view;
                 _selectionUiCommandSystem = selectionUiCommandSystem;
@@ -118,6 +122,7 @@ namespace Game.UI.Runtime
                 _selectionUiReadModel = selectionUiReadModel;
                 _captureGameplayUiClick = captureGameplayUiClick;
                 _gameTextResolver = gameTextResolver ?? FallbackGameTextResolver.Instance;
+                _commandModeQueued = commandModeQueued;
             }
 
             public void Bind()
@@ -226,33 +231,6 @@ namespace Game.UI.Runtime
                 ApplyCommandResult(TacticalCommandResult.Rejected(
                     TacticalCommandReasonCode.BuildUnavailable,
                     _gameTextResolver.Get("build.feedback.drawer_not_ready", "Build drawer is not ready.")));
-            }
-
-            private void OnMoveButtonClicked()
-            {
-                CaptureCommandUiClick();
-                LogMoveCommandTrace(
-                    $"moveButtonClicked view={_view.name} hasSelectionUi={_selectionUiCommandSystem != null}");
-                bool queued = _selectionUiCommandSystem != null &&
-                    _selectionUiCommandSystem.RequestMoveCommandMode();
-                LogMoveCommandTrace($"moveButtonRequestMoveCommandMode queued={queued}");
-
-                if (!queued)
-                    ApplyCommandResult(TacticalCommandResult.Rejected(
-                        TacticalCommandReasonCode.CommandUnavailable,
-                        "Move command unavailable."));
-            }
-
-            private void OnAttackButtonClicked()
-            {
-                CaptureCommandUiClick();
-                bool queued = _selectionUiCommandSystem != null &&
-                    _selectionUiCommandSystem.RequestAttackCommandMode();
-
-                if (!queued)
-                    ApplyCommandResult(TacticalCommandResult.Rejected(
-                        TacticalCommandReasonCode.CommandUnavailable,
-                        "Attack command unavailable."));
             }
 
             private void OnScanButtonClicked()

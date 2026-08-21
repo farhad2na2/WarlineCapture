@@ -26,6 +26,7 @@ namespace Game.Components
         public byte Requested;
         public byte Smooth;
         public byte UseTacticalRevealZoom;
+        public float SmoothTimeSeconds;
         public float3 World;
     }
 

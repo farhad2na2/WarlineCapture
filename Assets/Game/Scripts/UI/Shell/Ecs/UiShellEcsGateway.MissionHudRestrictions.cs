@@ -19,10 +19,19 @@ namespace Game.UI.Shell.Ecs
                 entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root);
             CampaignMissionCatalogComponent catalog =
                 entityManager.GetComponentData<CampaignMissionCatalogComponent>(root);
+            bool cinematicInteractionLocked =
+                IsOpeningCinematicActive(entityManager, root, in runtime);
             if (runtime.Version == 0 || runtime.SourceVersion == 0 ||
                 runtime.Phase == MissionPhaseKind.None || runtime.MissionId.Length == 0 ||
                 !catalog.Blob.IsCreated)
-                return false;
+            {
+                if (!cinematicInteractionLocked)
+                    return false;
+
+                restrictions = new UiMissionHudRestrictionsModel(
+                    runtime.MissionId.ToString(), false, false, false, false, false, true);
+                return true;
+            }
 
             ref CampaignMissionCatalogBlob blob = ref catalog.Blob.Value;
             for (int index = 0; index < blob.Missions.Length; index++)
@@ -37,11 +46,30 @@ namespace Game.UI.Shell.Ecs
                     definition.ProductionDisabled != 0,
                     definition.EconomyDisabled != 0,
                     definition.TransportDisabled != 0,
-                    definition.AirDisabled != 0);
+                    definition.AirDisabled != 0,
+                    cinematicInteractionLocked);
                 return true;
             }
 
-            return false;
+            if (!cinematicInteractionLocked)
+                return false;
+
+            restrictions = new UiMissionHudRestrictionsModel(
+                runtime.MissionId.ToString(), false, false, false, false, false, true);
+            return true;
+        }
+
+        private static bool IsOpeningCinematicActive(
+            EntityManager entityManager,
+            Entity root,
+            in CampaignMissionRuntimeComponent runtime)
+        {
+            if (!entityManager.HasComponent<CampaignMissionOpeningPresentationComponent>(root))
+                return false;
+
+            CampaignMissionOpeningPresentationComponent opening =
+                entityManager.GetComponentData<CampaignMissionOpeningPresentationComponent>(root);
+            return opening.SessionToken.Equals(runtime.SessionToken) && opening.Stage < 6;
         }
     }
 }

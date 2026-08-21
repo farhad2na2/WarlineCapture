@@ -11,7 +11,7 @@ using Game.Components;
 
 namespace Game.Runtime
 {
-    public sealed class RtsSelectionCommandResultFlushCompositionSystemHelper
+    public sealed partial class RtsSelectionCommandResultFlushCompositionSystemHelper
     {
         private const float AriaVoiceCooldownSeconds = 0.6f;
 
@@ -56,6 +56,7 @@ namespace Game.Runtime
             public readonly Action<EntityManager> EnsureEntityQueries;
             public readonly ClearCurrentSelectionAction ClearCurrentSelection;
             public readonly Action<TacticalCommandMode> ApplyHudCommandMode;
+            public readonly Action<TacticalCommandMode> CompleteHudGuidedWorldTarget;
             public readonly Action<BoardCommandModeDirection, bool> ApplyHudBoardCommandMode;
             public readonly Action<TacticalCommandResult> ApplyHudCommandResult;
             public readonly Action ClearHudSelection;
@@ -106,6 +107,7 @@ namespace Game.Runtime
                 Action<EntityManager> ensureEntityQueries,
                 ClearCurrentSelectionAction clearCurrentSelection,
                 Action<TacticalCommandMode> applyHudCommandMode,
+                Action<TacticalCommandMode> completeHudGuidedWorldTarget,
                 Action<BoardCommandModeDirection, bool> applyHudBoardCommandMode,
                 Action<TacticalCommandResult> applyHudCommandResult,
                 Action clearHudSelection,
@@ -155,6 +157,7 @@ namespace Game.Runtime
                 EnsureEntityQueries = ensureEntityQueries;
                 ClearCurrentSelection = clearCurrentSelection;
                 ApplyHudCommandMode = applyHudCommandMode;
+                CompleteHudGuidedWorldTarget = completeHudGuidedWorldTarget;
                 ApplyHudBoardCommandMode = applyHudBoardCommandMode;
                 ApplyHudCommandResult = applyHudCommandResult;
                 ClearHudSelection = clearHudSelection;
@@ -794,6 +797,7 @@ namespace Game.Runtime
                 TryEmitCommandConfirmationVoice(context, result.Kind, result.Accepted != 0);
                 if (result.Accepted != 0)
                 {
+                    context.CompleteHudGuidedWorldTarget?.Invoke(TacticalCommandMode.Move);
                     context.OrderMarkerSystem.TryShowCommandResultMarker(em, result);
                     context.ApplyHudCommandResult?.Invoke(ToTacticalCommandResult(result));
                     if (clearCommandMode)
@@ -958,6 +962,7 @@ namespace Game.Runtime
                 if (result.Accepted == 0)
                     continue;
 
+                context.CompleteHudGuidedWorldTarget?.Invoke(TacticalCommandMode.Attack);
                 bool clearInputCommandMode = context.InputSystem.ShouldClearActiveCommandModeAfterCommand(TacticalCommandMode.Attack);
                 bool clearHudCommandMode = clearInputCommandMode || explicitAttackTargetModeActive;
                 if (clearInputCommandMode)
@@ -1610,25 +1615,5 @@ namespace Game.Runtime
             };
         }
 
-        private static Vector2 SelectionPointerPosition(Context context)
-        {
-            return context.InputSystem != null
-                ? context.InputSystem.LastPointerPosition
-                : default;
-        }
-
-        private static TacticalCommandResult ToScanCommandResult(RtsSelectionCommandResultElement result)
-        {
-            if (result.Accepted == 0)
-                return TacticalCommandResult.Rejected((TacticalCommandReasonCode)result.ReasonCode);
-
-            if (result.DeferredToSource != 0)
-                return TacticalCommandResult.Success(GameText.Get("tactical.feedback.scan_ordered", "SCAN ORDERED: SCANNER EN ROUTE"));
-
-            string contacts = result.RevealedCount == 1
-                ? GameText.Get("tactical.feedback.scan_one_contact", "1 CONTACT")
-                : GameText.Format("tactical.feedback.scan_contacts", "{0} CONTACTS", result.RevealedCount);
-            return TacticalCommandResult.Success(GameText.Format("tactical.feedback.scan_complete", "SCAN COMPLETE: {0}", contacts));
-        }
     }
 }

@@ -26,17 +26,17 @@ public static class M01FirstContactAnchorTests
 
     private static readonly AnchorSpec[] Specs =
     {
-        new("anchor.ch01.m01.player_spawn", OperationMapAnchorKind.Deployment, new int2(1825, 783), 5f, 0f),
-        new("anchor.ch01.m01.camera_start", OperationMapAnchorKind.Camera, new int2(1815, 783), 1f, 0f),
-        new("anchor.ch01.m01.move_target", OperationMapAnchorKind.Objective, new int2(1835, 783), 3f, 0f),
-        new("anchor.ch01.m01.patrol_spawn", OperationMapAnchorKind.Spawn, new int2(1845, 783), 4f, 270f),
-        new("anchor.ch01.m01.patrol_route_a", OperationMapAnchorKind.Lane, new int2(1845, 773), 2f, 270f),
-        new("anchor.ch01.m01.patrol_route_b", OperationMapAnchorKind.Lane, new int2(1835, 773), 2f, 270f),
-        new("anchor.ch01.m01.patrol_route_c", OperationMapAnchorKind.Lane, new int2(1825, 773), 2f, 270f),
-        new("anchor.ch01.m01.patrol_objective", OperationMapAnchorKind.Hostile, new int2(1845, 793), 3f, 270f),
-        new("anchor.ch01.m01.civilian_safe_zone", OperationMapAnchorKind.Civilian, new int2(1840, 824), 7f, 45f),
-        new("anchor.ch01.m01.civilian_evacuation", OperationMapAnchorKind.Civilian, new int2(1870, 842), 7f, 45f),
-        new("anchor.ch01.m01.minimap_start", OperationMapAnchorKind.Minimap, new int2(1815, 773), 1f, 0f)
+        new("anchor.ch01.m01.player_spawn", OperationMapAnchorKind.Deployment, new int2(1792, 690), 5f, 0f),
+        new("anchor.ch01.m01.camera_start", OperationMapAnchorKind.Camera, new int2(1792, 682), 1f, 0f),
+        new("anchor.ch01.m01.move_target", OperationMapAnchorKind.Objective, new int2(1792, 710), 3f, 0f),
+        new("anchor.ch01.m01.patrol_spawn", OperationMapAnchorKind.Spawn, new int2(1792, 735), 4f, 180f),
+        new("anchor.ch01.m01.patrol_route_a", OperationMapAnchorKind.Lane, new int2(1792, 725), 2f, 180f),
+        new("anchor.ch01.m01.patrol_route_b", OperationMapAnchorKind.Lane, new int2(1792, 715), 2f, 180f),
+        new("anchor.ch01.m01.patrol_route_c", OperationMapAnchorKind.Lane, new int2(1792, 705), 2f, 180f),
+        new("anchor.ch01.m01.patrol_objective", OperationMapAnchorKind.Hostile, new int2(1792, 743), 3f, 180f),
+        new("anchor.ch01.m01.civilian_safe_zone", OperationMapAnchorKind.Civilian, new int2(1750, 755), 7f, 45f),
+        new("anchor.ch01.m01.civilian_evacuation", OperationMapAnchorKind.Civilian, new int2(1740, 775), 7f, 45f),
+        new("anchor.ch01.m01.minimap_start", OperationMapAnchorKind.Minimap, new int2(1792, 688), 1f, 0f)
     };
 
     public static void RunFocusedValidation()
@@ -210,6 +210,15 @@ public static class M01FirstContactAnchorTests
             Require(Vector3.Distance(a.Position, b.Position) > a.Radius + b.Radius + 4f,
                 $"Unit-bearing anchors overlap: {a.AnchorId} and {b.AnchorId}.");
         }
+
+        OperationMapAnchorConfig squad = Find(anchors, "anchor.ch01.m01.player_spawn");
+        OperationMapAnchorConfig patrol = Find(anchors, "anchor.ch01.m01.patrol_spawn");
+        Require(Vector3.Distance(squad.Position, patrol.Position) >= 40f,
+            "The civic-hall face-off must preserve at least forty metres of readable street distance.");
+        Require(Mathf.Abs(Mathf.DeltaAngle(squad.EulerAngles.y, patrol.EulerAngles.y)) >= 179f,
+            "The squad and civic-hall patrol must face one another.");
+        Require(Mathf.Abs(squad.Position.x - patrol.Position.x) <= 8f,
+            "The squad and civic-hall patrol must share the bazaar street axis.");
     }
 
     private static void ValidateTutorialSightlines(
@@ -263,8 +272,8 @@ public static class M01FirstContactAnchorTests
     }
 
     private static bool InsideContactCorridor(OperationMapAnchorConfig anchor) =>
-        anchor.Position.x >= 1728f && anchor.Position.x < 1856f &&
-        anchor.Position.z >= 720f && anchor.Position.z < 800f;
+        anchor.Position.x >= 1784f && anchor.Position.x < 1800f &&
+        anchor.Position.z >= 680f && anchor.Position.z < 744f;
 
     private static void WriteReport(
         OperationMapDefinition map,

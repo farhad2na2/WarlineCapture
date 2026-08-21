@@ -53,9 +53,10 @@ public sealed class M01FirstContactForcesPlayModeTests
             facts = world.EntityManager.GetComponentData<CampaignMissionAttemptFactsComponent>(fixture.Root);
             Assert.That(facts.CommandSquadSpawned, Is.EqualTo(1));
             opening = world.EntityManager.GetComponentData<CampaignMissionOpeningPresentationComponent>(fixture.Root);
-            Assert.That(opening.Stage, Is.EqualTo(1));
+            Assert.That(opening.Stage, Is.Zero,
+                "The mission must first hold on the live RTS camera before beginning its cinematic.");
             Assert.That(world.EntityManager.GetComponentData<RuntimeCameraFocusRequestComponent>(fixture.CameraFocus)
-                .Requested, Is.EqualTo(1));
+                .Requested, Is.Zero);
             yield break;
         }
         finally { fixture.Dispose(); }
@@ -88,7 +89,8 @@ public sealed class M01FirstContactForcesPlayModeTests
             Assert.That(world.EntityManager.HasComponent<CampaignMissionOpeningPresentationComponent>(fixture.Root),
                 Is.True);
             Assert.That(world.EntityManager.GetComponentData<RuntimeCameraFocusRequestComponent>(fixture.CameraFocus)
-                .Requested, Is.EqualTo(1));
+                .Requested, Is.Zero,
+                "The first visible mission frame must remain the normal RTS camera.");
             yield break;
         }
         finally { fixture.Dispose(); }
@@ -112,12 +114,19 @@ public sealed class M01FirstContactForcesPlayModeTests
             {
                 Assert.That(world.EntityManager.HasComponent<SelectedUnitTag>(entities[i]), Is.False,
                     "Mission spawn must scrub selection state inherited from runtime prefabs.");
+                Assert.That(world.EntityManager.HasComponent<UnitMidLodPrefabReference>(entities[i]), Is.False,
+                    "M01 cinematic actors must not swap into generated mid-LOD proxy meshes.");
+                Assert.That(world.EntityManager.HasComponent<UnitLowLodPrefabReference>(entities[i]), Is.False,
+                    "M01 cinematic actors must not swap into generated low-LOD proxy meshes.");
                 Faction faction = world.EntityManager.GetComponentData<Faction>(entities[i]);
                 if (faction.Id == 1) friendly++;
                 if (faction.Id == 2) hostile++;
                 LocalTransform transform = world.EntityManager.GetComponentData<LocalTransform>(entities[i]);
                 float3 center = faction.Id == 1 ? new float3(8f, 0f, 8f) : new float3(20f, 0f, 20f);
                 Assert.That(math.distance(transform.Position, center), Is.LessThanOrEqualTo(4f));
+                float3 forward = math.mul(transform.Rotation, new float3(0f, 0f, 1f));
+                Assert.That(faction.Id == 1 ? -forward.z : forward.z, Is.LessThan(-0.99f),
+                    "The command squad and civic-hall patrol must inherit opposing anchor facings.");
             }
             Assert.That(friendly, Is.EqualTo(4));
             Assert.That(hostile, Is.EqualTo(3));
@@ -127,7 +136,8 @@ public sealed class M01FirstContactForcesPlayModeTests
             Assert.That(facts.HostileTotalCount, Is.EqualTo(3));
             RuntimeCameraFocusRequestComponent focus = world.EntityManager.GetComponentData<
                 RuntimeCameraFocusRequestComponent>(fixture.CameraFocus);
-            Assert.That(focus.Requested, Is.EqualTo(1));
+            Assert.That(focus.Requested, Is.Zero,
+                "Spawning the mission must not replace the initial RTS camera.");
             float3 friendlyCenter = float3.zero;
             float3 hostileCenter = float3.zero;
             int friendlyCount = 0;
@@ -160,16 +170,29 @@ public sealed class M01FirstContactForcesPlayModeTests
             }
             Assert.That(friendlyCount, Is.EqualTo(4));
             Assert.That(hostileCount, Is.EqualTo(3));
-            Assert.That(focus.Smooth, Is.Zero,
-                "The opening hostile reveal must cut to the patrol before the timed squad return begins.");
-            Assert.That(focus.UseTacticalRevealZoom, Is.EqualTo(1));
-            Assert.That(math.distance(focus.World, hostileCenter / hostileCount), Is.LessThan(0.001f));
+            float3 expectedEstablishingFocus = math.lerp(
+                friendlyCenter / friendlyCount,
+                hostileCenter / hostileCount,
+                0.40f);
             CampaignMissionOpeningPresentationComponent opening = world.EntityManager.GetComponentData<
                 CampaignMissionOpeningPresentationComponent>(fixture.Root);
-            Assert.That(opening.Stage, Is.EqualTo(1));
+            Assert.That(opening.Stage, Is.Zero);
             Assert.That(opening.SessionToken, Is.EqualTo(Session));
             Assert.That(math.distance(opening.HostileFocus, hostileCenter / hostileCount), Is.LessThan(0.001f));
-            Assert.That(math.distance(opening.FriendlyFocus, friendlyCenter / friendlyCount), Is.LessThan(0.001f));
+            float3 expectedFriendlyFocus = friendlyCenter / friendlyCount;
+            Assert.That(math.distance(opening.FriendlyFocus, expectedFriendlyFocus), Is.LessThan(0.001f));
+            Assert.That(math.distance(opening.EstablishingFocus, expectedEstablishingFocus), Is.LessThan(0.001f));
+
+            opening.ElapsedMilliseconds = 2500;
+            world.EntityManager.SetComponentData(fixture.Root, opening);
+            Update<CampaignMissionPatrolOrderSystem>(world);
+            focus = world.EntityManager.GetComponentData<RuntimeCameraFocusRequestComponent>(fixture.CameraFocus);
+            Assert.That(focus.Requested, Is.EqualTo(1));
+            Assert.That(focus.Smooth, Is.EqualTo(1));
+            Assert.That(focus.UseTacticalRevealZoom, Is.EqualTo(3));
+            Assert.That(math.distance(focus.World, expectedEstablishingFocus), Is.LessThan(0.001f));
+            opening = world.EntityManager.GetComponentData<CampaignMissionOpeningPresentationComponent>(fixture.Root);
+            Assert.That(opening.Stage, Is.EqualTo(1));
             yield break;
         }
         finally { fixture.Dispose(); }
@@ -188,7 +211,7 @@ public sealed class M01FirstContactForcesPlayModeTests
             world.EntityManager.SetComponentData(fixture.CameraFocus, default(RuntimeCameraFocusRequestComponent));
             CampaignMissionOpeningPresentationComponent opening = world.EntityManager.GetComponentData<
                 CampaignMissionOpeningPresentationComponent>(fixture.Root);
-            opening.ElapsedMilliseconds = 20000;
+            opening.ElapsedMilliseconds = 2500;
             world.EntityManager.SetComponentData(fixture.Root, opening);
             using EntityQuery combatUnits = world.EntityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<CampaignMissionUnitRoleComponent>(), ComponentType.ReadOnly<UnitCombat>());
@@ -206,23 +229,62 @@ public sealed class M01FirstContactForcesPlayModeTests
                 RuntimeCameraFocusRequestComponent>(fixture.CameraFocus);
             Assert.That(focus.Requested, Is.EqualTo(1));
             Assert.That(focus.Smooth, Is.EqualTo(1));
-            Assert.That(focus.UseTacticalRevealZoom, Is.EqualTo(2));
+            Assert.That(focus.UseTacticalRevealZoom, Is.EqualTo(3));
+            Assert.That(focus.SmoothTimeSeconds, Is.EqualTo(2.25f));
             opening = world.EntityManager.GetComponentData<CampaignMissionOpeningPresentationComponent>(fixture.Root);
-            Assert.That(opening.Stage, Is.EqualTo(2));
-            Assert.That(math.distance(focus.World, opening.FriendlyFocus), Is.LessThan(0.001f));
+            Assert.That(opening.Stage, Is.EqualTo(1));
+            Assert.That(math.distance(focus.World, opening.EstablishingFocus), Is.LessThan(0.001f));
             Entity queue = UnitMoveOrderRequestSystem.EnsureQueueEntity(world.EntityManager);
             DynamicBuffer<UnitMoveOrderRequestElement> requests = world.EntityManager.GetBuffer<
                 UnitMoveOrderRequestElement>(queue);
             Assert.That(requests.Length, Is.Zero);
             for (int i = 0; i < combatEntities.Length; i++)
             {
-                Assert.That(world.EntityManager.GetComponentData<UnitCombat>(combatEntities[i]).CanAttack, Is.Zero,
-                    "M01 units must be unable to inflict damage before the explicit Engage phase.");
+                Assert.That(world.EntityManager.GetComponentData<UnitCombat>(combatEntities[i]).CanAttack, Is.EqualTo(1),
+                    "M01 soldiers must retain manual attack capability so Attack can arm before target selection.");
                 Assert.That(world.EntityManager.GetComponentData<UnitCombat>(combatEntities[i]).AutoEngage, Is.Zero,
                     "M01 units must not auto-engage before the explicit Engage phase.");
                 Assert.That(world.EntityManager.HasComponent<EngageTarget>(combatEntities[i]), Is.False,
                     "M01 must scrub inherited or AI-issued combat targets before Engage.");
             }
+
+            world.EntityManager.SetComponentData(
+                fixture.CameraFocus, default(RuntimeCameraFocusRequestComponent));
+            opening.ElapsedMilliseconds = 7000;
+            opening.Stage = 2;
+            world.EntityManager.SetComponentData(fixture.Root, opening);
+            Update<CampaignMissionPatrolOrderSystem>(world);
+            focus = world.EntityManager.GetComponentData<RuntimeCameraFocusRequestComponent>(fixture.CameraFocus);
+            Assert.That(focus.Requested, Is.EqualTo(1));
+            Assert.That(focus.Smooth, Is.EqualTo(1));
+            Assert.That(focus.UseTacticalRevealZoom, Is.EqualTo(1));
+            Assert.That(focus.SmoothTimeSeconds, Is.EqualTo(2.25f));
+            Assert.That(math.distance(focus.World, opening.HostileFocus), Is.LessThan(0.001f));
+            opening = world.EntityManager.GetComponentData<CampaignMissionOpeningPresentationComponent>(fixture.Root);
+            Assert.That(opening.Stage, Is.EqualTo(3));
+
+            world.EntityManager.SetComponentData(
+                fixture.CameraFocus, default(RuntimeCameraFocusRequestComponent));
+            opening.ElapsedMilliseconds = 12000;
+            opening.Stage = 4;
+            world.EntityManager.SetComponentData(fixture.Root, opening);
+            Update<CampaignMissionPatrolOrderSystem>(world);
+            focus = world.EntityManager.GetComponentData<RuntimeCameraFocusRequestComponent>(fixture.CameraFocus);
+            Assert.That(focus.Requested, Is.EqualTo(1));
+            Assert.That(focus.Smooth, Is.EqualTo(1));
+            Assert.That(focus.UseTacticalRevealZoom, Is.EqualTo(4),
+                "The final glide must restore the configured RTS camera rather than another cinematic close-up.");
+            Assert.That(math.distance(focus.World, opening.FriendlyFocus), Is.LessThan(0.001f));
+            opening = world.EntityManager.GetComponentData<CampaignMissionOpeningPresentationComponent>(fixture.Root);
+            Assert.That(opening.Stage, Is.EqualTo(5));
+
+            world.EntityManager.SetComponentData(
+                fixture.CameraFocus, default(RuntimeCameraFocusRequestComponent));
+            opening.ElapsedMilliseconds = 15000;
+            world.EntityManager.SetComponentData(fixture.Root, opening);
+            Update<CampaignMissionPatrolOrderSystem>(world);
+            opening = world.EntityManager.GetComponentData<CampaignMissionOpeningPresentationComponent>(fixture.Root);
+            Assert.That(opening.Stage, Is.EqualTo(6));
             facts.ElapsedMilliseconds = 12000;
             world.EntityManager.SetComponentData(fixture.Root, facts);
             CampaignMissionRuntimeComponent runtime = world.EntityManager.GetComponentData<
@@ -242,7 +304,7 @@ public sealed class M01FirstContactForcesPlayModeTests
                 Assert.That(requests[i].Goal, Is.EqualTo(new int2(12, 12)));
             }
             opening = world.EntityManager.GetComponentData<CampaignMissionOpeningPresentationComponent>(fixture.Root);
-            Assert.That(opening.Stage, Is.EqualTo(3));
+            Assert.That(opening.Stage, Is.EqualTo(7));
             for (int i = 0; i < combatEntities.Length; i++)
             {
                 Assert.That(world.EntityManager.GetComponentData<UnitCombat>(combatEntities[i]).CanAttack, Is.EqualTo(1));
@@ -314,7 +376,7 @@ public sealed class M01FirstContactForcesPlayModeTests
         {
             Entity prefab = em.CreateEntity(
                 typeof(Prefab), typeof(UnitSourcePrefabKey), typeof(LocalTransform), typeof(SelectedUnitTag),
-                typeof(UnitCombat));
+                typeof(UnitCombat), typeof(UnitMidLodPrefabReference), typeof(UnitLowLodPrefabReference));
             em.SetComponentData(prefab, new UnitSourcePrefabKey { Value = keys[i] });
             em.SetComponentData(prefab, LocalTransform.Identity);
             em.SetComponentData(prefab, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
@@ -390,8 +452,8 @@ public sealed class M01FirstContactForcesPlayModeTests
         root.OperationMapId = MapId;
         root.Grid = new OperationMapGridBlob { Origin = float3.zero, Dimensions = new int2(64, 64), CellSize = 2f };
         BlobBuilderArray<OperationMapAnchorBlob> anchors = builder.Allocate(ref root.Anchors, 5);
-        anchors[0] = Anchor("anchor.ch01.m01.player_spawn", new float3(8f, 0f, 8f), 4f);
-        anchors[1] = Anchor("anchor.ch01.m01.patrol_spawn", new float3(20f, 0f, 20f), 4f);
+        anchors[0] = Anchor("anchor.ch01.m01.player_spawn", new float3(8f, 0f, 8f), 4f, 0f);
+        anchors[1] = Anchor("anchor.ch01.m01.patrol_spawn", new float3(20f, 0f, 20f), 4f, 180f);
         anchors[2] = Anchor("anchor.ch01.m01.patrol_route_a", new float3(24f, 0f, 24f), 2f);
         anchors[3] = Anchor("anchor.ch01.m01.patrol_route_b", new float3(28f, 0f, 24f), 2f);
         anchors[4] = Anchor("anchor.ch01.m01.patrol_route_c", new float3(32f, 0f, 24f), 2f);
@@ -401,9 +463,10 @@ public sealed class M01FirstContactForcesPlayModeTests
         return result;
     }
 
-    private static OperationMapAnchorBlob Anchor(string id, float3 position, float radius) => new()
+    private static OperationMapAnchorBlob Anchor(string id, float3 position, float radius, float yaw = 0f) => new()
     {
-        Id = new FixedString64Bytes(id), Position = position, Rotation = quaternion.identity, Radius = radius
+        Id = new FixedString64Bytes(id), Position = position,
+        Rotation = quaternion.RotateY(math.radians(yaw)), Radius = radius
     };
 
     private static FixedString64Bytes[] RuntimeKeys() => new[]

@@ -88,7 +88,7 @@ namespace Game.Runtime
             if (Contains(entry.settledTokens, settlementToken))
                 return CampaignMissionSettlementReceipt.Duplicate(firstClear);
             if (firstClear && entry.firstClearRewardSettled)
-                return CampaignMissionSettlementReceipt.Rejected("first-clear-already-settled", true);
+                return CampaignMissionSettlementReceipt.Duplicate(true);
             if (!firstClear && requirePriorFirstClear && !entry.firstClearCompleted)
                 return CampaignMissionSettlementReceipt.Rejected("replay-before-first-clear", false);
 

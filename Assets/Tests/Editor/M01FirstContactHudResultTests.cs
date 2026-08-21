@@ -17,7 +17,7 @@ using UnityEngine.UI;
 
 public sealed class M01FirstContactHudResultTests
 {
-    private const string Marker = "[M01FirstContactHudResultValidation] result=Passed tests=10 captures=3";
+    private const string Marker = "[M01FirstContactHudResultValidation] result=Passed tests=11 captures=3";
 
     public static void RunFocusedValidation()
     {
@@ -31,6 +31,7 @@ public sealed class M01FirstContactHudResultTests
             Run(RetryQueuesOneCorrelatedAttempt, ref passed);
             Run(GatewayRejectsDuplicateResultInput, ref passed);
             Run(HudViewDoesNotOwnElapsedTime, ref passed);
+            Run(ContinueQueuesReturnToMainMenu, ref passed);
             Run(ResultGatewayFormatsOnlyAuthoritativeOutcomeRewards, ref passed);
             Run(PrefabsCarryProductionBindings, ref passed);
             Run(ResultPopupCapturesSupportedAspects, ref passed);
@@ -137,6 +138,15 @@ public sealed class M01FirstContactHudResultTests
         StringAssert.Contains("TryReadMatchHudStatusSurfaces", source);
     }
 
+    [Test] public static void ContinueQueuesReturnToMainMenu()
+    {
+        string source = File.ReadAllText(
+            "Assets/Game/Scripts/UI/Screens/CampaignMissionHudResultBinder.cs");
+        StringAssert.Contains("UiShellRouteIntent.ReturnToMainMenu", source);
+        StringAssert.Contains("UIRoute.MainMenu", source);
+        StringAssert.Contains("action == UiMissionResultActionKind.Continue", source);
+    }
+
     [Test] public static void PrefabsCarryProductionBindings()
     {
         GameObject result = AssetDatabase.LoadAssetAtPath<GameObject>(
@@ -144,6 +154,12 @@ public sealed class M01FirstContactHudResultTests
         GameObject canvas = AssetDatabase.LoadAssetAtPath<GameObject>(
             "Assets/Game/Prefabs/UI/Shell/UIShellAppCanvas.prefab");
         Assert.NotNull(result.GetComponent<MissionResultPopupView>());
+        RectTransform resultRect = result.GetComponent<RectTransform>();
+        Assert.That(resultRect.anchorMin, Is.EqualTo(Vector2.zero));
+        Assert.That(resultRect.anchorMax, Is.EqualTo(Vector2.one));
+        Assert.That(resultRect.anchoredPosition, Is.EqualTo(Vector2.zero));
+        Assert.That(resultRect.sizeDelta, Is.EqualTo(Vector2.zero),
+            "A stretch-anchored popup must not add its authored reference resolution to the live screen.");
         Assert.NotNull(canvas.GetComponent<CampaignMissionHudResultBinder>());
         Assert.That(GameObjectUtility.GetMonoBehavioursWithMissingScriptCount(canvas), Is.Zero);
     }

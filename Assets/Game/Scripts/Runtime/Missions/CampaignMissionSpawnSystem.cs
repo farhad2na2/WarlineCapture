@@ -11,13 +11,11 @@ namespace Game.Runtime
     public partial struct CampaignMissionSpawnSystem : ISystem
     {
         private EntityQuery _registryQuery;
-        private EntityQuery _cameraFocusQuery;
 
         public void OnCreate(ref SystemState state)
         {
             _registryQuery = state.GetEntityQuery(
                 ComponentType.ReadOnly<UnitPrefabRegistryTag>(), ComponentType.ReadOnly<UnitPrefabRegistryEntry>());
-            _cameraFocusQuery = state.GetEntityQuery(ComponentType.ReadWrite<RuntimeCameraFocusRequestComponent>());
             state.RequireForUpdate<CampaignMissionRootComponent>();
             state.RequireForUpdate<OperationMapMetadataComponent>();
         }
@@ -76,14 +74,21 @@ namespace Game.Runtime
                 out float3 playerFocus,
                 out float3 hostileFocus);
             prefabs.Dispose();
-            bool openingFocusRequested = RequestOpeningHostileCameraFocus(em, hostileFocus);
+            // The live RTS frame begins on the road-side squad. The following establishing
+            // glide advances into the street while keeping both sides and the civic hall
+            // readable before it continues to the patrol.
+            float3 establishingFocus = math.lerp(playerFocus, hostileFocus, 0.40f);
             SetOrAdd(em, root, new CampaignMissionOpeningPresentationComponent
             {
                 SessionToken = rootRuntime.SessionToken,
                 FriendlyFocus = playerFocus,
                 HostileFocus = hostileFocus,
+                EstablishingFocus = establishingFocus,
                 ElapsedMilliseconds = 0,
-                Stage = (byte)(openingFocusRequested ? 1 : 0)
+                // The HUD/camera composition initializes after mission entities. Stage zero
+                // deliberately defers the establishing shot until that composition is visible,
+                // preventing the normal match-intro zoom from overwriting the bazaar handoff.
+                Stage = 0
             });
             rootFacts.CommandSquadSpawned = 1;
             rootFacts.CommandSquadAlive = 1;
@@ -141,6 +146,13 @@ namespace Game.Runtime
                         Entity instance = em.Instantiate(prefab);
                         if (em.HasComponent<SelectedUnitTag>(instance))
                             em.RemoveComponent<SelectedUnitTag>(instance);
+                        // M01 presents seven named, close-camera actors. Keep their full models
+                        // stable while the opening camera moves instead of handing any actor to
+                        // the shared generated proxy LOD path used by large Skirmish armies.
+                        if (em.HasComponent<UnitMidLodPrefabReference>(instance))
+                            em.RemoveComponent<UnitMidLodPrefabReference>(instance);
+                        if (em.HasComponent<UnitLowLodPrefabReference>(instance))
+                            em.RemoveComponent<UnitLowLodPrefabReference>(instance);
                         float3 position = OffsetInsideAnchor(
                             anchor.Position, anchor.Radius, ordinal++, runtime.DeterministicSeed);
                         SetOrAdd(
@@ -176,22 +188,6 @@ namespace Game.Runtime
             hostileFocus = hostileCount > 0
                 ? hostilePositionSum / hostileCount
                 : playerFocus;
-        }
-
-        private bool RequestOpeningHostileCameraFocus(EntityManager em, float3 hostileFocus)
-        {
-            if (_cameraFocusQuery.CalculateEntityCount() != 1)
-                return false;
-
-            Entity focusEntity = _cameraFocusQuery.GetSingletonEntity();
-            em.SetComponentData(focusEntity, new RuntimeCameraFocusRequestComponent
-            {
-                Requested = 1,
-                Smooth = 0,
-                UseTacticalRevealZoom = 1,
-                World = hostileFocus
-            });
-            return true;
         }
 
         internal static bool TryFindDefinition(

@@ -470,8 +470,6 @@ namespace Game.Composition
                 if (streamedMatchView != null && streamedMatchView != matchScene)
                     staticMapPresentationStreamer.Unbind();
 
-                // Retain the lifecycle owner across the route transition. The menu-loading path
-                // coordinates EntityScene teardown before the Match shell itself is unloaded.
                 streamedMatchView = matchScene;
 
                 staticMapPresentationStreamer.Update();
@@ -693,6 +691,7 @@ namespace Game.Composition
             }
 
             MainMenuPlayUI mainMenu = matchBootstrap.EnsureMainMenuRuntimeDependencies();
+            mainMenu.BindGuidedHudRuntime(view.ContentSystem);
             if (view.ContentSystem.TryGetMatchHudSelectionPanelView(out MatchHudSelectionPanelView selectionPanelView))
                 matchBootstrap.BindMatchHudSelectionPanel(selectionPanelView);
 

@@ -1448,6 +1448,8 @@ namespace Game.UI.Contracts
         public readonly string RecommendationBody;
         public readonly string RecommendationPriorityText;
         public readonly string RecommendationActionLabel;
+        public readonly byte RecommendationKind;
+        public readonly byte RecommendationTargetKind;
         public readonly bool CanShow;
         public readonly bool CanExecute;
         public readonly bool CanStop;
@@ -1499,6 +1501,8 @@ namespace Game.UI.Contracts
             RecommendationBody = recommendationBody;
             RecommendationPriorityText = recommendationPriorityText;
             RecommendationActionLabel = recommendationActionLabel;
+            RecommendationKind = 0;
+            RecommendationTargetKind = 0;
             CanShow = canShow;
             CanExecute = canExecute;
             CanStop = canStop;
@@ -1535,7 +1539,9 @@ namespace Game.UI.Contracts
             string ownershipText,
             string ownershipDetailText,
             bool largeTextEnabled = false,
-            bool highContrastEnabled = false)
+            bool highContrastEnabled = false,
+            byte recommendationKind = 0,
+            byte recommendationTargetKind = 0)
         {
             Version = version;
             ElapsedVisible = elapsedVisible;
@@ -1560,6 +1566,8 @@ namespace Game.UI.Contracts
             RecommendationBody = recommendationBody ?? string.Empty;
             RecommendationPriorityText = recommendationPriorityText ?? string.Empty;
             RecommendationActionLabel = recommendationActionLabel ?? string.Empty;
+            RecommendationKind = recommendationKind;
+            RecommendationTargetKind = recommendationTargetKind;
             CanShow = canShow;
             CanExecute = canExecute;
             CanStop = canStop;
@@ -1589,43 +1597,6 @@ namespace Game.UI.Contracts
                 false,
                 string.Empty,
                 string.Empty);
-    }
-
-    public readonly struct UiAssistantHighlightModel
-    {
-        public readonly uint Version;
-        public readonly bool Active;
-        public readonly int RequestId;
-        public readonly int RecommendationId;
-        public readonly byte TargetKind;
-        public readonly float WorldX;
-        public readonly float WorldY;
-        public readonly float WorldZ;
-        public readonly float Strength;
-
-        public UiAssistantHighlightModel(
-            uint version,
-            bool active,
-            int requestId,
-            int recommendationId,
-            byte targetKind,
-            float worldX,
-            float worldY,
-            float worldZ,
-            float strength)
-        {
-            Version = version;
-            Active = active;
-            RequestId = requestId;
-            RecommendationId = recommendationId;
-            TargetKind = targetKind;
-            WorldX = worldX;
-            WorldY = worldY;
-            WorldZ = worldZ;
-            Strength = strength;
-        }
-
-        public static UiAssistantHighlightModel Empty => new(0, false, 0, 0, 0, 0f, 0f, 0f, 0f);
     }
 
     public readonly struct UiMatchHudMinimapMarkerModel

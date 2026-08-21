@@ -5,10 +5,8 @@ namespace Game.Runtime
 {
     public sealed partial class RtsCameraSystem : SystemBase
     {
-        private const float SmoothFocusCompletionDistanceSq = 0.01f;
         private const float FallbackDeltaTime = 1f / 60f;
 
-        private Vector3 _smoothFocusVelocity;
         private Vector3 _tacticalFollowPositionVelocity;
         private Vector3 _tacticalFollowLookAtVelocity;
         private Vector3 _tacticalFollowSmoothedLookAt;
@@ -22,8 +20,6 @@ namespace Game.Runtime
         private Rect _groundBoundary;
 
         public bool IsDragging { get; private set; }
-        public bool HasSmoothFocusTarget { get; private set; }
-        public Vector3 SmoothFocusTarget { get; private set; }
         public bool WasPlayRequested { get; set; }
         public bool WasBuildModeActive { get; set; }
         public bool IsZoomTransitionActive { get; set; }
@@ -56,6 +52,7 @@ namespace Game.Runtime
         {
             ClearDragging();
             ClearSmoothFocusTarget();
+            ClearSmoothPerspectiveTarget();
         }
 
         public void ResetCameraModeSession()
@@ -126,45 +123,6 @@ namespace Game.Runtime
         {
             boundary = _groundBoundary;
             return _hasGroundBoundary;
-        }
-
-        public void SetSmoothFocusTarget(Vector3 focusWorldPosition, bool resetVelocity)
-        {
-            focusWorldPosition.y = 0f;
-            focusWorldPosition = ClampGroundPositionToBoundary(focusWorldPosition);
-            SmoothFocusTarget = focusWorldPosition;
-            HasSmoothFocusTarget = true;
-
-            if (resetVelocity)
-                _smoothFocusVelocity = Vector3.zero;
-        }
-
-        public void ClearSmoothFocusTarget()
-        {
-            HasSmoothFocusTarget = false;
-            _smoothFocusVelocity = Vector3.zero;
-        }
-
-        public Vector3 UpdateSmoothFocus(Vector3 currentGroundCenter, float smoothTime)
-        {
-            if (!HasSmoothFocusTarget)
-                return currentGroundCenter;
-
-            Vector3 smoothedCenter = Vector3.SmoothDamp(
-                currentGroundCenter,
-                SmoothFocusTarget,
-                ref _smoothFocusVelocity,
-                Mathf.Max(0.01f, smoothTime));
-
-            Vector2 remaining = new(
-                SmoothFocusTarget.x - smoothedCenter.x,
-                SmoothFocusTarget.z - smoothedCenter.z);
-            if (remaining.sqrMagnitude > SmoothFocusCompletionDistanceSq)
-                return smoothedCenter;
-
-            smoothedCenter = SmoothFocusTarget;
-            ClearSmoothFocusTarget();
-            return smoothedCenter;
         }
 
         public bool PanCamera(Camera worldCamera, Vector2 screenDelta, float panSensitivity)

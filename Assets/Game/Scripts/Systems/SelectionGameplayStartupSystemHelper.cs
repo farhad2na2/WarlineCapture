@@ -1105,6 +1105,7 @@ namespace Game.Runtime
                     EnsureRuntimeSelectionDependencies,
                     ClearCurrentSelection,
                     mode => selectionHudFeedbackSystem.ApplyCommandMode(hudFeedbackContext, mode),
+                    mode => mainMenuPlayUi?.CompleteMatchHudGuidedWorldTarget(mode),
                     (direction, boardAllInteractable) =>
                         selectionHudFeedbackSystem.ApplyBoardCommandMode(hudFeedbackContext, direction, boardAllInteractable),
                     result => selectionHudFeedbackSystem.ApplyCommandResult(hudFeedbackContext, result),

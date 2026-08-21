@@ -306,17 +306,35 @@ namespace Game.UI.Runtime
                 _lastBuildDisabled == buildDisabled && _lastSupportDisabled == supportDisabled)
                 return;
 
-            SetButtonVisible(buildButton, !buildDisabled);
-            SetButtonVisible(_supportButton, !supportDisabled);
+            SetButtonDisabled(buildButton, buildDisabled);
+            SetButtonDisabled(_supportButton, supportDisabled);
             _lastBuildDisabled = buildDisabled;
             _lastSupportDisabled = supportDisabled;
             _missionRestrictionVisibilityApplied = true;
         }
 
-        private static void SetButtonVisible(Button button, bool visible)
+        private static void SetButtonDisabled(Button button, bool disabled)
         {
-            if (button != null && button.gameObject.activeSelf != visible)
-                button.gameObject.SetActive(visible);
+            if (button == null)
+                return;
+
+            if (!button.gameObject.activeSelf)
+                button.gameObject.SetActive(true);
+            UiDisabledMaterialUtility.SetSelectableDisabled(
+                button,
+                UiDisabledVisualReason.MissionRestriction,
+                disabled);
+            UiDisabledMaterialUtility.SetDisabled(
+                button.gameObject,
+                UiDisabledVisualReason.MissionRestriction,
+                disabled);
+            button.interactable = !disabled;
+            CanvasGroup group = button.GetComponent<CanvasGroup>();
+            if (group == null)
+                group = button.gameObject.AddComponent<CanvasGroup>();
+            group.alpha = 1f;
+            group.interactable = !disabled;
+            group.blocksRaycasts = !disabled;
         }
 
         private Camera ResolveEventCamera()

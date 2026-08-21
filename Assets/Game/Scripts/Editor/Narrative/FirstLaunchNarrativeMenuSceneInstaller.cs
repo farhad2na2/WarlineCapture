@@ -62,6 +62,21 @@ namespace Game.Editor
             Set(serialized, "firstLaunchPersianLocale", AssetDatabase.LoadAssetAtPath<NarrativeLocaleConfig>(FirstLaunchNarrativeConfigBuilder.PersianLocalePath));
             serialized.ApplyModifiedPropertiesWithoutUndo();
 
+            if (bootstrap.ShellEcsPresentation == null || bootstrap.ShellView == null ||
+                !bootstrap.ShellView.TryGetRegion(UIShellRegionId.PopupLayer, out UIShellRegionView popupRegion))
+                throw new UnityException("Menu scene is missing its shell presentation or popup region.");
+            CampaignMissionHudResultBinder resultBinder =
+                bootstrap.ShellEcsPresentation.GetComponent<CampaignMissionHudResultBinder>() ??
+                bootstrap.ShellEcsPresentation.gameObject.AddComponent<CampaignMissionHudResultBinder>();
+            GameObject resultPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+                "Assets/Game/Prefabs/UI/Popups/MissionResultPopup.prefab");
+            if (popupRegion.ContentRoot == null || resultPrefab == null)
+                throw new UnityException("Menu popup region or mission result prefab is not configured.");
+            resultBinder.Configure(popupRegion.ContentRoot, resultPrefab, popupRegion);
+            SerializedObject shellPresentation = new(bootstrap.ShellEcsPresentation);
+            Set(shellPresentation, "missionHudResultBinder", resultBinder);
+            shellPresentation.ApplyModifiedPropertiesWithoutUndo();
+
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
             AssetDatabase.SaveAssets();

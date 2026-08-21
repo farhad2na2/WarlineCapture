@@ -25,8 +25,9 @@ namespace Game.UI.Shell.Ecs
 
         private static uint AssistantHighlightVersion(AssistantPreviewHighlightElement highlight)
         {
-            uint combined = (uint)math.max(1, highlight.RequestId);
+            uint combined = (uint)math.max(1, highlight.RequestId) * 397u ^ (uint)math.max(0, highlight.Frame);
             combined = combined * 397u ^ (uint)math.max(0, highlight.RecommendationId);
+            combined = combined * 31u ^ (uint)highlight.RecommendationKind;
             combined = combined * 31u ^ (uint)highlight.TargetKind;
             combined = combined * 17u ^ (uint)math.asint(highlight.WorldPosition.x);
             combined = combined * 17u ^ (uint)math.asint(highlight.WorldPosition.y);

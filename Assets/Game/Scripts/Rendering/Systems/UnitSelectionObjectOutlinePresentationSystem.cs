@@ -95,6 +95,7 @@ namespace Game.Rendering
                 if (UnitSelectionMarkerSystem.IsBuildingSelectionOwner(em, units[i]))
                 {
                     DestroySelectionObjectOutlines(em, markers[i]);
+                    MarkSelectionObjectOutlineResolved(em, markers[i]);
                     continue;
                 }
 
@@ -122,7 +123,20 @@ namespace Game.Rendering
             if (!em.HasBuffer<SelectionObjectOutlineInstanceElement>(marker))
                 em.AddBuffer<SelectionObjectOutlineInstanceElement>(marker);
 
-            if (GetSelectionObjectOutlineCount(em, marker) > 0)
+            if (!usesVehicleMarker)
+            {
+                // Infantry uses GPU animation, so copying its render hierarchy cannot
+                // produce a valid object outline. Keep the authored ground marker and do
+                // not ancestry-scan every dense-city renderer when the squad is selected.
+                // Also remove an outline created before this policy was applied so a stale
+                // rectangular render proxy cannot remain underneath the circular marker.
+                if (GetSelectionObjectOutlineCount(em, marker) > 0)
+                    DestroySelectionObjectOutlines(em, marker);
+                MarkSelectionObjectOutlineResolved(em, marker);
+                return;
+            }
+
+            if (em.HasComponent<SelectionObjectOutlineResolvedTag>(marker))
                 return;
 
             using NativeList<Entity> sources = new(MaxSelectionObjectOutlineRenderers, Allocator.Temp);
@@ -148,6 +162,11 @@ namespace Game.Rendering
 
                 CreateSelectionObjectOutlineForSource(em, unit, marker, source, usesVehicleMarker);
             }
+
+            // Zero is the expected result for GPU-animated infantry. Cache that result so
+            // four selected soldiers do not each ancestry-scan the dense city's complete
+            // renderer query on every frame.
+            MarkSelectionObjectOutlineResolved(em, marker);
         }
 
         public static void DestroySelectionObjectOutlines(EntityManager em, Entity marker)
@@ -162,11 +181,23 @@ namespace Game.Rendering
 
             outlines.Clear();
 
+            if (em.HasComponent<SelectionObjectOutlineResolvedTag>(marker))
+                em.RemoveComponent<SelectionObjectOutlineResolvedTag>(marker);
+
             for (int i = 0; i < outlineEntities.Length; i++)
             {
                 Entity outline = outlineEntities[i];
                 if (outline != Entity.Null && em.Exists(outline))
                     VehicleVisualEntityUtility.DestroyVisualTree(em, outline);
+            }
+        }
+
+        private static void MarkSelectionObjectOutlineResolved(EntityManager em, Entity marker)
+        {
+            if (marker != Entity.Null && em.Exists(marker) &&
+                !em.HasComponent<SelectionObjectOutlineResolvedTag>(marker))
+            {
+                em.AddComponent<SelectionObjectOutlineResolvedTag>(marker);
             }
         }
 

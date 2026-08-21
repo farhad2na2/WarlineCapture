@@ -88,7 +88,8 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.TransportFirstBoarding_PreservesSelectedTransportAfterSuccess());
             RunCase(test => test.AttackTargetLookup_CompletesSelectionMarkerTransformWriteBeforeRuntimeBuildingRead());
             RunCase(test => test.AttackTargetLookup_RebindsAfterWorldReplacement());
-            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=63");
+            RunCase(test => test.AttackTargetLookup_SnapsAriaAttackPreviewToHighlightedEnemy());
+            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=64");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -3262,7 +3263,7 @@ public sealed class RtsSelectionInputSystemTests
 
         string attack = ExtractMethodBodyByName(pointerTarget, "private bool TryQueueResolvedAttackCommand");
         StringAssert.Contains("PointerTargetResolutionPass targetBoundary = CreatePointerTargetResolutionPass(context);", attack);
-        StringAssert.Contains("targetBoundary.TryGetClickedUnitEntity", attack);
+        StringAssert.Contains("targetBoundary.TryGetClickedAttackTargetEntity", attack);
         Assert.IsFalse(attack.Contains("TryGetClickedUnitEntity(context", StringComparison.Ordinal));
 
         string scan = ExtractMethodBodyByName(pointerTarget, "private bool TryQueueResolvedScanCommand");
@@ -3444,6 +3445,52 @@ public sealed class RtsSelectionInputSystemTests
                 replacementEntityManager,
                 out Entity selectedReplacementBuilding));
             Assert.AreEqual(replacementBuilding, selectedReplacementBuilding);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(cameraObject);
+        }
+    }
+
+    [Test]
+    public void AttackTargetLookup_SnapsAriaAttackPreviewToHighlightedEnemy()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        Entity hostile = em.CreateEntity(typeof(Faction), typeof(UnitHealth), typeof(LocalTransform));
+        em.SetComponentData(hostile, new Faction { Id = FactionIdentity.EnemyFactionId });
+        em.SetComponentData(hostile, new UnitHealth { Current = 100, Max = 100 });
+        em.SetComponentData(hostile, LocalTransform.FromPosition(new float3(18f, 0f, 22f)));
+        Entity assistantBoundary = em.CreateEntity();
+        em.AddBuffer<AssistantPreviewHighlightElement>(assistantBoundary).Add(new AssistantPreviewHighlightElement
+        {
+            Active = 1,
+            RecommendationKind = AssistantRecommendationKind.Attack,
+            TargetEntity = hostile,
+            WorldPosition = new float3(18f, 0f, 22f),
+            Strength = 1f
+        });
+
+        GameObject cameraObject = new("RtsSelectionInputSystemTests_AriaAttackCamera");
+        Camera camera = cameraObject.AddComponent<Camera>();
+        try
+        {
+            camera.orthographic = true;
+            camera.orthographicSize = 24f;
+            camera.pixelRect = new Rect(0f, 0f, 800f, 600f);
+            camera.transform.position = new Vector3(16f, 50f, 16f);
+            camera.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+            Vector3 targetScreen = camera.WorldToScreenPoint(new Vector3(18f, 1.2f, 22f));
+            Vector2 impreciseTap = new(targetScreen.x + 48f, targetScreen.y - 32f);
+
+            var pointerSystem = new RtsSelectionPointerTargetCommandCompositionSystemHelper();
+            bool hit = pointerSystem.TryGetClickedAttackTargetEntity(
+                CreatePointerTargetContext(camera),
+                impreciseTap,
+                em,
+                out Entity selectedTarget);
+
+            Assert.IsTrue(hit, "The ARIA attack cue should tolerate a nearby tap and resolve its exact live hostile.");
+            Assert.AreEqual(hostile, selectedTarget);
         }
         finally
         {

@@ -686,7 +686,15 @@ namespace Game.Runtime
             if (!context.TryGetDefaultEntityManager(out EntityManager em))
                 return;
 
-            RuntimeCameraFocusRequestUtility.Queue(context.CameraRequestSystem, em, runtime.ReadCameraFocusRequest(), runtime.InitialCameraFocusWorld);
+            RuntimeCameraFocusRequestUtility.Queue(
+                context.CameraRequestSystem,
+                em,
+                runtime.ReadCameraFocusRequest(),
+                runtime.InitialCameraFocusWorld,
+                context.NormalModeZoomHeight,
+                context.NormalModePitch,
+                context.NormalModeYaw,
+                context.NormalModeFieldOfView);
             ProcessCameraRequests(context, em);
             runtime.InitialCameraFocusRequested = false;
         }
@@ -704,18 +712,6 @@ namespace Game.Runtime
         private static bool IsMatchIntroComplete(Context context)
         {
             return context.MatchIntroStateQuery == null || context.MatchIntroStateQuery.IsIntroComplete();
-        }
-
-        private void UpdateSmoothCameraFocus(Context context)
-        {
-            if (!context.CameraSystem.HasSmoothFocusTarget || context.WorldCamera == null)
-                return;
-
-            if (!context.TryGetDefaultEntityManager(out EntityManager em))
-                return;
-
-            context.CameraRequestSystem.QueueUpdateSmoothFocus(em, context.ZoomTransitionSmoothTime);
-            ProcessCameraRequests(context, em);
         }
 
         private void SetCameraWasPlayRequested(Context context, bool wasPlayRequested)

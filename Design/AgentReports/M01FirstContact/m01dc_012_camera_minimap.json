@@ -1,8 +1,8 @@
 {
   "artifactId": "m01dc-012-camera-minimap-v1", "taskId": "M01DC-012", "result": "Passed",
   "authority": {"visual": "current approved FirstLaunch FL-P18", "oldImagesUsed": false},
-  "planningCamera": {"id": "camera.ch01.m01.planning", "position": [1840.8, 20, 764.2], "euler": [45, 340, 0], "fov": 40, "clamp": true},
-  "battleStartCamera": {"id": "camera.ch01.m01.battle_start", "position": [1848.1, 9, 774.5], "euler": [45, 340, 0], "fov": 32, "clamp": true},
+  "planningCamera": {"id": "camera.ch01.m01.planning", "position": [1792, 15, 680], "euler": [35, 0, 0], "fov": 50, "clamp": true},
+  "battleStartCamera": {"id": "camera.ch01.m01.battle_start", "position": [1792, 9, 680], "euler": [30, 0, 0], "fov": 42, "clamp": true},
   "minimap": {"id": "minimap.ch01.m01.projection", "origin": [760, 0, 300], "size": [240, 176], "orientationDegrees": 0, "roundTripTolerance": 0.001},
   "aspectReview": [{"resolution": "1920x1080", "aspect": "16:9"}, {"resolution": "2400x1080", "aspect": "20:9"}, {"resolution": "1920x1200", "aspect": "16:10-tablet"}],
   "safeArea": {"planningNormalized": [0.05, 0.05, 0.90, 0.90], "battleNormalized": [0.06, 0.06, 0.88, 0.88]},

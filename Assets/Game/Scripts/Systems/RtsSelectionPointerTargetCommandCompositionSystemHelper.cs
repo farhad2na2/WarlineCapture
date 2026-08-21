@@ -295,8 +295,8 @@ namespace Game.Runtime
             }
 
             PointerTargetResolutionPass targetBoundary = CreatePointerTargetResolutionPass(context);
-            if (!targetBoundary.TryGetClickedUnitEntity(screenPosition, em, out Entity targetEntity) ||
-                !IsDirectResolvedAttackTarget(em, targetEntity))
+            if (!targetBoundary.TryGetClickedAttackTargetEntity(screenPosition, em, out Entity targetEntity) ||
+                !AssistantPreviewAttackTargetUtility.IsDirectResolvedAttackTarget(em, targetEntity))
             {
                 return context.InputSystem.QueueAttackCommandRequest(screenPosition, explicitAttackTargetModeActive, frame);
             }
@@ -307,28 +307,6 @@ namespace Game.Runtime
                 explicitAttackTargetModeActive,
                 frame);
             return queuedResolvedTarget;
-        }
-
-        private static bool IsDirectResolvedAttackTarget(
-            EntityManager em,
-            Entity targetEntity)
-        {
-            if (targetEntity == Entity.Null ||
-                !em.Exists(targetEntity) ||
-                em.HasComponent<RuntimeBuildingCombatTag>(targetEntity) ||
-                em.HasComponent<RuntimeBuildingCombatInfo>(targetEntity) ||
-                em.HasComponent<StaticGridBlocker>(targetEntity) ||
-                !em.HasComponent<Faction>(targetEntity) ||
-                !em.HasComponent<LocalTransform>(targetEntity))
-            {
-                return false;
-            }
-
-            if (!FactionIdentity.IsHostileToPlayer(em.GetComponentData<Faction>(targetEntity).Id))
-                return false;
-
-            return !em.HasComponent<UnitHealth>(targetEntity) ||
-                   em.GetComponentData<UnitHealth>(targetEntity).Current > 0;
         }
 
         public bool TryRequestScanOrder(Context context, Vector2 screenPosition)
@@ -802,6 +780,14 @@ namespace Game.Runtime
 
         private bool TryGetClickedAttackTargetEntityFromBoundary(Context context, Vector2 screenPosition, EntityManager em, out Entity bestEntity)
         {
+            if (AssistantPreviewAttackTargetUtility.TryResolve(
+                    context.WorldCamera, screenPosition, em, out bestEntity))
+            {
+                context.LogSelectionDiagnostic?.Invoke(
+                    $"attackTargetLookup result=True route=AssistantPreview pos={screenPosition} entity={DescribeClickedEntity(em, bestEntity)} radius={AssistantPreviewAttackTargetUtility.ScreenRadiusPixels}");
+                return true;
+            }
+
             if (TryGetClickedUnitEntityFromBoundary(context, screenPosition, em, out bestEntity))
                 return true;
 

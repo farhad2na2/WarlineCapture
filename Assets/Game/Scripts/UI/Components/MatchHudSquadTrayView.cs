@@ -9,6 +9,10 @@ namespace Game.UI.Runtime
     [DisallowMultipleComponent]
     public sealed class MatchHudSquadTrayView : MonoBehaviour, IMatchHudSquadTrayView
     {
+        // UiAssistantHighlightModel deliberately carries the ECS target kind as a byte so
+        // Game.UI.Runtime does not depend on the gameplay-components assembly.
+        private const byte AssistantSquadTargetKind = 6;
+
         [Serializable]
         public sealed class Card
         {
@@ -33,18 +37,37 @@ namespace Game.UI.Runtime
         };
         private static readonly Color CardLabelColor = new(0.86f, 0.84f, 0.74f, 1f);
         private static readonly Color CardLabelStripColor = new(0f, 0f, 0f, 0.45f);
-
         private readonly Color[] _frameBaseColors = new Color[5];
+        private readonly Color[] _portraitBaseColors = new Color[5];
+        private readonly bool[] _missionDisabled = new bool[5];
         private Action<MatchHudSquadTraySlot> _cardClicked;
         private float _disabledFlashUntil;
         private int _disabledFlashIndex = -1;
         private Canvas _cachedCanvas;
+        private RectTransform _assistantGuidanceCue;
+        private CanvasGroup _assistantGuidanceGroup;
+        private bool _assistantGuidanceActive;
+        private MatchHudSquadTraySlot _selectedSlot = MatchHudSquadTraySlot.None;
+
+        internal RectTransform AssistantGuidanceTarget
+        {
+            get
+            {
+                return TryGetCard(0, out Card soldierCard) && soldierCard.Button != null
+                    ? soldierCard.Button.transform as RectTransform
+                    : null;
+            }
+        }
+
+        internal bool IsAssistantGuidanceTargetSelected =>
+            _selectedSlot == MatchHudSquadTraySlot.Soldiers;
 
         private void Awake()
         {
             MatchHudCanvasBatchingUtility.EnsureLocalCanvas(gameObject, needsRaycaster: true);
             CacheBaseFrameColors();
             CreateCardLabels();
+            CreateAssistantGuidanceCue();
             SetSelectedSlot(MatchHudSquadTraySlot.Soldiers);
         }
 
@@ -114,12 +137,19 @@ namespace Game.UI.Runtime
 
         private void Update()
         {
-            if (_disabledFlashIndex < 0 || Time.unscaledTime < _disabledFlashUntil)
-                return;
+            if (_disabledFlashIndex >= 0 && Time.unscaledTime >= _disabledFlashUntil)
+            {
+                if (TryGetCard(_disabledFlashIndex, out Card card) && card.FrameImage != null)
+                    SetImageColor(card.FrameImage, _frameBaseColors[_disabledFlashIndex]);
+                _disabledFlashIndex = -1;
+            }
 
-            if (TryGetCard(_disabledFlashIndex, out Card card) && card.FrameImage != null)
-                SetImageColor(card.FrameImage, _frameBaseColors[_disabledFlashIndex]);
-            _disabledFlashIndex = -1;
+            if (_assistantGuidanceActive && _assistantGuidanceCue != null && _assistantGuidanceGroup != null)
+            {
+                float pulse = (Mathf.Sin(Time.unscaledTime * 5.5f) + 1f) * 0.5f;
+                _assistantGuidanceGroup.alpha = Mathf.Lerp(0.72f, 1f, pulse);
+                _assistantGuidanceCue.anchoredPosition = new Vector2(0f, 80f + pulse * 7f);
+            }
         }
 
         public void Bind(Action<MatchHudSquadTraySlot> cardClicked)
@@ -158,11 +188,11 @@ namespace Game.UI.Runtime
             bool airDisabled,
             bool transportDisabled)
         {
-            SetCardVisible(0, visible: true);
-            SetCardVisible(1, visible: !combatVehiclesDisabled);
-            SetCardVisible(2, visible: !airDisabled);
-            SetCardVisible(3, visible: !airDisabled);
-            SetCardVisible(4, visible: !transportDisabled);
+            SetCardDisabled(0, disabled: false);
+            SetCardDisabled(1, combatVehiclesDisabled);
+            SetCardDisabled(2, airDisabled);
+            SetCardDisabled(3, airDisabled);
+            SetCardDisabled(4, transportDisabled);
         }
 
         public void Unbind()
@@ -178,6 +208,7 @@ namespace Game.UI.Runtime
 
         public void SetSelectedSlot(MatchHudSquadTraySlot selectedSlot)
         {
+            _selectedSlot = selectedSlot;
             for (int i = 0; i < cards.Length; i++)
             {
                 if (!TryGetCard(i, out Card card) || card.FrameImage == null)
@@ -200,7 +231,8 @@ namespace Game.UI.Runtime
             if (!TryGetCard(index, out Card card) || card.FrameImage == null)
                 return;
 
-            SetImageColor(card.FrameImage, new Color(1f, 0.82f, 0.35f, 0.92f));
+            Color baseColor = _frameBaseColors[index];
+            SetImageColor(card.FrameImage, new Color(1f, 0.82f, 0.35f, baseColor.a));
             _disabledFlashIndex = index;
             _disabledFlashUntil = Time.unscaledTime + disabledFlashSeconds;
         }
@@ -248,7 +280,11 @@ namespace Game.UI.Runtime
         private void CacheBaseFrameColors()
         {
             for (int i = 0; i < cards.Length; i++)
-                _frameBaseColors[i] = TryGetCard(i, out Card card) && card.FrameImage != null ? card.FrameImage.color : Color.white;
+            {
+                bool hasCard = TryGetCard(i, out Card card);
+                _frameBaseColors[i] = hasCard && card.FrameImage != null ? card.FrameImage.color : Color.white;
+                _portraitBaseColors[i] = hasCard && card.PortraitImage != null ? card.PortraitImage.color : Color.white;
+            }
         }
 
         private bool TryGetCard(int index, out Card card)
@@ -261,16 +297,100 @@ namespace Game.UI.Runtime
             return card != null;
         }
 
-        private void SetCardVisible(int index, bool visible)
+        private void SetCardDisabled(int index, bool disabled)
         {
-            if (TryGetCard(index, out Card card) && card.Button != null && card.Button.gameObject.activeSelf != visible)
-                card.Button.gameObject.SetActive(visible);
+            if (!TryGetCard(index, out Card card) || card.Button == null)
+                return;
+
+            _missionDisabled[index] = disabled;
+            if (!card.Button.gameObject.activeSelf)
+                card.Button.gameObject.SetActive(true);
+            UiDisabledMaterialUtility.SetSelectableDisabled(
+                card.Button,
+                UiDisabledVisualReason.MissionRestriction,
+                disabled);
+            UiDisabledMaterialUtility.SetDisabled(
+                card.Button.gameObject,
+                UiDisabledVisualReason.MissionRestriction,
+                disabled);
+            card.Button.interactable = !disabled;
         }
 
         private void OnCardClicked(int index)
         {
             UIAudioEventGateway.Raise(UIAudioEventKind.ButtonPrimaryClick);
             _cardClicked?.Invoke(ToSlot(index));
+            if (_assistantGuidanceActive && index == 0)
+            {
+                UiShellRuntimeGateway.TryEnqueueAssistantCommandIntent(
+                    UiAssistantCommandIntentKind.StopAssistantControl);
+                SetAssistantGuidanceCueVisible(false);
+            }
+        }
+
+        internal void ApplyAssistantGuidance(UiAssistantHighlightModel model)
+        {
+            CreateAssistantGuidanceCue();
+            bool pointToSoldiers = model.Active && model.TargetKind == AssistantSquadTargetKind;
+            SetAssistantGuidanceCueVisible(pointToSoldiers);
+        }
+
+        internal void ClearAssistantGuidance()
+        {
+            SetAssistantGuidanceCueVisible(false);
+        }
+
+        private void CreateAssistantGuidanceCue()
+        {
+            if (_assistantGuidanceCue != null || !TryGetCard(0, out Card soldierCard) || soldierCard.Button == null)
+                return;
+
+            GameObject cue = new("AriaButtonGuidance", typeof(RectTransform), typeof(CanvasGroup), typeof(Image));
+            cue.transform.SetParent(soldierCard.Button.transform, false);
+            cue.transform.SetAsLastSibling();
+            cue.layer = soldierCard.Button.gameObject.layer;
+            _assistantGuidanceCue = cue.GetComponent<RectTransform>();
+            _assistantGuidanceCue.anchorMin = new Vector2(0.5f, 1f);
+            _assistantGuidanceCue.anchorMax = new Vector2(0.5f, 1f);
+            _assistantGuidanceCue.pivot = new Vector2(0.5f, 0f);
+            _assistantGuidanceCue.anchoredPosition = new Vector2(0f, 80f);
+            _assistantGuidanceCue.sizeDelta = new Vector2(280f, 86f);
+            _assistantGuidanceGroup = cue.GetComponent<CanvasGroup>();
+            _assistantGuidanceGroup.interactable = false;
+            _assistantGuidanceGroup.blocksRaycasts = false;
+            Image background = cue.GetComponent<Image>();
+            background.color = new Color(0.035f, 0.15f, 0.18f, 0.94f);
+            background.raycastTarget = false;
+
+            GameObject labelObject = new("Instruction", typeof(RectTransform), typeof(TextMeshProUGUI));
+            labelObject.transform.SetParent(cue.transform, false);
+            labelObject.layer = cue.layer;
+            RectTransform labelRect = labelObject.GetComponent<RectTransform>();
+            labelRect.anchorMin = Vector2.zero;
+            labelRect.anchorMax = Vector2.one;
+            labelRect.offsetMin = Vector2.zero;
+            labelRect.offsetMax = Vector2.zero;
+            TextMeshProUGUI label = labelObject.GetComponent<TextMeshProUGUI>();
+            if (cardLabelFont != null)
+                label.font = cardLabelFont;
+            label.text = "TAP RIFLE SQUAD\n\u25bc";
+            label.fontStyle = FontStyles.Bold;
+            label.fontSize = 27f;
+            label.enableAutoSizing = true;
+            label.fontSizeMin = 18f;
+            label.fontSizeMax = 30f;
+            label.color = new Color(0.43f, 1f, 0.95f, 1f);
+            label.alignment = TextAlignmentOptions.Center;
+            label.textWrappingMode = TextWrappingModes.NoWrap;
+            label.raycastTarget = false;
+            cue.SetActive(false);
+        }
+
+        private void SetAssistantGuidanceCueVisible(bool visible)
+        {
+            _assistantGuidanceActive = visible;
+            if (_assistantGuidanceCue != null && _assistantGuidanceCue.gameObject.activeSelf != visible)
+                _assistantGuidanceCue.gameObject.SetActive(visible);
         }
 
         private static void SetImageSprite(Image image, Sprite sprite)

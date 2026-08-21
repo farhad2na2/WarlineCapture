@@ -95,6 +95,13 @@ namespace Game.Rendering
                     "Render proxy apply requires exactly one slot-command owner.");
             }
 
+            // The simulation-group publisher writes the command state from a job.
+            // This presentation system must consume that version on the main thread
+            // before deciding whether to schedule proxy work, so complete the tracked
+            // cross-group dependency before reading the singleton.
+            state.CompleteDependency();
+            state.EntityManager.CompleteDependencyBeforeRO<
+                OperationMapRenderSlotCommandStateComponent>();
             Entity commandOwner = _commandOwnerQuery.GetSingletonEntity();
             OperationMapRenderSlotCommandStateComponent commandState =
                 _commandOwnerQuery.GetSingleton<

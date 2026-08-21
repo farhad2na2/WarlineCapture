@@ -7,6 +7,30 @@ using UnityEngine.SceneManagement;
 
 namespace Game.Composition
 {
+#if UNITY_EDITOR
+    internal static class OperationMapEditorPlayModeExitState
+    {
+        internal static bool IsExitingPlayMode { get; private set; }
+
+        [UnityEditor.InitializeOnLoadMethod]
+        private static void Initialize()
+        {
+            UnityEditor.EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+            UnityEditor.EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+            IsExitingPlayMode = false;
+        }
+
+        private static void OnPlayModeStateChanged(UnityEditor.PlayModeStateChange state)
+        {
+            if (state == UnityEditor.PlayModeStateChange.ExitingPlayMode)
+                IsExitingPlayMode = true;
+            else if (state is UnityEditor.PlayModeStateChange.EnteredEditMode or
+                     UnityEditor.PlayModeStateChange.EnteredPlayMode)
+                IsExitingPlayMode = false;
+        }
+    }
+#endif
+
     internal interface IOperationMapSourceSceneOperation : IDisposable
     {
         bool IsDone { get; }
@@ -59,13 +83,121 @@ namespace Game.Composition
     {
         public IOperationMapSourceSceneOperation LoadAdditive(object runtimeKey)
         {
+#if UNITY_EDITOR
+            string sceneGuid = runtimeKey?.ToString();
+            string scenePath = string.IsNullOrWhiteSpace(sceneGuid)
+                ? null
+                : UnityEditor.AssetDatabase.GUIDToAssetPath(sceneGuid);
+            if (string.IsNullOrWhiteSpace(scenePath))
+            {
+                throw new InvalidOperationException(
+                    $"Operation-map source-scene address is not a project scene GUID: {sceneGuid ?? "<null>"}");
+            }
+
+            UnityEngine.AsyncOperation editorLoad =
+                UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode(
+                    scenePath,
+                    new LoadSceneParameters(LoadSceneMode.Additive));
+            if (editorLoad == null)
+            {
+                throw new InvalidOperationException(
+                    $"Operation-map source scene did not start loading: {scenePath}");
+            }
+
+            return new OperationMapEditorSourceSceneOperation(scenePath, editorLoad);
+#else
             AsyncOperationHandle<SceneInstance> handle = Addressables.LoadSceneAsync(
                 runtimeKey,
                 LoadSceneMode.Additive,
                 activateOnLoad: true);
             return new OperationMapAddressablesSourceSceneOperation(handle);
+#endif
         }
     }
+
+#if UNITY_EDITOR
+    internal sealed class OperationMapEditorSourceSceneOperation :
+        IOperationMapSourceSceneOperation
+    {
+        private readonly string scenePath;
+        private readonly UnityEngine.AsyncOperation loadOperation;
+        private UnityEngine.AsyncOperation unloadOperation;
+        private bool disposed;
+
+        internal OperationMapEditorSourceSceneOperation(
+            string scenePath,
+            UnityEngine.AsyncOperation loadOperation)
+        {
+            this.scenePath = scenePath;
+            this.loadOperation = loadOperation;
+        }
+
+        private Scene LoadedScene => SceneManager.GetSceneByPath(scenePath);
+
+        public bool IsDone => loadOperation.isDone;
+        public bool Succeeded => IsDone && LoadedScene.IsValid() && LoadedScene.isLoaded;
+        public float Progress01 => loadOperation.progress;
+        public Scene Scene => Succeeded ? LoadedScene : default;
+        public string Failure => IsDone && !Succeeded
+            ? $"Operation-map source scene did not load: {scenePath}"
+            : null;
+        public bool UnloadStarted { get; private set; }
+        public bool UnloadDone => UnloadStarted && unloadOperation != null && unloadOperation.isDone;
+        public bool UnloadSucceeded => UnloadDone && !LoadedScene.isLoaded;
+        public float UnloadProgress01 => unloadOperation?.progress ?? 0f;
+        public string UnloadFailure => UnloadDone && !UnloadSucceeded
+            ? $"Operation-map source scene did not unload: {scenePath}"
+            : null;
+
+        public bool TryBeginUnload(out string error)
+        {
+            if (disposed)
+            {
+                error = "Operation-map source-scene operation is disposed.";
+                return false;
+            }
+            if (UnloadStarted)
+            {
+                error = null;
+                return true;
+            }
+            if (!Succeeded)
+            {
+                error = "Operation-map source scene must finish loading before unload begins.";
+                return false;
+            }
+
+            unloadOperation = SceneManager.UnloadSceneAsync(LoadedScene);
+            if (unloadOperation == null)
+            {
+                error = $"Operation-map source scene did not start unloading: {scenePath}";
+                return false;
+            }
+
+            UnloadStarted = true;
+            error = null;
+            return true;
+        }
+
+        public void Dispose()
+        {
+            if (disposed)
+                return;
+
+            disposed = true;
+            if (OperationMapEditorPlayModeExitState.IsExitingPlayMode ||
+                !UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode ||
+                UnloadStarted ||
+                !Succeeded)
+            {
+                return;
+            }
+
+            unloadOperation = SceneManager.UnloadSceneAsync(LoadedScene);
+            UnloadStarted = unloadOperation != null;
+        }
+    }
+#endif
 
     internal sealed class OperationMapAddressablesPresentationManifestApi :
         IOperationMapPresentationManifestApi
@@ -161,7 +293,9 @@ namespace Game.Composition
 
             try
             {
-                unloadHandle = Addressables.UnloadSceneAsync(handle, autoReleaseHandle: false);
+                unloadHandle = Addressables.UnloadSceneAsync(
+                    handle,
+                    autoReleaseHandle: false);
                 if (!unloadHandle.IsValid())
                 {
                     error = "Operation-map source-scene unload did not return a valid operation.";
@@ -188,6 +322,19 @@ namespace Game.Composition
                 return;
 
             disposed = true;
+#if UNITY_EDITOR
+            // The Editor unloads every play-mode scene as part of the transition back to
+            // Edit Mode. Starting or releasing a second Addressables scene operation from
+            // OnDisable races Addressables' own play-mode cleanup and leaves an invalid
+            // scene handle in its tracked-scene set. Let that cleanup own the handles.
+            if (OperationMapEditorPlayModeExitState.IsExitingPlayMode ||
+                !UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            {
+                unloadHandle = default;
+                handle = default;
+                return;
+            }
+#endif
             if (UnloadStarted)
             {
                 if (unloadHandle.IsValid())

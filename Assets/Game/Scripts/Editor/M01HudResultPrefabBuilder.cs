@@ -31,6 +31,13 @@ namespace Game.Editor
             GameObject root = PrefabUtility.LoadPrefabContents(ResultPath);
             try
             {
+                RectTransform rootRect = root.GetComponent<RectTransform>();
+                rootRect.anchorMin = Vector2.zero;
+                rootRect.anchorMax = Vector2.one;
+                rootRect.pivot = new Vector2(0.5f, 0.5f);
+                rootRect.anchoredPosition = Vector2.zero;
+                rootRect.sizeDelta = Vector2.zero;
+                rootRect.localScale = Vector3.one;
                 MissionResultPopupView view = root.GetComponent<MissionResultPopupView>() ??
                                               root.AddComponent<MissionResultPopupView>();
                 Transform continueRoot = Find(root.transform, "ContinueButton");

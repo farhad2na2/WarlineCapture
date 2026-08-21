@@ -189,21 +189,6 @@ namespace Game.Runtime
             return TryEnqueue(entityManager, Request(RtsCameraRequestKind.MoveGroundCenterTo, focusWorldPosition));
         }
 
-        public bool QueueSetSmoothFocusTarget(EntityManager entityManager, Vector3 focusWorldPosition, bool resetVelocity)
-        {
-            return TryEnqueue(entityManager, Request(RtsCameraRequestKind.SetSmoothFocusTarget, focusWorldPosition, flag: resetVelocity));
-        }
-
-        public bool QueueClearSmoothFocusTarget(EntityManager entityManager)
-        {
-            return TryEnqueue(entityManager, Request(RtsCameraRequestKind.ClearSmoothFocusTarget));
-        }
-
-        public bool QueueUpdateSmoothFocus(EntityManager entityManager, float smoothTime)
-        {
-            return TryEnqueue(entityManager, Request(RtsCameraRequestKind.UpdateSmoothFocus, smoothTime));
-        }
-
         public bool QueueUpdateTacticalFollowPose(
             EntityManager entityManager,
             Vector3 desiredPosition,
@@ -376,6 +361,9 @@ namespace Game.Runtime
 
         private static void ProcessRequest(RtsCameraRequestElement request, RtsCameraSystem cameraSystem, Camera worldCamera, Action orderMarkersHideRequested)
         {
+            if (TryProcessSmoothRequest(request, cameraSystem, worldCamera))
+                return;
+
             switch (request.Kind)
             {
                 case RtsCameraRequestKind.ResetSession:
@@ -444,20 +432,6 @@ namespace Game.Runtime
                 case RtsCameraRequestKind.MoveGroundCenterTo:
                     cameraSystem.MoveCameraGroundCenterTo(worldCamera, ToVector3(request.WorldPosition));
                     break;
-                case RtsCameraRequestKind.SetSmoothFocusTarget:
-                    cameraSystem.SetSmoothFocusTarget(ToVector3(request.WorldPosition), request.Flag != 0);
-                    break;
-                case RtsCameraRequestKind.ClearSmoothFocusTarget:
-                    cameraSystem.ClearSmoothFocusTarget();
-                    break;
-                case RtsCameraRequestKind.UpdateSmoothFocus:
-                    if (cameraSystem.HasSmoothFocusTarget && worldCamera != null)
-                    {
-                        Vector3 currentGroundCenter = cameraSystem.GetCameraGroundCenterWorld(worldCamera);
-                        Vector3 smoothedCenter = cameraSystem.UpdateSmoothFocus(currentGroundCenter, request.Value);
-                        cameraSystem.MoveCameraGroundCenterTo(worldCamera, smoothedCenter);
-                    }
-                    break;
                 case RtsCameraRequestKind.UpdateTacticalFollowPose:
                     cameraSystem.UpdateTacticalFollowPose(
                         worldCamera,
@@ -488,6 +462,7 @@ namespace Game.Runtime
                 IsDragging = ToByte(cameraSystem.IsDragging),
                 HasSmoothFocusTarget = ToByte(cameraSystem.HasSmoothFocusTarget),
                 SmoothFocusTarget = ToFloat3(cameraSystem.SmoothFocusTarget),
+                HasSmoothPerspectiveTarget = ToByte(cameraSystem.HasSmoothPerspectiveTarget),
                 WasPlayRequested = ToByte(cameraSystem.WasPlayRequested),
                 WasBuildModeActive = ToByte(cameraSystem.WasBuildModeActive),
                 IsZoomTransitionActive = ToByte(cameraSystem.IsZoomTransitionActive),

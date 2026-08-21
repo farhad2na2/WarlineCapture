@@ -327,6 +327,14 @@ public sealed class UIShellCurrentContentLoadTests
             "Loading command must retain the serialized loading layer.");
         Assert.AreEqual(1f, loading.CanvasGroup.alpha, 0.0001f, "Loading layer must be fully opaque before completion is acknowledged.");
         Assert.AreEqual(Vector3.one, loading.RegionRoot.localScale, "Loading layer must be visually reset before completion is acknowledged.");
+        Image backgroundArt = Array.Find(
+            loading.ContentRoot.GetComponentsInChildren<Image>(true),
+            image => image.name == "BackgroundArt");
+        Assert.NotNull(backgroundArt, "Loading content must retain its full-screen background art.");
+        Assert.LessOrEqual(
+            Mathf.Max(backgroundArt.color.r, Mathf.Max(backgroundArt.color.g, backgroundArt.color.b)),
+            0.12f,
+            "The FirstLaunch-to-M01 loading bridge must remain dark instead of presenting a bright/white screen.");
     }
 
     [Test]
@@ -699,12 +707,49 @@ public sealed class UIShellCurrentContentLoadTests
         MatchOverlayCommandControlsView controls = AssertMatchHudFooterView(matchFooter).CommandControls;
         Assert.NotNull(controls);
 
-        content.BindGameplayRuntimeDependencies(new SelectionUiCommandUiSystemHelper(new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager)));
+        var mainMenuPlayUi = new MainMenuPlayUI();
+        content.BindGameplayRuntimeDependencies(
+            new SelectionUiCommandUiSystemHelper(
+                new RtsSelectionInputCompositionSystemHelper(
+                    Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager)),
+            mainMenuPlayUi);
+
+        MatchHudAssistantUiSystemHelper assistant = GetPrivateField<MatchHudAssistantUiSystemHelper>(
+            mainMenuPlayUi,
+            "_matchHudAssistantUiSystem");
+        assistant.ApplyHighlightReadModel(new UiAssistantHighlightModel(
+            700u,
+            true,
+            41,
+            3101,
+            2,
+            1,
+            12f,
+            3f,
+            9f,
+            1f));
         controls.MoveButton.onClick.Invoke();
 
         Assert.IsTrue(TryGetCommandRequests(out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests));
         Assert.AreEqual(1, requests.Length, "Move click must queue after runtime dependencies arrive after HUD install.");
         Assert.AreEqual(RtsSelectionCommandIntentKind.EnterMoveTargetMode, requests[0].Kind);
+
+        AssistantHighlightPresentationSystemHelper presentation =
+            GetPrivateField<AssistantHighlightPresentationSystemHelper>(
+                assistant,
+                "_highlightPresentationSystem");
+        Assert.AreEqual(
+            TacticalCommandMode.Move,
+            GetPrivateField<TacticalCommandMode>(presentation, "_awaitingWorldTargetMode"),
+            "Late gameplay dependency binding must reconnect ARIA's Move acknowledgement callback.");
+
+        presentation.BeginPendingShowMe(2, 1);
+        GameObject destinationRing = GameObject.Find("AriaAssistantPreviewHighlightRuntime");
+        Assert.NotNull(destinationRing, "The destination Show Me step must create its world indicator.");
+        Assert.IsTrue(
+            destinationRing.activeInHierarchy,
+            "After the late-bound Move button is accepted, the next Show Me must reveal the destination.");
+        mainMenuPlayUi.Dispose();
     }
 
     [Test]
@@ -1129,6 +1174,16 @@ public sealed class UIShellCurrentContentLoadTests
             return null;
 
         return canvas.worldCamera;
+    }
+
+    private static T GetPrivateField<T>(object target, string fieldName)
+    {
+        Assert.NotNull(target, fieldName);
+        FieldInfo field = target.GetType().GetField(
+            fieldName,
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.NotNull(field, fieldName);
+        return (T)field.GetValue(target);
     }
 
     private static T FindInScene<T>(Scene scene) where T : Component

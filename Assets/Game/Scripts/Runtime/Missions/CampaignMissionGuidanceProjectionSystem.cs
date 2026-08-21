@@ -93,15 +93,17 @@ namespace Game.Runtime
                     Set(ref next, AssistantRecommendationKind.Move, AssistantTargetKind.WorldPosition, MoveToCoverTitle, MoveToCoverBody, DoItAction);
                     next.SourceEntity = friendly; next.WorldPosition = move; next.HasWorldPosition = 1; next.CanExecute = friendly != Entity.Null ? (byte)1 : (byte)0; break;
                 case CampaignMissionGuidancePromptKind.ConfirmThreat:
-                    Set(ref next, AssistantRecommendationKind.CameraFocus, AssistantTargetKind.Entity, ConfirmThreatTitle, ConfirmThreatBody, ShowMeAction);
-                    next.TargetEntity = hostile; next.TargetId = PatrolObjectiveAnchor;
-                    next.WorldPosition = patrol; next.HasWorldPosition = 1; break;
+                    Set(ref next, AssistantRecommendationKind.Attack, AssistantTargetKind.Entity, ConfirmThreatTitle, ConfirmThreatBody, DoItAction);
+                    next.SourceEntity = friendly; next.TargetEntity = hostile; next.TargetId = PatrolObjectiveAnchor;
+                    next.WorldPosition = patrol; next.HasWorldPosition = 1;
+                    next.CanExecute = friendly != Entity.Null && hostile != Entity.Null ? (byte)1 : (byte)0; break;
                 case CampaignMissionGuidancePromptKind.Engage:
                     Set(ref next, AssistantRecommendationKind.Attack, AssistantTargetKind.Entity, EngagePatrolTitle, EngagePatrolBody, DoItAction);
                     next.SourceEntity = friendly; next.TargetEntity = hostile; next.CanExecute = friendly != Entity.Null && hostile != Entity.Null ? (byte)1 : (byte)0; break;
                 default:
-                    Set(ref next, AssistantRecommendationKind.CameraFocus, AssistantTargetKind.Objective, SecureCorridorTitle, SecureCorridorBody, ShowMeAction);
-                    next.TargetId = CivilianSafeZoneAnchor; next.WorldPosition = patrol; next.HasWorldPosition = 1; break;
+                    Set(ref next, AssistantRecommendationKind.CameraFocus, AssistantTargetKind.Objective, SecureCorridorTitle, SecureCorridorBody, DoItAction);
+                    next.TargetId = CivilianSafeZoneAnchor; next.WorldPosition = patrol; next.HasWorldPosition = 1;
+                    next.CanExecute = 1; break;
             }
             ApplyModePolicy(ref next);
             return next;

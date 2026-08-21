@@ -10,7 +10,6 @@ namespace Game.Runtime
     public partial struct UnitMoveOrderRequestSystem : ISystem
     {
         private EntityQuery _queueQuery;
-
         public void OnCreate(ref SystemState state)
         {
             _queueQuery = state.GetEntityQuery(
@@ -20,7 +19,6 @@ namespace Game.Runtime
             EnsureCommandEntity(state.EntityManager, _queueQuery);
             state.RequireForUpdate(_queueQuery);
         }
-
         public void OnUpdate(ref SystemState state)
         {
             ProcessPendingRequests(state.EntityManager, _queueQuery);
@@ -293,6 +291,8 @@ namespace Game.Runtime
                 case UnitMoveOrderRequestKind.Immediate:
                     moveOrderSystem.IssueImmediateMoveCommand(em, request.Entity, request.Goal);
                     return new UnitMoveOrderSystem.MoveOrderCommandResult { Issued = true };
+                case UnitMoveOrderRequestKind.CampaignGuidedSquad:
+                    return IssueCampaignGuidedSquadMove(em, request);
                 case UnitMoveOrderRequestKind.TargetOnly:
                     moveOrderSystem.IssueTargetOnlyMoveCommand(em, request.Entity, request.Goal);
                     return new UnitMoveOrderSystem.MoveOrderCommandResult { Issued = true };

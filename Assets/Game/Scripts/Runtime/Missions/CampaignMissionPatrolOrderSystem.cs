@@ -3,21 +3,39 @@ using Game.Missions.Contracts;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Transforms;
 
 namespace Game.Runtime
 {
     [UpdateInGroup(typeof(SimulationSystemGroup))]
+    [UpdateAfter(typeof(EngageTargetValidateSystem))]
     [UpdateBefore(typeof(UnitMoveOrderRequestSystem))]
     [UpdateBefore(typeof(UnitEngagementSystem))]
     [UpdateBefore(typeof(CampaignMissionRuntimeSystem))]
     public partial struct CampaignMissionPatrolOrderSystem : ISystem
     {
-        private const int SquadReturnFocusMilliseconds = 20000;
+        private const int InitialRtsHoldMilliseconds = 2500;
+        private const int EstablishingArrivalMilliseconds = 5500;
+        private const int EstablishingHoldMilliseconds = 7000;
+        private const int HostileArrivalMilliseconds = 10000;
+        private const int HostileHoldMilliseconds = 12000;
+        private const int RtsReturnArrivalMilliseconds = 15000;
+        private const float CinematicGlideSmoothTimeSeconds = 2.25f;
         private EntityQuery _cameraFocusQuery;
+        private EntityQuery _missionCombatantsQuery;
+        private EntityQuery _renderVirtualizationStateQuery;
 
         public void OnCreate(ref SystemState state)
         {
             _cameraFocusQuery = state.GetEntityQuery(ComponentType.ReadWrite<RuntimeCameraFocusRequestComponent>());
+            _missionCombatantsQuery = state.GetEntityQuery(
+                ComponentType.ReadOnly<CampaignMissionUnitRoleComponent>(),
+                ComponentType.ReadOnly<Faction>(),
+                ComponentType.ReadOnly<UnitHealth>(),
+                ComponentType.ReadOnly<UnitCombat>(),
+                ComponentType.ReadOnly<LocalTransform>());
+            _renderVirtualizationStateQuery = state.GetEntityQuery(
+                ComponentType.ReadOnly<OperationMapRenderVirtualizationStateComponent>());
             state.RequireForUpdate<CampaignMissionCatalogComponent>();
             state.RequireForUpdate<CampaignMissionRuntimeComponent>();
             state.RequireForUpdate<CampaignMissionAttemptFactsComponent>();
@@ -41,25 +59,27 @@ namespace Game.Runtime
                      SystemAPI.Query<RefRO<CampaignMissionOpeningPresentationComponent>>())
             {
                 CampaignMissionOpeningPresentationComponent current = opening.ValueRO;
-                if (current.SessionToken.Equals(runtime.SessionToken) && current.Stage is 0 or 1 or 2)
+                if (current.SessionToken.Equals(runtime.SessionToken) && current.Stage <= 6)
                 {
-                    routeElapsedMilliseconds = current.Stage < 2 ? 0 : current.ElapsedMilliseconds;
+                    routeElapsedMilliseconds = current.Stage < 6
+                        ? 0
+                        : math.max(0, current.ElapsedMilliseconds - RtsReturnArrivalMilliseconds);
                     break;
                 }
             }
             if (runtime.Outcome == MissionOutcomeKind.None)
             {
                 bool holdCombat = runtime.Phase < MissionPhaseKind.Engage;
-                bool releaseCombat = false;
+                bool releaseCombat = ShouldReleaseCombat(runtime.Phase);
                 if (runtime.Phase == MissionPhaseKind.Engage)
                 {
                     foreach (RefRW<CampaignMissionOpeningPresentationComponent> opening in
                              SystemAPI.Query<RefRW<CampaignMissionOpeningPresentationComponent>>())
                     {
                         CampaignMissionOpeningPresentationComponent current = opening.ValueRO;
-                        if (!current.SessionToken.Equals(runtime.SessionToken) || current.Stage != 2)
+                        if (!current.SessionToken.Equals(runtime.SessionToken) || current.Stage != 6)
                             continue;
-                        current.Stage = 3;
+                        current.Stage = 7;
                         opening.ValueRW = current;
                         releaseCombat = true;
                         routeElapsedMilliseconds = 0;
@@ -68,21 +88,32 @@ namespace Game.Runtime
                 if (holdCombat || releaseCombat)
                 {
                     EntityCommandBuffer preEngageCleanup = new(Allocator.Temp);
-                    foreach ((RefRW<UnitCombat> combat, RefRO<CampaignMissionUnitRoleComponent> role, Entity entity) in
-                             SystemAPI.Query<RefRW<UnitCombat>, RefRO<CampaignMissionUnitRoleComponent>>()
+                    foreach ((RefRW<UnitCombat> combat, RefRO<CampaignMissionUnitRoleComponent> role,
+                              RefRO<Faction> faction, Entity entity) in
+                             SystemAPI.Query<RefRW<UnitCombat>, RefRO<CampaignMissionUnitRoleComponent>, RefRO<Faction>>()
                                  .WithEntityAccess())
                     {
                         if (!role.ValueRO.SessionToken.Equals(runtime.SessionToken))
                             continue;
                         UnitCombat current = combat.ValueRO;
-                        current.CanAttack = (byte)(releaseCombat ? 1 : 0);
-                        current.AutoEngage = (byte)(releaseCombat && current.CanAttack != 0 ? 1 : 0);
+                        ApplyTutorialCombatPolicy(ref current, releaseCombat);
                         combat.ValueRW = current;
-                        if (holdCombat && state.EntityManager.HasComponent<EngageTarget>(entity))
+                        if (holdCombat && state.EntityManager.HasComponent<EngageTarget>(entity) &&
+                            ShouldRemovePreEngageTarget(
+                                state.EntityManager.GetComponentData<EngageTarget>(entity),
+                                faction.ValueRO.Id))
+                        {
                             preEngageCleanup.RemoveComponent<EngageTarget>(entity);
+                        }
                     }
                     preEngageCleanup.Playback(state.EntityManager);
                     preEngageCleanup.Dispose();
+
+                    if (releaseCombat && facts.AttackIssued != 0)
+                        CampaignMissionGroupAttackUtility.ContinueCommandedSquadAttack(
+                            state.EntityManager,
+                            _missionCombatantsQuery,
+                            runtime.SessionToken);
                 }
             }
             if (_cameraFocusQuery.CalculateEntityCount() == 1)
@@ -94,35 +125,58 @@ namespace Game.Runtime
                          SystemAPI.Query<RefRW<CampaignMissionOpeningPresentationComponent>>())
                 {
                     CampaignMissionOpeningPresentationComponent current = opening.ValueRO;
-                    if (current.Stage is not (0 or 1 or 2) || !current.SessionToken.Equals(runtime.SessionToken))
+                    if (current.Stage > 6 || !current.SessionToken.Equals(runtime.SessionToken))
                         continue;
 
-                    if (current.Stage == 0 && focus.Requested == 0)
+                    if (current.Stage <= 5 && IsOpeningVisible(state.EntityManager))
+                        current.ElapsedMilliseconds = SaturatingAddMilliseconds(
+                            current.ElapsedMilliseconds, SystemAPI.Time.DeltaTime);
+                    if (current.Stage == 0 &&
+                        current.ElapsedMilliseconds >= InitialRtsHoldMilliseconds &&
+                        focus.Requested == 0 && IsOpeningVisible(state.EntityManager))
                     {
                         state.EntityManager.SetComponentData(focusEntity, new RuntimeCameraFocusRequestComponent
                         {
                             Requested = 1,
-                            Smooth = 0,
-                            UseTacticalRevealZoom = 1,
-                            World = current.HostileFocus
+                            Smooth = 1,
+                            UseTacticalRevealZoom = 3,
+                            SmoothTimeSeconds = CinematicGlideSmoothTimeSeconds,
+                            World = current.EstablishingFocus
                         });
                         current.Stage = 1;
                     }
-                    if (current.Stage == 1)
-                        current.ElapsedMilliseconds = SaturatingAddMilliseconds(
-                            current.ElapsedMilliseconds, SystemAPI.Time.DeltaTime);
-                    if (current.Stage == 1 && current.ElapsedMilliseconds >= SquadReturnFocusMilliseconds &&
+                    if (current.Stage == 1 && current.ElapsedMilliseconds >= EstablishingArrivalMilliseconds)
+                        current.Stage = 2;
+                    if (current.Stage == 2 && current.ElapsedMilliseconds >= EstablishingHoldMilliseconds &&
                         focus.Requested == 0)
                     {
                         state.EntityManager.SetComponentData(focusEntity, new RuntimeCameraFocusRequestComponent
                         {
                             Requested = 1,
                             Smooth = 1,
-                            UseTacticalRevealZoom = 2,
+                            UseTacticalRevealZoom = 1,
+                            SmoothTimeSeconds = CinematicGlideSmoothTimeSeconds,
+                            World = current.HostileFocus
+                        });
+                        current.Stage = 3;
+                    }
+                    if (current.Stage == 3 && current.ElapsedMilliseconds >= HostileArrivalMilliseconds)
+                        current.Stage = 4;
+                    if (current.Stage == 4 && current.ElapsedMilliseconds >= HostileHoldMilliseconds &&
+                        focus.Requested == 0)
+                    {
+                        state.EntityManager.SetComponentData(focusEntity, new RuntimeCameraFocusRequestComponent
+                        {
+                            Requested = 1,
+                            Smooth = 1,
+                            UseTacticalRevealZoom = 4,
+                            SmoothTimeSeconds = CinematicGlideSmoothTimeSeconds,
                             World = current.FriendlyFocus
                         });
-                        current.Stage = 2;
+                        current.Stage = 5;
                     }
+                    if (current.Stage == 5 && current.ElapsedMilliseconds >= RtsReturnArrivalMilliseconds)
+                        current.Stage = 6;
                     opening.ValueRW = current;
                     break;
                 }
@@ -153,6 +207,27 @@ namespace Game.Runtime
             goals.Dispose();
         }
 
+        internal static void ApplyTutorialCombatPolicy(ref UnitCombat combat, bool releaseCombat)
+        {
+            // Keep the authored manual-attack capability available so the player can arm Attack
+            // and then choose a target. The tutorial hold suppresses only autonomous acquisition
+            // until the authoritative Engage phase begins. Reapply the release throughout Engage
+            // so the squad always acquires another nearby patrol member after its clicked target dies.
+            combat.AutoEngage = (byte)(releaseCombat && combat.CanAttack != 0 ? 1 : 0);
+        }
+
+        internal static bool ShouldReleaseCombat(MissionPhaseKind phase) =>
+            phase is MissionPhaseKind.Engage or MissionPhaseKind.SecureCorridor;
+
+        internal static bool ShouldRemovePreEngageTarget(in EngageTarget target, byte sourceFactionId)
+        {
+            // Automatic/retaliation targets are forbidden before Engage, but the player's
+            // explicit hostile click is the authoritative input that confirms the threat and
+            // advances the mission into Engage. Removing that commanded target here deadlocks
+            // the tutorial before CampaignMissionRuntimeSystem can observe it.
+            return !FactionIdentity.IsPlayerControlled(sourceFactionId) || target.IsCommanded == 0;
+        }
+
         private static bool TryFindRoute(
             ref CampaignMissionDefinitionBlob definition,
             Unity.Collections.FixedString64Bytes id, out int index)
@@ -161,6 +236,25 @@ namespace Game.Runtime
                 if (definition.PatrolRoutes[i].RouteId.Equals(id)) { index = i; return true; }
             index = -1;
             return false;
+        }
+
+        private bool IsOpeningVisible(EntityManager entityManager)
+        {
+            int renderStateCount = _renderVirtualizationStateQuery.CalculateEntityCount();
+            if (renderStateCount > 1)
+                return false;
+            if (renderStateCount == 1)
+            {
+                OperationMapRenderVirtualizationStateComponent renderState =
+                    entityManager.GetComponentData<OperationMapRenderVirtualizationStateComponent>(
+                        _renderVirtualizationStateQuery.GetSingletonEntity());
+                if (renderState.Initialized == 0 || renderState.InitialViewApplied == 0)
+                    return false;
+            }
+
+            // SimulationActive and the applied render state are the neutral runtime readiness
+            // boundaries. UI-shell transition state remains owned by composition and UI assemblies.
+            return true;
         }
 
         private static int SaturatingAddMilliseconds(int current, float deltaSeconds)

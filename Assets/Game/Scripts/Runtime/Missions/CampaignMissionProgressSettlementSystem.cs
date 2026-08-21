@@ -81,8 +81,10 @@ namespace Game.Runtime
             bool firstClear = runtime.RunKind == MissionRunKind.FirstClear ||
                               runtime.RunKind == MissionRunKind.Retry &&
                               runtime.LaunchOrigin == MissionLaunchOriginKind.FirstLaunch;
-            if (firstClear && result.ReturnDestination != MissionReturnDestinationKind.CommandBase ||
-                !firstClear && result.ReturnDestination != MissionReturnDestinationKind.CampaignOperations)
+            MissionReturnDestinationKind expectedReturn = runtime.LaunchOrigin == MissionLaunchOriginKind.FirstLaunch
+                ? MissionReturnDestinationKind.CommandBase
+                : MissionReturnDestinationKind.CampaignOperations;
+            if (result.ReturnDestination != expectedReturn)
             {
                 response.ReasonCode = new FixedString64Bytes("invalid-return-route");
                 return response;

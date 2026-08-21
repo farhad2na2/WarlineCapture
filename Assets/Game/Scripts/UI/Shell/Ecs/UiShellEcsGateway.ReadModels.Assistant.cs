@@ -207,7 +207,9 @@ namespace Game.UI.Shell.Ecs
                 ControlStateText(assistantState.ControlState),
                 ControlStateDetailText(assistantState.ControlState),
                 settings.LargeTextEnabled != 0,
-                settings.HighContrastEnabled != 0);
+                settings.HighContrastEnabled != 0,
+                (byte)topRecommendation.Kind,
+                (byte)topRecommendation.TargetKind);
 
             hasCachedAssistantPanel = true;
             cachedAssistantPanelWorld = entityManager.World;
@@ -260,6 +262,7 @@ namespace Game.UI.Shell.Ecs
                 true,
                 highlight.RequestId,
                 highlight.RecommendationId,
+                (byte)highlight.RecommendationKind,
                 (byte)highlight.TargetKind,
                 highlight.WorldPosition.x,
                 highlight.WorldPosition.y,

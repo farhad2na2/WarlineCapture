@@ -7,6 +7,7 @@ namespace Game.Components
     {
         GroupedManual,
         Immediate,
+        CampaignGuidedSquad,
         TargetOnly,
         TargetPathOnly,
         ClearMovement

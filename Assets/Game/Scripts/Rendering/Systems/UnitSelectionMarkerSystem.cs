@@ -646,9 +646,13 @@ namespace Game.Rendering
 
         private static int Bool01(bool value) => value ? 1 : 0;
 
-        private static void ApplyVehicleVariantVisibility(EntityManager em, Entity marker, bool usesVehicleMarker, bool isAirUnit)
+        internal static void ApplyVehicleVariantVisibility(EntityManager em, Entity marker, bool usesVehicleMarker, bool isAirUnit)
         {
             bool showVehicleGroundMarker = usesVehicleMarker && !isAirUnit;
+
+            if (SelectionMarkerVariantVisualUtility.TryApplyExplicitVariants(
+                    em, marker, usesVehicleMarker, showVehicleGroundMarker))
+                return;
 
             if (em.HasBuffer<LinkedEntityGroup>(marker))
             {
@@ -714,19 +718,7 @@ namespace Game.Rendering
             LocalTransform transform = em.GetComponentData<LocalTransform>(entity);
             transform.Scale = visible ? 1f : 0f;
             em.SetComponentData(entity, transform);
-            SetSelectionMarkerVisualRendering(em, entity, visible);
-        }
-
-        private static void SetSelectionMarkerVisualRendering(EntityManager em, Entity entity, bool visible)
-        {
-            if (entity == Entity.Null || !em.Exists(entity) || !em.HasComponent<MaterialMeshInfo>(entity))
-                return;
-
-            bool renderingDisabled = em.HasComponent<DisableRendering>(entity);
-            if (visible && renderingDisabled)
-                em.RemoveComponent<DisableRendering>(entity);
-            else if (!visible && !renderingDisabled)
-                em.AddComponent<DisableRendering>(entity);
+            SelectionMarkerVariantVisualUtility.SetRendering(em, entity, visible);
         }
 
         private static bool IsVehicleSelectionMarkerVisualName(string name)

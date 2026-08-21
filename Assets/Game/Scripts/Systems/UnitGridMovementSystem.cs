@@ -37,6 +37,7 @@ namespace Game.Runtime
         [ReadOnly] public ComponentLookup<UnitTarget> UnitTargetLookup;
         [ReadOnly] public ComponentLookup<UnitLongDistanceMove> LongDistanceMoveLookup;
         [ReadOnly] public ComponentLookup<ManualMoveGroupMemberTag> ManualMoveGroupLookup;
+        [ReadOnly] public ComponentLookup<CampaignMissionGuidedMoveInProgressTag> CampaignGuidedMoveLookup;
         [ReadOnly] public ComponentLookup<UnitTransportBoardingTarget> BoardingTargetLookup;
 
         public void Execute(
@@ -67,10 +68,12 @@ namespace Game.Runtime
             int targetIndex = GridUtils.CellToIndex(targetCell, Grid.Width);
             int2 footprintSize = footprint.Size;
             bool isVehicle = UnitVehicleMovementUtility.IsVehicle(footprint, movementBehavior);
-            bool groupedManualMove =
-                !isVehicle &&
-                ManualMoveGroupLookup.HasComponent(entity) &&
-                !BoardingTargetLookup.HasComponent(entity);
+            bool campaignGuidedMove = CampaignGuidedMoveLookup.HasComponent(entity);
+            bool groupedManualMove = ShouldUseGroupedManualStop(
+                isVehicle,
+                campaignGuidedMove,
+                ManualMoveGroupLookup.HasComponent(entity),
+                BoardingTargetLookup.HasComponent(entity));
             if (!isVehicle)
             {
                 int2 worldCell = GridUtils.WorldToCell(Grid, transform.Position);
@@ -81,8 +84,10 @@ namespace Game.Runtime
             if (!targetCell.Equals(unitGrid.Cell))
             {
                 bool targetOverlapsCurrentFootprint = UnitFootprintUtility.Overlaps(unitGrid.Cell, footprintSize, targetCell, footprintSize);
-                bool targetBlockedByGrid = !targetOverlapsCurrentFootprint &&
-                    !CanOccupyMovementTarget(Grid, Walkable, DynamicBlocked, FriendlyPassFactionIds, targetCell, footprintSize, unitGrid.Cell, faction.Id);
+                bool targetBlockedByGrid = ShouldBlockPathCell(
+                    campaignGuidedMove,
+                    !targetOverlapsCurrentFootprint &&
+                    !CanOccupyMovementTarget(Grid, Walkable, DynamicBlocked, FriendlyPassFactionIds, targetCell, footprintSize, unitGrid.Cell, faction.Id));
                 if (targetBlockedByGrid)
                 {
                     if (!isVehicle)
@@ -95,7 +100,8 @@ namespace Game.Runtime
                     return;
                 }
 
-                bool targetBlockedByOccupant = Occupied.IsSet(targetIndex);
+                bool targetBlockedByOccupant = ShouldBlockPathCell(
+                    campaignGuidedMove, Occupied.IsSet(targetIndex));
                 if (targetBlockedByOccupant)
                 {
                     bool passableSelfOccupancy = IsOnlySelfOccupyingCell(entity, targetIndex);
@@ -343,6 +349,9 @@ namespace Game.Runtime
             }
         }
 
+        internal static bool ShouldBlockPathCell(bool campaignGuidedMove, bool cellBlocked) =>
+            !campaignGuidedMove && cellBlocked;
+
         private void RequestRepath(int sortKey, Entity entity)
         {
             bool hasLongDistanceMove = LongDistanceMoveLookup.HasComponent(entity);
@@ -526,47 +535,6 @@ namespace Game.Runtime
             return foundSoft;
         }
 
-        private static bool IsSoftBlocker(int2 size)
-        {
-            int2 clamped = UnitFootprintUtility.ClampSize(size);
-            return clamped.x == 1 && clamped.y == 1;
-        }
-
-        public static bool CanOccupyMovementTarget(
-            in GridConfig grid,
-            in NativeArray<GridWalkable> walkable,
-            in NativeBitArray dynamicBlocked,
-            in NativeArray<byte> friendlyPassFactionIds,
-            int2 targetCell,
-            int2 footprintSize,
-            int2 currentCell,
-            byte factionId)
-        {
-            return UnitFootprintUtility.CanPlace(
-                grid,
-                walkable,
-                dynamicBlocked,
-                friendlyPassFactionIds,
-                default,
-                targetCell,
-                footprintSize,
-                currentCell,
-                factionId);
-        }
-
-        private bool IsBlockedForFaction(int idx, byte factionId)
-        {
-            if (!DynamicBlocked.IsCreated || !DynamicBlocked.IsSet(idx))
-                return false;
-
-            if (FriendlyPassFactionIds.IsCreated &&
-                (uint)idx < (uint)FriendlyPassFactionIds.Length &&
-                FriendlyPassFactionIds[idx] == factionId)
-                return false;
-
-            return true;
-        }
-
         private void RequestSoftBlockerMove(int sortKey, Entity entity, int2 blockerCell, int2 vehicleCell)
         {
             int2 bestGoal = blockerCell;
@@ -630,6 +598,7 @@ namespace Game.Runtime
         [ReadOnly] public ComponentLookup<UnitGrid> UnitGridLookup;
         [ReadOnly] public ComponentLookup<UnitLongDistanceMove> LongDistanceMoveLookup;
         [ReadOnly] public ComponentLookup<ManualMoveOrderTag> ManualMoveLookup;
+        [ReadOnly] public ComponentLookup<CampaignMissionGuidedMoveInProgressTag> CampaignGuidedMoveLookup;
 
         public void Execute([EntityIndexInQuery] int sortKey, Entity entity, ref UnitVehicleKinematics vehicleKinematics, in UnitPathFollow follow, in UnitPathRange range)
         {
@@ -640,6 +609,8 @@ namespace Game.Runtime
                 Ecb.RemoveComponent<UnitPathFollow>(sortKey, entity);
                 Ecb.RemoveComponent<UnitPathRange>(sortKey, entity);
                 Ecb.RemoveComponent<AutoWanderMoveTag>(sortKey, entity);
+                if (CampaignGuidedMoveLookup.HasComponent(entity))
+                    Ecb.RemoveComponent<CampaignMissionGuidedMoveInProgressTag>(sortKey, entity);
 
                 if (LongDistanceMoveLookup.HasComponent(entity) && UnitGridLookup.HasComponent(entity))
                 {
@@ -771,6 +742,7 @@ namespace Game.Runtime
                     UnitTargetLookup = SystemAPI.GetComponentLookup<UnitTarget>(true),
                     LongDistanceMoveLookup = SystemAPI.GetComponentLookup<UnitLongDistanceMove>(true),
                     ManualMoveGroupLookup = SystemAPI.GetComponentLookup<ManualMoveGroupMemberTag>(true),
+                    CampaignGuidedMoveLookup = SystemAPI.GetComponentLookup<CampaignMissionGuidedMoveInProgressTag>(true),
                     BoardingTargetLookup = SystemAPI.GetComponentLookup<UnitTransportBoardingTarget>(true)
                 }.ScheduleParallel(state.Dependency);
 
@@ -779,7 +751,8 @@ namespace Game.Runtime
                     Ecb = ecb,
                     UnitGridLookup = SystemAPI.GetComponentLookup<UnitGrid>(true),
                     LongDistanceMoveLookup = SystemAPI.GetComponentLookup<UnitLongDistanceMove>(true),
-                    ManualMoveLookup = SystemAPI.GetComponentLookup<ManualMoveOrderTag>(true)
+                    ManualMoveLookup = SystemAPI.GetComponentLookup<ManualMoveOrderTag>(true),
+                    CampaignGuidedMoveLookup = SystemAPI.GetComponentLookup<CampaignMissionGuidedMoveInProgressTag>(true)
                 }.ScheduleParallel(moveHandle);
 
                 var disposeEntitiesHandle = liveUnitEntities.Dispose(cleanupHandle);

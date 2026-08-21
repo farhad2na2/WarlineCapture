@@ -3,18 +3,18 @@
   "operationMapId":"opmap.ch01.district_edge_01", "scenarioId":"scenario.ch01.m01.first_contact",
   "anchorCount":11, "surfaceAuthority":"accepted physical source; unmodified",
   "anchors": [
-    {"id":"anchor.ch01.m01.player_spawn","kind":"Deployment","position":[1825,0.009,783],"yaw":0,"clearanceRadius":5},
-    {"id":"anchor.ch01.m01.camera_start","kind":"Camera","position":[1815,0.009,783],"yaw":0,"clearanceRadius":1},
-    {"id":"anchor.ch01.m01.move_target","kind":"Objective","position":[1835,0.009,783],"yaw":0,"clearanceRadius":3},
-    {"id":"anchor.ch01.m01.patrol_spawn","kind":"Spawn","position":[1845,0.009,783],"yaw":270,"clearanceRadius":4},
-    {"id":"anchor.ch01.m01.patrol_route_a","kind":"Lane","position":[1845,0.009,773],"yaw":270,"clearanceRadius":2},
-    {"id":"anchor.ch01.m01.patrol_route_b","kind":"Lane","position":[1835,0.009,773],"yaw":270,"clearanceRadius":2},
-    {"id":"anchor.ch01.m01.patrol_route_c","kind":"Lane","position":[1825,0.009,773],"yaw":270,"clearanceRadius":2},
-    {"id":"anchor.ch01.m01.patrol_objective","kind":"Hostile","position":[1845,0.009,793],"yaw":270,"clearanceRadius":3},
-    {"id":"anchor.ch01.m01.civilian_safe_zone","kind":"Civilian","position":[1840,-0.001,824],"yaw":45,"clearanceRadius":7},
-    {"id":"anchor.ch01.m01.civilian_evacuation","kind":"Civilian","position":[1870,-0.001,842],"yaw":45,"clearanceRadius":7},
-    {"id":"anchor.ch01.m01.minimap_start","kind":"Minimap","position":[1815,0.009,773],"yaw":0,"clearanceRadius":1}
+    {"id":"anchor.ch01.m01.player_spawn","kind":"Deployment","position":[1792,0.009,690],"yaw":0,"clearanceRadius":5},
+    {"id":"anchor.ch01.m01.camera_start","kind":"Camera","position":[1792,0.009,682],"yaw":0,"clearanceRadius":1},
+    {"id":"anchor.ch01.m01.move_target","kind":"Objective","position":[1792,0.009,710],"yaw":0,"clearanceRadius":3},
+    {"id":"anchor.ch01.m01.patrol_spawn","kind":"Spawn","position":[1792,0.009,735],"yaw":180,"clearanceRadius":4},
+    {"id":"anchor.ch01.m01.patrol_route_a","kind":"Lane","position":[1792,0.009,725],"yaw":180,"clearanceRadius":2},
+    {"id":"anchor.ch01.m01.patrol_route_b","kind":"Lane","position":[1791,0.009,716],"yaw":180,"clearanceRadius":2},
+    {"id":"anchor.ch01.m01.patrol_route_c","kind":"Lane","position":[1791,0.009,704],"yaw":180,"clearanceRadius":2},
+    {"id":"anchor.ch01.m01.patrol_objective","kind":"Hostile","position":[1792,0.009,743],"yaw":180,"clearanceRadius":3},
+    {"id":"anchor.ch01.m01.civilian_safe_zone","kind":"Civilian","position":[1750,0.009,755],"yaw":45,"clearanceRadius":7},
+    {"id":"anchor.ch01.m01.civilian_evacuation","kind":"Civilian","position":[1740,0.009,775],"yaw":45,"clearanceRadius":7},
+    {"id":"anchor.ch01.m01.minimap_start","kind":"Minimap","position":[1788,0.009,684],"yaw":0,"clearanceRadius":1}
   ],
-  "patrolTiming":{"encounterStartMs":3000,"patrolDelayMs":3000,"conservativeSpeedMps":5,"earliestDirectCivilianSeconds":11.261,"requiredPostContextSeconds":6},
+  "patrolTiming":{"encounterStartMs":3000,"patrolDelayMs":3000,"conservativeSpeedMps":5,"earliestDirectCivilianSeconds":12.304,"requiredPostContextSeconds":6},
   "validation":"[M01FirstContactAnchorValidation] result=Passed tests=13"
 }

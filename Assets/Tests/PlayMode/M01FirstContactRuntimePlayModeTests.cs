@@ -193,10 +193,6 @@ public sealed class M01FirstContactRuntimePlayModeTests
             em.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
         Assert.That(facts.HostileDefeatedCount, Is.EqualTo(3));
         Assert.That(facts.CommandSquadAlive, Is.EqualTo(1));
-        Assert.That(em.GetComponentData<CampaignMissionRuntimeComponent>(root).Phase,
-            Is.EqualTo(MissionPhaseKind.SecureCorridor));
-
-        Update(world, handle);
         CampaignMissionRuntimeComponent result = em.GetComponentData<CampaignMissionRuntimeComponent>(root);
         Assert.That(result.Phase, Is.EqualTo(MissionPhaseKind.Result));
         Assert.That(result.Outcome, Is.EqualTo(MissionOutcomeKind.Victory));

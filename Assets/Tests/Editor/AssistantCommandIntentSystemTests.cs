@@ -1,5 +1,6 @@
 using System;
 using Game.Components;
+using Game.Missions.Contracts;
 using Game.Runtime;
 using Game.UI.Shell.Contracts.Ecs;
 using Game.UI.Shell.Ecs;
@@ -25,6 +26,8 @@ public sealed class AssistantCommandIntentSystemTests
             RunCase(test => test.AssistantCommandIntentSystem_QueuesCameraPreviewFromEntityTarget());
             passed++;
             RunCase(test => test.AssistantCommandIntentSystem_GuidedMoveHighlightsTargetWithoutMovingCamera());
+            passed++;
+            RunCase(test => test.AssistantCommandIntentSystem_M01ReplayMovePreviewUsesAuthoredDestination());
             passed++;
             RunCase(test => test.AssistantCommandIntentSystem_QueuesCameraPreviewFromOperationMapObjectiveAnchor());
             passed++;
@@ -511,6 +514,50 @@ public sealed class AssistantCommandIntentSystemTests
             ComponentType.ReadOnly<RtsCameraRequestElement>());
         Assert.IsTrue(cameraQuery.IsEmptyIgnoreFilter,
             "Move guidance must preserve the player's RTS camera and teach the command button first.");
+    }
+
+    [Test]
+    public void AssistantCommandIntentSystem_M01ReplayMovePreviewUsesAuthoredDestination()
+    {
+        Entity boundary = CreateBoundary();
+        float3 nearSquadFallback = new(1792f, 0.009f, 693f);
+        float3 authoredDestination = new(1792f, 0.009f, 719f);
+        CreateActiveOperationMap(
+            CampaignMissionGuidedMoveRouteUtility.AuthoredMoveTargetAnchorId,
+            authoredDestination);
+        Entity runtime = _entityManager.CreateEntity(typeof(CampaignMissionRuntimeComponent));
+        _entityManager.SetComponentData(runtime, new CampaignMissionRuntimeComponent
+        {
+            MissionId = new FixedString64Bytes("saga.ch01.m01.first_contact"),
+            SessionToken = new FixedString64Bytes("m01-replay-preview"),
+            Phase = MissionPhaseKind.MoveToCover,
+            Outcome = MissionOutcomeKind.None,
+            RunKind = MissionRunKind.Replay,
+            ReplayTutorialEnabled = 1,
+            Version = 3,
+            SourceVersion = 2,
+            AttemptOrdinal = 2
+        });
+        _entityManager.GetBuffer<AssistantCommandIntentRequestElement>(boundary).Add(
+            new AssistantCommandIntentRequestElement
+            {
+                RequestId = 72,
+                Frame = UnityEngine.Time.frameCount,
+                RecommendationId = 3103,
+                RecommendationKind = AssistantRecommendationKind.Move,
+                Kind = AssistantCommandIntentKind.ShowRecommendation,
+                TargetKind = AssistantTargetKind.WorldPosition,
+                WorldPosition = nearSquadFallback
+            });
+
+        _intentSystem.Update(_world.Unmanaged);
+
+        DynamicBuffer<AssistantPreviewHighlightElement> highlights =
+            _entityManager.GetBuffer<AssistantPreviewHighlightElement>(boundary);
+        Assert.AreEqual(1, highlights.Length);
+        Assert.AreEqual(authoredDestination, highlights[0].WorldPosition,
+            "M01 Show Me must resolve the authored move_target anchor, never the replay squad fallback.");
+        Assert.Greater(math.distance(highlights[0].WorldPosition, nearSquadFallback), 20f);
     }
 
     [Test]

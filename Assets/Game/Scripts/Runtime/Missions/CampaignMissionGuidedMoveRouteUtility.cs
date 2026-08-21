@@ -14,6 +14,8 @@ namespace Game.Runtime
         private static readonly FixedString64Bytes MoveTargetAnchorId = "anchor.ch01.m01.move_target";
         private const int ExpectedCommandSquadCount = 4;
 
+        public static FixedString64Bytes AuthoredMoveTargetAnchorId => MoveTargetAnchorId;
+
         public readonly struct Context
         {
             public readonly FixedString64Bytes SessionToken;

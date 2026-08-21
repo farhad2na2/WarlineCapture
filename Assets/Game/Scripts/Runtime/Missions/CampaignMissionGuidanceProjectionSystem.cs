@@ -182,6 +182,10 @@ namespace Game.Runtime
         private static bool ProjectionEquals(in CampaignMissionGuidanceProjectionComponent a, in CampaignMissionGuidanceProjectionComponent b) =>
             a.GuidanceId == b.GuidanceId && a.Prompt == b.Prompt && a.GuidanceMode == b.GuidanceMode &&
             a.HintStrength == b.HintStrength && a.TargetEntity == b.TargetEntity && a.SourceEntity == b.SourceEntity &&
+            a.RecommendationKind == b.RecommendationKind && a.TargetKind == b.TargetKind &&
+            a.TargetCell.Equals(b.TargetCell) && a.WorldPosition.Equals(b.WorldPosition) &&
+            a.HasWorldPosition == b.HasWorldPosition && a.TargetId.Equals(b.TargetId) &&
+            a.CanShow == b.CanShow && a.CanExecute == b.CanExecute &&
             a.AcknowledgedGuidanceId == b.AcknowledgedGuidanceId && a.SubtitlesEnabled == b.SubtitlesEnabled &&
             a.LargeTextEnabled == b.LargeTextEnabled && a.HighContrastEnabled == b.HighContrastEnabled;
         private static uint Next(uint value) => value == uint.MaxValue ? uint.MaxValue : value + 1u;

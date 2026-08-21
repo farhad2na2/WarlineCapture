@@ -27,6 +27,7 @@ public sealed class M01FirstContactGuidanceTests
             ReplayTutorialOffSuppressesGuidance(); passed++; StableProjectionAllocatesZeroManagedBytes(); passed++;
             ExactlyOneGuidanceProjectionWriterExists(); passed++; ContextualEscalatesWithoutUnsafeExecution(); passed++;
             MinimalPublishesMandatoryInformationOnly(); passed++; GuidanceModesPreserveGameplayTruth(); passed++;
+            MoveTargetRefreshesWhenAuthoredAnchorBecomesAvailable(); passed++;
             Debug.Log($"[M01FirstContactGuidanceValidation] result=Passed tests={passed}"); ValidationExit.Exit(0);
         }
         catch (Exception e) { Debug.LogException(e); Debug.LogError($"[M01FirstContactGuidanceValidation] result=Failed passed={passed}"); ValidationExit.Exit(1); }
@@ -189,6 +190,23 @@ public sealed class M01FirstContactGuidanceTests
             Assert.That(runtime.MissionId, Is.EqualTo(baseline.MissionId)); Assert.That(runtime.Phase, Is.EqualTo(baseline.Phase));
             Assert.That(runtime.Outcome, Is.EqualTo(baseline.Outcome)); Assert.That(facts.HostileTotalCount, Is.EqualTo(3));
         }
+    }
+
+    [Test] public static void MoveTargetRefreshesWhenAuthoredAnchorBecomesAvailable()
+    {
+        var runtime = Runtime(MissionPhaseKind.MoveToCover);
+        float3 nearSquadFallback = new(1792f, 0.009f, 693f);
+        float3 authoredDestination = new(1792f, 0.009f, 719f);
+        CampaignMissionGuidanceProjectionSystem.TryBuildProjection(
+            default, runtime, Facts(), Settings(), new Entity { Index = 2, Version = 1 }, Entity.Null,
+            nearSquadFallback, default, out var stale);
+
+        Assert.That(CampaignMissionGuidanceProjectionSystem.TryBuildProjection(
+            stale, runtime, Facts(), Settings(), stale.SourceEntity, Entity.Null,
+            authoredDestination, default, out var refreshed), Is.True,
+            "A replay projection must refresh when operation-map metadata supplies the authored destination.");
+        Assert.That(refreshed.WorldPosition, Is.EqualTo(authoredDestination));
+        Assert.That(math.distance(refreshed.WorldPosition, nearSquadFallback), Is.GreaterThan(20f));
     }
 
     private static CampaignMissionRuntimeComponent Runtime(MissionPhaseKind phase) => new()

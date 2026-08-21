@@ -64,6 +64,18 @@ namespace Game.UI.Shell.Ecs
             out float3 position)
         {
             position = default;
+            if (request.RecommendationKind == AssistantRecommendationKind.Move &&
+                CampaignMissionGuidedMoveRouteUtility.IsGuidedMovePhaseActive(entityManager))
+            {
+                FixedString64Bytes moveTargetAnchorId =
+                    CampaignMissionGuidedMoveRouteUtility.AuthoredMoveTargetAnchorId;
+                return TryResolveNamedAnchor(
+                    entityManager,
+                    operationMapMetadataQuery,
+                    in moveTargetAnchorId,
+                    out position);
+            }
+
             if (request.TargetKind == AssistantTargetKind.WorldPosition && IsFinite(request.WorldPosition))
             {
                 position = request.WorldPosition;

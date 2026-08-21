@@ -188,7 +188,8 @@ namespace Game.Runtime
                      SystemAPI.Query<RefRW<CampaignMissionUnitRoleComponent>>().WithEntityAccess())
             {
                 CampaignMissionUnitRoleComponent current = role.ValueRO;
-                if (current.RouteId.IsEmpty || !current.SessionToken.Equals(runtime.SessionToken) ||
+                if (!ShouldIssuePatrolRoute(runtime.Phase) ||
+                    current.RouteId.IsEmpty || !current.SessionToken.Equals(runtime.SessionToken) ||
                     current.PatrolOrderVersion != 0 ||
                     !TryFindRoute(ref definition, current.RouteId, out int routeIndex)) continue;
                 ref CampaignMissionPatrolRouteBlob route = ref definition.PatrolRoutes[routeIndex];
@@ -217,6 +218,12 @@ namespace Game.Runtime
         }
 
         internal static bool ShouldReleaseCombat(MissionPhaseKind phase) =>
+            phase is MissionPhaseKind.Engage or MissionPhaseKind.SecureCorridor;
+
+        internal static bool ShouldIssuePatrolRoute(MissionPhaseKind phase) =>
+            // Holding at the civic-hall staging anchor is one of the authored patrol
+            // behaviours. Do not let a player who is reading or asking ARIA for help watch
+            // the enemies drift into the tutorial move target before Attack is confirmed.
             phase is MissionPhaseKind.Engage or MissionPhaseKind.SecureCorridor;
 
         internal static bool ShouldRemovePreEngageTarget(in EngageTarget target, byte sourceFactionId)

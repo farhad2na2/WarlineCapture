@@ -46,6 +46,7 @@ namespace Game.Runtime
                 SystemAPI.GetSingletonRW<CampaignMissionAttemptFactsComponent>();
             CampaignMissionAttemptFactsComponent projectedFacts = factsRw.ValueRO;
             bool commandSquadSelected = projectedFacts.CommandSquadSpawned != 0;
+            bool progressProjectionReady = true;
             if (activeRuntime.Outcome == MissionOutcomeKind.None &&
                 activeRuntime.Phase is >= MissionPhaseKind.FindSquad and <= MissionPhaseKind.SecureCorridor &&
                 projectedFacts.CommandSquadSpawned != 0)
@@ -68,6 +69,7 @@ namespace Game.Runtime
                 ComponentLookup<UnitHealth> health = SystemAPI.GetComponentLookup<UnitHealth>(true);
                 ComponentLookup<SelectedUnitTag> selectedUnits = SystemAPI.GetComponentLookup<SelectedUnitTag>(true);
                 ComponentLookup<UnitGrid> unitGrids = SystemAPI.GetComponentLookup<UnitGrid>(true);
+                ComponentLookup<LocalTransform> transforms = SystemAPI.GetComponentLookup<LocalTransform>(true);
                 GridConfig grid = default;
                 bool hasGrid = SystemAPI.TryGetSingleton(out grid);
                 CampaignMissionRuntimeProgressUtility.MoveTargetContext moveContext =
@@ -76,6 +78,8 @@ namespace Game.Runtime
                 int aliveFriendly = 0;
                 int aliveHostile = 0;
                 int expectedFriendly = 0;
+                int observedFriendly = 0;
+                int observedHostile = 0;
                 int friendliesAtMoveTarget = 0;
                 bool commandedHostileAttack = false;
 
@@ -89,22 +93,34 @@ namespace Game.Runtime
                 foreach ((RefRO<CampaignMissionUnitRoleComponent> role,
                           RefRO<Faction> faction,
                           RefRO<UnitHealth> unitHealth,
-                          RefRO<LocalTransform> transform,
                           Entity entity)
                          in SystemAPI.Query<RefRO<CampaignMissionUnitRoleComponent>, RefRO<Faction>,
-                             RefRO<UnitHealth>, RefRO<LocalTransform>>().WithEntityAccess())
+                             RefRO<UnitHealth>>().WithEntityAccess())
                 {
-                    if (!role.ValueRO.SessionToken.Equals(activeRuntime.SessionToken) || unitHealth.ValueRO.Current <= 0)
+                    if (!role.ValueRO.SessionToken.Equals(activeRuntime.SessionToken))
+                        continue;
+                    // Spawned mission entities receive their authored health after the ECS
+                    // entity itself becomes visible. A zero Max value is initialization, not
+                    // death; counting it as a ready roster can settle an irreversible defeat
+                    // one frame before the four soldiers receive 125/125 health.
+                    if (unitHealth.ValueRO.Max <= 0)
                         continue;
                     if (faction.ValueRO.Id > 1)
                     {
+                        observedHostile++;
+                        if (unitHealth.ValueRO.Current <= 0)
+                            continue;
                         aliveHostile++;
                         continue;
                     }
+                    observedFriendly++;
+                    if (unitHealth.ValueRO.Current <= 0)
+                        continue;
                     aliveFriendly++;
                     commandSquadSelected &= selectedUnits.HasComponent(entity);
-                    if (hasMoveTarget && CampaignMissionRuntimeProgressUtility.IsAtMoveTarget(
-                            transform.ValueRO.Position,
+                    if (hasMoveTarget && transforms.HasComponent(entity) &&
+                        CampaignMissionRuntimeProgressUtility.IsAtMoveTarget(
+                            transforms[entity].Position,
                             unitGrids.HasComponent(entity),
                             unitGrids.HasComponent(entity) ? unitGrids[entity].Cell : default,
                             in moveContext))
@@ -123,16 +139,35 @@ namespace Game.Runtime
 
                 projectedFacts.ElapsedMilliseconds = SaturatingAddMilliseconds(
                     projectedFacts.ElapsedMilliseconds, SystemAPI.Time.DeltaTime);
-                projectedFacts.CommandSquadAlive = aliveFriendly > 0 ? (byte)1 : (byte)0;
-                if (expectedFriendly > 0)
+                bool friendlyRosterReady = IsRosterProjectionReady(
+                    expectedFriendly, observedFriendly, activeRuntime.Phase);
+                progressProjectionReady = friendlyRosterReady;
+                if (friendlyRosterReady)
                 {
-                    projectedFacts.SquadLossCount = math.max(
-                        projectedFacts.SquadLossCount, math.max(0, expectedFriendly - aliveFriendly));
+                    projectedFacts.CommandSquadAlive = aliveFriendly > 0 ? (byte)1 : (byte)0;
+                    if (expectedFriendly > 0)
+                    {
+                        projectedFacts.SquadLossCount = math.max(
+                            projectedFacts.SquadLossCount, math.max(0, expectedFriendly - aliveFriendly));
+                    }
                 }
-                int defeated = math.clamp(projectedFacts.HostileTotalCount - aliveHostile,
-                    0, projectedFacts.HostileTotalCount);
-                projectedFacts.HostileDefeatedCount = math.max(projectedFacts.HostileDefeatedCount, defeated);
-                if (CampaignMissionRuntimeProgressUtility.AllAliveFriendliesReachedMoveTarget(
+                else
+                {
+                    // Spawn and prefab initialization cross system-group boundaries. Preserve
+                    // the one-time spawn facts until all four authored soldiers are visible to
+                    // the health roster instead of settling a false defeat on a partial frame.
+                    commandSquadSelected = false;
+                }
+                bool hostileRosterReady = IsRosterProjectionReady(
+                    projectedFacts.HostileTotalCount, observedHostile, activeRuntime.Phase);
+                if (hostileRosterReady)
+                {
+                    int defeated = math.clamp(projectedFacts.HostileTotalCount - aliveHostile,
+                        0, projectedFacts.HostileTotalCount);
+                    projectedFacts.HostileDefeatedCount = math.max(projectedFacts.HostileDefeatedCount, defeated);
+                }
+                if (friendlyRosterReady &&
+                    CampaignMissionRuntimeProgressUtility.AllAliveFriendliesReachedMoveTarget(
                         aliveFriendly, friendliesAtMoveTarget))
                     projectedFacts.MoveToCoverComplete = 1;
                 if (commandedHostileAttack)
@@ -140,19 +175,25 @@ namespace Game.Runtime
                     projectedFacts.ThreatConfirmed = 1;
                     projectedFacts.AttackIssued = 1;
                 }
-                commandSquadSelected &= aliveFriendly > 0;
+                commandSquadSelected &= friendlyRosterReady && aliveFriendly > 0;
                 factsRw.ValueRW = projectedFacts;
             }
-            foreach ((RefRW<CampaignMissionRuntimeComponent> runtime,
-                      RefRO<CampaignMissionAttemptFactsComponent> facts)
-                     in SystemAPI.Query<RefRW<CampaignMissionRuntimeComponent>,
-                         RefRO<CampaignMissionAttemptFactsComponent>>())
+            // Evaluate from the authoritative local projection written above. Re-querying the
+            // same facts component in this update can observe its pre-projection value and was
+            // able to settle Defeat while the freshly projected roster still contained four
+            // living soldiers.
+            RefRW<CampaignMissionRuntimeComponent> runtimeRw =
+                SystemAPI.GetSingletonRW<CampaignMissionRuntimeComponent>();
+            CampaignMissionRuntimeComponent currentRuntime = runtimeRw.ValueRO;
+            CampaignMissionRuntimeComponent nextRuntime = currentRuntime;
+            if (progressProjectionReady &&
+                CampaignMissionRuntimeProgressUtility.TryEvaluateSettled(
+                    in currentRuntime,
+                    in projectedFacts,
+                    commandSquadSelected,
+                    out nextRuntime))
             {
-                CampaignMissionRuntimeComponent next = runtime.ValueRO;
-                if (!CampaignMissionRuntimeProgressUtility.TryEvaluateSettled(
-                        in runtime.ValueRO, in facts.ValueRO, commandSquadSelected, out next))
-                    continue;
-                runtime.ValueRW = next;
+                runtimeRw.ValueRW = nextRuntime;
             }
         }
         private static int SaturatingAddMilliseconds(int current, float deltaSeconds)
@@ -160,6 +201,13 @@ namespace Game.Runtime
             int delta = (int)math.min(int.MaxValue, math.max(0f, math.round(deltaSeconds * 1000f)));
             return current >= int.MaxValue - delta ? int.MaxValue : current + delta;
         }
+
+        internal static bool IsRosterProjectionReady(
+            int expectedCount,
+            int observedCount,
+            MissionPhaseKind phase) =>
+            phase >= MissionPhaseKind.Engage || expectedCount > 0 && observedCount >= expectedCount;
+
         internal static bool TryConsumeAction(EntityManager entityManager, Entity root)
         {
             if (!entityManager.HasComponent<CampaignMissionRuntimeComponent>(root) ||
@@ -362,7 +410,8 @@ namespace Game.Runtime
             bool commandSquadSelected, out CampaignMissionRuntimeComponent next)
         {
             next = current;
-            if (!TryResolveAutomaticTransition(in current, in facts, commandSquadSelected,
+            if (!CampaignMissionRuntimeProgressUtility.TryResolveAutomaticTransition(
+                    in current, in facts, commandSquadSelected,
                     out MissionPhaseKind phase,
                     out MissionOutcomeKind outcome, out MissionReturnDestinationKind destination))
                 return false;
@@ -414,66 +463,6 @@ namespace Game.Runtime
                 MissionPhaseKind.Result => to is MissionPhaseKind.DebriefFirstClear or MissionPhaseKind.ReturnReplay,
                 _ => false
             };
-        }
-
-        private static bool TryResolveAutomaticTransition(
-            in CampaignMissionRuntimeComponent current,
-            in CampaignMissionAttemptFactsComponent facts,
-            bool commandSquadSelected,
-            out MissionPhaseKind phase,
-            out MissionOutcomeKind outcome,
-            out MissionReturnDestinationKind destination)
-        {
-            phase = current.Phase;
-            outcome = current.Outcome;
-            destination = current.ReturnDestination;
-            if (current.Phase == MissionPhaseKind.Preparing &&
-                (current.ReadyReadiness & current.RequiredReadiness) == current.RequiredReadiness)
-                phase = MissionPhaseKind.InteractiveBrief;
-            else if (current.Phase == MissionPhaseKind.InteractiveBrief)
-                phase = MissionPhaseKind.FindSquad;
-            else if (current.Phase == MissionPhaseKind.FindSquad &&
-                     facts.CommandSquadSpawned != 0 && facts.CommandSquadAlive == 0)
-                return ResolveDefeat(out phase, out outcome, out destination);
-            else if (current.Phase == MissionPhaseKind.FindSquad && current.RunKind != MissionRunKind.FirstClear &&
-                     current.ReplayTutorialEnabled == 0)
-                phase = MissionPhaseKind.Engage;
-            else if (current.Phase == MissionPhaseKind.FindSquad && commandSquadSelected)
-                phase = MissionPhaseKind.MoveToCover;
-            else if (current.Phase == MissionPhaseKind.MoveToCover && facts.CommandSquadAlive == 0)
-                return ResolveDefeat(out phase, out outcome, out destination);
-            else if (current.Phase == MissionPhaseKind.MoveToCover && facts.MoveToCoverComplete != 0)
-                phase = MissionPhaseKind.ConfirmThreat;
-            else if (current.Phase == MissionPhaseKind.ConfirmThreat && facts.CommandSquadAlive == 0)
-                return ResolveDefeat(out phase, out outcome, out destination);
-            else if (current.Phase == MissionPhaseKind.ConfirmThreat && facts.ThreatConfirmed != 0)
-                phase = MissionPhaseKind.Engage;
-            else if (current.Phase == MissionPhaseKind.Engage && facts.CommandSquadAlive == 0)
-                return ResolveDefeat(out phase, out outcome, out destination);
-            else if (current.Phase == MissionPhaseKind.Engage && facts.HostileTotalCount > 0 &&
-                     facts.HostileDefeatedCount >= facts.HostileTotalCount)
-                phase = MissionPhaseKind.SecureCorridor;
-            else if (current.Phase == MissionPhaseKind.SecureCorridor)
-            {
-                phase = MissionPhaseKind.Result;
-                outcome = MissionOutcomeKind.Victory;
-                destination = current.LaunchOrigin == MissionLaunchOriginKind.FirstLaunch
-                    ? MissionReturnDestinationKind.CommandBase
-                    : MissionReturnDestinationKind.CampaignOperations;
-            }
-            return phase != current.Phase || outcome != current.Outcome ||
-                   destination != current.ReturnDestination;
-        }
-
-        private static bool ResolveDefeat(
-            out MissionPhaseKind phase,
-            out MissionOutcomeKind outcome,
-            out MissionReturnDestinationKind destination)
-        {
-            phase = MissionPhaseKind.Result;
-            outcome = MissionOutcomeKind.Defeat;
-            destination = MissionReturnDestinationKind.CampaignOperations;
-            return true;
         }
 
         private static bool IsValidState(in CampaignMissionRuntimeComponent state) =>

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Game.Components;
 using Unity.Collections;
 using Unity.Entities;
@@ -8,6 +9,68 @@ namespace Game.Runtime
     internal static class CampaignMissionGuidedStreetPathUtility
     {
         private const int MaximumRouteCells = 128;
+        private const int PreferredFormationSlotCount = 4;
+
+        internal static bool TryResolvePreferredFormationGoal(
+            EntityManager entityManager,
+            Entity gridEntity,
+            in GridConfig grid,
+            UnitMoveOrderSystem moveOrderSystem,
+            in NativeArray<GridWalkable> walkable,
+            in NativeBitArray blocked,
+            in NativeArray<byte> friendlyPassFactionIds,
+            in NativeBitArray occupied,
+            HashSet<int> selectedCurrentCells,
+            MapSurfacePathfindingSnapshot.Context surfaceContext,
+            int2 start,
+            int2 footprintSize,
+            byte factionId,
+            in CampaignMissionGuidedMoveRouteUtility.Context context,
+            bool advancesAlongZ,
+            HashSet<int> reservedGoalCells,
+            out int2 resolvedGoal)
+        {
+            resolvedGoal = default;
+            int outerOffset = math.max(2, context.TargetRadiusCells);
+            int innerOffset = math.max(1, outerOffset - 2);
+            int bestScore = int.MaxValue;
+            using NativeList<int2> route = new(Allocator.Temp);
+            for (int slotIndex = 0; slotIndex < PreferredFormationSlotCount; slotIndex++)
+            {
+                int lateralOffset = slotIndex switch
+                {
+                    0 => -outerOffset,
+                    1 => -innerOffset,
+                    2 => innerOffset,
+                    _ => outerOffset
+                };
+                int2 candidate = context.TargetCell + (advancesAlongZ
+                    ? new int2(lateralOffset, 0)
+                    : new int2(0, lateralOffset));
+                int score = (advancesAlongZ
+                    ? math.abs(candidate.x - start.x)
+                    : math.abs(candidate.y - start.y)) * 10 + slotIndex;
+                if (score >= bestScore || !moveOrderSystem.CanReserveManualMoveGoal(
+                        grid, walkable, blocked, friendlyPassFactionIds, occupied,
+                        reservedGoalCells, selectedCurrentCells, candidate, footprintSize,
+                        0, factionId, surfaceContext, false))
+                    continue;
+
+                route.Clear();
+                if (!TryBuildDirect(
+                        entityManager, gridEntity, grid, walkable, blocked,
+                        friendlyPassFactionIds, start, candidate, footprintSize, factionId, route))
+                    continue;
+                bestScore = score;
+                resolvedGoal = candidate;
+            }
+
+            if (bestScore == int.MaxValue)
+                return false;
+            moveOrderSystem.ReserveManualMoveGoalFootprint(
+                grid, reservedGoalCells, resolvedGoal, footprintSize, 0);
+            return true;
+        }
 
         internal static bool HasRequiredBuffers(EntityManager entityManager, Entity gridEntity)
         {

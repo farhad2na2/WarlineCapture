@@ -168,6 +168,7 @@ namespace Game.Rendering
             var moveVisualLookup = SystemAPI.GetComponentLookup<UnitMoveVisualComponent>(true);
             var movementBehaviorLookup = SystemAPI.GetComponentLookup<UnitMovementBehavior>(true);
             var healthLookup = SystemAPI.GetComponentLookup<UnitHealth>(true);
+            var deathAnimationLookup = SystemAPI.GetComponentLookup<UnitDeathAnimationComponent>(true);
             var sourcePrefabKeyLookup = SystemAPI.GetComponentLookup<UnitSourcePrefabKey>(true);
             var factionLookup = SystemAPI.GetComponentLookup<Faction>(true);
             var selectedLookup = SystemAPI.GetComponentLookup<SelectedUnitTag>(true);
@@ -254,6 +255,7 @@ namespace Game.Rendering
                 MovementBehaviorLookup = movementBehaviorLookup,
                 AirMovementLookup = _airMovementLookup,
                 HealthLookup = healthLookup,
+                DeathAnimationLookup = deathAnimationLookup,
                 SourcePrefabKeyLookup = sourcePrefabKeyLookup,
                 FactionLookup = factionLookup,
                 SelectedLookup = selectedLookup,

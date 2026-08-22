@@ -11,6 +11,7 @@ using UnityEngine;
 using Game.Components;
 using Game.Rendering;
 using Game.Runtime;
+using SnivelerCode.GpuAnimation.Scripts.Components;
 
 public sealed class CombatDeathValidationTests
 {
@@ -19,18 +20,21 @@ public sealed class CombatDeathValidationTests
     private NativeBitArray _occupied;
     private NativeArray<byte> _friendlyPassFactionIds;
 
+    [MenuItem("Game/Validation/Run Combat Death Focused")]
     public static void RunFocusedValidation()
     {
         try
         {
             var tests = new CombatDeathValidationTests();
-            tests.SoldierAttack_KillsTargetDestroysEntityAndDoesNotRespawn();
+            tests.SoldierAttack_KillsTargetRetainsVisibleCorpseThenCullsOffscreenWithoutRespawn();
+            tests.UnitDeathPoseFreeze_UsesFinalAnimationFrame();
             tests.AirVehicleDeath_WithDestroyedVisual_HidesAliveVisualAndSpawnsDestroyedVisualWithoutGrid();
             tests.UnitModelSpawn_DoesNotSpawnDuplicateDetailModelWhenDetailedVisualAlreadyExists();
             tests.UnitRenderVisualExclusivity_HidesInactiveLodRootsRecursively();
+            tests.UnitRenderVisualExclusivity_AnimatedCorpseKeepsActiveLiveRootVisible();
             tests.UnitRenderVisualExclusivity_DestroyedVehicleHidesAliveRootsAndShowsDestroyedRoot();
             tests.VehicleWreckCleanup_FinalizesExpiredWreckAndDescendants();
-            Debug.Log("[CombatDeathFocusedValidation] result=Passed tests=6");
+            Debug.Log("[CombatDeathFocusedValidation] result=Passed tests=8");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -55,7 +59,7 @@ public sealed class CombatDeathValidationTests
     }
 
     [Test]
-    public void SoldierAttack_KillsTargetDestroysEntityAndDoesNotRespawn()
+    public void SoldierAttack_KillsTargetRetainsVisibleCorpseThenCullsOffscreenWithoutRespawn()
     {
         using var world = new World("CombatDeathValidationTests");
         EntityManager em = world.EntityManager;
@@ -85,6 +89,18 @@ public sealed class CombatDeathValidationTests
             Position = new float3(4f, 0f, 4f),
             IsCommanded = 1
         });
+        Entity animatedVisual = em.CreateEntity(
+            typeof(LocalTransform),
+            typeof(Parent),
+            typeof(MaterialAnimationData),
+            typeof(MaterialAnimationIndex),
+            typeof(MaterialAnimatorLink));
+        em.SetComponentData(animatedVisual, LocalTransform.Identity);
+        em.SetComponentData(animatedVisual, new Parent { Value = target });
+        em.AddBuffer<Child>(target).Add(new Child { Value = animatedVisual });
+        Entity cameraEntity = CreateCameraSnapshotEntity(
+            em,
+            em.GetComponentData<LocalTransform>(target).Position);
 
         SystemHandle attackSystem = world.CreateSystem<UnitAttackSystem>();
         SystemHandle deathSystem = world.CreateSystem<UnitDeathSystem>();
@@ -99,17 +115,47 @@ public sealed class CombatDeathValidationTests
         world.SetTime(new TimeData(0.2d, 0.1f));
         deathSystem.Update(world.Unmanaged);
 
-        Assert.IsFalse(em.Exists(target), "A soldier reduced to zero health must be destroyed after its death animation window.");
+        Assert.IsTrue(em.Exists(target), "A corpse inside the camera view must remain after its death animation finishes.");
+        Assert.AreEqual(1, em.GetComponentData<UnitDeathAnimationComponent>(target).PoseFrozen);
+        Assert.IsTrue(em.HasComponent<UnitDeathPoseFreezeTag>(animatedVisual),
+            "Animated corpse visuals must freeze instead of looping or disappearing.");
 
         Entity queueEntity = GetRespawnQueueEntity(em);
         DynamicBuffer<RespawnRequest> requests = em.GetBuffer<RespawnRequest>(queueEntity);
         Assert.AreEqual(0, requests.Length, "Combat deaths should not queue a replacement soldier.");
+
+        RuntimeCameraSnapshotComponent offscreenCamera =
+            CreateCameraSnapshot(em.GetComponentData<LocalTransform>(target).Position + new float3(100f, 0f, 0f));
+        Assert.IsFalse(UnitDeathSystem.IsInsideCameraViewport(
+                offscreenCamera,
+                em.GetComponentData<LocalTransform>(target).Position),
+            "The cleanup fixture must move the completed corpse outside the camera viewport.");
+        em.SetComponentData(cameraEntity, offscreenCamera);
+        world.SetTime(new TimeData(0.3d, 0.1f));
+        deathSystem.Update(world.Unmanaged);
+
+        Assert.IsFalse(em.HasComponent<UnitHealth>(target),
+            "A completed corpse must leave active gameplay state after it leaves the camera view.");
+        Assert.IsFalse(em.HasComponent<UnitDeathAnimationComponent>(target),
+            "A completed corpse must leave presentation state after it leaves the camera view.");
 
         world.SetTime(new TimeData(30d, 0.1f));
         respawnSystem.Update(world.Unmanaged);
 
         Assert.AreEqual(0, CountLivingRuntimeSoldiers(em, FactionIdentity.PlayerFactionId), "The killed soldier must not respawn later.");
         Assert.IsTrue(em.Exists(attacker), "The attacking soldier should remain alive.");
+    }
+
+    [Test]
+    public void UnitDeathPoseFreeze_UsesFinalAnimationFrame()
+    {
+        float3 renderConfig = UnitDeathPoseFreezeSystem.ResolveFinalRenderConfig(
+            animationStart: 10,
+            animationFrameCount: 4,
+            boneCount: 3);
+
+        Assert.AreEqual(new float3(19f, 19f, 0f), renderConfig,
+            "The frozen death pose must use the last frame twice so interpolation cannot wrap to frame zero.");
     }
 
     [Test]
@@ -246,6 +292,45 @@ public sealed class CombatDeathValidationTests
     }
 
     [Test]
+    public void UnitRenderVisualExclusivity_AnimatedCorpseKeepsActiveLiveRootVisible()
+    {
+        using var world = new World(nameof(UnitRenderVisualExclusivity_AnimatedCorpseKeepsActiveLiveRootVisible));
+        EntityManager em = world.EntityManager;
+        Entity detailRoot = CreateVisualTree(em);
+        Entity midRoot = CreateVisualTree(em);
+        Entity lowRoot = CreateVisualTree(em);
+        Entity corpse = em.CreateEntity(
+            typeof(UnitHealth),
+            typeof(UnitDeathAnimationComponent),
+            typeof(UnitDetailedVisualReference),
+            typeof(UnitMidLodInstanceReference),
+            typeof(UnitLowLodInstanceReference),
+            typeof(UnitRenderVisualComponent));
+        em.SetComponentData(corpse, new UnitHealth { Current = 0, Max = 100 });
+        em.SetComponentData(corpse, new UnitDeathAnimationComponent { PoseFrozen = 1 });
+        em.SetComponentData(corpse, new UnitDetailedVisualReference { Root = detailRoot });
+        em.SetComponentData(corpse, new UnitMidLodInstanceReference { Instance = midRoot });
+        em.SetComponentData(corpse, new UnitLowLodInstanceReference { Instance = lowRoot });
+        em.SetComponentData(corpse, new UnitRenderVisualComponent
+        {
+            Current = (byte)UnitRenderVisualKind.Detail,
+            Desired = (byte)UnitRenderVisualKind.Detail
+        });
+
+        SystemHandle system = world.CreateSystem<UnitRenderVisualExclusivitySystem>();
+        system.Update(world.Unmanaged);
+
+        AssertVisible(em, detailRoot, "An animated corpse must keep its active detailed death-pose root visible.");
+        AssertHidden(em, midRoot, "An animated corpse must not show a second LOD root.");
+        AssertHidden(em, lowRoot, "An animated corpse must not show a second LOD root.");
+        UnitDeathRenderPolicy deathRenderPolicy = new();
+        Assert.IsFalse(deathRenderPolicy.ShouldHideDeadLiveVisualRoots(hasAnimatedCorpseState: true),
+            "The render budget must preserve animated corpse visuals.");
+        Assert.IsTrue(deathRenderPolicy.ShouldHideDeadLiveVisualRoots(hasAnimatedCorpseState: false),
+            "Destroyed-visual vehicles must keep their original live roots hidden.");
+    }
+
+    [Test]
     public void UnitRenderVisualExclusivity_DestroyedVehicleHidesAliveRootsAndShowsDestroyedRoot()
     {
         using var world = new World(nameof(UnitRenderVisualExclusivity_DestroyedVehicleHidesAliveRootsAndShowsDestroyedRoot));
@@ -308,6 +393,26 @@ public sealed class CombatDeathValidationTests
         Assert.IsFalse(em.Exists(child), "Finalizing a wreck must also destroy descendant visual/runtime entities.");
         Entity queueEntity = GetRespawnQueueEntity(em);
         Assert.IsTrue(em.Exists(queueEntity), "Wreck cleanup should preserve the respawn queue created by the finalization boundary.");
+    }
+
+    private static Entity CreateCameraSnapshotEntity(EntityManager em, float3 center)
+    {
+        Entity entity = em.CreateEntity(typeof(RuntimeCameraSnapshotComponent));
+        em.SetComponentData(entity, CreateCameraSnapshot(center));
+        return entity;
+    }
+
+    private static RuntimeCameraSnapshotComponent CreateCameraSnapshot(float3 center)
+    {
+        float4x4 worldToCamera = float4x4.Translate(new float3(-center.x, -center.y, -center.z - 1f));
+        return new RuntimeCameraSnapshotComponent
+        {
+            IsValid = 1,
+            Position = center + new float3(0f, 0f, 1f),
+            WorldToCamera = worldToCamera,
+            Projection = float4x4.identity,
+            ViewProjection = worldToCamera
+        };
     }
 
     private void CreateGrid(EntityManager em, int width, int height)

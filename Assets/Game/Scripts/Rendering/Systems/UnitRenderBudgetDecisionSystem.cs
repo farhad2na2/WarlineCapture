@@ -22,6 +22,7 @@ namespace Game.Rendering
             public ComponentLookup<UnitMovementBehavior> MovementBehaviorLookup;
             public ComponentLookup<UnitAirMovement> AirMovementLookup;
             public ComponentLookup<UnitHealth> HealthLookup;
+            public ComponentLookup<UnitDeathAnimationComponent> DeathAnimationLookup;
             public ComponentLookup<UnitSourcePrefabKey> SourcePrefabKeyLookup;
             public ComponentLookup<Faction> FactionLookup;
             public ComponentLookup<SelectedUnitTag> SelectedLookup;
@@ -103,7 +104,10 @@ namespace Game.Rendering
                 UnitRenderBudgetLodReferences.UnitReferences lodReferences = context.LodReferenceSystem.ResolveUnitReferences(
                     unit,
                     context.LodReferenceLookups);
-                if (context.HealthLookup.HasComponent(unit) && context.HealthLookup[unit].Current <= 0)
+                if (context.HealthLookup.HasComponent(unit) &&
+                    context.HealthLookup[unit].Current <= 0 &&
+                    new UnitDeathRenderPolicy().ShouldHideDeadLiveVisualRoots(
+                        context.DeathAnimationLookup.HasComponent(unit)))
                 {
                     HideDeadUnitLiveVisualRoots(ref context, lodReferences, ref result);
                     continue;

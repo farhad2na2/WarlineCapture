@@ -10,6 +10,7 @@ using UnityEngine;
 
 public sealed class DynamicOccupancyRebuildSystemTests
 {
+    [MenuItem("Game/Validation/Run Dynamic Occupancy Focused")]
     public static void RunFocusedValidation()
     {
         try
@@ -17,7 +18,8 @@ public sealed class DynamicOccupancyRebuildSystemTests
             var tests = new DynamicOccupancyRebuildSystemTests();
             tests.InitialRebuildMarksUnitFootprint();
             tests.ChangedUnitGridMovesOccupancy();
-            Debug.Log("[DynamicOccupancyRebuildFocusedValidation] result=Passed tests=2");
+            tests.DeathAnimationStateRemovesUnitFootprintFromOccupancy();
+            Debug.Log("[DynamicOccupancyRebuildFocusedValidation] result=Passed tests=3");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -68,6 +70,33 @@ public sealed class DynamicOccupancyRebuildSystemTests
         DynamicOccupancyComponent occupancy = em.GetComponentData<DynamicOccupancyComponent>(gridEntity);
         Assert.IsFalse(occupancy.Occupied.IsSet(GridUtils.CellToIndex(new int2(1, 1), 6)));
         Assert.IsTrue(occupancy.Occupied.IsSet(GridUtils.CellToIndex(new int2(4, 3), 6)));
+        DisposeOccupancy(em, gridEntity);
+    }
+
+    [Test]
+    public void DeathAnimationStateRemovesUnitFootprintFromOccupancy()
+    {
+        using World world = new(nameof(DeathAnimationStateRemovesUnitFootprintFromOccupancy));
+        EntityManager em = world.EntityManager;
+        Entity gridEntity = CreateGrid(em);
+        Entity unit = em.CreateEntity(typeof(UnitGrid), typeof(UnitFootprint));
+        int2 cell = new(2, 2);
+        em.SetComponentData(unit, new UnitGrid { Cell = cell });
+        em.SetComponentData(unit, new UnitFootprint { Size = new int2(1, 1) });
+
+        SystemHandle system = world.CreateSystem<DynamicOccupancyRebuildSystem>();
+        system.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
+        Assert.IsTrue(em.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied.IsSet(
+            GridUtils.CellToIndex(cell, 6)));
+
+        em.AddComponentData(unit, new UnitDeathAnimationComponent { PoseFrozen = 1 });
+        system.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
+
+        Assert.IsFalse(em.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied.IsSet(
+            GridUtils.CellToIndex(cell, 6)),
+            "A retained corpse must not block pathfinding occupancy.");
         DisposeOccupancy(em, gridEntity);
     }
 

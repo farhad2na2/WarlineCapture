@@ -29,9 +29,9 @@ public sealed class CombatDeathPlayModeTests
     }
 
     [Test]
-    public void SoldierAttackDamageThenDeath_DestroysTargetWithoutRespawn()
+    public void SoldierAttackDamageThenDeath_RetainsVisibleCorpseThenCullsOffscreenWithoutRespawn()
     {
-        using var world = new World("SoldierAttackDamageThenDeath_DestroysTargetWithoutRespawn");
+        using var world = new World("SoldierAttackDamageThenDeath_RetainsVisibleCorpseThenCullsOffscreenWithoutRespawn");
         EntityManager em = world.EntityManager;
         CreateGrid(em, 8, 8);
 
@@ -59,6 +59,9 @@ public sealed class CombatDeathPlayModeTests
             Position = new float3(4f, 0f, 4f),
             IsCommanded = 1
         });
+        Entity cameraEntity = CreateCameraSnapshotEntity(
+            em,
+            em.GetComponentData<LocalTransform>(target).Position);
 
         SystemHandle attackSystem = world.CreateSystem<UnitAttackSystem>();
         SystemHandle deathSystem = world.CreateSystem<UnitDeathSystem>();
@@ -74,17 +77,50 @@ public sealed class CombatDeathPlayModeTests
         world.SetTime(new TimeData(0.2d, 0.1f));
         deathSystem.Update(world.Unmanaged);
 
-        Assert.IsFalse(em.Exists(target), "A soldier reduced to zero health must be destroyed after its death animation window.");
+        Assert.IsTrue(em.Exists(target), "A visible soldier corpse must remain after its death animation window.");
+        Assert.AreEqual(1, em.GetComponentData<UnitDeathAnimationComponent>(target).PoseFrozen);
 
         Entity queueEntity = GetRespawnQueueEntity(em);
         DynamicBuffer<RespawnRequest> requests = em.GetBuffer<RespawnRequest>(queueEntity);
         Assert.AreEqual(0, requests.Length, "Combat deaths should not queue a replacement soldier.");
+
+        RuntimeCameraSnapshotComponent offscreenCamera =
+            CreateCameraSnapshot(em.GetComponentData<LocalTransform>(target).Position + new float3(100f, 0f, 0f));
+        Assert.IsFalse(UnitDeathSystem.IsInsideCameraViewport(
+                offscreenCamera,
+                em.GetComponentData<LocalTransform>(target).Position),
+            "The cleanup fixture must move the completed corpse outside the camera viewport.");
+        em.SetComponentData(cameraEntity, offscreenCamera);
+        world.SetTime(new TimeData(0.3d, 0.1f));
+        deathSystem.Update(world.Unmanaged);
+
+        Assert.IsFalse(em.Exists(target), "A completed corpse should be destroyed after it leaves the camera view.");
 
         world.SetTime(new TimeData(30d, 0.1f));
         respawnSystem.Update(world.Unmanaged);
 
         Assert.AreEqual(0, CountLivingRuntimeSoldiers(em, FactionIdentity.PlayerFactionId), "The killed soldier must not respawn later.");
         Assert.IsTrue(em.Exists(attacker), "The attacking soldier should remain alive.");
+    }
+
+    private static Entity CreateCameraSnapshotEntity(EntityManager em, float3 center)
+    {
+        Entity entity = em.CreateEntity(typeof(RuntimeCameraSnapshotComponent));
+        em.SetComponentData(entity, CreateCameraSnapshot(center));
+        return entity;
+    }
+
+    private static RuntimeCameraSnapshotComponent CreateCameraSnapshot(float3 center)
+    {
+        float4x4 worldToCamera = float4x4.Translate(new float3(-center.x, -center.y, -center.z - 1f));
+        return new RuntimeCameraSnapshotComponent
+        {
+            IsValid = 1,
+            Position = center + new float3(0f, 0f, 1f),
+            WorldToCamera = worldToCamera,
+            Projection = float4x4.identity,
+            ViewProjection = worldToCamera
+        };
     }
 
     private void CreateGrid(EntityManager em, int width, int height)

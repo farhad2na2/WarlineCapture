@@ -58,6 +58,11 @@ namespace Game.Components
     public struct UnitDeathAnimationComponent : IComponentData
     {
         public float TimeRemaining;
+        public byte PoseFrozen;
+    }
+
+    public struct UnitDeathPoseFreezeTag : IComponentData
+    {
     }
 
     public struct UnitDestroyedVisualReference : IComponentData

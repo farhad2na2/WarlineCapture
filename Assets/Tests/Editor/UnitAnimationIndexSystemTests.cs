@@ -1,6 +1,7 @@
 using Game.Components;
 using Game.Configs;
 using Game.Runtime;
+using SnivelerCode.GpuAnimation.Scripts.Components;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using NUnit.Framework;
 using Unity.Entities;
@@ -11,6 +12,7 @@ using UnityEngine;
 
 public sealed class UnitAnimationIndexSystemTests
 {
+    [MenuItem("Game/Validation/Run Unit Animation Index Focused")]
     public static void RunFocusedValidation()
     {
         try
@@ -19,7 +21,8 @@ public sealed class UnitAnimationIndexSystemTests
             tests.ConfiguredRunShootAnimationResolvesAndAppliesToChildVisual();
             tests.EmptyConfiguredAnimationOrderDoesNotApplyInvalidAnimationIndex();
             tests.FallbackMovingAutoWanderResolvesWalkAnimation();
-            Debug.Log("[UnitAnimationIndexFocusedValidation] result=Passed tests=3");
+            tests.DeathAnimationAppliesToDetachedDetailedVisualOnFirstResolvedFrame();
+            Debug.Log("[UnitAnimationIndexFocusedValidation] result=Passed tests=4");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -79,6 +82,30 @@ public sealed class UnitAnimationIndexSystemTests
         system.Update(world.Unmanaged);
 
         Assert.AreEqual(2, em.GetComponentData<UnitResolvedAnimationIndex>(unit).Value);
+    }
+
+    [Test]
+    public void DeathAnimationAppliesToDetachedDetailedVisualOnFirstResolvedFrame()
+    {
+        using var world = new World(nameof(DeathAnimationAppliesToDetachedDetailedVisualOnFirstResolvedFrame));
+        EntityManager em = world.EntityManager;
+        Entity unit = CreateUnit(em, moving: false, health: 0, attackSeconds: 0f, withAnimationOrder: true);
+        DynamicBuffer<UnitAnimationOrderEntry> order = em.GetBuffer<UnitAnimationOrderEntry>(unit);
+        order.Add(new UnitAnimationOrderEntry { Kind = (byte)UnitAnimationKind.Idle });
+        order.Add(new UnitAnimationOrderEntry { Kind = (byte)UnitAnimationKind.Death01 });
+        em.AddComponentData(unit, new UnitDeathAnimationComponent { TimeRemaining = 0.25f });
+
+        Entity detailedVisual = em.CreateEntity(typeof(MaterialAnimationIndex));
+        em.SetComponentData(detailedVisual, new MaterialAnimationIndex { Value = 0 });
+        em.AddComponentData(unit, new UnitDetailedVisualReference { Root = detailedVisual });
+
+        SystemHandle system = world.CreateSystem<UnitAnimationIndexSystem>();
+        system.Update(world.Unmanaged);
+
+        byte expected = (byte)((byte)UnitAnimationKind.Death01 + 1);
+        Assert.AreEqual(expected, em.GetComponentData<UnitResolvedAnimationIndex>(unit).Value);
+        Assert.AreEqual(expected, em.GetComponentData<MaterialAnimationIndex>(detailedVisual).Value,
+            "A detached authored detailed visual must enter the death clip before its final pose is frozen.");
     }
 
     private static Entity CreateUnit(

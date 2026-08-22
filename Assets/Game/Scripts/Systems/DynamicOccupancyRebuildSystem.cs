@@ -141,6 +141,7 @@ namespace Game.Runtime
                 {
                     ComponentType.ReadOnly<StaticGridBlocker>(),
                     ComponentType.ReadOnly<RuntimeBuildingCombatTag>(),
+                    ComponentType.ReadOnly<UnitDeathAnimationComponent>(),
                 }
             });
 
@@ -155,6 +156,7 @@ namespace Game.Runtime
                 {
                     ComponentType.ReadOnly<StaticGridBlocker>(),
                     ComponentType.ReadOnly<RuntimeBuildingCombatTag>(),
+                    ComponentType.ReadOnly<UnitDeathAnimationComponent>(),
                 }
             });
             _changedGridUnitsQuery.SetChangedVersionFilter(ComponentType.ReadOnly<UnitGrid>());
@@ -203,7 +205,10 @@ namespace Game.Runtime
             _cachedGridSize = gridSize;
             _occupancyRecords.Clear();
 
-            foreach (var (unitGrid, footprint, entity) in SystemAPI.Query<RefRO<UnitGrid>, RefRO<UnitFootprint>>().WithNone<StaticGridBlocker, RuntimeBuildingCombatTag>().WithEntityAccess())
+            foreach (var (unitGrid, footprint, entity) in SystemAPI
+                         .Query<RefRO<UnitGrid>, RefRO<UnitFootprint>>()
+                         .WithNone<StaticGridBlocker, RuntimeBuildingCombatTag, UnitDeathAnimationComponent>()
+                         .WithEntityAccess())
             {
                 OccupancyRecord record = new()
                 {
@@ -355,7 +360,7 @@ namespace Game.Runtime
 
             foreach (var (_, _, entity) in SystemAPI
                          .Query<RefRO<UnitGrid>, RefRO<UnitFootprint>>()
-                         .WithNone<StaticGridBlocker, RuntimeBuildingCombatTag>()
+                         .WithNone<StaticGridBlocker, RuntimeBuildingCombatTag, UnitDeathAnimationComponent>()
                          .WithChangeFilter<UnitGrid>()
                          .WithEntityAccess())
             {

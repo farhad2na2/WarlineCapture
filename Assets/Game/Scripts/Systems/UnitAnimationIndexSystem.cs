@@ -48,6 +48,7 @@ namespace Game.Runtime
 
             var childLookup = SystemAPI.GetBufferLookup<Child>(true);
             var animationIndexLookup = SystemAPI.GetComponentLookup<MaterialAnimationIndex>();
+            var detailedVisualLookup = SystemAPI.GetComponentLookup<UnitDetailedVisualReference>(true);
             var modelInstanceLookup = SystemAPI.GetComponentLookup<UnitModelInstanceReference>(true);
             var midLodInstanceLookup = SystemAPI.GetComponentLookup<UnitMidLodInstanceReference>(true);
             var lowLodInstanceLookup = SystemAPI.GetComponentLookup<UnitLowLodInstanceReference>(true);
@@ -68,16 +69,20 @@ namespace Game.Runtime
 
                 byte targetAnimationIndex = resolvedAnimation.ValueRO.Value;
                 bool resolvedChanged = resolvedAnimation.ValueRO.Changed != 0;
-                bool appliedToVisuals = resolvedChanged
-                    ? ApplyAnimationIndexRecursive(entity, targetAnimationIndex, ref animationIndexLookup, ref childLookup)
-                    : ApplyAnimationIndexToVisualRoots(
-                        entity,
-                        targetAnimationIndex,
-                        ref animationIndexLookup,
-                        ref childLookup,
-                        ref modelInstanceLookup,
-                        ref midLodInstanceLookup,
-                        ref lowLodInstanceLookup);
+                bool appliedToVisuals = ApplyAnimationIndexRecursive(
+                    entity,
+                    targetAnimationIndex,
+                    ref animationIndexLookup,
+                    ref childLookup);
+                appliedToVisuals |= ApplyAnimationIndexToVisualRoots(
+                    entity,
+                    targetAnimationIndex,
+                    ref animationIndexLookup,
+                    ref childLookup,
+                    ref detailedVisualLookup,
+                    ref modelInstanceLookup,
+                    ref midLodInstanceLookup,
+                    ref lowLodInstanceLookup);
 
                 if (resolvedChanged || appliedToVisuals)
                     appliedUnits++;
@@ -263,11 +268,15 @@ namespace Game.Runtime
             byte animationIndex,
             ref ComponentLookup<MaterialAnimationIndex> animationIndexLookup,
             ref BufferLookup<Child> childLookup,
+            ref ComponentLookup<UnitDetailedVisualReference> detailedVisualLookup,
             ref ComponentLookup<UnitModelInstanceReference> modelInstanceLookup,
             ref ComponentLookup<UnitMidLodInstanceReference> midLodInstanceLookup,
             ref ComponentLookup<UnitLowLodInstanceReference> lowLodInstanceLookup)
         {
             bool applied = false;
+
+            if (detailedVisualLookup.HasComponent(entity))
+                applied |= ApplyAnimationIndexIfNeeded(detailedVisualLookup[entity].Root, animationIndex, ref animationIndexLookup, ref childLookup);
 
             if (modelInstanceLookup.HasComponent(entity))
                 applied |= ApplyAnimationIndexIfNeeded(modelInstanceLookup[entity].Instance, animationIndex, ref animationIndexLookup, ref childLookup);

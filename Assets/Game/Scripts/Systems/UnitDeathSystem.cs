@@ -5,6 +5,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using Game.Components;
+using SnivelerCode.GpuAnimation.Scripts.Components;
 
 namespace Game.Runtime
 {
@@ -12,11 +13,13 @@ namespace Game.Runtime
     public partial struct UnitDeathSystem : ISystem
     {
         private const float VehicleWreckLifetimeSeconds = 5f;
+        private const float CorpseViewportPadding = 0.1f;
         private NativeList<DeathBeginCandidate> _deathBeginCandidates;
         private NativeList<Entity> _finalizeEntities;
         private EntityQuery _respawnQueueQuery;
         private EntityQuery _deathBeginQuery;
         private EntityQuery _finalizeQuery;
+        private EntityQuery _cameraSnapshotQuery;
 
         private struct DeathBeginCandidate
         {
@@ -37,6 +40,8 @@ namespace Game.Runtime
                 ComponentType.ReadOnly<UnitHealth>(),
                 ComponentType.ReadOnly<UnitDeathAnimationComponent>(),
                 ComponentType.Exclude<StaticGridBlocker>());
+            _cameraSnapshotQuery = state.GetEntityQuery(
+                ComponentType.ReadOnly<RuntimeCameraSnapshotComponent>());
             _deathBeginCandidates = new NativeList<DeathBeginCandidate>(64, Allocator.Persistent);
             _finalizeEntities = new NativeList<Entity>(64, Allocator.Persistent);
         }
@@ -107,8 +112,34 @@ namespace Game.Runtime
             }.ScheduleParallel(state.Dependency);
             state.Dependency.Complete();
 
+            bool hasValidCamera = TryGetValidCameraSnapshot(out RuntimeCameraSnapshotComponent camera);
             for (int i = 0; i < _finalizeEntities.Length; i++)
-                FinalizeDeath(em, queueEntity, _finalizeEntities[i], now, respawnDelay);
+            {
+                Entity entity = _finalizeEntities[i];
+                if (!em.Exists(entity) || !em.HasComponent<UnitDeathAnimationComponent>(entity))
+                    continue;
+
+                UnitDeathAnimationComponent deathState = em.GetComponentData<UnitDeathAnimationComponent>(entity);
+                if (deathState.PoseFrozen == 0)
+                {
+                    FreezeDeathPose(em, entity);
+                    deathState.TimeRemaining = 0f;
+                    deathState.PoseFrozen = 1;
+                    em.SetComponentData(entity, deathState);
+                    continue;
+                }
+
+                if (!hasValidCamera)
+                    continue;
+                bool insideViewport = em.HasComponent<LocalTransform>(entity) &&
+                                      IsInsideCameraViewport(camera, em.GetComponentData<LocalTransform>(entity).Position);
+                if (insideViewport)
+                {
+                    continue;
+                }
+
+                FinalizeDeath(em, queueEntity, entity, now, respawnDelay);
+            }
         }
 
         [BurstCompile]
@@ -143,10 +174,99 @@ namespace Game.Runtime
                 if (health.Current > 0)
                     return;
 
-                deathState.TimeRemaining -= DeltaTime;
+                if (deathState.PoseFrozen != 0)
+                {
+                    FinalizeEntities.AddNoResize(entity);
+                    return;
+                }
+
+                deathState.TimeRemaining = math.max(0f, deathState.TimeRemaining - DeltaTime);
                 if (deathState.TimeRemaining <= 0f)
                     FinalizeEntities.AddNoResize(entity);
             }
+        }
+
+        private bool TryGetValidCameraSnapshot(out RuntimeCameraSnapshotComponent camera)
+        {
+            camera = default;
+            if (_cameraSnapshotQuery.CalculateEntityCount() != 1)
+                return false;
+
+            camera = _cameraSnapshotQuery.GetSingleton<RuntimeCameraSnapshotComponent>();
+            return camera.IsValid != 0;
+        }
+
+        internal static bool IsInsideCameraViewport(
+            in RuntimeCameraSnapshotComponent camera,
+            float3 worldPosition)
+        {
+            if (camera.IsValid == 0)
+                return false;
+
+            float4 homogeneousPosition = new(worldPosition, 1f);
+            float4 cameraPosition = math.mul(camera.WorldToCamera, homogeneousPosition);
+            float4 clipPosition = math.mul(camera.ViewProjection, homogeneousPosition);
+            float invW = math.abs(clipPosition.w) > 0.000001f ? 1f / clipPosition.w : 0f;
+            float viewportX = clipPosition.x * invW * 0.5f + 0.5f;
+            float viewportY = clipPosition.y * invW * 0.5f + 0.5f;
+            float viewportZ = -cameraPosition.z;
+            return viewportZ > 0f &&
+                   viewportX >= -CorpseViewportPadding && viewportX <= 1f + CorpseViewportPadding &&
+                   viewportY >= -CorpseViewportPadding && viewportY <= 1f + CorpseViewportPadding;
+        }
+
+        private static void FreezeDeathPose(EntityManager em, Entity unit)
+        {
+            using NativeList<Entity> visualEntities = new(256, Allocator.Temp);
+            using NativeHashSet<Entity> visited = new(256, Allocator.Temp);
+            CollectVisualEntities(em, unit, visualEntities, visited);
+            if (em.HasComponent<UnitDetailedVisualReference>(unit))
+                CollectVisualEntities(em, em.GetComponentData<UnitDetailedVisualReference>(unit).Root, visualEntities, visited);
+            if (em.HasComponent<UnitModelInstanceReference>(unit))
+                CollectVisualEntities(em, em.GetComponentData<UnitModelInstanceReference>(unit).Instance, visualEntities, visited);
+            if (em.HasComponent<UnitMidLodInstanceReference>(unit))
+                CollectVisualEntities(em, em.GetComponentData<UnitMidLodInstanceReference>(unit).Instance, visualEntities, visited);
+            if (em.HasComponent<UnitLowLodInstanceReference>(unit))
+                CollectVisualEntities(em, em.GetComponentData<UnitLowLodInstanceReference>(unit).Instance, visualEntities, visited);
+
+            for (int i = 0; i < visualEntities.Length; i++)
+            {
+                Entity visualEntity = visualEntities[i];
+                if (!em.HasComponent<MaterialAnimationData>(visualEntity) ||
+                    !em.HasComponent<MaterialAnimationIndex>(visualEntity) ||
+                    !em.HasComponent<MaterialAnimatorLink>(visualEntity) ||
+                    em.HasComponent<UnitDeathPoseFreezeTag>(visualEntity))
+                {
+                    continue;
+                }
+
+                em.AddComponent<UnitDeathPoseFreezeTag>(visualEntity);
+            }
+        }
+
+        private static void CollectVisualEntities(
+            EntityManager em,
+            Entity entity,
+            NativeList<Entity> visualEntities,
+            NativeHashSet<Entity> visited)
+        {
+            if (entity == Entity.Null || !em.Exists(entity) || !visited.Add(entity))
+                return;
+
+            visualEntities.Add(entity);
+            if (em.HasBuffer<LinkedEntityGroup>(entity))
+            {
+                DynamicBuffer<LinkedEntityGroup> linkedEntities = em.GetBuffer<LinkedEntityGroup>(entity);
+                for (int i = 0; i < linkedEntities.Length; i++)
+                    CollectVisualEntities(em, linkedEntities[i].Value, visualEntities, visited);
+            }
+
+            if (!em.HasBuffer<Child>(entity))
+                return;
+
+            DynamicBuffer<Child> children = em.GetBuffer<Child>(entity);
+            for (int i = 0; i < children.Length; i++)
+                CollectVisualEntities(em, children[i].Value, visualEntities, visited);
         }
 
         internal static void StripActiveUnitState(EntityManager em, Entity entity)

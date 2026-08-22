@@ -565,10 +565,7 @@ namespace Game.Rendering
                 if (!em.Exists(entity))
                     continue;
 
-                bool destroyed =
-                    em.HasComponent<VehicleDestroyedVisualInstanceReference>(entity) ||
-                    em.HasComponent<VehicleDestroyedVisualSpawnRequest>(entity) ||
-                    (em.HasComponent<UnitHealth>(entity) && em.GetComponentData<UnitHealth>(entity).Current <= 0);
+                bool destroyed = new UnitDeathRenderPolicy().ShouldUseDestroyedVisual(em, entity);
                 if (destroyed)
                 {
                     SetLinkedOriginalVisualsVisible(em, entity, false);

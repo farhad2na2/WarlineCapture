@@ -96,6 +96,16 @@ namespace Game.UI.Runtime
             ClosePanelWithoutInputCapture();
         }
 
+        private void ScheduleTutorialSubstep(byte step, float unscaledTime)
+        {
+            if (_finalTutorialSuppressed || step == 0 || step <= _completedTutorialStep)
+                return;
+            _pendingTutorialStep = step;
+            _displayedTutorialStep = 0;
+            _tutorialShowAtUnscaledTime = unscaledTime + TutorialStepDelaySeconds;
+            ClosePanelWithoutInputCapture();
+        }
+
         private void ClearTutorialPresentationState()
         {
             _pendingTutorialStep = 0;

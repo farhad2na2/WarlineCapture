@@ -111,7 +111,7 @@ namespace Game.UI.Runtime
                 return;
             }
 
-            if (_tutorialStep == 4)
+            if (_tutorialStep is 3 or 4)
             {
                 if (worldTargetCompleted)
                 {

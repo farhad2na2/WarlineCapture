@@ -195,6 +195,7 @@ namespace Game.Runtime
                     break;
                 }
 
+                EntityCommandBuffer finaleStructuralChanges = new(Allocator.Temp);
                 foreach (RefRW<CampaignMissionFinalePresentationComponent> finale in
                          SystemAPI.Query<RefRW<CampaignMissionFinalePresentationComponent>>())
                 {
@@ -230,10 +231,11 @@ namespace Game.Runtime
                         {
                             current.Stage = 2;
                             current.ElapsedMilliseconds = 0;
-                            RemoveCombatSuppression(
+                            QueueCombatSuppressionRemoval(
                                 state.EntityManager,
                                 _missionCombatantsQuery,
-                                runtime.SessionToken);
+                                runtime.SessionToken,
+                                ref finaleStructuralChanges);
                         }
                     }
                     else if (current.Stage == 2 && runtime.Phase == MissionPhaseKind.SecureCorridor)
@@ -259,6 +261,8 @@ namespace Game.Runtime
                     finale.ValueRW = current;
                     break;
                 }
+                finaleStructuralChanges.Playback(state.EntityManager);
+                finaleStructuralChanges.Dispose();
             }
             ref CampaignMissionDefinitionBlob definition = ref catalog.Blob.Value.Missions[definitionIndex];
             NativeList<Entity> targets = new(Allocator.Temp);
@@ -366,20 +370,20 @@ namespace Game.Runtime
             return current >= int.MaxValue - delta ? int.MaxValue : current + delta;
         }
 
-        private static void RemoveCombatSuppression(
+        internal static void QueueCombatSuppressionRemoval(
             EntityManager entityManager,
             EntityQuery missionCombatantsQuery,
-            in FixedString64Bytes sessionToken)
+            in FixedString64Bytes sessionToken,
+            ref EntityCommandBuffer structuralChanges)
         {
             using NativeArray<Entity> entities = missionCombatantsQuery.ToEntityArray(Allocator.Temp);
             for (int i = 0; i < entities.Length; i++)
             {
                 Entity entity = entities[i];
-                if (!entityManager.HasComponent<CampaignMissionCombatSuppressedTag>(entity) ||
-                    !entityManager.GetComponentData<CampaignMissionUnitRoleComponent>(entity)
+                if (!entityManager.GetComponentData<CampaignMissionUnitRoleComponent>(entity)
                         .SessionToken.Equals(sessionToken))
                     continue;
-                entityManager.RemoveComponent<CampaignMissionCombatSuppressedTag>(entity);
+                structuralChanges.RemoveComponent<CampaignMissionCombatSuppressedTag>(entity);
             }
         }
     }

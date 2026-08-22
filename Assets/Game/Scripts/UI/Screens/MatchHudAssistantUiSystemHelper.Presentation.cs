@@ -382,6 +382,11 @@ namespace Game.UI.Runtime
             _popupView?.ApplyTutorialInteractionState(
                 mode,
                 _tutorialWorldTargetCompleted);
+            if ((_lastPanelModel.TutorialStep == 2 && mode == TacticalCommandMode.Move) ||
+                (_lastPanelModel.TutorialStep is 3 or 4 && mode == TacticalCommandMode.Attack))
+            {
+                ScheduleTutorialSubstep(_lastPanelModel.TutorialStep, Time.unscaledTime);
+            }
         }
 
         private void MirrorPanelOpen(bool open, bool force = false)

@@ -31,6 +31,8 @@ public sealed class M01GuidedMoveRouteTests
             passed++;
             tests.TutorialFinaleProtectsOnlyThePlayerSquadDuringCombat();
             passed++;
+            tests.TutorialFinaleDefersCombatSuppressionRemovalUntilCommandBufferPlayback();
+            passed++;
             M01FirstContactHudRestrictionTests.CinematicInteractionLockTracksOpeningReturn();
             passed++;
             Debug.Log($"[M01TutorialFinaleValidation] result=Passed tests={passed}");
@@ -48,6 +50,38 @@ public sealed class M01GuidedMoveRouteTests
     {
         new M01GuidedMoveRouteTests().GuidedArrivalAdvancesAndCommandedAttackSurvivesPreEngageHold();
         Debug.Log("[M01StationaryEnemyEditModeValidation] result=Passed tests=1");
+    }
+
+    [Test]
+    public void TutorialFinaleDefersCombatSuppressionRemovalUntilCommandBufferPlayback()
+    {
+        using World world = new(nameof(TutorialFinaleDefersCombatSuppressionRemovalUntilCommandBufferPlayback));
+        EntityManager entityManager = world.EntityManager;
+        FixedString64Bytes session = new("m01-finale-structural-change");
+        Entity matching = entityManager.CreateEntity(
+            typeof(CampaignMissionUnitRoleComponent),
+            typeof(CampaignMissionCombatSuppressedTag));
+        Entity other = entityManager.CreateEntity(
+            typeof(CampaignMissionUnitRoleComponent),
+            typeof(CampaignMissionCombatSuppressedTag));
+        entityManager.SetComponentData(matching, new CampaignMissionUnitRoleComponent { SessionToken = session });
+        entityManager.SetComponentData(other, new CampaignMissionUnitRoleComponent
+        {
+            SessionToken = new FixedString64Bytes("other-session")
+        });
+
+        using EntityQuery query = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<CampaignMissionUnitRoleComponent>());
+        EntityCommandBuffer structuralChanges = new(Allocator.Temp);
+        CampaignMissionPatrolOrderSystem.QueueCombatSuppressionRemoval(
+            entityManager, query, session, ref structuralChanges);
+
+        Assert.IsTrue(entityManager.HasComponent<CampaignMissionCombatSuppressedTag>(matching),
+            "Suppression removal must remain deferred while a system is iterating entities.");
+        structuralChanges.Playback(entityManager);
+        structuralChanges.Dispose();
+        Assert.IsFalse(entityManager.HasComponent<CampaignMissionCombatSuppressedTag>(matching));
+        Assert.IsTrue(entityManager.HasComponent<CampaignMissionCombatSuppressedTag>(other));
     }
 
     [Test]

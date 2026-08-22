@@ -273,6 +273,13 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         MatchOverlayCommandControlsView commandControls = CreateCommandControls(overlay);
         ui.BindMatchHudCommandControls(commandControls);
         commandControls.MoveButton.onClick.Invoke();
+        Assert.IsFalse(popup.IsOpen,
+            "Pressing MOVE must remove the completed command-button instruction.");
+        float moveTargetDeadline = GetPrivateField<float>(helper, "_tutorialShowAtUnscaledTime");
+        helper.TickHighlight(moveTargetDeadline - 0.01f);
+        Assert.IsFalse(popup.IsOpen, "The destination instruction must honor the two-second delay.");
+        helper.TickHighlight(moveTargetDeadline);
+        Assert.IsTrue(popup.IsOpen, "ARIA must return to teach the destination substep.");
         Assert.AreEqual("CHOOSE DESTINATION", tutorial.TitleText.text);
         Assert.AreEqual("Tap the highlighted destination to move your squad.", tutorial.BodyText.text);
 
@@ -291,6 +298,13 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         helper.TickHighlight(100f);
         helper.TickHighlight(102f);
         Assert.IsTrue(popup.IsOpen);
+        commandControls.AttackButton.onClick.Invoke();
+        Assert.IsFalse(popup.IsOpen,
+            "Pressing ATTACK must remove the completed command-button instruction.");
+        float attackTargetDeadline = GetPrivateField<float>(helper, "_tutorialShowAtUnscaledTime");
+        helper.TickHighlight(attackTargetDeadline);
+        Assert.IsTrue(popup.IsOpen, "ARIA must return to teach the enemy-target substep.");
+        Assert.AreEqual("CHOOSE ENEMY", tutorial.TitleText.text);
         helper.CompleteWorldTarget(TacticalCommandMode.Attack);
         Assert.IsFalse(popup.IsOpen, "The final attack must hide ARIA immediately.");
 

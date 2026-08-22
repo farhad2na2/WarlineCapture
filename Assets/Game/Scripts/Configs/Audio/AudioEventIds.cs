@@ -709,6 +709,36 @@ namespace Game.Configs
         public const string VOARIAMessageSelectionFeedbackSquadSelected = "VO.ARIA.Message.SelectionFeedbackSquadSelected";
         public const uint VOARIAMessageSelectionFeedbackSquadSelectedHash = 2821846162u;
 
+        public const string VOARIATutorialM01FindSquadEn = "VO.ARIA.Tutorial.M01.FindSquad.En";
+        public const uint VOARIATutorialM01FindSquadEnHash = 4073964257u;
+
+        public const string VOARIATutorialM01MoveToCoverEn = "VO.ARIA.Tutorial.M01.MoveToCover.En";
+        public const uint VOARIATutorialM01MoveToCoverEnHash = 2083846237u;
+
+        public const string VOARIATutorialM01ConfirmThreatEn = "VO.ARIA.Tutorial.M01.ConfirmThreat.En";
+        public const uint VOARIATutorialM01ConfirmThreatEnHash = 383473216u;
+
+        public const string VOARIATutorialM01EngageEn = "VO.ARIA.Tutorial.M01.Engage.En";
+        public const uint VOARIATutorialM01EngageEnHash = 29346487u;
+
+        public const string VOARIATutorialM01SecureCorridorEn = "VO.ARIA.Tutorial.M01.SecureCorridor.En";
+        public const uint VOARIATutorialM01SecureCorridorEnHash = 2058127915u;
+
+        public const string VOARIATutorialM01FindSquadFa = "VO.ARIA.Tutorial.M01.FindSquad.Fa";
+        public const uint VOARIATutorialM01FindSquadFaHash = 4224521543u;
+
+        public const string VOARIATutorialM01MoveToCoverFa = "VO.ARIA.Tutorial.M01.MoveToCover.Fa";
+        public const uint VOARIATutorialM01MoveToCoverFaHash = 2100079403u;
+
+        public const string VOARIATutorialM01ConfirmThreatFa = "VO.ARIA.Tutorial.M01.ConfirmThreat.Fa";
+        public const uint VOARIATutorialM01ConfirmThreatFaHash = 1037653262u;
+
+        public const string VOARIATutorialM01EngageFa = "VO.ARIA.Tutorial.M01.Engage.Fa";
+        public const uint VOARIATutorialM01EngageFaHash = 516044533u;
+
+        public const string VOARIATutorialM01SecureCorridorFa = "VO.ARIA.Tutorial.M01.SecureCorridor.Fa";
+        public const uint VOARIATutorialM01SecureCorridorFaHash = 2679046913u;
+
         public static readonly string[] AllEventIds =
         {
             UIButtonPrimaryClick,
@@ -945,6 +975,16 @@ namespace Game.Configs
             VOARIAMessageSelectionFeedbackSoldierSingular,
             VOARIAMessageSelectionFeedbackSquadCount,
             VOARIAMessageSelectionFeedbackSquadSelected,
+            VOARIATutorialM01FindSquadEn,
+            VOARIATutorialM01MoveToCoverEn,
+            VOARIATutorialM01ConfirmThreatEn,
+            VOARIATutorialM01EngageEn,
+            VOARIATutorialM01SecureCorridorEn,
+            VOARIATutorialM01FindSquadFa,
+            VOARIATutorialM01MoveToCoverFa,
+            VOARIATutorialM01ConfirmThreatFa,
+            VOARIATutorialM01EngageFa,
+            VOARIATutorialM01SecureCorridorFa,
         };
 
         public static readonly uint[] AllEventHashes =
@@ -1183,6 +1223,16 @@ namespace Game.Configs
             VOARIAMessageSelectionFeedbackSoldierSingularHash,
             VOARIAMessageSelectionFeedbackSquadCountHash,
             VOARIAMessageSelectionFeedbackSquadSelectedHash,
+            VOARIATutorialM01FindSquadEnHash,
+            VOARIATutorialM01MoveToCoverEnHash,
+            VOARIATutorialM01ConfirmThreatEnHash,
+            VOARIATutorialM01EngageEnHash,
+            VOARIATutorialM01SecureCorridorEnHash,
+            VOARIATutorialM01FindSquadFaHash,
+            VOARIATutorialM01MoveToCoverFaHash,
+            VOARIATutorialM01ConfirmThreatFaHash,
+            VOARIATutorialM01EngageFaHash,
+            VOARIATutorialM01SecureCorridorFaHash,
         };
 
         public static uint StableHash(string value)

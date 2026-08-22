@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Game.Tactical.Contracts;
+using Game.Narrative.Contracts;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
+using Game.UI.Shell.Ecs;
 using NUnit.Framework;
 using TMPro;
 using UnityEditor;
@@ -33,6 +35,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             RunCase(test => test.PopupPrefab_BindsLockedLandscapeHierarchyAndMenuReference());
             passed++;
             RunCase(test => test.TutorialBriefing_RemainsVisibleThroughEachInstructionAndResetsForReplay());
+            passed++;
+            RunCase(test => test.TutorialNarration_MapsEveryM01StepToEnglishAndPersianEvents());
             passed++;
             RunCase(test => test.MatchHudPrefab_ContainsEditableAssistantButton());
             passed++;
@@ -233,6 +237,9 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         SetPrivateField(ui, "_nextAssistantPanelRefreshTime", 0f);
         ui.Update();
         Assert.IsTrue(popup.IsOpen);
+        Assert.AreEqual(1, gateway.TutorialNarrationSteps.Count);
+        Assert.AreEqual(1, gateway.TutorialNarrationSteps[0]);
+        Assert.AreEqual("Preview the verified hostile source before dispatch.", gateway.TutorialNarrationTexts[0]);
         Assert.IsTrue(tutorial.gameObject.activeSelf);
         Assert.IsFalse(popup.LandscapeLayout.gameObject.activeSelf);
         Assert.IsFalse(tutorial.CloseButton.gameObject.activeSelf,
@@ -264,8 +271,12 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         float stepTwoDeadline = GetPrivateField<float>(helper, "_tutorialShowAtUnscaledTime");
         helper.TickHighlight(stepTwoDeadline - 0.01f);
         Assert.IsFalse(popup.IsOpen, "The next tutorial instruction must wait for two seconds.");
+        Assert.AreEqual(1, gateway.TutorialNarrationSteps.Count,
+            "A hidden pending instruction must not start narration.");
         helper.TickHighlight(stepTwoDeadline);
         Assert.IsTrue(popup.IsOpen, "The next tutorial instruction must appear after two seconds.");
+        Assert.AreEqual(2, gateway.TutorialNarrationSteps.Count);
+        Assert.AreEqual(2, gateway.TutorialNarrationSteps[1]);
         Assert.AreEqual("TRAINING 2 / 5", tutorial.ProgressText.text);
         Assert.AreEqual("PRESS MOVE", tutorial.TitleText.text);
         Assert.AreEqual("Tap MOVE, then choose the highlighted destination.", tutorial.BodyText.text);
@@ -280,6 +291,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.IsFalse(popup.IsOpen, "The destination instruction must honor the two-second delay.");
         helper.TickHighlight(moveTargetDeadline);
         Assert.IsTrue(popup.IsOpen, "ARIA must return to teach the destination substep.");
+        Assert.AreEqual(2, gateway.TutorialNarrationSteps.Count,
+            "Reopening the same numbered tutorial step must not replay its voice line.");
         Assert.AreEqual("CHOOSE DESTINATION", tutorial.TitleText.text);
         Assert.AreEqual("Tap the highlighted destination to move your squad.", tutorial.BodyText.text);
 
@@ -298,6 +311,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         helper.TickHighlight(100f);
         helper.TickHighlight(102f);
         Assert.IsTrue(popup.IsOpen);
+        Assert.AreEqual(3, gateway.TutorialNarrationSteps.Count);
+        Assert.AreEqual(3, gateway.TutorialNarrationSteps[2]);
         commandControls.AttackButton.onClick.Invoke();
         Assert.IsFalse(popup.IsOpen,
             "Pressing ATTACK must remove the completed command-button instruction.");
@@ -323,7 +338,40 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         helper.ApplyReadModel(gateway.AssistantPanel);
         helper.TickHighlight(0f);
         Assert.IsTrue(popup.IsOpen, "A new mission attempt must present step one again.");
+        Assert.AreEqual(4, gateway.TutorialNarrationSteps.Count,
+            "A replay must narrate the first tutorial step again.");
+        Assert.AreEqual(1, gateway.TutorialNarrationSteps[3]);
         ui.Dispose();
+    }
+
+    [Test]
+    public void TutorialNarration_MapsEveryM01StepToEnglishAndPersianEvents()
+    {
+        MethodInfo resolver = typeof(UiShellEcsGateway).GetMethod(
+            "ResolveTutorialAudioEventId",
+            BindingFlags.Static | BindingFlags.NonPublic);
+        Assert.NotNull(resolver);
+        string[] englishSuffixes =
+        {
+            "FindSquad.En", "MoveToCover.En", "ConfirmThreat.En", "Engage.En", "SecureCorridor.En"
+        };
+        string[] persianSuffixes =
+        {
+            "FindSquad.Fa", "MoveToCover.Fa", "ConfirmThreat.Fa", "Engage.Fa", "SecureCorridor.Fa"
+        };
+        for (byte step = 1; step <= 5; step++)
+        {
+            StringAssert.EndsWith(
+                englishSuffixes[step - 1],
+                resolver.Invoke(
+                    null,
+                    new object[] { step, FirstLaunchNarrativeLanguage.English })?.ToString());
+            StringAssert.EndsWith(
+                persianSuffixes[step - 1],
+                resolver.Invoke(
+                    null,
+                    new object[] { step, FirstLaunchNarrativeLanguage.Persian })?.ToString());
+        }
     }
 
     [Test]
@@ -1165,6 +1213,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
     }
 
     private sealed class FakeAssistantPanelGateway : IUiShellRuntimeGateway, IUiAssistantPanelStateGateway,
+        IUiTutorialNarrationGateway,
         IUiMissionHudRestrictionsGateway
     {
         public UiAssistantHighlightModel AssistantHighlight { get; set; }
@@ -1174,6 +1223,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         public bool LastAssistantIntentFromTakeover { get; private set; }
         public UiAssistantPanelModel AssistantPanel { get; set; }
         public List<bool> AssistantPanelOpenStates { get; } = new();
+        public List<byte> TutorialNarrationSteps { get; } = new();
+        public List<string> TutorialNarrationTexts { get; } = new();
         public bool LastAssistantPanelOpen => AssistantPanelOpenStates.Count > 0 &&
                                               AssistantPanelOpenStates[AssistantPanelOpenStates.Count - 1];
         public bool CinematicInteractionLocked { get; set; }
@@ -1189,6 +1240,13 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         public bool TrySetAssistantPanelOpen(bool open)
         {
             AssistantPanelOpenStates.Add(open);
+            return true;
+        }
+
+        public bool TryEnqueueTutorialNarration(byte tutorialStep, string text)
+        {
+            TutorialNarrationSteps.Add(tutorialStep);
+            TutorialNarrationTexts.Add(text);
             return true;
         }
 

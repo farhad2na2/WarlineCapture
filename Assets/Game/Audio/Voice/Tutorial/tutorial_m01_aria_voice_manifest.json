@@ -1,0 +1,100 @@
+{
+  "schema": "WarlineCapture.TutorialNarrationVoice.v1",
+  "missionId": "campaign.chapter01.mission01",
+  "provider": "ElevenLabs",
+  "license": "ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE",
+  "runtimeNetworkTts": false,
+  "model": "eleven_v3",
+  "voice": {
+    "id": "Fi9tPTnEcbh3of7hOHC8",
+    "name": "Warline - ARIA Civic Relay"
+  },
+  "processing": {
+    "sampleRateHz": 44100,
+    "channels": 1,
+    "sourceEncoding": "PCM_S16LE",
+    "runtimeImportProfile": "Voice"
+  },
+  "clips": [
+    {
+      "step": 1,
+      "locale": "en-US",
+      "text": "Select the command squad to begin.",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_find_squad_aria.wav",
+      "durationSeconds": 1.835488,
+      "sha256": "4b3f8efea2d104bd808ca19c85b6f67aec3a91a90bd49ff6c5cc66e1233a8198"
+    },
+    {
+      "step": 2,
+      "locale": "en-US",
+      "text": "Move the squad to the marked cover position.",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_move_to_cover_aria.wav",
+      "durationSeconds": 2.241474,
+      "sha256": "1f8300f51ea13d4e72f2f74dc2a8fe9de165112a0d16c913f6073a0b150714cf"
+    },
+    {
+      "step": 3,
+      "locale": "en-US",
+      "text": "Inspect the armed patrol near the civilians.",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_confirm_threat_aria.wav",
+      "durationSeconds": 2.732653,
+      "sha256": "98794ee11a393d6fa3674bf99b8ef443761e4f77a90beac92ba41c7c7737c3c7"
+    },
+    {
+      "step": 4,
+      "locale": "en-US",
+      "text": "Attack the confirmed hostile patrol.",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_engage_aria.wav",
+      "durationSeconds": 2.061655,
+      "sha256": "5576656825e2ffd875e7c6d9e037b9fde98ae3bbc012eab2ed00f824427cc54e"
+    },
+    {
+      "step": 5,
+      "locale": "en-US",
+      "text": "Check the objective and secure the civilian route.",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_secure_corridor_aria.wav",
+      "durationSeconds": 2.668957,
+      "sha256": "436c4b4b676129aa5b50e170aa1dbc3a34c4e1b3a2fb2668ac64d1724b4e71d9"
+    },
+    {
+      "step": 1,
+      "locale": "fa-IR",
+      "text": "برای شروع، گروه فرماندهی را انتخاب کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_find_squad_aria_fa.wav",
+      "durationSeconds": 3.221859,
+      "sha256": "4547701cc280332f99d3442162430d4a1f9092ce9f99c0dacf03b20d3b2dbf94"
+    },
+    {
+      "step": 2,
+      "locale": "fa-IR",
+      "text": "گروه را به موقعیت پوشش علامت‌گذاری‌شده منتقل کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_move_to_cover_aria_fa.wav",
+      "durationSeconds": 3.897098,
+      "sha256": "7cc216d8fd484a28300d5863004d3181e626cd83bc3278204d19171d9e07be95"
+    },
+    {
+      "step": 3,
+      "locale": "fa-IR",
+      "text": "گشت مسلح نزدیک غیرنظامیان را بررسی کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_confirm_threat_aria_fa.wav",
+      "durationSeconds": 3.731111,
+      "sha256": "cdd183488c168472a23883541ecd2dd2ddb8a2830fb7c87a12c36d545a09523e"
+    },
+    {
+      "step": 4,
+      "locale": "fa-IR",
+      "text": "به گشت دشمن تأییدشده حمله کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_engage_aria_fa.wav",
+      "durationSeconds": 2.496281,
+      "sha256": "430e752f5d8b961d0ee41587ccd92d6c353646a16943d19eaa686f76512cc5f5"
+    },
+    {
+      "step": 5,
+      "locale": "fa-IR",
+      "text": "هدف را بررسی کنید و مسیر غیرنظامیان را امن کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_secure_corridor_aria_fa.wav",
+      "durationSeconds": 3.984376,
+      "sha256": "4febc4b2fcabd07c678a7af57408b5dd120328f61f3f44de646dcc7ae5e9a6ae"
+    }
+  ]
+}

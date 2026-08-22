@@ -10,6 +10,7 @@ namespace Game.UI.Runtime
         private byte _pendingTutorialStep;
         private byte _completedTutorialStep;
         private byte _displayedTutorialStep;
+        private byte _narratedTutorialSteps;
         private float _tutorialShowAtUnscaledTime = -1f;
         private bool _tutorialCinematicSuspended;
         private bool _finalTutorialSuppressed;
@@ -73,9 +74,17 @@ namespace Game.UI.Runtime
             if (unscaledTime < _tutorialShowAtUnscaledTime)
                 return;
 
+            bool newlyDisplayed = _displayedTutorialStep != _pendingTutorialStep;
             _displayedTutorialStep = _pendingTutorialStep;
             if (!IsPanelOpen)
                 SetPanelOpen(true);
+            if (newlyDisplayed && !WasTutorialStepNarrated(_displayedTutorialStep))
+            {
+                _narratedTutorialSteps |= (byte)(1 << (_displayedTutorialStep - 1));
+                UiShellRuntimeGateway.TryEnqueueTutorialNarration(
+                    _displayedTutorialStep,
+                    _lastPanelModel.RecommendationBody);
+            }
         }
 
         private void HandleSquadSelectionAcknowledged()
@@ -111,9 +120,16 @@ namespace Game.UI.Runtime
             _pendingTutorialStep = 0;
             _completedTutorialStep = 0;
             _displayedTutorialStep = 0;
+            _narratedTutorialSteps = 0;
             _tutorialShowAtUnscaledTime = -1f;
             _tutorialCinematicSuspended = false;
             _finalTutorialSuppressed = false;
+        }
+
+        private bool WasTutorialStepNarrated(byte step)
+        {
+            return step is > 0 and <= 8 &&
+                   (_narratedTutorialSteps & (1 << (step - 1))) != 0;
         }
     }
 }

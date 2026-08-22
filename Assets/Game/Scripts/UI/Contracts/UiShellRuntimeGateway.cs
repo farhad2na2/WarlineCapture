@@ -91,4 +91,9 @@ namespace Game.UI.Contracts
     {
         bool TrySetAssistantPanelOpen(bool open);
     }
+
+    public interface IUiTutorialNarrationGateway
+    {
+        bool TryEnqueueTutorialNarration(byte tutorialStep, string text);
+    }
 }

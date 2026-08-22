@@ -79,6 +79,7 @@ namespace Game.UI.Shell.Ecs
         public static void RegisterAsRuntimeGateway()
         {
             ResetWorldBoundQueries(null);
+            ResetTutorialNarrationSession();
             hasCachedDiagnosticsLogText = false;
             hasCachedMatchHudHeader = false;
             cachedMatchHudHeaderWorld = null;

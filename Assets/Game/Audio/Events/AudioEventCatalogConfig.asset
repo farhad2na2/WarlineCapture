@@ -3289,3 +3289,143 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: c5be8c99139f0a89fbf1260adabb408b, type: 3}
       weight: 1
+  - eventId: VO.ARIA.Tutorial.M01.FindSquad.En
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 17380119c69fd43038a41acb31024711, type: 3}
+      weight: 1
+  - eventId: VO.ARIA.Tutorial.M01.MoveToCover.En
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 52f2bc1f8461b435ca356bb00ed92051, type: 3}
+      weight: 1
+  - eventId: VO.ARIA.Tutorial.M01.ConfirmThreat.En
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: a771f068c4cab449180d8cc8a7dc42d1, type: 3}
+      weight: 1
+  - eventId: VO.ARIA.Tutorial.M01.Engage.En
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: a6f299b6db0ab4bbea569d7d2ce617fc, type: 3}
+      weight: 1
+  - eventId: VO.ARIA.Tutorial.M01.SecureCorridor.En
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: a421e004dd9d7474f90693f9b3bc7bd7, type: 3}
+      weight: 1
+  - eventId: VO.ARIA.Tutorial.M01.FindSquad.Fa
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: d3f49949ff3af4e6ba960757181a163e, type: 3}
+      weight: 1
+  - eventId: VO.ARIA.Tutorial.M01.MoveToCover.Fa
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 8eb8df825195e497c9d37fa317dd17da, type: 3}
+      weight: 1
+  - eventId: VO.ARIA.Tutorial.M01.ConfirmThreat.Fa
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 1d0b06145a2124379a49dcdcac2077ee, type: 3}
+      weight: 1
+  - eventId: VO.ARIA.Tutorial.M01.Engage.Fa
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 49c06679ef210474c9d22b9239031481, type: 3}
+      weight: 1
+  - eventId: VO.ARIA.Tutorial.M01.SecureCorridor.Fa
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 5d715bc3aaee94923892c85540ad502e, type: 3}
+      weight: 1

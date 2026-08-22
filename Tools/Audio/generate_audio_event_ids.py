@@ -10,7 +10,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 CATALOG_PATH = ROOT / "Assets" / "Game" / "Audio" / "Config" / "audio_event_catalog_v0_1.json"
-OUTPUT_PATH = ROOT / "Assets" / "Game" / "Scripts" / "Audio" / "Config" / "AudioEventIds.cs"
+OUTPUT_PATH = ROOT / "Assets" / "Game" / "Scripts" / "Configs" / "Audio" / "AudioEventIds.cs"
 
 
 def to_identifier(event_id: str) -> str:

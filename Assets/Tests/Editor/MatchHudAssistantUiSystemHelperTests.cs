@@ -192,7 +192,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.AreEqual(Vector2.zero, tutorial.BriefingLayout.anchorMax);
         Assert.GreaterOrEqual(
             tutorial.BriefingLayout.anchoredPosition.y - tutorial.BriefingLayout.rect.height * 0.5f,
-            240f,
+            440f,
             "The tutorial panel must stay above the lower-left squad controls.");
         Assert.IsTrue(Contains(tutorial.BriefingLayout, tutorial.ShowMeButton.transform as RectTransform));
         Assert.IsTrue(Contains(tutorial.BriefingLayout, tutorial.DoItButton.transform as RectTransform));

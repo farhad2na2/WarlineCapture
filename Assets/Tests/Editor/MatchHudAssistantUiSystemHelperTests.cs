@@ -192,7 +192,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.AreEqual(Vector2.zero, tutorial.BriefingLayout.anchorMax);
         Assert.GreaterOrEqual(
             tutorial.BriefingLayout.anchoredPosition.y - tutorial.BriefingLayout.rect.height * 0.5f,
-            440f,
+            620f,
             "The tutorial panel must stay above the lower-left squad controls.");
         Assert.IsTrue(Contains(tutorial.BriefingLayout, tutorial.ShowMeButton.transform as RectTransform));
         Assert.IsTrue(Contains(tutorial.BriefingLayout, tutorial.DoItButton.transform as RectTransform));
@@ -256,13 +256,20 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             tutorialStep: 2, tutorialStepCount: 5);
         SetPrivateField(ui, "_nextAssistantPanelRefreshTime", 0f);
         ui.Update();
-        Assert.IsTrue(popup.IsOpen, "The next tutorial step must present automatically.");
+        Assert.IsFalse(popup.IsOpen,
+            "Completing one instruction must remove ARIA before the next instruction appears.");
+
+        MatchHudAssistantUiSystemHelper helper =
+            GetPrivateField<MatchHudAssistantUiSystemHelper>(ui, "_matchHudAssistantUiSystem");
+        float stepTwoDeadline = GetPrivateField<float>(helper, "_tutorialShowAtUnscaledTime");
+        helper.TickHighlight(stepTwoDeadline - 0.01f);
+        Assert.IsFalse(popup.IsOpen, "The next tutorial instruction must wait for two seconds.");
+        helper.TickHighlight(stepTwoDeadline);
+        Assert.IsTrue(popup.IsOpen, "The next tutorial instruction must appear after two seconds.");
         Assert.AreEqual("TRAINING 2 / 5", tutorial.ProgressText.text);
         Assert.AreEqual("PRESS MOVE", tutorial.TitleText.text);
         Assert.AreEqual("Tap MOVE, then choose the highlighted destination.", tutorial.BodyText.text);
 
-        MatchHudAssistantUiSystemHelper helper =
-            GetPrivateField<MatchHudAssistantUiSystemHelper>(ui, "_matchHudAssistantUiSystem");
         MatchOverlayCommandControlsView commandControls = CreateCommandControls(overlay);
         ui.BindMatchHudCommandControls(commandControls);
         commandControls.MoveButton.onClick.Invoke();
@@ -271,26 +278,36 @@ public sealed class MatchHudAssistantUiSystemHelperTests
 
         helper.CompleteWorldTarget(TacticalCommandMode.Move);
         helper.ApplyCommandMode(TacticalCommandMode.None);
-        Assert.AreEqual("MOVING TO COVER", tutorial.TitleText.text);
-        Assert.AreEqual(
-            "Your squad is moving to the marked cover position.",
-            tutorial.BodyText.text);
-
-        tutorial.DoItButton.onClick.Invoke();
-        Assert.IsTrue(popup.IsOpen, "Do It must remain visible until the tutorial advances.");
-        Assert.AreEqual(UiAssistantCommandIntentKind.ExecuteRecommendation, gateway.LastAssistantIntentKind);
-
-        helper.ClosePanelWithoutInputCapture();
-        Assert.IsFalse(popup.IsOpen);
+        Assert.IsFalse(popup.IsOpen, "Accepting the destination must remove the completed instruction.");
         helper.ApplyReadModel(gateway.AssistantPanel);
-        Assert.IsTrue(popup.IsOpen,
-            "An active tutorial instruction must recover from an external panel close.");
+        helper.TickHighlight(float.MaxValue);
+        Assert.IsFalse(popup.IsOpen,
+            "A stale projection must not reopen a completed tutorial instruction.");
+
+        gateway.AssistantPanel = CreateStructuredModel(
+            804u, recommendationKind: 3, recommendationTargetKind: 6,
+            tutorialStep: 3, tutorialStepCount: 5);
+        helper.ApplyReadModel(gateway.AssistantPanel);
+        helper.TickHighlight(100f);
+        helper.TickHighlight(102f);
+        Assert.IsTrue(popup.IsOpen);
+        helper.CompleteWorldTarget(TacticalCommandMode.Attack);
+        Assert.IsFalse(popup.IsOpen, "The final attack must hide ARIA immediately.");
+
+        gateway.AssistantPanel = CreateStructuredModel(
+            805u, recommendationKind: 3, recommendationTargetKind: 6,
+            tutorialStep: 4, tutorialStepCount: 5);
+        helper.ApplyReadModel(gateway.AssistantPanel);
+        helper.TickHighlight(float.MaxValue);
+        Assert.IsFalse(popup.IsOpen,
+            "Final combat suppresses all later tutorial briefing projections.");
 
         helper.ResetForMissionAttempt();
         gateway.AssistantPanel = CreateStructuredModel(
-            804u, recommendationKind: 1, recommendationTargetKind: 6,
+            806u, recommendationKind: 1, recommendationTargetKind: 6,
             tutorialStep: 1, tutorialStepCount: 5);
         helper.ApplyReadModel(gateway.AssistantPanel);
+        helper.TickHighlight(0f);
         Assert.IsTrue(popup.IsOpen, "A new mission attempt must present step one again.");
         ui.Dispose();
     }

@@ -162,7 +162,7 @@ namespace Game.UI.Runtime
             RefreshZoomControlsIfDue(now);
             _matchHudResourceHeaderPresentation.RefreshIfDue(now);
             ApplyMatchHudAssistantPanelReadModelIfDue(now);
-            _matchHudAssistantUiSystem.TickHighlight();
+            _matchHudAssistantUiSystem.TickHighlight(now);
             TickGuidedHudRuntime();
             TickMatchHudThreatWarning(now);
         }

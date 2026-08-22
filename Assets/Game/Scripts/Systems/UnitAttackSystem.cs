@@ -134,7 +134,7 @@ namespace Game.Runtime
             using NativeList<StandardAttackCandidate> standardAttackCandidates = new(InitialAttackScratchCapacity, Allocator.TempJob);
             foreach (var (engage, attackState, attackTraceState, attackAnimationState, selfTransform, attack, selfHealth, entity) in SystemAPI
                          .Query<RefRW<EngageTarget>, RefRW<UnitAttackCooldownComponent>, RefRW<UnitAttackTraceComponent>, RefRW<UnitAttackAnimationComponent>, RefRO<LocalTransform>, RefRO<UnitAttack>, RefRO<UnitHealth>>()
-                         .WithNone<StaticGridBlocker>()
+                         .WithNone<StaticGridBlocker, CampaignMissionCombatSuppressedTag>()
                          .WithNone<UnitDeathAnimationComponent>()
                          .WithEntityAccess())
             {
@@ -465,8 +465,7 @@ namespace Game.Runtime
 
             LogSuppressedUnitUnderAttackAudio(em, target, attacker, damage, requestedAt, sourceSystem, eventId);
 
-            // Generic damage-tick alerts were masking ARIA threat voice at match start.
-            // Keep the event id resolvable, but do not auto-play the placeholder alert.
+            // Leave generic damage alerts silent so ARIA owns match-start threat voice.
             return false;
         }
 

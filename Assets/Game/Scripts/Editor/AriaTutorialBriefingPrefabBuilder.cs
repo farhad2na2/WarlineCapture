@@ -68,7 +68,7 @@ namespace Game.Editor
                     Vector2.zero,
                     Vector2.zero,
                     new Vector2(960f, 960f),
-                    new Vector2(540f, 920f));
+                    new Vector2(540f, 1100f));
                 portraitImage.preserveAspect = true;
 
                 Image backing = CreateImage("BriefingPanel", surface, panel, Color.white, false);
@@ -77,7 +77,7 @@ namespace Game.Editor
                     Vector2.zero,
                     Vector2.zero,
                     new Vector2(1800f, 760f),
-                    new Vector2(1650f, 820f));
+                    new Vector2(1650f, 1000f));
                 backing.type = Image.Type.Sliced;
 
                 TMP_Text identity = CreateText(
@@ -298,7 +298,7 @@ namespace Game.Editor
             if (view.transform.Find("TutorialInputBlocker") != null)
                 throw new InvalidOperationException("ARIA tutorial briefing must not cover the battlefield with an input overlay.");
             if (view.BriefingLayout.anchorMin != Vector2.zero || view.BriefingLayout.anchorMax != Vector2.zero ||
-                view.BriefingLayout.anchoredPosition.y - view.BriefingLayout.rect.height * 0.5f < 440f)
+                view.BriefingLayout.anchoredPosition.y - view.BriefingLayout.rect.height * 0.5f < 620f)
                 throw new InvalidOperationException("ARIA tutorial briefing must remain above the lower-left squad controls.");
             if (!Contains(view.BriefingLayout, view.ShowMeButton.transform as RectTransform) ||
                 !Contains(view.BriefingLayout, view.DoItButton.transform as RectTransform))

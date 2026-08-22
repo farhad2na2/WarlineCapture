@@ -91,9 +91,23 @@ namespace Game.Runtime
                 // preventing the normal match-intro zoom from overwriting the bazaar handoff.
                 Stage = 0
             });
+            bool finaleRequired = rootRuntime.MissionId.Equals(FirstContactMissionId) &&
+                                  (rootRuntime.RunKind == Game.Missions.Contracts.MissionRunKind.FirstClear ||
+                                   rootRuntime.ReplayTutorialEnabled != 0);
+            SetOrAdd(em, root, new CampaignMissionFinalePresentationComponent
+            {
+                SessionToken = rootRuntime.SessionToken,
+                FriendlyFocus = playerFocus,
+                HostileFocus = hostileFocus,
+                ElapsedMilliseconds = 0,
+                Required = finaleRequired ? (byte)1 : (byte)0,
+                Stage = 0
+            });
             rootFacts.CommandSquadSpawned = 1;
             rootFacts.CommandSquadAlive = 1;
             rootFacts.HostileTotalCount = CountHostiles(ref definition);
+            rootFacts.FinalePresentationRequired = finaleRequired ? (byte)1 : (byte)0;
+            rootFacts.FinalePresentationComplete = finaleRequired ? (byte)0 : (byte)1;
             em.SetComponentData(root, rootFacts);
         }
 
@@ -169,6 +183,11 @@ namespace Game.Runtime
                             MissionRoleId = unit.MissionRoleId, UnitGroupId = group.GroupId, RouteId = routeId,
                             SessionToken = runtime.SessionToken
                         });
+                        if (ShouldUseTutorialFinale(in runtime) &&
+                            !em.HasComponent<CampaignMissionCombatSuppressedTag>(instance))
+                        {
+                            em.AddComponent<CampaignMissionCombatSuppressedTag>(instance);
+                        }
                         if (ShouldKeepStationary(runtime.MissionId, group.FactionId) &&
                             !em.HasComponent<CampaignMissionStationaryUnitTag>(instance))
                         {
@@ -198,6 +217,11 @@ namespace Game.Runtime
 
         internal static bool ShouldKeepStationary(in FixedString64Bytes missionId, byte factionId) =>
             missionId.Equals(FirstContactMissionId) && !FactionIdentity.IsPlayerControlled(factionId);
+
+        internal static bool ShouldUseTutorialFinale(in CampaignMissionRuntimeComponent runtime) =>
+            runtime.MissionId.Equals(FirstContactMissionId) &&
+            (runtime.RunKind == Game.Missions.Contracts.MissionRunKind.FirstClear ||
+             runtime.ReplayTutorialEnabled != 0);
 
         internal static bool TryFindDefinition(
             in CampaignMissionCatalogComponent catalog, in CampaignMissionRuntimeComponent runtime, out int index)

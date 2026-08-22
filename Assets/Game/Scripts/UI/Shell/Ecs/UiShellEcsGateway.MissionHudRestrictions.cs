@@ -20,7 +20,8 @@ namespace Game.UI.Shell.Ecs
             CampaignMissionCatalogComponent catalog =
                 entityManager.GetComponentData<CampaignMissionCatalogComponent>(root);
             bool cinematicInteractionLocked =
-                IsOpeningCinematicActive(entityManager, root, in runtime);
+                IsOpeningCinematicActive(entityManager, root, in runtime) ||
+                IsFinaleCinematicActive(entityManager, root, in runtime);
             if (runtime.Version == 0 || runtime.SourceVersion == 0 ||
                 runtime.Phase == MissionPhaseKind.None || runtime.MissionId.Length == 0 ||
                 !catalog.Blob.IsCreated)
@@ -70,6 +71,21 @@ namespace Game.UI.Shell.Ecs
             CampaignMissionOpeningPresentationComponent opening =
                 entityManager.GetComponentData<CampaignMissionOpeningPresentationComponent>(root);
             return opening.SessionToken.Equals(runtime.SessionToken) && opening.Stage < 6;
+        }
+
+        private static bool IsFinaleCinematicActive(
+            EntityManager entityManager,
+            Entity root,
+            in CampaignMissionRuntimeComponent runtime)
+        {
+            if (!entityManager.HasComponent<CampaignMissionFinalePresentationComponent>(root))
+                return false;
+
+            CampaignMissionFinalePresentationComponent finale =
+                entityManager.GetComponentData<CampaignMissionFinalePresentationComponent>(root);
+            return finale.Required != 0 &&
+                   finale.SessionToken.Equals(runtime.SessionToken) &&
+                   finale.Stage is >= 1 and <= 3;
         }
     }
 }

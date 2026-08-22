@@ -2,6 +2,7 @@ using Unity.Entities;
 using Game.UI.Contracts;
 using Game.UI.Shell.Contracts.Ecs;
 using Game.Runtime;
+using Game.Components;
 
 namespace Game.Composition
 {
@@ -15,6 +16,8 @@ namespace Game.Composition
         }
 
         private readonly WorldScopedComponentQueryCache<MatchIntroTransitionComponent> _queryCache = new(readOnly: true);
+        private readonly WorldScopedComponentQueryCache<CampaignMissionFinalePresentationComponent>
+            _missionFinaleQueryCache = new(readOnly: true);
         private World _world;
 
         public void Bind(World world)
@@ -23,13 +26,16 @@ namespace Game.Composition
                 return;
 
             _queryCache.Invalidate();
+            _missionFinaleQueryCache.Invalidate();
             _world = world;
         }
 
         public bool IsGameplayInputLocked()
         {
             ReadResult result = TryReadState(out MatchIntroTransitionComponent state);
-            return result == ReadResult.Invalid || result == ReadResult.Found && state.InputLocked != 0;
+            return result == ReadResult.Invalid ||
+                   result == ReadResult.Found && state.InputLocked != 0 ||
+                   IsMissionFinaleInputLocked();
         }
 
         public bool IsIntroComplete()
@@ -44,6 +50,7 @@ namespace Game.Composition
         public void Reset()
         {
             _queryCache.Invalidate();
+            _missionFinaleQueryCache.Invalidate();
             _world = null;
         }
 
@@ -67,6 +74,18 @@ namespace Game.Composition
 
             state = entityManager.GetComponentData<MatchIntroTransitionComponent>(entity);
             return ReadResult.Found;
+        }
+
+        private bool IsMissionFinaleInputLocked()
+        {
+            if (_world == null || !_world.IsCreated)
+                return true;
+            EntityQuery query = _missionFinaleQueryCache.Get(_world.EntityManager);
+            if (query.CalculateEntityCount() != 1)
+                return false;
+            CampaignMissionFinalePresentationComponent finale =
+                query.GetSingleton<CampaignMissionFinalePresentationComponent>();
+            return finale.Required != 0 && finale.Stage is >= 1 and <= 3;
         }
     }
 }

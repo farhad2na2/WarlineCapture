@@ -113,7 +113,8 @@ namespace Game.Runtime
                                  facts.HostileDefeatedCount >= facts.HostileTotalCount;
             for (int transition = 0;
                  patrolCleared && transition < 2 && next.Outcome == MissionOutcomeKind.None &&
-                 next.Phase is MissionPhaseKind.Engage or MissionPhaseKind.SecureCorridor;
+                 (next.Phase is MissionPhaseKind.Engage or MissionPhaseKind.SecureCorridor) &&
+                 CanFinishFinale(in facts, next.Phase);
                  transition++)
             {
                 CampaignMissionRuntimeComponent settled = next;
@@ -168,7 +169,8 @@ namespace Game.Runtime
             else if (current.Phase == MissionPhaseKind.Engage && facts.HostileTotalCount > 0 &&
                      facts.HostileDefeatedCount >= facts.HostileTotalCount)
                 phase = MissionPhaseKind.SecureCorridor;
-            else if (current.Phase == MissionPhaseKind.SecureCorridor)
+            else if (current.Phase == MissionPhaseKind.SecureCorridor &&
+                     CanFinishFinale(in facts, current.Phase))
             {
                 phase = MissionPhaseKind.Result;
                 outcome = MissionOutcomeKind.Victory;
@@ -179,6 +181,13 @@ namespace Game.Runtime
             return phase != current.Phase || outcome != current.Outcome ||
                    destination != current.ReturnDestination;
         }
+
+        private static bool CanFinishFinale(
+            in CampaignMissionAttemptFactsComponent facts,
+            MissionPhaseKind phase) =>
+            phase != MissionPhaseKind.SecureCorridor ||
+            facts.FinalePresentationRequired == 0 ||
+            facts.FinalePresentationComplete != 0;
 
         private static bool ResolveDefeat(
             out MissionPhaseKind phase,

@@ -92,6 +92,22 @@ public sealed class M01FirstContactHudRestrictionTests
             world.EntityManager.SetComponentData(root, opening);
             Assert.That(UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var afterReturn), Is.True);
             Assert.That(afterReturn.CinematicInteractionLocked, Is.False);
+
+            world.EntityManager.AddComponentData(root, new CampaignMissionFinalePresentationComponent
+            {
+                SessionToken = runtime.SessionToken,
+                Required = 1,
+                Stage = 1
+            });
+            Assert.That(UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var duringFinale), Is.True);
+            Assert.That(duringFinale.CinematicInteractionLocked, Is.True,
+                "The finale must disable every HUD button while the camera and combat presentation run.");
+            CampaignMissionFinalePresentationComponent finale =
+                world.EntityManager.GetComponentData<CampaignMissionFinalePresentationComponent>(root);
+            finale.Stage = 4;
+            world.EntityManager.SetComponentData(root, finale);
+            Assert.That(UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var afterFinale), Is.True);
+            Assert.That(afterFinale.CinematicInteractionLocked, Is.False);
         }
         finally
         {

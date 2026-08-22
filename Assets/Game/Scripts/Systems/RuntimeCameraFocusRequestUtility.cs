@@ -17,6 +17,9 @@ namespace Game.Runtime
         public const float BazaarEstablishingPitch = 35f;
         public const float BazaarEstablishingYaw = 0f;
         public const float BazaarEstablishingFieldOfView = 50f;
+        public const float CombatRevealHeight = 7f;
+        public const float CombatRevealPitch = 24f;
+        public const float CombatRevealFieldOfView = 42f;
 
         public static Vector3 GetInitialBuildingFootprintCenterWorld(
             Vector2Int originCell,
@@ -48,18 +51,23 @@ namespace Game.Runtime
             float rtsHeight = 24f,
             float rtsPitch = 58f,
             float rtsYaw = 10f,
-            float rtsFieldOfView = 36f)
+            float rtsFieldOfView = 36f,
+            bool useExplicitYaw = false,
+            float explicitYaw = 0f)
         {
             camera.QueueSetMatchIntroZoomSettlePending(entityManager, false);
             bool showSquad = revealKind == 2;
             bool showBazaar = revealKind == 3;
             bool restoreRts = revealKind == 4;
+            bool showCombat = revealKind == 5;
             float height = restoreRts ? rtsHeight : showBazaar ? BazaarEstablishingHeight :
-                showSquad ? SquadRevealHeight : TacticalRevealHeight;
+                showCombat ? CombatRevealHeight : showSquad ? SquadRevealHeight : TacticalRevealHeight;
             float pitch = restoreRts ? rtsPitch : showBazaar ? BazaarEstablishingPitch :
-                showSquad ? SquadRevealPitch : TacticalRevealPitch;
-            float yaw = restoreRts ? rtsYaw : showBazaar ? BazaarEstablishingYaw : TacticalRevealYaw;
+                showCombat ? CombatRevealPitch : showSquad ? SquadRevealPitch : TacticalRevealPitch;
+            float yaw = useExplicitYaw ? explicitYaw :
+                restoreRts ? rtsYaw : showBazaar ? BazaarEstablishingYaw : TacticalRevealYaw;
             float fieldOfView = restoreRts ? rtsFieldOfView : showBazaar ? BazaarEstablishingFieldOfView :
+                showCombat ? CombatRevealFieldOfView :
                 showSquad ? SquadRevealFieldOfView : TacticalRevealFieldOfView;
             if (smoothTimeSeconds > 0f)
             {
@@ -104,7 +112,9 @@ namespace Game.Runtime
                     rtsHeight,
                     rtsPitch,
                     rtsYaw,
-                    rtsFieldOfView);
+                    rtsFieldOfView,
+                    request.UseExplicitYaw != 0,
+                    request.YawDegrees);
 
             if (request.Smooth != 0)
             {

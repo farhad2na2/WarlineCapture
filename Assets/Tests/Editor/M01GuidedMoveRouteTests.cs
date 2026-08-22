@@ -18,6 +18,32 @@ using UnityEngine;
 
 public sealed class M01GuidedMoveRouteTests
 {
+    [MenuItem("Game/Validation/Run M01 Tutorial Finale Focused")]
+    public static void RunTutorialFinaleFocusedValidation()
+    {
+        int passed = 0;
+        try
+        {
+            var tests = new M01GuidedMoveRouteTests();
+            tests.GuidedArrivalAdvancesAndCommandedAttackSurvivesPreEngageHold();
+            passed++;
+            tests.TutorialFinaleHoldsVictoryUntilEnemyDeathsHaveBeenPresented();
+            passed++;
+            tests.TutorialFinaleProtectsOnlyThePlayerSquadDuringCombat();
+            passed++;
+            M01FirstContactHudRestrictionTests.CinematicInteractionLockTracksOpeningReturn();
+            passed++;
+            Debug.Log($"[M01TutorialFinaleValidation] result=Passed tests={passed}");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError($"[M01TutorialFinaleValidation] result=Failed passed={passed}");
+            ValidationExit.Exit(1);
+        }
+    }
+
     public static void RunStationaryEnemyValidation()
     {
         new M01GuidedMoveRouteTests().GuidedArrivalAdvancesAndCommandedAttackSurvivesPreEngageHold();
@@ -482,6 +508,15 @@ public sealed class M01GuidedMoveRouteTests
         UnitCombat combat = new() { CanAttack = 1, AutoEngage = 0 };
         Assert.That(CampaignMissionPatrolOrderSystem.ShouldReleaseCombat(MissionPhaseKind.ConfirmThreat), Is.False);
         Assert.That(CampaignMissionPatrolOrderSystem.ShouldReleaseCombat(MissionPhaseKind.Engage), Is.True);
+        Assert.That(CampaignMissionPatrolOrderSystem.ShouldReleaseCombat(
+                MissionPhaseKind.Engage, tutorialFinaleActive: true, tutorialFinaleStage: 1), Is.False,
+            "Mission 1 combat must remain suppressed while the camera moves behind the squad.");
+        Assert.That(CampaignMissionPatrolOrderSystem.ShouldReleaseCombat(
+                MissionPhaseKind.Engage, tutorialFinaleActive: true, tutorialFinaleStage: 2), Is.True,
+            "Both factions may engage only after the finale camera arrives.");
+        Assert.That(CampaignMissionPatrolOrderSystem.ComputeCombatRevealYaw(new float3(0f, 0f, 12f)),
+            Is.EqualTo(0f).Within(0.001f),
+            "A north-facing hostile line must place the camera behind the southern friendly line.");
         FixedString64Bytes firstContactMissionId = new("saga.ch01.m01.first_contact");
         FixedString64Bytes otherMissionId = new("saga.ch01.m02.test");
         Assert.That(CampaignMissionPatrolOrderSystem.ShouldIssuePatrolRoute(
@@ -622,6 +657,77 @@ public sealed class M01GuidedMoveRouteTests
         Assert.That(result.ReturnDestination, Is.EqualTo(MissionReturnDestinationKind.CampaignOperations));
         Assert.That(result.Version, Is.EqualTo(runtime.Version + 2),
             "The mission must retain both authored transitions while exposing the victory atomically.");
+    }
+
+    [Test]
+    public void TutorialFinaleHoldsVictoryUntilEnemyDeathsHaveBeenPresented()
+    {
+        CampaignMissionRuntimeComponent runtime = new()
+        {
+            Version = 20,
+            SourceVersion = 1,
+            MissionId = new FixedString64Bytes("saga.ch01.m01.first_contact"),
+            ScenarioId = new FixedString64Bytes("scenario.ch01.m01.first_contact"),
+            OperationMapId = new FixedString64Bytes("opmap.ch01.district_edge_01"),
+            SessionToken = new FixedString64Bytes("m01-finale-hold"),
+            AttemptOrdinal = 1,
+            DeterministicSeed = 1234,
+            Phase = MissionPhaseKind.Engage,
+            Outcome = MissionOutcomeKind.None,
+            LaunchOrigin = MissionLaunchOriginKind.CampaignOperations
+        };
+        CampaignMissionAttemptFactsComponent facts = new()
+        {
+            CommandSquadSpawned = 1,
+            CommandSquadAlive = 1,
+            HostileTotalCount = 3,
+            HostileDefeatedCount = 3,
+            FinalePresentationRequired = 1,
+            FinalePresentationComplete = 0
+        };
+
+        Assert.That(CampaignMissionRuntimeProgressUtility.TryEvaluateSettled(
+            in runtime, in facts, commandSquadSelected: true,
+            out CampaignMissionRuntimeComponent secured), Is.True);
+        Assert.That(secured.Phase, Is.EqualTo(MissionPhaseKind.SecureCorridor));
+        Assert.That(secured.Outcome, Is.EqualTo(MissionOutcomeKind.None));
+        Assert.That(secured.Version, Is.EqualTo(runtime.Version + 1));
+        Assert.That(CampaignMissionRuntimeProgressUtility.TryEvaluateSettled(
+            in secured, in facts, commandSquadSelected: true, out _), Is.False,
+            "The result must remain hidden during the death animation and post-kill hold.");
+
+        facts.FinalePresentationComplete = 1;
+        Assert.That(CampaignMissionRuntimeProgressUtility.TryEvaluateSettled(
+            in secured, in facts, commandSquadSelected: true,
+            out CampaignMissionRuntimeComponent result), Is.True);
+        Assert.That(result.Phase, Is.EqualTo(MissionPhaseKind.Result));
+        Assert.That(result.Outcome, Is.EqualTo(MissionOutcomeKind.Victory));
+    }
+
+    [Test]
+    public void TutorialFinaleProtectsOnlyThePlayerSquadDuringCombat()
+    {
+        FixedString64Bytes session = new("m01-protection");
+        CampaignMissionFinalePresentationComponent finale = new()
+        {
+            SessionToken = session,
+            Required = 1,
+            Stage = 2
+        };
+        Assert.That(CampaignMissionTutorialProtectionSystem.ShouldProtect(
+            in finale, FactionIdentity.PlayerFactionId, in session), Is.True);
+        Assert.That(CampaignMissionTutorialProtectionSystem.ShouldProtect(
+            in finale, FactionIdentity.EnemyFactionId, in session), Is.False,
+            "Enemy patrol units must remain mortal during the tutorial finale.");
+
+        UnitHealth lethalHit = new() { Current = 0, Max = 125 };
+        UnitHealth protectedHealth = CampaignMissionTutorialProtectionSystem.ApplyProtection(in lethalHit);
+        Assert.That(protectedHealth.Current, Is.EqualTo(125));
+
+        finale.Stage = 4;
+        Assert.That(CampaignMissionTutorialProtectionSystem.ShouldProtect(
+            in finale, FactionIdentity.PlayerFactionId, in session), Is.False,
+            "Tutorial invulnerability must end with the finale presentation.");
     }
 
     [Test]
@@ -880,6 +986,7 @@ internal static class M01OwnerFeedbackValidation
             new M01GuidedMoveRouteTests().InfantryMarkerUsesBakedVariantReferencesToHideEveryRectangle();
             new M01GuidedMoveRouteTests().CommandedSquadAttackRedistributesAcrossEverySurvivingPatrolEnemy();
             new M01GuidedMoveRouteTests().ThirdPatrolDeathSettlesMissionVictoryInTheSameRuntimeUpdate();
+            new M01GuidedMoveRouteTests().TutorialFinaleHoldsVictoryUntilEnemyDeathsHaveBeenPresented();
             new M01GuidedMoveRouteTests().ResultPresentationPrefabOwnsConfiguredBinder();
             new M01GuidedMoveRouteTests().ResultPopupStretchesInsideEverySupportedScreen();
             passed++;

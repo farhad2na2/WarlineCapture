@@ -92,7 +92,7 @@ namespace Game.UI.Runtime
             if (!_cinematicHudLocked || _lockedContentVersion != _shellContent.ContentVersion)
             {
                 RestoreCinematicHudInteraction();
-                owner?._matchHudAssistantUiSystem.ResetForMissionAttempt();
+                owner?._matchHudAssistantUiSystem.SuspendForCinematic();
                 owner?._matchHudSquadTrayView?.ClearActiveSlot();
                 CaptureAndDisableMatchHudSelectables();
                 _cinematicHudLocked = true;

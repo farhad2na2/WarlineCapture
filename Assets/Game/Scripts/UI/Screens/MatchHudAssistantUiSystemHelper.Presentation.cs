@@ -120,6 +120,7 @@ namespace Game.UI.Runtime
             _lastHighlightModel = UiAssistantHighlightModel.Empty;
             _activeCommandMode = TacticalCommandMode.None;
             _tutorialWorldTargetCompleted = false;
+            ClearTutorialPresentationState();
         }
 
         public void ApplyReadModel(UiAssistantPanelModel model)
@@ -137,7 +138,7 @@ namespace Game.UI.Runtime
             _popupView.ApplyTutorialInteractionState(
                 _activeCommandMode,
                 _tutorialWorldTargetCompleted);
-            PresentActiveTutorial(model);
+            QueueTutorialPresentation(model, previousTutorialStep);
         }
 
         public void ApplyHighlightReadModel(UiAssistantHighlightModel model)
@@ -157,6 +158,14 @@ namespace Game.UI.Runtime
             _activeCommandMode = TacticalCommandMode.None;
             _tutorialWorldTargetCompleted = false;
             _highlightPresentationSystem.ResetForMissionAttempt();
+            ClearTutorialPresentationState();
+            ClosePanelWithoutInputCapture();
+        }
+
+        public void SuspendForCinematic()
+        {
+            _tutorialCinematicSuspended = true;
+            _tutorialShowAtUnscaledTime = -1f;
             ClosePanelWithoutInputCapture();
         }
 
@@ -198,19 +207,20 @@ namespace Game.UI.Runtime
             _highlightPresentationSystem.CompleteWorldTarget(mode);
             bool completesTutorialTarget =
                 (_lastPanelModel.TutorialStep == 2 && mode == TacticalCommandMode.Move) ||
-                (_lastPanelModel.TutorialStep == 4 && mode == TacticalCommandMode.Attack);
+                (_lastPanelModel.TutorialStep is 3 or 4 && mode == TacticalCommandMode.Attack);
             if (!completesTutorialTarget)
                 return;
 
             _tutorialWorldTargetCompleted = true;
-            _popupView?.ApplyTutorialInteractionState(
-                _activeCommandMode,
-                worldTargetCompleted: true);
+            CompleteTutorialStep(
+                _lastPanelModel.TutorialStep,
+                finalStep: mode == TacticalCommandMode.Attack);
         }
 
-        public void TickHighlight()
+        public void TickHighlight(float unscaledTime)
         {
             _highlightPresentationSystem.Tick();
+            TickTutorialPresentation(unscaledTime);
         }
 
         public bool TryClosePanel()
@@ -267,7 +277,8 @@ namespace Game.UI.Runtime
             _panelUiSystem.Bind(_popupView, _accessStateText, _accessCueText);
             _highlightPresentationSystem.Bind(
                 _popupView.PreviewHighlight,
-                HandleGuidedCommandModeAcknowledged);
+                HandleGuidedCommandModeAcknowledged,
+                HandleSquadSelectionAcknowledged);
             _panelUiSystem.ApplyReadModel(_lastPanelModel);
             _highlightPresentationSystem.ApplyReadModel(_lastHighlightModel);
             _popupView.Hide();
@@ -328,13 +339,17 @@ namespace Game.UI.Runtime
         private void ExecuteRecommendation()
         {
             CaptureUiOnly();
-            if (UiShellRuntimeGateway.TryEnqueueAssistantCommandIntent(
+            if (!UiShellRuntimeGateway.TryEnqueueAssistantCommandIntent(
                     UiAssistantCommandIntentKind.ExecuteRecommendation,
-                    fromTakeover: true) &&
-                _lastPanelModel.TutorialStep == 0)
-            {
+                    fromTakeover: true))
+                return;
+
+            if (_lastPanelModel.TutorialStep == 0)
                 SetPanelOpen(false);
-            }
+            else
+                CompleteTutorialStep(
+                    _lastPanelModel.TutorialStep,
+                    finalStep: _lastPanelModel.RecommendationKind == 3);
         }
 
         private void StopAssistantControl()
@@ -359,19 +374,6 @@ namespace Game.UI.Runtime
             }
 
             MirrorPanelOpen(open);
-        }
-
-        private void PresentActiveTutorial(UiAssistantPanelModel model)
-        {
-            if (!model.HasRecommendation || model.TutorialStep == 0)
-                return;
-            if (UiShellRuntimeGateway.TryReadMissionHudRestrictions(
-                    out UiMissionHudRestrictionsModel restrictions) &&
-                restrictions.CinematicInteractionLocked)
-                return;
-
-            if (!IsPanelOpen)
-                SetPanelOpen(true);
         }
 
         private void HandleGuidedCommandModeAcknowledged(TacticalCommandMode mode)

@@ -83,6 +83,8 @@ namespace Game.Components
         public byte MoveToCoverComplete;
         public byte ThreatConfirmed;
         public byte AttackIssued;
+        public byte FinalePresentationRequired;
+        public byte FinalePresentationComplete;
     }
 
     [InternalBufferCapacity(4)]
@@ -156,6 +158,10 @@ namespace Game.Components
     {
     }
 
+    public struct CampaignMissionCombatSuppressedTag : IComponentData
+    {
+    }
+
     public struct CampaignMissionOpeningPresentationComponent : IComponentData
     {
         public FixedString64Bytes SessionToken;
@@ -163,6 +169,16 @@ namespace Game.Components
         public float3 HostileFocus;
         public float3 EstablishingFocus;
         public int ElapsedMilliseconds;
+        public byte Stage;
+    }
+
+    public struct CampaignMissionFinalePresentationComponent : IComponentData
+    {
+        public FixedString64Bytes SessionToken;
+        public float3 FriendlyFocus;
+        public float3 HostileFocus;
+        public int ElapsedMilliseconds;
+        public byte Required;
         public byte Stage;
     }
 

@@ -44,6 +44,7 @@ namespace Game.UI.Runtime
         private TacticalCommandMode _activeCommandMode;
         private TacticalCommandMode _awaitingWorldTargetMode;
         private Action<TacticalCommandMode> _commandModeAcknowledged;
+        private Action _squadSelectionAcknowledged;
         private readonly Vector3[] _commandButtonCorners = new Vector3[4];
         private uint _lastVersion = uint.MaxValue;
 
@@ -51,10 +52,12 @@ namespace Game.UI.Runtime
 
         public void Bind(
             Image panelPulse,
-            Action<TacticalCommandMode> commandModeAcknowledged = null)
+            Action<TacticalCommandMode> commandModeAcknowledged = null,
+            Action squadSelectionAcknowledged = null)
         {
             _panelPulse = panelPulse;
             _commandModeAcknowledged = commandModeAcknowledged;
+            _squadSelectionAcknowledged = squadSelectionAcknowledged;
             if (_panelPulse != null)
                 _panelPulse.raycastTarget = false;
             _lastVersion = uint.MaxValue;
@@ -91,6 +94,7 @@ namespace Game.UI.Runtime
             _activeCommandMode = TacticalCommandMode.None;
             _awaitingWorldTargetMode = TacticalCommandMode.None;
             _commandModeAcknowledged = null;
+            _squadSelectionAcknowledged = null;
             _lastVersion = uint.MaxValue;
             LastAppliedModel = UiAssistantHighlightModel.Empty;
         }
@@ -456,6 +460,7 @@ namespace Game.UI.Runtime
             _awaitingWorldTargetMode = TacticalCommandMode.None;
             LastAppliedModel = UiAssistantHighlightModel.Empty;
             ApplyVisual(LastAppliedModel);
+            _squadSelectionAcknowledged?.Invoke();
             UiShellRuntimeGateway.TryEnqueueAssistantCommandIntent(
                 UiAssistantCommandIntentKind.StopAssistantControl);
         }

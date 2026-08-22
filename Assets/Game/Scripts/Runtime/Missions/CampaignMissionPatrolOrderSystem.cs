@@ -21,7 +21,10 @@ namespace Game.Runtime
         private const int HostileArrivalMilliseconds = 10000;
         private const int HostileHoldMilliseconds = 12000;
         private const int RtsReturnArrivalMilliseconds = 15000;
+        private const int FinaleCameraArrivalMilliseconds = 1800;
+        private const int FinalePostKillHoldMilliseconds = 3000;
         private const float CinematicGlideSmoothTimeSeconds = 2.25f;
+        private const float FinaleCameraSmoothTimeSeconds = 1.65f;
         private EntityQuery _cameraFocusQuery;
         private EntityQuery _missionCombatantsQuery;
         private EntityQuery _renderVirtualizationStateQuery;
@@ -68,10 +71,21 @@ namespace Game.Runtime
                     break;
                 }
             }
+            bool tutorialFinaleActive = false;
+            byte tutorialFinaleStage = 0;
+            if (SystemAPI.TryGetSingleton(out CampaignMissionFinalePresentationComponent finaleState) &&
+                finaleState.Required != 0 && finaleState.SessionToken.Equals(runtime.SessionToken))
+            {
+                tutorialFinaleActive = true;
+                tutorialFinaleStage = finaleState.Stage;
+            }
             if (runtime.Outcome == MissionOutcomeKind.None)
             {
                 bool holdCombat = runtime.Phase < MissionPhaseKind.Engage;
-                bool releaseCombat = ShouldReleaseCombat(runtime.Phase);
+                bool releaseCombat = ShouldReleaseCombat(
+                    runtime.Phase,
+                    tutorialFinaleActive,
+                    tutorialFinaleStage);
                 if (runtime.Phase == MissionPhaseKind.Engage)
                 {
                     foreach (RefRW<CampaignMissionOpeningPresentationComponent> opening in
@@ -82,7 +96,6 @@ namespace Game.Runtime
                             continue;
                         current.Stage = 7;
                         opening.ValueRW = current;
-                        releaseCombat = true;
                         routeElapsedMilliseconds = 0;
                     }
                 }
@@ -181,6 +194,71 @@ namespace Game.Runtime
                     opening.ValueRW = current;
                     break;
                 }
+
+                foreach (RefRW<CampaignMissionFinalePresentationComponent> finale in
+                         SystemAPI.Query<RefRW<CampaignMissionFinalePresentationComponent>>())
+                {
+                    CampaignMissionFinalePresentationComponent current = finale.ValueRO;
+                    if (current.Required == 0 || !current.SessionToken.Equals(runtime.SessionToken) ||
+                        current.Stage >= 4)
+                        continue;
+
+                    if (current.Stage == 0 && runtime.Phase == MissionPhaseKind.Engage &&
+                        facts.AttackIssued != 0 && focus.Requested == 0)
+                    {
+                        float3 direction = current.HostileFocus - current.FriendlyFocus;
+                        float yaw = ComputeCombatRevealYaw(direction);
+                        state.EntityManager.SetComponentData(focusEntity, new RuntimeCameraFocusRequestComponent
+                        {
+                            Requested = 1,
+                            Smooth = 1,
+                            UseTacticalRevealZoom = 5,
+                            UseExplicitYaw = 1,
+                            SmoothTimeSeconds = FinaleCameraSmoothTimeSeconds,
+                            YawDegrees = yaw,
+                            World = math.lerp(current.FriendlyFocus, current.HostileFocus, 0.48f)
+                        });
+                        current.Stage = 1;
+                        current.ElapsedMilliseconds = 0;
+                    }
+
+                    if (current.Stage == 1)
+                    {
+                        current.ElapsedMilliseconds = SaturatingAddMilliseconds(
+                            current.ElapsedMilliseconds, SystemAPI.Time.DeltaTime);
+                        if (current.ElapsedMilliseconds >= FinaleCameraArrivalMilliseconds)
+                        {
+                            current.Stage = 2;
+                            current.ElapsedMilliseconds = 0;
+                            RemoveCombatSuppression(
+                                state.EntityManager,
+                                _missionCombatantsQuery,
+                                runtime.SessionToken);
+                        }
+                    }
+                    else if (current.Stage == 2 && runtime.Phase == MissionPhaseKind.SecureCorridor)
+                    {
+                        current.Stage = 3;
+                        current.ElapsedMilliseconds = 0;
+                    }
+                    else if (current.Stage == 3)
+                    {
+                        current.ElapsedMilliseconds = SaturatingAddMilliseconds(
+                            current.ElapsedMilliseconds, SystemAPI.Time.DeltaTime);
+                        if (current.ElapsedMilliseconds >= FinalePostKillHoldMilliseconds)
+                        {
+                            current.Stage = 4;
+                            RefRW<CampaignMissionAttemptFactsComponent> factsRw =
+                                SystemAPI.GetSingletonRW<CampaignMissionAttemptFactsComponent>();
+                            CampaignMissionAttemptFactsComponent completedFacts = factsRw.ValueRO;
+                            completedFacts.FinalePresentationComplete = 1;
+                            factsRw.ValueRW = completedFacts;
+                        }
+                    }
+
+                    finale.ValueRW = current;
+                    break;
+                }
             }
             ref CampaignMissionDefinitionBlob definition = ref catalog.Blob.Value.Missions[definitionIndex];
             NativeList<Entity> targets = new(Allocator.Temp);
@@ -220,6 +298,21 @@ namespace Game.Runtime
 
         internal static bool ShouldReleaseCombat(MissionPhaseKind phase) =>
             phase is MissionPhaseKind.Engage or MissionPhaseKind.SecureCorridor;
+
+        internal static bool ShouldReleaseCombat(
+            MissionPhaseKind phase,
+            bool tutorialFinaleActive,
+            byte tutorialFinaleStage) =>
+            ShouldReleaseCombat(phase) && (!tutorialFinaleActive || tutorialFinaleStage >= 2);
+
+        internal static float ComputeCombatRevealYaw(float3 direction)
+        {
+            float2 groundDirection = direction.xz;
+            if (!math.all(math.isfinite(groundDirection)) || math.lengthsq(groundDirection) < 0.0001f)
+                return RuntimeCameraFocusRequestUtility.TacticalRevealYaw;
+            groundDirection = math.normalize(groundDirection);
+            return math.degrees(math.atan2(groundDirection.x, groundDirection.y));
+        }
 
         internal static bool ShouldIssuePatrolRoute(
             in FixedString64Bytes missionId,
@@ -271,6 +364,23 @@ namespace Game.Runtime
         {
             int delta = (int)math.min(int.MaxValue, math.max(0f, math.round(deltaSeconds * 1000f)));
             return current >= int.MaxValue - delta ? int.MaxValue : current + delta;
+        }
+
+        private static void RemoveCombatSuppression(
+            EntityManager entityManager,
+            EntityQuery missionCombatantsQuery,
+            in FixedString64Bytes sessionToken)
+        {
+            using NativeArray<Entity> entities = missionCombatantsQuery.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity entity = entities[i];
+                if (!entityManager.HasComponent<CampaignMissionCombatSuppressedTag>(entity) ||
+                    !entityManager.GetComponentData<CampaignMissionUnitRoleComponent>(entity)
+                        .SessionToken.Equals(sessionToken))
+                    continue;
+                entityManager.RemoveComponent<CampaignMissionCombatSuppressedTag>(entity);
+            }
         }
     }
 }

@@ -22,10 +22,11 @@ namespace Game.Runtime
         private const int HostileHoldMilliseconds = 12000;
         private const int RtsReturnArrivalMilliseconds = 15000;
         internal const int FinaleCameraArrivalMilliseconds = 900;
-        private const int FinalePostKillHoldMilliseconds = 3000;
+        internal const int FinalePostKillHoldMilliseconds = 3000;
         private const float CinematicGlideSmoothTimeSeconds = 2.25f;
         internal const float FinaleCameraSmoothTimeSeconds = 0.75f;
         internal const float FinaleFocusTowardHostiles = 0.38f;
+        internal const float FinaleCasualtyFocusTowardHostiles = 0.78f;
         private EntityQuery _cameraFocusQuery;
         private EntityQuery _missionCombatantsQuery;
         private EntityQuery _renderVirtualizationStateQuery;
@@ -254,8 +255,32 @@ namespace Game.Runtime
                                 ref finaleStructuralChanges);
                         }
                     }
-                    else if (current.Stage == 2 && runtime.Phase == MissionPhaseKind.SecureCorridor)
+                    else if (current.Stage == 2 && runtime.Phase == MissionPhaseKind.SecureCorridor &&
+                             focus.Requested == 0)
                     {
+                        float3 friendlyFocus = current.FriendlyFocus;
+                        float3 casualtyFocus = current.HostileFocus;
+                        if (CampaignMissionFinaleCameraUtility.TryComputeCasualtyFocus(
+                                state.EntityManager,
+                                _missionCombatantsQuery,
+                                runtime.SessionToken,
+                                out float3 liveFriendlyFocus,
+                                out float3 liveCasualtyFocus))
+                        {
+                            friendlyFocus = liveFriendlyFocus;
+                            casualtyFocus = liveCasualtyFocus;
+                        }
+
+                        state.EntityManager.SetComponentData(focusEntity, new RuntimeCameraFocusRequestComponent
+                        {
+                            Requested = 1,
+                            Smooth = 1,
+                            UseTacticalRevealZoom = 5,
+                            UseExplicitYaw = 1,
+                            SmoothTimeSeconds = FinaleCameraSmoothTimeSeconds,
+                            YawDegrees = ComputeCombatRevealYaw(casualtyFocus - friendlyFocus),
+                            World = ComputeCasualtyRevealFocus(friendlyFocus, casualtyFocus)
+                        });
                         current.Stage = 3;
                         current.ElapsedMilliseconds = 0;
                     }
@@ -337,50 +362,21 @@ namespace Game.Runtime
         internal static float3 ComputeCombatRevealFocus(float3 friendlyFocus, float3 hostileFocus) =>
             math.lerp(friendlyFocus, hostileFocus, FinaleFocusTowardHostiles);
 
+        internal static float3 ComputeCasualtyRevealFocus(float3 friendlyFocus, float3 casualtyFocus) =>
+            math.lerp(friendlyFocus, casualtyFocus, FinaleCasualtyFocusTowardHostiles);
+
         internal static bool TryComputeLiveCombatFocus(
             EntityManager entityManager,
             EntityQuery missionCombatantsQuery,
             in FixedString64Bytes sessionToken,
             out float3 friendlyFocus,
-            out float3 hostileFocus)
-        {
-            friendlyFocus = float3.zero;
-            hostileFocus = float3.zero;
-            int friendlyCount = 0;
-            int hostileCount = 0;
-            using NativeArray<Entity> combatants = missionCombatantsQuery.ToEntityArray(Allocator.Temp);
-            for (int index = 0; index < combatants.Length; index++)
-            {
-                Entity entity = combatants[index];
-                CampaignMissionUnitRoleComponent role =
-                    entityManager.GetComponentData<CampaignMissionUnitRoleComponent>(entity);
-                UnitHealth health = entityManager.GetComponentData<UnitHealth>(entity);
-                float3 position = entityManager.GetComponentData<LocalTransform>(entity).Position;
-                if (!role.SessionToken.Equals(sessionToken) || health.Current <= 0 ||
-                    !math.all(math.isfinite(position)))
-                {
-                    continue;
-                }
-
-                Faction faction = entityManager.GetComponentData<Faction>(entity);
-                if (FactionIdentity.IsPlayerControlled(faction.Id))
-                {
-                    friendlyFocus += position;
-                    friendlyCount++;
-                }
-                else
-                {
-                    hostileFocus += position;
-                    hostileCount++;
-                }
-            }
-
-            if (friendlyCount == 0 || hostileCount == 0)
-                return false;
-            friendlyFocus /= friendlyCount;
-            hostileFocus /= hostileCount;
-            return true;
-        }
+            out float3 hostileFocus) =>
+            CampaignMissionFinaleCameraUtility.TryComputeLiveCombatFocus(
+                entityManager,
+                missionCombatantsQuery,
+                sessionToken,
+                out friendlyFocus,
+                out hostileFocus);
 
         internal static bool ShouldIssuePatrolRoute(
             in FixedString64Bytes missionId,

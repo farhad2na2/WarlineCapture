@@ -28,13 +28,14 @@ public sealed class CombatDeathValidationTests
             var tests = new CombatDeathValidationTests();
             tests.SoldierAttack_KillsTargetRetainsVisibleCorpseThenCullsOffscreenWithoutRespawn();
             tests.UnitDeathPoseFreeze_UsesFinalAnimationFrame();
+            tests.DeathPlayback_ResetsClockAndStopsAtFirstFinalFrame();
             tests.AirVehicleDeath_WithDestroyedVisual_HidesAliveVisualAndSpawnsDestroyedVisualWithoutGrid();
             tests.UnitModelSpawn_DoesNotSpawnDuplicateDetailModelWhenDetailedVisualAlreadyExists();
             tests.UnitRenderVisualExclusivity_HidesInactiveLodRootsRecursively();
             tests.UnitRenderVisualExclusivity_AnimatedCorpseKeepsActiveLiveRootVisible();
             tests.UnitRenderVisualExclusivity_DestroyedVehicleHidesAliveRootsAndShowsDestroyedRoot();
             tests.VehicleWreckCleanup_FinalizesExpiredWreckAndDescendants();
-            Debug.Log("[CombatDeathFocusedValidation] result=Passed tests=8");
+            Debug.Log("[CombatDeathFocusedValidation] result=Passed tests=9");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -156,6 +157,73 @@ public sealed class CombatDeathValidationTests
 
         Assert.AreEqual(new float3(19f, 19f, 0f), renderConfig,
             "The frozen death pose must use the last frame twice so interpolation cannot wrap to frame zero.");
+    }
+
+    [Test]
+    public void DeathPlayback_ResetsClockAndStopsAtFirstFinalFrame()
+    {
+        using var world = new World(nameof(DeathPlayback_ResetsClockAndStopsAtFirstFinalFrame));
+        EntityManager em = world.EntityManager;
+        Entity unit = em.CreateEntity();
+        em.AddBuffer<UnitAnimationOrderEntry>(unit).Add(new UnitAnimationOrderEntry
+        {
+            Kind = (byte)Game.Configs.UnitAnimationKind.Death01
+        });
+
+        BlobAssetReference<MaterialAnimatorBlobAsset> animatorBlob;
+        using (BlobBuilder builder = new(Allocator.Temp))
+        {
+            ref MaterialAnimatorBlobAsset animator = ref builder.ConstructRoot<MaterialAnimatorBlobAsset>();
+            animator.BoneCount = 50;
+            BlobBuilderArray<MaterialAnimationBlobAsset> animations =
+                builder.Allocate(ref animator.Animations, 13);
+            animations[12] = new MaterialAnimationBlobAsset
+            {
+                Fps = 60,
+                Frames = 44,
+                Speed = 1,
+                Loop = false
+            };
+            builder.Allocate(ref animator.Alphas, 0);
+            animatorBlob = builder.CreateBlobAssetReference<MaterialAnimatorBlobAsset>(Allocator.Persistent);
+        }
+
+        try
+        {
+            Entity animatorEntity = em.CreateEntity(typeof(MaterialAnimatorBlobData));
+            em.SetComponentData(animatorEntity, new MaterialAnimatorBlobData { Value = animatorBlob });
+            Entity visual = em.CreateEntity(
+                typeof(MaterialAnimationData),
+                typeof(MaterialAnimationIndex),
+                typeof(MaterialAnimatorLink));
+            em.SetComponentData(visual, new MaterialAnimationData
+            {
+                AnimationIndex = 3,
+                TransitionIndex = 7,
+                Time = 9f,
+                TransitionTime = 0.4f
+            });
+            em.SetComponentData(visual, new MaterialAnimatorLink { Value = animatorEntity });
+            em.SetComponentData(visual, new MaterialAnimationIndex { Value = 3 });
+            em.AddBuffer<Child>(unit).Add(new Child { Value = visual });
+
+            float duration = UnitDeathAnimationPlaybackUtility.Prepare(em, unit, 1.25f);
+            MaterialAnimationData reset = em.GetComponentData<MaterialAnimationData>(visual);
+            MaterialAnimationIndex target = em.GetComponentData<MaterialAnimationIndex>(visual);
+
+            Assert.That(duration, Is.EqualTo(43f / 60f).Within(0.0001f),
+                "Death playback must freeze on the first traversal's final frame before modulo wrapping.");
+            Assert.That(reset.Time, Is.Zero, "A death clip must begin at frame zero, not the previous animation phase.");
+            Assert.That(reset.AnimationIndex, Is.EqualTo(12),
+                "Death must replace the previous clip immediately instead of blending from its stale clock.");
+            Assert.That(target.Value, Is.EqualTo(12));
+            Assert.That(reset.TransitionIndex, Is.EqualTo(12));
+            Assert.That(reset.TransitionTime, Is.Zero);
+        }
+        finally
+        {
+            animatorBlob.Dispose();
+        }
     }
 
     [Test]

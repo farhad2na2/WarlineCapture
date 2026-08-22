@@ -95,9 +95,13 @@ namespace Game.Runtime
                     continue;
                 }
 
+                float playbackDuration = UnitDeathAnimationPlaybackUtility.Prepare(
+                    em,
+                    entity,
+                    candidate.Duration);
                 em.AddComponentData(entity, new UnitDeathAnimationComponent
                 {
-                    TimeRemaining = candidate.Duration
+                    TimeRemaining = playbackDuration
                 });
             }
 

@@ -37,6 +37,8 @@ public sealed class M01GuidedMoveRouteTests
             passed++;
             tests.FinaleCameraUsesLiveCombatantsAndHudSafeFraming();
             passed++;
+            tests.FinaleMovesToMissionCasualtiesBeforeVictory();
+            passed++;
             M01FirstContactHudRestrictionTests.CinematicInteractionLockTracksOpeningReturn();
             passed++;
             Debug.Log($"[M01TutorialFinaleValidation] result=Passed tests={passed}");
@@ -172,6 +174,71 @@ public sealed class M01GuidedMoveRouteTests
             Assert.That(hostileViewport.x, Is.InRange(0.28f, 0.72f));
             Assert.That(hostileViewport.y, Is.InRange(0.62f, 0.84f),
                 "The enemy line must remain below the top HUD and clearly visible ahead.");
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(cameraOwner);
+        }
+    }
+
+    [Test]
+    public void FinaleMovesToMissionCasualtiesBeforeVictory()
+    {
+        using World world = new(nameof(FinaleMovesToMissionCasualtiesBeforeVictory));
+        EntityManager em = world.EntityManager;
+        FixedString64Bytes session = new("m01-casualty-camera");
+        CreateCombatant(em, session, FactionIdentity.PlayerFactionId, new float3(-1f, 0f, 718f));
+        CreateCombatant(em, session, FactionIdentity.PlayerFactionId, new float3(1f, 0f, 720f));
+        CreateCombatant(em, session, FactionIdentity.EnemyFactionId, new float3(-1f, 0f, 734f), health: 0);
+        CreateCombatant(em, session, FactionIdentity.EnemyFactionId, new float3(0f, 0f, 735f), health: 0);
+        CreateCombatant(em, session, FactionIdentity.EnemyFactionId, new float3(1f, 0f, 736f), health: 0);
+        CreateCombatant(em, session, FactionIdentity.PlayerFactionId, new float3(0f, 0f, 690f), health: 0);
+        CreateCombatant(em, new FixedString64Bytes("other-session"), FactionIdentity.EnemyFactionId,
+            new float3(0f, 0f, 999f), health: 0);
+
+        using EntityQuery query = em.CreateEntityQuery(
+            ComponentType.ReadOnly<CampaignMissionUnitRoleComponent>(),
+            ComponentType.ReadOnly<Faction>(),
+            ComponentType.ReadOnly<UnitHealth>(),
+            ComponentType.ReadOnly<UnitCombat>(),
+            ComponentType.ReadOnly<LocalTransform>());
+        Assert.That(CampaignMissionFinaleCameraUtility.TryComputeCasualtyFocus(
+            em, query, session, out float3 friendlyFocus, out float3 casualtyFocus), Is.True);
+        Assert.That(math.distance(friendlyFocus, new float3(0f, 0f, 719f)), Is.LessThan(0.001f));
+        Assert.That(math.distance(casualtyFocus, new float3(0f, 0f, 735f)), Is.LessThan(0.001f),
+            "The final camera must target this mission's dead hostile bodies only.");
+        Assert.That(CampaignMissionPatrolOrderSystem.FinaleCasualtyFocusTowardHostiles,
+            Is.EqualTo(0.78f).Within(0.001f));
+        Assert.That(CampaignMissionPatrolOrderSystem.FinalePostKillHoldMilliseconds, Is.EqualTo(3000),
+            "Victory must wait while the casualty shot is visible.");
+
+        float3 revealFocus = CampaignMissionPatrolOrderSystem.ComputeCasualtyRevealFocus(
+            friendlyFocus, casualtyFocus);
+        Assert.That(math.distance(revealFocus, new float3(0f, 0f, 731.48f)), Is.LessThan(0.001f));
+
+        GameObject cameraOwner = new(nameof(FinaleMovesToMissionCasualtiesBeforeVictory));
+        try
+        {
+            Camera camera = cameraOwner.AddComponent<Camera>();
+            camera.aspect = 2016f / 896f;
+            camera.fieldOfView = RuntimeCameraFocusRequestUtility.CombatRevealFieldOfView;
+            float pitch = RuntimeCameraFocusRequestUtility.CombatRevealPitch;
+            float yaw = CampaignMissionPatrolOrderSystem.ComputeCombatRevealYaw(casualtyFocus - friendlyFocus);
+            Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
+            Vector3 groundForward = rotation * Vector3.forward;
+            groundForward.y = 0f;
+            groundForward.Normalize();
+            float height = RuntimeCameraFocusRequestUtility.CombatRevealHeight;
+            float groundOffset = height / Mathf.Tan(pitch * Mathf.Deg2Rad);
+            Vector3 position = new(revealFocus.x, height, revealFocus.z);
+            position -= groundForward * groundOffset;
+            camera.transform.SetPositionAndRotation(position, rotation);
+
+            Vector3 casualtyViewport = camera.WorldToViewportPoint((Vector3)casualtyFocus + Vector3.up * 0.25f);
+            Assert.That(casualtyViewport.z, Is.GreaterThan(0f));
+            Assert.That(casualtyViewport.x, Is.InRange(0.28f, 0.72f));
+            Assert.That(casualtyViewport.y, Is.InRange(0.45f, 0.72f),
+                "The bodies must be centered in the unobstructed combat viewport before victory appears.");
         }
         finally
         {

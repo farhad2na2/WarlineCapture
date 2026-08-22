@@ -31,6 +31,7 @@ namespace Game.UI.Runtime
         private bool _mirroredPanelOpen;
         private UiAssistantPanelModel _lastPanelModel = UiAssistantPanelModel.Empty;
         private UiAssistantHighlightModel _lastHighlightModel = UiAssistantHighlightModel.Empty;
+        private byte _lastPresentedTutorialStep;
 
         public bool IsPanelOpen => _popupView != null && _popupView.IsOpen;
         public bool IsBound => _buttonRoot != null && _popupView != null;
@@ -116,6 +117,7 @@ namespace Game.UI.Runtime
             _highlightPresentationSystem.Unbind();
             _lastPanelModel = UiAssistantPanelModel.Empty;
             _lastHighlightModel = UiAssistantHighlightModel.Empty;
+            _lastPresentedTutorialStep = 0;
         }
 
         public void ApplyReadModel(UiAssistantPanelModel model)
@@ -127,6 +129,7 @@ namespace Game.UI.Runtime
             if (_popupView == null && !EnsurePopupView())
                 return;
             _panelUiSystem.ApplyReadModel(model);
+            PresentTutorialStepOnce(model);
         }
 
         public void ApplyHighlightReadModel(UiAssistantHighlightModel model)
@@ -143,6 +146,7 @@ namespace Game.UI.Runtime
         public void ResetForMissionAttempt()
         {
             _lastHighlightModel = UiAssistantHighlightModel.Empty;
+            _lastPresentedTutorialStep = 0;
             _highlightPresentationSystem.ResetForMissionAttempt();
             ClosePanelWithoutInputCapture();
         }
@@ -318,6 +322,20 @@ namespace Game.UI.Runtime
             }
 
             MirrorPanelOpen(open);
+        }
+
+        private void PresentTutorialStepOnce(UiAssistantPanelModel model)
+        {
+            if (!model.HasRecommendation || model.TutorialStep == 0 ||
+                model.TutorialStep == _lastPresentedTutorialStep)
+                return;
+            if (UiShellRuntimeGateway.TryReadMissionHudRestrictions(
+                    out UiMissionHudRestrictionsModel restrictions) &&
+                restrictions.CinematicInteractionLocked)
+                return;
+
+            _lastPresentedTutorialStep = model.TutorialStep;
+            SetPanelOpen(true);
         }
 
         private void MirrorPanelOpen(bool open, bool force = false)

@@ -32,6 +32,7 @@ namespace Game.UI.Runtime
         }
 
         private RectTransform _landscapeLayout;
+        private AriaTutorialBriefingView _tutorialBriefing;
         private Button _headerCloseButton;
         private Button _closeButton;
         private Button _showMeButton;
@@ -100,6 +101,7 @@ namespace Game.UI.Runtime
                 return true;
 
             _landscapeLayout = FindComponent<RectTransform>("LandscapeLayout");
+            _tutorialBriefing = GetComponentInChildren<AriaTutorialBriefingView>(true);
             _headerCloseButton = FindComponent<Button>("HeaderCloseButton");
             _closeButton = FindComponent<Button>("CloseButton");
             _showMeButton = FindComponent<Button>("ShowMeButton");
@@ -155,6 +157,8 @@ namespace Game.UI.Runtime
             CacheAccessibilityDefaults();
 
             _hierarchyBound = _landscapeLayout != null &&
+                              _tutorialBriefing != null &&
+                              _tutorialBriefing.TryBindHierarchy() &&
                               _headerCloseButton != null &&
                               _closeButton != null &&
                               _showMeButton != null &&
@@ -188,6 +192,10 @@ namespace Game.UI.Runtime
             _showMeButton.onClick.AddListener(RequestShowRecommendation);
             _doItButton.onClick.AddListener(RequestExecuteRecommendation);
             _stopButton.onClick.AddListener(RequestStop);
+            _tutorialBriefing.BindActions(
+                RequestClose,
+                RequestShowRecommendation,
+                RequestExecuteRecommendation);
         }
 
         public void UnbindActions()
@@ -202,6 +210,8 @@ namespace Game.UI.Runtime
                 _doItButton.onClick.RemoveListener(RequestExecuteRecommendation);
             if (_stopButton != null)
                 _stopButton.onClick.RemoveListener(RequestStop);
+            if (_tutorialBriefing != null)
+                _tutorialBriefing.UnbindActions();
 
             _closeRequested = null;
             _showRecommendationRequested = null;
@@ -224,7 +234,12 @@ namespace Game.UI.Runtime
 
         public bool ContainsScreenPoint(Vector2 screenPosition)
         {
-            if (!IsOpen || _landscapeLayout == null)
+            if (!IsOpen)
+                return false;
+
+            if (_tutorialBriefing != null && _tutorialBriefing.gameObject.activeSelf)
+                return _tutorialBriefing.ContainsScreenPoint(screenPosition);
+            if (_landscapeLayout == null)
                 return false;
 
             Canvas canvas = _landscapeLayout.GetComponentInParent<Canvas>();
@@ -241,6 +256,9 @@ namespace Game.UI.Runtime
 
         public void ApplyAccessibility(bool largeTextEnabled, bool highContrastEnabled)
         {
+            if (_tutorialBriefing != null)
+                _tutorialBriefing.ApplyAccessibility(largeTextEnabled, highContrastEnabled);
+
             byte state = (byte)((largeTextEnabled ? 1 : 0) | (highContrastEnabled ? 2 : 0));
             if (_accessibilityState == state || _accessibilityTexts == null)
                 return;
@@ -348,6 +366,12 @@ namespace Game.UI.Runtime
         public void ApplyRecommendation(UiAssistantPanelModel model)
         {
             bool visible = model.HasRecommendation;
+            bool tutorialVisible = visible && model.TutorialStep > 0;
+            SetActive(_landscapeLayout != null ? _landscapeLayout.gameObject : null, !tutorialVisible);
+            SetActive(_tutorialBriefing != null ? _tutorialBriefing.gameObject : null, tutorialVisible);
+            if (tutorialVisible)
+                _tutorialBriefing.Apply(model);
+
             SetText(_recommendationTitle, visible ? model.RecommendationTitle : string.Empty);
             SetText(_recommendationReason, visible ? model.RecommendationBody : string.Empty);
             SetText(_recommendationPriorityText, visible ? model.RecommendationPriorityText : string.Empty);

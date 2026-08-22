@@ -4,6 +4,7 @@ using UnityEngine;
 
 public sealed class AssistantRolloutValidationTests
 {
+    [UnityEditor.MenuItem("Game/Validation/Run ARIA Assistant Rollout Focused")]
     public static void RunFocusedValidation()
     {
         int passed = 0;

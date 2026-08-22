@@ -29,6 +29,7 @@ public sealed class AssistantPerformanceDiagnosticsValidation
     private const double P95BudgetMs = 0.75d;
     private const long AllocationBudgetBytes = 0;
 
+    [UnityEditor.MenuItem("Game/Validation/Run ARIA Assistant Performance")]
     public static void RunBatchValidation()
     {
         try
@@ -352,6 +353,11 @@ public sealed class AssistantPerformanceDiagnosticsValidation
                 new FixedString64Bytes("Hostile " + (i + 1)),
                 new float3(16f + i * 2f, 0f, 4f));
         }
+
+        em.AddComponentData(hostiles[0], new UnitMovementBehavior
+        {
+            UsesVehicleMotion = 1
+        });
     }
 
     private static Entity CreateCombatEntity(

@@ -120,7 +120,9 @@ namespace Game.UI.Shell.Ecs
                 TargetEntity = guidance.TargetEntity, TargetCell = guidance.TargetCell, WorldPosition = guidance.WorldPosition,
                 TargetId = guidance.TargetId, Score = 94f, Title = guidance.Title, Reason = guidance.Body,
                 ActionLabel = guidance.ActionLabel, HasTargetCell = guidance.HasTargetCell, HasWorldPosition = guidance.HasWorldPosition,
-                CanShow = guidance.CanShow, CanExecute = guidance.CanExecute
+                CanShow = guidance.CanShow, CanExecute = guidance.CanExecute,
+                TutorialStep = (byte)guidance.Prompt,
+                TutorialStepCount = (byte)CampaignMissionGuidancePromptKind.SecureCorridor
             };
             return true;
         }
@@ -139,7 +141,9 @@ namespace Game.UI.Shell.Ecs
                    current.RejectionReason.Equals(expected.RejectionReason) && current.ActionLabel.Equals(expected.ActionLabel) &&
                    current.HasTargetCell == expected.HasTargetCell && current.HasWorldPosition == expected.HasWorldPosition &&
                    current.CanShow == expected.CanShow && current.CanExecute == expected.CanExecute &&
-                   current.CanTakeControl == expected.CanTakeControl;
+                   current.CanTakeControl == expected.CanTakeControl &&
+                   current.TutorialStep == expected.TutorialStep &&
+                   current.TutorialStepCount == expected.TutorialStepCount;
         }
     }
 }

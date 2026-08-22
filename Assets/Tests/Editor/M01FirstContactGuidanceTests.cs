@@ -14,6 +14,7 @@ using UnityEngine;
 
 public sealed class M01FirstContactGuidanceTests
 {
+    [UnityEditor.MenuItem("Game/Validation/Run M01 First Contact Guidance Focused")]
     public static void RunFocusedValidation()
     {
         int passed = 0;
@@ -41,7 +42,10 @@ public sealed class M01FirstContactGuidanceTests
               new Entity { Index = 10, Version = 1 }, new Entity { Index = 11, Version = 1 }, new float3(1), new float3(2), out var next), Is.True);
           Assert.That((int)next.Prompt, Is.EqualTo(i + 1)); Assert.That(next.Active, Is.EqualTo(1));
           Assert.That(next.CanExecute, Is.EqualTo(1), $"Full-guidance Do It must remain available for {phases[i]}.");
-          Assert.That(next.ActionLabel.ToString(), Is.EqualTo("DO IT")); }
+          Assert.That(next.ActionLabel.ToString(), Is.EqualTo("DO IT"));
+          Assert.That(AssistantObjectiveProjectionUtility.TryBuildCampaignGuidanceRecommendation(next, out var recommendation), Is.True);
+          Assert.That(recommendation.TutorialStep, Is.EqualTo(i + 1));
+          Assert.That(recommendation.TutorialStepCount, Is.EqualTo(phases.Length)); }
     }
 
     [Test] public static void ShowMeAndDoItStayInsideAriaAuthority()

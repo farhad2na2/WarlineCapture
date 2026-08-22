@@ -20,14 +20,19 @@ public sealed class MatchHudAssistantUiSystemHelperTests
     private const string MatchHudPrefabPath =
         "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab";
     private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
+    private const string AriaPortraitPath =
+        "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_aria.png";
     private bool _openedScene;
 
+    [UnityEditor.MenuItem("Game/Validation/Run ARIA Tutorial Briefing Focused")]
     public static void RunFocusedValidation()
     {
         int passed = 0;
         try
         {
             RunCase(test => test.PopupPrefab_BindsLockedLandscapeHierarchyAndMenuReference());
+            passed++;
+            RunCase(test => test.TutorialBriefing_AutoOpensOncePerStepAfterCinematicAndResetsForReplay());
             passed++;
             RunCase(test => test.MatchHudPrefab_ContainsEditableAssistantButton());
             passed++;
@@ -175,11 +180,85 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.NotNull(FindNamed(view.transform, "ReportRow1"));
         Assert.NotNull(FindNamed(view.transform, "TargetMarker2"));
 
+        AriaTutorialBriefingView tutorial = view.GetComponentInChildren<AriaTutorialBriefingView>(true);
+        Assert.NotNull(tutorial, "POP-13 must contain the prefab-authored tutorial briefing surface.");
+        Assert.IsTrue(tutorial.TryBindHierarchy());
+        Assert.AreEqual(
+            AriaPortraitPath,
+            AssetDatabase.GetAssetPath(tutorial.PortraitImage.sprite));
+        Assert.IsTrue(Contains(tutorial.BriefingLayout, tutorial.ShowMeButton.transform as RectTransform));
+        Assert.IsTrue(Contains(tutorial.BriefingLayout, tutorial.DoItButton.transform as RectTransform));
+        Assert.GreaterOrEqual((tutorial.ShowMeButton.transform as RectTransform).rect.height, 110f);
+        Assert.GreaterOrEqual((tutorial.DoItButton.transform as RectTransform).rect.height, 110f);
+
         Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
         _openedScene = true;
         UIShellContentView content = FindInScene<UIShellContentView>(scene);
         Assert.NotNull(content);
         Assert.AreSame(prefab, content.AriaCommandAssistantPopupPrefab);
+    }
+
+    [Test]
+    public void TutorialBriefing_AutoOpensOncePerStepAfterCinematicAndResetsForReplay()
+    {
+        CreateHudHarness(true, out RectTransform overlay, out RectTransform header, out _);
+        var gateway = new FakeAssistantPanelGateway(
+            CreateStructuredModel(801u, recommendationKind: 1, recommendationTargetKind: 6,
+                tutorialStep: 1, tutorialStepCount: 5),
+            UiAssistantHighlightModel.Empty)
+        {
+            CinematicInteractionLocked = true
+        };
+        UiShellRuntimeGateway.Register(gateway);
+        var ui = new MainMenuPlayUI();
+        ui.Init(null, new FakeMatchRuntimeState());
+        ui.BindMatchHudAssistant(header.gameObject, overlay, LoadPopupPrefab());
+
+        ui.Update();
+        AriaCommandAssistantPopupView popup =
+            overlay.GetComponentInChildren<AriaCommandAssistantPopupView>(true);
+        AriaTutorialBriefingView tutorial =
+            popup.GetComponentInChildren<AriaTutorialBriefingView>(true);
+        Assert.IsFalse(popup.IsOpen, "The tutorial briefing must wait for the opening cinematic lock.");
+
+        gateway.CinematicInteractionLocked = false;
+        SetPrivateField(ui, "_nextAssistantPanelRefreshTime", 0f);
+        ui.Update();
+        Assert.IsTrue(popup.IsOpen);
+        Assert.IsTrue(tutorial.gameObject.activeSelf);
+        Assert.IsFalse(popup.LandscapeLayout.gameObject.activeSelf);
+        Assert.AreEqual("FOCUS HOSTILE ARMOR", tutorial.TitleText.text);
+        Assert.AreEqual("TRAINING 1 / 5", tutorial.ProgressText.text);
+
+        tutorial.ShowMeButton.onClick.Invoke();
+        Assert.IsFalse(popup.IsOpen);
+        Assert.AreEqual(UiAssistantCommandIntentKind.ShowRecommendation, gateway.LastAssistantIntentKind);
+
+        gateway.AssistantPanel = CreateStructuredModel(
+            802u, recommendationKind: 1, recommendationTargetKind: 6,
+            tutorialStep: 1, tutorialStepCount: 5);
+        SetPrivateField(ui, "_nextAssistantPanelRefreshTime", 0f);
+        ui.Update();
+        Assert.IsFalse(popup.IsOpen, "A refreshed read model must not reopen the same tutorial step.");
+
+        gateway.AssistantPanel = CreateStructuredModel(
+            803u, recommendationKind: 2, recommendationTargetKind: 1,
+            tutorialStep: 2, tutorialStepCount: 5);
+        SetPrivateField(ui, "_nextAssistantPanelRefreshTime", 0f);
+        ui.Update();
+        Assert.IsTrue(popup.IsOpen, "The next tutorial step must present automatically.");
+        Assert.AreEqual("TRAINING 2 / 5", tutorial.ProgressText.text);
+        tutorial.CloseButton.onClick.Invoke();
+
+        MatchHudAssistantUiSystemHelper helper =
+            GetPrivateField<MatchHudAssistantUiSystemHelper>(ui, "_matchHudAssistantUiSystem");
+        helper.ResetForMissionAttempt();
+        gateway.AssistantPanel = CreateStructuredModel(
+            804u, recommendationKind: 1, recommendationTargetKind: 6,
+            tutorialStep: 1, tutorialStepCount: 5);
+        helper.ApplyReadModel(gateway.AssistantPanel);
+        Assert.IsTrue(popup.IsOpen, "A new mission attempt must present step one again.");
+        ui.Dispose();
     }
 
     [Test]
@@ -728,7 +807,9 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         uint version,
         bool canExecute = true,
         byte recommendationKind = 0,
-        byte recommendationTargetKind = 0)
+        byte recommendationTargetKind = 0,
+        byte tutorialStep = 0,
+        byte tutorialStepCount = 0)
     {
         return new UiAssistantPanelModel(
             version,
@@ -756,7 +837,9 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             "PLAYER CONTROL",
             "You are issuing orders directly.",
             recommendationKind: recommendationKind,
-            recommendationTargetKind: recommendationTargetKind);
+            recommendationTargetKind: recommendationTargetKind,
+            tutorialStep: tutorialStep,
+            tutorialStepCount: tutorialStepCount);
     }
 
     private static UiAssistantHighlightModel CreateHighlightModel(
@@ -962,6 +1045,21 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         return RectTransformUtility.WorldToScreenPoint(null, (corners[0] + corners[2]) * 0.5f);
     }
 
+    private static bool Contains(RectTransform parent, RectTransform child)
+    {
+        if (parent == null || child == null)
+            return false;
+        Vector3[] corners = new Vector3[4];
+        child.GetWorldCorners(corners);
+        for (int i = 0; i < corners.Length; i++)
+        {
+            Vector3 local = parent.InverseTransformPoint(corners[i]);
+            if (!parent.rect.Contains(local))
+                return false;
+        }
+        return true;
+    }
+
     private static T FindInScene<T>(Scene scene) where T : Component
     {
         foreach (GameObject root in scene.GetRootGameObjects())
@@ -1001,7 +1099,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         public bool RequestCancelActiveCommandMode() => true;
     }
 
-    private sealed class FakeAssistantPanelGateway : IUiShellRuntimeGateway, IUiAssistantPanelStateGateway
+    private sealed class FakeAssistantPanelGateway : IUiShellRuntimeGateway, IUiAssistantPanelStateGateway,
+        IUiMissionHudRestrictionsGateway
     {
         public UiAssistantHighlightModel AssistantHighlight { get; set; }
         public UiAssistantHighlightModel HighlightAfterShowMe { get; set; }
@@ -1012,6 +1111,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         public List<bool> AssistantPanelOpenStates { get; } = new();
         public bool LastAssistantPanelOpen => AssistantPanelOpenStates.Count > 0 &&
                                               AssistantPanelOpenStates[AssistantPanelOpenStates.Count - 1];
+        public bool CinematicInteractionLocked { get; set; }
 
         public FakeAssistantPanelGateway(UiAssistantPanelModel assistantPanel, UiAssistantHighlightModel assistantHighlight)
         {
@@ -1050,6 +1150,13 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         public bool TryReadMatchHudStatusSurfaces(out UiMatchHudStatusSurfacesModel statusSurfaces) { statusSurfaces = UiMatchHudStatusSurfacesModel.Default; return false; }
         public bool TryReadMatchHudAssistantPanel(out UiAssistantPanelModel assistantPanel) { assistantPanel = AssistantPanel; return true; }
         public bool TryReadMatchHudAssistantHighlight(out UiAssistantHighlightModel assistantHighlight) { assistantHighlight = AssistantHighlight; return AssistantHighlight.Active; }
+        public bool TryReadMissionHudRestrictions(out UiMissionHudRestrictionsModel restrictions)
+        {
+            restrictions = new UiMissionHudRestrictionsModel(
+                "campaign.chapter01.mission01", true, true, true, true, true,
+                CinematicInteractionLocked);
+            return true;
+        }
         public bool TryReadMatchHudMinimap(out UiMatchHudMinimapModel minimap) { minimap = UiMatchHudMinimapModel.Default; return false; }
         public bool TryReadMatchHudPassengerDrawer(out UiMatchHudPassengerDrawerModel passengerDrawer) { passengerDrawer = UiMatchHudPassengerDrawerModel.Hidden; return false; }
         public bool TryReadMatchHudSquadTray(out UiMatchHudSquadTrayModel squadTray) { squadTray = UiMatchHudSquadTrayModel.Default; return false; }

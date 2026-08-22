@@ -259,6 +259,8 @@ namespace Game.Components
         public byte CanShow;
         public byte CanExecute;
         public byte CanTakeControl;
+        public byte TutorialStep;
+        public byte TutorialStepCount;
     }
 
     [InternalBufferCapacity(0)]

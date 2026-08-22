@@ -1450,6 +1450,8 @@ namespace Game.UI.Contracts
         public readonly string RecommendationActionLabel;
         public readonly byte RecommendationKind;
         public readonly byte RecommendationTargetKind;
+        public readonly byte TutorialStep;
+        public readonly byte TutorialStepCount;
         public readonly bool CanShow;
         public readonly bool CanExecute;
         public readonly bool CanStop;
@@ -1503,6 +1505,8 @@ namespace Game.UI.Contracts
             RecommendationActionLabel = recommendationActionLabel;
             RecommendationKind = 0;
             RecommendationTargetKind = 0;
+            TutorialStep = 0;
+            TutorialStepCount = 0;
             CanShow = canShow;
             CanExecute = canExecute;
             CanStop = canStop;
@@ -1541,7 +1545,9 @@ namespace Game.UI.Contracts
             bool largeTextEnabled = false,
             bool highContrastEnabled = false,
             byte recommendationKind = 0,
-            byte recommendationTargetKind = 0)
+            byte recommendationTargetKind = 0,
+            byte tutorialStep = 0,
+            byte tutorialStepCount = 0)
         {
             Version = version;
             ElapsedVisible = elapsedVisible;
@@ -1568,6 +1574,8 @@ namespace Game.UI.Contracts
             RecommendationActionLabel = recommendationActionLabel ?? string.Empty;
             RecommendationKind = recommendationKind;
             RecommendationTargetKind = recommendationTargetKind;
+            TutorialStep = tutorialStep;
+            TutorialStepCount = tutorialStepCount;
             CanShow = canShow;
             CanExecute = canExecute;
             CanStop = canStop;

@@ -209,7 +209,9 @@ namespace Game.UI.Shell.Ecs
                 settings.LargeTextEnabled != 0,
                 settings.HighContrastEnabled != 0,
                 (byte)topRecommendation.Kind,
-                (byte)topRecommendation.TargetKind);
+                (byte)topRecommendation.TargetKind,
+                topRecommendation.TutorialStep,
+                topRecommendation.TutorialStepCount);
 
             hasCachedAssistantPanel = true;
             cachedAssistantPanelWorld = entityManager.World;

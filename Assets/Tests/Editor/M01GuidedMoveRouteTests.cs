@@ -35,6 +35,8 @@ public sealed class M01GuidedMoveRouteTests
             passed++;
             tests.FirstContactCinematicActorsStayOnDetailedVisuals();
             passed++;
+            tests.FinaleCameraUsesLiveCombatantsAndHudSafeFraming();
+            passed++;
             M01FirstContactHudRestrictionTests.CinematicInteractionLockTracksOpeningReturn();
             passed++;
             Debug.Log($"[M01TutorialFinaleValidation] result=Passed tests={passed}");
@@ -113,6 +115,88 @@ public sealed class M01GuidedMoveRouteTests
         UnitRenderVisualComponent visual = em.GetComponentData<UnitRenderVisualComponent>(actor);
         Assert.That(visual.Current, Is.EqualTo((byte)UnitRenderVisualKind.Detail));
         Assert.That(visual.Desired, Is.EqualTo((byte)UnitRenderVisualKind.Detail));
+    }
+
+    [Test]
+    public void FinaleCameraUsesLiveCombatantsAndHudSafeFraming()
+    {
+        using World world = new(nameof(FinaleCameraUsesLiveCombatantsAndHudSafeFraming));
+        EntityManager em = world.EntityManager;
+        FixedString64Bytes session = new("m01-live-finale-camera");
+        CreateCombatant(em, session, FactionIdentity.PlayerFactionId, new float3(-1f, 0f, 718f));
+        CreateCombatant(em, session, FactionIdentity.PlayerFactionId, new float3(1f, 0f, 720f));
+        CreateCombatant(em, session, FactionIdentity.PlayerFactionId, new float3(0f, 0f, 690f), health: 0);
+        CreateCombatant(em, session, FactionIdentity.EnemyFactionId, new float3(-1f, 0f, 734f));
+        CreateCombatant(em, session, FactionIdentity.EnemyFactionId, new float3(1f, 0f, 736f));
+        CreateCombatant(em, new FixedString64Bytes("other-session"), FactionIdentity.EnemyFactionId,
+            new float3(0f, 0f, 999f));
+
+        using EntityQuery query = em.CreateEntityQuery(
+            ComponentType.ReadOnly<CampaignMissionUnitRoleComponent>(),
+            ComponentType.ReadOnly<Faction>(),
+            ComponentType.ReadOnly<UnitHealth>(),
+            ComponentType.ReadOnly<UnitCombat>(),
+            ComponentType.ReadOnly<LocalTransform>());
+        Assert.That(CampaignMissionPatrolOrderSystem.TryComputeLiveCombatFocus(
+            em, query, session, out float3 friendlyFocus, out float3 hostileFocus), Is.True);
+        Assert.That(math.distance(friendlyFocus, new float3(0f, 0f, 719f)), Is.LessThan(0.001f));
+        Assert.That(math.distance(hostileFocus, new float3(0f, 0f, 735f)), Is.LessThan(0.001f));
+
+        float3 combatFocus = CampaignMissionPatrolOrderSystem.ComputeCombatRevealFocus(
+            friendlyFocus, hostileFocus);
+        GameObject cameraOwner = new(nameof(FinaleCameraUsesLiveCombatantsAndHudSafeFraming));
+        try
+        {
+            Camera camera = cameraOwner.AddComponent<Camera>();
+            camera.aspect = 2016f / 896f;
+            camera.fieldOfView = RuntimeCameraFocusRequestUtility.CombatRevealFieldOfView;
+            float pitch = RuntimeCameraFocusRequestUtility.CombatRevealPitch;
+            float yaw = CampaignMissionPatrolOrderSystem.ComputeCombatRevealYaw(hostileFocus - friendlyFocus);
+            Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
+            Vector3 groundForward = rotation * Vector3.forward;
+            groundForward.y = 0f;
+            groundForward.Normalize();
+            float height = RuntimeCameraFocusRequestUtility.CombatRevealHeight;
+            float groundOffset = height / Mathf.Tan(pitch * Mathf.Deg2Rad);
+            Vector3 position = new(combatFocus.x, height, combatFocus.z);
+            position -= groundForward * groundOffset;
+            camera.transform.SetPositionAndRotation(position, rotation);
+
+            Vector3 friendlyViewport = camera.WorldToViewportPoint((Vector3)friendlyFocus + Vector3.up);
+            Vector3 hostileViewport = camera.WorldToViewportPoint((Vector3)hostileFocus + Vector3.up);
+            Assert.That(friendlyViewport.z, Is.GreaterThan(0f));
+            Assert.That(friendlyViewport.x, Is.InRange(0.28f, 0.72f));
+            Assert.That(friendlyViewport.y, Is.InRange(0.24f, 0.46f),
+                "The live squad must sit above the bottom command UI in the combat shot.");
+            Assert.That(hostileViewport.z, Is.GreaterThan(0f));
+            Assert.That(hostileViewport.x, Is.InRange(0.28f, 0.72f));
+            Assert.That(hostileViewport.y, Is.InRange(0.62f, 0.84f),
+                "The enemy line must remain below the top HUD and clearly visible ahead.");
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(cameraOwner);
+        }
+    }
+
+    private static Entity CreateCombatant(
+        EntityManager em,
+        FixedString64Bytes session,
+        byte factionId,
+        float3 position,
+        int health = 100)
+    {
+        Entity entity = em.CreateEntity(
+            typeof(CampaignMissionUnitRoleComponent),
+            typeof(Faction),
+            typeof(UnitHealth),
+            typeof(UnitCombat),
+            typeof(LocalTransform));
+        em.SetComponentData(entity, new CampaignMissionUnitRoleComponent { SessionToken = session });
+        em.SetComponentData(entity, new Faction { Id = factionId });
+        em.SetComponentData(entity, new UnitHealth { Current = health, Max = 100 });
+        em.SetComponentData(entity, LocalTransform.FromPosition(position));
+        return entity;
     }
 
     [Test]
@@ -585,13 +669,13 @@ public sealed class M01GuidedMoveRouteTests
         Assert.That(CampaignMissionPatrolOrderSystem.FinaleCameraArrivalMilliseconds, Is.EqualTo(900),
             "Combat must release within 0.9 seconds of the finale camera request.");
         Assert.That(CampaignMissionPatrolOrderSystem.FinaleFocusTowardHostiles,
-            Is.EqualTo(0.35f).Within(0.001f),
+            Is.EqualTo(0.38f).Within(0.001f),
             "The finale frame must favor the squad foreground while preserving the enemy firing line.");
         float3 combatFocus = CampaignMissionPatrolOrderSystem.ComputeCombatRevealFocus(
             new float3(10f, 0f, 10f), new float3(10f, 0f, 30f));
-        Assert.That(math.distance(combatFocus, new float3(10f, 0f, 17f)), Is.LessThan(0.001f));
-        Assert.That(RuntimeCameraFocusRequestUtility.CombatRevealHeight, Is.EqualTo(5.5f).Within(0.001f));
-        Assert.That(RuntimeCameraFocusRequestUtility.CombatRevealPitch, Is.EqualTo(27f).Within(0.001f));
+        Assert.That(math.distance(combatFocus, new float3(10f, 0f, 17.6f)), Is.LessThan(0.001f));
+        Assert.That(RuntimeCameraFocusRequestUtility.CombatRevealHeight, Is.EqualTo(12f).Within(0.001f));
+        Assert.That(RuntimeCameraFocusRequestUtility.CombatRevealPitch, Is.EqualTo(30f).Within(0.001f));
         Assert.That(RuntimeCameraFocusRequestUtility.CombatRevealFieldOfView, Is.EqualTo(38f).Within(0.001f));
         Assert.That(CampaignMissionPatrolOrderSystem.ComputeCombatRevealYaw(new float3(0f, 0f, 12f)),
             Is.EqualTo(0f).Within(0.001f),

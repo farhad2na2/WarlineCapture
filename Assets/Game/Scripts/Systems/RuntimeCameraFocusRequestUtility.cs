@@ -17,8 +17,8 @@ namespace Game.Runtime
         public const float BazaarEstablishingPitch = 35f;
         public const float BazaarEstablishingYaw = 0f;
         public const float BazaarEstablishingFieldOfView = 50f;
-        public const float CombatRevealHeight = 5.5f;
-        public const float CombatRevealPitch = 27f;
+        public const float CombatRevealHeight = 12f;
+        public const float CombatRevealPitch = 30f;
         public const float CombatRevealFieldOfView = 38f;
 
         public static Vector3 GetInitialBuildingFootprintCenterWorld(

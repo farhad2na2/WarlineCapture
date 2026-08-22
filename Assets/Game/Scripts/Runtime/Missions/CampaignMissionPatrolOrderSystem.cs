@@ -25,7 +25,7 @@ namespace Game.Runtime
         private const int FinalePostKillHoldMilliseconds = 3000;
         private const float CinematicGlideSmoothTimeSeconds = 2.25f;
         internal const float FinaleCameraSmoothTimeSeconds = 0.75f;
-        internal const float FinaleFocusTowardHostiles = 0.35f;
+        internal const float FinaleFocusTowardHostiles = 0.38f;
         private EntityQuery _cameraFocusQuery;
         private EntityQuery _missionCombatantsQuery;
         private EntityQuery _renderVirtualizationStateQuery;
@@ -208,7 +208,22 @@ namespace Game.Runtime
                     if (current.Stage == 0 && runtime.Phase == MissionPhaseKind.Engage &&
                         facts.AttackIssued != 0 && focus.Requested == 0)
                     {
-                        float3 direction = current.HostileFocus - current.FriendlyFocus;
+                        float3 friendlyFocus = current.FriendlyFocus;
+                        float3 hostileFocus = current.HostileFocus;
+                        if (TryComputeLiveCombatFocus(
+                                state.EntityManager,
+                                _missionCombatantsQuery,
+                                runtime.SessionToken,
+                                out float3 liveFriendlyFocus,
+                                out float3 liveHostileFocus))
+                        {
+                            friendlyFocus = liveFriendlyFocus;
+                            hostileFocus = liveHostileFocus;
+                            current.FriendlyFocus = liveFriendlyFocus;
+                            current.HostileFocus = liveHostileFocus;
+                        }
+
+                        float3 direction = hostileFocus - friendlyFocus;
                         float yaw = ComputeCombatRevealYaw(direction);
                         state.EntityManager.SetComponentData(focusEntity, new RuntimeCameraFocusRequestComponent
                         {
@@ -218,7 +233,7 @@ namespace Game.Runtime
                             UseExplicitYaw = 1,
                             SmoothTimeSeconds = FinaleCameraSmoothTimeSeconds,
                             YawDegrees = yaw,
-                            World = ComputeCombatRevealFocus(current.FriendlyFocus, current.HostileFocus)
+                            World = ComputeCombatRevealFocus(friendlyFocus, hostileFocus)
                         });
                         current.Stage = 1;
                         current.ElapsedMilliseconds = 0;
@@ -321,6 +336,51 @@ namespace Game.Runtime
 
         internal static float3 ComputeCombatRevealFocus(float3 friendlyFocus, float3 hostileFocus) =>
             math.lerp(friendlyFocus, hostileFocus, FinaleFocusTowardHostiles);
+
+        internal static bool TryComputeLiveCombatFocus(
+            EntityManager entityManager,
+            EntityQuery missionCombatantsQuery,
+            in FixedString64Bytes sessionToken,
+            out float3 friendlyFocus,
+            out float3 hostileFocus)
+        {
+            friendlyFocus = float3.zero;
+            hostileFocus = float3.zero;
+            int friendlyCount = 0;
+            int hostileCount = 0;
+            using NativeArray<Entity> combatants = missionCombatantsQuery.ToEntityArray(Allocator.Temp);
+            for (int index = 0; index < combatants.Length; index++)
+            {
+                Entity entity = combatants[index];
+                CampaignMissionUnitRoleComponent role =
+                    entityManager.GetComponentData<CampaignMissionUnitRoleComponent>(entity);
+                UnitHealth health = entityManager.GetComponentData<UnitHealth>(entity);
+                float3 position = entityManager.GetComponentData<LocalTransform>(entity).Position;
+                if (!role.SessionToken.Equals(sessionToken) || health.Current <= 0 ||
+                    !math.all(math.isfinite(position)))
+                {
+                    continue;
+                }
+
+                Faction faction = entityManager.GetComponentData<Faction>(entity);
+                if (FactionIdentity.IsPlayerControlled(faction.Id))
+                {
+                    friendlyFocus += position;
+                    friendlyCount++;
+                }
+                else
+                {
+                    hostileFocus += position;
+                    hostileCount++;
+                }
+            }
+
+            if (friendlyCount == 0 || hostileCount == 0)
+                return false;
+            friendlyFocus /= friendlyCount;
+            hostileFocus /= hostileCount;
+            return true;
+        }
 
         internal static bool ShouldIssuePatrolRoute(
             in FixedString64Bytes missionId,

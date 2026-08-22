@@ -32,7 +32,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         {
             RunCase(test => test.PopupPrefab_BindsLockedLandscapeHierarchyAndMenuReference());
             passed++;
-            RunCase(test => test.TutorialBriefing_AutoOpensOncePerStepAfterCinematicAndResetsForReplay());
+            RunCase(test => test.TutorialBriefing_RemainsVisibleThroughEachInstructionAndResetsForReplay());
             passed++;
             RunCase(test => test.MatchHudPrefab_ContainsEditableAssistantButton());
             passed++;
@@ -186,12 +186,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.AreEqual(
             AriaPortraitPath,
             AssetDatabase.GetAssetPath(tutorial.PortraitImage.sprite));
-        Transform inputBlockerTransform = FindNamed(view.transform, "TutorialInputBlocker");
-        Assert.NotNull(inputBlockerTransform);
-        Image inputBlocker = inputBlockerTransform.GetComponent<Image>();
-        Assert.NotNull(inputBlocker);
-        Assert.AreEqual(0f, inputBlocker.color.a, 0.001f,
-            "The tutorial input blocker must not darken the battlefield.");
+        Assert.IsNull(FindNamed(view.transform, "TutorialInputBlocker"),
+            "The persistent tutorial briefing must not block battlefield or HUD input.");
         Assert.AreEqual(Vector2.zero, tutorial.BriefingLayout.anchorMin);
         Assert.AreEqual(Vector2.zero, tutorial.BriefingLayout.anchorMax);
         Assert.GreaterOrEqual(
@@ -211,7 +207,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
     }
 
     [Test]
-    public void TutorialBriefing_AutoOpensOncePerStepAfterCinematicAndResetsForReplay()
+    public void TutorialBriefing_RemainsVisibleThroughEachInstructionAndResetsForReplay()
     {
         CreateHudHarness(true, out RectTransform overlay, out RectTransform header, out _);
         var gateway = new FakeAssistantPanelGateway(
@@ -239,11 +235,13 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.IsTrue(popup.IsOpen);
         Assert.IsTrue(tutorial.gameObject.activeSelf);
         Assert.IsFalse(popup.LandscapeLayout.gameObject.activeSelf);
+        Assert.IsFalse(tutorial.CloseButton.gameObject.activeSelf,
+            "Active tutorial instructions must not expose a close action.");
         Assert.AreEqual("FOCUS HOSTILE ARMOR", tutorial.TitleText.text);
         Assert.AreEqual("TRAINING 1 / 5", tutorial.ProgressText.text);
 
         tutorial.ShowMeButton.onClick.Invoke();
-        Assert.IsFalse(popup.IsOpen);
+        Assert.IsTrue(popup.IsOpen, "Show Me must keep the tutorial instruction visible.");
         Assert.AreEqual(UiAssistantCommandIntentKind.ShowRecommendation, gateway.LastAssistantIntentKind);
 
         gateway.AssistantPanel = CreateStructuredModel(
@@ -251,7 +249,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             tutorialStep: 1, tutorialStepCount: 5);
         SetPrivateField(ui, "_nextAssistantPanelRefreshTime", 0f);
         ui.Update();
-        Assert.IsFalse(popup.IsOpen, "A refreshed read model must not reopen the same tutorial step.");
+        Assert.IsTrue(popup.IsOpen, "The active tutorial instruction must remain visible.");
 
         gateway.AssistantPanel = CreateStructuredModel(
             803u, recommendationKind: 2, recommendationTargetKind: 1,
@@ -260,10 +258,34 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         ui.Update();
         Assert.IsTrue(popup.IsOpen, "The next tutorial step must present automatically.");
         Assert.AreEqual("TRAINING 2 / 5", tutorial.ProgressText.text);
-        tutorial.CloseButton.onClick.Invoke();
+        Assert.AreEqual("PRESS MOVE", tutorial.TitleText.text);
+        Assert.AreEqual("Tap MOVE, then choose the highlighted destination.", tutorial.BodyText.text);
 
         MatchHudAssistantUiSystemHelper helper =
             GetPrivateField<MatchHudAssistantUiSystemHelper>(ui, "_matchHudAssistantUiSystem");
+        MatchOverlayCommandControlsView commandControls = CreateCommandControls(overlay);
+        ui.BindMatchHudCommandControls(commandControls);
+        commandControls.MoveButton.onClick.Invoke();
+        Assert.AreEqual("CHOOSE DESTINATION", tutorial.TitleText.text);
+        Assert.AreEqual("Tap the highlighted destination to move your squad.", tutorial.BodyText.text);
+
+        helper.CompleteWorldTarget(TacticalCommandMode.Move);
+        helper.ApplyCommandMode(TacticalCommandMode.None);
+        Assert.AreEqual("MOVING TO COVER", tutorial.TitleText.text);
+        Assert.AreEqual(
+            "Your squad is moving to the marked cover position.",
+            tutorial.BodyText.text);
+
+        tutorial.DoItButton.onClick.Invoke();
+        Assert.IsTrue(popup.IsOpen, "Do It must remain visible until the tutorial advances.");
+        Assert.AreEqual(UiAssistantCommandIntentKind.ExecuteRecommendation, gateway.LastAssistantIntentKind);
+
+        helper.ClosePanelWithoutInputCapture();
+        Assert.IsFalse(popup.IsOpen);
+        helper.ApplyReadModel(gateway.AssistantPanel);
+        Assert.IsTrue(popup.IsOpen,
+            "An active tutorial instruction must recover from an external panel close.");
+
         helper.ResetForMissionAttempt();
         gateway.AssistantPanel = CreateStructuredModel(
             804u, recommendationKind: 1, recommendationTargetKind: 6,

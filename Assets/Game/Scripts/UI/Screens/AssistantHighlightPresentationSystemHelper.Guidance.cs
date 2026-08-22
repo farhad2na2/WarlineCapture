@@ -1,3 +1,4 @@
+using System;
 using Game.UI.Contracts;
 using TMPro;
 using UnityEngine;
@@ -42,14 +43,18 @@ namespace Game.UI.Runtime
         private Button _attackGuidanceButton;
         private TacticalCommandMode _activeCommandMode;
         private TacticalCommandMode _awaitingWorldTargetMode;
+        private Action<TacticalCommandMode> _commandModeAcknowledged;
         private readonly Vector3[] _commandButtonCorners = new Vector3[4];
         private uint _lastVersion = uint.MaxValue;
 
         public UiAssistantHighlightModel LastAppliedModel { get; private set; } = UiAssistantHighlightModel.Empty;
 
-        public void Bind(Image panelPulse)
+        public void Bind(
+            Image panelPulse,
+            Action<TacticalCommandMode> commandModeAcknowledged = null)
         {
             _panelPulse = panelPulse;
+            _commandModeAcknowledged = commandModeAcknowledged;
             if (_panelPulse != null)
                 _panelPulse.raycastTarget = false;
             _lastVersion = uint.MaxValue;
@@ -85,6 +90,7 @@ namespace Game.UI.Runtime
             _selectSquadCompleted = false;
             _activeCommandMode = TacticalCommandMode.None;
             _awaitingWorldTargetMode = TacticalCommandMode.None;
+            _commandModeAcknowledged = null;
             _lastVersion = uint.MaxValue;
             LastAppliedModel = UiAssistantHighlightModel.Empty;
         }
@@ -149,6 +155,7 @@ namespace Game.UI.Runtime
             if (MatchesGuidedCommand(LastAppliedModel, mode))
                 ArmGuidedCommand(mode);
             ApplyVisual(LastAppliedModel);
+            _commandModeAcknowledged?.Invoke(mode);
         }
 
         private void ArmGuidedCommand(TacticalCommandMode mode)

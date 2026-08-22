@@ -62,14 +62,6 @@ namespace Game.Editor
                 Stretch(surface);
                 AriaTutorialBriefingView view = surface.gameObject.AddComponent<AriaTutorialBriefingView>();
 
-                Image inputBlocker = CreateImage(
-                    "TutorialInputBlocker",
-                    surface,
-                    null,
-                    Color.clear,
-                    true);
-                Stretch(inputBlocker.rectTransform);
-
                 Image portraitImage = CreateImage("AriaPortrait", surface, portrait, Color.white, false);
                 SetRect(
                     portraitImage.rectTransform,
@@ -303,10 +295,8 @@ namespace Game.Editor
                 throw new InvalidOperationException("ARIA tutorial briefing hierarchy is incomplete.");
             if (AssetDatabase.GetAssetPath(view.PortraitImage.sprite) != PortraitPath)
                 throw new InvalidOperationException("ARIA tutorial briefing must use the canonical ARIA portrait.");
-            Transform blockerTransform = view.transform.Find("TutorialInputBlocker");
-            Image inputBlocker = blockerTransform != null ? blockerTransform.GetComponent<Image>() : null;
-            if (inputBlocker == null || inputBlocker.color.a > 0.001f)
-                throw new InvalidOperationException("ARIA tutorial briefing must not darken the battlefield.");
+            if (view.transform.Find("TutorialInputBlocker") != null)
+                throw new InvalidOperationException("ARIA tutorial briefing must not cover the battlefield with an input overlay.");
             if (view.BriefingLayout.anchorMin != Vector2.zero || view.BriefingLayout.anchorMax != Vector2.zero ||
                 view.BriefingLayout.anchoredPosition.y - view.BriefingLayout.rect.height * 0.5f < 240f)
                 throw new InvalidOperationException("ARIA tutorial briefing must remain above the lower-left squad controls.");

@@ -2,6 +2,7 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Game.Tactical.Contracts;
 using Game.UI.Contracts;
 
 namespace Game.UI.Runtime
@@ -23,6 +24,9 @@ namespace Game.UI.Runtime
         private Action _closeRequested;
         private Action _showRecommendationRequested;
         private Action _executeRecommendationRequested;
+        private byte _tutorialStep;
+        private string _defaultTitle = string.Empty;
+        private string _defaultBody = string.Empty;
 
         public RectTransform BriefingLayout => briefingLayout;
         public Image PortraitImage => portraitImage;
@@ -71,8 +75,10 @@ namespace Game.UI.Runtime
 
         public void Apply(UiAssistantPanelModel model)
         {
-            titleText.text = (model.RecommendationTitle ?? string.Empty).ToUpperInvariant();
-            bodyText.text = model.RecommendationBody ?? string.Empty;
+            _tutorialStep = model.TutorialStep;
+            _defaultTitle = (model.RecommendationTitle ?? string.Empty).ToUpperInvariant();
+            _defaultBody = model.RecommendationBody ?? string.Empty;
+            ApplyInteractionState(TacticalCommandMode.None, worldTargetCompleted: false);
             int step = Mathf.Max(1, model.TutorialStep);
             int count = Mathf.Max(step, model.TutorialStepCount);
             progressText.SetText("TRAINING {0} / {1}", step, count);
@@ -80,6 +86,50 @@ namespace Game.UI.Runtime
             doItButton.interactable = model.CanExecute;
             showMeButtonLabel.text = "SHOW ME";
             doItButtonLabel.text = "DO IT";
+            closeButton.gameObject.SetActive(false);
+        }
+
+        public void ApplyInteractionState(
+            TacticalCommandMode mode,
+            bool worldTargetCompleted)
+        {
+            if (_tutorialStep == 2)
+            {
+                if (worldTargetCompleted)
+                {
+                    ApplyInstruction(
+                        "MOVING TO COVER",
+                        "Your squad is moving to the marked cover position.");
+                    return;
+                }
+
+                ApplyInstruction(
+                    mode == TacticalCommandMode.Move ? "CHOOSE DESTINATION" : "PRESS MOVE",
+                    mode == TacticalCommandMode.Move
+                        ? "Tap the highlighted destination to move your squad."
+                        : "Tap MOVE, then choose the highlighted destination.");
+                return;
+            }
+
+            if (_tutorialStep == 4)
+            {
+                if (worldTargetCompleted)
+                {
+                    ApplyInstruction(
+                        "ATTACK ORDER ISSUED",
+                        "Your squad is engaging the highlighted enemy.");
+                    return;
+                }
+
+                ApplyInstruction(
+                    mode == TacticalCommandMode.Attack ? "CHOOSE ENEMY" : "PRESS ATTACK",
+                    mode == TacticalCommandMode.Attack
+                        ? "Tap the highlighted enemy to issue the attack."
+                        : "Tap ATTACK, then choose the highlighted enemy.");
+                return;
+            }
+
+            ApplyInstruction(_defaultTitle, _defaultBody);
         }
 
         public void ApplyAccessibility(bool largeTextEnabled, bool highContrastEnabled)
@@ -113,5 +163,13 @@ namespace Game.UI.Runtime
         private void RequestClose() => _closeRequested?.Invoke();
         private void RequestShowRecommendation() => _showRecommendationRequested?.Invoke();
         private void RequestExecuteRecommendation() => _executeRecommendationRequested?.Invoke();
+
+        private void ApplyInstruction(string title, string body)
+        {
+            if (titleText.text != title)
+                titleText.text = title;
+            if (bodyText.text != body)
+                bodyText.text = body;
+        }
     }
 }

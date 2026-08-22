@@ -2,6 +2,7 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Game.Tactical.Contracts;
 using Game.UI.Contracts;
 
 namespace Game.UI.Runtime
@@ -389,6 +390,14 @@ namespace Game.UI.Runtime
             SetText(_showMeButtonLabel, "SHOW ME");
             SetText(_doItButtonLabel, "DO IT");
             SetText(_stopButtonLabel, "STOP");
+        }
+
+        public void ApplyTutorialInteractionState(
+            TacticalCommandMode mode,
+            bool worldTargetCompleted)
+        {
+            if (_tutorialBriefing != null && _tutorialBriefing.gameObject.activeSelf)
+                _tutorialBriefing.ApplyInteractionState(mode, worldTargetCompleted);
         }
 
         public void ApplyTargetLock(UiAssistantTargetLockModel model)

@@ -31,7 +31,8 @@ namespace Game.UI.Runtime
         private bool _mirroredPanelOpen;
         private UiAssistantPanelModel _lastPanelModel = UiAssistantPanelModel.Empty;
         private UiAssistantHighlightModel _lastHighlightModel = UiAssistantHighlightModel.Empty;
-        private byte _lastPresentedTutorialStep;
+        private TacticalCommandMode _activeCommandMode;
+        private bool _tutorialWorldTargetCompleted;
 
         public bool IsPanelOpen => _popupView != null && _popupView.IsOpen;
         public bool IsBound => _buttonRoot != null && _popupView != null;
@@ -117,19 +118,26 @@ namespace Game.UI.Runtime
             _highlightPresentationSystem.Unbind();
             _lastPanelModel = UiAssistantPanelModel.Empty;
             _lastHighlightModel = UiAssistantHighlightModel.Empty;
-            _lastPresentedTutorialStep = 0;
+            _activeCommandMode = TacticalCommandMode.None;
+            _tutorialWorldTargetCompleted = false;
         }
 
         public void ApplyReadModel(UiAssistantPanelModel model)
         {
+            byte previousTutorialStep = _lastPanelModel.TutorialStep;
             _lastPanelModel = model;
+            if (previousTutorialStep != model.TutorialStep)
+                _tutorialWorldTargetCompleted = false;
             if (_buttonRoot == null)
                 return;
 
             if (_popupView == null && !EnsurePopupView())
                 return;
             _panelUiSystem.ApplyReadModel(model);
-            PresentTutorialStepOnce(model);
+            _popupView.ApplyTutorialInteractionState(
+                _activeCommandMode,
+                _tutorialWorldTargetCompleted);
+            PresentActiveTutorial(model);
         }
 
         public void ApplyHighlightReadModel(UiAssistantHighlightModel model)
@@ -146,7 +154,8 @@ namespace Game.UI.Runtime
         public void ResetForMissionAttempt()
         {
             _lastHighlightModel = UiAssistantHighlightModel.Empty;
-            _lastPresentedTutorialStep = 0;
+            _activeCommandMode = TacticalCommandMode.None;
+            _tutorialWorldTargetCompleted = false;
             _highlightPresentationSystem.ResetForMissionAttempt();
             ClosePanelWithoutInputCapture();
         }
@@ -168,17 +177,35 @@ namespace Game.UI.Runtime
 
         public void ApplyCommandMode(TacticalCommandMode mode)
         {
+            _activeCommandMode = mode;
             _highlightPresentationSystem.ApplyCommandMode(mode);
+            _popupView?.ApplyTutorialInteractionState(
+                mode,
+                _tutorialWorldTargetCompleted);
         }
 
         public void AcknowledgeCommandMode(TacticalCommandMode mode)
         {
+            _activeCommandMode = mode;
             _highlightPresentationSystem.AcknowledgeCommandMode(mode);
+            _popupView?.ApplyTutorialInteractionState(
+                mode,
+                _tutorialWorldTargetCompleted);
         }
 
         public void CompleteWorldTarget(TacticalCommandMode mode)
         {
             _highlightPresentationSystem.CompleteWorldTarget(mode);
+            bool completesTutorialTarget =
+                (_lastPanelModel.TutorialStep == 2 && mode == TacticalCommandMode.Move) ||
+                (_lastPanelModel.TutorialStep == 4 && mode == TacticalCommandMode.Attack);
+            if (!completesTutorialTarget)
+                return;
+
+            _tutorialWorldTargetCompleted = true;
+            _popupView?.ApplyTutorialInteractionState(
+                _activeCommandMode,
+                worldTargetCompleted: true);
         }
 
         public void TickHighlight()
@@ -238,7 +265,9 @@ namespace Game.UI.Runtime
                 ExecuteRecommendation,
                 StopAssistantControl);
             _panelUiSystem.Bind(_popupView, _accessStateText, _accessCueText);
-            _highlightPresentationSystem.Bind(_popupView.PreviewHighlight);
+            _highlightPresentationSystem.Bind(
+                _popupView.PreviewHighlight,
+                HandleGuidedCommandModeAcknowledged);
             _panelUiSystem.ApplyReadModel(_lastPanelModel);
             _highlightPresentationSystem.ApplyReadModel(_lastHighlightModel);
             _popupView.Hide();
@@ -292,12 +321,20 @@ namespace Game.UI.Runtime
                 ? _lastHighlightModel.TargetKind
                 : _lastPanelModel.RecommendationTargetKind;
             _highlightPresentationSystem.BeginPendingShowMe(recommendationKind, targetKind);
-            SetPanelOpen(false);
+            if (_lastPanelModel.TutorialStep == 0)
+                SetPanelOpen(false);
         }
 
         private void ExecuteRecommendation()
         {
-            CaptureUiOnly(); if (UiShellRuntimeGateway.TryEnqueueAssistantCommandIntent(UiAssistantCommandIntentKind.ExecuteRecommendation, fromTakeover: true)) SetPanelOpen(false);
+            CaptureUiOnly();
+            if (UiShellRuntimeGateway.TryEnqueueAssistantCommandIntent(
+                    UiAssistantCommandIntentKind.ExecuteRecommendation,
+                    fromTakeover: true) &&
+                _lastPanelModel.TutorialStep == 0)
+            {
+                SetPanelOpen(false);
+            }
         }
 
         private void StopAssistantControl()
@@ -324,18 +361,25 @@ namespace Game.UI.Runtime
             MirrorPanelOpen(open);
         }
 
-        private void PresentTutorialStepOnce(UiAssistantPanelModel model)
+        private void PresentActiveTutorial(UiAssistantPanelModel model)
         {
-            if (!model.HasRecommendation || model.TutorialStep == 0 ||
-                model.TutorialStep == _lastPresentedTutorialStep)
+            if (!model.HasRecommendation || model.TutorialStep == 0)
                 return;
             if (UiShellRuntimeGateway.TryReadMissionHudRestrictions(
                     out UiMissionHudRestrictionsModel restrictions) &&
                 restrictions.CinematicInteractionLocked)
                 return;
 
-            _lastPresentedTutorialStep = model.TutorialStep;
-            SetPanelOpen(true);
+            if (!IsPanelOpen)
+                SetPanelOpen(true);
+        }
+
+        private void HandleGuidedCommandModeAcknowledged(TacticalCommandMode mode)
+        {
+            _activeCommandMode = mode;
+            _popupView?.ApplyTutorialInteractionState(
+                mode,
+                _tutorialWorldTargetCompleted);
         }
 
         private void MirrorPanelOpen(bool open, bool force = false)

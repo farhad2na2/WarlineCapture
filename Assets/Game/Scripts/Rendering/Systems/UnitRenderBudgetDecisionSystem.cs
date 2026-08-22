@@ -26,6 +26,7 @@ namespace Game.Rendering
             public ComponentLookup<UnitSourcePrefabKey> SourcePrefabKeyLookup;
             public ComponentLookup<Faction> FactionLookup;
             public ComponentLookup<SelectedUnitTag> SelectedLookup;
+            public ComponentLookup<UnitForceDetailedVisualTag> ForceDetailedVisualLookup;
             public ComponentLookup<UnitRenderVisualComponent> VisualStateLookup;
             public ComponentLookup<UnitRenderBudgetCulledUnitTag> CulledUnitLookup;
             public EntityStorageInfoLookup EntityStorageInfoLookup;
@@ -174,6 +175,7 @@ namespace Game.Rendering
                         IsEnemyUnit = isEnemyUnit,
                         IsSelectedUnit = isSelectedUnit,
                         IsMovingUnit = isMovingUnit,
+                        ForceDetailedVisual = context.ForceDetailedVisualLookup.HasComponent(unit),
                         CameraMotionActive = context.CameraMotionActive,
                         Visible = context.Distances[i].Visible,
                         DistanceSq = context.Distances[i].DistanceSq,

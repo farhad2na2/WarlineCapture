@@ -25,6 +25,7 @@ namespace Game.Runtime
         private const int FinalePostKillHoldMilliseconds = 3000;
         private const float CinematicGlideSmoothTimeSeconds = 2.25f;
         internal const float FinaleCameraSmoothTimeSeconds = 0.75f;
+        internal const float FinaleFocusTowardHostiles = 0.35f;
         private EntityQuery _cameraFocusQuery;
         private EntityQuery _missionCombatantsQuery;
         private EntityQuery _renderVirtualizationStateQuery;
@@ -217,7 +218,7 @@ namespace Game.Runtime
                             UseExplicitYaw = 1,
                             SmoothTimeSeconds = FinaleCameraSmoothTimeSeconds,
                             YawDegrees = yaw,
-                            World = math.lerp(current.FriendlyFocus, current.HostileFocus, 0.48f)
+                            World = ComputeCombatRevealFocus(current.FriendlyFocus, current.HostileFocus)
                         });
                         current.Stage = 1;
                         current.ElapsedMilliseconds = 0;
@@ -317,6 +318,9 @@ namespace Game.Runtime
             groundDirection = math.normalize(groundDirection);
             return math.degrees(math.atan2(groundDirection.x, groundDirection.y));
         }
+
+        internal static float3 ComputeCombatRevealFocus(float3 friendlyFocus, float3 hostileFocus) =>
+            math.lerp(friendlyFocus, hostileFocus, FinaleFocusTowardHostiles);
 
         internal static bool ShouldIssuePatrolRoute(
             in FixedString64Bytes missionId,

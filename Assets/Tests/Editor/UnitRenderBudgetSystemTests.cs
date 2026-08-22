@@ -8,6 +8,7 @@ using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEditor;
 using Game.Rendering.Contracts;
 using Game.Components;
 using Game.Rendering;
@@ -17,6 +18,7 @@ public sealed partial class UnitRenderBudgetSystemTests
     private const int DenseOperationMapRenderChildCount = 70710;
     private const int Vrp054SteadyStateSampleCount = 300;
 
+    [MenuItem("Game/Validation/Run Unit Render Budget Focused")]
     public static void RunFocusedValidation()
     {
         try
@@ -36,6 +38,7 @@ public sealed partial class UnitRenderBudgetSystemTests
             tests.CharacterRenderPolicyDoesNotGloballyForceDetailedModelPath();
             tests.ImpostorTagRequestUsesCachedLookup();
             tests.UnselectedEnemyBeyondImpostorThresholdUsesFarImpostorVisual();
+            tests.ForcedDetailedActorNeverUsesLodOrImpostorVisual();
             tests.AirVehiclesStayDetailedBeyondLodAndImpostorThresholds();
             tests.AirUnitDecisionForcesDetailedRootsWhenBudgetWouldUseLow();
             tests.SelectedVehicleForcesImmediateDetailedVisual();
@@ -61,7 +64,7 @@ public sealed partial class UnitRenderBudgetSystemTests
             tests.CharacterImpostorsScaleUpAtHighTacticalCameraHeight();
             tests.HighCameraCharacterImpostorsFaceCameraPlane();
             tests.SourceKeyPrefixChecksDoNotAllocate();
-            Debug.Log("[UnitRenderBudgetFocusedValidation] result=Passed tests=38");
+            Debug.Log("[UnitRenderBudgetFocusedValidation] result=Passed tests=39");
         }
         catch (System.Exception ex)
         {
@@ -817,6 +820,44 @@ public sealed partial class UnitRenderBudgetSystemTests
     }
 
     [Test]
+    public void ForcedDetailedActorNeverUsesLodOrImpostorVisual()
+    {
+        using var world = new World(nameof(ForcedDetailedActorNeverUsesLodOrImpostorVisual));
+        using var ecb = new EntityCommandBuffer(Allocator.Temp);
+        using var readyTaggedThisFrame = new NativeHashSet<Entity>(1, Allocator.Temp);
+
+        UnitRenderBudgetVisualPlan.Result result = new UnitRenderBudgetVisualPlan().CreateDesiredVisualPlan(
+            world.EntityManager,
+            ecb,
+            readyTaggedThisFrame,
+            default,
+            new UnitRenderBudgetVisualPlan.Request
+            {
+                Unit = TestEntity(41),
+                ForceDetailedVisual = true,
+                IsCharacter = true,
+                IsEnemyUnit = true,
+                Visible = 1,
+                DistanceSq = 100f * 100f,
+                HasMidLodInstance = true,
+                HasLowLodInstance = true,
+                LowBand = true,
+                EnemyImpostorDistanceSq = 28f * 28f
+            },
+            new UnitRenderBudgetCharacterPolicy(),
+            new UnitRenderBudgetReadiness(),
+            new UnitRenderBudgetAnimationReadiness(),
+            new UnitRenderBudgetRenderableState());
+
+        Assert.AreEqual(UnitRenderVisualKind.Detail, result.DesiredVisual);
+        Assert.IsTrue(result.ShouldShowDetail);
+        Assert.IsFalse(result.ShouldShowMid);
+        Assert.IsFalse(result.ShouldShowLow);
+        Assert.IsFalse(result.ShouldShowFar);
+        Assert.IsTrue(result.ForceImmediateDetailVisual);
+    }
+
+    [Test]
     public void SelectedVisibleCharacterNeverUsesFarImpostorAtZoomedOutDistance()
     {
         using var world = new World(nameof(SelectedVisibleCharacterNeverUsesFarImpostorAtZoomedOutDistance));
@@ -968,6 +1009,7 @@ public sealed partial class UnitRenderBudgetSystemTests
             SourcePrefabKeyLookup = lookupSystem.GetSourcePrefabKeyLookup(),
             FactionLookup = lookupSystem.GetFactionLookup(),
             SelectedLookup = lookupSystem.GetSelectedLookup(),
+            ForceDetailedVisualLookup = lookupSystem.GetForceDetailedVisualLookup(),
             VisualStateLookup = lookupSystem.GetVisualStateLookup(),
             CulledUnitLookup = lookupSystem.GetCulledUnitLookup(),
             EntityStorageInfoLookup = lookupSystem.GetEntityStorageInfoLookupForTests(),
@@ -1215,6 +1257,7 @@ public sealed partial class UnitRenderBudgetSystemTests
             SourcePrefabKeyLookup = lookupSystem.GetSourcePrefabKeyLookup(),
             FactionLookup = lookupSystem.GetFactionLookup(),
             SelectedLookup = lookupSystem.GetSelectedLookup(),
+            ForceDetailedVisualLookup = lookupSystem.GetForceDetailedVisualLookup(),
             VisualStateLookup = lookupSystem.GetVisualStateLookup(),
             CulledUnitLookup = lookupSystem.GetCulledUnitLookup(),
             EntityStorageInfoLookup = lookupSystem.GetEntityStorageInfoLookupForTests(),
@@ -1790,6 +1833,11 @@ public sealed partial class UnitRenderBudgetSystemTests
         public ComponentLookup<SelectedUnitTag> GetSelectedLookup()
         {
             return GetComponentLookup<SelectedUnitTag>(true);
+        }
+
+        public ComponentLookup<UnitForceDetailedVisualTag> GetForceDetailedVisualLookup()
+        {
+            return GetComponentLookup<UnitForceDetailedVisualTag>(true);
         }
 
         public ComponentLookup<MaterialAnimationIndex> GetMaterialAnimationIndexLookup()

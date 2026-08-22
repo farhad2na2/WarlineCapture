@@ -172,6 +172,7 @@ namespace Game.Rendering
             var sourcePrefabKeyLookup = SystemAPI.GetComponentLookup<UnitSourcePrefabKey>(true);
             var factionLookup = SystemAPI.GetComponentLookup<Faction>(true);
             var selectedLookup = SystemAPI.GetComponentLookup<SelectedUnitTag>(true);
+            var forceDetailedVisualLookup = SystemAPI.GetComponentLookup<UnitForceDetailedVisualTag>(true);
             var culledUnitLookup = SystemAPI.GetComponentLookup<UnitRenderBudgetCulledUnitTag>(true);
             var disabledLookup = SystemAPI.GetComponentLookup<Disabled>(true);
             var disableRenderingLookup = SystemAPI.GetComponentLookup<DisableRendering>(true);
@@ -259,6 +260,7 @@ namespace Game.Rendering
                 SourcePrefabKeyLookup = sourcePrefabKeyLookup,
                 FactionLookup = factionLookup,
                 SelectedLookup = selectedLookup,
+                ForceDetailedVisualLookup = forceDetailedVisualLookup,
                 VisualStateLookup = _visualStateLookup,
                 CulledUnitLookup = culledUnitLookup,
                 EntityStorageInfoLookup = _entityStorageInfoLookup,

@@ -141,6 +141,10 @@ namespace Game.Components
     {
     }
 
+    public struct UnitForceDetailedVisualTag : IComponentData
+    {
+    }
+
     public enum UnitRenderVisualKind : byte
     {
         Unknown = 0,

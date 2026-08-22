@@ -33,6 +33,8 @@ public sealed class M01GuidedMoveRouteTests
             passed++;
             tests.TutorialFinaleDefersCombatSuppressionRemovalUntilCommandBufferPlayback();
             passed++;
+            tests.FirstContactCinematicActorsStayOnDetailedVisuals();
+            passed++;
             M01FirstContactHudRestrictionTests.CinematicInteractionLockTracksOpeningReturn();
             passed++;
             Debug.Log($"[M01TutorialFinaleValidation] result=Passed tests={passed}");
@@ -82,6 +84,35 @@ public sealed class M01GuidedMoveRouteTests
         structuralChanges.Dispose();
         Assert.IsFalse(entityManager.HasComponent<CampaignMissionCombatSuppressedTag>(matching));
         Assert.IsTrue(entityManager.HasComponent<CampaignMissionCombatSuppressedTag>(other));
+    }
+
+    [Test]
+    public void FirstContactCinematicActorsStayOnDetailedVisuals()
+    {
+        using World world = new(nameof(FirstContactCinematicActorsStayOnDetailedVisuals));
+        EntityManager em = world.EntityManager;
+        Entity actor = em.CreateEntity(
+            typeof(UnitMidLodPrefabReference),
+            typeof(UnitLowLodPrefabReference),
+            typeof(UnitRenderBudgetCulledUnitTag),
+            typeof(UnitRenderVisualExclusivityAppliedState),
+            typeof(UnitRenderVisualComponent));
+        em.SetComponentData(actor, new UnitRenderVisualComponent
+        {
+            Current = (byte)UnitRenderVisualKind.Far,
+            Desired = (byte)UnitRenderVisualKind.Far
+        });
+
+        CampaignMissionSpawnSystem.ApplyFirstContactCinematicVisualPolicy(em, actor);
+
+        Assert.That(em.HasComponent<UnitForceDetailedVisualTag>(actor), Is.True);
+        Assert.That(em.HasComponent<UnitMidLodPrefabReference>(actor), Is.False);
+        Assert.That(em.HasComponent<UnitLowLodPrefabReference>(actor), Is.False);
+        Assert.That(em.HasComponent<UnitRenderBudgetCulledUnitTag>(actor), Is.False);
+        Assert.That(em.HasComponent<UnitRenderVisualExclusivityAppliedState>(actor), Is.False);
+        UnitRenderVisualComponent visual = em.GetComponentData<UnitRenderVisualComponent>(actor);
+        Assert.That(visual.Current, Is.EqualTo((byte)UnitRenderVisualKind.Detail));
+        Assert.That(visual.Desired, Is.EqualTo((byte)UnitRenderVisualKind.Detail));
     }
 
     [Test]
@@ -553,6 +584,15 @@ public sealed class M01GuidedMoveRouteTests
             "The finale camera must move quickly enough to preserve the visible firefight.");
         Assert.That(CampaignMissionPatrolOrderSystem.FinaleCameraArrivalMilliseconds, Is.EqualTo(900),
             "Combat must release within 0.9 seconds of the finale camera request.");
+        Assert.That(CampaignMissionPatrolOrderSystem.FinaleFocusTowardHostiles,
+            Is.EqualTo(0.35f).Within(0.001f),
+            "The finale frame must favor the squad foreground while preserving the enemy firing line.");
+        float3 combatFocus = CampaignMissionPatrolOrderSystem.ComputeCombatRevealFocus(
+            new float3(10f, 0f, 10f), new float3(10f, 0f, 30f));
+        Assert.That(math.distance(combatFocus, new float3(10f, 0f, 17f)), Is.LessThan(0.001f));
+        Assert.That(RuntimeCameraFocusRequestUtility.CombatRevealHeight, Is.EqualTo(5.5f).Within(0.001f));
+        Assert.That(RuntimeCameraFocusRequestUtility.CombatRevealPitch, Is.EqualTo(27f).Within(0.001f));
+        Assert.That(RuntimeCameraFocusRequestUtility.CombatRevealFieldOfView, Is.EqualTo(38f).Within(0.001f));
         Assert.That(CampaignMissionPatrolOrderSystem.ComputeCombatRevealYaw(new float3(0f, 0f, 12f)),
             Is.EqualTo(0f).Within(0.001f),
             "A north-facing hostile line must place the camera behind the southern friendly line.");

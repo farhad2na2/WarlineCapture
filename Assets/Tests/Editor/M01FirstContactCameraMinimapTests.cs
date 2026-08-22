@@ -104,9 +104,9 @@ public static class M01FirstContactCameraMinimapTests
                 Mathf.Approximately(RuntimeCameraFocusRequestUtility.BazaarEstablishingPitch, 35f) &&
                 Mathf.Approximately(RuntimeCameraFocusRequestUtility.BazaarEstablishingYaw, 0f) &&
                 Mathf.Approximately(RuntimeCameraFocusRequestUtility.BazaarEstablishingFieldOfView, 50f) &&
-                Mathf.Approximately(RuntimeCameraFocusRequestUtility.CombatRevealHeight, 7f) &&
-                Mathf.Approximately(RuntimeCameraFocusRequestUtility.CombatRevealPitch, 24f) &&
-                Mathf.Approximately(RuntimeCameraFocusRequestUtility.CombatRevealFieldOfView, 42f),
+                Mathf.Approximately(RuntimeCameraFocusRequestUtility.CombatRevealHeight, 5.5f) &&
+                Mathf.Approximately(RuntimeCameraFocusRequestUtility.CombatRevealPitch, 27f) &&
+                Mathf.Approximately(RuntimeCameraFocusRequestUtility.CombatRevealFieldOfView, 38f),
             "The opening must establish the accepted civic bazaar, zoom on the patrol, and return to the full squad.");
     }
 

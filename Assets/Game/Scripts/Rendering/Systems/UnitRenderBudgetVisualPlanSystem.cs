@@ -27,6 +27,7 @@ namespace Game.Rendering
             public bool IsEnemyUnit;
             public bool IsSelectedUnit;
             public bool IsMovingUnit;
+            public bool ForceDetailedVisual;
             public bool CameraMotionActive;
             public byte Visible;
             public float DistanceSq;
@@ -143,7 +144,7 @@ namespace Game.Rendering
                 request.HasLowLodInstance &&
                 request.LowBand;
             bool shouldShowFar = !shouldShowDetail && !shouldShowMid && !shouldShowLow;
-            if (request.IsAirUnit)
+            if (request.IsAirUnit || request.ForceDetailedVisual)
             {
                 return new Result(
                     shouldShowDetail: true,

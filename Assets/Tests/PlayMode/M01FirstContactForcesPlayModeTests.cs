@@ -118,6 +118,12 @@ public sealed class M01FirstContactForcesPlayModeTests
                     "M01 cinematic actors must not swap into generated mid-LOD proxy meshes.");
                 Assert.That(world.EntityManager.HasComponent<UnitLowLodPrefabReference>(entities[i]), Is.False,
                     "M01 cinematic actors must not swap into generated low-LOD proxy meshes.");
+                Assert.That(world.EntityManager.HasComponent<UnitForceDetailedVisualTag>(entities[i]), Is.True,
+                    "M01 actors must remain on their authored full-body model during every cinematic.");
+                UnitRenderVisualComponent visual =
+                    world.EntityManager.GetComponentData<UnitRenderVisualComponent>(entities[i]);
+                Assert.That(visual.Current, Is.EqualTo((byte)UnitRenderVisualKind.Detail));
+                Assert.That(visual.Desired, Is.EqualTo((byte)UnitRenderVisualKind.Detail));
                 Faction faction = world.EntityManager.GetComponentData<Faction>(entities[i]);
                 if (faction.Id == 1) friendly++;
                 if (faction.Id == 2) hostile++;

@@ -161,13 +161,8 @@ namespace Game.Runtime
                         Entity instance = em.Instantiate(prefab);
                         if (em.HasComponent<SelectedUnitTag>(instance))
                             em.RemoveComponent<SelectedUnitTag>(instance);
-                        // M01 presents seven named, close-camera actors. Keep their full models
-                        // stable while the opening camera moves instead of handing any actor to
-                        // the shared generated proxy LOD path used by large Skirmish armies.
-                        if (em.HasComponent<UnitMidLodPrefabReference>(instance))
-                            em.RemoveComponent<UnitMidLodPrefabReference>(instance);
-                        if (em.HasComponent<UnitLowLodPrefabReference>(instance))
-                            em.RemoveComponent<UnitLowLodPrefabReference>(instance);
+                        if (runtime.MissionId.Equals(FirstContactMissionId))
+                            ApplyFirstContactCinematicVisualPolicy(em, instance);
                         float3 position = OffsetInsideAnchor(
                             anchor.Position, anchor.Radius, ordinal++, runtime.DeterministicSeed);
                         SetOrAdd(
@@ -217,6 +212,28 @@ namespace Game.Runtime
 
         internal static bool ShouldKeepStationary(in FixedString64Bytes missionId, byte factionId) =>
             missionId.Equals(FirstContactMissionId) && !FactionIdentity.IsPlayerControlled(factionId);
+
+        internal static void ApplyFirstContactCinematicVisualPolicy(EntityManager em, Entity instance)
+        {
+            // Seven close-camera actors are negligible beside the map render budget. Keep them on
+            // their authored model throughout the opening and finale, including the first frame.
+            if (em.HasComponent<UnitMidLodPrefabReference>(instance))
+                em.RemoveComponent<UnitMidLodPrefabReference>(instance);
+            if (em.HasComponent<UnitLowLodPrefabReference>(instance))
+                em.RemoveComponent<UnitLowLodPrefabReference>(instance);
+            if (!em.HasComponent<UnitForceDetailedVisualTag>(instance))
+                em.AddComponent<UnitForceDetailedVisualTag>(instance);
+            if (em.HasComponent<UnitRenderBudgetCulledUnitTag>(instance))
+                em.RemoveComponent<UnitRenderBudgetCulledUnitTag>(instance);
+            if (em.HasComponent<UnitRenderVisualExclusivityAppliedState>(instance))
+                em.RemoveComponent<UnitRenderVisualExclusivityAppliedState>(instance);
+            SetOrAdd(em, instance, new UnitRenderVisualComponent
+            {
+                Current = (byte)UnitRenderVisualKind.Detail,
+                Desired = (byte)UnitRenderVisualKind.Detail,
+                LastChangedFrame = 0
+            });
+        }
 
         internal static bool ShouldUseTutorialFinale(in CampaignMissionRuntimeComponent runtime) =>
             runtime.MissionId.Equals(FirstContactMissionId) &&

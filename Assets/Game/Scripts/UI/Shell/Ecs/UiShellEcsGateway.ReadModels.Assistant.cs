@@ -159,6 +159,22 @@ namespace Game.UI.Shell.Ecs
 
             AssistantRecommendationElement topRecommendation =
                 recommendations.Length > 0 ? recommendations[0] : default;
+            string recommendationTitle = topRecommendation.RecommendationId != 0
+                ? topRecommendation.Title.ToString()
+                : string.Empty;
+            string recommendationBody = topRecommendation.RecommendationId != 0
+                ? topRecommendation.Reason.ToString()
+                : string.Empty;
+            bool tutorialRightToLeft = false;
+            if (topRecommendation.RecommendationId != 0 && topRecommendation.TutorialStep > 0)
+            {
+                TryResolveTutorialPresentationText(
+                    topRecommendation.TutorialStep,
+                    ResolveTutorialNarrationLanguage(),
+                    out recommendationTitle,
+                    out recommendationBody,
+                    out tutorialRightToLeft);
+            }
             BuildAssistantGoalRows(
                 goals,
                 out UiAssistantGoalRowModel goal0,
@@ -194,10 +210,8 @@ namespace Game.UI.Shell.Ecs
                 targetLock,
                 narration,
                 topRecommendation.RecommendationId != 0,
-                topRecommendation.RecommendationId != 0 ? topRecommendation.Title.ToString() : string.Empty,
-                topRecommendation.RecommendationId != 0
-                    ? topRecommendation.Reason.ToString()
-                    : string.Empty,
+                recommendationTitle,
+                recommendationBody,
                 topRecommendation.RecommendationId != 0 ? PriorityText(topRecommendation.Priority) : string.Empty,
                 topRecommendation.RecommendationId != 0 ? topRecommendation.ActionLabel.ToString() : string.Empty,
                 topRecommendation.CanShow != 0,
@@ -211,7 +225,8 @@ namespace Game.UI.Shell.Ecs
                 (byte)topRecommendation.Kind,
                 (byte)topRecommendation.TargetKind,
                 topRecommendation.TutorialStep,
-                topRecommendation.TutorialStepCount);
+                topRecommendation.TutorialStepCount,
+                tutorialRightToLeft);
 
             hasCachedAssistantPanel = true;
             cachedAssistantPanelWorld = entityManager.World;

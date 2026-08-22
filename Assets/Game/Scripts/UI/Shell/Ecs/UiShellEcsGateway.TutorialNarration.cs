@@ -84,6 +84,42 @@ namespace Game.UI.Shell.Ecs
             return new FixedString64Bytes(eventId);
         }
 
+        internal static bool TryResolveTutorialPresentationText(
+            byte tutorialStep,
+            FirstLaunchNarrativeLanguage language,
+            out string title,
+            out string body,
+            out bool rightToLeft)
+        {
+            rightToLeft = language == FirstLaunchNarrativeLanguage.Persian;
+            if (rightToLeft)
+            {
+                (title, body) = tutorialStep switch
+                {
+                    1 => ("گروه خود را پیدا کنید", "برای شروع، گروه فرماندهی را انتخاب کنید."),
+                    2 => ("به پوشش حرکت کنید", "گروه را به موقعیت پوشش علامت‌گذاری‌شده منتقل کنید."),
+                    3 => ("تهدید را بررسی کنید", "گشت مسلح نزدیک غیرنظامیان را بررسی کنید."),
+                    4 => ("با گشت دشمن درگیر شوید", "به گشت دشمن تأییدشده حمله کنید."),
+                    5 => ("مسیر را امن کنید", "هدف را بررسی کنید و مسیر غیرنظامیان را امن کنید."),
+                    _ => (string.Empty, string.Empty)
+                };
+            }
+            else
+            {
+                (title, body) = tutorialStep switch
+                {
+                    1 => ("Find your squad", "Select the command squad to begin."),
+                    2 => ("Move to cover", "Move the squad to the marked cover position."),
+                    3 => ("Confirm the threat", "Inspect the armed patrol near the civilians."),
+                    4 => ("Engage the patrol", "Attack the confirmed hostile patrol."),
+                    5 => ("Secure the corridor", "Check the objective and secure the civilian route."),
+                    _ => (string.Empty, string.Empty)
+                };
+            }
+
+            return tutorialStep is >= 1 and <= 5;
+        }
+
         private static FirstLaunchNarrativeLanguage ResolveTutorialNarrationLanguage()
         {
             if (hasCachedTutorialNarrationLanguage)

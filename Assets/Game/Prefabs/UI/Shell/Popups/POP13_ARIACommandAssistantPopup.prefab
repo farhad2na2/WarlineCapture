@@ -16062,6 +16062,7 @@ MonoBehaviour:
   doItButton: {fileID: 7011132528476816266}
   showMeButtonLabel: {fileID: 5246861051792718977}
   doItButtonLabel: {fileID: 3109882752031804355}
+  persianFont: {fileID: 11400000, guid: 15a37dd92cdf54f419eb634937a005e2, type: 2}
 --- !u!1 &8780818635581963781
 GameObject:
   m_ObjectHideFlags: 0

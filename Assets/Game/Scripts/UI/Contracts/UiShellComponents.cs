@@ -1452,6 +1452,7 @@ namespace Game.UI.Contracts
         public readonly byte RecommendationTargetKind;
         public readonly byte TutorialStep;
         public readonly byte TutorialStepCount;
+        public readonly bool TutorialRightToLeft;
         public readonly bool CanShow;
         public readonly bool CanExecute;
         public readonly bool CanStop;
@@ -1507,6 +1508,7 @@ namespace Game.UI.Contracts
             RecommendationTargetKind = 0;
             TutorialStep = 0;
             TutorialStepCount = 0;
+            TutorialRightToLeft = false;
             CanShow = canShow;
             CanExecute = canExecute;
             CanStop = canStop;
@@ -1547,7 +1549,8 @@ namespace Game.UI.Contracts
             byte recommendationKind = 0,
             byte recommendationTargetKind = 0,
             byte tutorialStep = 0,
-            byte tutorialStepCount = 0)
+            byte tutorialStepCount = 0,
+            bool tutorialRightToLeft = false)
         {
             Version = version;
             ElapsedVisible = elapsedVisible;
@@ -1576,6 +1579,7 @@ namespace Game.UI.Contracts
             RecommendationTargetKind = recommendationTargetKind;
             TutorialStep = tutorialStep;
             TutorialStepCount = tutorialStepCount;
+            TutorialRightToLeft = tutorialRightToLeft;
             CanShow = canShow;
             CanExecute = canExecute;
             CanStop = canStop;

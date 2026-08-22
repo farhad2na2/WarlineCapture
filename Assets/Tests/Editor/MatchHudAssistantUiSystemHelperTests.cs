@@ -38,6 +38,10 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             passed++;
             RunCase(test => test.TutorialNarration_MapsEveryM01StepToEnglishAndPersianEvents());
             passed++;
+            RunCase(test => test.TutorialLocalization_MapsEveryM01StepToEnglishAndPersianText());
+            passed++;
+            RunCase(test => test.TutorialBriefing_PersianUsesRtlFontAndLocalizedSubsteps());
+            passed++;
             RunCase(test => test.MatchHudPrefab_ContainsEditableAssistantButton());
             passed++;
             RunCase(test => test.BindMatchHudAssistant_UsesPrefabButtonAndRestoresObjectives());
@@ -372,6 +376,101 @@ public sealed class MatchHudAssistantUiSystemHelperTests
                     null,
                     new object[] { step, FirstLaunchNarrativeLanguage.Persian })?.ToString());
         }
+    }
+
+    [Test]
+    public void TutorialLocalization_MapsEveryM01StepToEnglishAndPersianText()
+    {
+        MethodInfo resolver = typeof(UiShellEcsGateway).GetMethod(
+            "TryResolveTutorialPresentationText",
+            BindingFlags.Static | BindingFlags.NonPublic);
+        Assert.NotNull(resolver);
+        string[] englishTitles =
+        {
+            "Find your squad", "Move to cover", "Confirm the threat", "Engage the patrol", "Secure the corridor"
+        };
+        string[] englishBodies =
+        {
+            "Select the command squad to begin.",
+            "Move the squad to the marked cover position.",
+            "Inspect the armed patrol near the civilians.",
+            "Attack the confirmed hostile patrol.",
+            "Check the objective and secure the civilian route."
+        };
+        string[] persianTitles =
+        {
+            "گروه خود را پیدا کنید", "به پوشش حرکت کنید", "تهدید را بررسی کنید",
+            "با گشت دشمن درگیر شوید", "مسیر را امن کنید"
+        };
+        string[] persianBodies =
+        {
+            "برای شروع، گروه فرماندهی را انتخاب کنید.",
+            "گروه را به موقعیت پوشش علامت‌گذاری‌شده منتقل کنید.",
+            "گشت مسلح نزدیک غیرنظامیان را بررسی کنید.",
+            "به گشت دشمن تأییدشده حمله کنید.",
+            "هدف را بررسی کنید و مسیر غیرنظامیان را امن کنید."
+        };
+
+        for (byte step = 1; step <= 5; step++)
+        {
+            object[] english =
+            {
+                step, FirstLaunchNarrativeLanguage.English, null, null, false
+            };
+            Assert.IsTrue((bool)resolver.Invoke(null, english));
+            Assert.AreEqual(englishTitles[step - 1], english[2]);
+            Assert.AreEqual(englishBodies[step - 1], english[3]);
+            Assert.IsFalse((bool)english[4]);
+
+            object[] persian =
+            {
+                step, FirstLaunchNarrativeLanguage.Persian, null, null, false
+            };
+            Assert.IsTrue((bool)resolver.Invoke(null, persian));
+            Assert.AreEqual(persianTitles[step - 1], persian[2]);
+            Assert.AreEqual(persianBodies[step - 1], persian[3]);
+            Assert.IsTrue((bool)persian[4]);
+        }
+    }
+
+    [Test]
+    public void TutorialBriefing_PersianUsesRtlFontAndLocalizedSubsteps()
+    {
+        GameObject instance = UnityEngine.Object.Instantiate(LoadPopupPrefab());
+        instance.name = "AssistantUiTestPersianTutorial";
+        AriaTutorialBriefingView tutorial =
+            instance.GetComponentInChildren<AriaTutorialBriefingView>(true);
+        Assert.NotNull(tutorial);
+        Assert.IsTrue(tutorial.TryBindHierarchy());
+
+        tutorial.Apply(CreateStructuredModel(
+            901u,
+            recommendationKind: 2,
+            recommendationTargetKind: 1,
+            tutorialStep: 2,
+            tutorialStepCount: 5,
+            recommendationTitle: "به پوشش حرکت کنید",
+            recommendationBody: "گروه را به موقعیت پوشش علامت‌گذاری‌شده منتقل کنید.",
+            tutorialRightToLeft: true));
+
+        Assert.IsTrue(tutorial.TitleText.isRightToLeftText);
+        Assert.IsTrue(tutorial.BodyText.isRightToLeftText);
+        Assert.IsTrue(tutorial.ProgressText.isRightToLeftText);
+        Assert.AreEqual(
+            "Assets/Game/Art/UI/Fonts/NotoSansArabic/NotoSansArabic-Narrative SDF.asset",
+            AssetDatabase.GetAssetPath(tutorial.TitleText.font));
+        Assert.AreNotEqual("PRESS MOVE", tutorial.TitleText.text);
+        StringAssert.DoesNotContain("TRAINING", tutorial.ProgressText.text);
+        StringAssert.DoesNotContain(
+            "SHOW ME",
+            tutorial.ShowMeButton.GetComponentInChildren<TMP_Text>(true).text);
+
+        string pressMoveTitle = tutorial.TitleText.text;
+        tutorial.ApplyInteractionState(TacticalCommandMode.Move, worldTargetCompleted: false);
+        Assert.AreNotEqual(pressMoveTitle, tutorial.TitleText.text);
+        Assert.AreNotEqual("CHOOSE DESTINATION", tutorial.TitleText.text);
+        tutorial.ApplyInteractionState(TacticalCommandMode.Move, worldTargetCompleted: true);
+        Assert.AreNotEqual("MOVING TO COVER", tutorial.TitleText.text);
     }
 
     [Test]
@@ -922,7 +1021,10 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         byte recommendationKind = 0,
         byte recommendationTargetKind = 0,
         byte tutorialStep = 0,
-        byte tutorialStepCount = 0)
+        byte tutorialStepCount = 0,
+        string recommendationTitle = "Focus hostile armor",
+        string recommendationBody = "Preview the verified hostile source before dispatch.",
+        bool tutorialRightToLeft = false)
     {
         return new UiAssistantPanelModel(
             version,
@@ -939,8 +1041,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             new UiAssistantTargetLockModel(true, 2, 1, "Raven Tank", "Echo Squad", "140 M", "72 / 100", "HOSTILE", "PREVIEW", "Line of fire verified."),
             new UiAssistantNarrationModel((byte)UiAssistantNarrationStateKind.Presented, 3, "PRESENTED", "Hostile armor identified.", string.Empty, true),
             true,
-            "Focus hostile armor",
-            "Preview the verified hostile source before dispatch.",
+            recommendationTitle,
+            recommendationBody,
             "CRITICAL",
             "SHOW ME",
             true,
@@ -952,7 +1054,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             recommendationKind: recommendationKind,
             recommendationTargetKind: recommendationTargetKind,
             tutorialStep: tutorialStep,
-            tutorialStepCount: tutorialStepCount);
+            tutorialStepCount: tutorialStepCount,
+            tutorialRightToLeft: tutorialRightToLeft);
     }
 
     private static UiAssistantHighlightModel CreateHighlightModel(

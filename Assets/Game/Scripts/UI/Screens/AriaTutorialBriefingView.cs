@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Game.Tactical.Contracts;
 using Game.UI.Contracts;
+using RTLTMPro;
 
 namespace Game.UI.Runtime
 {
@@ -20,6 +21,7 @@ namespace Game.UI.Runtime
         [SerializeField] private Button doItButton;
         [SerializeField] private TMP_Text showMeButtonLabel;
         [SerializeField] private TMP_Text doItButtonLabel;
+        [SerializeField] private TMP_FontAsset persianFont;
 
         private Action _closeRequested;
         private Action _showRecommendationRequested;
@@ -27,6 +29,11 @@ namespace Game.UI.Runtime
         private byte _tutorialStep;
         private string _defaultTitle = string.Empty;
         private string _defaultBody = string.Empty;
+        private bool _rightToLeft;
+        private TMP_Text[] _localizedTextTargets;
+        private TMP_FontAsset[] _defaultFonts;
+        private TextAlignmentOptions[] _defaultAlignments;
+        private readonly FastStringBuilder _rtlBuffer = new(RTLSupport.DefaultBufferSize);
 
         public RectTransform BriefingLayout => briefingLayout;
         public Image PortraitImage => portraitImage;
@@ -76,16 +83,22 @@ namespace Game.UI.Runtime
         public void Apply(UiAssistantPanelModel model)
         {
             _tutorialStep = model.TutorialStep;
-            _defaultTitle = (model.RecommendationTitle ?? string.Empty).ToUpperInvariant();
+            _rightToLeft = model.TutorialRightToLeft;
+            ApplyLanguagePresentation();
+            _defaultTitle = _rightToLeft
+                ? model.RecommendationTitle ?? string.Empty
+                : (model.RecommendationTitle ?? string.Empty).ToUpperInvariant();
             _defaultBody = model.RecommendationBody ?? string.Empty;
             ApplyInteractionState(TacticalCommandMode.None, worldTargetCompleted: false);
             int step = Mathf.Max(1, model.TutorialStep);
             int count = Mathf.Max(step, model.TutorialStepCount);
-            progressText.SetText("TRAINING {0} / {1}", step, count);
+            SetLocalizedText(
+                progressText,
+                _rightToLeft ? $"آموزش {step} / {count}" : $"TRAINING {step} / {count}");
             showMeButton.interactable = model.CanShow;
             doItButton.interactable = model.CanExecute;
-            showMeButtonLabel.text = "SHOW ME";
-            doItButtonLabel.text = "DO IT";
+            SetLocalizedText(showMeButtonLabel, _rightToLeft ? "نشانم بده" : "SHOW ME");
+            SetLocalizedText(doItButtonLabel, _rightToLeft ? "انجامش بده" : "DO IT");
             closeButton.gameObject.SetActive(false);
         }
 
@@ -98,16 +111,24 @@ namespace Game.UI.Runtime
                 if (worldTargetCompleted)
                 {
                     ApplyInstruction(
-                        "MOVING TO COVER",
-                        "Your squad is moving to the marked cover position.");
+                        _rightToLeft ? "در حال حرکت به پوشش" : "MOVING TO COVER",
+                        _rightToLeft
+                            ? "گروه شما در حال حرکت به موقعیت پوشش علامت‌گذاری‌شده است."
+                            : "Your squad is moving to the marked cover position.");
                     return;
                 }
 
                 ApplyInstruction(
-                    mode == TacticalCommandMode.Move ? "CHOOSE DESTINATION" : "PRESS MOVE",
-                    mode == TacticalCommandMode.Move
-                        ? "Tap the highlighted destination to move your squad."
-                        : "Tap MOVE, then choose the highlighted destination.");
+                    _rightToLeft
+                        ? mode == TacticalCommandMode.Move ? "مقصد را انتخاب کنید" : "حرکت را بزنید"
+                        : mode == TacticalCommandMode.Move ? "CHOOSE DESTINATION" : "PRESS MOVE",
+                    _rightToLeft
+                        ? mode == TacticalCommandMode.Move
+                            ? "برای حرکت گروه، روی مقصد علامت‌گذاری‌شده بزنید."
+                            : "روی «حرکت» بزنید، سپس مقصد علامت‌گذاری‌شده را انتخاب کنید."
+                        : mode == TacticalCommandMode.Move
+                            ? "Tap the highlighted destination to move your squad."
+                            : "Tap MOVE, then choose the highlighted destination.");
                 return;
             }
 
@@ -116,16 +137,24 @@ namespace Game.UI.Runtime
                 if (worldTargetCompleted)
                 {
                     ApplyInstruction(
-                        "ATTACK ORDER ISSUED",
-                        "Your squad is engaging the highlighted enemy.");
+                        _rightToLeft ? "دستور حمله صادر شد" : "ATTACK ORDER ISSUED",
+                        _rightToLeft
+                            ? "گروه شما در حال درگیری با دشمن علامت‌گذاری‌شده است."
+                            : "Your squad is engaging the highlighted enemy.");
                     return;
                 }
 
                 ApplyInstruction(
-                    mode == TacticalCommandMode.Attack ? "CHOOSE ENEMY" : "PRESS ATTACK",
-                    mode == TacticalCommandMode.Attack
-                        ? "Tap the highlighted enemy to issue the attack."
-                        : "Tap ATTACK, then choose the highlighted enemy.");
+                    _rightToLeft
+                        ? mode == TacticalCommandMode.Attack ? "دشمن را انتخاب کنید" : "حمله را بزنید"
+                        : mode == TacticalCommandMode.Attack ? "CHOOSE ENEMY" : "PRESS ATTACK",
+                    _rightToLeft
+                        ? mode == TacticalCommandMode.Attack
+                            ? "برای صدور دستور حمله، روی دشمن علامت‌گذاری‌شده بزنید."
+                            : "روی «حمله» بزنید، سپس دشمن علامت‌گذاری‌شده را انتخاب کنید."
+                        : mode == TacticalCommandMode.Attack
+                            ? "Tap the highlighted enemy to issue the attack."
+                            : "Tap ATTACK, then choose the highlighted enemy.");
                 return;
             }
 
@@ -166,10 +195,69 @@ namespace Game.UI.Runtime
 
         private void ApplyInstruction(string title, string body)
         {
-            if (titleText.text != title)
-                titleText.text = title;
-            if (bodyText.text != body)
-                bodyText.text = body;
+            SetLocalizedText(titleText, title);
+            SetLocalizedText(bodyText, body);
+        }
+
+        private void ApplyLanguagePresentation()
+        {
+            if (_localizedTextTargets == null)
+            {
+                _localizedTextTargets = new[]
+                {
+                    titleText, bodyText, progressText, showMeButtonLabel, doItButtonLabel
+                };
+                _defaultFonts = new TMP_FontAsset[_localizedTextTargets.Length];
+                _defaultAlignments = new TextAlignmentOptions[_localizedTextTargets.Length];
+                for (int i = 0; i < _localizedTextTargets.Length; i++)
+                {
+                    _defaultFonts[i] = _localizedTextTargets[i].font;
+                    _defaultAlignments[i] = _localizedTextTargets[i].alignment;
+                }
+            }
+
+            for (int i = 0; i < _localizedTextTargets.Length; i++)
+            {
+                TMP_Text target = _localizedTextTargets[i];
+                target.font = _rightToLeft && persianFont != null
+                    ? persianFont
+                    : _defaultFonts[i];
+                target.alignment = _rightToLeft
+                    ? ToRightAligned(_defaultAlignments[i])
+                    : _defaultAlignments[i];
+            }
+        }
+
+        private void SetLocalizedText(TMP_Text target, string value)
+        {
+            string display = value ?? string.Empty;
+            if (_rightToLeft && display.Length > 0)
+            {
+                _rtlBuffer.Clear();
+                RTLSupport.FixRTL(
+                    display,
+                    _rtlBuffer,
+                    farsi: true,
+                    fixTextTags: true,
+                    preserveNumbers: true);
+                _rtlBuffer.Reverse();
+                display = _rtlBuffer.ToString();
+            }
+
+            target.isRightToLeftText = _rightToLeft;
+            if (target.text != display)
+                target.text = display;
+        }
+
+        private static TextAlignmentOptions ToRightAligned(TextAlignmentOptions alignment)
+        {
+            return alignment switch
+            {
+                TextAlignmentOptions.Left => TextAlignmentOptions.Right,
+                TextAlignmentOptions.TopLeft => TextAlignmentOptions.TopRight,
+                TextAlignmentOptions.BottomLeft => TextAlignmentOptions.BottomRight,
+                _ => alignment
+            };
         }
     }
 }

@@ -42,6 +42,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             passed++;
             RunCase(test => test.TutorialBriefing_PersianUsesRtlFontAndLocalizedSubsteps());
             passed++;
+            RunCase(test => test.TutorialDoIt_SelectsCommandModeBeforeExecutingWorldOrder());
+            passed++;
             RunCase(test => test.MatchHudPrefab_ContainsEditableAssistantButton());
             passed++;
             RunCase(test => test.BindMatchHudAssistant_UsesPrefabButtonAndRestoresObjectives());
@@ -264,7 +266,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
 
         gateway.AssistantPanel = CreateStructuredModel(
             803u, recommendationKind: 2, recommendationTargetKind: 1,
-            tutorialStep: 2, tutorialStepCount: 5);
+            tutorialStep: 2, tutorialStepCount: 5,
+            recommendationBody: "Move the squad to the marked cover position.");
         SetPrivateField(ui, "_nextAssistantPanelRefreshTime", 0f);
         ui.Update();
         Assert.IsFalse(popup.IsOpen,
@@ -283,7 +286,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.AreEqual(2, gateway.TutorialNarrationSteps[1]);
         Assert.AreEqual("TRAINING 2 / 5", tutorial.ProgressText.text);
         Assert.AreEqual("PRESS MOVE", tutorial.TitleText.text);
-        Assert.AreEqual("Tap MOVE, then choose the highlighted destination.", tutorial.BodyText.text);
+        Assert.AreEqual("Move the squad to the marked cover position.", tutorial.BodyText.text);
 
         MatchOverlayCommandControlsView commandControls = CreateCommandControls(overlay);
         ui.BindMatchHudCommandControls(commandControls);
@@ -310,7 +313,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
 
         gateway.AssistantPanel = CreateStructuredModel(
             804u, recommendationKind: 3, recommendationTargetKind: 6,
-            tutorialStep: 3, tutorialStepCount: 5);
+            tutorialStep: 3, tutorialStepCount: 5,
+            recommendationBody: "Inspect the armed patrol near the civilians.");
         helper.ApplyReadModel(gateway.AssistantPanel);
         helper.TickHighlight(100f);
         helper.TickHighlight(102f);
@@ -324,6 +328,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         helper.TickHighlight(attackTargetDeadline);
         Assert.IsTrue(popup.IsOpen, "ARIA must return to teach the enemy-target substep.");
         Assert.AreEqual("CHOOSE ENEMY", tutorial.TitleText.text);
+        Assert.AreEqual("Tap the highlighted enemy to issue the attack.", tutorial.BodyText.text);
         helper.CompleteWorldTarget(TacticalCommandMode.Attack);
         Assert.IsFalse(popup.IsOpen, "The final attack must hide ARIA immediately.");
 
@@ -466,11 +471,72 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             tutorial.ShowMeButton.GetComponentInChildren<TMP_Text>(true).text);
 
         string pressMoveTitle = tutorial.TitleText.text;
+        string pressMoveBody = tutorial.BodyText.text;
         tutorial.ApplyInteractionState(TacticalCommandMode.Move, worldTargetCompleted: false);
         Assert.AreNotEqual(pressMoveTitle, tutorial.TitleText.text);
         Assert.AreNotEqual("CHOOSE DESTINATION", tutorial.TitleText.text);
+        Assert.AreNotEqual(pressMoveBody, tutorial.BodyText.text);
+        StringAssert.DoesNotContain("Tap", tutorial.BodyText.text);
+        string destinationBody = tutorial.BodyText.text;
         tutorial.ApplyInteractionState(TacticalCommandMode.Move, worldTargetCompleted: true);
         Assert.AreNotEqual("MOVING TO COVER", tutorial.TitleText.text);
+        Assert.AreNotEqual(destinationBody, tutorial.BodyText.text);
+        StringAssert.DoesNotContain("Your squad", tutorial.BodyText.text);
+    }
+
+    [Test]
+    public void TutorialDoIt_SelectsCommandModeBeforeExecutingWorldOrder()
+    {
+        CreateHudHarness(true, out RectTransform overlay, out RectTransform header, out _);
+        var gateway = new FakeAssistantPanelGateway(
+            CreateStructuredModel(
+                902u,
+                recommendationKind: 3,
+                recommendationTargetKind: 6,
+                tutorialStep: 4,
+                tutorialStepCount: 5,
+                recommendationBody: "Attack the confirmed hostile patrol."),
+            CreateHighlightModel(902u, recommendationKind: 3, targetKind: 6));
+        UiShellRuntimeGateway.Register(gateway);
+        var ui = new MainMenuPlayUI();
+        ui.Init(null, new FakeMatchRuntimeState());
+        ui.BindMatchHudAssistant(header.gameObject, overlay, LoadPopupPrefab());
+
+        MatchOverlayCommandControlsView commandControls = CreateCommandControls(overlay);
+        var commandInput = new MatchOverlayCommandInputUiSystemHelper();
+        commandInput.Bind(
+            commandControls,
+            new AcceptedSelectionUiCommand(),
+            commandModeQueued: ui.AcknowledgeMatchHudGuidedCommandMode);
+        ui.BindMatchHudCommandControls(commandControls);
+        ui.Update();
+
+        MatchHudAssistantUiSystemHelper helper =
+            GetPrivateField<MatchHudAssistantUiSystemHelper>(ui, "_matchHudAssistantUiSystem");
+        helper.TickHighlight(float.MaxValue);
+        AriaTutorialBriefingView tutorial = overlay
+            .GetComponentInChildren<AriaTutorialBriefingView>(true);
+        Assert.IsTrue(tutorial.gameObject.activeInHierarchy);
+        Assert.AreEqual("PRESS ATTACK", tutorial.TitleText.text);
+        Assert.AreEqual("Attack the confirmed hostile patrol.", tutorial.BodyText.text);
+
+        tutorial.DoItButton.onClick.Invoke();
+
+        Assert.AreEqual(0, gateway.AssistantIntentRequestCount,
+            "The first tutorial DO IT must select ATTACK instead of issuing the world order.");
+        Assert.IsFalse(tutorial.gameObject.activeInHierarchy);
+        float targetInstructionDeadline = GetPrivateField<float>(helper, "_tutorialShowAtUnscaledTime");
+        helper.TickHighlight(targetInstructionDeadline);
+        Assert.IsTrue(tutorial.gameObject.activeInHierarchy);
+        Assert.AreEqual("CHOOSE ENEMY", tutorial.TitleText.text);
+        Assert.AreEqual("Tap the highlighted enemy to issue the attack.", tutorial.BodyText.text);
+
+        tutorial.DoItButton.onClick.Invoke();
+
+        Assert.AreEqual(1, gateway.AssistantIntentRequestCount);
+        Assert.AreEqual(UiAssistantCommandIntentKind.ExecuteRecommendation, gateway.LastAssistantIntentKind);
+        Assert.IsTrue(gateway.LastAssistantIntentFromTakeover);
+        ui.Dispose();
     }
 
     [Test]

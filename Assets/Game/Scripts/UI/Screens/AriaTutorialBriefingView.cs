@@ -122,13 +122,11 @@ namespace Game.UI.Runtime
                     _rightToLeft
                         ? mode == TacticalCommandMode.Move ? "مقصد را انتخاب کنید" : "حرکت را بزنید"
                         : mode == TacticalCommandMode.Move ? "CHOOSE DESTINATION" : "PRESS MOVE",
-                    _rightToLeft
-                        ? mode == TacticalCommandMode.Move
+                    mode == TacticalCommandMode.Move
+                        ? _rightToLeft
                             ? "برای حرکت گروه، روی مقصد علامت‌گذاری‌شده بزنید."
-                            : "روی «حرکت» بزنید، سپس مقصد علامت‌گذاری‌شده را انتخاب کنید."
-                        : mode == TacticalCommandMode.Move
-                            ? "Tap the highlighted destination to move your squad."
-                            : "Tap MOVE, then choose the highlighted destination.");
+                            : "Tap the highlighted destination to move your squad."
+                        : _defaultBody);
                 return;
             }
 
@@ -148,13 +146,11 @@ namespace Game.UI.Runtime
                     _rightToLeft
                         ? mode == TacticalCommandMode.Attack ? "دشمن را انتخاب کنید" : "حمله را بزنید"
                         : mode == TacticalCommandMode.Attack ? "CHOOSE ENEMY" : "PRESS ATTACK",
-                    _rightToLeft
-                        ? mode == TacticalCommandMode.Attack
+                    mode == TacticalCommandMode.Attack
+                        ? _rightToLeft
                             ? "برای صدور دستور حمله، روی دشمن علامت‌گذاری‌شده بزنید."
-                            : "روی «حمله» بزنید، سپس دشمن علامت‌گذاری‌شده را انتخاب کنید."
-                        : mode == TacticalCommandMode.Attack
-                            ? "Tap the highlighted enemy to issue the attack."
-                            : "Tap ATTACK, then choose the highlighted enemy.");
+                            : "Tap the highlighted enemy to issue the attack."
+                        : _defaultBody);
                 return;
             }
 

@@ -31,6 +31,7 @@ namespace Game.UI.Runtime
         private bool _mirroredPanelOpen;
         private UiAssistantPanelModel _lastPanelModel = UiAssistantPanelModel.Empty;
         private UiAssistantHighlightModel _lastHighlightModel = UiAssistantHighlightModel.Empty;
+        private MatchOverlayCommandControlsView _commandControlsView;
         private TacticalCommandMode _activeCommandMode;
         private bool _tutorialWorldTargetCompleted;
 
@@ -118,6 +119,7 @@ namespace Game.UI.Runtime
             _highlightPresentationSystem.Unbind();
             _lastPanelModel = UiAssistantPanelModel.Empty;
             _lastHighlightModel = UiAssistantHighlightModel.Empty;
+            _commandControlsView = null;
             _activeCommandMode = TacticalCommandMode.None;
             _tutorialWorldTargetCompleted = false;
             ClearTutorialPresentationState();
@@ -176,6 +178,7 @@ namespace Game.UI.Runtime
 
         public void BindCommandControls(MatchOverlayCommandControlsView commandControlsView)
         {
+            _commandControlsView = commandControlsView;
             _highlightPresentationSystem.BindCommandControls(commandControlsView);
         }
 
@@ -339,6 +342,9 @@ namespace Game.UI.Runtime
         private void ExecuteRecommendation()
         {
             CaptureUiOnly();
+            if (TryAdvanceTutorialCommandSubstep())
+                return;
+
             if (!UiShellRuntimeGateway.TryEnqueueAssistantCommandIntent(
                     UiAssistantCommandIntentKind.ExecuteRecommendation,
                     fromTakeover: true))
@@ -350,6 +356,30 @@ namespace Game.UI.Runtime
                 CompleteTutorialStep(
                     _lastPanelModel.TutorialStep,
                     finalStep: _lastPanelModel.RecommendationKind == 3);
+        }
+
+        private bool TryAdvanceTutorialCommandSubstep()
+        {
+            if (_lastPanelModel.TutorialStep == 0)
+                return false;
+
+            TacticalCommandMode requiredMode = _lastPanelModel.RecommendationKind switch
+            {
+                2 => TacticalCommandMode.Move,
+                3 => TacticalCommandMode.Attack,
+                _ => TacticalCommandMode.None
+            };
+            if (requiredMode == TacticalCommandMode.None || _activeCommandMode == requiredMode)
+                return false;
+
+            Button commandButton = requiredMode == TacticalCommandMode.Move
+                ? _commandControlsView?.MoveButton
+                : _commandControlsView?.AttackButton;
+            if (commandButton != null && commandButton.IsActive() && commandButton.IsInteractable())
+                commandButton.onClick.Invoke();
+
+            // Tutorial automation must never bypass the command-button instruction.
+            return true;
         }
 
         private void StopAssistantControl()

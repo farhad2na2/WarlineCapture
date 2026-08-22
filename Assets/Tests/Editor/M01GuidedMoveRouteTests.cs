@@ -211,6 +211,10 @@ public sealed class M01GuidedMoveRouteTests
             Is.EqualTo(0.78f).Within(0.001f));
         Assert.That(CampaignMissionPatrolOrderSystem.FinalePostKillHoldMilliseconds, Is.EqualTo(3000),
             "Victory must wait while the casualty shot is visible.");
+        Assert.That(CampaignMissionPatrolOrderSystem.ShouldCompleteFinale(3899), Is.False,
+            "The mission-complete UI must not appear during camera arrival or the three-second hold.");
+        Assert.That(CampaignMissionPatrolOrderSystem.ShouldCompleteFinale(3900), Is.True,
+            "Completion may begin only after camera arrival plus the full three-second hold.");
 
         float3 revealFocus = CampaignMissionPatrolOrderSystem.ComputeCasualtyRevealFocus(
             friendlyFocus, casualtyFocus);

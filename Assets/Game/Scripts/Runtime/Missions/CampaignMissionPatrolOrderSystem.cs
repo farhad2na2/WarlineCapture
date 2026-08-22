@@ -288,7 +288,7 @@ namespace Game.Runtime
                     {
                         current.ElapsedMilliseconds = SaturatingAddMilliseconds(
                             current.ElapsedMilliseconds, SystemAPI.Time.DeltaTime);
-                        if (current.ElapsedMilliseconds >= FinalePostKillHoldMilliseconds)
+                        if (ShouldCompleteFinale(current.ElapsedMilliseconds))
                         {
                             current.Stage = 4;
                             RefRW<CampaignMissionAttemptFactsComponent> factsRw =
@@ -364,6 +364,9 @@ namespace Game.Runtime
 
         internal static float3 ComputeCasualtyRevealFocus(float3 friendlyFocus, float3 casualtyFocus) =>
             math.lerp(friendlyFocus, casualtyFocus, FinaleCasualtyFocusTowardHostiles);
+
+        internal static bool ShouldCompleteFinale(int elapsedMilliseconds) =>
+            elapsedMilliseconds >= FinaleCameraArrivalMilliseconds + FinalePostKillHoldMilliseconds;
 
         internal static bool TryComputeLiveCombatFocus(
             EntityManager entityManager,

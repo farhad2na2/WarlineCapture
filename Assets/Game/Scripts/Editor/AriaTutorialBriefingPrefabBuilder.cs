@@ -62,30 +62,30 @@ namespace Game.Editor
                 Stretch(surface);
                 AriaTutorialBriefingView view = surface.gameObject.AddComponent<AriaTutorialBriefingView>();
 
-                Image scrim = CreateImage(
-                    "TutorialInputScrim",
+                Image inputBlocker = CreateImage(
+                    "TutorialInputBlocker",
                     surface,
                     null,
-                    new Color(0.01f, 0.015f, 0.018f, 0.72f),
+                    Color.clear,
                     true);
-                Stretch(scrim.rectTransform);
+                Stretch(inputBlocker.rectTransform);
 
                 Image portraitImage = CreateImage("AriaPortrait", surface, portrait, Color.white, false);
                 SetRect(
                     portraitImage.rectTransform,
-                    new Vector2(0.5f, 0.5f),
-                    new Vector2(0.5f, 0.5f),
-                    new Vector2(900f, 900f),
-                    new Vector2(-1060f, 40f));
+                    Vector2.zero,
+                    Vector2.zero,
+                    new Vector2(960f, 960f),
+                    new Vector2(540f, 740f));
                 portraitImage.preserveAspect = true;
 
                 Image backing = CreateImage("BriefingPanel", surface, panel, Color.white, false);
                 SetRect(
                     backing.rectTransform,
-                    new Vector2(0.5f, 0.5f),
-                    new Vector2(0.5f, 0.5f),
-                    new Vector2(2300f, 920f),
-                    new Vector2(470f, 20f));
+                    Vector2.zero,
+                    Vector2.zero,
+                    new Vector2(1800f, 760f),
+                    new Vector2(1650f, 640f));
                 backing.type = Image.Type.Sliced;
 
                 TMP_Text identity = CreateText(
@@ -93,7 +93,7 @@ namespace Game.Editor
                     backing.transform,
                     "ARIA",
                     bold,
-                    48f,
+                    40f,
                     TextAlignmentOptions.Left,
                     Cyan);
                 SetAnchored(identity.rectTransform, new Vector2(0.065f, 0.845f), new Vector2(0.28f, 0.94f));
@@ -103,7 +103,7 @@ namespace Game.Editor
                     backing.transform,
                     "TACTICAL ADVISOR",
                     medium,
-                    32f,
+                    28f,
                     TextAlignmentOptions.Left,
                     Muted);
                 SetAnchored(role.rectTransform, new Vector2(0.245f, 0.845f), new Vector2(0.62f, 0.94f));
@@ -113,13 +113,13 @@ namespace Game.Editor
                     backing.transform,
                     "FIND YOUR SQUAD",
                     bold,
-                    72f,
+                    58f,
                     TextAlignmentOptions.Left,
                     Pale);
                 SetAnchored(title.rectTransform, new Vector2(0.065f, 0.64f), new Vector2(0.92f, 0.84f));
                 title.enableAutoSizing = true;
-                title.fontSizeMin = 52f;
-                title.fontSizeMax = 72f;
+                title.fontSizeMin = 42f;
+                title.fontSizeMax = 58f;
                 title.textWrappingMode = TextWrappingModes.NoWrap;
 
                 Image divider = CreateImage("TutorialDivider", backing.transform, null, new Color(Cyan.r, Cyan.g, Cyan.b, 0.68f), false);
@@ -130,13 +130,13 @@ namespace Game.Editor
                     backing.transform,
                     "Select the command squad to begin.",
                     medium,
-                    48f,
+                    38f,
                     TextAlignmentOptions.TopLeft,
                     Pale);
                 SetAnchored(body.rectTransform, new Vector2(0.065f, 0.285f), new Vector2(0.935f, 0.58f));
                 body.enableAutoSizing = true;
-                body.fontSizeMin = 36f;
-                body.fontSizeMax = 48f;
+                body.fontSizeMin = 30f;
+                body.fontSizeMax = 38f;
                 body.textWrappingMode = TextWrappingModes.Normal;
                 body.overflowMode = TextOverflowModes.Ellipsis;
 
@@ -145,7 +145,7 @@ namespace Game.Editor
                     backing.transform,
                     "TRAINING 1 / 5",
                     bold,
-                    34f,
+                    30f,
                     TextAlignmentOptions.Left,
                     Gold);
                 SetAnchored(progress.rectTransform, new Vector2(0.065f, 0.075f), new Vector2(0.39f, 0.24f));
@@ -303,6 +303,13 @@ namespace Game.Editor
                 throw new InvalidOperationException("ARIA tutorial briefing hierarchy is incomplete.");
             if (AssetDatabase.GetAssetPath(view.PortraitImage.sprite) != PortraitPath)
                 throw new InvalidOperationException("ARIA tutorial briefing must use the canonical ARIA portrait.");
+            Transform blockerTransform = view.transform.Find("TutorialInputBlocker");
+            Image inputBlocker = blockerTransform != null ? blockerTransform.GetComponent<Image>() : null;
+            if (inputBlocker == null || inputBlocker.color.a > 0.001f)
+                throw new InvalidOperationException("ARIA tutorial briefing must not darken the battlefield.");
+            if (view.BriefingLayout.anchorMin != Vector2.zero || view.BriefingLayout.anchorMax != Vector2.zero ||
+                view.BriefingLayout.anchoredPosition.y - view.BriefingLayout.rect.height * 0.5f < 240f)
+                throw new InvalidOperationException("ARIA tutorial briefing must remain above the lower-left squad controls.");
             if (!Contains(view.BriefingLayout, view.ShowMeButton.transform as RectTransform) ||
                 !Contains(view.BriefingLayout, view.DoItButton.transform as RectTransform))
                 throw new InvalidOperationException("ARIA tutorial actions must remain inside the briefing panel.");
@@ -364,7 +371,7 @@ namespace Game.Editor
             SetAnchored(icon.rectTransform, new Vector2(0.09f, 0.2f), new Vector2(0.29f, 0.8f));
             icon.preserveAspect = true;
 
-            labelText = CreateText("Label", image.transform, label, font, 38f, TextAlignmentOptions.Center, Pale);
+            labelText = CreateText("Label", image.transform, label, font, 32f, TextAlignmentOptions.Center, Pale);
             SetAnchored(labelText.rectTransform, new Vector2(0.25f, 0.08f), new Vector2(0.96f, 0.92f));
             return button;
         }

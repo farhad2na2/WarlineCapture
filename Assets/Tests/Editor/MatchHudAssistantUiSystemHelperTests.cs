@@ -186,6 +186,18 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.AreEqual(
             AriaPortraitPath,
             AssetDatabase.GetAssetPath(tutorial.PortraitImage.sprite));
+        Transform inputBlockerTransform = FindNamed(view.transform, "TutorialInputBlocker");
+        Assert.NotNull(inputBlockerTransform);
+        Image inputBlocker = inputBlockerTransform.GetComponent<Image>();
+        Assert.NotNull(inputBlocker);
+        Assert.AreEqual(0f, inputBlocker.color.a, 0.001f,
+            "The tutorial input blocker must not darken the battlefield.");
+        Assert.AreEqual(Vector2.zero, tutorial.BriefingLayout.anchorMin);
+        Assert.AreEqual(Vector2.zero, tutorial.BriefingLayout.anchorMax);
+        Assert.GreaterOrEqual(
+            tutorial.BriefingLayout.anchoredPosition.y - tutorial.BriefingLayout.rect.height * 0.5f,
+            240f,
+            "The tutorial panel must stay above the lower-left squad controls.");
         Assert.IsTrue(Contains(tutorial.BriefingLayout, tutorial.ShowMeButton.transform as RectTransform));
         Assert.IsTrue(Contains(tutorial.BriefingLayout, tutorial.DoItButton.transform as RectTransform));
         Assert.GreaterOrEqual((tutorial.ShowMeButton.transform as RectTransform).rect.height, 110f);

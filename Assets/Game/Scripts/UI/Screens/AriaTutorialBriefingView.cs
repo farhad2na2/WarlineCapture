@@ -85,9 +85,9 @@ namespace Game.UI.Runtime
         public void ApplyAccessibility(bool largeTextEnabled, bool highContrastEnabled)
         {
             float scale = largeTextEnabled ? 1.08f : 1f;
-            titleText.fontSize = 72f * scale;
-            bodyText.fontSize = 48f * scale;
-            progressText.fontSize = 34f * scale;
+            titleText.fontSize = 58f * scale;
+            bodyText.fontSize = 38f * scale;
+            progressText.fontSize = 30f * scale;
             Color primary = highContrastEnabled ? Color.white : new Color(0.95f, 0.92f, 0.82f, 1f);
             titleText.color = primary;
             bodyText.color = primary;

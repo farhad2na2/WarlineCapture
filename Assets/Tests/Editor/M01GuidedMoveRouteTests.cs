@@ -548,6 +548,11 @@ public sealed class M01GuidedMoveRouteTests
         Assert.That(CampaignMissionPatrolOrderSystem.ShouldReleaseCombat(
                 MissionPhaseKind.Engage, tutorialFinaleActive: true, tutorialFinaleStage: 2), Is.True,
             "Both factions may engage only after the finale camera arrives.");
+        Assert.That(CampaignMissionPatrolOrderSystem.FinaleCameraSmoothTimeSeconds,
+            Is.EqualTo(0.75f).Within(0.001f),
+            "The finale camera must move quickly enough to preserve the visible firefight.");
+        Assert.That(CampaignMissionPatrolOrderSystem.FinaleCameraArrivalMilliseconds, Is.EqualTo(900),
+            "Combat must release within 0.9 seconds of the finale camera request.");
         Assert.That(CampaignMissionPatrolOrderSystem.ComputeCombatRevealYaw(new float3(0f, 0f, 12f)),
             Is.EqualTo(0f).Within(0.001f),
             "A north-facing hostile line must place the camera behind the southern friendly line.");

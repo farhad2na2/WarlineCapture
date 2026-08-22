@@ -21,10 +21,10 @@ namespace Game.Runtime
         private const int HostileArrivalMilliseconds = 10000;
         private const int HostileHoldMilliseconds = 12000;
         private const int RtsReturnArrivalMilliseconds = 15000;
-        private const int FinaleCameraArrivalMilliseconds = 1800;
+        internal const int FinaleCameraArrivalMilliseconds = 900;
         private const int FinalePostKillHoldMilliseconds = 3000;
         private const float CinematicGlideSmoothTimeSeconds = 2.25f;
-        private const float FinaleCameraSmoothTimeSeconds = 1.65f;
+        internal const float FinaleCameraSmoothTimeSeconds = 0.75f;
         private EntityQuery _cameraFocusQuery;
         private EntityQuery _missionCombatantsQuery;
         private EntityQuery _renderVirtualizationStateQuery;

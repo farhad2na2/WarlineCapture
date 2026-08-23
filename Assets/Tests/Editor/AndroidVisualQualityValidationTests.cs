@@ -29,6 +29,7 @@ public sealed class AndroidVisualQualityValidationTests
     private const float BalancedMobileRenderScale = 0.50f;
     private const float HighMobileRenderScale = 0.75f;
     private const int HighMobileShadowmapResolution = 1024;
+    private const float HighMobileShadowDistance = 90f;
     private const int HighMobileShadowCascadeCount = 2;
     private const float HighMobileShadowCascadeSplit = 0.35f;
     private const float HighMobileShadowDepthBias = 0.05f;
@@ -152,7 +153,7 @@ public sealed class AndroidVisualQualityValidationTests
         Assert.AreEqual(BalancedMobileMsaa, msaa.intValue, "High mobile must keep MSAA disabled and use FSR plus camera AA.");
         Assert.That(renderScale.floatValue, Is.EqualTo(HighMobileRenderScale).Within(0.001f), "High mobile must render the world at 75% resolution.");
         Assert.AreEqual(BalancedMobileUpscalingFilter, upscalingFilter.intValue, "High mobile must retain FSR upscaling.");
-        Assert.That(shadowDistance.floatValue, Is.EqualTo(48f).Within(0.001f), "High mobile must keep useful RTS shadows visible farther than Medium.");
+        Assert.That(shadowDistance.floatValue, Is.EqualTo(HighMobileShadowDistance).Within(0.001f), "High mobile must retain shadows from the accepted overhead tactical camera height.");
         Assert.AreEqual(HighMobileShadowmapResolution, shadowmapResolution.intValue, "High mobile must retain enough directional-shadow texel density to avoid unstable hard edges.");
         Assert.AreEqual(HighMobileShadowCascadeCount, shadowCascadeCount.intValue, "High mobile must split near and far tactical shadows for stable camera motion.");
         Assert.That(shadowCascadeSplit.floatValue, Is.EqualTo(HighMobileShadowCascadeSplit).Within(0.001f), "High mobile must reserve sufficient shadow texels for nearby units and buildings.");

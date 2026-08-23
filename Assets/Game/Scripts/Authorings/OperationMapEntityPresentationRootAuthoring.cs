@@ -81,6 +81,7 @@ namespace Game.Authoring
             return true;
         }
 
+        [BakingVersion("WarlineCapture", 1)]
         private sealed class RootBaker : Baker<OperationMapEntityPresentationRootAuthoring>
         {
             public override void Bake(OperationMapEntityPresentationRootAuthoring authoring)

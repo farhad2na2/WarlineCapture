@@ -272,6 +272,7 @@ namespace Game.Authoring
         public IReadOnlyList<UnitAnimationKind> AnimationOrder => animationOrder;
         public Vector2Int GetConfiguredFootprintCells() => footprintCells;
 
+        [BakingVersion("WarlineCapture", 1)]
         private class UnitGridBaker : Baker<UnitGridAuthoring>
         {
             public override void Bake(UnitGridAuthoring authoring)

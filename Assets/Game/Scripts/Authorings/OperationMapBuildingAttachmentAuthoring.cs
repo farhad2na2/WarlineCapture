@@ -68,6 +68,7 @@ namespace Game.Authoring
             return true;
         }
 
+        [BakingVersion("WarlineCapture", 1)]
         private sealed class AttachmentBaker : Baker<OperationMapBuildingAttachmentAuthoring>
         {
             public override void Bake(OperationMapBuildingAttachmentAuthoring authoring)

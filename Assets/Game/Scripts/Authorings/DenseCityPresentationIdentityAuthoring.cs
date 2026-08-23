@@ -78,6 +78,7 @@ namespace Game.Authoring
             return true;
         }
 
+        [BakingVersion("WarlineCapture", 1)]
         private sealed class IdentityBaker : Baker<DenseCityPresentationIdentityAuthoring>
         {
             public override void Bake(DenseCityPresentationIdentityAuthoring authoring)

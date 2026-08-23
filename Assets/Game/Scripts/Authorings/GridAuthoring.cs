@@ -92,6 +92,7 @@ namespace Game.Authoring
         }
 #endif
 
+        [BakingVersion("WarlineCapture", 1)]
         private class GridBaker : Baker<GridAuthoring>
         {
             public override void Bake(GridAuthoring authoring)

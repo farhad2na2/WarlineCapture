@@ -28,6 +28,7 @@ namespace Game.Authoring
         public float MaxInfantrySlopeDegrees => maxInfantrySlopeDegrees;
         public float MaxVehicleSlopeDegrees => maxVehicleSlopeDegrees;
 
+        [BakingVersion("WarlineCapture", 1)]
         private sealed class Baker : Baker<MapSurfaceAuthoring>
         {
             public override void Bake(MapSurfaceAuthoring authoring)

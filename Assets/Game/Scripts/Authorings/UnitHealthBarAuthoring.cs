@@ -17,6 +17,7 @@ namespace Game.Authoring
                 DefaultFill = config.DefaultFill;
         }
 
+        [BakingVersion("WarlineCapture", 1)]
         private sealed class UnitHealthBarBaker : Baker<UnitHealthBarAuthoring>
         {
             public override void Bake(UnitHealthBarAuthoring authoring)

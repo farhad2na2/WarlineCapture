@@ -18,6 +18,7 @@ namespace Game.Authoring
                 defaultColor = config.DefaultColor;
         }
 
+        [BakingVersion("WarlineCapture", 1)]
         private sealed class Baker : Baker<FactionTintTargetAuthoring>
         {
             public override void Bake(FactionTintTargetAuthoring authoring)

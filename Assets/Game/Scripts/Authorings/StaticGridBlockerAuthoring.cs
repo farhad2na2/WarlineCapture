@@ -27,6 +27,7 @@ namespace Game.Authoring
             size = config.Size;
         }
 
+        [BakingVersion("WarlineCapture", 1)]
         private class StaticGridBlockerBaker : Baker<StaticGridBlockerAuthoring>
         {
             public override void Bake(StaticGridBlockerAuthoring authoring)

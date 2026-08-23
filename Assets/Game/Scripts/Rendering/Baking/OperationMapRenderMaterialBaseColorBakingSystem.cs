@@ -10,6 +10,7 @@ using UnityEngine;
 
 namespace Game.Rendering
 {
+    [BakingVersion("WarlineCapture", 1)]
     [RequireMatchingQueriesForUpdate]
     [WorldSystemFilter(WorldSystemFilterFlags.BakingSystem)]
     [UpdateInGroup(typeof(PostBakingSystemGroup))]

@@ -27,6 +27,7 @@ namespace Game.Authoring
         private float ChurnIntervalSeconds => config != null ? config.ChurnIntervalSeconds : 1f;
         private int AddRemovePerInterval => config != null ? config.AddRemovePerInterval : 50;
 
+        [BakingVersion("WarlineCapture", 1)]
         private class InitialUnitsSpawnerBaker : Baker<InitialUnitsSpawnerAuthoring>
         {
             public override void Bake(InitialUnitsSpawnerAuthoring authoring)

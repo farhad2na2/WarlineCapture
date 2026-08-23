@@ -35,6 +35,7 @@ namespace Game.Authoring
                 unitHealthBarPrefab = config.UnitHealthBarPrefab;
         }
 
+        [BakingVersion("WarlineCapture", 1)]
         private sealed class BakerImpl : Baker<UnitPrefabRegistryAuthoring>
         {
             public override void Bake(UnitPrefabRegistryAuthoring authoring)

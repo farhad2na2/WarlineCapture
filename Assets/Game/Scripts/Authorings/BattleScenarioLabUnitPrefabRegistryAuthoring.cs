@@ -10,6 +10,7 @@ namespace Game.Authoring
     {
         [SerializeField] private GameObject[] unitSpawnPrefabs = System.Array.Empty<GameObject>();
 
+        [BakingVersion("WarlineCapture", 1)]
         private sealed class BakerImpl : Baker<BattleScenarioLabUnitPrefabRegistryAuthoring>
         {
             public override void Bake(BattleScenarioLabUnitPrefabRegistryAuthoring authoring)

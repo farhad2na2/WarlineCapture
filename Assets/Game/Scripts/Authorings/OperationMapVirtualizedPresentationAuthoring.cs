@@ -41,6 +41,7 @@ namespace Game.Authoring
             return true;
         }
 
+        [BakingVersion("WarlineCapture", 1)]
         private sealed class Baker : Baker<OperationMapVirtualizedPresentationAuthoring>
         {
             public override void Bake(OperationMapVirtualizedPresentationAuthoring authoring)

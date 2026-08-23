@@ -46,6 +46,7 @@ namespace Game.Authoring
             };
         }
 
+        [BakingVersion("WarlineCapture", 1)]
         private sealed class Baker : Baker<FactionVisualSettingsAuthoring>
         {
             public override void Bake(FactionVisualSettingsAuthoring authoring)

@@ -8,6 +8,7 @@ namespace Game.Authoring
     [DisallowMultipleComponent]
     public sealed class SelectionMarkerAuthoring : MonoBehaviour
     {
+        [BakingVersion("WarlineCapture", 1)]
         private sealed class Baker : Baker<SelectionMarkerAuthoring>
         {
             public override void Bake(SelectionMarkerAuthoring authoring)

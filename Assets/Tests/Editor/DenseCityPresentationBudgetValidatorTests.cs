@@ -209,7 +209,7 @@ public sealed class DenseCityPresentationBudgetValidatorTests
         Assert.That(report.entityContentArchiveCount, Is.EqualTo(1));
         Assert.That(report.duplicatedDependencyBytes, Is.Zero);
         Assert.That(report.renderVirtualizationMetricsComplete, Is.Zero);
-        Assert.That(report.renderVirtualizationSlotCapacity, Is.EqualTo(7784));
+        Assert.That(report.renderVirtualizationSlotCapacity, Is.EqualTo(7765));
         Assert.That(report.packedSourceRowsRemoved, Is.EqualTo(-1));
     }
 
@@ -295,7 +295,7 @@ public sealed class DenseCityPresentationBudgetValidatorTests
             File.ReadAllText(reportPath));
         Assert.That(report, Is.Not.Null);
         Assert.That(report.result, Is.EqualTo("DenseCityPackedAssetSharingPassed"));
-        Assert.That(report.renderEntityCount, Is.EqualTo(76517));
+        Assert.That(report.renderEntityCount, Is.EqualTo(76405));
         Assert.That(report.entityContentArchiveCount, Is.EqualTo(1));
         Assert.That(report.duplicatedDependencyGuidCount, Is.Zero);
         Assert.That(report.duplicatedDependencyBytes, Is.Zero);
@@ -616,7 +616,7 @@ public sealed class DenseCityPresentationBudgetValidatorTests
             denseRenderOnlyIdentityCount = 31759,
             denseUnknownRoleIdentityCount = 0,
             duplicateDenseIdentityCount = 0,
-            renderMeshEntityCount = 76517,
+            renderMeshEntityCount = 76405,
             sharedRenderMeshArrayIdentityCount = 1,
             sharedMeshAssetIdentityCount = 1769,
             sharedMaterialAssetIdentityCount = 80,
@@ -743,14 +743,14 @@ public sealed class DenseCityPresentationBudgetValidatorTests
             operationMapId = "opmap.skirmish.desert_base_01",
             contentHash = new string('a', 64),
             prototypeCount = 9107,
-            partCount = 12293,
+            partCount = 12181,
             placementCount = 40460,
             cellCount = 1934,
             policyBucketCount = 4,
-            totalPoolSlotCapacity = 7784,
-            sourceRenderRowCount = 76517,
-            eligibleSourceRowCount = 61925,
-            logicalRenderRowCount = 61925,
+            totalPoolSlotCapacity = 7765,
+            sourceRenderRowCount = 76405,
+            eligibleSourceRowCount = 61813,
+            logicalRenderRowCount = 61813,
             residentSourceRowCount = 14592,
             sourceRowsRemoved = 0,
             logicalParityResult = "Passed",

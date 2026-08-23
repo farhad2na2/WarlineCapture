@@ -22,12 +22,12 @@ using Hash128 = Unity.Entities.Hash128;
 public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTests
 {
     private const int DenseExpectedVirtualizedPlacementCount = 40460;
-    private const int DenseExpectedVirtualizedRowCount = 61925;
+    private const int DenseExpectedVirtualizedRowCount = 61813;
     private const int DenseExpectedVirtualizedRendererCount = 61783;
     private const int DenseExpectedVirtualizedResidentRowCount = 14017;
-    private const int DenseExpectedVirtualizedSlotCount = 7784;
+    private const int DenseExpectedVirtualizedSlotCount = 7765;
     private const int DenseExpectedVirtualizedPrototypeCount = 9107;
-    private const int DenseExpectedVirtualizedPartCount = 12293;
+    private const int DenseExpectedVirtualizedPartCount = 12181;
     private const int DenseExpectedVirtualizedCellCount = 1934;
     private const int DenseExpectedVirtualizedPoolBucketCount = 4;
     private const int DenseExpectedVirtualizedGeneratedBuildingCount = 4530;

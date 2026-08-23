@@ -9968,7 +9968,11 @@ namespace Game.Editor
                     continue;
 
                 GameObject prefab = waterTankPrefabs[hash % (uint)waterTankPrefabs.Length];
-                if (!TryFindLowerRoofAnchor(building, hash ^ 0x83b9d20du, out Vector3 roofAnchor))
+                if (!TryFindSupportedRoofAnchor(
+                        building,
+                        hash ^ 0x83b9d20du,
+                        1.05f,
+                        out Vector3 roofAnchor))
                     continue;
 
                 if (InstantiateOwnedBuildingAttachment(
@@ -10022,7 +10026,11 @@ namespace Game.Editor
                 {
                     uint detailHash = hash ^ (uint)(detailIndex * 0x9e3779b9);
                     GameObject prefab = utilityPrefabs[detailHash % (uint)utilityPrefabs.Length];
-                    if (!TryFindLowerRoofAnchor(building, detailHash ^ 0x945d32abu, out Vector3 roofAnchor))
+                    if (!TryFindSupportedRoofAnchor(
+                            building,
+                            detailHash ^ 0x945d32abu,
+                            0.48f,
+                            out Vector3 roofAnchor))
                         continue;
 
                     if (InstantiateOwnedBuildingAttachment(
@@ -10054,6 +10062,10 @@ namespace Game.Editor
             {
                 GeneratedBuildingInfo building = buildings[buildingIndex];
                 if (!building.IsShop || building.Bounds.size.y < 4f)
+                    continue;
+
+                List<RoofTriangle> buildingTriangles = CollectBuildingTriangles(building, false);
+                if (buildingTriangles.Count == 0)
                     continue;
 
                 uint hash = HashGroundPatch(
@@ -10104,7 +10116,17 @@ namespace Game.Editor
                             localHeight,
                             building.LocalBounds.max.z)
                     };
-                    Vector3 anchor = building.Wrapper.TransformPoint(localAnchor);
+                    if (!TryFindFacadeAnchor(
+                            building,
+                            buildingTriangles,
+                            localAnchor,
+                            localNormal,
+                            out Vector3 supportedLocalAnchor))
+                    {
+                        continue;
+                    }
+
+                    Vector3 anchor = building.Wrapper.TransformPoint(supportedLocalAnchor);
                     Vector3 outwardNormal = building.Wrapper.TransformDirection(localNormal).normalized;
 
                     GameObject instance =
@@ -10164,80 +10186,242 @@ namespace Game.Editor
             return count;
         }
 
-        private static bool TryFindLowerRoofAnchor(
+        private static bool TryFindSupportedRoofAnchor(
             GeneratedBuildingInfo building,
             uint hash,
+            float minimumSupportHalfExtent,
             out Vector3 anchor)
         {
             anchor = default;
-            MeshFilter[] meshFilters = building.Wrapper.GetComponentsInChildren<MeshFilter>(true);
-            if (meshFilters.Length == 0)
-                return false;
-
-            var roofTriangles = new List<RoofTriangle>(256);
-            for (int filterIndex = 0; filterIndex < meshFilters.Length; filterIndex++)
-            {
-                MeshFilter meshFilter = meshFilters[filterIndex];
-                if (!meshFilter.gameObject.activeInHierarchy || meshFilter.sharedMesh == null)
-                    continue;
-
-                CollectRoofTriangles(building.Wrapper, meshFilter, roofTriangles);
-            }
+            List<RoofTriangle> roofTriangles = CollectBuildingTriangles(building, true);
 
             if (roofTriangles.Count == 0)
                 return false;
 
             float minimumLocalRoofHeight = building.LocalBounds.min.y + building.LocalBounds.size.y * 0.55f;
             float maximumLocalRoofHeight = building.LocalBounds.max.y + 0.05f;
-            float lowestLocalRoofHeight = float.PositiveInfinity;
+            float highestLocalRoofHeight = float.NegativeInfinity;
             float phase = Hash01(hash ^ 0x9e3779b9u) * Mathf.PI * 2f;
 
-            for (int sampleIndex = 0; sampleIndex < 16; sampleIndex++)
+            for (int sampleIndex = 0; sampleIndex < 24; sampleIndex++)
             {
                 float angle = phase + sampleIndex * Mathf.PI * 0.61803398875f;
                 float radius = Mathf.Lerp(
-                    0.24f,
-                    0.43f,
+                    0.12f,
+                    0.34f,
                     Hash01(hash ^ (uint)(sampleIndex * 0x45d9f3b)));
                 Vector3 localColumn = new(
                     building.LocalBounds.center.x + Mathf.Cos(angle) * building.LocalBounds.size.x * radius,
                     0f,
                     building.LocalBounds.center.z + Mathf.Sin(angle) * building.LocalBounds.size.z * radius);
-                float sampleTop = float.NegativeInfinity;
-                for (int triangleIndex = 0; triangleIndex < roofTriangles.Count; triangleIndex++)
+                if (!TrySampleSupportedRoofPatch(
+                        roofTriangles,
+                        localColumn,
+                        minimumSupportHalfExtent,
+                        out float sampleTop) ||
+                    sampleTop < minimumLocalRoofHeight ||
+                    sampleTop > maximumLocalRoofHeight ||
+                    sampleTop <= highestLocalRoofHeight)
                 {
-                    RoofTriangle triangle = roofTriangles[triangleIndex];
-                    if (!TryInterpolateTriangleHeight(
-                            triangle,
-                            localColumn.x,
-                            localColumn.z,
-                            out float triangleHeight) ||
-                        triangleHeight <= sampleTop)
-                    {
-                        continue;
-                    }
-
-                    sampleTop = triangleHeight;
+                    continue;
                 }
 
-                if (sampleTop < minimumLocalRoofHeight ||
-                    sampleTop > maximumLocalRoofHeight ||
-                    sampleTop >= lowestLocalRoofHeight)
-                    continue;
-
-                lowestLocalRoofHeight = sampleTop;
+                highestLocalRoofHeight = sampleTop;
                 anchor = building.Wrapper.TransformPoint(new Vector3(
                     localColumn.x,
                     sampleTop,
                     localColumn.z));
             }
 
-            return !float.IsPositiveInfinity(lowestLocalRoofHeight);
+            return !float.IsNegativeInfinity(highestLocalRoofHeight);
         }
 
-        private static void CollectRoofTriangles(
+        private static List<RoofTriangle> CollectBuildingTriangles(
+            GeneratedBuildingInfo building,
+            bool roofsOnly)
+        {
+            MeshFilter[] meshFilters = building.Wrapper.GetComponentsInChildren<MeshFilter>(true);
+            var triangles = new List<RoofTriangle>(512);
+            for (int filterIndex = 0; filterIndex < meshFilters.Length; filterIndex++)
+            {
+                MeshFilter meshFilter = meshFilters[filterIndex];
+                if (!meshFilter.gameObject.activeInHierarchy ||
+                    meshFilter.sharedMesh == null ||
+                    IsGeneratedBuildingAttachment(meshFilter.transform, building.Wrapper))
+                {
+                    continue;
+                }
+
+                CollectMeshTriangles(building.Wrapper, meshFilter, roofsOnly, triangles);
+            }
+
+            return triangles;
+        }
+
+        private static bool IsGeneratedBuildingAttachment(Transform transform, Transform wrapper)
+        {
+            for (Transform current = transform; current != null && current != wrapper; current = current.parent)
+            {
+                string objectName = current.name;
+                if (objectName.Contains("_Roof_", StringComparison.Ordinal) ||
+                    objectName.Contains("_RoofUtility_", StringComparison.Ordinal) ||
+                    objectName.Contains("_ShopWall_", StringComparison.Ordinal))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool TrySampleSupportedRoofPatch(
+            List<RoofTriangle> roofTriangles,
+            Vector3 localCenter,
+            float halfExtent,
+            out float supportHeight)
+        {
+            Vector2[] offsets =
+            {
+                Vector2.zero,
+                new(-halfExtent, -halfExtent),
+                new(halfExtent, -halfExtent),
+                new(-halfExtent, halfExtent),
+                new(halfExtent, halfExtent),
+                new(-halfExtent, 0f),
+                new(halfExtent, 0f),
+                new(0f, -halfExtent),
+                new(0f, halfExtent)
+            };
+
+            supportHeight = float.NegativeInfinity;
+            for (int offsetIndex = 0; offsetIndex < offsets.Length; offsetIndex++)
+            {
+                Vector2 offset = offsets[offsetIndex];
+                if (!TrySampleRoofHeight(
+                        roofTriangles,
+                        localCenter.x + offset.x,
+                        localCenter.z + offset.y,
+                        out float sampleHeight))
+                {
+                    return false;
+                }
+
+                if (offsetIndex == 0)
+                {
+                    supportHeight = sampleHeight;
+                    continue;
+                }
+
+                if (Mathf.Abs(sampleHeight - supportHeight) > 0.12f)
+                    return false;
+            }
+
+            return true;
+        }
+
+        private static bool TrySampleRoofHeight(
+            List<RoofTriangle> roofTriangles,
+            float x,
+            float z,
+            out float height)
+        {
+            height = float.NegativeInfinity;
+            for (int triangleIndex = 0; triangleIndex < roofTriangles.Count; triangleIndex++)
+            {
+                if (TryInterpolateTriangleHeight(
+                        roofTriangles[triangleIndex],
+                        x,
+                        z,
+                        out float triangleHeight) &&
+                    triangleHeight > height)
+                {
+                    height = triangleHeight;
+                }
+            }
+
+            return !float.IsNegativeInfinity(height);
+        }
+
+        private static bool TryFindFacadeAnchor(
+            GeneratedBuildingInfo building,
+            List<RoofTriangle> buildingTriangles,
+            Vector3 localAnchor,
+            Vector3 localOutwardNormal,
+            out Vector3 supportedLocalAnchor)
+        {
+            float searchDistance = Mathf.Max(building.LocalBounds.size.x, building.LocalBounds.size.z) + 2f;
+            Vector3 rayOrigin = localAnchor + localOutwardNormal * searchDistance;
+            Vector3 rayDirection = -localOutwardNormal;
+            float closestDistance = float.PositiveInfinity;
+            supportedLocalAnchor = default;
+            for (int triangleIndex = 0; triangleIndex < buildingTriangles.Count; triangleIndex++)
+            {
+                RoofTriangle triangle = buildingTriangles[triangleIndex];
+                Vector3 triangleNormal = Vector3.Cross(triangle.B - triangle.A, triangle.C - triangle.A);
+                if (triangleNormal.sqrMagnitude < 0.000001f ||
+                    Mathf.Abs(Vector3.Dot(triangleNormal.normalized, localOutwardNormal)) < 0.55f ||
+                    !TryIntersectRayTriangle(
+                        rayOrigin,
+                        rayDirection,
+                        triangle,
+                        out float distance) ||
+                    distance >= closestDistance)
+                {
+                    continue;
+                }
+
+                closestDistance = distance;
+                supportedLocalAnchor = rayOrigin + rayDirection * distance;
+            }
+
+            if (float.IsPositiveInfinity(closestDistance))
+                return false;
+
+            float recess = Vector3.Dot(localAnchor - supportedLocalAnchor, localOutwardNormal);
+            return recess >= -0.05f && recess <= 2.25f;
+        }
+
+        private static bool TryIntersectRayTriangle(
+            Vector3 origin,
+            Vector3 direction,
+            RoofTriangle triangle,
+            out float distance)
+        {
+            Vector3 edge1 = triangle.B - triangle.A;
+            Vector3 edge2 = triangle.C - triangle.A;
+            Vector3 p = Vector3.Cross(direction, edge2);
+            float determinant = Vector3.Dot(edge1, p);
+            if (Mathf.Abs(determinant) < 0.000001f)
+            {
+                distance = 0f;
+                return false;
+            }
+
+            float inverseDeterminant = 1f / determinant;
+            Vector3 t = origin - triangle.A;
+            float u = Vector3.Dot(t, p) * inverseDeterminant;
+            if (u < -0.0001f || u > 1.0001f)
+            {
+                distance = 0f;
+                return false;
+            }
+
+            Vector3 q = Vector3.Cross(t, edge1);
+            float v = Vector3.Dot(direction, q) * inverseDeterminant;
+            if (v < -0.0001f || u + v > 1.0001f)
+            {
+                distance = 0f;
+                return false;
+            }
+
+            distance = Vector3.Dot(edge2, q) * inverseDeterminant;
+            return distance >= 0f;
+        }
+
+        private static void CollectMeshTriangles(
             Transform wrapper,
             MeshFilter meshFilter,
+            bool roofsOnly,
             List<RoofTriangle> output)
         {
             Mesh mesh = meshFilter.sharedMesh;
@@ -10270,20 +10454,31 @@ namespace Game.Editor
             {
                 NativeArray<ushort> indices = meshData.GetIndexData<ushort>();
                 for (int subMeshIndex = 0; subMeshIndex < meshData.subMeshCount; subMeshIndex++)
-                    AppendRoofTriangles(meshData.GetSubMesh(subMeshIndex), indices, localVertices, output);
+                    AppendMeshTriangles(
+                        meshData.GetSubMesh(subMeshIndex),
+                        indices,
+                        localVertices,
+                        roofsOnly,
+                        output);
             }
             else
             {
                 NativeArray<uint> indices = meshData.GetIndexData<uint>();
                 for (int subMeshIndex = 0; subMeshIndex < meshData.subMeshCount; subMeshIndex++)
-                    AppendRoofTriangles(meshData.GetSubMesh(subMeshIndex), indices, localVertices, output);
+                    AppendMeshTriangles(
+                        meshData.GetSubMesh(subMeshIndex),
+                        indices,
+                        localVertices,
+                        roofsOnly,
+                        output);
             }
         }
 
-        private static void AppendRoofTriangles<TIndex>(
+        private static void AppendMeshTriangles<TIndex>(
             SubMeshDescriptor subMesh,
             NativeArray<TIndex> indices,
             Vector3[] vertices,
+            bool roofsOnly,
             List<RoofTriangle> output)
             where TIndex : unmanaged
         {
@@ -10307,7 +10502,8 @@ namespace Game.Editor
                 Vector3 b = vertices[bIndex];
                 Vector3 c = vertices[cIndex];
                 Vector3 normal = Vector3.Cross(b - a, c - a);
-                if (normal.sqrMagnitude < 0.000001f || normal.normalized.y < 0.72f)
+                if (normal.sqrMagnitude < 0.000001f ||
+                    roofsOnly && normal.normalized.y < 0.72f)
                     continue;
 
                 output.Add(new RoofTriangle(a, b, c));

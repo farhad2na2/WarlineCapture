@@ -45,11 +45,11 @@ namespace Game.Editor
             OperationMapRenderDatabaseBuilder.ReportPath
         };
 
-        private const int ExpectedEligibleRows = 61925;
+        private const int ExpectedEligibleRows = 61813;
         private const int ExpectedEligibleRenderers = 61783;
-        private const int ExpectedSlots = 7784;
+        private const int ExpectedSlots = 7765;
         private const int ExpectedPrototypes = 9107;
-        private const int ExpectedParts = 12293;
+        private const int ExpectedParts = 12181;
         private const int ExpectedPlacements = 40460;
         private const int ExpectedRenderOnlyPlacements = 31400;
         private const int ExpectedGeneratedBuildingIdentities = 4530;

@@ -4,39 +4,39 @@
     "result": "Passed",
     "operationMapId": "opmap.skirmish.desert_base_01",
     "candidateScenePath": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
-    "candidateSceneDependencyHash": "241d8e47067791086b35b26555bf4611",
+    "candidateSceneDependencyHash": "4b3adaed660928ed188870899aba813d",
     "packedEvidencePath": "Design/AgentReports/2026-07-25_dense_city_packed_asset_sharing.json",
     "packedEvidenceRenderRows": 82797,
     "normalizedEmbeddedDestroyedDuplicateRowsRemoved": 4396,
-    "correctedLayoutRenderRowsRemoved": 1884,
+    "correctedLayoutRenderRowsRemoved": 1996,
     "intactVisualNormalizationResult": "Passed",
-    "totalRenderRows": 76517,
-    "eligibleRenderRows": 61925,
+    "totalRenderRows": 76405,
+    "eligibleRenderRows": 61813,
     "excludedRenderRows": 14592,
-    "stableOwnerJoinedRenderRows": 76162,
+    "stableOwnerJoinedRenderRows": 76050,
     "unresolvedOwnerRenderRows": 355,
-    "eligibleStableOwnerJoinedRenderRows": 61925,
-    "sourceRowCount": 76517,
-    "sourceRowsSha256": "335fc69d3f4b9f1419cb704f1757475d67ae4d1f810574a034f5caf299e42839",
+    "eligibleStableOwnerJoinedRenderRows": 61813,
+    "sourceRowCount": 76405,
+    "sourceRowsSha256": "21e699e21565968543eefba9b51f9cdce24bd2465cd4136dd40331595325a1fa",
     "sourceRowsPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_source_rows.json.gz",
     "sourceRowsCompression": "gzip",
-    "sourceRowsJsonSha256": "9a6551f47676532c1999a405a54511eb8b5de55ea774a700e8e7d923243181a7",
-    "sourceRowsGzipSha256": "fad0abb916e90cb1fd70997c3181df8258bbfb99ecdef129afa09916a40bb4c1",
+    "sourceRowsJsonSha256": "dbe2ef2bafe405fd0b9017d7dc9edf909b794c8bd0e993e52b6a029703a98307",
+    "sourceRowsGzipSha256": "ce8492332c937424ac9ed700833069ee2e42adda0789554760be07bae0e59485",
     "logicalPlacementCount": 40460,
     "prototypeCount": 9107,
-    "prototypePartCount": 12293,
-    "prototypeRecipeRowsConsumed": 61925,
-    "prototypeRecipesSha256": "f91890e882f576f1da809f25abdcd2b9199395835766ff797c370ac80b39a1d3",
+    "prototypePartCount": 12181,
+    "prototypeRecipeRowsConsumed": 61813,
+    "prototypeRecipesSha256": "52918cfd8f8bca22d941e26ec078050ca94b5cac00ec11b9ef82e0a4c19f9d7d",
     "prototypeRecipesPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_prototype_recipes.json",
-    "prototypeRecipesJsonSha256": "d9817bf90d88fa07c80b246934fa25c487b3ff5c09c4cc71dd52e46416f14d6d",
+    "prototypeRecipesJsonSha256": "173b09b9f5b5ab46eb447d5b377182122517d46e7f48be78d4755efc49627fa3",
     "placementCount": 40460,
     "stateOwnerCount": 4530,
     "stateLinkedPlacementCount": 9060,
     "renderOnlyPlacementCount": 31400,
-    "placementPartRowCount": 61925,
-    "logicalPlacementsSha256": "986185b76dd19b1da4537e79613e4922a64d8633073165bcd9003f18402c3a57",
+    "placementPartRowCount": 61813,
+    "logicalPlacementsSha256": "8076424d83775e37aa535aeec4f75cf9193f3333dd191b59a376bf367235dbb1",
     "logicalPlacementsPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_logical_placements.json",
-    "logicalPlacementsJsonSha256": "f3eb9732dbe783c53d318311df4fc49700a99b00c35841dd1dfc05a49e8f7880",
+    "logicalPlacementsJsonSha256": "ccdc463737a0b1c006a25c9b0d6cbfac85c9936cad154e316665feecf184400b",
     "renderCellSize": 32.0,
     "acceptedRenderGridOrigin": [
         0.0,
@@ -57,13 +57,13 @@
         0
     ],
     "occupiedCellCount": 1934,
-    "cellPlacementIndexCount": 60922,
-    "multiCellPlacementCount": 15522,
+    "cellPlacementIndexCount": 60855,
+    "multiCellPlacementCount": 15493,
     "maximumCellsPerPlacement": 6,
     "maximumPlacementsPerCell": 85,
-    "spatialCellsSha256": "a7dab969701b4739b37726d024550002d9ccff0b4223e3e3b4ddad4d033fa794",
+    "spatialCellsSha256": "b35f7045b626d294389985a95198f87f1c18e078a8ded0fb743c4e1058245c38",
     "spatialCellsPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_spatial_cells.json",
-    "spatialCellsJsonSha256": "18496882ed266e2bd0fd7953a33057aeab9818f14d04ce4ed68a10f44a6b584d",
+    "spatialCellsJsonSha256": "7fea87b3642a637e6daafd7ede57948853aa065eb2ad31a2af8c9ea2afc61be3",
     "mutationAuthorized": true,
     "mutationBlocker": "",
     "buildingFamilySelectionPolicy": "Generated building families are selected atomically only when repeated, every canonical owner has intact and destroyed recipes, and every family row satisfies the closed renderer and render-policy schema.",
@@ -93,12 +93,12 @@
             "ownerCount": 1182,
             "completeOwnerCount": 1182,
             "excludedOwnerCount": 0,
-            "totalRowCount": 5329,
-            "eligibleRowCount": 5329,
+            "totalRowCount": 5217,
+            "eligibleRowCount": 5217,
             "excludedRowCount": 0,
-            "intactRowCount": 4147,
+            "intactRowCount": 4035,
             "destroyedRowCount": 1182,
-            "repeatedSignatureRowCount": 5329,
+            "repeatedSignatureRowCount": 5217,
             "unsupportedRendererRowCount": 0,
             "unsupportedPolicyRowCount": 0
         },
@@ -109761,9 +109761,9 @@
         },
         {
             "key": "Shop",
-            "eligible": 5329,
+            "eligible": 5217,
             "excluded": 0,
-            "total": 5329
+            "total": 5217
         }
     ],
     "bySemanticCategory": [
@@ -109775,9 +109775,9 @@
         },
         {
             "key": "GameplayBuildingIntact",
-            "eligible": 12194,
+            "eligible": 12082,
             "excluded": 171,
-            "total": 12365
+            "total": 12253
         },
         {
             "key": "Horizon",
@@ -118266,42 +118266,6 @@
             "total": 8
         },
         {
-            "key": "GameplayBuildingIntact|mesh||0b24ab5753dbaa54599f4fbecd390443:23162872264435234|b8b82f9f2ac7d5642bf3b027a9b5becd:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
-            "eligible": 17,
-            "excluded": 0,
-            "total": 17
-        },
-        {
-            "key": "GameplayBuildingIntact|mesh||0b24ab5753dbaa54599f4fbecd390443:23162872264435234|b8b82f9f2ac7d5642bf3b027a9b5becd:4300000|607ac1ca371b942b99f5b38ba589d12d:2100000|0",
-            "eligible": 9,
-            "excluded": 0,
-            "total": 9
-        },
-        {
-            "key": "GameplayBuildingIntact|mesh||0b24ab5753dbaa54599f4fbecd390443:23162872264435234|b8b82f9f2ac7d5642bf3b027a9b5becd:4300000|6487453456f55495a85cab7b38eaece4:2100000|0",
-            "eligible": 18,
-            "excluded": 0,
-            "total": 18
-        },
-        {
-            "key": "GameplayBuildingIntact|mesh||0b24ab5753dbaa54599f4fbecd390443:23162872264435234|b8b82f9f2ac7d5642bf3b027a9b5becd:4300000|c0949687d30c74ca3b5f933d68fbd88f:2100000|0",
-            "eligible": 19,
-            "excluded": 0,
-            "total": 19
-        },
-        {
-            "key": "GameplayBuildingIntact|mesh||0b24ab5753dbaa54599f4fbecd390443:23162872264435234|b8b82f9f2ac7d5642bf3b027a9b5becd:4300000|cee1bea9fb2214c89b13d5a8997b3930:2100000|0",
-            "eligible": 16,
-            "excluded": 0,
-            "total": 16
-        },
-        {
-            "key": "GameplayBuildingIntact|mesh||0b24ab5753dbaa54599f4fbecd390443:23162872264435234|b8b82f9f2ac7d5642bf3b027a9b5becd:4300000|e14749e23c1b64c0493721aaf371a8ae:2100000|0",
-            "eligible": 14,
-            "excluded": 0,
-            "total": 14
-        },
-        {
             "key": "GameplayBuildingIntact|mesh||0f5262386c4594c1e8c35d8da1bf6466:5123855221298289851|cd29a08631f2d99478d1882519820c4a:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
             "eligible": 31,
             "excluded": 0,
@@ -118380,6 +118344,12 @@
             "total": 91
         },
         {
+            "key": "GameplayBuildingIntact|mesh||18319ed2ae961437dab6476d1015c664:23161423307815030|6fe5c156a3b147f49bd3e4766bda34b1:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 80,
+            "excluded": 0,
+            "total": 80
+        },
+        {
             "key": "GameplayBuildingIntact|mesh||1a8a1af8a2b73ae4787feda0f3c5c364:23158228778860600|98b363230d511da4c9ea9dc9b233f3c1:4300004|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 0,
             "excluded": 12,
@@ -118398,22 +118368,16 @@
             "total": 12
         },
         {
-            "key": "GameplayBuildingIntact|mesh||1d3060407e6aa1c459293cee3349b0f3:23840219150242980|648b6202b99a19746a1acb07f3a49beb:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 0,
-            "excluded": 6,
-            "total": 6
+            "key": "GameplayBuildingIntact|mesh||2680d3c9ad2cc4ebaa9ba95cf3aa3f22:23629790289698760|085010b893dcc4c4a808fb1aba09e3a0:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|1",
+            "eligible": 142,
+            "excluded": 0,
+            "total": 142
         },
         {
-            "key": "GameplayBuildingIntact|mesh||1e44a434c694f0a4fa5d07a25b44b95a:23145407954086054|ba860a25ff5b5a642892d5955d183333:4300000|59266c69bb5e4a44b82461f5af99ddc5:2100000|0",
-            "eligible": 184,
+            "key": "GameplayBuildingIntact|mesh||2680d3c9ad2cc4ebaa9ba95cf3aa3f22:23629790289698760|085010b893dcc4c4a808fb1aba09e3a0:4300000|b2c3a31deaefda1498acfc5155aa8dbb:2100000|0",
+            "eligible": 142,
             "excluded": 0,
-            "total": 184
-        },
-        {
-            "key": "GameplayBuildingIntact|mesh||1ebd957ad33171544963fb4cff4561cb:23820164143229318|bcbe6102b075f044aa8ae9227b603f13:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 102,
-            "excluded": 0,
-            "total": 102
+            "total": 142
         },
         {
             "key": "GameplayBuildingIntact|mesh||282248d7837b54676b1815966567226b:6713593082677426898|3c54a6630b4e72d45aeefe3a196dadf0:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
@@ -118452,64 +118416,94 @@
             "total": 22
         },
         {
-            "key": "GameplayBuildingIntact|mesh||36c1fc83f004a8049909097cb60bdc72:23860438639422632|0ee36102dee027841bf563aa2becf8e8:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
-            "eligible": 16,
+            "key": "GameplayBuildingIntact|mesh||3582d1daf7b3e4ba9937f61fa5bb7a66:23000898357209822|4d3ad0f0252a9d7418a575cd2c48f248:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 172,
             "excluded": 0,
-            "total": 16
+            "total": 172
         },
         {
-            "key": "GameplayBuildingIntact|mesh||36c1fc83f004a8049909097cb60bdc72:23860438639422632|0ee36102dee027841bf563aa2becf8e8:4300000|607ac1ca371b942b99f5b38ba589d12d:2100000|0",
-            "eligible": 18,
-            "excluded": 0,
-            "total": 18
-        },
-        {
-            "key": "GameplayBuildingIntact|mesh||36c1fc83f004a8049909097cb60bdc72:23860438639422632|0ee36102dee027841bf563aa2becf8e8:4300000|6487453456f55495a85cab7b38eaece4:2100000|0",
-            "eligible": 18,
-            "excluded": 0,
-            "total": 18
-        },
-        {
-            "key": "GameplayBuildingIntact|mesh||36c1fc83f004a8049909097cb60bdc72:23860438639422632|0ee36102dee027841bf563aa2becf8e8:4300000|c0949687d30c74ca3b5f933d68fbd88f:2100000|0",
-            "eligible": 18,
-            "excluded": 0,
-            "total": 18
-        },
-        {
-            "key": "GameplayBuildingIntact|mesh||36c1fc83f004a8049909097cb60bdc72:23860438639422632|0ee36102dee027841bf563aa2becf8e8:4300000|cee1bea9fb2214c89b13d5a8997b3930:2100000|0",
+            "key": "GameplayBuildingIntact|mesh||3e8be80e995174e9c874adc7ac4b18ad:23162872264435234|b8b82f9f2ac7d5642bf3b027a9b5becd:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
             "eligible": 17,
             "excluded": 0,
             "total": 17
         },
         {
-            "key": "GameplayBuildingIntact|mesh||36c1fc83f004a8049909097cb60bdc72:23860438639422632|0ee36102dee027841bf563aa2becf8e8:4300000|e14749e23c1b64c0493721aaf371a8ae:2100000|0",
-            "eligible": 20,
+            "key": "GameplayBuildingIntact|mesh||3e8be80e995174e9c874adc7ac4b18ad:23162872264435234|b8b82f9f2ac7d5642bf3b027a9b5becd:4300000|607ac1ca371b942b99f5b38ba589d12d:2100000|0",
+            "eligible": 9,
             "excluded": 0,
-            "total": 20
+            "total": 9
         },
         {
-            "key": "GameplayBuildingIntact|mesh||4333129fd9026b34a9401589e226ec45:23003001357791068|71c6e4d7e2bd4bc4ba7050f6772669d8:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 167,
+            "key": "GameplayBuildingIntact|mesh||3e8be80e995174e9c874adc7ac4b18ad:23162872264435234|b8b82f9f2ac7d5642bf3b027a9b5becd:4300000|6487453456f55495a85cab7b38eaece4:2100000|0",
+            "eligible": 18,
             "excluded": 0,
-            "total": 167
+            "total": 18
         },
         {
-            "key": "GameplayBuildingIntact|mesh||4c05d654e45aec44bbd367d136bc59a9:23000898357209822|4d3ad0f0252a9d7418a575cd2c48f248:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 191,
+            "key": "GameplayBuildingIntact|mesh||3e8be80e995174e9c874adc7ac4b18ad:23162872264435234|b8b82f9f2ac7d5642bf3b027a9b5becd:4300000|c0949687d30c74ca3b5f933d68fbd88f:2100000|0",
+            "eligible": 19,
             "excluded": 0,
-            "total": 191
+            "total": 19
         },
         {
-            "key": "GameplayBuildingIntact|mesh||4f84f6f284fd77444aec6c8d4550af90:23430190310130970|489ed28ad2eaf284fb9406f0d1b10adc:4300000|59266c69bb5e4a44b82461f5af99ddc5:2100000|0",
-            "eligible": 161,
+            "key": "GameplayBuildingIntact|mesh||3e8be80e995174e9c874adc7ac4b18ad:23162872264435234|b8b82f9f2ac7d5642bf3b027a9b5becd:4300000|cee1bea9fb2214c89b13d5a8997b3930:2100000|0",
+            "eligible": 16,
             "excluded": 0,
-            "total": 161
+            "total": 16
         },
         {
-            "key": "GameplayBuildingIntact|mesh||51f34af7e1ed8294582076c187527548:23112575706698374|5cbc4148baeac774ab5980b037254a49:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 41,
+            "key": "GameplayBuildingIntact|mesh||3e8be80e995174e9c874adc7ac4b18ad:23162872264435234|b8b82f9f2ac7d5642bf3b027a9b5becd:4300000|e14749e23c1b64c0493721aaf371a8ae:2100000|0",
+            "eligible": 14,
             "excluded": 0,
-            "total": 41
+            "total": 14
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||48725e346fef34d2491fd467f02052bc:23939979429664214|a0e132ea00f6c3e4cab5d6123534683c:4300000|59266c69bb5e4a44b82461f5af99ddc5:2100000|0",
+            "eligible": 169,
+            "excluded": 0,
+            "total": 169
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||48c0105c72f684dafafb8003ff442043:23368719039761276|9c4d7e306aee98b4ab7d8e6a21c6b965:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 83,
+            "excluded": 0,
+            "total": 83
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||551e5e6dfec7745bf9458ed055228562:23230769708525028|0fa49f22b5e7c1344814a3e9097086a6:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
+            "eligible": 13,
+            "excluded": 0,
+            "total": 13
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||551e5e6dfec7745bf9458ed055228562:23230769708525028|0fa49f22b5e7c1344814a3e9097086a6:4300000|607ac1ca371b942b99f5b38ba589d12d:2100000|0",
+            "eligible": 10,
+            "excluded": 0,
+            "total": 10
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||551e5e6dfec7745bf9458ed055228562:23230769708525028|0fa49f22b5e7c1344814a3e9097086a6:4300000|6487453456f55495a85cab7b38eaece4:2100000|0",
+            "eligible": 17,
+            "excluded": 0,
+            "total": 17
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||551e5e6dfec7745bf9458ed055228562:23230769708525028|0fa49f22b5e7c1344814a3e9097086a6:4300000|c0949687d30c74ca3b5f933d68fbd88f:2100000|0",
+            "eligible": 16,
+            "excluded": 0,
+            "total": 16
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||551e5e6dfec7745bf9458ed055228562:23230769708525028|0fa49f22b5e7c1344814a3e9097086a6:4300000|cee1bea9fb2214c89b13d5a8997b3930:2100000|0",
+            "eligible": 15,
+            "excluded": 0,
+            "total": 15
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||551e5e6dfec7745bf9458ed055228562:23230769708525028|0fa49f22b5e7c1344814a3e9097086a6:4300000|e14749e23c1b64c0493721aaf371a8ae:2100000|0",
+            "eligible": 17,
+            "excluded": 0,
+            "total": 17
         },
         {
             "key": "GameplayBuildingIntact|mesh||557b984869eef454a95a544168e3dbfa:2979724779386725450|e49e2e8da7662e440a1413b0aa90e870:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
@@ -118546,6 +118540,12 @@
             "eligible": 109,
             "excluded": 0,
             "total": 109
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||58091f368fb3d434a8f873d329d170a5:23145407954086054|ba860a25ff5b5a642892d5955d183333:4300000|59266c69bb5e4a44b82461f5af99ddc5:2100000|0",
+            "eligible": 167,
+            "excluded": 0,
+            "total": 167
         },
         {
             "key": "GameplayBuildingIntact|mesh||5838b58b4ee2042da81e088ee01e3382:1866058471840888834|07b62f9b8bec88f4a80a8215e0497be5:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
@@ -118614,22 +118614,46 @@
             "total": 1
         },
         {
-            "key": "GameplayBuildingIntact|mesh||6c89edd2b9ce1b3489cd7162bdb0e390:23161423307815030|6fe5c156a3b147f49bd3e4766bda34b1:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 80,
-            "excluded": 0,
-            "total": 80
-        },
-        {
             "key": "GameplayBuildingIntact|mesh||6d40cda8e12154454a6ec1f160415e5a:790929423390663453|8e2c9973c1ec14b4d9ebabe0f2e36cfc:4300000|fac919e79d9205b428af4817cfb4e238:2100000|0",
             "eligible": 3050,
             "excluded": 0,
             "total": 3050
         },
         {
-            "key": "GameplayBuildingIntact|mesh||6e87757f75c85d74badfba3392aede48:23080208840483292|72ecca11eb569994fa9b4d349060508f:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 75,
+            "key": "GameplayBuildingIntact|mesh||6d50fbc526a0642fb8eea793d1df8459:23860438639422632|0ee36102dee027841bf563aa2becf8e8:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
+            "eligible": 16,
             "excluded": 0,
-            "total": 75
+            "total": 16
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||6d50fbc526a0642fb8eea793d1df8459:23860438639422632|0ee36102dee027841bf563aa2becf8e8:4300000|607ac1ca371b942b99f5b38ba589d12d:2100000|0",
+            "eligible": 18,
+            "excluded": 0,
+            "total": 18
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||6d50fbc526a0642fb8eea793d1df8459:23860438639422632|0ee36102dee027841bf563aa2becf8e8:4300000|6487453456f55495a85cab7b38eaece4:2100000|0",
+            "eligible": 18,
+            "excluded": 0,
+            "total": 18
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||6d50fbc526a0642fb8eea793d1df8459:23860438639422632|0ee36102dee027841bf563aa2becf8e8:4300000|c0949687d30c74ca3b5f933d68fbd88f:2100000|0",
+            "eligible": 18,
+            "excluded": 0,
+            "total": 18
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||6d50fbc526a0642fb8eea793d1df8459:23860438639422632|0ee36102dee027841bf563aa2becf8e8:4300000|cee1bea9fb2214c89b13d5a8997b3930:2100000|0",
+            "eligible": 17,
+            "excluded": 0,
+            "total": 17
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||6d50fbc526a0642fb8eea793d1df8459:23860438639422632|0ee36102dee027841bf563aa2becf8e8:4300000|e14749e23c1b64c0493721aaf371a8ae:2100000|0",
+            "eligible": 20,
+            "excluded": 0,
+            "total": 20
         },
         {
             "key": "GameplayBuildingIntact|mesh||720a593e10bc6473ca5ed71307d7301b:9073657189930601306|01b8dd5b9d4c6084c80cefccfb0072a0:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
@@ -118666,24 +118690,6 @@
             "eligible": 25,
             "excluded": 0,
             "total": 25
-        },
-        {
-            "key": "GameplayBuildingIntact|mesh||796782e6afa93754aae4a8bd6f04ef26:23629790289698760|085010b893dcc4c4a808fb1aba09e3a0:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|1",
-            "eligible": 142,
-            "excluded": 0,
-            "total": 142
-        },
-        {
-            "key": "GameplayBuildingIntact|mesh||796782e6afa93754aae4a8bd6f04ef26:23629790289698760|085010b893dcc4c4a808fb1aba09e3a0:4300000|b2c3a31deaefda1498acfc5155aa8dbb:2100000|0",
-            "eligible": 142,
-            "excluded": 0,
-            "total": 142
-        },
-        {
-            "key": "GameplayBuildingIntact|mesh||7d326d45292b5ea469e2c8cb15e572d0:23368719039761276|9c4d7e306aee98b4ab7d8e6a21c6b965:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 83,
-            "excluded": 0,
-            "total": 83
         },
         {
             "key": "GameplayBuildingIntact|mesh||7e1c4c10a9e5243cd806bf7c6344854e:5410264351128434520|9563a35993fa0fa4e950cf228f02dab4:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
@@ -118758,22 +118764,22 @@
             "total": 55
         },
         {
-            "key": "GameplayBuildingIntact|mesh||7f7ce7fee050f124780a27da7a437a22:23647006855508510|3634425369a10b643a98445599f854f5:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 0,
-            "excluded": 7,
-            "total": 7
-        },
-        {
-            "key": "GameplayBuildingIntact|mesh||7f7ce7fee050f124780a27da7a437a22:23810380882409100|3634425369a10b643a98445599f854f5:4300002|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 0,
-            "excluded": 7,
-            "total": 7
-        },
-        {
             "key": "GameplayBuildingIntact|mesh||81a72a361a4ec4f20b4327e0dfe7a61a:8348281278321843336|49fe7ceda52736444bdddb0652d1093e:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 298,
             "excluded": 0,
             "total": 298
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||8721a0b09024b4b3499dd21cbb927fd5:23624724685017898|7d6af040e5782264b80c246cfb086fd6:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 58,
+            "excluded": 0,
+            "total": 58
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||8ba361617aee4468db28f0c04f5a36e5:23112575706698374|5cbc4148baeac774ab5980b037254a49:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 41,
+            "excluded": 0,
+            "total": 41
         },
         {
             "key": "GameplayBuildingIntact|mesh||8d4eef43723d54d81aee2ad48937872a:2587431571036664691|3ef1198cd97e26d49b169a27d952fe84:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
@@ -119010,10 +119016,22 @@
             "total": 23
         },
         {
-            "key": "GameplayBuildingIntact|mesh||9563474d40658d947bb0ebe2f2b0b076:23927110349108016|8dc5a5d08c1936d45aeb62efd4f19b95:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 86,
+            "key": "GameplayBuildingIntact|mesh||915b4a7e97eaf463f8295f8536acf4a2:23003001357791068|71c6e4d7e2bd4bc4ba7050f6772669d8:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 150,
             "excluded": 0,
-            "total": 86
+            "total": 150
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||93ae0a63fdaf74332abcde7ecf70d911:23820545000984488|85f5503fe883f4a4aa272fb89cf3841c:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 163,
+            "excluded": 0,
+            "total": 163
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||9681790cb9d364966871b29e11b4fd41:23041846808948610|2343a657de76fac46bf0ca7d4ea83be2:4300000|59266c69bb5e4a44b82461f5af99ddc5:2100000|0",
+            "eligible": 142,
+            "excluded": 0,
+            "total": 142
         },
         {
             "key": "GameplayBuildingIntact|mesh||98105b554051a49c087228af3e9ca7b5:2456742163627643451|846f7666f466e9a41aa482e5698e74c9:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
@@ -119052,42 +119070,6 @@
             "total": 81
         },
         {
-            "key": "GameplayBuildingIntact|mesh||9fafba07b81849f4d9ad6b5de1e760ce:23230769708525028|0fa49f22b5e7c1344814a3e9097086a6:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
-            "eligible": 13,
-            "excluded": 0,
-            "total": 13
-        },
-        {
-            "key": "GameplayBuildingIntact|mesh||9fafba07b81849f4d9ad6b5de1e760ce:23230769708525028|0fa49f22b5e7c1344814a3e9097086a6:4300000|607ac1ca371b942b99f5b38ba589d12d:2100000|0",
-            "eligible": 10,
-            "excluded": 0,
-            "total": 10
-        },
-        {
-            "key": "GameplayBuildingIntact|mesh||9fafba07b81849f4d9ad6b5de1e760ce:23230769708525028|0fa49f22b5e7c1344814a3e9097086a6:4300000|6487453456f55495a85cab7b38eaece4:2100000|0",
-            "eligible": 17,
-            "excluded": 0,
-            "total": 17
-        },
-        {
-            "key": "GameplayBuildingIntact|mesh||9fafba07b81849f4d9ad6b5de1e760ce:23230769708525028|0fa49f22b5e7c1344814a3e9097086a6:4300000|c0949687d30c74ca3b5f933d68fbd88f:2100000|0",
-            "eligible": 16,
-            "excluded": 0,
-            "total": 16
-        },
-        {
-            "key": "GameplayBuildingIntact|mesh||9fafba07b81849f4d9ad6b5de1e760ce:23230769708525028|0fa49f22b5e7c1344814a3e9097086a6:4300000|cee1bea9fb2214c89b13d5a8997b3930:2100000|0",
-            "eligible": 15,
-            "excluded": 0,
-            "total": 15
-        },
-        {
-            "key": "GameplayBuildingIntact|mesh||9fafba07b81849f4d9ad6b5de1e760ce:23230769708525028|0fa49f22b5e7c1344814a3e9097086a6:4300000|e14749e23c1b64c0493721aaf371a8ae:2100000|0",
-            "eligible": 17,
-            "excluded": 0,
-            "total": 17
-        },
-        {
             "key": "GameplayBuildingIntact|mesh||a056b38d0d5177b42b5bc8318cad5901:23108060070047082|4c69c0d196d0d75469ac057dac5f444c:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 0,
             "excluded": 12,
@@ -119100,16 +119082,16 @@
             "total": 12
         },
         {
-            "key": "GameplayBuildingIntact|mesh||ae1f4ff7b0542da4b87cb81478542958:23820545000984488|85f5503fe883f4a4aa272fb89cf3841c:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 176,
-            "excluded": 0,
-            "total": 176
+            "key": "GameplayBuildingIntact|mesh||a11fc506ab2f947b6a494e194230ba68:23840219150242980|648b6202b99a19746a1acb07f3a49beb:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 0,
+            "excluded": 6,
+            "total": 6
         },
         {
-            "key": "GameplayBuildingIntact|mesh||b032858893e644c49af69e3f8eab0350:23041846808948610|2343a657de76fac46bf0ca7d4ea83be2:4300000|59266c69bb5e4a44b82461f5af99ddc5:2100000|0",
-            "eligible": 156,
+            "key": "GameplayBuildingIntact|mesh||a499b6ca16f7d443697f2c700c688573:23232591932433212|696fd0370ebf4f2469314643c089d3ba:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 78,
             "excluded": 0,
-            "total": 156
+            "total": 78
         },
         {
             "key": "GameplayBuildingIntact|mesh||b189dceced0fc4c78bf6b1d2374fb6b0:2226447368197188737|1d3b70190da126145b9837bd88482303:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
@@ -119148,76 +119130,10 @@
             "total": 22
         },
         {
-            "key": "GameplayBuildingIntact|mesh||bdadd3f4090d31046835e9722f2de0f9:23403433648238258|1ab4e64968c30e742bceaec998ff852f:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
-            "eligible": 5,
+            "key": "GameplayBuildingIntact|mesh||c030be409b8104f3c97fa08635717f26:23080208840483292|72ecca11eb569994fa9b4d349060508f:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 75,
             "excluded": 0,
-            "total": 5
-        },
-        {
-            "key": "GameplayBuildingIntact|mesh||bdadd3f4090d31046835e9722f2de0f9:23403433648238258|1ab4e64968c30e742bceaec998ff852f:4300000|607ac1ca371b942b99f5b38ba589d12d:2100000|0",
-            "eligible": 4,
-            "excluded": 0,
-            "total": 4
-        },
-        {
-            "key": "GameplayBuildingIntact|mesh||bdadd3f4090d31046835e9722f2de0f9:23403433648238258|1ab4e64968c30e742bceaec998ff852f:4300000|6487453456f55495a85cab7b38eaece4:2100000|0",
-            "eligible": 4,
-            "excluded": 0,
-            "total": 4
-        },
-        {
-            "key": "GameplayBuildingIntact|mesh||bdadd3f4090d31046835e9722f2de0f9:23403433648238258|1ab4e64968c30e742bceaec998ff852f:4300000|c0949687d30c74ca3b5f933d68fbd88f:2100000|0",
-            "eligible": 7,
-            "excluded": 0,
-            "total": 7
-        },
-        {
-            "key": "GameplayBuildingIntact|mesh||bdadd3f4090d31046835e9722f2de0f9:23403433648238258|1ab4e64968c30e742bceaec998ff852f:4300000|cee1bea9fb2214c89b13d5a8997b3930:2100000|0",
-            "eligible": 5,
-            "excluded": 0,
-            "total": 5
-        },
-        {
-            "key": "GameplayBuildingIntact|mesh||bdadd3f4090d31046835e9722f2de0f9:23403433648238258|1ab4e64968c30e742bceaec998ff852f:4300000|e14749e23c1b64c0493721aaf371a8ae:2100000|0",
-            "eligible": 10,
-            "excluded": 0,
-            "total": 10
-        },
-        {
-            "key": "GameplayBuildingIntact|mesh||bdadd3f4090d31046835e9722f2de0f9:23596962405743454|1ab4e64968c30e742bceaec998ff852f:4300004|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
-            "eligible": 5,
-            "excluded": 0,
-            "total": 5
-        },
-        {
-            "key": "GameplayBuildingIntact|mesh||bdadd3f4090d31046835e9722f2de0f9:23596962405743454|1ab4e64968c30e742bceaec998ff852f:4300004|607ac1ca371b942b99f5b38ba589d12d:2100000|0",
-            "eligible": 4,
-            "excluded": 0,
-            "total": 4
-        },
-        {
-            "key": "GameplayBuildingIntact|mesh||bdadd3f4090d31046835e9722f2de0f9:23596962405743454|1ab4e64968c30e742bceaec998ff852f:4300004|6487453456f55495a85cab7b38eaece4:2100000|0",
-            "eligible": 4,
-            "excluded": 0,
-            "total": 4
-        },
-        {
-            "key": "GameplayBuildingIntact|mesh||bdadd3f4090d31046835e9722f2de0f9:23596962405743454|1ab4e64968c30e742bceaec998ff852f:4300004|c0949687d30c74ca3b5f933d68fbd88f:2100000|0",
-            "eligible": 7,
-            "excluded": 0,
-            "total": 7
-        },
-        {
-            "key": "GameplayBuildingIntact|mesh||bdadd3f4090d31046835e9722f2de0f9:23596962405743454|1ab4e64968c30e742bceaec998ff852f:4300004|cee1bea9fb2214c89b13d5a8997b3930:2100000|0",
-            "eligible": 5,
-            "excluded": 0,
-            "total": 5
-        },
-        {
-            "key": "GameplayBuildingIntact|mesh||bdadd3f4090d31046835e9722f2de0f9:23596962405743454|1ab4e64968c30e742bceaec998ff852f:4300004|e14749e23c1b64c0493721aaf371a8ae:2100000|0",
-            "eligible": 10,
-            "excluded": 0,
-            "total": 10
+            "total": 75
         },
         {
             "key": "GameplayBuildingIntact|mesh||c07a4ea7418664c24ad4c16fd7f26424:7153339257403390523|0366124c30891f04f8f4e27209c49207:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
@@ -119256,18 +119172,6 @@
             "total": 88
         },
         {
-            "key": "GameplayBuildingIntact|mesh||c4eb6cf706a0ffc4ba4f2075d3239a48:23624724685017898|7d6af040e5782264b80c246cfb086fd6:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 58,
-            "excluded": 0,
-            "total": 58
-        },
-        {
-            "key": "GameplayBuildingIntact|mesh||c5926434d8b00d84b918893b83f422e4:23232591932433212|696fd0370ebf4f2469314643c089d3ba:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 78,
-            "excluded": 0,
-            "total": 78
-        },
-        {
             "key": "GameplayBuildingIntact|mesh||c7cbe0b7f05fd4fda825c6ce586b2be2:3375987908487706694|3ce084898a5a68e4f8281693a35d46ef:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
             "eligible": 24,
             "excluded": 0,
@@ -119304,40 +119208,106 @@
             "total": 21
         },
         {
-            "key": "GameplayBuildingIntact|mesh||d3b9cd470c2906243aaecc81087240a1:23151536570126220|2aed57cd816aec04bb68c91e15d29a0a:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
-            "eligible": 24,
-            "excluded": 0,
-            "total": 24
+            "key": "GameplayBuildingIntact|mesh||caa5d4b3d674e4c5e9c03a37d4e9324a:23647006855508510|3634425369a10b643a98445599f854f5:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 0,
+            "excluded": 7,
+            "total": 7
         },
         {
-            "key": "GameplayBuildingIntact|mesh||d3b9cd470c2906243aaecc81087240a1:23151536570126220|2aed57cd816aec04bb68c91e15d29a0a:4300000|607ac1ca371b942b99f5b38ba589d12d:2100000|0",
-            "eligible": 12,
-            "excluded": 0,
-            "total": 12
+            "key": "GameplayBuildingIntact|mesh||caa5d4b3d674e4c5e9c03a37d4e9324a:23810380882409100|3634425369a10b643a98445599f854f5:4300002|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 0,
+            "excluded": 7,
+            "total": 7
         },
         {
-            "key": "GameplayBuildingIntact|mesh||d3b9cd470c2906243aaecc81087240a1:23151536570126220|2aed57cd816aec04bb68c91e15d29a0a:4300000|6487453456f55495a85cab7b38eaece4:2100000|0",
-            "eligible": 22,
+            "key": "GameplayBuildingIntact|mesh||df177e0a111214d6fbecf786840c4ffa:23430190310130970|489ed28ad2eaf284fb9406f0d1b10adc:4300000|59266c69bb5e4a44b82461f5af99ddc5:2100000|0",
+            "eligible": 145,
             "excluded": 0,
-            "total": 22
+            "total": 145
         },
         {
-            "key": "GameplayBuildingIntact|mesh||d3b9cd470c2906243aaecc81087240a1:23151536570126220|2aed57cd816aec04bb68c91e15d29a0a:4300000|c0949687d30c74ca3b5f933d68fbd88f:2100000|0",
-            "eligible": 12,
+            "key": "GameplayBuildingIntact|mesh||e0b6786493efc4748a3669b66e733e1f:23927110349108016|8dc5a5d08c1936d45aeb62efd4f19b95:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 86,
             "excluded": 0,
-            "total": 12
+            "total": 86
         },
         {
-            "key": "GameplayBuildingIntact|mesh||d3b9cd470c2906243aaecc81087240a1:23151536570126220|2aed57cd816aec04bb68c91e15d29a0a:4300000|cee1bea9fb2214c89b13d5a8997b3930:2100000|0",
-            "eligible": 23,
+            "key": "GameplayBuildingIntact|mesh||e5ccf49c3946a43099159b46d3315dfc:23403433648238258|1ab4e64968c30e742bceaec998ff852f:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
+            "eligible": 5,
             "excluded": 0,
-            "total": 23
+            "total": 5
         },
         {
-            "key": "GameplayBuildingIntact|mesh||d3b9cd470c2906243aaecc81087240a1:23151536570126220|2aed57cd816aec04bb68c91e15d29a0a:4300000|e14749e23c1b64c0493721aaf371a8ae:2100000|0",
-            "eligible": 24,
+            "key": "GameplayBuildingIntact|mesh||e5ccf49c3946a43099159b46d3315dfc:23403433648238258|1ab4e64968c30e742bceaec998ff852f:4300000|607ac1ca371b942b99f5b38ba589d12d:2100000|0",
+            "eligible": 4,
             "excluded": 0,
-            "total": 24
+            "total": 4
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||e5ccf49c3946a43099159b46d3315dfc:23403433648238258|1ab4e64968c30e742bceaec998ff852f:4300000|6487453456f55495a85cab7b38eaece4:2100000|0",
+            "eligible": 4,
+            "excluded": 0,
+            "total": 4
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||e5ccf49c3946a43099159b46d3315dfc:23403433648238258|1ab4e64968c30e742bceaec998ff852f:4300000|c0949687d30c74ca3b5f933d68fbd88f:2100000|0",
+            "eligible": 7,
+            "excluded": 0,
+            "total": 7
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||e5ccf49c3946a43099159b46d3315dfc:23403433648238258|1ab4e64968c30e742bceaec998ff852f:4300000|cee1bea9fb2214c89b13d5a8997b3930:2100000|0",
+            "eligible": 5,
+            "excluded": 0,
+            "total": 5
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||e5ccf49c3946a43099159b46d3315dfc:23403433648238258|1ab4e64968c30e742bceaec998ff852f:4300000|e14749e23c1b64c0493721aaf371a8ae:2100000|0",
+            "eligible": 10,
+            "excluded": 0,
+            "total": 10
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||e5ccf49c3946a43099159b46d3315dfc:23596962405743454|1ab4e64968c30e742bceaec998ff852f:4300004|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
+            "eligible": 5,
+            "excluded": 0,
+            "total": 5
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||e5ccf49c3946a43099159b46d3315dfc:23596962405743454|1ab4e64968c30e742bceaec998ff852f:4300004|607ac1ca371b942b99f5b38ba589d12d:2100000|0",
+            "eligible": 4,
+            "excluded": 0,
+            "total": 4
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||e5ccf49c3946a43099159b46d3315dfc:23596962405743454|1ab4e64968c30e742bceaec998ff852f:4300004|6487453456f55495a85cab7b38eaece4:2100000|0",
+            "eligible": 4,
+            "excluded": 0,
+            "total": 4
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||e5ccf49c3946a43099159b46d3315dfc:23596962405743454|1ab4e64968c30e742bceaec998ff852f:4300004|c0949687d30c74ca3b5f933d68fbd88f:2100000|0",
+            "eligible": 7,
+            "excluded": 0,
+            "total": 7
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||e5ccf49c3946a43099159b46d3315dfc:23596962405743454|1ab4e64968c30e742bceaec998ff852f:4300004|cee1bea9fb2214c89b13d5a8997b3930:2100000|0",
+            "eligible": 5,
+            "excluded": 0,
+            "total": 5
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||e5ccf49c3946a43099159b46d3315dfc:23596962405743454|1ab4e64968c30e742bceaec998ff852f:4300004|e14749e23c1b64c0493721aaf371a8ae:2100000|0",
+            "eligible": 10,
+            "excluded": 0,
+            "total": 10
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||ee56db34303a94a3e83c44ec8dc94647:23820164143229318|bcbe6102b075f044aa8ae9227b603f13:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 102,
+            "excluded": 0,
+            "total": 102
         },
         {
             "key": "GameplayBuildingIntact|mesh||f17185abba3e947a0a3b7f2170c1af75:2297677532899004126|b2ac065c98983b9439042cc64c2557c6:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
@@ -119376,12 +119346,6 @@
             "total": 97
         },
         {
-            "key": "GameplayBuildingIntact|mesh||f31af7f404f9ffe4cb366e512c49b2aa:23939979429664214|a0e132ea00f6c3e4cab5d6123534683c:4300000|59266c69bb5e4a44b82461f5af99ddc5:2100000|0",
-            "eligible": 185,
-            "excluded": 0,
-            "total": 185
-        },
-        {
             "key": "GameplayBuildingIntact|mesh||f3f3fbd3b75c34012817e6ad939bf78c:3047741914265071122|4ed71721307c2c948aa5c8d1b181b92f:4300006|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 0,
             "excluded": 2,
@@ -119412,46 +119376,82 @@
             "total": 2
         },
         {
-            "key": "Horizon|prefab|0106d0ab24bad5541bf38ff44c470fe6:1129651473438538|0106d0ab24bad5541bf38ff44c470fe6:23261720636963144|76a857d1dfcaa234a9e97e47fce4cfa4:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 0,
-            "excluded": 6,
-            "total": 6
+            "key": "GameplayBuildingIntact|mesh||f6349bf9f562c404fb9fb8fae953d52f:23151536570126220|2aed57cd816aec04bb68c91e15d29a0a:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
+            "eligible": 24,
+            "excluded": 0,
+            "total": 24
         },
         {
-            "key": "Horizon|prefab|213fedfd62f97574a806a7057d250c4a:1670240038277574|213fedfd62f97574a806a7057d250c4a:23242627188954084|f54ae5aca9566a84682467d0dd6306b0:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 0,
-            "excluded": 7,
-            "total": 7
+            "key": "GameplayBuildingIntact|mesh||f6349bf9f562c404fb9fb8fae953d52f:23151536570126220|2aed57cd816aec04bb68c91e15d29a0a:4300000|607ac1ca371b942b99f5b38ba589d12d:2100000|0",
+            "eligible": 12,
+            "excluded": 0,
+            "total": 12
         },
         {
-            "key": "Horizon|prefab|2444a82a6092dd0429a4f9e9779d64f9:1128670862836824|2444a82a6092dd0429a4f9e9779d64f9:23915349751328214|7631ed49a95083b469567087f808837a:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "key": "GameplayBuildingIntact|mesh||f6349bf9f562c404fb9fb8fae953d52f:23151536570126220|2aed57cd816aec04bb68c91e15d29a0a:4300000|6487453456f55495a85cab7b38eaece4:2100000|0",
+            "eligible": 22,
+            "excluded": 0,
+            "total": 22
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||f6349bf9f562c404fb9fb8fae953d52f:23151536570126220|2aed57cd816aec04bb68c91e15d29a0a:4300000|c0949687d30c74ca3b5f933d68fbd88f:2100000|0",
+            "eligible": 12,
+            "excluded": 0,
+            "total": 12
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||f6349bf9f562c404fb9fb8fae953d52f:23151536570126220|2aed57cd816aec04bb68c91e15d29a0a:4300000|cee1bea9fb2214c89b13d5a8997b3930:2100000|0",
+            "eligible": 23,
+            "excluded": 0,
+            "total": 23
+        },
+        {
+            "key": "GameplayBuildingIntact|mesh||f6349bf9f562c404fb9fb8fae953d52f:23151536570126220|2aed57cd816aec04bb68c91e15d29a0a:4300000|e14749e23c1b64c0493721aaf371a8ae:2100000|0",
+            "eligible": 24,
+            "excluded": 0,
+            "total": 24
+        },
+        {
+            "key": "Horizon|prefab|5232f9401ceb141eeb0bd934aede2ed9:1128670862836824|5232f9401ceb141eeb0bd934aede2ed9:23915349751328214|7631ed49a95083b469567087f808837a:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 0,
             "excluded": 9,
             "total": 9
         },
         {
-            "key": "Horizon|prefab|7c48f30db67c7cd4ea8d4d67f7b0dcbf:1726014894292508|7c48f30db67c7cd4ea8d4d67f7b0dcbf:23371044147097380|2556ee89c91ec3644b76d957423fe598:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "key": "Horizon|prefab|5ee665dbeebce414aa43f841a0b7f606:1670240038277574|5ee665dbeebce414aa43f841a0b7f606:23242627188954084|f54ae5aca9566a84682467d0dd6306b0:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 0,
-            "excluded": 10,
-            "total": 10
+            "excluded": 7,
+            "total": 7
         },
         {
-            "key": "Horizon|prefab|a0af33d49bf5d2344ac5ae704e7b8dd9:1792545491955742|a0af33d49bf5d2344ac5ae704e7b8dd9:23830084237527536|6bfb7e568887f6f44b40fe4cd636dcd9:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 0,
-            "excluded": 8,
-            "total": 8
-        },
-        {
-            "key": "Horizon|prefab|a0f37ebc0d7d66f4bbb5edbf71d9384f:1807092743858426|a0f37ebc0d7d66f4bbb5edbf71d9384f:23236034049103322|95c9937e65e63ea45b90ddeef14c4a13:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "key": "Horizon|prefab|69e0ddf135f2a4a65b65aa953fd16f8e:1129651473438538|69e0ddf135f2a4a65b65aa953fd16f8e:23261720636963144|76a857d1dfcaa234a9e97e47fce4cfa4:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 0,
             "excluded": 6,
             "total": 6
         },
         {
-            "key": "Horizon|prefab|e972aac95f890254fb661bf5573e21a1:1959726956676370|e972aac95f890254fb661bf5573e21a1:23963392595764838|ded34fa3a04b14445a23afc4bd4f8d2a:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "key": "Horizon|prefab|878550fc1cfcb49babfb6ce50a76f172:1792545491955742|878550fc1cfcb49babfb6ce50a76f172:23830084237527536|6bfb7e568887f6f44b40fe4cd636dcd9:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 0,
+            "excluded": 8,
+            "total": 8
+        },
+        {
+            "key": "Horizon|prefab|f0e282d1bf3a141d2822832302fa0cac:1959726956676370|f0e282d1bf3a141d2822832302fa0cac:23963392595764838|ded34fa3a04b14445a23afc4bd4f8d2a:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 0,
             "excluded": 7,
             "total": 7
+        },
+        {
+            "key": "Horizon|prefab|f559a2b7091874c97ace3a32db3ffbfc:1807092743858426|f559a2b7091874c97ace3a32db3ffbfc:23236034049103322|95c9937e65e63ea45b90ddeef14c4a13:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 0,
+            "excluded": 6,
+            "total": 6
+        },
+        {
+            "key": "Horizon|prefab|faeec4d2a1c294979b962b923e9c8bfb:1726014894292508|faeec4d2a1c294979b962b923e9c8bfb:23371044147097380|2556ee89c91ec3644b76d957423fe598:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 0,
+            "excluded": 10,
+            "total": 10
         },
         {
             "key": "Infrastructure|prefab|095cd66c53a054737955d9773c3d4060:6752715572181065886|095cd66c53a054737955d9773c3d4060:2307020365131687743|1bbb265b2cab6de44a670ef7c5d11151:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
@@ -119484,6 +119484,12 @@
             "total": 2064
         },
         {
+            "key": "Infrastructure|prefab|0dfdac036ba10447fb15897c6a9b0ef9:1074653944695324|0dfdac036ba10447fb15897c6a9b0ef9:23619447874582440|df72033e7bdc2bf43991aca3a9f72e4d:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 318,
+            "excluded": 0,
+            "total": 318
+        },
+        {
             "key": "Infrastructure|prefab|0edeb5415af72ab418de56420349e4fe:6752715572181065886|0edeb5415af72ab418de56420349e4fe:2307020365131687743|1bbb265b2cab6de44a670ef7c5d11151:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 1532,
             "excluded": 0,
@@ -119512,6 +119518,12 @@
             "eligible": 1532,
             "excluded": 0,
             "total": 1532
+        },
+        {
+            "key": "Infrastructure|prefab|107e71925db9446da8e7c3061276769f:1491763348482022|107e71925db9446da8e7c3061276769f:23675410530635422|d645c1c644850cd4bbbb79eaf1ed7021:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 1408,
+            "excluded": 0,
+            "total": 1408
         },
         {
             "key": "Infrastructure|prefab|19ddf3e86f1306542af1df5745ebacfb:4627792861614435960|19ddf3e86f1306542af1df5745ebacfb:2785551417663278647|a8108c677731e914491722c0e433889c:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
@@ -119544,40 +119556,22 @@
             "total": 4
         },
         {
-            "key": "Infrastructure|prefab|1ec495524713b4440909eea48d3584dd:1475455805769540|1ec495524713b4440909eea48d3584dd:23305772563269458|6feace9dcba1b2941b298fba9b5b76a9:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 7622,
+            "key": "Infrastructure|prefab|28d458b303e3444598de47927fa02b54:1144283006411506|28d458b303e3444598de47927fa02b54:23910814394105476|39e9c4895f0b5a34787c503110d9fd93:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 162,
             "excluded": 0,
-            "total": 7622
+            "total": 162
         },
         {
-            "key": "Infrastructure|prefab|1ec495524713b4440909eea48d3584dd:1475455805769540|1ec495524713b4440909eea48d3584dd:23305772563269458|6feace9dcba1b2941b298fba9b5b76a9:4300000|59ec465e0e57248adb922ab08a27b755:2100000|0",
-            "eligible": 806,
+            "key": "Infrastructure|prefab|28d458b303e3444598de47927fa02b54:1144283006411506|28d458b303e3444598de47927fa02b54:23910814394105476|39e9c4895f0b5a34787c503110d9fd93:4300000|59ec465e0e57248adb922ab08a27b755:2100000|0",
+            "eligible": 796,
             "excluded": 0,
-            "total": 806
+            "total": 796
         },
         {
-            "key": "Infrastructure|prefab|20c7fa047a5fc854083c28df21f9e49d:1322831827103546|20c7fa047a5fc854083c28df21f9e49d:23422668361824468|cfe04afaedf707442a06c4bd60e63d59:4300000|db32d33995df0407c82437f0f33d41e6:2100000|0",
-            "eligible": 15,
+            "key": "Infrastructure|prefab|52c79ec8cc070488db50bc7b83e6a239:1870349420866156|52c79ec8cc070488db50bc7b83e6a239:23791145873048440|eb53db972f906f24db6c9ec6ece86ec2:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 636,
             "excluded": 0,
-            "total": 15
-        },
-        {
-            "key": "Infrastructure|prefab|27b37fc6073e7dc4493291a40ffce450:1532088383690136|27b37fc6073e7dc4493291a40ffce450:23077661688082786|51ae3a82e4ede004088b051f37f99c62:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 154,
-            "excluded": 0,
-            "total": 154
-        },
-        {
-            "key": "Infrastructure|prefab|27b37fc6073e7dc4493291a40ffce450:1532088383690136|27b37fc6073e7dc4493291a40ffce450:23077661688082786|51ae3a82e4ede004088b051f37f99c62:4300000|59ec465e0e57248adb922ab08a27b755:2100000|0",
-            "eligible": 822,
-            "excluded": 0,
-            "total": 822
-        },
-        {
-            "key": "Infrastructure|prefab|52d4be720ec601e4096a9110f4cae881:1074653944695324|52d4be720ec601e4096a9110f4cae881:23619447874582440|df72033e7bdc2bf43991aca3a9f72e4d:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 318,
-            "excluded": 0,
-            "total": 318
+            "total": 636
         },
         {
             "key": "Infrastructure|prefab|5865dda7cc6f9e84495a47e8f9811563:5663504907340982192|5865dda7cc6f9e84495a47e8f9811563:5663504907338987888|88ef6d59d360f634b87dfa673d406580:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
@@ -119590,12 +119584,6 @@
             "eligible": 752,
             "excluded": 0,
             "total": 752
-        },
-        {
-            "key": "Infrastructure|prefab|5c7d24f9b9faabc4a9df233b77ef368d:1870349420866156|5c7d24f9b9faabc4a9df233b77ef368d:23791145873048440|eb53db972f906f24db6c9ec6ece86ec2:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 636,
-            "excluded": 0,
-            "total": 636
         },
         {
             "key": "Infrastructure|prefab|65241ad8beab543e589a7e3c7334b214:2219165648693706337|65241ad8beab543e589a7e3c7334b214:2470368823003970929|0000000000000000e000000000000000:10210|0fa5d366bb53f419589f173fccfd6863:2100000|0",
@@ -119626,12 +119614,6 @@
             "eligible": 29,
             "excluded": 0,
             "total": 29
-        },
-        {
-            "key": "Infrastructure|prefab|673f151ecea0f534b9ef97a8c1b1fc49:1491763348482022|673f151ecea0f534b9ef97a8c1b1fc49:23675410530635422|d645c1c644850cd4bbbb79eaf1ed7021:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 1408,
-            "excluded": 0,
-            "total": 1408
         },
         {
             "key": "Infrastructure|prefab|73b4e6d68769d294e9bbb2138e5b9ec9:125360972841645786|73b4e6d68769d294e9bbb2138e5b9ec9:2120217822695517533|02d73b5526e75cc49ba953f6de18bc78:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
@@ -119712,18 +119694,6 @@
             "total": 18
         },
         {
-            "key": "Infrastructure|prefab|8177219c29c3def4798e3278bf383b60:1144283006411506|8177219c29c3def4798e3278bf383b60:23910814394105476|39e9c4895f0b5a34787c503110d9fd93:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 162,
-            "excluded": 0,
-            "total": 162
-        },
-        {
-            "key": "Infrastructure|prefab|8177219c29c3def4798e3278bf383b60:1144283006411506|8177219c29c3def4798e3278bf383b60:23910814394105476|39e9c4895f0b5a34787c503110d9fd93:4300000|59ec465e0e57248adb922ab08a27b755:2100000|0",
-            "eligible": 796,
-            "excluded": 0,
-            "total": 796
-        },
-        {
             "key": "Infrastructure|prefab|8a34e9514dfe04fd7a308e8dded1b154:4627792861614435960|8a34e9514dfe04fd7a308e8dded1b154:2785551417663278647|0000000000000000e000000000000000:10210|0fa5d366bb53f419589f173fccfd6863:2100000|0",
             "eligible": 15,
             "excluded": 0,
@@ -119760,10 +119730,16 @@
             "total": 122
         },
         {
-            "key": "Infrastructure|prefab|94e81307b09ae04409cea5580df32dc1:1948214864163224|94e81307b09ae04409cea5580df32dc1:23790917551295560|480ab772f86a55d4d969cd53d85edbc0:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 667,
+            "key": "Infrastructure|prefab|aed60d2f3de7844f0ad228486c510d50:1532088383690136|aed60d2f3de7844f0ad228486c510d50:23077661688082786|51ae3a82e4ede004088b051f37f99c62:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 154,
             "excluded": 0,
-            "total": 667
+            "total": 154
+        },
+        {
+            "key": "Infrastructure|prefab|aed60d2f3de7844f0ad228486c510d50:1532088383690136|aed60d2f3de7844f0ad228486c510d50:23077661688082786|51ae3a82e4ede004088b051f37f99c62:4300000|59ec465e0e57248adb922ab08a27b755:2100000|0",
+            "eligible": 822,
+            "excluded": 0,
+            "total": 822
         },
         {
             "key": "Infrastructure|prefab|b4e31794b94814524a6f32f65cdd82d4:125360972841645786|b4e31794b94814524a6f32f65cdd82d4:2120217822695517533|02d73b5526e75cc49ba953f6de18bc78:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
@@ -119850,6 +119826,12 @@
             "total": 9
         },
         {
+            "key": "Infrastructure|prefab|dbc79b578a3f444969fcb5bc4469b6d0:1948214864163224|dbc79b578a3f444969fcb5bc4469b6d0:23790917551295560|480ab772f86a55d4d969cd53d85edbc0:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 667,
+            "excluded": 0,
+            "total": 667
+        },
+        {
             "key": "Infrastructure|prefab|e2f08cee24028544f8b9c7e889074a1c:8321809417646549874|e2f08cee24028544f8b9c7e889074a1c:7529453304070081191|bba35968f6654c5468b15145051145ef:-8538677807511832003|988a3b944108f4af9800219477fa7f65:2100000|0",
             "eligible": 304,
             "excluded": 0,
@@ -119860,6 +119842,12 @@
             "eligible": 0,
             "excluded": 304,
             "total": 304
+        },
+        {
+            "key": "Infrastructure|prefab|ee3678b39d9ad44aa9fd5f19f8e887c1:1322831827103546|ee3678b39d9ad44aa9fd5f19f8e887c1:23422668361824468|cfe04afaedf707442a06c4bd60e63d59:4300000|db32d33995df0407c82437f0f33d41e6:2100000|0",
+            "eligible": 15,
+            "excluded": 0,
+            "total": 15
         },
         {
             "key": "Infrastructure|prefab|fa0a16026cf90474c84e43de668567d7:2977948095156090640|fa0a16026cf90474c84e43de668567d7:3543345167943611931|0000000000000000e000000000000000:10210|0fa5d366bb53f419589f173fccfd6863:2100000|0",
@@ -119928,166 +119916,184 @@
             "total": 27
         },
         {
-            "key": "Prop|prefab|02e18f272cd6f414b8cebfe737b0c88d:1348256614571836|02e18f272cd6f414b8cebfe737b0c88d:23374333187701114|e8fa72d4ed49e0b488a6a0ec8b602578:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 124,
+            "key": "Infrastructure|prefab|fe595b0c869fd48c4836400df794a02d:1475455805769540|fe595b0c869fd48c4836400df794a02d:23305772563269458|6feace9dcba1b2941b298fba9b5b76a9:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 7622,
             "excluded": 0,
-            "total": 124
+            "total": 7622
         },
         {
-            "key": "Prop|prefab|1e3e91fc5d1d6064dbd13db45d9fbbe1:1034922659544222|1e3e91fc5d1d6064dbd13db45d9fbbe1:23514872885241026|647d43b70a3b59a4ca7d65564dd6be8e:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 369,
+            "key": "Infrastructure|prefab|fe595b0c869fd48c4836400df794a02d:1475455805769540|fe595b0c869fd48c4836400df794a02d:23305772563269458|6feace9dcba1b2941b298fba9b5b76a9:4300000|59ec465e0e57248adb922ab08a27b755:2100000|0",
+            "eligible": 806,
             "excluded": 0,
-            "total": 369
+            "total": 806
         },
         {
-            "key": "Prop|prefab|1e8a0c052ac8d774cbd71a35596e3b55:1380009469142936|1e8a0c052ac8d774cbd71a35596e3b55:23425265438196818|5f462e34be722aa4a9145d0222da07f0:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 347,
-            "excluded": 0,
-            "total": 347
-        },
-        {
-            "key": "Prop|prefab|22fe59241302503469ce36c0658f17e8:1607088785362156|22fe59241302503469ce36c0658f17e8:23497701344693020|6720bdb59fb7cc445a1035c48503bdd7:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "key": "Prop|prefab|09b48c54cac5b4baa946811e249bb9a4:1607088785362156|09b48c54cac5b4baa946811e249bb9a4:23497701344693020|6720bdb59fb7cc445a1035c48503bdd7:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 0,
             "excluded": 1,
             "total": 1
         },
         {
-            "key": "Prop|prefab|2a802185ef9d0734694765e7f2939617:1934626129697622|2a802185ef9d0734694765e7f2939617:23792544098167630|04fc367986963124c9cddd4d12052fcd:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 378,
-            "excluded": 0,
-            "total": 378
-        },
-        {
-            "key": "Prop|prefab|34c660834ac363f4e8bc7d1df8fc050a:1351276236628500|34c660834ac363f4e8bc7d1df8fc050a:23532657960606304|66d0394c999737e4488c3589e5c95672:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 317,
-            "excluded": 0,
-            "total": 317
-        },
-        {
-            "key": "Prop|prefab|3a4a74c661e99204fa23c68584378e6d:1939290389013320|3a4a74c661e99204fa23c68584378e6d:23809752688075968|7040ec9be36e5cd42a1ed2e47a82097e:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "key": "Prop|prefab|1189b6000eebd470e85b629d3b87142a:1939290389013320|1189b6000eebd470e85b629d3b87142a:23809752688075968|7040ec9be36e5cd42a1ed2e47a82097e:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 348,
             "excluded": 0,
             "total": 348
         },
         {
-            "key": "Prop|prefab|3db9ff1b78eb85a4bb13cbc6a302cc98:1148552503308426|3db9ff1b78eb85a4bb13cbc6a302cc98:23151129999758782|6b092fe425afd3c42ba205e5401e7f5b:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 359,
+            "key": "Prop|prefab|27520cdedc1314291bf4f3f8e7fcebf5:1351276236628500|27520cdedc1314291bf4f3f8e7fcebf5:23532657960606304|66d0394c999737e4488c3589e5c95672:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 317,
             "excluded": 0,
-            "total": 359
+            "total": 317
         },
         {
-            "key": "Prop|prefab|5fdd138ebd3525a4782d95df81486683:1178823656422394|5fdd138ebd3525a4782d95df81486683:23043696849486258|810236f6a4d110548996e6294272c7d2:4300002|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 393,
-            "excluded": 0,
-            "total": 393
-        },
-        {
-            "key": "Prop|prefab|5fdd138ebd3525a4782d95df81486683:1178823656422394|5fdd138ebd3525a4782d95df81486683:23382847901275248|810236f6a4d110548996e6294272c7d2:4300004|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 393,
-            "excluded": 0,
-            "total": 393
-        },
-        {
-            "key": "Prop|prefab|5fdd138ebd3525a4782d95df81486683:1178823656422394|5fdd138ebd3525a4782d95df81486683:23919602183600022|810236f6a4d110548996e6294272c7d2:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 393,
-            "excluded": 0,
-            "total": 393
-        },
-        {
-            "key": "Prop|prefab|659bc0b3b47ee4f408d94382319921f3:1073223972887106|659bc0b3b47ee4f408d94382319921f3:23540927899269384|889ed087ce0dc9d4f945bd290b763d9b:4300004|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 369,
-            "excluded": 0,
-            "total": 369
-        },
-        {
-            "key": "Prop|prefab|659bc0b3b47ee4f408d94382319921f3:1073223972887106|659bc0b3b47ee4f408d94382319921f3:23575556808955652|889ed087ce0dc9d4f945bd290b763d9b:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 369,
-            "excluded": 0,
-            "total": 369
-        },
-        {
-            "key": "Prop|prefab|659bc0b3b47ee4f408d94382319921f3:1073223972887106|659bc0b3b47ee4f408d94382319921f3:23768047298083826|889ed087ce0dc9d4f945bd290b763d9b:4300002|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 369,
-            "excluded": 0,
-            "total": 369
-        },
-        {
-            "key": "Prop|prefab|ab5b770f11645104db5e8281231fdbd2:1941315322240426|ab5b770f11645104db5e8281231fdbd2:23038449189089250|63c4eb820380cdb4aaff090c308cf579:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 359,
-            "excluded": 0,
-            "total": 359
-        },
-        {
-            "key": "Prop|prefab|d1975e95633908b4480c68c208b1ea40:1741896867869746|d1975e95633908b4480c68c208b1ea40:23326220129789712|a46009c4d241a2d488f9a56ed636daec:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 337,
-            "excluded": 0,
-            "total": 337
-        },
-        {
-            "key": "Prop|prefab|d4001fe91b24fcd4e9e1136be88d8008:1879586073365376|d4001fe91b24fcd4e9e1136be88d8008:23604264102013344|f492cd10ba0961141b4283d9deb9df19:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "key": "Prop|prefab|2cdb0a8d7d64e4d398c7c62b93ec2c00:1879586073365376|2cdb0a8d7d64e4d398c7c62b93ec2c00:23604264102013344|f492cd10ba0961141b4283d9deb9df19:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 17,
             "excluded": 0,
             "total": 17
         },
         {
-            "key": "Prop|prefab|e690d9656ea874c428086d1dc400aad7:1844669185981364|e690d9656ea874c428086d1dc400aad7:23835415360087792|15d9e259f16ac5f42b2b4d8784545877:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 11,
+            "key": "Prop|prefab|3d4e7c62e7d954474a6f793a3211646a:1741896867869746|3d4e7c62e7d954474a6f793a3211646a:23326220129789712|a46009c4d241a2d488f9a56ed636daec:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 337,
             "excluded": 0,
-            "total": 11
+            "total": 337
         },
         {
-            "key": "Prop|prefab|eeedb309431b113438cbdc06da49ff44:1668601937144062|eeedb309431b113438cbdc06da49ff44:23631272026056512|68a228ecd3e471e44953c3fe98ff24e4:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "key": "Prop|prefab|3ed84c19eb07146359c5e1d8e67f7336:1178823656422394|3ed84c19eb07146359c5e1d8e67f7336:23043696849486258|810236f6a4d110548996e6294272c7d2:4300002|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 393,
+            "excluded": 0,
+            "total": 393
+        },
+        {
+            "key": "Prop|prefab|3ed84c19eb07146359c5e1d8e67f7336:1178823656422394|3ed84c19eb07146359c5e1d8e67f7336:23382847901275248|810236f6a4d110548996e6294272c7d2:4300004|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 393,
+            "excluded": 0,
+            "total": 393
+        },
+        {
+            "key": "Prop|prefab|3ed84c19eb07146359c5e1d8e67f7336:1178823656422394|3ed84c19eb07146359c5e1d8e67f7336:23919602183600022|810236f6a4d110548996e6294272c7d2:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 393,
+            "excluded": 0,
+            "total": 393
+        },
+        {
+            "key": "Prop|prefab|5476c25e130404662b00d0d5721057a6:1073223972887106|5476c25e130404662b00d0d5721057a6:23540927899269384|889ed087ce0dc9d4f945bd290b763d9b:4300004|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 369,
+            "excluded": 0,
+            "total": 369
+        },
+        {
+            "key": "Prop|prefab|5476c25e130404662b00d0d5721057a6:1073223972887106|5476c25e130404662b00d0d5721057a6:23575556808955652|889ed087ce0dc9d4f945bd290b763d9b:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 369,
+            "excluded": 0,
+            "total": 369
+        },
+        {
+            "key": "Prop|prefab|5476c25e130404662b00d0d5721057a6:1073223972887106|5476c25e130404662b00d0d5721057a6:23768047298083826|889ed087ce0dc9d4f945bd290b763d9b:4300002|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 369,
+            "excluded": 0,
+            "total": 369
+        },
+        {
+            "key": "Prop|prefab|637d58bfed3a94dec97420cc2949c15b:1668601937144062|637d58bfed3a94dec97420cc2949c15b:23631272026056512|68a228ecd3e471e44953c3fe98ff24e4:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 367,
             "excluded": 0,
             "total": 367
         },
         {
-            "key": "Prop|prefab|f173d4afbe488534694c1cb893ded701:1465904934661882|f173d4afbe488534694c1cb893ded701:23720317401713540|b8832600f88268c46adce6877ba3a371:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "key": "Prop|prefab|68ff8fdfbcd56411bb24669886a326f9:1465904934661882|68ff8fdfbcd56411bb24669886a326f9:23720317401713540|b8832600f88268c46adce6877ba3a371:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 0,
             "excluded": 1,
             "total": 1
         },
         {
-            "key": "Vegetation|prefab|2faa161a5aba02e43a55311d6238ed6a:1123928462775146|2faa161a5aba02e43a55311d6238ed6a:23209477223074448|be4a07cdff8dcdf4b9e0f7902e558b3d:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 568,
+            "key": "Prop|prefab|a4c3d165b493040639bfc87f5ef7905c:1934626129697622|a4c3d165b493040639bfc87f5ef7905c:23792544098167630|04fc367986963124c9cddd4d12052fcd:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 378,
             "excluded": 0,
-            "total": 568
+            "total": 378
         },
         {
-            "key": "Vegetation|prefab|69b4e7a4055b2194f9eb1c78774ee523:1971384767470032|69b4e7a4055b2194f9eb1c78774ee523:23097362526852406|fb72c742ade8526468381ba864289832:4300000|cecad80e1c7e042a79301a706cc153b2:2100000|0",
-            "eligible": 30,
+            "key": "Prop|prefab|b04f338e0d21e4b2c8cf9ab38a6c41eb:1844669185981364|b04f338e0d21e4b2c8cf9ab38a6c41eb:23835415360087792|15d9e259f16ac5f42b2b4d8784545877:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 11,
             "excluded": 0,
-            "total": 30
+            "total": 11
         },
         {
-            "key": "Vegetation|prefab|72ba485371f8edf44b88c0041e7f8e4a:1848120204254172|72ba485371f8edf44b88c0041e7f8e4a:23909191772588140|3e4eb286fced4ce45a66b2c511233efd:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "key": "Prop|prefab|bcc46d82d1a6f469f9b3f7b00411da31:1941315322240426|bcc46d82d1a6f469f9b3f7b00411da31:23038449189089250|63c4eb820380cdb4aaff090c308cf579:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 359,
+            "excluded": 0,
+            "total": 359
+        },
+        {
+            "key": "Prop|prefab|c8e4947e5b1684f4884bcecebd6f1e38:1380009469142936|c8e4947e5b1684f4884bcecebd6f1e38:23425265438196818|5f462e34be722aa4a9145d0222da07f0:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 347,
+            "excluded": 0,
+            "total": 347
+        },
+        {
+            "key": "Prop|prefab|cf660689448a441bba119f8f45424ea5:1348256614571836|cf660689448a441bba119f8f45424ea5:23374333187701114|e8fa72d4ed49e0b488a6a0ec8b602578:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 124,
+            "excluded": 0,
+            "total": 124
+        },
+        {
+            "key": "Prop|prefab|d3e03410bc27e4b79a8ec18be924dadb:1148552503308426|d3e03410bc27e4b79a8ec18be924dadb:23151129999758782|6b092fe425afd3c42ba205e5401e7f5b:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 359,
+            "excluded": 0,
+            "total": 359
+        },
+        {
+            "key": "Prop|prefab|d4f61f41862144f5bb3905178d24a8cc:1034922659544222|d4f61f41862144f5bb3905178d24a8cc:23514872885241026|647d43b70a3b59a4ca7d65564dd6be8e:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 369,
+            "excluded": 0,
+            "total": 369
+        },
+        {
+            "key": "Vegetation|prefab|0315d4c8d7d34495a86be2e2f8e84515:1848120204254172|0315d4c8d7d34495a86be2e2f8e84515:23909191772588140|3e4eb286fced4ce45a66b2c511233efd:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 435,
             "excluded": 0,
             "total": 435
         },
         {
-            "key": "Vegetation|prefab|8efcd019ae675584ea173b9640c500f0:1138684863123908|8efcd019ae675584ea173b9640c500f0:23436945278632694|2f7e0aa439a901b4a9757ecb86240adc:4300000|cecad80e1c7e042a79301a706cc153b2:2100000|0",
-            "eligible": 29,
-            "excluded": 0,
-            "total": 29
-        },
-        {
-            "key": "Vegetation|prefab|9b29f168975bc324f8cfa89eaa2073d0:1879274043669234|9b29f168975bc324f8cfa89eaa2073d0:23420721139255226|d7dccd4561a0eaf429da95d32356ad1a:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 1861,
-            "excluded": 0,
-            "total": 1861
-        },
-        {
-            "key": "Vegetation|prefab|9c6793adc9dd9c44181ecfbf3bc627c9:1767534745975012|9c6793adc9dd9c44181ecfbf3bc627c9:23331242263830038|de6f4735d4ee8304a8677559456ed51f:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "key": "Vegetation|prefab|125c2653ca9754647b433408192a2ff2:1767534745975012|125c2653ca9754647b433408192a2ff2:23331242263830038|de6f4735d4ee8304a8677559456ed51f:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 265,
             "excluded": 0,
             "total": 265
         },
         {
-            "key": "Vegetation|prefab|ca8d26bb0c95e9049bbf33e26f412ed0:1083917246981912|ca8d26bb0c95e9049bbf33e26f412ed0:23856665671451182|2d0868feaa10fed48ad711efdfe0cd99:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "key": "Vegetation|prefab|1a8d51f72e109446ca41210e7e7b2a37:1123928462775146|1a8d51f72e109446ca41210e7e7b2a37:23209477223074448|be4a07cdff8dcdf4b9e0f7902e558b3d:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 568,
+            "excluded": 0,
+            "total": 568
+        },
+        {
+            "key": "Vegetation|prefab|27ca1d610e476467f976926133b48534:1879274043669234|27ca1d610e476467f976926133b48534:23420721139255226|d7dccd4561a0eaf429da95d32356ad1a:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 1861,
+            "excluded": 0,
+            "total": 1861
+        },
+        {
+            "key": "Vegetation|prefab|9ddd3b267978c431ea6ff3ceca8deedc:1083917246981912|9ddd3b267978c431ea6ff3ceca8deedc:23856665671451182|2d0868feaa10fed48ad711efdfe0cd99:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 159,
             "excluded": 0,
             "total": 159
+        },
+        {
+            "key": "Vegetation|prefab|a762b4dbb45fe473994096f8e6b1dfc6:1738312227926298|a762b4dbb45fe473994096f8e6b1dfc6:23045115871659910|bf5b2ebf1cacbe54e9b59dc8c0f78eb3:4300000|cecad80e1c7e042a79301a706cc153b2:2100000|0",
+            "eligible": 46,
+            "excluded": 0,
+            "total": 46
+        },
+        {
+            "key": "Vegetation|prefab|c11361aed3c5c495c9f57b0d8271cc7e:1971384767470032|c11361aed3c5c495c9f57b0d8271cc7e:23097362526852406|fb72c742ade8526468381ba864289832:4300000|cecad80e1c7e042a79301a706cc153b2:2100000|0",
+            "eligible": 30,
+            "excluded": 0,
+            "total": 30
+        },
+        {
+            "key": "Vegetation|prefab|cdff689792999429786c9194952d98b5:1138376770595666|cdff689792999429786c9194952d98b5:23585435853634366|ffc63fecea48ed3418c6689c532819c0:4300000|cecad80e1c7e042a79301a706cc153b2:2100000|0",
+            "eligible": 29,
+            "excluded": 0,
+            "total": 29
         },
         {
             "key": "Vegetation|prefab|ddcc8030742463e49959f0e6fbadeff2:1712885822017418|ddcc8030742463e49959f0e6fbadeff2:23494464856336718|17ccc6b9b48bbe641a5431d19baa6186:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
@@ -120096,13 +120102,7 @@
             "total": 2262
         },
         {
-            "key": "Vegetation|prefab|df02465878d8e8e42af3f1892100697c:1738312227926298|df02465878d8e8e42af3f1892100697c:23045115871659910|bf5b2ebf1cacbe54e9b59dc8c0f78eb3:4300000|cecad80e1c7e042a79301a706cc153b2:2100000|0",
-            "eligible": 46,
-            "excluded": 0,
-            "total": 46
-        },
-        {
-            "key": "Vegetation|prefab|ee33a5abf449b7d4189ae9c283b3e0d8:1138376770595666|ee33a5abf449b7d4189ae9c283b3e0d8:23585435853634366|ffc63fecea48ed3418c6689c532819c0:4300000|cecad80e1c7e042a79301a706cc153b2:2100000|0",
+            "key": "Vegetation|prefab|ffcdafe8105534c249ca85b47818d462:1138684863123908|ffcdafe8105534c249ca85b47818d462:23436945278632694|2f7e0aa439a901b4a9757ecb86240adc:4300000|cecad80e1c7e042a79301a706cc153b2:2100000|0",
             "eligible": 29,
             "excluded": 0,
             "total": 29
@@ -120111,9 +120111,9 @@
     "byRendererType": [
         {
             "key": "UnityEngine.MeshRenderer",
-            "eligible": 61925,
+            "eligible": 61813,
             "excluded": 14592,
-            "total": 76517
+            "total": 76405
         }
     ],
     "byPolicyBucket": [
@@ -120137,15 +120137,15 @@
         },
         {
             "key": "OpaqueShadowsOff|0|1|Object|2",
-            "eligible": 12051,
+            "eligible": 11984,
             "excluded": 41,
-            "total": 12092
+            "total": 12025
         },
         {
             "key": "OpaqueShadowsOn|0|1|Object|3",
-            "eligible": 46245,
+            "eligible": 46200,
             "excluded": 13926,
-            "total": 60171
+            "total": 60126
         },
         {
             "key": "Unsupported:Transparent render policy does not support cast or static shadows.",
@@ -120163,9 +120163,9 @@
         },
         {
             "key": "Opaque",
-            "eligible": 58296,
+            "eligible": 58184,
             "excluded": 13968,
-            "total": 72264
+            "total": 72152
         },
         {
             "key": "Transparent",
@@ -120195,15 +120195,15 @@
         },
         {
             "key": "SupportedPolicy:OpaqueShadowsOff",
-            "eligible": 12051,
+            "eligible": 11984,
             "excluded": 42,
-            "total": 12093
+            "total": 12026
         },
         {
             "key": "SupportedPolicy:OpaqueShadowsOn",
-            "eligible": 46245,
+            "eligible": 46200,
             "excluded": 13926,
-            "total": 60171
+            "total": 60126
         }
     ],
     "byGameplayOwnership": [
@@ -120227,9 +120227,9 @@
         },
         {
             "key": "DenseGenerated:GameplayBuildings",
-            "eligible": 12194,
+            "eligible": 12082,
             "excluded": 171,
-            "total": 12365
+            "total": 12253
         },
         {
             "key": "DenseGenerated:RenderOnly",
@@ -120253,9 +120253,9 @@
         },
         {
             "key": "eligible",
-            "eligible": 61925,
+            "eligible": 61813,
             "excluded": 0,
-            "total": 61925
+            "total": 61813
         },
         {
             "key": "gameplay-building-family-unsupported-render-policy",

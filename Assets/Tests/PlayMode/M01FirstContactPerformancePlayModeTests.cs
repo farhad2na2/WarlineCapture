@@ -159,9 +159,9 @@ public sealed class M01FirstContactPerformancePlayModeTests
         Assert.That(finalEvidence, Does.Contain("\"fixedProxySlots\": 7784"));
         Assert.That(finalEvidence, Does.Contain("\"maximumGcBytesPerFrame\": 0"));
         Assert.That(finalEvidence, Does.Contain("\"allRoutesPassed\": true"));
-        Assert.That(reuseEvidence, Does.Contain("04681634c40403c8d30e1de2c44a64ac598403b7cd8f0574e1359a12f5758d73"));
-        Assert.That(reuseEvidence, Does.Contain("a931d70e9e04915285c805cdd70545edd1b1852cb47a5fbb4a6ca0e1e7812fe7"));
-        Assert.That(reuseEvidence, Does.Contain("2fb85fd03d4b82621ba9c9168a21560e2ba8df3350e45594c5b3785a58768b8d"));
+        Assert.That(reuseEvidence, Does.Contain("4aa97c859c2003d01630a4bd2bcd910ce0fcba7928e94b960732ce7a0353b917"));
+        Assert.That(reuseEvidence, Does.Contain("c898b0089b396558ca17c13e44369bc3286fabe49b7eb6ee9a0435545105fc4e"));
+        Assert.That(reuseEvidence, Does.Contain("038c4807e62e12942293a04b86a8e92e44e06a4d6988ca634239e8adabd96917"));
         Assert.That(cameraEvidence, Does.Contain("\"clamp\": true"));
         Assert.That(cameraEvidence, Does.Contain("[M01FirstContactCameraMinimapValidation] result=Passed tests=12"));
         Pass();

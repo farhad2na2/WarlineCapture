@@ -29,13 +29,13 @@ public static class M01FirstContactDenseCityReuseTests
         new(SourceDefinitionPath, "f91b737280d8950d97264b54589b963f605a8d8911a0f4e17397bef667e4eba6"),
         new(
             "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_dense_city_authoring_candidate.unity",
-            "5a15843d63868d639b88d2084ea41184af0cf5d6050b22b563a516ef13752b9c"),
+            "3ed5a25e1db1857ee11d92e6f654cfa01e7992a407c6e56124ea24bacc58cdbe"),
         new(
             "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
-            "52b30f735209fbde2911f6bebf7dd397ed66c2fd1355f420ce7db22c7ac85b4f"),
+            "58870fe1f1ef7e76276c3d965e67a4d62eb8c0d0ad258d48c19c161ade382a06"),
         new(
             "Assets/Game/GeneratedOperationMaps/RuntimeBinding/opmap.skirmish.desert_base_01/Candidates/opmap_skirmish_desert_base_01_dense_city_entity_scene_runtime.unity",
-            "f58a73d0a8f3627d7ddf42f72b42a9db495d5139ba5da6768492ac36e671ade9"),
+            "8250d180852a4fc1ea94586091c69e841aa7e58c04d3928cfce6c2cd4ba38427"),
         new(
             "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset",
             "1402d769704008e254563ff7ecda835294db83afc2cee6d5bb456987f0392b4d"),
@@ -101,9 +101,9 @@ public static class M01FirstContactDenseCityReuseTests
         DenseCityDatabaseReport report = JsonUtility.FromJson<DenseCityDatabaseReport>(
             File.ReadAllText(DatabaseReportPath));
         Require(report != null && report.result == "Passed", "Dense-city VRP database report is not accepted.");
-        Require(report.contentHash == "ec96a423fac12973b06d579a4277a28da0234244630c4f3ffb518c37df293dac" &&
-                report.recordOrderingSha256 == "7df0db01d72addb978d991aebcd8cf865a37308adc22e7a911cc525b4bbaa378" &&
-                report.configSerializedSha256 == "aec499e27a121941f37cd345a13cc629f35ff14a34cac1a56015ff8fd76911e1",
+        Require(report.contentHash == "4aa97c859c2003d01630a4bd2bcd910ce0fcba7928e94b960732ce7a0353b917" &&
+                report.recordOrderingSha256 == "c898b0089b396558ca17c13e44369bc3286fabe49b7eb6ee9a0435545105fc4e" &&
+                report.configSerializedSha256 == "038c4807e62e12942293a04b86a8e92e44e06a4d6988ca634239e8adabd96917",
             "Dense-city VRP database identity or ordering drifted.");
         Require(report.logicalParityResult == "Passed" && report.isolationResult == "Passed",
             "Dense-city logical parity or isolation is no longer accepted.");
@@ -116,7 +116,7 @@ public static class M01FirstContactDenseCityReuseTests
         Require(Sha256File(DatabaseConfigPath) == report.configSerializedSha256,
             "VRP database config bytes drifted from the accepted report.");
         Require(Sha256File(DatabaseReportPath) ==
-                "8e7a432409c71a6d774a3f3434b969ed0d03b6cb46faf5c494de3edda52ac183",
+                "a68130fc2247f4401f59b0f691f2751b8beeeb1c3ada24a5c0e4943a2c80d3a1",
             "Accepted VRP database report bytes drifted.");
     }
 
@@ -162,14 +162,14 @@ public static class M01FirstContactDenseCityReuseTests
         DenseCityDatabaseReport database,
         DenseCityTransformParityReport parity)
     {
-        Require(database.sourceRenderRowCount == 76517 && database.eligibleSourceRowCount == 61925 &&
-                database.logicalRenderRowCount == 61925 && database.residentSourceRowCount == 14592 &&
-                database.placementCount == 40460 && database.totalPoolSlotCapacity == 7784 &&
+        Require(database.sourceRenderRowCount == 76405 && database.eligibleSourceRowCount == 61813 &&
+                database.logicalRenderRowCount == 61813 && database.residentSourceRowCount == 14592 &&
+                database.placementCount == 40460 && database.totalPoolSlotCapacity == 7765 &&
                 database.sourceRowsRemoved == 0,
             "Accepted dense-city row, placement, residency, or fixed-slot capacity drifted.");
         Require(parity.candidateIdentityCount == 36304 && parity.bakedIdentityCount == 36304 &&
-                parity.generatedCandidateRendererEntityCount == 62455 &&
-                parity.generatedBakedRenderEntityCount == 62455,
+                parity.generatedCandidateRendererEntityCount == 62343 &&
+                parity.generatedBakedRenderEntityCount == 62343,
             "Accepted dense-city identity or renderer parity counts drifted.");
     }
 

@@ -15,15 +15,15 @@
     "provisionalMapMmiEntityBudget": 40460,
     "mapMmiEntityLimit": 24000,
     "provisionalMapMmiEntityBudgetWithinLimit": false,
-    "totalPeakRequiredPartRows": 6485,
-    "totalProvisionalActiveProxySlots": 7784,
+    "totalPeakRequiredPartRows": 6470,
+    "totalProvisionalActiveProxySlots": 7765,
     "activeProxySlotLimit": 8000,
     "provisionalActiveProxySlotsWithinLimit": true,
     "zeroOverflowProvenForProvisionalCapacity": true,
-    "sourceRowsSha256": "335fc69d3f4b9f1419cb704f1757475d67ae4d1f810574a034f5caf299e42839",
-    "prototypeRecipesSha256": "f91890e882f576f1da809f25abdcd2b9199395835766ff797c370ac80b39a1d3",
-    "logicalPlacementsSha256": "986185b76dd19b1da4537e79613e4922a64d8633073165bcd9003f18402c3a57",
-    "spatialCellsSha256": "a7dab969701b4739b37726d024550002d9ccff0b4223e3e3b4ddad4d033fa794",
+    "sourceRowsSha256": "21e699e21565968543eefba9b51f9cdce24bd2465cd4136dd40331595325a1fa",
+    "prototypeRecipesSha256": "52918cfd8f8bca22d941e26ec078050ca94b5cac00ec11b9ef82e0a4c19f9d7d",
+    "logicalPlacementsSha256": "8076424d83775e37aa535aeec4f75cf9193f3333dd191b59a376bf367235dbb1",
+    "spatialCellsSha256": "b35f7045b626d294389985a95198f87f1c18e078a8ded0fb743c4e1058245c38",
     "capacityByPolicy": [
         {
             "policyBucket": "OpaqueShadowsOn",
@@ -32,10 +32,10 @@
             "motionVectorMode": "Object",
             "shadowFlags": 3,
             "sweepSampleCount": 14592,
-            "peakRequiredPartRows": 4092,
-            "peakSampleIdentity": "grid-cell:65:25:materialized=9x12",
-            "capacity": 4911,
-            "headroomCount": 819
+            "peakRequiredPartRows": 4084,
+            "peakSampleIdentity": "grid-cell:65:24:materialized=9x12",
+            "capacity": 4901,
+            "headroomCount": 817
         },
         {
             "policyBucket": "OpaqueShadowsOff",
@@ -44,10 +44,10 @@
             "motionVectorMode": "Object",
             "shadowFlags": 2,
             "sweepSampleCount": 14592,
-            "peakRequiredPartRows": 1876,
+            "peakRequiredPartRows": 1869,
             "peakSampleIdentity": "grid-cell:57:26:materialized=9x12",
-            "capacity": 2252,
-            "headroomCount": 376
+            "capacity": 2243,
+            "headroomCount": 374
         },
         {
             "policyBucket": "AlphaClippedShadowsOn",

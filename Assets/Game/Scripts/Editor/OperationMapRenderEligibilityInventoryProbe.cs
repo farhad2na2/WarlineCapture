@@ -40,7 +40,11 @@ namespace Game.Editor
             "Design/AgentReports/2026-07-28_dense_city_render_virtualization_capacity_budget.json";
         internal const int HistoricalPackedRenderRowCount = 82797;
         internal const int ExpectedEmbeddedDestroyedDuplicateRowRemoval = 4396;
-        internal const int ExpectedCorrectedLayoutRenderRowRemoval = 1884;
+        internal const int ExpectedPreviouslyCorrectedLayoutRenderRowRemoval = 1884;
+        internal const int ExpectedUnsupportedAttachmentRenderRowRemoval = 112;
+        internal const int ExpectedCorrectedLayoutRenderRowRemoval =
+            ExpectedPreviouslyCorrectedLayoutRenderRowRemoval +
+            ExpectedUnsupportedAttachmentRenderRowRemoval;
         internal const int ExpectedPackedRenderRowCount =
             HistoricalPackedRenderRowCount -
             ExpectedEmbeddedDestroyedDuplicateRowRemoval -

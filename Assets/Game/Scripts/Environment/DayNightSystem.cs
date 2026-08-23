@@ -43,8 +43,15 @@ namespace Game.Runtime
         private Color _originalAmbientGroundColor;
         private float _originalAmbientIntensity;
         private float _originalReflectionIntensity;
+        private bool _originalDirectionalLightCaptured;
+        private Color _originalDirectionalLightColor;
+        private float _originalDirectionalLightIntensity;
+        private float _originalDirectionalLightShadowStrength;
+        private Quaternion _originalDirectionalLightRotation;
         private bool _originalVolumeWeightCaptured;
         private float _originalVolumeWeight;
+        private VolumeProfile _originalVolumeSharedProfile;
+        private VolumeProfile _originalVolumeInstantiatedProfile;
         private float _currentHour;
         private int _dayCount = 1;
         private float _nextEnvironmentRefreshTime;
@@ -107,6 +114,7 @@ namespace Game.Runtime
             _runtimeVisualsEnabled = enabled;
             if (!enabled)
             {
+                ReleaseRuntimeVolumeProfile();
                 RestoreInitialEnvironmentState();
                 return;
             }
@@ -184,8 +192,8 @@ namespace Game.Runtime
 
         public void Dispose()
         {
-            RestoreInitialEnvironmentState();
             ReleaseRuntimeVolumeProfile();
+            RestoreInitialEnvironmentState();
             _initialEnvironmentStateCaptured = false;
         }
 
@@ -201,10 +209,23 @@ namespace Game.Runtime
             _originalAmbientIntensity = RenderSettings.ambientIntensity;
             _originalReflectionIntensity = RenderSettings.reflectionIntensity;
 
+            _originalDirectionalLightCaptured = directionalLight != null;
+            if (_originalDirectionalLightCaptured)
+            {
+                _originalDirectionalLightColor = directionalLight.color;
+                _originalDirectionalLightIntensity = directionalLight.intensity;
+                _originalDirectionalLightShadowStrength = directionalLight.shadowStrength;
+                _originalDirectionalLightRotation = directionalLight.transform.rotation;
+            }
+
             if (globalVolume != null)
             {
                 _originalVolumeWeight = globalVolume.weight;
                 _originalVolumeWeightCaptured = true;
+                _originalVolumeSharedProfile = globalVolume.sharedProfile;
+                _originalVolumeInstantiatedProfile = globalVolume.HasInstantiatedProfile()
+                    ? globalVolume.profile
+                    : null;
             }
 
             _initialEnvironmentStateCaptured = true;
@@ -227,8 +248,20 @@ namespace Game.Runtime
             RenderSettings.ambientIntensity = _originalAmbientIntensity;
             RenderSettings.reflectionIntensity = _originalReflectionIntensity;
 
+            if (_originalDirectionalLightCaptured && directionalLight != null)
+            {
+                directionalLight.color = _originalDirectionalLightColor;
+                directionalLight.intensity = _originalDirectionalLightIntensity;
+                directionalLight.shadowStrength = _originalDirectionalLightShadowStrength;
+                directionalLight.transform.rotation = _originalDirectionalLightRotation;
+            }
+
             if (globalVolume != null && _originalVolumeWeightCaptured)
+            {
                 globalVolume.weight = _originalVolumeWeight;
+                globalVolume.sharedProfile = _originalVolumeSharedProfile;
+                globalVolume.profile = _originalVolumeInstantiatedProfile;
+            }
 
             if (_runtimeSkyboxMaterial != null)
             {

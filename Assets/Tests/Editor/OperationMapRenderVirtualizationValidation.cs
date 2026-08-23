@@ -1702,6 +1702,8 @@ public sealed class OperationMapRenderVirtualizationValidation
                 Assert.That(entityManager.HasComponent<MaterialMeshInfo>(slotEntity), Is.True);
                 Assert.That(entityManager.HasComponent<LocalToWorld>(slotEntity), Is.True);
                 Assert.That(entityManager.HasComponent<RenderBounds>(slotEntity), Is.True);
+                Assert.That(entityManager.HasComponent<WorldToLocal_Tag>(slotEntity), Is.True);
+                Assert.That(entityManager.HasComponent<BlendProbeTag>(slotEntity), Is.True);
                 Assert.That(entityManager.HasComponent<URPMaterialPropertyBaseColor>(slotEntity), Is.True);
                 Assert.That(entityManager.HasComponent<Parent>(slotEntity), Is.False);
                 Assert.That(entityManager.HasComponent<Child>(slotEntity), Is.False);

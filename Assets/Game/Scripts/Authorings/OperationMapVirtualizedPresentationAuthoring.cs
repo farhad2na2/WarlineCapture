@@ -41,7 +41,7 @@ namespace Game.Authoring
             return true;
         }
 
-        [BakingVersion("WarlineCapture", 1)]
+        [BakingVersion("WarlineCapture", 2)]
         private sealed class Baker : Baker<OperationMapVirtualizedPresentationAuthoring>
         {
             public override void Bake(OperationMapVirtualizedPresentationAuthoring authoring)
@@ -134,6 +134,8 @@ namespace Game.Authoring
                             Extents = float3.zero
                         }
                     });
+                    AddComponent<WorldToLocal_Tag>(slotEntity);
+                    AddComponent<BlendProbeTag>(slotEntity);
                     AddComponent(slotEntity, new URPMaterialPropertyBaseColor
                     {
                         Value = new float4(1f)

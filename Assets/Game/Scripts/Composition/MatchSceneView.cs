@@ -202,6 +202,7 @@ namespace Game.Composition
 
         private void Awake()
         {
+            ApplyMatchEnvironmentAuthority();
             ApplyAudioListenerAuthority();
             if (Application.isPlaying)
                 EnsureMatchRuntimeBound();
@@ -209,9 +210,26 @@ namespace Game.Composition
 
         private void OnEnable()
         {
+            ApplyMatchEnvironmentAuthority();
             ApplyAudioListenerAuthority();
             if (Application.isPlaying)
                 EnsureMatchRuntimeBound();
+        }
+
+        private void ApplyMatchEnvironmentAuthority()
+        {
+            if (!Application.isPlaying)
+                return;
+
+            Scene matchScene = gameObject.scene;
+            if (!matchScene.IsValid() || !matchScene.isLoaded || SceneManager.GetActiveScene() == matchScene)
+                return;
+
+            if (!SceneManager.SetActiveScene(matchScene))
+            {
+                throw new InvalidOperationException(
+                    $"Failed to make the loaded Match scene active for authored environment ownership: '{matchScene.path}'.");
+            }
         }
 
         private void Update()
@@ -307,6 +325,7 @@ namespace Game.Composition
                 return true;
             }
 
+            ApplyMatchEnvironmentAuthority();
             if (!TryPublishCompatibilityOperationMapMetadata(world, out error))
                 return false;
 

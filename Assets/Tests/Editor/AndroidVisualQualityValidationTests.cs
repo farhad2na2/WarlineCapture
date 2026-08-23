@@ -59,6 +59,7 @@ public sealed class AndroidVisualQualityValidationTests
             RunCase(() => MatchCompositionRoutesVisualQualityChangesAndUnsubscribes(), ref passed);
             RunCase(() => VisualQualityRoutingRemainsEventDriven(), ref passed);
             RunCase(() => DayNightRemainsAuthoritativeAcrossQualityChanges(), ref passed);
+            RunCase(() => DayNightDisableRestoresAuthoredMissionEnvironment(), ref passed);
             RunCase(() => RuntimeQualityTierMappingsAreComplete(), ref passed);
             RunCase(() => FullscreenMapSuspendsHiddenCompactMinimapRefresh(), ref passed);
             Debug.Log($"[AndroidVisualQualityValidation] result=Passed tests={passed}");
@@ -853,6 +854,82 @@ public sealed class AndroidVisualQualityValidationTests
             UnityEngine.Object.DestroyImmediate(originalVolumeProfile);
             UnityEngine.Object.DestroyImmediate(ultraVolumeProfile);
             SettingsService.Save(previousSettings);
+        }
+    }
+
+    [Test]
+    public static void DayNightDisableRestoresAuthoredMissionEnvironment()
+    {
+        Type volumeType = Type.GetType(
+            "UnityEngine.Rendering.Volume, Unity.RenderPipelines.Core.Runtime");
+        Type volumeProfileType = Type.GetType(
+            "UnityEngine.Rendering.VolumeProfile, Unity.RenderPipelines.Core.Runtime");
+        Assert.NotNull(volumeType);
+        Assert.NotNull(volumeProfileType);
+
+        GameObject lightObject = new("AuthoredMissionLight", typeof(Light));
+        GameObject volumeObject = new("AuthoredMissionVolume");
+        ScriptableObject authoredProfile = ScriptableObject.CreateInstance(volumeProfileType);
+        DayNightSystemConfig config = ScriptableObject.CreateInstance<DayNightSystemConfig>();
+        World world = new("AuthoredMissionEnvironmentValidation");
+
+        Light light = lightObject.GetComponent<Light>();
+        light.type = LightType.Directional;
+        light.color = new Color(1f, 0.9826f, 0.8309f, 1f);
+        light.intensity = 1.5f;
+        light.shadowStrength = 0.86f;
+        light.transform.rotation = Quaternion.Euler(42f, 128f, 7f);
+        Color authoredLightColor = light.color;
+        float authoredLightIntensity = light.intensity;
+        float authoredShadowStrength = light.shadowStrength;
+        Quaternion authoredRotation = light.transform.rotation;
+
+        Component volume = volumeObject.AddComponent(volumeType);
+        WriteMember(volume, "sharedProfile", authoredProfile);
+        WriteMember(volume, "weight", 0.73f);
+
+        SerializedObject serializedConfig = new(config);
+        serializedConfig.FindProperty("animateDirectionalLight").boolValue = true;
+        serializedConfig.FindProperty("startHour").floatValue = 9f;
+        serializedConfig.ApplyModifiedPropertiesWithoutUndo();
+
+        MethodInfo hasInstantiatedProfile = volumeType.GetMethod(
+            "HasInstantiatedProfile",
+            BindingFlags.Instance | BindingFlags.Public);
+        Assert.NotNull(hasInstantiatedProfile);
+
+        try
+        {
+            DayNightSystem dayNight = world.GetOrCreateSystemManaged<DayNightSystem>();
+            MethodInfo initializeDayNight = typeof(DayNightSystem).GetMethod(
+                "Init",
+                BindingFlags.Instance | BindingFlags.Public);
+            Assert.NotNull(initializeDayNight);
+            initializeDayNight.Invoke(dayNight, new object[] { config, light, volume });
+
+            Assert.That((bool)hasInstantiatedProfile.Invoke(volume, null), Is.True);
+            Assert.AreNotEqual(authoredLightColor, light.color);
+            Assert.That(light.intensity, Is.Not.EqualTo(authoredLightIntensity).Within(0.0001f));
+            Assert.AreNotEqual(authoredRotation, light.transform.rotation);
+
+            dayNight.SetRuntimeVisualsEnabled(false);
+
+            Assert.That(dayNight.RuntimeVisualsEnabled, Is.False);
+            Assert.AreEqual(authoredLightColor, light.color);
+            Assert.That(light.intensity, Is.EqualTo(authoredLightIntensity).Within(0.0001f));
+            Assert.That(light.shadowStrength, Is.EqualTo(authoredShadowStrength).Within(0.0001f));
+            Assert.AreEqual(authoredRotation, light.transform.rotation);
+            Assert.AreSame(authoredProfile, ReadMember(volume, "sharedProfile"));
+            Assert.That((bool)hasInstantiatedProfile.Invoke(volume, null), Is.False);
+            Assert.That(Convert.ToSingle(ReadMember(volume, "weight")), Is.EqualTo(0.73f).Within(0.0001f));
+        }
+        finally
+        {
+            world.Dispose();
+            UnityEngine.Object.DestroyImmediate(lightObject);
+            UnityEngine.Object.DestroyImmediate(volumeObject);
+            UnityEngine.Object.DestroyImmediate(authoredProfile);
+            UnityEngine.Object.DestroyImmediate(config);
         }
     }
 

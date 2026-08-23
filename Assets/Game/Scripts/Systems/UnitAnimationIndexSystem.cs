@@ -255,7 +255,7 @@ namespace Game.Runtime
                 if (animationOrder[slotIndex].Kind != preferred)
                     continue;
 
-                animationIndex = (byte)(preferred + 1);
+                animationIndex = (byte)(slotIndex + 1);
                 return true;
             }
 

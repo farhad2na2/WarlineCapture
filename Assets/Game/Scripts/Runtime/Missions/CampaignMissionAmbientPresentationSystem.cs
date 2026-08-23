@@ -274,11 +274,11 @@ namespace Game.Runtime
             {
                 if (animationOrder[i].Kind == (byte)UnitAnimationKind.Run)
                 {
-                    animationIndex = (byte)((byte)UnitAnimationKind.Run + 1);
+                    animationIndex = (byte)(i + 1);
                     break;
                 }
                 if (animationIndex == byte.MaxValue && animationOrder[i].Kind == (byte)UnitAnimationKind.Walk)
-                    animationIndex = (byte)((byte)UnitAnimationKind.Walk + 1);
+                    animationIndex = (byte)(i + 1);
             }
 
             if (animationIndex != byte.MaxValue)

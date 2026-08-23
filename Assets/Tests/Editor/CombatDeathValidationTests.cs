@@ -165,10 +165,9 @@ public sealed class CombatDeathValidationTests
         using var world = new World(nameof(DeathPlayback_ResetsClockAndStopsAtFirstFinalFrame));
         EntityManager em = world.EntityManager;
         Entity unit = em.CreateEntity();
-        em.AddBuffer<UnitAnimationOrderEntry>(unit).Add(new UnitAnimationOrderEntry
-        {
-            Kind = (byte)Game.Configs.UnitAnimationKind.Death01
-        });
+        DynamicBuffer<UnitAnimationOrderEntry> animationOrder = em.AddBuffer<UnitAnimationOrderEntry>(unit);
+        animationOrder.Add(new UnitAnimationOrderEntry { Kind = (byte)Game.Configs.UnitAnimationKind.Idle });
+        animationOrder.Add(new UnitAnimationOrderEntry { Kind = (byte)Game.Configs.UnitAnimationKind.Death01 });
 
         BlobAssetReference<MaterialAnimatorBlobAsset> animatorBlob;
         using (BlobBuilder builder = new(Allocator.Temp))
@@ -176,8 +175,8 @@ public sealed class CombatDeathValidationTests
             ref MaterialAnimatorBlobAsset animator = ref builder.ConstructRoot<MaterialAnimatorBlobAsset>();
             animator.BoneCount = 50;
             BlobBuilderArray<MaterialAnimationBlobAsset> animations =
-                builder.Allocate(ref animator.Animations, 13);
-            animations[12] = new MaterialAnimationBlobAsset
+                builder.Allocate(ref animator.Animations, 3);
+            animations[2] = new MaterialAnimationBlobAsset
             {
                 Fps = 60,
                 Frames = 44,
@@ -214,10 +213,10 @@ public sealed class CombatDeathValidationTests
             Assert.That(duration, Is.EqualTo(43f / 60f).Within(0.0001f),
                 "Death playback must freeze on the first traversal's final frame before modulo wrapping.");
             Assert.That(reset.Time, Is.Zero, "A death clip must begin at frame zero, not the previous animation phase.");
-            Assert.That(reset.AnimationIndex, Is.EqualTo(12),
+            Assert.That(reset.AnimationIndex, Is.EqualTo(2),
                 "Death must replace the previous clip immediately instead of blending from its stale clock.");
-            Assert.That(target.Value, Is.EqualTo(12));
-            Assert.That(reset.TransitionIndex, Is.EqualTo(12));
+            Assert.That(target.Value, Is.EqualTo(2));
+            Assert.That(reset.TransitionIndex, Is.EqualTo(2));
             Assert.That(reset.TransitionTime, Is.Zero);
         }
         finally

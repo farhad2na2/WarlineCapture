@@ -61,7 +61,7 @@ public sealed class M01FirstContactAmbientPlayModeTests
                 Assert.That(math.distance(motion.AlleyMerge, motion.SquadPass), Is.GreaterThan(1f));
                 Assert.That(math.distance(motion.SquadPass, motion.Exit), Is.GreaterThan(1f));
                 Assert.That(world.EntityManager.GetComponentData<UnitResolvedAnimationIndex>(entity).Value,
-                    Is.EqualTo((byte)UnitAnimationKind.Run + 1));
+                    Is.EqualTo(2));
                 routeCounts[civilian.RouteIndex]++;
                 int prefabIndex = CivilianPrefabIndex(
                     world.EntityManager.GetComponentData<UnitSourcePrefabKey>(entity).Value);

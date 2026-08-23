@@ -21,9 +21,11 @@ public sealed class UnitAnimationIndexSystemTests
             tests.ConfiguredRunShootAnimationResolvesAndAppliesToChildVisual();
             tests.EmptyConfiguredAnimationOrderDoesNotApplyInvalidAnimationIndex();
             tests.FallbackMovingAutoWanderResolvesWalkAnimation();
+            tests.FullCanonicalAnimationOrderResolvesRunToEighthGpuClip();
+            tests.ProductionCivilianConfigsPlaceRunInSecondGpuClip();
             tests.DeathAnimationAppliesToDetachedDetailedVisualOnFirstResolvedFrame();
             tests.GameplayInertResolvedAnimationAppliesToModelVisual();
-            Debug.Log("[UnitAnimationIndexFocusedValidation] result=Passed tests=5");
+            Debug.Log("[UnitAnimationIndexFocusedValidation] result=Passed tests=7");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -48,7 +50,7 @@ public sealed class UnitAnimationIndexSystemTests
         SystemHandle system = world.CreateSystem<UnitAnimationIndexSystem>();
         system.Update(world.Unmanaged);
 
-        byte expected = (byte)((byte)UnitAnimationKind.RunShoot + 1);
+        byte expected = 2;
         Assert.AreEqual(expected, em.GetComponentData<UnitResolvedAnimationIndex>(unit).Value);
         Assert.AreEqual(0, em.GetComponentData<UnitResolvedAnimationIndex>(unit).Changed);
         Assert.That(em.GetComponentData<UnitAttackAnimationComponent>(unit).TimeRemaining, Is.EqualTo(0.15f).Within(0.0001f));
@@ -86,6 +88,43 @@ public sealed class UnitAnimationIndexSystemTests
     }
 
     [Test]
+    public void FullCanonicalAnimationOrderResolvesRunToEighthGpuClip()
+    {
+        using var world = new World(nameof(FullCanonicalAnimationOrderResolvesRunToEighthGpuClip));
+        EntityManager em = world.EntityManager;
+        Entity unit = CreateUnit(em, moving: true, health: 100, attackSeconds: 0f, withAnimationOrder: true);
+        DynamicBuffer<UnitAnimationOrderEntry> order = em.GetBuffer<UnitAnimationOrderEntry>(unit);
+        for (byte kind = (byte)UnitAnimationKind.Idle; kind <= (byte)UnitAnimationKind.Death03; kind++)
+            order.Add(new UnitAnimationOrderEntry { Kind = kind });
+
+        SystemHandle system = world.CreateSystem<UnitAnimationIndexSystem>();
+        system.Update(world.Unmanaged);
+
+        Assert.AreEqual(8, em.GetComponentData<UnitResolvedAnimationIndex>(unit).Value);
+    }
+
+    [Test]
+    public void ProductionCivilianConfigsPlaceRunInSecondGpuClip()
+    {
+        string[] configPaths =
+        {
+            "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Chr_Civilian_Male_01_Config.asset",
+            "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Chr_Civilian_Female_01_Config.asset",
+            "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Chr_Civilian_Male_02_Config.asset",
+            "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Chr_Civilian_Female_02_Config.asset"
+        };
+
+        foreach (string path in configPaths)
+        {
+            UnitGridAuthoringConfig config = AssetDatabase.LoadAssetAtPath<UnitGridAuthoringConfig>(path);
+            Assert.That(config, Is.Not.Null, path);
+            Assert.That(config.AnimationOrder, Has.Count.EqualTo(7), path);
+            Assert.That(config.AnimationOrder[0], Is.EqualTo(UnitAnimationKind.Idle), path);
+            Assert.That(config.AnimationOrder[1], Is.EqualTo(UnitAnimationKind.Run), path);
+        }
+    }
+
+    [Test]
     public void DeathAnimationAppliesToDetachedDetailedVisualOnFirstResolvedFrame()
     {
         using var world = new World(nameof(DeathAnimationAppliesToDetachedDetailedVisualOnFirstResolvedFrame));
@@ -103,7 +142,7 @@ public sealed class UnitAnimationIndexSystemTests
         SystemHandle system = world.CreateSystem<UnitAnimationIndexSystem>();
         system.Update(world.Unmanaged);
 
-        byte expected = (byte)((byte)UnitAnimationKind.Death01 + 1);
+        byte expected = 2;
         Assert.AreEqual(expected, em.GetComponentData<UnitResolvedAnimationIndex>(unit).Value);
         Assert.AreEqual(expected, em.GetComponentData<MaterialAnimationIndex>(detailedVisual).Value,
             "A detached authored detailed visual must enter the death clip before its final pose is frozen.");
@@ -120,7 +159,7 @@ public sealed class UnitAnimationIndexSystemTests
             typeof(UnitMoveVisualComponent),
             typeof(UnitResolvedAnimationIndex),
             typeof(UnitModelInstanceReference));
-        byte runIndex = (byte)((byte)UnitAnimationKind.Run + 1);
+        byte runIndex = 2;
         em.SetComponentData(presentation, new UnitMoveVisualComponent { IsMoving = 1 });
         em.SetComponentData(presentation, new UnitResolvedAnimationIndex
         {

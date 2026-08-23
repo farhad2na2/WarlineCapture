@@ -129,7 +129,7 @@ namespace Game.Runtime
                 if (animationOrder[index].Kind != encodedKind)
                     continue;
 
-                animationIndex = (byte)(encodedKind + 1);
+                animationIndex = (byte)(index + 1);
                 return true;
             }
 

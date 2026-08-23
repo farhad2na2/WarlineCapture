@@ -217,6 +217,9 @@ namespace Game.Configs
         public const string AmbienceCityDayLoop = "Ambience.City.DayLoop";
         public const uint AmbienceCityDayLoopHash = 3552601528u;
 
+        public const string AmbienceMissionCivilianPanic = "Ambience.Mission.CivilianPanic";
+        public const uint AmbienceMissionCivilianPanicHash = 2548328607u;
+
         public const string AmbienceBaseDistantLoop = "Ambience.Base.DistantLoop";
         public const uint AmbienceBaseDistantLoopHash = 1729659713u;
 
@@ -823,6 +826,7 @@ namespace Game.Configs
             MusicResultVictory,
             MusicResultDefeat,
             AmbienceCityDayLoop,
+            AmbienceMissionCivilianPanic,
             AmbienceBaseDistantLoop,
             VOARIAMessageConfirmDestroy,
             VOARIAMessageNotEnoughMoney,
@@ -1075,6 +1079,7 @@ namespace Game.Configs
             MusicResultVictoryHash,
             MusicResultDefeatHash,
             AmbienceCityDayLoopHash,
+            AmbienceMissionCivilianPanicHash,
             AmbienceBaseDistantLoopHash,
             VOARIAMessageConfirmDestroyHash,
             VOARIAMessageNotEnoughMoneyHash,

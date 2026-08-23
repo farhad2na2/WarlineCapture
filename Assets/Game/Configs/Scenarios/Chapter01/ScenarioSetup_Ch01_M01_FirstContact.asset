@@ -106,4 +106,4 @@ MonoBehaviour:
   - presentationId: ambient.ch01.m01.civilians
     anchorId: anchor.ch01.m01.civilian_safe_zone
     routeId: route.ch01.m01.civilian_evacuation
-    instanceCount: 8
+    instanceCount: 24

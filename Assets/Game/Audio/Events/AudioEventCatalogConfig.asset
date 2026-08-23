@@ -993,6 +993,20 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: c2f81074fbe542594aeb4a1985ae37e3, type: 3}
       weight: 1
+  - eventId: Ambience.Mission.CivilianPanic
+    busId: Ambience
+    priority: 2
+    cooldownMilliseconds: 20000
+    volumeDecibels: -5
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: c9c772b0ea75d46b987d29a63e22a840, type: 3}
+      weight: 1
   - eventId: Ambience.Base.DistantLoop
     busId: Ambience
     priority: 0

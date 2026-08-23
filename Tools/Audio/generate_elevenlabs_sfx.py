@@ -396,6 +396,21 @@ SPECS: tuple[SfxSpec, ...] = (
     SfxSpec("UI.Feedback.Toast.Error", "Assets/Game/Audio/UI/ui_feedback_toast_error_01.wav", 0.65, "UI error toast, restrained negative digital pulse, professional military interface sound, no harsh alarm, no voice, no music.", prompt_influence=0.58),
     SfxSpec("UI.Feedback.Toast.Positive", "Assets/Game/Audio/UI/ui_feedback_toast_positive_01.wav", 0.65, "UI positive toast, restrained success digital pulse, professional military interface sound, no voice, no music.", prompt_influence=0.58),
     SfxSpec("Ambience.City.DayLoop", "Assets/Game/Audio/Ambience/amb_city_day_loop_01.wav", 8.0, "Loopable modern city daytime ambience near a military operation, distant traffic, wind, faint urban room tone, no music, no voice, seamless loop with clean headroom.", loop=True, prompt_influence=0.50, max_rms_db=-12.0, max_crest_db=22.0),
+    SfxSpec(
+        "Ambience.Mission.CivilianPanic",
+        "Assets/Game/Audio/Ambience/amb_m01_crowd_panic_flee_01.wav",
+        10.0,
+        "Frightened urban civilian crowd fleeing through a war-torn street, twenty to thirty mixed "
+        "adult men and women screaming and gasping in panic, rapid footsteps arriving from both side "
+        "alleys then running past and receding into the distance, natural layered crowd perspective, "
+        "no intelligible words, no music, no weapons, no explosions, no sirens, clean cinematic game ambience.",
+        prompt_influence=0.62,
+        min_rms_db=-30.0,
+        max_rms_db=-10.0,
+        max_silence_ratio=0.35,
+        max_crest_db=22.0,
+        target_lufs=-18.0,
+    ),
     SfxSpec("Ambience.Base.DistantLoop", "Assets/Game/Audio/Ambience/amb_base_distant_loop_01.wav", 8.0, "Loopable military base distant ambience, low generators, far vehicles, wind over concrete, subtle radio texture, no music, no voice, seamless loop with clean headroom.", loop=True, prompt_influence=0.52, max_rms_db=-12.0, max_crest_db=22.0),
     SfxSpec("Music.Splash.Intro", "Assets/Game/Audio/Music/music_splash_intro_01.wav", 5.0, "Short military strategy game splash intro sting, cinematic percussion and low brass texture, no voice, clean headroom.", prompt_influence=0.48, max_rms_db=-6.0),
     SfxSpec(

@@ -210,7 +210,7 @@ public sealed class M01FirstContactCanonicalDataTests
         Assert.IsTrue(scenario.Restrictions.TransportDisabled);
         Assert.IsTrue(scenario.Restrictions.AirDisabled);
         Assert.AreEqual(1, scenario.AmbientPresentations.Length);
-        Assert.AreEqual(8, scenario.AmbientPresentations[0].InstanceCount);
+        Assert.AreEqual(24, scenario.AmbientPresentations[0].InstanceCount);
     }
 
     private static T Load<T>(string path) where T : UnityEngine.Object

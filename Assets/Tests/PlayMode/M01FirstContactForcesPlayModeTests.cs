@@ -1,6 +1,7 @@
 #if UNITY_INCLUDE_TESTS
 using System.Collections;
 using Game.Components;
+using Game.Configs;
 using Game.Missions.Contracts;
 using Game.Runtime;
 using NUnit.Framework;
@@ -210,6 +211,17 @@ public sealed class M01FirstContactForcesPlayModeTests
             Assert.That(math.distance(focus.World, expectedEstablishingFocus), Is.LessThan(0.001f));
             opening = world.EntityManager.GetComponentData<CampaignMissionOpeningPresentationComponent>(fixture.Root);
             Assert.That(opening.Stage, Is.EqualTo(1));
+            using EntityQuery audioRequests = world.EntityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<AudioPlaybackRequestQueueComponent>(),
+                ComponentType.ReadOnly<AudioPlaybackRequestElement>());
+            Assert.That(audioRequests.CalculateEntityCount(), Is.EqualTo(1));
+            Entity audioEntity = audioRequests.GetSingletonEntity();
+            DynamicBuffer<AudioPlaybackRequestElement> queuedAudio =
+                world.EntityManager.GetBuffer<AudioPlaybackRequestElement>(audioEntity);
+            Assert.That(queuedAudio.Length, Is.EqualTo(1));
+            Assert.That(queuedAudio[0].EventId.ToString(), Is.EqualTo(AudioEventIds.AmbienceMissionCivilianPanic));
+            Assert.That(queuedAudio[0].BusId.ToString(), Is.EqualTo("Ambience"));
+            Assert.That(queuedAudio[0].Priority, Is.EqualTo(AudioPlaybackPriority.High));
             yield break;
         }
         finally { fixture.Dispose(); }

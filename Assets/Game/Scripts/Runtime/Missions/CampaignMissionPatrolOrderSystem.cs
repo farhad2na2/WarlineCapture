@@ -1,4 +1,5 @@
 using Game.Components;
+using Game.Configs;
 using Game.Missions.Contracts;
 using Unity.Collections;
 using Unity.Entities;
@@ -50,6 +51,7 @@ namespace Game.Runtime
 
         public void OnUpdate(ref SystemState state)
         {
+            bool emitOpeningPanicAudio = false;
             CampaignMissionCatalogComponent catalog = SystemAPI.GetSingleton<CampaignMissionCatalogComponent>();
             CampaignMissionRuntimeComponent runtime = SystemAPI.GetSingleton<CampaignMissionRuntimeComponent>();
             CampaignMissionAttemptFactsComponent facts = SystemAPI.GetSingleton<CampaignMissionAttemptFactsComponent>();
@@ -160,6 +162,7 @@ namespace Game.Runtime
                             World = current.EstablishingFocus
                         });
                         current.Stage = 1;
+                        emitOpeningPanicAudio = true;
                     }
                     if (current.Stage == 1 && current.ElapsedMilliseconds >= EstablishingArrivalMilliseconds)
                         current.Stage = 2;
@@ -309,6 +312,17 @@ namespace Game.Runtime
                 }
                 finaleStructuralChanges.Playback(state.EntityManager);
                 finaleStructuralChanges.Dispose();
+            }
+            if (emitOpeningPanicAudio)
+            {
+                AudioEventRequestSystem.EnqueueOneShot(
+                    state.EntityManager,
+                    new FixedString64Bytes(AudioEventIds.AmbienceMissionCivilianPanic),
+                    AudioEventIds.AmbienceMissionCivilianPanicHash,
+                    new FixedString32Bytes("Ambience"),
+                    AudioPlaybackPriority.High,
+                    (float)SystemAPI.Time.ElapsedTime,
+                    cooldownSeconds: 20f);
             }
             ref CampaignMissionDefinitionBlob definition = ref catalog.Blob.Value.Missions[definitionIndex];
             NativeList<Entity> targets = new(Allocator.Temp);

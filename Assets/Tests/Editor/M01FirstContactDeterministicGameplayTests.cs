@@ -204,10 +204,10 @@ public static class M01FirstContactDeterministicGameplayTests
     private static string CivilianContract(ScenarioSetupConfig scenario)
     {
         Require(scenario.AmbientPresentations.Length == 1 &&
-                scenario.AmbientPresentations[0].InstanceCount == 8 &&
+                scenario.AmbientPresentations[0].InstanceCount == 24 &&
                 scenario.AmbientPresentations[0].InstanceCount <=
                     CampaignMissionAmbientPresentationSystem.MaxCivilianPresentations,
-            "M01 civilians must remain at eight within the hard cap of twelve.");
+            "M01 civilians must remain at twenty-four within the hard cap of thirty-two.");
         string source = File.ReadAllText(
             "Assets/Game/Scripts/Runtime/Missions/CampaignMissionAmbientPresentationSystem.cs");
         Require(source.Contains("PresentationSystemGroup", StringComparison.Ordinal) &&

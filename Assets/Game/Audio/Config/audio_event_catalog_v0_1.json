@@ -1725,6 +1725,30 @@
       ]
     },
     {
+      "eventId": "Ambience.Mission.CivilianPanic",
+      "busId": "Ambience",
+      "priority": "High",
+      "cooldownMs": 20000,
+      "volumeDb": -5.0,
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Ambience/amb_m01_crowd_panic_flee_01.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
       "eventId": "Ambience.Base.DistantLoop",
       "busId": "Ambience",
       "priority": "Low",

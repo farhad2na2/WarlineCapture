@@ -61,6 +61,7 @@ public static class M01FirstContactRuntimeOwnershipTests
             typeof(CampaignMissionActionResultElement), typeof(CampaignMissionResultComponent),
             typeof(CampaignMissionSettlementRequestElement), typeof(CampaignMissionSettlementResultElement),
             typeof(CampaignMissionUnitRoleComponent), typeof(CampaignMissionAmbientCivilianComponent),
+            typeof(CampaignMissionAmbientCivilianMotionComponent),
             typeof(CampaignMissionCatalogBlob), typeof(CampaignMissionDefinitionBlob)
         };
         foreach (Type type in types)

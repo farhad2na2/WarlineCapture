@@ -172,7 +172,7 @@ namespace Game.Editor
                 Set(ambient, "presentationId", "ambient.ch01.m01.civilians");
                 Set(ambient, "anchorId", "anchor.ch01.m01.civilian_safe_zone");
                 Set(ambient, "routeId", "route.ch01.m01.civilian_evacuation");
-                Set(ambient, "instanceCount", 8);
+                Set(ambient, "instanceCount", 24);
             });
             serialized.ApplyModifiedPropertiesWithoutUndo();
         }

@@ -192,6 +192,16 @@ namespace Game.Components
         public byte Evacuating;
     }
 
+    public struct CampaignMissionAmbientCivilianMotionComponent : IComponentData
+    {
+        public float3 AlleyMerge;
+        public float3 SquadPass;
+        public float3 Exit;
+        public float Speed;
+        public float DelaySeconds;
+        public byte Segment;
+    }
+
     public enum CampaignMissionGuidancePromptKind : byte
     {
         None = 0, FindSquad = 1, MoveToCover = 2, ConfirmThreat = 3, Engage = 4, SecureCorridor = 5

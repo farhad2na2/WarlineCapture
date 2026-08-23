@@ -1,5 +1,7 @@
+using Game.Configs;
 using Game.Components;
 using Game.Missions.Contracts;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -10,14 +12,14 @@ namespace Game.Runtime
     [UpdateInGroup(typeof(PresentationSystemGroup))]
     public partial struct CampaignMissionAmbientPresentationSystem : ISystem
     {
-        internal const int MaxCivilianPresentations = 12;
+        internal const int MaxCivilianPresentations = 32;
         private const int CivilianPrefabKeyCount = 4;
         private EntityQuery _ambientQuery;
         private EntityQuery _prefabRegistryQuery;
         private FixedString64Bytes _processedSessionToken;
         private int _processedAttemptOrdinal;
         private uint _processedSourceVersion;
-        private byte _processedEvacuating;
+        private byte _presentationStarted;
         private byte _capacityUnavailable;
 
         public void OnCreate(ref SystemState state)
@@ -45,7 +47,7 @@ namespace Game.Runtime
 
             ref CampaignMissionDefinitionBlob definition = ref catalog.Blob.Value.Missions[definitionIndex];
             if (!TryResolveContract(ref definition, ref metadata.Blob.Value, out var ambient,
-                    out OperationMapAnchorBlob safe, out OperationMapAnchorBlob evacuation))
+                    out OperationMapAnchorBlob player, out OperationMapAnchorBlob hostile))
             {
                 Cleanup(ref state, _ambientQuery, default, -1);
                 return;
@@ -53,24 +55,20 @@ namespace Game.Runtime
 
             bool sameAttempt = _processedSessionToken.Equals(runtime.SessionToken) &&
                                _processedAttemptOrdinal == runtime.AttemptOrdinal;
-            bool evacuating = runtime.Outcome == MissionOutcomeKind.Victory ||
-                              runtime.Phase == MissionPhaseKind.SecureCorridor ||
-                              (sameAttempt && _processedEvacuating != 0);
             if (sameAttempt &&
                 _processedSourceVersion == runtime.SourceVersion &&
-                _processedEvacuating == (evacuating ? (byte)1 : (byte)0) &&
-                (_ambientQuery.CalculateEntityCount() == ambient.InstanceCount ||
-                 (_capacityUnavailable != 0 && _ambientQuery.IsEmptyIgnoreFilter)))
+                (_presentationStarted != 0 || _capacityUnavailable != 0))
                 return;
 
             Cleanup(ref state, _ambientQuery, runtime.SessionToken, runtime.AttemptOrdinal);
-            _capacityUnavailable = EnsurePresentation(
+            bool created = EnsurePresentation(
                 ref state, _ambientQuery, _prefabRegistryQuery, in runtime,
-                ref ambient, in safe, in evacuation, evacuating) ? (byte)0 : (byte)1;
+                ref ambient, in player, in hostile);
+            _capacityUnavailable = created ? (byte)0 : (byte)1;
+            _presentationStarted = created ? (byte)1 : (byte)0;
             _processedSessionToken = runtime.SessionToken;
             _processedAttemptOrdinal = runtime.AttemptOrdinal;
             _processedSourceVersion = runtime.SourceVersion;
-            _processedEvacuating = evacuating ? (byte)1 : (byte)0;
         }
 
         public void OnDestroy(ref SystemState state)
@@ -82,26 +80,30 @@ namespace Game.Runtime
         private static bool TryResolveContract(
             ref CampaignMissionDefinitionBlob definition, ref OperationMapBlob map,
             out CampaignMissionAmbientPresentationBlob ambient,
-            out OperationMapAnchorBlob safe, out OperationMapAnchorBlob evacuation)
+            out OperationMapAnchorBlob player, out OperationMapAnchorBlob hostile)
         {
             ambient = default;
-            safe = default;
-            evacuation = default;
+            player = default;
+            hostile = default;
             if (definition.AmbientPresentations.Length != 1)
                 return false;
             ambient = definition.AmbientPresentations[0];
             return ambient.InstanceCount is > 0 and <= MaxCivilianPresentations &&
                    !ambient.PresentationId.IsEmpty && !ambient.RouteId.IsEmpty &&
-                   CampaignMissionSpawnSystem.TryFindAnchor(ref map, ambient.AnchorId, out safe) &&
+                   CampaignMissionSpawnSystem.TryFindAnchor(ref map, ambient.AnchorId, out _) &&
                    CampaignMissionSpawnSystem.TryFindAnchor(
-                       ref map, new FixedString64Bytes("anchor.ch01.m01.civilian_evacuation"), out evacuation);
+                       ref map, new FixedString64Bytes("anchor.ch01.m01.civilian_evacuation"), out _) &&
+                   CampaignMissionSpawnSystem.TryFindAnchor(
+                       ref map, new FixedString64Bytes("anchor.ch01.m01.player_spawn"), out player) &&
+                   CampaignMissionSpawnSystem.TryFindAnchor(
+                       ref map, new FixedString64Bytes("anchor.ch01.m01.patrol_spawn"), out hostile);
         }
 
         private static bool EnsurePresentation(
             ref SystemState state, EntityQuery query, EntityQuery prefabRegistryQuery,
             in CampaignMissionRuntimeComponent runtime,
             ref CampaignMissionAmbientPresentationBlob ambient,
-            in OperationMapAnchorBlob safe, in OperationMapAnchorBlob evacuation, bool evacuating)
+            in OperationMapAnchorBlob player, in OperationMapAnchorBlob hostile)
         {
             EntityManager em = state.EntityManager;
             if (query.CalculateEntityCount() == ambient.InstanceCount)
@@ -112,8 +114,7 @@ namespace Game.Runtime
                 for (int i = 0; i < civilians.Length; i++)
                 {
                     matches &= civilians[i].SessionToken.Equals(runtime.SessionToken) &&
-                               civilians[i].AttemptOrdinal == runtime.AttemptOrdinal &&
-                               civilians[i].Evacuating == (evacuating ? (byte)1 : (byte)0);
+                               civilians[i].AttemptOrdinal == runtime.AttemptOrdinal;
                 }
                 if (matches) return true;
             }
@@ -123,22 +124,34 @@ namespace Game.Runtime
             FixedList128Bytes<Entity> prefabs = ResolveOptionalPrefabs(em, prefabRegistryQuery);
             if (prefabs.IsEmpty)
                 return false;
-            float3 center = evacuating ? evacuation.Position : safe.Position;
-            float radius = evacuating ? evacuation.Radius : safe.Radius;
             for (int i = 0; i < ambient.InstanceCount; i++)
             {
+                PanicRoute route = CreatePanicRoute(in player, in hostile, i, runtime.DeterministicSeed);
                 Entity entity = em.Instantiate(prefabs[i % prefabs.Length]);
                 StripGameplayComponents(em, entity);
                 SetOrAdd(em, entity, new CivilianUnitTag());
+                SetOrAdd(em, entity, new UnitForceDetailedVisualTag());
                 SetOrAdd(em, entity, new CampaignMissionAmbientCivilianComponent
                 {
                     PresentationId = ambient.PresentationId, RouteId = ambient.RouteId,
-                    SessionToken = runtime.SessionToken, RouteIndex = evacuating ? 1 : 0,
-                    AttemptOrdinal = runtime.AttemptOrdinal, Evacuating = evacuating ? (byte)1 : (byte)0
+                    SessionToken = runtime.SessionToken, RouteIndex = route.RouteIndex,
+                    AttemptOrdinal = runtime.AttemptOrdinal, Evacuating = 1
                 });
+                SetOrAdd(em, entity, new CampaignMissionAmbientCivilianMotionComponent
+                {
+                    AlleyMerge = route.AlleyMerge,
+                    SquadPass = route.SquadPass,
+                    Exit = route.Exit,
+                    Speed = route.Speed,
+                    DelaySeconds = route.DelaySeconds
+                });
+                SetOrAdd(em, entity, new UnitPrevWorldPos { Value = route.Start });
+                SetOrAdd(em, entity, new UnitMoveVisualComponent());
+                SetRunAnimation(em, entity);
                 em.SetComponentData(entity, LocalTransform.FromPositionRotationScale(
-                    Position(center, radius, i, runtime.DeterministicSeed),
-                    evacuating ? evacuation.Rotation : safe.Rotation, 1f));
+                    route.Start,
+                    quaternion.LookRotationSafe(route.AlleyMerge - route.Start, math.up()),
+                    1f));
             }
             return true;
         }
@@ -189,6 +202,19 @@ namespace Game.Runtime
             RemoveIfPresent<UnitTarget>(em, entity);
             RemoveIfPresent<AIControlledTag>(em, entity);
             RemoveIfPresent<ManualControlledTag>(em, entity);
+            RemoveIfPresent<UnitGrid>(em, entity);
+            RemoveIfPresent<UnitMove>(em, entity);
+            RemoveIfPresent<UnitFootprint>(em, entity);
+            RemoveIfPresent<UnitMovementBehavior>(em, entity);
+            RemoveIfPresent<UnitPathRequest>(em, entity);
+            RemoveIfPresent<UnitPathFollow>(em, entity);
+            RemoveIfPresent<UnitPathRange>(em, entity);
+            RemoveIfPresent<UnitLongDistanceMove>(em, entity);
+            RemoveIfPresent<UnitIdleWanderComponent>(em, entity);
+            RemoveIfPresent<AutoWanderMoveTag>(em, entity);
+            RemoveIfPresent<ManualMoveOrderTag>(em, entity);
+            RemoveIfPresent<UnitMidLodPrefabReference>(em, entity);
+            RemoveIfPresent<UnitLowLodPrefabReference>(em, entity);
         }
 
         private static void RemoveIfPresent<T>(EntityManager em, Entity entity)
@@ -237,12 +263,169 @@ namespace Game.Runtime
             }
         }
 
-        private static float3 Position(float3 center, float radius, int ordinal, int seed)
+        private static void SetRunAnimation(EntityManager em, Entity entity)
+        {
+            if (!em.HasBuffer<UnitAnimationOrderEntry>(entity))
+                return;
+
+            DynamicBuffer<UnitAnimationOrderEntry> animationOrder = em.GetBuffer<UnitAnimationOrderEntry>(entity);
+            byte animationIndex = byte.MaxValue;
+            for (int i = 0; i < animationOrder.Length; i++)
+            {
+                if (animationOrder[i].Kind == (byte)UnitAnimationKind.Run)
+                {
+                    animationIndex = (byte)i;
+                    break;
+                }
+                if (animationIndex == byte.MaxValue && animationOrder[i].Kind == (byte)UnitAnimationKind.Walk)
+                    animationIndex = (byte)i;
+            }
+
+            if (animationIndex != byte.MaxValue)
+                SetOrAdd(em, entity, new UnitResolvedAnimationIndex { Value = animationIndex, Changed = 1, Updated = 1 });
+        }
+
+        private static PanicRoute CreatePanicRoute(
+            in OperationMapAnchorBlob player,
+            in OperationMapAnchorBlob hostile,
+            int ordinal,
+            int seed)
         {
             uint hash = math.hash(new int2(seed ^ 0x51A7, ordinal + 1));
-            float angle = (hash & 2047u) * (2f * math.PI / 2048f);
-            float distance = math.min(math.max(0.6f, radius * 0.55f), math.max(0.6f, radius - 0.3f));
-            return center + new float3(math.cos(angle) * distance, 0f, math.sin(angle) * distance);
+            float3 towardSquad = math.normalizesafe(
+                player.Position - hostile.Position,
+                new float3(0f, 0f, -1f));
+            towardSquad.y = 0f;
+            towardSquad = math.normalizesafe(towardSquad, new float3(0f, 0f, -1f));
+            float3 lateral = new(towardSquad.z, 0f, -towardSquad.x);
+            int routeIndex = ordinal & 1;
+            float side = routeIndex == 0 ? 1f : -1f;
+            float alongJitter = (((hash >> 8) & 255u) / 255f - 0.5f) * 4f;
+            float lateralJitter = (((hash >> 16) & 255u) / 255f - 0.5f) * 3f;
+            float speedJitter = ((hash >> 24) & 255u) / 255f;
+
+            return new PanicRoute
+            {
+                Start = hostile.Position + towardSquad * (7f + alongJitter) +
+                        lateral * (side * (20f + lateralJitter)),
+                AlleyMerge = math.lerp(hostile.Position, player.Position, 0.42f) +
+                             lateral * (side * (6f + lateralJitter * 0.25f)),
+                SquadPass = player.Position + towardSquad * (5f + alongJitter * 0.25f) +
+                            lateral * (side * (4.5f + lateralJitter * 0.2f)),
+                Exit = player.Position + towardSquad * (30f + alongJitter) +
+                       lateral * (side * (24f + lateralJitter)),
+                Speed = 6.6f + speedJitter * 1.4f,
+                DelaySeconds = 0.45f + (ordinal >> 1) * 0.20f + speedJitter * 0.18f,
+                RouteIndex = routeIndex
+            };
+        }
+
+        private struct PanicRoute
+        {
+            public float3 Start;
+            public float3 AlleyMerge;
+            public float3 SquadPass;
+            public float3 Exit;
+            public float Speed;
+            public float DelaySeconds;
+            public int RouteIndex;
+        }
+    }
+
+    [BurstCompile]
+    [UpdateInGroup(typeof(SimulationSystemGroup))]
+    [UpdateAfter(typeof(CampaignMissionPatrolOrderSystem))]
+    [UpdateBefore(typeof(UnitSurfaceTrackingSystem))]
+    public partial struct CampaignMissionAmbientCivilianMotionSystem : ISystem
+    {
+        private EntityQuery _ecbSingletonQuery;
+
+        [BurstCompile]
+        public void OnCreate(ref SystemState state)
+        {
+            EntityQueryBuilder builder = new(Allocator.Temp);
+            _ecbSingletonQuery = builder
+                .WithAll<EndSimulationEntityCommandBufferSystem.Singleton>()
+                .WithOptions(EntityQueryOptions.IncludeSystems)
+                .Build(ref state);
+            builder.Dispose();
+            state.RequireForUpdate<CampaignMissionAmbientCivilianMotionComponent>();
+            state.RequireForUpdate(_ecbSingletonQuery);
+        }
+
+        [BurstCompile]
+        public void OnUpdate(ref SystemState state)
+        {
+            if (!SystemAPI.TryGetSingleton(out CampaignMissionOpeningPresentationComponent opening) ||
+                opening.Stage == 0)
+                return;
+
+            Entity ecbEntity = _ecbSingletonQuery.GetSingletonEntity();
+            EndSimulationEntityCommandBufferSystem.Singleton ecbSystem =
+                state.EntityManager.GetComponentData<EndSimulationEntityCommandBufferSystem.Singleton>(ecbEntity);
+            state.Dependency = new MoveJob
+            {
+                DeltaTime = SystemAPI.Time.DeltaTime,
+                Ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter()
+            }.ScheduleParallel(state.Dependency);
+        }
+
+        [BurstCompile]
+        private partial struct MoveJob : IJobEntity
+        {
+            public float DeltaTime;
+            public EntityCommandBuffer.ParallelWriter Ecb;
+
+            public void Execute(
+                [EntityIndexInQuery] int sortKey,
+                Entity entity,
+                ref LocalTransform transform,
+                ref CampaignMissionAmbientCivilianMotionComponent motion,
+                ref UnitMoveVisualComponent moveVisual)
+            {
+                if (motion.DelaySeconds > 0f)
+                {
+                    motion.DelaySeconds = math.max(0f, motion.DelaySeconds - DeltaTime);
+                    moveVisual.IsMoving = 0;
+                    moveVisual.StillSeconds = 0f;
+                    return;
+                }
+
+                float3 target = motion.Segment switch
+                {
+                    0 => motion.AlleyMerge,
+                    1 => motion.SquadPass,
+                    _ => motion.Exit
+                };
+                float3 delta = target - transform.Position;
+                delta.y = 0f;
+                float distance = math.length(delta);
+                float step = math.max(0f, motion.Speed * DeltaTime);
+                if (distance <= math.max(0.12f, step))
+                {
+                    float3 position = target;
+                    position.y = transform.Position.y;
+                    transform.Position = position;
+                    motion.Segment++;
+                    moveVisual.IsMoving = 1;
+                    moveVisual.StillSeconds = 0f;
+                    if (motion.Segment > 2)
+                        Ecb.DestroyEntity(sortKey, entity);
+                    return;
+                }
+
+                float3 direction = delta / math.max(distance, 0.0001f);
+                float3 next = transform.Position + direction * step;
+                next.y = transform.Position.y;
+                transform.Position = next;
+                quaternion facing = quaternion.LookRotationSafe(direction, math.up());
+                transform.Rotation = math.slerp(
+                    transform.Rotation,
+                    facing,
+                    math.saturate(DeltaTime * 10f));
+                moveVisual.IsMoving = 1;
+                moveVisual.StillSeconds = 0f;
+            }
         }
     }
 }

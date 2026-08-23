@@ -63,16 +63,61 @@ namespace Game.Runtime
                     continue;
                 }
 
-                int targetIndex = FindLeastAssignedNearestHostile(
+                int targetIndex = FindLeastAssignedNearestTarget(
                     entityManager, friendly, hostiles, assignedCounts);
                 Entity target = hostiles[targetIndex];
                 assignedCounts[targetIndex]++;
-                QueueContinuationOrder(entityManager, ref orders, friendly, target);
+                QueueAttackOrder(entityManager, ref orders, friendly, target);
             }
 
             orders.Playback(entityManager);
             orders.Dispose();
             assignedCounts.Dispose();
+        }
+
+        internal static int QueueHostileCounterfire(
+            EntityManager entityManager,
+            EntityQuery missionCombatantsQuery,
+            FixedString64Bytes sessionToken,
+            ref EntityCommandBuffer orders)
+        {
+            using NativeArray<Entity> combatants = missionCombatantsQuery.ToEntityArray(Allocator.Temp);
+            using NativeList<Entity> friendlies = new(Allocator.Temp);
+            for (int index = 0; index < combatants.Length; index++)
+            {
+                Entity candidate = combatants[index];
+                CampaignMissionUnitRoleComponent role =
+                    entityManager.GetComponentData<CampaignMissionUnitRoleComponent>(candidate);
+                Faction faction = entityManager.GetComponentData<Faction>(candidate);
+                UnitHealth health = entityManager.GetComponentData<UnitHealth>(candidate);
+                if (role.SessionToken.Equals(sessionToken) &&
+                    FactionIdentity.IsPlayerControlled(faction.Id) &&
+                    health.Current > 0)
+                {
+                    friendlies.Add(candidate);
+                }
+            }
+
+            if (friendlies.Length == 0)
+                return 0;
+
+            NativeArray<int> assignedCounts = new(friendlies.Length, Allocator.Temp);
+            int queued = 0;
+            for (int index = 0; index < combatants.Length; index++)
+            {
+                Entity hostile = combatants[index];
+                if (!IsEligibleHostile(entityManager, hostile, sessionToken))
+                    continue;
+
+                int targetIndex = FindLeastAssignedNearestTarget(
+                    entityManager, hostile, friendlies, assignedCounts);
+                assignedCounts[targetIndex]++;
+                QueueAttackOrder(entityManager, ref orders, hostile, friendlies[targetIndex]);
+                queued++;
+            }
+
+            assignedCounts.Dispose();
+            return queued;
         }
 
         private static void CollectLiveHostiles(
@@ -136,6 +181,22 @@ namespace Game.Runtime
                    combat.CanAttack != 0;
         }
 
+        private static bool IsEligibleHostile(
+            EntityManager entityManager,
+            Entity entity,
+            FixedString64Bytes sessionToken)
+        {
+            CampaignMissionUnitRoleComponent role =
+                entityManager.GetComponentData<CampaignMissionUnitRoleComponent>(entity);
+            Faction faction = entityManager.GetComponentData<Faction>(entity);
+            UnitHealth health = entityManager.GetComponentData<UnitHealth>(entity);
+            UnitCombat combat = entityManager.GetComponentData<UnitCombat>(entity);
+            return role.SessionToken.Equals(sessionToken) &&
+                   !FactionIdentity.IsPlayerControlled(faction.Id) &&
+                   health.Current > 0 &&
+                   combat.CanAttack != 0;
+        }
+
         private static bool HasLiveHostileTarget(
             EntityManager entityManager,
             Entity friendly,
@@ -147,20 +208,20 @@ namespace Game.Runtime
             return IndexOf(hostiles, current.Target) >= 0;
         }
 
-        private static int FindLeastAssignedNearestHostile(
+        private static int FindLeastAssignedNearestTarget(
             EntityManager entityManager,
-            Entity friendly,
-            NativeList<Entity> hostiles,
+            Entity source,
+            NativeList<Entity> targets,
             NativeArray<int> assignedCounts)
         {
-            float3 friendlyPosition = entityManager.GetComponentData<LocalTransform>(friendly).Position;
+            float3 sourcePosition = entityManager.GetComponentData<LocalTransform>(source).Position;
             int bestIndex = 0;
             float bestDistanceSq = float.MaxValue;
             int bestAssignedCount = int.MaxValue;
-            for (int index = 0; index < hostiles.Length; index++)
+            for (int index = 0; index < targets.Length; index++)
             {
-                float3 delta = entityManager.GetComponentData<LocalTransform>(hostiles[index]).Position -
-                               friendlyPosition;
+                float3 delta = entityManager.GetComponentData<LocalTransform>(targets[index]).Position -
+                               sourcePosition;
                 delta.y = 0f;
                 float distanceSq = math.lengthsq(delta);
                 int assignedCount = assignedCounts[index];
@@ -175,10 +236,10 @@ namespace Game.Runtime
             return bestIndex;
         }
 
-        private static void QueueContinuationOrder(
+        private static void QueueAttackOrder(
             EntityManager entityManager,
             ref EntityCommandBuffer orders,
-            Entity friendly,
+            Entity source,
             Entity target)
         {
             float3 targetPosition = entityManager.GetComponentData<LocalTransform>(target).Position;
@@ -192,17 +253,17 @@ namespace Game.Runtime
                 Position = targetPosition,
                 IsCommanded = 1
             };
-            if (entityManager.HasComponent<EngageTarget>(friendly))
-                orders.SetComponent(friendly, continuation);
+            if (entityManager.HasComponent<EngageTarget>(source))
+                orders.SetComponent(source, continuation);
             else
-                orders.AddComponent(friendly, continuation);
+                orders.AddComponent(source, continuation);
 
-            RemoveIfPresent<ManualMoveOrderTag>(entityManager, ref orders, friendly);
-            RemoveIfPresent<HoldPositionOrderTag>(entityManager, ref orders, friendly);
-            RemoveIfPresent<UnitPathFollow>(entityManager, ref orders, friendly);
-            RemoveIfPresent<UnitPathRange>(entityManager, ref orders, friendly);
-            RemoveIfPresent<UnitPathRequest>(entityManager, ref orders, friendly);
-            RemoveIfPresent<AutoWanderMoveTag>(entityManager, ref orders, friendly);
+            RemoveIfPresent<ManualMoveOrderTag>(entityManager, ref orders, source);
+            RemoveIfPresent<HoldPositionOrderTag>(entityManager, ref orders, source);
+            RemoveIfPresent<UnitPathFollow>(entityManager, ref orders, source);
+            RemoveIfPresent<UnitPathRange>(entityManager, ref orders, source);
+            RemoveIfPresent<UnitPathRequest>(entityManager, ref orders, source);
+            RemoveIfPresent<AutoWanderMoveTag>(entityManager, ref orders, source);
         }
 
         private static int IndexOf(NativeList<Entity> entities, Entity target)

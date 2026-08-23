@@ -11,6 +11,7 @@ namespace Game.Runtime
     public partial struct CampaignMissionSpawnSystem : ISystem
     {
         private static readonly FixedString64Bytes FirstContactMissionId = "saga.ch01.m01.first_contact";
+        internal const float FirstContactHostileMinimumAttackRange = 60f;
         private EntityQuery _registryQuery;
 
         public void OnCreate(ref SystemState state)
@@ -171,6 +172,8 @@ namespace Game.Runtime
                         SetOrAdd(em, instance, new UnitPrevWorldPos { Value = position });
                         SetOrAdd(em, instance, new UnitMoveVisualComponent());
                         SetOrAdd(em, instance, new Faction { Id = group.FactionId });
+                        if (runtime.MissionId.Equals(FirstContactMissionId))
+                            ApplyFirstContactHostileCombatPolicy(em, instance, group.FactionId);
                         SetOrAdd(em, instance,
                             new UnitSourcePrefabKey { Value = unit.RuntimePrefabSourceKey });
                         SetOrAdd(em, instance, new CampaignMissionUnitRoleComponent
@@ -212,6 +215,19 @@ namespace Game.Runtime
 
         internal static bool ShouldKeepStationary(in FixedString64Bytes missionId, byte factionId) =>
             missionId.Equals(FirstContactMissionId) && !FactionIdentity.IsPlayerControlled(factionId);
+
+        internal static void ApplyFirstContactHostileCombatPolicy(
+            EntityManager em,
+            Entity instance,
+            byte factionId)
+        {
+            if (FactionIdentity.IsPlayerControlled(factionId) || !em.HasComponent<UnitAttack>(instance))
+                return;
+
+            UnitAttack attack = em.GetComponentData<UnitAttack>(instance);
+            attack.Range = math.max(attack.Range, FirstContactHostileMinimumAttackRange);
+            em.SetComponentData(instance, attack);
+        }
 
         internal static void ApplyFirstContactCinematicVisualPolicy(EntityManager em, Entity instance)
         {

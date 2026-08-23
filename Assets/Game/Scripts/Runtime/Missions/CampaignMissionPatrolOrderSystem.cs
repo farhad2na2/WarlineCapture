@@ -253,6 +253,11 @@ namespace Game.Runtime
                                 _missionCombatantsQuery,
                                 runtime.SessionToken,
                                 ref finaleStructuralChanges);
+                            CampaignMissionGroupAttackUtility.QueueHostileCounterfire(
+                                state.EntityManager,
+                                _missionCombatantsQuery,
+                                runtime.SessionToken,
+                                ref finaleStructuralChanges);
                         }
                     }
                     else if (current.Stage == 2 && runtime.Phase == MissionPhaseKind.SecureCorridor &&

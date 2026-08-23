@@ -31,6 +31,8 @@ public sealed class M01GuidedMoveRouteTests
             passed++;
             tests.TutorialFinaleProtectsOnlyThePlayerSquadDuringCombat();
             passed++;
+            tests.TutorialFinaleQueuesReciprocalHostileFireWithoutMovingThePatrol();
+            passed++;
             tests.TutorialFinaleDefersCombatSuppressionRemovalUntilCommandBufferPlayback();
             passed++;
             tests.FirstContactCinematicActorsStayOnDetailedVisuals();
@@ -965,6 +967,66 @@ public sealed class M01GuidedMoveRouteTests
     }
 
     [Test]
+    public void TutorialFinaleQueuesReciprocalHostileFireWithoutMovingThePatrol()
+    {
+        using World world = new(nameof(TutorialFinaleQueuesReciprocalHostileFireWithoutMovingThePatrol));
+        EntityManager entityManager = world.EntityManager;
+        FixedString64Bytes session = new("m01-reciprocal-fire");
+        Entity[] friendlies = new Entity[4];
+        Entity[] hostiles = new Entity[3];
+        for (int index = 0; index < friendlies.Length; index++)
+            friendlies[index] = CreateMissionCombatant(
+                entityManager, session, FactionIdentity.PlayerFactionId, 100,
+                new float3(index * 2f, 0f, 0f));
+        for (int index = 0; index < hostiles.Length; index++)
+        {
+            hostiles[index] = CreateMissionCombatant(
+                entityManager, session, FactionIdentity.EnemyFactionId, 100,
+                new float3(index * 2f, 0f, 48f));
+            entityManager.AddComponent<CampaignMissionCombatSuppressedTag>(hostiles[index]);
+            entityManager.AddComponent<CampaignMissionStationaryUnitTag>(hostiles[index]);
+        }
+
+        using EntityQuery query = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<CampaignMissionUnitRoleComponent>(),
+            ComponentType.ReadOnly<Faction>(),
+            ComponentType.ReadOnly<UnitHealth>(),
+            ComponentType.ReadOnly<UnitCombat>(),
+            ComponentType.ReadOnly<LocalTransform>());
+        EntityCommandBuffer finaleChanges = new(Allocator.Temp);
+        CampaignMissionPatrolOrderSystem.QueueCombatSuppressionRemoval(
+            entityManager, query, session, ref finaleChanges);
+        int queued = CampaignMissionGroupAttackUtility.QueueHostileCounterfire(
+            entityManager, query, session, ref finaleChanges);
+
+        Assert.That(queued, Is.EqualTo(3));
+        foreach (Entity hostile in hostiles)
+        {
+            Assert.That(entityManager.HasComponent<CampaignMissionCombatSuppressedTag>(hostile), Is.True);
+            Assert.That(entityManager.HasComponent<EngageTarget>(hostile), Is.False,
+                "Counterfire must stay deferred while the finale system is iterating.");
+        }
+
+        finaleChanges.Playback(entityManager);
+        finaleChanges.Dispose();
+        foreach (Entity hostile in hostiles)
+        {
+            Assert.That(entityManager.HasComponent<CampaignMissionCombatSuppressedTag>(hostile), Is.False);
+            Assert.That(entityManager.HasComponent<CampaignMissionStationaryUnitTag>(hostile), Is.True,
+                "Counterfire must aim and fire in place without releasing patrol movement.");
+            EngageTarget target = entityManager.GetComponentData<EngageTarget>(hostile);
+            Assert.That(target.IsCommanded, Is.EqualTo(1));
+            Assert.That(entityManager.GetComponentData<Faction>(target.Target).Id,
+                Is.EqualTo(FactionIdentity.PlayerFactionId));
+            float distance = math.distance(
+                entityManager.GetComponentData<LocalTransform>(hostile).Position,
+                entityManager.GetComponentData<LocalTransform>(target.Target).Position);
+            Assert.That(distance, Is.LessThanOrEqualTo(
+                entityManager.GetComponentData<UnitAttack>(hostile).Range));
+        }
+    }
+
+    [Test]
     public void ResultPresentationPrefabOwnsConfiguredBinder()
     {
         const string appCanvasPath = "Assets/Game/Prefabs/UI/Shell/UIShellAppCanvas.prefab";
@@ -1002,12 +1064,19 @@ public sealed class M01GuidedMoveRouteTests
             typeof(Faction),
             typeof(UnitHealth),
             typeof(UnitCombat),
+            typeof(UnitAttack),
             typeof(LocalTransform),
             typeof(UnitGrid));
         entityManager.SetComponentData(entity, new CampaignMissionUnitRoleComponent { SessionToken = session });
         entityManager.SetComponentData(entity, new Faction { Id = factionId });
         entityManager.SetComponentData(entity, new UnitHealth { Current = health, Max = 100 });
         entityManager.SetComponentData(entity, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
+        entityManager.SetComponentData(entity, new UnitAttack
+        {
+            Range = CampaignMissionSpawnSystem.FirstContactHostileMinimumAttackRange,
+            Damage = 10,
+            CooldownSeconds = 1f
+        });
         entityManager.SetComponentData(entity, LocalTransform.FromPosition(position));
         entityManager.SetComponentData(entity, new UnitGrid { Cell = new int2((int)position.x, (int)position.z) });
         return entity;

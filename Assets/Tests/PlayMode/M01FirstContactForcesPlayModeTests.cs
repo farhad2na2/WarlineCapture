@@ -24,8 +24,9 @@ public sealed class M01FirstContactForcesPlayModeTests
         RunToCompletion(tests.SpawnDoesNotWaitForCameraChannel());
         RunToCompletion(tests.SpawnCreatesExactDeterministicFourVersusThreeForce());
         RunToCompletion(tests.HostilesRemainStationaryThroughoutMission());
+        RunToCompletion(tests.FinaleArrivalReleasesThreeStationaryHostilesToCounterfire());
         RunToCompletion(tests.MissingRuntimePrefabFailsClosedWithoutPartialSpawn());
-        UnityEngine.Debug.Log("[M01FirstContactForcesPlayModeValidation] result=Passed tests=5");
+        UnityEngine.Debug.Log("[M01FirstContactForcesPlayModeValidation] result=Passed tests=6");
     }
 
     [UnityTest]
@@ -127,6 +128,12 @@ public sealed class M01FirstContactForcesPlayModeTests
                 Faction faction = world.EntityManager.GetComponentData<Faction>(entities[i]);
                 if (faction.Id == 1) friendly++;
                 if (faction.Id == 2) hostile++;
+                UnitAttack attack = world.EntityManager.GetComponentData<UnitAttack>(entities[i]);
+                Assert.That(attack.Range, Is.EqualTo(
+                    faction.Id == FactionIdentity.EnemyFactionId
+                        ? CampaignMissionSpawnSystem.FirstContactHostileMinimumAttackRange
+                        : 35f),
+                    "Only M01 hostiles need the formation-specific counterfire range floor.");
                 Assert.That(
                     world.EntityManager.HasComponent<CampaignMissionStationaryUnitTag>(entities[i]),
                     Is.EqualTo(faction.Id == FactionIdentity.EnemyFactionId),
@@ -332,6 +339,82 @@ public sealed class M01FirstContactForcesPlayModeTests
     }
 
     [UnityTest]
+    public IEnumerator FinaleArrivalReleasesThreeStationaryHostilesToCounterfire()
+    {
+        using World world = new(nameof(FinaleArrivalReleasesThreeStationaryHostilesToCounterfire));
+        Fixture fixture = CreateFixture(world, tutorialFinaleEnabled: true);
+        try
+        {
+            Update<CampaignMissionSpawnSystem>(world);
+            CampaignMissionOpeningPresentationComponent opening = world.EntityManager.GetComponentData<
+                CampaignMissionOpeningPresentationComponent>(fixture.Root);
+            opening.Stage = 7;
+            world.EntityManager.SetComponentData(fixture.Root, opening);
+            CampaignMissionRuntimeComponent runtime = world.EntityManager.GetComponentData<
+                CampaignMissionRuntimeComponent>(fixture.Root);
+            runtime.Phase = MissionPhaseKind.Engage;
+            world.EntityManager.SetComponentData(fixture.Root, runtime);
+            CampaignMissionAttemptFactsComponent facts = world.EntityManager.GetComponentData<
+                CampaignMissionAttemptFactsComponent>(fixture.Root);
+            facts.AttackIssued = 1;
+            world.EntityManager.SetComponentData(fixture.Root, facts);
+            CampaignMissionFinalePresentationComponent finale = world.EntityManager.GetComponentData<
+                CampaignMissionFinalePresentationComponent>(fixture.Root);
+            finale.Stage = 1;
+            finale.ElapsedMilliseconds = CampaignMissionPatrolOrderSystem.FinaleCameraArrivalMilliseconds;
+            world.EntityManager.SetComponentData(fixture.Root, finale);
+            world.EntityManager.SetComponentData(
+                fixture.CameraFocus, default(RuntimeCameraFocusRequestComponent));
+
+            Update<CampaignMissionPatrolOrderSystem>(world);
+
+            finale = world.EntityManager.GetComponentData<CampaignMissionFinalePresentationComponent>(fixture.Root);
+            Assert.That(finale.Stage, Is.EqualTo(2));
+            using EntityQuery units = world.EntityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<CampaignMissionUnitRoleComponent>(),
+                ComponentType.ReadOnly<Faction>());
+            using NativeArray<Entity> entities = units.ToEntityArray(Allocator.Temp);
+            int hostileCount = 0;
+            for (int index = 0; index < entities.Length; index++)
+            {
+                Entity entity = entities[index];
+                Faction faction = world.EntityManager.GetComponentData<Faction>(entity);
+                Assert.That(world.EntityManager.HasComponent<CampaignMissionCombatSuppressedTag>(entity), Is.False);
+                if (faction.Id != FactionIdentity.EnemyFactionId)
+                    continue;
+
+                hostileCount++;
+                Assert.That(world.EntityManager.HasComponent<CampaignMissionStationaryUnitTag>(entity), Is.True);
+                Assert.That(world.EntityManager.HasComponent<EngageTarget>(entity), Is.True,
+                    "Every hostile must aim at the protected squad when the finale camera arrives.");
+                EngageTarget target = world.EntityManager.GetComponentData<EngageTarget>(entity);
+                Assert.That(target.IsCommanded, Is.EqualTo(1));
+                Assert.That(world.EntityManager.GetComponentData<Faction>(target.Target).Id,
+                    Is.EqualTo(FactionIdentity.PlayerFactionId));
+                float distance = math.distance(
+                    world.EntityManager.GetComponentData<LocalTransform>(entity).Position,
+                    world.EntityManager.GetComponentData<LocalTransform>(target.Target).Position);
+                Assert.That(distance, Is.LessThanOrEqualTo(
+                    world.EntityManager.GetComponentData<UnitAttack>(entity).Range));
+            }
+            Assert.That(hostileCount, Is.EqualTo(3));
+
+            Update<CampaignMissionPatrolOrderSystem>(world);
+            for (int index = 0; index < entities.Length; index++)
+            {
+                if (world.EntityManager.GetComponentData<Faction>(entities[index]).Id ==
+                    FactionIdentity.EnemyFactionId)
+                {
+                    Assert.That(world.EntityManager.GetComponentData<UnitCombat>(entities[index]).AutoEngage,
+                        Is.EqualTo(1));
+                }
+            }
+            yield break;
+        }
+        finally { fixture.Dispose(); }
+    }
+
+    [UnityTest]
     public IEnumerator MissingRuntimePrefabFailsClosedWithoutPartialSpawn()
     {
         using World world = new(nameof(MissingRuntimePrefabFailsClosedWithoutPartialSpawn));
@@ -354,7 +437,8 @@ public sealed class M01FirstContactForcesPlayModeTests
         World world,
         bool omitLastPrefab = false,
         bool includeGameplayState = false,
-        bool includeCameraFocus = true)
+        bool includeCameraFocus = true,
+        bool tutorialFinaleEnabled = false)
     {
         EntityManager em = world.EntityManager;
         BlobAssetReference<CampaignMissionCatalogBlob> catalog = CreateCatalog();
@@ -366,7 +450,8 @@ public sealed class M01FirstContactForcesPlayModeTests
         em.SetComponentData(root, new CampaignMissionRuntimeComponent
         {
             MissionId = MissionId, ScenarioId = ScenarioId, OperationMapId = MapId,
-            SessionToken = Session, DeterministicSeed = 1701
+            SessionToken = Session, DeterministicSeed = 1701,
+            ReplayTutorialEnabled = tutorialFinaleEnabled ? (byte)1 : (byte)0
         });
         Entity mapEntity = em.CreateEntity(typeof(OperationMapMetadataComponent));
         em.SetComponentData(mapEntity, new OperationMapMetadataComponent { Blob = map, Generation = 1 });
@@ -384,10 +469,13 @@ public sealed class M01FirstContactForcesPlayModeTests
         {
             Entity prefab = em.CreateEntity(
                 typeof(Prefab), typeof(UnitSourcePrefabKey), typeof(LocalTransform), typeof(SelectedUnitTag),
-                typeof(UnitCombat), typeof(UnitMidLodPrefabReference), typeof(UnitLowLodPrefabReference));
+                typeof(UnitCombat), typeof(UnitAttack), typeof(UnitHealth), typeof(UnitMidLodPrefabReference),
+                typeof(UnitLowLodPrefabReference));
             em.SetComponentData(prefab, new UnitSourcePrefabKey { Value = keys[i] });
             em.SetComponentData(prefab, LocalTransform.Identity);
             em.SetComponentData(prefab, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
+            em.SetComponentData(prefab, new UnitAttack { Range = 35f, CooldownSeconds = 1f, Damage = 10 });
+            em.SetComponentData(prefab, new UnitHealth { Current = 100, Max = 100 });
             registry.Add(new UnitPrefabRegistryEntry { Prefab = prefab });
         }
         return new Fixture

@@ -68,23 +68,27 @@ namespace Game.Editor
         private static bool deploySubmitted;
         private static bool profileApplied;
         private static bool completed;
+        private static bool exitEditorAfterCapture;
         private static double startedAt;
         private static MobileVisualQualityCaptureMatrix matrixCapture;
 
         [MenuItem("Game/Rendering/Capture Mobile Visual Quality/Current")]
         public static void CaptureCurrent()
         {
+            exitEditorAfterCapture = false;
             Run(CaptureProfile.Current);
         }
 
         [MenuItem("Game/Rendering/Capture Mobile Visual Quality/Candidate")]
         public static void CaptureCandidate()
         {
+            exitEditorAfterCapture = false;
             Run(CaptureProfile.Candidate);
         }
 
         public static void CaptureFromEnvironment()
         {
+            exitEditorAfterCapture = true;
             string profile = Environment.GetEnvironmentVariable("WARLINE_MOBILE_VISUAL_CAPTURE_PROFILE");
             Run(string.Equals(profile, "candidate", StringComparison.OrdinalIgnoreCase)
                 ? CaptureProfile.Candidate
@@ -581,7 +585,8 @@ namespace Game.Editor
                 return;
 
             EditorApplication.playModeStateChanged -= ExitBatchAfterPlayMode;
-            if (Application.isBatchMode && pendingBatchExitCode != int.MinValue)
+            if ((Application.isBatchMode || exitEditorAfterCapture) &&
+                pendingBatchExitCode != int.MinValue)
                 EditorApplication.Exit(pendingBatchExitCode);
         }
     }

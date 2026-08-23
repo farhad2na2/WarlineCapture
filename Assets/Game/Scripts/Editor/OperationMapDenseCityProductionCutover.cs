@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using Game.Authoring;
 using Game.Composition;
 using Game.Configs;
 using Game.Rendering;
@@ -116,6 +117,54 @@ namespace Game.Editor
             }
         }
 
+        [MenuItem("Game/Operation Maps/Repair EntityScene Runtime Surface Overlays")]
+        public static void RepairEntitySceneRuntimeSurfaceOverlays()
+        {
+            SceneSetup[] previousSetup = EditorSceneManager.GetSceneManagerSetup();
+            try
+            {
+                MapSurfaceSceneOverlayAuthoringData[] acceptedOverlays =
+                    OperationMapRuntimeBindingSceneBuilder.CaptureSurfaceSceneOverlays(
+                        StaticMapPresentationBaker.CurrentStagedOperationMapScenePath);
+                MapSurfaceSceneOverlayAuthoringData[] denseOverlays =
+                    OperationMapRuntimeBindingSceneBuilder.CaptureSurfaceSceneOverlays(
+                        DenseCityCandidateAuthoringTransaction.CandidateMapScenePath);
+
+                ApplySurfaceOverlaysToRuntimeBinding(
+                    OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateRuntimeBindingPath,
+                    acceptedOverlays);
+                ApplySurfaceOverlaysToRuntimeBinding(
+                    OperationMapEntitySceneCandidateAddressablesLayoutPlanner.DenseCandidateRuntimeBindingPath,
+                    denseOverlays);
+                ApplySurfaceOverlaysToRuntimeBinding(
+                    OperationMapAddressablesLayoutBuilder.SourceScenePath,
+                    denseOverlays);
+                AssetDatabase.SaveAssets();
+
+                ValidateEntityRuntimeBinding(
+                    OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateRuntimeBindingPath,
+                    OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateDefinitionPath,
+                    OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath);
+                ValidateEntityRuntimeBinding(
+                    OperationMapEntitySceneCandidateAddressablesLayoutPlanner.DenseCandidateRuntimeBindingPath,
+                    OperationMapEntitySceneCandidateAddressablesLayoutPlanner.DenseCandidateDefinitionPath,
+                    DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath);
+                ValidateEntityRuntimeBinding(
+                    OperationMapAddressablesLayoutBuilder.SourceScenePath,
+                    OperationMapAddressablesLayoutBuilder.DefinitionPath,
+                    DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath);
+
+                Debug.Log(
+                    "[OperationMapEntitySceneSurfaceOverlayRepair] result=Passed " +
+                    $"acceptedOverlays={acceptedOverlays.Length} denseOverlays={denseOverlays.Length}");
+            }
+            finally
+            {
+                if (previousSetup.Length > 0)
+                    EditorSceneManager.RestoreSceneManagerSetup(previousSetup);
+            }
+        }
+
         private static OperationMapDefinition RequireDefinition(string path)
         {
             OperationMapDefinition definition =
@@ -166,6 +215,9 @@ namespace Game.Editor
                 DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath);
             if (entityScene == null)
                 throw new InvalidOperationException("Accepted dense EntityScene asset is missing.");
+            MapSurfaceSceneOverlayAuthoringData[] surfaceOverlays =
+                OperationMapRuntimeBindingSceneBuilder.CaptureSurfaceSceneOverlays(
+                    DenseCityCandidateAuthoringTransaction.CandidateMapScenePath);
 
             Scene scene = EditorSceneManager.OpenScene(
                 OperationMapAddressablesLayoutBuilder.SourceScenePath,
@@ -189,6 +241,9 @@ namespace Game.Editor
                 viewData.FindProperty("presentationSourceSceneGuid").stringValue = string.Empty;
                 viewData.FindProperty("presentationSourceScenePath").stringValue = string.Empty;
                 viewData.ApplyModifiedPropertiesWithoutUndo();
+                OperationMapRuntimeBindingSceneBuilder.ApplySurfaceSceneOverlays(
+                    view.MapSurfaceAuthoring,
+                    surfaceOverlays);
                 EditorUtility.SetDirty(view);
                 EditorSceneManager.MarkSceneDirty(scene);
                 if (!EditorSceneManager.SaveScene(
@@ -300,6 +355,54 @@ namespace Game.Editor
                         OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
                         OperationMapAddressablesLayoutBuilder.DefinitionPath,
                         DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath,
+                        out string error))
+                {
+                    throw new InvalidOperationException(error);
+                }
+            }
+            finally
+            {
+                CloseSceneKeepingEditorValid(scene);
+            }
+        }
+
+        private static void ApplySurfaceOverlaysToRuntimeBinding(
+            string runtimeBindingPath,
+            MapSurfaceSceneOverlayAuthoringData[] overlays)
+        {
+            Scene scene = EditorSceneManager.OpenScene(runtimeBindingPath, OpenSceneMode.Single);
+            try
+            {
+                OperationMapSceneView view = FindSingleView(scene);
+                OperationMapRuntimeBindingSceneBuilder.ApplySurfaceSceneOverlays(
+                    view.MapSurfaceAuthoring,
+                    overlays);
+                EditorSceneManager.MarkSceneDirty(scene);
+                if (!EditorSceneManager.SaveScene(scene, runtimeBindingPath, false))
+                {
+                    throw new InvalidOperationException(
+                        $"Failed to save runtime surface overlays: {runtimeBindingPath}");
+                }
+            }
+            finally
+            {
+                CloseSceneKeepingEditorValid(scene);
+            }
+        }
+
+        private static void ValidateEntityRuntimeBinding(
+            string runtimeBindingPath,
+            string definitionPath,
+            string subScenePath)
+        {
+            Scene scene = EditorSceneManager.OpenScene(runtimeBindingPath, OpenSceneMode.Single);
+            try
+            {
+                if (!OperationMapRuntimeBindingSceneValidator.TryValidateLoadedEntityScene(
+                        scene,
+                        OperationMapEntityPresentationCandidateSceneBuilder.OperationMapId,
+                        definitionPath,
+                        subScenePath,
                         out string error))
                 {
                     throw new InvalidOperationException(error);

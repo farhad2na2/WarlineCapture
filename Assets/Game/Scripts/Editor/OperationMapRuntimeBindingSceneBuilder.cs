@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using Game.Authoring;
 using Game.Composition;
+using Game.Components;
 using Game.Configs;
 using Game.Rendering;
 using Game.Runtime;
@@ -141,6 +143,7 @@ namespace Game.Editor
             surfaceData.FindProperty("maxInfantrySlopeDegrees").floatValue = input.MaxInfantrySlopeDegrees;
             surfaceData.FindProperty("maxVehicleSlopeDegrees").floatValue = input.MaxVehicleSlopeDegrees;
             surfaceData.ApplyModifiedPropertiesWithoutUndo();
+            ApplySurfaceSceneOverlays(surface, input.SceneOverlays);
 
             var viewData = new SerializedObject(view);
             viewData.FindProperty("operationMapId").stringValue = input.OperationMapId;
@@ -160,6 +163,263 @@ namespace Game.Editor
             viewData.FindProperty("presentationSourceSceneGuid").stringValue = input.PresentationSourceSceneGuid;
             viewData.FindProperty("presentationSourceScenePath").stringValue = input.PresentationSourceScenePath;
             viewData.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        internal static void ApplySurfaceSceneOverlays(
+            MapSurfaceAuthoring surface,
+            MapSurfaceSceneOverlayAuthoringData[] overlays)
+        {
+            if (surface == null)
+                throw new ArgumentNullException(nameof(surface));
+            overlays ??= Array.Empty<MapSurfaceSceneOverlayAuthoringData>();
+
+            var surfaceData = new SerializedObject(surface);
+            SerializedProperty sceneOverlays = surfaceData.FindProperty("sceneOverlays");
+            if (sceneOverlays == null)
+                throw new InvalidOperationException("MapSurfaceAuthoring scene-overlays field is missing.");
+
+            sceneOverlays.arraySize = overlays.Length;
+            for (int index = 0; index < overlays.Length; index++)
+            {
+                MapSurfaceSceneOverlayAuthoringData overlay = overlays[index];
+                SerializedProperty element = sceneOverlays.GetArrayElementAtIndex(index);
+                element.FindPropertyRelative("Center").vector3Value = overlay.Center;
+                element.FindPropertyRelative("Rotation").quaternionValue = overlay.Rotation;
+                element.FindPropertyRelative("HalfExtents").vector2Value = overlay.HalfExtents;
+                element.FindPropertyRelative("Height").floatValue = overlay.Height;
+                element.FindPropertyRelative("Normal").vector3Value = overlay.Normal;
+                element.FindPropertyRelative("SurfaceType").intValue = (int)overlay.SurfaceType;
+                element.FindPropertyRelative("MovementMask").intValue = (int)overlay.MovementMask;
+                element.FindPropertyRelative("Flags").intValue = (int)overlay.Flags;
+                element.FindPropertyRelative("LayerId").intValue = overlay.LayerId;
+            }
+            surfaceData.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(surface);
+        }
+
+        internal static MapSurfaceSceneOverlayAuthoringData[] CaptureSurfaceSceneOverlays(
+            string sourceScenePath)
+        {
+            Scene sourceScene = EditorSceneManager.OpenScene(sourceScenePath, OpenSceneMode.Single);
+            try
+            {
+                OperationMapSceneView sourceView = RequireSourceView(sourceScene);
+                MapSurfaceDataAsset surfaceData =
+                    sourceView.MapSurfaceAuthoring.BakedSurfaceData;
+                MapSurfaceSceneOverlayAuthoringData[] authoredOverlays =
+                    FilterSurfaceOverlays(
+                        MapSurfaceSceneOverlayPresentation.Capture(sourceView),
+                        surfaceData);
+                MapSurfaceSceneOverlayAuthoringData[] virtualizedOverlays =
+                    CaptureVirtualizedRoadSurfaceOverlays(surfaceData);
+                return CombineSurfaceSceneOverlays(
+                    authoredOverlays,
+                    virtualizedOverlays,
+                    sourceScenePath);
+            }
+            finally
+            {
+                CloseSceneKeepingEditorValid(sourceScene);
+            }
+        }
+
+        internal static MapSurfaceSceneOverlayAuthoringData[]
+            CaptureVirtualizedRoadSurfaceOverlays()
+        {
+            MapSurfaceDataAsset surfaceData =
+                AssetDatabase.LoadAssetAtPath<MapSurfaceDataAsset>(
+                    OperationMapAddressablesLayoutBuilder.MapSurfacePath);
+            return CaptureVirtualizedRoadSurfaceOverlays(surfaceData);
+        }
+
+        private static MapSurfaceSceneOverlayAuthoringData[]
+            CaptureVirtualizedRoadSurfaceOverlays(MapSurfaceDataAsset surfaceData)
+        {
+            if (surfaceData == null || surfaceData.CellSize <= 0f ||
+                surfaceData.Dimensions.x <= 0 || surfaceData.Dimensions.y <= 0)
+            {
+                throw new InvalidOperationException(
+                    "Virtualized road overlays require valid baked map-surface bounds.");
+            }
+
+            OperationMapRenderDatabaseBakeConfig config =
+                AssetDatabase.LoadAssetAtPath<OperationMapRenderDatabaseBakeConfig>(
+                    OperationMapRenderDatabaseBuilder.ConfigPath);
+            if (config == null)
+            {
+                throw new InvalidOperationException(
+                    "Virtualized render database is missing: " +
+                    OperationMapRenderDatabaseBuilder.ConfigPath);
+            }
+            if (!config.TryValidateSchema(out string error))
+            {
+                throw new InvalidOperationException(
+                    "Virtualized render database is invalid: " + error);
+            }
+
+            var overlays = new List<MapSurfaceSceneOverlayAuthoringData>();
+            for (int placementIndex = 0; placementIndex < config.Placements.Count; placementIndex++)
+            {
+                OperationMapRenderPlacementConfigRecord placement = config.Placements[placementIndex];
+                OperationMapRenderPrototypeConfigRecord prototype =
+                    config.Prototypes[placement.PrototypeIndex];
+                int partEnd = prototype.FirstPart + prototype.PartCount;
+                for (int partIndex = prototype.FirstPart; partIndex < partEnd; partIndex++)
+                {
+                    OperationMapRenderPrototypePartConfigRecord part = config.Parts[partIndex];
+                    if ((part.LodFlags & OperationMapRenderLodFlags.Lod0) == 0)
+                        continue;
+
+                    Mesh mesh = config.Meshes[part.MeshIndex].Mesh;
+                    if (!TryResolveVirtualizedRoadType(mesh, out MapSurfaceType surfaceType))
+                        continue;
+
+                    Matrix4x4 worldMatrix = placement.WorldMatrix * part.LocalToPlacement;
+                    Bounds worldBounds = TransformBounds(part.LocalBounds, worldMatrix);
+                    if (worldBounds.extents.x <= 0.01f || worldBounds.extents.z <= 0.01f)
+                        continue;
+                    if (!IntersectsSurfaceBounds(worldBounds, surfaceData))
+                        continue;
+
+                    overlays.Add(new MapSurfaceSceneOverlayAuthoringData
+                    {
+                        Center = worldBounds.center,
+                        Rotation = Quaternion.identity,
+                        HalfExtents = new Vector2(
+                            worldBounds.extents.x + 0.1f,
+                            worldBounds.extents.z + 0.1f),
+                        Height = worldBounds.max.y,
+                        Normal = Vector3.up,
+                        SurfaceType = surfaceType,
+                        MovementMask = MapSurfaceMovementMask.AllGroundUnits |
+                                       MapSurfaceMovementMask.AirGrounded,
+                        Flags = MapSurfaceFlags.Road,
+                        LayerId = 0
+                    });
+                }
+            }
+
+            return overlays.ToArray();
+        }
+
+        private static bool IntersectsSurfaceBounds(
+            Bounds worldBounds,
+            MapSurfaceDataAsset surfaceData)
+        {
+            Vector3 min = surfaceData.GridOrigin;
+            Vector3 max = min + new Vector3(
+                surfaceData.Dimensions.x * surfaceData.CellSize,
+                0f,
+                surfaceData.Dimensions.y * surfaceData.CellSize);
+            return worldBounds.max.x > min.x && worldBounds.min.x < max.x &&
+                   worldBounds.max.z > min.z && worldBounds.min.z < max.z;
+        }
+
+        private static MapSurfaceSceneOverlayAuthoringData[] FilterSurfaceOverlays(
+            MapSurfaceSceneOverlayAuthoringData[] overlays,
+            MapSurfaceDataAsset surfaceData)
+        {
+            if (surfaceData == null || surfaceData.CellSize <= 0f ||
+                surfaceData.Dimensions.x <= 0 || surfaceData.Dimensions.y <= 0)
+            {
+                throw new InvalidOperationException(
+                    "Scene overlays require valid baked map-surface bounds.");
+            }
+
+            Vector3 min = surfaceData.GridOrigin;
+            Vector3 max = min + new Vector3(
+                surfaceData.Dimensions.x * surfaceData.CellSize,
+                0f,
+                surfaceData.Dimensions.y * surfaceData.CellSize);
+            var filtered = new List<MapSurfaceSceneOverlayAuthoringData>(overlays.Length);
+            for (int index = 0; index < overlays.Length; index++)
+            {
+                MapSurfaceSceneOverlayAuthoringData overlay = overlays[index];
+                if (overlay.Center.x + overlay.HalfExtents.x <= min.x ||
+                    overlay.Center.x - overlay.HalfExtents.x >= max.x ||
+                    overlay.Center.z + overlay.HalfExtents.y <= min.z ||
+                    overlay.Center.z - overlay.HalfExtents.y >= max.z)
+                {
+                    continue;
+                }
+                filtered.Add(overlay);
+            }
+
+            return filtered.ToArray();
+        }
+
+        private static MapSurfaceSceneOverlayAuthoringData[] CombineSurfaceSceneOverlays(
+            MapSurfaceSceneOverlayAuthoringData[] authoredOverlays,
+            MapSurfaceSceneOverlayAuthoringData[] virtualizedOverlays,
+            string sourceScenePath)
+        {
+            if (authoredOverlays.Length == 0 || virtualizedOverlays.Length == 0)
+            {
+                throw new InvalidOperationException(
+                    "Operation-map source and virtualized render database both require " +
+                    $"road surface overlays: {sourceScenePath}");
+            }
+
+            var overlays = new MapSurfaceSceneOverlayAuthoringData[
+                authoredOverlays.Length + virtualizedOverlays.Length];
+            Array.Copy(authoredOverlays, overlays, authoredOverlays.Length);
+            Array.Copy(
+                virtualizedOverlays,
+                0,
+                overlays,
+                authoredOverlays.Length,
+                virtualizedOverlays.Length);
+            return overlays;
+        }
+
+        private static bool TryResolveVirtualizedRoadType(
+            Mesh mesh,
+            out MapSurfaceType surfaceType)
+        {
+            surfaceType = MapSurfaceType.Road;
+            if (mesh == null || string.IsNullOrEmpty(mesh.name))
+                return false;
+
+            string name = mesh.name;
+            if (name.IndexOf("DirtRoad_Slope", StringComparison.OrdinalIgnoreCase) >= 0)
+                return false;
+            if (name.IndexOf("DirtRoad", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                surfaceType = MapSurfaceType.DirtRoad;
+                return true;
+            }
+            if (name.IndexOf("Runway", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                surfaceType = MapSurfaceType.Highway;
+                return true;
+            }
+            if (name.IndexOf("Road_Light", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                name.IndexOf("Road_Edge", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                name.IndexOf("Road_Warning", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                return false;
+            }
+
+            return name.StartsWith("SM_Env_Road_", StringComparison.OrdinalIgnoreCase) ||
+                   name.StartsWith("SM_Gen_Env_Road_", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static Bounds TransformBounds(Bounds localBounds, Matrix4x4 matrix)
+        {
+            Vector3 localExtents = localBounds.extents;
+            Vector3 worldExtents = new(
+                Mathf.Abs(matrix.m00) * localExtents.x +
+                Mathf.Abs(matrix.m01) * localExtents.y +
+                Mathf.Abs(matrix.m02) * localExtents.z,
+                Mathf.Abs(matrix.m10) * localExtents.x +
+                Mathf.Abs(matrix.m11) * localExtents.y +
+                Mathf.Abs(matrix.m12) * localExtents.z,
+                Mathf.Abs(matrix.m20) * localExtents.x +
+                Mathf.Abs(matrix.m21) * localExtents.y +
+                Mathf.Abs(matrix.m22) * localExtents.z);
+            return new Bounds(
+                matrix.MultiplyPoint3x4(localBounds.center),
+                worldExtents * 2f);
         }
 
         private static void PublishCandidate()
@@ -275,7 +535,8 @@ namespace Game.Editor
                 input.BuildingPlacementsPath,
                 input.VehiclePlacementsPath,
                 input.SurfaceDataPath,
-                input.SubScenePath
+                input.SubScenePath,
+                OperationMapRenderDatabaseBuilder.ConfigPath
             };
             var fingerprint = new StringBuilder(1024);
             for (int index = 0; index < inputPaths.Length; index++)
@@ -283,13 +544,14 @@ namespace Game.Editor
 
             return new RuntimeBindingLedger
             {
-                schemaVersion = 2,
+                schemaVersion = 4,
                 operationMapId = input.OperationMapId,
                 sourceSceneGuid = AssetDatabase.AssetPathToGUID(sourceScenePath),
                 sourceSceneHash = ComputeFileHash(sourceScenePath),
                 inputHash = ComputeTextHash(fingerprint.ToString()),
                 strippedRendererCount = input.SourceRendererCount,
                 strippedColliderCount = input.SourceColliderCount,
+                copiedSurfaceOverlayCount = input.SceneOverlays.Length,
                 copiedPhysicsIdentities = Array.Empty<string>(),
                 outputGameObjectCount = 7,
                 outputHash = string.Empty
@@ -383,6 +645,7 @@ namespace Game.Editor
             internal readonly float MaxBuildingSlopeDegrees;
             internal readonly float MaxInfantrySlopeDegrees;
             internal readonly float MaxVehicleSlopeDegrees;
+            internal readonly MapSurfaceSceneOverlayAuthoringData[] SceneOverlays;
             internal readonly int SourceRendererCount;
             internal readonly int SourceColliderCount;
             internal readonly string PresentationSourceSceneGuid;
@@ -402,6 +665,13 @@ namespace Game.Editor
                 MaxBuildingSlopeDegrees = source.MapSurfaceAuthoring.MaxBuildingSlopeDegrees;
                 MaxInfantrySlopeDegrees = source.MapSurfaceAuthoring.MaxInfantrySlopeDegrees;
                 MaxVehicleSlopeDegrees = source.MapSurfaceAuthoring.MaxVehicleSlopeDegrees;
+                MapSurfaceDataAsset surfaceData = source.MapSurfaceAuthoring.BakedSurfaceData;
+                SceneOverlays = CombineSurfaceSceneOverlays(
+                    FilterSurfaceOverlays(
+                        MapSurfaceSceneOverlayPresentation.Capture(source),
+                        surfaceData),
+                    CaptureVirtualizedRoadSurfaceOverlays(surfaceData),
+                    source.gameObject.scene.path);
                 SourceRendererCount = source.MapRoot.GetComponentsInChildren<Renderer>(true).Length;
                 SourceColliderCount = source.MapRoot.GetComponentsInChildren<Collider>(true).Length;
                 PresentationSourceScenePath = source.gameObject.scene.path;
@@ -421,6 +691,7 @@ namespace Game.Editor
             public string inputHash;
             public int strippedRendererCount;
             public int strippedColliderCount;
+            public int copiedSurfaceOverlayCount;
             public string[] copiedPhysicsIdentities;
             public int outputGameObjectCount;
             public string outputHash;

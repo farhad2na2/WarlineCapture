@@ -1,7 +1,10 @@
 using System;
 using System.Linq;
+using Game.Authoring;
 using Game.Composition;
+using Game.Components;
 using Game.Editor;
+using Game.Configs;
 using Game.Runtime;
 using NUnit.Framework;
 using UnityEditor;
@@ -33,9 +36,17 @@ public sealed class OperationMapRuntimeBindingSceneValidatorTests
             passed++;
             tests.CandidateEntitySceneRejectsAddedCollider();
             passed++;
-            tests.PresentationOnlySceneRejectsAddedRenderer();
+            tests.ProductionEntitySceneRejectsAddedRenderer();
             passed++;
-            tests.PresentationOnlySceneRejectsMissingAuthoringSourceIdentity();
+            tests.ProductionEntitySceneRejectsMissingSurfaceOverlays();
+            passed++;
+            tests.GeneratedScenePreservesSourceSurfaceOverlays();
+            passed++;
+            tests.MissionOneDenseRuntimeBindingPreservesSourceSurfaceOverlays();
+            passed++;
+            tests.SerializedRoadOverlaysStayInsideActiveSurfaceBounds();
+            passed++;
+            tests.MissionOneDirtRoadOverlayMatchesVirtualizedRendererBounds();
             passed++;
             Debug.Log($"[OperationMapRuntimeBindingSceneValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -85,9 +96,11 @@ public sealed class OperationMapRuntimeBindingSceneValidatorTests
         try
         {
             Assert.That(
-                OperationMapRuntimeBindingSceneValidator.TryValidateLoadedScene(
+                OperationMapRuntimeBindingSceneValidator.TryValidateLoadedEntityScene(
                     scene,
                     StaticMapPresentationBaker.CurrentOperationMapId,
+                    OperationMapAddressablesLayoutBuilder.DefinitionPath,
+                    DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath,
                     out string error),
                 Is.True,
                 error);
@@ -109,7 +122,9 @@ public sealed class OperationMapRuntimeBindingSceneValidatorTests
             dependencies,
             Does.Not.Contain(StaticMapPresentationBaker.CurrentStagedOperationMapScenePath));
         Assert.That(
-            dependencies.Any(path => path.Contains("GeneratedStaticMapPresentation", StringComparison.Ordinal)),
+            dependencies.Any(path =>
+                path.Contains("GeneratedStaticMapPresentation", StringComparison.Ordinal) &&
+                path.EndsWith(".unity", StringComparison.OrdinalIgnoreCase)),
             Is.False,
             "Presentation chunk scenes must remain independently streamed dependencies.");
     }
@@ -147,9 +162,11 @@ public sealed class OperationMapRuntimeBindingSceneValidatorTests
             dependencies,
             Does.Not.Contain(OperationMapAddressablesLayoutBuilder.AuthoringScenePath));
         Assert.That(
-            dependencies.Any(path => path.Contains(
-                "GeneratedStaticMapPresentation",
-                StringComparison.OrdinalIgnoreCase)),
+            dependencies.Any(path =>
+                path.Contains(
+                    "GeneratedStaticMapPresentation",
+                    StringComparison.OrdinalIgnoreCase) &&
+                path.EndsWith(".unity", StringComparison.OrdinalIgnoreCase)),
             Is.False);
     }
 
@@ -208,7 +225,7 @@ public sealed class OperationMapRuntimeBindingSceneValidatorTests
     }
 
     [Test]
-    public void PresentationOnlySceneRejectsAddedRenderer()
+    public void ProductionEntitySceneRejectsAddedRenderer()
     {
         Scene scene = EditorSceneManager.OpenScene(
             OperationMapRuntimeBindingSceneBuilder.OutputPath,
@@ -223,9 +240,11 @@ public sealed class OperationMapRuntimeBindingSceneValidatorTests
             cube.transform.SetParent(view.MapRoot, false);
 
             Assert.That(
-                OperationMapRuntimeBindingSceneValidator.TryValidateLoadedScene(
+                OperationMapRuntimeBindingSceneValidator.TryValidateLoadedEntityScene(
                     scene,
                     StaticMapPresentationBaker.CurrentOperationMapId,
+                    OperationMapAddressablesLayoutBuilder.DefinitionPath,
+                    DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath,
                     out string error),
                 Is.False);
             Assert.That(error, Does.Contain("renderer"));
@@ -237,7 +256,7 @@ public sealed class OperationMapRuntimeBindingSceneValidatorTests
     }
 
     [Test]
-    public void PresentationOnlySceneRejectsMissingAuthoringSourceIdentity()
+    public void ProductionEntitySceneRejectsMissingSurfaceOverlays()
     {
         Scene scene = EditorSceneManager.OpenScene(
             OperationMapRuntimeBindingSceneBuilder.OutputPath,
@@ -247,22 +266,116 @@ public sealed class OperationMapRuntimeBindingSceneValidatorTests
             OperationMapSceneView view = scene.GetRootGameObjects()
                 .SelectMany(root => root.GetComponentsInChildren<OperationMapSceneView>(true))
                 .Single();
-            var serializedView = new SerializedObject(view);
-            serializedView.FindProperty("presentationSourceSceneGuid").stringValue = string.Empty;
-            serializedView.ApplyModifiedPropertiesWithoutUndo();
+            OperationMapRuntimeBindingSceneBuilder.ApplySurfaceSceneOverlays(
+                view.MapSurfaceAuthoring,
+                Array.Empty<MapSurfaceSceneOverlayAuthoringData>());
 
             Assert.That(
-                OperationMapRuntimeBindingSceneValidator.TryValidateLoadedScene(
+                OperationMapRuntimeBindingSceneValidator.TryValidateLoadedEntityScene(
                     scene,
                     StaticMapPresentationBaker.CurrentOperationMapId,
+                    OperationMapAddressablesLayoutBuilder.DefinitionPath,
+                    DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath,
                     out string error),
                 Is.False);
-            Assert.That(error, Does.Contain("presentation-source"));
+            Assert.That(error, Does.Contain("road surface overlays"));
         }
         finally
         {
             EditorSceneManager.CloseScene(scene, true);
         }
+    }
+
+    [Test]
+    public void GeneratedScenePreservesSourceSurfaceOverlays()
+    {
+        AssertSurfaceOverlayParity(
+            DenseCityCandidateAuthoringTransaction.CandidateMapScenePath,
+            OperationMapRuntimeBindingSceneBuilder.OutputPath);
+    }
+
+    [Test]
+    public void MissionOneDenseRuntimeBindingPreservesSourceSurfaceOverlays()
+    {
+        AssertSurfaceOverlayParity(
+            DenseCityCandidateAuthoringTransaction.CandidateMapScenePath,
+            OperationMapEntitySceneCandidateAddressablesLayoutPlanner
+                .DenseCandidateRuntimeBindingPath);
+    }
+
+    private static void AssertSurfaceOverlayParity(string sourceScenePath, string runtimeScenePath)
+    {
+        MapSurfaceSceneOverlayAuthoringData[] expected =
+            OperationMapRuntimeBindingSceneBuilder.CaptureSurfaceSceneOverlays(sourceScenePath);
+
+        Scene runtimeScene = EditorSceneManager.OpenScene(
+            runtimeScenePath,
+            OpenSceneMode.Single);
+        try
+        {
+            MapSurfaceSceneOverlayAuthoringData[] actual =
+                FindSingleView(runtimeScene).MapSurfaceAuthoring.SceneOverlays;
+            Assert.That(expected.Length, Is.GreaterThan(0));
+            Assert.That(actual.Length, Is.EqualTo(expected.Length));
+            for (int index = 0; index < expected.Length; index++)
+            {
+                Assert.That(actual[index].Center, Is.EqualTo(expected[index].Center));
+                Assert.That(actual[index].Rotation, Is.EqualTo(expected[index].Rotation));
+                Assert.That(actual[index].HalfExtents, Is.EqualTo(expected[index].HalfExtents));
+                Assert.That(actual[index].Height, Is.EqualTo(expected[index].Height).Within(0.0001f));
+                Assert.That(actual[index].SurfaceType, Is.EqualTo(expected[index].SurfaceType));
+                Assert.That(actual[index].MovementMask, Is.EqualTo(expected[index].MovementMask));
+                Assert.That(actual[index].Flags, Is.EqualTo(expected[index].Flags));
+                Assert.That(actual[index].LayerId, Is.EqualTo(expected[index].LayerId));
+            }
+        }
+        finally
+        {
+            EditorSceneManager.CloseScene(runtimeScene, true);
+        }
+    }
+
+    [Test]
+    public void SerializedRoadOverlaysStayInsideActiveSurfaceBounds()
+    {
+        MapSurfaceDataAsset surface = AssetDatabase.LoadAssetAtPath<MapSurfaceDataAsset>(
+            OperationMapAddressablesLayoutBuilder.MapSurfacePath);
+        Assert.That(surface, Is.Not.Null);
+        Vector3 min = surface.GridOrigin;
+        Vector3 max = min + new Vector3(
+            surface.Dimensions.x * surface.CellSize,
+            0f,
+            surface.Dimensions.y * surface.CellSize);
+        MapSurfaceSceneOverlayAuthoringData[] overlays =
+            OperationMapRuntimeBindingSceneBuilder.CaptureSurfaceSceneOverlays(
+                DenseCityCandidateAuthoringTransaction.CandidateMapScenePath);
+
+        Assert.That(overlays.Length, Is.GreaterThan(0));
+        for (int index = 0; index < overlays.Length; index++)
+        {
+            MapSurfaceSceneOverlayAuthoringData overlay = overlays[index];
+            Assert.That(overlay.Center.x + overlay.HalfExtents.x, Is.GreaterThan(min.x));
+            Assert.That(overlay.Center.x - overlay.HalfExtents.x, Is.LessThan(max.x));
+            Assert.That(overlay.Center.z + overlay.HalfExtents.y, Is.GreaterThan(min.z));
+            Assert.That(overlay.Center.z - overlay.HalfExtents.y, Is.LessThan(max.z));
+        }
+    }
+
+    [Test]
+    public void MissionOneDirtRoadOverlayMatchesVirtualizedRendererBounds()
+    {
+        MapSurfaceSceneOverlayAuthoringData[] overlays =
+            OperationMapRuntimeBindingSceneBuilder.CaptureVirtualizedRoadSurfaceOverlays();
+        Assert.That(
+            Array.Exists(
+                overlays,
+                overlay =>
+                    overlay.SurfaceType == MapSurfaceType.DirtRoad &&
+                    Mathf.Abs(overlay.Center.x - 1790.856f) <= 0.01f &&
+                    Mathf.Abs(overlay.Center.z - 692.928f) <= 0.01f &&
+                    Mathf.Abs(overlay.Height - 0.418999f) <= 0.01f),
+            Is.True,
+            "Mission 1 dirt road must use the exact virtualized renderer bounds.");
     }
 
     private static Scene OpenCandidateEntityScene()

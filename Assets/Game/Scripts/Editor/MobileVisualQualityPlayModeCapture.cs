@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using Game.Authoring;
 using Game.Composition;
 using Game.Components;
 using Game.Configs;
@@ -96,6 +97,16 @@ namespace Game.Editor
         {
             exitEditorAfterCapture = false;
             Run(CaptureProfile.Candidate);
+        }
+
+        [MenuItem("Game/Rendering/Capture Mobile Visual Quality/Mission 1 Grounding Proof")]
+        public static void CaptureMissionOneGroundingProof()
+        {
+            exitEditorAfterCapture = false;
+            Run(
+                CaptureProfile.Current,
+                FirstContactMissionId,
+                Path.Combine(Path.GetTempPath(), "warline-m01-grounding-proof"));
         }
 
         public static void CaptureFromEnvironment()
@@ -212,7 +223,10 @@ namespace Game.Editor
             return path;
         }
 
-        private static void Run(CaptureProfile profile)
+        private static void Run(
+            CaptureProfile profile,
+            string forcedMissionId = null,
+            string forcedArtifactDirectory = null)
         {
             try
             {
@@ -226,12 +240,16 @@ namespace Game.Editor
 
                 captureProfile = profile;
                 selectedProfile = LoadProfile(profile);
-                captureMissionId = ResolveCaptureMissionId();
+                captureMissionId = string.IsNullOrWhiteSpace(forcedMissionId)
+                    ? ResolveCaptureMissionId()
+                    : forcedMissionId;
                 bool matrixRequested = string.Equals(
                     Environment.GetEnvironmentVariable(MobileVisualQualityCaptureMatrix.ModeEnvironmentVariable),
                     MobileVisualQualityCaptureMatrix.MatrixMode,
                     StringComparison.OrdinalIgnoreCase);
-                artifactDirectory = Environment.GetEnvironmentVariable("WARLINE_MOBILE_VISUAL_CAPTURE_DIR");
+                artifactDirectory = forcedArtifactDirectory;
+                if (string.IsNullOrWhiteSpace(artifactDirectory))
+                    artifactDirectory = Environment.GetEnvironmentVariable("WARLINE_MOBILE_VISUAL_CAPTURE_DIR");
                 if (string.IsNullOrWhiteSpace(artifactDirectory))
                 {
                     artifactDirectory = matrixRequested
@@ -495,6 +513,7 @@ namespace Game.Editor
             {
                 WriteCenterRayDiagnostics(camera, viewpoint);
                 WriteDirtRoadEntityDiagnostics(viewpoint);
+                WriteGroundingDiagnostics(viewpoint);
                 WriteEnvironmentDiagnostics(
                     camera,
                     Path.Combine(artifactDirectory, $"{GetProfileLabel()}_{viewpoint}_environment.txt"));
@@ -552,6 +571,110 @@ namespace Game.Editor
                     $"worldUp={Format((Vector3)math.normalizesafe(math.mul(orientation, new float3(0f, 1f, 0f))))} " +
                     $"position={Format((Vector3)matrix.c3.xyz)} components={componentTypes}");
             }
+        }
+
+        private static void WriteGroundingDiagnostics(string viewpoint)
+        {
+            World world = World.DefaultGameObjectInjectionWorld;
+            if (world == null || !world.IsCreated)
+                return;
+
+            EntityManager entityManager = world.EntityManager;
+            using StreamWriter writer = new(Path.Combine(
+                artifactDirectory,
+                $"{GetProfileLabel()}_{viewpoint}_grounding.txt"));
+
+            MapSurfaceAuthoring[] surfaceAuthorings = UnityEngine.Object.FindObjectsByType<MapSurfaceAuthoring>(
+                FindObjectsInactive.Include,
+                FindObjectsSortMode.InstanceID);
+            MapBakeGroupAuthoring[] bakeGroups = UnityEngine.Object.FindObjectsByType<MapBakeGroupAuthoring>(
+                FindObjectsInactive.Include,
+                FindObjectsSortMode.InstanceID);
+            writer.WriteLine($"managedSurfaceAuthorings={surfaceAuthorings.Length} managedBakeGroups={bakeGroups.Length}");
+
+            NativeArray<MapSurfaceSceneOverlay> overlays = default;
+            using (EntityQuery surfaceQuery = entityManager.CreateEntityQuery(
+                       ComponentType.ReadOnly<MapSurfaceComponent>()))
+            {
+                using NativeArray<Entity> surfaceEntities = surfaceQuery.ToEntityArray(Allocator.Temp);
+                writer.WriteLine($"surfaceEntities={surfaceEntities.Length}");
+                if (surfaceEntities.Length == 1 &&
+                    entityManager.HasBuffer<MapSurfaceSceneOverlay>(surfaceEntities[0]))
+                {
+                    DynamicBuffer<MapSurfaceSceneOverlay> buffer =
+                        entityManager.GetBuffer<MapSurfaceSceneOverlay>(surfaceEntities[0], true);
+                    overlays = buffer.ToNativeArray(Allocator.Temp);
+                }
+            }
+            writer.WriteLine($"sceneOverlays={(overlays.IsCreated ? overlays.Length : 0)}");
+
+            using EntityQuery roadQuery = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<MaterialMeshInfo>(),
+                ComponentType.ReadOnly<RenderMeshArray>(),
+                ComponentType.ReadOnly<WorldRenderBounds>());
+            using NativeArray<Entity> roadEntities = roadQuery.ToEntityArray(Allocator.Temp);
+            using EntityQuery unitQuery = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<CampaignMissionUnitRoleComponent>(),
+                ComponentType.ReadOnly<LocalTransform>(),
+                ComponentType.ReadOnly<UnitSurfaceComponent>());
+            using NativeArray<Entity> unitEntities = unitQuery.ToEntityArray(Allocator.Temp);
+            writer.WriteLine($"missionUnits={unitEntities.Length}");
+            for (int i = 0; i < unitEntities.Length; i++)
+            {
+                Entity unit = unitEntities[i];
+                CampaignMissionUnitRoleComponent role =
+                    entityManager.GetComponentData<CampaignMissionUnitRoleComponent>(unit);
+                LocalTransform transform = entityManager.GetComponentData<LocalTransform>(unit);
+                UnitSurfaceComponent surface = entityManager.GetComponentData<UnitSurfaceComponent>(unit);
+                float groundOffset = entityManager.HasComponent<UnitGroundOffsetComponent>(unit)
+                    ? entityManager.GetComponentData<UnitGroundOffsetComponent>(unit).Value
+                    : 0f;
+                int health = entityManager.HasComponent<UnitHealth>(unit)
+                    ? entityManager.GetComponentData<UnitHealth>(unit).Current
+                    : int.MinValue;
+                writer.WriteLine(
+                    $"unit={unit.Index}:{unit.Version} role={role.MissionRoleId} health={health} " +
+                    $"position={Format((Vector3)transform.Position)} sampledHeight={surface.LastSampledHeight:0.######} " +
+                    $"groundOffset={groundOffset:0.######} hasSurface={surface.HasSurface} grounded={surface.IsGrounded}");
+
+                if (overlays.IsCreated)
+                {
+                    for (int overlayIndex = 0; overlayIndex < overlays.Length; overlayIndex++)
+                    {
+                        MapSurfaceSceneOverlay overlay = overlays[overlayIndex];
+                        float3 local = math.mul(math.inverse(overlay.Rotation), transform.Position - overlay.Center);
+                        if (math.abs(local.x) > overlay.HalfExtents.x ||
+                            math.abs(local.z) > overlay.HalfExtents.y)
+                            continue;
+                        writer.WriteLine(
+                            $"  overlay={overlayIndex} type={overlay.SurfaceType} height={overlay.Height:0.######} " +
+                            $"center={Format((Vector3)overlay.Center)} halfExtents={overlay.HalfExtents.x:0.###},{overlay.HalfExtents.y:0.###}");
+                    }
+                }
+
+                for (int roadIndex = 0; roadIndex < roadEntities.Length; roadIndex++)
+                {
+                    Entity road = roadEntities[roadIndex];
+                    MaterialMeshInfo meshInfo = entityManager.GetComponentData<MaterialMeshInfo>(road);
+                    if (meshInfo.HasMaterialMeshIndexRange)
+                        continue;
+                    RenderMeshArray array = entityManager.GetSharedComponentManaged<RenderMeshArray>(road);
+                    Mesh mesh = array.GetMesh(meshInfo);
+                    if (mesh == null || mesh.name.IndexOf("DirtRoad", StringComparison.Ordinal) < 0)
+                        continue;
+                    AABB bounds = entityManager.GetComponentData<WorldRenderBounds>(road).Value;
+                    if (math.abs(transform.Position.x - bounds.Center.x) > bounds.Extents.x ||
+                        math.abs(transform.Position.z - bounds.Center.z) > bounds.Extents.z)
+                        continue;
+                    writer.WriteLine(
+                        $"  road={road.Index}:{road.Version} mesh={mesh.name} " +
+                        $"boundsCenter={Format((Vector3)bounds.Center)} boundsExtents={Format((Vector3)bounds.Extents)} " +
+                        $"roadTop={(bounds.Center.y + bounds.Extents.y):0.######}");
+                }
+            }
+
+            if (overlays.IsCreated)
+                overlays.Dispose();
         }
 
         private static string GetRelevantRenderComponentTypes(EntityManager entityManager, Entity entity)

@@ -1,3 +1,4 @@
+using System;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -8,6 +9,36 @@ using Game.Configs;
 
 namespace Game.Authoring
 {
+    [Serializable]
+    public struct MapSurfaceSceneOverlayAuthoringData
+    {
+        public Vector3 Center;
+        public Quaternion Rotation;
+        public Vector2 HalfExtents;
+        public float Height;
+        public Vector3 Normal;
+        public MapSurfaceType SurfaceType;
+        public MapSurfaceMovementMask MovementMask;
+        public MapSurfaceFlags Flags;
+        public int LayerId;
+
+        public MapSurfaceSceneOverlay ToRuntimeOverlay()
+        {
+            return new MapSurfaceSceneOverlay
+            {
+                Center = Center,
+                Rotation = Rotation,
+                HalfExtents = HalfExtents,
+                Height = Height,
+                Normal = Normal,
+                SurfaceType = SurfaceType,
+                MovementMask = MovementMask,
+                Flags = Flags,
+                LayerId = LayerId
+            };
+        }
+    }
+
     [DisallowMultipleComponent]
     [MovedFrom(true, sourceNamespace: "", sourceAssembly: "Game.Authoring", sourceClassName: "MapSurfaceAuthoring")]
     public sealed class MapSurfaceAuthoring : MonoBehaviour
@@ -19,6 +50,8 @@ namespace Game.Authoring
         [SerializeField, Min(0f)] private float maxBuildingSlopeDegrees = 8f;
         [SerializeField, Min(0f)] private float maxInfantrySlopeDegrees = 35f;
         [SerializeField, Min(0f)] private float maxVehicleSlopeDegrees = 22f;
+        [SerializeField] private MapSurfaceSceneOverlayAuthoringData[] sceneOverlays =
+            Array.Empty<MapSurfaceSceneOverlayAuthoringData>();
 
         public MapSurfaceDataAsset BakedSurfaceData => bakedSurfaceData;
         public GridAuthoringConfig GridConfig => gridConfig;
@@ -27,6 +60,8 @@ namespace Game.Authoring
         public float MaxBuildingSlopeDegrees => maxBuildingSlopeDegrees;
         public float MaxInfantrySlopeDegrees => maxInfantrySlopeDegrees;
         public float MaxVehicleSlopeDegrees => maxVehicleSlopeDegrees;
+        public MapSurfaceSceneOverlayAuthoringData[] SceneOverlays =>
+            sceneOverlays ?? Array.Empty<MapSurfaceSceneOverlayAuthoringData>();
 
         [BakingVersion("WarlineCapture", 1)]
         private sealed class Baker : Baker<MapSurfaceAuthoring>

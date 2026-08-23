@@ -45,6 +45,11 @@ namespace Game.Components
         public int LayerId;
     }
 
+    public struct MapSurfaceSceneOverlayRevision : IComponentData
+    {
+        public uint Value;
+    }
+
     public struct MapSurfaceDiagnosticsComponent : IComponentData
     {
         public int CellCount;

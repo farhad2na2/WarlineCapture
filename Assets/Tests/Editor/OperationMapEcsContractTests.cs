@@ -8,6 +8,37 @@ using Unity.Mathematics;
 
 public sealed class OperationMapEcsContractTests
 {
+    public static void RunFocusedValidation()
+    {
+        var tests = new OperationMapEcsContractTests();
+        int passed = 0;
+        try
+        {
+            tests.ComponentsAndBuffers_UseExpectedEcsKinds();
+            passed++;
+            tests.ContractTypes_AreUnmanaged();
+            passed++;
+            tests.Readiness_UsesExplicitGenerationScopedFlags();
+            passed++;
+            tests.ActiveAndRequestData_CarryBoundedMapScenarioAndMissionIds();
+            passed++;
+            tests.BoundsAndBlobRecords_UseBurstReadableMathAndFixedStrings();
+            passed++;
+            tests.BufferAndStateSizes_RemainBounded();
+            passed++;
+            tests.ResultCodes_CoverFailureUnwindBoundaries();
+            passed++;
+            UnityEngine.Debug.Log($"[OperationMapEcsContractValidation] result=Passed tests={passed}");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            UnityEngine.Debug.LogError(
+                $"[OperationMapEcsContractValidation] result=Failed passed={passed}\n{exception}");
+            ValidationExit.Exit(1);
+        }
+    }
+
     [Test]
     public void ComponentsAndBuffers_UseExpectedEcsKinds()
     {
@@ -18,8 +49,10 @@ public sealed class OperationMapEcsContractTests
         AssertComponent<OperationMapBoundsComponent>();
         AssertComponent<OperationMapMetadataComponent>();
         AssertComponent<OperationMapReadinessComponent>();
+        AssertComponent<MapSurfaceSceneOverlayRevision>();
         AssertBuffer<OperationMapLoadRequestElement>();
         AssertBuffer<OperationMapLoadResultElement>();
+        AssertBuffer<MapSurfaceSceneOverlay>();
     }
 
     [Test]
@@ -32,8 +65,10 @@ public sealed class OperationMapEcsContractTests
         AssertUnmanaged<OperationMapBoundsComponent>();
         AssertUnmanaged<OperationMapMetadataComponent>();
         AssertUnmanaged<OperationMapReadinessComponent>();
+        AssertUnmanaged<MapSurfaceSceneOverlayRevision>();
         AssertUnmanaged<OperationMapLoadRequestElement>();
         AssertUnmanaged<OperationMapLoadResultElement>();
+        AssertUnmanaged<MapSurfaceSceneOverlay>();
         AssertUnmanaged<OperationMapBlob>();
         AssertUnmanaged<OperationMapAnchorBlob>();
         AssertUnmanaged<OperationMapCameraBlob>();
@@ -131,6 +166,8 @@ public sealed class OperationMapEcsContractTests
         Assert.That(UnsafeUtility.SizeOf<OperationMapLoadRequestElement>(), Is.LessThanOrEqualTo(224));
         Assert.That(UnsafeUtility.SizeOf<OperationMapLoadResultElement>(), Is.LessThanOrEqualTo(384));
         Assert.That(UnsafeUtility.SizeOf<OperationMapBoundsComponent>(), Is.EqualTo(72));
+        Assert.That(UnsafeUtility.SizeOf<MapSurfaceSceneOverlayRevision>(), Is.EqualTo(4));
+        Assert.That(UnsafeUtility.SizeOf<MapSurfaceSceneOverlay>(), Is.LessThanOrEqualTo(80));
     }
 
     [Test]

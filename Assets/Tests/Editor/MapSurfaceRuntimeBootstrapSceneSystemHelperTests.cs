@@ -27,7 +27,8 @@ public sealed class MapSurfaceRuntimeBootstrapSceneSystemHelperTests
             tests.DisposeRuntimeSurfaceAfterWorldDisposeDoesNotThrow();
             tests.RuntimeBlobHashChangesWhenSurfacePayloadChanges();
             tests.MapSurfaceAuthoringBakerUsesContentHashDeduplication();
-            Debug.Log("[MapSurfaceRuntimeBootstrapValidation] result=Passed tests=8");
+            tests.SerializedSceneOverlayPublishesWithoutRuntimeRendererHierarchy();
+            Debug.Log("[MapSurfaceRuntimeBootstrapValidation] result=Passed tests=9");
         }
         catch (Exception exception)
         {
@@ -353,6 +354,61 @@ public sealed class MapSurfaceRuntimeBootstrapSceneSystemHelperTests
         StringAssert.Contains("surfaceData.ComputeRuntimeBlobHash()", source);
         StringAssert.Contains("TryGetBlobAssetReference(surfaceHash", source);
         StringAssert.Contains("AddBlobAssetWithCustomHash(ref surfaceBlob, surfaceHash)", source);
+    }
+
+    [Test]
+    public void SerializedSceneOverlayPublishesWithoutRuntimeRendererHierarchy()
+    {
+        using World world = new("SerializedSceneOverlayPublishesWithoutRuntimeRendererHierarchy");
+        var surfaceObject = new GameObject("Surface");
+        MapSurfaceAuthoring authoring = surfaceObject.AddComponent<MapSurfaceAuthoring>();
+        try
+        {
+            var expected = new MapSurfaceSceneOverlayAuthoringData
+            {
+                Center = new Vector3(12f, 0.25f, 8f),
+                Rotation = Quaternion.identity,
+                HalfExtents = new Vector2(4f, 2f),
+                Height = 0.4f,
+                Normal = Vector3.up,
+                SurfaceType = MapSurfaceType.DirtRoad,
+                MovementMask = MapSurfaceMovementMask.AllGroundUnits,
+                Flags = MapSurfaceFlags.Road,
+                LayerId = 0
+            };
+            FieldInfo field = typeof(MapSurfaceAuthoring).GetField(
+                "sceneOverlays",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.That(field, Is.Not.Null);
+            field.SetValue(authoring, new[] { expected });
+
+            Entity surface = world.EntityManager.CreateEntity();
+            MapSurfaceSceneOverlayPresentation.Publish(authoring, world.EntityManager, surface);
+
+            Assert.That(surfaceObject.GetComponentsInChildren<Renderer>(true), Is.Empty);
+            DynamicBuffer<MapSurfaceSceneOverlay> overlays =
+                world.EntityManager.GetBuffer<MapSurfaceSceneOverlay>(surface, true);
+            Assert.That(overlays.Length, Is.EqualTo(1));
+            Assert.That(overlays[0].Height, Is.EqualTo(expected.Height).Within(0.0001f));
+            Assert.That(overlays[0].SurfaceType, Is.EqualTo(MapSurfaceType.DirtRoad));
+            Assert.That(overlays[0].Flags, Is.EqualTo(MapSurfaceFlags.Road));
+            Assert.That(
+                world.EntityManager.GetComponentData<MapSurfaceSceneOverlayRevision>(surface).Value,
+                Is.EqualTo(1));
+
+            expected.Height = 0.7f;
+            field.SetValue(authoring, new[] { expected });
+            MapSurfaceSceneOverlayPresentation.Publish(authoring, world.EntityManager, surface);
+            Assert.That(overlays.Length, Is.EqualTo(1));
+            Assert.That(overlays[0].Height, Is.EqualTo(0.7f).Within(0.0001f));
+            Assert.That(
+                world.EntityManager.GetComponentData<MapSurfaceSceneOverlayRevision>(surface).Value,
+                Is.EqualTo(2));
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(surfaceObject);
+        }
     }
 
     private static MapSurfaceComponent CreateSurfaceComponent(BlobAssetReference<MapSurfaceBlob> blob)

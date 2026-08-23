@@ -1,12 +1,14 @@
+using System.Collections.Generic;
 using Game.Authoring;
 using Game.Components;
+using Game.Rendering;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
 namespace Game.Composition
 {
-    internal static class MapSurfaceSceneOverlayPresentation
+    public static class MapSurfaceSceneOverlayPresentation
     {
         private const float SceneOverlayPadding = 0.1f;
 
@@ -24,45 +26,102 @@ namespace Game.Composition
             DynamicBuffer<MapSurfaceSceneOverlay> overlays = entityManager.GetBuffer<MapSurfaceSceneOverlay>(surfaceEntity);
             overlays.Clear();
 
-            MapBakeGroupAuthoring[] groups = authoring.GetComponentsInChildren<MapBakeGroupAuthoring>(true);
-            for (int i = 0; i < groups.Length; i++)
+            MapSurfaceSceneOverlayAuthoringData[] authoredOverlays = authoring.SceneOverlays;
+            if (authoredOverlays.Length == 0)
+                authoredOverlays = Capture(authoring);
+
+            for (int i = 0; i < authoredOverlays.Length; i++)
+                overlays.Add(authoredOverlays[i].ToRuntimeOverlay());
+
+            uint revision = 1;
+            if (entityManager.HasComponent<MapSurfaceSceneOverlayRevision>(surfaceEntity))
             {
-                MapBakeGroupAuthoring group = groups[i];
-                if (group == null)
+                revision = entityManager.GetComponentData<MapSurfaceSceneOverlayRevision>(surfaceEntity).Value + 1;
+                if (revision == 0)
+                    revision = 1;
+            }
+            else
+            {
+                entityManager.AddComponent<MapSurfaceSceneOverlayRevision>(surfaceEntity);
+            }
+            entityManager.SetComponentData(
+                surfaceEntity,
+                new MapSurfaceSceneOverlayRevision { Value = revision });
+        }
+
+        public static MapSurfaceSceneOverlayAuthoringData[] Capture(MapSurfaceAuthoring authoring)
+        {
+            if (authoring == null)
+                return System.Array.Empty<MapSurfaceSceneOverlayAuthoringData>();
+
+            return Capture(authoring.transform);
+        }
+
+        public static MapSurfaceSceneOverlayAuthoringData[] Capture(OperationMapSceneView view)
+        {
+            if (view == null || !view.gameObject.scene.IsValid())
+                return System.Array.Empty<MapSurfaceSceneOverlayAuthoringData>();
+
+            var overlays = new List<MapSurfaceSceneOverlayAuthoringData>();
+            GameObject[] roots = view.gameObject.scene.GetRootGameObjects();
+            for (int rootIndex = 0; rootIndex < roots.Length; rootIndex++)
+                Append(roots[rootIndex].transform, overlays);
+            return overlays.ToArray();
+        }
+
+        private static MapSurfaceSceneOverlayAuthoringData[] Capture(Transform root)
+        {
+            if (root == null)
+                return System.Array.Empty<MapSurfaceSceneOverlayAuthoringData>();
+
+            var overlays = new List<MapSurfaceSceneOverlayAuthoringData>();
+            Append(root, overlays);
+            return overlays.ToArray();
+        }
+
+        private static void Append(
+            Transform root,
+            List<MapSurfaceSceneOverlayAuthoringData> overlays)
+        {
+            MeshFilter[] filters = root.GetComponentsInChildren<MeshFilter>(true);
+            for (int filterIndex = 0; filterIndex < filters.Length; filterIndex++)
+            {
+                MeshFilter filter = filters[filterIndex];
+                if (filter == null || filter.sharedMesh == null)
+                    continue;
+                MapBakeGroupAuthoring group =
+                    filter.GetComponentInParent<MapBakeGroupAuthoring>(true);
+                if (!TryResolveSettings(
+                        group,
+                        filter.transform,
+                        out MapSurfaceType type,
+                        out MapSurfaceFlags flags,
+                        out MapSurfaceMovementMask mask,
+                        out int layerId))
                     continue;
 
-                MeshFilter[] filters = group.GetComponentsInChildren<MeshFilter>(group.IncludeInactiveChildren);
-                for (int filterIndex = 0; filterIndex < filters.Length; filterIndex++)
+                Renderer renderer = filter.GetComponent<Renderer>();
+                if (renderer == null)
+                    continue;
+
+                Bounds bounds = renderer.bounds;
+                if (bounds.extents.x <= 0.01f || bounds.extents.z <= 0.01f)
+                    continue;
+
+                overlays.Add(new MapSurfaceSceneOverlayAuthoringData
                 {
-                    MeshFilter filter = filters[filterIndex];
-                    if (filter == null || filter.sharedMesh == null || !IsOwnedByGroup(filter, group))
-                        continue;
-                    if (!TryResolveSettings(group, filter.transform, out MapSurfaceType type, out MapSurfaceFlags flags, out MapSurfaceMovementMask mask, out int layerId))
-                        continue;
-
-                    Renderer renderer = filter.GetComponent<Renderer>();
-                    if (renderer == null)
-                        continue;
-
-                    Bounds bounds = renderer.bounds;
-                    if (bounds.extents.x <= 0.01f || bounds.extents.z <= 0.01f)
-                        continue;
-
-                    overlays.Add(new MapSurfaceSceneOverlay
-                    {
-                        Center = bounds.center,
-                        Rotation = quaternion.identity,
-                        HalfExtents = new float2(
-                            bounds.extents.x + SceneOverlayPadding,
-                            bounds.extents.z + SceneOverlayPadding),
-                        Height = bounds.max.y,
-                        Normal = math.up(),
-                        SurfaceType = type,
-                        MovementMask = mask,
-                        Flags = flags,
-                        LayerId = layerId
-                    });
-                }
+                    Center = bounds.center,
+                    Rotation = Quaternion.identity,
+                    HalfExtents = new Vector2(
+                        bounds.extents.x + SceneOverlayPadding,
+                        bounds.extents.z + SceneOverlayPadding),
+                    Height = bounds.max.y,
+                    Normal = Vector3.up,
+                    SurfaceType = type,
+                    MovementMask = mask,
+                    Flags = flags,
+                    LayerId = layerId
+                });
             }
         }
 
@@ -112,14 +171,6 @@ namespace Game.Composition
             }
 
             return false;
-        }
-
-        private static bool IsOwnedByGroup(MeshFilter filter, MapBakeGroupAuthoring ownerGroup)
-        {
-            if (filter == null || ownerGroup == null)
-                return false;
-
-            return filter.GetComponentInParent<MapBakeGroupAuthoring>(true) == ownerGroup;
         }
     }
 }

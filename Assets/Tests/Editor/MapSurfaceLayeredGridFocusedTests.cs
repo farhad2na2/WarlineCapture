@@ -39,9 +39,11 @@ public sealed class MapSurfaceLayeredGridFocusedTests
             tests.MapSurfaceBakeUsesSubCellSamplesForBumpyTerrainSupport();
             tests.UnitSurfaceTrackingKeepsInfantryAboveCurrentCellSupportHeight();
             tests.UnitSurfaceTrackingKeepsInfantryAboveNearbyBumpySupportHeight();
+            tests.UnitSurfaceTrackingKeepsDeadInfantryAboveSceneRoadOverlay();
+            tests.UnitSurfaceTrackingRefreshesSameCountSceneOverlayRevision();
             tests.SpawnGroundingKeepsInfantryAboveNearbyBumpySupportHeight();
             tests.MovePreviewResolverUsesSelectedVehicleFootprint();
-            Debug.Log("[MapSurfaceLayeredGridFocusedValidation] result=Passed tests=20");
+            Debug.Log("[MapSurfaceLayeredGridFocusedValidation] result=Passed tests=22");
         }
         catch (System.Exception exception)
         {
@@ -800,6 +802,121 @@ public sealed class MapSurfaceLayeredGridFocusedTests
         {
             world.Dispose();
         }
+    }
+
+    [Test]
+    public void UnitSurfaceTrackingKeepsDeadInfantryAboveSceneRoadOverlay()
+    {
+        using SurfaceBlobScope scope = CreateSurface(
+            new int2(1, 1),
+            FlatCells(1, 1),
+            new[] { Sample(int2.zero, 1, 0, 0f) },
+            Array.Empty<MapSurfaceConnection>());
+
+        using World world = new("UnitSurfaceTrackingKeepsDeadInfantryAboveSceneRoadOverlay");
+        EntityManager em = world.EntityManager;
+        Entity surfaceEntity = em.CreateEntity(typeof(MapSurfaceComponent));
+        em.SetComponentData(surfaceEntity, scope.Surface);
+        DynamicBuffer<MapSurfaceSceneOverlay> overlays =
+            em.AddBuffer<MapSurfaceSceneOverlay>(surfaceEntity);
+        overlays.Add(new MapSurfaceSceneOverlay
+        {
+            Center = new float3(0.5f, 0.3f, 0.5f),
+            Rotation = quaternion.identity,
+            HalfExtents = new float2(0.5f),
+            Height = 0.4f,
+            Normal = math.up(),
+            SurfaceType = MapSurfaceType.DirtRoad,
+            MovementMask = MapSurfaceMovementMask.AllGroundUnits,
+            Flags = MapSurfaceFlags.Road
+        });
+
+        Entity corpse = em.CreateEntity(
+            typeof(UnitSurfaceComponent),
+            typeof(UnitGrid),
+            typeof(UnitMovementBehavior),
+            typeof(LocalTransform),
+            typeof(UnitGroundOffsetComponent),
+            typeof(UnitHealth));
+        em.SetComponentData(corpse, new UnitGrid { Cell = int2.zero });
+        em.SetComponentData(corpse, new UnitMovementBehavior { UsesVehicleMotion = 0 });
+        em.SetComponentData(corpse, LocalTransform.FromPosition(new float3(0.5f, -1f, 0.5f)));
+        em.SetComponentData(corpse, new UnitGroundOffsetComponent { Value = 0.1f });
+        em.SetComponentData(corpse, new UnitHealth { Current = 0, Max = 100 });
+
+        SystemHandle trackingSystem = world.CreateSystem<UnitSurfaceTrackingSystem>();
+        SystemHandle groundingSystem = world.CreateSystem<UnitGroundingSystem>();
+        trackingSystem.Update(world.Unmanaged);
+        groundingSystem.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
+
+        UnitSurfaceComponent sampled = em.GetComponentData<UnitSurfaceComponent>(corpse);
+        LocalTransform transform = em.GetComponentData<LocalTransform>(corpse);
+        Assert.That(sampled.LastSampledHeight, Is.EqualTo(0.4f).Within(0.0001f));
+        Assert.That(transform.Position.y, Is.EqualTo(0.5f).Within(0.0001f));
+        Assert.That(sampled.IsGrounded, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void UnitSurfaceTrackingRefreshesSameCountSceneOverlayRevision()
+    {
+        using SurfaceBlobScope scope = CreateSurface(
+            new int2(1, 1),
+            FlatCells(1, 1),
+            new[] { Sample(int2.zero, 1, 0, 0f) },
+            Array.Empty<MapSurfaceConnection>());
+
+        using World world = new("UnitSurfaceTrackingRefreshesSameCountSceneOverlayRevision");
+        EntityManager em = world.EntityManager;
+        Entity surfaceEntity = em.CreateEntity(typeof(MapSurfaceComponent));
+        em.SetComponentData(surfaceEntity, scope.Surface);
+        DynamicBuffer<MapSurfaceSceneOverlay> overlays =
+            em.AddBuffer<MapSurfaceSceneOverlay>(surfaceEntity);
+        overlays.Add(new MapSurfaceSceneOverlay
+        {
+            Center = new float3(0.5f, 0.2f, 0.5f),
+            Rotation = quaternion.identity,
+            HalfExtents = new float2(0.5f),
+            Height = 0.4f,
+            Normal = math.up(),
+            SurfaceType = MapSurfaceType.DirtRoad,
+            MovementMask = MapSurfaceMovementMask.AllGroundUnits,
+            Flags = MapSurfaceFlags.Road
+        });
+        em.AddComponentData(
+            surfaceEntity,
+            new MapSurfaceSceneOverlayRevision { Value = 1 });
+
+        Entity unit = em.CreateEntity(
+            typeof(UnitSurfaceComponent),
+            typeof(UnitGrid),
+            typeof(UnitMovementBehavior),
+            typeof(LocalTransform));
+        em.SetComponentData(unit, new UnitGrid { Cell = int2.zero });
+        em.SetComponentData(unit, new UnitMovementBehavior { UsesVehicleMotion = 0 });
+        em.SetComponentData(unit, LocalTransform.FromPosition(new float3(0.5f, 0f, 0.5f)));
+
+        SystemHandle trackingSystem = world.CreateSystem<UnitSurfaceTrackingSystem>();
+        trackingSystem.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
+        Assert.That(
+            em.GetComponentData<UnitSurfaceComponent>(unit).LastSampledHeight,
+            Is.EqualTo(0.4f).Within(0.0001f));
+
+        trackingSystem.Update(world.Unmanaged);
+        overlays = em.GetBuffer<MapSurfaceSceneOverlay>(surfaceEntity);
+        MapSurfaceSceneOverlay changed = overlays[0];
+        changed.Height = 0.7f;
+        overlays[0] = changed;
+        em.SetComponentData(
+            surfaceEntity,
+            new MapSurfaceSceneOverlayRevision { Value = 2 });
+
+        trackingSystem.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
+        Assert.That(
+            em.GetComponentData<UnitSurfaceComponent>(unit).LastSampledHeight,
+            Is.EqualTo(0.7f).Within(0.0001f));
     }
 
     [Test]

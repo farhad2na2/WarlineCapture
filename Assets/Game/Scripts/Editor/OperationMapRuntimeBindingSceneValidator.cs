@@ -93,6 +93,11 @@ namespace Game.Editor
                 error = "EntityScene runtime binding must not retain PresentationOnly source identity.";
                 return false;
             }
+            if (view.MapSurfaceAuthoring.SceneOverlays.Length == 0)
+            {
+                error = "EntityScene runtime binding is missing serialized road surface overlays.";
+                return false;
+            }
 
             error = null;
             return true;

@@ -309,7 +309,8 @@ namespace Game.Editor
             EnsureCandidateRuntimeBindingScene(
                 OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateRuntimeBindingPath,
                 OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateDefinitionPath,
-                OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath);
+                OperationMapEntityPresentationMigrationEditor.CandidateSubScenePath,
+                StaticMapPresentationBaker.CurrentStagedOperationMapScenePath);
         }
 
         internal static void EnsureDenseCityCandidateRuntimeBindingScene()
@@ -317,13 +318,15 @@ namespace Game.Editor
             EnsureCandidateRuntimeBindingScene(
                 OperationMapEntitySceneCandidateAddressablesLayoutPlanner.DenseCandidateRuntimeBindingPath,
                 OperationMapEntitySceneCandidateAddressablesLayoutPlanner.DenseCandidateDefinitionPath,
-                DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath);
+                DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath,
+                DenseCityCandidateAuthoringTransaction.CandidateMapScenePath);
         }
 
         private static void EnsureCandidateRuntimeBindingScene(
             string outputPath,
             string candidateDefinitionPath,
-            string candidateSubScenePath)
+            string candidateSubScenePath,
+            string surfaceOverlaySourceScenePath)
         {
             string folder = Path.GetDirectoryName(outputPath)?.Replace('\\', '/');
             EnsureFolder(folder);
@@ -353,6 +356,10 @@ namespace Game.Editor
             {
                 return;
             }
+
+            MapSurfaceSceneOverlayAuthoringData[] surfaceOverlays =
+                OperationMapRuntimeBindingSceneBuilder.CaptureSurfaceSceneOverlays(
+                    surfaceOverlaySourceScenePath);
 
             UnityEngine.Object loadedOutput = AssetDatabase.LoadMainAssetAtPath(outputPath);
             if (loadedOutput != null)
@@ -421,6 +428,9 @@ namespace Game.Editor
                 viewData.FindProperty("presentationSourceSceneGuid").stringValue = string.Empty;
                 viewData.FindProperty("presentationSourceScenePath").stringValue = string.Empty;
                 viewData.ApplyModifiedPropertiesWithoutUndo();
+                OperationMapRuntimeBindingSceneBuilder.ApplySurfaceSceneOverlays(
+                    view.MapSurfaceAuthoring,
+                    surfaceOverlays);
                 EditorUtility.SetDirty(view);
                 EditorSceneManager.MarkSceneDirty(scene);
 
@@ -484,6 +494,11 @@ namespace Game.Editor
                     ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
                 scene = EditorSceneManager.OpenScene(outputPath, OpenSceneMode.Single);
                 OperationMapSceneView view = FindSingleView(scene);
+                if (view.MapSurfaceAuthoring.SceneOverlays.Length == 0)
+                {
+                    error = "Candidate EntityScene runtime binding is missing road surface overlays.";
+                    return false;
+                }
                 CombinedMeshBaker decorationBaker =
                     ResolveDecorationCombinedMeshBaker(
                         scene,

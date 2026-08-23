@@ -28,6 +28,12 @@ public sealed class AndroidVisualQualityValidationTests
     private const float MinimumLowRenderScale = 0.50f;
     private const float BalancedMobileRenderScale = 0.50f;
     private const float HighMobileRenderScale = 0.75f;
+    private const int HighMobileShadowmapResolution = 1024;
+    private const int HighMobileShadowCascadeCount = 2;
+    private const float HighMobileShadowCascadeSplit = 0.35f;
+    private const float HighMobileShadowDepthBias = 0.05f;
+    private const float HighMobileShadowNormalBias = 0.35f;
+    private const int HighMobileSoftShadowQuality = 2;
     private const int BalancedMobileMsaa = 1;
     private const int BalancedMobileUpscalingFilter = 3;
     private const float BalancedMobileFsrSharpness = 0.72f;
@@ -122,17 +128,38 @@ public sealed class AndroidVisualQualityValidationTests
         SerializedProperty renderScale = serializedAsset.FindProperty("m_RenderScale");
         SerializedProperty upscalingFilter = serializedAsset.FindProperty("m_UpscalingFilter");
         SerializedProperty shadowDistance = serializedAsset.FindProperty("m_ShadowDistance");
+        SerializedProperty shadowmapResolution = serializedAsset.FindProperty("m_MainLightShadowmapResolution");
+        SerializedProperty shadowCascadeCount = serializedAsset.FindProperty("m_ShadowCascadeCount");
+        SerializedProperty shadowCascadeSplit = serializedAsset.FindProperty("m_Cascade2Split");
+        SerializedProperty shadowDepthBias = serializedAsset.FindProperty("m_ShadowDepthBias");
+        SerializedProperty shadowNormalBias = serializedAsset.FindProperty("m_ShadowNormalBias");
+        SerializedProperty softShadowsSupported = serializedAsset.FindProperty("m_SoftShadowsSupported");
+        SerializedProperty softShadowQuality = serializedAsset.FindProperty("m_SoftShadowQuality");
 
         Assert.NotNull(hdr, "High mobile URP asset is missing serialized m_SupportsHDR.");
         Assert.NotNull(msaa, "High mobile URP asset is missing serialized m_MSAA.");
         Assert.NotNull(renderScale, "High mobile URP asset is missing serialized m_RenderScale.");
         Assert.NotNull(upscalingFilter, "High mobile URP asset is missing serialized m_UpscalingFilter.");
         Assert.NotNull(shadowDistance, "High mobile URP asset is missing serialized m_ShadowDistance.");
+        Assert.NotNull(shadowmapResolution, "High mobile URP asset is missing serialized m_MainLightShadowmapResolution.");
+        Assert.NotNull(shadowCascadeCount, "High mobile URP asset is missing serialized m_ShadowCascadeCount.");
+        Assert.NotNull(shadowCascadeSplit, "High mobile URP asset is missing serialized m_Cascade2Split.");
+        Assert.NotNull(shadowDepthBias, "High mobile URP asset is missing serialized m_ShadowDepthBias.");
+        Assert.NotNull(shadowNormalBias, "High mobile URP asset is missing serialized m_ShadowNormalBias.");
+        Assert.NotNull(softShadowsSupported, "High mobile URP asset is missing serialized m_SoftShadowsSupported.");
+        Assert.NotNull(softShadowQuality, "High mobile URP asset is missing serialized m_SoftShadowQuality.");
         Assert.AreEqual(0, hdr.intValue, "High mobile must keep HDR disabled to avoid unnecessary bandwidth cost.");
         Assert.AreEqual(BalancedMobileMsaa, msaa.intValue, "High mobile must keep MSAA disabled and use FSR plus camera AA.");
         Assert.That(renderScale.floatValue, Is.EqualTo(HighMobileRenderScale).Within(0.001f), "High mobile must render the world at 75% resolution.");
         Assert.AreEqual(BalancedMobileUpscalingFilter, upscalingFilter.intValue, "High mobile must retain FSR upscaling.");
         Assert.That(shadowDistance.floatValue, Is.EqualTo(48f).Within(0.001f), "High mobile must keep useful RTS shadows visible farther than Medium.");
+        Assert.AreEqual(HighMobileShadowmapResolution, shadowmapResolution.intValue, "High mobile must retain enough directional-shadow texel density to avoid unstable hard edges.");
+        Assert.AreEqual(HighMobileShadowCascadeCount, shadowCascadeCount.intValue, "High mobile must split near and far tactical shadows for stable camera motion.");
+        Assert.That(shadowCascadeSplit.floatValue, Is.EqualTo(HighMobileShadowCascadeSplit).Within(0.001f), "High mobile must reserve sufficient shadow texels for nearby units and buildings.");
+        Assert.That(shadowDepthBias.floatValue, Is.EqualTo(HighMobileShadowDepthBias).Within(0.001f), "High mobile shadow depth bias must preserve grounded contact shadows.");
+        Assert.That(shadowNormalBias.floatValue, Is.EqualTo(HighMobileShadowNormalBias).Within(0.001f), "High mobile shadow normal bias must match the accepted clean-contact setting.");
+        Assert.AreEqual(1, softShadowsSupported.intValue, "High mobile must soften directional shadow sampling to suppress camera-motion shimmer.");
+        Assert.AreEqual(HighMobileSoftShadowQuality, softShadowQuality.intValue, "High mobile must use the bounded medium soft-shadow kernel.");
     }
 
     [Test]

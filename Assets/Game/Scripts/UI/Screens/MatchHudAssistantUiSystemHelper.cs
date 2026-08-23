@@ -13,6 +13,7 @@ namespace Game.UI.Runtime
         private UiTutorialNarrationPhase _pendingTutorialPhase;
         private UiTutorialNarrationPhase _displayedTutorialPhase;
         private ushort _narratedTutorialCues;
+        private ushort _autoShownTutorialCues;
         private float _tutorialShowAtUnscaledTime = -1f;
         private bool _tutorialCinematicSuspended;
         private bool _finalTutorialSuppressed;
@@ -83,6 +84,12 @@ namespace Game.UI.Runtime
             _displayedTutorialPhase = _pendingTutorialPhase;
             if (!IsPanelOpen)
                 SetPanelOpen(true);
+            if (_displayedTutorialPhase == UiTutorialNarrationPhase.WorldTarget &&
+                !WasTutorialCueAutoShown(_displayedTutorialStep, _displayedTutorialPhase) &&
+                TryShowRecommendation())
+            {
+                MarkTutorialCueAutoShown(_displayedTutorialStep, _displayedTutorialPhase);
+            }
             if (!WasTutorialCueNarrated(
                     _displayedTutorialStep,
                     _displayedTutorialPhase))
@@ -142,6 +149,7 @@ namespace Game.UI.Runtime
             _pendingTutorialPhase = UiTutorialNarrationPhase.PrimaryAction;
             _displayedTutorialPhase = UiTutorialNarrationPhase.PrimaryAction;
             _narratedTutorialCues = 0;
+            _autoShownTutorialCues = 0;
             _tutorialShowAtUnscaledTime = -1f;
             _tutorialCinematicSuspended = false;
             _finalTutorialSuppressed = false;
@@ -158,6 +166,19 @@ namespace Game.UI.Runtime
             int bit = TutorialCueBit(step, phase);
             if (bit >= 0)
                 _narratedTutorialCues |= (ushort)(1 << bit);
+        }
+
+        private bool WasTutorialCueAutoShown(byte step, UiTutorialNarrationPhase phase)
+        {
+            int bit = TutorialCueBit(step, phase);
+            return bit >= 0 && (_autoShownTutorialCues & (1 << bit)) != 0;
+        }
+
+        private void MarkTutorialCueAutoShown(byte step, UiTutorialNarrationPhase phase)
+        {
+            int bit = TutorialCueBit(step, phase);
+            if (bit >= 0)
+                _autoShownTutorialCues |= (ushort)(1 << bit);
         }
 
         private static int TutorialCueBit(byte step, UiTutorialNarrationPhase phase)

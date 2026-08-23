@@ -321,8 +321,13 @@ namespace Game.UI.Runtime
         private void ShowRecommendation()
         {
             CaptureUiOnly();
+            TryShowRecommendation();
+        }
+
+        private bool TryShowRecommendation()
+        {
             if (!UiShellRuntimeGateway.TryEnqueueAssistantCommandIntent(UiAssistantCommandIntentKind.ShowRecommendation))
-                return;
+                return false;
 
             // The structured panel projection can trail the highlight projection by one
             // simulation update after the player completes a tutorial action. Prefer the
@@ -337,6 +342,7 @@ namespace Game.UI.Runtime
             _highlightPresentationSystem.BeginPendingShowMe(recommendationKind, targetKind);
             if (_lastPanelModel.TutorialStep == 0)
                 SetPanelOpen(false);
+            return true;
         }
 
         private void ExecuteRecommendation()

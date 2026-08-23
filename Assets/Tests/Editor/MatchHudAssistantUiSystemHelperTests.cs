@@ -301,9 +301,15 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         gateway.TutorialNarrationFailuresRemaining = 1;
         helper.TickHighlight(moveTargetDeadline);
         Assert.IsTrue(popup.IsOpen, "ARIA must return to teach the destination substep.");
+        Assert.AreEqual(2, gateway.AssistantIntentRequestCount,
+            "Opening the destination substep must automatically reveal its world target once.");
+        Assert.AreEqual(UiAssistantCommandIntentKind.ShowRecommendation, gateway.LastAssistantIntentKind);
+        Assert.IsFalse(gateway.LastAssistantIntentFromTakeover);
         Assert.AreEqual(2, gateway.TutorialNarrationSteps.Count,
             "A rejected narration request must remain pending rather than being marked complete.");
         helper.TickHighlight(moveTargetDeadline + 0.01f);
+        Assert.AreEqual(2, gateway.AssistantIntentRequestCount,
+            "Narration retries must not repeat an accepted automatic target reveal.");
         Assert.AreEqual(3, gateway.TutorialNarrationSteps.Count,
             "The destination narration must retry after a transient gateway rejection.");
         Assert.AreEqual(2, gateway.TutorialNarrationSteps[2]);
@@ -343,6 +349,11 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         float attackTargetDeadline = GetPrivateField<float>(helper, "_tutorialShowAtUnscaledTime");
         helper.TickHighlight(attackTargetDeadline);
         Assert.IsTrue(popup.IsOpen, "ARIA must return to teach the enemy-target substep.");
+        Assert.AreEqual(3, gateway.AssistantIntentRequestCount,
+            "Opening the enemy-target substep must automatically reveal its world target once.");
+        helper.TickHighlight(attackTargetDeadline + 0.01f);
+        Assert.AreEqual(3, gateway.AssistantIntentRequestCount,
+            "An open enemy-target substep must not enqueue duplicate automatic reveals.");
         Assert.AreEqual(5, gateway.TutorialNarrationSteps.Count);
         Assert.AreEqual(3, gateway.TutorialNarrationSteps[4]);
         Assert.AreEqual(UiTutorialNarrationPhase.WorldTarget, gateway.TutorialNarrationPhases[4]);
@@ -618,10 +629,14 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.AreEqual("CHOOSE ENEMY", tutorial.TitleText.text);
         Assert.AreEqual("Tap the highlighted enemy to issue the attack.", tutorial.BodyText.text);
         Assert.AreEqual("TRAINING 5 / 5", tutorial.ProgressText.text);
+        Assert.AreEqual(1, gateway.AssistantIntentRequestCount,
+            "Opening the target instruction must automatically issue SHOW ME.");
+        Assert.AreEqual(UiAssistantCommandIntentKind.ShowRecommendation, gateway.LastAssistantIntentKind);
+        Assert.IsFalse(gateway.LastAssistantIntentFromTakeover);
 
         tutorial.DoItButton.onClick.Invoke();
 
-        Assert.AreEqual(1, gateway.AssistantIntentRequestCount);
+        Assert.AreEqual(2, gateway.AssistantIntentRequestCount);
         Assert.AreEqual(UiAssistantCommandIntentKind.ExecuteRecommendation, gateway.LastAssistantIntentKind);
         Assert.IsTrue(gateway.LastAssistantIntentFromTakeover);
         ui.Dispose();

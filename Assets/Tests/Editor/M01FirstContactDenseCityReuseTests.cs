@@ -32,7 +32,7 @@ public static class M01FirstContactDenseCityReuseTests
             "5a15843d63868d639b88d2084ea41184af0cf5d6050b22b563a516ef13752b9c"),
         new(
             "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
-            "c1bc203591b3f32ae3d8410eaa0988e694b1d9d449ba1e938d9f38058698b598"),
+            "52b30f735209fbde2911f6bebf7dd397ed66c2fd1355f420ce7db22c7ac85b4f"),
         new(
             "Assets/Game/GeneratedOperationMaps/RuntimeBinding/opmap.skirmish.desert_base_01/Candidates/opmap_skirmish_desert_base_01_dense_city_entity_scene_runtime.unity",
             "f58a73d0a8f3627d7ddf42f72b42a9db495d5139ba5da6768492ac36e671ade9"),
@@ -101,9 +101,9 @@ public static class M01FirstContactDenseCityReuseTests
         DenseCityDatabaseReport report = JsonUtility.FromJson<DenseCityDatabaseReport>(
             File.ReadAllText(DatabaseReportPath));
         Require(report != null && report.result == "Passed", "Dense-city VRP database report is not accepted.");
-        Require(report.contentHash == "04681634c40403c8d30e1de2c44a64ac598403b7cd8f0574e1359a12f5758d73" &&
-                report.recordOrderingSha256 == "a931d70e9e04915285c805cdd70545edd1b1852cb47a5fbb4a6ca0e1e7812fe7" &&
-                report.configSerializedSha256 == "2fb85fd03d4b82621ba9c9168a21560e2ba8df3350e45594c5b3785a58768b8d",
+        Require(report.contentHash == "ec3f7d738e7878d7291bae728207922be5ea248a4390b61be182390cc9bcc8df" &&
+                report.recordOrderingSha256 == "1bef0b5ca9fc3a242b0bd417150635c318630954a2b826c0fcf33ee7691005c3" &&
+                report.configSerializedSha256 == "2ddc6f40a43d04537d80168094ebc7629fc155f5177912ea7bb0b03bde82fd83",
             "Dense-city VRP database identity or ordering drifted.");
         Require(report.logicalParityResult == "Passed" && report.isolationResult == "Passed",
             "Dense-city logical parity or isolation is no longer accepted.");
@@ -116,7 +116,7 @@ public static class M01FirstContactDenseCityReuseTests
         Require(Sha256File(DatabaseConfigPath) == report.configSerializedSha256,
             "VRP database config bytes drifted from the accepted report.");
         Require(Sha256File(DatabaseReportPath) ==
-                "e8a7318457d22b29f5c6bed4f4d4f166f0c02ef90aff1b7bdee5f5606c764121",
+                "24d49619557c87319bf7a30286b595a8b00c76ea222835535cef797685f39230",
             "Accepted VRP database report bytes drifted.");
     }
 

@@ -20,9 +20,9 @@
     "activeProxySlotLimit": 8000,
     "provisionalActiveProxySlotsWithinLimit": true,
     "zeroOverflowProvenForProvisionalCapacity": true,
-    "sourceRowsSha256": "1b40fb3d1ee11e440b22124f59edd0c94e7f4b213d6a57c389797336d10177e5",
-    "prototypeRecipesSha256": "68f41a47d8f8109eb1393d6b02d4d74c8e70a5ba6d57f8dc014572dba4bebf92",
-    "logicalPlacementsSha256": "76ac904fa1a2ef2cf251922c54565620d58873f482cb6561a96da6530090603c",
+    "sourceRowsSha256": "12adf0263038e2b5d5977470e7be45d23543d815b381d128c4e8239d4af6883a",
+    "prototypeRecipesSha256": "a3837d67a6971f1cf13aa3a7fa8cc0c1400d7a7a80c8cadc110ee34bc4df4d23",
+    "logicalPlacementsSha256": "78ed41eb53b6f67cb80c0d99e4928369f74c7043f6e014088b74c6916e9da272",
     "spatialCellsSha256": "a7dab969701b4739b37726d024550002d9ccff0b4223e3e3b4ddad4d033fa794",
     "capacityByPolicy": [
         {

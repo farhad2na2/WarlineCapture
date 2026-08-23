@@ -209,7 +209,9 @@ namespace Game.UI.Runtime
                     _awaitingNextShowMe = false;
                     _worldTargetShowRequested = true;
                     _commandGuidanceArmed = true;
-                    _pendingFirstShowMe = false;
+                    // Keep an unresolved local command cue hidden until ECS returns the
+                    // canonical world target. Clearing this flag here would project the
+                    // provisional zero position and point near the squad.
                     ApplyVisual(LastAppliedModel);
                     return;
                 }

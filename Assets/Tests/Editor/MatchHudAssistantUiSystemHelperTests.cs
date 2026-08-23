@@ -36,6 +36,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             passed++;
             RunCase(test => test.TutorialBriefing_RemainsVisibleThroughEachInstructionAndResetsForReplay());
             passed++;
+            RunCase(test => test.TutorialBriefing_AutoShowsVisibleIndicatorForEveryInstruction());
+            passed++;
             RunCase(test => test.TutorialNarration_MapsEveryM01StepToEnglishAndPersianEvents());
             passed++;
             RunCase(test => test.TutorialLocalization_MapsEveryM01StepToEnglishAndPersianText());
@@ -68,7 +70,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             passed++;
             RunCase(test => test.MissionReplay_ContentVersionChangeClearsPendingGuidanceState());
             passed++;
-            RunCase(test => test.MissionReplay_MissingEcsHighlightClearsLocalDestinationPlaceholder());
+            RunCase(test => test.DelayedEcsHighlight_RemainsPendingUntilCanonicalTargetOrMissionReset());
             passed++;
             RunCase(test => test.DiagnosticSuppressionState_IsOwnedByEachHudInstance());
             passed++;
@@ -252,9 +254,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             "Active tutorial instructions must not expose a close action.");
         Assert.AreEqual("FOCUS HOSTILE ARMOR", tutorial.TitleText.text);
         Assert.AreEqual("TRAINING 1 / 5", tutorial.ProgressText.text);
-
-        tutorial.ShowMeButton.onClick.Invoke();
-        Assert.IsTrue(popup.IsOpen, "Show Me must keep the tutorial instruction visible.");
+        Assert.AreEqual(1, gateway.AssistantIntentRequestCount,
+            "Opening the first tutorial instruction must automatically issue SHOW ME.");
         Assert.AreEqual(UiAssistantCommandIntentKind.ShowRecommendation, gateway.LastAssistantIntentKind);
 
         gateway.AssistantPanel = CreateStructuredModel(
@@ -289,6 +290,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.AreEqual("TRAINING 2 / 5", tutorial.ProgressText.text);
         Assert.AreEqual("PRESS MOVE", tutorial.TitleText.text);
         Assert.AreEqual("Tap MOVE to select the move command.", tutorial.BodyText.text);
+        Assert.AreEqual(2, gateway.AssistantIntentRequestCount,
+            "Opening the MOVE instruction must automatically reveal its command button.");
 
         MatchOverlayCommandControlsView commandControls = CreateCommandControls(overlay);
         ui.BindMatchHudCommandControls(commandControls);
@@ -301,14 +304,14 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         gateway.TutorialNarrationFailuresRemaining = 1;
         helper.TickHighlight(moveTargetDeadline);
         Assert.IsTrue(popup.IsOpen, "ARIA must return to teach the destination substep.");
-        Assert.AreEqual(2, gateway.AssistantIntentRequestCount,
+        Assert.AreEqual(3, gateway.AssistantIntentRequestCount,
             "Opening the destination substep must automatically reveal its world target once.");
         Assert.AreEqual(UiAssistantCommandIntentKind.ShowRecommendation, gateway.LastAssistantIntentKind);
         Assert.IsFalse(gateway.LastAssistantIntentFromTakeover);
         Assert.AreEqual(2, gateway.TutorialNarrationSteps.Count,
             "A rejected narration request must remain pending rather than being marked complete.");
         helper.TickHighlight(moveTargetDeadline + 0.01f);
-        Assert.AreEqual(2, gateway.AssistantIntentRequestCount,
+        Assert.AreEqual(3, gateway.AssistantIntentRequestCount,
             "Narration retries must not repeat an accepted automatic target reveal.");
         Assert.AreEqual(3, gateway.TutorialNarrationSteps.Count,
             "The destination narration must retry after a transient gateway rejection.");
@@ -343,16 +346,18 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.AreEqual("Tap ATTACK to select the attack command.", gateway.TutorialNarrationTexts[3]);
         Assert.AreEqual("TRAINING 4 / 5", tutorial.ProgressText.text);
         Assert.AreEqual("Tap ATTACK to select the attack command.", tutorial.BodyText.text);
+        Assert.AreEqual(4, gateway.AssistantIntentRequestCount,
+            "Opening the ATTACK instruction must automatically reveal its command button.");
         commandControls.AttackButton.onClick.Invoke();
         Assert.IsFalse(popup.IsOpen,
             "Pressing ATTACK must remove the completed command-button instruction.");
         float attackTargetDeadline = GetPrivateField<float>(helper, "_tutorialShowAtUnscaledTime");
         helper.TickHighlight(attackTargetDeadline);
         Assert.IsTrue(popup.IsOpen, "ARIA must return to teach the enemy-target substep.");
-        Assert.AreEqual(3, gateway.AssistantIntentRequestCount,
+        Assert.AreEqual(5, gateway.AssistantIntentRequestCount,
             "Opening the enemy-target substep must automatically reveal its world target once.");
         helper.TickHighlight(attackTargetDeadline + 0.01f);
-        Assert.AreEqual(3, gateway.AssistantIntentRequestCount,
+        Assert.AreEqual(5, gateway.AssistantIntentRequestCount,
             "An open enemy-target substep must not enqueue duplicate automatic reveals.");
         Assert.AreEqual(5, gateway.TutorialNarrationSteps.Count);
         Assert.AreEqual(3, gateway.TutorialNarrationSteps[4]);
@@ -384,6 +389,76 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.AreEqual(6, gateway.TutorialNarrationSteps.Count,
             "A replay must narrate the first tutorial step again.");
         Assert.AreEqual(1, gateway.TutorialNarrationSteps[5]);
+        ui.Dispose();
+    }
+
+    [Test]
+    public void TutorialBriefing_AutoShowsVisibleIndicatorForEveryInstruction()
+    {
+        CreateHudHarness(true, out RectTransform overlay, out RectTransform header, out _);
+        var gateway = new FakeAssistantPanelGateway(
+            CreateStructuredModel(821u, recommendationKind: 1, recommendationTargetKind: 6,
+                tutorialStep: 1, tutorialStepCount: 5),
+            UiAssistantHighlightModel.Empty);
+        UiShellRuntimeGateway.Register(gateway);
+        var ui = new MainMenuPlayUI();
+        ui.Init(null, new FakeMatchRuntimeState());
+        ui.BindMatchHudAssistant(header.gameObject, overlay, LoadPopupPrefab());
+        MatchHudSquadTrayView squadTray = CreateSquadTray(overlay);
+        ui.BindMatchHudSquadTray(squadTray);
+        MatchOverlayCommandControlsView commandControls = CreateCommandControls(overlay);
+        ui.BindMatchHudCommandControls(commandControls);
+
+        ui.Update();
+        GameObject indicator = FindLoadedObject("AriaAssistantTargetIndicatorRuntime");
+        AssertVisibleIndicator(indicator, "SELECT SQUAD\n\u25bc");
+        Assert.AreEqual(1, gateway.AssistantIntentRequestCount);
+
+        gateway.AssistantPanel = CreateStructuredModel(
+            822u, recommendationKind: 2, recommendationTargetKind: 1,
+            tutorialStep: 2, tutorialStepCount: 5);
+        MatchHudAssistantUiSystemHelper helper =
+            GetPrivateField<MatchHudAssistantUiSystemHelper>(ui, "_matchHudAssistantUiSystem");
+        helper.ApplyReadModel(gateway.AssistantPanel);
+        helper.TickHighlight(10f);
+        helper.TickHighlight(12f);
+        AssertVisibleIndicator(indicator, "PRESS MOVE\n\u25bc");
+        Assert.AreEqual(2, gateway.AssistantIntentRequestCount);
+
+        commandControls.MoveButton.onClick.Invoke();
+        float moveTargetDeadline = GetPrivateField<float>(helper, "_tutorialShowAtUnscaledTime");
+        helper.TickHighlight(moveTargetDeadline);
+        Assert.IsFalse(indicator.activeInHierarchy,
+            "An unresolved destination must stay hidden instead of pointing at a local placeholder.");
+        gateway.AssistantHighlight = CreateHighlightModel(824u, recommendationKind: 2);
+        helper.ApplyHighlightReadModel(gateway.AssistantHighlight);
+        helper.TickHighlight(moveTargetDeadline + 0.01f);
+        AssertVisibleIndicator(indicator, "CLICK DESTINATION\n\u25bc");
+        AssertWorldRingCenteredAt(new Vector3(12f, 3.38f, 9f));
+        Assert.AreEqual(3, gateway.AssistantIntentRequestCount);
+
+        helper.CompleteWorldTarget(TacticalCommandMode.Move);
+        helper.ApplyCommandMode(TacticalCommandMode.None);
+        gateway.AssistantPanel = CreateStructuredModel(
+            825u, recommendationKind: 3, recommendationTargetKind: 6,
+            tutorialStep: 3, tutorialStepCount: 5);
+        helper.ApplyReadModel(gateway.AssistantPanel);
+        helper.TickHighlight(20f);
+        helper.TickHighlight(22f);
+        AssertVisibleIndicator(indicator, "PRESS ATTACK\n\u25bc");
+        Assert.AreEqual(4, gateway.AssistantIntentRequestCount);
+
+        commandControls.AttackButton.onClick.Invoke();
+        float attackTargetDeadline = GetPrivateField<float>(helper, "_tutorialShowAtUnscaledTime");
+        helper.TickHighlight(attackTargetDeadline);
+        Assert.IsFalse(indicator.activeInHierarchy,
+            "An unresolved enemy must stay hidden instead of reusing the previous destination.");
+        gateway.AssistantHighlight = CreateHighlightModel(827u, recommendationKind: 3, targetKind: 6);
+        helper.ApplyHighlightReadModel(gateway.AssistantHighlight);
+        helper.TickHighlight(attackTargetDeadline + 0.01f);
+        AssertVisibleIndicator(indicator, "CLICK ENEMY\n\u25bc");
+        AssertWorldRingCenteredAt(new Vector3(12f, 3.38f, 9f));
+        Assert.AreEqual(5, gateway.AssistantIntentRequestCount);
         ui.Dispose();
     }
 
@@ -620,8 +695,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
 
         tutorial.DoItButton.onClick.Invoke();
 
-        Assert.AreEqual(0, gateway.AssistantIntentRequestCount,
-            "The first tutorial DO IT must select ATTACK instead of issuing the world order.");
+        Assert.AreEqual(1, gateway.AssistantIntentRequestCount,
+            "The first tutorial DO IT must only add the automatic ATTACK reveal, not issue the world order.");
         Assert.IsFalse(tutorial.gameObject.activeInHierarchy);
         float targetInstructionDeadline = GetPrivateField<float>(helper, "_tutorialShowAtUnscaledTime");
         helper.TickHighlight(targetInstructionDeadline);
@@ -629,14 +704,14 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.AreEqual("CHOOSE ENEMY", tutorial.TitleText.text);
         Assert.AreEqual("Tap the highlighted enemy to issue the attack.", tutorial.BodyText.text);
         Assert.AreEqual("TRAINING 5 / 5", tutorial.ProgressText.text);
-        Assert.AreEqual(1, gateway.AssistantIntentRequestCount,
+        Assert.AreEqual(2, gateway.AssistantIntentRequestCount,
             "Opening the target instruction must automatically issue SHOW ME.");
         Assert.AreEqual(UiAssistantCommandIntentKind.ShowRecommendation, gateway.LastAssistantIntentKind);
         Assert.IsFalse(gateway.LastAssistantIntentFromTakeover);
 
         tutorial.DoItButton.onClick.Invoke();
 
-        Assert.AreEqual(2, gateway.AssistantIntentRequestCount);
+        Assert.AreEqual(3, gateway.AssistantIntentRequestCount);
         Assert.AreEqual(UiAssistantCommandIntentKind.ExecuteRecommendation, gateway.LastAssistantIntentKind);
         Assert.IsTrue(gateway.LastAssistantIntentFromTakeover);
         ui.Dispose();
@@ -1082,7 +1157,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
     }
 
     [Test]
-    public void MissionReplay_MissingEcsHighlightClearsLocalDestinationPlaceholder()
+    public void DelayedEcsHighlight_RemainsPendingUntilCanonicalTargetOrMissionReset()
     {
         var presentation = new AssistantHighlightPresentationSystemHelper();
         presentation.ApplyReadModel(UiAssistantHighlightModel.Empty);
@@ -1091,12 +1166,16 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         presentation.AcknowledgeCommandMode(TacticalCommandMode.Move);
         presentation.BeginPendingShowMe(recommendationKind: 2, targetKind: 1);
         Assert.IsTrue(presentation.LastAppliedModel.Active,
-            "The second Show Me click should reproduce the local destination placeholder.");
+            "The second Show Me request must retain its pending recommendation identity.");
 
         presentation.ApplyReadModel(UiAssistantHighlightModel.Empty);
 
+        Assert.IsTrue(presentation.LastAppliedModel.Active,
+            "A stale empty read must not consume a pending request before ECS publishes its canonical target.");
+        Assert.IsTrue(GetPrivateField<bool>(presentation, "_pendingFirstShowMe"));
+        presentation.ResetForMissionAttempt();
         Assert.IsFalse(presentation.LastAppliedModel.Active,
-            "An authoritative empty ECS read must clear a local placeholder even when version zero was already cached.");
+            "Mission reset must clear a pending target from the previous attempt.");
         Assert.IsFalse(GetPrivateField<bool>(presentation, "_commandGuidanceArmed"));
         Assert.IsFalse(GetPrivateField<bool>(presentation, "_worldTargetShowRequested"));
     }
@@ -1412,6 +1491,32 @@ public sealed class MatchHudAssistantUiSystemHelperTests
                 return objects[index];
         }
         return null;
+    }
+
+    private static void AssertVisibleIndicator(GameObject indicator, string expectedText)
+    {
+        Assert.NotNull(indicator, "The automatic tutorial indicator must exist.");
+        Assert.IsTrue(indicator.activeInHierarchy,
+            $"The automatic tutorial indicator '{expectedText}' must be visible.");
+        Assert.AreEqual(expectedText, indicator.GetComponentInChildren<TMP_Text>(true).text);
+    }
+
+    private static void AssertWorldRingCenteredAt(Vector3 expectedCenter)
+    {
+        GameObject ringObject = GameObject.Find("AriaAssistantPreviewHighlightRuntime");
+        Assert.NotNull(ringObject, "The canonical tutorial world ring must exist.");
+        Assert.IsTrue(ringObject.activeInHierarchy, "The canonical tutorial world ring must be visible.");
+        LineRenderer ring = ringObject.GetComponent<LineRenderer>();
+        Assert.NotNull(ring);
+        var positions = new Vector3[ring.positionCount];
+        ring.GetPositions(positions);
+        Vector3 center = Vector3.zero;
+        for (int index = 0; index < positions.Length; index++)
+            center += positions[index];
+        center /= positions.Length;
+        Assert.That(center.x, Is.EqualTo(expectedCenter.x).Within(0.01f));
+        Assert.That(center.y, Is.EqualTo(expectedCenter.y).Within(0.01f));
+        Assert.That(center.z, Is.EqualTo(expectedCenter.z).Within(0.01f));
     }
 
     private static string Text(Transform root, string name)

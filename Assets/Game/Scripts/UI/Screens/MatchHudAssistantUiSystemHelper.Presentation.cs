@@ -324,7 +324,7 @@ namespace Game.UI.Runtime
             TryShowRecommendation();
         }
 
-        private bool TryShowRecommendation()
+        private bool TryShowRecommendation(bool preferPanelRecommendation = false)
         {
             if (!UiShellRuntimeGateway.TryEnqueueAssistantCommandIntent(UiAssistantCommandIntentKind.ShowRecommendation))
                 return false;
@@ -333,10 +333,15 @@ namespace Game.UI.Runtime
             // simulation update after the player completes a tutorial action. Prefer the
             // active highlight so the next explicit Show Me teaches the current step rather
             // than replaying the previous panel recommendation.
-            byte recommendationKind = _lastHighlightModel.Active
+            bool useHighlightRecommendation =
+                !preferPanelRecommendation &&
+                _lastHighlightModel.Active &&
+                (_lastPanelModel.RecommendationKind == 0 ||
+                 _lastHighlightModel.RecommendationKind == _lastPanelModel.RecommendationKind);
+            byte recommendationKind = useHighlightRecommendation
                 ? _lastHighlightModel.RecommendationKind
                 : _lastPanelModel.RecommendationKind;
-            byte targetKind = _lastHighlightModel.Active
+            byte targetKind = useHighlightRecommendation
                 ? _lastHighlightModel.TargetKind
                 : _lastPanelModel.RecommendationTargetKind;
             _highlightPresentationSystem.BeginPendingShowMe(recommendationKind, targetKind);

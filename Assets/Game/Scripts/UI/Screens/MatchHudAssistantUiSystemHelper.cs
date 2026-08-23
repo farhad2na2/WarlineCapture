@@ -84,9 +84,10 @@ namespace Game.UI.Runtime
             _displayedTutorialPhase = _pendingTutorialPhase;
             if (!IsPanelOpen)
                 SetPanelOpen(true);
-            if (_displayedTutorialPhase == UiTutorialNarrationPhase.WorldTarget &&
-                !WasTutorialCueAutoShown(_displayedTutorialStep, _displayedTutorialPhase) &&
-                TryShowRecommendation())
+            if (!WasTutorialCueAutoShown(_displayedTutorialStep, _displayedTutorialPhase) &&
+                TryShowRecommendation(
+                    preferPanelRecommendation:
+                    _displayedTutorialPhase == UiTutorialNarrationPhase.PrimaryAction))
             {
                 MarkTutorialCueAutoShown(_displayedTutorialStep, _displayedTutorialPhase);
             }

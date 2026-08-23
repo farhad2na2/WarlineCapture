@@ -18,16 +18,20 @@ public sealed class M01FirstContactForcesPlayModeTests
     private static readonly FixedString64Bytes MapId = new("opmap.ch01.district_edge_01");
     private static readonly FixedString64Bytes Session = new("m01-force-test");
 
+#if UNITY_EDITOR
+    [UnityEditor.MenuItem("Game/Validation/Run M01 First Contact Forces Focused")]
+#endif
     public static void RunFocusedValidation()
     {
         M01FirstContactForcesPlayModeTests tests = new();
         RunToCompletion(tests.SpawnWaitsForGameplayStartBeforePublishingOpeningCamera());
         RunToCompletion(tests.SpawnDoesNotWaitForCameraChannel());
         RunToCompletion(tests.SpawnCreatesExactDeterministicFourVersusThreeForce());
+        RunToCompletion(tests.ReplayReissuesInitialRtsOverview());
         RunToCompletion(tests.HostilesRemainStationaryThroughoutMission());
         RunToCompletion(tests.FinaleArrivalReleasesThreeStationaryHostilesToCounterfire());
         RunToCompletion(tests.MissingRuntimePrefabFailsClosedWithoutPartialSpawn());
-        UnityEngine.Debug.Log("[M01FirstContactForcesPlayModeValidation] result=Passed tests=6");
+        UnityEngine.Debug.Log("[M01FirstContactForcesPlayModeValidation] result=Passed tests=7");
     }
 
     [UnityTest]
@@ -57,8 +61,9 @@ public sealed class M01FirstContactForcesPlayModeTests
             opening = world.EntityManager.GetComponentData<CampaignMissionOpeningPresentationComponent>(fixture.Root);
             Assert.That(opening.Stage, Is.Zero,
                 "The mission must first hold on the live RTS camera before beginning its cinematic.");
-            Assert.That(world.EntityManager.GetComponentData<RuntimeCameraFocusRequestComponent>(fixture.CameraFocus)
-                .Requested, Is.Zero);
+            RuntimeCameraFocusRequestComponent focus = world.EntityManager.GetComponentData<
+                RuntimeCameraFocusRequestComponent>(fixture.CameraFocus);
+            AssertInitialRtsOverview(focus, opening.FriendlyFocus);
             yield break;
         }
         finally { fixture.Dispose(); }
@@ -90,9 +95,11 @@ public sealed class M01FirstContactForcesPlayModeTests
             Assert.That(facts.CommandSquadSpawned, Is.EqualTo(1));
             Assert.That(world.EntityManager.HasComponent<CampaignMissionOpeningPresentationComponent>(fixture.Root),
                 Is.True);
-            Assert.That(world.EntityManager.GetComponentData<RuntimeCameraFocusRequestComponent>(fixture.CameraFocus)
-                .Requested, Is.Zero,
-                "The first visible mission frame must remain the normal RTS camera.");
+            CampaignMissionOpeningPresentationComponent opening = world.EntityManager.GetComponentData<
+                CampaignMissionOpeningPresentationComponent>(fixture.Root);
+            AssertInitialRtsOverview(
+                world.EntityManager.GetComponentData<RuntimeCameraFocusRequestComponent>(fixture.CameraFocus),
+                opening.FriendlyFocus);
             yield break;
         }
         finally { fixture.Dispose(); }
@@ -154,8 +161,8 @@ public sealed class M01FirstContactForcesPlayModeTests
             Assert.That(facts.HostileTotalCount, Is.EqualTo(3));
             RuntimeCameraFocusRequestComponent focus = world.EntityManager.GetComponentData<
                 RuntimeCameraFocusRequestComponent>(fixture.CameraFocus);
-            Assert.That(focus.Requested, Is.Zero,
-                "Spawning the mission must not replace the initial RTS camera.");
+            Assert.That(focus.Requested, Is.EqualTo(1));
+            Assert.That(focus.UseTacticalRevealZoom, Is.EqualTo(4));
             float3 friendlyCenter = float3.zero;
             float3 hostileCenter = float3.zero;
             int friendlyCount = 0;
@@ -201,6 +208,8 @@ public sealed class M01FirstContactForcesPlayModeTests
             Assert.That(math.distance(opening.FriendlyFocus, expectedFriendlyFocus), Is.LessThan(0.001f));
             Assert.That(math.distance(opening.EstablishingFocus, expectedEstablishingFocus), Is.LessThan(0.001f));
 
+            world.EntityManager.SetComponentData(
+                fixture.CameraFocus, default(RuntimeCameraFocusRequestComponent));
             opening.ElapsedMilliseconds = 2500;
             world.EntityManager.SetComponentData(fixture.Root, opening);
             Update<CampaignMissionPatrolOrderSystem>(world);
@@ -222,6 +231,56 @@ public sealed class M01FirstContactForcesPlayModeTests
             Assert.That(queuedAudio[0].EventId.ToString(), Is.EqualTo(AudioEventIds.AmbienceMissionCivilianPanic));
             Assert.That(queuedAudio[0].BusId.ToString(), Is.EqualTo("Ambience"));
             Assert.That(queuedAudio[0].Priority, Is.EqualTo(AudioPlaybackPriority.High));
+            yield break;
+        }
+        finally { fixture.Dispose(); }
+    }
+
+    [UnityTest]
+    public IEnumerator ReplayReissuesInitialRtsOverview()
+    {
+        using World world = new(nameof(ReplayReissuesInitialRtsOverview));
+        Fixture fixture = CreateFixture(world);
+        try
+        {
+            Update<CampaignMissionSpawnSystem>(world);
+            CampaignMissionOpeningPresentationComponent firstOpening = world.EntityManager.GetComponentData<
+                CampaignMissionOpeningPresentationComponent>(fixture.Root);
+            AssertInitialRtsOverview(
+                world.EntityManager.GetComponentData<RuntimeCameraFocusRequestComponent>(fixture.CameraFocus),
+                firstOpening.FriendlyFocus);
+
+            using EntityQuery units = world.EntityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<CampaignMissionUnitRoleComponent>());
+            world.EntityManager.DestroyEntity(units);
+
+            FixedString64Bytes replaySession = new("m01-force-test-replay");
+            CampaignMissionRuntimeComponent runtime = world.EntityManager.GetComponentData<
+                CampaignMissionRuntimeComponent>(fixture.Root);
+            runtime.SessionToken = replaySession;
+            runtime.AttemptOrdinal = 1;
+            world.EntityManager.SetComponentData(fixture.Root, runtime);
+            world.EntityManager.SetComponentData(
+                fixture.Root, default(CampaignMissionAttemptFactsComponent));
+            world.EntityManager.SetComponentData(fixture.CameraFocus, new RuntimeCameraFocusRequestComponent
+            {
+                Requested = 1,
+                Smooth = 1,
+                UseTacticalRevealZoom = 5,
+                World = firstOpening.HostileFocus
+            });
+
+            Update<CampaignMissionSpawnSystem>(world);
+
+            CampaignMissionOpeningPresentationComponent replayOpening = world.EntityManager.GetComponentData<
+                CampaignMissionOpeningPresentationComponent>(fixture.Root);
+            Assert.That(replayOpening.SessionToken, Is.EqualTo(replaySession));
+            Assert.That(replayOpening.Stage, Is.Zero);
+            Assert.That(replayOpening.ElapsedMilliseconds, Is.Zero);
+            Assert.That(replayOpening.InitialRtsOverviewRequested, Is.EqualTo(1));
+            AssertInitialRtsOverview(
+                world.EntityManager.GetComponentData<RuntimeCameraFocusRequestComponent>(fixture.CameraFocus),
+                replayOpening.FriendlyFocus);
             yield break;
         }
         finally { fixture.Dispose(); }
@@ -498,6 +557,17 @@ public sealed class M01FirstContactForcesPlayModeTests
             CameraFocus = cameraFocus,
             GameplayState = gameplayState
         };
+    }
+
+    private static void AssertInitialRtsOverview(
+        RuntimeCameraFocusRequestComponent focus,
+        float3 expectedFriendlyFocus)
+    {
+        Assert.That(focus.Requested, Is.EqualTo(1));
+        Assert.That(focus.Smooth, Is.Zero,
+            "Every attempt must restore the RTS overview immediately, not glide from the prior finale pose.");
+        Assert.That(focus.UseTacticalRevealZoom, Is.EqualTo(4));
+        Assert.That(math.distance(focus.World, expectedFriendlyFocus), Is.LessThan(0.001f));
     }
 
     private static BlobAssetReference<CampaignMissionCatalogBlob> CreateCatalog()

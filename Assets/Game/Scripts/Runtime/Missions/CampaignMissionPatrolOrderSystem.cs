@@ -146,7 +146,18 @@ namespace Game.Runtime
                     if (current.Stage > 6 || !current.SessionToken.Equals(runtime.SessionToken))
                         continue;
 
-                    if (current.Stage <= 5 && IsOpeningVisible(state.EntityManager))
+                    if (current.InitialRtsOverviewRequested == 0)
+                    {
+                        CampaignMissionSpawnSystem.QueueInitialRtsOverview(
+                            state.EntityManager,
+                            focusEntity,
+                            current.FriendlyFocus);
+                        current.InitialRtsOverviewRequested = 1;
+                        opening.ValueRW = current;
+                        break;
+                    }
+
+                    if (current.Stage <= 5 && focus.Requested == 0 && IsOpeningVisible(state.EntityManager))
                         current.ElapsedMilliseconds = SaturatingAddMilliseconds(
                             current.ElapsedMilliseconds, SystemAPI.Time.DeltaTime);
                     if (current.Stage == 0 &&

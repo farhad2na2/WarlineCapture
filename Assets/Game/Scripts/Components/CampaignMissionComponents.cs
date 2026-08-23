@@ -169,6 +169,7 @@ namespace Game.Components
         public float3 HostileFocus;
         public float3 EstablishingFocus;
         public int ElapsedMilliseconds;
+        public byte InitialRtsOverviewRequested;
         public byte Stage;
     }
 

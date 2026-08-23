@@ -13,11 +13,13 @@ namespace Game.Runtime
         private static readonly FixedString64Bytes FirstContactMissionId = "saga.ch01.m01.first_contact";
         internal const float FirstContactHostileMinimumAttackRange = 60f;
         private EntityQuery _registryQuery;
+        private EntityQuery _cameraFocusQuery;
 
         public void OnCreate(ref SystemState state)
         {
             _registryQuery = state.GetEntityQuery(
                 ComponentType.ReadOnly<UnitPrefabRegistryTag>(), ComponentType.ReadOnly<UnitPrefabRegistryEntry>());
+            _cameraFocusQuery = state.GetEntityQuery(ComponentType.ReadWrite<RuntimeCameraFocusRequestComponent>());
             state.RequireForUpdate<CampaignMissionRootComponent>();
             state.RequireForUpdate<OperationMapMetadataComponent>();
         }
@@ -80,7 +82,7 @@ namespace Game.Runtime
             // glide advances into the street while keeping both sides and the civic hall
             // readable before it continues to the patrol.
             float3 establishingFocus = math.lerp(playerFocus, hostileFocus, 0.40f);
-            SetOrAdd(em, root, new CampaignMissionOpeningPresentationComponent
+            CampaignMissionOpeningPresentationComponent opening = new()
             {
                 SessionToken = rootRuntime.SessionToken,
                 FriendlyFocus = playerFocus,
@@ -91,7 +93,13 @@ namespace Game.Runtime
                 // deliberately defers the establishing shot until that composition is visible,
                 // preventing the normal match-intro zoom from overwriting the bazaar handoff.
                 Stage = 0
-            });
+            };
+            if (_cameraFocusQuery.CalculateEntityCount() == 1)
+            {
+                QueueInitialRtsOverview(em, _cameraFocusQuery.GetSingletonEntity(), playerFocus);
+                opening.InitialRtsOverviewRequested = 1;
+            }
+            SetOrAdd(em, root, opening);
             bool finaleRequired = rootRuntime.MissionId.Equals(FirstContactMissionId) &&
                                   (rootRuntime.RunKind == Game.Missions.Contracts.MissionRunKind.FirstClear ||
                                    rootRuntime.ReplayTutorialEnabled != 0);
@@ -215,6 +223,19 @@ namespace Game.Runtime
 
         internal static bool ShouldKeepStationary(in FixedString64Bytes missionId, byte factionId) =>
             missionId.Equals(FirstContactMissionId) && !FactionIdentity.IsPlayerControlled(factionId);
+
+        internal static void QueueInitialRtsOverview(
+            EntityManager entityManager,
+            Entity cameraFocusEntity,
+            float3 friendlyFocus)
+        {
+            entityManager.SetComponentData(cameraFocusEntity, new RuntimeCameraFocusRequestComponent
+            {
+                Requested = 1,
+                UseTacticalRevealZoom = 4,
+                World = friendlyFocus
+            });
+        }
 
         internal static void ApplyFirstContactHostileCombatPolicy(
             EntityManager em,

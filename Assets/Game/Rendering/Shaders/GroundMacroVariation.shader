@@ -13,8 +13,10 @@ Shader "Game/Environment/GroundMacroVariation"
     {
         [MainTexture] _BaseMap("Atlas (Base Map)", 2D) = "white" {}
         [MainColor] _BaseColor("Base Color", Color) = (1, 1, 1, 1)
+        _BaseColorInfluence("Base Color Influence", Range(0, 1)) = 1
         _Smoothness("Smoothness", Range(0, 1)) = 0.2
         _SpecColor("Specular Color", Color) = (0.2, 0.2, 0.2, 1)
+        [HideInInspector] _EnvironmentReflections("Environment Reflections", Float) = 0
 
         [Header(Macro Variation World XZ)]
         _MacroTintA("Macro Tint A (dry dirt)", Color) = (0.82, 0.74, 0.58, 1)
@@ -95,6 +97,7 @@ Shader "Game/Environment/GroundMacroVariation"
             CBUFFER_START(UnityPerMaterial)
                 float4 _BaseMap_ST;
                 half4 _BaseColor;
+                half _BaseColorInfluence;
                 half _Smoothness;
                 half4 _SpecColor;
                 half4 _MacroTintA;
@@ -263,7 +266,7 @@ Shader "Game/Environment/GroundMacroVariation"
                 UNITY_SETUP_INSTANCE_ID(input);
 
                 half4 atlas = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, input.uv);
-                half3 albedo = atlas.rgb * _BaseColor.rgb;
+                half3 albedo = atlas.rgb * lerp(half3(1, 1, 1), _BaseColor.rgb, _BaseColorInfluence);
                 half3 normalWS = NormalizeNormalPerPixel(input.normalWS);
                 ApplyGroundVariation(input.positionWS, albedo, normalWS);
                 albedo = ApplyDirtShoulderTint(atlas.rgb, albedo);

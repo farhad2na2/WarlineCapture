@@ -18,6 +18,10 @@ public sealed class AndroidVisualQualityValidationTests
 {
     private const string MobileRenderPipelinePath = "Assets/Settings/Mobile_RPAsset.asset";
     private const string HighMobileRenderPipelinePath = "Assets/Game/Rendering/Mobile_RPAsset_MobileCandidate.asset";
+    private const string DemoVolumeProfilePath = "Assets/PolygonMilitary/Scenes/Demo/Military_Demo.asset";
+    private const string DenseAsphaltMaterialPath = "Assets/Game/Materials/Gray.mat";
+    private const string DemoRoadAlbedoPath = "Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Road_01.png";
+    private const string DemoRoadNormalPath = "Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Road_Normal.png";
     private const string MobileRendererPath = "Assets/Settings/Mobile_Renderer.asset";
     private const string VisualQualityProfilePath = "Assets/Game/Rendering/VisualQualityConfig.asset";
     private const string MainMenuPlayUiPath = "Assets/Game/Scripts/UI/MainMenuPlayUI.cs";
@@ -37,6 +41,8 @@ public sealed class AndroidVisualQualityValidationTests
             int passed = 0;
             RunCase(() => MobileRenderPipelineUsesBalancedScaleAndMsaa(), ref passed);
             RunCase(() => HighMobileRenderPipelineUsesSharperScaleAndExtendedShadows(), ref passed);
+            RunCase(() => HighMobileVolumeProfileMatchesDemoExactly(), ref passed);
+            RunCase(() => HighProfileEnablesDetailedGroundAndDenseAsphalt(), ref passed);
             RunCase(() => MobileRenderPipelineUsesGpuInstancedDrawingDefaults(), ref passed);
             RunCase(() => MobileRendererUsesForwardPlusForEntitiesGraphics(), ref passed);
             RunCase(() => GraphicsSettingsRetainsBatchRendererGroupShaderVariants(), ref passed);
@@ -126,6 +132,84 @@ public sealed class AndroidVisualQualityValidationTests
         Assert.That(renderScale.floatValue, Is.EqualTo(HighMobileRenderScale).Within(0.001f), "High mobile must render the world at 75% resolution.");
         Assert.AreEqual(BalancedMobileUpscalingFilter, upscalingFilter.intValue, "High mobile must retain FSR upscaling.");
         Assert.That(shadowDistance.floatValue, Is.EqualTo(48f).Within(0.001f), "High mobile must keep useful RTS shadows visible farther than Medium.");
+    }
+
+    [Test]
+    public static void HighMobileVolumeProfileMatchesDemoExactly()
+    {
+        UnityEngine.Object profile = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(DemoVolumeProfilePath);
+        Assert.NotNull(profile, $"Missing Demo volume profile at {DemoVolumeProfilePath}.");
+
+        SerializedProperty components = new SerializedObject(profile).FindProperty("components");
+        Assert.NotNull(components, "High mobile volume profile is missing serialized components.");
+        UnityEngine.Object color = null;
+        bool hasBloom = false;
+        bool hasVignette = false;
+        bool hasSplitTone = false;
+        for (int i = 0; i < components.arraySize; i++)
+        {
+            UnityEngine.Object component = components.GetArrayElementAtIndex(i).objectReferenceValue;
+            Assert.NotNull(component, $"High mobile volume component {i} is missing.");
+            if (string.Equals(component.name, "ColorAdjustments", StringComparison.Ordinal))
+                color = component;
+            else if (string.Equals(component.name, "Bloom", StringComparison.Ordinal))
+                hasBloom = true;
+            else if (string.Equals(component.name, "Vignette", StringComparison.Ordinal))
+                hasVignette = true;
+            else if (string.Equals(component.name, "ShadowsMidtonesHighlights", StringComparison.Ordinal))
+                hasSplitTone = true;
+        }
+
+        Assert.NotNull(color, "High mobile volume must configure color adjustments.");
+        Assert.True(hasBloom, "High mobile volume must preserve Demo bloom.");
+        Assert.True(hasVignette, "High mobile volume must preserve Demo vignette.");
+        Assert.True(hasSplitTone, "High mobile volume must preserve Demo shadow/midtone grading.");
+        Assert.AreEqual(4, components.arraySize, "High mobile volume must preserve the exact Demo component set.");
+        SerializedObject serializedColor = new(color);
+        float contrast = serializedColor.FindProperty("contrast").FindPropertyRelative("m_Value").floatValue;
+        float saturation = serializedColor.FindProperty("saturation").FindPropertyRelative("m_Value").floatValue;
+        Assert.That(contrast, Is.EqualTo(15f).Within(0.001f), "High mobile contrast must match Demo exactly.");
+        Assert.That(saturation, Is.EqualTo(10f).Within(0.001f), "High mobile saturation must match Demo exactly.");
+    }
+
+    [Test]
+    public static void HighProfileEnablesDetailedGroundAndDenseAsphalt()
+    {
+        VisualQualityProfileAsset profile =
+            AssetDatabase.LoadAssetAtPath<VisualQualityProfileAsset>(VisualQualityProfilePath);
+        Assert.NotNull(profile, $"Missing visual quality profile at {VisualQualityProfilePath}.");
+        Assert.True(
+            profile.EnableGroundVariation,
+            "High map quality must not disable the baked ground macro/detail variation shader.");
+
+        Material asphalt = AssetDatabase.LoadAssetAtPath<Material>(DenseAsphaltMaterialPath);
+        Assert.NotNull(asphalt, $"Missing dense asphalt material at {DenseAsphaltMaterialPath}.");
+        Assert.NotNull(asphalt.shader, "Dense asphalt material has no shader.");
+        Assert.AreEqual(
+            "Game/Environment/GroundMacroVariation",
+            asphalt.shader.name,
+            "Dense asphalt must use the instanced macro-detail shader instead of a flat color material.");
+        Assert.AreEqual(
+            DemoRoadAlbedoPath,
+            AssetDatabase.GetAssetPath(asphalt.GetTexture("_BaseMap")),
+            "Dense asphalt must reuse the approved Demo2 road albedo.");
+        Assert.AreEqual(
+            DemoRoadNormalPath,
+            AssetDatabase.GetAssetPath(asphalt.GetTexture("_DesertDetailNormal")),
+            "Dense asphalt must reuse the approved Demo2 road normal detail.");
+        Assert.That(
+            asphalt.GetFloat("_BaseColorInfluence"),
+            Is.EqualTo(0f).Within(0.001f),
+            "Dense asphalt must not inherit the legacy flat-gray per-entity tint.");
+        Assert.Greater(
+            asphalt.GetFloat("_MacroStrength"),
+            0f,
+            "Dense asphalt requires subtle world-space variation between repeated road tiles.");
+        Assert.That(
+            asphalt.GetFloat("_EnvironmentReflections"),
+            Is.EqualTo(0f).Within(0.001f),
+            "Detailed asphalt must preserve the protected Autobahn's non-reflective contract.");
+        Assert.True(asphalt.enableInstancing, "Dense asphalt must remain GPU-instancing compatible.");
     }
 
     [Test]
@@ -300,10 +384,12 @@ public sealed class AndroidVisualQualityValidationTests
         SerializedProperty mediumPipeline = serializedProfile.FindProperty("mediumRenderPipelineAsset");
         SerializedProperty highPipeline = serializedProfile.FindProperty("highRenderPipelineAsset");
         SerializedProperty highVolume = serializedProfile.FindProperty("highVolumeProfile");
+        SerializedProperty ultraVolume = serializedProfile.FindProperty("globalVolumeProfile");
         Assert.NotNull(cameraAntialiasingMode, "Visual quality profile is missing serialized cameraAntialiasingMode.");
         Assert.NotNull(mediumPipeline, "Visual quality profile is missing serialized mediumRenderPipelineAsset.");
         Assert.NotNull(highPipeline, "Visual quality profile is missing serialized highRenderPipelineAsset.");
         Assert.NotNull(highVolume, "Visual quality profile is missing serialized highVolumeProfile.");
+        Assert.NotNull(ultraVolume, "Visual quality profile is missing serialized globalVolumeProfile.");
 
         Assert.GreaterOrEqual(
             profile.LowRenderScaleOverride,
@@ -324,7 +410,14 @@ public sealed class AndroidVisualQualityValidationTests
             highPipeline.objectReferenceValue,
             "High must not silently reuse Medium's lower-resolution render pipeline.");
         Assert.NotNull(highVolume.objectReferenceValue, "High requires a configured color-grading volume profile.");
+        UnityEngine.Object demoVolume = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(DemoVolumeProfilePath);
+        Assert.AreSame(demoVolume, highVolume.objectReferenceValue, "High must use the exact Demo volume profile.");
+        Assert.AreSame(demoVolume, ultraVolume.objectReferenceValue, "Ultra must use the exact Demo volume profile.");
         Assert.True(profile.EnableHighCameraPostProcessing, "High must enable its configured mobile color treatment.");
+        Assert.That(
+            profile.HighSunShadowStrength,
+            Is.EqualTo(1f).Within(0.001f),
+            "High shadows must preserve the Demo light's full shadow strength.");
         Assert.AreEqual(
             1,
             cameraAntialiasingMode.intValue,
@@ -938,5 +1031,6 @@ public sealed class AndroidVisualQualityValidationTests
         Assert.NotNull(field, $"{type.Name} is missing {memberName}.");
         field.SetValue(target, value);
     }
+
 }
 #endif

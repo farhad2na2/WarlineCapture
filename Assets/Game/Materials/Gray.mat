@@ -8,14 +8,14 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Gray
-  m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
+  m_Shader: {fileID: 4800000, guid: ccc0634edfe14e0c95ffa7446dd9ec82, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _ENVIRONMENTREFLECTIONS_OFF
   m_InvalidKeywords: []
   m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
+  m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap:
@@ -27,11 +27,19 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 6481596871fd2b34fbb71814c2ce6a64, type: 3}
+        m_Scale: {x: 1, y: 0.88}
+        m_Offset: {x: 0, y: 0.1}
+    - _BumpMap:
+        m_Texture: {fileID: 2800000, guid: 0ed3b77386a0ee44b8fef4deaac4526f, type: 3}
+        m_Scale: {x: 1, y: 0.88}
+        m_Offset: {x: 0, y: 0.1}
+    - _DesertDetailMap:
+        m_Texture: {fileID: 2800000, guid: 6481596871fd2b34fbb71814c2ce6a64, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _BumpMap:
-        m_Texture: {fileID: 0}
+    - _DesertDetailNormal:
+        m_Texture: {fileID: 2800000, guid: 0ed3b77386a0ee44b8fef4deaac4526f, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -48,6 +56,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _GreenDetailMap:
+        m_Texture: {fileID: 2800000, guid: 6481596871fd2b34fbb71814c2ce6a64, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -90,24 +102,39 @@ Material:
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _BumpScale: 1
+    - _BaseColorInfluence: 0
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
     - _Cull: 2
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
+    - _DetailFadeEnd: 320
+    - _DetailFadeStart: 80
+    - _DetailScale: 0.11
+    - _DetailStrength: 0.035
     - _DetailNormalMapScale: 1
+    - _DirtShoulderTintStrength: 0
+    - _DirtShoulderWarmthThreshold: 0.08
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 0
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
+    - _GreenPatchThreshold: 0.55
+    - _GroundDetailNormalStrength: 0.22
+    - _GroundDetailStrength: 0
+    - _GroundDetailTiling: 0.04
+    - _MacroContrastHigh: 0.72
+    - _MacroContrastLow: 0.28
+    - _MacroScale: 0.035
+    - _MacroStrength: 0.2
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.005
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _Smoothness: 0
+    - _Smoothness: 0.08
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -119,7 +146,10 @@ Material:
     m_Colors:
     - _BaseColor: {r: 0.44705883, g: 0.43137255, b: 0.40784314, a: 1}
     - _Color: {r: 0.4470588, g: 0.4313725, b: 0.4078431, a: 1}
+    - _DirtShoulderColorScale: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _MacroTintA: {r: 0.82, g: 0.84, b: 0.86, a: 1}
+    - _MacroTintB: {r: 0.7, g: 0.66, b: 0.6, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

@@ -17,26 +17,26 @@
     "unresolvedOwnerRenderRows": 355,
     "eligibleStableOwnerJoinedRenderRows": 61925,
     "sourceRowCount": 76517,
-    "sourceRowsSha256": "12adf0263038e2b5d5977470e7be45d23543d815b381d128c4e8239d4af6883a",
+    "sourceRowsSha256": "335fc69d3f4b9f1419cb704f1757475d67ae4d1f810574a034f5caf299e42839",
     "sourceRowsPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_source_rows.json.gz",
     "sourceRowsCompression": "gzip",
-    "sourceRowsJsonSha256": "f02485aa00ef67683ee4197e129486fb695395297af6a6647ba9d4327e0fd17f",
-    "sourceRowsGzipSha256": "515924116d2ad3c6cce3cc8efb8fdd9d1c5488579cc5660adea059beedfdaf04",
+    "sourceRowsJsonSha256": "9a6551f47676532c1999a405a54511eb8b5de55ea774a700e8e7d923243181a7",
+    "sourceRowsGzipSha256": "fad0abb916e90cb1fd70997c3181df8258bbfb99ecdef129afa09916a40bb4c1",
     "logicalPlacementCount": 40460,
     "prototypeCount": 9107,
     "prototypePartCount": 12293,
     "prototypeRecipeRowsConsumed": 61925,
-    "prototypeRecipesSha256": "a3837d67a6971f1cf13aa3a7fa8cc0c1400d7a7a80c8cadc110ee34bc4df4d23",
+    "prototypeRecipesSha256": "f91890e882f576f1da809f25abdcd2b9199395835766ff797c370ac80b39a1d3",
     "prototypeRecipesPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_prototype_recipes.json",
-    "prototypeRecipesJsonSha256": "f262f5ab4b7578ee91ac7fb6106a84dc644c0cfcd6960c2bd97bc5a80acc075c",
+    "prototypeRecipesJsonSha256": "d9817bf90d88fa07c80b246934fa25c487b3ff5c09c4cc71dd52e46416f14d6d",
     "placementCount": 40460,
     "stateOwnerCount": 4530,
     "stateLinkedPlacementCount": 9060,
     "renderOnlyPlacementCount": 31400,
     "placementPartRowCount": 61925,
-    "logicalPlacementsSha256": "78ed41eb53b6f67cb80c0d99e4928369f74c7043f6e014088b74c6916e9da272",
+    "logicalPlacementsSha256": "986185b76dd19b1da4537e79613e4922a64d8633073165bcd9003f18402c3a57",
     "logicalPlacementsPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_logical_placements.json",
-    "logicalPlacementsJsonSha256": "0f713bcf10b7c1437f6e4780ccfa7425b553c2afe8e2735f9ed253f9ef52f6ce",
+    "logicalPlacementsJsonSha256": "f3eb9732dbe783c53d318311df4fc49700a99b00c35841dd1dfc05a49e8f7880",
     "renderCellSize": 32.0,
     "acceptedRenderGridOrigin": [
         0.0,
@@ -119496,7 +119496,7 @@
             "total": 1532
         },
         {
-            "key": "Infrastructure|prefab|0edeb5415af72ab418de56420349e4fe:6752715572181065886|0edeb5415af72ab418de56420349e4fe:3465647364283834676|c79f18f98ef15d94d9da27dc21f33692:4300000|3b6acbff6d516b24ba59ade48d3bc9ab:2100000|0",
+            "key": "Infrastructure|prefab|0edeb5415af72ab418de56420349e4fe:6752715572181065886|0edeb5415af72ab418de56420349e4fe:3465647364283834676|c79f18f98ef15d94d9da27dc21f33692:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 1532,
             "excluded": 0,
             "total": 1532
@@ -119514,7 +119514,7 @@
             "total": 1532
         },
         {
-            "key": "Infrastructure|prefab|19ddf3e86f1306542af1df5745ebacfb:4627792861614435960|19ddf3e86f1306542af1df5745ebacfb:2785551417663278647|a8108c677731e914491722c0e433889c:4300000|3b6acbff6d516b24ba59ade48d3bc9ab:2100000|0",
+            "key": "Infrastructure|prefab|19ddf3e86f1306542af1df5745ebacfb:4627792861614435960|19ddf3e86f1306542af1df5745ebacfb:2785551417663278647|a8108c677731e914491722c0e433889c:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 4,
             "excluded": 0,
             "total": 4
@@ -119646,13 +119646,13 @@
             "total": 120
         },
         {
-            "key": "Infrastructure|prefab|73b4e6d68769d294e9bbb2138e5b9ec9:125360972841645786|73b4e6d68769d294e9bbb2138e5b9ec9:6817077091035775243|a8108c677731e914491722c0e433889c:4300000|3b6acbff6d516b24ba59ade48d3bc9ab:2100000|0",
+            "key": "Infrastructure|prefab|73b4e6d68769d294e9bbb2138e5b9ec9:125360972841645786|73b4e6d68769d294e9bbb2138e5b9ec9:6817077091035775243|a8108c677731e914491722c0e433889c:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 120,
             "excluded": 0,
             "total": 120
         },
         {
-            "key": "Infrastructure|prefab|73b4e6d68769d294e9bbb2138e5b9ec9:125360972841645786|73b4e6d68769d294e9bbb2138e5b9ec9:6841182298160217704|a8108c677731e914491722c0e433889c:4300000|3b6acbff6d516b24ba59ade48d3bc9ab:2100000|0",
+            "key": "Infrastructure|prefab|73b4e6d68769d294e9bbb2138e5b9ec9:125360972841645786|73b4e6d68769d294e9bbb2138e5b9ec9:6841182298160217704|a8108c677731e914491722c0e433889c:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 120,
             "excluded": 0,
             "total": 120
@@ -119670,19 +119670,19 @@
             "total": 120
         },
         {
-            "key": "Infrastructure|prefab|73b4e6d68769d294e9bbb2138e5b9ec9:125360972841645786|73b4e6d68769d294e9bbb2138e5b9ec9:9123379582741175582|a8108c677731e914491722c0e433889c:4300000|3b6acbff6d516b24ba59ade48d3bc9ab:2100000|0",
+            "key": "Infrastructure|prefab|73b4e6d68769d294e9bbb2138e5b9ec9:125360972841645786|73b4e6d68769d294e9bbb2138e5b9ec9:9123379582741175582|a8108c677731e914491722c0e433889c:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 120,
             "excluded": 0,
             "total": 120
         },
         {
-            "key": "Infrastructure|prefab|73b4e6d68769d294e9bbb2138e5b9ec9:125360972841645786|73b4e6d68769d294e9bbb2138e5b9ec9:986382898110572655|a8108c677731e914491722c0e433889c:4300000|3b6acbff6d516b24ba59ade48d3bc9ab:2100000|0",
+            "key": "Infrastructure|prefab|73b4e6d68769d294e9bbb2138e5b9ec9:125360972841645786|73b4e6d68769d294e9bbb2138e5b9ec9:986382898110572655|a8108c677731e914491722c0e433889c:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 120,
             "excluded": 0,
             "total": 120
         },
         {
-            "key": "Infrastructure|prefab|787b5f0314040784cb52998984b465ff:2977948095156090640|787b5f0314040784cb52998984b465ff:17011344541616708|c79f18f98ef15d94d9da27dc21f33692:4300000|3b6acbff6d516b24ba59ade48d3bc9ab:2100000|0",
+            "key": "Infrastructure|prefab|787b5f0314040784cb52998984b465ff:2977948095156090640|787b5f0314040784cb52998984b465ff:17011344541616708|c79f18f98ef15d94d9da27dc21f33692:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 18,
             "excluded": 0,
             "total": 18
@@ -119754,7 +119754,7 @@
             "total": 15
         },
         {
-            "key": "Infrastructure|prefab|926a821ced7ab7e4282e2d57bb086a96:2977948095156090640|926a821ced7ab7e4282e2d57bb086a96:17011344541616708|c79f18f98ef15d94d9da27dc21f33692:4300000|3b6acbff6d516b24ba59ade48d3bc9ab:2100000|0",
+            "key": "Infrastructure|prefab|926a821ced7ab7e4282e2d57bb086a96:2977948095156090640|926a821ced7ab7e4282e2d57bb086a96:17011344541616708|c79f18f98ef15d94d9da27dc21f33692:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 122,
             "excluded": 0,
             "total": 122
@@ -119802,49 +119802,49 @@
             "total": 1233
         },
         {
-            "key": "Infrastructure|prefab|c4d9275e3a9aa8949bdfd2c237fd4bb4:2219165648693706337|c4d9275e3a9aa8949bdfd2c237fd4bb4:5924566868765960817|a8108c677731e914491722c0e433889c:4300000|3b6acbff6d516b24ba59ade48d3bc9ab:2100000|0",
+            "key": "Infrastructure|prefab|c4d9275e3a9aa8949bdfd2c237fd4bb4:2219165648693706337|c4d9275e3a9aa8949bdfd2c237fd4bb4:5924566868765960817|a8108c677731e914491722c0e433889c:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 30,
             "excluded": 0,
             "total": 30
         },
         {
-            "key": "Infrastructure|prefab|c4d9275e3a9aa8949bdfd2c237fd4bb4:2219165648693706337|c4d9275e3a9aa8949bdfd2c237fd4bb4:9079989481496617841|a8108c677731e914491722c0e433889c:4300000|3b6acbff6d516b24ba59ade48d3bc9ab:2100000|0",
+            "key": "Infrastructure|prefab|c4d9275e3a9aa8949bdfd2c237fd4bb4:2219165648693706337|c4d9275e3a9aa8949bdfd2c237fd4bb4:9079989481496617841|a8108c677731e914491722c0e433889c:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 30,
             "excluded": 0,
             "total": 30
         },
         {
-            "key": "Infrastructure|prefab|d1aa43c7aa84beb4a92179470ab03397:6752715572181065886|d1aa43c7aa84beb4a92179470ab03397:3465647364283834676|c79f18f98ef15d94d9da27dc21f33692:4300000|3b6acbff6d516b24ba59ade48d3bc9ab:2100000|0",
+            "key": "Infrastructure|prefab|d1aa43c7aa84beb4a92179470ab03397:6752715572181065886|d1aa43c7aa84beb4a92179470ab03397:3465647364283834676|c79f18f98ef15d94d9da27dc21f33692:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 1477,
             "excluded": 0,
             "total": 1477
         },
         {
-            "key": "Infrastructure|prefab|d66e5ccbe0160fc45bcc4100badeb182:125360972841645786|d66e5ccbe0160fc45bcc4100badeb182:6817077091035775243|a8108c677731e914491722c0e433889c:4300000|3b6acbff6d516b24ba59ade48d3bc9ab:2100000|0",
+            "key": "Infrastructure|prefab|d66e5ccbe0160fc45bcc4100badeb182:125360972841645786|d66e5ccbe0160fc45bcc4100badeb182:6817077091035775243|a8108c677731e914491722c0e433889c:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 90,
             "excluded": 0,
             "total": 90
         },
         {
-            "key": "Infrastructure|prefab|d66e5ccbe0160fc45bcc4100badeb182:125360972841645786|d66e5ccbe0160fc45bcc4100badeb182:6841182298160217704|a8108c677731e914491722c0e433889c:4300000|3b6acbff6d516b24ba59ade48d3bc9ab:2100000|0",
+            "key": "Infrastructure|prefab|d66e5ccbe0160fc45bcc4100badeb182:125360972841645786|d66e5ccbe0160fc45bcc4100badeb182:6841182298160217704|a8108c677731e914491722c0e433889c:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 90,
             "excluded": 0,
             "total": 90
         },
         {
-            "key": "Infrastructure|prefab|d66e5ccbe0160fc45bcc4100badeb182:125360972841645786|d66e5ccbe0160fc45bcc4100badeb182:9123379582741175582|a8108c677731e914491722c0e433889c:4300000|3b6acbff6d516b24ba59ade48d3bc9ab:2100000|0",
+            "key": "Infrastructure|prefab|d66e5ccbe0160fc45bcc4100badeb182:125360972841645786|d66e5ccbe0160fc45bcc4100badeb182:9123379582741175582|a8108c677731e914491722c0e433889c:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 90,
             "excluded": 0,
             "total": 90
         },
         {
-            "key": "Infrastructure|prefab|d66e5ccbe0160fc45bcc4100badeb182:125360972841645786|d66e5ccbe0160fc45bcc4100badeb182:986382898110572655|a8108c677731e914491722c0e433889c:4300000|3b6acbff6d516b24ba59ade48d3bc9ab:2100000|0",
+            "key": "Infrastructure|prefab|d66e5ccbe0160fc45bcc4100badeb182:125360972841645786|d66e5ccbe0160fc45bcc4100badeb182:986382898110572655|a8108c677731e914491722c0e433889c:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 90,
             "excluded": 0,
             "total": 90
         },
         {
-            "key": "Infrastructure|prefab|d89705a668a8d154aae2808221ff8c22:4627792861614435960|d89705a668a8d154aae2808221ff8c22:2785551417663278647|a8108c677731e914491722c0e433889c:4300000|3b6acbff6d516b24ba59ade48d3bc9ab:2100000|0",
+            "key": "Infrastructure|prefab|d89705a668a8d154aae2808221ff8c22:4627792861614435960|d89705a668a8d154aae2808221ff8c22:2785551417663278647|a8108c677731e914491722c0e433889c:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 9,
             "excluded": 0,
             "total": 9
@@ -119904,7 +119904,7 @@
             "total": 27
         },
         {
-            "key": "Infrastructure|prefab|fd2d31f06cc51fc48a878aa89d3a24ca:2219165648693706337|fd2d31f06cc51fc48a878aa89d3a24ca:5924566868765960817|a8108c677731e914491722c0e433889c:4300000|3b6acbff6d516b24ba59ade48d3bc9ab:2100000|0",
+            "key": "Infrastructure|prefab|fd2d31f06cc51fc48a878aa89d3a24ca:2219165648693706337|fd2d31f06cc51fc48a878aa89d3a24ca:5924566868765960817|a8108c677731e914491722c0e433889c:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 27,
             "excluded": 0,
             "total": 27
@@ -119922,7 +119922,7 @@
             "total": 27
         },
         {
-            "key": "Infrastructure|prefab|fd2d31f06cc51fc48a878aa89d3a24ca:2219165648693706337|fd2d31f06cc51fc48a878aa89d3a24ca:9079989481496617841|a8108c677731e914491722c0e433889c:4300000|3b6acbff6d516b24ba59ade48d3bc9ab:2100000|0",
+            "key": "Infrastructure|prefab|fd2d31f06cc51fc48a878aa89d3a24ca:2219165648693706337|fd2d31f06cc51fc48a878aa89d3a24ca:9079989481496617841|a8108c677731e914491722c0e433889c:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 27,
             "excluded": 0,
             "total": 27

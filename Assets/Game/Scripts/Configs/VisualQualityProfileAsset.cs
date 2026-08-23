@@ -31,10 +31,10 @@ namespace Game.Configs
         [SerializeField, Min(0f)] private float cameraRenderScaleOverride = 1f;
         [SerializeField, Range(0f, 1f)] private float lowSunShadowStrength = 0.25f;
         [SerializeField, Range(0f, 1f)] private float mediumSunShadowStrength = 0.55f;
-        [SerializeField, Range(0f, 1f)] private float highSunShadowStrength = 0.72f;
+        [SerializeField, Range(0f, 1f)] private float highSunShadowStrength = 1f;
         [SerializeField] private Color premiumSunColor = new(1f, 0.78f, 0.48f, 1f);
         [SerializeField, Range(0f, 8f)] private float premiumSunIntensity = 3.2f;
-        [SerializeField, Range(0f, 1f)] private float premiumSunShadowStrength = 0.88f;
+        [SerializeField, Range(0f, 1f)] private float premiumSunShadowStrength = 1f;
         [SerializeField] private Vector3 premiumSunEulerAngles = new(42f, -32f, 0f);
         [SerializeField] private Color premiumAmbientSkyColor = new(0.58f, 0.68f, 0.78f, 1f);
         [SerializeField] private Color premiumAmbientEquatorColor = new(0.34f, 0.36f, 0.38f, 1f);

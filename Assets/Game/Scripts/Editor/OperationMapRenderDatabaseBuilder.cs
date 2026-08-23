@@ -28,8 +28,6 @@ namespace Game.Editor
             "Design/AgentReports/2026-07-28_dense_city_render_virtualization_capacity_budget.json";
         private const string LegacyMilitaryMaterialGuid =
             "48843a2db7a47754f9c8d6ae390ebf4b";
-        private const string DenseDirtRoadMaterialGuid =
-            "3b6acbff6d516b24ba59ade48d3bc9ab";
         private const long MaterialLocalId = 2100000;
 
         [MenuItem("Game/Operation Maps/EntityScene Migration/Build Candidate Render Database")]
@@ -276,7 +274,7 @@ namespace Game.Editor
                 .ThenBy(value => value.localId)
                 .ToArray();
             AssetIdentity[] materialIds = inputs.prototypes.parts
-                .Select(ResolveMaterialIdentity)
+                .Select(ResolveSourceMaterialIdentity)
                 .Distinct()
                 .OrderBy(value => value.guid, StringComparer.Ordinal)
                 .ThenBy(value => value.localId)
@@ -378,7 +376,7 @@ namespace Game.Editor
                         rendererIdentity.Low,
                         rendererIdentity.High,
                         meshIndices[new AssetIdentity(value.meshAssetGuid, value.meshLocalId)],
-                        materialIndices[ResolveMaterialIdentity(value)],
+                        materialIndices[ResolveSourceMaterialIdentity(value)],
                         value.subMeshIndex,
                         MatrixFrom(value.localToPlacement),
                         BoundsFrom(value.localBoundsCenter, value.localBoundsExtents),
@@ -418,24 +416,14 @@ namespace Game.Editor
             };
         }
 
-        private static AssetIdentity ResolveMaterialIdentity(PartDto part)
+        private static AssetIdentity ResolveSourceMaterialIdentity(PartDto part)
         {
             AssetIdentity source =
                 new(part.materialAssetGuid, part.materialLocalId);
             if (!part.rendererPath.StartsWith("Dirt[", StringComparison.Ordinal))
                 return source;
-            if (part.materialLocalId != MaterialLocalId)
-            {
-                throw new InvalidOperationException(
-                    $"Dense dirt-road prototype {part.prototypeIndex} has an unexpected " +
-                    "renderer or source material contract.");
-            }
-            if (string.Equals(
-                    part.materialAssetGuid,
-                    DenseDirtRoadMaterialGuid,
-                    StringComparison.Ordinal))
-                return source;
-            if (!string.Equals(
+            if (part.materialLocalId != MaterialLocalId ||
+                !string.Equals(
                     part.materialAssetGuid,
                     LegacyMilitaryMaterialGuid,
                     StringComparison.Ordinal))
@@ -444,7 +432,7 @@ namespace Game.Editor
                     $"Dense dirt-road prototype {part.prototypeIndex} has an unexpected " +
                     "renderer or source material contract.");
             }
-            return new AssetIdentity(DenseDirtRoadMaterialGuid, MaterialLocalId);
+            return source;
         }
 
         private static T LoadAsset<T>(AssetIdentity identity) where T : UnityEngine.Object

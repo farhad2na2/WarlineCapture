@@ -101,9 +101,9 @@ public static class M01FirstContactDenseCityReuseTests
         DenseCityDatabaseReport report = JsonUtility.FromJson<DenseCityDatabaseReport>(
             File.ReadAllText(DatabaseReportPath));
         Require(report != null && report.result == "Passed", "Dense-city VRP database report is not accepted.");
-        Require(report.contentHash == "ec3f7d738e7878d7291bae728207922be5ea248a4390b61be182390cc9bcc8df" &&
-                report.recordOrderingSha256 == "1bef0b5ca9fc3a242b0bd417150635c318630954a2b826c0fcf33ee7691005c3" &&
-                report.configSerializedSha256 == "2ddc6f40a43d04537d80168094ebc7629fc155f5177912ea7bb0b03bde82fd83",
+        Require(report.contentHash == "ec96a423fac12973b06d579a4277a28da0234244630c4f3ffb518c37df293dac" &&
+                report.recordOrderingSha256 == "7df0db01d72addb978d991aebcd8cf865a37308adc22e7a911cc525b4bbaa378" &&
+                report.configSerializedSha256 == "aec499e27a121941f37cd345a13cc629f35ff14a34cac1a56015ff8fd76911e1",
             "Dense-city VRP database identity or ordering drifted.");
         Require(report.logicalParityResult == "Passed" && report.isolationResult == "Passed",
             "Dense-city logical parity or isolation is no longer accepted.");
@@ -116,7 +116,7 @@ public static class M01FirstContactDenseCityReuseTests
         Require(Sha256File(DatabaseConfigPath) == report.configSerializedSha256,
             "VRP database config bytes drifted from the accepted report.");
         Require(Sha256File(DatabaseReportPath) ==
-                "24d49619557c87319bf7a30286b595a8b00c76ea222835535cef797685f39230",
+                "8e7a432409c71a6d774a3f3434b969ed0d03b6cb46faf5c494de3edda52ac183",
             "Accepted VRP database report bytes drifted.");
     }
 

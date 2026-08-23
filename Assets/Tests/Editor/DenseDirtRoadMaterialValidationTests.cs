@@ -4,14 +4,21 @@ using System.IO;
 using Game.Configs;
 using NUnit.Framework;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public sealed class DenseDirtRoadMaterialValidationTests
 {
-    private const string DenseDirtRoadMaterialPath =
-        "Assets/Game/Art/MapPrototypes/M01/Materials/M01_DirtRoad.mat";
     private const string DemoDirtRoadMaterialPath =
         "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_01_A.mat";
+    private const string DemoVolumeProfilePath =
+        "Assets/PolygonMilitary/Scenes/Demo/Military_Demo.asset";
+    private const string MatchScenePath = "Assets/Game/Scenes/Match.unity";
+    private const string VisualQualityProfilePath =
+        "Assets/Game/Rendering/VisualQualityConfig.asset";
+    private const string MobileCandidateVisualQualityProfilePath =
+        "Assets/Game/Rendering/VisualQualityConfig_MobileCandidate.asset";
     private const string RenderDatabaseConfigPath =
         "Assets/Game/GeneratedOperationMapEntityPresentationCandidate/VirtualizedPresentation/" +
         "OperationMapRenderDatabaseBakeConfig.asset";
@@ -50,8 +57,11 @@ public sealed class DenseDirtRoadMaterialValidationTests
     {
         try
         {
-            DenseDirtRoadsUseWarmDemoSurface();
-            Debug.Log("[DenseDirtRoadMaterialValidation] result=Passed dirtRenderers=36 packedParts=18");
+            DenseDirtRoadsUseExactDemoSurface();
+            MatchUsesExactDemoVolumeProfile();
+            Debug.Log(
+                "[DenseDirtRoadMaterialValidation] result=Passed " +
+                "dirtRenderers=36 packedParts=18 demoMaterial=Exact demoVolume=Exact");
         }
         catch (Exception exception)
         {
@@ -62,28 +72,27 @@ public sealed class DenseDirtRoadMaterialValidationTests
     }
 
     [Test]
-    public static void DenseDirtRoadsUseWarmDemoSurface()
+    public static void DenseDirtRoadsUseExactDemoSurface()
     {
-        Material dirt = AssetDatabase.LoadAssetAtPath<Material>(DenseDirtRoadMaterialPath);
-        Assert.NotNull(dirt, $"Missing dense dirt-road material at {DenseDirtRoadMaterialPath}.");
+        Material dirt = AssetDatabase.LoadAssetAtPath<Material>(DemoDirtRoadMaterialPath);
+        Assert.NotNull(dirt, $"Missing Demo dirt-road material at {DemoDirtRoadMaterialPath}.");
         Assert.AreEqual(
             DemoDirtRoadAlbedoPath,
             AssetDatabase.GetAssetPath(dirt.GetTexture("_BaseMap")),
-            "Dense dirt roads must preserve the Demo dirt-road atlas and authored UV detail.");
+            "Dense dirt roads must use the exact Demo dirt-road atlas and authored UV detail.");
         Assert.AreEqual(
             DemoDirtRoadNormalPath,
             AssetDatabase.GetAssetPath(dirt.GetTexture("_BumpMap")),
             "Dense dirt roads must preserve the Demo dirt-road normal map.");
         Assert.True(dirt.IsKeywordEnabled("_NORMALMAP"), "Dense dirt roads must enable their normal map.");
-        Assert.That(dirt.GetFloat("_EnvironmentReflections"), Is.Zero.Within(0.001f));
-        Assert.True(dirt.IsKeywordEnabled("_ENVIRONMENTREFLECTIONS_OFF"));
+        Assert.That(dirt.GetFloat("_EnvironmentReflections"), Is.EqualTo(1f).Within(0.001f));
+        Assert.False(dirt.IsKeywordEnabled("_ENVIRONMENTREFLECTIONS_OFF"));
         Assert.True(dirt.enableInstancing, "Dense dirt roads must remain GPU-instancing compatible.");
 
         Color tint = dirt.GetColor("_BaseColor");
-        Assert.That(tint.r, Is.GreaterThanOrEqualTo(0.99f));
-        Assert.That(tint.g, Is.GreaterThanOrEqualTo(0.85f));
-        Assert.That(tint.b, Is.LessThanOrEqualTo(0.70f));
-        Assert.Greater(tint.r, tint.b, "Dense dirt roads require an explicit warm sand response.");
+        Assert.That(tint.r, Is.EqualTo(1f).Within(0.001f));
+        Assert.That(tint.g, Is.EqualTo(1f).Within(0.001f));
+        Assert.That(tint.b, Is.EqualTo(1f).Within(0.001f));
 
         int dirtRendererCount = 0;
         int sidewalkRendererCount = 0;
@@ -100,14 +109,12 @@ public sealed class DenseDirtRoadMaterialValidationTests
                     dirtRendererCount++;
                 else
                     sidewalkRendererCount++;
-                string expectedMaterialPath =
-                    isDirt ? DenseDirtRoadMaterialPath : DemoDirtRoadMaterialPath;
                 foreach (Material material in renderer.sharedMaterials)
                 {
                     Assert.AreEqual(
-                        expectedMaterialPath,
+                        DemoDirtRoadMaterialPath,
                         AssetDatabase.GetAssetPath(material),
-                        $"Dense dirt-road renderer '{renderer.name}' has the wrong surface material: {path}.");
+                        $"Dense dirt-road renderer '{renderer.name}' must use the exact Demo material: {path}.");
                 }
             }
         }
@@ -143,9 +150,71 @@ public sealed class DenseDirtRoadMaterialValidationTests
             Assert.AreEqual(
                 dirtMaterialIndex,
                 database.Parts[part.partIndex].MaterialIndex,
-                $"Packed dirt-road part {part.partIndex} must use the dedicated warm material.");
+                $"Packed dirt-road part {part.partIndex} must use the exact Demo material.");
         }
         Assert.AreEqual(18, packedDirtPartCount, "Every packed Dirt renderer must be covered.");
+    }
+
+    [Test]
+    public static void MatchUsesExactDemoVolumeProfile()
+    {
+        UnityEngine.Object demoProfile =
+            AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(DemoVolumeProfilePath);
+        Assert.NotNull(demoProfile, $"Missing Demo volume profile at {DemoVolumeProfilePath}.");
+
+        AssertQualityProfileUsesDemoVolume(VisualQualityProfilePath, demoProfile);
+        AssertQualityProfileUsesDemoVolume(MobileCandidateVisualQualityProfilePath, demoProfile);
+
+        SceneSetup[] setup = EditorSceneManager.GetSceneManagerSetup();
+        try
+        {
+            EditorSceneManager.OpenScene(MatchScenePath, OpenSceneMode.Single);
+            GameObject globalOwner = GameObject.Find("Global Volume");
+            Assert.NotNull(globalOwner, "Match scene has no global volume owner.");
+            Component global = globalOwner.GetComponent("Volume");
+            Assert.NotNull(global, "Match global-volume owner has no Volume component.");
+            SerializedProperty sharedProfile =
+                new SerializedObject(global).FindProperty("sharedProfile");
+            Assert.NotNull(sharedProfile, "Match global volume has no shared-profile field.");
+            Assert.AreSame(
+                demoProfile,
+                sharedProfile.objectReferenceValue,
+                "Match must use the exact Demo global volume profile before runtime quality selection.");
+        }
+        finally
+        {
+            EditorSceneManager.RestoreSceneManagerSetup(setup);
+        }
+    }
+
+    private static void AssertQualityProfileUsesDemoVolume(
+        string profilePath,
+        UnityEngine.Object demoProfile)
+    {
+        VisualQualityProfileAsset profile =
+            AssetDatabase.LoadAssetAtPath<VisualQualityProfileAsset>(profilePath);
+        Assert.NotNull(profile, $"Missing visual-quality profile at {profilePath}.");
+        SerializedObject serializedProfile = new(profile);
+        SerializedProperty highVolume = serializedProfile.FindProperty("highVolumeProfile");
+        SerializedProperty ultraVolume = serializedProfile.FindProperty("globalVolumeProfile");
+        Assert.NotNull(highVolume, $"High volume field is missing: {profilePath}.");
+        Assert.NotNull(ultraVolume, $"Ultra volume field is missing: {profilePath}.");
+        Assert.AreSame(
+            demoProfile,
+            highVolume.objectReferenceValue,
+            $"High quality must use the exact Demo volume profile: {profilePath}.");
+        Assert.AreSame(
+            demoProfile,
+            ultraVolume.objectReferenceValue,
+            $"Ultra quality must use the exact Demo volume profile: {profilePath}.");
+        Assert.That(
+            profile.HighSunShadowStrength,
+            Is.EqualTo(1f).Within(0.001f),
+            $"High quality must preserve the Demo light's full shadow strength: {profilePath}.");
+        Assert.That(
+            profile.PremiumSunShadowStrength,
+            Is.EqualTo(1f).Within(0.001f),
+            $"Ultra quality must preserve the Demo light's full shadow strength: {profilePath}.");
     }
 
     [Serializable]

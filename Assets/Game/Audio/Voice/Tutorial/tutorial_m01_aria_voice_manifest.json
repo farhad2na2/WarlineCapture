@@ -1,6 +1,7 @@
 {
-  "schema": "WarlineCapture.TutorialNarrationVoice.v1",
+  "schema": "WarlineCapture.TutorialNarrationVoice.v2",
   "missionId": "campaign.chapter01.mission01",
+  "generatedAtUtc": "2026-08-23T08:20:00Z",
   "provider": "ElevenLabs",
   "license": "ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE",
   "runtimeNetworkTts": false,
@@ -18,6 +19,7 @@
   "clips": [
     {
       "step": 1,
+      "phase": "selection",
       "locale": "en-US",
       "text": "Select the command squad to begin.",
       "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_find_squad_aria.wav",
@@ -26,30 +28,43 @@
     },
     {
       "step": 2,
+      "phase": "command",
       "locale": "en-US",
-      "text": "Move the squad to the marked cover position.",
+      "text": "Tap MOVE to select the move command.",
       "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_move_to_cover_aria.wav",
-      "durationSeconds": 2.241474,
-      "sha256": "1f8300f51ea13d4e72f2f74dc2a8fe9de165112a0d16c913f6073a0b150714cf"
+      "durationSeconds": 2.847347,
+      "sha256": "e121fffefa26d8952790ccec0b5a0d561459ccf4307ca4140249841079775ea2"
     },
     {
       "step": 3,
+      "phase": "worldTarget",
       "locale": "en-US",
-      "text": "Inspect the armed patrol near the civilians.",
-      "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_confirm_threat_aria.wav",
-      "durationSeconds": 2.732653,
-      "sha256": "98794ee11a393d6fa3674bf99b8ef443761e4f77a90beac92ba41c7c7737c3c7"
+      "text": "Tap the highlighted destination to move your squad.",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_move_destination_aria.wav",
+      "durationSeconds": 3.474286,
+      "sha256": "dca0bbfac6187c657d7c1aa1f4a6742132e2449e6381fdefe56fbcf52f3f666c"
     },
     {
       "step": 4,
+      "phase": "command",
       "locale": "en-US",
-      "text": "Attack the confirmed hostile patrol.",
-      "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_engage_aria.wav",
-      "durationSeconds": 2.061655,
-      "sha256": "5576656825e2ffd875e7c6d9e037b9fde98ae3bbc012eab2ed00f824427cc54e"
+      "text": "Tap ATTACK to select the attack command.",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_confirm_threat_aria.wav",
+      "durationSeconds": 2.925714,
+      "sha256": "e26c961b0f367a66a0cfadd4bc8d2b11525c3426a868516548f539967cf0308e"
     },
     {
       "step": 5,
+      "phase": "worldTarget",
+      "locale": "en-US",
+      "text": "Tap the highlighted enemy to issue the attack.",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_attack_target_aria.wav",
+      "durationSeconds": 2.847347,
+      "sha256": "f0331ac12fce42b53f516045ea8a384cdc1e72640d394f1f891326798002513f"
+    },
+    {
+      "step": 5,
+      "phase": "missionResolution",
       "locale": "en-US",
       "text": "Check the objective and secure the civilian route.",
       "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_secure_corridor_aria.wav",
@@ -58,6 +73,7 @@
     },
     {
       "step": 1,
+      "phase": "selection",
       "locale": "fa-IR",
       "text": "برای شروع، گروه فرماندهی را انتخاب کنید.",
       "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_find_squad_aria_fa.wav",
@@ -66,30 +82,43 @@
     },
     {
       "step": 2,
+      "phase": "command",
       "locale": "fa-IR",
-      "text": "گروه را به موقعیت پوشش علامت‌گذاری‌شده منتقل کنید.",
+      "text": "برای انتخاب دستور حرکت، روی «حرکت» بزنید.",
       "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_move_to_cover_aria_fa.wav",
-      "durationSeconds": 3.897098,
-      "sha256": "7cc216d8fd484a28300d5863004d3181e626cd83bc3278204d19171d9e07be95"
+      "durationSeconds": 3.787755,
+      "sha256": "171fb4f0cbce1868a079661337ed7b7e68cee402cc5035cbefaf4bdcab559bc2"
     },
     {
       "step": 3,
+      "phase": "worldTarget",
       "locale": "fa-IR",
-      "text": "گشت مسلح نزدیک غیرنظامیان را بررسی کنید.",
-      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_confirm_threat_aria_fa.wav",
-      "durationSeconds": 3.731111,
-      "sha256": "cdd183488c168472a23883541ecd2dd2ddb8a2830fb7c87a12c36d545a09523e"
+      "text": "برای حرکت گروه، روی مقصد علامت‌گذاری‌شده بزنید.",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_move_destination_aria_fa.wav",
+      "durationSeconds": 4.284082,
+      "sha256": "6fd0adec31875429ee280b9dbed9c4acc6dce80c531d932f163c80a04d3a7c30"
     },
     {
       "step": 4,
+      "phase": "command",
       "locale": "fa-IR",
-      "text": "به گشت دشمن تأییدشده حمله کنید.",
-      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_engage_aria_fa.wav",
-      "durationSeconds": 2.496281,
-      "sha256": "430e752f5d8b961d0ee41587ccd92d6c353646a16943d19eaa686f76512cc5f5"
+      "text": "برای انتخاب دستور حمله، روی «حمله» بزنید.",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_confirm_threat_aria_fa.wav",
+      "durationSeconds": 3.474286,
+      "sha256": "1d5152ece83dde7dc9aeb3459a7214573f0d2a0a9733fe4401992346a1c201fc"
     },
     {
       "step": 5,
+      "phase": "worldTarget",
+      "locale": "fa-IR",
+      "text": "برای صدور دستور حمله، روی دشمن علامت‌گذاری‌شده بزنید.",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_attack_target_aria_fa.wav",
+      "durationSeconds": 4.597551,
+      "sha256": "131aa531634962d13d6b97cd0a1405beb5137e4f900abeb1571cb1a36dc634af"
+    },
+    {
+      "step": 5,
+      "phase": "missionResolution",
       "locale": "fa-IR",
       "text": "هدف را بررسی کنید و مسیر غیرنظامیان را امن کنید.",
       "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_secure_corridor_aria_fa.wav",

@@ -284,9 +284,11 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.IsTrue(popup.IsOpen, "The next tutorial instruction must appear after two seconds.");
         Assert.AreEqual(2, gateway.TutorialNarrationSteps.Count);
         Assert.AreEqual(2, gateway.TutorialNarrationSteps[1]);
+        Assert.AreEqual(UiTutorialNarrationPhase.PrimaryAction, gateway.TutorialNarrationPhases[1]);
+        Assert.AreEqual("Tap MOVE to select the move command.", gateway.TutorialNarrationTexts[1]);
         Assert.AreEqual("TRAINING 2 / 5", tutorial.ProgressText.text);
         Assert.AreEqual("PRESS MOVE", tutorial.TitleText.text);
-        Assert.AreEqual("Move the squad to the marked cover position.", tutorial.BodyText.text);
+        Assert.AreEqual("Tap MOVE to select the move command.", tutorial.BodyText.text);
 
         MatchOverlayCommandControlsView commandControls = CreateCommandControls(overlay);
         ui.BindMatchHudCommandControls(commandControls);
@@ -296,10 +298,20 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         float moveTargetDeadline = GetPrivateField<float>(helper, "_tutorialShowAtUnscaledTime");
         helper.TickHighlight(moveTargetDeadline - 0.01f);
         Assert.IsFalse(popup.IsOpen, "The destination instruction must honor the two-second delay.");
+        gateway.TutorialNarrationFailuresRemaining = 1;
         helper.TickHighlight(moveTargetDeadline);
         Assert.IsTrue(popup.IsOpen, "ARIA must return to teach the destination substep.");
         Assert.AreEqual(2, gateway.TutorialNarrationSteps.Count,
-            "Reopening the same numbered tutorial step must not replay its voice line.");
+            "A rejected narration request must remain pending rather than being marked complete.");
+        helper.TickHighlight(moveTargetDeadline + 0.01f);
+        Assert.AreEqual(3, gateway.TutorialNarrationSteps.Count,
+            "The destination narration must retry after a transient gateway rejection.");
+        Assert.AreEqual(2, gateway.TutorialNarrationSteps[2]);
+        Assert.AreEqual(UiTutorialNarrationPhase.WorldTarget, gateway.TutorialNarrationPhases[2]);
+        Assert.AreEqual(
+            "Tap the highlighted destination to move your squad.",
+            gateway.TutorialNarrationTexts[2]);
+        Assert.AreEqual("TRAINING 3 / 5", tutorial.ProgressText.text);
         Assert.AreEqual("CHOOSE DESTINATION", tutorial.TitleText.text);
         Assert.AreEqual("Tap the highlighted destination to move your squad.", tutorial.BodyText.text);
 
@@ -319,14 +331,25 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         helper.TickHighlight(100f);
         helper.TickHighlight(102f);
         Assert.IsTrue(popup.IsOpen);
-        Assert.AreEqual(3, gateway.TutorialNarrationSteps.Count);
-        Assert.AreEqual(3, gateway.TutorialNarrationSteps[2]);
+        Assert.AreEqual(4, gateway.TutorialNarrationSteps.Count);
+        Assert.AreEqual(3, gateway.TutorialNarrationSteps[3]);
+        Assert.AreEqual(UiTutorialNarrationPhase.PrimaryAction, gateway.TutorialNarrationPhases[3]);
+        Assert.AreEqual("Tap ATTACK to select the attack command.", gateway.TutorialNarrationTexts[3]);
+        Assert.AreEqual("TRAINING 4 / 5", tutorial.ProgressText.text);
+        Assert.AreEqual("Tap ATTACK to select the attack command.", tutorial.BodyText.text);
         commandControls.AttackButton.onClick.Invoke();
         Assert.IsFalse(popup.IsOpen,
             "Pressing ATTACK must remove the completed command-button instruction.");
         float attackTargetDeadline = GetPrivateField<float>(helper, "_tutorialShowAtUnscaledTime");
         helper.TickHighlight(attackTargetDeadline);
         Assert.IsTrue(popup.IsOpen, "ARIA must return to teach the enemy-target substep.");
+        Assert.AreEqual(5, gateway.TutorialNarrationSteps.Count);
+        Assert.AreEqual(3, gateway.TutorialNarrationSteps[4]);
+        Assert.AreEqual(UiTutorialNarrationPhase.WorldTarget, gateway.TutorialNarrationPhases[4]);
+        Assert.AreEqual(
+            "Tap the highlighted enemy to issue the attack.",
+            gateway.TutorialNarrationTexts[4]);
+        Assert.AreEqual("TRAINING 5 / 5", tutorial.ProgressText.text);
         Assert.AreEqual("CHOOSE ENEMY", tutorial.TitleText.text);
         Assert.AreEqual("Tap the highlighted enemy to issue the attack.", tutorial.BodyText.text);
         helper.CompleteWorldTarget(TacticalCommandMode.Attack);
@@ -347,9 +370,9 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         helper.ApplyReadModel(gateway.AssistantPanel);
         helper.TickHighlight(0f);
         Assert.IsTrue(popup.IsOpen, "A new mission attempt must present step one again.");
-        Assert.AreEqual(4, gateway.TutorialNarrationSteps.Count,
+        Assert.AreEqual(6, gateway.TutorialNarrationSteps.Count,
             "A replay must narrate the first tutorial step again.");
-        Assert.AreEqual(1, gateway.TutorialNarrationSteps[3]);
+        Assert.AreEqual(1, gateway.TutorialNarrationSteps[5]);
         ui.Dispose();
     }
 
@@ -374,13 +397,64 @@ public sealed class MatchHudAssistantUiSystemHelperTests
                 englishSuffixes[step - 1],
                 resolver.Invoke(
                     null,
-                    new object[] { step, FirstLaunchNarrativeLanguage.English })?.ToString());
+                    new object[]
+                    {
+                        step,
+                        UiTutorialNarrationPhase.PrimaryAction,
+                        FirstLaunchNarrativeLanguage.English
+                    })?.ToString());
             StringAssert.EndsWith(
                 persianSuffixes[step - 1],
                 resolver.Invoke(
                     null,
-                    new object[] { step, FirstLaunchNarrativeLanguage.Persian })?.ToString());
+                    new object[]
+                    {
+                        step,
+                        UiTutorialNarrationPhase.PrimaryAction,
+                        FirstLaunchNarrativeLanguage.Persian
+                    })?.ToString());
         }
+
+        StringAssert.EndsWith(
+            "MoveDestination.En",
+            resolver.Invoke(
+                null,
+                new object[]
+                {
+                    (byte)2,
+                    UiTutorialNarrationPhase.WorldTarget,
+                    FirstLaunchNarrativeLanguage.English
+                })?.ToString());
+        StringAssert.EndsWith(
+            "MoveDestination.Fa",
+            resolver.Invoke(
+                null,
+                new object[]
+                {
+                    (byte)2,
+                    UiTutorialNarrationPhase.WorldTarget,
+                    FirstLaunchNarrativeLanguage.Persian
+                })?.ToString());
+        StringAssert.EndsWith(
+            "AttackTarget.En",
+            resolver.Invoke(
+                null,
+                new object[]
+                {
+                    (byte)3,
+                    UiTutorialNarrationPhase.WorldTarget,
+                    FirstLaunchNarrativeLanguage.English
+                })?.ToString());
+        StringAssert.EndsWith(
+            "AttackTarget.Fa",
+            resolver.Invoke(
+                null,
+                new object[]
+                {
+                    (byte)3,
+                    UiTutorialNarrationPhase.WorldTarget,
+                    FirstLaunchNarrativeLanguage.Persian
+                })?.ToString());
     }
 
     [Test]
@@ -469,6 +543,12 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         StringAssert.DoesNotContain(
             "SHOW ME",
             tutorial.ShowMeButton.GetComponentInChildren<TMP_Text>(true).text);
+        Assert.AreEqual(
+            "برای انتخاب دستور حرکت، روی «حرکت» بزنید.",
+            tutorial.CurrentInstructionBody);
+        Assert.AreEqual(
+            UiTutorialNarrationPhase.PrimaryAction,
+            tutorial.CurrentNarrationPhase);
 
         string pressMoveTitle = tutorial.TitleText.text;
         string pressMoveBody = tutorial.BodyText.text;
@@ -477,6 +557,12 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.AreNotEqual("CHOOSE DESTINATION", tutorial.TitleText.text);
         Assert.AreNotEqual(pressMoveBody, tutorial.BodyText.text);
         StringAssert.DoesNotContain("Tap", tutorial.BodyText.text);
+        Assert.AreEqual(
+            "برای حرکت گروه، روی مقصد علامت‌گذاری‌شده بزنید.",
+            tutorial.CurrentInstructionBody);
+        Assert.AreEqual(
+            UiTutorialNarrationPhase.WorldTarget,
+            tutorial.CurrentNarrationPhase);
         string destinationBody = tutorial.BodyText.text;
         tutorial.ApplyInteractionState(TacticalCommandMode.Move, worldTargetCompleted: true);
         Assert.AreNotEqual("MOVING TO COVER", tutorial.TitleText.text);
@@ -518,7 +604,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             .GetComponentInChildren<AriaTutorialBriefingView>(true);
         Assert.IsTrue(tutorial.gameObject.activeInHierarchy);
         Assert.AreEqual("PRESS ATTACK", tutorial.TitleText.text);
-        Assert.AreEqual("Attack the confirmed hostile patrol.", tutorial.BodyText.text);
+        Assert.AreEqual("Tap ATTACK to select the attack command.", tutorial.BodyText.text);
+        Assert.AreEqual("TRAINING 4 / 5", tutorial.ProgressText.text);
 
         tutorial.DoItButton.onClick.Invoke();
 
@@ -530,6 +617,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.IsTrue(tutorial.gameObject.activeInHierarchy);
         Assert.AreEqual("CHOOSE ENEMY", tutorial.TitleText.text);
         Assert.AreEqual("Tap the highlighted enemy to issue the attack.", tutorial.BodyText.text);
+        Assert.AreEqual("TRAINING 5 / 5", tutorial.ProgressText.text);
 
         tutorial.DoItButton.onClick.Invoke();
 
@@ -1393,7 +1481,9 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         public UiAssistantPanelModel AssistantPanel { get; set; }
         public List<bool> AssistantPanelOpenStates { get; } = new();
         public List<byte> TutorialNarrationSteps { get; } = new();
+        public List<UiTutorialNarrationPhase> TutorialNarrationPhases { get; } = new();
         public List<string> TutorialNarrationTexts { get; } = new();
+        public int TutorialNarrationFailuresRemaining { get; set; }
         public bool LastAssistantPanelOpen => AssistantPanelOpenStates.Count > 0 &&
                                               AssistantPanelOpenStates[AssistantPanelOpenStates.Count - 1];
         public bool CinematicInteractionLocked { get; set; }
@@ -1412,9 +1502,19 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             return true;
         }
 
-        public bool TryEnqueueTutorialNarration(byte tutorialStep, string text)
+        public bool TryEnqueueTutorialNarration(
+            byte tutorialStep,
+            UiTutorialNarrationPhase phase,
+            string text)
         {
+            if (TutorialNarrationFailuresRemaining > 0)
+            {
+                TutorialNarrationFailuresRemaining--;
+                return false;
+            }
+
             TutorialNarrationSteps.Add(tutorialStep);
+            TutorialNarrationPhases.Add(phase);
             TutorialNarrationTexts.Add(text);
             return true;
         }

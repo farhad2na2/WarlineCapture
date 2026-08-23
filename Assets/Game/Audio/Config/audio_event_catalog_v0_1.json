@@ -5693,6 +5693,22 @@
       ]
     },
     {
+      "eventId": "VO.ARIA.Tutorial.M01.MoveDestination.En",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": { "min": 0.0, "max": 0.0 },
+      "playback": { "loop": false, "spatial": false, "maxInstances": 1, "allowRuntimeLoad": false },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_move_destination_aria.wav",
+          "status": "elevenlabs-v3-licensed",
+          "weight": 1
+        }
+      ]
+    },
+    {
       "eventId": "VO.ARIA.Tutorial.M01.ConfirmThreat.En",
       "busId": "Voice",
       "priority": "High",
@@ -5719,6 +5735,22 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_engage_aria.wav",
+          "status": "elevenlabs-v3-licensed",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Tutorial.M01.AttackTarget.En",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": { "min": 0.0, "max": 0.0 },
+      "playback": { "loop": false, "spatial": false, "maxInstances": 1, "allowRuntimeLoad": false },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_attack_target_aria.wav",
           "status": "elevenlabs-v3-licensed",
           "weight": 1
         }
@@ -5773,6 +5805,22 @@
       ]
     },
     {
+      "eventId": "VO.ARIA.Tutorial.M01.MoveDestination.Fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": { "min": 0.0, "max": 0.0 },
+      "playback": { "loop": false, "spatial": false, "maxInstances": 1, "allowRuntimeLoad": false },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_move_destination_aria_fa.wav",
+          "status": "elevenlabs-v3-licensed",
+          "weight": 1
+        }
+      ]
+    },
+    {
       "eventId": "VO.ARIA.Tutorial.M01.ConfirmThreat.Fa",
       "busId": "Voice",
       "priority": "High",
@@ -5799,6 +5847,22 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_engage_aria_fa.wav",
+          "status": "elevenlabs-v3-licensed",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "VO.ARIA.Tutorial.M01.AttackTarget.Fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6.0,
+      "pitchVariance": { "min": 0.0, "max": 0.0 },
+      "playback": { "loop": false, "spatial": false, "maxInstances": 1, "allowRuntimeLoad": false },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_attack_target_aria_fa.wav",
           "status": "elevenlabs-v3-licensed",
           "weight": 1
         }

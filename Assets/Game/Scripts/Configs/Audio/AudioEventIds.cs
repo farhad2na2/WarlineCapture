@@ -715,11 +715,17 @@ namespace Game.Configs
         public const string VOARIATutorialM01MoveToCoverEn = "VO.ARIA.Tutorial.M01.MoveToCover.En";
         public const uint VOARIATutorialM01MoveToCoverEnHash = 2083846237u;
 
+        public const string VOARIATutorialM01MoveDestinationEn = "VO.ARIA.Tutorial.M01.MoveDestination.En";
+        public const uint VOARIATutorialM01MoveDestinationEnHash = 3570977129u;
+
         public const string VOARIATutorialM01ConfirmThreatEn = "VO.ARIA.Tutorial.M01.ConfirmThreat.En";
         public const uint VOARIATutorialM01ConfirmThreatEnHash = 383473216u;
 
         public const string VOARIATutorialM01EngageEn = "VO.ARIA.Tutorial.M01.Engage.En";
         public const uint VOARIATutorialM01EngageEnHash = 29346487u;
+
+        public const string VOARIATutorialM01AttackTargetEn = "VO.ARIA.Tutorial.M01.AttackTarget.En";
+        public const uint VOARIATutorialM01AttackTargetEnHash = 3897856629u;
 
         public const string VOARIATutorialM01SecureCorridorEn = "VO.ARIA.Tutorial.M01.SecureCorridor.En";
         public const uint VOARIATutorialM01SecureCorridorEnHash = 2058127915u;
@@ -730,11 +736,17 @@ namespace Game.Configs
         public const string VOARIATutorialM01MoveToCoverFa = "VO.ARIA.Tutorial.M01.MoveToCover.Fa";
         public const uint VOARIATutorialM01MoveToCoverFaHash = 2100079403u;
 
+        public const string VOARIATutorialM01MoveDestinationFa = "VO.ARIA.Tutorial.M01.MoveDestination.Fa";
+        public const uint VOARIATutorialM01MoveDestinationFaHash = 2916208703u;
+
         public const string VOARIATutorialM01ConfirmThreatFa = "VO.ARIA.Tutorial.M01.ConfirmThreat.Fa";
         public const uint VOARIATutorialM01ConfirmThreatFaHash = 1037653262u;
 
         public const string VOARIATutorialM01EngageFa = "VO.ARIA.Tutorial.M01.Engage.Fa";
         public const uint VOARIATutorialM01EngageFaHash = 516044533u;
+
+        public const string VOARIATutorialM01AttackTargetFa = "VO.ARIA.Tutorial.M01.AttackTarget.Fa";
+        public const uint VOARIATutorialM01AttackTargetFaHash = 3108867251u;
 
         public const string VOARIATutorialM01SecureCorridorFa = "VO.ARIA.Tutorial.M01.SecureCorridor.Fa";
         public const uint VOARIATutorialM01SecureCorridorFaHash = 2679046913u;
@@ -977,13 +989,17 @@ namespace Game.Configs
             VOARIAMessageSelectionFeedbackSquadSelected,
             VOARIATutorialM01FindSquadEn,
             VOARIATutorialM01MoveToCoverEn,
+            VOARIATutorialM01MoveDestinationEn,
             VOARIATutorialM01ConfirmThreatEn,
             VOARIATutorialM01EngageEn,
+            VOARIATutorialM01AttackTargetEn,
             VOARIATutorialM01SecureCorridorEn,
             VOARIATutorialM01FindSquadFa,
             VOARIATutorialM01MoveToCoverFa,
+            VOARIATutorialM01MoveDestinationFa,
             VOARIATutorialM01ConfirmThreatFa,
             VOARIATutorialM01EngageFa,
+            VOARIATutorialM01AttackTargetFa,
             VOARIATutorialM01SecureCorridorFa,
         };
 
@@ -1225,13 +1241,17 @@ namespace Game.Configs
             VOARIAMessageSelectionFeedbackSquadSelectedHash,
             VOARIATutorialM01FindSquadEnHash,
             VOARIATutorialM01MoveToCoverEnHash,
+            VOARIATutorialM01MoveDestinationEnHash,
             VOARIATutorialM01ConfirmThreatEnHash,
             VOARIATutorialM01EngageEnHash,
+            VOARIATutorialM01AttackTargetEnHash,
             VOARIATutorialM01SecureCorridorEnHash,
             VOARIATutorialM01FindSquadFaHash,
             VOARIATutorialM01MoveToCoverFaHash,
+            VOARIATutorialM01MoveDestinationFaHash,
             VOARIATutorialM01ConfirmThreatFaHash,
             VOARIATutorialM01EngageFaHash,
+            VOARIATutorialM01AttackTargetFaHash,
             VOARIATutorialM01SecureCorridorFaHash,
         };
 

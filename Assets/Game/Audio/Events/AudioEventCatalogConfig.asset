@@ -3317,6 +3317,20 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 52f2bc1f8461b435ca356bb00ed92051, type: 3}
       weight: 1
+  - eventId: VO.ARIA.Tutorial.M01.MoveDestination.En
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 9c4f9c5afe06242a981f8c678ffdf6ca, type: 3}
+      weight: 1
   - eventId: VO.ARIA.Tutorial.M01.ConfirmThreat.En
     busId: Voice
     priority: 2
@@ -3344,6 +3358,20 @@ MonoBehaviour:
       allowRuntimeLoad: 0
     clips:
     - clip: {fileID: 8300000, guid: a6f299b6db0ab4bbea569d7d2ce617fc, type: 3}
+      weight: 1
+  - eventId: VO.ARIA.Tutorial.M01.AttackTarget.En
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 361c0ab42eab0492f8cf77aa96bdd128, type: 3}
       weight: 1
   - eventId: VO.ARIA.Tutorial.M01.SecureCorridor.En
     busId: Voice
@@ -3387,6 +3415,20 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 8eb8df825195e497c9d37fa317dd17da, type: 3}
       weight: 1
+  - eventId: VO.ARIA.Tutorial.M01.MoveDestination.Fa
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 79c2b12e689c24091895730b8062e218, type: 3}
+      weight: 1
   - eventId: VO.ARIA.Tutorial.M01.ConfirmThreat.Fa
     busId: Voice
     priority: 2
@@ -3414,6 +3456,20 @@ MonoBehaviour:
       allowRuntimeLoad: 0
     clips:
     - clip: {fileID: 8300000, guid: 49c06679ef210474c9d22b9239031481, type: 3}
+      weight: 1
+  - eventId: VO.ARIA.Tutorial.M01.AttackTarget.Fa
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 02ac441a364ae4d91b1936dcfc711316, type: 3}
       weight: 1
   - eventId: VO.ARIA.Tutorial.M01.SecureCorridor.Fa
     busId: Voice

@@ -124,10 +124,13 @@ namespace Game.UI.Runtime
                    assistantPanelState.TrySetAssistantPanelOpen(open);
         }
 
-        public static bool TryEnqueueTutorialNarration(byte tutorialStep, string text)
+        public static bool TryEnqueueTutorialNarration(
+            byte tutorialStep,
+            UiTutorialNarrationPhase phase,
+            string text)
         {
             return current is IUiTutorialNarrationGateway tutorialNarration &&
-                   tutorialNarration.TryEnqueueTutorialNarration(tutorialStep, text);
+                   tutorialNarration.TryEnqueueTutorialNarration(tutorialStep, phase, text);
         }
 
         public static bool TryReadMatchHudAssistantHighlight(out UiAssistantHighlightModel assistantHighlight)

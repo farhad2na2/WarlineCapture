@@ -99,6 +99,17 @@ namespace Game.Runtime
                 return new AudioPlaybackPresentationResult(false, AudioPlaybackRequestStatus.MissingClip, "MissingClip", -1);
             }
 
+            string resolvedBusId = AudioPlaybackSourceConfiguration.ResolveBusId(request, entry);
+            if (request.InterruptsLowerPriority != 0 &&
+                !TryInterruptBus(resolvedBusId, request.Priority))
+            {
+                return new AudioPlaybackPresentationResult(
+                    false,
+                    AudioPlaybackRequestStatus.Culled,
+                    "HigherPriorityBusOwner",
+                    -1);
+            }
+
             int maxInstances = math.max(1, entry.Playback?.MaxInstances ?? 1);
             if (CountActiveInstances(request.EventHash) >= maxInstances)
             {
@@ -136,7 +147,7 @@ namespace Game.Runtime
             pooledSource.EventHash = request.EventHash;
             pooledSource.RequestId = request.RequestId;
             pooledSource.Priority = request.Priority;
-            pooledSource.BusId = AudioPlaybackSourceConfiguration.ResolveBusId(request, entry);
+            pooledSource.BusId = resolvedBusId;
             pooledSource.VolumeDecibels = AudioPlaybackSourceConfiguration.ResolveTotalDecibels(request, entry, bus);
             pooledSource.InUse = true;
             pooledSource.ReleaseAfterFade = false;
@@ -409,6 +420,35 @@ namespace Game.Runtime
             }
 
             return count;
+        }
+
+        private bool TryInterruptBus(string busId, AudioPlaybackPriority incomingPriority)
+        {
+            for (int i = 0; i < _sources.Count; i++)
+            {
+                PooledAudioSource pooledSource = _sources[i];
+                if (pooledSource.InUse &&
+                    string.Equals(pooledSource.BusId, busId, StringComparison.Ordinal) &&
+                    pooledSource.Priority > incomingPriority)
+                {
+                    return false;
+                }
+            }
+
+            for (int i = 0; i < _sources.Count; i++)
+            {
+                PooledAudioSource pooledSource = _sources[i];
+                if (!pooledSource.InUse ||
+                    !string.Equals(pooledSource.BusId, busId, StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                pooledSource.Source?.Stop();
+                ReleaseSource(i);
+            }
+
+            return true;
         }
 
         private static bool AdvanceFade(ref PooledAudioSource pooledSource, float now)

@@ -134,7 +134,8 @@ namespace Game.UI.Shell.Ecs
                 new FixedString32Bytes("Voice"),
                 ToAudioPriority(request.Priority),
                 now,
-                cooldownSeconds: DefaultVoiceCooldownSeconds);
+                cooldownSeconds: DefaultVoiceCooldownSeconds,
+                interruptsLowerPriority: request.InterruptsLowerPriority != 0);
         }
 
         private static bool CancelPendingRequests(DynamicBuffer<AssistantNarrationRequestElement> requests)

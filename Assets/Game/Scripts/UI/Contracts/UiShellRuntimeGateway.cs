@@ -10,6 +10,12 @@ namespace Game.UI.Contracts
         StopAssistantControl = 3
     }
 
+    public enum UiTutorialNarrationPhase : byte
+    {
+        PrimaryAction = 0,
+        WorldTarget = 1
+    }
+
     public interface IUiShellRuntimeGateway
     {
         bool TryEnqueueRouteRequest(UiShellRouteIntent intent, UIRoute route, bool pushHistory);
@@ -94,6 +100,9 @@ namespace Game.UI.Contracts
 
     public interface IUiTutorialNarrationGateway
     {
-        bool TryEnqueueTutorialNarration(byte tutorialStep, string text);
+        bool TryEnqueueTutorialNarration(
+            byte tutorialStep,
+            UiTutorialNarrationPhase phase,
+            string text);
     }
 }

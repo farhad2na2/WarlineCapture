@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using Game.Components;
 using Game.Configs;
 using Game.Runtime;
@@ -31,6 +32,8 @@ public sealed class AssistantNarrationRequestSystemTests
             RunCase(test => test.AssistantNarrationRequestSystem_RespectsNarrationModeGate());
             passed++;
             RunCase(test => test.AssistantNarrationRequestSystem_CoalescesSameSuppressionKey());
+            passed++;
+            RunCase(test => test.TutorialNarration_RetiresPriorCueBeforeSelectingTheNextCue());
             passed++;
             RunCase(test => test.AssistantNarrationRequestSystem_ThrottlesLowPriorityButAllowsCriticalInterruption());
             passed++;
@@ -207,6 +210,53 @@ public sealed class AssistantNarrationRequestSystemTests
     }
 
     [Test]
+    public void TutorialNarration_RetiresPriorCueBeforeSelectingTheNextCue()
+    {
+        Entity boundary = CreateBoundary(AssistantNarrationMode.Important);
+        AddMessage(
+            boundary,
+            1000001,
+            AssistantMessagePriority.High,
+            "Tap MOVE to select the move command.",
+            requiresNarration: 1);
+
+        _narrationSystem.Update(_world.Unmanaged);
+
+        AddMessage(
+            boundary,
+            9001,
+            AssistantMessagePriority.High,
+            "Unrelated tactical alert",
+            requiresNarration: 0);
+        DynamicBuffer<AssistantMessageElement> messages =
+            _entityManager.GetBuffer<AssistantMessageElement>(boundary);
+        MethodInfo retire = typeof(UiShellEcsGateway).GetMethod(
+            "RetirePreviousTutorialMessages",
+            BindingFlags.Static | BindingFlags.NonPublic);
+        Assert.NotNull(retire);
+        Assert.AreEqual(1, retire.Invoke(null, new object[] { messages }));
+        Assert.AreEqual(1, messages[0].Acknowledged);
+        Assert.AreEqual(0, messages[0].RequiresNarration);
+        Assert.AreEqual(0, messages[1].Acknowledged);
+
+        AddMessage(
+            boundary,
+            1000002,
+            AssistantMessagePriority.High,
+            "Tap the highlighted destination to move your squad.",
+            requiresNarration: 1);
+        _narrationSystem.Update(_world.Unmanaged);
+
+        DynamicBuffer<AssistantNarrationRequestElement> requests =
+            _entityManager.GetBuffer<AssistantNarrationRequestElement>(boundary);
+        Assert.AreEqual(2, requests.Length);
+        Assert.AreEqual(1000002, requests[1].MessageId);
+        Assert.AreEqual(
+            "Tap the highlighted destination to move your squad.",
+            requests[1].Text.ToString());
+    }
+
+    [Test]
     public void AssistantNarrationRequestSystem_ThrottlesLowPriorityButAllowsCriticalInterruption()
     {
         Entity boundary = CreateBoundary(AssistantNarrationMode.All);
@@ -294,6 +344,7 @@ public sealed class AssistantNarrationRequestSystemTests
         Assert.AreEqual(AudioEventIds.VOARIAMessageWarningGroundAttackType, playbackRequests[0].EventId.ToString());
         Assert.AreEqual(AudioEventIds.VOARIAMessageWarningGroundAttackTypeHash, playbackRequests[0].EventHash);
         Assert.AreEqual("Voice", playbackRequests[0].BusId.ToString());
+        Assert.AreEqual(1, playbackRequests[0].InterruptsLowerPriority);
 
         AudioCooldownSystem.ProcessPendingRequests(_entityManager, now: 1f);
         playbackRequests = _entityManager.GetBuffer<AudioPlaybackRequestElement>(audioEntity);

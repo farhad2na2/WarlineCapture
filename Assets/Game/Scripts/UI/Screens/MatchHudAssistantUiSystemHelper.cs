@@ -10,7 +10,9 @@ namespace Game.UI.Runtime
         private byte _pendingTutorialStep;
         private byte _completedTutorialStep;
         private byte _displayedTutorialStep;
-        private byte _narratedTutorialSteps;
+        private UiTutorialNarrationPhase _pendingTutorialPhase;
+        private UiTutorialNarrationPhase _displayedTutorialPhase;
+        private ushort _narratedTutorialCues;
         private float _tutorialShowAtUnscaledTime = -1f;
         private bool _tutorialCinematicSuspended;
         private bool _finalTutorialSuppressed;
@@ -23,6 +25,8 @@ namespace Game.UI.Runtime
                     ClosePanelWithoutInputCapture();
                 _pendingTutorialStep = 0;
                 _displayedTutorialStep = 0;
+                _pendingTutorialPhase = UiTutorialNarrationPhase.PrimaryAction;
+                _displayedTutorialPhase = UiTutorialNarrationPhase.PrimaryAction;
                 _tutorialShowAtUnscaledTime = -1f;
                 return;
             }
@@ -40,6 +44,7 @@ namespace Game.UI.Runtime
             ClosePanelWithoutInputCapture();
             _displayedTutorialStep = 0;
             _pendingTutorialStep = model.TutorialStep;
+            _pendingTutorialPhase = UiTutorialNarrationPhase.PrimaryAction;
             _tutorialShowAtUnscaledTime = -1f;
         }
 
@@ -74,16 +79,26 @@ namespace Game.UI.Runtime
             if (unscaledTime < _tutorialShowAtUnscaledTime)
                 return;
 
-            bool newlyDisplayed = _displayedTutorialStep != _pendingTutorialStep;
             _displayedTutorialStep = _pendingTutorialStep;
+            _displayedTutorialPhase = _pendingTutorialPhase;
             if (!IsPanelOpen)
                 SetPanelOpen(true);
-            if (newlyDisplayed && !WasTutorialStepNarrated(_displayedTutorialStep))
-            {
-                _narratedTutorialSteps |= (byte)(1 << (_displayedTutorialStep - 1));
-                UiShellRuntimeGateway.TryEnqueueTutorialNarration(
+            if (!WasTutorialCueNarrated(
                     _displayedTutorialStep,
-                    _lastPanelModel.RecommendationBody);
+                    _displayedTutorialPhase))
+            {
+                string narrationText = _popupView?.CurrentTutorialInstructionBody;
+                if (string.IsNullOrWhiteSpace(narrationText))
+                    narrationText = _lastPanelModel.RecommendationBody;
+                if (UiShellRuntimeGateway.TryEnqueueTutorialNarration(
+                        _displayedTutorialStep,
+                        _displayedTutorialPhase,
+                        narrationText))
+                {
+                    MarkTutorialCueNarrated(
+                        _displayedTutorialStep,
+                        _displayedTutorialPhase);
+                }
             }
         }
 
@@ -100,6 +115,8 @@ namespace Game.UI.Runtime
             _completedTutorialStep = Math.Max(_completedTutorialStep, step);
             _pendingTutorialStep = 0;
             _displayedTutorialStep = 0;
+            _pendingTutorialPhase = UiTutorialNarrationPhase.PrimaryAction;
+            _displayedTutorialPhase = UiTutorialNarrationPhase.PrimaryAction;
             _tutorialShowAtUnscaledTime = -1f;
             _finalTutorialSuppressed |= finalStep;
             ClosePanelWithoutInputCapture();
@@ -110,7 +127,9 @@ namespace Game.UI.Runtime
             if (_finalTutorialSuppressed || step == 0 || step <= _completedTutorialStep)
                 return;
             _pendingTutorialStep = step;
+            _pendingTutorialPhase = UiTutorialNarrationPhase.WorldTarget;
             _displayedTutorialStep = 0;
+            _displayedTutorialPhase = UiTutorialNarrationPhase.PrimaryAction;
             _tutorialShowAtUnscaledTime = unscaledTime + TutorialStepDelaySeconds;
             ClosePanelWithoutInputCapture();
         }
@@ -120,16 +139,32 @@ namespace Game.UI.Runtime
             _pendingTutorialStep = 0;
             _completedTutorialStep = 0;
             _displayedTutorialStep = 0;
-            _narratedTutorialSteps = 0;
+            _pendingTutorialPhase = UiTutorialNarrationPhase.PrimaryAction;
+            _displayedTutorialPhase = UiTutorialNarrationPhase.PrimaryAction;
+            _narratedTutorialCues = 0;
             _tutorialShowAtUnscaledTime = -1f;
             _tutorialCinematicSuspended = false;
             _finalTutorialSuppressed = false;
         }
 
-        private bool WasTutorialStepNarrated(byte step)
+        private bool WasTutorialCueNarrated(byte step, UiTutorialNarrationPhase phase)
         {
-            return step is > 0 and <= 8 &&
-                   (_narratedTutorialSteps & (1 << (step - 1))) != 0;
+            int bit = TutorialCueBit(step, phase);
+            return bit >= 0 && (_narratedTutorialCues & (1 << bit)) != 0;
+        }
+
+        private void MarkTutorialCueNarrated(byte step, UiTutorialNarrationPhase phase)
+        {
+            int bit = TutorialCueBit(step, phase);
+            if (bit >= 0)
+                _narratedTutorialCues |= (ushort)(1 << bit);
+        }
+
+        private static int TutorialCueBit(byte step, UiTutorialNarrationPhase phase)
+        {
+            if (step is < 1 or > 8 || phase > UiTutorialNarrationPhase.WorldTarget)
+                return -1;
+            return ((step - 1) * 2) + (int)phase;
         }
     }
 }

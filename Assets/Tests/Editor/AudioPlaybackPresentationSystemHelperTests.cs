@@ -23,6 +23,10 @@ public sealed class AudioPlaybackPresentationSystemHelperTests
             passed++;
             RunCase(test => test.PlayAcceptedRequest_CullsWhenEventMaxInstancesReached());
             passed++;
+            RunCase(test => test.PlayAcceptedRequest_InterruptibleVoiceReplacesOlderEqualPriorityVoice());
+            passed++;
+            RunCase(test => test.PlayAcceptedRequest_InterruptibleVoiceCannotReplaceHigherPriorityVoice());
+            passed++;
             RunCase(test => test.PlayAcceptedRequest_ReturnsMissingClipForEmptyCatalogEntry());
             passed++;
             RunCase(test => test.PlayAcceptedRequest_ConfiguresMissileSpatialSfxForRtsScaleAudibility());
@@ -136,6 +140,67 @@ public sealed class AudioPlaybackPresentationSystemHelperTests
         Assert.AreEqual(AudioPlaybackRequestStatus.Culled, second.Status);
         Assert.AreEqual("MaxInstances", second.Reason);
         Assert.AreEqual(1, helper.ActiveSourceCount);
+    }
+
+    [Test]
+    public void PlayAcceptedRequest_InterruptibleVoiceReplacesOlderEqualPriorityVoice()
+    {
+        using AudioPlaybackPresentationSystemHelper helper = new(initialPoolSize: 2, maxPoolSize: 2);
+        AudioPlaybackRequestElement firstRequest = CreateAcceptedRequest(1, "voice.first", 101u);
+        firstRequest.BusId = new FixedString32Bytes("Voice");
+        firstRequest.Priority = AudioPlaybackPriority.High;
+        firstRequest.InterruptsLowerPriority = 1;
+        AudioPlaybackRequestElement secondRequest = CreateAcceptedRequest(2, "voice.second", 102u);
+        secondRequest.BusId = new FixedString32Bytes("Voice");
+        secondRequest.Priority = AudioPlaybackPriority.High;
+        secondRequest.InterruptsLowerPriority = 1;
+
+        Assert.IsTrue(helper.PlayAcceptedRequest(
+            firstRequest,
+            CreateEntry("voice.first", "Voice", 1, CreateClip("voice_first")),
+            null,
+            CreateSettings()).Played);
+        Assert.IsTrue(helper.PlayAcceptedRequest(
+            secondRequest,
+            CreateEntry("voice.second", "Voice", 1, CreateClip("voice_second")),
+            null,
+            CreateSettings()).Played);
+
+        Assert.AreEqual(1, helper.ActiveSourceCount);
+        Assert.IsFalse(helper.TryGetActiveSource(firstRequest.RequestId, out _));
+        Assert.IsTrue(helper.TryGetActiveSource(secondRequest.RequestId, out _));
+    }
+
+    [Test]
+    public void PlayAcceptedRequest_InterruptibleVoiceCannotReplaceHigherPriorityVoice()
+    {
+        using AudioPlaybackPresentationSystemHelper helper = new(initialPoolSize: 2, maxPoolSize: 2);
+        AudioPlaybackRequestElement criticalRequest = CreateAcceptedRequest(1, "voice.critical", 201u);
+        criticalRequest.BusId = new FixedString32Bytes("Voice");
+        criticalRequest.Priority = AudioPlaybackPriority.Critical;
+        criticalRequest.InterruptsLowerPriority = 1;
+        AudioPlaybackRequestElement highRequest = CreateAcceptedRequest(2, "voice.high", 202u);
+        highRequest.BusId = new FixedString32Bytes("Voice");
+        highRequest.Priority = AudioPlaybackPriority.High;
+        highRequest.InterruptsLowerPriority = 1;
+
+        Assert.IsTrue(helper.PlayAcceptedRequest(
+            criticalRequest,
+            CreateEntry("voice.critical", "Voice", 1, CreateClip("voice_critical")),
+            null,
+            CreateSettings()).Played);
+        AudioPlaybackPresentationResult result = helper.PlayAcceptedRequest(
+            highRequest,
+            CreateEntry("voice.high", "Voice", 1, CreateClip("voice_high")),
+            null,
+            CreateSettings());
+
+        Assert.IsFalse(result.Played);
+        Assert.AreEqual(AudioPlaybackRequestStatus.Culled, result.Status);
+        Assert.AreEqual("HigherPriorityBusOwner", result.Reason);
+        Assert.AreEqual(1, helper.ActiveSourceCount);
+        Assert.IsTrue(helper.TryGetActiveSource(criticalRequest.RequestId, out _));
+        Assert.IsFalse(helper.TryGetActiveSource(highRequest.RequestId, out _));
     }
 
     [Test]

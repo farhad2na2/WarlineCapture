@@ -104,7 +104,8 @@ namespace Game.Runtime
             float cooldownSeconds = 0f,
             Entity sourceEntity = default,
             bool spatial = false,
-            float3 worldPosition = default)
+            float3 worldPosition = default,
+            bool interruptsLowerPriority = false)
         {
             Entity audioEntity = EnsureAudioEntity(em);
             AudioPlaybackRequestQueueComponent queue = em.GetComponentData<AudioPlaybackRequestQueueComponent>(audioEntity);
@@ -128,7 +129,8 @@ namespace Game.Runtime
                 RequestedAt = requestedAt,
                 CooldownSeconds = math.max(0f, cooldownSeconds),
                 HasWorldPosition = (byte)(spatial ? 1 : 0),
-                Spatial = (byte)(spatial ? 1 : 0)
+                Spatial = (byte)(spatial ? 1 : 0),
+                InterruptsLowerPriority = (byte)(interruptsLowerPriority ? 1 : 0)
             });
 
             return queue.LastRequestId;

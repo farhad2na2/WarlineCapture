@@ -14,13 +14,15 @@ namespace Game.Editor
         {
             "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_find_squad_aria.wav",
             "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_move_to_cover_aria.wav",
+            "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_move_destination_aria.wav",
             "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_confirm_threat_aria.wav",
-            "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_engage_aria.wav",
+            "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_attack_target_aria.wav",
             "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_secure_corridor_aria.wav",
             "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_find_squad_aria_fa.wav",
             "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_move_to_cover_aria_fa.wav",
+            "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_move_destination_aria_fa.wav",
             "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_confirm_threat_aria_fa.wav",
-            "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_engage_aria_fa.wav",
+            "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_attack_target_aria_fa.wav",
             "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_secure_corridor_aria_fa.wav"
         };
 
@@ -29,7 +31,7 @@ namespace Game.Editor
         {
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
             for (int i = 0; i < StableClipPaths.Length; i++)
-                ConfigureImport(StableClipPaths[i], i >= 5 ? "fa-IR" : "en-US");
+                ConfigureImport(StableClipPaths[i], i >= 6 ? "fa-IR" : "en-US");
             ValidateImports();
             Debug.Log($"[M01TutorialNarrationAudioImporter] result=Passed clips={StableClipPaths.Length}");
         }

@@ -13,13 +13,17 @@ namespace Game.UI.Shell.Ecs
     public sealed partial class UiShellEcsGateway : IUiTutorialNarrationGateway
     {
         private const int TutorialMessageBaseId = 1000000;
+        private const int TutorialMessageLimitExclusive = 2000000;
         private const float TutorialMessageLifetimeSeconds = 12f;
 
         private static FirstLaunchNarrativeLanguage cachedTutorialNarrationLanguage;
         private static bool hasCachedTutorialNarrationLanguage;
         private static int tutorialNarrationSequence;
 
-        bool IUiTutorialNarrationGateway.TryEnqueueTutorialNarration(byte tutorialStep, string text)
+        bool IUiTutorialNarrationGateway.TryEnqueueTutorialNarration(
+            byte tutorialStep,
+            UiTutorialNarrationPhase phase,
+            string text)
         {
             if (tutorialStep is < 1 or > 5 || string.IsNullOrWhiteSpace(text) ||
                 !TryGetBoundary(out EntityManager entityManager, out Entity boundary) ||
@@ -31,6 +35,7 @@ namespace Game.UI.Shell.Ecs
 
             FixedString64Bytes audioEventId = ResolveTutorialAudioEventId(
                 tutorialStep,
+                phase,
                 ResolveTutorialNarrationLanguage());
             if (audioEventId.Length == 0)
                 return false;
@@ -40,7 +45,10 @@ namespace Game.UI.Shell.Ecs
             FixedString64Bytes suppressionKey = new("assistant.tutorial.m01.");
             suppressionKey.Append(sequence);
             float now = (float)entityManager.World.Time.ElapsedTime;
-            entityManager.GetBuffer<AssistantMessageElement>(boundary).Add(new AssistantMessageElement
+            DynamicBuffer<AssistantMessageElement> messages =
+                entityManager.GetBuffer<AssistantMessageElement>(boundary);
+            RetirePreviousTutorialMessages(messages);
+            messages.Add(new AssistantMessageElement
             {
                 MessageId = messageId,
                 SourceVersion = Math.Max(1, Time.frameCount),
@@ -57,26 +65,59 @@ namespace Game.UI.Shell.Ecs
             return true;
         }
 
+        internal static int RetirePreviousTutorialMessages(
+            DynamicBuffer<AssistantMessageElement> messages)
+        {
+            int retired = 0;
+            for (int i = 0; i < messages.Length; i++)
+            {
+                AssistantMessageElement message = messages[i];
+                if (message.MessageId < TutorialMessageBaseId ||
+                    message.MessageId >= TutorialMessageLimitExclusive ||
+                    message.Acknowledged != 0 && message.RequiresNarration == 0)
+                {
+                    continue;
+                }
+
+                message.Acknowledged = 1;
+                message.RequiresNarration = 0;
+                messages[i] = message;
+                retired++;
+            }
+
+            return retired;
+        }
+
         internal static FixedString64Bytes ResolveTutorialAudioEventId(
             byte tutorialStep,
+            UiTutorialNarrationPhase phase,
             FirstLaunchNarrativeLanguage language)
         {
             bool persian = language == FirstLaunchNarrativeLanguage.Persian;
-            string eventId = tutorialStep switch
+            string eventId = (tutorialStep, phase) switch
             {
-                1 => persian
+                (1, _) => persian
                     ? AudioEventIds.VOARIATutorialM01FindSquadFa
                     : AudioEventIds.VOARIATutorialM01FindSquadEn,
-                2 => persian
+                (2, UiTutorialNarrationPhase.PrimaryAction) => persian
                     ? AudioEventIds.VOARIATutorialM01MoveToCoverFa
                     : AudioEventIds.VOARIATutorialM01MoveToCoverEn,
-                3 => persian
+                (2, UiTutorialNarrationPhase.WorldTarget) => persian
+                    ? AudioEventIds.VOARIATutorialM01MoveDestinationFa
+                    : AudioEventIds.VOARIATutorialM01MoveDestinationEn,
+                (3, UiTutorialNarrationPhase.PrimaryAction) => persian
                     ? AudioEventIds.VOARIATutorialM01ConfirmThreatFa
                     : AudioEventIds.VOARIATutorialM01ConfirmThreatEn,
-                4 => persian
+                (3, UiTutorialNarrationPhase.WorldTarget) => persian
+                    ? AudioEventIds.VOARIATutorialM01AttackTargetFa
+                    : AudioEventIds.VOARIATutorialM01AttackTargetEn,
+                (4, UiTutorialNarrationPhase.PrimaryAction) => persian
                     ? AudioEventIds.VOARIATutorialM01EngageFa
                     : AudioEventIds.VOARIATutorialM01EngageEn,
-                5 => persian
+                (4, UiTutorialNarrationPhase.WorldTarget) => persian
+                    ? AudioEventIds.VOARIATutorialM01AttackTargetFa
+                    : AudioEventIds.VOARIATutorialM01AttackTargetEn,
+                (5, _) => persian
                     ? AudioEventIds.VOARIATutorialM01SecureCorridorFa
                     : AudioEventIds.VOARIATutorialM01SecureCorridorEn,
                 _ => string.Empty

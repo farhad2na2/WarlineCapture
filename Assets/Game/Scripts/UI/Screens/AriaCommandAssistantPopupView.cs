@@ -85,6 +85,12 @@ namespace Game.UI.Runtime
         public RectTransform LandscapeLayout => _landscapeLayout;
         public Image PreviewHighlight => _previewHighlight;
         public bool IsOpen => _hierarchyBound && gameObject.activeInHierarchy;
+        public string CurrentTutorialInstructionBody =>
+            _tutorialBriefing != null ? _tutorialBriefing.CurrentInstructionBody : string.Empty;
+        public UiTutorialNarrationPhase CurrentTutorialNarrationPhase =>
+            _tutorialBriefing != null
+                ? _tutorialBriefing.CurrentNarrationPhase
+                : UiTutorialNarrationPhase.PrimaryAction;
 
         private void Awake()
         {

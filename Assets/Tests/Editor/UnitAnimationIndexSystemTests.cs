@@ -22,7 +22,8 @@ public sealed class UnitAnimationIndexSystemTests
             tests.EmptyConfiguredAnimationOrderDoesNotApplyInvalidAnimationIndex();
             tests.FallbackMovingAutoWanderResolvesWalkAnimation();
             tests.DeathAnimationAppliesToDetachedDetailedVisualOnFirstResolvedFrame();
-            Debug.Log("[UnitAnimationIndexFocusedValidation] result=Passed tests=4");
+            tests.GameplayInertResolvedAnimationAppliesToModelVisual();
+            Debug.Log("[UnitAnimationIndexFocusedValidation] result=Passed tests=5");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -106,6 +107,34 @@ public sealed class UnitAnimationIndexSystemTests
         Assert.AreEqual(expected, em.GetComponentData<UnitResolvedAnimationIndex>(unit).Value);
         Assert.AreEqual(expected, em.GetComponentData<MaterialAnimationIndex>(detailedVisual).Value,
             "A detached authored detailed visual must enter the death clip before its final pose is frozen.");
+    }
+
+    [Test]
+    public void GameplayInertResolvedAnimationAppliesToModelVisual()
+    {
+        using var world = new World(nameof(GameplayInertResolvedAnimationAppliesToModelVisual));
+        EntityManager em = world.EntityManager;
+        Entity visual = em.CreateEntity(typeof(MaterialAnimationIndex));
+        em.SetComponentData(visual, new MaterialAnimationIndex { Value = 1 });
+        Entity presentation = em.CreateEntity(
+            typeof(UnitMoveVisualComponent),
+            typeof(UnitResolvedAnimationIndex),
+            typeof(UnitModelInstanceReference));
+        byte runIndex = (byte)((byte)UnitAnimationKind.Run + 1);
+        em.SetComponentData(presentation, new UnitMoveVisualComponent { IsMoving = 1 });
+        em.SetComponentData(presentation, new UnitResolvedAnimationIndex
+        {
+            Value = runIndex,
+            Changed = 1,
+            Updated = 1
+        });
+        em.SetComponentData(presentation, new UnitModelInstanceReference { Instance = visual });
+
+        SystemHandle system = world.CreateSystem<UnitAnimationIndexSystem>();
+        system.Update(world.Unmanaged);
+
+        Assert.AreEqual(runIndex, em.GetComponentData<MaterialAnimationIndex>(visual).Value);
+        Assert.AreEqual(0, em.GetComponentData<UnitResolvedAnimationIndex>(presentation).Changed);
     }
 
     private static Entity CreateUnit(

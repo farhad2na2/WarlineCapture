@@ -21,7 +21,7 @@ namespace Game.Runtime
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<UnitMoveVisualComponent>();
-            state.RequireForUpdate<UnitHealth>();
+            state.RequireForUpdate<UnitResolvedAnimationIndex>();
         }
 
         public void OnUpdate(ref SystemState state)
@@ -57,7 +57,7 @@ namespace Game.Runtime
 
             foreach (var (resolvedAnimation, entity) in SystemAPI
                      .Query<RefRW<UnitResolvedAnimationIndex>>()
-                     .WithAll<UnitMoveVisualComponent, UnitHealth, UnitAttackAnimationComponent>()
+                     .WithAll<UnitMoveVisualComponent>()
                      .WithNone<StaticGridBlocker>()
                      .WithEntityAccess())
             {

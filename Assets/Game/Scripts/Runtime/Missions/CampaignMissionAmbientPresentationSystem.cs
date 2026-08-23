@@ -121,8 +121,8 @@ namespace Game.Runtime
 
             if (!query.IsEmptyIgnoreFilter)
                 DestroyIndividually(em, query);
-            FixedList128Bytes<Entity> prefabs = ResolveOptionalPrefabs(em, prefabRegistryQuery);
-            if (prefabs.IsEmpty)
+            FixedList128Bytes<Entity> prefabs = ResolveCivilianPrefabs(em, prefabRegistryQuery);
+            if (prefabs.Length != CivilianPrefabKeyCount)
                 return false;
             for (int i = 0; i < ambient.InstanceCount; i++)
             {
@@ -156,7 +156,7 @@ namespace Game.Runtime
             return true;
         }
 
-        private static FixedList128Bytes<Entity> ResolveOptionalPrefabs(
+        private static FixedList128Bytes<Entity> ResolveCivilianPrefabs(
             EntityManager em, EntityQuery query)
         {
             FixedList128Bytes<Entity> result = default;
@@ -274,11 +274,11 @@ namespace Game.Runtime
             {
                 if (animationOrder[i].Kind == (byte)UnitAnimationKind.Run)
                 {
-                    animationIndex = (byte)i;
+                    animationIndex = (byte)((byte)UnitAnimationKind.Run + 1);
                     break;
                 }
                 if (animationIndex == byte.MaxValue && animationOrder[i].Kind == (byte)UnitAnimationKind.Walk)
-                    animationIndex = (byte)i;
+                    animationIndex = (byte)((byte)UnitAnimationKind.Walk + 1);
             }
 
             if (animationIndex != byte.MaxValue)
@@ -291,34 +291,82 @@ namespace Game.Runtime
             int ordinal,
             int seed)
         {
-            uint hash = math.hash(new int2(seed ^ 0x51A7, ordinal + 1));
+            uint hashA = math.hash(new int3(seed ^ 0x51A7, ordinal + 1, 0x2B));
+            uint hashB = math.hash(new int3(seed ^ 0x2C31, ordinal + 1, 0x73));
             float3 towardSquad = math.normalizesafe(
                 player.Position - hostile.Position,
                 new float3(0f, 0f, -1f));
             towardSquad.y = 0f;
             towardSquad = math.normalizesafe(towardSquad, new float3(0f, 0f, -1f));
             float3 lateral = new(towardSquad.z, 0f, -towardSquad.x);
-            int routeIndex = ordinal & 1;
-            float side = routeIndex == 0 ? 1f : -1f;
-            float alongJitter = (((hash >> 8) & 255u) / 255f - 0.5f) * 4f;
-            float lateralJitter = (((hash >> 16) & 255u) / 255f - 0.5f) * 3f;
-            float speedJitter = ((hash >> 24) & 255u) / 255f;
+            int routeIndex = ordinal & 7;
+            float side = (routeIndex & 1) == 0 ? 1f : -1f;
+            float alongJitter = SignedUnit(hashA, 0);
+            float lateralJitter = SignedUnit(hashA, 8);
+            float waypointJitter = SignedUnit(hashA, 16);
+            float exitJitter = SignedUnit(hashB, 8);
+            float speedJitter = UnsignedUnit(hashB, 24);
+
+            float3 start;
+            float3 alleyMerge;
+            if (routeIndex <= 1)
+            {
+                start = hostile.Position + towardSquad * (7f + alongJitter * 5f) +
+                        lateral * (side * (17f + lateralJitter * 3f));
+                alleyMerge = hostile.Position + towardSquad * (18f + waypointJitter * 3f) +
+                             lateral * (side * (7f + lateralJitter * 2f));
+            }
+            else if (routeIndex <= 3)
+            {
+                start = hostile.Position + towardSquad * (5f + alongJitter * 8f) +
+                        lateral * (side * (9f + lateralJitter * 3f));
+                alleyMerge = hostile.Position + towardSquad * (19f + waypointJitter * 4f) +
+                             lateral * (side * (4f + lateralJitter * 2f));
+            }
+            else if (routeIndex <= 5)
+            {
+                start = hostile.Position + towardSquad * (3f + alongJitter * 6f) +
+                        lateral * (side * (4.5f + lateralJitter * 2f));
+                alleyMerge = hostile.Position + towardSquad * (20f + waypointJitter * 4f) +
+                             lateral * (side * (6f + lateralJitter * 3f));
+            }
+            else
+            {
+                start = hostile.Position + towardSquad * (4f + alongJitter * 8f) +
+                        lateral * (side * (15f + lateralJitter * 4f));
+                alleyMerge = hostile.Position + towardSquad * (11f + waypointJitter * 5f) +
+                             lateral * (side * (27f + lateralJitter * 5f));
+            }
+
+            bool towardFriendlyLine = routeIndex <= 5;
+            float3 squadPass = towardFriendlyLine
+                ? player.Position - towardSquad * (10f + waypointJitter * 5f) +
+                  lateral * (side * (8f + lateralJitter * 6f))
+                : hostile.Position + towardSquad * (19f + waypointJitter * 5f) +
+                  lateral * (side * (38f + lateralJitter * 6f));
+            float3 exit = towardFriendlyLine
+                ? player.Position + towardSquad * (27f + exitJitter * 7f) +
+                  lateral * (side * (19f + lateralJitter * 8f))
+                : player.Position - towardSquad * (2f + exitJitter * 7f) +
+                  lateral * (side * (55f + lateralJitter * 8f));
 
             return new PanicRoute
             {
-                Start = hostile.Position + towardSquad * (7f + alongJitter) +
-                        lateral * (side * (20f + lateralJitter)),
-                AlleyMerge = math.lerp(hostile.Position, player.Position, 0.42f) +
-                             lateral * (side * (6f + lateralJitter * 0.25f)),
-                SquadPass = player.Position + towardSquad * (5f + alongJitter * 0.25f) +
-                            lateral * (side * (4.5f + lateralJitter * 0.2f)),
-                Exit = player.Position + towardSquad * (30f + alongJitter) +
-                       lateral * (side * (24f + lateralJitter)),
-                Speed = 6.6f + speedJitter * 1.4f,
-                DelaySeconds = 0.45f + (ordinal >> 1) * 0.20f + speedJitter * 0.18f,
+                Start = start,
+                AlleyMerge = alleyMerge,
+                SquadPass = squadPass,
+                Exit = exit,
+                Speed = 6.4f + speedJitter * 1.6f,
+                DelaySeconds = 0f,
                 RouteIndex = routeIndex
             };
         }
+
+        private static float SignedUnit(uint hash, int shift) =>
+            UnsignedUnit(hash, shift) * 2f - 1f;
+
+        private static float UnsignedUnit(uint hash, int shift) =>
+            ((hash >> shift) & 255u) / 255f;
 
         private struct PanicRoute
         {
@@ -356,8 +404,7 @@ namespace Game.Runtime
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            if (!SystemAPI.TryGetSingleton(out CampaignMissionOpeningPresentationComponent opening) ||
-                opening.Stage == 0)
+            if (!SystemAPI.TryGetSingleton(out CampaignMissionOpeningPresentationComponent opening))
                 return;
 
             Entity ecbEntity = _ecbSingletonQuery.GetSingletonEntity();

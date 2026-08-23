@@ -31,8 +31,8 @@ public sealed class M01FirstContactAmbientPlayModeTests
             using EntityQuery query = AmbientQuery(world.EntityManager);
             Assert.That(query.CalculateEntityCount(), Is.EqualTo(CivilianCount));
             using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-            int leftRouteCount = 0;
-            int rightRouteCount = 0;
+            int[] routeCounts = new int[8];
+            int[] prefabCounts = new int[4];
             for (int i = 0; i < entities.Length; i++)
             {
                 Entity entity = entities[i];
@@ -55,27 +55,32 @@ public sealed class M01FirstContactAmbientPlayModeTests
                 CampaignMissionAmbientCivilianMotionComponent motion = world.EntityManager.GetComponentData<
                     CampaignMissionAmbientCivilianMotionComponent>(entity);
                 Assert.That(civilian.Evacuating, Is.EqualTo(1));
-                Assert.That(civilian.RouteIndex, Is.InRange(0, 1));
-                Assert.That(motion.Speed, Is.InRange(6.6f, 8f));
-                Assert.That(motion.DelaySeconds, Is.InRange(0.45f, 3f));
+                Assert.That(civilian.RouteIndex, Is.InRange(0, 7));
+                Assert.That(motion.Speed, Is.InRange(6.4f, 8f));
+                Assert.That(motion.DelaySeconds, Is.Zero);
                 Assert.That(math.distance(motion.AlleyMerge, motion.SquadPass), Is.GreaterThan(1f));
                 Assert.That(math.distance(motion.SquadPass, motion.Exit), Is.GreaterThan(1f));
                 Assert.That(world.EntityManager.GetComponentData<UnitResolvedAnimationIndex>(entity).Value,
-                    Is.EqualTo(2));
-                if (civilian.RouteIndex == 0) leftRouteCount++;
-                else rightRouteCount++;
+                    Is.EqualTo((byte)UnitAnimationKind.Run + 1));
+                routeCounts[civilian.RouteIndex]++;
+                int prefabIndex = CivilianPrefabIndex(
+                    world.EntityManager.GetComponentData<UnitSourcePrefabKey>(entity).Value);
+                Assert.That(prefabIndex, Is.InRange(0, 3));
+                prefabCounts[prefabIndex]++;
             }
-            Assert.That(leftRouteCount, Is.EqualTo(CivilianCount / 2));
-            Assert.That(rightRouteCount, Is.EqualTo(CivilianCount / 2));
+            for (int i = 0; i < routeCounts.Length; i++)
+                Assert.That(routeCounts[i], Is.EqualTo(3), $"route {i}");
+            for (int i = 0; i < prefabCounts.Length; i++)
+                Assert.That(prefabCounts[i], Is.EqualTo(6), $"civilian prefab {i}");
             yield break;
         }
         finally { fixture.Dispose(); }
     }
 
     [UnityTest]
-    public IEnumerator PanicMotionWaitsForOpeningThenMovesAndCleansUpAtExit()
+    public IEnumerator PanicMotionRunsDuringOpeningPreRollAndCleansUpAtExit()
     {
-        using World world = new(nameof(PanicMotionWaitsForOpeningThenMovesAndCleansUpAtExit));
+        using World world = new(nameof(PanicMotionRunsDuringOpeningPreRollAndCleansUpAtExit));
         Fixture fixture = CreateFixture(world, CivilianCount, withPrefabs: true);
         try
         {
@@ -97,20 +102,6 @@ public sealed class M01FirstContactAmbientPlayModeTests
             world.SetTime(new TimeData(1d, 0.5f));
             UpdateMotionSystem(world, motionSystem);
             world.EntityManager.CompleteAllTrackedJobs();
-            Assert.That(world.EntityManager.GetComponentData<LocalTransform>(civilian).Position,
-                Is.EqualTo(initial.Position));
-
-            CampaignMissionOpeningPresentationComponent opening = world.EntityManager.GetComponentData<
-                CampaignMissionOpeningPresentationComponent>(fixture.Root);
-            opening.Stage = 1;
-            world.EntityManager.SetComponentData(fixture.Root, opening);
-            CampaignMissionAmbientCivilianMotionComponent motion = world.EntityManager.GetComponentData<
-                CampaignMissionAmbientCivilianMotionComponent>(civilian);
-            motion.DelaySeconds = 0f;
-            world.EntityManager.SetComponentData(civilian, motion);
-            world.SetTime(new TimeData(1.5d, 0.5f));
-            UpdateMotionSystem(world, motionSystem);
-            world.EntityManager.CompleteAllTrackedJobs();
             Assert.That(math.distance(
                     world.EntityManager.GetComponentData<LocalTransform>(civilian).Position,
                     initial.Position),
@@ -119,7 +110,8 @@ public sealed class M01FirstContactAmbientPlayModeTests
                 Is.EqualTo(1));
 
             LocalTransform atExit = world.EntityManager.GetComponentData<LocalTransform>(civilian);
-            motion = world.EntityManager.GetComponentData<CampaignMissionAmbientCivilianMotionComponent>(civilian);
+            CampaignMissionAmbientCivilianMotionComponent motion = world.EntityManager.GetComponentData<
+                CampaignMissionAmbientCivilianMotionComponent>(civilian);
             motion.DelaySeconds = 0f;
             motion.Segment = 2;
             motion.Exit = atExit.Position;
@@ -129,6 +121,80 @@ public sealed class M01FirstContactAmbientPlayModeTests
             world.EntityManager.CompleteAllTrackedJobs();
             endSimulation.Update();
             Assert.That(world.EntityManager.Exists(civilian), Is.False);
+            yield break;
+        }
+        finally { fixture.Dispose(); }
+    }
+
+    [UnityTest]
+    public IEnumerator PanicStartsSpanHostileDistrictAndFavorSquadDirection()
+    {
+        using World world = new(nameof(PanicStartsSpanHostileDistrictAndFavorSquadDirection));
+        Fixture fixture = CreateFixture(world, CivilianCount, withPrefabs: true);
+        try
+        {
+            Update(world);
+            using EntityQuery query = AmbientQuery(world.EntityManager);
+            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            float minX = float.MaxValue;
+            float maxX = float.MinValue;
+            float minZ = float.MaxValue;
+            float maxZ = float.MinValue;
+            int leftStarts = 0;
+            int rightStarts = 0;
+            int squadBiasedRoutes = 0;
+            float3 towardSquad = new(0f, 0f, -1f);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity entity = entities[i];
+                LocalTransform transform = world.EntityManager.GetComponentData<LocalTransform>(entity);
+                CampaignMissionAmbientCivilianComponent civilian = world.EntityManager.GetComponentData<
+                    CampaignMissionAmbientCivilianComponent>(entity);
+                CampaignMissionAmbientCivilianMotionComponent motion = world.EntityManager.GetComponentData<
+                    CampaignMissionAmbientCivilianMotionComponent>(entity);
+                minX = math.min(minX, transform.Position.x);
+                maxX = math.max(maxX, transform.Position.x);
+                minZ = math.min(minZ, transform.Position.z);
+                maxZ = math.max(maxZ, transform.Position.z);
+                if (transform.Position.x < 0f) leftStarts++;
+                else rightStarts++;
+                if (civilian.RouteIndex <= 5)
+                {
+                    squadBiasedRoutes++;
+                    float3 initialDirection = math.normalizesafe(
+                        motion.AlleyMerge - transform.Position,
+                        towardSquad);
+                    Assert.That(math.dot(initialDirection, towardSquad), Is.GreaterThan(0.35f));
+                }
+            }
+
+            Assert.That(leftStarts, Is.EqualTo(CivilianCount / 2));
+            Assert.That(rightStarts, Is.EqualTo(CivilianCount / 2));
+            Assert.That(squadBiasedRoutes, Is.EqualTo(18));
+            Assert.That(maxX - minX, Is.GreaterThan(28f));
+            Assert.That(maxZ - minZ, Is.GreaterThan(14f));
+            yield break;
+        }
+        finally { fixture.Dispose(); }
+    }
+
+    [UnityTest]
+    public IEnumerator MissingCivilianVariantFailsClosed()
+    {
+        using World world = new(nameof(MissingCivilianVariantFailsClosed));
+        Fixture fixture = CreateFixture(world, CivilianCount, withPrefabs: true);
+        try
+        {
+            Entity registryEntity = world.EntityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<UnitPrefabRegistryTag>(),
+                ComponentType.ReadOnly<UnitPrefabRegistryEntry>()).GetSingletonEntity();
+            DynamicBuffer<UnitPrefabRegistryEntry> registry =
+                world.EntityManager.GetBuffer<UnitPrefabRegistryEntry>(registryEntity);
+            registry.RemoveAt(registry.Length - 1);
+
+            Update(world);
+            using EntityQuery query = AmbientQuery(world.EntityManager);
+            Assert.That(query.CalculateEntityCount(), Is.Zero);
             yield break;
         }
         finally { fixture.Dispose(); }
@@ -340,21 +406,42 @@ public sealed class M01FirstContactAmbientPlayModeTests
     {
         Entity registryEntity = em.CreateEntity(typeof(UnitPrefabRegistryTag));
         em.AddBuffer<UnitPrefabRegistryEntry>(registryEntity);
-        Entity prefab = em.CreateEntity(
-            typeof(Prefab), typeof(UnitSourcePrefabKey), typeof(LocalTransform), typeof(Faction),
-            typeof(UnitHealth), typeof(UnitCombat), typeof(UnitAttack), typeof(SelectedUnitTag),
-            typeof(UnitGrid), typeof(UnitMove), typeof(UnitFootprint), typeof(UnitMovementBehavior),
-            typeof(UnitPrevWorldPos), typeof(UnitMoveVisualComponent), typeof(UnitResolvedAnimationIndex),
-            typeof(UnitMidLodPrefabReference), typeof(UnitLowLodPrefabReference));
-        em.SetComponentData(prefab, new UnitSourcePrefabKey { Value = new FixedString64Bytes("Unit_Chr_Civilian_Male_01") });
-        em.SetComponentData(prefab, LocalTransform.Identity);
-        DynamicBuffer<UnitAnimationOrderEntry> animationOrder = em.AddBuffer<UnitAnimationOrderEntry>(prefab);
-        animationOrder.Add(new UnitAnimationOrderEntry { Kind = (byte)UnitAnimationKind.Idle });
-        animationOrder.Add(new UnitAnimationOrderEntry { Kind = (byte)UnitAnimationKind.Walk });
-        animationOrder.Add(new UnitAnimationOrderEntry { Kind = (byte)UnitAnimationKind.Run });
-        DynamicBuffer<UnitPrefabRegistryEntry> registry = em.GetBuffer<UnitPrefabRegistryEntry>(registryEntity);
-        registry.Add(new UnitPrefabRegistryEntry { Prefab = prefab });
+        for (int i = 0; i < 4; i++)
+        {
+            Entity prefab = em.CreateEntity(
+                typeof(Prefab), typeof(UnitSourcePrefabKey), typeof(LocalTransform), typeof(Faction),
+                typeof(UnitHealth), typeof(UnitCombat), typeof(UnitAttack), typeof(SelectedUnitTag),
+                typeof(UnitGrid), typeof(UnitMove), typeof(UnitFootprint), typeof(UnitMovementBehavior),
+                typeof(UnitPrevWorldPos), typeof(UnitMoveVisualComponent), typeof(UnitResolvedAnimationIndex),
+                typeof(UnitMidLodPrefabReference), typeof(UnitLowLodPrefabReference));
+            em.SetComponentData(prefab, new UnitSourcePrefabKey { Value = CivilianPrefabKey(i) });
+            em.SetComponentData(prefab, LocalTransform.Identity);
+            DynamicBuffer<UnitAnimationOrderEntry> animationOrder = em.AddBuffer<UnitAnimationOrderEntry>(prefab);
+            animationOrder.Add(new UnitAnimationOrderEntry { Kind = (byte)UnitAnimationKind.Idle });
+            animationOrder.Add(new UnitAnimationOrderEntry { Kind = (byte)UnitAnimationKind.Run });
+            animationOrder.Add(new UnitAnimationOrderEntry { Kind = (byte)UnitAnimationKind.Walk });
+            em.GetBuffer<UnitPrefabRegistryEntry>(registryEntity).Add(
+                new UnitPrefabRegistryEntry { Prefab = prefab });
+        }
     }
+
+    private static int CivilianPrefabIndex(FixedString64Bytes key)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            if (key.Equals(CivilianPrefabKey(i)))
+                return i;
+        }
+        return -1;
+    }
+
+    private static FixedString64Bytes CivilianPrefabKey(int index) => index switch
+    {
+        0 => new FixedString64Bytes("Unit_Chr_Civilian_Male_01"),
+        1 => new FixedString64Bytes("Unit_Chr_Civilian_Female_01"),
+        2 => new FixedString64Bytes("Unit_Chr_Civilian_Male_02"),
+        _ => new FixedString64Bytes("Unit_Chr_Civilian_Female_02")
+    };
 
     private static EntityQuery AmbientQuery(EntityManager em) =>
         em.CreateEntityQuery(ComponentType.ReadOnly<CampaignMissionAmbientCivilianComponent>());

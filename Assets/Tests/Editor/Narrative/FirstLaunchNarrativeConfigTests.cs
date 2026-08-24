@@ -18,10 +18,12 @@ public sealed class FirstLaunchNarrativeConfigTests
             FirstLaunchNarrativeConfigTests tests = new();
             tests.SequenceConfig_HasUniqueConnectedStatesAndAllApprovedPanels();
             tests.SequenceConfig_AuthorsAudioRouteAndCompletionPolicy();
+            tests.LocationIntro_Uses10AmBazaarTimeInEnglishAndPersian();
+            tests.PersianLocale_UsesNaturalCommunicationsOutageText();
             tests.DialogueLines_HaveStableKeysSpeakersTimingAndVoiceClips();
             tests.SpeakerCatalog_UsesDistinctPortraitsAndProductionAriaIcon();
             tests.SequenceConfig_DoesNotDirectlyRetainPanelTextures();
-            Debug.Log("[FirstLaunchNarrativeConfigValidation] result=Passed tests=5 states=26 panels=22 lines=17 speakers=5");
+            Debug.Log("[FirstLaunchNarrativeConfigValidation] result=Passed tests=7 states=26 panels=22 lines=17 speakers=5");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -114,6 +116,77 @@ public sealed class FirstLaunchNarrativeConfigTests
         Assert.AreEqual("first_launch.m01_debrief_completion", arrival.CompletionPayloadId);
         CollectionAssert.Contains(arrival.EvidenceIds, "evidence.aria.revoked_credential_fragment");
         CollectionAssert.Contains(arrival.MissionContextFlags, "story.aria.revoked_credential_clue_found");
+    }
+
+    [Test]
+    public void LocationIntro_Uses10AmBazaarTimeInEnglishAndPersian()
+    {
+        FirstLaunchNarrativeConfigBuilder.Build();
+        NarrativeSequenceConfig config = AssetDatabase.LoadAssetAtPath<NarrativeSequenceConfig>(
+            FirstLaunchNarrativeConfigBuilder.SequencePath);
+        Assert.NotNull(config);
+        NarrativeStateRecord opening = null;
+        foreach (NarrativeStateRecord state in config.States)
+        {
+            if (state.StateId == "FL-P01")
+            {
+                opening = state;
+                break;
+            }
+        }
+        Assert.NotNull(opening);
+        Assert.AreEqual("OLD MARKET / 10:00 LOCAL", opening.LocationSubtitleFallback);
+
+        NarrativeLocaleConfig persian = AssetDatabase.LoadAssetAtPath<NarrativeLocaleConfig>(
+            FirstLaunchNarrativeConfigBuilder.PersianLocalePath);
+        Assert.NotNull(persian);
+        NarrativeLocaleTextRecord localizedTime = null;
+        foreach (NarrativeLocaleTextRecord entry in persian.Text)
+        {
+            if (entry.Key == "narrative.first_launch.location.old_market.context")
+            {
+                localizedTime = entry;
+                break;
+            }
+        }
+
+        Assert.NotNull(localizedTime);
+        Assert.AreEqual("بازار قدیم / ساعت ۱۰:۰۰ محلی", localizedTime.Value);
+    }
+
+    [Test]
+    public void PersianLocale_UsesNaturalCommunicationsOutageText()
+    {
+        FirstLaunchNarrativeConfigBuilder.Build();
+        NarrativeLocaleConfig persian = AssetDatabase.LoadAssetAtPath<NarrativeLocaleConfig>(
+            FirstLaunchNarrativeConfigBuilder.PersianLocalePath);
+        Assert.NotNull(persian);
+
+        NarrativeLocaleTextRecord dispatchLine = null;
+        NarrativeLocaleTextRecord ariaLine = null;
+        foreach (NarrativeLocaleTextRecord entry in persian.Text)
+        {
+            if (entry.Key == "narrative.first_launch.line.p03_radio")
+            {
+                dispatchLine = entry;
+            }
+            else if (entry.Key == "narrative.first_launch.line.p05_aria")
+            {
+                ariaLine = entry;
+            }
+        }
+
+        Assert.NotNull(dispatchLine);
+        Assert.AreEqual(
+            "فرماندهی واکنش مشترک، اینجا مرکز اعزام منطقه است. صدای ما را دارید؟ سامانهٔ ارتباطی منطقه از کار افتاده و ارتباط با فرماندهی قطع شده.",
+            dispatchLine.Value);
+        StringAssert.DoesNotContain("رله", dispatchLine.Value);
+
+        Assert.NotNull(ariaLine);
+        Assert.AreEqual(
+            "من آریا هستم، دستیار ارتباط شهری. زیرساخت ارتباطی آسیب دیده و ارتباط با فرماندهی هنوز برقرار نشده است.",
+            ariaLine.Value);
+        StringAssert.DoesNotContain("رله", ariaLine.Value);
     }
 
     [Test]

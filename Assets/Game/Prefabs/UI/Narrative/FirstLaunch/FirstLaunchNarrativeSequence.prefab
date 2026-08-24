@@ -7387,7 +7387,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: OLD MARKET / 06:42 LOCAL
+  m_text: OLD MARKET / 10:00 LOCAL
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: -8208433976371812551, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
@@ -7461,7 +7461,7 @@ MonoBehaviour:
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
   preserveNumbers: 0
   farsi: 1
-  originalText: OLD MARKET / 06:42 LOCAL
+  originalText: OLD MARKET / 10:00 LOCAL
   fixTags: 1
   forceFix: 0
 --- !u!1 &4381267496768992085

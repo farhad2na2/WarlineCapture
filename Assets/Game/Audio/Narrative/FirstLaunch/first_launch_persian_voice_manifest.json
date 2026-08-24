@@ -58,23 +58,23 @@
       "sourceOutputFormat": "mp3_44100_192",
       "processing": "dispatch-radio",
       "performanceDirection": null,
-      "durationSeconds": 8.378,
-      "minimumDurationSeconds": 4.783,
+      "durationSeconds": 8.381,
+      "minimumDurationSeconds": 5.217,
       "maximumDurationSeconds": 8.45,
-      "targetDurationSeconds": 8.378117913832199,
-      "timingCompression": 1.0215,
+      "targetDurationSeconds": 8.380952380952381,
+      "timingCompression": 1.2149,
       "selectedCandidate": 1,
       "candidateCount": 3,
       "candidateDurationsSeconds": [
-        8.378,
-        8.373,
-        8.389
+        8.381,
+        8.383,
+        8.381
       ],
-      "requestId": "l08eNm3Sh2ChmGWORMxl",
-      "characterCost": "65",
-      "generationSeed": 913011,
-      "generatedAtUtc": "2026-07-17T15:50:47.839587+00:00",
-      "sha256": "69502f0842b2645355d8003779598d2f54aa951d9409a0f2b468bd0d6ec7c73d",
+      "requestId": "qeBbqmgCfHTJ4j5X3A9e",
+      "characterCost": "73",
+      "generationSeed": 913001,
+      "generatedAtUtc": "2026-08-24T11:18:47.684941+00:00",
+      "sha256": "a37ffbe13ae0d097d5d37e83d02db0cd0ac8f0b0ec29c78449d165aaf1503f1b",
       "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p03_radio.wav"
     },
     {
@@ -85,24 +85,24 @@
       "modelId": "eleven_v3",
       "sourceOutputFormat": "mp3_44100_192",
       "processing": "dalia-field-comms",
-      "performanceDirection": "[urgent] [breathing hard]",
-      "durationSeconds": 10.716,
-      "minimumDurationSeconds": 4.565,
+      "performanceDirection": "[urgent] [speaking quickly]",
+      "durationSeconds": 9.777,
+      "minimumDurationSeconds": 4.348,
       "maximumDurationSeconds": 11.25,
       "targetDurationSeconds": 7.4,
       "timingCompression": 1.04,
       "selectedCandidate": 2,
       "candidateCount": 3,
       "candidateDurationsSeconds": [
-        10.986,
-        10.716,
-        11.069
+        10.424,
+        9.777,
+        10.621
       ],
-      "requestId": "MLoBkiVaEy58uCaF7EkW",
-      "characterCost": "84",
-      "generationSeed": 913022,
-      "generatedAtUtc": "2026-07-17T15:51:07.826024+00:00",
-      "sha256": "290cf0c40f961c33f100e3f0c9e649b81f603111c8ad5d6494c51971e67036ee",
+      "requestId": "idudtufw69hC4PMssl8h",
+      "characterCost": "85",
+      "generationSeed": 913002,
+      "generatedAtUtc": "2026-08-24T11:35:43.228347+00:00",
+      "sha256": "988d0ac784f0f77a1b21b8b3797254ba7adcb0e0313676bc12c0e5e5635200f3",
       "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p04_dalia.wav"
     },
     {
@@ -142,23 +142,23 @@
       "sourceOutputFormat": "mp3_44100_192",
       "processing": "aria-clean",
       "performanceDirection": null,
-      "durationSeconds": 7.419,
-      "minimumDurationSeconds": 3.261,
+      "durationSeconds": 8.117,
+      "minimumDurationSeconds": 3.913,
       "maximumDurationSeconds": 9.25,
-      "targetDurationSeconds": 7.419047619047619,
+      "targetDurationSeconds": 8.11673469387755,
       "timingCompression": 1.0,
       "selectedCandidate": 1,
       "candidateCount": 3,
       "candidateDurationsSeconds": [
-        7.419,
-        7.568,
-        7.299
+        8.117,
+        8.199,
+        8.416
       ],
-      "requestId": "uZ6m5OK3DvRo7BOSG5BO",
-      "characterCost": "48",
-      "generationSeed": 913041,
-      "generatedAtUtc": "2026-07-17T15:51:38.306158+00:00",
-      "sha256": "6aae78bb64fd1ef801cb0b6c151a4b5577e4dd57d817ff1967c94a808d72d2b9",
+      "requestId": "2XgdHigHJFQlo9i5lGvH",
+      "characterCost": "56",
+      "generationSeed": 913011,
+      "generatedAtUtc": "2026-08-24T11:35:56.068908+00:00",
+      "sha256": "0fc951362bacbc0bbb0dcb1a0f435f4d2187e13b4133047f688f78cac5235c14",
       "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p05_aria.wav"
     },
     {
@@ -498,12 +498,12 @@
       "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p18_aria.wav"
     }
   ],
-  "lastUpdatedAtUtc": "2026-07-17T15:56:47.219979+00:00",
+  "lastUpdatedAtUtc": "2026-08-24T11:35:56.073439+00:00",
   "subscriptionSnapshotLastUpdate": {
     "tier": "creator",
     "status": "active",
-    "creditLimit": 121024,
-    "creditsUsedBeforeGeneration": 23701
+    "creditLimit": 217933,
+    "creditsUsedBeforeGeneration": 5668
   },
   "commanderVoiceSelection": {
     "femalePortraitIndices": [

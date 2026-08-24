@@ -126,6 +126,11 @@ public sealed class FirstLaunchNarrativePresentationTests
         Assert.NotNull(prefab.GetComponentInChildren<NarrativePlaybackControlsView>(true));
         Assert.NotNull(prefab.GetComponentInChildren<NarrativeReviewerControlsView>(true));
         Assert.NotNull(prefab.GetComponent<NarrativeSequenceView>().PanelMotionRoot);
+        TMP_Text locationSubtitle = Array.Find(
+            prefab.GetComponentsInChildren<TMP_Text>(true),
+            text => text.name == "DistrictAndTime");
+        Assert.NotNull(locationSubtitle);
+        Assert.AreEqual("OLD MARKET / 10:00 LOCAL", locationSubtitle.text);
         AspectRatioFitter panelFitter = prefab.transform.Find("Panel")?.GetComponent<AspectRatioFitter>();
         Assert.NotNull(panelFitter, "Full-screen narrative panels require aspect-envelope fitting on non-16:9 devices.");
         Assert.AreEqual(AspectRatioFitter.AspectMode.EnvelopeParent, panelFitter.aspectMode);

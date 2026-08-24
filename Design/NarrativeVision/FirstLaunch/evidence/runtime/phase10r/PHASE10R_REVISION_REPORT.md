@@ -12,7 +12,7 @@ Unity: 6000.5.2f1
 - The comic frame remains the dialogue treatment. Shipping controls, identity, guidance, and confirmation surfaces use the current Match HUD panel and button assets.
 - Shipping touch targets are at least 88 px high. Reviewer controls are enlarged and top-pivoted so they remain inside the safe area.
 - The broken right pointer attachment is disabled. Corrected 9-slice borders render without the reviewed black edge artifact.
-- FL-P01 now presents live `SAHRIN` and `OLD MARKET / 06:42 LOCAL` text from localization-ready config keys. Its enlarged plate uses a top-left pivot and remains inside the safe area.
+- FL-P01 now presents live `SAHRIN` and `OLD MARKET / 10:00 LOCAL` text from localization-ready config keys. Its enlarged plate uses a top-left pivot and remains inside the safe area.
 
 ## Narrative Audio
 

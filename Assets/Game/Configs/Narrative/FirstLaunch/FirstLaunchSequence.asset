@@ -41,7 +41,7 @@ MonoBehaviour:
     locationTitleKey: narrative.first_launch.location.sahrin.name
     locationTitleFallback: SAHRIN
     locationSubtitleKey: narrative.first_launch.location.old_market.context
-    locationSubtitleFallback: OLD MARKET / 06:42 LOCAL
+    locationSubtitleFallback: OLD MARKET / 10:00 LOCAL
     musicCue: 0
     ambienceCue: 1
     vehicleCue: 0

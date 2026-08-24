@@ -41,7 +41,7 @@ namespace Game.Composition
                 (string.IsNullOrEmpty(state.LocationTitleKey) && string.IsNullOrEmpty(state.LocationTitleFallback)))
                 return default;
             string title = string.IsNullOrEmpty(state.LocationTitleFallback) ? "SAHRIN" : state.LocationTitleFallback;
-            string subtitle = string.IsNullOrEmpty(state.LocationSubtitleFallback) ? "OLD MARKET / 06:42 LOCAL" : state.LocationSubtitleFallback;
+            string subtitle = string.IsNullOrEmpty(state.LocationSubtitleFallback) ? "OLD MARKET / 10:00 LOCAL" : state.LocationSubtitleFallback;
             string titleKey = string.IsNullOrEmpty(state.LocationTitleKey)
                 ? "narrative.first_launch.location.sahrin.name"
                 : state.LocationTitleKey;

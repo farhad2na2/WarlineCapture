@@ -370,7 +370,7 @@ namespace Game.Editor
 
             TMP_Text title = CreateText("LocationName", surface.transform, "SAHRIN", bold, 56f, TextAlignmentOptions.Left, new Color(0.96f, 0.78f, 0.3f, 1f));
             SetStretchOffsets(title.rectTransform, new Vector2(74f, 66f), new Vector2(-54f, -24f));
-            TMP_Text subtitle = CreateText("DistrictAndTime", surface.transform, "OLD MARKET / 06:42 LOCAL", medium, 34f, TextAlignmentOptions.Left, new Color(0.9f, 0.88f, 0.8f, 1f));
+            TMP_Text subtitle = CreateText("DistrictAndTime", surface.transform, "OLD MARKET / 10:00 LOCAL", medium, 34f, TextAlignmentOptions.Left, new Color(0.9f, 0.88f, 0.8f, 1f));
             SetStretchOffsets(subtitle.rectTransform, new Vector2(74f, 24f), new Vector2(-54f, -78f));
             SetObject(view, "group", group);
             SetObject(view, "titleText", title);
@@ -837,7 +837,7 @@ namespace Game.Editor
             {
                 Visible = showLocation,
                 Title = "SAHRIN",
-                Subtitle = "OLD MARKET / 06:42 LOCAL"
+                Subtitle = "OLD MARKET / 10:00 LOCAL"
             });
             view.DialogueView.ApplySpeaker(new NarrativeSpeakerPresentationModel
             {

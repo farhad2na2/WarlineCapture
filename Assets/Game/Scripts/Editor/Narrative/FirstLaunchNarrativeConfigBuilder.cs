@@ -180,7 +180,7 @@ namespace Game.Editor
                 Set(state, "locationTitleKey", "narrative.first_launch.location.sahrin.name");
                 Set(state, "locationTitleFallback", "SAHRIN");
                 Set(state, "locationSubtitleKey", "narrative.first_launch.location.old_market.context");
-                Set(state, "locationSubtitleFallback", "OLD MARKET / 06:42 LOCAL");
+                Set(state, "locationSubtitleFallback", "OLD MARKET / 10:00 LOCAL");
             }
             List<NarrativeDialogueLineRecord> records = new();
             foreach (LineDefinition definition in Lines)

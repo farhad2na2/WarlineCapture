@@ -53,6 +53,10 @@ MAX_DURATIONS = {
     "p18_aria": 9.25,
 }
 
+MAX_TIMING_COMPRESSION = {
+    "p03_radio": 1.22,
+}
+
 VOICE_DESIGNS: dict[str, dict[str, Any]] = {
     "RADIO": {
         "name": "Warline - District Dispatch",
@@ -189,7 +193,7 @@ PROCESSING = {
 }
 
 PERFORMANCE_DIRECTIONS = {
-    "p04_dalia": {"tags": "[urgent] [breathing hard]", "tempo": 1.04, "targetDuration": 7.4},
+    "p04_dalia": {"tags": "[urgent] [speaking quickly]", "tempo": 1.04, "targetDuration": 7.4},
     "p11_dalia": {"tags": "[tense] [speaking quickly]", "tempo": 1.04, "targetDuration": 4.8},
     "p15_dalia": {"tags": "[alarmed] [controlled]", "tempo": 1.04, "targetDuration": 5.3},
     "p17_dalia": {"tags": "[strained] [resolute]", "tempo": 1.03, "targetDuration": 3.8},
@@ -481,10 +485,11 @@ def generate_batch(args: argparse.Namespace, api_key: str, subscription: dict[st
         for index, line in enumerate(selected_lines):
             line_id = line["lineId"]
             speaker = line["speaker"]
+            speech_text = line.get("speechText", line["text"])
             voice = voice_records[speaker]
             processing = processing_for(line_id, speaker)
             maximum = MAX_DURATIONS[line_id]
-            minimum = max(1.0, len(line["text"].split()) / 4.6)
+            minimum = max(1.0, len(speech_text.split()) / 4.6)
             direction = PERFORMANCE_DIRECTIONS.get(line_id, {})
             base_tempo = float(direction.get("tempo", 1.0))
             candidates: list[dict[str, Any]] = []
@@ -496,7 +501,7 @@ def generate_batch(args: argparse.Namespace, api_key: str, subscription: dict[st
                 generated, headers = request_audio(
                     api_key,
                     voice["voiceId"],
-                    directed_text(line_id, line["text"]),
+                    directed_text(line_id, speech_text),
                     seed,
                     language_code,
                 )
@@ -507,7 +512,7 @@ def generate_batch(args: argparse.Namespace, api_key: str, subscription: dict[st
                 duration = wav_duration(output_wav)
                 if duration > maximum:
                     tempo *= duration / (maximum - 0.08)
-                    if tempo > 1.18:
+                    if tempo > MAX_TIMING_COMPRESSION.get(line_id, 1.18):
                         raise RuntimeError(
                             f"{line_id} candidate {candidate_index} requires {tempo:.3f}x timing compression."
                         )
@@ -520,7 +525,7 @@ def generate_batch(args: argparse.Namespace, api_key: str, subscription: dict[st
                 if duration < minimum:
                     raise RuntimeError(
                         f"{line_id} candidate {candidate_index} is only {duration:.3f}s for "
-                        f"{len(line['text'].split())} words; the line may be truncated."
+                        f"{len(speech_text.split())} words; the line may be truncated."
                     )
 
                 candidates.append(

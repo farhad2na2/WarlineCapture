@@ -301,13 +301,6 @@ namespace Game.UI.Runtime
             Camera worldCamera = _worldCamera;
             if (worldCamera == null || !worldCamera.isActiveAndEnabled)
             {
-                worldCamera = Camera.main;
-                if (worldCamera != null && worldCamera.isActiveAndEnabled)
-                    _worldCamera = worldCamera;
-            }
-
-            if (worldCamera == null || !worldCamera.isActiveAndEnabled)
-            {
                 ShowScreenTargetFallback();
                 return;
             }

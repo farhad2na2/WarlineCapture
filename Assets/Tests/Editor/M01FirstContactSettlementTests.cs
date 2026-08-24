@@ -166,12 +166,16 @@ public sealed class M01FirstContactSettlementTests
         _fixture.Settle("safe", 1, MissionRunKind.FirstClear,
             MissionLaunchOriginKind.FirstLaunch, MissionReturnDestinationKind.CommandBase, 2, 120000);
         string profilePath = Path.Combine(_fixture.RootPath, SaveService.ProfileFileName);
-        using (FileStream lockFile = new(profilePath, FileMode.Open, FileAccess.Read, FileShare.Read))
-            Assert.Throws<IOException>(() => _fixture.Store.SettleWithRewards(
-                M01, "blocked", 2, false, 3, 60000, M02, _fixture.ReplayRewards));
+        string backupPath = profilePath + ".bak";
+        Directory.CreateDirectory(backupPath);
+        Exception failure = Assert.Catch(() => _fixture.Store.SettleWithRewards(
+            M01, "blocked", 2, false, 3, 60000, M02, _fixture.ReplayRewards));
+        Assert.That(failure, Is.InstanceOf<IOException>().Or.InstanceOf<UnauthorizedAccessException>());
+        Directory.Delete(backupPath, true);
         PlayerProfileSaveData profile = _fixture.Service.LoadProfile();
         Assert.That(profile.credits, Is.EqualTo(1200));
         Assert.That(_fixture.Store.ReadAll()[0].settledTokens.Length, Is.EqualTo(1));
+        Assert.That(File.Exists(profilePath + ".tmp"), Is.False);
     }
 
     [Test]

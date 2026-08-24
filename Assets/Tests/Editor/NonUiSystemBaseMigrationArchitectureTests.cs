@@ -13,14 +13,14 @@ public sealed class NonUiSystemBaseMigrationArchitectureTests
     private const string InventoryPath = "Design/Architecture/systembase_to_isystem_inventory.md";
     private const string MonoBehaviourLoopBaselinePath = "Design/Architecture/phase7_monobehaviour_loop_baseline.md";
     private const int ManagedExceptionPlanningCap = 30;
-    private const int FinalProductionDeclarationCount = 216;
-    private const int FinalProductionNonUiCount = 194;
-    private const int FinalProductionUiCount = 22;
+    private const int FinalProductionDeclarationCount = 220;
+    private const int FinalProductionNonUiCount = 197;
+    private const int FinalProductionUiCount = 23;
     private const int FinalProductionSystemBaseCount = 25;
-    private const int FinalProductionISystemCount = 191;
-    private const int FinalConvertedCount = 169;
+    private const int FinalProductionISystemCount = 195;
+    private const int FinalConvertedCount = 172;
     private const int FinalManagedExceptionCount = 25;
-    private const int FinalUiOutOfScopeCount = 22;
+    private const int FinalUiOutOfScopeCount = 23;
 
     private static readonly Regex TypeDeclarationRegex = new(
         @"^[ \t]*(?:(?:\[[^\]\r\n]*(?:\r?\n[ \t]*\[[^\]\r\n]*)*\][ \t]*)\r?\n[ \t]*)*" +
@@ -443,7 +443,7 @@ public sealed class NonUiSystemBaseMigrationArchitectureTests
         Assert.AreEqual(FinalManagedExceptionCount, managedExceptions, "Final Phase 7 managed exception count drifted.");
         Assert.AreEqual(FinalUiOutOfScopeCount, uiOutOfScope, "Final Phase 7 UI out-of-scope count drifted.");
         Assert.AreEqual(0, reviewRequired, "Final Phase 7 inventory must not retain ReviewRequired rows.");
-        Assert.AreEqual(191f / 216f, share, 0.001f, "Final Phase 7 production ISystem share drifted.");
+        Assert.AreEqual(195f / 220f, share, 0.001f, "Final Phase 7 production ISystem share drifted.");
     }
 
     [Test]

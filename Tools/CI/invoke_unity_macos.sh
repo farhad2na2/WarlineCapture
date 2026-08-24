@@ -98,7 +98,7 @@ if [[ ! -x "$UNITY_EXE" ]]; then
     exit 127
 fi
 
-if ! pgrep -f '/Unity Hub\.app/Contents/MacOS/Unity Hub' >/dev/null 2>&1; then
+if ! pgrep -fl '/Applications/Unity Hub\.app/Contents/MacOS/Unity Hub' >/dev/null 2>&1; then
     echo "[UnityInvokeMac] ERROR: Unity Hub is not running. Open Unity Hub, sign in, wait until idle, then rerun this command." >&2
     exit 65
 fi

@@ -1327,6 +1327,7 @@ internal static class M01OwnerFeedbackValidation
         {
             Debug.LogException(exception);
             Debug.LogError($"[M01OwnerFeedbackValidation] result=Failed passed={passed}");
+            throw;
         }
     }
 

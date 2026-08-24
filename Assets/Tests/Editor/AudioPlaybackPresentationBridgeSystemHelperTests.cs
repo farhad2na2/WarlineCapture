@@ -90,11 +90,11 @@ public sealed class AudioPlaybackPresentationBridgeSystemHelperTests
     [Test]
     public void AriaVoiceLanguageResolver_MapsPersistedSelectionToSupportedLocale()
     {
-        Assert.AreEqual("en-US", AriaVoiceLanguageResolver.ResolveLocaleCode("English"));
-        Assert.AreEqual("fa-IR", AriaVoiceLanguageResolver.ResolveLocaleCode("Persian"));
-        Assert.AreEqual("fa-IR", AriaVoiceLanguageResolver.ResolveLocaleCode("persian"));
-        Assert.AreEqual("en-US", AriaVoiceLanguageResolver.ResolveLocaleCode(null));
-        Assert.AreEqual("en-US", AriaVoiceLanguageResolver.ResolveLocaleCode("Unsupported"));
+        Assert.AreEqual("en-US", AudioPlaybackPresentationBridgeSystemHelper.ResolveAriaLocaleCode("English"));
+        Assert.AreEqual("fa-IR", AudioPlaybackPresentationBridgeSystemHelper.ResolveAriaLocaleCode("Persian"));
+        Assert.AreEqual("fa-IR", AudioPlaybackPresentationBridgeSystemHelper.ResolveAriaLocaleCode("persian"));
+        Assert.AreEqual("en-US", AudioPlaybackPresentationBridgeSystemHelper.ResolveAriaLocaleCode(null));
+        Assert.AreEqual("en-US", AudioPlaybackPresentationBridgeSystemHelper.ResolveAriaLocaleCode("Unsupported"));
     }
 
     [Test]

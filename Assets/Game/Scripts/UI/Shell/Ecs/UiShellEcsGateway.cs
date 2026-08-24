@@ -120,17 +120,13 @@ namespace Game.UI.Shell.Ecs
             UiShellRuntimeGateway.Register(Shared);
         }
 
-        public static bool TryEnqueueRouteRequest(UiShellRouteIntent intent, UIRoute route, bool pushHistory) =>
-            UiShellRouteAdapter.TryEnqueueRouteRequest(intent, route, pushHistory);
+        public static bool TryEnqueueRouteRequest(UiShellRouteIntent intent, UIRoute route, bool pushHistory) => UiShellRouteAdapter.TryEnqueueRouteRequest(intent, route, pushHistory);
 
-        public static bool TryEnqueueUiAction(UiActionKind kind, int payloadId) =>
-            UiShellActionAdapter.TryEnqueueUiAction(kind, payloadId);
+        public static bool TryEnqueueUiAction(UiActionKind kind, int payloadId) => UiShellActionAdapter.TryEnqueueUiAction(kind, payloadId);
 
-        public static bool TryEnqueueAssistantCommandIntent(UiAssistantCommandIntentKind kind, bool fromTakeover) =>
-            UiShellActionAdapter.TryEnqueueAssistantCommandIntent(kind, fromTakeover);
+        public static bool TryEnqueueAssistantCommandIntent(UiAssistantCommandIntentKind kind, bool fromTakeover) => UiShellActionAdapter.TryEnqueueAssistantCommandIntent(kind, fromTakeover);
 
-        public static bool TrySetAssistantPanelOpen(bool open) =>
-            UiShellSettingsAdapter.TrySetAssistantPanelOpen(open);
+        public static bool TrySetAssistantPanelOpen(bool open) => UiShellSettingsAdapter.TrySetAssistantPanelOpen(open);
 
         public static bool TryReadLoadingProgress(out UiShellLoadingProgressModel loading) =>
             UiShellReadModelAdapter.TryReadLoadingProgress(out loading);
@@ -226,6 +222,5 @@ namespace Game.UI.Shell.Ecs
             boundary = boundaryQuery.GetSingletonEntity();
             return true;
         }
-
     }
 }

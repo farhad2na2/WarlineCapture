@@ -174,6 +174,7 @@ public static class M01FirstContactRuntimeOwnershipTests
         CampaignMissionRuntimeComponent state = Create(MissionPhaseKind.Engage);
         CampaignMissionAttemptFactsComponent facts = Facts();
         facts.CommandSquadAlive = 0;
+        facts.SquadLossCount = 1;
         Require(CampaignMissionRuntimeSystem.TryEvaluate(in state, in facts, out CampaignMissionRuntimeComponent next) &&
                 next.Phase == MissionPhaseKind.Result && next.Outcome == MissionOutcomeKind.Defeat,
             "Command-squad loss did not publish defeat.");

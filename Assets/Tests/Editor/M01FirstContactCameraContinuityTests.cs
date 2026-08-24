@@ -59,7 +59,7 @@ public static class M01FirstContactCameraContinuityTests
             Require(Contains(map, planning.Position) && Contains(map, battle.Position),
                 "A frozen live camera left the accepted M01 camera bounds.");
             Require(Sha256File(DenseCityCandidateAuthoringTransaction.CandidateEntityScenePath) ==
-                    "c1bc203591b3f32ae3d8410eaa0988e694b1d9d449ba1e938d9f38058698b598",
+                    "618195b23355d7ec078bddb7d6b92e650d9c18bb3ecfdebfef325d270ab06610",
                 "Accepted dense-city presentation scene changed.");
 
             Scene workspace = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);

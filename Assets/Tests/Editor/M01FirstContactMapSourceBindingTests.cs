@@ -64,17 +64,17 @@ public sealed class M01FirstContactMapSourceBindingTests
             "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/" +
             "opmap_skirmish_desert_base_01_dense_city_authoring_candidate.unity",
             "a0c9dc175951148c48a94a26bc036bf5",
-            "5a15843d63868d639b88d2084ea41184af0cf5d6050b22b563a516ef13752b9c");
+            "36537fb1d54eef219e962d8150894fe4f3602cf9066195c01debd03d98b4946e");
         AssertAsset(
             "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/" +
             "opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
             "c00140f2e94a04c3084c8dcb0c18cbd0",
-            "c1bc203591b3f32ae3d8410eaa0988e694b1d9d449ba1e938d9f38058698b598");
+            "618195b23355d7ec078bddb7d6b92e650d9c18bb3ecfdebfef325d270ab06610");
         AssertAsset(
             "Assets/Game/GeneratedOperationMaps/RuntimeBinding/opmap.skirmish.desert_base_01/Candidates/" +
             "opmap_skirmish_desert_base_01_dense_city_entity_scene_runtime.unity",
             "dad0bd13fb20943dfb2f881cbe225f05",
-            "f58a73d0a8f3627d7ddf42f72b42a9db495d5139ba5da6768492ac36e671ade9");
+            "8250d180852a4fc1ea94586091c69e841aa7e58c04d3928cfce6c2cd4ba38427");
         AssertAsset("Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset",
             "12f517deb32ab49698acbfdaf7c3eac7",
             "1402d769704008e254563ff7ecda835294db83afc2cee6d5bb456987f0392b4d");

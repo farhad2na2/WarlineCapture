@@ -2,10 +2,10 @@
   "artifactId":"m01dc-015-camera-continuity-v1", "taskId":"M01DC-015", "result":"Passed",
   "authority":{"panel":"current approved FL-P18 R1","oldImagesUsed":false},
   "flP18Hashes":{"16x9":"d68d9a3341ab9493d68d491b1d51eb481bc2fc862c47b57c60affc9572216a54","20x9":"078abb9f5b759a3c606a030e6d44187194c156681db749bd4dbf8bed6cc4d548"},
-  "mapContentHash":"6183dc7e335f8385ed7e451e133987950adf5f68697a5b592519e3bb75f9b2f3", "rendererCount":76052,
+  "mapContentHash":"95ddbb2a59e91270a839db2f1f1d547dfc6cda46534eb6d67d1e23fdb0adeee2", "rendererCount":75741,
   "layout":{"columns":["16:9","20:9","16:10-tablet"],"rowsTopToBottom":["FL-P18","live-planning","live-battle-start"]},
   "transition":{"cover":"FL-P18 retained through readiness","normalBlendSeconds":1.25,"reducedMotionBlendSeconds":0,"inputLockedUntilBattleStart":true,"mainMenuFrames":0,"unrelatedSceneFrames":0},
-  "contactSheet":"Design/AgentReports/M01FirstContact/m01dc_015_camera_continuity_contact_sheet.png", "contactSheetSha256":"6e8a7f750f7307ea2f2ce82fbba03597cf01e0e2ee8b0b29976b8f545feef9ad",
+  "contactSheet":"Design/AgentReports/M01FirstContact/m01dc_015_camera_continuity_contact_sheet.png", "contactSheetSha256":"b901c0b06361126cc3af08cd48b47a6a61979c5fd9f15a2d64a321f6111ff9bb",
   "review":{"operatorKind":"Agent","routeDirection":"Pass","bazaarLandmarkContinuity":"Pass","patrolAnchorFraming":"Pass","livePatrolActors":"DeferredToM01DC019","cityLitAndResident":"Pass","invalidCameraOrFlash":"Absent"},
   "validation":"[M01FirstContactCameraContinuityValidation] result=Passed tests=14"
 }

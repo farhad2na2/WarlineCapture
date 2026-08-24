@@ -154,9 +154,12 @@ public sealed class M01FirstContactProgressStoreTests
     [Test] public void InterruptedAtomicReplacePreservesPriorProfile() => WithContext(context =>
     {
         context.Service.SaveProfile(new PlayerProfileSaveData { commanderName = "Prior" });
-        using FileStream lockFile = new(context.ProfilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-        Assert.Throws<IOException>(() => context.Service.SaveProfile(new PlayerProfileSaveData { commanderName = "Rejected" }));
-        lockFile.Dispose();
+        string backupPath = context.ProfilePath + ".bak";
+        Directory.CreateDirectory(backupPath);
+        Exception failure = Assert.Catch(() =>
+            context.Service.SaveProfile(new PlayerProfileSaveData { commanderName = "Rejected" }));
+        Assert.That(failure, Is.InstanceOf<IOException>().Or.InstanceOf<UnauthorizedAccessException>());
+        Directory.Delete(backupPath, true);
         Assert.AreEqual("Prior", context.Service.LoadProfile().commanderName);
         Assert.IsFalse(File.Exists(context.ProfilePath + ".tmp"));
     });

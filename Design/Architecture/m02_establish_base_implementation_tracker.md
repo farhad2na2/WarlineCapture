@@ -1,8 +1,8 @@
 # M02 Establish The Base Implementation Tracker
 
 Date: 2026-08-24
-Status: Active; M02EB-002 accepted and M02EB-003 dependency-ready
-Progress: 2/34 accepted items (5.9%)
+Status: Active; M02EB-003 accepted and M02EB-004 through M02EB-006 dependency-ready
+Progress: 3/34 accepted items (8.8%)
 Parent design: `Design/SagaChapters/Saga_Chapter01_First_Response.md` (`M02 Detailed Spec`)
 Technical architecture: `Design/Architecture/m02_establish_base_technical_architecture.md`
 Mission: `saga.ch01.m02.establish_base`
@@ -81,7 +81,7 @@ Every item records an exact path allowlist before editing. Unexpected user chang
   **Acceptance:** every required behavior has one existing owner or one explicit additive gap; no parallel framework is proposed.
   **Evidence:** `Design/AgentReports/M02EstablishBase/m02eb_002_current_head_inventory.md`.
 
-- [ ] **M02EB-003 - Freeze exact ownership, rollback, and validation matrix**
+- [x] **M02EB-003 - Freeze exact ownership, rollback, and validation matrix**
   **Depends on:** M02EB-002.
   **Deliverable:** exact path allowlists, exclusions, expected tests/pass markers, generated-output policy, and rollback for M02EB-004 through M02EB-034.
   **Acceptance:** no wildcard ownership or protected-path overlap; source-growth ceilings and shared regressions are explicit.
@@ -252,3 +252,4 @@ The first user review occurs at M02EB-029:
 | 2026-08-24 | Final comic and voice production follows playable vertical-slice timing approval. | Accepted |
 | 2026-08-24 | M02EB-001 documentation consistency gate passed with 34 ordered/unique items and zero unresolved producer-decision text. | Accepted |
 | 2026-08-24 | M02EB-002 current-head inventory mapped every required M02 behavior to an existing sole owner or explicit additive gap; Unity CLI 1.0.0-beta.6 was available but no live Editor was connected. | Accepted |
+| 2026-08-24 | M02EB-003 froze exact write paths, protected dense-city exclusions, generated-output policy, rollback, pass markers, M01 regressions, and source-growth/performance ceilings. | Accepted |

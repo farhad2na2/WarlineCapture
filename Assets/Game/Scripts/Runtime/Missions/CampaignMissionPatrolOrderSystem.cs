@@ -43,6 +43,7 @@ namespace Game.Runtime
                 ComponentType.ReadOnly<LocalTransform>());
             _renderVirtualizationStateQuery = state.GetEntityQuery(
                 ComponentType.ReadOnly<OperationMapRenderVirtualizationStateComponent>());
+            CreateGuidedMoveCameraQuery(ref state);
             state.RequireForUpdate<CampaignMissionCatalogComponent>();
             state.RequireForUpdate<CampaignMissionRuntimeComponent>();
             state.RequireForUpdate<CampaignMissionAttemptFactsComponent>();
@@ -143,7 +144,14 @@ namespace Game.Runtime
                          SystemAPI.Query<RefRW<CampaignMissionOpeningPresentationComponent>>())
                 {
                     CampaignMissionOpeningPresentationComponent current = opening.ValueRO;
-                    if (current.Stage > 6 || !current.SessionToken.Equals(runtime.SessionToken))
+                    if (!current.SessionToken.Equals(runtime.SessionToken))
+                        continue;
+                    if (TryQueueGuidedMoveCamera(ref state, focusEntity, in focus, in runtime, metadata, ref current))
+                    {
+                        opening.ValueRW = current;
+                        break;
+                    }
+                    if (current.Stage > 6)
                         continue;
 
                     if (current.InitialRtsOverviewRequested == 0)

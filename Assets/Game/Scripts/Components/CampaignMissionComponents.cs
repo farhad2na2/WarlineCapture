@@ -170,6 +170,7 @@ namespace Game.Components
         public float3 EstablishingFocus;
         public int ElapsedMilliseconds;
         public byte InitialRtsOverviewRequested;
+        public byte GuidedMoveCameraRequested;
         public byte Stage;
     }
 

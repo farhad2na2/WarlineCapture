@@ -28,10 +28,11 @@ public sealed class M01FirstContactForcesPlayModeTests
         RunToCompletion(tests.SpawnDoesNotWaitForCameraChannel());
         RunToCompletion(tests.SpawnCreatesExactDeterministicFourVersusThreeForce());
         RunToCompletion(tests.ReplayReissuesInitialRtsOverview());
+        RunToCompletion(tests.GuidedMoveQueuesOneSmoothForwardCameraFocus());
         RunToCompletion(tests.HostilesRemainStationaryThroughoutMission());
         RunToCompletion(tests.FinaleArrivalReleasesThreeStationaryHostilesToCounterfire());
         RunToCompletion(tests.MissingRuntimePrefabFailsClosedWithoutPartialSpawn());
-        UnityEngine.Debug.Log("[M01FirstContactForcesPlayModeValidation] result=Passed tests=7");
+        UnityEngine.Debug.Log("[M01FirstContactForcesPlayModeValidation] result=Passed tests=8");
     }
 
     [UnityTest]
@@ -281,6 +282,63 @@ public sealed class M01FirstContactForcesPlayModeTests
             AssertInitialRtsOverview(
                 world.EntityManager.GetComponentData<RuntimeCameraFocusRequestComponent>(fixture.CameraFocus),
                 replayOpening.FriendlyFocus);
+            yield break;
+        }
+        finally { fixture.Dispose(); }
+    }
+
+    [UnityTest]
+    public IEnumerator GuidedMoveQueuesOneSmoothForwardCameraFocus()
+    {
+        using World world = new(nameof(GuidedMoveQueuesOneSmoothForwardCameraFocus));
+        Fixture fixture = CreateFixture(world);
+        try
+        {
+            Update<CampaignMissionSpawnSystem>(world);
+            CampaignMissionOpeningPresentationComponent opening = world.EntityManager.GetComponentData<
+                CampaignMissionOpeningPresentationComponent>(fixture.Root);
+            opening.Stage = 6;
+            world.EntityManager.SetComponentData(fixture.Root, opening);
+            CampaignMissionRuntimeComponent runtime = world.EntityManager.GetComponentData<
+                CampaignMissionRuntimeComponent>(fixture.Root);
+            runtime.Phase = MissionPhaseKind.MoveToCover;
+            world.EntityManager.SetComponentData(fixture.Root, runtime);
+            using EntityQuery friendlies = world.EntityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<CampaignMissionUnitRoleComponent>(), ComponentType.ReadOnly<Faction>());
+            using NativeArray<Entity> entities = friendlies.ToEntityArray(Allocator.Temp);
+            Entity movingUnit = Entity.Null;
+            for (int index = 0; index < entities.Length; index++)
+            {
+                if (world.EntityManager.GetComponentData<Faction>(entities[index]).Id != FactionIdentity.PlayerFactionId)
+                    continue;
+                movingUnit = entities[index];
+                break;
+            }
+            Assert.That(movingUnit, Is.Not.EqualTo(Entity.Null));
+            world.EntityManager.AddComponent<CampaignMissionGuidedMoveInProgressTag>(movingUnit);
+            world.EntityManager.SetComponentData(
+                fixture.CameraFocus, default(RuntimeCameraFocusRequestComponent));
+
+            Update<CampaignMissionPatrolOrderSystem>(world);
+
+            RuntimeCameraFocusRequestComponent focus = world.EntityManager.GetComponentData<
+                RuntimeCameraFocusRequestComponent>(fixture.CameraFocus);
+            Assert.That(focus.Requested, Is.EqualTo(1));
+            Assert.That(focus.Smooth, Is.EqualTo(1));
+            Assert.That(focus.UseTacticalRevealZoom, Is.EqualTo(4));
+            Assert.That(focus.SmoothTimeSeconds, Is.EqualTo(2.25f));
+            float3 expected = CampaignMissionPatrolOrderSystem.ComputeGuidedMoveCameraFocus(
+                new float3(14f, 0f, 14f), opening.HostileFocus);
+            Assert.That(math.distance(focus.World, expected), Is.LessThan(0.001f),
+                "The camera must advance beyond the squad destination so the next hostile target is visible.");
+            opening = world.EntityManager.GetComponentData<CampaignMissionOpeningPresentationComponent>(fixture.Root);
+            Assert.That(opening.GuidedMoveCameraRequested, Is.EqualTo(1));
+
+            world.EntityManager.SetComponentData(
+                fixture.CameraFocus, default(RuntimeCameraFocusRequestComponent));
+            Update<CampaignMissionPatrolOrderSystem>(world);
+            Assert.That(world.EntityManager.GetComponentData<RuntimeCameraFocusRequestComponent>(fixture.CameraFocus)
+                .Requested, Is.Zero, "The guided move may queue only one camera glide per attempt.");
             yield break;
         }
         finally { fixture.Dispose(); }
@@ -629,12 +687,13 @@ public sealed class M01FirstContactForcesPlayModeTests
         ref OperationMapBlob root = ref builder.ConstructRoot<OperationMapBlob>();
         root.OperationMapId = MapId;
         root.Grid = new OperationMapGridBlob { Origin = float3.zero, Dimensions = new int2(64, 64), CellSize = 2f };
-        BlobBuilderArray<OperationMapAnchorBlob> anchors = builder.Allocate(ref root.Anchors, 5);
+        BlobBuilderArray<OperationMapAnchorBlob> anchors = builder.Allocate(ref root.Anchors, 6);
         anchors[0] = Anchor("anchor.ch01.m01.player_spawn", new float3(8f, 0f, 8f), 4f, 0f);
         anchors[1] = Anchor("anchor.ch01.m01.patrol_spawn", new float3(20f, 0f, 20f), 4f, 180f);
-        anchors[2] = Anchor("anchor.ch01.m01.patrol_route_a", new float3(24f, 0f, 24f), 2f);
-        anchors[3] = Anchor("anchor.ch01.m01.patrol_route_b", new float3(28f, 0f, 24f), 2f);
-        anchors[4] = Anchor("anchor.ch01.m01.patrol_route_c", new float3(32f, 0f, 24f), 2f);
+        anchors[2] = Anchor("anchor.ch01.m01.move_target", new float3(14f, 0f, 14f), 2f);
+        anchors[3] = Anchor("anchor.ch01.m01.patrol_route_a", new float3(24f, 0f, 24f), 2f);
+        anchors[4] = Anchor("anchor.ch01.m01.patrol_route_b", new float3(28f, 0f, 24f), 2f);
+        anchors[5] = Anchor("anchor.ch01.m01.patrol_route_c", new float3(32f, 0f, 24f), 2f);
         BlobAssetReference<OperationMapBlob> result =
             builder.CreateBlobAssetReference<OperationMapBlob>(Allocator.Persistent);
         builder.Dispose();

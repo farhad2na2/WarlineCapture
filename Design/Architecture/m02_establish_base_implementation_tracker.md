@@ -1,8 +1,8 @@
 # M02 Establish The Base Implementation Tracker
 
 Date: 2026-08-24
-Status: Active; M02EB-005 accepted and M02EB-006 plus M02EB-009 dependency-ready
-Progress: 5/34 accepted items (14.7%)
+Status: Active; M02EB-006 accepted and M02EB-007 plus M02EB-009 dependency-ready
+Progress: 6/34 accepted items (17.6%)
 Parent design: `Design/SagaChapters/Saga_Chapter01_First_Response.md` (`M02 Detailed Spec`)
 Technical architecture: `Design/Architecture/m02_establish_base_technical_architecture.md`
 Mission: `saga.ch01.m02.establish_base`
@@ -101,10 +101,11 @@ Every item records an exact path allowlist before editing. Unexpected user chang
   **Acceptance:** legacy Skirmish defaults remain unchanged; M02 affordability and identity validate deterministically.
   **Evidence:** `[M02EstablishBaseScenarioValidation] result=Passed tests=12`; `[M01FirstContactScenarioCompatibilityValidation] result=Passed tests=8`; `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; production files split to 357/120/109 lines; zero compiler errors; logs `/private/tmp/warline-m02eb-005-scenario-split.log`, `/private/tmp/warline-m02eb-005-m01-scenario-split.log`, and `/private/tmp/warline-m02eb-005-source-growth.log`.
 
-- [ ] **M02EB-006 - Make Barracks the bounded canonical rifle producer**
+- [x] **M02EB-006 - Make Barracks the bounded canonical rifle producer**
   **Depends on:** M02EB-005.
   **Deliverable:** reviewed Barracks production entry and mission filter for one required rifle squad.
   **Acceptance:** Barracks can queue/spawn the approved unit through existing production ownership; Tent/Road Barrier remain absent from M02; catalog regressions pass.
+  **Evidence:** `[M02EstablishBaseConfigBuilder] result=Passed scope=BarracksProduction entries=1 unit=Unit_Chr_Soldier_Male_02_Alt_04`; `[M02EstablishBaseBarracksProductionValidation] result=Passed tests=4`; `[EditorFirstProductionFunctionalBatchValidation] result=Passed suites=8 tests=93`; `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; zero compiler errors; logs `/private/tmp/warline-m02eb-006-builder.log`, `/private/tmp/warline-m02eb-006-focused.log`, `/private/tmp/warline-m02eb-006-production-regression.log`, and `/private/tmp/warline-m02eb-006-source-growth.log`.
 
 - [ ] **M02EB-007 - Author canonical M02 mission definition**
   **Depends on:** M02EB-004 through M02EB-006.
@@ -257,3 +258,4 @@ The first user review occurs at M02EB-029:
 | 2026-08-24 | M02EB-003 froze exact write paths, protected dense-city exclusions, generated-output policy, rollback, pass markers, M01 regressions, and source-growth/performance ceilings. | Accepted |
 | 2026-08-24 | M02EB-004 appended three objective rules and one star rule without renumbering M01, added explicit role-versus-config target identity, and passed focused M02, full M01 contract, and source-growth gates. | Accepted |
 | 2026-08-24 | M02EB-005 added an opt-in scenario mission-runtime block for resources, build catalog/zone, producer/unit, base, and delayed wave; legacy defaults remain disabled and source growth passes without exception. | Accepted |
+| 2026-08-24 | M02EB-006 made the canonical Barracks config expose exactly `Unit_Chr_Soldier_Male_02_Alt_04`; the existing production pipeline passed its 93-test functional batch while Tent and Road Barrier remained unchanged. | Accepted |

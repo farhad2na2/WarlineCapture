@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2010000000000000000000000000004, type: 3}
   m_Name: Prefab_BuildingDefinition_Building_Barrack_Config
   m_EditorClassIdentifier: 
+  displayName: Barracks
+  description: Military housing and training facility used to support infantry operations.
   portraitSprite: {fileID: 21300000, guid: e516a6ebde0441afb7884943519409b8, type: 3}
   portraitCardSprite: {fileID: 21300000, guid: 94511c40b67240f2a1e24191786fa562, type: 3}
   portraitActionSprite: {fileID: 21300000, guid: be90410793f74c698476e6f9a0fc0769, type: 3}
-  displayName: Barracks
-  description: Military housing and training facility used to support infantry operations.
   maxHealth: 1200
   role: 0
   isWall: 0
@@ -28,9 +28,30 @@ MonoBehaviour:
   oilStorageCapacity: 0
   fuelBarrelsPerDay: 0
   fuelStorageCapacity: 0
+  materialFabricationEnabled: 0
+  materialFabricationOilConsumedPerCycle: 0
+  materialFabricationMaterialsOutputPerCycle: 0
+  materialFabricationCycleDurationSeconds: 30
+  materialFabricationOutputCapacityPolicy: 0
   refugeeCapacity: 0
   refugeeUpkeepPerCitizenPerDay: 0
   threatDetectionKind: 0
   threatDetectionRadiusCells: 0
+  canAttack: 0
+  maxConcurrentAttacks: 1
+  attackRange: 0
+  attackCooldownSeconds: 1
+  attackDamage: 0
+  attackImpactPrefab: {fileID: 0}
+  muzzleFlashPrefab: {fileID: 0}
+  muzzleFlashHeightOffset: 0.95
+  muzzleFlashForwardOffset: 0.5
+  attackTraceColor: {r: 1, g: 0.62, b: 0.25, a: 1}
+  attackTraceWidth: 0.14
+  attackTraceScrollSpeed: 24
+  attackTraceDashDensity: 4
+  attackTraceVisibleSeconds: 0.1
+  attackTracerEveryNthShot: 3
   destroyedVisualPrefab: {fileID: 9083467568423483946, guid: 81a72a361a4ec4f20b4327e0dfe7a61a, type: 3}
-  productions: []
+  productions:
+  - spawnUnitPrefab: {fileID: 3282182154612916099, guid: ff73c8b7cbf844778916da330e9cd3e3, type: 3}

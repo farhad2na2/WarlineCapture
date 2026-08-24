@@ -173,6 +173,7 @@ namespace Game.Configs
         [SerializeField] private ScenarioRestrictionConfig restrictions;
         [SerializeField] private ScenarioAmbientPresentationConfig[] ambientPresentations =
             Array.Empty<ScenarioAmbientPresentationConfig>();
+        [SerializeField] private ScenarioMissionRuntimeConfig missionRuntime;
 
         public string ScenarioId => scenarioId;
         public string OperationMapId => operationMapId;
@@ -183,6 +184,7 @@ namespace Game.Configs
         public ReadOnlySpan<ScenarioPatrolRouteConfig> PatrolRoutes => patrolRoutes;
         public ScenarioRestrictionConfig Restrictions => restrictions;
         public ReadOnlySpan<ScenarioAmbientPresentationConfig> AmbientPresentations => ambientPresentations;
+        public ScenarioMissionRuntimeConfig MissionRuntime => missionRuntime;
 
         public bool TryValidateIdentity(out string error)
         {
@@ -247,7 +249,8 @@ namespace Game.Configs
             }
 
             if (!TryValidateUnitGroups(out error) || !TryValidatePatrolRoutes(out error) ||
-                !TryValidateAmbientPresentations(out error))
+                !TryValidateAmbientPresentations(out error) ||
+                !ScenarioMissionRuntimeContractValidation.TryValidate(this, out error))
                 return false;
 
             error = null;

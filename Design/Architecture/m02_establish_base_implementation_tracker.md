@@ -1,8 +1,8 @@
 # M02 Establish The Base Implementation Tracker
 
 Date: 2026-08-24
-Status: Active; M02EB-007 accepted and M02EB-008 plus M02EB-009 dependency-ready
-Progress: 7/34 accepted items (20.6%)
+Status: Active; M02EB-008 accepted and M02EB-009 dependency-ready
+Progress: 8/34 accepted items (23.5%)
 Parent design: `Design/SagaChapters/Saga_Chapter01_First_Response.md` (`M02 Detailed Spec`)
 Technical architecture: `Design/Architecture/m02_establish_base_technical_architecture.md`
 Mission: `saga.ch01.m02.establish_base`
@@ -113,10 +113,11 @@ Every item records an exact path allowlist before editing. Unexpected user chang
   **Acceptance:** exact ids and first-clear/replay rules validate; no unavailable resource or feature is required.
   **Evidence:** `[M02EstablishBaseConfigBuilder] result=Passed scope=MissionDefinition mission=saga.ch01.m02.establish_base`; `[M02EstablishBaseContractValidation] result=Passed tests=8`; `[M01FirstContactConsolidatedContractValidation] result=Passed suites=23`; `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; zero compiler errors; logs `/private/tmp/warline-m02eb-007-builder.log`, `/private/tmp/warline-m02eb-007-contract.log`, `/private/tmp/warline-m02eb-007-m01-regression.log`, and `/private/tmp/warline-m02eb-007-source-growth.log`.
 
-- [ ] **M02EB-008 - Author canonical M02 scenario**
+- [x] **M02EB-008 - Author canonical M02 scenario**
   **Depends on:** M02EB-005 through M02EB-007.
   **Deliverable:** deterministic friendly squad, forward post, Barracks footprint, resources, required unit, delayed patrol, restrictions, and civilians.
   **Acceptance:** all config/prefab/role/anchor references resolve and two serializations are stable.
+  **Evidence:** canonical scenario SHA-256 `aefa375b500d5ae045724ce21268da99a2616ccb99c31c4b2486dbc25ab7f43f`; `[M02EstablishBaseCanonicalDataValidation] result=Passed tests=10`; `[M02EstablishBaseScenarioValidation] result=Passed tests=12`; `[M02EstablishBaseContractValidation] result=Passed tests=8`; `[M01FirstContactScenarioCompatibilityValidation] result=Passed tests=8`; `[M01FirstContactConsolidatedContractValidation] result=Passed suites=23`; `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; zero compiler errors. The canonical data leaves 5,000 Credits and 10 Materials after the required Barracks and rifle order, fits the resolved 20x10 Barracks footprint inside a 24x14 lot, warns at 90 seconds, activates at 120 seconds, and regenerates byte-identically. Logs: `/private/tmp/warline-m02eb-008-builder.log`, `/private/tmp/warline-m02eb-008-canonical.log`, `/private/tmp/warline-m02eb-008-schema.log`, `/private/tmp/warline-m02eb-008-contract.log`, `/private/tmp/warline-m02eb-008-m01-compatibility.log`, `/private/tmp/warline-m02eb-008-m01-regression.log`, and `/private/tmp/warline-m02eb-008-source-growth.log`.
 
 - [ ] **M02EB-009 - Author logical forward-post operation map**
   **Depends on:** M02EB-003.
@@ -261,3 +262,4 @@ The first user review occurs at M02EB-029:
 | 2026-08-24 | M02EB-005 added an opt-in scenario mission-runtime block for resources, build catalog/zone, producer/unit, base, and delayed wave; legacy defaults remain disabled and source growth passes without exception. | Accepted |
 | 2026-08-24 | M02EB-006 made the canonical Barracks config expose exactly `Unit_Chr_Soldier_Male_02_Alt_04`; the existing production pipeline passed its 93-test functional batch while Tent and Road Barrier remained unchanged. | Accepted |
 | 2026-08-24 | M02EB-007 authored the canonical M02 definition with three ordered objectives, three independent stars, explicit first-clear/replay rewards, Build-enabled commands, stable sequences, and only established readiness features. | Accepted |
+| 2026-08-24 | M02EB-008 authored the deterministic M02 scenario with exact approved units, a bounded Barracks lot, positive post-action resource float, suppressed delayed patrol timing, transport/air restrictions, civilians, closed anchor references, and byte-stable regeneration. | Accepted |

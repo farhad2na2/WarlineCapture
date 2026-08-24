@@ -1,0 +1,132 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19ea19a05fcb4fa5b6afe32e88bedc11, type: 3}
+  m_Name: ScenarioSetup_Ch01_M02_EstablishBase
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.ScenarioSetupConfig
+  scenarioId: scenario.ch01.m02.establish_base
+  operationMapId: opmap.ch01.forward_post_01
+  requiredAnchors:
+  - anchorId: anchor.ch01.m02.friendly_spawn
+    kind: 3
+  - anchorId: anchor.ch01.m02.camera_start
+    kind: 12
+  - anchorId: anchor.ch01.m02.forward_post
+    kind: 7
+  - anchorId: anchor.ch01.m02.build_lot
+    kind: 4
+  - anchorId: anchor.ch01.m02.hostile_spawn
+    kind: 1
+  - anchorId: anchor.ch01.m02.lane_a
+    kind: 11
+  - anchorId: anchor.ch01.m02.lane_b
+    kind: 11
+  - anchorId: anchor.ch01.m02.lane_c
+    kind: 11
+  - anchorId: anchor.ch01.m02.defense_boundary
+    kind: 6
+  - anchorId: anchor.ch01.m02.civilian_edge
+    kind: 5
+  - anchorId: anchor.ch01.m02.civilian_evacuation
+    kind: 5
+  - anchorId: anchor.ch01.m02.minimap_start
+    kind: 13
+  deterministicSeed: 2002001
+  encounterStartMilliseconds: 120000
+  unitGroups:
+  - groupId: group.ch01.m02.command_squad
+    factionIndex: 1
+    units:
+    - unitConfigKey: unit.jrc.rifle_male_02_alt_02
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Male_02_Alt_02
+      expectedAssetGuid: 70d525bdf4894529869cd1402ff5d62e
+      spawnAnchorId: anchor.ch01.m02.friendly_spawn
+      missionRoleId: role.friendly.command_squad
+      count: 1
+    - unitConfigKey: unit.jrc.rifle_male_02_alt_04
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Male_02_Alt_04
+      expectedAssetGuid: a3d36fd8847164cc596e0b5ba7bd9bb9
+      spawnAnchorId: anchor.ch01.m02.friendly_spawn
+      missionRoleId: role.friendly.command_squad
+      count: 1
+    - unitConfigKey: unit.jrc.rifle_female_01_alt_01
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Female_01_Alt_01
+      expectedAssetGuid: 970069fef3e4437195c3225a1615e384
+      spawnAnchorId: anchor.ch01.m02.friendly_spawn
+      missionRoleId: role.friendly.command_squad
+      count: 1
+    - unitConfigKey: unit.jrc.rifle_female_02_alt_01
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Female_02_Alt_01
+      expectedAssetGuid: b9481cc1ec42499c96846b5d161ac7b2
+      spawnAnchorId: anchor.ch01.m02.friendly_spawn
+      missionRoleId: role.friendly.command_squad
+      count: 1
+  - groupId: group.ch01.m02.hostile_patrol
+    factionIndex: 2
+    units:
+    - unitConfigKey: unit.ash.courier
+      runtimePrefabSourceKey: Unit_Chr_Insurgent_Male_03
+      expectedAssetGuid: fe23cbf9678344f4b182169b49fe68b6
+      spawnAnchorId: anchor.ch01.m02.hostile_spawn
+      missionRoleId: role.hostile.patrol
+      count: 1
+    - unitConfigKey: unit.ash.warden
+      runtimePrefabSourceKey: Unit_Chr_Insurgent_Female_01
+      expectedAssetGuid: 01045d2a58ec4359b395696309684ffa
+      spawnAnchorId: anchor.ch01.m02.hostile_spawn
+      missionRoleId: role.hostile.patrol
+      count: 1
+    - unitConfigKey: unit.ash.broker
+      runtimePrefabSourceKey: Unit_Chr_Insurgent_Female_02
+      expectedAssetGuid: 8093159068194fc187efe5c356116e9b
+      spawnAnchorId: anchor.ch01.m02.hostile_spawn
+      missionRoleId: role.hostile.patrol
+      count: 1
+  patrolRoutes:
+  - routeId: route.ch01.m02.hostile_patrol
+    unitGroupId: group.ch01.m02.hostile_patrol
+    anchorIds:
+    - anchor.ch01.m02.lane_a
+    - anchor.ch01.m02.lane_b
+    - anchor.ch01.m02.lane_c
+    startDelayMilliseconds: 120000
+  restrictions:
+    buildingDisabled: 0
+    productionDisabled: 0
+    economyDisabled: 0
+    transportDisabled: 1
+    airDisabled: 1
+  ambientPresentations:
+  - presentationId: ambient.ch01.m02.civilians
+    anchorId: anchor.ch01.m02.civilian_edge
+    routeId: route.ch01.m02.civilian_evacuation
+    instanceCount: 12
+  missionRuntime:
+    enabled: 1
+    startingCredits: 55000
+    startingMaterials: 120
+    buildCatalog:
+    - buildingConfigId: Building_Barrack
+      maxCount: 1
+    requiredProducerConfigId: Building_Barrack
+    requiredUnitConfigId: Unit_Chr_Soldier_Male_02_Alt_04
+    baseMissionRoleId: role.friendly.forward_post
+    baseAnchorId: anchor.ch01.m02.forward_post
+    buildZone:
+      anchorId: anchor.ch01.m02.build_lot
+      halfWidthCells: 12
+      halfHeightCells: 7
+    delayedWave:
+      unitGroupId: group.ch01.m02.hostile_patrol
+      routeId: route.ch01.m02.hostile_patrol
+      targetMissionRoleId: role.friendly.forward_post
+      warningAtMilliseconds: 90000
+      activationAtMilliseconds: 120000

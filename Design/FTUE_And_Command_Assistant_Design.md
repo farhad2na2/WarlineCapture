@@ -532,7 +532,7 @@ Key assistant lines:
 This mission teaches infrastructure. A base is not a menu purchase; it is a position inside the 3D operation map that you must defend.
 ```
 
-Recommended note: resolve the current `Building_Barrack` versus `Tent_Regular` design decision before final implementation. The assistant must teach exactly the canonical producer.
+Canonical producer: `Building_Barrack`. M02 grants mission-scoped access, teaches only this producer, and awards its permanent unlock on first clear. `Tent_Regular` and `Building_Road_Barrier` are not shown in the M02 build tutorial.
 
 ### Mission 3: Radar Warning
 

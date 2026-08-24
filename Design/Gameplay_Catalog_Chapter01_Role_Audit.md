@@ -104,13 +104,13 @@ Catalog coverage:
 Gaps:
 
 - `Building_Barrack` has no `productionUnitIds` and no `ability.produce_unit`, while the mission says the player builds barracks and produces a squad.
-- `Tent_Regular` is the catalog item that actually produces rifle units.
-- Runtime reward now uses `Building_Barrack`; production behavior still needs the Barrack versus Tent decision.
-- `Building_Road_Barrier` is allowed in the Chapter 1 mission prose, but its balance unlock gate is `ch02.operation_infrastructure`.
+- `Tent_Regular` is the legacy catalog item that currently produces rifle units and remains outside the M02 tutorial catalog.
+- `Building_Road_Barrier` remains gated to `ch02.operation_infrastructure` and is not exposed by M02.
 
-Decision needed:
+Decision (project-owner M02 start authorization, 2026-08-24):
 
-- Either make `Building_Barrack` the Chapter 1 producer and give it rifle production data, or rewrite M02 to require `Tent_Regular` as the production structure.
+- `Building_Barrack` is the canonical M02 producer and receives the bounded rifle production data required by the mission.
+- M02 exposes only `Building_Barrack` in its build tutorial. The mission grants temporary access at start and the existing first-clear reward grants the permanent unlock.
 
 ### M03 Radar Warning
 
@@ -222,7 +222,7 @@ These roles exist conceptually in the mission docs but need concrete catalog/con
 | Mission | Missing concrete assignment |
 |---|---|
 | M01 | exact player rifle squad unit ID and exact hostile patrol composition |
-| M02 | whether the production structure is `Building_Barrack` or `Tent_Regular` |
+| M02 | exact rifleline unit ID produced by canonical `Building_Barrack` |
 | M03 | exact convoy enemy composition and whether road barrier should unlock in Chapter 1 |
 | M04 | exact tutorial transport unit, preferably `Unit_Veh_Helicopter_Transport` |
 | M05 | exact wall/gate target ID, exact enemy core building ID, exact APC variant |

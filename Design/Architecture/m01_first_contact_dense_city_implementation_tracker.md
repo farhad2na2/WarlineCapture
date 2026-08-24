@@ -1,7 +1,7 @@
 # M01 First Contact Dense-City Implementation Tracker
 
 Date: 2026-08-12
-Status: Active; M01DC-037 accepted and M01DC-038 dependency-ready
+Status: Implementation expansion accepted; M01DC-038 through M01DC-043 device certification deferred
 Progress: 37/43 accepted items (86.0%)
 Parent design: `Design/M01_FirstContact_Dense_City_High_Level_Design.md`
 Technical architecture: `Design/Architecture/m01_first_contact_dense_city_technical_architecture.md`
@@ -779,4 +779,10 @@ M01DC-001 acceptance on 2026-08-12 confirmed that this tracker correctly capture
 - Android performance and two-minute thermal gates;
 - clean commit-and-push boundaries and stop conditions.
 
-Tracker acceptance authorizes implementation only within these boundaries. It does not authorize M02, AM-027, unrelated feature work, dense-city source redesign, or any weakening of accepted architecture or performance contracts.
+Tracker acceptance authorizes implementation only within these boundaries. It does not authorize AM-027, unrelated feature work, dense-city source redesign, or any weakening of accepted architecture or performance contracts.
+
+### 2026-08-24 M02 Expansion Amendment
+
+The project owner manually played the current Mission 1 tutorial candidate, accepted moving on to Mission 2, and explicitly deferred further Samsung validation. M01DC-038 through M01DC-043 remain open and are not represented as passed, certified, or complete. Their Android real-input, performance, thermal, final-package, and closeout evidence remains required before a later production-certification claim.
+
+This owner amendment permits Chapter 1 Mission 2 design and implementation to begin on the stable M01 gameplay/architecture baseline. M02 work must preserve M01 behavior and pass the inherited Editor, architecture, source-growth, lifecycle, and performance contracts. It does not weaken or erase the deferred M01 evidence debt.

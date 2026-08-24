@@ -293,7 +293,7 @@ Do not grant match Materials, Fuel, Oil, Command, Rush Tickets, store items, Ope
 | Starting Credits | Enough to place required barracks and queue one squad. |
 | Starting Materials | Enough for the required structure; no optional upgrades. |
 | Starting Fuel | Hidden or zero. |
-| Allowed Build Catalog | `Building_Barrack`, `Tent_Regular`, `Building_Road_Barrier`. |
+| Allowed Build Catalog | `Building_Barrack` as a mission-scoped producer; first-clear grants its permanent unlock. |
 | Allowed Commands | Select, Move, Attack, Stop, Hold, Build, Produce. |
 | Threat Warning | Low-severity warning before the delayed patrol reaches the forward lot. |
 
@@ -301,7 +301,7 @@ Do not grant match Materials, Fuel, Oil, Command, Rush Tickets, store items, Ope
 
 | ObjectiveId | Type | Requirement | HUD Rule |
 |---|---|---|---|
-| `obj.ch01.m02.build_forward_barracks` | BuildStructure | Build the required barracks/tent at a valid footprint. | Visible from mission start. |
+| `obj.ch01.m02.build_forward_barracks` | BuildStructure | Build `Building_Barrack` at a valid footprint. | Visible from mission start. |
 | `obj.ch01.m02.produce_rifle_squad` | ProduceUnit | Produce one additional rifle squad from the new structure. | Revealed after structure is complete. |
 | `obj.ch01.m02.defend_forward_post` | DefendBase | Prevent the forward post from being destroyed before production completes. | Visible once first warning appears. |
 

@@ -325,17 +325,17 @@ WarlineCapture tactical gameplay is ECS-first. Only Canvas UI is allowed to be n
 
 ## Current Priority Order
 
-1. M01 First Contact production slice.
-2. Tactical metadata and camera bounds for `iso.ch01.district_edge_01`.
-3. SCN-08 tactical HUD missing controls: selected entity panel, command mode banner, world command markers, invalid command feedback, minimap camera bridge.
-4. Command validation reason codes shared between gameplay and UI.
-5. FTUE M01 ARIA steps using typed ids, not screen coordinates.
-6. M01 validation scene and capture set: art-only, metadata overlay, playable select/move/attack/objective/result flow.
-7. Asset register updates for M01 tactical ground, metadata, HUD controls, ARIA/tutorial visuals, and required unit/building sprites.
+1. M02 Establish The Base production slice under `Design/Architecture/m02_establish_base_implementation_tracker.md`.
+2. Canonical Barracks build, placement, production, and resource-spend loop.
+3. `opmap.ch01.forward_post_01` logical map, anchors, cameras, minimap, and defense lane.
+4. M02 objectives, delayed patrol, defense result, rewards, retry, and Campaign progression.
+5. M02 ARIA build/produce/defend guidance using typed ids, not screen coordinates.
+6. M02 brief/comms/debrief storyboard followed by final bilingual comic/audio after playable timing approval.
+7. M01DC-038 through M01DC-043 Android certification remains deferred and must not be reported as passed.
 
 ## Speed Rules
 
-- Finish and validate M01 before expanding to M02-M05. Do not start later mission implementation until the PM assistant marks `Design/AgentTasks/M01_CRITICAL_PATH.md` ready to expand.
+- M02 is authorized by the project owner's 2026-08-24 expansion decision. M01's deferred Android certification debt remains open and may not be represented as passed.
 - Prefer narrow tasks that close one named gate over broad polish tasks.
 - Treat visual target drift, missing validation, missing reports, and cross-lane contract ambiguity as schedule risks, not minor cleanup.
 - Keep legacy systems isolated unless they directly advance current M01: random city/road generation, day/night, legacy 3D `Model` children, and separate `Destroyed` child objects must not re-enter production gameplay by accident.

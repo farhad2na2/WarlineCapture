@@ -18,6 +18,10 @@ namespace Game.Editor
             "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Building_Barrack_Config.asset";
         public const string RequiredRiflePrefabPath =
             "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_02_Alt_04.prefab";
+        public const string MissionCatalogPath =
+            "Assets/Game/Configs/Campaign/CampaignMissionCatalog.asset";
+        public const string OperationMapCatalogPath =
+            "Assets/Game/Configs/OperationMaps/Chapter01/OperationMapCatalog_Chapter01.asset";
 
         [MenuItem("Game/Campaign/M02/Configure Barracks Production")]
         public static void ConfigureBarracksProductionMenu() => ConfigureBarracksProduction();
@@ -27,6 +31,48 @@ namespace Game.Editor
 
         [MenuItem("Game/Campaign/M02/Build Scenario")]
         public static void BuildScenarioMenu() => BuildScenario();
+
+        [MenuItem("Game/Campaign/M02/Build Canonical Data")]
+        public static void BuildCanonicalDataMenu() => BuildCanonicalData();
+
+        public static void BuildCanonicalData()
+        {
+            BuildMissionDefinition();
+            BuildScenario();
+            M02EstablishBaseForwardPostWindowValidation.RunFocusedValidation();
+            BuildCatalogs();
+        }
+
+        public static void BuildCatalogs()
+        {
+            M01FirstContactConfigBuilder.RefreshChapterCatalogs();
+
+            MissionDefinitionCatalogConfig missions =
+                LoadRequired<MissionDefinitionCatalogConfig>(MissionCatalogPath);
+            OperationMapCatalogConfig maps =
+                LoadRequired<OperationMapCatalogConfig>(OperationMapCatalogPath);
+            MissionDefinitionConfig mission = LoadRequired<MissionDefinitionConfig>(MissionPath);
+            ScenarioSetupConfig scenario = LoadRequired<ScenarioSetupConfig>(ScenarioPath);
+            OperationMapDefinition map = LoadRequired<OperationMapDefinition>(
+                M02EstablishBaseForwardPostWindowValidation.DefinitionPath);
+
+            Require(MissionDefinitionContractValidation.TryValidateCatalog(missions, out string error), error);
+            Require(maps.TryValidate(out error), error);
+            Require(missions.Entries.Length == 2 && maps.Definitions.Length == 2,
+                "Chapter 1 catalogs must contain exactly M01 and M02.");
+            Require(missions.TryResolve(MissionId, out MissionDefinitionConfig resolvedMission) &&
+                    ReferenceEquals(resolvedMission, mission),
+                "Campaign catalog did not resolve the canonical M02 mission.");
+            Require(maps.TryResolve(map.OperationMapId, out OperationMapDefinition resolvedMap) &&
+                    ReferenceEquals(resolvedMap, map),
+                "Operation-map catalog did not resolve the canonical M02 map.");
+            Require(scenario.TryValidate(out error) && mission.ScenarioId == scenario.ScenarioId &&
+                    mission.OperationMapId == scenario.OperationMapId &&
+                    scenario.OperationMapId == map.OperationMapId,
+                error ?? "M02 mission, scenario, and operation-map identities do not close.");
+            Debug.Log(
+                "[M02EstablishBaseConfigBuilder] result=Passed scope=Catalogs missions=2 maps=2");
+        }
 
         public static void BuildScenario()
         {
@@ -331,6 +377,20 @@ namespace Game.Editor
             asset = ScriptableObject.CreateInstance<T>();
             AssetDatabase.CreateAsset(asset, path);
             return asset;
+        }
+
+        private static T LoadRequired<T>(string path) where T : UnityEngine.Object
+        {
+            T asset = AssetDatabase.LoadAssetAtPath<T>(path);
+            if (asset == null)
+                throw new InvalidOperationException($"Missing M02 canonical dependency '{path}'.");
+            return asset;
+        }
+
+        private static void Require(bool condition, string message)
+        {
+            if (!condition)
+                throw new InvalidOperationException(message);
         }
 
         private static void SetArray(

@@ -1,8 +1,8 @@
 # M02 Establish The Base Implementation Tracker
 
 Date: 2026-08-24
-Status: Active; M02EB-009 accepted and M02EB-010 dependency-ready
-Progress: 9/34 accepted items (26.5%)
+Status: Active; M02EB-010 accepted and M02EB-011 dependency-ready
+Progress: 10/34 accepted items (29.4%)
 Parent design: `Design/SagaChapters/Saga_Chapter01_First_Response.md` (`M02 Detailed Spec`)
 Technical architecture: `Design/Architecture/m02_establish_base_technical_architecture.md`
 Mission: `saga.ch01.m02.establish_base`
@@ -125,10 +125,11 @@ Every item records an exact path allowlist before editing. Unexpected user chang
   **Acceptance:** physical content remains unmodified; transformed bounds, placement, sightlines, and logical/source hashes validate.
   **Evidence:** logical map SHA-256 `1920a6d4a8566934324855156ff3287cfc0f259d976600416af3c6eaa090b8e1`; accepted physical definition SHA-256 `f91b737280d8950d97264b54589b963f605a8d8911a0f4e17397bef667e4eba6`, placements SHA-256 `f5d54abe4dca19b4b2deca889f46fb8196bef98e0e4ee7cb3daa511a2606358b`, and surface SHA-256 `1402d769704008e254563ff7ecda835294db83afc2cee6d5bb456987f0392b4d` remained exact. The logical window is `(780,270)-(1100,470)`, the deterministic clear Barracks lot is `(1018,392,24,14)`, and both camera shots, minimap projection, 14 safe-surface anchors, and defense-route sightlines validate. `[M02EstablishBaseForwardPostWindowValidation] result=Passed tests=9`; `[M02EstablishBaseOperationMapValidation] result=Passed tests=10`; `[M01FirstContactMapSourceBindingValidation] result=Passed tests=14`; `[M01FirstContactDenseCityReuseValidation] result=Passed tests=8`; `[OperationMapEcsContractValidation] result=Passed tests=7`; `[M01FirstContactCameraMinimapValidation] result=Passed tests=12`; `[M01FirstContactAnchorValidation] result=Passed tests=13`; `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; zero compiler errors. Logs: `/private/tmp/warline-m02eb-009-builder-final.log`, `/private/tmp/warline-m02eb-009-focused-clean-generator.log`, `/private/tmp/warline-m02eb-009-reg-source-binding.log`, `/private/tmp/warline-m02eb-009-reg-dense-reuse.log`, `/private/tmp/warline-m02eb-009-reg-ecs-contract.log`, `/private/tmp/warline-m02eb-009-reg-camera-minimap.log`, `/private/tmp/warline-m02eb-009-reg-anchor.log`, and `/private/tmp/warline-m02eb-009-source-growth-final.log`.
 
-- [ ] **M02EB-010 - Catalog M02 and prove deterministic canonical data**
+- [x] **M02EB-010 - Catalog M02 and prove deterministic canonical data**
   **Depends on:** M02EB-007 through M02EB-009.
   **Deliverable:** Campaign mission/map/scenario catalog entries and consolidated data validator.
   **Acceptance:** M01 and M02 both resolve; duplicate/stale/missing identities fail closed; two-pass assets are byte stable.
+  **Evidence:** the Chapter 1 mission catalog resolves exactly ordered `saga.ch01.m01.first_contact` and `saga.ch01.m02.establish_base`; the operation-map catalog resolves exactly ordered `opmap.ch01.district_edge_01` and `opmap.ch01.forward_post_01` with index-aligned built-in content packs. Canonical SHA-256 values after two-pass generation are mission `e2b9d68aee3e4d020cfb36d22439a86c71ee9d62e0c7cf71bfd1f23ca9603443`, scenario `aefa375b500d5ae045724ce21268da99a2616ccb99c31c4b2486dbc25ab7f43f`, map `1920a6d4a8566934324855156ff3287cfc0f259d976600416af3c6eaa090b8e1`, mission catalog `6810e32ea833e8199e72cf8cf68e86e97190377fd90cc5003e26fdb924d1322c`, and map catalog `a09971ed5e9ae2125ad04c7dcfed6059d1b0ee05f7545cd16658f818f8c68e15`. `[M02EstablishBaseConfigBuilder] result=Passed scope=Catalogs missions=2 maps=2`; `[M02EstablishBaseCanonicalDataValidation] result=Passed tests=15`; `[M02EstablishBaseConsolidatedDataValidation] result=Passed suites=5`; `[M01FirstContactConsolidatedContractValidation] result=Passed suites=23`; `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; zero compiler errors. Logs: `/private/tmp/warline-m02eb-010-consolidated-final2.log`, `/private/tmp/warline-m02eb-010-m01-regression.log`, and `/private/tmp/warline-m02eb-010-source-growth.log`.
 
 ### Phase C - Gameplay Vertical Slice
 
@@ -265,3 +266,4 @@ The first user review occurs at M02EB-029:
 | 2026-08-24 | M02EB-007 authored the canonical M02 definition with three ordered objectives, three independent stars, explicit first-clear/replay rewards, Build-enabled commands, stable sequences, and only established readiness features. | Accepted |
 | 2026-08-24 | M02EB-008 authored the deterministic M02 scenario with exact approved units, a bounded Barracks lot, positive post-action resource float, suppressed delayed patrol timing, transport/air restrictions, civilians, closed anchor references, and byte-stable regeneration. | Accepted |
 | 2026-08-24 | M02EB-009 bound a cropped logical forward-post mission window to the exact accepted dense-city EntityScene, surface, minimap raster, and building placements; its deterministic lot, anchors, route, cameras, and all affected M01/architecture regressions passed without changing physical content. | Accepted |
+| 2026-08-25 | M02EB-010 made the existing Chapter 1 Editor builder the deterministic merge-and-sort owner for mission and map catalogs, added exact M01/M02 graph validation, and proved duplicate, missing, stale, and cross-builder preservation failures close safely. | Accepted |

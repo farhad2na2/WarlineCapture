@@ -15,3 +15,5 @@ MonoBehaviour:
   entries:
   - missionId: saga.ch01.m01.first_contact
     definition: {fileID: 11400000, guid: 7284111cf4349bf4bb7bb0faa0b53619, type: 2}
+  - missionId: saga.ch01.m02.establish_base
+    definition: {fileID: 11400000, guid: ed9029770e1c94ce4ada381a46f801e7, type: 2}

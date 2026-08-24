@@ -51,8 +51,9 @@ public static class M01FirstContactOperationMapTests
             ScenarioSetupConfig scenario = Load<ScenarioSetupConfig>(ScenarioPath);
             Require(catalog != null && map != null && source != null && scenario != null, "Required M01 assets are missing.");
             Require(catalog.TryValidate(out string catalogError), catalogError);
-            Require(catalog.Definitions.Length == 1 && catalog.Entries.Length == 1,
-                "Chapter 01 catalog must contain exactly the M01 logical map.");
+            Require(catalog.Definitions.Length >= 1 &&
+                    catalog.Entries.Length == catalog.Definitions.Length,
+                "Chapter 01 catalog must preserve M01 and pair every logical map with one content pack.");
             Require(catalog.TryResolve("opmap.ch01.district_edge_01", out OperationMapDefinition resolved) &&
                     ReferenceEquals(resolved, map), "M01 catalog did not resolve its exact logical map.");
             ValidateFreshBootstrap(catalog, map, scenario);

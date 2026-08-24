@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Configs::Game.Configs.OperationMapCatalogConfig
   definitions:
   - {fileID: 11400000, guid: 8c19d5328fd5b7c43b9d5ecb0065df04, type: 2}
+  - {fileID: 11400000, guid: 30ded13be441a44b588827ac6aee0e2d, type: 2}
   entries:
   - definition: {fileID: 11400000, guid: 8c19d5328fd5b7c43b9d5ecb0065df04, type: 2}
     contentPack:
@@ -21,3 +22,9 @@ MonoBehaviour:
       deliveryKind: 0
       contentVersion: 1
       contentHash: 95ddbb2a59e91270a839db2f1f1d547dfc6cda46534eb6d67d1e23fdb0adeee2
+  - definition: {fileID: 11400000, guid: 30ded13be441a44b588827ac6aee0e2d, type: 2}
+    contentPack:
+      contentPackId: opmap-pack.ch01.forward_post_01
+      deliveryKind: 0
+      contentVersion: 1
+      contentHash: 7905484067858c1db0db99bb2fd97aa328895ba2a805da44885f22f49864bdc6

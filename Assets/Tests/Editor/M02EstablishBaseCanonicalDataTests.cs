@@ -17,13 +17,21 @@ public sealed class M02EstablishBaseCanonicalDataTests
     private const string RequiredUnitConfigPath =
         "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Chr_Soldier_Male_02_Alt_04_Config.asset";
     private const string Marker =
-        "[M02EstablishBaseCanonicalDataValidation] result=Passed tests=10";
+        "[M02EstablishBaseCanonicalDataValidation] result=Passed tests=15";
+    private static readonly string[] CanonicalPaths =
+    {
+        M02EstablishBaseConfigBuilder.MissionPath,
+        M02EstablishBaseConfigBuilder.ScenarioPath,
+        M02EstablishBaseForwardPostWindowValidation.DefinitionPath,
+        M02EstablishBaseConfigBuilder.MissionCatalogPath,
+        M02EstablishBaseConfigBuilder.OperationMapCatalogPath
+    };
 
     public static void RunFocusedValidation()
     {
         try
         {
-            M02EstablishBaseConfigBuilder.BuildScenario();
+            M02EstablishBaseConfigBuilder.BuildCanonicalData();
             M02EstablishBaseCanonicalDataTests tests = new();
             tests.RegenerationIsByteStable();
             tests.ScenarioPassesContractValidation();
@@ -35,6 +43,11 @@ public sealed class M02EstablishBaseCanonicalDataTests
             tests.BuildZoneContainsTheCanonicalBarracksFootprint();
             tests.DelayedWaveAndRouteUseOneDeterministicTimeline();
             tests.RestrictionsAndCivilianPresentationMatchTheMissionScope();
+            tests.CatalogsValidateAndResolveExactChapterSet();
+            tests.MissionScenarioAndMapIdentitiesClose();
+            tests.ContentPacksMirrorLogicalMapVersionsAndHashes();
+            tests.CatalogsRejectMissingDuplicateAndStaleIdentities();
+            tests.M01CatalogRefreshPreservesM02AndCanonicalBytes();
             Debug.Log(Marker);
             ValidationExit.Passed();
         }
@@ -49,9 +62,9 @@ public sealed class M02EstablishBaseCanonicalDataTests
     [Test]
     public void RegenerationIsByteStable()
     {
-        string before = HashScenario();
-        M02EstablishBaseConfigBuilder.BuildScenario();
-        Assert.AreEqual(before, HashScenario());
+        string[] before = HashCanonicalAssets();
+        M02EstablishBaseConfigBuilder.BuildCanonicalData();
+        CollectionAssert.AreEqual(before, HashCanonicalAssets());
     }
 
     [Test]
@@ -194,6 +207,145 @@ public sealed class M02EstablishBaseCanonicalDataTests
         Assert.AreEqual(12, civilians.InstanceCount);
     }
 
+    [Test]
+    public void CatalogsValidateAndResolveExactChapterSet()
+    {
+        MissionDefinitionCatalogConfig missions = Load<MissionDefinitionCatalogConfig>(
+            M02EstablishBaseConfigBuilder.MissionCatalogPath);
+        OperationMapCatalogConfig maps = Load<OperationMapCatalogConfig>(
+            M02EstablishBaseConfigBuilder.OperationMapCatalogPath);
+        Assert.IsTrue(MissionDefinitionContractValidation.TryValidateCatalog(missions, out string error), error);
+        Assert.IsTrue(maps.TryValidate(out error), error);
+        Assert.AreEqual(2, missions.Entries.Length);
+        Assert.AreEqual("saga.ch01.m01.first_contact", missions.Entries[0].MissionId);
+        Assert.AreEqual(M02EstablishBaseConfigBuilder.MissionId, missions.Entries[1].MissionId);
+        Assert.IsTrue(missions.TryResolve(M02EstablishBaseConfigBuilder.MissionId, out var mission));
+        Assert.AreEqual(M02EstablishBaseConfigBuilder.MissionPath, AssetDatabase.GetAssetPath(mission));
+        Assert.AreEqual(2, maps.Definitions.Length);
+        Assert.AreEqual("opmap.ch01.district_edge_01", maps.Definitions[0].OperationMapId);
+        Assert.AreEqual("opmap.ch01.forward_post_01", maps.Definitions[1].OperationMapId);
+        Assert.IsTrue(maps.TryResolve("opmap.ch01.forward_post_01", out var map));
+        Assert.AreEqual(M02EstablishBaseForwardPostWindowValidation.DefinitionPath,
+            AssetDatabase.GetAssetPath(map));
+    }
+
+    [Test]
+    public void MissionScenarioAndMapIdentitiesClose()
+    {
+        MissionDefinitionConfig mission = Load<MissionDefinitionConfig>(
+            M02EstablishBaseConfigBuilder.MissionPath);
+        ScenarioSetupConfig scenario = Scenario();
+        OperationMapDefinition map = Load<OperationMapDefinition>(
+            M02EstablishBaseForwardPostWindowValidation.DefinitionPath);
+        Assert.AreEqual(mission.ScenarioId, scenario.ScenarioId);
+        Assert.AreEqual(mission.OperationMapId, scenario.OperationMapId);
+        Assert.AreEqual(scenario.OperationMapId, map.OperationMapId);
+    }
+
+    [Test]
+    public void ContentPacksMirrorLogicalMapVersionsAndHashes()
+    {
+        OperationMapCatalogConfig catalog = Load<OperationMapCatalogConfig>(
+            M02EstablishBaseConfigBuilder.OperationMapCatalogPath);
+        for (int index = 0; index < catalog.Definitions.Length; index++)
+        {
+            OperationMapDefinition map = catalog.Definitions[index];
+            OperationMapCatalogEntryConfig entry = catalog.Entries[index];
+            Assert.AreSame(map, entry.Definition);
+            Assert.AreEqual("opmap-pack." + map.OperationMapId.Substring(6),
+                entry.ContentPack.ContentPackId);
+            Assert.AreEqual(OperationMapDeliveryKind.BuiltInLocal, entry.ContentPack.DeliveryKind);
+            Assert.AreEqual(map.ContentVersion, entry.ContentPack.ContentVersion);
+            Assert.AreEqual(map.ContentHash, entry.ContentPack.ContentHash);
+        }
+    }
+
+    [Test]
+    public void CatalogsRejectMissingDuplicateAndStaleIdentities()
+    {
+        MissionDefinitionConfig m01 = Load<MissionDefinitionConfig>(
+            M01FirstContactConfigBuilder.MissionPath);
+        MissionDefinitionCatalogConfig missionCatalog =
+            ScriptableObject.CreateInstance<MissionDefinitionCatalogConfig>();
+        OperationMapCatalogConfig mapCatalog = ScriptableObject.CreateInstance<OperationMapCatalogConfig>();
+        try
+        {
+            SerializedObject missions = new(missionCatalog);
+            SerializedProperty entries = missions.FindProperty("entries");
+            entries.arraySize = 2;
+            for (int index = 0; index < entries.arraySize; index++)
+            {
+                SerializedProperty entry = entries.GetArrayElementAtIndex(index);
+                entry.FindPropertyRelative("missionId").stringValue = m01.MissionId;
+                entry.FindPropertyRelative("definition").objectReferenceValue = m01;
+            }
+            missions.ApplyModifiedPropertiesWithoutUndo();
+            Assert.IsFalse(MissionDefinitionContractValidation.TryValidateCatalog(
+                missionCatalog, out string duplicateError));
+            StringAssert.Contains("Duplicate", duplicateError);
+
+            entries.arraySize = 1;
+            SerializedProperty stale = entries.GetArrayElementAtIndex(0);
+            stale.FindPropertyRelative("missionId").stringValue = M02EstablishBaseConfigBuilder.MissionId;
+            stale.FindPropertyRelative("definition").objectReferenceValue = m01;
+            missions.ApplyModifiedPropertiesWithoutUndo();
+            Assert.IsFalse(MissionDefinitionContractValidation.TryValidateCatalog(
+                missionCatalog, out string staleError));
+            StringAssert.Contains("does not match", staleError);
+
+            SerializedObject maps = new(mapCatalog);
+            SerializedProperty definitions = maps.FindProperty("definitions");
+            definitions.arraySize = 1;
+            definitions.GetArrayElementAtIndex(0).objectReferenceValue = null;
+            maps.FindProperty("entries").arraySize = 1;
+            maps.ApplyModifiedPropertiesWithoutUndo();
+            Assert.IsFalse(mapCatalog.TryValidate(out string missingError));
+            StringAssert.Contains("missing", missingError);
+
+            OperationMapDefinition m01Map = Load<OperationMapDefinition>(
+                M01FirstContactConfigBuilder.OperationMapPath);
+            definitions.GetArrayElementAtIndex(0).objectReferenceValue = m01Map;
+            SerializedProperty mapEntry = maps.FindProperty("entries").GetArrayElementAtIndex(0);
+            mapEntry.FindPropertyRelative("definition").objectReferenceValue = m01Map;
+            SerializedProperty contentPack = mapEntry.FindPropertyRelative("contentPack");
+            contentPack.FindPropertyRelative("contentPackId").stringValue =
+                "opmap-pack.ch01.district_edge_01";
+            contentPack.FindPropertyRelative("deliveryKind").intValue =
+                (int)OperationMapDeliveryKind.BuiltInLocal;
+            contentPack.FindPropertyRelative("contentVersion").intValue = m01Map.ContentVersion;
+            contentPack.FindPropertyRelative("contentHash").stringValue = "stale";
+            maps.ApplyModifiedPropertiesWithoutUndo();
+            Assert.IsFalse(mapCatalog.TryValidate(out string stalePackError));
+            StringAssert.Contains("version and hash", stalePackError);
+
+            MissionDefinitionCatalogConfig liveMissions = Load<MissionDefinitionCatalogConfig>(
+                M02EstablishBaseConfigBuilder.MissionCatalogPath);
+            OperationMapCatalogConfig liveMaps = Load<OperationMapCatalogConfig>(
+                M02EstablishBaseConfigBuilder.OperationMapCatalogPath);
+            Assert.IsFalse(liveMissions.TryResolve("saga.ch01.m03.stale", out _));
+            Assert.IsFalse(liveMaps.TryResolve("opmap.ch01.stale", out _));
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(missionCatalog);
+            UnityEngine.Object.DestroyImmediate(mapCatalog);
+        }
+    }
+
+    [Test]
+    public void M01CatalogRefreshPreservesM02AndCanonicalBytes()
+    {
+        string[] before = HashCatalogs();
+        M01FirstContactConfigBuilder.RefreshChapterCatalogs();
+        CollectionAssert.AreEqual(before, HashCatalogs());
+        Assert.IsTrue(Load<MissionDefinitionCatalogConfig>(
+            M02EstablishBaseConfigBuilder.MissionCatalogPath).TryResolve(
+                M02EstablishBaseConfigBuilder.MissionId, out _));
+        Assert.IsTrue(Load<OperationMapCatalogConfig>(
+            M02EstablishBaseConfigBuilder.OperationMapCatalogPath).TryResolve(
+                "opmap.ch01.forward_post_01", out _));
+    }
+
     private static void AssertGroup(
         string groupId,
         byte factionIndex,
@@ -253,11 +405,25 @@ public sealed class M02EstablishBaseCanonicalDataTests
         return asset;
     }
 
-    private static string HashScenario()
+    private static string[] HashCanonicalAssets()
+    {
+        string[] hashes = new string[CanonicalPaths.Length];
+        for (int index = 0; index < CanonicalPaths.Length; index++)
+            hashes[index] = HashFile(CanonicalPaths[index]);
+        return hashes;
+    }
+
+    private static string[] HashCatalogs() => new[]
+    {
+        HashFile(M02EstablishBaseConfigBuilder.MissionCatalogPath),
+        HashFile(M02EstablishBaseConfigBuilder.OperationMapCatalogPath)
+    };
+
+    private static string HashFile(string path)
     {
         using SHA256 sha = SHA256.Create();
         return BitConverter.ToString(
-            sha.ComputeHash(File.ReadAllBytes(M02EstablishBaseConfigBuilder.ScenarioPath)))
+            sha.ComputeHash(File.ReadAllBytes(path)))
             .Replace("-", string.Empty);
     }
 }

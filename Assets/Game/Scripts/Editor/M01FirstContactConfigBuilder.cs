@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Game.Components;
 using Game.Configs;
 using Game.Tactical.Contracts;
@@ -40,8 +41,8 @@ namespace Game.Editor
                 LoadOrCreate<OperationMapCatalogConfig>(OperationMapCatalogPath);
             PopulateMission(mission);
             PopulateScenario(scenario);
-            PopulateCatalog(catalog, mission);
-            PopulateOperationMapCatalog(operationMapCatalog, operationMap);
+            PopulateCatalog(catalog);
+            PopulateOperationMapCatalog(operationMapCatalog);
             M01FirstContactNarrativeConfigBuilder.Build();
             EditorUtility.SetDirty(mission);
             EditorUtility.SetDirty(scenario);
@@ -53,18 +54,27 @@ namespace Game.Editor
 
         public static void RefreshOperationMapCatalogContentPack()
         {
-            OperationMapDefinition operationMap =
-                AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(OperationMapPath);
+            RefreshChapterCatalogs();
+        }
+
+        public static void RefreshChapterCatalogs()
+        {
+            MissionDefinitionCatalogConfig missionCatalog =
+                AssetDatabase.LoadAssetAtPath<MissionDefinitionCatalogConfig>(CatalogPath);
             OperationMapCatalogConfig operationMapCatalog =
                 AssetDatabase.LoadAssetAtPath<OperationMapCatalogConfig>(OperationMapCatalogPath);
-            if (operationMap == null || operationMapCatalog == null)
-                throw new InvalidOperationException("M01 operation map or chapter catalog is missing.");
+            if (missionCatalog == null || operationMapCatalog == null)
+                throw new InvalidOperationException("Chapter 1 mission or operation-map catalog is missing.");
 
-            PopulateOperationMapCatalog(operationMapCatalog, operationMap);
+            PopulateCatalog(missionCatalog);
+            PopulateOperationMapCatalog(operationMapCatalog);
+            EditorUtility.SetDirty(missionCatalog);
             EditorUtility.SetDirty(operationMapCatalog);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-            Debug.Log("[M01FirstContactConfigBuilder] result=Passed scope=OperationMapCatalog");
+            Debug.Log(
+                $"[M01FirstContactConfigBuilder] result=Passed scope=ChapterCatalogs " +
+                $"missions={missionCatalog.Entries.Length} maps={operationMapCatalog.Definitions.Length}");
         }
 
         private static void PopulateMission(MissionDefinitionConfig target)
@@ -212,34 +222,70 @@ namespace Game.Editor
             }
         }
 
-        private static void PopulateCatalog(MissionDefinitionCatalogConfig target, MissionDefinitionConfig mission)
+        private static void PopulateCatalog(MissionDefinitionCatalogConfig target)
         {
+            MissionDefinitionConfig[] missions = LoadChapterMissionDefinitions();
             SerializedObject serialized = new(target);
-            SetArray(serialized, "entries", 1, (entry, _) =>
+            SetArray(serialized, "entries", missions.Length, (entry, index) =>
             {
-                Set(entry, "missionId", MissionId);
+                MissionDefinitionConfig mission = missions[index];
+                Set(entry, "missionId", mission.MissionId);
                 entry.FindPropertyRelative("definition").objectReferenceValue = mission;
             });
             serialized.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        private static void PopulateOperationMapCatalog(
-            OperationMapCatalogConfig target,
-            OperationMapDefinition operationMap)
+        private static void PopulateOperationMapCatalog(OperationMapCatalogConfig target)
         {
+            OperationMapDefinition[] maps = LoadChapterOperationMaps();
             SerializedObject serialized = new(target);
-            SetArray(serialized, "definitions", 1, (definition, _) =>
-                definition.objectReferenceValue = operationMap);
-            SetArray(serialized, "entries", 1, (entry, _) =>
+            SetArray(serialized, "definitions", maps.Length, (definition, index) =>
+                definition.objectReferenceValue = maps[index]);
+            SetArray(serialized, "entries", maps.Length, (entry, index) =>
             {
+                OperationMapDefinition operationMap = maps[index];
                 entry.FindPropertyRelative("definition").objectReferenceValue = operationMap;
                 SerializedProperty pack = entry.FindPropertyRelative("contentPack");
-                Set(pack, "contentPackId", "opmap-pack.ch01.district_edge_01");
+                Set(pack, "contentPackId", "opmap-pack." + operationMap.OperationMapId.Substring(6));
                 Set(pack, "deliveryKind", (int)OperationMapDeliveryKind.BuiltInLocal);
                 Set(pack, "contentVersion", operationMap.ContentVersion);
                 Set(pack, "contentHash", operationMap.ContentHash);
             });
             serialized.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static MissionDefinitionConfig[] LoadChapterMissionDefinitions()
+        {
+            List<MissionDefinitionConfig> missions = new();
+            foreach (string guid in AssetDatabase.FindAssets(
+                         "t:MissionDefinitionConfig",
+                         new[] { "Assets/Game/Configs/Missions/Chapter01" }))
+            {
+                MissionDefinitionConfig mission = AssetDatabase.LoadAssetAtPath<MissionDefinitionConfig>(
+                    AssetDatabase.GUIDToAssetPath(guid));
+                if (mission != null)
+                    missions.Add(mission);
+            }
+
+            missions.Sort((left, right) => string.CompareOrdinal(left.MissionId, right.MissionId));
+            return missions.ToArray();
+        }
+
+        private static OperationMapDefinition[] LoadChapterOperationMaps()
+        {
+            List<OperationMapDefinition> maps = new();
+            foreach (string guid in AssetDatabase.FindAssets(
+                         "t:OperationMapDefinition",
+                         new[] { "Assets/Game/Configs/OperationMaps/Chapter01" }))
+            {
+                OperationMapDefinition map = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
+                    AssetDatabase.GUIDToAssetPath(guid));
+                if (map != null)
+                    maps.Add(map);
+            }
+
+            maps.Sort((left, right) => string.CompareOrdinal(left.OperationMapId, right.OperationMapId));
+            return maps.ToArray();
         }
 
         private static T LoadOrCreate<T>(string path) where T : ScriptableObject

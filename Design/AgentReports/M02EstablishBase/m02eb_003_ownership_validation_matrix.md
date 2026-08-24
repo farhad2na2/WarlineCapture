@@ -43,6 +43,7 @@ Approved existing paths:
 - `Assets/Game/Scripts/Configs/GameplayConfigModels.cs`
 - `Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Building_Barrack_Config.asset`
 - `Assets/Game/Scripts/Editor/M01FirstContactConfigBuilder.cs`
+- `Assets/Tests/Editor/M01FirstContactOperationMapTests.cs`
 - `Assets/Game/Configs/Campaign/CampaignMissionCatalog.asset`
 - `Assets/Game/Configs/OperationMaps/Chapter01/OperationMapCatalog_Chapter01.asset`
 

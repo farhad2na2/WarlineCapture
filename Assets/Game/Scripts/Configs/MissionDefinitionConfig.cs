@@ -12,6 +12,7 @@ namespace Game.Configs
         [SerializeField] private string displayTextKey;
         [SerializeField] private MissionObjectiveRuleKind rule;
         [SerializeField] private string missionRoleId;
+        [SerializeField] private string targetConfigId;
         [SerializeField, Min(1)] private int requiredCount;
         [SerializeField] private bool failureOnRuleBreak;
 
@@ -27,6 +28,25 @@ namespace Game.Configs
             this.displayTextKey = displayTextKey;
             this.rule = rule;
             this.missionRoleId = missionRoleId;
+            this.targetConfigId = string.Empty;
+            this.requiredCount = requiredCount;
+            this.failureOnRuleBreak = failureOnRuleBreak;
+        }
+
+        public MissionObjectiveDefinitionConfig(
+            string objectiveId,
+            string displayTextKey,
+            MissionObjectiveRuleKind rule,
+            string missionRoleId,
+            string targetConfigId,
+            int requiredCount,
+            bool failureOnRuleBreak = false)
+        {
+            this.objectiveId = objectiveId;
+            this.displayTextKey = displayTextKey;
+            this.rule = rule;
+            this.missionRoleId = missionRoleId;
+            this.targetConfigId = targetConfigId;
             this.requiredCount = requiredCount;
             this.failureOnRuleBreak = failureOnRuleBreak;
         }
@@ -35,6 +55,7 @@ namespace Game.Configs
         public string DisplayTextKey => displayTextKey;
         public MissionObjectiveRuleKind Rule => rule;
         public string MissionRoleId => missionRoleId;
+        public string TargetConfigId => targetConfigId;
         public int RequiredCount => requiredCount;
         public bool FailureOnRuleBreak => failureOnRuleBreak;
     }
@@ -74,6 +95,7 @@ namespace Game.Configs
             MissionStarRuleKind.CompleteMission => "mission.star.complete",
             MissionStarRuleKind.NoSquadLoss => "mission.star.no_squad_loss",
             MissionStarRuleKind.CompleteUnderMilliseconds => "mission.star.under_time",
+            MissionStarRuleKind.NoCivilianLoss => "mission.star.no_civilian_loss",
             _ => string.Empty
         };
     }

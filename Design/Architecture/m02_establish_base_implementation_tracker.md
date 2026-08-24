@@ -1,8 +1,8 @@
 # M02 Establish The Base Implementation Tracker
 
 Date: 2026-08-24
-Status: Active; M02EB-003 accepted and M02EB-004 through M02EB-006 dependency-ready
-Progress: 3/34 accepted items (8.8%)
+Status: Active; M02EB-004 accepted and M02EB-005 through M02EB-006 dependency-ready
+Progress: 4/34 accepted items (11.8%)
 Parent design: `Design/SagaChapters/Saga_Chapter01_First_Response.md` (`M02 Detailed Spec`)
 Technical architecture: `Design/Architecture/m02_establish_base_technical_architecture.md`
 Mission: `saga.ch01.m02.establish_base`
@@ -89,10 +89,11 @@ Every item records an exact path allowlist before editing. Unexpected user chang
 
 ### Phase B - Contracts And Canonical Data
 
-- [ ] **M02EB-004 - Add default-safe M02 objective and star rules**
+- [x] **M02EB-004 - Add default-safe M02 objective and star rules**
   **Depends on:** M02EB-003.
   **Deliverable:** data-supported BuildStructure, ProduceUnit, DefendMissionRole, and NoCivilianLoss rules.
   **Acceptance:** M01 behavior is byte/behavior compatible; invalid/ambiguous rules fail closed; focused contract and architecture suites pass.
+  **Evidence:** `[M02EstablishBaseMissionRuleValidation] result=Passed tests=11`; `[M01FirstContactConsolidatedContractValidation] result=Passed suites=23`; `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; zero compiler errors; logs `/private/tmp/warline-m02eb-004-rules.log`, `/private/tmp/warline-m02eb-004-m01-regression.log`, and `/private/tmp/warline-m02eb-004-source-growth.log`.
 
 - [ ] **M02EB-005 - Add default-safe scenario economy/build/base schema**
   **Depends on:** M02EB-003.
@@ -253,3 +254,4 @@ The first user review occurs at M02EB-029:
 | 2026-08-24 | M02EB-001 documentation consistency gate passed with 34 ordered/unique items and zero unresolved producer-decision text. | Accepted |
 | 2026-08-24 | M02EB-002 current-head inventory mapped every required M02 behavior to an existing sole owner or explicit additive gap; Unity CLI 1.0.0-beta.6 was available but no live Editor was connected. | Accepted |
 | 2026-08-24 | M02EB-003 froze exact write paths, protected dense-city exclusions, generated-output policy, rollback, pass markers, M01 regressions, and source-growth/performance ceilings. | Accepted |
+| 2026-08-24 | M02EB-004 appended three objective rules and one star rule without renumbering M01, added explicit role-versus-config target identity, and passed focused M02, full M01 contract, and source-growth gates. | Accepted |

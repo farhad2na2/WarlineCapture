@@ -61,7 +61,10 @@ namespace Game.Missions.Contracts
     {
         None = 0,
         DestroyMissionRole = 1,
-        ProtectMissionRole = 2
+        ProtectMissionRole = 2,
+        BuildStructure = 3,
+        ProduceUnit = 4,
+        DefendMissionRole = 5
     }
 
     public enum MissionStarRuleKind : byte
@@ -69,7 +72,8 @@ namespace Game.Missions.Contracts
         None = 0,
         CompleteMission = 1,
         NoSquadLoss = 2,
-        CompleteUnderMilliseconds = 3
+        CompleteUnderMilliseconds = 3,
+        NoCivilianLoss = 4
     }
 
     public enum MissionRewardKind : byte

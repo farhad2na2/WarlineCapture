@@ -146,8 +146,7 @@ namespace Game.Configs
                 MissionObjectiveDefinitionConfig objective = objectives[index];
                 if (!IsValidObjectiveId(objective.ObjectiveId) ||
                     !IsValidScopedId(objective.DisplayTextKey, "mission", 3, 8) ||
-                    !IsValidScopedId(objective.MissionRoleId, "role", 2, 7) ||
-                    objective.Rule == MissionObjectiveRuleKind.None || objective.RequiredCount < 1)
+                    !HasValidObjectiveTarget(objective) || objective.RequiredCount < 1)
                 {
                     error = $"Mission '{definition.MissionId}' has invalid objective at index {index}.";
                     return false;
@@ -164,6 +163,45 @@ namespace Game.Configs
             }
 
             error = null;
+            return true;
+        }
+
+        private static bool HasValidObjectiveTarget(MissionObjectiveDefinitionConfig objective)
+        {
+            bool hasRole = !string.IsNullOrEmpty(objective.MissionRoleId);
+            bool hasConfig = !string.IsNullOrEmpty(objective.TargetConfigId);
+            switch (objective.Rule)
+            {
+                case MissionObjectiveRuleKind.DestroyMissionRole:
+                case MissionObjectiveRuleKind.ProtectMissionRole:
+                case MissionObjectiveRuleKind.DefendMissionRole:
+                    return hasRole && !hasConfig &&
+                        IsValidScopedId(objective.MissionRoleId, "role", 2, 7);
+                case MissionObjectiveRuleKind.BuildStructure:
+                    return !hasRole && hasConfig &&
+                        IsValidGameplayConfigId(objective.TargetConfigId, "Building_");
+                case MissionObjectiveRuleKind.ProduceUnit:
+                    return !hasRole && hasConfig &&
+                        IsValidGameplayConfigId(objective.TargetConfigId, "Unit_");
+                default:
+                    return false;
+            }
+        }
+
+        private static bool IsValidGameplayConfigId(string value, string requiredPrefix)
+        {
+            if (string.IsNullOrWhiteSpace(value) || value.Length > 96 ||
+                !value.StartsWith(requiredPrefix, StringComparison.Ordinal) ||
+                IsPlaceholderToken(value))
+                return false;
+
+            for (int index = 0; index < value.Length; index++)
+            {
+                char character = value[index];
+                if (!char.IsLetterOrDigit(character) && character != '_')
+                    return false;
+            }
+
             return true;
         }
 

@@ -1,8 +1,8 @@
 # M02 Establish The Base Implementation Tracker
 
 Date: 2026-08-24
-Status: Active; M02EB-008 accepted and M02EB-009 dependency-ready
-Progress: 8/34 accepted items (23.5%)
+Status: Active; M02EB-009 accepted and M02EB-010 dependency-ready
+Progress: 9/34 accepted items (26.5%)
 Parent design: `Design/SagaChapters/Saga_Chapter01_First_Response.md` (`M02 Detailed Spec`)
 Technical architecture: `Design/Architecture/m02_establish_base_technical_architecture.md`
 Mission: `saga.ch01.m02.establish_base`
@@ -119,10 +119,11 @@ Every item records an exact path allowlist before editing. Unexpected user chang
   **Acceptance:** all config/prefab/role/anchor references resolve and two serializations are stable.
   **Evidence:** canonical scenario SHA-256 `aefa375b500d5ae045724ce21268da99a2616ccb99c31c4b2486dbc25ab7f43f`; `[M02EstablishBaseCanonicalDataValidation] result=Passed tests=10`; `[M02EstablishBaseScenarioValidation] result=Passed tests=12`; `[M02EstablishBaseContractValidation] result=Passed tests=8`; `[M01FirstContactScenarioCompatibilityValidation] result=Passed tests=8`; `[M01FirstContactConsolidatedContractValidation] result=Passed suites=23`; `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; zero compiler errors. The canonical data leaves 5,000 Credits and 10 Materials after the required Barracks and rifle order, fits the resolved 20x10 Barracks footprint inside a 24x14 lot, warns at 90 seconds, activates at 120 seconds, and regenerates byte-identically. Logs: `/private/tmp/warline-m02eb-008-builder.log`, `/private/tmp/warline-m02eb-008-canonical.log`, `/private/tmp/warline-m02eb-008-schema.log`, `/private/tmp/warline-m02eb-008-contract.log`, `/private/tmp/warline-m02eb-008-m01-compatibility.log`, `/private/tmp/warline-m02eb-008-m01-regression.log`, and `/private/tmp/warline-m02eb-008-source-growth.log`.
 
-- [ ] **M02EB-009 - Author logical forward-post operation map**
+- [x] **M02EB-009 - Author logical forward-post operation map**
   **Depends on:** M02EB-003.
   **Deliverable:** exact source binding, map bounds, camera/minimap metadata, build surface, base, defense route, civilian, and narrative anchors.
   **Acceptance:** physical content remains unmodified; transformed bounds, placement, sightlines, and logical/source hashes validate.
+  **Evidence:** logical map SHA-256 `1920a6d4a8566934324855156ff3287cfc0f259d976600416af3c6eaa090b8e1`; accepted physical definition SHA-256 `f91b737280d8950d97264b54589b963f605a8d8911a0f4e17397bef667e4eba6`, placements SHA-256 `f5d54abe4dca19b4b2deca889f46fb8196bef98e0e4ee7cb3daa511a2606358b`, and surface SHA-256 `1402d769704008e254563ff7ecda835294db83afc2cee6d5bb456987f0392b4d` remained exact. The logical window is `(780,270)-(1100,470)`, the deterministic clear Barracks lot is `(1018,392,24,14)`, and both camera shots, minimap projection, 14 safe-surface anchors, and defense-route sightlines validate. `[M02EstablishBaseForwardPostWindowValidation] result=Passed tests=9`; `[M02EstablishBaseOperationMapValidation] result=Passed tests=10`; `[M01FirstContactMapSourceBindingValidation] result=Passed tests=14`; `[M01FirstContactDenseCityReuseValidation] result=Passed tests=8`; `[OperationMapEcsContractValidation] result=Passed tests=7`; `[M01FirstContactCameraMinimapValidation] result=Passed tests=12`; `[M01FirstContactAnchorValidation] result=Passed tests=13`; `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; zero compiler errors. Logs: `/private/tmp/warline-m02eb-009-builder-final.log`, `/private/tmp/warline-m02eb-009-focused-clean-generator.log`, `/private/tmp/warline-m02eb-009-reg-source-binding.log`, `/private/tmp/warline-m02eb-009-reg-dense-reuse.log`, `/private/tmp/warline-m02eb-009-reg-ecs-contract.log`, `/private/tmp/warline-m02eb-009-reg-camera-minimap.log`, `/private/tmp/warline-m02eb-009-reg-anchor.log`, and `/private/tmp/warline-m02eb-009-source-growth-final.log`.
 
 - [ ] **M02EB-010 - Catalog M02 and prove deterministic canonical data**
   **Depends on:** M02EB-007 through M02EB-009.
@@ -263,3 +264,4 @@ The first user review occurs at M02EB-029:
 | 2026-08-24 | M02EB-006 made the canonical Barracks config expose exactly `Unit_Chr_Soldier_Male_02_Alt_04`; the existing production pipeline passed its 93-test functional batch while Tent and Road Barrier remained unchanged. | Accepted |
 | 2026-08-24 | M02EB-007 authored the canonical M02 definition with three ordered objectives, three independent stars, explicit first-clear/replay rewards, Build-enabled commands, stable sequences, and only established readiness features. | Accepted |
 | 2026-08-24 | M02EB-008 authored the deterministic M02 scenario with exact approved units, a bounded Barracks lot, positive post-action resource float, suppressed delayed patrol timing, transport/air restrictions, civilians, closed anchor references, and byte-stable regeneration. | Accepted |
+| 2026-08-24 | M02EB-009 bound a cropped logical forward-post mission window to the exact accepted dense-city EntityScene, surface, minimap raster, and building placements; its deterministic lot, anchors, route, cameras, and all affected M01/architecture regressions passed without changing physical content. | Accepted |

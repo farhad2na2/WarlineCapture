@@ -36,6 +36,8 @@ Approved existing paths:
 - `Assets/Game/Scripts/Configs/MissionDefinitionConfig.cs`
 - `Assets/Game/Scripts/Configs/MissionDefinitionContractValidation.cs`
 - `Assets/Game/Scripts/Configs/ScenarioSetupConfig.cs`
+- `Assets/Game/Scripts/Configs/ScenarioMissionRuntimeConfig.cs`
+- `Assets/Game/Scripts/Configs/ScenarioMissionRuntimeContractValidation.cs`
 - `Assets/Game/Scripts/Components/CampaignMissionComponents.cs`
 - `Assets/Game/Scripts/Composition/CampaignMissionCatalogProjection.cs`
 - `Assets/Game/Scripts/Configs/GameplayConfigModels.cs`

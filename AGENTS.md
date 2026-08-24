@@ -1,11 +1,18 @@
 # Unity Execution Contract
 
 - Keep Unity Hub open and signed in while any Unity Editor or validation runs.
-- Never invoke the Unity executable directly. Use the platform-specific repository wrapper described below.
+- Do not invoke the Unity executable directly. Use the platform-specific repository wrapper described below.
 - On macOS, `invoke_unity_macos.sh` uses **GUI licensing** and never passes `-batchmode`. Do not add `-batchmode`, do not bypass the wrapper, and do not try an alternate Unity command when validation fails.
 - Normal Editors and wrapper-driven validation may run concurrently. The shared licensing client supports multiple clients.
 - Never run `Tools/CI/reset_unity_macos_ipc.sh`, pass `--reset-ipc`, or use `--quit-hub` while any Unity Editor is running. Reset requires `--confirm-no-editors` and is recovery-only for a fully closed, known-stuck Unity environment that the user explicitly asked to recover.
 - Do not terminate Unity, Unity Hub, Unity.Licensing.Client, Package Manager, or remove `/private/tmp/Unity-*.sock` files unless the user explicitly asks to recover a stuck Unity environment.
+
+## Unity CLI / Pipeline agent path (updated 2026-08-24)
+
+- Prefer Unity CLI + Unity Pipeline for agent integration. The AI Assistant package's in-Editor MCP server is deprecated; do not depend on it for Codex/GamePlay agent work.
+- The Unity CLI still has an MCP mode. When an agent needs MCP, use the CLI stdio server (`unity mcp --project-path <project>`) rather than the deprecated in-Editor MCP bridge.
+- Keep `com.unity.pipeline` installed in this project for CLI-connected Editor commands. Verify with `unity pipeline list`, `unity status --project-path <project>`, `unity list --project-path <project>`, and `unity command --project-path <project>`.
+- Do not use Unity CLI `build`, `run`, or `test` as a replacement for the macOS validation/build wrappers until the macOS licensing rule below is re-tested. Those commands may spawn batchmode Unity, which is still known-broken on this machine.
 
 ## Windows validation rule (approved 2026-07-25)
 

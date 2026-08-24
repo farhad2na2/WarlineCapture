@@ -1,8 +1,8 @@
 # M02 Establish The Base Implementation Tracker
 
 Date: 2026-08-24
-Status: Active; M02EB-001 accepted and M02EB-002 dependency-ready
-Progress: 1/34 accepted items (2.9%)
+Status: Active; M02EB-002 accepted and M02EB-003 dependency-ready
+Progress: 2/34 accepted items (5.9%)
 Parent design: `Design/SagaChapters/Saga_Chapter01_First_Response.md` (`M02 Detailed Spec`)
 Technical architecture: `Design/Architecture/m02_establish_base_technical_architecture.md`
 Mission: `saga.ch01.m02.establish_base`
@@ -75,7 +75,7 @@ Every item records an exact path allowlist before editing. Unexpected user chang
   **Acceptance:** authorities agree; M01 open gates remain honest; M02 is authorized without weakening architecture/performance contracts.
   **Evidence:** focused documentation diff, consistency scan, clean bounded commit.
 
-- [ ] **M02EB-002 - Inventory exact current-head reuse seams**
+- [x] **M02EB-002 - Inventory exact current-head reuse seams**
   **Depends on:** M02EB-001.
   **Deliverable:** map exact mission, scenario, map, building, production, resource, combat, UI, ARIA, narrative, persistence, tests, and source-growth owners.
   **Acceptance:** every required behavior has one existing owner or one explicit additive gap; no parallel framework is proposed.
@@ -251,3 +251,4 @@ The first user review occurs at M02EB-029:
 | 2026-08-24 | `Building_Barrack` is the sole M02 tutorial producer; Tent and Road Barrier are excluded. | Accepted |
 | 2026-08-24 | Final comic and voice production follows playable vertical-slice timing approval. | Accepted |
 | 2026-08-24 | M02EB-001 documentation consistency gate passed with 34 ordered/unique items and zero unresolved producer-decision text. | Accepted |
+| 2026-08-24 | M02EB-002 current-head inventory mapped every required M02 behavior to an existing sole owner or explicit additive gap; Unity CLI 1.0.0-beta.6 was available but no live Editor was connected. | Accepted |

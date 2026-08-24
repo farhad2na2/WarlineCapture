@@ -498,6 +498,10 @@ namespace Game.Editor
                 DenseCityProtectedAutobahnRouteDescriptor protectedAutobahnReplacement =
                     DenseCityCandidateAuthoringTransaction
                         .CreateProtectedAutobahnReplacementDescriptor(entityScene, view);
+                DenseMiddleEasternCityEditModeBuilder.RetainedRooftopPropAnchor[]
+                    retainedRooftopPropAnchors =
+                        DenseCityCandidateAuthoringTransaction
+                            .CaptureAcceptedRetainedRooftopPropAnchors();
                 bool hasAcceptedAutobahnManifest =
                     entityRoot.GetComponentInChildren<
                         DenseCityProtectedAutobahnReplacementManifestAuthoring>(true) != null;
@@ -517,8 +521,12 @@ namespace Game.Editor
                         DenseMiddleEasternCityEditModeBuilder.Result replacementGenerated =
                             RuntimeCityRAndDEditModeBuilder.BuildDenseMapWide(
                                 view,
-                                protectedAutobahnReplacement);
-                        generated = RuntimeCityRAndDEditModeBuilder.BuildDenseMapWide(view);
+                                protectedAutobahnReplacement,
+                                retainedRooftopPropAnchors);
+                        generated = RuntimeCityRAndDEditModeBuilder.BuildDenseMapWide(
+                            view,
+                            null,
+                            retainedRooftopPropAnchors);
                         backfillRecords = new DenseCityGenerationRecordSnapshot(
                             replacementGenerated.Records.Buildings,
                             generated.Records.Surfaces,
@@ -528,7 +536,8 @@ namespace Game.Editor
                     {
                         generated = RuntimeCityRAndDEditModeBuilder.BuildDenseMapWide(
                             view,
-                            protectedAutobahnReplacement);
+                            protectedAutobahnReplacement,
+                            retainedRooftopPropAnchors);
                         backfillRecords = generated.Records;
                     }
                     try

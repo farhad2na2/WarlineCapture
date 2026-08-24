@@ -41,6 +41,20 @@ public sealed class DenseCityCandidateAuthoringTransactionTests
             "result=Passed tests=1");
     }
 
+    public static void RunRetainedRooftopSupportGeometryValidation()
+    {
+        var suite = new DenseCityCandidateAuthoringTransactionTests();
+        suite.RetainedRooftopSupportAssembly_MustCoverPropAndConnectToBuilding();
+        suite.RetainedRooftopSupportPlan_ProducesAttachedGroundConnectedAssembly();
+        suite.RetainedRooftopSupportPlan_RotatedFacadeAndRooftopRemainAttachedAndDeterministic();
+        suite.DetachedBuildingAttachments_RemoveOnlyElevatedDisconnectedProps();
+        suite.CanonicalPresentationCleanup_RemovesDetachedPropAndKeepsGroundedProp();
+        suite.CanonicalPresentationCleanup_ReplacesUnownedPrefabSignWithSemanticSign();
+        Debug.Log(
+            "[DenseCityRetainedRooftopSupportGeometryValidation] " +
+            "result=Passed tests=6");
+    }
+
     [SetUp]
     public void SetUp()
     {
@@ -182,6 +196,336 @@ public sealed class DenseCityCandidateAuthoringTransactionTests
         Assert.That(error, Does.Contain("hash is invalid"));
         Assert.That(File.Exists(ToPhysicalPath(CandidateMapPath)), Is.False);
         Assert.That(File.Exists(ToPhysicalPath(CandidateEntityPath)), Is.False);
+    }
+
+    [Test]
+    public void RetainedRooftopSupportAssembly_MustCoverPropAndConnectToBuilding()
+    {
+        var propBounds = new Bounds(new Vector3(4f, 6f, -3f), new Vector3(2f, 4f, 2f));
+        var attachedPlatform = new Bounds(
+            new Vector3(4f, 3.83f, -3f),
+            new Vector3(2.4f, 0.32f, 2.4f));
+        var detachedPlatform = new Bounds(
+            new Vector3(4f, 3.2f, -3f),
+            new Vector3(2.4f, 0.32f, 2.4f));
+        var undersizedPlatform = new Bounds(
+            new Vector3(4f, 3.83f, -3f),
+            new Vector3(1.4f, 0.32f, 1.4f));
+        var attachment = new Bounds(
+            new Vector3(4f, 1.5f, -3f),
+            new Vector3(5f, 3f, 5f));
+        var attachmentAnchor = new DenseMiddleEasternCityEditModeBuilder.RetainedRooftopPropAnchor(
+            "SM_Bld_WaterTank_01[42]",
+            Matrix4x4.identity,
+            propBounds,
+            attachment,
+            attachment,
+            Matrix4x4.identity);
+        var connectedVerticalSupport = new Bounds(
+            new Vector3(4f, 3.36f, -3f),
+            new Vector3(0.5f, 0.72f, 0.5f));
+        var floatingVerticalSupport = new Bounds(
+            new Vector3(4f, 3.34f, -3f),
+            new Vector3(0.3f, 0.2f, 0.3f));
+
+        Assert.That(
+            DenseMiddleEasternCityEditModeBuilder.CoversRetainedRooftopProp(
+                propBounds,
+                attachedPlatform),
+            Is.True);
+        Assert.That(
+            DenseMiddleEasternCityEditModeBuilder.CoversRetainedRooftopProp(
+                propBounds,
+                detachedPlatform),
+            Is.False);
+        Assert.That(
+            DenseMiddleEasternCityEditModeBuilder.CoversRetainedRooftopProp(
+                propBounds,
+                undersizedPlatform),
+            Is.False);
+        Assert.That(
+            DenseMiddleEasternCityEditModeBuilder.ConnectsRetainedRooftopPlatformToAttachment(
+                attachedPlatform,
+                connectedVerticalSupport,
+                attachmentAnchor),
+            Is.True);
+        Assert.That(
+            DenseMiddleEasternCityEditModeBuilder.ConnectsRetainedRooftopPlatformToAttachment(
+                attachedPlatform,
+                floatingVerticalSupport,
+                attachmentAnchor),
+            Is.False);
+    }
+
+    [Test]
+    public void RetainedRooftopSupportPlan_ProducesAttachedGroundConnectedAssembly()
+    {
+        var propBounds = new Bounds(new Vector3(4f, 6f, -3f), new Vector3(2f, 4f, 2f));
+        var anchor = new DenseMiddleEasternCityEditModeBuilder.RetainedRooftopPropAnchor(
+            "SM_Bld_WaterTank_01[42]",
+            Matrix4x4.identity,
+            propBounds,
+            new Bounds(new Vector3(1.5f, 3f, -3f), new Vector3(3f, 6f, 6f)),
+            new Bounds(Vector3.zero, new Vector3(3f, 6f, 6f)),
+            Matrix4x4.TRS(
+                new Vector3(1.5f, 3f, -3f),
+                Quaternion.identity,
+                Vector3.one));
+        var platformPrefabBounds = new Bounds(
+            new Vector3(0f, 0.6015f, 0f),
+            new Vector3(10.436f, 1.203f, 10.436f));
+        var supportPrefabBounds = new Bounds(
+            new Vector3(0f, -2.3745f, 0f),
+            new Vector3(4.374f, 4.749f, 1.705f));
+
+        Assert.That(
+            DenseMiddleEasternCityEditModeBuilder.TryPlanRetainedRooftopSupportAssembly(
+                anchor,
+                0f,
+                platformPrefabBounds,
+                supportPrefabBounds,
+                out DenseMiddleEasternCityEditModeBuilder.RetainedRooftopSupportPlan plan,
+                out string error),
+            Is.True,
+            error);
+
+        Bounds platformBounds = TransformBounds(
+            platformPrefabBounds,
+            plan.PlatformWorldMatrix);
+        Bounds supportBounds = TransformBounds(
+            supportPrefabBounds,
+            plan.VerticalSupportWorldMatrix);
+        Assert.That(
+            DenseMiddleEasternCityEditModeBuilder.CoversRetainedRooftopProp(
+                propBounds,
+                platformBounds),
+            Is.True);
+        Assert.That(
+            DenseMiddleEasternCityEditModeBuilder.ConnectsRetainedRooftopPlatformToAttachment(
+                platformBounds,
+                supportBounds,
+                anchor),
+            Is.True);
+    }
+
+    [Test]
+    public void RetainedRooftopSupportPlan_RotatedFacadeAndRooftopRemainAttachedAndDeterministic()
+    {
+        var platformPrefabBounds = new Bounds(
+            new Vector3(0f, 0.6015f, 0f),
+            new Vector3(10.436f, 1.203f, 10.436f));
+        var supportPrefabBounds = new Bounds(
+            new Vector3(0f, -2.3745f, 0f),
+            new Vector3(2.193f, 7.679f, 0.56f));
+        Matrix4x4 attachmentMatrix = Matrix4x4.TRS(
+            new Vector3(4f, 3f, -3f),
+            Quaternion.Euler(0f, 35f, 0f),
+            Vector3.one);
+        var attachmentLocalBounds = new Bounds(Vector3.zero, new Vector3(4f, 6f, 5f));
+        Bounds attachmentWorldBounds = TransformBounds(
+            attachmentLocalBounds,
+            attachmentMatrix);
+        var facadeAnchor = new DenseMiddleEasternCityEditModeBuilder.RetainedRooftopPropAnchor(
+            "facade",
+            Matrix4x4.identity,
+            new Bounds(new Vector3(7.2f, 6f, -3f), new Vector3(2f, 4f, 2f)),
+            attachmentWorldBounds,
+            attachmentLocalBounds,
+            attachmentMatrix);
+
+        Assert.That(
+            DenseMiddleEasternCityEditModeBuilder.TryPlanRetainedRooftopSupportAssembly(
+                facadeAnchor,
+                0f,
+                platformPrefabBounds,
+                supportPrefabBounds,
+                out DenseMiddleEasternCityEditModeBuilder.RetainedRooftopSupportPlan firstFacade,
+                out string facadeError),
+            Is.True,
+            facadeError);
+        Assert.That(
+            DenseMiddleEasternCityEditModeBuilder.TryPlanRetainedRooftopSupportAssembly(
+                facadeAnchor,
+                0f,
+                platformPrefabBounds,
+                supportPrefabBounds,
+                out DenseMiddleEasternCityEditModeBuilder.RetainedRooftopSupportPlan secondFacade,
+                out _),
+            Is.True);
+        AssertMatricesEqual(firstFacade.PlatformWorldMatrix, secondFacade.PlatformWorldMatrix);
+        AssertMatricesEqual(
+            firstFacade.VerticalSupportWorldMatrix,
+            secondFacade.VerticalSupportWorldMatrix);
+        Assert.That(
+            DenseMiddleEasternCityEditModeBuilder.ConnectsRetainedRooftopPlatformToAttachment(
+                TransformBounds(platformPrefabBounds, firstFacade.PlatformWorldMatrix),
+                TransformBounds(supportPrefabBounds, firstFacade.VerticalSupportWorldMatrix),
+                facadeAnchor),
+            Is.True);
+
+        var rooftopAnchor = new DenseMiddleEasternCityEditModeBuilder.RetainedRooftopPropAnchor(
+            "rooftop",
+            Matrix4x4.identity,
+            new Bounds(new Vector3(4f, 7f, -3f), new Vector3(2f, 2f, 2f)),
+            attachmentWorldBounds,
+            attachmentLocalBounds,
+            attachmentMatrix);
+        Assert.That(
+            DenseMiddleEasternCityEditModeBuilder.TryPlanRetainedRooftopSupportAssembly(
+                rooftopAnchor,
+                0f,
+                platformPrefabBounds,
+                supportPrefabBounds,
+                out DenseMiddleEasternCityEditModeBuilder.RetainedRooftopSupportPlan rooftopPlan,
+                out string rooftopError),
+            Is.True,
+            rooftopError);
+        Assert.That(
+            DenseMiddleEasternCityEditModeBuilder.ConnectsRetainedRooftopPlatformToAttachment(
+                TransformBounds(platformPrefabBounds, rooftopPlan.PlatformWorldMatrix),
+                TransformBounds(supportPrefabBounds, rooftopPlan.VerticalSupportWorldMatrix),
+                rooftopAnchor),
+            Is.True);
+    }
+
+    [Test]
+    public void DetachedBuildingAttachments_RemoveOnlyElevatedDisconnectedProps()
+    {
+        const float foundationHeight = 0.035f;
+        var groundedProp = new Bounds(
+            new Vector3(0f, 0.55f, 0f),
+            new Vector3(1f, 1f, 1f));
+        var elevatedProp = new Bounds(
+            new Vector3(0f, 3f, 0f),
+            new Vector3(1f, 1f, 1f));
+
+        Assert.That(
+            DenseMiddleEasternCityEditModeBuilder.IsDetachedElevatedBuildingAttachment(
+                groundedProp,
+                foundationHeight,
+                2f),
+            Is.False);
+        Assert.That(
+            DenseMiddleEasternCityEditModeBuilder.IsDetachedElevatedBuildingAttachment(
+                elevatedProp,
+                foundationHeight,
+                0.2f),
+            Is.False);
+        Assert.That(
+            DenseMiddleEasternCityEditModeBuilder.IsDetachedElevatedBuildingAttachment(
+                elevatedProp,
+                foundationHeight,
+                1.35f),
+            Is.True);
+    }
+
+    [Test]
+    public void CanonicalPresentationCleanup_RemovesDetachedPropAndKeepsGroundedProp()
+    {
+        var root = new GameObject("GeneratedRoot");
+        var building = new GameObject("DenseCityBuilding");
+        building.transform.SetParent(root.transform, false);
+        GameObject body = CreateBoundsRenderer(
+            "Model",
+            "SM_Bld_Test",
+            building.transform,
+            new Vector3(0f, 0.5f, 0f));
+        GameObject grounded = CreateBoundsRenderer(
+            "SM_Prop_Grounded",
+            "SM_Prop_Grounded",
+            building.transform,
+            new Vector3(3f, 0.5f, 0f));
+        GameObject detached = CreateBoundsRenderer(
+            "SM_Prop_Detached",
+            "SM_Prop_Detached",
+            building.transform,
+            new Vector3(3f, 3f, 0f));
+        Mesh bodyMesh = body.GetComponent<MeshFilter>().sharedMesh;
+        Mesh groundedMesh = grounded.GetComponent<MeshFilter>().sharedMesh;
+        Mesh detachedMesh = detached.GetComponent<MeshFilter>().sharedMesh;
+        try
+        {
+            Assert.That(
+                DenseMiddleEasternCityEditModeBuilder
+                    .RemoveDetachedElevatedBuildingAttachments(root.transform),
+                Is.EqualTo(1));
+            Assert.That(detached == null, Is.True);
+            Assert.That(grounded == null, Is.False);
+            Assert.That(
+                DenseMiddleEasternCityEditModeBuilder
+                    .CountDetachedElevatedBuildingAttachments(root.transform),
+                Is.Zero);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(root);
+            UnityEngine.Object.DestroyImmediate(bodyMesh);
+            UnityEngine.Object.DestroyImmediate(groundedMesh);
+            UnityEngine.Object.DestroyImmediate(detachedMesh);
+        }
+    }
+
+    [Test]
+    public void CanonicalPresentationCleanup_ReplacesUnownedPrefabSignWithSemanticSign()
+    {
+        var root = new GameObject("GeneratedRoot");
+        var building = new GameObject("DenseCityBuilding");
+        building.transform.SetParent(root.transform, false);
+        GameObject body = CreateBoundsRenderer(
+            "Model",
+            "SM_Bld_Test",
+            building.transform,
+            new Vector3(0f, 0.5f, 0f));
+        GameObject unownedSign = CreateBoundsRenderer(
+            "SM_Prop_Sign_Shop_04",
+            "SM_Prop_Sign_Shop_04",
+            building.transform,
+            new Vector3(0f, 1f, 0f));
+        GameObject semanticSign = CreateBoundsRenderer(
+            "SM_Prop_Sign_Shop_04_ShopWall_0001",
+            "SM_Prop_Sign_Shop_04",
+            building.transform,
+            new Vector3(0f, 1f, 0f));
+        semanticSign.AddComponent<OperationMapBuildingAttachmentAuthoring>();
+        Mesh bodyMesh = body.GetComponent<MeshFilter>().sharedMesh;
+        Mesh unownedSignMesh = unownedSign.GetComponent<MeshFilter>().sharedMesh;
+        Mesh semanticSignMesh = semanticSign.GetComponent<MeshFilter>().sharedMesh;
+        try
+        {
+            Assert.That(
+                DenseMiddleEasternCityEditModeBuilder
+                    .RemoveDetachedElevatedBuildingAttachments(root.transform),
+                Is.EqualTo(1));
+            Assert.That(unownedSign == null, Is.True);
+            Assert.That(semanticSign == null, Is.False);
+            Assert.That(
+                DenseMiddleEasternCityEditModeBuilder
+                    .CountDetachedElevatedBuildingAttachments(root.transform),
+                Is.Zero);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(root);
+            UnityEngine.Object.DestroyImmediate(bodyMesh);
+            UnityEngine.Object.DestroyImmediate(unownedSignMesh);
+            UnityEngine.Object.DestroyImmediate(semanticSignMesh);
+        }
+    }
+
+    private static GameObject CreateBoundsRenderer(
+        string objectName,
+        string meshName,
+        Transform parent,
+        Vector3 localPosition)
+    {
+        var instance = new GameObject(objectName);
+        instance.transform.SetParent(parent, false);
+        instance.transform.localPosition = localPosition;
+        var mesh = new Mesh { name = meshName };
+        mesh.bounds = new Bounds(Vector3.zero, Vector3.one);
+        instance.AddComponent<MeshFilter>().sharedMesh = mesh;
+        instance.AddComponent<MeshRenderer>();
+        return instance;
     }
 
     [Test]
@@ -345,6 +689,32 @@ public sealed class DenseCityCandidateAuthoringTransactionTests
         Path.GetFullPath(Path.Combine(
             Path.GetDirectoryName(Application.dataPath) ?? string.Empty,
             assetPath));
+
+    private static Bounds TransformBounds(Bounds localBounds, Matrix4x4 matrix)
+    {
+        Vector3 center = matrix.MultiplyPoint3x4(localBounds.center);
+        Vector3 extents = localBounds.extents;
+        Vector3 axisX = matrix.MultiplyVector(new Vector3(extents.x, 0f, 0f));
+        Vector3 axisY = matrix.MultiplyVector(new Vector3(0f, extents.y, 0f));
+        Vector3 axisZ = matrix.MultiplyVector(new Vector3(0f, 0f, extents.z));
+        var worldExtents = new Vector3(
+            Mathf.Abs(axisX.x) + Mathf.Abs(axisY.x) + Mathf.Abs(axisZ.x),
+            Mathf.Abs(axisX.y) + Mathf.Abs(axisY.y) + Mathf.Abs(axisZ.y),
+            Mathf.Abs(axisX.z) + Mathf.Abs(axisY.z) + Mathf.Abs(axisZ.z));
+        return new Bounds(center, worldExtents * 2f);
+    }
+
+    private static void AssertMatricesEqual(Matrix4x4 expected, Matrix4x4 actual)
+    {
+        for (int row = 0; row < 4; row++)
+        for (int column = 0; column < 4; column++)
+        {
+            Assert.That(
+                actual[row, column],
+                Is.EqualTo(expected[row, column]).Within(0.00001f),
+                $"matrix[{row},{column}]");
+        }
+    }
 
     private static void EnsureFolder(string path)
     {

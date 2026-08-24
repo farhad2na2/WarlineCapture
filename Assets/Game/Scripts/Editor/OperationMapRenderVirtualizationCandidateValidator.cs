@@ -22,8 +22,8 @@ namespace Game.Editor
     using Hash128 = Unity.Entities.Hash128;
 
     /// <summary>
-    /// Two-pass direct bake of the persisted candidate-only virtualization package.
-    /// Production remains at its accepted resident/static mode.
+    /// Two-pass direct bake of the persisted virtualization package.
+    /// Production and the retained candidate both use the accepted packed EntityScene route.
     /// </summary>
     internal static class OperationMapRenderVirtualizationCandidateValidator
     {
@@ -45,17 +45,17 @@ namespace Game.Editor
             OperationMapRenderDatabaseBuilder.ReportPath
         };
 
-        private const int ExpectedEligibleRows = 61813;
-        private const int ExpectedEligibleRenderers = 61783;
-        private const int ExpectedSlots = 7765;
-        private const int ExpectedPrototypes = 9107;
-        private const int ExpectedParts = 12181;
-        private const int ExpectedPlacements = 40460;
-        private const int ExpectedRenderOnlyPlacements = 31400;
+        private const int ExpectedEligibleRows = 61620;
+        private const int ExpectedEligibleRenderers = 61478;
+        private const int ExpectedSlots = 7732;
+        private const int ExpectedPrototypes = 9109;
+        private const int ExpectedParts = 11870;
+        private const int ExpectedPlacements = 40580;
+        private const int ExpectedRenderOnlyPlacements = 31520;
         private const int ExpectedGeneratedBuildingIdentities = 4530;
         private const int ExpectedRetainedGeneratedBuildingIdentities = 4530;
         private const int ExpectedRetainedGeneratedRenderOnlyIdentities = 5758;
-        private const int ExpectedCells = 1934;
+        private const int ExpectedCells = 1965;
         private const int ExpectedPoolBuckets = 4;
         private const int PackedMaterialMeshInfoEntityLimit = 24000;
         private const int FixedProxySlotLimit = 8000;
@@ -114,10 +114,10 @@ namespace Game.Editor
                 persistedCandidateRenderResidencyMode =
                     OperationMapRenderResidencyMode.VirtualizedProxyPool.ToString(),
                 productionPresentationKind =
-                    OperationMapPresentationKind.StaticSceneChunks.ToString(),
+                    OperationMapPresentationKind.EntityScene.ToString(),
                 productionRenderResidencyMode =
-                    OperationMapRenderResidencyMode.ResidentEntities.ToString(),
-                productionCutover = 0,
+                    OperationMapRenderResidencyMode.VirtualizedProxyPool.ToString(),
+                productionCutover = 1,
                 passCount = 2,
                 firstFingerprint = first.Fingerprint,
                 secondFingerprint = second.Fingerprint,
@@ -178,7 +178,7 @@ namespace Game.Editor
                 $"{second.RetainedVirtualizedGeneratedBuildingIdentityCount} " +
                 $"retainedGeneratedRenderOnly=" +
                 $"{second.RetainedVirtualizedGeneratedRenderOnlyIdentityCount} " +
-                "productionCutover=0");
+                "productionCutover=1");
         }
 
         public static void RunTwoFullBakeAllDeterminismValidation()
@@ -258,7 +258,7 @@ namespace Game.Editor
                 cellPlacementIndexCount = second.CellPlacementIndexCount,
                 policyBucketCount = second.PolicyBucketCount,
                 proxySlotCount = second.TotalPoolSlotCapacity,
-                productionCutover = 0
+                productionCutover = 1
             };
             string physicalReportPath = Path.Combine(projectRoot, TwoRunBakeAllReportPath);
             Directory.CreateDirectory(
@@ -277,7 +277,7 @@ namespace Game.Editor
                 $"orderingHash={second.DatabaseOrderingHash} " +
                 $"packedFingerprint={second.DirectBake.Fingerprint} " +
                 $"placements={second.PlacementCount} slots={second.TotalPoolSlotCapacity} " +
-                "productionCutover=0");
+                "productionCutover=1");
         }
 
         private static BakeAllPassSummary RunFullBakeAllPass(
@@ -818,12 +818,12 @@ namespace Game.Editor
                     OperationMapEntitySceneCandidateAddressablesLayoutPlanner
                         .DenseCandidateDefinitionPath);
             if (production == null ||
-                production.PresentationKind != OperationMapPresentationKind.StaticSceneChunks ||
+                production.PresentationKind != OperationMapPresentationKind.EntityScene ||
                 production.RenderResidencyMode !=
-                OperationMapRenderResidencyMode.ResidentEntities)
+                OperationMapRenderResidencyMode.VirtualizedProxyPool)
             {
                 throw new InvalidOperationException(
-                    "Production cutover is not disabled at the protected static baseline.");
+                    "Production is not using the accepted packed EntityScene route.");
             }
             if (candidate == null ||
                 candidate.PresentationKind != OperationMapPresentationKind.EntityScene ||

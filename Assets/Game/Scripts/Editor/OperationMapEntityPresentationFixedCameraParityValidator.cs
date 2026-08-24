@@ -31,8 +31,8 @@ namespace Game.Editor
         internal const float MaximumMeanChannelDelta = 0.0025f;
         internal const float MaximumChangedPixelRatio = 0.01f;
         private const byte ChangedChannelThreshold = 3;
-        private const int ExpectedDenseIdentityCount = 36304;
-        private const int ExpectedDenseRuntimeRenderRowCount = 62455;
+        private const int ExpectedDenseIdentityCount = 36424;
+        private const int ExpectedDenseRuntimeRenderRowCount = 62136;
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
 
         [MenuItem("Game/Operation Maps/EntityScene Migration/Capture Fixed Camera Parity")]

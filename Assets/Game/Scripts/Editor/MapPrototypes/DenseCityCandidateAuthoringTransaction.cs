@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using Game.Authoring;
+using Game.Components;
 using Game.Configs;
 using Game.Runtime;
 using UnityEditor;
@@ -36,7 +37,12 @@ namespace Game.Editor
         internal const string ProtectedBuildingPlacementConfigPath =
             OperationMapCurrentCompatibilityPlacementStager.SourceBuildingConfigPath;
         private const string GeneratorSchema = "dense-city-v1";
-        private const int GeneratorSchemaVersion = 1;
+        private const int GeneratorSchemaVersion = 2;
+        private const int ExpectedRetainedCityWaterTankCount = 60;
+        private const string RetainedRooftopPlatformPrefabName =
+            "SM_Prop_Pipeline_SmokeStack_Platform_01";
+        private const string RetainedRooftopVerticalSupportPrefabName =
+            "SM_Prop_Pipeline_Pipe_Small_Support_01";
         private const string CandidateGeneratedAssetRoot =
             "Assets/Game/GeneratedOperationMaps/DenseCity";
         private const string LegacySkyMaterialPath =
@@ -162,6 +168,59 @@ namespace Game.Editor
         }
 
         [MenuItem(
+            "Game/Maps/Skirmish Desert Base/Validate Retained Rooftop Supports")]
+        public static void ValidateRetainedRooftopSupports()
+        {
+            SceneSetup[] previousSetup = EditorSceneManager.GetSceneManagerSetup();
+            Scene mapScene = default;
+            Scene entityScene = default;
+            try
+            {
+                DenseMiddleEasternCityEditModeBuilder.RetainedRooftopPropAnchor[]
+                    acceptedAnchors = CaptureAcceptedRetainedRooftopPropAnchors();
+                mapScene = EditorSceneManager.OpenScene(
+                    CandidateMapScenePath,
+                    OpenSceneMode.Additive);
+                entityScene = EditorSceneManager.OpenScene(
+                    CandidateEntityScenePath,
+                    OpenSceneMode.Additive);
+                DenseCityGeneratedRootAuthoring entityRoot = RequireGeneratedRoot(
+                    entityScene,
+                    DenseCityGeneratedRootRole.EntityPresentationSource);
+                Transform[] retainedWaterTanks = CollectRetainedCityWaterTanks(entityScene);
+                RequireAcceptedRetainedRooftopPropParity(
+                    retainedWaterTanks,
+                    acceptedAnchors);
+                RuntimeCityRAndDMapView view = RequireMapView(mapScene);
+                RequireRetainedRooftopSupport(
+                    entityRoot,
+                    acceptedAnchors,
+                    view.GridOrigin.y);
+                int detachedBuildingAttachments =
+                    DenseMiddleEasternCityEditModeBuilder
+                        .CountDetachedElevatedBuildingAttachments(entityRoot.transform);
+                if (detachedBuildingAttachments != 0)
+                {
+                    throw new InvalidOperationException(
+                        "Dense-city candidate still contains detached elevated building props: " +
+                        $"count={detachedBuildingAttachments}.");
+                }
+                Debug.Log(
+                    "[DenseCityRetainedRooftopSupportValidation] result=Passed " +
+                    $"retainedCityTanks={retainedWaterTanks.Length} " +
+                    $"platforms={ExpectedRetainedCityWaterTankCount} " +
+                    $"verticalSupports={ExpectedRetainedCityWaterTankCount} " +
+                    "detachedBuildingAttachments=0");
+            }
+            finally
+            {
+                CloseScene(ref entityScene);
+                CloseScene(ref mapScene);
+                RestoreSceneSetup(previousSetup);
+            }
+        }
+
+        [MenuItem(
             "Game/Maps/Skirmish Desert Base/Apply Dense City Candidate DOTS Materials")]
         public static void ApplyCandidateMaterialCompatibilityBatch()
         {
@@ -250,6 +309,9 @@ namespace Game.Editor
 
                 string sourceMapHash = ComputeFileHash(SourceMapScenePath);
                 string sourceEntityHash = ComputeFileHash(SourceEntityScenePath);
+                DenseMiddleEasternCityEditModeBuilder.RetainedRooftopPropAnchor[]
+                    acceptedRetainedRooftopPropAnchors =
+                        CaptureAcceptedRetainedRooftopPropAnchors();
                 ProtectedPlacementConfigSnapshot placementConfigSnapshot =
                     CaptureProtectedPlacementConfig(
                         ProtectedBuildingPlacementConfigPath);
@@ -305,6 +367,7 @@ namespace Game.Editor
                         expectedGenerationHash,
                         existingProxyFolder,
                         placementConfigSnapshot,
+                        acceptedRetainedRooftopPropAnchors,
                         out summary))
                 {
                     RestoreActiveScene(previousActiveScene);
@@ -332,13 +395,19 @@ namespace Game.Editor
                 entityRoot = replacementRoots.EntityPresentationSource;
                 RequireEmptyCandidateOwnership(mapRoot, entityRoot);
 
+                Transform[] retainedWaterTanks = CollectRetainedCityWaterTanks(entityScene);
+                RequireAcceptedRetainedRooftopPropParity(
+                    retainedWaterTanks,
+                    acceptedRetainedRooftopPropAnchors);
+
                 RuntimeCityRAndDMapView view = RequireMapView(mapScene);
                 DenseCityProtectedAutobahnRouteDescriptor protectedAutobahnReplacement =
                     CreateProtectedAutobahnReplacementDescriptor(entityScene, view);
                 DenseMiddleEasternCityEditModeBuilder.Result result =
                     RuntimeCityRAndDEditModeBuilder.BuildDenseMapWide(
                         view,
-                        protectedAutobahnReplacement);
+                        protectedAutobahnReplacement,
+                        acceptedRetainedRooftopPropAnchors);
                 if (result.Records == null ||
                     result.Records.Buildings.Count != result.SemanticBuildings ||
                     result.Records.Surfaces.Count != result.SemanticSurfaces ||
@@ -357,6 +426,34 @@ namespace Game.Editor
                         hierarchy,
                         DenseCityBuildingDefinitionLibrary.LoadExisting(),
                         DenseCityBuildingMaterialLibrary.LoadExisting());
+                int detachedBuildingAttachmentsRemoved =
+                    DenseMiddleEasternCityEditModeBuilder
+                        .RemoveDetachedElevatedBuildingAttachments(entityRoot.transform);
+                if (detachedBuildingAttachmentsRemoved == 0)
+                {
+                    throw new InvalidOperationException(
+                        "Dense-city canonical presentation cleanup found no detached elevated " +
+                        "building props.");
+                }
+                int remainingDetachedBuildingAttachments =
+                    DenseMiddleEasternCityEditModeBuilder
+                        .CountDetachedElevatedBuildingAttachments(entityRoot.transform);
+                if (remainingDetachedBuildingAttachments != 0)
+                {
+                    throw new InvalidOperationException(
+                        "Dense-city canonical presentation cleanup left detached elevated " +
+                        $"building props: count={remainingDetachedBuildingAttachments}.");
+                }
+                Debug.Log(
+                    "[DenseCityBuildingAttachmentCleanup] result=Passed " +
+                    $"removed={detachedBuildingAttachmentsRemoved} remaining=0");
+                RequireAcceptedRetainedRooftopPropParity(
+                    retainedWaterTanks,
+                    acceptedRetainedRooftopPropAnchors);
+                RequireRetainedRooftopSupport(
+                    entityRoot,
+                    acceptedRetainedRooftopPropAnchors,
+                    view.GridOrigin.y);
                 int realizedAutobahnTiles = MarkRealizedProtectedAutobahnTiles(
                     entityRoot,
                     view.GeneratedRoot,
@@ -418,6 +515,8 @@ namespace Game.Editor
                     $"generationId={generationId} buildings={realized.Buildings.Count} " +
                     $"renderOnly={realized.RenderOnly.Count} proxies={proxies.Partitions} " +
                     $"surfaces={proxies.Records} retiredAutobahnOwners={retiredAutobahnOwners} " +
+                    $"retainedRooftopSupports={retainedWaterTanks.Length} " +
+                    $"detachedBuildingAttachmentsRemoved={detachedBuildingAttachmentsRemoved} " +
                     $"realizedAutobahnTiles={realizedAutobahnTiles} " +
                     $"buildingPlacementCount={placementConfigSnapshot.PlacementCount} " +
                     $"buildingPlacementSha256={placementConfigSnapshot.Sha256} " +
@@ -458,6 +557,8 @@ namespace Game.Editor
             string expectedGenerationHash,
             string proxyFolder,
             ProtectedPlacementConfigSnapshot placementConfigSnapshot,
+            IReadOnlyList<DenseMiddleEasternCityEditModeBuilder.RetainedRooftopPropAnchor>
+                acceptedRetainedRooftopPropAnchors,
             out string summary)
         {
             summary = null;
@@ -492,13 +593,380 @@ namespace Game.Editor
             if (proxyCount == 0 || buildingCount == 0 || renderOnlyCount == 0)
                 return false;
 
+            Transform[] retainedWaterTanks;
+            try
+            {
+                retainedWaterTanks = CollectRetainedCityWaterTanks(entityScene);
+                RequireAcceptedRetainedRooftopPropParity(
+                    retainedWaterTanks,
+                    acceptedRetainedRooftopPropAnchors);
+                RuntimeCityRAndDMapView view = RequireMapView(mapScene);
+                RequireRetainedRooftopSupport(
+                    entityRoot,
+                    acceptedRetainedRooftopPropAnchors,
+                    view.GridOrigin.y);
+            }
+            catch
+            {
+                return false;
+            }
+
             summary =
                 $"result=AlreadyComplete generationId={generationId} " +
                 $"buildings={buildingCount} renderOnly={renderOnlyCount} proxies={proxyCount} " +
+                $"retainedRooftopSupports={retainedWaterTanks.Length} " +
                 $"buildingPlacementCount={placementConfigSnapshot.PlacementCount} " +
                 $"buildingPlacementSha256={placementConfigSnapshot.Sha256} " +
                 $"proxyFolder={proxyFolder}";
             return true;
+        }
+
+        private static Transform[] CollectRetainedCityWaterTanks(Scene entityScene)
+        {
+            Transform sourceProps = entityScene.GetRootGameObjects()
+                .SelectMany(root => root.GetComponentsInChildren<Transform>(true))
+                .SingleOrDefault(candidate =>
+                    string.Equals(candidate.name, "__SourceTransform__Props", StringComparison.Ordinal) &&
+                    candidate.parent != null &&
+                    string.Equals(candidate.parent.name, "__SourceTransform__Map", StringComparison.Ordinal));
+            if (sourceProps == null)
+            {
+                throw new InvalidOperationException(
+                    "Dense-city entity candidate is missing its retained source Props root.");
+            }
+
+            Transform[] retained = Enumerable.Range(0, sourceProps.childCount)
+                .Select(sourceProps.GetChild)
+                .Where(candidate =>
+                    candidate.name.StartsWith("SM_Prop_WaterTank_", StringComparison.Ordinal) &&
+                    candidate.GetComponentInChildren<Renderer>(true) != null)
+                .OrderBy(GetStableTransformPath, StringComparer.Ordinal)
+                .ToArray();
+            if (retained.Length != ExpectedRetainedCityWaterTankCount)
+            {
+                throw new InvalidOperationException(
+                    "Dense-city retained city water-tank population drifted: " +
+                    $"found={retained.Length} expected={ExpectedRetainedCityWaterTankCount}.");
+            }
+
+            return retained;
+        }
+
+        internal static DenseMiddleEasternCityEditModeBuilder.RetainedRooftopPropAnchor[]
+            CaptureAcceptedRetainedRooftopPropAnchors()
+        {
+            Scene acceptedSourceScene = default;
+            try
+            {
+                acceptedSourceScene = EditorSceneManager.OpenScene(
+                    SourceEntityScenePath,
+                    OpenSceneMode.Additive);
+                return CreateRetainedRooftopPropAnchors(
+                    CollectRetainedCityWaterTanks(acceptedSourceScene));
+            }
+            finally
+            {
+                CloseScene(ref acceptedSourceScene);
+            }
+        }
+
+        private static DenseMiddleEasternCityEditModeBuilder.RetainedRooftopPropAnchor[]
+            CreateRetainedRooftopPropAnchors(IReadOnlyList<Transform> retainedWaterTanks)
+        {
+            Renderer[] buildingRenderers = retainedWaterTanks.Count == 0
+                ? Array.Empty<Renderer>()
+                : retainedWaterTanks[0].gameObject.scene
+                    .GetRootGameObjects()
+                    .SelectMany(root => root.GetComponentsInChildren<Renderer>(true))
+                    .Where(IsBuildingAttachmentRenderer)
+                    .ToArray();
+            var anchors = new DenseMiddleEasternCityEditModeBuilder.RetainedRooftopPropAnchor[
+                retainedWaterTanks.Count];
+            for (int index = 0; index < retainedWaterTanks.Count; index++)
+            {
+                Transform tank = retainedWaterTanks[index];
+                if (!TryGetRendererBounds(tank, out Bounds bounds))
+                {
+                    throw new InvalidOperationException(
+                        $"Retained water tank has no renderer bounds: '{GetStableTransformPath(tank)}'.");
+                }
+                if (!TryFindNearestBuildingAttachment(
+                        tank,
+                        bounds,
+                        buildingRenderers,
+                        out Bounds attachmentBounds,
+                        out Bounds attachmentLocalBounds,
+                        out Matrix4x4 attachmentWorldMatrix))
+                {
+                    throw new InvalidOperationException(
+                        $"Retained water tank has no nearby building attachment: " +
+                        $"'{GetStableTransformPath(tank)}'.");
+                }
+                anchors[index] =
+                    new DenseMiddleEasternCityEditModeBuilder.RetainedRooftopPropAnchor(
+                        GetRetainedPropStableKey(tank),
+                        tank.localToWorldMatrix,
+                        bounds,
+                        attachmentBounds,
+                        attachmentLocalBounds,
+                        attachmentWorldMatrix);
+            }
+            return anchors;
+        }
+
+        private static bool IsBuildingAttachmentRenderer(Renderer renderer)
+        {
+            if (renderer == null || !renderer.enabled || !renderer.gameObject.activeInHierarchy)
+                return false;
+            MeshFilter filter = renderer.GetComponent<MeshFilter>();
+            string meshName = filter != null && filter.sharedMesh != null
+                ? filter.sharedMesh.name
+                : renderer.gameObject.name;
+            return meshName.StartsWith("SM_Bld_", StringComparison.Ordinal) &&
+                   !meshName.StartsWith("SM_Bld_WaterTank_", StringComparison.Ordinal);
+        }
+
+        private static bool TryFindNearestBuildingAttachment(
+            Transform tank,
+            Bounds tankBounds,
+            IReadOnlyList<Renderer> buildingRenderers,
+            out Bounds attachmentBounds,
+            out Bounds attachmentLocalBounds,
+            out Matrix4x4 attachmentWorldMatrix)
+        {
+            attachmentBounds = default;
+            attachmentLocalBounds = default;
+            attachmentWorldMatrix = default;
+            float bestScore = float.PositiveInfinity;
+            bool found = false;
+            Vector3 samplePoint = new(
+                tankBounds.center.x,
+                tankBounds.min.y,
+                tankBounds.center.z);
+            for (int index = 0; index < buildingRenderers.Count; index++)
+            {
+                Renderer renderer = buildingRenderers[index];
+                if (renderer.transform == tank || renderer.transform.IsChildOf(tank))
+                    continue;
+                Bounds candidateLocal = renderer.localBounds;
+                Matrix4x4 candidateWorldMatrix = renderer.transform.localToWorldMatrix;
+                Matrix4x4 candidateWorldToLocal = candidateWorldMatrix.inverse;
+                Vector3 sampleLocal = candidateWorldToLocal.MultiplyPoint3x4(samplePoint);
+                Vector3 closestLocal = candidateLocal.ClosestPoint(sampleLocal);
+                Vector3 closest = candidateWorldMatrix.MultiplyPoint3x4(closestLocal);
+                float horizontalDistanceSquared =
+                    (new Vector2(samplePoint.x, samplePoint.z) -
+                     new Vector2(closest.x, closest.z)).sqrMagnitude;
+                float verticalDistance = Mathf.Abs(samplePoint.y - closest.y);
+                float score = horizontalDistanceSquared + verticalDistance * verticalDistance * 0.25f;
+                if (score >= bestScore)
+                    continue;
+                bestScore = score;
+                attachmentBounds = renderer.bounds;
+                attachmentLocalBounds = candidateLocal;
+                attachmentWorldMatrix = candidateWorldMatrix;
+                found = true;
+            }
+
+            const float MaximumAttachmentDistance = 8f;
+            return found && bestScore <= MaximumAttachmentDistance * MaximumAttachmentDistance;
+        }
+
+        private static void RequireAcceptedRetainedRooftopPropParity(
+            IReadOnlyList<Transform> retainedWaterTanks,
+            IReadOnlyList<DenseMiddleEasternCityEditModeBuilder.RetainedRooftopPropAnchor>
+                acceptedAnchors)
+        {
+            if (retainedWaterTanks.Count != acceptedAnchors.Count)
+                throw new InvalidOperationException("Retained water-tank parity population drifted.");
+            for (int index = 0; index < retainedWaterTanks.Count; index++)
+            {
+                Transform retainedWaterTank = retainedWaterTanks[index];
+                DenseMiddleEasternCityEditModeBuilder.RetainedRooftopPropAnchor accepted =
+                    acceptedAnchors[index];
+                string actualStableKey = GetRetainedPropStableKey(retainedWaterTank);
+                if (!string.Equals(actualStableKey, accepted.StablePath, StringComparison.Ordinal))
+                {
+                    throw new InvalidOperationException(
+                        "Dense-city retained water-tank source identity drifted: " +
+                        $"actual='{actualStableKey}' expected='{accepted.StablePath}'.");
+                }
+                if (!MatricesApproximatelyEqual(
+                        accepted.WorldMatrix,
+                        retainedWaterTank.localToWorldMatrix,
+                        0.0001f))
+                {
+                    throw new InvalidOperationException(
+                        "Dense-city candidate differs from the accepted retained water-tank transform: " +
+                        $"'{accepted.StablePath}'.");
+                }
+                if (!TryGetRendererBounds(retainedWaterTank, out Bounds actualBounds) ||
+                    !BoundsApproximatelyEqual(accepted.RendererBounds, actualBounds, 0.0001f))
+                {
+                    throw new InvalidOperationException(
+                        "Dense-city candidate differs from the accepted retained water-tank bounds: " +
+                        $"'{accepted.StablePath}'.");
+                }
+            }
+        }
+
+        private static void RequireRetainedRooftopSupport(
+            DenseCityGeneratedRootAuthoring entityRoot,
+            IReadOnlyList<DenseMiddleEasternCityEditModeBuilder.RetainedRooftopPropAnchor>
+                acceptedAnchors,
+            float authoredGradeElevation)
+        {
+            DenseCityPresentationIdentityAuthoring[] infrastructureIdentities = entityRoot
+                .GetComponentsInChildren<DenseCityPresentationIdentityAuthoring>(true)
+                .Where(identity =>
+                    identity.Role == OperationMapEntityPresentationRole.RenderOnly &&
+                    identity.Category == DenseCityPresentationSemanticCategory.Infrastructure &&
+                    identity.AllowsProtectedOverlap)
+                .OrderBy(identity => identity.StableId, StringComparer.Ordinal)
+                .ToArray();
+            DenseCityPresentationIdentityAuthoring[] platformIdentities = infrastructureIdentities
+                .Where(identity => string.Equals(
+                    identity.gameObject.name,
+                    RetainedRooftopPlatformPrefabName,
+                    StringComparison.Ordinal))
+                .ToArray();
+            DenseCityPresentationIdentityAuthoring[] verticalSupportIdentities = infrastructureIdentities
+                .Where(identity => string.Equals(
+                    identity.gameObject.name,
+                    RetainedRooftopVerticalSupportPrefabName,
+                    StringComparison.Ordinal))
+                .ToArray();
+            if (platformIdentities.Length != ExpectedRetainedCityWaterTankCount ||
+                verticalSupportIdentities.Length != ExpectedRetainedCityWaterTankCount)
+            {
+                throw new InvalidOperationException(
+                    "Dense-city retained rooftop support population drifted: " +
+                    $"platforms={platformIdentities.Length} " +
+                    $"verticalSupports={verticalSupportIdentities.Length} " +
+                    $"expectedEach={ExpectedRetainedCityWaterTankCount}.");
+            }
+
+            List<Bounds> availablePlatforms = CollectIdentityBounds(platformIdentities, "platform");
+            List<Bounds> availableVerticalSupports =
+                CollectIdentityBounds(verticalSupportIdentities, "vertical support");
+
+            for (int tankIndex = 0; tankIndex < acceptedAnchors.Count; tankIndex++)
+            {
+                DenseMiddleEasternCityEditModeBuilder.RetainedRooftopPropAnchor accepted =
+                    acceptedAnchors[tankIndex];
+                int bestPlatformIndex = -1;
+                float bestDistanceSquared = float.PositiveInfinity;
+                for (int platformIndex = 0;
+                     platformIndex < availablePlatforms.Count;
+                     platformIndex++)
+                {
+                    Bounds platformBounds = availablePlatforms[platformIndex];
+                    if (!DenseMiddleEasternCityEditModeBuilder.CoversRetainedRooftopProp(
+                            accepted.RendererBounds,
+                            platformBounds))
+                    {
+                        continue;
+                    }
+                    float distanceSquared =
+                        (platformBounds.center - accepted.RendererBounds.center).sqrMagnitude;
+                    if (distanceSquared >= bestDistanceSquared)
+                        continue;
+                    bestDistanceSquared = distanceSquared;
+                    bestPlatformIndex = platformIndex;
+                }
+                if (bestPlatformIndex < 0)
+                {
+                    throw new InvalidOperationException(
+                        $"Retained water tank has no attached platform: '{accepted.StablePath}'.");
+                }
+                Bounds matchedPlatform = availablePlatforms[bestPlatformIndex];
+                availablePlatforms.RemoveAt(bestPlatformIndex);
+
+                int bestSupportIndex = -1;
+                bestDistanceSquared = float.PositiveInfinity;
+                for (int supportIndex = 0;
+                     supportIndex < availableVerticalSupports.Count;
+                     supportIndex++)
+                {
+                    Bounds supportBounds = availableVerticalSupports[supportIndex];
+                    if (!DenseMiddleEasternCityEditModeBuilder
+                            .ConnectsRetainedRooftopPlatformToAttachment(
+                                matchedPlatform,
+                                supportBounds,
+                                accepted))
+                    {
+                        continue;
+                    }
+                    float distanceSquared =
+                        (supportBounds.center - matchedPlatform.center).sqrMagnitude;
+                    if (distanceSquared >= bestDistanceSquared)
+                        continue;
+                    bestDistanceSquared = distanceSquared;
+                    bestSupportIndex = supportIndex;
+                }
+                if (bestSupportIndex < 0)
+                {
+                    throw new InvalidOperationException(
+                        $"Retained water-tank platform is not connected to its building: " +
+                        $"'{accepted.StablePath}'.");
+                }
+                availableVerticalSupports.RemoveAt(bestSupportIndex);
+            }
+
+            if (availablePlatforms.Count != 0 || availableVerticalSupports.Count != 0)
+                throw new InvalidOperationException("Retained rooftop support ownership is not one-to-one.");
+        }
+
+        private static List<Bounds> CollectIdentityBounds(
+            IReadOnlyList<DenseCityPresentationIdentityAuthoring> identities,
+            string kind)
+        {
+            var bounds = new List<Bounds>(identities.Count);
+            for (int index = 0; index < identities.Count; index++)
+            {
+                if (!TryGetRendererBounds(identities[index].transform, out Bounds rendererBounds))
+                    throw new InvalidOperationException($"A retained rooftop {kind} has no renderer bounds.");
+                bounds.Add(rendererBounds);
+            }
+            return bounds;
+        }
+
+        private static bool BoundsApproximatelyEqual(Bounds left, Bounds right, float tolerance) =>
+            (left.center - right.center).sqrMagnitude <= tolerance * tolerance &&
+            (left.size - right.size).sqrMagnitude <= tolerance * tolerance;
+
+        private static string GetRetainedPropStableKey(Transform transform) =>
+            $"{transform.name}[{transform.GetSiblingIndex()}]";
+
+        private static bool TryGetRendererBounds(Transform root, out Bounds bounds)
+        {
+            bounds = default;
+            bool found = false;
+            Renderer[] renderers = root.GetComponentsInChildren<Renderer>(true);
+            for (int index = 0; index < renderers.Length; index++)
+            {
+                Renderer renderer = renderers[index];
+                if (renderer == null || !renderer.enabled)
+                    continue;
+                if (!found)
+                {
+                    bounds = renderer.bounds;
+                    found = true;
+                }
+                else
+                {
+                    bounds.Encapsulate(renderer.bounds);
+                }
+            }
+            return found;
+        }
+
+        private static string GetStableTransformPath(Transform transform)
+        {
+            var segments = new Stack<string>();
+            for (Transform current = transform; current != null; current = current.parent)
+                segments.Push($"{current.name}[{current.GetSiblingIndex()}]");
+            return string.Join("/", segments);
         }
 
         internal static bool MatchesGenerationContract(

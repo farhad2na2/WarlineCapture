@@ -4,39 +4,39 @@
     "result": "Passed",
     "operationMapId": "opmap.skirmish.desert_base_01",
     "candidateScenePath": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
-    "candidateSceneDependencyHash": "4b3adaed660928ed188870899aba813d",
+    "candidateSceneDependencyHash": "907fd20602702de50220ff86d4db0a5b",
     "packedEvidencePath": "Design/AgentReports/2026-07-25_dense_city_packed_asset_sharing.json",
     "packedEvidenceRenderRows": 82797,
     "normalizedEmbeddedDestroyedDuplicateRowsRemoved": 4396,
-    "correctedLayoutRenderRowsRemoved": 1996,
+    "correctedLayoutRenderRowsRemoved": 2315,
     "intactVisualNormalizationResult": "Passed",
-    "totalRenderRows": 76405,
-    "eligibleRenderRows": 61813,
-    "excludedRenderRows": 14592,
-    "stableOwnerJoinedRenderRows": 76050,
+    "totalRenderRows": 76206,
+    "eligibleRenderRows": 61620,
+    "excludedRenderRows": 14586,
+    "stableOwnerJoinedRenderRows": 75851,
     "unresolvedOwnerRenderRows": 355,
-    "eligibleStableOwnerJoinedRenderRows": 61813,
-    "sourceRowCount": 76405,
-    "sourceRowsSha256": "21e699e21565968543eefba9b51f9cdce24bd2465cd4136dd40331595325a1fa",
+    "eligibleStableOwnerJoinedRenderRows": 61620,
+    "sourceRowCount": 76206,
+    "sourceRowsSha256": "26c74717b245e1c2ebaf4a0d409c541c79f9a24105f998b9713483e544459efa",
     "sourceRowsPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_source_rows.json.gz",
     "sourceRowsCompression": "gzip",
-    "sourceRowsJsonSha256": "dbe2ef2bafe405fd0b9017d7dc9edf909b794c8bd0e993e52b6a029703a98307",
-    "sourceRowsGzipSha256": "ce8492332c937424ac9ed700833069ee2e42adda0789554760be07bae0e59485",
-    "logicalPlacementCount": 40460,
-    "prototypeCount": 9107,
-    "prototypePartCount": 12181,
-    "prototypeRecipeRowsConsumed": 61813,
-    "prototypeRecipesSha256": "52918cfd8f8bca22d941e26ec078050ca94b5cac00ec11b9ef82e0a4c19f9d7d",
+    "sourceRowsJsonSha256": "4007d6b49731e8cd9af0a6ab149796b6507d9dd845d5e3151164a58b7b1c4dca",
+    "sourceRowsGzipSha256": "9383a16eefcc68a8289214ca5bc636c107b111cdc33b70c9eeaf58dbc6490519",
+    "logicalPlacementCount": 40580,
+    "prototypeCount": 9109,
+    "prototypePartCount": 11870,
+    "prototypeRecipeRowsConsumed": 61620,
+    "prototypeRecipesSha256": "8d5912505971378a72a12edbffc178be9a35ebd51e0eda8c412a13a01696ee52",
     "prototypeRecipesPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_prototype_recipes.json",
-    "prototypeRecipesJsonSha256": "173b09b9f5b5ab46eb447d5b377182122517d46e7f48be78d4755efc49627fa3",
-    "placementCount": 40460,
+    "prototypeRecipesJsonSha256": "907e4311cd2eb5ff4c4173801f91a07fae69e365175562347bbcd4d104ffb0b7",
+    "placementCount": 40580,
     "stateOwnerCount": 4530,
     "stateLinkedPlacementCount": 9060,
-    "renderOnlyPlacementCount": 31400,
-    "placementPartRowCount": 61813,
-    "logicalPlacementsSha256": "8076424d83775e37aa535aeec4f75cf9193f3333dd191b59a376bf367235dbb1",
+    "renderOnlyPlacementCount": 31520,
+    "placementPartRowCount": 61620,
+    "logicalPlacementsSha256": "397b8ebe62e5e715edd0c3de690e12c2ee3e64ac537d86da6c3ea55956b353c8",
     "logicalPlacementsPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_logical_placements.json",
-    "logicalPlacementsJsonSha256": "ccdc463737a0b1c006a25c9b0d6cbfac85c9936cad154e316665feecf184400b",
+    "logicalPlacementsJsonSha256": "e114258563e8c1753028b33fff8811af673835600eae8c5447d71c598c2dbeef",
     "renderCellSize": 32.0,
     "acceptedRenderGridOrigin": [
         0.0,
@@ -56,14 +56,14 @@
         -54,
         0
     ],
-    "occupiedCellCount": 1934,
-    "cellPlacementIndexCount": 60855,
+    "occupiedCellCount": 1965,
+    "cellPlacementIndexCount": 60967,
     "multiCellPlacementCount": 15493,
     "maximumCellsPerPlacement": 6,
     "maximumPlacementsPerCell": 85,
-    "spatialCellsSha256": "b35f7045b626d294389985a95198f87f1c18e078a8ded0fb743c4e1058245c38",
+    "spatialCellsSha256": "5e6a7f12984fbf106753ce57bab58c181e39dc5ff35c355060d4b2abfc7879af",
     "spatialCellsPath": "Design/AgentReports/2026-07-28_dense_city_render_virtualization_spatial_cells.json",
-    "spatialCellsJsonSha256": "7fea87b3642a637e6daafd7ede57948853aa065eb2ad31a2af8c9ea2afc61be3",
+    "spatialCellsJsonSha256": "996dd9bc4054e2e526746b98e91f9991af0efb2b1dc3032bb22a615341135444",
     "mutationAuthorized": true,
     "mutationBlocker": "",
     "buildingFamilySelectionPolicy": "Generated building families are selected atomically only when repeated, every canonical owner has intact and destroyed recipes, and every family row satisfies the closed renderer and render-policy schema.",
@@ -93,12 +93,12 @@
             "ownerCount": 1182,
             "completeOwnerCount": 1182,
             "excludedOwnerCount": 0,
-            "totalRowCount": 5217,
-            "eligibleRowCount": 5217,
+            "totalRowCount": 4904,
+            "eligibleRowCount": 4904,
             "excludedRowCount": 0,
-            "intactRowCount": 4035,
+            "intactRowCount": 3722,
             "destroyedRowCount": 1182,
-            "repeatedSignatureRowCount": 5217,
+            "repeatedSignatureRowCount": 4904,
             "unsupportedRendererRowCount": 0,
             "unsupportedPolicyRowCount": 0
         },
@@ -109,12 +109,12 @@
             "ownerCount": 15,
             "completeOwnerCount": 15,
             "excludedOwnerCount": 0,
-            "totalRowCount": 171,
+            "totalRowCount": 165,
             "eligibleRowCount": 0,
-            "excludedRowCount": 171,
-            "intactRowCount": 96,
+            "excludedRowCount": 165,
+            "intactRowCount": 90,
             "destroyedRowCount": 75,
-            "repeatedSignatureRowCount": 165,
+            "repeatedSignatureRowCount": 159,
             "unsupportedRendererRowCount": 0,
             "unsupportedPolicyRowCount": 18
         }
@@ -286,6 +286,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.006e8d3d2a07571d4736b5728374763ccd12fbf399710d47def153534afd01ea",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.006f7a5f56f9bc3ab44d6582e843166b4aec959ddb27a3a27fe6e52bb7d835e8",
             "selected": true,
             "reasonCode": "eligible"
@@ -447,6 +452,11 @@
         },
         {
             "stableId": "densecity.00ed2a9157ff92b04b5a9a9a8350fde5ad3907815c998bf1e98c9208223e2126",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.00ed87a693f0ae0e17ab41fac8c62fb98e0231245535cc7a708597f381452cea",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -1301,6 +1311,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.02cb79049574165e00f56cb313b35fcd7c867df4add939e1a005e17804f9a98c",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.02cb9793fa337bf900464003476f732b2dde6dc63770a0194e3dda01cc7dca9c",
             "selected": true,
             "reasonCode": "eligible"
@@ -1481,6 +1496,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.034a4a60c732efc2ae34cdc8e04b9333a935a25ba3fddcba32f96388e8874336",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.034d6bd206547a73eaa3ce502e4f53b62652e3b272278ccc60b6b480bd7ad8f4",
             "selected": true,
             "reasonCode": "eligible"
@@ -1552,6 +1572,11 @@
         },
         {
             "stableId": "densecity.036eee856ac0499740b79d1a852cbe428fa719e513691be754f9cde33a158146",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.036ffb9d137d4e01e599df780ccc431f1a0b1f9189d3db55060a3ceb4c195733",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -2376,6 +2401,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.056641053eed1ced076689ff03ca8f039cb1f4d4152ebd7a0881a9d3e823099f",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.05685d6a998c595f8456aff210274bac7136cedded971d1d613851ae08bd14fd",
             "selected": true,
             "reasonCode": "eligible"
@@ -2607,6 +2637,11 @@
         },
         {
             "stableId": "densecity.0614e50d2f1b7748c3e64698d65821ac5633d7f92b806e06cd5664837ef92c9b",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.061793b8429d38fe53646f23b81528aace9806dee6ffaf2e69115cd91490b223",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -4596,6 +4631,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.0a75ba441dd3374af4373841cac74e23e4d4bda6e9b88760d7586b83304ac6db",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.0a785f79fd1d8862cff0d33bc57819719e4b9b771a8bf48b77c80a2c562271c4",
             "selected": true,
             "reasonCode": "eligible"
@@ -5282,6 +5322,11 @@
         },
         {
             "stableId": "densecity.0c152be2aef9bf8b1b4b7acef178da74078b911eb745ff5e8b3b2f21458297ae",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.0c1a9130c663b6ebc048612bf852e6a63368bbfa6451059d7133a28062d3146e",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -6166,6 +6211,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.0dfdeb0665901e992d7435a13224191c406530c77975f169c8ab22f574e37070",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.0e0291e8cdde4a404111ee88e7bc1599876187531b2af2480e493cf1ac9a232d",
             "selected": true,
             "reasonCode": "eligible"
@@ -6607,6 +6657,11 @@
         },
         {
             "stableId": "densecity.0f1c9ae6e16f685fecafa583809e75d0a432a87aebec49f4bc044601ee485398",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.0f1d419c24aaa3303df96f53aaf6274cbfa3665fb16c9323c6f146abaeb7d646",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -7126,6 +7181,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.1023fd9bfec6bfa513014e917662925f03b31200499e3c4b886c8373e2a53296",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.1024704efa9b874a832bde5372641fb064bd775a546c293ee0076e26a33ccabe",
             "selected": true,
             "reasonCode": "eligible"
@@ -7352,6 +7412,11 @@
         },
         {
             "stableId": "densecity.10b78863ad4b711f05d5ce96d4e1a54aa5bc9ec8ab7b387368dfb23e84faecae",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.10bb66d4fa3246eaf5e7bc6f8979d428add2b0511f88e0763678389f739aca0d",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -7746,6 +7811,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.11ab8d8ca7eb0377e50ad1aeb04ffdef3a1a56bb0e26c83b61c891cc5f56fe6d",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.11af18a113432bced88e1f2557ece5282a697e843292e2a0780cbfa9e9d8cf62",
             "selected": true,
             "reasonCode": "eligible"
@@ -7772,11 +7842,6 @@
         },
         {
             "stableId": "densecity.11b5a72aec099ee49c43d2f5f58eecfa2295241f1d09febdafa6265dae63bf81",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
-            "stableId": "densecity.11b904cb152134113f3ed30796225781d83ea5f3b9f3970e15d5870ded6836fc",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -7932,6 +7997,11 @@
         },
         {
             "stableId": "densecity.120dc27c42c3dce1fea8a333acf0ae1e7362988051bf0bb0c2564eec9d28e61e",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.120de8d2b266107a0b6023da6da36ba448f6a5b5944fd6f0909c0dba7f7ad3f3",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -9926,6 +9996,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.16d75c8c8e8cb9b69f8a392f9b741f34db410ebae254b0f0614ac9d3e777eaea",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.16d9ad17dd8ec0bb73d41c560d5ca1f9066c69515a31a9f02a7ebf186d92bdb1",
             "selected": true,
             "reasonCode": "eligible"
@@ -9987,6 +10062,11 @@
         },
         {
             "stableId": "densecity.16fc1d700fc8d5cc6d20a43cf3f9e1654b1bb74dae0d78701c8e885c8260e033",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.16ff223de9d91f982b11fac7297e10cdafc60f1bcc0c6eae3b4c5045e121a9cb",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -10321,11 +10401,6 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.17c4441ed1a7e7e412bc8e1e6c3c4e7a76a1409c64e2155113b948da0c8c2a3e",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
             "stableId": "densecity.17c57bb9eb2555f19da35946893ce88d19683a4f0faff2f1011ae5f2f69375f1",
             "selected": true,
             "reasonCode": "eligible"
@@ -10362,6 +10437,11 @@
         },
         {
             "stableId": "densecity.17dafcc69c6af9e77588c20442f6fdaea04313232694f007236c66ca13f8eeb0",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.17dc1bf9c4cf6581b5d11da7d5055d9c90364d2cce5176988fb31cfd43a151b3",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -10916,11 +10996,6 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.1923fefe7a8822c2ff256f667262fa09e3bf3f3cbc777ff0ea9227d20fd83ff0",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
             "stableId": "densecity.19269dc09938f28f6b5b3ccea0d68d4d5dc9c74eb0afab97acb7266e3cc74753",
             "selected": true,
             "reasonCode": "eligible"
@@ -11082,6 +11157,11 @@
         },
         {
             "stableId": "densecity.199905fd077d49a6229fd38feae1024f73d448d7ebc8a0c687e615bbcbc6c4a7",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.199d4457b787bd6e64ceb4cefb9bd263ccedc03d29ff85bb80f26436a3bede67",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -11732,6 +11812,11 @@
         },
         {
             "stableId": "densecity.1b00c17969f2da78419e4e297dac166bb773b07a287502b5e268996c032586e0",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.1b06763e39033be8b39d7828e8d38b2d9b73603f2b10d2b527994c96e0697722",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -13091,6 +13176,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.1e17891b4d23a4bf589d6f8e39c21b1de44222725568694d54c75b9739fccb0d",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.1e1a66ed13017b5f059a3213d4c8373fa9c10592ef079202a90c46afdd49b876",
             "selected": true,
             "reasonCode": "eligible"
@@ -14106,6 +14196,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.20beccf6ca50c2c08c82a4625f00d279111c93fada1bf59b6623f51eef36a132",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.20c1ac7ee5178fc141dc440419c962ad50065ebb12a65c26ef17fb390fabca01",
             "selected": true,
             "reasonCode": "eligible"
@@ -14122,6 +14217,11 @@
         },
         {
             "stableId": "densecity.20cb10b019660a7596f386a097033fcaa8bccf5b17a52e0263ef42e889753f82",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.20ccabba160d162f6f35dd929589891f70e5cf310c7000b743b07b0eda23c381",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -14217,6 +14317,11 @@
         },
         {
             "stableId": "densecity.2103a78280797a0c35447367011f80d1069d7aace15dab700940e154f7d90684",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.210df7f127cf3df82ad1c7ed2c522f91ae07cdd944e1ac997d21c7e85bf3b6c9",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -14351,11 +14456,6 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.2163fbabde00c9e40629d6990fa3cb85bf789a8d2022555f54e5fe93eabfef82",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
             "stableId": "densecity.2165db4d62ca902c9ba89bc1adbddcb7c4eca06d6d1263fcc3840ca8af5625d1",
             "selected": true,
             "reasonCode": "eligible"
@@ -14387,6 +14487,11 @@
         },
         {
             "stableId": "densecity.217f9f8f8e964f420a32b8af911c5b662fbfc17e9b89690986d5bda7499115f3",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.217fe0cb1e76efdf6f09ea985abc6d88222e2986ab6f1136a7849ab4e6710a20",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -14817,6 +14922,11 @@
         },
         {
             "stableId": "densecity.2296348450cbe81c5e0facd24f11f84d8d8a9a96166c319f0d4e73d5310aa605",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.2299bf0f41622b016908e4db87a3d3cc20450870979be4848063db7296a0a93b",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -15837,6 +15947,11 @@
         },
         {
             "stableId": "densecity.24eb593f31ec4acb3065b0a69d62f422646d230f0e7cc38b85f801579e1fe5d7",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.24ee6e7b694d7bf0470e082f30a0c2f171e215535625850dabc9e2567b9b1466",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -16906,6 +17021,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.2761e3646e6a618e4db48106a58a1ef81f3de3079194d020e83f3fa6f1ebc6f9",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.27622a0cca327063a3360362c726eaa5eddc4e3964847ce8f36eca069627d80e",
             "selected": true,
             "reasonCode": "eligible"
@@ -17362,6 +17482,11 @@
         },
         {
             "stableId": "densecity.2880018d4cdfc2373dd1efa900300f7b2f33dd2cca9b606eb1e15be00a48dbb1",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.2882ff525b85866ef446878f89e5bb8b4e0f988ce24f3a537ae864b1074f5098",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -17896,6 +18021,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.2a1d37e9a617e240143ddab834d4fc50a506d8ae0059c4c13926d547dd802892",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.2a1e838bd0259a099a0c657301d2df1c9f148a997445be133952236c435da005",
             "selected": true,
             "reasonCode": "eligible"
@@ -17912,11 +18042,6 @@
         },
         {
             "stableId": "densecity.2a1fc0021f5f0050c64ca5a9f40fb7a03ed3ef4c18ff583ddae3c7aaf1da6222",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
-            "stableId": "densecity.2a206c1e84a0bac2e9311249becbac307d5c453f79e6773852cdc310e5d93be7",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -18801,11 +18926,6 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.2c02a5db588009a18918a29ae548f80f1c70fea6ceae15ac37fc26c90808bfd4",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
             "stableId": "densecity.2c04c9eaf386d57614ab05047dc868e62a9e9f1bbee997ea02df1528efed5e7c",
             "selected": true,
             "reasonCode": "eligible"
@@ -19072,6 +19192,11 @@
         },
         {
             "stableId": "densecity.2ccaa0876948aca21ed2d87ea1d7aaba9186bf7749d74bb30ed8e98a68b7847a",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.2cce9d8dd4f385326089714e3b744e37fb2043f476aa4da187e5ee4f662675f7",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -19346,11 +19471,6 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.2d6ebea864b18c572078fe27b145ca6f371655e9e4b08cb6142d5cb6ecb7e135",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
             "stableId": "densecity.2d72efa44f4c3add30c73cafaeb4407578b8b3657b7948a0c18cfd5b9a0a4fbd",
             "selected": true,
             "reasonCode": "eligible"
@@ -19471,11 +19591,6 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.2dbfb41405e262032cec7e2adebb1990150c370b9faa34241feca34c724b5dbf",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
             "stableId": "densecity.2dc5b4df59eff6bebbe1b644109eada5ea190128d84665ae374a972aa97f2a41",
             "selected": true,
             "reasonCode": "eligible"
@@ -19507,6 +19622,11 @@
         },
         {
             "stableId": "densecity.2de53141390f4cd90e83d60261d85fbc39ef2d9b9678e332bcaf4d6af4fe868d",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.2de7f3dba470c5bbb5179cb47ca6411e75f4760a4e237a87b9c280e1278a7a47",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -20066,11 +20186,6 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.2f284b4759eb15f3081ac7e436c298199f247d591e6d2d23ee4b74602884f77d",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
             "stableId": "densecity.2f296fee92a68be65fe14000172b94a92bb4c9c6970a469b383fda5660693b75",
             "selected": true,
             "reasonCode": "eligible"
@@ -20336,6 +20451,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.2fb0b62e3fd1e6e4f1090b74d9548dca426337348ef2e77608864d397e64d19d",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.2fb56b021e4e599e3683b1bcbed1259e2ddfe4c9675443c95492913e50ad0f2b",
             "selected": true,
             "reasonCode": "eligible"
@@ -20571,6 +20691,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.303a8c07358cc5e0b9fe8fd30ce656aaca181bdfdf2de14c4231e0cdc13ce531",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.303ca0ea653882520fde9c47c51934e3182563b4d8532d8a547e3e329021e639",
             "selected": true,
             "reasonCode": "eligible"
@@ -20716,6 +20841,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.3094d308092520acfb10f837d5d7dd851d1dd54e6921f91728d11a4856335ded",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.30a63e858d3b918938dd3985df4eca9468c6c9ddfa3863cbbff47b77a61b3b87",
             "selected": true,
             "reasonCode": "eligible"
@@ -20822,6 +20952,11 @@
         },
         {
             "stableId": "densecity.30da4481c637af755af556acbd90c3734b110988c7a7606b87a23edbe1255317",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.30e061ff23e3f3107090f545d56a3b119070ba97d19c1dff53c676df779d4e5f",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -22496,6 +22631,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.34e62f19519832c6431ee23ae3e8a08a0ac1e50c756f8b78740f850b63031b84",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.34ea791b2467b0a072102d7a3caadda2e50daab24029755d275e583e9e42beed",
             "selected": true,
             "reasonCode": "eligible"
@@ -23606,12 +23746,22 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.374c327035e9fc6c2af88554798652a2cd36df8808f724f281f50a2eb115a127",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.374e20544dcd9cd930efecb9c8381bbceae14da1ef38c7d305daafe050b76fc5",
             "selected": true,
             "reasonCode": "eligible"
         },
         {
             "stableId": "densecity.374e7aae6173a2397faa8446cb8a1c13428ce0599d557f2aecae24e7050c055b",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.374fa46a226d1c78d38ac6c260e39e09fe44e8b9291d3d71c83ded6013430dfc",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -23991,6 +24141,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.3828bb1bbff060185781d0785c4b30464826952b7fb45448bdfd0f1e1127fd54",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.382b0ac08baee007127124eef5bc71b261540135d7984e098e728701bf8294ad",
             "selected": true,
             "reasonCode": "eligible"
@@ -24077,6 +24232,11 @@
         },
         {
             "stableId": "densecity.384bd92a5168df43a65d3dff0ebbd0d0b4333fd27ddb4d5d832094b9324fc7de",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.384e06b961af05f0f5b525b168991cb1dd7ec149547331c74dfa7a83f88f9cc3",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -24416,6 +24576,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.392e0039855b2f47d74a58148b1adad5738748916ba1b0921f49f9454be6cbe8",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.392f39fda529a2cf4491bc630d8b6cac4974a7d2d2fda3c3c16d8bf8649c13b9",
             "selected": true,
             "reasonCode": "eligible"
@@ -24442,6 +24607,11 @@
         },
         {
             "stableId": "densecity.3938d16b435524af82a27fb30ec2046f203b5ef4ded6c5f3031549f8369b8404",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.393ae3628dbd90c431da11b48ebb8b2e52ede1a41be4b2d74f4eec8eb76bb448",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -24727,6 +24897,11 @@
         },
         {
             "stableId": "densecity.39ddb25400ab5cc920836bbb3b2751cb7451cd72215c71d10d6b25eafea682d5",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.39e21fae1981af82055cbbb32261f5eb3776d2b1c9acfbce47e02d135aab96a9",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -26191,6 +26366,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.3d48ba6989bca02a7cf660579a5c0a47eb2f68bf4212447c0950a73dd7df3a29",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.3d48cee786503f32e6dc6a9f8bed578dba94abcace1ee4d30a669bd5be9db438",
             "selected": true,
             "reasonCode": "eligible"
@@ -26471,11 +26651,6 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.3de0a09364e520a6d1e46591bc292665d62e60c9ddd6d1a64294c04915400df0",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
             "stableId": "densecity.3de0d960a82f61bc6c4f43f6edf50fbdb4baf49f0bc83df8d5934c065aecdfde",
             "selected": true,
             "reasonCode": "eligible"
@@ -26662,11 +26837,6 @@
         },
         {
             "stableId": "densecity.3e2ff3eeb10c7fe518897fe0d55bfd7513fb8fa4478883660162187c78e4d8d6",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
-            "stableId": "densecity.3e30d81b30267bf534f41a61b4ff9381e6e83824396190899517e76a144be42e",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -26866,6 +27036,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.3e9f4d850f594bf61b1a9405efa4988aff89e2d3990e3b47a1830c622f9dfcea",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.3e9f8ef25b4d52ffe9a9e3e8d08a3bc698bb8c6f86bde6f0c0402888b9a5c6b4",
             "selected": true,
             "reasonCode": "eligible"
@@ -26937,6 +27112,11 @@
         },
         {
             "stableId": "densecity.3ec132a4aaaafdf7c3dff11a35d1fe87642cc4cd776fc8b652722c09a689533f",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.3ec221ebab17eb1bcd0de2f0baf4532a1ae61eb1b357915ef37b82d605412ba7",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -27716,11 +27896,6 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.40b2286bdb88e586c3fa42695c897040bc38a4a32a90fdba4fca7dd19c8a661f",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
             "stableId": "densecity.40b76818d6271e0ae243022689b1dbcfa6dc500bc34db176f5125b3e7fbef2b7",
             "selected": true,
             "reasonCode": "eligible"
@@ -28481,12 +28656,12 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.42776c54d43e1db2e4b51dd76839126eb46979778e56e901fb83eab46a506bca",
+            "stableId": "densecity.427657d8e227bed8bba8bbd15b7893967e96332df270f4022f8ff37e6cedc079",
             "selected": true,
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.427e553ad63e8a281a9a52a866fa08d59f4ae1faf16ef2fed4cdcb0c2496d032",
+            "stableId": "densecity.42776c54d43e1db2e4b51dd76839126eb46979778e56e901fb83eab46a506bca",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -28542,6 +28717,11 @@
         },
         {
             "stableId": "densecity.42982568272e742ee5a00eced51b3878fb515f13dfc32322e47bbf8acf8fa620",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.429cdce0b7ad86f687e3639d6f1b080d0ec1e560275a535e7b4d88c23729f1a0",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -29166,6 +29346,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.44032e43946287a95f81e236ff2425dfdb200179c327485271033130ba90ce24",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.4404b587051b11b95992d9d50ebd91e9a5c928f94f87381d9a10aa569b6a00ae",
             "selected": true,
             "reasonCode": "eligible"
@@ -29241,6 +29426,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.442fb7e8dbc172699cb33842becbaccb6c81f4b09e67786c5d69a9504fb12317",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.4434fb94e2f087c8ced87e3db9f9ddf0d8e15fa11cb90c34503ddf63c6ad3e96",
             "selected": true,
             "reasonCode": "eligible"
@@ -29292,11 +29482,6 @@
         },
         {
             "stableId": "densecity.4445c9f70ac34ad41559757679b5d1f0fd798c472e0d7a80278e4317469d91a6",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
-            "stableId": "densecity.444acdef6b22910135af7a60ada72cb0f036a54740e6f943a937a1b413b18396",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -29866,6 +30051,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.4597e58d22b61e57e0010781b9fc4f7b773ed3c1c9dad02e3829d7fa073e825a",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.459b5c0267e5e9c7dbb7b6b57382a3130a1fad13d87d265fdd5ea2105cc409b9",
             "selected": true,
             "reasonCode": "eligible"
@@ -30052,11 +30242,6 @@
         },
         {
             "stableId": "densecity.461b6bfb56af43ee921e5eb08e7fccd22bd1054a6e921fe3d3b1517f621257e0",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
-            "stableId": "densecity.461dea81b078ebd8505a6c03406ccfe3866789ec3ba2006774ff2f35e6891604",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -30277,11 +30462,6 @@
         },
         {
             "stableId": "densecity.4694e563c9fc74e9831570e6f7d98818dd1f78957a5049d0407498d375966fc6",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
-            "stableId": "densecity.46971bcbadff940b4e79544d432d7e556e04b9ce8cb9bf5b78adf1ca85b0355e",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -31361,11 +31541,6 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.492883ee29379039ebed50715717980678acd571b1c44c426e74f9a0c9d6f8fa",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
             "stableId": "densecity.4928c475ffc4145e9b23d0a0ee3851799c22e2d2cc52fd45ff5db98f80f47bfc",
             "selected": true,
             "reasonCode": "eligible"
@@ -32346,6 +32521,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.4b80c2488cc06b7ed43488b4bee8d9381f8dc825b26a8f286b9f6e75caad2a1c",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.4b85aaa25bbac053d572df6acc9753838bff34e94b9077096fb21e99f06c0121",
             "selected": true,
             "reasonCode": "eligible"
@@ -33171,17 +33351,17 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.4dc5815c8f610dacd9bd98cbd1ee625ae5ddd5ef577b9c4658f19f3b87ce7fc7",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
             "stableId": "densecity.4dca26f2327883d768cde5b22f7b14fc4efb4f21feeb77d5b8b591bd3d55e6d1",
             "selected": true,
             "reasonCode": "eligible"
         },
         {
             "stableId": "densecity.4dca96b3c23ab4a030e0cd9f6ec918e6cd84c41a80d2207b0501a54c3ce3ce2f",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.4dcbf166431d9f66e706901add5f1e42b8d71b93689c4263d0e1ac5d885154ee",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -33492,11 +33672,6 @@
         },
         {
             "stableId": "densecity.4ea65fcc0de4038baac0bc4beb148ef0a4b9f0b943a6d3b7fea4d386c2ee46c0",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
-            "stableId": "densecity.4ea88bbfe95f7a7c30bb4836100b2b3727e44a53aaeba585167013aafacc7fc3",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -34751,6 +34926,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.51ebc7775592c0a372cd75b131ed10b7c527dfe55a871f9b7b4d947c1c0407fe",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.51eead3997c35bd77a7ec8d5ee4f5090b634dcb6ce0d647d7daf9b6c9ec3ad29",
             "selected": true,
             "reasonCode": "eligible"
@@ -35561,6 +35741,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.53cd395dfc39acb95bcaf677be030832743d8e6048f14bff330a820cefeed66c",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.53d4f453927b881e5cb79f161cb9b5e2966dcbd4179589cfee8f9bfd7b815a5b",
             "selected": true,
             "reasonCode": "eligible"
@@ -36076,6 +36261,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.54e07efa93c7fd74fa43bfceaea96f45e2f9da41a8164f93ac9d3412c671edca",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.54e714d18a6a87463682645b163e0e0412e1089057f5e54216d889525910c5eb",
             "selected": true,
             "reasonCode": "eligible"
@@ -36097,11 +36287,6 @@
         },
         {
             "stableId": "densecity.54f8ccbd3cb8f001579bd93cb6d79a67240220bac8f3e58106e166fccc7d393e",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
-            "stableId": "densecity.54fdbc34840e6cb8594ee2fdd1fdee79c0e01653f3ab56b94a4ca677629dc975",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -36196,6 +36381,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.5534b6cd76546741b86c532abf256c998759cda35e0a0c0f308b86d0ed399143",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.553bca5ac429657b506f8a2527fb63c1d0e402bf904452515c1eea483fc04d86",
             "selected": true,
             "reasonCode": "eligible"
@@ -36207,6 +36397,11 @@
         },
         {
             "stableId": "densecity.553d572ebc15b933e29af199f2ca1e66c760361ad376c5f861f90fc23b252f32",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.553e7e2c8d4ba9690f6455bac7ce41a9a56cae431220c9ab41e59c9f06f01ec2",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -36267,6 +36462,11 @@
         },
         {
             "stableId": "densecity.5558ac5688a78a1ff693ec1cbf72d5438ba20ec189af0d09acaf735e8d132a7d",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.555e8625947b6385aed6f4a1f0a4b1c6c973fcd2eab6dfa048b3a35580d133e6",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -36572,11 +36772,6 @@
         },
         {
             "stableId": "densecity.5606e6e9e1d4cb9e6ebd5ac78c256b86663ab3d2263cd678341d7269ad897d8b",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
-            "stableId": "densecity.5609536d96390ea852cd96e38704976e5f9f93ca288cf07d09b21937187603f6",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -36887,6 +37082,11 @@
         },
         {
             "stableId": "densecity.56ac6184e080a0bebb346ba976a622d7aeefb1e4a1d8afa3ce08d9b441803b7a",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.56ad04a876c71810085e695c8febfc8bd9fbc8f6b4c65129fa812836e97f69b5",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -37561,6 +37761,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.5859737c3c3989c8049e1487f0a0a573bb4f7fabdc757a613e57b43e0bfab3cc",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.585a918515b1b005f38f7a88ebdaea994faac8715814cc66dd8f4edb33a3928d",
             "selected": true,
             "reasonCode": "eligible"
@@ -37607,6 +37812,11 @@
         },
         {
             "stableId": "densecity.58695d0af7106471d32afda4ef7cfc6476fa6f794dce443e053d499a2fa09ad6",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.586af4db3c57663c3d12d8f862d2896e1020ace2b6604546713885406dfff516",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -37707,6 +37917,11 @@
         },
         {
             "stableId": "densecity.58a6135140bd82486024acf79e05407d89c7f7871bab83d3736b120b0b8f20fc",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.58a8e2848321a273ac84670adac529ef175e1d697c5353d67fb51433fc269f50",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -38047,6 +38262,11 @@
         },
         {
             "stableId": "densecity.597d55c49ca90695ad6579bf8d32045dedfffd97ff247dbc73a1692856f73240",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.59807d26281e82f9693151782a73397fd2c571d5858900122c945a9a1f59451b",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -39366,6 +39586,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.5c8bbdb1569433f97ee005bc38f757ea78f5673e4f4d21d0bad07947a4e6b6db",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.5c8cd389c0699ec4650952c9645ca120e72fe8140480dd07e37a3eb57609b223",
             "selected": true,
             "reasonCode": "eligible"
@@ -39411,6 +39636,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.5ca09b58b2f5557e57a80bfe42c126b439fa6f677565e7495038ce9efa7c6ed7",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.5ca1117a42833ec16cc90982372c22b5ec906f15b587ffcb1db5b7c234488ee4",
             "selected": true,
             "reasonCode": "eligible"
@@ -39431,12 +39661,22 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.5cb44b17200a9faff21c52ab104d58c1d157ebd7414797566f845e45c6fcdeda",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.5cb4dd304e733522defcf9226e1fa8e3be7ebc8e2a9c7b3b16656b49aa0c4d3f",
             "selected": true,
             "reasonCode": "eligible"
         },
         {
             "stableId": "densecity.5cb6bd6f9261979e9b0326ee7145ac2625f6acf3a75ee04f4b0949f642129060",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.5cbb1b8d2cd4e0b997daed369fbbf0642e94dceaaf5dfc4b8841c595c9266d19",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -39617,6 +39857,11 @@
         },
         {
             "stableId": "densecity.5d31a09c31faaea4e1e5ddbe6d61b58fc8b235eeb43d7904b2c3899f9ea84880",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.5d34c9c89dcf96250a575e8948270a131a07f6305acc1df1fca69accfcd128e8",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -40046,11 +40291,6 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.5e3a00df5a0b6371603d544d6a020c9663aeaad95af705167a13fc66e46f655e",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
             "stableId": "densecity.5e413037b4ff1fb4b902993290bb5854d2dd1b69b9eeaca1f8a50def0bc423c0",
             "selected": true,
             "reasonCode": "eligible"
@@ -40411,6 +40651,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.5f28c6c262333a94e45b0dfc089c62dea42839ce76a22bc28083b21a3388916e",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.5f2bdd0c40fa571660df9b5cf5a441029e50b948d0b77a3c618bbba240f7619a",
             "selected": true,
             "reasonCode": "eligible"
@@ -40727,6 +40972,11 @@
         },
         {
             "stableId": "densecity.5fe27f9427bd3444a1e14aad949be6267e7c559d967da4b85ae0267bf456c7f7",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.5fe4a516e95e8b687ff2859f08285d36e124a70fcd9909eebbd5d574ef5e0f78",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -41141,6 +41391,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.60e9d5b3b04c4067b9da1ff4fedd2351c233e2687eb9c6a617b0b349b0d13e46",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.60ebee578578c6b8e8e9eef3656a186152d266f8999d26e31057fdf92ff2a9a9",
             "selected": true,
             "reasonCode": "eligible"
@@ -41157,11 +41412,6 @@
         },
         {
             "stableId": "densecity.60f1119ef9eaba4815ff31d15f298aec45e552fd1549332d3f8f6015e726104f",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
-            "stableId": "densecity.60f13afecea30a0a5beb1f445aac6bf4235decbfff80f60fce68fe182bd9770f",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -41656,6 +41906,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.6216421012327f157eb310de43636e0addd75acc2d98961251e3e78fde8bd18c",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.62181e66ec84d8f2855e1c5dc33e36923d7c31e761fecd9bdbe27509b4b807e5",
             "selected": true,
             "reasonCode": "eligible"
@@ -41917,6 +42172,11 @@
         },
         {
             "stableId": "densecity.62be568a01cb0a443442fa649c37f6455149d68b1a177ab3fd954907a9a7590e",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.62be5d848cae79c9de8e9257477c48a4c53ac3bf89964fec77d9bb1f13bf9476",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -42217,11 +42477,6 @@
         },
         {
             "stableId": "densecity.633cc2c322ccac38b1cf7545d399c75605fa84263d354109466b2f8e8946de8e",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
-            "stableId": "densecity.6341ae807fb103432bf3762976b5c0e276cf0cf78352f1316f6a96dda4003bfe",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -42552,11 +42807,6 @@
         },
         {
             "stableId": "densecity.642cdd2a2c2729efffac944b0ab1e99605c496b9a1ddd07e5841ae8846bc833c",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
-            "stableId": "densecity.642ec9da5a07f06a1ec85bd81a839a37b949e6d0cdda4805b91e16639fb23a91",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -43366,6 +43616,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.660fb8fbc094c1c902daabe9faee6dccf9989014b6cde8d0387d2e256c3f5b79",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.661052b6bf415e758e1b540252ba4b1d942e115af999914576bf85d114b118b4",
             "selected": true,
             "reasonCode": "eligible"
@@ -43591,6 +43846,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.669f54e20aff4c228b45ab13a459453c2b6c5389b88316933848ea9018449cc5",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.66a1e949839d701a1c17e83a50e3a4493e2f6f3ae2475fa4b67878da47a886e8",
             "selected": true,
             "reasonCode": "eligible"
@@ -43702,11 +43962,6 @@
         },
         {
             "stableId": "densecity.66dff00bdc73979db0d93537e20c3dffab86462b97020cf16368fad918db63aa",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
-            "stableId": "densecity.66e210923ac122a892bdc6375182b66188c074440b0c6e448bcf5dd6a091439a",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -43882,6 +44137,11 @@
         },
         {
             "stableId": "densecity.674d4d76925cb30473b02d4eae082b4dd4cec113de83d084d2373bf93d506cf9",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.67562dd149cf00680f51987a0f4f20e9b8321314d291a79895c2de7d2f87edb0",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -44102,11 +44362,6 @@
         },
         {
             "stableId": "densecity.67e6d5fda7a17187e77f9f9d1848fc7d3ee514ecd870a6d1843d0893fa4b552b",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
-            "stableId": "densecity.67ec0a0be70ab4be8dedd2a40b8d4846e63b05b66ae3e1708a11f7f13872e42e",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -45061,6 +45316,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.6a2e87baafb447a0be486c738273ea584dbdd7109a32b3f209018a2ba67f2d93",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.6a3081bdf69b6d7eca31fee2189f4cd41d1f6b83f6a1542aa113aa99d34a16e2",
             "selected": true,
             "reasonCode": "eligible"
@@ -45187,6 +45447,11 @@
         },
         {
             "stableId": "densecity.6a5d9c867b4a5311a13d0695c1f9c225073d2bb8fbf6ca5d7b173a61f65b8a50",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.6a5dc50144f854555a5e00c315ba1170d4362ce6522d7f1e7d8992a972bc04eb",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -45557,6 +45822,11 @@
         },
         {
             "stableId": "densecity.6b4df00615b1f5a72123a13300130b2a1192e911e5cca57ee99786075cf1b7f1",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.6b4f2c04c15b6ce95b4d3e6c176ab10816094ea002742f918b10794bc292f914",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -46411,6 +46681,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.6d45b0cbcc2ee6e1e3da9e00be6eb0d27cfef45aae485df7a406c6321cb45092",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.6d4db4d43a9ee86fd88126186e316a3276a47f13e34b11c25e5e308cad0b8a94",
             "selected": true,
             "reasonCode": "eligible"
@@ -46522,6 +46797,11 @@
         },
         {
             "stableId": "densecity.6da713173231146faf2c05e127cc1dcb0f841a581184bdb438b1fd3aacfe29b7",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.6db1a593ddfdc0588f3ee7953d675cbffbf851a668b660d5b9999cc966f69dba",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -47606,6 +47886,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.701789f7925bf0ec08a21e702dbe1aeed6f9f63b449a8b0bb2ffbe5b5c42e4ae",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.701aa39b7725ecb4fbdf99cc0824ff8052447b03ff498641dc28b59c9b97dd36",
             "selected": true,
             "reasonCode": "eligible"
@@ -47652,11 +47937,6 @@
         },
         {
             "stableId": "densecity.70394137779ddccaa7ac9cb93f8778706500d6c1f19ab6b3ade36e2b59606e7d",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
-            "stableId": "densecity.703a7b5b9c32929741a98be4e67327cdaa2c860ef22d15a7b31fb6d611a95c30",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -47737,6 +48017,11 @@
         },
         {
             "stableId": "densecity.7065efc578e38354c3397aad5230ccf4e968cc89e8bdefd3bf48200e9aa1bcde",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.7066d8d2e1767881ed210ee8f56a6d902e050759d800199a44fbc5c92eb9a4ce",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -48351,11 +48636,6 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.71c2257afee64789e2da61f806b448a3b4c958ba8f9e4b6911f73750615db4b2",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
             "stableId": "densecity.71cc79bb40a369e6e9c0ca9bd29bbafd4adb591840e31139667f79fb0b2995aa",
             "selected": true,
             "reasonCode": "eligible"
@@ -48811,11 +49091,6 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.72d359572830c7c546c012d010cdb6ee93e1811ddf69f3acbe188d51812303d2",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
             "stableId": "densecity.72d367a8785ee25d4057bbae621218ac46e007dc82738e200b5188e814d037a6",
             "selected": true,
             "reasonCode": "eligible"
@@ -48947,6 +49222,11 @@
         },
         {
             "stableId": "densecity.72faeb6b431f568612e17ddbaa3d9f0b2cfc56716df0b0311916654d6268c3c6",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.72fc5b4a22e5e11e7566bb475a2498035eebde1a1033afabf19361cbfcff0445",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -49291,11 +49571,6 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.73ff8624cca5cc80df43cfda0f6874f347fbb2cf7c5853d8ca1cc2233ed10b20",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
             "stableId": "densecity.74094f00d8d8749adbb6c691f7a3f36c74a671c85dafe763dc99bf374c3e1b0b",
             "selected": true,
             "reasonCode": "eligible"
@@ -49561,6 +49836,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.74ada349c5d310acff31f1d78e4661f86c6797652f47a19ff435b01dab0e7f53",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.74b70cf6cfac57645d646825ab10be39a55ed2e38688d96359ff0c1cb3d15e41",
             "selected": true,
             "reasonCode": "eligible"
@@ -49607,6 +49887,11 @@
         },
         {
             "stableId": "densecity.74d3fbbf99ef112a496640f8174cc2883befabd16c088dbb80533f68421c6fc9",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.74d4970aa789d42a04902d23c15bef7342f2ded573b1ca6d516f4bd82c0f2930",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -50451,11 +50736,6 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.76ba42666b69f70736f9224e0018a6266d5736de9045ad10f13b98c5c4f3283b",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
             "stableId": "densecity.76bccb80ed3ad1a3b8b1d29bf0dae6a83a1136edc00af8463b717cf0e2d27476",
             "selected": true,
             "reasonCode": "eligible"
@@ -50487,11 +50767,6 @@
         },
         {
             "stableId": "densecity.76d06f597f5e37dc9231ebda9e52de7bc21a97fb1de2d2ababd3548de0b24131",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
-            "stableId": "densecity.76d22fdc92f27955cdd61b12a957c5fc56acef76d73c7e46c7071b26e3e49c5a",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -50607,6 +50882,11 @@
         },
         {
             "stableId": "densecity.7728ec4596a7eecfa94c0b126a922231ae5327137547c0fb5ef9ac39c203dc19",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.772ae86a6e64b3a783630ffc8268d0ec26e313b57d3e84e60f4c7e6bd25dc83f",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -51691,6 +51971,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.799d807557cf468a4363ffa489a6e16897038157571fb4f1df8fbe4390a78557",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.79a0c002f4bd5b3dcd5d3c261e97d9e9b90a9149ec72fa8e55594f2e50316284",
             "selected": true,
             "reasonCode": "eligible"
@@ -51787,6 +52072,11 @@
         },
         {
             "stableId": "densecity.79ccdc7b56349c18c5f3dea7ec8ddefb8dfb1c820d2b843e7f5cac1a53092167",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.79cd8a785601e0172e4f12f10c59bedc909d5e637cefa192861c75479be0af36",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -52132,6 +52422,11 @@
         },
         {
             "stableId": "densecity.7aa3730f4be9cc1a78f2f2ca84345de44a057589a12070dd39ed6092c32fdac6",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.7aa84d003b0e5eed0ec6026632a209962966bc9469a4403f242cd49db122020e",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -52761,11 +53056,6 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.7c22e7d0d41f390ef32bb6d21fb74146283ccc5346b8d3a789f596d04bf44d95",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
             "stableId": "densecity.7c2d6202efda4bedbe3d2a883ba0ceaf35d6d935551998203fd412afda5cdbf4",
             "selected": true,
             "reasonCode": "eligible"
@@ -52777,6 +53067,11 @@
         },
         {
             "stableId": "densecity.7c37c9e90dc574a83b3ec00d09c33bdf1eb6c6e191d6e6e77a190c64f631ac2b",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.7c3b259d38b038c224045300fcb71c40bb3afc57b5b827c93e95f0aac2683592",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -53037,6 +53332,11 @@
         },
         {
             "stableId": "densecity.7cb8bf3353d2f974ff778a8955d42b0b4e0521b97847c1e07e824ae8ab0c62cc",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.7cbaed163ba419c8c3effc768cdf6c2d9014b90946ed8e8dbc33740222718e33",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -53461,6 +53761,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.7d9aab68d91c2bef5fdcf2e3e48786d9e918e0eec27df12114f5bc0716c32c79",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.7d9cd32372a676d778694b96b8efc9ad4f3a0fcbbaaf919cc97a68f17609af7d",
             "selected": true,
             "reasonCode": "eligible"
@@ -53601,6 +53906,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.7dcdea8f6e4cca5e41330eac9f53e65ccb52d28521b771c48ef5a983e8c13696",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.7dcec0c9591d877240f30f60885153e00fe684f6bd61466c9f27eea862256c77",
             "selected": true,
             "reasonCode": "eligible"
@@ -53612,6 +53922,11 @@
         },
         {
             "stableId": "densecity.7dcfc483db35fb1cfd45badb3073e3f94127d47c6523348b623261e1171e577b",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.7dd18b4eb72d486d0afe7c476401b277e9a4875dd9978228d7d8940c2942d6d1",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -53966,6 +54281,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.7ec8ff30a09db9baefc4ebd9b67e2027b6a896b35d6ac89397f44ab6e161eeaf",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.7ec915275b83b3da220bc00a2b6a1910fab2fb76751f00135ede5678f6b03fe9",
             "selected": true,
             "reasonCode": "eligible"
@@ -54197,11 +54517,6 @@
         },
         {
             "stableId": "densecity.7f5544db6d1140f45fdaf0f89790ba6260938dacf711a1937074b740b507ef6b",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
-            "stableId": "densecity.7f5aedf063a557c2343af058728b9f412191bdaac90c4cf4268c4281963a8d37",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -54497,6 +54812,11 @@
         },
         {
             "stableId": "densecity.800c8ae8c6595e86bb2bcbe6a0c90450ea4a99681b4788c0457757fec9e888b7",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.800edc159865416a6f443bdb32b564725016a6202b0fe037921ceec6cae3538d",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -55001,6 +55321,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.8141fda2406a8ba8712d3a8e0c2da97e6e6116583901037013071f364769d14b",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.81444a83342e31ad11ba5af77bf6f9391901dd706fe1c3534fb34292ca57c13d",
             "selected": true,
             "reasonCode": "eligible"
@@ -55297,6 +55622,11 @@
         },
         {
             "stableId": "densecity.81e85d19bc8d6a9396de3ce37a88199a76c6a7bc59fd277dc0e0d8ea22160950",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.81e9a34870eb4530d2bf1eaca91936d80a138276153fcfa436b95b6d05c205e4",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -55747,6 +56077,11 @@
         },
         {
             "stableId": "densecity.82f6a1bed0459c897f102e3e1c1357e29919742fc075c21dc74af8c0a1b37dcb",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.82f799c7e6604d1f152d45b5305b032542a43cd1c150f5769c9b21924c685c8b",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -57566,11 +57901,6 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.8716f900269ef4d17812341fd1c7fcdfbc21e1f07702bd53ff15855f3fd2d6b2",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
             "stableId": "densecity.871b88156fd743314ad3cccecd03d8103cc0fd89d021d094527fff153c198dc1",
             "selected": true,
             "reasonCode": "eligible"
@@ -58886,6 +59216,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.8a2e84601ef744373fef1f786bc80ad5d46e6872d0b0d70c96a854b41816665a",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.8a2f31259e928df19b8755b411434ee6d2f0f877c40c47cc2304ffe9dcf95ea7",
             "selected": true,
             "reasonCode": "eligible"
@@ -58946,7 +59281,7 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.8a56c6b38cd4d01dac590c952c2957ce9b68e4534177b7d81f4b5a95e9c3da74",
+            "stableId": "densecity.8a5fc5274b4886aa081c248398eb398b07af269ed4950d246dd41938c3e3fc73",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -59431,6 +59766,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.8ba428d9c4941a31f20b483f3b7008a314dec23d1b0473107c9cdcc812271122",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.8ba85e81282f8f39ef2fea6f8eb847b7605ddb4fc522bfc5b8a07d811c14ccc1",
             "selected": true,
             "reasonCode": "eligible"
@@ -59762,11 +60102,6 @@
         },
         {
             "stableId": "densecity.8c6fe85b12538e6f162a1252743daa162cdf3a38cd6b346152e3a17b897e37e2",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
-            "stableId": "densecity.8c760e20ccef8cb07770022d58a11b6c41350f68eb47eb3bb377f440c06e09ed",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -60211,6 +60546,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.8d85c964d24f0fdbfd526afdd21adb7fa237f6f95bacfa05743ee0981ed73f66",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.8d8bbd722dc897c2e2cf19df14177463ffefad51ebdb776c1e389d3aee640fdc",
             "selected": true,
             "reasonCode": "eligible"
@@ -60332,6 +60672,11 @@
         },
         {
             "stableId": "densecity.8de6b725509f04796a8d6d5c04969209abdb86f22627a4b3f7c1423f96e92848",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.8de9074cb0a58191945593036531ae5010b316dcd5795752e59fb5d54bb666d1",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -60712,6 +61057,11 @@
         },
         {
             "stableId": "densecity.8ee575ef0eada3c3061f5ce7b1bcf6f4df25720b87af6ea5e00159a0e4f036d9",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.8ee9865ced98cf5cbb59843c6da956675d35d2e49ae10a184f1e2ead8992a35e",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -61591,6 +61941,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.9112899a90e74022ab8ef93bf6a8d182c925830f9edda393648b7051cfe633ac",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.9116128a1456aa248e1d17044145ec3e7e262c486118aedca7e5eaa2f9f36627",
             "selected": true,
             "reasonCode": "eligible"
@@ -61702,6 +62057,11 @@
         },
         {
             "stableId": "densecity.914a54fb75f2b371eb225fb8ef8ca1797d2258411fa74fe5f9d4696c788f6c5d",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.914a722d38bf8d483feb9f297b19449e8d4896e49e325f53b4df4ec1da778804",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -61957,6 +62317,11 @@
         },
         {
             "stableId": "densecity.91d162395fc4779aa4f35c2793d2c00d83dc1fd3bba63e43b0abce40b3b0a2d5",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.91d2d64e510b72be779261305124335740d58a8fbf005fcdd09f2a14f423afee",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -63161,6 +63526,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.94a1fe10f9b21be29fb79689ef4882a9f943680368729c44a30e8806ec85a653",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.94a8183632df43ea3d261d698aa23778a778146952289d3d896b4d9d71381eb8",
             "selected": true,
             "reasonCode": "eligible"
@@ -63407,6 +63777,11 @@
         },
         {
             "stableId": "densecity.952af2777fbcdb980e40aabb3b56da200ebad4b80ee87bdccb074e175382e301",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.952ea2c0b32c70400575c59916163dce2bf70abbc03a0a4d8b55005b0227853b",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -64242,11 +64617,6 @@
         },
         {
             "stableId": "densecity.976293fdcd25d2ebf6bb0a27fecf066b667a866124e2c91e02359c36984602d3",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
-            "stableId": "densecity.97653f2788e4d39478f59df73c76e7b77b170beb084c1a2ee78dd9b1ef6d62d5",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -66476,6 +66846,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.9c8e0f20860d53c6e8e73135e64ecaf65a907707fc4461293e826067f992bb61",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.9c8fb03bbb4ee3c7574c2367f6440306f5127213cfc87f580ee3d69d65fef6d6",
             "selected": true,
             "reasonCode": "eligible"
@@ -67291,6 +67666,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.9e3591676ab3a95d6fb6170cb8e709d604a97749ea384e4c88372a95dcea5e54",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.9e35fcb9f90e03d3ff2903a5cfc2e153678d7f9441e14f0e921fd234f6c63441",
             "selected": true,
             "reasonCode": "eligible"
@@ -67526,11 +67906,6 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.9ec1d23262d6c75d3a9b4527ad9b4588d58837db31ef6b3f5b719fe794be7b22",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
             "stableId": "densecity.9ec5f890af0bcce3a240288df2f11163984ae222e37c2f1919dcbd083c8ce1b0",
             "selected": true,
             "reasonCode": "eligible"
@@ -67592,6 +67967,11 @@
         },
         {
             "stableId": "densecity.9eedd2b37dafb6139e8198a105e07ffd25adc2b5ba1ef8289bf2624a8b28a556",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.9eeec9ac7d52d9a321a8487d78ba16167f1d6f6eafc7a93fabd27e9ce292b0bd",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -67976,12 +68356,22 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.9fe69c2c4672be9959b581e484adb9c050b702d67f6e98b8b9dc54f5bba9e3ce",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.9fe708df9f801fd7010af203ba637e086e7ff5937d1c10e7217d20f8e836a055",
             "selected": true,
             "reasonCode": "eligible"
         },
         {
             "stableId": "densecity.9fe90d5738df3677591028382d60b87e1b7e6c8d6668939d3a77e31e4ced5926",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.9fea4fd4570aa8e4f1b5cbb08b271be09f0d378b5af9a738340df616b53e2d53",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -68601,11 +68991,6 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.a1a18a92e4739ddbdcb3b28f3cd576ad12e7c7599a2eca3040b939ab974b9a2c",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
             "stableId": "densecity.a1a3b44b2b8d6bc7b88c5beb720ede3300cced348745e1d203b045b492dad6af",
             "selected": true,
             "reasonCode": "eligible"
@@ -68702,6 +69087,11 @@
         },
         {
             "stableId": "densecity.a1d793d46eaf34bb62e81e0a93ee71ebccf2570e8a1c76de983718229206c78a",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.a1d94fdb322f138dca35d12ec1a213f756189100fcd38b4d386d78d067043920",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -69016,6 +69406,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.a29f98b117340c3a82515175a08fe88e166bee0878fefbecda384d8f2d67bb22",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.a2a7fe750057f89827c772cd0a6b7a05ebdd73f8d7c46267da8f40c618eaeaa5",
             "selected": true,
             "reasonCode": "eligible"
@@ -69172,6 +69567,11 @@
         },
         {
             "stableId": "densecity.a30fae3df17877f6162f905548cddf6a2598df3bc79fe3dbb8fdfc20a055ed58",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.a3103418d8b8928391a9e9542fde6aff595cbf47854a07cfbd9571fcc7e5a2ee",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -69676,6 +70076,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.a3f223a7433a3d942cb9de0244672adc8d788f1bc2cd946cf61e10e0efc7c896",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.a3f4b3d4a3e26df500668e9d28d2d955321f779bddb6e076ae80b9eb87e20b7e",
             "selected": true,
             "reasonCode": "eligible"
@@ -69857,6 +70262,11 @@
         },
         {
             "stableId": "densecity.a4511b702084a7ef7135f742c767bca7b21afd250c9611650ae56adb9bae6963",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.a45362dff12ec391db859724c123f71d371f9a6ca97d5012e332bb4fe12ac3cc",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -70381,6 +70791,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.a57d89c92c73a193e2e5cb7fa8d2428e933b58cb2069b3bf5c74cfdb75bfb5f7",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.a57e351f2ebd54a2b243a7ec080afbf7d6d246e8406053aafe276dca8e0bf1b7",
             "selected": true,
             "reasonCode": "eligible"
@@ -70726,6 +71141,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.a64c83c7c9309028db2ba53fa471d5a2b75c635a74c628f3d3089df6c4791272",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.a64e3d1587db04e2a8091485e5417f9cedde7e51a2b8e0c3ee6737c2c702ce34",
             "selected": true,
             "reasonCode": "eligible"
@@ -70827,11 +71247,6 @@
         },
         {
             "stableId": "densecity.a69b87a7fa5f6a1c160a2ab9d4050395cff24304ebfddaaeba1ca2a073e3957d",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
-            "stableId": "densecity.a69bcdcd8cae10281ade306729c33937024fd17b89164176f05d84750063b9c5",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -71126,11 +71541,6 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.a72a8e23996d281a2264a25967b3828b1c7cdd88274391dbf6430bc1dc5cb35b",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
             "stableId": "densecity.a72cd823293cf6bb4120572a6226899320c8cb54d40900b34f56d7ddf1d6f620",
             "selected": true,
             "reasonCode": "eligible"
@@ -71187,6 +71597,11 @@
         },
         {
             "stableId": "densecity.a74455c3d4ed9736d0e890a23d35dd9bbf347a5c150397c55718599d0a5048c5",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.a74478a3736787297731d6b3da10415b68272476052bc2a132f1a4e65e2be677",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -71876,6 +72291,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.a8c0fb17cdf7b59e1bd1104f5c07584800dc9cf184e350654876fa023d4a5261",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.a8c191f49c26092bfadc8e8101b7de333e4c7034bc313aa6deb73cea600c6865",
             "selected": true,
             "reasonCode": "eligible"
@@ -72072,11 +72492,6 @@
         },
         {
             "stableId": "densecity.a91e1802ed1a78823c374d83cfbf00c43c793baf3a0f44e5d7e2209753a6a756",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
-            "stableId": "densecity.a9229ccdd512f832cd66ca5afc225e46950061ef8e827fc34fa560c51c1e8c7f",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -72626,6 +73041,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.aa512a1cd3a62e2d09aba490c051897d4bf6166b9c58097ff796c66fd252bb44",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.aa52148f7cdd805322510c7ffe526f22974f9af9afc1fb3b30421fdb9bd855c6",
             "selected": true,
             "reasonCode": "eligible"
@@ -72901,6 +73321,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.aaef104800e64787e2fb805a07883ed4fbab3a794d050689eeab2e69ba868e74",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.aaf3c1eba5508cbd6bf70f21bb9265483af9a9d60d0f4e92b7b507b2a5c77b51",
             "selected": true,
             "reasonCode": "eligible"
@@ -73106,6 +73531,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.ab6a7a7c3f20994bca5d6e049d57cfdcabb2bb37433cfd94ffe29277da4fa91e",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.ab6b7ea5158079edf45da415ea7d875bd9aadba0509ad76975ad2edb9c5c97dc",
             "selected": true,
             "reasonCode": "eligible"
@@ -73137,11 +73567,6 @@
         },
         {
             "stableId": "densecity.ab87d8c2fbd00eb0e24571230751975576fe5d8a4d6a19f8a72721495121d6f9",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
-            "stableId": "densecity.ab88e00a0d4e14b0c3aa052abe5e80c446313b26ab363da7425987a18c51980c",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -73646,11 +74071,6 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.ac97c160a982f908489555ce3e09f574c79254886d533793339132153aa33e44",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
             "stableId": "densecity.ac98af7dc8bb233c6bca49d9636b258ff737d79a58a0f70a82194c1319911bff",
             "selected": true,
             "reasonCode": "eligible"
@@ -73792,6 +74212,11 @@
         },
         {
             "stableId": "densecity.acf7cdbd1c04b6df0fe88eaaf5764940fd89e20f1d82ee26b7522f73d251c040",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.acfa661819896a25e6cfa554fa2a6ef18d1849e82edcbdd9f7153427fa4fa1e5",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -74397,6 +74822,11 @@
         },
         {
             "stableId": "densecity.ae864fc9f7ade27c7e70a99b37d131737299df0096db8080a725bd68e01c805c",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.ae88623dc58d6431e123be7d1a04265987cfe172c552b207925275c8c5a62ceb",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -76146,6 +76576,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.b2e1dc9390250db7dca42efba3addc84e789bc902fd3f40548cf128a64740cd6",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.b2e31f94c2ee0c695bf85307af5acf9026f52c02983ec5417e1afe5f6723ad1e",
             "selected": true,
             "reasonCode": "eligible"
@@ -76621,6 +77056,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.b438389134056f3179a4a649bd365d0eb2f45e8c040a769ca1b5033b38097a9d",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.b43b83ace2c344c2887572b798d971ab5cdc6e82b14ec53b9bb165bba729ffce",
             "selected": true,
             "reasonCode": "eligible"
@@ -76706,12 +77146,22 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.b4671f4b6d73621f223cbf6f7e6ce75a103ff7ef42f1ab913b2bc37b17e11f8b",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.b469c28d7a4f573fd40b21ea41dbd3fe2d71d8c613df76081c2d3873f83701f2",
             "selected": true,
             "reasonCode": "eligible"
         },
         {
             "stableId": "densecity.b46cb2d1a117d475c94576f2051f92b07070d11d5732b6df72977b90c0e9c449",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.b470fdd20b238e8f78acbb9e28945d4286291ddd6c1de06267b6b3f8520d6059",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -76896,6 +77346,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.b4dab5b7df15bb8bdf91888958feb4d11bfce30ba51a33202aae2af8a52498d6",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.b4e1579458d8e04bb0a512622247c83a4f7207984da3b54d23e9e00214551b03",
             "selected": true,
             "reasonCode": "eligible"
@@ -76942,6 +77397,11 @@
         },
         {
             "stableId": "densecity.b4ecfdb45e08a42d5d3da3fdacd6577a3821dae5b0e2d43d8986de76ec47e4af",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.b4ef20435dfb0fdadc8577dfd6245f35a754d2c95691ea5d723ba8c9475b0eef",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -77132,6 +77592,11 @@
         },
         {
             "stableId": "densecity.b581a97cb97b1c5348ccb99e469e3fe3af1d74d77f96c51e8f11673ad122352c",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.b58cbfdda7d183125dd3495a42f46b157d4f1610b0adddc2ffca1fb9d4a19ac3",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -77707,6 +78172,11 @@
         },
         {
             "stableId": "densecity.b6c799f75523354897f65404961ea52c7c1278fcdebd6ac946f257e6cd5dc4e8",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.b6c9908bf31c34c55d856c3653a0f7e6c4054ae24cd0aed1eec0159c2cb5d0a0",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -78501,11 +78971,6 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.b88b1387b4c0b9db76aec4ef05d0de6d2aa484cb5d51fe001c50d39595c2114a",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
             "stableId": "densecity.b8924f71053e1597cb0a3f79a13b771e65a0ee84af02ca2a610e60c39a3c7537",
             "selected": true,
             "reasonCode": "eligible"
@@ -79161,6 +79626,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.ba645c2d8771d91d0c01794d5fbe2b6aaf52308cc2c7dc9785587f17e7e154c0",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.ba667a5dc4cc34b9b5c4e0fefde7560ef9c80cf2655ddb99da789f127773c541",
             "selected": true,
             "reasonCode": "eligible"
@@ -79801,6 +80271,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.bbd7c2afe72fb09b6e75a008cd89ada9a48e0d1ae9aeb138894c7df833b5648b",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.bbd8c2f94d3785afd9fb5c09c198aa0929d6eec81b8d21f9c5758e4e04e9b726",
             "selected": true,
             "reasonCode": "eligible"
@@ -79941,6 +80416,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.bc258d90936e5358e1f31b14b4567ce35747fe5ba2dc45ae3190bf5477c1b700",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.bc2689379f658e172d493b2ec0458e37eaa9131422dbae9f6a11717cdee2d642",
             "selected": true,
             "reasonCode": "eligible"
@@ -80037,6 +80517,11 @@
         },
         {
             "stableId": "densecity.bc57a075a70098891c409f66567ffe89849439bf724e32f4d368e00e7a215dff",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.bc5b1a405fe68281cf62ea36a6cdbc04ef0c6b6bbcce4692dba1bebd360d24fe",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -80172,11 +80657,6 @@
         },
         {
             "stableId": "densecity.bc9ee81ab32173bb50c4ddad6718edd30d787553a2cafbaf70cb6f2df22f779b",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
-            "stableId": "densecity.bca01400eb71869e0ce59cd1f7bffe5c99fee95f85af8ae5d6392743f4271b5b",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -80447,6 +80927,11 @@
         },
         {
             "stableId": "densecity.bd353014d05d9bea9fd1cac2b64e3b73bd00d0c150436068f9a4a26dad123aed",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.bd37b72f4b8fc0b6d05fa61c8927023717702206fabd9ab71f4fa05c11de5f05",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -81311,11 +81796,6 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.bf2546ace8aa64a0e649be34a4d0dc973e75ce4250bd48a2cc0387cebf9f8931",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
             "stableId": "densecity.bf2914c65c1a17b68251116f60ee8319b9c56084dfa913726390d6cbd6f21477",
             "selected": true,
             "reasonCode": "eligible"
@@ -81501,6 +81981,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.bf8cc5cd636bbda3138d256010ad46e8f6cfcdf727b78dc9c749dd519d1e6bd6",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.bf901774b89818def5131fc84ac368debd921a8930202b0d6ca11bc4c08d5180",
             "selected": true,
             "reasonCode": "eligible"
@@ -81672,6 +82157,11 @@
         },
         {
             "stableId": "densecity.bff38d8a62d3d23e7312f8084e3fb960d0f5eabf54b894bc17a9f86c558b2e11",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.bff4bdad71c1c8ef471c4ba46f99126fd06c60b2f65ff7b82e5c1d98c34bf6c2",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -81872,6 +82362,11 @@
         },
         {
             "stableId": "densecity.c07dc96b5c1bf2c00825e7f87978bb9613673636169882e8bb6357302cad066f",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.c0800dc5fe3395789ed0ca004fa7827a866d6410ece0346fe914ee624c0c06db",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -82161,11 +82656,6 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.c16e277726f8adfc4e956641c64f4736d531da9471c26145514bcd781a9b44d2",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
             "stableId": "densecity.c16fb49c34ae243cdf4fad970c0c1487603ec6958733a6548abde3c5257577c9",
             "selected": true,
             "reasonCode": "eligible"
@@ -82277,11 +82767,6 @@
         },
         {
             "stableId": "densecity.c1a9fe5d79daf79b07619df20feefe28241a49e3a37d0edc61b648c82a90e939",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
-            "stableId": "densecity.c1aa7b0d4d60994617d09a269af97a8c64097be3bf636b6bdcfe7d8c35b373e9",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -82447,11 +82932,6 @@
         },
         {
             "stableId": "densecity.c1f7cb2c6500e1f7643428ae65c2ab02c80207016633b4153ab3945d851690f9",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
-            "stableId": "densecity.c1fa1cde21f2bb0344cb71ddc766c73623afd2a0d98bc88d485a8c02fe0b4526",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -82791,6 +83271,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.c2c694d9788e556481a1feb6a6908a543c233f4f6710e1309e17bcf5a087018f",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.c2caff4fa1694dc836ef62cbcbdef1134748df412d5774f95270bc7d46f23c76",
             "selected": true,
             "reasonCode": "eligible"
@@ -83091,6 +83576,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.c38902ca58609a9ddbf29b3d117d5c1647a244ee58764fd746f9926997b991c4",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.c38eb51bda9e09e57a1877aa919c19fc85d3b994f5cda0e5e3e4c3a9b97ea298",
             "selected": true,
             "reasonCode": "eligible"
@@ -83192,6 +83682,11 @@
         },
         {
             "stableId": "densecity.c3d61228d14c3936c09dcee55a19dbaa9ce61493be6d1caaa581c47dee352c2b",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.c3d6fcfd367fa8f3d6ff7c47435bd06f39ddde6c0f38aa36fc3e2d4078c7acc7",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -83706,6 +84201,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.c52a87cef0665857bcc1a744536fb4aef468cde52c767fcdfb673f0bf33d8ef1",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.c52ab453bf80069979266f51aebafaac3be090f93a8363bab11b74631468c9e2",
             "selected": true,
             "reasonCode": "eligible"
@@ -83902,6 +84402,11 @@
         },
         {
             "stableId": "densecity.c5a7e6284dac7020314f01f417440e78c54366a03e8c8a5959d100cbcad96b77",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.c5a9c30729d8188f9944c112214a3234c04caa0de9681dd8918e132b16d69157",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -84172,6 +84677,11 @@
         },
         {
             "stableId": "densecity.c630dd6fdc780d3f4799bef734ade07ab61c585ee3b9846ee9dd6231df1bcbea",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.c6320e0e4046354eca6d2b19dd1302c3ca25169d0ccc6599d7f4fdf9f4c4590f",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -85091,6 +85601,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.c83518dfb18f25e85fdd5b124f02625e1c340984b14ac53532570a100691af51",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.c838efa6d380364785114947594342172097a7ebcb1ad3be47146ad8f8e6b527",
             "selected": true,
             "reasonCode": "eligible"
@@ -85227,11 +85742,6 @@
         },
         {
             "stableId": "densecity.c8688731a46b6d7cc2b642d582c766b8f67f8f879ee7401409f016bef4cf0888",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
-            "stableId": "densecity.c86d6d20ace728ba378f836aeb3a59b76ae31a8716c5617e8416feea31b09b80",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -85381,6 +85891,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.c8d4404b390f965d5994f02d7e193b870c3cb5334389935dfd491e98ff047f7e",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.c8d4730307bc985a2daed8f890c4da2f6fcb0e26cb0d2bcb210a83973fe790d4",
             "selected": true,
             "reasonCode": "eligible"
@@ -85482,11 +85997,6 @@
         },
         {
             "stableId": "densecity.c8ffb9ee6adf9b24b76b69a7023e5c9d9267c8d556d48e08fd09569bd4d84388",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
-            "stableId": "densecity.c900472257f7bcda7ce3a4178e1c5bb197a36feaa4c31f76c78c880e4d79eac8",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -85672,6 +86182,11 @@
         },
         {
             "stableId": "densecity.c957beb79c910d9d9826c4d9550b18c6b568375d90a3db189709ced6635af7ce",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.c95a42fe49618feefc091a6136016db736c6157232b5abc5b1d594ff6144b433",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -86001,6 +86516,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.ca34a2aa689ee145aac02cd3e3e12d06e90fe2eff84eafd4e757d6ad210b39f5",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.ca34ce3086489cee14a8cc5eae0ea4095b2bccfd2fa39c3b3021d0864b990530",
             "selected": true,
             "reasonCode": "eligible"
@@ -86147,6 +86667,11 @@
         },
         {
             "stableId": "densecity.ca7c77a1154499b33baea3d157e67f16218cb3f9bad0f5ae0350b72e3d2f2404",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.ca7c9df332785465920dbcbcd038ae5be639a5d17fd4d9e1776ba6318a95122e",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -86427,6 +86952,11 @@
         },
         {
             "stableId": "densecity.cb2b96dded0c9151dc5ac06cc2cb5f8130d2b8e03d173f447a2adf2ffefddc03",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.cb2d2921029a78fc88882984a5e853202b34cc7299b67f738359c688221d405f",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -90541,6 +91071,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.d441bb50874aab1abc8cb821bc615e1a3d0a0e2fc49e42f9a9eb4103b458d560",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.d4424f00212f7ab48473357b5d0cae5b3ad61ce0550b0ba6486a5b83581bc4fd",
             "selected": true,
             "reasonCode": "eligible"
@@ -90681,11 +91216,6 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.d47fe1702c071c84af023267c2d8120192015d107b0c0ee27331a96136b5eca4",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
             "stableId": "densecity.d484494f75b7f0639729ff2c5f25f581c322a841bdf3f941063d5b1a33c465f1",
             "selected": true,
             "reasonCode": "eligible"
@@ -90777,6 +91307,11 @@
         },
         {
             "stableId": "densecity.d4b33f233642127fdda0c3d59e02e1a91cd3c4773ce5c617934c439f10d89087",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.d4b4f7183c00ea17772ac72a202125939294b2eb1b4c4ae99356d007cba17567",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -91576,11 +92111,6 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.d68c8089b263938d5ca49372d088fc53d5caa85301fa8bdfaa95cb095a89ac61",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
             "stableId": "densecity.d68dc498554bacddf51aee212bf1d44df23bfa368fa1f3b3370e874553e28db7",
             "selected": true,
             "reasonCode": "eligible"
@@ -91717,6 +92247,11 @@
         },
         {
             "stableId": "densecity.d6c85bc06b0d216216e72cee35a3800814b0d5910890f70b2f2ba6d68c664793",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.d6cc342529e9039975d15b6ce1254c9d6df828e45ad946e46c669651f59e104b",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -91942,6 +92477,11 @@
         },
         {
             "stableId": "densecity.d74f689adee75ff9098a71a4653ddaf228e8600220347cfcfc30c745085b001b",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.d74f9a7c2d63e2fccfc983b626ff224fda2cd422bb4725877a2373b6689782e0",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -93562,6 +94102,11 @@
         },
         {
             "stableId": "densecity.dabc47cd06c06547ec5a0c759aba19e591517351ff1d2b9cb71c0cfc6c140248",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.dabd53d4c080af48ba300e97271760c1d7008fc88664ae96ce8472edfffc22cd",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -95791,11 +96336,6 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.df5a2c2aa4ea8fa21f1d748ed49c470249650899f04c7e285e5f9ba2fdb15b28",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
             "stableId": "densecity.df6b5948f0104111043110e01cff2d61686348bc58444a15096c06b51c0bf328",
             "selected": true,
             "reasonCode": "eligible"
@@ -95807,6 +96347,11 @@
         },
         {
             "stableId": "densecity.df6c09759889164327db79be5db1c528a436692db9f39feb9538f4d15765900f",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.df6c3764082e5368c81ea39d55d07efc5ccd243ebce86580c971d388830fee4d",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -96672,11 +97217,6 @@
         },
         {
             "stableId": "densecity.e139093c1ec895945f4af3ef19244cbdf377b955722a98a175ec893dda8f99cd",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
-            "stableId": "densecity.e13bd1036c8ce733aa70cb6a092452ef06b550ba77836844ae20375006644b62",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -98126,6 +98666,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.e47e0de663a2764a03eb84b05566e380572daa1974026c60e5f165b111489105",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.e47ef18443972ce6e4c9af8211ab65c54600205476788f9fe5831cdb4e9b08de",
             "selected": true,
             "reasonCode": "eligible"
@@ -98372,6 +98917,16 @@
         },
         {
             "stableId": "densecity.e4f7edeec3951427410ec58c63598f84d4f38a7e0676e26d5319f4008ee8eee7",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.e4f7fbab86c77e45f12c67e9c08cb272f49d6d0b75b1b019652aebcbe1ed0153",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.e4fbdb197a8d67d795b74379cc4fb4cf0cea32324fee127f65c4b394adf95568",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -98791,6 +99346,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.e5f53dcfe7fa07547bd513ff44c43ade93376ab2aefc0aba044b077cf2e1cfbe",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.e5f5f7f95afb06dd7d071c529a5ab6bbcef734a09ba88a4796a1aa97d087ceae",
             "selected": true,
             "reasonCode": "eligible"
@@ -98937,6 +99497,11 @@
         },
         {
             "stableId": "densecity.e64a51b1cbe1ac0bf5095615670c7562d4266d41a4d3ee5575b11cfd6b892c3a",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.e64a7aaec0bfb67d34baaf107fc90eaf8e86bb3da9466d785b89ccd15487e6f1",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -99701,6 +100266,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.e7eccb73163acd221c44667b4a375ce198e6809d280276e4880468652fe0e00d",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.e7f047b7308a22590b1c286c317aa40ef408077af9f94c5b626086aebc544c55",
             "selected": true,
             "reasonCode": "eligible"
@@ -100347,6 +100917,11 @@
         },
         {
             "stableId": "densecity.e9438fc3d7684664cf2ada3a3216389c32fccec846fe97506bbd678725f715dc",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.e945da568d03c2e881c21888cb8233b470cbb7b49c0265cb53188dbe918691fc",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -101216,6 +101791,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.eb67d9310bc092063009ca1d2e11a85caa6c26271f5f02fbf17602cfaec627da",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.eb68f60edcf198576f97f5b68219dd77a65983c9ac3662cf654a3ca02311d525",
             "selected": true,
             "reasonCode": "eligible"
@@ -101547,6 +102127,11 @@
         },
         {
             "stableId": "densecity.ec3b968da629fcfe3151a433cce7f832e462c568aaaef22068bf04d9e1c427f7",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
+            "stableId": "densecity.ec3c78d93da1bd0c379177f950d19917dcff86b737a9f13e584c1ecdcf86b882",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -103586,6 +104171,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.f0be1bc97519184de19e98d14c04f1ba79e15264c19111692cd333917d2769ad",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.f0bffde97e6a77505ebed658577e21eb62bdb5f83fbae6f023b70de29a5b498c",
             "selected": true,
             "reasonCode": "eligible"
@@ -105226,6 +105816,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.f4b88f509181678259cda988be377893d5c5dc924d2d9c787b7c237a2c8b0c90",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.f4b98d2ef2e64e0d34004b1424e85a6a3f852bd5387baf350dc6c163fda86fa1",
             "selected": true,
             "reasonCode": "eligible"
@@ -105631,6 +106226,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.f59236f9d644fc6c6b32fb3e638eef52f65f9bb5e42d12c5acbe818938ea3de1",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.f592c8cf9fa1838e835a2c83e4a31c0a378a4957256af2b10b184b36a45e5dab",
             "selected": true,
             "reasonCode": "eligible"
@@ -105827,11 +106427,6 @@
         },
         {
             "stableId": "densecity.f60229c0ca6f0151d708b3a631be59e8cb826a012894a8288f16ba93d8809cb7",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
-            "stableId": "densecity.f6063e9626391c3de88e83a512541ef386bcd52c91d7c0fc2b177f64e2792b3c",
             "selected": true,
             "reasonCode": "eligible"
         },
@@ -109266,6 +109861,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.feccfda2dbbdda52407ce1d25ba4bf5bf399301192d0aff00bac03f2541e6ac6",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.fed238216efdf2f71504745e7afcadc09a5a68f2f7e17aec29a996506ebbdb06",
             "selected": true,
             "reasonCode": "eligible"
@@ -109611,6 +110211,11 @@
             "reasonCode": "eligible"
         },
         {
+            "stableId": "densecity.ffc8355ed88133a7d327ee85cbf41bcddd840ae712ced27fed308fa36d86dd4e",
+            "selected": true,
+            "reasonCode": "eligible"
+        },
+        {
             "stableId": "densecity.ffcbd81b631b508b3118f6772fd3f5827551c36cd4c237e7c7e67badebb29c21",
             "selected": true,
             "reasonCode": "eligible"
@@ -109736,11 +110341,6 @@
             "reasonCode": "eligible"
         },
         {
-            "stableId": "densecity.fff9c2890a7eca766cb56c1055df50f1f93ab1fc0964cd7d73d2a37133d8f1e5",
-            "selected": true,
-            "reasonCode": "eligible"
-        },
-        {
             "stableId": "densecity.fffd020f1c793466dab27cb682bef0f35f7e4b900b0928da6b624346894f1fae",
             "selected": true,
             "reasonCode": "eligible"
@@ -109750,8 +110350,8 @@
         {
             "key": "CityHall",
             "eligible": 0,
-            "excluded": 171,
-            "total": 171
+            "excluded": 165,
+            "total": 165
         },
         {
             "key": "House",
@@ -109761,9 +110361,9 @@
         },
         {
             "key": "Shop",
-            "eligible": 5217,
+            "eligible": 4904,
             "excluded": 0,
-            "total": 5217
+            "total": 4904
         }
     ],
     "bySemanticCategory": [
@@ -109775,9 +110375,9 @@
         },
         {
             "key": "GameplayBuildingIntact",
-            "eligible": 12082,
-            "excluded": 171,
-            "total": 12253
+            "eligible": 11769,
+            "excluded": 165,
+            "total": 11934
         },
         {
             "key": "Horizon",
@@ -109787,9 +110387,9 @@
         },
         {
             "key": "Infrastructure",
-            "eligible": 38428,
+            "eligible": 38548,
             "excluded": 304,
-            "total": 38732
+            "total": 38852
         },
         {
             "key": "Prop",
@@ -118345,9 +118945,9 @@
         },
         {
             "key": "GameplayBuildingIntact|mesh||18319ed2ae961437dab6476d1015c664:23161423307815030|6fe5c156a3b147f49bd3e4766bda34b1:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 80,
+            "eligible": 78,
             "excluded": 0,
-            "total": 80
+            "total": 78
         },
         {
             "key": "GameplayBuildingIntact|mesh||1a8a1af8a2b73ae4787feda0f3c5c364:23158228778860600|98b363230d511da4c9ea9dc9b233f3c1:4300004|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
@@ -118417,9 +119017,9 @@
         },
         {
             "key": "GameplayBuildingIntact|mesh||3582d1daf7b3e4ba9937f61fa5bb7a66:23000898357209822|4d3ad0f0252a9d7418a575cd2c48f248:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 172,
+            "eligible": 138,
             "excluded": 0,
-            "total": 172
+            "total": 138
         },
         {
             "key": "GameplayBuildingIntact|mesh||3e8be80e995174e9c874adc7ac4b18ad:23162872264435234|b8b82f9f2ac7d5642bf3b027a9b5becd:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
@@ -118459,15 +119059,15 @@
         },
         {
             "key": "GameplayBuildingIntact|mesh||48725e346fef34d2491fd467f02052bc:23939979429664214|a0e132ea00f6c3e4cab5d6123534683c:4300000|59266c69bb5e4a44b82461f5af99ddc5:2100000|0",
-            "eligible": 169,
+            "eligible": 138,
             "excluded": 0,
-            "total": 169
+            "total": 138
         },
         {
             "key": "GameplayBuildingIntact|mesh||48c0105c72f684dafafb8003ff442043:23368719039761276|9c4d7e306aee98b4ab7d8e6a21c6b965:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 83,
+            "eligible": 80,
             "excluded": 0,
-            "total": 83
+            "total": 80
         },
         {
             "key": "GameplayBuildingIntact|mesh||551e5e6dfec7745bf9458ed055228562:23230769708525028|0fa49f22b5e7c1344814a3e9097086a6:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
@@ -118543,9 +119143,9 @@
         },
         {
             "key": "GameplayBuildingIntact|mesh||58091f368fb3d434a8f873d329d170a5:23145407954086054|ba860a25ff5b5a642892d5955d183333:4300000|59266c69bb5e4a44b82461f5af99ddc5:2100000|0",
-            "eligible": 167,
+            "eligible": 144,
             "excluded": 0,
-            "total": 167
+            "total": 144
         },
         {
             "key": "GameplayBuildingIntact|mesh||5838b58b4ee2042da81e088ee01e3382:1866058471840888834|07b62f9b8bec88f4a80a8215e0497be5:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
@@ -118771,9 +119371,9 @@
         },
         {
             "key": "GameplayBuildingIntact|mesh||8721a0b09024b4b3499dd21cbb927fd5:23624724685017898|7d6af040e5782264b80c246cfb086fd6:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 58,
+            "eligible": 57,
             "excluded": 0,
-            "total": 58
+            "total": 57
         },
         {
             "key": "GameplayBuildingIntact|mesh||8ba361617aee4468db28f0c04f5a36e5:23112575706698374|5cbc4148baeac774ab5980b037254a49:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
@@ -119017,21 +119617,21 @@
         },
         {
             "key": "GameplayBuildingIntact|mesh||915b4a7e97eaf463f8295f8536acf4a2:23003001357791068|71c6e4d7e2bd4bc4ba7050f6772669d8:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 150,
+            "eligible": 141,
             "excluded": 0,
-            "total": 150
+            "total": 141
         },
         {
             "key": "GameplayBuildingIntact|mesh||93ae0a63fdaf74332abcde7ecf70d911:23820545000984488|85f5503fe883f4a4aa272fb89cf3841c:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 163,
+            "eligible": 129,
             "excluded": 0,
-            "total": 163
+            "total": 129
         },
         {
             "key": "GameplayBuildingIntact|mesh||9681790cb9d364966871b29e11b4fd41:23041846808948610|2343a657de76fac46bf0ca7d4ea83be2:4300000|59266c69bb5e4a44b82461f5af99ddc5:2100000|0",
-            "eligible": 142,
+            "eligible": 144,
             "excluded": 0,
-            "total": 142
+            "total": 144
         },
         {
             "key": "GameplayBuildingIntact|mesh||98105b554051a49c087228af3e9ca7b5:2456742163627643451|846f7666f466e9a41aa482e5698e74c9:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
@@ -119082,16 +119682,10 @@
             "total": 12
         },
         {
-            "key": "GameplayBuildingIntact|mesh||a11fc506ab2f947b6a494e194230ba68:23840219150242980|648b6202b99a19746a1acb07f3a49beb:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 0,
-            "excluded": 6,
-            "total": 6
-        },
-        {
             "key": "GameplayBuildingIntact|mesh||a499b6ca16f7d443697f2c700c688573:23232591932433212|696fd0370ebf4f2469314643c089d3ba:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 78,
+            "eligible": 69,
             "excluded": 0,
-            "total": 78
+            "total": 69
         },
         {
             "key": "GameplayBuildingIntact|mesh||b189dceced0fc4c78bf6b1d2374fb6b0:2226447368197188737|1d3b70190da126145b9837bd88482303:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
@@ -119131,9 +119725,9 @@
         },
         {
             "key": "GameplayBuildingIntact|mesh||c030be409b8104f3c97fa08635717f26:23080208840483292|72ecca11eb569994fa9b4d349060508f:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 75,
+            "eligible": 66,
             "excluded": 0,
-            "total": 75
+            "total": 66
         },
         {
             "key": "GameplayBuildingIntact|mesh||c07a4ea7418664c24ad4c16fd7f26424:7153339257403390523|0366124c30891f04f8f4e27209c49207:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
@@ -119220,16 +119814,10 @@
             "total": 7
         },
         {
-            "key": "GameplayBuildingIntact|mesh||df177e0a111214d6fbecf786840c4ffa:23430190310130970|489ed28ad2eaf284fb9406f0d1b10adc:4300000|59266c69bb5e4a44b82461f5af99ddc5:2100000|0",
-            "eligible": 145,
-            "excluded": 0,
-            "total": 145
-        },
-        {
             "key": "GameplayBuildingIntact|mesh||e0b6786493efc4748a3669b66e733e1f:23927110349108016|8dc5a5d08c1936d45aeb62efd4f19b95:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 86,
+            "eligible": 78,
             "excluded": 0,
-            "total": 86
+            "total": 78
         },
         {
             "key": "GameplayBuildingIntact|mesh||e5ccf49c3946a43099159b46d3315dfc:23403433648238258|1ab4e64968c30e742bceaec998ff852f:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
@@ -119305,9 +119893,9 @@
         },
         {
             "key": "GameplayBuildingIntact|mesh||ee56db34303a94a3e83c44ec8dc94647:23820164143229318|bcbe6102b075f044aa8ae9227b603f13:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
-            "eligible": 102,
+            "eligible": 95,
             "excluded": 0,
-            "total": 102
+            "total": 95
         },
         {
             "key": "GameplayBuildingIntact|mesh||f17185abba3e947a0a3b7f2170c1af75:2297677532899004126|b2ac065c98983b9439042cc64c2557c6:4300000|28053772e042a4ad19cd1e62c348a9ef:2100000|0",
@@ -119568,6 +120156,12 @@
             "total": 796
         },
         {
+            "key": "Infrastructure|prefab|31b565bae9fe149fbb7e2a3ada766889:1875645083152958|31b565bae9fe149fbb7e2a3ada766889:23776499277159422|6b22745d680809a468c1cf5e61035c6c:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 60,
+            "excluded": 0,
+            "total": 60
+        },
+        {
             "key": "Infrastructure|prefab|52c79ec8cc070488db50bc7b83e6a239:1870349420866156|52c79ec8cc070488db50bc7b83e6a239:23791145873048440|eb53db972f906f24db6c9ec6ece86ec2:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
             "eligible": 636,
             "excluded": 0,
@@ -119728,6 +120322,12 @@
             "eligible": 122,
             "excluded": 0,
             "total": 122
+        },
+        {
+            "key": "Infrastructure|prefab|9c07e98a21ae24974b345dc7ab589bf6:1967413743015570|9c07e98a21ae24974b345dc7ab589bf6:23083796344142332|ba39ca33b06c4c642ab732f14dd089f2:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
+            "eligible": 60,
+            "excluded": 0,
+            "total": 60
         },
         {
             "key": "Infrastructure|prefab|aed60d2f3de7844f0ad228486c510d50:1532088383690136|aed60d2f3de7844f0ad228486c510d50:23077661688082786|51ae3a82e4ede004088b051f37f99c62:4300000|48843a2db7a47754f9c8d6ae390ebf4b:2100000|0",
@@ -120111,9 +120711,9 @@
     "byRendererType": [
         {
             "key": "UnityEngine.MeshRenderer",
-            "eligible": 61813,
-            "excluded": 14592,
-            "total": 76405
+            "eligible": 61620,
+            "excluded": 14586,
+            "total": 76206
         }
     ],
     "byPolicyBucket": [
@@ -120137,15 +120737,15 @@
         },
         {
             "key": "OpaqueShadowsOff|0|1|Object|2",
-            "eligible": 11984,
+            "eligible": 11884,
             "excluded": 41,
-            "total": 12025
+            "total": 11925
         },
         {
             "key": "OpaqueShadowsOn|0|1|Object|3",
-            "eligible": 46200,
-            "excluded": 13926,
-            "total": 60126
+            "eligible": 46107,
+            "excluded": 13920,
+            "total": 60027
         },
         {
             "key": "Unsupported:Transparent render policy does not support cast or static shadows.",
@@ -120163,9 +120763,9 @@
         },
         {
             "key": "Opaque",
-            "eligible": 58184,
-            "excluded": 13968,
-            "total": 72152
+            "eligible": 57991,
+            "excluded": 13962,
+            "total": 71953
         },
         {
             "key": "Transparent",
@@ -120195,15 +120795,15 @@
         },
         {
             "key": "SupportedPolicy:OpaqueShadowsOff",
-            "eligible": 11984,
+            "eligible": 11884,
             "excluded": 42,
-            "total": 12026
+            "total": 11926
         },
         {
             "key": "SupportedPolicy:OpaqueShadowsOn",
-            "eligible": 46200,
-            "excluded": 13926,
-            "total": 60126
+            "eligible": 46107,
+            "excluded": 13920,
+            "total": 60027
         }
     ],
     "byGameplayOwnership": [
@@ -120227,15 +120827,15 @@
         },
         {
             "key": "DenseGenerated:GameplayBuildings",
-            "eligible": 12082,
-            "excluded": 171,
-            "total": 12253
+            "eligible": 11769,
+            "excluded": 165,
+            "total": 11934
         },
         {
             "key": "DenseGenerated:RenderOnly",
-            "eligible": 49731,
+            "eligible": 49851,
             "excluded": 359,
-            "total": 50090
+            "total": 50210
         },
         {
             "key": "Unresolved",
@@ -120253,15 +120853,15 @@
         },
         {
             "key": "eligible",
-            "eligible": 61813,
+            "eligible": 61620,
             "excluded": 0,
-            "total": 61813
+            "total": 61620
         },
         {
             "key": "gameplay-building-family-unsupported-render-policy",
             "eligible": 0,
-            "excluded": 171,
-            "total": 171
+            "excluded": 165,
+            "total": 165
         },
         {
             "key": "unique-environment-content-resident",

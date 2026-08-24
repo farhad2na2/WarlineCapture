@@ -17,6 +17,73 @@ namespace Game.Editor
 {
     internal static class DenseMiddleEasternCityEditModeBuilder
     {
+        internal readonly struct RetainedRooftopPropAnchor
+        {
+            internal RetainedRooftopPropAnchor(
+                string stablePath,
+                Matrix4x4 worldMatrix,
+                Bounds rendererBounds,
+                Bounds attachmentBounds,
+                Bounds attachmentLocalBounds,
+                Matrix4x4 attachmentWorldMatrix)
+            {
+                if (string.IsNullOrWhiteSpace(stablePath))
+                    throw new ArgumentException("A stable retained-prop path is required.", nameof(stablePath));
+                if (!IsFiniteVector(rendererBounds.center) || !IsFiniteVector(rendererBounds.extents) ||
+                    rendererBounds.size.x <= 0f || rendererBounds.size.y <= 0f ||
+                    rendererBounds.size.z <= 0f)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(rendererBounds));
+                }
+                if (!IsFiniteVector(attachmentBounds.center) ||
+                    !IsFiniteVector(attachmentBounds.extents) ||
+                    attachmentBounds.size.x <= 0f || attachmentBounds.size.y <= 0f ||
+                    attachmentBounds.size.z <= 0f)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(attachmentBounds));
+                }
+                if (!IsFiniteVector(attachmentLocalBounds.center) ||
+                    !IsFiniteVector(attachmentLocalBounds.extents) ||
+                    attachmentLocalBounds.size.x <= 0f ||
+                    attachmentLocalBounds.size.y <= 0f ||
+                    attachmentLocalBounds.size.z <= 0f)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(attachmentLocalBounds));
+                }
+
+                StablePath = stablePath;
+                WorldMatrix = worldMatrix;
+                RendererBounds = rendererBounds;
+                AttachmentBounds = attachmentBounds;
+                AttachmentLocalBounds = attachmentLocalBounds;
+                AttachmentWorldMatrix = attachmentWorldMatrix;
+            }
+
+            internal string StablePath { get; }
+            internal Matrix4x4 WorldMatrix { get; }
+            internal Bounds RendererBounds { get; }
+            internal Bounds AttachmentBounds { get; }
+            internal Bounds AttachmentLocalBounds { get; }
+            internal Matrix4x4 AttachmentWorldMatrix { get; }
+        }
+
+        internal readonly struct RetainedRooftopSupportPlan
+        {
+            internal RetainedRooftopSupportPlan(
+                Matrix4x4 platformWorldMatrix,
+                Matrix4x4 verticalSupportWorldMatrix)
+            {
+                PlatformWorldMatrix = platformWorldMatrix;
+                VerticalSupportWorldMatrix = verticalSupportWorldMatrix;
+            }
+
+            internal Matrix4x4 PlatformWorldMatrix { get; }
+            internal Matrix4x4 VerticalSupportWorldMatrix { get; }
+        }
+
+        private static bool IsFiniteVector(Vector3 value) =>
+            float.IsFinite(value.x) && float.IsFinite(value.y) && float.IsFinite(value.z);
+
         internal readonly struct Result
         {
             public readonly int RoadTiles;
@@ -1053,7 +1120,6 @@ namespace Game.Editor
             "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Airconditioner_06.prefab",
             "Assets/PolygonMilitary/Prefabs/Props/Signs/SM_Prop_Sign_Shop_01.prefab",
             "Assets/PolygonMilitary/Prefabs/Props/Signs/SM_Prop_Sign_Shop_02.prefab",
-            "Assets/PolygonMilitary/Prefabs/Props/Signs/SM_Prop_Sign_Shop_04.prefab",
             "Assets/PolygonMilitary/Prefabs/Props/Signs/SM_Prop_Sign_Shop_06.prefab"
         };
 
@@ -1173,6 +1239,14 @@ namespace Game.Editor
         private const string RoofCap03PrefabPath =
             "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Roof_Cap_03.prefab";
 
+        internal const string RetainedRooftopPlatformPrefabPath =
+            "Assets/PolygonMilitary/Prefabs/Props/PipeLine/" +
+            "SM_Prop_Pipeline_SmokeStack_Platform_01.prefab";
+
+        internal const string RetainedRooftopVerticalSupportPrefabPath =
+            "Assets/PolygonMilitary/Prefabs/Props/PipeLine/" +
+            "SM_Prop_Pipeline_Pipe_Small_Support_01.prefab";
+
         private static readonly Dictionary<GameObject, bool> DenseCityPrefabUsabilityCache = new();
 
         internal static Vector2 GetRoadGridOrigin(RuntimeCityRAndDMapView view)
@@ -1197,6 +1271,21 @@ namespace Game.Editor
             Transform generatedRoot,
             RuntimeCitySpawnerSystemConfig config,
             DenseCityProtectedAutobahnRouteDescriptor protectedAutobahnReplacement)
+        {
+            return Build(
+                view,
+                generatedRoot,
+                config,
+                protectedAutobahnReplacement,
+                null);
+        }
+
+        internal static Result Build(
+            RuntimeCityRAndDMapView view,
+            Transform generatedRoot,
+            RuntimeCitySpawnerSystemConfig config,
+            DenseCityProtectedAutobahnRouteDescriptor protectedAutobahnReplacement,
+            IReadOnlyList<RetainedRooftopPropAnchor> retainedRooftopPropAnchors)
         {
             if (view == null)
                 throw new ArgumentNullException(nameof(view));
@@ -1363,6 +1452,13 @@ namespace Game.Editor
                 roadResult.BoulevardMedianCells,
                 authoredGradeElevation,
                 config.RandomSeed);
+            int retainedRooftopSupports = AddRetainedRooftopPropSupports(
+                generatedRoot,
+                retainedRooftopPropAnchors,
+                authoredGradeElevation,
+                config.RandomSeed,
+                generationTransactions,
+                protectedOverlapRenderers);
             OpenGroundDetailResult openGroundDetails = AddOpenGroundDetails(
                 generatedRoot,
                 cityOrigin,
@@ -1380,7 +1476,8 @@ namespace Game.Editor
                 generationTransactions);
             Debug.Log(
                 $"[DenseCityDetailPass] roofCaps={roofDetails} " +
-                $"openGroundPatches={openGroundDetails.Visuals}");
+                $"openGroundPatches={openGroundDetails.Visuals} " +
+                $"retainedRooftopSupports={retainedRooftopSupports}");
             Debug.Log(
                 $"[DenseCityUrbanProps] waterTanks={urbanDetails.WaterTanks} " +
                 $"rooftopUtilities={urbanDetails.RooftopUtilities} " +
@@ -7488,6 +7585,162 @@ namespace Game.Editor
             }
         }
 
+        internal static int RemoveDetachedElevatedBuildingAttachments(Transform generatedRoot)
+        {
+            GameObject[] detached =
+                CollectDetachedElevatedBuildingAttachmentsFromGeneratedRoot(generatedRoot);
+            for (int index = 0; index < detached.Length; index++)
+                UnityEngine.Object.DestroyImmediate(detached[index]);
+            return detached.Length;
+        }
+
+        internal static int CountDetachedElevatedBuildingAttachments(Transform generatedRoot) =>
+            CollectDetachedElevatedBuildingAttachmentsFromGeneratedRoot(generatedRoot).Length;
+
+        private static GameObject[] CollectDetachedElevatedBuildingAttachmentsFromGeneratedRoot(
+            Transform generatedRoot)
+        {
+            if (generatedRoot == null)
+                throw new ArgumentNullException(nameof(generatedRoot));
+            Transform[] buildings = generatedRoot
+                .GetComponentsInChildren<Transform>(false)
+                .Where(transform =>
+                    string.Equals(transform.name, "DenseCityBuilding", StringComparison.Ordinal))
+                .OrderBy(GetTransformPath, StringComparer.Ordinal)
+                .ToArray();
+            var detached = new List<GameObject>();
+            for (int buildingIndex = 0; buildingIndex < buildings.Length; buildingIndex++)
+            {
+                detached.AddRange(
+                    CollectDetachedElevatedBuildingAttachmentsForBuilding(
+                        buildings[buildingIndex]));
+            }
+            return detached.Distinct().ToArray();
+        }
+
+        private static GameObject[] CollectDetachedElevatedBuildingAttachmentsForBuilding(
+            Transform building)
+        {
+            var detached = new List<GameObject>();
+            if (building == null)
+                return detached.ToArray();
+            Renderer[] buildingBodies = building
+                .GetComponentsInChildren<Renderer>(false)
+                .Where(renderer =>
+                {
+                    MeshFilter filter = renderer.GetComponent<MeshFilter>();
+                    string meshName = filter != null && filter.sharedMesh != null
+                        ? filter.sharedMesh.name
+                        : renderer.gameObject.name;
+                    return meshName.StartsWith("SM_Bld_", StringComparison.Ordinal) &&
+                           !meshName.StartsWith("SM_Bld_WaterTank_", StringComparison.Ordinal);
+                })
+                .ToArray();
+            if (buildingBodies.Length == 0)
+                return detached.ToArray();
+            float foundationHeight = buildingBodies.Min(renderer => renderer.bounds.min.y);
+            Transform[] attachmentRoots = building
+                .GetComponentsInChildren<Transform>(false)
+                .Where(transform =>
+                    transform != building &&
+                    transform.name.StartsWith("SM_Prop_", StringComparison.Ordinal) &&
+                    !HasPropAncestor(transform.parent, building))
+                .OrderBy(GetTransformPath, StringComparer.Ordinal)
+                .ToArray();
+            for (int attachmentIndex = 0;
+                 attachmentIndex < attachmentRoots.Length;
+                 attachmentIndex++)
+            {
+                Transform attachment = attachmentRoots[attachmentIndex];
+                if (attachment == null ||
+                    !TryGetActiveWorldBounds(attachment, out Bounds attachmentBounds))
+                {
+                    continue;
+                }
+
+                if (IsUnownedPrefabShopSign(attachment))
+                {
+                    detached.Add(attachment.gameObject);
+                    continue;
+                }
+
+                float nearestBodyGap = float.PositiveInfinity;
+                for (int bodyIndex = 0; bodyIndex < buildingBodies.Length; bodyIndex++)
+                {
+                    nearestBodyGap = Mathf.Min(
+                        nearestBodyGap,
+                        DistanceBetweenBounds(
+                            attachmentBounds,
+                            buildingBodies[bodyIndex].bounds));
+                }
+                if (IsDetachedElevatedBuildingAttachment(
+                        attachmentBounds,
+                        foundationHeight,
+                        nearestBodyGap))
+                {
+                    detached.Add(attachment.gameObject);
+                }
+            }
+            return detached.ToArray();
+        }
+
+        private static bool IsUnownedPrefabShopSign(Transform attachment) =>
+            attachment.name.StartsWith("SM_Prop_Sign_Shop_", StringComparison.Ordinal) &&
+            attachment.GetComponent<OperationMapBuildingAttachmentAuthoring>() == null;
+
+        internal static bool IsDetachedElevatedBuildingAttachment(
+            Bounds attachmentBounds,
+            float foundationHeight,
+            float nearestBuildingBodyGap)
+        {
+            const float GroundContactTolerance = 0.1f;
+            const float BuildingContactTolerance = 0.35f;
+            return attachmentBounds.min.y > foundationHeight + GroundContactTolerance &&
+                   nearestBuildingBodyGap > BuildingContactTolerance;
+        }
+
+        private static bool HasPropAncestor(Transform candidate, Transform buildingRoot)
+        {
+            while (candidate != null && candidate != buildingRoot)
+            {
+                if (candidate.name.StartsWith("SM_Prop_", StringComparison.Ordinal))
+                    return true;
+                candidate = candidate.parent;
+            }
+            return false;
+        }
+
+        private static bool TryGetActiveWorldBounds(Transform root, out Bounds bounds)
+        {
+            bounds = default;
+            Renderer[] renderers = root.GetComponentsInChildren<Renderer>(false);
+            bool found = false;
+            for (int index = 0; index < renderers.Length; index++)
+            {
+                Renderer renderer = renderers[index];
+                if (renderer == null || !renderer.enabled)
+                    continue;
+                if (!found)
+                {
+                    bounds = renderer.bounds;
+                    found = true;
+                }
+                else
+                {
+                    bounds.Encapsulate(renderer.bounds);
+                }
+            }
+            return found;
+        }
+
+        private static float DistanceBetweenBounds(Bounds left, Bounds right)
+        {
+            float x = Mathf.Max(0f, Mathf.Max(left.min.x - right.max.x, right.min.x - left.max.x));
+            float y = Mathf.Max(0f, Mathf.Max(left.min.y - right.max.y, right.min.y - left.max.y));
+            float z = Mathf.Max(0f, Mathf.Max(left.min.z - right.max.z, right.min.z - left.max.z));
+            return Mathf.Sqrt(x * x + y * y + z * z);
+        }
+
         private static DenseCityFrontageEdge ToDenseCityFrontageEdge(FrontageSnapEdge edge) => edge switch
         {
             FrontageSnapEdge.None => DenseCityFrontageEdge.None,
@@ -7563,6 +7816,433 @@ namespace Game.Editor
                 "SM_Bld_Roof_Cap_03 (2)",
                 int.MaxValue);
             return count;
+        }
+
+        private static int AddRetainedRooftopPropSupports(
+            Transform generatedRoot,
+            IReadOnlyList<RetainedRooftopPropAnchor> anchors,
+            float authoredGradeElevation,
+            uint seed,
+            DenseCityGenerationTransactionContext generationTransactions,
+            ISet<Renderer> protectedOverlapRenderers)
+        {
+            if (anchors == null || anchors.Count == 0)
+                return 0;
+            if (generatedRoot == null)
+                throw new ArgumentNullException(nameof(generatedRoot));
+            if (generationTransactions == null)
+                throw new ArgumentNullException(nameof(generationTransactions));
+            if (protectedOverlapRenderers == null)
+                throw new ArgumentNullException(nameof(protectedOverlapRenderers));
+
+            GameObject platformPrefab = LoadRequiredPrefab(RetainedRooftopPlatformPrefabPath);
+            GameObject verticalSupportPrefab =
+                LoadRequiredPrefab(RetainedRooftopVerticalSupportPrefabPath);
+            if (!TryGetPrefabLocalRendererBounds(platformPrefab.transform, out Bounds platformPrefabBounds) ||
+                !TryGetPrefabLocalRendererBounds(
+                    verticalSupportPrefab.transform,
+                    out Bounds verticalSupportPrefabBounds))
+            {
+                throw new InvalidOperationException(
+                    "Retained-prop support prefabs require non-degenerate renderer bounds.");
+            }
+            DenseCityVisualAssetMetadata platformMetadata =
+                DenseCityVisualAssetMetadataExtractor.Extract(platformPrefab);
+            DenseCityVisualAssetMetadata verticalSupportMetadata =
+                DenseCityVisualAssetMetadataExtractor.Extract(verticalSupportPrefab);
+
+            RetainedRooftopPropAnchor[] orderedAnchors = anchors
+                .OrderBy(anchor => anchor.StablePath, StringComparer.Ordinal)
+                .ToArray();
+            int supportCount = 0;
+            for (int anchorIndex = 0; anchorIndex < orderedAnchors.Length; anchorIndex++)
+            {
+                RetainedRooftopPropAnchor anchor = orderedAnchors[anchorIndex];
+                if (!TryPlanRetainedRooftopSupportAssembly(
+                        anchor,
+                        authoredGradeElevation,
+                        platformPrefabBounds,
+                        verticalSupportPrefabBounds,
+                        out RetainedRooftopSupportPlan plan,
+                        out string planningError))
+                {
+                    throw new InvalidOperationException(planningError);
+                }
+
+                GameObject platformInstance = null;
+                GameObject verticalSupportInstance = null;
+                bool accepted = generationTransactions.TryPlacePresentationOnlyVisuals(
+                    0,
+                    2,
+                    2,
+                    sequence => new[]
+                    {
+                        DenseCityRenderOnlyPresentationRecordFactory.Create(
+                            new DenseCityRenderOnlyPresentationRecordInput(
+                                DenseCityGeneratorSchema,
+                                unchecked((int)seed),
+                                0,
+                                sequence,
+                                "retained-rooftop-platform-visual",
+                                DenseCityPresentationCategory.Infrastructure,
+                                platformMetadata.PrefabAssetGuid,
+                                platformMetadata.PrefabLocalId,
+                                platformMetadata.MaterialAssetGuids,
+                                plan.PlatformWorldMatrix,
+                                true,
+                                true,
+                                2,
+                                true)),
+                        DenseCityRenderOnlyPresentationRecordFactory.Create(
+                            new DenseCityRenderOnlyPresentationRecordInput(
+                                DenseCityGeneratorSchema,
+                                unchecked((int)seed),
+                                0,
+                                sequence + 1,
+                                "retained-rooftop-vertical-support-visual",
+                                DenseCityPresentationCategory.Infrastructure,
+                                verticalSupportMetadata.PrefabAssetGuid,
+                                verticalSupportMetadata.PrefabLocalId,
+                                verticalSupportMetadata.MaterialAssetGuids,
+                                plan.VerticalSupportWorldMatrix,
+                                true,
+                                true,
+                                2,
+                                true))
+                    },
+                    () =>
+                    {
+                        platformInstance = DenseCityPhysicsComponentStripper.InstantiatePrefabWithoutPhysics(
+                            platformPrefab,
+                            generatedRoot);
+                        verticalSupportInstance =
+                            DenseCityPhysicsComponentStripper.InstantiatePrefabWithoutPhysics(
+                                verticalSupportPrefab,
+                                generatedRoot);
+                        if (platformInstance == null || verticalSupportInstance == null)
+                            return false;
+                        platformInstance.name =
+                            $"{platformPrefab.name}_RetainedPlatform_{anchorIndex:0000}";
+                        verticalSupportInstance.name =
+                            $"{verticalSupportPrefab.name}_RetainedSupport_{anchorIndex:0000}";
+                        DenseCityRenderOnlyPresentationRealizer.ApplyWorldMatrix(
+                            platformInstance.transform,
+                            plan.PlatformWorldMatrix);
+                        DenseCityRenderOnlyPresentationRealizer.ApplyWorldMatrix(
+                            verticalSupportInstance.transform,
+                            plan.VerticalSupportWorldMatrix);
+                        DisableColliders(platformInstance);
+                        DisableColliders(verticalSupportInstance);
+                        if (!TryGetWorldBounds(platformInstance.transform, out Bounds platformBounds) ||
+                            !TryGetWorldBounds(
+                                verticalSupportInstance.transform,
+                                out Bounds verticalSupportBounds) ||
+                            !CoversRetainedRooftopProp(anchor.RendererBounds, platformBounds) ||
+                            !ConnectsRetainedRooftopPlatformToAttachment(
+                                platformBounds,
+                                verticalSupportBounds,
+                                anchor))
+                        {
+                            return false;
+                        }
+                        AddProtectedOverlapRenderers(platformInstance, protectedOverlapRenderers);
+                        AddProtectedOverlapRenderers(
+                            verticalSupportInstance,
+                            protectedOverlapRenderers);
+                        return true;
+                    });
+                if (!accepted)
+                {
+                    if (platformInstance != null)
+                        UnityEngine.Object.DestroyImmediate(platformInstance);
+                    if (verticalSupportInstance != null)
+                        UnityEngine.Object.DestroyImmediate(verticalSupportInstance);
+                    throw new InvalidOperationException(
+                        $"Retained rooftop support realization failed: '{anchor.StablePath}'.");
+                }
+
+                supportCount++;
+            }
+
+            return supportCount;
+        }
+
+        internal static bool TryPlanRetainedRooftopSupportAssembly(
+            RetainedRooftopPropAnchor anchor,
+            float authoredGradeElevation,
+            Bounds platformPrefabBounds,
+            Bounds verticalSupportPrefabBounds,
+            out RetainedRooftopSupportPlan plan,
+            out string error)
+        {
+            plan = default;
+            error = null;
+            Bounds propBounds = anchor.RendererBounds;
+            if (!HasUsableBounds(platformPrefabBounds) ||
+                !HasUsableBounds(verticalSupportPrefabBounds))
+            {
+                error = "Retained rooftop support prefab bounds are degenerate.";
+                return false;
+            }
+
+            const float footprintMargin = 0.2f;
+            float platformScale = Mathf.Max(
+                (propBounds.size.x + footprintMargin * 2f) / platformPrefabBounds.size.x,
+                (propBounds.size.z + footprintMargin * 2f) / platformPrefabBounds.size.z);
+            platformScale = Mathf.Max(platformScale, 0.18f);
+            var platformScaleVector = Vector3.one * platformScale;
+            Vector3 platformSize = Vector3.Scale(
+                platformPrefabBounds.size,
+                platformScaleVector);
+            var platformCenter = new Vector3(
+                propBounds.center.x,
+                propBounds.min.y - platformSize.y * 0.5f,
+                propBounds.center.z);
+            Matrix4x4 platformMatrix = CreateAxisAlignedBoundsMatrix(
+                platformPrefabBounds,
+                platformCenter,
+                platformScaleVector);
+
+            float platformBottom = platformCenter.y - platformSize.y * 0.5f;
+            Bounds attachmentBounds = anchor.AttachmentBounds;
+            Bounds attachmentLocalBounds = anchor.AttachmentLocalBounds;
+            Matrix4x4 attachmentWorldMatrix = anchor.AttachmentWorldMatrix;
+            Matrix4x4 attachmentWorldToLocalMatrix = attachmentWorldMatrix.inverse;
+            Vector3 platformBottomPoint = new(
+                platformCenter.x,
+                platformBottom,
+                platformCenter.z);
+            Vector3 platformBottomLocal =
+                attachmentWorldToLocalMatrix.MultiplyPoint3x4(platformBottomPoint);
+            bool overlapsAttachmentFootprint =
+                platformBottomLocal.x >= attachmentLocalBounds.min.x &&
+                platformBottomLocal.x <= attachmentLocalBounds.max.x &&
+                platformBottomLocal.z >= attachmentLocalBounds.min.z &&
+                platformBottomLocal.z <= attachmentLocalBounds.max.z;
+            Vector3 roofPoint = attachmentWorldMatrix.MultiplyPoint3x4(new Vector3(
+                Mathf.Clamp(
+                    platformBottomLocal.x,
+                    attachmentLocalBounds.min.x,
+                    attachmentLocalBounds.max.x),
+                attachmentLocalBounds.max.y,
+                Mathf.Clamp(
+                    platformBottomLocal.z,
+                    attachmentLocalBounds.min.z,
+                    attachmentLocalBounds.max.z)));
+            float roofGap = platformBottom - roofPoint.y;
+
+            Vector3 supportTop = new(platformCenter.x, platformBottom, platformCenter.z);
+            Vector3 supportBottom;
+            if (overlapsAttachmentFootprint && roofGap >= -0.2f && roofGap <= 3f)
+            {
+                Vector3 roofContactLocal = platformBottomLocal;
+                roofContactLocal.y = attachmentLocalBounds.max.y - 0.08f;
+                supportBottom = attachmentWorldMatrix.MultiplyPoint3x4(roofContactLocal);
+            }
+            else
+            {
+                Vector3 wallPoint = ClosestHorizontalAttachmentPoint(
+                    platformCenter,
+                    attachmentLocalBounds,
+                    attachmentWorldMatrix,
+                    out Vector3 outward);
+                float platformRadius = Mathf.Max(platformSize.x, platformSize.z) * 0.5f;
+                supportTop += outward * platformRadius * 0.35f;
+                float braceDrop = Mathf.Clamp(platformRadius, 0.8f, 1.8f);
+                supportBottom = new Vector3(
+                    wallPoint.x,
+                    Mathf.Clamp(
+                        platformBottom - braceDrop,
+                        attachmentBounds.min.y + 0.2f,
+                        attachmentBounds.max.y - 0.2f),
+                    wallPoint.z) - outward * 0.08f;
+            }
+
+            Vector3 supportVector = supportTop - supportBottom;
+            float supportLength = supportVector.magnitude;
+            if (supportLength < 0.2f)
+            {
+                error =
+                    $"Retained rooftop prop has no usable building attachment span: '{anchor.StablePath}'.";
+                return false;
+            }
+
+            float braceWidth = Mathf.Clamp(
+                Mathf.Min(platformSize.x, platformSize.z) * 0.2f,
+                0.22f,
+                0.5f);
+            var supportScale = new Vector3(
+                braceWidth / verticalSupportPrefabBounds.size.x,
+                supportLength / verticalSupportPrefabBounds.size.y,
+                braceWidth / verticalSupportPrefabBounds.size.z);
+            Quaternion supportRotation = Quaternion.FromToRotation(
+                Vector3.up,
+                supportVector / supportLength);
+            Matrix4x4 verticalSupportMatrix = CreateOrientedBoundsMatrix(
+                verticalSupportPrefabBounds,
+                (supportTop + supportBottom) * 0.5f,
+                supportRotation,
+                supportScale);
+            plan = new RetainedRooftopSupportPlan(
+                platformMatrix,
+                verticalSupportMatrix);
+            return true;
+        }
+
+        private static Vector3 ClosestHorizontalAttachmentPoint(
+            Vector3 platformCenter,
+            Bounds attachmentLocalBounds,
+            Matrix4x4 attachmentWorldMatrix,
+            out Vector3 outward)
+        {
+            Matrix4x4 worldToLocal = attachmentWorldMatrix.inverse;
+            Vector3 localCenter = worldToLocal.MultiplyPoint3x4(platformCenter);
+            float x = Mathf.Clamp(
+                localCenter.x,
+                attachmentLocalBounds.min.x,
+                attachmentLocalBounds.max.x);
+            float y = Mathf.Clamp(
+                localCenter.y,
+                attachmentLocalBounds.min.y,
+                attachmentLocalBounds.max.y);
+            float z = Mathf.Clamp(
+                localCenter.z,
+                attachmentLocalBounds.min.z,
+                attachmentLocalBounds.max.z);
+            Vector3 localOutward;
+            bool outsideX = localCenter.x < attachmentLocalBounds.min.x ||
+                            localCenter.x > attachmentLocalBounds.max.x;
+            bool outsideZ = localCenter.z < attachmentLocalBounds.min.z ||
+                            localCenter.z > attachmentLocalBounds.max.z;
+            if (outsideX || outsideZ)
+            {
+                float xDistance = Mathf.Abs(localCenter.x - x);
+                float zDistance = Mathf.Abs(localCenter.z - z);
+                if (xDistance >= zDistance)
+                {
+                    x = localCenter.x < attachmentLocalBounds.center.x
+                        ? attachmentLocalBounds.min.x
+                        : attachmentLocalBounds.max.x;
+                    localOutward = localCenter.x < attachmentLocalBounds.center.x
+                        ? Vector3.left
+                        : Vector3.right;
+                }
+                else
+                {
+                    z = localCenter.z < attachmentLocalBounds.center.z
+                        ? attachmentLocalBounds.min.z
+                        : attachmentLocalBounds.max.z;
+                    localOutward = localCenter.z < attachmentLocalBounds.center.z
+                        ? Vector3.back
+                        : Vector3.forward;
+                }
+            }
+            else
+            {
+                float minX = Mathf.Abs(localCenter.x - attachmentLocalBounds.min.x);
+                float maxX = Mathf.Abs(attachmentLocalBounds.max.x - localCenter.x);
+                float minZ = Mathf.Abs(localCenter.z - attachmentLocalBounds.min.z);
+                float maxZ = Mathf.Abs(attachmentLocalBounds.max.z - localCenter.z);
+                float nearest = Mathf.Min(minX, maxX, minZ, maxZ);
+                if (Mathf.Approximately(nearest, minX))
+                {
+                    x = attachmentLocalBounds.min.x;
+                    localOutward = Vector3.left;
+                }
+                else if (Mathf.Approximately(nearest, maxX))
+                {
+                    x = attachmentLocalBounds.max.x;
+                    localOutward = Vector3.right;
+                }
+                else if (Mathf.Approximately(nearest, minZ))
+                {
+                    z = attachmentLocalBounds.min.z;
+                    localOutward = Vector3.back;
+                }
+                else
+                {
+                    z = attachmentLocalBounds.max.z;
+                    localOutward = Vector3.forward;
+                }
+            }
+
+            outward = attachmentWorldMatrix.MultiplyVector(localOutward).normalized;
+            return attachmentWorldMatrix.MultiplyPoint3x4(new Vector3(x, y, z));
+        }
+
+        private static Matrix4x4 CreateAxisAlignedBoundsMatrix(
+            Bounds prefabBounds,
+            Vector3 desiredWorldCenter,
+            Vector3 scale)
+        {
+            Vector3 rootPosition = desiredWorldCenter - Vector3.Scale(prefabBounds.center, scale);
+            return Matrix4x4.TRS(rootPosition, Quaternion.identity, scale);
+        }
+
+        private static Matrix4x4 CreateOrientedBoundsMatrix(
+            Bounds prefabBounds,
+            Vector3 desiredWorldCenter,
+            Quaternion rotation,
+            Vector3 scale)
+        {
+            Vector3 scaledCenter = Vector3.Scale(prefabBounds.center, scale);
+            Vector3 rootPosition = desiredWorldCenter - rotation * scaledCenter;
+            return Matrix4x4.TRS(rootPosition, rotation, scale);
+        }
+
+        private static bool HasUsableBounds(Bounds bounds) =>
+            IsFiniteVector(bounds.center) &&
+            IsFiniteVector(bounds.extents) &&
+            bounds.size.x > 0.001f && bounds.size.y > 0.001f && bounds.size.z > 0.001f;
+
+        private static void AddProtectedOverlapRenderers(
+            GameObject owner,
+            ISet<Renderer> protectedOverlapRenderers)
+        {
+            Renderer[] renderers = owner.GetComponentsInChildren<Renderer>(true);
+            for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
+                protectedOverlapRenderers.Add(renderers[rendererIndex]);
+        }
+
+        internal static bool CoversRetainedRooftopProp(Bounds propBounds, Bounds supportBounds)
+        {
+            const float horizontalTolerance = 0.08f;
+            const float verticalTolerance = 0.08f;
+            return supportBounds.min.x <= propBounds.min.x + horizontalTolerance &&
+                   supportBounds.max.x >= propBounds.max.x - horizontalTolerance &&
+                   supportBounds.min.z <= propBounds.min.z + horizontalTolerance &&
+                   supportBounds.max.z >= propBounds.max.z - horizontalTolerance &&
+                   Mathf.Abs(propBounds.min.y - supportBounds.max.y) <= verticalTolerance;
+        }
+
+        internal static bool ConnectsRetainedRooftopPlatformToAttachment(
+            Bounds platformBounds,
+            Bounds verticalSupportBounds,
+            RetainedRooftopPropAnchor anchor)
+        {
+            const float tolerance = 0.02f;
+            Bounds expandedSupport = verticalSupportBounds;
+            expandedSupport.Expand(tolerance * 2f);
+            Bounds expandedPlatform = platformBounds;
+            expandedPlatform.Expand(tolerance * 2f);
+            if (!expandedSupport.Intersects(expandedPlatform))
+                return false;
+
+            Matrix4x4 worldToLocal = anchor.AttachmentWorldMatrix.inverse;
+            Vector3 center = verticalSupportBounds.center;
+            Vector3 extents = verticalSupportBounds.extents;
+            var localSupport = new Bounds(
+                worldToLocal.MultiplyPoint3x4(center),
+                Vector3.zero);
+            for (int x = -1; x <= 1; x += 2)
+            for (int y = -1; y <= 1; y += 2)
+            for (int z = -1; z <= 1; z += 2)
+            {
+                localSupport.Encapsulate(worldToLocal.MultiplyPoint3x4(
+                    center + Vector3.Scale(extents, new Vector3(x, y, z))));
+            }
+            localSupport.Expand(tolerance * 2f);
+            return localSupport.Intersects(anchor.AttachmentLocalBounds);
         }
 
         private static int AddRoofCapsForShop(

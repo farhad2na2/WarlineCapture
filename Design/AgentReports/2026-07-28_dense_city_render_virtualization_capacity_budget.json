@@ -11,19 +11,19 @@
     "observedMaterializedEnvelopeOrientationCount": 2,
     "canonicalSampleCount": 14592,
     "policyCount": 4,
-    "placementCount": 40460,
-    "provisionalMapMmiEntityBudget": 40460,
+    "placementCount": 40580,
+    "provisionalMapMmiEntityBudget": 40580,
     "mapMmiEntityLimit": 24000,
     "provisionalMapMmiEntityBudgetWithinLimit": false,
-    "totalPeakRequiredPartRows": 6470,
-    "totalProvisionalActiveProxySlots": 7765,
+    "totalPeakRequiredPartRows": 6442,
+    "totalProvisionalActiveProxySlots": 7732,
     "activeProxySlotLimit": 8000,
     "provisionalActiveProxySlotsWithinLimit": true,
     "zeroOverflowProvenForProvisionalCapacity": true,
-    "sourceRowsSha256": "21e699e21565968543eefba9b51f9cdce24bd2465cd4136dd40331595325a1fa",
-    "prototypeRecipesSha256": "52918cfd8f8bca22d941e26ec078050ca94b5cac00ec11b9ef82e0a4c19f9d7d",
-    "logicalPlacementsSha256": "8076424d83775e37aa535aeec4f75cf9193f3333dd191b59a376bf367235dbb1",
-    "spatialCellsSha256": "b35f7045b626d294389985a95198f87f1c18e078a8ded0fb743c4e1058245c38",
+    "sourceRowsSha256": "26c74717b245e1c2ebaf4a0d409c541c79f9a24105f998b9713483e544459efa",
+    "prototypeRecipesSha256": "8d5912505971378a72a12edbffc178be9a35ebd51e0eda8c412a13a01696ee52",
+    "logicalPlacementsSha256": "397b8ebe62e5e715edd0c3de690e12c2ee3e64ac537d86da6c3ea55956b353c8",
+    "spatialCellsSha256": "5e6a7f12984fbf106753ce57bab58c181e39dc5ff35c355060d4b2abfc7879af",
     "capacityByPolicy": [
         {
             "policyBucket": "OpaqueShadowsOn",
@@ -32,10 +32,10 @@
             "motionVectorMode": "Object",
             "shadowFlags": 3,
             "sweepSampleCount": 14592,
-            "peakRequiredPartRows": 4084,
+            "peakRequiredPartRows": 4074,
             "peakSampleIdentity": "grid-cell:65:24:materialized=9x12",
-            "capacity": 4901,
-            "headroomCount": 817
+            "capacity": 4889,
+            "headroomCount": 815
         },
         {
             "policyBucket": "OpaqueShadowsOff",
@@ -44,10 +44,10 @@
             "motionVectorMode": "Object",
             "shadowFlags": 2,
             "sweepSampleCount": 14592,
-            "peakRequiredPartRows": 1869,
+            "peakRequiredPartRows": 1851,
             "peakSampleIdentity": "grid-cell:57:26:materialized=9x12",
-            "capacity": 2243,
-            "headroomCount": 374
+            "capacity": 2222,
+            "headroomCount": 371
         },
         {
             "policyBucket": "AlphaClippedShadowsOn",

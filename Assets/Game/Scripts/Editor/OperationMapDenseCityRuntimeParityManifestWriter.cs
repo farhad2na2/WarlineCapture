@@ -32,9 +32,9 @@ namespace Game.Editor
         private const string OperationMapId = "opmap.skirmish.desert_base_01";
         private const string EntitySceneGuid = "c00140f2e94a04c3084c8dcb0c18cbd0";
         private const int ExpectedLegacyIdentityCount = 9544;
-        private const int ExpectedDenseIdentityCount = 36304;
-        private const int ExpectedBakedRenderEntityCount = 76405;
-        private const int ExpectedFixedProxySlotCount = 7765;
+        private const int ExpectedDenseIdentityCount = 36424;
+        private const int ExpectedBakedRenderEntityCount = 76206;
+        private const int ExpectedFixedProxySlotCount = 7732;
         private const int ExpectedRenderRowCount =
             ExpectedBakedRenderEntityCount + ExpectedFixedProxySlotCount;
         private static readonly UTF8Encoding Utf8WithoutBom = new(false);
@@ -130,7 +130,7 @@ namespace Game.Editor
                     renderRowCount = renderRows.Length,
                     manifestBytes = new FileInfo(manifestPath).Length,
                     manifestSha256 = sha256,
-                    productionCutover = 0
+                    productionCutover = 1
                 };
                 WriteSummary(projectRoot, summary);
                 return summary;

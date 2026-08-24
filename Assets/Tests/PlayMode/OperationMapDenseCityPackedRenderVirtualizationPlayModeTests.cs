@@ -21,23 +21,23 @@ using Hash128 = Unity.Entities.Hash128;
 
 public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTests
 {
-    private const int DenseExpectedVirtualizedPlacementCount = 40460;
-    private const int DenseExpectedVirtualizedRowCount = 61813;
-    private const int DenseExpectedVirtualizedRendererCount = 61783;
-    private const int DenseExpectedVirtualizedResidentRowCount = 14017;
-    private const int DenseExpectedVirtualizedSlotCount = 7765;
-    private const int DenseExpectedVirtualizedPrototypeCount = 9107;
-    private const int DenseExpectedVirtualizedPartCount = 12181;
-    private const int DenseExpectedVirtualizedCellCount = 1934;
+    private const int DenseExpectedVirtualizedPlacementCount = 40580;
+    private const int DenseExpectedVirtualizedRowCount = 61620;
+    private const int DenseExpectedVirtualizedRendererCount = 61478;
+    private const int DenseExpectedVirtualizedResidentRowCount = 14011;
+    private const int DenseExpectedVirtualizedSlotCount = 7732;
+    private const int DenseExpectedVirtualizedPrototypeCount = 9109;
+    private const int DenseExpectedVirtualizedPartCount = 11870;
+    private const int DenseExpectedVirtualizedCellCount = 1965;
     private const int DenseExpectedVirtualizedPoolBucketCount = 4;
     private const int DenseExpectedVirtualizedGeneratedBuildingCount = 4530;
-    private const int DenseExpectedVirtualizedGeneratedRenderOnlyCount = 31400;
+    private const int DenseExpectedVirtualizedGeneratedRenderOnlyCount = 31520;
     private const int DenseExpectedRetainedVirtualizedGeneratedBuildingCount = 4530;
     private const int DenseExpectedRetainedVirtualizedGeneratedRenderOnlyCount = 5758;
     private const int DenseExpectedVirtualizedDatabaseSchemaVersion =
         OperationMapRenderDatabaseBakeConfig.CurrentSchemaVersion;
     private const string DenseExpectedVirtualizedContentHash =
-        "bfb350f0c8d1474aa05252dc04c87eede4c1210adcee9c92dcdbecc35897896e";
+        "fa8f007755d8b042e94c6e2f793414b4192ec21930e5c35fcde9ccf68de49f26";
 
     [UnityTest]
     [Timeout(600000)]

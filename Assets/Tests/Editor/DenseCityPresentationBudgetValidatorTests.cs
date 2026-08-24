@@ -134,7 +134,7 @@ public sealed class DenseCityPresentationBudgetValidatorTests
             Is.True,
             error);
         Assert.That(report.existingVisualIdentityCount, Is.EqualTo(9544));
-        Assert.That(report.generatedVisualIdentityCount, Is.EqualTo(36304));
+        Assert.That(report.generatedVisualIdentityCount, Is.EqualTo(36424));
         Assert.That(report.authoringSceneEntryCount, Is.Zero);
         Assert.That(report.staticPresentationEntryCount, Is.Zero);
     }
@@ -209,7 +209,7 @@ public sealed class DenseCityPresentationBudgetValidatorTests
         Assert.That(report.entityContentArchiveCount, Is.EqualTo(1));
         Assert.That(report.duplicatedDependencyBytes, Is.Zero);
         Assert.That(report.renderVirtualizationMetricsComplete, Is.Zero);
-        Assert.That(report.renderVirtualizationSlotCapacity, Is.EqualTo(7765));
+        Assert.That(report.renderVirtualizationSlotCapacity, Is.EqualTo(7732));
         Assert.That(report.packedSourceRowsRemoved, Is.EqualTo(-1));
     }
 
@@ -295,7 +295,7 @@ public sealed class DenseCityPresentationBudgetValidatorTests
             File.ReadAllText(reportPath));
         Assert.That(report, Is.Not.Null);
         Assert.That(report.result, Is.EqualTo("DenseCityPackedAssetSharingPassed"));
-        Assert.That(report.renderEntityCount, Is.EqualTo(76405));
+        Assert.That(report.renderEntityCount, Is.EqualTo(76206));
         Assert.That(report.entityContentArchiveCount, Is.EqualTo(1));
         Assert.That(report.duplicatedDependencyGuidCount, Is.Zero);
         Assert.That(report.duplicatedDependencyBytes, Is.Zero);
@@ -607,19 +607,19 @@ public sealed class DenseCityPresentationBudgetValidatorTests
         bake = new DenseCityPresentationBudgetValidator.DenseCandidateBakeEvidence
         {
             result = "DenseCandidateBakeValidationPassed",
-            authoringDenseIdentityCount = 36304,
+            authoringDenseIdentityCount = 36424,
             authoringDenseGameplayBuildingIdentityCount = 4545,
-            authoringDenseRenderOnlyIdentityCount = 31759,
+            authoringDenseRenderOnlyIdentityCount = 31879,
             legacyPresentationIdentityCount = 9544,
-            denseIdentityCount = 36304,
+            denseIdentityCount = 36424,
             denseGameplayBuildingIdentityCount = 4545,
-            denseRenderOnlyIdentityCount = 31759,
+            denseRenderOnlyIdentityCount = 31879,
             denseUnknownRoleIdentityCount = 0,
             duplicateDenseIdentityCount = 0,
-            renderMeshEntityCount = 76405,
+            renderMeshEntityCount = 76206,
             sharedRenderMeshArrayIdentityCount = 1,
-            sharedMeshAssetIdentityCount = 1769,
-            sharedMaterialAssetIdentityCount = 80,
+            sharedMeshAssetIdentityCount = 1760,
+            sharedMaterialAssetIdentityCount = 68,
             missingIntactVisualRootCount = 0,
             sharedIntactDestroyedVisualRootCount = 0,
             nonFiniteTransformCount = 0,
@@ -637,17 +637,17 @@ public sealed class DenseCityPresentationBudgetValidatorTests
         parity = new DenseCityPresentationBudgetValidator.DenseTransformParityEvidence
         {
             result = "DenseCityGeneratedTransformParityPassed",
-            candidateIdentityCount = 36304,
-            uniqueCandidateIdentityCount = 36304,
-            bakedIdentityCount = 36304,
-            uniqueBakedIdentityCount = 36304,
-            generatedCandidateRendererEntityCount = 62455,
-            generatedBakedRenderEntityCount = 62455,
+            candidateIdentityCount = 36424,
+            uniqueCandidateIdentityCount = 36424,
+            bakedIdentityCount = 36424,
+            uniqueBakedIdentityCount = 36424,
+            generatedCandidateRendererEntityCount = 62144,
+            generatedBakedRenderEntityCount = 62144,
             persistentGeneratedSourceFailureCount = 0,
-            repeatedGeneratedPrefabSourceCount = 57,
-            repeatedGeneratedPrefabPlacementCount = 31757,
-            repeatedGeneratedPresentationSignatureCount = 377,
-            repeatedGeneratedPresentationEntryCount = 62447,
+            repeatedGeneratedPrefabSourceCount = 59,
+            repeatedGeneratedPrefabPlacementCount = 31877,
+            repeatedGeneratedPresentationSignatureCount = 299,
+            repeatedGeneratedPresentationEntryCount = 62136,
             unresolvedGeneratedRendererEntityCount = 0,
             unresolvedGeneratedMeshCount = 0,
             unresolvedGeneratedMaterialCount = 0,
@@ -742,16 +742,16 @@ public sealed class DenseCityPresentationBudgetValidatorTests
             result = "Passed",
             operationMapId = "opmap.skirmish.desert_base_01",
             contentHash = new string('a', 64),
-            prototypeCount = 9107,
-            partCount = 12181,
-            placementCount = 40460,
-            cellCount = 1934,
+            prototypeCount = 9109,
+            partCount = 11870,
+            placementCount = 40580,
+            cellCount = 1965,
             policyBucketCount = 4,
-            totalPoolSlotCapacity = 7765,
-            sourceRenderRowCount = 76405,
-            eligibleSourceRowCount = 61813,
-            logicalRenderRowCount = 61813,
-            residentSourceRowCount = 14592,
+            totalPoolSlotCapacity = 7732,
+            sourceRenderRowCount = 76206,
+            eligibleSourceRowCount = 61620,
+            logicalRenderRowCount = 61620,
+            residentSourceRowCount = 14586,
             sourceRowsRemoved = 0,
             logicalParityResult = "Passed",
             isolationResult = "Passed"

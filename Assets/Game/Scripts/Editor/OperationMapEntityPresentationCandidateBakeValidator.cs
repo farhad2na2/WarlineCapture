@@ -35,8 +35,8 @@ namespace Game.Editor
         internal const int ExpectedPresentationIdentities = 9544;
         internal const int ExpectedDenseGameplayBuildings = 4977;
         internal const int ExpectedDenseGeneratedGameplayBuildings = 4545;
-        internal const int ExpectedDenseGeneratedRenderOnlyOwners = 31759;
-        internal const int ExpectedDenseGeneratedIdentities = 36304;
+        internal const int ExpectedDenseGeneratedRenderOnlyOwners = 31879;
+        internal const int ExpectedDenseGeneratedIdentities = 36424;
         internal const int ExpectedDenseVirtualizedGameplayBuildings = 4530;
         internal const int ExpectedDenseResidentGameplayBuildings =
             ExpectedDenseGameplayBuildings - ExpectedDenseVirtualizedGameplayBuildings;
@@ -113,7 +113,7 @@ namespace Game.Editor
                     $"nonFiniteTransforms={report.NonFiniteTransformCount} " +
                     $"managedMapVisualCompanions={report.ManagedMapVisualCompanionCount} " +
                     $"transformParityRows={parity.candidateIdentityCount} " +
-                    $"productionCutover=0 report={report.ReportPath}");
+                    $"productionCutover=1 report={report.ReportPath}");
             }
             finally
             {
@@ -198,7 +198,7 @@ namespace Game.Editor
                     $"renderMeshEntities={report.renderMeshEntityCount} " +
                     $"transformParityRows={parity.candidateIdentityCount} " +
                     $"runtimeParityManifestBytes={runtimeParityManifest.manifestBytes} " +
-                    $"productionCutover=0 report={report.reportPath}");
+                    $"productionCutover=1 report={report.reportPath}");
             }
             finally
             {
@@ -706,7 +706,7 @@ namespace Game.Editor
                 authoringDenseGameplayBuildingIdentityCount =
                     authoring.DenseGameplayBuildingIdentities,
                 authoringDenseRenderOnlyIdentityCount = authoring.DenseRenderOnlyIdentities,
-                productionCutover = 0
+                productionCutover = 1
             };
 
             using NativeArray<DenseCityPresentationIdentity> identities =

@@ -42,13 +42,17 @@ namespace Game.Editor
         internal const int ExpectedEmbeddedDestroyedDuplicateRowRemoval = 4396;
         internal const int ExpectedPreviouslyCorrectedLayoutRenderRowRemoval = 1884;
         internal const int ExpectedUnsupportedAttachmentRenderRowRemoval = 112;
+        internal const int ExpectedDetachedElevatedBuildingPropRenderRowRemoval = 319;
+        internal const int ExpectedRetainedRooftopSupportRenderRowAddition = 120;
         internal const int ExpectedCorrectedLayoutRenderRowRemoval =
             ExpectedPreviouslyCorrectedLayoutRenderRowRemoval +
-            ExpectedUnsupportedAttachmentRenderRowRemoval;
+            ExpectedUnsupportedAttachmentRenderRowRemoval +
+            ExpectedDetachedElevatedBuildingPropRenderRowRemoval;
         internal const int ExpectedPackedRenderRowCount =
             HistoricalPackedRenderRowCount -
             ExpectedEmbeddedDestroyedDuplicateRowRemoval -
-            ExpectedCorrectedLayoutRenderRowRemoval;
+            ExpectedCorrectedLayoutRenderRowRemoval +
+            ExpectedRetainedRooftopSupportRenderRowAddition;
         internal const float RenderCellSize = 32f;
         // VRP-067 device evidence (House, stationary interior route) materialized
         // the inclusive envelope x=42..53, z=19..27. Sweep that exact 12x9
@@ -353,7 +357,8 @@ namespace Game.Editor
             if (rows.Count != ExpectedPackedRenderRowCount ||
                 HistoricalPackedRenderRowCount - rows.Count !=
                     ExpectedEmbeddedDestroyedDuplicateRowRemoval +
-                    ExpectedCorrectedLayoutRenderRowRemoval)
+                    ExpectedCorrectedLayoutRenderRowRemoval -
+                    ExpectedRetainedRooftopSupportRenderRowAddition)
             {
                 throw new InvalidOperationException(
                     "Normalized authoring render rows did not reconcile to the historical " +
@@ -361,7 +366,8 @@ namespace Game.Editor
                     $"expectedCurrent={ExpectedPackedRenderRowCount}, " +
                     $"historical={HistoricalPackedRenderRowCount}, " +
                     $"expectedDuplicateRemoval={ExpectedEmbeddedDestroyedDuplicateRowRemoval}, " +
-                    $"expectedCorrectedLayoutRemoval={ExpectedCorrectedLayoutRenderRowRemoval}.");
+                    $"expectedCorrectedLayoutRemoval={ExpectedCorrectedLayoutRenderRowRemoval}, " +
+                    $"expectedSupportAddition={ExpectedRetainedRooftopSupportRenderRowAddition}.");
             }
             if (eligibleStableOwnerJoined != eligible)
             {

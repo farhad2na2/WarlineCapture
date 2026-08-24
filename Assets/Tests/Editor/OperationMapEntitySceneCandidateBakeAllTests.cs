@@ -168,7 +168,7 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
         Assert.That(
             DenseCityCandidateAuthoringTransaction.MatchesGenerationContract(
                 "dense-city-v1",
-                1,
+                2,
                 24681357,
                 currentHash,
                 24681357,
@@ -178,6 +178,15 @@ public sealed class OperationMapEntitySceneCandidateBakeAllTests
             DenseCityCandidateAuthoringTransaction.MatchesGenerationContract(
                 "dense-city-v1",
                 1,
+                24681357,
+                currentHash,
+                24681357,
+                currentHash),
+            Is.False);
+        Assert.That(
+            DenseCityCandidateAuthoringTransaction.MatchesGenerationContract(
+                "dense-city-v1",
+                2,
                 24681357,
                 staleHash,
                 24681357,

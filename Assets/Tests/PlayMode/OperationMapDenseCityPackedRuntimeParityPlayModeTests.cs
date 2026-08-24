@@ -29,8 +29,8 @@ public sealed partial class OperationMapEntityScenePackedRuntimeParityPlayModeTe
     private const uint DenseParityMagic = 0x57444350;
     private const int DenseParityFormatVersion = 3;
     private const int DenseExpectedLegacyIdentityCount = 9544;
-    private const int DenseExpectedGeneratedIdentityCount = 36946;
-    private const int DenseExpectedRenderRowCount = 82797;
+    private const int DenseExpectedGeneratedIdentityCount = 36424;
+    private const int DenseExpectedRenderRowCount = 83938;
     private const int DenseGraphicsStableFrameCount = 3;
     private const int DenseGraphicsReadinessFrameLimit = 120;
     private const string DenseDefinitionAddress =

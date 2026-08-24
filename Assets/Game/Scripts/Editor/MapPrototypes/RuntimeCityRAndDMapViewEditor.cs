@@ -284,6 +284,15 @@ namespace Game.Editor
             RuntimeCityRAndDMapView view,
             DenseCityProtectedAutobahnRouteDescriptor protectedAutobahnReplacement)
         {
+            return BuildDenseMapWide(view, protectedAutobahnReplacement, null);
+        }
+
+        internal static DenseMiddleEasternCityEditModeBuilder.Result BuildDenseMapWide(
+            RuntimeCityRAndDMapView view,
+            DenseCityProtectedAutobahnRouteDescriptor protectedAutobahnReplacement,
+            IReadOnlyList<DenseMiddleEasternCityEditModeBuilder.RetainedRooftopPropAnchor>
+                retainedRooftopPropAnchors)
+        {
             if (view == null)
                 throw new ArgumentNullException(nameof(view));
             if (Application.isPlaying)
@@ -309,7 +318,8 @@ namespace Game.Editor
                         view,
                         root,
                         config,
-                        protectedAutobahnReplacement);
+                        protectedAutobahnReplacement,
+                        retainedRooftopPropAnchors);
 
                 RegisterGeneratedChildrenForUndo(root);
                 MarkSceneDirty(view);

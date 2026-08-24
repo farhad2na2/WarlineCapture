@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using Game.Configs;
 using NUnit.Framework;
 using UnityEditor;
@@ -21,6 +22,9 @@ public sealed class AudioConfigContractTests
     private const string CatalogJsonPath = "Assets/Game/Audio/Config/audio_event_catalog_v0_1.json";
     private const string RuntimeCatalogAssetPath = "Assets/Game/Audio/Events/AudioEventCatalogConfig.asset";
     private const string ImportProfileJsonPath = "Assets/Game/Audio/Config/audio_import_profiles_v0_1.json";
+    private const string AriaBilingualManifestPath = "Assets/Game/Audio/GeneratedSource/aria_match_voice_bilingual_manifest_v0_1.json";
+    private const string AriaMatchEventPrefix = "VO.ARIA.Message.";
+    private const string CanonicalAriaVoiceId = "Fi9tPTnEcbh3of7hOHC8";
 
     private static readonly string[] RequiredCoreEventIds =
     {
@@ -89,7 +93,8 @@ public sealed class AudioConfigContractTests
             tests.AudioImportProfileConfigExists();
             tests.CatalogAudioImportSettingsMatchProfiles();
             tests.MenuAndMatchMusicUseLongStereoBackgroundMasters();
-            Debug.Log("[AudioConfigContractValidation] result=Passed tests=15");
+            tests.AriaMatchVoiceCatalogHasCompleteCanonicalBilingualCoverage();
+            Debug.Log("[AudioConfigContractValidation] result=Passed tests=16");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -177,6 +182,8 @@ public sealed class AudioConfigContractTests
         Assert.IsFalse(entry.Playback.AllowRuntimeLoad);
         Assert.NotNull(entry.Clips);
         Assert.AreEqual(0, entry.Clips.Count);
+        Assert.NotNull(entry.LocalizedClips);
+        Assert.AreEqual(0, entry.LocalizedClips.Count);
         Assert.AreEqual(new Vector2(-0.02f, 0.02f), entry.PitchVariance);
     }
 
@@ -273,15 +280,44 @@ public sealed class AudioConfigContractTests
 
             for (int clipIndex = 0; clipIndex < entry.clips.Length; clipIndex++)
             {
-                AudioClipJson clip = entry.clips[clipIndex];
-                Assert.IsFalse(string.IsNullOrWhiteSpace(clip.assetPath), $"{entry.eventId} clip {clipIndex} must have an asset path.");
-                StringAssert.StartsWith("Assets/Game/Audio/", clip.assetPath, clip.assetPath);
-                StringAssert.EndsWith(".wav", clip.assetPath, clip.assetPath);
-                Assert.IsTrue(File.Exists(clip.assetPath), $"{entry.eventId} references missing clip {clip.assetPath}.");
-                Assert.Greater(clip.weight, 0, $"{entry.eventId} clip {clip.assetPath} must have positive weight.");
-                Assert.IsTrue(clipPaths.Add(clip.assetPath), $"Duplicate catalog clip path: {clip.assetPath}");
+                ValidateCatalogClip(entry.eventId, "default", entry.clips[clipIndex], clipIndex, clipPaths);
+            }
+
+            LocalizedAudioClipSetJson[] localizedSets = entry.localizedClips ?? Array.Empty<LocalizedAudioClipSetJson>();
+            var localeCodes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            for (int setIndex = 0; setIndex < localizedSets.Length; setIndex++)
+            {
+                LocalizedAudioClipSetJson localizedSet = localizedSets[setIndex];
+                Assert.IsFalse(string.IsNullOrWhiteSpace(localizedSet.localeCode), $"{entry.eventId} localized set {setIndex} needs a locale.");
+                Assert.IsTrue(localeCodes.Add(localizedSet.localeCode), $"{entry.eventId} duplicates locale {localizedSet.localeCode}.");
+                Assert.NotNull(localizedSet.clips, $"{entry.eventId} {localizedSet.localeCode} clips are null.");
+                Assert.Greater(localizedSet.clips.Length, 0, $"{entry.eventId} {localizedSet.localeCode} has no clips.");
+                for (int clipIndex = 0; clipIndex < localizedSet.clips.Length; clipIndex++)
+                {
+                    ValidateCatalogClip(
+                        entry.eventId,
+                        localizedSet.localeCode,
+                        localizedSet.clips[clipIndex],
+                        clipIndex,
+                        clipPaths);
+                }
             }
         }
+    }
+
+    private static void ValidateCatalogClip(
+        string eventId,
+        string localeCode,
+        AudioClipJson clip,
+        int clipIndex,
+        HashSet<string> clipPaths)
+    {
+        Assert.IsFalse(string.IsNullOrWhiteSpace(clip.assetPath), $"{eventId} {localeCode} clip {clipIndex} must have an asset path.");
+        StringAssert.StartsWith("Assets/Game/Audio/", clip.assetPath, clip.assetPath);
+        StringAssert.EndsWith(".wav", clip.assetPath, clip.assetPath);
+        Assert.IsTrue(File.Exists(clip.assetPath), $"{eventId} references missing {localeCode} clip {clip.assetPath}.");
+        Assert.Greater(clip.weight, 0, $"{eventId} clip {clip.assetPath} must have positive weight.");
+        Assert.IsTrue(clipPaths.Add(clip.assetPath), $"Duplicate catalog clip path: {clip.assetPath}");
     }
 
     [Test]
@@ -304,6 +340,67 @@ public sealed class AudioConfigContractTests
             if (entry.playback.loop)
                 Assert.IsTrue(isLoopBus, $"{entry.eventId} loops must stay on Music or Ambience buses.");
         }
+    }
+
+    [Test]
+    public void AriaMatchVoiceCatalogHasCompleteCanonicalBilingualCoverage()
+    {
+        Assert.IsTrue(File.Exists(AriaBilingualManifestPath), $"Missing ARIA bilingual manifest: {AriaBilingualManifestPath}");
+        AriaBilingualManifestJson manifest = JsonUtility.FromJson<AriaBilingualManifestJson>(
+            File.ReadAllText(AriaBilingualManifestPath));
+        Assert.NotNull(manifest);
+        Assert.AreEqual("WarlineCapture.AriaMatchVoiceBilingual.v0.1", manifest.schema);
+        Assert.AreEqual("ElevenLabs", manifest.provider);
+        Assert.AreEqual("ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE", manifest.license);
+        Assert.AreEqual("eleven_v3", manifest.model);
+        Assert.IsFalse(manifest.runtimeNetworkTts);
+        Assert.NotNull(manifest.voice);
+        Assert.AreEqual(CanonicalAriaVoiceId, manifest.voice.id);
+        Assert.AreEqual("Warline - ARIA Civic Relay", manifest.voice.name);
+        Assert.AreEqual(163, manifest.eventCount);
+        Assert.AreEqual(2, manifest.localeCount);
+        Assert.AreEqual(326, manifest.clipCount);
+        Assert.NotNull(manifest.clips);
+        Assert.AreEqual(manifest.clipCount, manifest.clips.Length);
+
+        Dictionary<string, AriaManifestClipJson> manifestByPath = manifest.clips.ToDictionary(clip => clip.assetPath);
+        CatalogJson catalog = ReadCatalog();
+        AudioEventJson[] ariaEvents = catalog.events
+            .Where(entry => entry.eventId.StartsWith(AriaMatchEventPrefix, StringComparison.Ordinal))
+            .ToArray();
+        Assert.AreEqual(163, ariaEvents.Length, "Every in-match ARIA command must have bilingual coverage.");
+
+        for (int i = 0; i < ariaEvents.Length; i++)
+        {
+            AudioEventJson entry = ariaEvents[i];
+            Assert.AreEqual(1, entry.clips.Length, entry.eventId);
+            Assert.AreEqual("elevenlabs-commercial", entry.clips[0].status, entry.eventId);
+            Assert.NotNull(entry.localizedClips, entry.eventId);
+            Assert.AreEqual(1, entry.localizedClips.Length, entry.eventId);
+            Assert.AreEqual("fa-IR", entry.localizedClips[0].localeCode, entry.eventId);
+            Assert.AreEqual(1, entry.localizedClips[0].clips.Length, entry.eventId);
+            Assert.AreEqual("elevenlabs-commercial", entry.localizedClips[0].clips[0].status, entry.eventId);
+
+            ValidateAriaManifestClip(manifestByPath, entry.eventId, "en-US", entry.clips[0].assetPath);
+            ValidateAriaManifestClip(manifestByPath, entry.eventId, "fa-IR", entry.localizedClips[0].clips[0].assetPath);
+        }
+    }
+
+    private static void ValidateAriaManifestClip(
+        IReadOnlyDictionary<string, AriaManifestClipJson> manifestByPath,
+        string eventId,
+        string locale,
+        string assetPath)
+    {
+        Assert.IsTrue(manifestByPath.TryGetValue(assetPath, out AriaManifestClipJson clip), assetPath);
+        Assert.AreEqual(eventId, clip.eventId, assetPath);
+        Assert.AreEqual(locale, clip.locale, assetPath);
+        Assert.IsFalse(string.IsNullOrWhiteSpace(clip.text), assetPath);
+        Assert.IsTrue(File.Exists(assetPath), assetPath);
+        using SHA256 sha256 = SHA256.Create();
+        using FileStream stream = File.OpenRead(assetPath);
+        string actualHash = BitConverter.ToString(sha256.ComputeHash(stream)).Replace("-", string.Empty).ToLowerInvariant();
+        Assert.AreEqual(clip.sha256, actualHash, assetPath);
     }
 
     [Test]
@@ -342,6 +439,24 @@ public sealed class AudioConfigContractTests
                     AssetDatabase.GetAssetPath(actualClip.Clip),
                     $"{expected.eventId} clip {clipIndex}");
                 Assert.AreEqual(expected.clips[clipIndex].weight, actualClip.Weight, $"{expected.eventId} clip {clipIndex}");
+            }
+
+            LocalizedAudioClipSetJson[] expectedLocalized = expected.localizedClips ?? Array.Empty<LocalizedAudioClipSetJson>();
+            Assert.AreEqual(expectedLocalized.Length, actual.LocalizedClips.Count, expected.eventId);
+            for (int setIndex = 0; setIndex < expectedLocalized.Length; setIndex++)
+            {
+                LocalizedAudioClipSetJson expectedSet = expectedLocalized[setIndex];
+                LocalizedAudioClipSet actualSet = actual.LocalizedClips[setIndex];
+                Assert.AreEqual(expectedSet.localeCode, actualSet.LocaleCode, expected.eventId);
+                Assert.AreEqual(expectedSet.clips.Length, actualSet.Clips.Count, expected.eventId);
+                for (int clipIndex = 0; clipIndex < expectedSet.clips.Length; clipIndex++)
+                {
+                    Assert.AreEqual(
+                        expectedSet.clips[clipIndex].assetPath,
+                        AssetDatabase.GetAssetPath(actualSet.Clips[clipIndex].Clip),
+                        $"{expected.eventId} {expectedSet.localeCode} clip {clipIndex}");
+                    Assert.AreEqual(expectedSet.clips[clipIndex].weight, actualSet.Clips[clipIndex].Weight);
+                }
             }
         }
     }
@@ -413,7 +528,10 @@ public sealed class AudioConfigContractTests
     {
         return ReadCatalog()
             .events
-            .SelectMany(entry => entry.clips ?? Array.Empty<AudioClipJson>())
+            .SelectMany(entry =>
+                (entry.clips ?? Array.Empty<AudioClipJson>())
+                .Concat((entry.localizedClips ?? Array.Empty<LocalizedAudioClipSetJson>())
+                    .SelectMany(set => set.clips ?? Array.Empty<AudioClipJson>())))
             .Select(clip => clip.assetPath)
             .Where(path => !string.IsNullOrWhiteSpace(path))
             .ToArray();
@@ -475,6 +593,14 @@ public sealed class AudioConfigContractTests
         public PitchVarianceJson pitchVariance;
         public PlaybackJson playback;
         public AudioClipJson[] clips;
+        public LocalizedAudioClipSetJson[] localizedClips;
+    }
+
+    [Serializable]
+    private sealed class LocalizedAudioClipSetJson
+    {
+        public string localeCode;
+        public AudioClipJson[] clips;
     }
 
     [Serializable]
@@ -499,6 +625,38 @@ public sealed class AudioConfigContractTests
         public string assetPath;
         public string status;
         public int weight;
+    }
+
+    [Serializable]
+    private sealed class AriaBilingualManifestJson
+    {
+        public string schema;
+        public string provider;
+        public string license;
+        public bool runtimeNetworkTts;
+        public string model;
+        public AriaManifestVoiceJson voice;
+        public int eventCount;
+        public int localeCount;
+        public int clipCount;
+        public AriaManifestClipJson[] clips;
+    }
+
+    [Serializable]
+    private sealed class AriaManifestVoiceJson
+    {
+        public string id;
+        public string name;
+    }
+
+    [Serializable]
+    private sealed class AriaManifestClipJson
+    {
+        public string eventId;
+        public string locale;
+        public string text;
+        public string assetPath;
+        public string sha256;
     }
 
     [Serializable]

@@ -1,8 +1,8 @@
 {
   "schema": "WarlineCapture.AudioEventCatalog.Placeholder.v0.1",
-  "status": "placeholder-data-only",
-  "generatedBy": "Tools/Audio/generate_placeholder_audio.py",
-  "implementationNote": "This file assigns audio event ids to placeholder WAV assets. It does not implement playback, ECS systems, UI wiring, or prefab changes.",
+  "status": "production-localized-voice",
+  "generatedBy": "Tools/Audio/generate_bilingual_aria_match_voice.py",
+  "implementationNote": "ARIA match-command events contain deterministic English clips and complete fa-IR overrides.",
   "buses": [
     {
       "busId": "UI",
@@ -1791,8 +1791,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_confirm_destroy_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_confirm_destroy_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -1815,8 +1827,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_not_enough_money_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_not_enough_money_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -1839,8 +1863,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_create_first_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_create_first_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -1863,8 +1899,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_drag_building_to_final_position_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_drag_building_to_final_position_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -1887,8 +1935,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_ground_attack_type_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_warning_ground_attack_type_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -1911,8 +1971,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_air_attack_type_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_warning_air_attack_type_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -1935,8 +2007,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_attack_eta_seconds_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_warning_attack_eta_seconds_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -1959,8 +2043,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_attack_eta_suffix_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_warning_attack_eta_suffix_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -1983,8 +2079,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_attack_count_suffix_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_warning_attack_count_suffix_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2007,8 +2115,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_no_selection_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_no_selection_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2031,8 +2151,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_target_out_of_bounds_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_target_out_of_bounds_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2055,8 +2187,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_target_blocked_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_target_blocked_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2079,8 +2223,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_target_unreachable_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_target_unreachable_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2103,8 +2259,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_target_not_enemy_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_target_not_enemy_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2127,8 +2295,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_target_not_attackable_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_target_not_attackable_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2151,8 +2331,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_command_unavailable_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_command_unavailable_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2175,8 +2367,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_build_unavailable_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_build_unavailable_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2199,8 +2403,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_camera_jump_unavailable_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_camera_jump_unavailable_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2223,8 +2439,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_scan_unavailable_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_scan_unavailable_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2247,8 +2475,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_scan_cooldown_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_scan_cooldown_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2271,8 +2511,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_insufficient_resources_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_insufficient_resources_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2295,8 +2547,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_insufficient_fuel_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_insufficient_fuel_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2319,8 +2583,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_invalid_transport_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_invalid_transport_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2343,8 +2619,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_invalid_passenger_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_invalid_passenger_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2367,8 +2655,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_transport_full_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_transport_full_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2391,8 +2691,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_no_eligible_passengers_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_no_eligible_passengers_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2415,8 +2727,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_no_disembark_cell_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_no_disembark_cell_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2439,8 +2763,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_transport_passenger_missing_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_transport_passenger_missing_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2463,8 +2799,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_select_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_select_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2487,8 +2835,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_move_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_move_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2511,8 +2871,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_attack_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_attack_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2535,8 +2907,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_hold_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_hold_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2559,8 +2943,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_stop_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_stop_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2583,8 +2979,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_scan_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_scan_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2607,8 +3015,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_board_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_board_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2631,8 +3051,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_build_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_build_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2655,8 +3087,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_special_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_special_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2679,8 +3123,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_prompt_transport_to_passenger_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_board_prompt_transport_to_passenger_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2703,8 +3159,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_prompt_passenger_to_transport_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_board_prompt_passenger_to_transport_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2727,8 +3195,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_unavailable_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_board_unavailable_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2751,8 +3231,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_tap_units_to_board_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_board_tap_units_to_board_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2775,8 +3267,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_selected_unit_cannot_board_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_board_selected_unit_cannot_board_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2799,8 +3303,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_select_unit_first_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_board_select_unit_first_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2823,8 +3339,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_unavailable_hold_no_selection_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_unavailable_hold_no_selection_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2847,8 +3375,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_unavailable_stop_no_selection_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_unavailable_stop_no_selection_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2871,8 +3411,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_unavailable_scan_no_selection_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_unavailable_scan_no_selection_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2895,8 +3447,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_camera_follow_unavailable_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_camera_follow_unavailable_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2919,8 +3483,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_camera_follow_active_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_camera_follow_active_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2943,8 +3519,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_rts_camera_restored_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_rts_camera_restored_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2967,8 +3555,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_follow_target_lost_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_follow_target_lost_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -2991,8 +3591,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_destroyed_selected_building_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_destroyed_selected_building_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3015,8 +3627,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_air_defense_auto_engage_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_air_defense_auto_engage_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3039,8 +3663,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_exiting_unit_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_exiting_unit_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3063,8 +3699,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_exiting_passengers_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_exiting_passengers_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3087,8 +3735,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_loading_transport_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_loading_transport_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3111,8 +3771,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_boarding_transport_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_boarding_transport_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3135,8 +3807,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_holding_current_position_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_holding_current_position_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3159,8 +3843,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_stopped_selected_units_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_stopped_selected_units_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3183,8 +3879,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_unit_returning_to_base_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_unit_returning_to_base_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3207,8 +3915,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_units_returning_to_base_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_units_returning_to_base_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3231,8 +3951,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_destroyed_selected_unit_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_destroyed_selected_unit_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3255,8 +3987,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_destroyed_selected_units_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_destroyed_selected_units_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3279,8 +4023,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_scan_ordered_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_scan_ordered_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3303,8 +4059,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_scan_one_contact_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_scan_one_contact_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3327,8 +4095,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_scan_contacts_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_scan_contacts_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3351,8 +4131,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_scan_complete_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_scan_complete_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3375,8 +4167,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_missile_launched_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_missile_launched_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3399,8 +4203,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_airdrop_emergency_drop_visual_missing_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_airdrop_emergency_drop_visual_missing_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3423,8 +4239,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_airdrop_parachute_visual_missing_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_airdrop_parachute_visual_missing_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3447,8 +4275,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_airdrop_no_clear_landing_zone_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_airdrop_no_clear_landing_zone_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3471,8 +4311,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_airdrop_cargo_drop_blocked_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_airdrop_cargo_drop_blocked_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3495,8 +4347,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_move_title_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_move_title_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3519,8 +4383,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_move_description_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_move_description_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3543,8 +4419,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_attack_title_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_attack_title_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3567,8 +4455,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_attack_description_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_attack_description_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3591,8 +4491,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_scan_title_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_scan_title_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3615,8 +4527,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_scan_description_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_scan_description_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3639,8 +4563,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_board_title_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_board_title_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3663,8 +4599,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_board_description_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_board_description_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3687,8 +4635,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_board_description_transport_to_passenger_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_board_description_transport_to_passenger_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3711,8 +4671,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_build_title_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_build_title_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3735,8 +4707,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_build_description_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_build_description_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3759,8 +4743,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_move_title_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_move_title_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3783,8 +4779,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_move_description_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_move_description_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3807,8 +4815,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_attack_title_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_attack_title_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3831,8 +4851,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_attack_description_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_attack_description_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3855,8 +4887,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_hold_title_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_hold_title_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3879,8 +4923,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_hold_description_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_hold_description_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3903,8 +4959,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_stop_title_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_stop_title_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3927,8 +4995,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_stop_description_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_stop_description_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3951,8 +5031,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_scan_title_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_scan_title_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3975,8 +5067,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_scan_description_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_scan_description_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -3999,8 +5103,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_board_title_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_board_title_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4023,8 +5139,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_board_description_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_board_description_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4047,8 +5175,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_build_title_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_build_title_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4071,8 +5211,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_build_description_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_build_description_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4095,8 +5247,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_return_title_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_return_title_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4119,8 +5283,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_return_description_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_return_description_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4143,8 +5319,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_destroy_title_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_destroy_title_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4167,8 +5355,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_destroy_description_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_destroy_description_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4191,8 +5391,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_name_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_empty_name_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4215,8 +5427,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_ready_buildings_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_ready_buildings_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4239,8 +5463,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_ready_vehicles_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_ready_vehicles_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4263,8 +5499,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_ready_aircraft_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_ready_aircraft_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4287,8 +5535,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_ready_soldiers_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_ready_soldiers_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4311,8 +5571,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_ready_default_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_ready_default_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4335,8 +5607,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_instruction_place_pending_confirm_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_instruction_place_pending_confirm_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4359,8 +5643,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_instruction_cannot_place_here_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_instruction_cannot_place_here_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4383,8 +5679,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_connecting_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_connecting_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4407,8 +5715,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_not_enough_money_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_not_enough_money_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4431,8 +5751,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_missing_producer_named_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_missing_producer_named_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4455,8 +5787,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_missing_producer_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_missing_producer_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4479,8 +5823,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_queue_full_named_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_queue_full_named_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4503,8 +5859,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_queue_full_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_queue_full_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4527,8 +5895,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_global_queue_full_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_global_queue_full_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4551,8 +5931,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_invalid_selection_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_invalid_selection_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4575,8 +5967,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_unavailable_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_unavailable_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4599,8 +6003,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_not_enough_money_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_short_not_enough_money_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4623,8 +6039,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_requires_named_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_short_requires_named_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4647,8 +6075,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_missing_producer_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_short_missing_producer_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4671,8 +6111,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_queue_full_named_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_short_queue_full_named_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4695,8 +6147,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_queue_full_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_short_queue_full_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4719,8 +6183,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_global_queue_full_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_short_global_queue_full_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4743,8 +6219,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_unavailable_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_short_unavailable_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4767,8 +6255,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_buildings_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_empty_buildings_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4791,8 +6291,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_vehicles_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_empty_vehicles_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4815,8 +6327,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_aircraft_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_empty_aircraft_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4839,8 +6363,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_soldiers_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_empty_soldiers_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4863,8 +6399,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_default_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_empty_default_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4887,8 +6435,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_select_item_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_empty_select_item_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4911,8 +6471,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_placement_invalid_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_placement_invalid_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4935,8 +6507,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_action_place_choose_footprint_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_action_place_choose_footprint_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4959,8 +6543,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_place_building_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_place_building_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -4983,8 +6579,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_requested_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_requested_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -5007,8 +6615,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_success_recruitment_queued_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_success_recruitment_queued_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -5031,8 +6651,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_success_production_queued_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_success_production_queued_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -5055,8 +6687,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_cancel_unavailable_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_cancel_unavailable_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -5079,8 +6723,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_cancelled_named_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_cancelled_named_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -5103,8 +6759,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_cancelled_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_cancelled_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -5127,8 +6795,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_queue_empty_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_queue_empty_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -5151,8 +6831,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_queue_cleared_sentence_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_queue_cleared_sentence_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -5175,8 +6867,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_clear_unavailable_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_clear_unavailable_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -5199,8 +6903,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_queue_cleared_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_queue_cleared_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -5223,8 +6939,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_placement_cancelled_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_placement_cancelled_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -5247,8 +6975,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_rotated_90_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_rotated_90_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -5271,8 +7011,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_no_active_placement_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_no_active_placement_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -5295,8 +7047,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_building_placed_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_building_placed_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -5319,8 +7083,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_place_on_valid_ground_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_place_on_valid_ground_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -5343,8 +7119,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_drawer_not_ready_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_drawer_not_ready_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -5367,8 +7155,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_status_drag_to_position_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_placement_status_drag_to_position_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -5391,8 +7191,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_status_valid_ground_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_placement_status_valid_ground_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -5415,8 +7227,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_title_default_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_placement_title_default_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -5439,8 +7263,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_title_named_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_placement_title_named_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -5463,8 +7299,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_instruction_confirm_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_placement_instruction_confirm_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -5487,8 +7335,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_title_fallback_subject_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_placement_title_fallback_subject_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -5511,8 +7371,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_match_feedback_tactical_map_not_ready_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_match_feedback_tactical_map_not_ready_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -5535,8 +7407,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_match_feedback_blocked_civilian_zone_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_match_feedback_blocked_civilian_zone_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -5559,8 +7443,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_unit_singular_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_selection_feedback_unit_singular_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -5583,8 +7479,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_unit_plural_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_selection_feedback_unit_plural_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -5607,8 +7515,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_vehicle_singular_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_selection_feedback_vehicle_singular_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -5631,8 +7551,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_soldier_singular_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_selection_feedback_soldier_singular_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -5655,8 +7587,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_squad_count_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_selection_feedback_squad_count_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -5679,8 +7623,20 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_squad_selected_01.wav",
-          "status": "neural-tts",
+          "status": "elevenlabs-commercial",
           "weight": 1
+        }
+      ],
+      "localizedClips": [
+        {
+          "localeCode": "fa-IR",
+          "clips": [
+            {
+              "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_selection_feedback_squad_selected_01_fa.wav",
+              "status": "elevenlabs-commercial",
+              "weight": 1
+            }
+          ]
         }
       ]
     },
@@ -5690,8 +7646,16 @@
       "priority": "High",
       "cooldownMs": 600,
       "volumeDb": -6.0,
-      "pitchVariance": { "min": 0.0, "max": 0.0 },
-      "playback": { "loop": false, "spatial": false, "maxInstances": 1, "allowRuntimeLoad": false },
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_find_squad_aria.wav",
@@ -5706,8 +7670,16 @@
       "priority": "High",
       "cooldownMs": 600,
       "volumeDb": -6.0,
-      "pitchVariance": { "min": 0.0, "max": 0.0 },
-      "playback": { "loop": false, "spatial": false, "maxInstances": 1, "allowRuntimeLoad": false },
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_move_to_cover_aria.wav",
@@ -5722,8 +7694,16 @@
       "priority": "High",
       "cooldownMs": 600,
       "volumeDb": -6.0,
-      "pitchVariance": { "min": 0.0, "max": 0.0 },
-      "playback": { "loop": false, "spatial": false, "maxInstances": 1, "allowRuntimeLoad": false },
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_move_destination_aria.wav",
@@ -5738,8 +7718,16 @@
       "priority": "High",
       "cooldownMs": 600,
       "volumeDb": -6.0,
-      "pitchVariance": { "min": 0.0, "max": 0.0 },
-      "playback": { "loop": false, "spatial": false, "maxInstances": 1, "allowRuntimeLoad": false },
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_confirm_threat_aria.wav",
@@ -5754,8 +7742,16 @@
       "priority": "High",
       "cooldownMs": 600,
       "volumeDb": -6.0,
-      "pitchVariance": { "min": 0.0, "max": 0.0 },
-      "playback": { "loop": false, "spatial": false, "maxInstances": 1, "allowRuntimeLoad": false },
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_engage_aria.wav",
@@ -5770,8 +7766,16 @@
       "priority": "High",
       "cooldownMs": 600,
       "volumeDb": -6.0,
-      "pitchVariance": { "min": 0.0, "max": 0.0 },
-      "playback": { "loop": false, "spatial": false, "maxInstances": 1, "allowRuntimeLoad": false },
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_attack_target_aria.wav",
@@ -5786,8 +7790,16 @@
       "priority": "High",
       "cooldownMs": 600,
       "volumeDb": -6.0,
-      "pitchVariance": { "min": 0.0, "max": 0.0 },
-      "playback": { "loop": false, "spatial": false, "maxInstances": 1, "allowRuntimeLoad": false },
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_secure_corridor_aria.wav",
@@ -5802,8 +7814,16 @@
       "priority": "High",
       "cooldownMs": 600,
       "volumeDb": -6.0,
-      "pitchVariance": { "min": 0.0, "max": 0.0 },
-      "playback": { "loop": false, "spatial": false, "maxInstances": 1, "allowRuntimeLoad": false },
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_find_squad_aria_fa.wav",
@@ -5818,8 +7838,16 @@
       "priority": "High",
       "cooldownMs": 600,
       "volumeDb": -6.0,
-      "pitchVariance": { "min": 0.0, "max": 0.0 },
-      "playback": { "loop": false, "spatial": false, "maxInstances": 1, "allowRuntimeLoad": false },
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_move_to_cover_aria_fa.wav",
@@ -5834,8 +7862,16 @@
       "priority": "High",
       "cooldownMs": 600,
       "volumeDb": -6.0,
-      "pitchVariance": { "min": 0.0, "max": 0.0 },
-      "playback": { "loop": false, "spatial": false, "maxInstances": 1, "allowRuntimeLoad": false },
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_move_destination_aria_fa.wav",
@@ -5850,8 +7886,16 @@
       "priority": "High",
       "cooldownMs": 600,
       "volumeDb": -6.0,
-      "pitchVariance": { "min": 0.0, "max": 0.0 },
-      "playback": { "loop": false, "spatial": false, "maxInstances": 1, "allowRuntimeLoad": false },
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_confirm_threat_aria_fa.wav",
@@ -5866,8 +7910,16 @@
       "priority": "High",
       "cooldownMs": 600,
       "volumeDb": -6.0,
-      "pitchVariance": { "min": 0.0, "max": 0.0 },
-      "playback": { "loop": false, "spatial": false, "maxInstances": 1, "allowRuntimeLoad": false },
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_engage_aria_fa.wav",
@@ -5882,8 +7934,16 @@
       "priority": "High",
       "cooldownMs": 600,
       "volumeDb": -6.0,
-      "pitchVariance": { "min": 0.0, "max": 0.0 },
-      "playback": { "loop": false, "spatial": false, "maxInstances": 1, "allowRuntimeLoad": false },
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_attack_target_aria_fa.wav",
@@ -5898,8 +7958,16 @@
       "priority": "High",
       "cooldownMs": 600,
       "volumeDb": -6.0,
-      "pitchVariance": { "min": 0.0, "max": 0.0 },
-      "playback": { "loop": false, "spatial": false, "maxInstances": 1, "allowRuntimeLoad": false },
+      "pitchVariance": {
+        "min": 0.0,
+        "max": 0.0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_secure_corridor_aria_fa.wav",

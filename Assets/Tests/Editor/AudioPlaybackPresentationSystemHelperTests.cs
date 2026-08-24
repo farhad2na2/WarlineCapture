@@ -41,6 +41,8 @@ public sealed class AudioPlaybackPresentationSystemHelperTests
             passed++;
             RunCase(test => test.PlayAcceptedRequest_CrossfadesMusicStatesAndReleasesOutgoingLoop());
             passed++;
+            RunCase(test => test.PlayAcceptedRequest_SelectsRequestedLocalizedClip());
+            passed++;
 
             Debug.Log($"[AudioPlaybackPresentationHelperValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -429,6 +431,36 @@ public sealed class AudioPlaybackPresentationSystemHelperTests
         Assert.That(matchSource.volume, Is.EqualTo(1f).Within(0.001f));
     }
 
+    [Test]
+    public void PlayAcceptedRequest_SelectsRequestedLocalizedClip()
+    {
+        using AudioPlaybackPresentationSystemHelper helper = new(initialPoolSize: 1, maxPoolSize: 1);
+        AudioClip english = CreateClip("aria_english");
+        AudioClip persian = CreateClip("aria_persian");
+        AudioEventCatalogEntry entry = CreateEntry(
+            AudioEventIds.VOARIAMessageWarningGroundAttackType,
+            busId: "Voice",
+            maxInstances: 1,
+            clip: english);
+        AddLocalizedClip(entry, "fa-IR", persian);
+        AudioPlaybackRequestElement request = CreateAcceptedRequest(
+            77,
+            AudioEventIds.VOARIAMessageWarningGroundAttackType,
+            AudioEventIds.VOARIAMessageWarningGroundAttackTypeHash);
+        request.BusId = new FixedString32Bytes("Voice");
+
+        AudioPlaybackPresentationResult result = helper.PlayAcceptedRequest(
+            request,
+            entry,
+            bus: null,
+            settings: CreateSettings(),
+            localeCode: "fa-IR");
+
+        Assert.IsTrue(result.Played);
+        Assert.IsTrue(helper.TryGetActiveSource(request.RequestId, out AudioSource source));
+        Assert.AreSame(persian, source.clip);
+    }
+
     private AudioClip CreateClip(string name)
     {
         AudioClip clip = AudioClip.Create(name, 4410, 1, 44100, false);
@@ -492,6 +524,17 @@ public sealed class AudioPlaybackPresentationSystemHelperTests
         }
 
         return entry;
+    }
+
+    private static void AddLocalizedClip(AudioEventCatalogEntry entry, string localeCode, AudioClip clip)
+    {
+        AudioClipWeightEntry weightEntry = new();
+        SetPrivateField(weightEntry, "clip", clip);
+        SetPrivateField(weightEntry, "weight", 1);
+        LocalizedAudioClipSet clipSet = new();
+        SetPrivateField(clipSet, "localeCode", localeCode);
+        SetPrivateField(clipSet, "clips", new List<AudioClipWeightEntry> { weightEntry });
+        SetPrivateField(entry, "localizedClips", new List<LocalizedAudioClipSet> { clipSet });
     }
 
     private static void SetPrivateField<TTarget, TValue>(TTarget target, string fieldName, TValue value)

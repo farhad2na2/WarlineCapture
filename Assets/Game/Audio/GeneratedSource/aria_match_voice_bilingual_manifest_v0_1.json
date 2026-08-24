@@ -1,0 +1,2951 @@
+{
+  "schema": "WarlineCapture.AriaMatchVoiceBilingual.v0.1",
+  "generatedAtUtc": "2026-08-24T10:15:23.835800+00:00",
+  "provider": "ElevenLabs",
+  "license": "ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE",
+  "runtimeNetworkTts": false,
+  "model": "eleven_v3",
+  "voice": {
+    "id": "Fi9tPTnEcbh3of7hOHC8",
+    "name": "Warline - ARIA Civic Relay"
+  },
+  "eventCount": 163,
+  "localeCount": 2,
+  "clipCount": 326,
+  "clips": [
+    {
+      "key": "confirm_destroy",
+      "eventId": "VO.ARIA.Message.ConfirmDestroy",
+      "locale": "en-US",
+      "text": "Are you sure you want to destroy {0}?",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_confirm_destroy_01.wav",
+      "durationSeconds": 2.08,
+      "sha256": "e8a7e324fb5357365a3d820cc30773c9ffb3f334438b202d1d137245f75fcfa7"
+    },
+    {
+      "key": "confirm_destroy",
+      "eventId": "VO.ARIA.Message.ConfirmDestroy",
+      "locale": "fa-IR",
+      "text": "آیا از نابود کردن {0} مطمئن هستید؟",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_confirm_destroy_01_fa.wav",
+      "durationSeconds": 3.12,
+      "sha256": "b551ec10aaf8211fce3ff28050887588acd276e3c0d86efcaa096517740965bc"
+    },
+    {
+      "key": "not_enough_money",
+      "eventId": "VO.ARIA.Message.NotEnoughMoney",
+      "locale": "en-US",
+      "text": "Not enough money",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_not_enough_money_01.wav",
+      "durationSeconds": 1.12,
+      "sha256": "56068073e3905f6b3566a979ce1fba0bdf2f84bd3a2e4086ba065a7d4fb4ec35"
+    },
+    {
+      "key": "not_enough_money",
+      "eventId": "VO.ARIA.Message.NotEnoughMoney",
+      "locale": "fa-IR",
+      "text": "اعتبار کافی نیست",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_not_enough_money_01_fa.wav",
+      "durationSeconds": 1.84,
+      "sha256": "1be31b86eea93391339e4adcce352e2bc090c8ce8f1226f9e56e86922a074dbd"
+    },
+    {
+      "key": "create_first",
+      "eventId": "VO.ARIA.Message.CreateFirst",
+      "locale": "en-US",
+      "text": "Create {0} first",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_create_first_01.wav",
+      "durationSeconds": 1.44,
+      "sha256": "8490e1fff3ed3f6a3698c75ab17360860a73662a8e4c17eb45940d9d2c11939d"
+    },
+    {
+      "key": "create_first",
+      "eventId": "VO.ARIA.Message.CreateFirst",
+      "locale": "fa-IR",
+      "text": "ابتدا {0} را بسازید",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_create_first_01_fa.wav",
+      "durationSeconds": 1.92,
+      "sha256": "901933f27d1b86407206987786ef6e87bf2a54133c0f49d129731bd348ca0d70"
+    },
+    {
+      "key": "drag_building_to_final_position",
+      "eventId": "VO.ARIA.Message.DragBuildingToFinalPosition",
+      "locale": "en-US",
+      "text": "Drag to final position",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_drag_building_to_final_position_01.wav",
+      "durationSeconds": 1.92,
+      "sha256": "0faed60e986daf2449d423828741968936a68e5a373e4e9a1f3a21bd2da1ade6"
+    },
+    {
+      "key": "drag_building_to_final_position",
+      "eventId": "VO.ARIA.Message.DragBuildingToFinalPosition",
+      "locale": "fa-IR",
+      "text": "به موقعیت نهایی بکشید",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_drag_building_to_final_position_01_fa.wav",
+      "durationSeconds": 2.08,
+      "sha256": "5cd02e5a8f66d5280a28979f24f66b848433d6f7ba235ee0dbb763676cba706b"
+    },
+    {
+      "key": "warning_ground_attack_type",
+      "eventId": "VO.ARIA.Message.WarningGroundAttackType",
+      "locale": "en-US",
+      "text": "Ground vehicle attack detected",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_ground_attack_type_01.wav",
+      "durationSeconds": 2.0,
+      "sha256": "6dbc4b47d6f3c7b0556ac61340ca460e06617eef21051fd2ed1f4278bbf51e43"
+    },
+    {
+      "key": "warning_ground_attack_type",
+      "eventId": "VO.ARIA.Message.WarningGroundAttackType",
+      "locale": "fa-IR",
+      "text": "حمله خودروهای زمینی شناسایی شد",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_warning_ground_attack_type_01_fa.wav",
+      "durationSeconds": 2.88,
+      "sha256": "abe63b45b11e47e0371c9327b9c9b324d2e7c5633db9d4bfcfb249e3a115476a"
+    },
+    {
+      "key": "warning_air_attack_type",
+      "eventId": "VO.ARIA.Message.WarningAirAttackType",
+      "locale": "en-US",
+      "text": "Air attack detected",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_air_attack_type_01.wav",
+      "durationSeconds": 1.6,
+      "sha256": "b1db655606d84ac2dd1c817b200f572c112afb0b1776878e6a4c02dd3881d8fc"
+    },
+    {
+      "key": "warning_air_attack_type",
+      "eventId": "VO.ARIA.Message.WarningAirAttackType",
+      "locale": "fa-IR",
+      "text": "حمله هوایی شناسایی شد",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_warning_air_attack_type_01_fa.wav",
+      "durationSeconds": 2.0,
+      "sha256": "7c9d06a8fd9b27d4983aec76414eb7900f68d3a5e311fd26e1528cb0830dd9ee"
+    },
+    {
+      "key": "warning_attack_eta_seconds",
+      "eventId": "VO.ARIA.Message.WarningAttackEtaSeconds",
+      "locale": "en-US",
+      "text": "Estimated time to base: {0} seconds",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_attack_eta_seconds_01.wav",
+      "durationSeconds": 2.96,
+      "sha256": "2c2d0d476f6e908084361de453d1e48ec94f1aad90981cfac0ce79221bf354fe"
+    },
+    {
+      "key": "warning_attack_eta_seconds",
+      "eventId": "VO.ARIA.Message.WarningAttackEtaSeconds",
+      "locale": "fa-IR",
+      "text": "زمان تقریبی رسیدن به پایگاه: {0} ثانیه",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_warning_attack_eta_seconds_01_fa.wav",
+      "durationSeconds": 4.48,
+      "sha256": "8c60a46879f1ea818b5fe78caa2c094adbce8b86af1f5b2b63f5e2b755261f57"
+    },
+    {
+      "key": "warning_attack_eta_suffix",
+      "eventId": "VO.ARIA.Message.WarningAttackEtaSuffix",
+      "locale": "en-US",
+      "text": "{0} - ETA {1}s",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_attack_eta_suffix_01.wav",
+      "durationSeconds": 2.64,
+      "sha256": "233d218fb86416db400d15f6a72ea34b188b0c7d89cdad92e917f10d48873671"
+    },
+    {
+      "key": "warning_attack_eta_suffix",
+      "eventId": "VO.ARIA.Message.WarningAttackEtaSuffix",
+      "locale": "fa-IR",
+      "text": "{0} - زمان رسیدن {1} ثانیه",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_warning_attack_eta_suffix_01_fa.wav",
+      "durationSeconds": 2.96,
+      "sha256": "d5312f613c8e0bb2be485d385fe52ea0d4566737700e695e0a019f712bd150da"
+    },
+    {
+      "key": "warning_attack_count_suffix",
+      "eventId": "VO.ARIA.Message.WarningAttackCountSuffix",
+      "locale": "en-US",
+      "text": "{0} x{1}",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_attack_count_suffix_01.wav",
+      "durationSeconds": 1.52,
+      "sha256": "3ccaff239b1edc9c62499a2678a884d2135ae232da6c0e51f42090d00a71e19a"
+    },
+    {
+      "key": "warning_attack_count_suffix",
+      "eventId": "VO.ARIA.Message.WarningAttackCountSuffix",
+      "locale": "fa-IR",
+      "text": "{0}، تعداد {1}",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_warning_attack_count_suffix_01_fa.wav",
+      "durationSeconds": 1.92,
+      "sha256": "3a2db6728f3477c760ddb48d800f8c6cd867509dcbcd8babde2ed3ff8cadace5"
+    },
+    {
+      "key": "tactical.command.reason.no_selection",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonNoSelection",
+      "locale": "en-US",
+      "text": "Select units or a building first.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_no_selection_01.wav",
+      "durationSeconds": 2.4,
+      "sha256": "eaa3ae735ac0323d931186846ab1a9845ff5da7416a1d7e0b595019cbc5f1af6"
+    },
+    {
+      "key": "tactical.command.reason.no_selection",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonNoSelection",
+      "locale": "fa-IR",
+      "text": "ابتدا نیروها یا یک ساختمان را انتخاب کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_no_selection_01_fa.wav",
+      "durationSeconds": 3.68,
+      "sha256": "f16d0fd6156eeb06f8a8a4ddfe48b4b99b517ac6ee41fba072fef67d57b5fc6e"
+    },
+    {
+      "key": "tactical.command.reason.target_out_of_bounds",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTargetOutOfBounds",
+      "locale": "en-US",
+      "text": "Target is outside the playable area.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_target_out_of_bounds_01.wav",
+      "durationSeconds": 2.56,
+      "sha256": "fb3636974752cb0664d61b485b452811af951deffb15d03559219deb2b2787a8"
+    },
+    {
+      "key": "tactical.command.reason.target_out_of_bounds",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTargetOutOfBounds",
+      "locale": "fa-IR",
+      "text": "هدف خارج از محدوده عملیاتی است.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_target_out_of_bounds_01_fa.wav",
+      "durationSeconds": 2.72,
+      "sha256": "af91dcd692337b22b893c4c16c3dcd1898ddbb35534fc72b0e03a44ce0968ce0"
+    },
+    {
+      "key": "tactical.command.reason.target_blocked",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTargetBlocked",
+      "locale": "en-US",
+      "text": "Route is blocked.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_target_blocked_01.wav",
+      "durationSeconds": 1.28,
+      "sha256": "be8f613b2f9915cfb1632068b729585a68cff0e25e13a15401dc0c9a826b2ef7"
+    },
+    {
+      "key": "tactical.command.reason.target_blocked",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTargetBlocked",
+      "locale": "fa-IR",
+      "text": "مسیر مسدود است.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_target_blocked_01_fa.wav",
+      "durationSeconds": 1.52,
+      "sha256": "67904d56ccb4127c23ac96a860112793a44e8a3be008b1c727bc5d0c4586984b"
+    },
+    {
+      "key": "tactical.command.reason.target_unreachable",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTargetUnreachable",
+      "locale": "en-US",
+      "text": "Target is unreachable.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_target_unreachable_01.wav",
+      "durationSeconds": 1.6,
+      "sha256": "7fa19820d5385c64144c3a3db26d4bf4c6c50d71b501a7b5d4967e2a482e5ffb"
+    },
+    {
+      "key": "tactical.command.reason.target_unreachable",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTargetUnreachable",
+      "locale": "fa-IR",
+      "text": "دسترسی به هدف ممکن نیست.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_target_unreachable_01_fa.wav",
+      "durationSeconds": 2.48,
+      "sha256": "e158d948a1002ecff250d13adac149462af9b039e9f1ec71fd44ca9d4ce07002"
+    },
+    {
+      "key": "tactical.command.reason.target_not_enemy",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTargetNotEnemy",
+      "locale": "en-US",
+      "text": "Target is not hostile.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_target_not_enemy_01.wav",
+      "durationSeconds": 1.92,
+      "sha256": "c16f837722426d1f36d72e4d3b4bc409eed4c11b799adc2c28b6416429711edc"
+    },
+    {
+      "key": "tactical.command.reason.target_not_enemy",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTargetNotEnemy",
+      "locale": "fa-IR",
+      "text": "هدف دشمن نیست.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_target_not_enemy_01_fa.wav",
+      "durationSeconds": 1.44,
+      "sha256": "6d72906261e4c82f60a2cb77f7d63b1ec1729c446b1aafe72d536e7947d75c44"
+    },
+    {
+      "key": "tactical.command.reason.target_not_attackable",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTargetNotAttackable",
+      "locale": "en-US",
+      "text": "Target cannot be attacked.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_target_not_attackable_01.wav",
+      "durationSeconds": 1.84,
+      "sha256": "a8c49b4b7e374aa373ef83f1135ffe2ffaf2eef766526317b86a2972c79a52dd"
+    },
+    {
+      "key": "tactical.command.reason.target_not_attackable",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTargetNotAttackable",
+      "locale": "fa-IR",
+      "text": "امکان حمله به این هدف وجود ندارد.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_target_not_attackable_01_fa.wav",
+      "durationSeconds": 2.8,
+      "sha256": "95ebaf9a45b52f423bc9c5b7c6350878d50e886b352d316e03b37f99ca644ad3"
+    },
+    {
+      "key": "tactical.command.reason.command_unavailable",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonCommandUnavailable",
+      "locale": "en-US",
+      "text": "Command unavailable.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_command_unavailable_01.wav",
+      "durationSeconds": 1.76,
+      "sha256": "a9063f2851b1002b1dcc99b95b4ca7a5c8a7fdf396b2eb1f26020ae4c87bafe4"
+    },
+    {
+      "key": "tactical.command.reason.command_unavailable",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonCommandUnavailable",
+      "locale": "fa-IR",
+      "text": "فرمان در دسترس نیست.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_command_unavailable_01_fa.wav",
+      "durationSeconds": 1.92,
+      "sha256": "73a7c8e68272e994bfb360e5ff64f43d921b41dc88e47cda5e2d6310f8cacfc8"
+    },
+    {
+      "key": "tactical.command.reason.build_unavailable",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonBuildUnavailable",
+      "locale": "en-US",
+      "text": "Building unavailable.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_build_unavailable_01.wav",
+      "durationSeconds": 1.76,
+      "sha256": "37606039509f4f660cbf163e241d954dd3e7b3f547dc11f08a5a1d02b974a43a"
+    },
+    {
+      "key": "tactical.command.reason.build_unavailable",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonBuildUnavailable",
+      "locale": "fa-IR",
+      "text": "ساخت‌وساز در دسترس نیست.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_build_unavailable_01_fa.wav",
+      "durationSeconds": 2.24,
+      "sha256": "c297186e3f42ff078e8470611da4de71c8d55a3a59c8348f67d677b325b77e49"
+    },
+    {
+      "key": "tactical.command.reason.camera_jump_unavailable",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonCameraJumpUnavailable",
+      "locale": "en-US",
+      "text": "Camera focus unavailable.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_camera_jump_unavailable_01.wav",
+      "durationSeconds": 1.92,
+      "sha256": "a061edb7d5ecdb695da3459c5ced70abe7d2c80b780025dab64fbe275590ac2b"
+    },
+    {
+      "key": "tactical.command.reason.camera_jump_unavailable",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonCameraJumpUnavailable",
+      "locale": "fa-IR",
+      "text": "تمرکز دوربین در دسترس نیست.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_camera_jump_unavailable_01_fa.wav",
+      "durationSeconds": 2.8,
+      "sha256": "6a411764e8553f2fa98c328b14d76785530c16a7d38714ebd4a07d551eb959b2"
+    },
+    {
+      "key": "tactical.command.reason.scan_unavailable",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonScanUnavailable",
+      "locale": "en-US",
+      "text": "Scan unavailable.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_scan_unavailable_01.wav",
+      "durationSeconds": 1.52,
+      "sha256": "5b53d9678b4f9d8426e753c14596383972d974165b4a3c97e4479c48d9697d6f"
+    },
+    {
+      "key": "tactical.command.reason.scan_unavailable",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonScanUnavailable",
+      "locale": "fa-IR",
+      "text": "اسکن در دسترس نیست.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_scan_unavailable_01_fa.wav",
+      "durationSeconds": 2.0,
+      "sha256": "51784aa06a106065b0cf30471f88a721cffb97588f7ed1236a3fabe950aa9b20"
+    },
+    {
+      "key": "tactical.command.reason.scan_cooldown",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonScanCooldown",
+      "locale": "en-US",
+      "text": "Scan cooling down.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_scan_cooldown_01.wav",
+      "durationSeconds": 1.52,
+      "sha256": "0f44786cfc490cf96b9fbb503d2026f63be7c46339ad2cd883da6b041344f3f6"
+    },
+    {
+      "key": "tactical.command.reason.scan_cooldown",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonScanCooldown",
+      "locale": "fa-IR",
+      "text": "اسکن در حال بازیابی است.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_scan_cooldown_01_fa.wav",
+      "durationSeconds": 2.16,
+      "sha256": "c2cf99f6bdabdb5007bf1c64042d0540a018923a40fc2b7a488f3c08316e61c1"
+    },
+    {
+      "key": "tactical.command.reason.insufficient_resources",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonInsufficientResources",
+      "locale": "en-US",
+      "text": "Insufficient resources.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_insufficient_resources_01.wav",
+      "durationSeconds": 1.68,
+      "sha256": "15a0f95cc6ecda6bf2e8ec60b8370f861c1c8aa9612f8f42a1f9c264f2ba2f8c"
+    },
+    {
+      "key": "tactical.command.reason.insufficient_resources",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonInsufficientResources",
+      "locale": "fa-IR",
+      "text": "منابع کافی نیست.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_insufficient_resources_01_fa.wav",
+      "durationSeconds": 1.84,
+      "sha256": "4910292f62fa6c239e245e9f2b5db67870e5ff95e42e7536584d335a38cad168"
+    },
+    {
+      "key": "tactical.command.reason.insufficient_fuel",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonInsufficientFuel",
+      "locale": "en-US",
+      "text": "Insufficient fuel.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_insufficient_fuel_01.wav",
+      "durationSeconds": 1.52,
+      "sha256": "998156bed5dad6eb4dc15d9cc833911a7912a3a5fd3671cd9f7139ebec5e511d"
+    },
+    {
+      "key": "tactical.command.reason.insufficient_fuel",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonInsufficientFuel",
+      "locale": "fa-IR",
+      "text": "سوخت کافی نیست.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_insufficient_fuel_01_fa.wav",
+      "durationSeconds": 1.44,
+      "sha256": "5c21cafe01baed10e869dcbfcd30b2aca19760deda0070db8a51b69a7a158290"
+    },
+    {
+      "key": "tactical.command.reason.invalid_transport",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonInvalidTransport",
+      "locale": "en-US",
+      "text": "Select a transport vehicle or aircraft first.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_invalid_transport_01.wav",
+      "durationSeconds": 3.36,
+      "sha256": "bfb53ff3d10b371aabacf1d8bc6405f51351e9148e5f68ff9eebb924bb574f37"
+    },
+    {
+      "key": "tactical.command.reason.invalid_transport",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonInvalidTransport",
+      "locale": "fa-IR",
+      "text": "ابتدا یک خودرو یا هواگرد ترابری انتخاب کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_invalid_transport_01_fa.wav",
+      "durationSeconds": 4.0,
+      "sha256": "cbe37b73ab245e98dc394a1143da89bc663b2e39bf5aa04c43d6fc05a02dee43"
+    },
+    {
+      "key": "tactical.command.reason.invalid_passenger",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonInvalidPassenger",
+      "locale": "en-US",
+      "text": "Select units or cargo that can board.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_invalid_passenger_01.wav",
+      "durationSeconds": 2.64,
+      "sha256": "b223da1638638a21c17fda0f37548c492c697a197d5d3a13499864cf2aa9d45c"
+    },
+    {
+      "key": "tactical.command.reason.invalid_passenger",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonInvalidPassenger",
+      "locale": "fa-IR",
+      "text": "نیرو یا محموله قابل سوار شدن را انتخاب کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_invalid_passenger_01_fa.wav",
+      "durationSeconds": 3.92,
+      "sha256": "be456d34f6eae9ca6f99c85579a85fe729a35b8b3445b1255434e6cf793df11f"
+    },
+    {
+      "key": "tactical.command.reason.transport_full",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTransportFull",
+      "locale": "en-US",
+      "text": "Transport is full.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_transport_full_01.wav",
+      "durationSeconds": 1.52,
+      "sha256": "3a01dc7824c73cf5b17d563987b183f5b131604fa9d0e452e8fe5b98d63ac6c0"
+    },
+    {
+      "key": "tactical.command.reason.transport_full",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTransportFull",
+      "locale": "fa-IR",
+      "text": "ظرفیت وسیله ترابری تکمیل است.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_transport_full_01_fa.wav",
+      "durationSeconds": 3.2,
+      "sha256": "c35a71228948308447023efafdb3420ab488e519e543fbcf79ae2cc9de5d11df"
+    },
+    {
+      "key": "tactical.command.reason.no_eligible_passengers",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonNoEligiblePassengers",
+      "locale": "en-US",
+      "text": "No nearby units can board this transport.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_no_eligible_passengers_01.wav",
+      "durationSeconds": 2.64,
+      "sha256": "0548060405197df8309cb1ef0457c1e829921b6a0b0faa48015603dad837d98f"
+    },
+    {
+      "key": "tactical.command.reason.no_eligible_passengers",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonNoEligiblePassengers",
+      "locale": "fa-IR",
+      "text": "هیچ نیروی نزدیک نمی‌تواند سوار این وسیله شود.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_no_eligible_passengers_01_fa.wav",
+      "durationSeconds": 3.76,
+      "sha256": "c57aedd4b4fe48f9fa4a8af9c4c25a6ee5781ceb859a723bea8f6d47fb1db62b"
+    },
+    {
+      "key": "tactical.command.reason.no_disembark_cell",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonNoDisembarkCell",
+      "locale": "en-US",
+      "text": "No clear exit point for passengers.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_no_disembark_cell_01.wav",
+      "durationSeconds": 2.32,
+      "sha256": "d282c8da3d11d0347aff0d517e918cb3e75548f503673c09ee398272ead87624"
+    },
+    {
+      "key": "tactical.command.reason.no_disembark_cell",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonNoDisembarkCell",
+      "locale": "fa-IR",
+      "text": "محل امنی برای پیاده شدن نیروها وجود ندارد.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_no_disembark_cell_01_fa.wav",
+      "durationSeconds": 3.6,
+      "sha256": "a6ddb86f02c877a5899797fdf8d6dc6bed85001a61791edb15016bc5fa1b18ab"
+    },
+    {
+      "key": "tactical.command.reason.transport_passenger_missing",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTransportPassengerMissing",
+      "locale": "en-US",
+      "text": "Passenger is not inside this transport.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_reason_transport_passenger_missing_01.wav",
+      "durationSeconds": 2.56,
+      "sha256": "404436ae0e5ed3da1df45d9d5475e9c35e0c90518048e44b7ad350f5e00ecfdd"
+    },
+    {
+      "key": "tactical.command.reason.transport_passenger_missing",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTransportPassengerMissing",
+      "locale": "fa-IR",
+      "text": "این نیرو داخل وسیله ترابری نیست.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_transport_passenger_missing_01_fa.wav",
+      "durationSeconds": 2.72,
+      "sha256": "c1aade778ecd5204816c5ebe8185bdbc844a245559bee1592666ea5ba4cdde18"
+    },
+    {
+      "key": "tactical.command.instruction.select",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionSelect",
+      "locale": "en-US",
+      "text": "Select units or a building.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_select_01.wav",
+      "durationSeconds": 2.0,
+      "sha256": "88353e856b3bc8ead814389c4b0d6559ae08b4f162966e5be60306ba82f1e052"
+    },
+    {
+      "key": "tactical.command.instruction.select",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionSelect",
+      "locale": "fa-IR",
+      "text": "نیروها یا یک ساختمان را انتخاب کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_select_01_fa.wav",
+      "durationSeconds": 2.96,
+      "sha256": "f517def0cdc82be6419e6880876195fb560d7859f2e51305b1e4e2300cfa4a2d"
+    },
+    {
+      "key": "tactical.command.instruction.move",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionMove",
+      "locale": "en-US",
+      "text": "Choose destination.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_move_01.wav",
+      "durationSeconds": 1.52,
+      "sha256": "fb0ca972e86ab6efc92d1835b8397e665df458f1ce8cf3f0564a4c9de4a9f482"
+    },
+    {
+      "key": "tactical.command.instruction.move",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionMove",
+      "locale": "fa-IR",
+      "text": "مقصد را انتخاب کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_move_01_fa.wav",
+      "durationSeconds": 1.76,
+      "sha256": "597916ac263cb2532a300b4074242c0bf4bc937c37fc263ee53ee52c4b96c10a"
+    },
+    {
+      "key": "tactical.command.instruction.attack",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionAttack",
+      "locale": "en-US",
+      "text": "Tap hostile target.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_attack_01.wav",
+      "durationSeconds": 1.6,
+      "sha256": "7cb40c7623a89b4a110cfc2f7379776f8bc35785e252809b803a5c1c6a07a25c"
+    },
+    {
+      "key": "tactical.command.instruction.attack",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionAttack",
+      "locale": "fa-IR",
+      "text": "روی هدف دشمن بزنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_attack_01_fa.wav",
+      "durationSeconds": 2.08,
+      "sha256": "99964f19e537a1eb729f6a746d0320b10a5a4747693df22e453ea147867e864f"
+    },
+    {
+      "key": "tactical.command.instruction.hold",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionHold",
+      "locale": "en-US",
+      "text": "Hold position and return fire.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_hold_01.wav",
+      "durationSeconds": 2.4,
+      "sha256": "883d48b9539ad0a1e00744f383b123ee209126ffc7e5c492819b0f50540e8326"
+    },
+    {
+      "key": "tactical.command.instruction.hold",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionHold",
+      "locale": "fa-IR",
+      "text": "موضع را حفظ کنید و پاسخ آتش بدهید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_hold_01_fa.wav",
+      "durationSeconds": 3.04,
+      "sha256": "4dee94a8249d4e69f64128a41c7b8416ee5b690eef9c20ea06129450a67757ce"
+    },
+    {
+      "key": "tactical.command.instruction.stop",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionStop",
+      "locale": "en-US",
+      "text": "Stop selected units and clear orders.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_stop_01.wav",
+      "durationSeconds": 2.96,
+      "sha256": "de1d171fae895b7d38ebd839af4e8f076c0b5b660b4a6dfe386db1196a87209b"
+    },
+    {
+      "key": "tactical.command.instruction.stop",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionStop",
+      "locale": "fa-IR",
+      "text": "نیروهای منتخب را متوقف و فرمان‌ها را لغو کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_stop_01_fa.wav",
+      "durationSeconds": 4.0,
+      "sha256": "eaaa951001d6afe43feab556ca59e7028c06b90b0dfc224a9c4615a74af6e323"
+    },
+    {
+      "key": "tactical.command.instruction.scan",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionScan",
+      "locale": "en-US",
+      "text": "Tap scan area.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_scan_01.wav",
+      "durationSeconds": 1.76,
+      "sha256": "c6a98aa0105d098ec2f074321a357f2f49c922ee1e86549b10838e56a7f0467e"
+    },
+    {
+      "key": "tactical.command.instruction.scan",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionScan",
+      "locale": "fa-IR",
+      "text": "روی محدوده اسکن بزنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_scan_01_fa.wav",
+      "durationSeconds": 2.0,
+      "sha256": "f1399880761f26fd2591419d93bfba0ece22c4cfae5fb1651377f3dbabf3b1fd"
+    },
+    {
+      "key": "tactical.command.instruction.board",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionBoard",
+      "locale": "en-US",
+      "text": "Select a transport.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_board_01.wav",
+      "durationSeconds": 1.52,
+      "sha256": "fa5fed0e6c5a2034de752a3b3b72ef4e5ed25386a6eba032c59b1369cb893be0"
+    },
+    {
+      "key": "tactical.command.instruction.board",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionBoard",
+      "locale": "fa-IR",
+      "text": "یک وسیله ترابری انتخاب کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_board_01_fa.wav",
+      "durationSeconds": 2.56,
+      "sha256": "f3811ee86bfa0e8ffbab3928f1c9e7ab51709e9964a55e9d51242294fa1d764f"
+    },
+    {
+      "key": "tactical.command.instruction.build",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionBuild",
+      "locale": "en-US",
+      "text": "Choose what to build, produce, or recruit.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_build_01.wav",
+      "durationSeconds": 2.72,
+      "sha256": "fda2ed5ea6bd9492053fd6ba33404374076fbee60468f2e9a890dfa434f424de"
+    },
+    {
+      "key": "tactical.command.instruction.build",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionBuild",
+      "locale": "fa-IR",
+      "text": "ساختمان، محصول یا نیروی مورد نظر را انتخاب کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_build_01_fa.wav",
+      "durationSeconds": 4.48,
+      "sha256": "9e2b4e6b9948d9a33cdbfedc0a22903cd5b0cc0f922641d47e75a274a965815c"
+    },
+    {
+      "key": "tactical.command.instruction.special",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionSpecial",
+      "locale": "en-US",
+      "text": "Choose special command.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_instruction_special_01.wav",
+      "durationSeconds": 1.52,
+      "sha256": "fed67ad6916ce74c8a118b4427c153f0d7b47805276753ab83903da391d50268"
+    },
+    {
+      "key": "tactical.command.instruction.special",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionSpecial",
+      "locale": "fa-IR",
+      "text": "فرمان ویژه را انتخاب کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_special_01_fa.wav",
+      "durationSeconds": 2.32,
+      "sha256": "6523b2d745bb612dfe89f17b003e2377237971c9e24a5496ff2606c6031d6a0e"
+    },
+    {
+      "key": "tactical.command.board.prompt_transport_to_passenger",
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardPromptTransportToPassenger",
+      "locale": "en-US",
+      "text": "Select units to board or use BOARD ALL.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_prompt_transport_to_passenger_01.wav",
+      "durationSeconds": 3.44,
+      "sha256": "869902c9fec8a129db775051fdf03948fc4c22833e6933193de38b6e6602d830"
+    },
+    {
+      "key": "tactical.command.board.prompt_transport_to_passenger",
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardPromptTransportToPassenger",
+      "locale": "fa-IR",
+      "text": "نیروها را برای سوار شدن انتخاب کنید یا همه را سوار کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_board_prompt_transport_to_passenger_01_fa.wav",
+      "durationSeconds": 4.96,
+      "sha256": "c930860b2ddd05169efa6874efd191ea8c1b8a708b1d282bc19142515634b7eb"
+    },
+    {
+      "key": "tactical.command.board.prompt_passenger_to_transport",
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardPromptPassengerToTransport",
+      "locale": "en-US",
+      "text": "Select a transport.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_prompt_passenger_to_transport_01.wav",
+      "durationSeconds": 1.52,
+      "sha256": "fa5fed0e6c5a2034de752a3b3b72ef4e5ed25386a6eba032c59b1369cb893be0"
+    },
+    {
+      "key": "tactical.command.board.prompt_passenger_to_transport",
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardPromptPassengerToTransport",
+      "locale": "fa-IR",
+      "text": "یک وسیله ترابری انتخاب کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_board_prompt_passenger_to_transport_01_fa.wav",
+      "durationSeconds": 2.56,
+      "sha256": "f3811ee86bfa0e8ffbab3928f1c9e7ab51709e9964a55e9d51242294fa1d764f"
+    },
+    {
+      "key": "tactical.command.board.unavailable",
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardUnavailable",
+      "locale": "en-US",
+      "text": "Board command unavailable.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_unavailable_01.wav",
+      "durationSeconds": 2.0,
+      "sha256": "c5d03ef825343e73a3ddcfb4f276910cbca657f62d55c31d1e1e4554ab5334d3"
+    },
+    {
+      "key": "tactical.command.board.unavailable",
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardUnavailable",
+      "locale": "fa-IR",
+      "text": "فرمان سوار شدن در دسترس نیست.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_board_unavailable_01_fa.wav",
+      "durationSeconds": 2.88,
+      "sha256": "09eef13ea6234000e076105c2a7a95c0b50a4446132d7e58f0342b2e8d7f7fc7"
+    },
+    {
+      "key": "tactical.command.board.tap_units_to_board",
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardTapUnitsToBoard",
+      "locale": "en-US",
+      "text": "Tap units to board.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_tap_units_to_board_01.wav",
+      "durationSeconds": 1.6,
+      "sha256": "951fa189cd56af3657f4873b768abe45adee21982f79bd31d88d90ab39b1df05"
+    },
+    {
+      "key": "tactical.command.board.tap_units_to_board",
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardTapUnitsToBoard",
+      "locale": "fa-IR",
+      "text": "روی نیروها بزنید تا سوار شوند.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_board_tap_units_to_board_01_fa.wav",
+      "durationSeconds": 2.8,
+      "sha256": "7c54c91fd9f122274aee4ae02eb342328d9f32585d145d9d9038a2c4cf2f26c0"
+    },
+    {
+      "key": "tactical.command.board.selected_unit_cannot_board",
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardSelectedUnitCannotBoard",
+      "locale": "en-US",
+      "text": "Selected unit cannot board.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_selected_unit_cannot_board_01.wav",
+      "durationSeconds": 2.16,
+      "sha256": "155751c2d717823991c4080ba1e19e66d1dfc9e718f203c667470807cb861560"
+    },
+    {
+      "key": "tactical.command.board.selected_unit_cannot_board",
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardSelectedUnitCannotBoard",
+      "locale": "fa-IR",
+      "text": "نیروی منتخب نمی‌تواند سوار شود.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_board_selected_unit_cannot_board_01_fa.wav",
+      "durationSeconds": 2.96,
+      "sha256": "eb5d7dd80db4c7a8aae3641564af5e6f829e8767a7fea0fe0cd343ba7dad787a"
+    },
+    {
+      "key": "tactical.command.board.select_unit_first",
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardSelectUnitFirst",
+      "locale": "en-US",
+      "text": "Select a unit first.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_board_select_unit_first_01.wav",
+      "durationSeconds": 1.76,
+      "sha256": "83747b9adfd01d9ae0658477e481bc6b64b028172774911f186dc702343fc89b"
+    },
+    {
+      "key": "tactical.command.board.select_unit_first",
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardSelectUnitFirst",
+      "locale": "fa-IR",
+      "text": "ابتدا یک نیرو انتخاب کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_board_select_unit_first_01_fa.wav",
+      "durationSeconds": 2.32,
+      "sha256": "da6867a4c94e86f391a0e0d73c6314f4be6c88acf2b24b491c5345a1907674fc"
+    },
+    {
+      "key": "tactical.command.unavailable.hold_no_selection",
+      "eventId": "VO.ARIA.Message.TacticalCommandUnavailableHoldNoSelection",
+      "locale": "en-US",
+      "text": "Select units before holding position.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_unavailable_hold_no_selection_01.wav",
+      "durationSeconds": 2.64,
+      "sha256": "2148f74324923816036c7730237f3795fb8295ce38017d385ac838e5d1f740a0"
+    },
+    {
+      "key": "tactical.command.unavailable.hold_no_selection",
+      "eventId": "VO.ARIA.Message.TacticalCommandUnavailableHoldNoSelection",
+      "locale": "fa-IR",
+      "text": "برای حفظ موضع ابتدا نیروها را انتخاب کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_unavailable_hold_no_selection_01_fa.wav",
+      "durationSeconds": 3.28,
+      "sha256": "43d0c8e63a7a620dfdd4bb0d512e0dad2d0634f220a07585b25b76bb1dff59c9"
+    },
+    {
+      "key": "tactical.command.unavailable.stop_no_selection",
+      "eventId": "VO.ARIA.Message.TacticalCommandUnavailableStopNoSelection",
+      "locale": "en-US",
+      "text": "Select units before stopping orders.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_unavailable_stop_no_selection_01.wav",
+      "durationSeconds": 2.96,
+      "sha256": "cc41258bf0df50d29744a887c6ea9727e33917a22f68aab21bca73ca0448dc16"
+    },
+    {
+      "key": "tactical.command.unavailable.stop_no_selection",
+      "eventId": "VO.ARIA.Message.TacticalCommandUnavailableStopNoSelection",
+      "locale": "fa-IR",
+      "text": "برای توقف فرمان‌ها ابتدا نیروها را انتخاب کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_unavailable_stop_no_selection_01_fa.wav",
+      "durationSeconds": 4.0,
+      "sha256": "22d3253a5ad4a287aeb31d2b7f025b7a6af51fc143753c3a3208171bd9335dc8"
+    },
+    {
+      "key": "tactical.command.unavailable.scan_no_selection",
+      "eventId": "VO.ARIA.Message.TacticalCommandUnavailableScanNoSelection",
+      "locale": "en-US",
+      "text": "Select a scanner or combat unit first.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_command_unavailable_scan_no_selection_01.wav",
+      "durationSeconds": 2.88,
+      "sha256": "1a5b0bb721fabf48cf4e5931b9f4ff183da963aa084da39f1055d650d1191bf8"
+    },
+    {
+      "key": "tactical.command.unavailable.scan_no_selection",
+      "eventId": "VO.ARIA.Message.TacticalCommandUnavailableScanNoSelection",
+      "locale": "fa-IR",
+      "text": "ابتدا واحد اسکن یا نیروی رزمی را انتخاب کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_unavailable_scan_no_selection_01_fa.wav",
+      "durationSeconds": 4.0,
+      "sha256": "e8b3b74fd17f5cccf23dd04b4507f9476c15d8c720d6b411206baeb7bbe06df1"
+    },
+    {
+      "key": "tactical.feedback.camera_follow_unavailable",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackCameraFollowUnavailable",
+      "locale": "en-US",
+      "text": "Camera follow unavailable.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_camera_follow_unavailable_01.wav",
+      "durationSeconds": 2.0,
+      "sha256": "a17ce66955ffdba759f6b4eeb6e2b88407144bab85a61f358c73f58b70616cab"
+    },
+    {
+      "key": "tactical.feedback.camera_follow_unavailable",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackCameraFollowUnavailable",
+      "locale": "fa-IR",
+      "text": "تعقیب دوربین در دسترس نیست.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_camera_follow_unavailable_01_fa.wav",
+      "durationSeconds": 2.4,
+      "sha256": "3d33afbc095e72a2beec4e36afffe41b05348fb604c2306f341fafb70a8239a9"
+    },
+    {
+      "key": "tactical.feedback.camera_follow_active",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackCameraFollowActive",
+      "locale": "en-US",
+      "text": "Camera follow active.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_camera_follow_active_01.wav",
+      "durationSeconds": 1.52,
+      "sha256": "33b68bb4a42756311648a85d4a2966beeb3b12a3b4e36e87dbde317a19a2ccdc"
+    },
+    {
+      "key": "tactical.feedback.camera_follow_active",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackCameraFollowActive",
+      "locale": "fa-IR",
+      "text": "تعقیب دوربین فعال شد.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_camera_follow_active_01_fa.wav",
+      "durationSeconds": 2.08,
+      "sha256": "de928779f6ea139944e0d3e3c216f7702c4d540db72a3cb34e6c22fe9c80083f"
+    },
+    {
+      "key": "tactical.feedback.rts_camera_restored",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackRtsCameraRestored",
+      "locale": "en-US",
+      "text": "RTS camera restored.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_rts_camera_restored_01.wav",
+      "durationSeconds": 2.0,
+      "sha256": "17d90dc8ef4517def544c1af1fa039dd5dbbb32e9645b90c33e8e097813b55b3"
+    },
+    {
+      "key": "tactical.feedback.rts_camera_restored",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackRtsCameraRestored",
+      "locale": "fa-IR",
+      "text": "دوربین راهبردی بازگردانده شد.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_rts_camera_restored_01_fa.wav",
+      "durationSeconds": 2.72,
+      "sha256": "b6bf9b4907023ef04d15873350498f996c242888841490a40c120baab64ca83f"
+    },
+    {
+      "key": "tactical.feedback.follow_target_lost",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackFollowTargetLost",
+      "locale": "en-US",
+      "text": "Follow target lost.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_follow_target_lost_01.wav",
+      "durationSeconds": 1.36,
+      "sha256": "12f560c5983f00c9865e675ee51cdd23a37ce02d51d89aa585c0407094c4afa4"
+    },
+    {
+      "key": "tactical.feedback.follow_target_lost",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackFollowTargetLost",
+      "locale": "fa-IR",
+      "text": "هدف تعقیب از دست رفت.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_follow_target_lost_01_fa.wav",
+      "durationSeconds": 2.24,
+      "sha256": "719fc6c3192df89bc7ff39f81581e209681172bdb6d06f72b94b73ac17cfebdc"
+    },
+    {
+      "key": "tactical.feedback.destroyed_selected_building",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackDestroyedSelectedBuilding",
+      "locale": "en-US",
+      "text": "Destroyed selected building.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_destroyed_selected_building_01.wav",
+      "durationSeconds": 1.76,
+      "sha256": "86c9dd701184e9be4c90a4aeb310301968a40493c2657955f6b444d300a9cfe4"
+    },
+    {
+      "key": "tactical.feedback.destroyed_selected_building",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackDestroyedSelectedBuilding",
+      "locale": "fa-IR",
+      "text": "ساختمان منتخب نابود شد.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_destroyed_selected_building_01_fa.wav",
+      "durationSeconds": 2.48,
+      "sha256": "5313fb0a4cd11c7ed7baea80504b4379670ae130fb1256e5d9d720aa72d41632"
+    },
+    {
+      "key": "tactical.feedback.air_defense_auto_engage",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackAirDefenseAutoEngage",
+      "locale": "en-US",
+      "text": "Air defense auto-engages aircraft and incoming missiles.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_air_defense_auto_engage_01.wav",
+      "durationSeconds": 4.08,
+      "sha256": "47abe1ff902c68153b7dc3c1335bb45bc5e993d18946870e5922afc74c453611"
+    },
+    {
+      "key": "tactical.feedback.air_defense_auto_engage",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackAirDefenseAutoEngage",
+      "locale": "fa-IR",
+      "text": "پدافند هوایی به‌طور خودکار با هواگردها و موشک‌های ورودی درگیر می‌شود.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_air_defense_auto_engage_01_fa.wav",
+      "durationSeconds": 6.24,
+      "sha256": "1cf1d3b686c57352dfbc469c9ac4433c679a7819019525cd4344e1889d43f2a3"
+    },
+    {
+      "key": "tactical.feedback.exiting_unit",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackExitingUnit",
+      "locale": "en-US",
+      "text": "Exiting unit.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_exiting_unit_01.wav",
+      "durationSeconds": 1.12,
+      "sha256": "7044408be7169a87bce99dab8162969db50252940972f1cfec3a28e4eecf73db"
+    },
+    {
+      "key": "tactical.feedback.exiting_unit",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackExitingUnit",
+      "locale": "fa-IR",
+      "text": "نیرو در حال پیاده شدن است.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_exiting_unit_01_fa.wav",
+      "durationSeconds": 2.24,
+      "sha256": "5ff9dc8ef74b1b40f8f0b95f0daeb17c37767240639a236ac1f646970e3d13b0"
+    },
+    {
+      "key": "tactical.feedback.exiting_passengers",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackExitingPassengers",
+      "locale": "en-US",
+      "text": "Exiting passengers.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_exiting_passengers_01.wav",
+      "durationSeconds": 1.44,
+      "sha256": "a3acc86c8d0029fd6a97fef8e192f212ae9785708e2bf4fd781057906bf5c561"
+    },
+    {
+      "key": "tactical.feedback.exiting_passengers",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackExitingPassengers",
+      "locale": "fa-IR",
+      "text": "نیروها در حال پیاده شدن هستند.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_exiting_passengers_01_fa.wav",
+      "durationSeconds": 2.48,
+      "sha256": "7cc82e2fdb5cf71d82f5afa64381477eb973a5a4e7c8e716041d8607401c0bcb"
+    },
+    {
+      "key": "tactical.feedback.loading_transport",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackLoadingTransport",
+      "locale": "en-US",
+      "text": "Loading transport.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_loading_transport_01.wav",
+      "durationSeconds": 1.36,
+      "sha256": "4bbb85fec69c864a36f0e9786cfa8317413f2202e4336935eca6e44d5cd629e6"
+    },
+    {
+      "key": "tactical.feedback.loading_transport",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackLoadingTransport",
+      "locale": "fa-IR",
+      "text": "وسیله ترابری در حال بارگیری است.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_loading_transport_01_fa.wav",
+      "durationSeconds": 2.8,
+      "sha256": "6be11fd513bf205647ca84eb0fac8c1c5d0d60755dd3cf944567df66f9a11b42"
+    },
+    {
+      "key": "tactical.feedback.boarding_transport",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackBoardingTransport",
+      "locale": "en-US",
+      "text": "Boarding transport.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_boarding_transport_01.wav",
+      "durationSeconds": 1.52,
+      "sha256": "7e5288470d5f111699ed3938c3d80f0d2f6be55ca7e36169dee3d9a73932cca0"
+    },
+    {
+      "key": "tactical.feedback.boarding_transport",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackBoardingTransport",
+      "locale": "fa-IR",
+      "text": "نیروها در حال سوار شدن هستند.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_boarding_transport_01_fa.wav",
+      "durationSeconds": 2.4,
+      "sha256": "79b3889fac457694fa617940cd9698aa96b73cbf9839cfc67acb7b02d70dfa28"
+    },
+    {
+      "key": "tactical.feedback.holding_current_position",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackHoldingCurrentPosition",
+      "locale": "en-US",
+      "text": "Holding current position.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_holding_current_position_01.wav",
+      "durationSeconds": 1.76,
+      "sha256": "830e2f43e3167a4160707c3c1637a2dd32afd9aa068bb9def4b253b5acbdc16b"
+    },
+    {
+      "key": "tactical.feedback.holding_current_position",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackHoldingCurrentPosition",
+      "locale": "fa-IR",
+      "text": "موضع فعلی حفظ می‌شود.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_holding_current_position_01_fa.wav",
+      "durationSeconds": 2.0,
+      "sha256": "96c52f0c38ded5d1e0e3f970cc8345a17a6cb40fac2b16538b8d48c02e9fb94c"
+    },
+    {
+      "key": "tactical.feedback.stopped_selected_units",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackStoppedSelectedUnits",
+      "locale": "en-US",
+      "text": "Stopped selected units.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_stopped_selected_units_01.wav",
+      "durationSeconds": 2.0,
+      "sha256": "eb101a0c8a972a7032b8281709ff4897cb4b53f484b735db2b2eed28bdbfd885"
+    },
+    {
+      "key": "tactical.feedback.stopped_selected_units",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackStoppedSelectedUnits",
+      "locale": "fa-IR",
+      "text": "نیروهای منتخب متوقف شدند.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_stopped_selected_units_01_fa.wav",
+      "durationSeconds": 2.88,
+      "sha256": "227f62f50f557effb1f70513cb8ad5fcc779e9ecf311a3803d4c2f7cffc4ab2b"
+    },
+    {
+      "key": "tactical.feedback.unit_returning_to_base",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackUnitReturningToBase",
+      "locale": "en-US",
+      "text": "Unit returning to base.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_unit_returning_to_base_01.wav",
+      "durationSeconds": 1.6,
+      "sha256": "427cdc7919dd3f0f4d2d1a196f1c81b2f0501b6a7a923bee2f3bceaf473fbdeb"
+    },
+    {
+      "key": "tactical.feedback.unit_returning_to_base",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackUnitReturningToBase",
+      "locale": "fa-IR",
+      "text": "نیرو به پایگاه بازمی‌گردد.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_unit_returning_to_base_01_fa.wav",
+      "durationSeconds": 2.24,
+      "sha256": "1fd423193fa14e7b346ad3fb163c2aa61186f8049b6a777176be0e35506a84d7"
+    },
+    {
+      "key": "tactical.feedback.units_returning_to_base",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackUnitsReturningToBase",
+      "locale": "en-US",
+      "text": "{0} units returning to base.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_units_returning_to_base_01.wav",
+      "durationSeconds": 2.08,
+      "sha256": "1682b9c87ef4c21f5ea2f5afe1f78b82bfd81b30eeceb2071f3f33f43f2922ce"
+    },
+    {
+      "key": "tactical.feedback.units_returning_to_base",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackUnitsReturningToBase",
+      "locale": "fa-IR",
+      "text": "{0} نیرو به پایگاه بازمی‌گردند.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_units_returning_to_base_01_fa.wav",
+      "durationSeconds": 2.72,
+      "sha256": "e13587ea4407f774bebc8906e699e0248f2bf968a0f13cf588a15974c6a9d8fb"
+    },
+    {
+      "key": "tactical.feedback.destroyed_selected_unit",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackDestroyedSelectedUnit",
+      "locale": "en-US",
+      "text": "Destroyed selected unit.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_destroyed_selected_unit_01.wav",
+      "durationSeconds": 1.6,
+      "sha256": "3cdc4553e0428003e8e1f38019f9fe15f19cb9b7e4fb88c6ed8395de08feb412"
+    },
+    {
+      "key": "tactical.feedback.destroyed_selected_unit",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackDestroyedSelectedUnit",
+      "locale": "fa-IR",
+      "text": "نیروی منتخب نابود شد.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_destroyed_selected_unit_01_fa.wav",
+      "durationSeconds": 2.16,
+      "sha256": "8fde20d5b2639d5a0d5b70a486da3fdc46ec1aadb9224744254c0c8de15cc6e2"
+    },
+    {
+      "key": "tactical.feedback.destroyed_selected_units",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackDestroyedSelectedUnits",
+      "locale": "en-US",
+      "text": "Destroyed {0} selected units.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_destroyed_selected_units_01.wav",
+      "durationSeconds": 2.4,
+      "sha256": "f30dcd8bc153af2e70a1548ecd2b1781cd8ff019de81cbe725cf90b1256bd55e"
+    },
+    {
+      "key": "tactical.feedback.destroyed_selected_units",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackDestroyedSelectedUnits",
+      "locale": "fa-IR",
+      "text": "{0} نیروی منتخب نابود شدند.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_destroyed_selected_units_01_fa.wav",
+      "durationSeconds": 2.8,
+      "sha256": "280ddfc21ac69bca052aa8d67134906d18238870586cf9b5492c4d413947c68d"
+    },
+    {
+      "key": "tactical.feedback.scan_ordered",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackScanOrdered",
+      "locale": "en-US",
+      "text": "SCAN ORDERED: SCANNER EN ROUTE",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_scan_ordered_01.wav",
+      "durationSeconds": 2.24,
+      "sha256": "4d0042d38d11ddf081839715609ec07ec395bbd7a8f0199500a83bf64167e9ea"
+    },
+    {
+      "key": "tactical.feedback.scan_ordered",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackScanOrdered",
+      "locale": "fa-IR",
+      "text": "فرمان اسکن صادر شد؛ واحد اسکن در راه است",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_scan_ordered_01_fa.wav",
+      "durationSeconds": 3.52,
+      "sha256": "8d1f18050e72031bbd9af8b2510a7f51d1539c6be360a557f2dab705fc4d9260"
+    },
+    {
+      "key": "tactical.feedback.scan_one_contact",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackScanOneContact",
+      "locale": "en-US",
+      "text": "1 CONTACT",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_scan_one_contact_01.wav",
+      "durationSeconds": 1.12,
+      "sha256": "4a9be758bc5d16d2cc389c1262e528e15dc660cb02950c8435bf65eeec366140"
+    },
+    {
+      "key": "tactical.feedback.scan_one_contact",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackScanOneContact",
+      "locale": "fa-IR",
+      "text": "یک هدف شناسایی شد",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_scan_one_contact_01_fa.wav",
+      "durationSeconds": 1.84,
+      "sha256": "5a080c65093e3ac58d63513c9d8c75c58b7f2bd7c84be320a213c7079dfa83d3"
+    },
+    {
+      "key": "tactical.feedback.scan_contacts",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackScanContacts",
+      "locale": "en-US",
+      "text": "{0} CONTACTS",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_scan_contacts_01.wav",
+      "durationSeconds": 1.92,
+      "sha256": "849ece6e8a03693deb3f94bf19de54f46eeb47aa3896115872430e6de2710f00"
+    },
+    {
+      "key": "tactical.feedback.scan_contacts",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackScanContacts",
+      "locale": "fa-IR",
+      "text": "{0} هدف شناسایی شد",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_scan_contacts_01_fa.wav",
+      "durationSeconds": 2.32,
+      "sha256": "48a76181ae7a33d53d81d753e838574a08e704834a22f6241b4ee75d7d3c98a7"
+    },
+    {
+      "key": "tactical.feedback.scan_complete",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackScanComplete",
+      "locale": "en-US",
+      "text": "SCAN COMPLETE: {0}",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_scan_complete_01.wav",
+      "durationSeconds": 1.92,
+      "sha256": "2e4d644b708e68f9ff7e027bcb8fd0453d246f98bd0de6c49a8c7c96800ac825"
+    },
+    {
+      "key": "tactical.feedback.scan_complete",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackScanComplete",
+      "locale": "fa-IR",
+      "text": "اسکن کامل شد: {0}",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_scan_complete_01_fa.wav",
+      "durationSeconds": 3.6,
+      "sha256": "c87db3d6c0e7e9b5191576a3c552aa17aec7b5b6ab5fb74608a74befe7c1695e"
+    },
+    {
+      "key": "tactical.feedback.missile_launched",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackMissileLaunched",
+      "locale": "en-US",
+      "text": "Missile launched.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_missile_launched_01.wav",
+      "durationSeconds": 1.36,
+      "sha256": "0431357476f86ea58f2e36a4251fa28fbbf7961e862624256c1f66a7f03dfc43"
+    },
+    {
+      "key": "tactical.feedback.missile_launched",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackMissileLaunched",
+      "locale": "fa-IR",
+      "text": "موشک شلیک شد.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_missile_launched_01_fa.wav",
+      "durationSeconds": 1.44,
+      "sha256": "17c33afa014c592e02fca3900efbe1bb7e5e8c090af12fce0885643d7002be97"
+    },
+    {
+      "key": "tactical.airdrop.emergency_drop_visual_missing",
+      "eventId": "VO.ARIA.Message.TacticalAirdropEmergencyDropVisualMissing",
+      "locale": "en-US",
+      "text": "Emergency drop visual missing.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_airdrop_emergency_drop_visual_missing_01.wav",
+      "durationSeconds": 2.16,
+      "sha256": "ddc54152f9d3770be5dce8332e7ee94e3e06f81dfdd3414648ea391f76fa8e5b"
+    },
+    {
+      "key": "tactical.airdrop.emergency_drop_visual_missing",
+      "eventId": "VO.ARIA.Message.TacticalAirdropEmergencyDropVisualMissing",
+      "locale": "fa-IR",
+      "text": "نمایش بصری پرتاب اضطراری موجود نیست.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_airdrop_emergency_drop_visual_missing_01_fa.wav",
+      "durationSeconds": 3.68,
+      "sha256": "9aeaeb308f55c19e6438895b1d317c24d2f6da20de7c527ea5a11c52341e09c7"
+    },
+    {
+      "key": "tactical.airdrop.parachute_visual_missing",
+      "eventId": "VO.ARIA.Message.TacticalAirdropParachuteVisualMissing",
+      "locale": "en-US",
+      "text": "Parachute visual missing.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_airdrop_parachute_visual_missing_01.wav",
+      "durationSeconds": 1.76,
+      "sha256": "98110ba7a599d6431f2c6bfe12006661c8aa1a2be1b64f0c9d7db4e4e31e21f8"
+    },
+    {
+      "key": "tactical.airdrop.parachute_visual_missing",
+      "eventId": "VO.ARIA.Message.TacticalAirdropParachuteVisualMissing",
+      "locale": "fa-IR",
+      "text": "نمایش بصری چتر نجات موجود نیست.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_airdrop_parachute_visual_missing_01_fa.wav",
+      "durationSeconds": 3.6,
+      "sha256": "d3d2c71f9870b99e2bbd9dd986945ba280376b949c7be450a45f9da2d96a6628"
+    },
+    {
+      "key": "tactical.airdrop.no_clear_landing_zone",
+      "eventId": "VO.ARIA.Message.TacticalAirdropNoClearLandingZone",
+      "locale": "en-US",
+      "text": "No clear airdrop landing zone.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_airdrop_no_clear_landing_zone_01.wav",
+      "durationSeconds": 2.0,
+      "sha256": "a6fe9fc930a096c889b1bf54378d7d44c42ddc351ed0070f510e8feba1712f08"
+    },
+    {
+      "key": "tactical.airdrop.no_clear_landing_zone",
+      "eventId": "VO.ARIA.Message.TacticalAirdropNoClearLandingZone",
+      "locale": "fa-IR",
+      "text": "منطقه بازی برای فرود هوایی وجود ندارد.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_airdrop_no_clear_landing_zone_01_fa.wav",
+      "durationSeconds": 3.6,
+      "sha256": "74d5c117e3b4d4e2b15d21970a0c3c6bed42716e1c04a9b9db2b51aa767e30ec"
+    },
+    {
+      "key": "tactical.airdrop.cargo_drop_blocked",
+      "eventId": "VO.ARIA.Message.TacticalAirdropCargoDropBlocked",
+      "locale": "en-US",
+      "text": "Cargo drop blocked.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_airdrop_cargo_drop_blocked_01.wav",
+      "durationSeconds": 1.36,
+      "sha256": "d4ad9e7b746d1d1082761238e6ce6a7e1d5c80916ba5032180df3f086f8d240f"
+    },
+    {
+      "key": "tactical.airdrop.cargo_drop_blocked",
+      "eventId": "VO.ARIA.Message.TacticalAirdropCargoDropBlocked",
+      "locale": "fa-IR",
+      "text": "پرتاب محموله مسدود است.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_airdrop_cargo_drop_blocked_01_fa.wav",
+      "durationSeconds": 2.08,
+      "sha256": "291e829ca26bf3553e495503109d94fa9602d3f15e0af4315fcf8197994085cf"
+    },
+    {
+      "key": "tactical.banner.mode.move.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeMoveTitle",
+      "locale": "en-US",
+      "text": "MOVE ORDER",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_move_title_01.wav",
+      "durationSeconds": 1.12,
+      "sha256": "5c9825ea82b3378555e75c62c3587307b886bcccb8cfd88bec91bb42936e17bb"
+    },
+    {
+      "key": "tactical.banner.mode.move.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeMoveTitle",
+      "locale": "fa-IR",
+      "text": "فرمان حرکت",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_move_title_01_fa.wav",
+      "durationSeconds": 1.36,
+      "sha256": "7c105b45b365038f59d1286eb0808f6806924c84b1c216fc73d2f2f088e33a59"
+    },
+    {
+      "key": "tactical.banner.mode.move.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeMoveDescription",
+      "locale": "en-US",
+      "text": "Select a destination.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_move_description_01.wav",
+      "durationSeconds": 1.76,
+      "sha256": "e1ea424dcd06d68c77b10e497042a0f578fa1a4eea33ec4bb686b38c5e388295"
+    },
+    {
+      "key": "tactical.banner.mode.move.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeMoveDescription",
+      "locale": "fa-IR",
+      "text": "مقصد را انتخاب کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_move_description_01_fa.wav",
+      "durationSeconds": 1.76,
+      "sha256": "597916ac263cb2532a300b4074242c0bf4bc937c37fc263ee53ee52c4b96c10a"
+    },
+    {
+      "key": "tactical.banner.mode.attack.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeAttackTitle",
+      "locale": "en-US",
+      "text": "ATTACK ORDER",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_attack_title_01.wav",
+      "durationSeconds": 0.96,
+      "sha256": "5bec5792a7a256ca513a584db1275cdba78aa944346552c9ff13db45160156c7"
+    },
+    {
+      "key": "tactical.banner.mode.attack.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeAttackTitle",
+      "locale": "fa-IR",
+      "text": "فرمان حمله",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_attack_title_01_fa.wav",
+      "durationSeconds": 1.28,
+      "sha256": "0d9825e12180b3e9039f5743575846ebeafb51481bebedcd84560497d8a1afba"
+    },
+    {
+      "key": "tactical.banner.mode.attack.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeAttackDescription",
+      "locale": "en-US",
+      "text": "Select an enemy target.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_attack_description_01.wav",
+      "durationSeconds": 1.76,
+      "sha256": "83688ba096452a6b648cba3a2bd0676bb8b11ae7022227cb2807308085a65a2d"
+    },
+    {
+      "key": "tactical.banner.mode.attack.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeAttackDescription",
+      "locale": "fa-IR",
+      "text": "یک هدف دشمن انتخاب کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_attack_description_01_fa.wav",
+      "durationSeconds": 2.24,
+      "sha256": "03df99ba5fdd5e1d0e2d255d1a40a24c37ad57bb22467ab128bcb112b6943415"
+    },
+    {
+      "key": "tactical.banner.mode.scan.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeScanTitle",
+      "locale": "en-US",
+      "text": "SCAN ORDER",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_scan_title_01.wav",
+      "durationSeconds": 1.12,
+      "sha256": "94e81b63aad7063d222675931e338ab8be280261592d398e6abf60e3119a59ef"
+    },
+    {
+      "key": "tactical.banner.mode.scan.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeScanTitle",
+      "locale": "fa-IR",
+      "text": "فرمان اسکن",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_scan_title_01_fa.wav",
+      "durationSeconds": 1.28,
+      "sha256": "cfe826f9096fd1ceba218717dd63f6259d30df78f07f891df957dd000c3618e3"
+    },
+    {
+      "key": "tactical.banner.mode.scan.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeScanDescription",
+      "locale": "en-US",
+      "text": "Select an area to scan.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_scan_description_01.wav",
+      "durationSeconds": 1.84,
+      "sha256": "d95f3413db9072a00282222a35422a05b12417adb9d08933af6e778d922bee61"
+    },
+    {
+      "key": "tactical.banner.mode.scan.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeScanDescription",
+      "locale": "fa-IR",
+      "text": "محدوده اسکن را انتخاب کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_scan_description_01_fa.wav",
+      "durationSeconds": 2.48,
+      "sha256": "61b33ccd83dd93b2195840f279f3b00d52e0979c1d93a52f1b8c6c0a92058482"
+    },
+    {
+      "key": "tactical.banner.mode.board.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeBoardTitle",
+      "locale": "en-US",
+      "text": "BOARD ORDER",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_board_title_01.wav",
+      "durationSeconds": 1.28,
+      "sha256": "8f5b8e88fc5a996bad65df15d1e26ca93308300ed89bbbfc71f801e9e2245124"
+    },
+    {
+      "key": "tactical.banner.mode.board.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeBoardTitle",
+      "locale": "fa-IR",
+      "text": "فرمان سوار شدن",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_board_title_01_fa.wav",
+      "durationSeconds": 1.6,
+      "sha256": "992f49b525b84e241d3467894caf5d30921aa123bfe4a1cc183c890a9300e839"
+    },
+    {
+      "key": "tactical.banner.mode.board.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeBoardDescription",
+      "locale": "en-US",
+      "text": "Select a transport.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_board_description_01.wav",
+      "durationSeconds": 1.52,
+      "sha256": "fa5fed0e6c5a2034de752a3b3b72ef4e5ed25386a6eba032c59b1369cb893be0"
+    },
+    {
+      "key": "tactical.banner.mode.board.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeBoardDescription",
+      "locale": "fa-IR",
+      "text": "یک وسیله ترابری انتخاب کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_board_description_01_fa.wav",
+      "durationSeconds": 2.56,
+      "sha256": "f3811ee86bfa0e8ffbab3928f1c9e7ab51709e9964a55e9d51242294fa1d764f"
+    },
+    {
+      "key": "tactical.banner.mode.board.description_transport_to_passenger",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeBoardDescriptionTransportToPassenger",
+      "locale": "en-US",
+      "text": "Select units to board.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_board_description_transport_to_passenger_01.wav",
+      "durationSeconds": 1.68,
+      "sha256": "dd5e97f9551c0482b533a3cbfbc8fa995c322ff59523d105c597003d253724bd"
+    },
+    {
+      "key": "tactical.banner.mode.board.description_transport_to_passenger",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeBoardDescriptionTransportToPassenger",
+      "locale": "fa-IR",
+      "text": "نیروها را برای سوار شدن انتخاب کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_board_description_transport_to_passenger_01_fa.wav",
+      "durationSeconds": 3.04,
+      "sha256": "2bb8732e61c6b57db9d226fb28a670503051e9f132d2d60326fe4edb3781262d"
+    },
+    {
+      "key": "tactical.banner.mode.build.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeBuildTitle",
+      "locale": "en-US",
+      "text": "BUILD ORDER",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_build_title_01.wav",
+      "durationSeconds": 1.12,
+      "sha256": "0c3d2f7f52c4251304335e1d13d602fc2ff4a672ac88820cbdcaa28476795bb0"
+    },
+    {
+      "key": "tactical.banner.mode.build.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeBuildTitle",
+      "locale": "fa-IR",
+      "text": "فرمان ساخت",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_build_title_01_fa.wav",
+      "durationSeconds": 1.2,
+      "sha256": "7cdc44f37823a8abb2964d3815f9c061f061a0282cdb69c26fa7143ed90a17ab"
+    },
+    {
+      "key": "tactical.banner.mode.build.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeBuildDescription",
+      "locale": "en-US",
+      "text": "Place structure on valid terrain.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_mode_build_description_01.wav",
+      "durationSeconds": 2.32,
+      "sha256": "dc7176ce8f9b0a59986a7bf3442be2d1bcf535b6bc3a28eb996292cb669c0ee1"
+    },
+    {
+      "key": "tactical.banner.mode.build.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeBuildDescription",
+      "locale": "fa-IR",
+      "text": "سازه را روی زمین مناسب قرار دهید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_build_description_01_fa.wav",
+      "durationSeconds": 2.88,
+      "sha256": "94b46567436b1fc5f22e8a75281eff3910354f713e8e39718f2012ed9f8ca81c"
+    },
+    {
+      "key": "tactical.banner.accepted.move.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedMoveTitle",
+      "locale": "en-US",
+      "text": "MOVE ORDER",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_move_title_01.wav",
+      "durationSeconds": 1.12,
+      "sha256": "5c9825ea82b3378555e75c62c3587307b886bcccb8cfd88bec91bb42936e17bb"
+    },
+    {
+      "key": "tactical.banner.accepted.move.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedMoveTitle",
+      "locale": "fa-IR",
+      "text": "فرمان حرکت",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_move_title_01_fa.wav",
+      "durationSeconds": 1.36,
+      "sha256": "7c105b45b365038f59d1286eb0808f6806924c84b1c216fc73d2f2f088e33a59"
+    },
+    {
+      "key": "tactical.banner.accepted.move.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedMoveDescription",
+      "locale": "en-US",
+      "text": "Units moving to target.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_move_description_01.wav",
+      "durationSeconds": 1.76,
+      "sha256": "0971be1941fb111fecd6ebe0bcc7e2e25c0706ebf04ec317fc2e3f7591e3daec"
+    },
+    {
+      "key": "tactical.banner.accepted.move.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedMoveDescription",
+      "locale": "fa-IR",
+      "text": "نیروها به سوی هدف حرکت می‌کنند.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_move_description_01_fa.wav",
+      "durationSeconds": 3.12,
+      "sha256": "6d6c80d49ecf7217fcbe8b3c5da2907e968ddf0abcc39a4c0577d21fb11795b8"
+    },
+    {
+      "key": "tactical.banner.accepted.attack.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedAttackTitle",
+      "locale": "en-US",
+      "text": "ATTACK ORDER",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_attack_title_01.wav",
+      "durationSeconds": 0.96,
+      "sha256": "5bec5792a7a256ca513a584db1275cdba78aa944346552c9ff13db45160156c7"
+    },
+    {
+      "key": "tactical.banner.accepted.attack.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedAttackTitle",
+      "locale": "fa-IR",
+      "text": "فرمان حمله",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_attack_title_01_fa.wav",
+      "durationSeconds": 1.28,
+      "sha256": "0d9825e12180b3e9039f5743575846ebeafb51481bebedcd84560497d8a1afba"
+    },
+    {
+      "key": "tactical.banner.accepted.attack.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedAttackDescription",
+      "locale": "en-US",
+      "text": "Engaging target.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_attack_description_01.wav",
+      "durationSeconds": 1.2,
+      "sha256": "3d80551355b33f0ba6cc54308256cf025be575f561e65601c24f68cce63a1ab2"
+    },
+    {
+      "key": "tactical.banner.accepted.attack.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedAttackDescription",
+      "locale": "fa-IR",
+      "text": "درگیری با هدف آغاز شد.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_attack_description_01_fa.wav",
+      "durationSeconds": 2.24,
+      "sha256": "885b00729ee99f7734b07f4984d6c9f1b444ed1f0f2d48b57b9e8ac9272bf19c"
+    },
+    {
+      "key": "tactical.banner.accepted.hold.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedHoldTitle",
+      "locale": "en-US",
+      "text": "HOLD POSITION",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_hold_title_01.wav",
+      "durationSeconds": 1.28,
+      "sha256": "78960de27e1209f5b87d137b07985cf48db791c39c5e481744efd468e71ed7ee"
+    },
+    {
+      "key": "tactical.banner.accepted.hold.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedHoldTitle",
+      "locale": "fa-IR",
+      "text": "حفظ موضع",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_hold_title_01_fa.wav",
+      "durationSeconds": 1.04,
+      "sha256": "0d62c500e3bf7fb229f0ee882269361d912a838e1533d769ad9aa17090b09dd1"
+    },
+    {
+      "key": "tactical.banner.accepted.hold.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedHoldDescription",
+      "locale": "en-US",
+      "text": "Selected units holding ground.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_hold_description_01.wav",
+      "durationSeconds": 2.0,
+      "sha256": "4149e858e6a2a1f35346768c20268bd61196957467e1380b7b46502678f6b9e1"
+    },
+    {
+      "key": "tactical.banner.accepted.hold.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedHoldDescription",
+      "locale": "fa-IR",
+      "text": "نیروهای منتخب موضع را حفظ می‌کنند.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_hold_description_01_fa.wav",
+      "durationSeconds": 3.12,
+      "sha256": "596b8aa47974971fd45e5d33a18dd592613bea65a6879d74cb148ce7c8256cde"
+    },
+    {
+      "key": "tactical.banner.accepted.stop.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedStopTitle",
+      "locale": "en-US",
+      "text": "STOP ORDER",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_stop_title_01.wav",
+      "durationSeconds": 0.96,
+      "sha256": "acdbe28608cf65bc6d23f146704141f2ebe7d356e22516a8f52984de64ae38d2"
+    },
+    {
+      "key": "tactical.banner.accepted.stop.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedStopTitle",
+      "locale": "fa-IR",
+      "text": "فرمان توقف",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_stop_title_01_fa.wav",
+      "durationSeconds": 1.52,
+      "sha256": "709c9cfe62693f035d4bf4802dd1edb66070d88f1e9eeb7b233a837b011e129d"
+    },
+    {
+      "key": "tactical.banner.accepted.stop.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedStopDescription",
+      "locale": "en-US",
+      "text": "Selected units clearing orders.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_stop_description_01.wav",
+      "durationSeconds": 2.64,
+      "sha256": "62ce78cb04fff7a1e3452e3fc5e48615479646bfadc64c0cf249e7d40109debc"
+    },
+    {
+      "key": "tactical.banner.accepted.stop.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedStopDescription",
+      "locale": "fa-IR",
+      "text": "فرمان‌های نیروهای منتخب لغو می‌شود.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_stop_description_01_fa.wav",
+      "durationSeconds": 3.28,
+      "sha256": "7b66f70ea0d0685e50bca0024859e651eb71b561ed1a9632da927615ba24ded7"
+    },
+    {
+      "key": "tactical.banner.accepted.scan.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedScanTitle",
+      "locale": "en-US",
+      "text": "SCAN ORDER",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_scan_title_01.wav",
+      "durationSeconds": 1.12,
+      "sha256": "94e81b63aad7063d222675931e338ab8be280261592d398e6abf60e3119a59ef"
+    },
+    {
+      "key": "tactical.banner.accepted.scan.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedScanTitle",
+      "locale": "fa-IR",
+      "text": "فرمان اسکن",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_scan_title_01_fa.wav",
+      "durationSeconds": 1.28,
+      "sha256": "cfe826f9096fd1ceba218717dd63f6259d30df78f07f891df957dd000c3618e3"
+    },
+    {
+      "key": "tactical.banner.accepted.scan.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedScanDescription",
+      "locale": "en-US",
+      "text": "Recon sweep in progress.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_scan_description_01.wav",
+      "durationSeconds": 2.08,
+      "sha256": "752676abb7879099717caa4d20161291c7cddee85a58d3adbc0847ccc78265d7"
+    },
+    {
+      "key": "tactical.banner.accepted.scan.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedScanDescription",
+      "locale": "fa-IR",
+      "text": "پویش شناسایی در حال انجام است.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_scan_description_01_fa.wav",
+      "durationSeconds": 2.8,
+      "sha256": "f203a255dce37cadab94e145f36a9bc2fc0cf0ca78bf02ee1493830a8359bc0f"
+    },
+    {
+      "key": "tactical.banner.accepted.board.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedBoardTitle",
+      "locale": "en-US",
+      "text": "BOARD ORDER",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_board_title_01.wav",
+      "durationSeconds": 1.28,
+      "sha256": "8f5b8e88fc5a996bad65df15d1e26ca93308300ed89bbbfc71f801e9e2245124"
+    },
+    {
+      "key": "tactical.banner.accepted.board.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedBoardTitle",
+      "locale": "fa-IR",
+      "text": "فرمان سوار شدن",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_board_title_01_fa.wav",
+      "durationSeconds": 1.6,
+      "sha256": "992f49b525b84e241d3467894caf5d30921aa123bfe4a1cc183c890a9300e839"
+    },
+    {
+      "key": "tactical.banner.accepted.board.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedBoardDescription",
+      "locale": "en-US",
+      "text": "Boarding transport.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_board_description_01.wav",
+      "durationSeconds": 1.52,
+      "sha256": "7e5288470d5f111699ed3938c3d80f0d2f6be55ca7e36169dee3d9a73932cca0"
+    },
+    {
+      "key": "tactical.banner.accepted.board.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedBoardDescription",
+      "locale": "fa-IR",
+      "text": "نیروها در حال سوار شدن هستند.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_board_description_01_fa.wav",
+      "durationSeconds": 2.4,
+      "sha256": "79b3889fac457694fa617940cd9698aa96b73cbf9839cfc67acb7b02d70dfa28"
+    },
+    {
+      "key": "tactical.banner.accepted.build.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedBuildTitle",
+      "locale": "en-US",
+      "text": "BUILD ORDER",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_build_title_01.wav",
+      "durationSeconds": 1.12,
+      "sha256": "0c3d2f7f52c4251304335e1d13d602fc2ff4a672ac88820cbdcaa28476795bb0"
+    },
+    {
+      "key": "tactical.banner.accepted.build.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedBuildTitle",
+      "locale": "fa-IR",
+      "text": "فرمان ساخت",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_build_title_01_fa.wav",
+      "durationSeconds": 1.2,
+      "sha256": "7cdc44f37823a8abb2964d3815f9c061f061a0282cdb69c26fa7143ed90a17ab"
+    },
+    {
+      "key": "tactical.banner.accepted.build.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedBuildDescription",
+      "locale": "en-US",
+      "text": "Building order accepted.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_build_description_01.wav",
+      "durationSeconds": 1.76,
+      "sha256": "7cc4b3fa1b5399a8ae9a0c15a7f83a1edf6320389b91625fa8997a792255fab7"
+    },
+    {
+      "key": "tactical.banner.accepted.build.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedBuildDescription",
+      "locale": "fa-IR",
+      "text": "فرمان ساخت پذیرفته شد.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_build_description_01_fa.wav",
+      "durationSeconds": 2.24,
+      "sha256": "9650d21d4348a8d672cd030e3983f9dbcc8d8b1af10fc2fe610e28b850e59687"
+    },
+    {
+      "key": "tactical.banner.accepted.return.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedReturnTitle",
+      "locale": "en-US",
+      "text": "RETURN ORDER",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_return_title_01.wav",
+      "durationSeconds": 1.28,
+      "sha256": "b2cc1c6e45603d277ba872eeaf31e8c280e0b7ea7e760db95580cc85fdb93041"
+    },
+    {
+      "key": "tactical.banner.accepted.return.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedReturnTitle",
+      "locale": "fa-IR",
+      "text": "فرمان بازگشت",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_return_title_01_fa.wav",
+      "durationSeconds": 1.68,
+      "sha256": "8ab61e8f6462106b7cae69fe1641e6d155237643dd37ba1ccd661ea01d32b0d3"
+    },
+    {
+      "key": "tactical.banner.accepted.return.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedReturnDescription",
+      "locale": "en-US",
+      "text": "Unit returning to base.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_return_description_01.wav",
+      "durationSeconds": 1.6,
+      "sha256": "427cdc7919dd3f0f4d2d1a196f1c81b2f0501b6a7a923bee2f3bceaf473fbdeb"
+    },
+    {
+      "key": "tactical.banner.accepted.return.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedReturnDescription",
+      "locale": "fa-IR",
+      "text": "نیرو به پایگاه بازمی‌گردد.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_return_description_01_fa.wav",
+      "durationSeconds": 2.24,
+      "sha256": "1fd423193fa14e7b346ad3fb163c2aa61186f8049b6a777176be0e35506a84d7"
+    },
+    {
+      "key": "tactical.banner.accepted.destroy.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedDestroyTitle",
+      "locale": "en-US",
+      "text": "DESTROY ORDER",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_destroy_title_01.wav",
+      "durationSeconds": 1.2,
+      "sha256": "c9c2a870737472f263d3e0320841d5b3d31bbbf1432f9ac1a9e450da6ef60699"
+    },
+    {
+      "key": "tactical.banner.accepted.destroy.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedDestroyTitle",
+      "locale": "fa-IR",
+      "text": "فرمان نابودی",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_destroy_title_01_fa.wav",
+      "durationSeconds": 1.36,
+      "sha256": "c61a9d35baa5460bd19d4b2dc416c128da0ed9dab3d6a8a19f8dbef1ae0b0107"
+    },
+    {
+      "key": "tactical.banner.accepted.destroy.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedDestroyDescription",
+      "locale": "en-US",
+      "text": "Selected unit removed.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_destroy_description_01.wav",
+      "durationSeconds": 1.92,
+      "sha256": "839485bdb39a73e234b4845c35aa3c5a173608f7fe06fc9b06b07fa066f1fced"
+    },
+    {
+      "key": "tactical.banner.accepted.destroy.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedDestroyDescription",
+      "locale": "fa-IR",
+      "text": "نیروی منتخب حذف شد.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_destroy_description_01_fa.wav",
+      "durationSeconds": 2.16,
+      "sha256": "3664dafe0422386b5c07178f7f44673aced8ff6017a1689f74326fe35753d243"
+    },
+    {
+      "key": "build.drawer.empty.name",
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptyName",
+      "locale": "en-US",
+      "text": "NO ITEMS",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_name_01.wav",
+      "durationSeconds": 1.28,
+      "sha256": "172c3ed50bbf20b8e39a48dd9435df3bdd9a8c2d6bc291cfe0e889ba70f14dfd"
+    },
+    {
+      "key": "build.drawer.empty.name",
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptyName",
+      "locale": "fa-IR",
+      "text": "موردی وجود ندارد",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_empty_name_01_fa.wav",
+      "durationSeconds": 1.6,
+      "sha256": "407f0df160ba41dfc94441a2590dd7f83c8e0c25e602c3be2bf3f9399887c33c"
+    },
+    {
+      "key": "build.drawer.ready.buildings",
+      "eventId": "VO.ARIA.Message.BuildDrawerReadyBuildings",
+      "locale": "en-US",
+      "text": "PLACE: choose a location for {0}.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_ready_buildings_01.wav",
+      "durationSeconds": 2.64,
+      "sha256": "df6e67f74848cb5b72681ec927c9090c40e605a03f3be84d75a9669ebd45386f"
+    },
+    {
+      "key": "build.drawer.ready.buildings",
+      "eventId": "VO.ARIA.Message.BuildDrawerReadyBuildings",
+      "locale": "fa-IR",
+      "text": "استقرار: محل {0} را انتخاب کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_ready_buildings_01_fa.wav",
+      "durationSeconds": 3.76,
+      "sha256": "df6ccba9ce679060e52275254d74d9304728dfed2499a4dfb1f3cd5461e51d02"
+    },
+    {
+      "key": "build.drawer.ready.vehicles",
+      "eventId": "VO.ARIA.Message.BuildDrawerReadyVehicles",
+      "locale": "en-US",
+      "text": "PRODUCE: add {0} to the vehicle queue.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_ready_vehicles_01.wav",
+      "durationSeconds": 2.64,
+      "sha256": "b6a2500257a5a14fe7db03b91ad3bb4c371be572e1c705271aa15ae6e4af325d"
+    },
+    {
+      "key": "build.drawer.ready.vehicles",
+      "eventId": "VO.ARIA.Message.BuildDrawerReadyVehicles",
+      "locale": "fa-IR",
+      "text": "تولید: {0} را به صف خودروها اضافه کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_ready_vehicles_01_fa.wav",
+      "durationSeconds": 3.6,
+      "sha256": "571c7b93cbc009bdc63e191bcb1f749efeb6f14b98ed8ae3ab2ae13682e1c14e"
+    },
+    {
+      "key": "build.drawer.ready.aircraft",
+      "eventId": "VO.ARIA.Message.BuildDrawerReadyAircraft",
+      "locale": "en-US",
+      "text": "PRODUCE: add {0} to the aircraft queue.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_ready_aircraft_01.wav",
+      "durationSeconds": 3.04,
+      "sha256": "7df19a38dc80ab22556f1c38110d3944aec8433597fad6b09eba715549753120"
+    },
+    {
+      "key": "build.drawer.ready.aircraft",
+      "eventId": "VO.ARIA.Message.BuildDrawerReadyAircraft",
+      "locale": "fa-IR",
+      "text": "تولید: {0} را به صف هواگردها اضافه کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_ready_aircraft_01_fa.wav",
+      "durationSeconds": 3.92,
+      "sha256": "ed42fb06a64548b5cf5c87c4833ddc588354a23175eb722be8bebd5b60cafac4"
+    },
+    {
+      "key": "build.drawer.ready.soldiers",
+      "eventId": "VO.ARIA.Message.BuildDrawerReadySoldiers",
+      "locale": "en-US",
+      "text": "RECRUIT: add {0} to the training queue.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_ready_soldiers_01.wav",
+      "durationSeconds": 2.72,
+      "sha256": "c67c23fac8f4e1db4930281ea09dc707ef070c02b7203c93ed6f033e6b89bdc5"
+    },
+    {
+      "key": "build.drawer.ready.soldiers",
+      "eventId": "VO.ARIA.Message.BuildDrawerReadySoldiers",
+      "locale": "fa-IR",
+      "text": "جذب نیرو: {0} را به صف آموزش اضافه کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_ready_soldiers_01_fa.wav",
+      "durationSeconds": 3.92,
+      "sha256": "4be3230d9cd485260fefe431ad04152ae21ee4c6fa36161c62fc579412586249"
+    },
+    {
+      "key": "build.drawer.ready.default",
+      "eventId": "VO.ARIA.Message.BuildDrawerReadyDefault",
+      "locale": "en-US",
+      "text": "Select {0}.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_ready_default_01.wav",
+      "durationSeconds": 1.28,
+      "sha256": "89a1e2a15e9c23d2a6ec02e65124c3b217092a7a9679b55fe39b1b03990cb7e8"
+    },
+    {
+      "key": "build.drawer.ready.default",
+      "eventId": "VO.ARIA.Message.BuildDrawerReadyDefault",
+      "locale": "fa-IR",
+      "text": "{0} را انتخاب کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_ready_default_01_fa.wav",
+      "durationSeconds": 1.6,
+      "sha256": "e3549ba639338f4fa6cbaaeb468e32f1e9ccecea6474a4f3165bdb2a93aac55a"
+    },
+    {
+      "key": "build.drawer.instruction.place_pending_confirm",
+      "eventId": "VO.ARIA.Message.BuildDrawerInstructionPlacePendingConfirm",
+      "locale": "en-US",
+      "text": "Place {0}: drag to position, then confirm.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_instruction_place_pending_confirm_01.wav",
+      "durationSeconds": 3.68,
+      "sha256": "1df55d9f83609c915ca4dd2fbde8ebddb8c0bf03cf43431103a78db068c15fdc"
+    },
+    {
+      "key": "build.drawer.instruction.place_pending_confirm",
+      "eventId": "VO.ARIA.Message.BuildDrawerInstructionPlacePendingConfirm",
+      "locale": "fa-IR",
+      "text": "استقرار {0}: به محل مورد نظر بکشید و تأیید کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_instruction_place_pending_confirm_01_fa.wav",
+      "durationSeconds": 5.68,
+      "sha256": "147cd64dcabd01506f8e7faaea211328bd34abfc753407a632c8bc35793848a6"
+    },
+    {
+      "key": "build.drawer.instruction.cannot_place_here",
+      "eventId": "VO.ARIA.Message.BuildDrawerInstructionCannotPlaceHere",
+      "locale": "en-US",
+      "text": "Cannot place here: {0}.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_instruction_cannot_place_here_01.wav",
+      "durationSeconds": 2.16,
+      "sha256": "f5b11ccffb5c798d1f4e2c2fe0ff4232031ff314278cfa9d9915bafec0a6a8e2"
+    },
+    {
+      "key": "build.drawer.instruction.cannot_place_here",
+      "eventId": "VO.ARIA.Message.BuildDrawerInstructionCannotPlaceHere",
+      "locale": "fa-IR",
+      "text": "استقرار در این محل ممکن نیست: {0}.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_instruction_cannot_place_here_01_fa.wav",
+      "durationSeconds": 4.4,
+      "sha256": "67c70e73cbdba3b0dfeb2e2261e5079e3c6ae1935d405eeffb9edc2b9dc37f3b"
+    },
+    {
+      "key": "build.drawer.failure.connecting",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureConnecting",
+      "locale": "en-US",
+      "text": "Build drawer is still connecting. Try again in a moment.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_connecting_01.wav",
+      "durationSeconds": 3.52,
+      "sha256": "5c6300c17da7636970dbac21ba6d9d65e8a3ec19b10813a0cb3dcdf5b0195bf4"
+    },
+    {
+      "key": "build.drawer.failure.connecting",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureConnecting",
+      "locale": "fa-IR",
+      "text": "منوی ساخت در حال اتصال است. کمی بعد دوباره تلاش کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_connecting_01_fa.wav",
+      "durationSeconds": 4.56,
+      "sha256": "0aefd93747bd11eb1f6b4fdf7b79fb5bfe44251528758ebdbb42717a8c27806d"
+    },
+    {
+      "key": "build.drawer.failure.not_enough_money",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureNotEnoughMoney",
+      "locale": "en-US",
+      "text": "Need {0} more credits to {1} {2}.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_not_enough_money_01.wav",
+      "durationSeconds": 2.8,
+      "sha256": "114bebca3b5750124cef6d68e79d5b12fb40e73513da49915558a97549e6b705"
+    },
+    {
+      "key": "build.drawer.failure.not_enough_money",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureNotEnoughMoney",
+      "locale": "fa-IR",
+      "text": "برای {1} {2} به {0} اعتبار بیشتر نیاز است.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_not_enough_money_01_fa.wav",
+      "durationSeconds": 4.24,
+      "sha256": "967978b222b47c76fb5e11ee9019c5fb5789d81cba18bf2190282b1391c1297e"
+    },
+    {
+      "key": "build.drawer.failure.missing_producer_named",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureMissingProducerNamed",
+      "locale": "en-US",
+      "text": "Cannot {0} {1}: requires {2}.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_missing_producer_named_01.wav",
+      "durationSeconds": 2.56,
+      "sha256": "a68ea55f080443e23fe2157230a978e1000856540e7ff0e14d682340ccaaeb72"
+    },
+    {
+      "key": "build.drawer.failure.missing_producer_named",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureMissingProducerNamed",
+      "locale": "fa-IR",
+      "text": "امکان {0} {1} وجود ندارد؛ به {2} نیاز است.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_missing_producer_named_01_fa.wav",
+      "durationSeconds": 4.56,
+      "sha256": "052f0736f8f8b0c7d51c01337c80192772d2cecb6f2251d8a16de3db648a090e"
+    },
+    {
+      "key": "build.drawer.failure.missing_producer",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureMissingProducer",
+      "locale": "en-US",
+      "text": "Cannot {0} {1}: {2}.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_missing_producer_01.wav",
+      "durationSeconds": 2.48,
+      "sha256": "5189ffc80b168ef1622b1c1ca9abc7b0fed1e0a8675d027f8c1f2dcf9e62d228"
+    },
+    {
+      "key": "build.drawer.failure.missing_producer",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureMissingProducer",
+      "locale": "fa-IR",
+      "text": "امکان {0} {1} وجود ندارد: {2}.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_missing_producer_01_fa.wav",
+      "durationSeconds": 3.52,
+      "sha256": "8c91ff8df6afad9ce4ca5eaf66873267ce13c8f494995fdbcc645f3beec23ab9"
+    },
+    {
+      "key": "build.drawer.failure.queue_full_named",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureQueueFullNamed",
+      "locale": "en-US",
+      "text": "Cannot {0} {1}: all {2} production slots are full.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_queue_full_named_01.wav",
+      "durationSeconds": 3.92,
+      "sha256": "6d2b9b928125af09ccfa5c99b52c42a6ca81aa43e8d9f4c370afd377aa123212"
+    },
+    {
+      "key": "build.drawer.failure.queue_full_named",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureQueueFullNamed",
+      "locale": "fa-IR",
+      "text": "امکان {0} {1} وجود ندارد؛ همه جایگاه‌های تولید {2} پر هستند.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_queue_full_named_01_fa.wav",
+      "durationSeconds": 6.56,
+      "sha256": "115c7ba4619a531db4a622af2c1336a04c1ed8a94258d2a37626fcfd15b3e632"
+    },
+    {
+      "key": "build.drawer.failure.queue_full",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureQueueFull",
+      "locale": "en-US",
+      "text": "Cannot {0} {1}: all compatible production slots are full.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_queue_full_01.wav",
+      "durationSeconds": 4.16,
+      "sha256": "7c1ef5ac6fffc92596e1750cc24387dcb3c446d4a1ccc036a74c6316ba0d111f"
+    },
+    {
+      "key": "build.drawer.failure.queue_full",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureQueueFull",
+      "locale": "fa-IR",
+      "text": "امکان {0} {1} وجود ندارد؛ همه جایگاه‌های تولید مرتبط پر هستند.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_queue_full_01_fa.wav",
+      "durationSeconds": 5.92,
+      "sha256": "40163a23182dc596465dd13eaeb0494f44eca9e9505fc6a2881c1a22badafecb"
+    },
+    {
+      "key": "build.drawer.failure.global_queue_full",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureGlobalQueueFull",
+      "locale": "en-US",
+      "text": "Cannot {0} {1}: production queue limit reached ({2} max).",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_global_queue_full_01.wav",
+      "durationSeconds": 4.72,
+      "sha256": "4bfcf00137badca45481359e0f3cb9e1ab2aa6686ce6a8f46583f1ca05e7e5c1"
+    },
+    {
+      "key": "build.drawer.failure.global_queue_full",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureGlobalQueueFull",
+      "locale": "fa-IR",
+      "text": "امکان {0} {1} وجود ندارد؛ سقف صف تولید {2} است.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_global_queue_full_01_fa.wav",
+      "durationSeconds": 5.6,
+      "sha256": "c38a0b1328cf4b70a35935cd8cd1b21a33c11c5709006a077fefd6467d2f11a0"
+    },
+    {
+      "key": "build.drawer.failure.invalid_selection",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureInvalidSelection",
+      "locale": "en-US",
+      "text": "Select a build drawer item first.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_invalid_selection_01.wav",
+      "durationSeconds": 2.48,
+      "sha256": "abe8c1f161506800d582e2d817c5153765a87da9dc1f9f3808722b446351ed60"
+    },
+    {
+      "key": "build.drawer.failure.invalid_selection",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureInvalidSelection",
+      "locale": "fa-IR",
+      "text": "ابتدا یک مورد از منوی ساخت انتخاب کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_invalid_selection_01_fa.wav",
+      "durationSeconds": 3.44,
+      "sha256": "ba5a77d1e9d074cc591cdee27ae34431fb717e81619d3002c48e3cb724b937bf"
+    },
+    {
+      "key": "build.drawer.failure.unavailable",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureUnavailable",
+      "locale": "en-US",
+      "text": "Cannot {0} {1}: request unavailable.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_unavailable_01.wav",
+      "durationSeconds": 2.96,
+      "sha256": "fe06dd170c40da6857518f4ae44e3d001e58ba527dc24606c5ec3364ba99141f"
+    },
+    {
+      "key": "build.drawer.failure.unavailable",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureUnavailable",
+      "locale": "fa-IR",
+      "text": "امکان {0} {1} وجود ندارد؛ درخواست در دسترس نیست.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_unavailable_01_fa.wav",
+      "durationSeconds": 5.28,
+      "sha256": "a70bcb117122979eac5bebf6777382ef1a55b71185dff56b3eaa6ef7f99b37de"
+    },
+    {
+      "key": "build.drawer.failure.short.not_enough_money",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortNotEnoughMoney",
+      "locale": "en-US",
+      "text": "Insufficient credits.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_not_enough_money_01.wav",
+      "durationSeconds": 1.6,
+      "sha256": "23d75246abf23c74220030ee0e46d643682b3b3c4922d7814ca104fa31a2a0d6"
+    },
+    {
+      "key": "build.drawer.failure.short.not_enough_money",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortNotEnoughMoney",
+      "locale": "fa-IR",
+      "text": "اعتبار کافی نیست.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_short_not_enough_money_01_fa.wav",
+      "durationSeconds": 2.0,
+      "sha256": "01ebc6e84ff650034081e25e86ca6f96d65c087dff41745a156ff7bb0ac47816"
+    },
+    {
+      "key": "build.drawer.failure.short.requires_named",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortRequiresNamed",
+      "locale": "en-US",
+      "text": "Requires {0}.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_requires_named_01.wav",
+      "durationSeconds": 1.2,
+      "sha256": "bb1b6c82f2d4c74b081c1426ebb31551a3ac959a470b17ad1ccbae83b3a339f5"
+    },
+    {
+      "key": "build.drawer.failure.short.requires_named",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortRequiresNamed",
+      "locale": "fa-IR",
+      "text": "به {0} نیاز است.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_short_requires_named_01_fa.wav",
+      "durationSeconds": 1.6,
+      "sha256": "01e7035f383de9bb11c55ec37e3626631e4f4486cbbf30d6f1b0bdcc756bedc9"
+    },
+    {
+      "key": "build.drawer.failure.short.missing_producer",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortMissingProducer",
+      "locale": "en-US",
+      "text": "Required producer is missing.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_missing_producer_01.wav",
+      "durationSeconds": 2.0,
+      "sha256": "577e5eff56f18338d6eb2655bb83f67b3fd272d0fb06f3429f546ad238e5de7f"
+    },
+    {
+      "key": "build.drawer.failure.short.missing_producer",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortMissingProducer",
+      "locale": "fa-IR",
+      "text": "ساختمان تولیدکننده مورد نیاز وجود ندارد.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_short_missing_producer_01_fa.wav",
+      "durationSeconds": 3.44,
+      "sha256": "bb249ee12d5ab69ac25e2713a32d1d42fa2cf044c488f84df080cd585c52f639"
+    },
+    {
+      "key": "build.drawer.failure.short.queue_full_named",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortQueueFullNamed",
+      "locale": "en-US",
+      "text": "{0} production slots are full.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_queue_full_named_01.wav",
+      "durationSeconds": 2.08,
+      "sha256": "74293e6e7434af713444a93238c2d1457d5cfc63c5afbd9204f35995966ed316"
+    },
+    {
+      "key": "build.drawer.failure.short.queue_full_named",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortQueueFullNamed",
+      "locale": "fa-IR",
+      "text": "جایگاه‌های تولید {0} پر هستند.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_short_queue_full_named_01_fa.wav",
+      "durationSeconds": 2.72,
+      "sha256": "a8523b036a16f74108c7250172736067e8881687e7238e921f51e48e925dc595"
+    },
+    {
+      "key": "build.drawer.failure.short.queue_full",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortQueueFull",
+      "locale": "en-US",
+      "text": "All compatible production slots are full.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_queue_full_01.wav",
+      "durationSeconds": 2.48,
+      "sha256": "041a9c4e327abe423b7d6346ff8ab4d11e525c5a41c8983fa24838efe54ece50"
+    },
+    {
+      "key": "build.drawer.failure.short.queue_full",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortQueueFull",
+      "locale": "fa-IR",
+      "text": "همه جایگاه‌های تولید مرتبط پر هستند.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_short_queue_full_01_fa.wav",
+      "durationSeconds": 3.12,
+      "sha256": "e2c30a0a640f4e9239150d139d2b22b22a29418a4e71c26d1399b442fe1f5973"
+    },
+    {
+      "key": "build.drawer.failure.short.global_queue_full",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortGlobalQueueFull",
+      "locale": "en-US",
+      "text": "Production queue limit reached ({0} max).",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_global_queue_full_01.wav",
+      "durationSeconds": 3.04,
+      "sha256": "4452b8058505452ff3d9a1ae2b06ad6b0d8586455d6160d0f6abc79803c71f7d"
+    },
+    {
+      "key": "build.drawer.failure.short.global_queue_full",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortGlobalQueueFull",
+      "locale": "fa-IR",
+      "text": "سقف صف تولید تکمیل شده است؛ حداکثر {0}.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_short_global_queue_full_01_fa.wav",
+      "durationSeconds": 4.24,
+      "sha256": "41f9e5d260ffa3ef19d3c05249685f497df8f4e29389d2b916cb7c3f52941341"
+    },
+    {
+      "key": "build.drawer.failure.short.unavailable",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortUnavailable",
+      "locale": "en-US",
+      "text": "Build request unavailable.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_failure_short_unavailable_01.wav",
+      "durationSeconds": 1.92,
+      "sha256": "ffbb98e6065f2ae3a8793d97696096cde62790f9099a6d9ad3eac9f0ee8794f4"
+    },
+    {
+      "key": "build.drawer.failure.short.unavailable",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortUnavailable",
+      "locale": "fa-IR",
+      "text": "درخواست ساخت در دسترس نیست.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_short_unavailable_01_fa.wav",
+      "durationSeconds": 2.64,
+      "sha256": "5dc4cf03de5d484a0433822d0202e8b12be3417a4f108c1a6014d1d48401c983"
+    },
+    {
+      "key": "build.drawer.empty.buildings",
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptyBuildings",
+      "locale": "en-US",
+      "text": "No requestable buildings are configured.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_buildings_01.wav",
+      "durationSeconds": 2.48,
+      "sha256": "286075173e34c4a0b4e6673f42b68b61e4db1aee400e3f3e307c6c2ee28e74c4"
+    },
+    {
+      "key": "build.drawer.empty.buildings",
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptyBuildings",
+      "locale": "fa-IR",
+      "text": "هیچ ساختمان قابل درخواستی تعریف نشده است.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_empty_buildings_01_fa.wav",
+      "durationSeconds": 3.44,
+      "sha256": "7984849a5d6c2fae12fc7e2afab594769a30af4500805788a9dec035a8b2f5fe"
+    },
+    {
+      "key": "build.drawer.empty.vehicles",
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptyVehicles",
+      "locale": "en-US",
+      "text": "No requestable vehicles are configured.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_vehicles_01.wav",
+      "durationSeconds": 2.64,
+      "sha256": "7fa6b33e042f926faf5e71f5888ec845b0032c6411e4c929949f527bea4abe96"
+    },
+    {
+      "key": "build.drawer.empty.vehicles",
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptyVehicles",
+      "locale": "fa-IR",
+      "text": "هیچ خودروی قابل درخواستی تعریف نشده است.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_empty_vehicles_01_fa.wav",
+      "durationSeconds": 3.44,
+      "sha256": "eb9a4cadcc83cba09927c0124632c67302666efa97e92cda99b87132addb30a1"
+    },
+    {
+      "key": "build.drawer.empty.aircraft",
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptyAircraft",
+      "locale": "en-US",
+      "text": "No requestable aircraft are configured.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_aircraft_01.wav",
+      "durationSeconds": 2.72,
+      "sha256": "49044a1d181cad809f50c4837e90f6039f5b5bcfbe7595544baac023abc7dd5e"
+    },
+    {
+      "key": "build.drawer.empty.aircraft",
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptyAircraft",
+      "locale": "fa-IR",
+      "text": "هیچ هواگرد قابل درخواستی تعریف نشده است.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_empty_aircraft_01_fa.wav",
+      "durationSeconds": 3.44,
+      "sha256": "79d905b3204ccafc29f81a4a10acf1c9531dc5bc149eeb20d1cd2d008d7f0570"
+    },
+    {
+      "key": "build.drawer.empty.soldiers",
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptySoldiers",
+      "locale": "en-US",
+      "text": "No requestable soldiers are configured.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_soldiers_01.wav",
+      "durationSeconds": 2.48,
+      "sha256": "6b77111a13a9f7a933c2c85ac6e9be2384b4b34a4e9e3022b0d685420b44059a"
+    },
+    {
+      "key": "build.drawer.empty.soldiers",
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptySoldiers",
+      "locale": "fa-IR",
+      "text": "هیچ نیروی قابل درخواستی تعریف نشده است.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_empty_soldiers_01_fa.wav",
+      "durationSeconds": 3.28,
+      "sha256": "1d25cf72f69f1e6b27d1e89d03d7fc731a490041905f2065c6def10354c4fe13"
+    },
+    {
+      "key": "build.drawer.empty.default",
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptyDefault",
+      "locale": "en-US",
+      "text": "No requestable items are configured.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_default_01.wav",
+      "durationSeconds": 2.64,
+      "sha256": "6f2b4ad1354851402341b786078e90039dc17c6eaf255073674b5d49e0628e93"
+    },
+    {
+      "key": "build.drawer.empty.default",
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptyDefault",
+      "locale": "fa-IR",
+      "text": "هیچ مورد قابل درخواستی تعریف نشده است.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_empty_default_01_fa.wav",
+      "durationSeconds": 3.04,
+      "sha256": "97286086b01750115064ccca9510fe0ef56b099bc3a7b8a92b8d2cd3f3de81ed"
+    },
+    {
+      "key": "build.drawer.empty.select_item",
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptySelectItem",
+      "locale": "en-US",
+      "text": "Select an item to place, produce, or recruit.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_empty_select_item_01.wav",
+      "durationSeconds": 3.2,
+      "sha256": "5feab78cbd05bb9c16360ce061266df37116860d7e31bbf5743f2cbfbf8671e8"
+    },
+    {
+      "key": "build.drawer.empty.select_item",
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptySelectItem",
+      "locale": "fa-IR",
+      "text": "یک مورد برای استقرار، تولید یا جذب انتخاب کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_empty_select_item_01_fa.wav",
+      "durationSeconds": 4.4,
+      "sha256": "7fedf5e8746a4eff6da43ec55483e8e9d9118d435294bf4386e6db8c42da61e2"
+    },
+    {
+      "key": "build.drawer.placement.invalid",
+      "eventId": "VO.ARIA.Message.BuildDrawerPlacementInvalid",
+      "locale": "en-US",
+      "text": "invalid placement",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_placement_invalid_01.wav",
+      "durationSeconds": 1.52,
+      "sha256": "803417444be50f4612624b34c6a4c7ee6d882e0af903cd61883b432b673cb803"
+    },
+    {
+      "key": "build.drawer.placement.invalid",
+      "eventId": "VO.ARIA.Message.BuildDrawerPlacementInvalid",
+      "locale": "fa-IR",
+      "text": "محل استقرار نامعتبر است",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_placement_invalid_01_fa.wav",
+      "durationSeconds": 2.32,
+      "sha256": "1f6c64f4c69635fbda26b585de111dfff0e121e7739f86cdbb241c205e0efd4f"
+    },
+    {
+      "key": "build.drawer.action.place_choose_footprint",
+      "eventId": "VO.ARIA.Message.BuildDrawerActionPlaceChooseFootprint",
+      "locale": "en-US",
+      "text": "Place {0}: choose a valid footprint.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_action_place_choose_footprint_01.wav",
+      "durationSeconds": 2.88,
+      "sha256": "a03814137bb26754ed333ef3a71f115a98cd7619a32cf1e89fb6567f7dff986f"
+    },
+    {
+      "key": "build.drawer.action.place_choose_footprint",
+      "eventId": "VO.ARIA.Message.BuildDrawerActionPlaceChooseFootprint",
+      "locale": "fa-IR",
+      "text": "استقرار {0}: محدوده مناسبی انتخاب کنید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_action_place_choose_footprint_01_fa.wav",
+      "durationSeconds": 4.56,
+      "sha256": "44be156c142926463c65417a40ec96bbcebdcd6a179f20c3681e82c1b43b3b12"
+    },
+    {
+      "key": "build.feedback.place_building",
+      "eventId": "VO.ARIA.Message.BuildFeedbackPlaceBuilding",
+      "locale": "en-US",
+      "text": "PLACE BUILDING",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_place_building_01.wav",
+      "durationSeconds": 1.2,
+      "sha256": "26875124d5221f66017d43772eb490a85ba2a7cd62bad4dddf788415050b771c"
+    },
+    {
+      "key": "build.feedback.place_building",
+      "eventId": "VO.ARIA.Message.BuildFeedbackPlaceBuilding",
+      "locale": "fa-IR",
+      "text": "استقرار ساختمان",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_place_building_01_fa.wav",
+      "durationSeconds": 1.76,
+      "sha256": "8f5493cbadcea66fa51b6518ccb766863cfcb22497e8584bcaecb60d0b9744ec"
+    },
+    {
+      "key": "build.feedback.production_requested",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionRequested",
+      "locale": "en-US",
+      "text": "{0}: {1}",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_requested_01.wav",
+      "durationSeconds": 1.52,
+      "sha256": "99a4b79fbb2f50f4784203d6e85b25e96fec7fc98612e2494bad20736a603f75"
+    },
+    {
+      "key": "build.feedback.production_requested",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionRequested",
+      "locale": "fa-IR",
+      "text": "{0}: {1}",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_requested_01_fa.wav",
+      "durationSeconds": 2.56,
+      "sha256": "f7e5d35a01552db44727d52f2c220563df7fe10b54fcd135f52e9ecd0b06162e"
+    },
+    {
+      "key": "build.drawer.success.recruitment_queued",
+      "eventId": "VO.ARIA.Message.BuildDrawerSuccessRecruitmentQueued",
+      "locale": "en-US",
+      "text": "{0} added to recruitment queue.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_success_recruitment_queued_01.wav",
+      "durationSeconds": 2.08,
+      "sha256": "898c619d9bf769e1bef61946ad9854c6bb6d66cbd831531ca5793e073540f8d1"
+    },
+    {
+      "key": "build.drawer.success.recruitment_queued",
+      "eventId": "VO.ARIA.Message.BuildDrawerSuccessRecruitmentQueued",
+      "locale": "fa-IR",
+      "text": "{0} به صف جذب نیرو اضافه شد.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_success_recruitment_queued_01_fa.wav",
+      "durationSeconds": 2.64,
+      "sha256": "04de5c16347b60e84a2e21165531efd4f646125929117dc5b99ddbfecb3425ad"
+    },
+    {
+      "key": "build.drawer.success.production_queued",
+      "eventId": "VO.ARIA.Message.BuildDrawerSuccessProductionQueued",
+      "locale": "en-US",
+      "text": "{0} added to production queue.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_drawer_success_production_queued_01.wav",
+      "durationSeconds": 2.08,
+      "sha256": "584bcf92adeda619e41a4c7cd63dfc97889a957dc534b962c234b260180a7f88"
+    },
+    {
+      "key": "build.drawer.success.production_queued",
+      "eventId": "VO.ARIA.Message.BuildDrawerSuccessProductionQueued",
+      "locale": "fa-IR",
+      "text": "{0} به صف تولید اضافه شد.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_success_production_queued_01_fa.wav",
+      "durationSeconds": 2.16,
+      "sha256": "e0c608c5df519efe09d62ba8bb5f867eb277fffc79050e959feaf506eee18d62"
+    },
+    {
+      "key": "build.feedback.production_cancel_unavailable",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionCancelUnavailable",
+      "locale": "en-US",
+      "text": "Production cancel unavailable.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_cancel_unavailable_01.wav",
+      "durationSeconds": 2.32,
+      "sha256": "1b903d4b2aa38bc46329d07e0bd2b16436eafa1cb8e8f213fd7b31eaed6f39f2"
+    },
+    {
+      "key": "build.feedback.production_cancel_unavailable",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionCancelUnavailable",
+      "locale": "fa-IR",
+      "text": "لغو تولید در دسترس نیست.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_cancel_unavailable_01_fa.wav",
+      "durationSeconds": 2.64,
+      "sha256": "a2dd9e6831893b0a821a88013337b81a5d264ef660a199f52bbfae797963fc32"
+    },
+    {
+      "key": "build.feedback.production_cancelled_named",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionCancelledNamed",
+      "locale": "en-US",
+      "text": "Cancelled {0}.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_cancelled_named_01.wav",
+      "durationSeconds": 1.36,
+      "sha256": "9276d273ff5cf303240c156d6f34f168896d28c7bbe4b242cc17d048f37e4e46"
+    },
+    {
+      "key": "build.feedback.production_cancelled_named",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionCancelledNamed",
+      "locale": "fa-IR",
+      "text": "{0} لغو شد.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_cancelled_named_01_fa.wav",
+      "durationSeconds": 1.36,
+      "sha256": "8e06e98ee87c8ee5d6543c1777e8293ec42f96259b07b539662478016b3ec645"
+    },
+    {
+      "key": "build.feedback.production_cancelled",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionCancelled",
+      "locale": "en-US",
+      "text": "PRODUCTION CANCELLED",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_cancelled_01.wav",
+      "durationSeconds": 1.44,
+      "sha256": "01a6a434f89bd21b9528e0e2b93375dddbdeb4799e66911eec06d97de89740c6"
+    },
+    {
+      "key": "build.feedback.production_cancelled",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionCancelled",
+      "locale": "fa-IR",
+      "text": "تولید لغو شد",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_cancelled_01_fa.wav",
+      "durationSeconds": 1.36,
+      "sha256": "98bb383de7de8541a731c2a75f611fcec4da4e4c729792b0a6a0c8bce09ee62b"
+    },
+    {
+      "key": "build.feedback.production_queue_empty",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionQueueEmpty",
+      "locale": "en-US",
+      "text": "Production queue is empty.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_queue_empty_01.wav",
+      "durationSeconds": 1.68,
+      "sha256": "833005e2f783f239c4fd4a023d71802fa345a31a624e6dbe1f7ae6aae4dd68ea"
+    },
+    {
+      "key": "build.feedback.production_queue_empty",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionQueueEmpty",
+      "locale": "fa-IR",
+      "text": "صف تولید خالی است.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_queue_empty_01_fa.wav",
+      "durationSeconds": 1.68,
+      "sha256": "bb08aa6506b6205347cb356d58f219289d76529abe2ed72b93c131a1a3638ce4"
+    },
+    {
+      "key": "build.feedback.production_queue_cleared_sentence",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionQueueClearedSentence",
+      "locale": "en-US",
+      "text": "Production queue cleared.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_queue_cleared_sentence_01.wav",
+      "durationSeconds": 1.6,
+      "sha256": "3927dda0f54bcb726811888f6746b4ca1d4dfe25b499e8d0e72ba0f88337c50a"
+    },
+    {
+      "key": "build.feedback.production_queue_cleared_sentence",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionQueueClearedSentence",
+      "locale": "fa-IR",
+      "text": "صف تولید پاک شد.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_queue_cleared_sentence_01_fa.wav",
+      "durationSeconds": 1.6,
+      "sha256": "ff41f8246c2ab8ae8260104d3008856af10cea38bff7b0dab5a979784e6ff0dd"
+    },
+    {
+      "key": "build.feedback.production_clear_unavailable",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionClearUnavailable",
+      "locale": "en-US",
+      "text": "Production clear unavailable.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_clear_unavailable_01.wav",
+      "durationSeconds": 2.0,
+      "sha256": "594ade1db51a59c6d07b3980748b55d051ea45cb4aefc66d71e9e6d94a7ab400"
+    },
+    {
+      "key": "build.feedback.production_clear_unavailable",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionClearUnavailable",
+      "locale": "fa-IR",
+      "text": "پاک کردن صف تولید در دسترس نیست.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_clear_unavailable_01_fa.wav",
+      "durationSeconds": 3.2,
+      "sha256": "a0040f519bd8d37796d0517b2455947c2afefed62c940140a03f3791b0732ae0"
+    },
+    {
+      "key": "build.feedback.production_queue_cleared",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionQueueCleared",
+      "locale": "en-US",
+      "text": "PRODUCTION QUEUE CLEARED",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_production_queue_cleared_01.wav",
+      "durationSeconds": 1.68,
+      "sha256": "0f21836bb2b7eb97ca2ac1ee9a3f4e3af75d06ca0e5132b31b91068da7fc4f44"
+    },
+    {
+      "key": "build.feedback.production_queue_cleared",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionQueueCleared",
+      "locale": "fa-IR",
+      "text": "صف تولید پاک شد",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_queue_cleared_01_fa.wav",
+      "durationSeconds": 1.68,
+      "sha256": "6c5901b5cee92c1fa2a07b9d332767053aaad0beb3e1618e9efb1371778670f9"
+    },
+    {
+      "key": "build.feedback.placement_cancelled",
+      "eventId": "VO.ARIA.Message.BuildFeedbackPlacementCancelled",
+      "locale": "en-US",
+      "text": "PLACEMENT CANCELLED",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_placement_cancelled_01.wav",
+      "durationSeconds": 1.28,
+      "sha256": "09455272ecb6b185d4b9a11edd0475bd22c852552e34cd5b53715ab54a104267"
+    },
+    {
+      "key": "build.feedback.placement_cancelled",
+      "eventId": "VO.ARIA.Message.BuildFeedbackPlacementCancelled",
+      "locale": "fa-IR",
+      "text": "استقرار لغو شد",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_placement_cancelled_01_fa.wav",
+      "durationSeconds": 1.52,
+      "sha256": "5e5f91adc09c0f32216936739582eaed687a4488b453294b079c17f8dea1a204"
+    },
+    {
+      "key": "build.feedback.rotated_90",
+      "eventId": "VO.ARIA.Message.BuildFeedbackRotated90",
+      "locale": "en-US",
+      "text": "ROTATED 90 DEGREES",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_rotated_90_01.wav",
+      "durationSeconds": 2.0,
+      "sha256": "659bcadc23dae5266f66f7a03dc1b4f347ebe61804a38fc109e4ecb14dd809f1"
+    },
+    {
+      "key": "build.feedback.rotated_90",
+      "eventId": "VO.ARIA.Message.BuildFeedbackRotated90",
+      "locale": "fa-IR",
+      "text": "نود درجه چرخانده شد",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_rotated_90_01_fa.wav",
+      "durationSeconds": 2.0,
+      "sha256": "178743c4f106f8584df816086b3c16c31b7d146db5b5e795db8e7b658f63127f"
+    },
+    {
+      "key": "build.feedback.no_active_placement",
+      "eventId": "VO.ARIA.Message.BuildFeedbackNoActivePlacement",
+      "locale": "en-US",
+      "text": "No active building placement.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_no_active_placement_01.wav",
+      "durationSeconds": 2.0,
+      "sha256": "3363d9d4aaef2e49762d2a502b576bd7c1ce9005da486d77507bc900ecce5775"
+    },
+    {
+      "key": "build.feedback.no_active_placement",
+      "eventId": "VO.ARIA.Message.BuildFeedbackNoActivePlacement",
+      "locale": "fa-IR",
+      "text": "هیچ استقرار ساختمانی فعال نیست.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_no_active_placement_01_fa.wav",
+      "durationSeconds": 2.88,
+      "sha256": "c5870715d04b6ff92c2982c1750ffe965603c43a7c20cbb2548902fe791e15a6"
+    },
+    {
+      "key": "build.feedback.building_placed",
+      "eventId": "VO.ARIA.Message.BuildFeedbackBuildingPlaced",
+      "locale": "en-US",
+      "text": "BUILDING PLACED",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_building_placed_01.wav",
+      "durationSeconds": 1.12,
+      "sha256": "d1e4b794d6f12154dbe18341d21722496decd452f17e34c29f2db9e1fa361687"
+    },
+    {
+      "key": "build.feedback.building_placed",
+      "eventId": "VO.ARIA.Message.BuildFeedbackBuildingPlaced",
+      "locale": "fa-IR",
+      "text": "ساختمان مستقر شد",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_building_placed_01_fa.wav",
+      "durationSeconds": 1.68,
+      "sha256": "0877ad366c9c6913099877a075e94f08c3e240e3b76aedc000f96577ed5db62a"
+    },
+    {
+      "key": "build.feedback.place_on_valid_ground",
+      "eventId": "VO.ARIA.Message.BuildFeedbackPlaceOnValidGround",
+      "locale": "en-US",
+      "text": "Place on valid ground.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_place_on_valid_ground_01.wav",
+      "durationSeconds": 1.6,
+      "sha256": "5e9103b69c4b3566e501f9f0d51dc69d1dc9b064085f210769715eb1ff8d634d"
+    },
+    {
+      "key": "build.feedback.place_on_valid_ground",
+      "eventId": "VO.ARIA.Message.BuildFeedbackPlaceOnValidGround",
+      "locale": "fa-IR",
+      "text": "روی زمین مناسب قرار دهید.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_place_on_valid_ground_01_fa.wav",
+      "durationSeconds": 2.4,
+      "sha256": "c326e0a8dc5f0f5ad19f6cc8dcfeeb89df42c708205d035f4aa530b622cf3844"
+    },
+    {
+      "key": "build.feedback.drawer_not_ready",
+      "eventId": "VO.ARIA.Message.BuildFeedbackDrawerNotReady",
+      "locale": "en-US",
+      "text": "Build drawer is not ready.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_feedback_drawer_not_ready_01.wav",
+      "durationSeconds": 1.84,
+      "sha256": "bd62b66d261e3d46b5b728b04d1ed1c39765dddd270c9641744a6f6c0edba4fd"
+    },
+    {
+      "key": "build.feedback.drawer_not_ready",
+      "eventId": "VO.ARIA.Message.BuildFeedbackDrawerNotReady",
+      "locale": "fa-IR",
+      "text": "منوی ساخت آماده نیست.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_drawer_not_ready_01_fa.wav",
+      "durationSeconds": 1.92,
+      "sha256": "eefea4d49814a3623773dd9f5658d6aa3f5429ab011af2f8050e81b88408947d"
+    },
+    {
+      "key": "build.placement.status.drag_to_position",
+      "eventId": "VO.ARIA.Message.BuildPlacementStatusDragToPosition",
+      "locale": "en-US",
+      "text": "DRAG TO POSITION",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_status_drag_to_position_01.wav",
+      "durationSeconds": 1.12,
+      "sha256": "afae640d637579348d8d1997bd240fc24adf63975d0009b9c1bccc04314a0b60"
+    },
+    {
+      "key": "build.placement.status.drag_to_position",
+      "eventId": "VO.ARIA.Message.BuildPlacementStatusDragToPosition",
+      "locale": "fa-IR",
+      "text": "به موقعیت مورد نظر بکشید",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_placement_status_drag_to_position_01_fa.wav",
+      "durationSeconds": 2.4,
+      "sha256": "f3179441b00301bb4bb82680bbbfcec4e96658605c4b32d0321c91040c58dc5f"
+    },
+    {
+      "key": "build.placement.status.valid_ground",
+      "eventId": "VO.ARIA.Message.BuildPlacementStatusValidGround",
+      "locale": "en-US",
+      "text": "VALID GROUND",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_status_valid_ground_01.wav",
+      "durationSeconds": 1.12,
+      "sha256": "3b3481406e994c4487dce7f8bdd76646919661fbcef3e11e4fadb61aec151b93"
+    },
+    {
+      "key": "build.placement.status.valid_ground",
+      "eventId": "VO.ARIA.Message.BuildPlacementStatusValidGround",
+      "locale": "fa-IR",
+      "text": "زمین مناسب",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_placement_status_valid_ground_01_fa.wav",
+      "durationSeconds": 1.36,
+      "sha256": "025bc40f24678d98786d8a1bc3c4cb58df6344174d5404c8719904ac253fb618"
+    },
+    {
+      "key": "build.placement.title.default",
+      "eventId": "VO.ARIA.Message.BuildPlacementTitleDefault",
+      "locale": "en-US",
+      "text": "PLACE BUILDING",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_title_default_01.wav",
+      "durationSeconds": 1.2,
+      "sha256": "26875124d5221f66017d43772eb490a85ba2a7cd62bad4dddf788415050b771c"
+    },
+    {
+      "key": "build.placement.title.default",
+      "eventId": "VO.ARIA.Message.BuildPlacementTitleDefault",
+      "locale": "fa-IR",
+      "text": "استقرار ساختمان",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_placement_title_default_01_fa.wav",
+      "durationSeconds": 1.76,
+      "sha256": "8f5493cbadcea66fa51b6518ccb766863cfcb22497e8584bcaecb60d0b9744ec"
+    },
+    {
+      "key": "build.placement.title.named",
+      "eventId": "VO.ARIA.Message.BuildPlacementTitleNamed",
+      "locale": "en-US",
+      "text": "PLACE {0}",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_title_named_01.wav",
+      "durationSeconds": 1.2,
+      "sha256": "76ae391e2b787cb6bd3d925ce07c47f9cf3f01dac2ee5e7e398e425111212e86"
+    },
+    {
+      "key": "build.placement.title.named",
+      "eventId": "VO.ARIA.Message.BuildPlacementTitleNamed",
+      "locale": "fa-IR",
+      "text": "استقرار {0}",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_placement_title_named_01_fa.wav",
+      "durationSeconds": 1.6,
+      "sha256": "235813779747547e07a839f7aafb6b95c137386bbd33d0bdb2c8721241741f02"
+    },
+    {
+      "key": "build.placement.instruction.confirm",
+      "eventId": "VO.ARIA.Message.BuildPlacementInstructionConfirm",
+      "locale": "en-US",
+      "text": "DRAG TO POSITION, CONFIRM TO BUILD",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_instruction_confirm_01.wav",
+      "durationSeconds": 2.48,
+      "sha256": "14ae74da4f221b81872329ecfb8fc926f18ad5bb3e9a785c5d16cb178c06a61a"
+    },
+    {
+      "key": "build.placement.instruction.confirm",
+      "eventId": "VO.ARIA.Message.BuildPlacementInstructionConfirm",
+      "locale": "fa-IR",
+      "text": "به محل مورد نظر بکشید و برای ساخت تأیید کنید",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_placement_instruction_confirm_01_fa.wav",
+      "durationSeconds": 4.08,
+      "sha256": "35df47ae6eae6964b7114b23937bc672bd8b908c0f6b04b13d205570ac5a1d19"
+    },
+    {
+      "key": "build.placement.title.fallback_subject",
+      "eventId": "VO.ARIA.Message.BuildPlacementTitleFallbackSubject",
+      "locale": "en-US",
+      "text": "BUILDING",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_build_placement_title_fallback_subject_01.wav",
+      "durationSeconds": 0.88,
+      "sha256": "15a708cd198255f8ff5592f0dcfb77690c03ead2dcf4b20fff5c93fdef4eeb38"
+    },
+    {
+      "key": "build.placement.title.fallback_subject",
+      "eventId": "VO.ARIA.Message.BuildPlacementTitleFallbackSubject",
+      "locale": "fa-IR",
+      "text": "ساختمان",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_placement_title_fallback_subject_01_fa.wav",
+      "durationSeconds": 0.88,
+      "sha256": "cf6b4045589ed6661faea66c0a1d555473720111964fe17f509a7959d238d1e1"
+    },
+    {
+      "key": "match.feedback.tactical_map_not_ready",
+      "eventId": "VO.ARIA.Message.MatchFeedbackTacticalMapNotReady",
+      "locale": "en-US",
+      "text": "Tactical map is not ready.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_match_feedback_tactical_map_not_ready_01.wav",
+      "durationSeconds": 2.0,
+      "sha256": "7e442489c0fb3716a1ec4b9fce5fc9a6d15a41526ea81889983737b5fc6a313c"
+    },
+    {
+      "key": "match.feedback.tactical_map_not_ready",
+      "eventId": "VO.ARIA.Message.MatchFeedbackTacticalMapNotReady",
+      "locale": "fa-IR",
+      "text": "نقشه تاکتیکی آماده نیست.",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_match_feedback_tactical_map_not_ready_01_fa.wav",
+      "durationSeconds": 2.4,
+      "sha256": "cd5d1964ab537f0aa9f93e364ceab85377c49eb9a28cae112770ea564573487d"
+    },
+    {
+      "key": "match.feedback.blocked_civilian_zone",
+      "eventId": "VO.ARIA.Message.MatchFeedbackBlockedCivilianZone",
+      "locale": "en-US",
+      "text": "Blocked: civilian zone",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_match_feedback_blocked_civilian_zone_01.wav",
+      "durationSeconds": 2.08,
+      "sha256": "88e56f9317f620499a771f308493ae33acb22a255eb49a5b08dff01552d98fa7"
+    },
+    {
+      "key": "match.feedback.blocked_civilian_zone",
+      "eventId": "VO.ARIA.Message.MatchFeedbackBlockedCivilianZone",
+      "locale": "fa-IR",
+      "text": "مسدود است: منطقه غیرنظامی",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_match_feedback_blocked_civilian_zone_01_fa.wav",
+      "durationSeconds": 3.52,
+      "sha256": "866f186415d5327a5714d35856e58ac659d21ae6186adb7c402c970f13c39168"
+    },
+    {
+      "key": "selection.feedback.unit_singular",
+      "eventId": "VO.ARIA.Message.SelectionFeedbackUnitSingular",
+      "locale": "en-US",
+      "text": "UNIT",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_unit_singular_01.wav",
+      "durationSeconds": 0.8,
+      "sha256": "3995a4cf26f407b06eb9feb00446c7daced69aa9a24960c17fc6ddaea66c44e1"
+    },
+    {
+      "key": "selection.feedback.unit_singular",
+      "eventId": "VO.ARIA.Message.SelectionFeedbackUnitSingular",
+      "locale": "fa-IR",
+      "text": "واحد",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_selection_feedback_unit_singular_01_fa.wav",
+      "durationSeconds": 1.2,
+      "sha256": "f00e4069750639507df615afc0ab9d27730bf6db90fd931a482fb9b5c721bf1f"
+    },
+    {
+      "key": "selection.feedback.unit_plural",
+      "eventId": "VO.ARIA.Message.SelectionFeedbackUnitPlural",
+      "locale": "en-US",
+      "text": "UNITS",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_unit_plural_01.wav",
+      "durationSeconds": 1.2,
+      "sha256": "565547194effd042e33ab092df361bcdd97a2835ad69726cb1b567265b19a5d8"
+    },
+    {
+      "key": "selection.feedback.unit_plural",
+      "eventId": "VO.ARIA.Message.SelectionFeedbackUnitPlural",
+      "locale": "fa-IR",
+      "text": "واحد",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_selection_feedback_unit_plural_01_fa.wav",
+      "durationSeconds": 1.2,
+      "sha256": "f00e4069750639507df615afc0ab9d27730bf6db90fd931a482fb9b5c721bf1f"
+    },
+    {
+      "key": "selection.feedback.vehicle_singular",
+      "eventId": "VO.ARIA.Message.SelectionFeedbackVehicleSingular",
+      "locale": "en-US",
+      "text": "VEHICLE",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_vehicle_singular_01.wav",
+      "durationSeconds": 0.64,
+      "sha256": "194b39fd6c48f44c966b7bc817e3fee082141ac3674a7412e5a6ab81b308e71e"
+    },
+    {
+      "key": "selection.feedback.vehicle_singular",
+      "eventId": "VO.ARIA.Message.SelectionFeedbackVehicleSingular",
+      "locale": "fa-IR",
+      "text": "خودرو",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_selection_feedback_vehicle_singular_01_fa.wav",
+      "durationSeconds": 1.84,
+      "sha256": "aac4a72f38232561a33539e4cbea7e9a702319aee1ddcaa84c383a36fef86227"
+    },
+    {
+      "key": "selection.feedback.soldier_singular",
+      "eventId": "VO.ARIA.Message.SelectionFeedbackSoldierSingular",
+      "locale": "en-US",
+      "text": "SOLDIER",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_soldier_singular_01.wav",
+      "durationSeconds": 0.64,
+      "sha256": "bcc52656261b0764e76239be2c2c18c6e4078391cfd78fae2de6f7dc2cc0af6b"
+    },
+    {
+      "key": "selection.feedback.soldier_singular",
+      "eventId": "VO.ARIA.Message.SelectionFeedbackSoldierSingular",
+      "locale": "fa-IR",
+      "text": "سرباز",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_selection_feedback_soldier_singular_01_fa.wav",
+      "durationSeconds": 1.92,
+      "sha256": "e32c5616137d3061e6ec3e3cd31954bbbb4418445ccf500dc1ca03c71f7226b0"
+    },
+    {
+      "key": "selection.feedback.squad_count",
+      "eventId": "VO.ARIA.Message.SelectionFeedbackSquadCount",
+      "locale": "en-US",
+      "text": "{0} {1}",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_squad_count_01.wav",
+      "durationSeconds": 1.2,
+      "sha256": "593c510fa6be660e61697ea0180ffe75e04768f1f4794beb7182fd7d5c01f94b"
+    },
+    {
+      "key": "selection.feedback.squad_count",
+      "eventId": "VO.ARIA.Message.SelectionFeedbackSquadCount",
+      "locale": "fa-IR",
+      "text": "{0} {1}",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_selection_feedback_squad_count_01_fa.wav",
+      "durationSeconds": 1.6,
+      "sha256": "e00ddf06534dd27b9188e5aa30e8fc15012b6f4d221eca4e7e10b67f81cdb620"
+    },
+    {
+      "key": "selection.feedback.squad_selected",
+      "eventId": "VO.ARIA.Message.SelectionFeedbackSquadSelected",
+      "locale": "en-US",
+      "text": "SQUAD SELECTED",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_selection_feedback_squad_selected_01.wav",
+      "durationSeconds": 1.28,
+      "sha256": "9475d55ae591250c1aed3eef2f22689f0491530d620891c3a0299377f6e293f7"
+    },
+    {
+      "key": "selection.feedback.squad_selected",
+      "eventId": "VO.ARIA.Message.SelectionFeedbackSquadSelected",
+      "locale": "fa-IR",
+      "text": "گروه انتخاب شد",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_selection_feedback_squad_selected_01_fa.wav",
+      "durationSeconds": 1.6,
+      "sha256": "fbe4ba76fbf582db625c4622b83b46243ef9f4c06af79cf4fe5df1df5489ae0a"
+    }
+  ]
+}

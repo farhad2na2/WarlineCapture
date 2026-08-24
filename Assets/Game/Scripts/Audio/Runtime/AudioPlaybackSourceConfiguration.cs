@@ -12,9 +12,9 @@ namespace Game.Runtime
         public const float SpatialSfxMinDistance = 24f;
         public const float SpatialSfxMaxDistance = 180f;
 
-        public static AudioClip SelectClip(AudioEventCatalogEntry entry)
+        public static AudioClip SelectClip(AudioEventCatalogEntry entry, string localeCode = null)
         {
-            IReadOnlyList<AudioClipWeightEntry> clips = entry.Clips;
+            IReadOnlyList<AudioClipWeightEntry> clips = entry.ResolveClips(localeCode);
             for (int i = 0; i < clips.Count; i++)
             {
                 if (clips[i]?.Clip != null && clips[i].Weight > 0)

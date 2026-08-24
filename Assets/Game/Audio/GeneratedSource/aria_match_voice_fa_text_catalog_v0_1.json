@@ -1,0 +1,986 @@
+{
+  "schema": "WarlineCapture.AriaMatchVoiceText.fa-IR.v0.1",
+  "locale": "fa-IR",
+  "elevenLabsLanguageCode": "fa",
+  "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+  "entries": [
+    {
+      "key": "confirm_destroy",
+      "eventId": "VO.ARIA.Message.ConfirmDestroy",
+      "englishText": "Are you sure you want to destroy {0}?",
+      "text": "آیا از نابود کردن {0} مطمئن هستید؟"
+    },
+    {
+      "key": "not_enough_money",
+      "eventId": "VO.ARIA.Message.NotEnoughMoney",
+      "englishText": "Not enough money",
+      "text": "اعتبار کافی نیست"
+    },
+    {
+      "key": "create_first",
+      "eventId": "VO.ARIA.Message.CreateFirst",
+      "englishText": "Create {0} first",
+      "text": "ابتدا {0} را بسازید"
+    },
+    {
+      "key": "drag_building_to_final_position",
+      "eventId": "VO.ARIA.Message.DragBuildingToFinalPosition",
+      "englishText": "Drag to final position",
+      "text": "به موقعیت نهایی بکشید"
+    },
+    {
+      "key": "warning_ground_attack_type",
+      "eventId": "VO.ARIA.Message.WarningGroundAttackType",
+      "englishText": "Ground vehicle attack detected",
+      "text": "حمله خودروهای زمینی شناسایی شد"
+    },
+    {
+      "key": "warning_air_attack_type",
+      "eventId": "VO.ARIA.Message.WarningAirAttackType",
+      "englishText": "Air attack detected",
+      "text": "حمله هوایی شناسایی شد"
+    },
+    {
+      "key": "warning_attack_eta_seconds",
+      "eventId": "VO.ARIA.Message.WarningAttackEtaSeconds",
+      "englishText": "Estimated time to base: {0} seconds",
+      "text": "زمان تقریبی رسیدن به پایگاه: {0} ثانیه"
+    },
+    {
+      "key": "warning_attack_eta_suffix",
+      "eventId": "VO.ARIA.Message.WarningAttackEtaSuffix",
+      "englishText": "{0} - ETA {1}s",
+      "text": "{0} - زمان رسیدن {1} ثانیه"
+    },
+    {
+      "key": "warning_attack_count_suffix",
+      "eventId": "VO.ARIA.Message.WarningAttackCountSuffix",
+      "englishText": "{0} x{1}",
+      "text": "{0}، تعداد {1}"
+    },
+    {
+      "key": "tactical.command.reason.no_selection",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonNoSelection",
+      "englishText": "Select units or a building first.",
+      "text": "ابتدا نیروها یا یک ساختمان را انتخاب کنید."
+    },
+    {
+      "key": "tactical.command.reason.target_out_of_bounds",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTargetOutOfBounds",
+      "englishText": "Target is outside the playable area.",
+      "text": "هدف خارج از محدوده عملیاتی است."
+    },
+    {
+      "key": "tactical.command.reason.target_blocked",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTargetBlocked",
+      "englishText": "Route is blocked.",
+      "text": "مسیر مسدود است."
+    },
+    {
+      "key": "tactical.command.reason.target_unreachable",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTargetUnreachable",
+      "englishText": "Target is unreachable.",
+      "text": "دسترسی به هدف ممکن نیست."
+    },
+    {
+      "key": "tactical.command.reason.target_not_enemy",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTargetNotEnemy",
+      "englishText": "Target is not hostile.",
+      "text": "هدف دشمن نیست."
+    },
+    {
+      "key": "tactical.command.reason.target_not_attackable",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTargetNotAttackable",
+      "englishText": "Target cannot be attacked.",
+      "text": "امکان حمله به این هدف وجود ندارد."
+    },
+    {
+      "key": "tactical.command.reason.command_unavailable",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonCommandUnavailable",
+      "englishText": "Command unavailable.",
+      "text": "فرمان در دسترس نیست."
+    },
+    {
+      "key": "tactical.command.reason.build_unavailable",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonBuildUnavailable",
+      "englishText": "Building unavailable.",
+      "text": "ساخت‌وساز در دسترس نیست."
+    },
+    {
+      "key": "tactical.command.reason.camera_jump_unavailable",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonCameraJumpUnavailable",
+      "englishText": "Camera focus unavailable.",
+      "text": "تمرکز دوربین در دسترس نیست."
+    },
+    {
+      "key": "tactical.command.reason.scan_unavailable",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonScanUnavailable",
+      "englishText": "Scan unavailable.",
+      "text": "اسکن در دسترس نیست."
+    },
+    {
+      "key": "tactical.command.reason.scan_cooldown",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonScanCooldown",
+      "englishText": "Scan cooling down.",
+      "text": "اسکن در حال بازیابی است."
+    },
+    {
+      "key": "tactical.command.reason.insufficient_resources",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonInsufficientResources",
+      "englishText": "Insufficient resources.",
+      "text": "منابع کافی نیست."
+    },
+    {
+      "key": "tactical.command.reason.insufficient_fuel",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonInsufficientFuel",
+      "englishText": "Insufficient fuel.",
+      "text": "سوخت کافی نیست."
+    },
+    {
+      "key": "tactical.command.reason.invalid_transport",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonInvalidTransport",
+      "englishText": "Select a transport vehicle or aircraft first.",
+      "text": "ابتدا یک خودرو یا هواگرد ترابری انتخاب کنید."
+    },
+    {
+      "key": "tactical.command.reason.invalid_passenger",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonInvalidPassenger",
+      "englishText": "Select units or cargo that can board.",
+      "text": "نیرو یا محموله قابل سوار شدن را انتخاب کنید."
+    },
+    {
+      "key": "tactical.command.reason.transport_full",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTransportFull",
+      "englishText": "Transport is full.",
+      "text": "ظرفیت وسیله ترابری تکمیل است."
+    },
+    {
+      "key": "tactical.command.reason.no_eligible_passengers",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonNoEligiblePassengers",
+      "englishText": "No nearby units can board this transport.",
+      "text": "هیچ نیروی نزدیک نمی‌تواند سوار این وسیله شود."
+    },
+    {
+      "key": "tactical.command.reason.no_disembark_cell",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonNoDisembarkCell",
+      "englishText": "No clear exit point for passengers.",
+      "text": "محل امنی برای پیاده شدن نیروها وجود ندارد."
+    },
+    {
+      "key": "tactical.command.reason.transport_passenger_missing",
+      "eventId": "VO.ARIA.Message.TacticalCommandReasonTransportPassengerMissing",
+      "englishText": "Passenger is not inside this transport.",
+      "text": "این نیرو داخل وسیله ترابری نیست."
+    },
+    {
+      "key": "tactical.command.instruction.select",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionSelect",
+      "englishText": "Select units or a building.",
+      "text": "نیروها یا یک ساختمان را انتخاب کنید."
+    },
+    {
+      "key": "tactical.command.instruction.move",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionMove",
+      "englishText": "Choose destination.",
+      "text": "مقصد را انتخاب کنید."
+    },
+    {
+      "key": "tactical.command.instruction.attack",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionAttack",
+      "englishText": "Tap hostile target.",
+      "text": "روی هدف دشمن بزنید."
+    },
+    {
+      "key": "tactical.command.instruction.hold",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionHold",
+      "englishText": "Hold position and return fire.",
+      "text": "موضع را حفظ کنید و پاسخ آتش بدهید."
+    },
+    {
+      "key": "tactical.command.instruction.stop",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionStop",
+      "englishText": "Stop selected units and clear orders.",
+      "text": "نیروهای منتخب را متوقف و فرمان‌ها را لغو کنید."
+    },
+    {
+      "key": "tactical.command.instruction.scan",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionScan",
+      "englishText": "Tap scan area.",
+      "text": "روی محدوده اسکن بزنید."
+    },
+    {
+      "key": "tactical.command.instruction.board",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionBoard",
+      "englishText": "Select a transport.",
+      "text": "یک وسیله ترابری انتخاب کنید."
+    },
+    {
+      "key": "tactical.command.instruction.build",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionBuild",
+      "englishText": "Choose what to build, produce, or recruit.",
+      "text": "ساختمان، محصول یا نیروی مورد نظر را انتخاب کنید."
+    },
+    {
+      "key": "tactical.command.instruction.special",
+      "eventId": "VO.ARIA.Message.TacticalCommandInstructionSpecial",
+      "englishText": "Choose special command.",
+      "text": "فرمان ویژه را انتخاب کنید."
+    },
+    {
+      "key": "tactical.command.board.prompt_transport_to_passenger",
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardPromptTransportToPassenger",
+      "englishText": "Select units to board or use BOARD ALL.",
+      "text": "نیروها را برای سوار شدن انتخاب کنید یا همه را سوار کنید."
+    },
+    {
+      "key": "tactical.command.board.prompt_passenger_to_transport",
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardPromptPassengerToTransport",
+      "englishText": "Select a transport.",
+      "text": "یک وسیله ترابری انتخاب کنید."
+    },
+    {
+      "key": "tactical.command.board.unavailable",
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardUnavailable",
+      "englishText": "Board command unavailable.",
+      "text": "فرمان سوار شدن در دسترس نیست."
+    },
+    {
+      "key": "tactical.command.board.tap_units_to_board",
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardTapUnitsToBoard",
+      "englishText": "Tap units to board.",
+      "text": "روی نیروها بزنید تا سوار شوند."
+    },
+    {
+      "key": "tactical.command.board.selected_unit_cannot_board",
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardSelectedUnitCannotBoard",
+      "englishText": "Selected unit cannot board.",
+      "text": "نیروی منتخب نمی‌تواند سوار شود."
+    },
+    {
+      "key": "tactical.command.board.select_unit_first",
+      "eventId": "VO.ARIA.Message.TacticalCommandBoardSelectUnitFirst",
+      "englishText": "Select a unit first.",
+      "text": "ابتدا یک نیرو انتخاب کنید."
+    },
+    {
+      "key": "tactical.command.unavailable.hold_no_selection",
+      "eventId": "VO.ARIA.Message.TacticalCommandUnavailableHoldNoSelection",
+      "englishText": "Select units before holding position.",
+      "text": "برای حفظ موضع ابتدا نیروها را انتخاب کنید."
+    },
+    {
+      "key": "tactical.command.unavailable.stop_no_selection",
+      "eventId": "VO.ARIA.Message.TacticalCommandUnavailableStopNoSelection",
+      "englishText": "Select units before stopping orders.",
+      "text": "برای توقف فرمان‌ها ابتدا نیروها را انتخاب کنید."
+    },
+    {
+      "key": "tactical.command.unavailable.scan_no_selection",
+      "eventId": "VO.ARIA.Message.TacticalCommandUnavailableScanNoSelection",
+      "englishText": "Select a scanner or combat unit first.",
+      "text": "ابتدا واحد اسکن یا نیروی رزمی را انتخاب کنید."
+    },
+    {
+      "key": "tactical.feedback.camera_follow_unavailable",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackCameraFollowUnavailable",
+      "englishText": "Camera follow unavailable.",
+      "text": "تعقیب دوربین در دسترس نیست."
+    },
+    {
+      "key": "tactical.feedback.camera_follow_active",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackCameraFollowActive",
+      "englishText": "Camera follow active.",
+      "text": "تعقیب دوربین فعال شد."
+    },
+    {
+      "key": "tactical.feedback.rts_camera_restored",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackRtsCameraRestored",
+      "englishText": "RTS camera restored.",
+      "text": "دوربین راهبردی بازگردانده شد."
+    },
+    {
+      "key": "tactical.feedback.follow_target_lost",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackFollowTargetLost",
+      "englishText": "Follow target lost.",
+      "text": "هدف تعقیب از دست رفت."
+    },
+    {
+      "key": "tactical.feedback.destroyed_selected_building",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackDestroyedSelectedBuilding",
+      "englishText": "Destroyed selected building.",
+      "text": "ساختمان منتخب نابود شد."
+    },
+    {
+      "key": "tactical.feedback.air_defense_auto_engage",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackAirDefenseAutoEngage",
+      "englishText": "Air defense auto-engages aircraft and incoming missiles.",
+      "text": "پدافند هوایی به‌طور خودکار با هواگردها و موشک‌های ورودی درگیر می‌شود."
+    },
+    {
+      "key": "tactical.feedback.exiting_unit",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackExitingUnit",
+      "englishText": "Exiting unit.",
+      "text": "نیرو در حال پیاده شدن است."
+    },
+    {
+      "key": "tactical.feedback.exiting_passengers",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackExitingPassengers",
+      "englishText": "Exiting passengers.",
+      "text": "نیروها در حال پیاده شدن هستند."
+    },
+    {
+      "key": "tactical.feedback.loading_transport",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackLoadingTransport",
+      "englishText": "Loading transport.",
+      "text": "وسیله ترابری در حال بارگیری است."
+    },
+    {
+      "key": "tactical.feedback.boarding_transport",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackBoardingTransport",
+      "englishText": "Boarding transport.",
+      "text": "نیروها در حال سوار شدن هستند."
+    },
+    {
+      "key": "tactical.feedback.holding_current_position",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackHoldingCurrentPosition",
+      "englishText": "Holding current position.",
+      "text": "موضع فعلی حفظ می‌شود."
+    },
+    {
+      "key": "tactical.feedback.stopped_selected_units",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackStoppedSelectedUnits",
+      "englishText": "Stopped selected units.",
+      "text": "نیروهای منتخب متوقف شدند."
+    },
+    {
+      "key": "tactical.feedback.unit_returning_to_base",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackUnitReturningToBase",
+      "englishText": "Unit returning to base.",
+      "text": "نیرو به پایگاه بازمی‌گردد."
+    },
+    {
+      "key": "tactical.feedback.units_returning_to_base",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackUnitsReturningToBase",
+      "englishText": "{0} units returning to base.",
+      "text": "{0} نیرو به پایگاه بازمی‌گردند."
+    },
+    {
+      "key": "tactical.feedback.destroyed_selected_unit",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackDestroyedSelectedUnit",
+      "englishText": "Destroyed selected unit.",
+      "text": "نیروی منتخب نابود شد."
+    },
+    {
+      "key": "tactical.feedback.destroyed_selected_units",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackDestroyedSelectedUnits",
+      "englishText": "Destroyed {0} selected units.",
+      "text": "{0} نیروی منتخب نابود شدند."
+    },
+    {
+      "key": "tactical.feedback.scan_ordered",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackScanOrdered",
+      "englishText": "SCAN ORDERED: SCANNER EN ROUTE",
+      "text": "فرمان اسکن صادر شد؛ واحد اسکن در راه است"
+    },
+    {
+      "key": "tactical.feedback.scan_one_contact",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackScanOneContact",
+      "englishText": "1 CONTACT",
+      "text": "یک هدف شناسایی شد"
+    },
+    {
+      "key": "tactical.feedback.scan_contacts",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackScanContacts",
+      "englishText": "{0} CONTACTS",
+      "text": "{0} هدف شناسایی شد"
+    },
+    {
+      "key": "tactical.feedback.scan_complete",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackScanComplete",
+      "englishText": "SCAN COMPLETE: {0}",
+      "text": "اسکن کامل شد: {0}"
+    },
+    {
+      "key": "tactical.feedback.missile_launched",
+      "eventId": "VO.ARIA.Message.TacticalFeedbackMissileLaunched",
+      "englishText": "Missile launched.",
+      "text": "موشک شلیک شد."
+    },
+    {
+      "key": "tactical.airdrop.emergency_drop_visual_missing",
+      "eventId": "VO.ARIA.Message.TacticalAirdropEmergencyDropVisualMissing",
+      "englishText": "Emergency drop visual missing.",
+      "text": "نمایش بصری پرتاب اضطراری موجود نیست."
+    },
+    {
+      "key": "tactical.airdrop.parachute_visual_missing",
+      "eventId": "VO.ARIA.Message.TacticalAirdropParachuteVisualMissing",
+      "englishText": "Parachute visual missing.",
+      "text": "نمایش بصری چتر نجات موجود نیست."
+    },
+    {
+      "key": "tactical.airdrop.no_clear_landing_zone",
+      "eventId": "VO.ARIA.Message.TacticalAirdropNoClearLandingZone",
+      "englishText": "No clear airdrop landing zone.",
+      "text": "منطقه بازی برای فرود هوایی وجود ندارد."
+    },
+    {
+      "key": "tactical.airdrop.cargo_drop_blocked",
+      "eventId": "VO.ARIA.Message.TacticalAirdropCargoDropBlocked",
+      "englishText": "Cargo drop blocked.",
+      "text": "پرتاب محموله مسدود است."
+    },
+    {
+      "key": "tactical.banner.mode.move.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeMoveTitle",
+      "englishText": "MOVE ORDER",
+      "text": "فرمان حرکت"
+    },
+    {
+      "key": "tactical.banner.mode.move.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeMoveDescription",
+      "englishText": "Select a destination.",
+      "text": "مقصد را انتخاب کنید."
+    },
+    {
+      "key": "tactical.banner.mode.attack.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeAttackTitle",
+      "englishText": "ATTACK ORDER",
+      "text": "فرمان حمله"
+    },
+    {
+      "key": "tactical.banner.mode.attack.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeAttackDescription",
+      "englishText": "Select an enemy target.",
+      "text": "یک هدف دشمن انتخاب کنید."
+    },
+    {
+      "key": "tactical.banner.mode.scan.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeScanTitle",
+      "englishText": "SCAN ORDER",
+      "text": "فرمان اسکن"
+    },
+    {
+      "key": "tactical.banner.mode.scan.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeScanDescription",
+      "englishText": "Select an area to scan.",
+      "text": "محدوده اسکن را انتخاب کنید."
+    },
+    {
+      "key": "tactical.banner.mode.board.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeBoardTitle",
+      "englishText": "BOARD ORDER",
+      "text": "فرمان سوار شدن"
+    },
+    {
+      "key": "tactical.banner.mode.board.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeBoardDescription",
+      "englishText": "Select a transport.",
+      "text": "یک وسیله ترابری انتخاب کنید."
+    },
+    {
+      "key": "tactical.banner.mode.board.description_transport_to_passenger",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeBoardDescriptionTransportToPassenger",
+      "englishText": "Select units to board.",
+      "text": "نیروها را برای سوار شدن انتخاب کنید."
+    },
+    {
+      "key": "tactical.banner.mode.build.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeBuildTitle",
+      "englishText": "BUILD ORDER",
+      "text": "فرمان ساخت"
+    },
+    {
+      "key": "tactical.banner.mode.build.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerModeBuildDescription",
+      "englishText": "Place structure on valid terrain.",
+      "text": "سازه را روی زمین مناسب قرار دهید."
+    },
+    {
+      "key": "tactical.banner.accepted.move.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedMoveTitle",
+      "englishText": "MOVE ORDER",
+      "text": "فرمان حرکت"
+    },
+    {
+      "key": "tactical.banner.accepted.move.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedMoveDescription",
+      "englishText": "Units moving to target.",
+      "text": "نیروها به سوی هدف حرکت می‌کنند."
+    },
+    {
+      "key": "tactical.banner.accepted.attack.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedAttackTitle",
+      "englishText": "ATTACK ORDER",
+      "text": "فرمان حمله"
+    },
+    {
+      "key": "tactical.banner.accepted.attack.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedAttackDescription",
+      "englishText": "Engaging target.",
+      "text": "درگیری با هدف آغاز شد."
+    },
+    {
+      "key": "tactical.banner.accepted.hold.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedHoldTitle",
+      "englishText": "HOLD POSITION",
+      "text": "حفظ موضع"
+    },
+    {
+      "key": "tactical.banner.accepted.hold.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedHoldDescription",
+      "englishText": "Selected units holding ground.",
+      "text": "نیروهای منتخب موضع را حفظ می‌کنند."
+    },
+    {
+      "key": "tactical.banner.accepted.stop.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedStopTitle",
+      "englishText": "STOP ORDER",
+      "text": "فرمان توقف"
+    },
+    {
+      "key": "tactical.banner.accepted.stop.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedStopDescription",
+      "englishText": "Selected units clearing orders.",
+      "text": "فرمان‌های نیروهای منتخب لغو می‌شود."
+    },
+    {
+      "key": "tactical.banner.accepted.scan.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedScanTitle",
+      "englishText": "SCAN ORDER",
+      "text": "فرمان اسکن"
+    },
+    {
+      "key": "tactical.banner.accepted.scan.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedScanDescription",
+      "englishText": "Recon sweep in progress.",
+      "text": "پویش شناسایی در حال انجام است."
+    },
+    {
+      "key": "tactical.banner.accepted.board.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedBoardTitle",
+      "englishText": "BOARD ORDER",
+      "text": "فرمان سوار شدن"
+    },
+    {
+      "key": "tactical.banner.accepted.board.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedBoardDescription",
+      "englishText": "Boarding transport.",
+      "text": "نیروها در حال سوار شدن هستند."
+    },
+    {
+      "key": "tactical.banner.accepted.build.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedBuildTitle",
+      "englishText": "BUILD ORDER",
+      "text": "فرمان ساخت"
+    },
+    {
+      "key": "tactical.banner.accepted.build.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedBuildDescription",
+      "englishText": "Building order accepted.",
+      "text": "فرمان ساخت پذیرفته شد."
+    },
+    {
+      "key": "tactical.banner.accepted.return.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedReturnTitle",
+      "englishText": "RETURN ORDER",
+      "text": "فرمان بازگشت"
+    },
+    {
+      "key": "tactical.banner.accepted.return.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedReturnDescription",
+      "englishText": "Unit returning to base.",
+      "text": "نیرو به پایگاه بازمی‌گردد."
+    },
+    {
+      "key": "tactical.banner.accepted.destroy.title",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedDestroyTitle",
+      "englishText": "DESTROY ORDER",
+      "text": "فرمان نابودی"
+    },
+    {
+      "key": "tactical.banner.accepted.destroy.description",
+      "eventId": "VO.ARIA.Message.TacticalBannerAcceptedDestroyDescription",
+      "englishText": "Selected unit removed.",
+      "text": "نیروی منتخب حذف شد."
+    },
+    {
+      "key": "build.drawer.empty.name",
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptyName",
+      "englishText": "NO ITEMS",
+      "text": "موردی وجود ندارد"
+    },
+    {
+      "key": "build.drawer.ready.buildings",
+      "eventId": "VO.ARIA.Message.BuildDrawerReadyBuildings",
+      "englishText": "PLACE: choose a location for {0}.",
+      "text": "استقرار: محل {0} را انتخاب کنید."
+    },
+    {
+      "key": "build.drawer.ready.vehicles",
+      "eventId": "VO.ARIA.Message.BuildDrawerReadyVehicles",
+      "englishText": "PRODUCE: add {0} to the vehicle queue.",
+      "text": "تولید: {0} را به صف خودروها اضافه کنید."
+    },
+    {
+      "key": "build.drawer.ready.aircraft",
+      "eventId": "VO.ARIA.Message.BuildDrawerReadyAircraft",
+      "englishText": "PRODUCE: add {0} to the aircraft queue.",
+      "text": "تولید: {0} را به صف هواگردها اضافه کنید."
+    },
+    {
+      "key": "build.drawer.ready.soldiers",
+      "eventId": "VO.ARIA.Message.BuildDrawerReadySoldiers",
+      "englishText": "RECRUIT: add {0} to the training queue.",
+      "text": "جذب نیرو: {0} را به صف آموزش اضافه کنید."
+    },
+    {
+      "key": "build.drawer.ready.default",
+      "eventId": "VO.ARIA.Message.BuildDrawerReadyDefault",
+      "englishText": "Select {0}.",
+      "text": "{0} را انتخاب کنید."
+    },
+    {
+      "key": "build.drawer.instruction.place_pending_confirm",
+      "eventId": "VO.ARIA.Message.BuildDrawerInstructionPlacePendingConfirm",
+      "englishText": "Place {0}: drag to position, then confirm.",
+      "text": "استقرار {0}: به محل مورد نظر بکشید و تأیید کنید."
+    },
+    {
+      "key": "build.drawer.instruction.cannot_place_here",
+      "eventId": "VO.ARIA.Message.BuildDrawerInstructionCannotPlaceHere",
+      "englishText": "Cannot place here: {0}.",
+      "text": "استقرار در این محل ممکن نیست: {0}."
+    },
+    {
+      "key": "build.drawer.failure.connecting",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureConnecting",
+      "englishText": "Build drawer is still connecting. Try again in a moment.",
+      "text": "منوی ساخت در حال اتصال است. کمی بعد دوباره تلاش کنید."
+    },
+    {
+      "key": "build.drawer.failure.not_enough_money",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureNotEnoughMoney",
+      "englishText": "Need {0} more credits to {1} {2}.",
+      "text": "برای {1} {2} به {0} اعتبار بیشتر نیاز است."
+    },
+    {
+      "key": "build.drawer.failure.missing_producer_named",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureMissingProducerNamed",
+      "englishText": "Cannot {0} {1}: requires {2}.",
+      "text": "امکان {0} {1} وجود ندارد؛ به {2} نیاز است."
+    },
+    {
+      "key": "build.drawer.failure.missing_producer",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureMissingProducer",
+      "englishText": "Cannot {0} {1}: {2}.",
+      "text": "امکان {0} {1} وجود ندارد: {2}."
+    },
+    {
+      "key": "build.drawer.failure.queue_full_named",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureQueueFullNamed",
+      "englishText": "Cannot {0} {1}: all {2} production slots are full.",
+      "text": "امکان {0} {1} وجود ندارد؛ همه جایگاه‌های تولید {2} پر هستند."
+    },
+    {
+      "key": "build.drawer.failure.queue_full",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureQueueFull",
+      "englishText": "Cannot {0} {1}: all compatible production slots are full.",
+      "text": "امکان {0} {1} وجود ندارد؛ همه جایگاه‌های تولید مرتبط پر هستند."
+    },
+    {
+      "key": "build.drawer.failure.global_queue_full",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureGlobalQueueFull",
+      "englishText": "Cannot {0} {1}: production queue limit reached ({2} max).",
+      "text": "امکان {0} {1} وجود ندارد؛ سقف صف تولید {2} است."
+    },
+    {
+      "key": "build.drawer.failure.invalid_selection",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureInvalidSelection",
+      "englishText": "Select a build drawer item first.",
+      "text": "ابتدا یک مورد از منوی ساخت انتخاب کنید."
+    },
+    {
+      "key": "build.drawer.failure.unavailable",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureUnavailable",
+      "englishText": "Cannot {0} {1}: request unavailable.",
+      "text": "امکان {0} {1} وجود ندارد؛ درخواست در دسترس نیست."
+    },
+    {
+      "key": "build.drawer.failure.short.not_enough_money",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortNotEnoughMoney",
+      "englishText": "Insufficient credits.",
+      "text": "اعتبار کافی نیست."
+    },
+    {
+      "key": "build.drawer.failure.short.requires_named",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortRequiresNamed",
+      "englishText": "Requires {0}.",
+      "text": "به {0} نیاز است."
+    },
+    {
+      "key": "build.drawer.failure.short.missing_producer",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortMissingProducer",
+      "englishText": "Required producer is missing.",
+      "text": "ساختمان تولیدکننده مورد نیاز وجود ندارد."
+    },
+    {
+      "key": "build.drawer.failure.short.queue_full_named",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortQueueFullNamed",
+      "englishText": "{0} production slots are full.",
+      "text": "جایگاه‌های تولید {0} پر هستند."
+    },
+    {
+      "key": "build.drawer.failure.short.queue_full",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortQueueFull",
+      "englishText": "All compatible production slots are full.",
+      "text": "همه جایگاه‌های تولید مرتبط پر هستند."
+    },
+    {
+      "key": "build.drawer.failure.short.global_queue_full",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortGlobalQueueFull",
+      "englishText": "Production queue limit reached ({0} max).",
+      "text": "سقف صف تولید تکمیل شده است؛ حداکثر {0}."
+    },
+    {
+      "key": "build.drawer.failure.short.unavailable",
+      "eventId": "VO.ARIA.Message.BuildDrawerFailureShortUnavailable",
+      "englishText": "Build request unavailable.",
+      "text": "درخواست ساخت در دسترس نیست."
+    },
+    {
+      "key": "build.drawer.empty.buildings",
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptyBuildings",
+      "englishText": "No requestable buildings are configured.",
+      "text": "هیچ ساختمان قابل درخواستی تعریف نشده است."
+    },
+    {
+      "key": "build.drawer.empty.vehicles",
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptyVehicles",
+      "englishText": "No requestable vehicles are configured.",
+      "text": "هیچ خودروی قابل درخواستی تعریف نشده است."
+    },
+    {
+      "key": "build.drawer.empty.aircraft",
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptyAircraft",
+      "englishText": "No requestable aircraft are configured.",
+      "text": "هیچ هواگرد قابل درخواستی تعریف نشده است."
+    },
+    {
+      "key": "build.drawer.empty.soldiers",
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptySoldiers",
+      "englishText": "No requestable soldiers are configured.",
+      "text": "هیچ نیروی قابل درخواستی تعریف نشده است."
+    },
+    {
+      "key": "build.drawer.empty.default",
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptyDefault",
+      "englishText": "No requestable items are configured.",
+      "text": "هیچ مورد قابل درخواستی تعریف نشده است."
+    },
+    {
+      "key": "build.drawer.empty.select_item",
+      "eventId": "VO.ARIA.Message.BuildDrawerEmptySelectItem",
+      "englishText": "Select an item to place, produce, or recruit.",
+      "text": "یک مورد برای استقرار، تولید یا جذب انتخاب کنید."
+    },
+    {
+      "key": "build.drawer.placement.invalid",
+      "eventId": "VO.ARIA.Message.BuildDrawerPlacementInvalid",
+      "englishText": "invalid placement",
+      "text": "محل استقرار نامعتبر است"
+    },
+    {
+      "key": "build.drawer.action.place_choose_footprint",
+      "eventId": "VO.ARIA.Message.BuildDrawerActionPlaceChooseFootprint",
+      "englishText": "Place {0}: choose a valid footprint.",
+      "text": "استقرار {0}: محدوده مناسبی انتخاب کنید."
+    },
+    {
+      "key": "build.feedback.place_building",
+      "eventId": "VO.ARIA.Message.BuildFeedbackPlaceBuilding",
+      "englishText": "PLACE BUILDING",
+      "text": "استقرار ساختمان"
+    },
+    {
+      "key": "build.feedback.production_requested",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionRequested",
+      "englishText": "{0}: {1}",
+      "text": "{0}: {1}"
+    },
+    {
+      "key": "build.drawer.success.recruitment_queued",
+      "eventId": "VO.ARIA.Message.BuildDrawerSuccessRecruitmentQueued",
+      "englishText": "{0} added to recruitment queue.",
+      "text": "{0} به صف جذب نیرو اضافه شد."
+    },
+    {
+      "key": "build.drawer.success.production_queued",
+      "eventId": "VO.ARIA.Message.BuildDrawerSuccessProductionQueued",
+      "englishText": "{0} added to production queue.",
+      "text": "{0} به صف تولید اضافه شد."
+    },
+    {
+      "key": "build.feedback.production_cancel_unavailable",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionCancelUnavailable",
+      "englishText": "Production cancel unavailable.",
+      "text": "لغو تولید در دسترس نیست."
+    },
+    {
+      "key": "build.feedback.production_cancelled_named",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionCancelledNamed",
+      "englishText": "Cancelled {0}.",
+      "text": "{0} لغو شد."
+    },
+    {
+      "key": "build.feedback.production_cancelled",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionCancelled",
+      "englishText": "PRODUCTION CANCELLED",
+      "text": "تولید لغو شد"
+    },
+    {
+      "key": "build.feedback.production_queue_empty",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionQueueEmpty",
+      "englishText": "Production queue is empty.",
+      "text": "صف تولید خالی است."
+    },
+    {
+      "key": "build.feedback.production_queue_cleared_sentence",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionQueueClearedSentence",
+      "englishText": "Production queue cleared.",
+      "text": "صف تولید پاک شد."
+    },
+    {
+      "key": "build.feedback.production_clear_unavailable",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionClearUnavailable",
+      "englishText": "Production clear unavailable.",
+      "text": "پاک کردن صف تولید در دسترس نیست."
+    },
+    {
+      "key": "build.feedback.production_queue_cleared",
+      "eventId": "VO.ARIA.Message.BuildFeedbackProductionQueueCleared",
+      "englishText": "PRODUCTION QUEUE CLEARED",
+      "text": "صف تولید پاک شد"
+    },
+    {
+      "key": "build.feedback.placement_cancelled",
+      "eventId": "VO.ARIA.Message.BuildFeedbackPlacementCancelled",
+      "englishText": "PLACEMENT CANCELLED",
+      "text": "استقرار لغو شد"
+    },
+    {
+      "key": "build.feedback.rotated_90",
+      "eventId": "VO.ARIA.Message.BuildFeedbackRotated90",
+      "englishText": "ROTATED 90 DEGREES",
+      "text": "نود درجه چرخانده شد"
+    },
+    {
+      "key": "build.feedback.no_active_placement",
+      "eventId": "VO.ARIA.Message.BuildFeedbackNoActivePlacement",
+      "englishText": "No active building placement.",
+      "text": "هیچ استقرار ساختمانی فعال نیست."
+    },
+    {
+      "key": "build.feedback.building_placed",
+      "eventId": "VO.ARIA.Message.BuildFeedbackBuildingPlaced",
+      "englishText": "BUILDING PLACED",
+      "text": "ساختمان مستقر شد"
+    },
+    {
+      "key": "build.feedback.place_on_valid_ground",
+      "eventId": "VO.ARIA.Message.BuildFeedbackPlaceOnValidGround",
+      "englishText": "Place on valid ground.",
+      "text": "روی زمین مناسب قرار دهید."
+    },
+    {
+      "key": "build.feedback.drawer_not_ready",
+      "eventId": "VO.ARIA.Message.BuildFeedbackDrawerNotReady",
+      "englishText": "Build drawer is not ready.",
+      "text": "منوی ساخت آماده نیست."
+    },
+    {
+      "key": "build.placement.status.drag_to_position",
+      "eventId": "VO.ARIA.Message.BuildPlacementStatusDragToPosition",
+      "englishText": "DRAG TO POSITION",
+      "text": "به موقعیت مورد نظر بکشید"
+    },
+    {
+      "key": "build.placement.status.valid_ground",
+      "eventId": "VO.ARIA.Message.BuildPlacementStatusValidGround",
+      "englishText": "VALID GROUND",
+      "text": "زمین مناسب"
+    },
+    {
+      "key": "build.placement.title.default",
+      "eventId": "VO.ARIA.Message.BuildPlacementTitleDefault",
+      "englishText": "PLACE BUILDING",
+      "text": "استقرار ساختمان"
+    },
+    {
+      "key": "build.placement.title.named",
+      "eventId": "VO.ARIA.Message.BuildPlacementTitleNamed",
+      "englishText": "PLACE {0}",
+      "text": "استقرار {0}"
+    },
+    {
+      "key": "build.placement.instruction.confirm",
+      "eventId": "VO.ARIA.Message.BuildPlacementInstructionConfirm",
+      "englishText": "DRAG TO POSITION, CONFIRM TO BUILD",
+      "text": "به محل مورد نظر بکشید و برای ساخت تأیید کنید"
+    },
+    {
+      "key": "build.placement.title.fallback_subject",
+      "eventId": "VO.ARIA.Message.BuildPlacementTitleFallbackSubject",
+      "englishText": "BUILDING",
+      "text": "ساختمان"
+    },
+    {
+      "key": "match.feedback.tactical_map_not_ready",
+      "eventId": "VO.ARIA.Message.MatchFeedbackTacticalMapNotReady",
+      "englishText": "Tactical map is not ready.",
+      "text": "نقشه تاکتیکی آماده نیست."
+    },
+    {
+      "key": "match.feedback.blocked_civilian_zone",
+      "eventId": "VO.ARIA.Message.MatchFeedbackBlockedCivilianZone",
+      "englishText": "Blocked: civilian zone",
+      "text": "مسدود است: منطقه غیرنظامی"
+    },
+    {
+      "key": "selection.feedback.unit_singular",
+      "eventId": "VO.ARIA.Message.SelectionFeedbackUnitSingular",
+      "englishText": "UNIT",
+      "text": "واحد"
+    },
+    {
+      "key": "selection.feedback.unit_plural",
+      "eventId": "VO.ARIA.Message.SelectionFeedbackUnitPlural",
+      "englishText": "UNITS",
+      "text": "واحد"
+    },
+    {
+      "key": "selection.feedback.vehicle_singular",
+      "eventId": "VO.ARIA.Message.SelectionFeedbackVehicleSingular",
+      "englishText": "VEHICLE",
+      "text": "خودرو"
+    },
+    {
+      "key": "selection.feedback.soldier_singular",
+      "eventId": "VO.ARIA.Message.SelectionFeedbackSoldierSingular",
+      "englishText": "SOLDIER",
+      "text": "سرباز"
+    },
+    {
+      "key": "selection.feedback.squad_count",
+      "eventId": "VO.ARIA.Message.SelectionFeedbackSquadCount",
+      "englishText": "{0} {1}",
+      "text": "{0} {1}"
+    },
+    {
+      "key": "selection.feedback.squad_selected",
+      "eventId": "VO.ARIA.Message.SelectionFeedbackSquadSelected",
+      "englishText": "SQUAD SELECTED",
+      "text": "گروه انتخاب شد"
+    }
+  ]
+}

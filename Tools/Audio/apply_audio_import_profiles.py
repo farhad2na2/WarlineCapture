@@ -32,6 +32,9 @@ def load_catalog_clip_paths() -> list[Path]:
     for event in catalog["events"]:
         for clip in event["clips"]:
             paths.append(ROOT / clip["assetPath"])
+        for localized_set in event.get("localizedClips", []):
+            for clip in localized_set.get("clips", []):
+                paths.append(ROOT / clip["assetPath"])
     return paths
 
 
@@ -52,13 +55,25 @@ def replace_scalar(text: str, key: str, value: int | str) -> str:
     return text
 
 
-def replace_exact_indent_scalar(text: str, key: str, value: int | str, spaces: int) -> str:
+def replace_or_insert_importer_scalar(text: str, key: str, value: int | str) -> str:
+    spaces = 2
     indent = " " * spaces
     pattern = re.compile(rf"(^{indent}{re.escape(key)}:\s*).*$", re.MULTILINE)
     replacement = rf"\g<1>{value}"
     text, count = pattern.subn(replacement, text)
-    if count != 1:
-        raise RuntimeError(f"Expected one '{key}' field with {spaces} spaces in audio meta.")
+    if count == 1:
+        return text
+    if count > 1:
+        raise RuntimeError(f"Expected at most one AudioImporter '{key}' field in audio meta.")
+
+    load_in_background_pattern = re.compile(r"(^  loadInBackground:\s*.*$)", re.MULTILINE)
+    text, insert_count = load_in_background_pattern.subn(
+        rf"  {key}: {value}\n\1",
+        text,
+        count=1,
+    )
+    if insert_count != 1:
+        raise RuntimeError(f"Unable to insert AudioImporter '{key}' field in audio meta.")
     return text
 
 
@@ -94,7 +109,7 @@ def apply_profile(path: Path, profile: dict[str, object]) -> None:
     text = replace_scalar(text, "conversionMode", 0)
     text = replace_scalar(text, "forceToMono", 1 if profile["forceToMono"] else 0)
     text = replace_scalar(text, "normalize", 1)
-    text = replace_exact_indent_scalar(text, "preloadAudioData", 1 if profile["preloadAudioData"] else 0, 2)
+    text = replace_or_insert_importer_scalar(text, "preloadAudioData", 1 if profile["preloadAudioData"] else 0)
     text = replace_or_insert_sample_scalar(text, "preloadAudioData", 1 if profile["preloadAudioData"] else 0)
     text = replace_scalar(text, "loadInBackground", 1 if profile["loadInBackground"] else 0)
     text = replace_scalar(text, "ambisonic", 0)

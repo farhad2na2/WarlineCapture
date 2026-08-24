@@ -66,6 +66,15 @@ public sealed class AudioRuntimeConfigAssetBuilderTests
                 Assert.GreaterOrEqual(entry.Clips[clipIndex].Weight, 0, entry.EventId);
             }
 
+            for (int setIndex = 0; setIndex < entry.LocalizedClips.Count; setIndex++)
+            {
+                LocalizedAudioClipSet localizedSet = entry.LocalizedClips[setIndex];
+                Assert.IsFalse(string.IsNullOrWhiteSpace(localizedSet.LocaleCode), entry.EventId);
+                Assert.Greater(localizedSet.Clips.Count, 0, entry.EventId);
+                for (int clipIndex = 0; clipIndex < localizedSet.Clips.Count; clipIndex++)
+                    Assert.NotNull(localizedSet.Clips[clipIndex].Clip, entry.EventId);
+            }
+
             if (entry.EventId == AudioEventIds.UIButtonPrimaryClick)
                 foundPrimaryClick = true;
         }

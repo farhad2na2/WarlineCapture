@@ -38,6 +38,8 @@ public sealed class AudioPlaybackPresentationBridgeSystemHelperTests
             passed++;
             RunCase(test => test.DrainAcceptedRequests_FadesSettingsChangesOnActiveMusicSource());
             passed++;
+            RunCase(test => test.AriaVoiceLanguageResolver_MapsPersistedSelectionToSupportedLocale());
+            passed++;
 
             Debug.Log($"[AudioPlaybackPresentationBridgeValidation] result=Passed tests={passed}");
             ValidationExit.Passed();
@@ -83,6 +85,16 @@ public sealed class AudioPlaybackPresentationBridgeSystemHelperTests
         }
 
         _clips.Clear();
+    }
+
+    [Test]
+    public void AriaVoiceLanguageResolver_MapsPersistedSelectionToSupportedLocale()
+    {
+        Assert.AreEqual("en-US", AriaVoiceLanguageResolver.ResolveLocaleCode("English"));
+        Assert.AreEqual("fa-IR", AriaVoiceLanguageResolver.ResolveLocaleCode("Persian"));
+        Assert.AreEqual("fa-IR", AriaVoiceLanguageResolver.ResolveLocaleCode("persian"));
+        Assert.AreEqual("en-US", AriaVoiceLanguageResolver.ResolveLocaleCode(null));
+        Assert.AreEqual("en-US", AriaVoiceLanguageResolver.ResolveLocaleCode("Unsupported"));
     }
 
     [Test]

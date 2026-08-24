@@ -303,32 +303,26 @@ namespace Game.Editor
                         continue;
                     }
 
-                    IReadOnlyList<AudioClipWeightEntry> clips = audioEvent.Clips;
-                    for (int clipIndex = 0; clipIndex < clips.Count; clipIndex++)
+                    CollectCatalogAudioClipSet(
+                        audioEvent,
+                        audioEvent.Clips,
+                        catalogPath,
+                        localeCode: null,
+                        records,
+                        warnings);
+                    IReadOnlyList<LocalizedAudioClipSet> localizedSets = audioEvent.LocalizedClips;
+                    for (int setIndex = 0; setIndex < localizedSets.Count; setIndex++)
                     {
-                        AudioClip clip = clips[clipIndex]?.Clip;
-                        if (clip == null)
-                        {
-                            warnings.Add(
-                                $"Audio event '{audioEvent.EventId}' in '{catalogPath}' contains a null clip at index {clipIndex}.");
+                        LocalizedAudioClipSet localizedSet = localizedSets[setIndex];
+                        if (localizedSet == null)
                             continue;
-                        }
-
-                        string clipPath = AssetDatabase.GetAssetPath(clip)?.Replace('\\', '/');
-                        if (string.IsNullOrWhiteSpace(clipPath))
-                        {
-                            warnings.Add($"Audio event '{audioEvent.EventId}' has a clip without an AssetDatabase path.");
-                            continue;
-                        }
-
-                        if (!records.TryGetValue(clipPath, out CatalogAudioResidencyRecord record))
-                        {
-                            record = InspectCatalogAudioClip(clipPath, clip, warnings);
-                            records.Add(clipPath, record);
-                        }
-
-                        AddUniqueSorted(record.EventIds, audioEvent.EventId);
-                        AddUniqueSorted(record.BusIds, audioEvent.BusId);
+                        CollectCatalogAudioClipSet(
+                            audioEvent,
+                            localizedSet.Clips,
+                            catalogPath,
+                            localizedSet.LocaleCode,
+                            records,
+                            warnings);
                     }
                 }
             }
@@ -341,6 +335,45 @@ namespace Game.Editor
                 .ThenBy(record => record.Category, StringComparer.Ordinal)
                 .ThenBy(record => record.AssetPath, StringComparer.Ordinal)
                 .ToList();
+        }
+
+        private static void CollectCatalogAudioClipSet(
+            AudioEventCatalogEntry audioEvent,
+            IReadOnlyList<AudioClipWeightEntry> clips,
+            string catalogPath,
+            string localeCode,
+            Dictionary<string, CatalogAudioResidencyRecord> records,
+            List<string> warnings)
+        {
+            for (int clipIndex = 0; clipIndex < clips.Count; clipIndex++)
+            {
+                AudioClip clip = clips[clipIndex]?.Clip;
+                string localeLabel = string.IsNullOrWhiteSpace(localeCode) ? "default" : localeCode;
+                if (clip == null)
+                {
+                    warnings.Add(
+                        $"Audio event '{audioEvent.EventId}' in '{catalogPath}' contains a null {localeLabel} clip " +
+                        $"at index {clipIndex}.");
+                    continue;
+                }
+
+                string clipPath = AssetDatabase.GetAssetPath(clip)?.Replace('\\', '/');
+                if (string.IsNullOrWhiteSpace(clipPath))
+                {
+                    warnings.Add(
+                        $"Audio event '{audioEvent.EventId}' has a {localeLabel} clip without an AssetDatabase path.");
+                    continue;
+                }
+
+                if (!records.TryGetValue(clipPath, out CatalogAudioResidencyRecord record))
+                {
+                    record = InspectCatalogAudioClip(clipPath, clip, warnings);
+                    records.Add(clipPath, record);
+                }
+
+                AddUniqueSorted(record.EventIds, audioEvent.EventId);
+                AddUniqueSorted(record.BusIds, audioEvent.BusId);
+            }
         }
 
         private static CatalogAudioResidencyRecord InspectCatalogAudioClip(

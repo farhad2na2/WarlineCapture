@@ -574,37 +574,51 @@ namespace Game.Editor
                 if (entry == null)
                     continue;
 
-                IReadOnlyList<AudioClipWeightEntry> clips = entry.Clips;
-                for (int clipIndex = 0; clipIndex < clips.Count; clipIndex++)
+                AddCatalogClipDescriptors(entry, entry.Clips, clipsByPath);
+                IReadOnlyList<LocalizedAudioClipSet> localizedSets = entry.LocalizedClips;
+                for (int setIndex = 0; setIndex < localizedSets.Count; setIndex++)
                 {
-                    AudioClip clip = clips[clipIndex]?.Clip;
-                    if (clip == null)
-                        continue;
-
-                    string assetPath = AssetDatabase.GetAssetPath(clip);
-                    if (string.IsNullOrWhiteSpace(assetPath))
-                        assetPath = clip.name;
-
-                    if (!clipsByPath.TryGetValue(assetPath, out CatalogClipDescriptor descriptor))
-                    {
-                        descriptor = new CatalogClipDescriptor
-                        {
-                            Clip = clip,
-                            AssetPath = assetPath
-                        };
-                        clipsByPath.Add(assetPath, descriptor);
-                    }
-
-                    if (!string.IsNullOrWhiteSpace(entry.EventId))
-                        descriptor.EventIds.Add(entry.EventId);
-                    if (!string.IsNullOrWhiteSpace(entry.BusId))
-                        descriptor.BusIds.Add(entry.BusId);
+                    LocalizedAudioClipSet localizedSet = localizedSets[setIndex];
+                    if (localizedSet != null)
+                        AddCatalogClipDescriptors(entry, localizedSet.Clips, clipsByPath);
                 }
             }
 
             return clipsByPath.Values
                 .OrderBy(descriptor => descriptor.AssetPath, StringComparer.Ordinal)
                 .ToList();
+        }
+
+        private static void AddCatalogClipDescriptors(
+            AudioEventCatalogEntry entry,
+            IReadOnlyList<AudioClipWeightEntry> clips,
+            Dictionary<string, CatalogClipDescriptor> clipsByPath)
+        {
+            for (int clipIndex = 0; clipIndex < clips.Count; clipIndex++)
+            {
+                AudioClip clip = clips[clipIndex]?.Clip;
+                if (clip == null)
+                    continue;
+
+                string assetPath = AssetDatabase.GetAssetPath(clip);
+                if (string.IsNullOrWhiteSpace(assetPath))
+                    assetPath = clip.name;
+
+                if (!clipsByPath.TryGetValue(assetPath, out CatalogClipDescriptor descriptor))
+                {
+                    descriptor = new CatalogClipDescriptor
+                    {
+                        Clip = clip,
+                        AssetPath = assetPath
+                    };
+                    clipsByPath.Add(assetPath, descriptor);
+                }
+
+                if (!string.IsNullOrWhiteSpace(entry.EventId))
+                    descriptor.EventIds.Add(entry.EventId);
+                if (!string.IsNullOrWhiteSpace(entry.BusId))
+                    descriptor.BusIds.Add(entry.BusId);
+            }
         }
 
         private static List<AudioMemoryCatalogClipSnapshot> CaptureCatalogClips()

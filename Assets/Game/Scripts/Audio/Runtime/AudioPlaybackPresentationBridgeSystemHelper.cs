@@ -1,11 +1,42 @@
 using System.Collections.Generic;
 using Game.Components;
 using Game.Configs;
+using Game.Narrative.Contracts;
 using Unity.Collections;
 using Unity.Entities;
 
 namespace Game.Runtime
 {
+    public static class AriaVoiceLanguageResolver
+    {
+        public const string EnglishLocaleCode = "en-US";
+        public const string PersianLocaleCode = "fa-IR";
+
+        public static string ResolveSavedLocaleCode()
+        {
+            try
+            {
+                PlayerProfileSaveData profile = SaveService.CreateDefault().LoadProfile();
+                return ResolveLocaleCode(profile?.firstLaunchLanguage);
+            }
+            catch (System.Exception)
+            {
+                return EnglishLocaleCode;
+            }
+        }
+
+        public static string ResolveLocaleCode(string persistedLanguage)
+        {
+            return System.Enum.TryParse(
+                       persistedLanguage,
+                       ignoreCase: true,
+                       out FirstLaunchNarrativeLanguage language) &&
+                   language == FirstLaunchNarrativeLanguage.Persian
+                ? PersianLocaleCode
+                : EnglishLocaleCode;
+        }
+    }
+
     public readonly struct AudioPlaybackPresentationBridgeResult
     {
         public AudioPlaybackPresentationBridgeResult(int presentedCount, int playedCount, int failedCount, int lastPresentedRequestId)
@@ -25,6 +56,8 @@ namespace Game.Runtime
     public sealed class AudioPlaybackPresentationBridgeSystemHelper : System.IDisposable
     {
         private const float SettingsMusicFadeSeconds = 0.35f;
+        private const string AriaMatchEventPrefix = "VO.ARIA.Message.";
+        internal const string PersianLocaleCode = "fa-IR";
 
         private readonly Dictionary<uint, AudioEventCatalogEntry> _eventsByHash = new();
         private readonly Dictionary<string, AudioMixerBusEntry> _busesById = new(System.StringComparer.Ordinal);
@@ -32,6 +65,9 @@ namespace Game.Runtime
         private AudioMixerBusConfig _mixerBusConfig;
         private int _lastPresentedRequestId;
         private uint _lastAppliedSettingsVersion;
+        private bool _hasCompletePersianAriaCatalog;
+        private bool _hasResolvedAriaLocale;
+        private string _ariaLocaleCode;
         private readonly AudioGameplayStateQueryCache _simulationStateQuery = new();
 
         public int LastPresentedRequestId => _lastPresentedRequestId;
@@ -155,7 +191,8 @@ namespace Game.Runtime
                         bus,
                         settings,
                         now,
-                        musicTransitionSeconds);
+                        musicTransitionSeconds,
+                        ResolvePlaybackLocale(entry));
                 request.Status = result.Played
                     ? AudioPlaybackRequestStatus.Presented
                     : result.Status;
@@ -185,6 +222,8 @@ namespace Game.Runtime
         {
             _lastPresentedRequestId = 0;
             _lastAppliedSettingsVersion = 0;
+            _hasResolvedAriaLocale = false;
+            _ariaLocaleCode = null;
         }
         public void Dispose()
         {
@@ -201,6 +240,9 @@ namespace Game.Runtime
             _eventsByHash.Clear();
             _busesById.Clear();
 
+            int ariaMatchEventCount = 0;
+            int persianAriaMatchEventCount = 0;
+
             IReadOnlyList<AudioEventCatalogEntry> events = eventCatalog.Events;
             for (int i = 0; i < events.Count; i++)
             {
@@ -210,7 +252,17 @@ namespace Game.Runtime
 
                 uint hash = AudioEventIds.StableHash(entry.EventId);
                 _eventsByHash[hash] = entry;
+                if (entry.EventId.StartsWith(AriaMatchEventPrefix, System.StringComparison.Ordinal))
+                {
+                    ariaMatchEventCount++;
+                    if (entry.HasLocalizedClips(PersianLocaleCode))
+                        persianAriaMatchEventCount++;
+                }
             }
+
+            _hasCompletePersianAriaCatalog =
+                ariaMatchEventCount > 0 &&
+                persianAriaMatchEventCount == ariaMatchEventCount;
 
             if (mixerBusConfig == null)
                 return;
@@ -236,6 +288,24 @@ namespace Game.Runtime
 
             uint hash = AudioEventIds.StableHash(request.EventId.ToString());
             return _eventsByHash.TryGetValue(hash, out entry) ? entry : null;
+        }
+
+        private string ResolvePlaybackLocale(AudioEventCatalogEntry entry)
+        {
+            if (!_hasCompletePersianAriaCatalog ||
+                entry == null ||
+                !entry.EventId.StartsWith(AriaMatchEventPrefix, System.StringComparison.Ordinal))
+            {
+                return null;
+            }
+
+            if (!_hasResolvedAriaLocale)
+            {
+                _ariaLocaleCode = AriaVoiceLanguageResolver.ResolveSavedLocaleCode();
+                _hasResolvedAriaLocale = true;
+            }
+
+            return _ariaLocaleCode;
         }
 
         private AudioMixerBusEntry ResolveBus(AudioEventCatalogEntry entry, AudioPlaybackRequestElement request)

@@ -81,7 +81,8 @@ namespace Game.Runtime
             AudioMixerBusEntry bus,
             AudioSettingsComponent settings,
             float now = 0f,
-            float musicTransitionSeconds = 0f)
+            float musicTransitionSeconds = 0f,
+            string localeCode = null)
         {
             if (request.Status != AudioPlaybackRequestStatus.Accepted)
             {
@@ -93,7 +94,7 @@ namespace Game.Runtime
                 return new AudioPlaybackPresentationResult(false, AudioPlaybackRequestStatus.MissingEvent, "MissingCatalogEntry", -1);
             }
 
-            AudioClip clip = AudioPlaybackSourceConfiguration.SelectClip(entry);
+            AudioClip clip = AudioPlaybackSourceConfiguration.SelectClip(entry, localeCode);
             if (clip == null)
             {
                 return new AudioPlaybackPresentationResult(false, AudioPlaybackRequestStatus.MissingClip, "MissingClip", -1);

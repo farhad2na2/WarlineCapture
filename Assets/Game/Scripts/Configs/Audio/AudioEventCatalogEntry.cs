@@ -23,6 +23,16 @@ namespace Game.Configs
     }
 
     [Serializable]
+    public sealed class LocalizedAudioClipSet
+    {
+        [SerializeField] private string localeCode;
+        [SerializeField] private List<AudioClipWeightEntry> clips = new();
+
+        public string LocaleCode => localeCode;
+        public IReadOnlyList<AudioClipWeightEntry> Clips => clips;
+    }
+
+    [Serializable]
     public sealed class AudioPlaybackConfig
     {
         [SerializeField] private bool loop;
@@ -47,6 +57,7 @@ namespace Game.Configs
         [SerializeField] private Vector2 pitchVariance = new(-0.02f, 0.02f);
         [SerializeField] private AudioPlaybackConfig playback = new();
         [SerializeField] private List<AudioClipWeightEntry> clips = new();
+        [SerializeField] private List<LocalizedAudioClipSet> localizedClips = new();
 
         public string EventId => eventId;
         public string BusId => busId;
@@ -56,5 +67,34 @@ namespace Game.Configs
         public Vector2 PitchVariance => pitchVariance;
         public AudioPlaybackConfig Playback => playback;
         public IReadOnlyList<AudioClipWeightEntry> Clips => clips;
+        public IReadOnlyList<LocalizedAudioClipSet> LocalizedClips => localizedClips;
+
+        public IReadOnlyList<AudioClipWeightEntry> ResolveClips(string localeCode)
+        {
+            if (!string.IsNullOrWhiteSpace(localeCode) && localizedClips != null)
+            {
+                for (int i = 0; i < localizedClips.Count; i++)
+                {
+                    LocalizedAudioClipSet clipSet = localizedClips[i];
+                    if (clipSet != null &&
+                        string.Equals(clipSet.LocaleCode, localeCode, StringComparison.OrdinalIgnoreCase) &&
+                        clipSet.Clips != null &&
+                        clipSet.Clips.Count > 0)
+                    {
+                        return clipSet.Clips;
+                    }
+                }
+            }
+
+            return clips != null
+                ? (IReadOnlyList<AudioClipWeightEntry>)clips
+                : Array.Empty<AudioClipWeightEntry>();
+        }
+
+        public bool HasLocalizedClips(string localeCode)
+        {
+            IReadOnlyList<AudioClipWeightEntry> resolved = ResolveClips(localeCode);
+            return clips != null && !ReferenceEquals(resolved, clips) && resolved.Count > 0;
+        }
     }
 }

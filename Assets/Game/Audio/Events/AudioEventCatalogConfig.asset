@@ -27,6 +27,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 44abe730d2eb230a28326198efbfc6af, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: UI.Button.Secondary.Click
     busId: UI
     priority: 1
@@ -41,6 +42,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: aedb3822916715a086fa9f43c7886478, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: UI.Button.Negative.Click
     busId: UI
     priority: 1
@@ -55,6 +57,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 16339c497d6396855b0229ec8cfcdd1e, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: UI.Button.Disabled.Tap
     busId: UI
     priority: 0
@@ -69,6 +72,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: f9e71662e7fb609942fdad32f954d987, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: UI.Tab.Select
     busId: UI
     priority: 1
@@ -83,6 +87,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: e0b6032b592cc391d80e31cb81baa09b, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: UI.Card.Select
     busId: UI
     priority: 1
@@ -97,6 +102,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 9f9ca14ff4a6bcebe20923628e8ec7a3, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: UI.Card.Locked
     busId: UI
     priority: 0
@@ -111,6 +117,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 8e222af5a6a09414921ed65236e720d1, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: UI.Popup.Open
     busId: UI
     priority: 1
@@ -125,6 +132,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 27e4e85a01807ffb01c251a1fbe9f4b6, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: UI.Popup.Close
     busId: UI
     priority: 1
@@ -139,6 +147,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 1ec3f1072ecb467e3168385e479e870b, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: UI.Screen.Forward
     busId: UI
     priority: 1
@@ -153,6 +162,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 10d4c5338d91c689f80216a7c11e235d, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: UI.Screen.Back
     busId: UI
     priority: 1
@@ -167,6 +177,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 340579dfac66c31c141299a08ba8047c, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: UI.Drawer.Open
     busId: UI
     priority: 1
@@ -181,6 +192,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: c3e723873d204929fb555d7a9e632340, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: UI.Drawer.Close
     busId: UI
     priority: 1
@@ -195,6 +207,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: f5374509ba333841a80c41c0f8c40355, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: UI.Slider.Tick
     busId: UI
     priority: 0
@@ -209,6 +222,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 151bcc2c814fa8b96adf235e5f936dbd, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: UI.Toggle.On
     busId: UI
     priority: 1
@@ -223,6 +237,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 095d0472c458bccdc9ff2e0e642b5403, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: UI.Toggle.Off
     busId: UI
     priority: 1
@@ -237,6 +252,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 27dfe2375f4bf3f83f69c61b7fcffb15, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: UI.Feedback.Toast.Error
     busId: UI
     priority: 2
@@ -251,6 +267,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: c40341dfc3257f08be61163134d1814f, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: UI.Feedback.Toast.Positive
     busId: UI
     priority: 1
@@ -265,6 +282,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 07a71aef6dc1bd4d8e295c364bd825cc, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Unit.Select.Infantry
     busId: SFX
     priority: 1
@@ -279,6 +297,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: bec1fbd6265d493891295a76ed89d924, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Unit.Select.Vehicle
     busId: SFX
     priority: 1
@@ -293,6 +312,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 8bf213a5d75f9722eb0c8fcf89b295bf, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Unit.Select.Air
     busId: SFX
     priority: 1
@@ -307,6 +327,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: c79483a0d92c23b3163419d925733fb1, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Unit.Engine.Vehicle.Move
     busId: SFX
     priority: 0
@@ -321,6 +342,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: c5056fd0c0ccd11708fdc9344c83842c, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Unit.Engine.Aircraft.Takeoff
     busId: SFX
     priority: 1
@@ -335,6 +357,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 66018e2c7e74360db939fb2ff3958044, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Unit.Engine.Aircraft.Flight
     busId: SFX
     priority: 0
@@ -349,6 +372,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: ebd33511dbdc20f77421141ab5718683, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Unit.Engine.Helicopter.Flight
     busId: SFX
     priority: 0
@@ -363,6 +387,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: e025f45bfcb8f3459b3fd55d0f333385, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Weapon.Fire.SmallArms
     busId: SFX
     priority: 1
@@ -377,6 +402,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: f63be05fd4e4ebabeacad4576a0265ff, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Weapon.Missile.Impact
     busId: SFX
     priority: 2
@@ -391,6 +417,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: e342d1ffaacaa6748b9e3857be7d4131, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Command.Move.Accepted
     busId: SFX
     priority: 1
@@ -405,6 +432,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: fcee6cf02df6a9bad0391fc439bedca7, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Command.Attack.Accepted
     busId: SFX
     priority: 2
@@ -419,6 +447,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 36a67e380ae7cd887899dd8ccc7b1f11, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Command.Hold.Accepted
     busId: SFX
     priority: 1
@@ -433,6 +462,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: b7317719a473ad48b0eaf2d6634330ac, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Command.Stop.Returning
     busId: SFX
     priority: 2
@@ -447,6 +477,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 83ee330ba0faf15799197280b64055a5, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Command.Scan.Targeting
     busId: SFX
     priority: 1
@@ -461,6 +492,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 601cc8c9fa3587c886515b49af1c087c, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Command.Scan.Accepted
     busId: SFX
     priority: 1
@@ -475,6 +507,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 2c0f8e8cba1eac7875b9cd6083b7ed0b, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Command.Rejected
     busId: SFX
     priority: 2
@@ -489,6 +522,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 3d912dd8ace4567c601e1f9f8e929a92, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Build.Place.Valid
     busId: SFX
     priority: 1
@@ -503,6 +537,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 3e022585e3d351c3cd5278068052eae1, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Build.Place.Invalid
     busId: SFX
     priority: 2
@@ -517,6 +552,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 19da132631a81c1cc8d1ace1565231cc, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Production.Queued
     busId: SFX
     priority: 1
@@ -531,6 +567,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: ffb14feb240004de6607ff4f341a5eae, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Production.Complete
     busId: SFX
     priority: 2
@@ -545,6 +582,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: d61664ed15fa8329390c68e14f4a69b8, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.ResourceExchange.Accepted
     busId: SFX
     priority: 1
@@ -559,6 +597,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 95728b7366d1df65a61d49e6ed8aa2fa, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.ResourceExchange.Rejected
     busId: SFX
     priority: 2
@@ -573,6 +612,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 9f7eb4c7f9c0a7288a8f4ffe3eb56a11, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.ResourceExchange.QueueStarted
     busId: SFX
     priority: 1
@@ -587,6 +627,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 8cf07865fd833a627d935d67184543c6, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.ResourceExchange.Rushed
     busId: SFX
     priority: 2
@@ -601,6 +642,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: b8bc88ff590a80a9c65f2562e231d6b7, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.ResourceExchange.Completed
     busId: SFX
     priority: 2
@@ -615,6 +657,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: d5084308f5d43876e21bc5481b6a91aa, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.ResourceExchange.Cancelled
     busId: SFX
     priority: 1
@@ -629,6 +672,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 310d4729a5a7c1095f98a002ffef6e21, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Weapon.Rifle.Fire
     busId: SFX
     priority: 1
@@ -643,6 +687,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 2f97d212b71883533498a499c3fcb149, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Weapon.VehicleCannon.Fire
     busId: SFX
     priority: 2
@@ -657,6 +702,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: cdc7395558345f0e37abf6d2bf60193e, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Weapon.Missile.Launch
     busId: SFX
     priority: 2
@@ -671,6 +717,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: a6873395fd2c89fa39b2ca5cdc431294, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Weapon.AirMissile.Launch
     busId: SFX
     priority: 2
@@ -685,6 +732,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 26c6024312ca8eba04a0911f7395badf, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Weapon.Missile.Flight
     busId: SFX
     priority: 1
@@ -699,6 +747,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: bd7c415e717fbdfc55dc94aeae743877, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Unit.Aircraft.Flyby
     busId: SFX
     priority: 2
@@ -713,6 +762,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: a9037d7d211029bcd1dae0881ceff071, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Unit.Vehicle.Engine
     busId: SFX
     priority: 0
@@ -727,6 +777,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: f27dd5bc6065192da3a6f725b7ecfc0a, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Impact.Bullet
     busId: SFX
     priority: 1
@@ -741,6 +792,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 1830e91d0c913da52ad0acb2e037bf8e, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Explosion.Small
     busId: SFX
     priority: 2
@@ -755,6 +807,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 6bc609ccfad3a309019ed431235aeabb, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Explosion.Large
     busId: SFX
     priority: 3
@@ -769,6 +822,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: ebc333e5d2673bc7a73b86216667ead1, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Unit.Vehicle.Destroyed
     busId: SFX
     priority: 2
@@ -783,6 +837,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: c44220ec6bd9d943616188b4548d06d1, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Alert.Threat.Minor
     busId: Alerts
     priority: 1
@@ -797,6 +852,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: f42a849a008b6ba8449980660714a281, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Alert.Threat.Critical
     busId: Alerts
     priority: 3
@@ -811,6 +867,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 655ff7da5a05dc8275ea5257eddc9dde, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Alert.Unit.UnderAttack
     busId: Alerts
     priority: 2
@@ -825,6 +882,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 778b3763b250894ff8ea41003a7a8439, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Alert.Base.Breached
     busId: Alerts
     priority: 3
@@ -839,6 +897,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 06b294150663962e9f7ba2ecb9db0e40, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Objective.Progress
     busId: SFX
     priority: 1
@@ -853,6 +912,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: fc4a12770dd3d8507d40de46feea5e3a, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Objective.Complete
     busId: SFX
     priority: 2
@@ -867,6 +927,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: ad5314b67e735216db1eec63038dfb72, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Gameplay.Objective.Failed
     busId: SFX
     priority: 3
@@ -881,6 +942,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: bdc10b6563f26313a5baa8973b2c10f8, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Music.Splash.Intro
     busId: Music
     priority: 3
@@ -895,6 +957,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 6d770bf52705b10a3b0cf71337b297bd, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Music.Menu.Loop
     busId: Music
     priority: 3
@@ -909,6 +972,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: e42d19f9db8e99affe58c9519039ec17, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Music.Briefing.Loop
     busId: Music
     priority: 3
@@ -923,6 +987,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: cdca897534ff64769fa0d9a7e2e7856d, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Music.Match.CalmLoop
     busId: Music
     priority: 3
@@ -937,6 +1002,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: f5fc0e5d9cc1b40bb91855e9e972dd38, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Music.Match.CombatLoop
     busId: Music
     priority: 3
@@ -951,6 +1017,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: ba41c8f38c67d22ece916f5deedda905, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Music.Result.Victory
     busId: Music
     priority: 3
@@ -965,6 +1032,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: bfe4c0c626ea5b205c48bc9a19d2e8bb, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Music.Result.Defeat
     busId: Music
     priority: 3
@@ -979,6 +1047,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 4e356c7f3ccae5fa7ed7867f618213df, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Ambience.City.DayLoop
     busId: Ambience
     priority: 0
@@ -993,6 +1062,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: c2f81074fbe542594aeb4a1985ae37e3, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Ambience.Mission.CivilianPanic
     busId: Ambience
     priority: 2
@@ -1007,6 +1077,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: c9c772b0ea75d46b987d29a63e22a840, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: Ambience.Base.DistantLoop
     busId: Ambience
     priority: 0
@@ -1021,6 +1092,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 0d77b82af1cd945e9bbbc4fe9dd6e968, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: VO.ARIA.Message.ConfirmDestroy
     busId: Voice
     priority: 1
@@ -1035,6 +1107,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 401b4c3ed3129ec53d996596636d4a35, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: a8886e9605fecc3076bafd836a68b117, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.NotEnoughMoney
     busId: Voice
     priority: 1
@@ -1049,6 +1126,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: f225c43398ada860a8a9e27b74f04673, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 2ce0f9469e1f0ede14693c817e8885ac, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.CreateFirst
     busId: Voice
     priority: 1
@@ -1063,6 +1145,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: f04f3e0f3d20c2c33d03b80bb20db0da, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 30c9b0128420765248be9ae4443f08ce, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.DragBuildingToFinalPosition
     busId: Voice
     priority: 1
@@ -1077,6 +1164,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: c914de3d305524f65921b6051e26e8db, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 504ef98818ce896a6908a678b2d8fb61, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.WarningGroundAttackType
     busId: Voice
     priority: 2
@@ -1091,6 +1183,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 8d82333d4d3e806f333a458e452cf6bb, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 39a6745be79d6f19618a6b68f01261ed, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.WarningAirAttackType
     busId: Voice
     priority: 2
@@ -1105,6 +1202,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 4a6cc58cb68921204ff32633c1263295, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 2596f3836eeacbfc1624e4668b2f6c4c, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.WarningAttackEtaSeconds
     busId: Voice
     priority: 2
@@ -1119,6 +1221,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 4d0a0af5b47a1dcc49f45173eb4606bd, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 3b8d53647cc16ec55e4adc9d0160e7e2, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.WarningAttackEtaSuffix
     busId: Voice
     priority: 2
@@ -1133,6 +1240,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: a6752bf9e954b4d259de0c1b03679f00, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 6654c95c010729881c226899a89bd412, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.WarningAttackCountSuffix
     busId: Voice
     priority: 2
@@ -1147,6 +1259,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: f4a0acc2ea6eb0b49e15ea0d82f80e59, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 1879994f94058dbffebaaa39d4eb6dc3, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandReasonNoSelection
     busId: Voice
     priority: 1
@@ -1161,6 +1278,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: a666213ffc227be0735b4f574e437348, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 7c64c7d3e797f751c9b066bf8df1392f, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandReasonTargetOutOfBounds
     busId: Voice
     priority: 1
@@ -1175,6 +1297,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 04f3c6db651eebbf463bbade64cfd365, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 42f461f5544b306b573fb74852effc07, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandReasonTargetBlocked
     busId: Voice
     priority: 2
@@ -1189,6 +1316,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 88b141ec802e7cea12fa650d9f75ab02, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 19488d8b6ad74e3a1bba1fa20b8bb791, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandReasonTargetUnreachable
     busId: Voice
     priority: 1
@@ -1203,6 +1335,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: edc7681925023cefed765f4b287f84c9, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: a7504c092923594787e54689e8a1d869, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandReasonTargetNotEnemy
     busId: Voice
     priority: 1
@@ -1217,6 +1354,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 159a4fda0ab76559c832c20a9643734e, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: b459b2c04e77fe9890c2cf9ad7a1d1e8, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandReasonTargetNotAttackable
     busId: Voice
     priority: 2
@@ -1231,6 +1373,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 8ea028821201959ba91b1dc5be9acf08, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 73ce5a8646ca28cb073900ad8139c298, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandReasonCommandUnavailable
     busId: Voice
     priority: 2
@@ -1245,6 +1392,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 6ceee2ed1c3c5a94dd2afd9e43e0b69c, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 9469c27777fb682cef66d0c934a68bb2, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandReasonBuildUnavailable
     busId: Voice
     priority: 2
@@ -1259,6 +1411,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: c0a2a7354c4f46c0fb2b3f91dba4c844, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: f73cd15c68d4d5044d87f397961f6420, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandReasonCameraJumpUnavailable
     busId: Voice
     priority: 2
@@ -1273,6 +1430,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: fa76f16c80778a32b2cda647ddfdaccb, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 3cda59e0298209edc3df85bbe7f3119c, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandReasonScanUnavailable
     busId: Voice
     priority: 2
@@ -1287,6 +1449,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 3d9cea58cfa4121e05b5539707f801ba, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 73689f9923329f7a96aa060750636a29, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandReasonScanCooldown
     busId: Voice
     priority: 1
@@ -1301,6 +1468,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 67982674467ef27d20e40613350175ee, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 747fd70964dc1d77bae0965d26407029, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandReasonInsufficientResources
     busId: Voice
     priority: 2
@@ -1315,6 +1487,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 7bb85fc58fedf9ef079a01f96a3cd721, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 4c3689073a463a39a71c9451bb6af8e8, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandReasonInsufficientFuel
     busId: Voice
     priority: 2
@@ -1329,6 +1506,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 5f13348ddf00e95918fa823b46785900, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: e975491a494f2af6e424f881e72783a0, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandReasonInvalidTransport
     busId: Voice
     priority: 2
@@ -1343,6 +1525,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 718d7c1fb53eb3a31e934e3244550fc3, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: dccb1f757e2c8a634521724c5c9fa2a0, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandReasonInvalidPassenger
     busId: Voice
     priority: 2
@@ -1357,6 +1544,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: a366171c863de7ca35d431029e47d232, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 5242942b1342943b4f6a5dfba56675aa, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandReasonTransportFull
     busId: Voice
     priority: 1
@@ -1371,6 +1563,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: c64e6923a2e51749f45126c517d26096, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: c153d216defcf6710fa590a2273c1ce8, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandReasonNoEligiblePassengers
     busId: Voice
     priority: 1
@@ -1385,6 +1582,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: f3662b169232c09fb5c269b148bd8b4f, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 1fd2913c96347e41935e0c6a33995bc5, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandReasonNoDisembarkCell
     busId: Voice
     priority: 1
@@ -1399,6 +1601,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 551021097fbfc1a190a912741b4336e5, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: fd9899b058ad2be7abc2f6621090c284, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandReasonTransportPassengerMissing
     busId: Voice
     priority: 1
@@ -1413,6 +1620,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: e828642d6f13ce3393d3ba87123f5a21, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 9e8c673436ef4ac40fea29d21e5719fc, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandInstructionSelect
     busId: Voice
     priority: 1
@@ -1427,6 +1639,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: dc65851efe32633b2e23bc830c2faf4f, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 19bc272461126e53183d8137610e447c, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandInstructionMove
     busId: Voice
     priority: 1
@@ -1441,6 +1658,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 897cc7d8433564539def48fce4fe9733, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 1b95d631a61562c031a6e8097524dec3, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandInstructionAttack
     busId: Voice
     priority: 2
@@ -1455,6 +1677,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 0b0a7aa48472ac300fabbe164b98b8be, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 4b04fc1c7b9280fcbe0f0ce699d26805, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandInstructionHold
     busId: Voice
     priority: 1
@@ -1469,6 +1696,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: c9bdc4cce65b79d62653c1d0453a0aef, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: a29ca1cdfb5fb9d5cda7f44ec54e271a, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandInstructionStop
     busId: Voice
     priority: 1
@@ -1483,6 +1715,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: f68b6ca48fc57d69cca7b4e62238b4be, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 5f03b4a309b65b790eeee2ba7f40f869, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandInstructionScan
     busId: Voice
     priority: 1
@@ -1497,6 +1734,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: c40560d99c9aa4271bb524a1c055e7c7, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: ac4c5dba1b424e347e776f12fa48d9c8, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandInstructionBoard
     busId: Voice
     priority: 1
@@ -1511,6 +1753,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: e49a6ddcef02e16351932e0b9c75381b, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 18503e684903835e344911d7ddb7fdf7, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandInstructionBuild
     busId: Voice
     priority: 1
@@ -1525,6 +1772,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: cb5a4b2d6a85b006c6ade6fc26e482b1, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 6118439a4ebf27cfb0cf64607ed02625, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandInstructionSpecial
     busId: Voice
     priority: 1
@@ -1539,6 +1791,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 18feac7d495bb3430b8a5bcc32cce93f, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 500ccd9050bf887f58f2d303fabe636b, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandBoardPromptTransportToPassenger
     busId: Voice
     priority: 1
@@ -1553,6 +1810,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: cd0b233d6481c288a1643a5d64d95120, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 26442e0f0089cea97c8e969d6c914834, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandBoardPromptPassengerToTransport
     busId: Voice
     priority: 1
@@ -1567,6 +1829,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: f16e5a80d6b70068b6ec4b09baa6bdd0, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 4d4695d35bdaa65c857cc35a19aafa8d, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandBoardUnavailable
     busId: Voice
     priority: 2
@@ -1581,6 +1848,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 8c7a1822d56caeb8f07c2b43c5147975, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: b348cbb931aabe7627b609bd92ec4a08, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandBoardTapUnitsToBoard
     busId: Voice
     priority: 1
@@ -1595,6 +1867,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: ced8846e1315180087bbaa67dd6cb3ca, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 1cda81b0ffd69bc1ecbfd4233edd19eb, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandBoardSelectedUnitCannotBoard
     busId: Voice
     priority: 1
@@ -1609,6 +1886,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 9166851c1b33604d4625ccfc88cfb7d6, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 21ac148690c312746170a28474c7d734, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandBoardSelectUnitFirst
     busId: Voice
     priority: 1
@@ -1623,6 +1905,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 6f84d390ce9ec9494a79c3481176d354, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 14084549a811bf46404ddcbde2e516e4, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandUnavailableHoldNoSelection
     busId: Voice
     priority: 2
@@ -1637,6 +1924,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 7bac27a7c025fcfb807b1498b631efe5, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 8233fea3630754899a70b55216f6dcae, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandUnavailableStopNoSelection
     busId: Voice
     priority: 2
@@ -1651,6 +1943,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 506b6b921d6b6435339b08aa5e1ada15, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 91148985f0772d00fa889ddc2015e91f, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalCommandUnavailableScanNoSelection
     busId: Voice
     priority: 2
@@ -1665,6 +1962,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 8e31ee524a5332e565cf4a99f1fa4314, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: d441172070fec12ad7e6bdf3512d2633, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalFeedbackCameraFollowUnavailable
     busId: Voice
     priority: 2
@@ -1679,6 +1981,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 33595012d369cbb44c69de82e30e8622, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: d0dd89419beb191eec27ca1f776692c0, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalFeedbackCameraFollowActive
     busId: Voice
     priority: 1
@@ -1693,6 +2000,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 2e41330ec22cbac6ae6e816ce8c5396e, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: be9016ab160d0eac6b46854b685b586e, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalFeedbackRtsCameraRestored
     busId: Voice
     priority: 1
@@ -1707,6 +2019,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: fb85d9659f499fa94e495f6e5ee5217d, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: bbf5a554b1430bf2f487fc29d4354c01, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalFeedbackFollowTargetLost
     busId: Voice
     priority: 1
@@ -1721,6 +2038,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 485187fd24e8079aa0ce6499975d8ba0, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 34bb0d9f6809b48472ab324dbcf021b0, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalFeedbackDestroyedSelectedBuilding
     busId: Voice
     priority: 2
@@ -1735,6 +2057,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 3cea194eb7ac2dd3c0d58c0f1f32b055, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 5fc160390c8167efb75812b725fb8a31, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalFeedbackAirDefenseAutoEngage
     busId: Voice
     priority: 1
@@ -1749,6 +2076,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 0dcea3a801159787adeaf969b9f2b5c1, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 16ea5944691414b40c953cc2ab577d4b, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalFeedbackExitingUnit
     busId: Voice
     priority: 1
@@ -1763,6 +2095,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 88cae787853d985d5a1fbc7c8acc3ddd, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 6e37755c6c11dce06ea88cfcd7d3a430, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalFeedbackExitingPassengers
     busId: Voice
     priority: 1
@@ -1777,6 +2114,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: b9daa662b8398327082d4def7da784de, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: bd307e37bf6234b291e99fd3e0323ed5, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalFeedbackLoadingTransport
     busId: Voice
     priority: 1
@@ -1791,6 +2133,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: a4727f07d5d3e6186593d277f4301b0e, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: e5ed94ad95be38af7a3fa92b6e013ba0, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalFeedbackBoardingTransport
     busId: Voice
     priority: 1
@@ -1805,6 +2152,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: a1cea74a26133d964fe467b0d1b85753, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 253c57d8d0c8850bdb38d9a5e79080ca, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalFeedbackHoldingCurrentPosition
     busId: Voice
     priority: 1
@@ -1819,6 +2171,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: ae32da88d5edebee4a0ff6f6cc1259d7, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: e4fccc67e31a8bf1a5a9a9dc3d9fc033, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalFeedbackStoppedSelectedUnits
     busId: Voice
     priority: 1
@@ -1833,6 +2190,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 380743a2e94ab16a1f3b5d837ad4fc25, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 192ceacd56358c0559e6a10e47fe1854, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalFeedbackUnitReturningToBase
     busId: Voice
     priority: 1
@@ -1847,6 +2209,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: bf209cc6bdaaa7a5c071125849d47d0b, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: e6c57d033d4e303e94bcb0b16f345f3c, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalFeedbackUnitsReturningToBase
     busId: Voice
     priority: 1
@@ -1861,6 +2228,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: cb4eb1c5055c574753eee6c9467472da, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 99a89638dce6ca9c37f586ccef7b5e2c, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalFeedbackDestroyedSelectedUnit
     busId: Voice
     priority: 2
@@ -1875,6 +2247,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 21cd739353b5bba96c561c35537e2f1b, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 366c26748b47b286f0d0341751000f23, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalFeedbackDestroyedSelectedUnits
     busId: Voice
     priority: 2
@@ -1889,6 +2266,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: bcf17f9a64dc9bb6d244f94e7d371226, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 9f6a9996c38f27a2bdf0868f672a08d1, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalFeedbackScanOrdered
     busId: Voice
     priority: 1
@@ -1903,6 +2285,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 9a8dccdddd956b721843dc882dc7618e, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 2a9f80bdb310331af9a19021879fc8f4, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalFeedbackScanOneContact
     busId: Voice
     priority: 1
@@ -1917,6 +2304,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: d606be4417e1704afb7d5a960d5f4d68, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 7027fb37ef963f92abaea5a1ba618f94, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalFeedbackScanContacts
     busId: Voice
     priority: 1
@@ -1931,6 +2323,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: ad67604115bcd2deddb579bc7c93d668, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: d459362f4d8bc2cc9a412f497b2e5582, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalFeedbackScanComplete
     busId: Voice
     priority: 1
@@ -1945,6 +2342,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: d8a1366c9a1c5face6ea16abee458b5e, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 119e6b8bd4d11e2ffcbaf7151f445d7d, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalFeedbackMissileLaunched
     busId: Voice
     priority: 2
@@ -1959,6 +2361,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 46a275d80dcb16faaffe42a1a4287ac4, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: cfc4cf9109bc91c31ca80e4451413450, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalAirdropEmergencyDropVisualMissing
     busId: Voice
     priority: 1
@@ -1973,6 +2380,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 37c2751eb86d8faca2bdec09fba9915a, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 0a647fa9e476ae9e5f9f3286da514931, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalAirdropParachuteVisualMissing
     busId: Voice
     priority: 1
@@ -1987,6 +2399,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: bdf0c0a89bbdc7cfcbeea2206a0fbfe7, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 52796e52e834e748766c01638abd50e9, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalAirdropNoClearLandingZone
     busId: Voice
     priority: 1
@@ -2001,6 +2418,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 360ba2278bbcb85968b3371bfec48687, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 41c130641895fbdafbe1f0c5428835e6, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalAirdropCargoDropBlocked
     busId: Voice
     priority: 2
@@ -2015,6 +2437,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 1493740756f0c1bc89fa24ce6dbd56f6, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: a9bf4a3e6cc4031ad7075e1d85d02cef, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalBannerModeMoveTitle
     busId: Voice
     priority: 1
@@ -2029,6 +2456,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: e0f96a2166d31fcd112a0f4a07476a11, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 69d15c40903b0bddefcb9c1ae2b05719, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalBannerModeMoveDescription
     busId: Voice
     priority: 1
@@ -2043,6 +2475,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 2bc17b1c90531ff87e3ba9d3e3677b62, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 16bf5a29411f7a908612f2f53ab34cd8, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalBannerModeAttackTitle
     busId: Voice
     priority: 2
@@ -2057,6 +2494,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 807065c3811e4380aff9ed6c1645424f, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: a10bcb5d59791ab8595d522523d10bfd, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalBannerModeAttackDescription
     busId: Voice
     priority: 2
@@ -2071,6 +2513,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 38d83b0f12df3ef91448a0ac2d886a84, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 1b9648ecbecad6737e3a15ef74327d49, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalBannerModeScanTitle
     busId: Voice
     priority: 1
@@ -2085,6 +2532,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 548c66f74eddb4efab551de4fe67d466, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: a44349a46aab80ab6f62e63964395336, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalBannerModeScanDescription
     busId: Voice
     priority: 1
@@ -2099,6 +2551,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 35873917bd93ef2320a2cdc6416eede0, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: e246af6119eddcaf7b6fe9503d69cc9d, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalBannerModeBoardTitle
     busId: Voice
     priority: 1
@@ -2113,6 +2570,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: a8d60c0ca052479bef70cd659f594c79, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 3c7179325a532ad6c83407944d4ffe1a, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalBannerModeBoardDescription
     busId: Voice
     priority: 1
@@ -2127,6 +2589,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 1261d1ae35eee06ac7729e90201d2b9a, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 932dc0bccd9e1241063bef1a75d10e02, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalBannerModeBoardDescriptionTransportToPassenger
     busId: Voice
     priority: 1
@@ -2141,6 +2608,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 819848e13b384e55123d1c823ee77ae8, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: af1d7f5fbb9fb01331146d7e5608c699, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalBannerModeBuildTitle
     busId: Voice
     priority: 1
@@ -2155,6 +2627,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 7282ec0a5003a0442c11f0389cf2e74b, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 81e31baeaf2b7a7dde9860fa0dd3997e, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalBannerModeBuildDescription
     busId: Voice
     priority: 1
@@ -2169,6 +2646,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 5ed3e8ea8684032a08b7bd462375afb8, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 2e241b782b1a6ddfc0ca61e1f4e04999, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalBannerAcceptedMoveTitle
     busId: Voice
     priority: 1
@@ -2183,6 +2665,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 7cf05bb791ebf3f2f8bd5097c23e5f13, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 6c18460c68563dbfc4b1e89773523b6d, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalBannerAcceptedMoveDescription
     busId: Voice
     priority: 1
@@ -2197,6 +2684,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: f4913197a465de9b0a1fff34de090130, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: f958c4f4dcaea0a07a66fc21411b3d84, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalBannerAcceptedAttackTitle
     busId: Voice
     priority: 2
@@ -2211,6 +2703,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 6a7f4476023256ccc3915e016425d06b, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 6aa702c9fa10dffba12dec3cf1a344a7, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalBannerAcceptedAttackDescription
     busId: Voice
     priority: 2
@@ -2225,6 +2722,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 9f4b5740d9c760d8a1459344f5454dbf, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 1cd8316ca525d845d9508b1663c07bdc, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalBannerAcceptedHoldTitle
     busId: Voice
     priority: 1
@@ -2239,6 +2741,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 53dd18c89221ca85cb1592aca285e2bd, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: ae3e06655ec5e61cfae43a43f7868c9a, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalBannerAcceptedHoldDescription
     busId: Voice
     priority: 1
@@ -2253,6 +2760,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: f68c6a3cf757b980cb4e1b04e44b6b7f, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: e6a2a3bac368a9e576bdec54eb5a623c, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalBannerAcceptedStopTitle
     busId: Voice
     priority: 1
@@ -2267,6 +2779,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 465a8b42862271e9d65d6beb30a6ce95, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 09a4651aabb1bfd70bcccc8ff8221423, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalBannerAcceptedStopDescription
     busId: Voice
     priority: 1
@@ -2281,6 +2798,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 9cb30f7702b96de7df79643c3f42f553, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: ef2900cd416f115750b9f02ed71bae9c, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalBannerAcceptedScanTitle
     busId: Voice
     priority: 1
@@ -2295,6 +2817,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: aced783763fc84fc64e36ff64a8428fd, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 71a9630a5d8be8d5b0388d4b7f747162, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalBannerAcceptedScanDescription
     busId: Voice
     priority: 1
@@ -2309,6 +2836,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 5f417d02feec6362d0c6246c9a51a019, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 9b0de9f78aed65cacfc0da405f79a645, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalBannerAcceptedBoardTitle
     busId: Voice
     priority: 1
@@ -2323,6 +2855,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: cc48d0e5c49baa3249c9ee7faf3b4b80, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 34c53665ce346a05aea87be39dbb0796, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalBannerAcceptedBoardDescription
     busId: Voice
     priority: 1
@@ -2337,6 +2874,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: c51d3f641c5bb1537a091ec3cd847432, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 9ab55908f2d05d54103bee6d393a155b, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalBannerAcceptedBuildTitle
     busId: Voice
     priority: 1
@@ -2351,6 +2893,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 5a185e3eb6f9b8d6c3e91627448e13a2, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 6a0c3881b2a65f6c4ff3eafa0f35f09f, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalBannerAcceptedBuildDescription
     busId: Voice
     priority: 1
@@ -2365,6 +2912,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 872d97a0dbd786c537fe444c1a425da1, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: fdb7d4dda1760d7afe3ec0776bdf7349, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalBannerAcceptedReturnTitle
     busId: Voice
     priority: 1
@@ -2379,6 +2931,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 6c27bff334af96cbafbd7f417daf3faa, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 74e94ace41e34c48618efabc4c89c817, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalBannerAcceptedReturnDescription
     busId: Voice
     priority: 1
@@ -2393,6 +2950,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 9b531adac2385c36a7d39c49dd528d92, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 6cbf3050dba8fd349bb2f223a3e29b9b, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalBannerAcceptedDestroyTitle
     busId: Voice
     priority: 1
@@ -2407,6 +2969,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 7d5b2a674344b7aa18ebdd985b85c36f, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: c724e3721a6a92cf4ca2a64237a4b143, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.TacticalBannerAcceptedDestroyDescription
     busId: Voice
     priority: 1
@@ -2421,6 +2988,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 0c5dc3d721f4c9df96e19f3dcf222946, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 4ae208ad7c90ba20923e7310fa0fa796, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerEmptyName
     busId: Voice
     priority: 1
@@ -2435,6 +3007,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: a61a763b0ea2b5daa47d6a5623a448d4, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 7add2dc8b7f85ec2eee9e357c32cc5c2, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerReadyBuildings
     busId: Voice
     priority: 1
@@ -2449,6 +3026,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 1c922a718d7b2be561e3ca99547cbb02, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: c8ba766cb45d8fe703b30cdb4b12e0a2, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerReadyVehicles
     busId: Voice
     priority: 1
@@ -2463,6 +3045,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 996f7d733c11559da7547cac3b0faf82, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 141be0c7d549e939f106d6cf4230978f, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerReadyAircraft
     busId: Voice
     priority: 1
@@ -2477,6 +3064,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 0bfba673f035469932f48e5c1a2a2c31, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 8193d4592690fc2bb283d829c4ffce78, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerReadySoldiers
     busId: Voice
     priority: 1
@@ -2491,6 +3083,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 2d3242af3768e418a00996e37e52bf0a, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 152344fff00b2e40ba85466d41c34bd0, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerReadyDefault
     busId: Voice
     priority: 1
@@ -2505,6 +3102,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 567dbe1088b7085e06ac55c0acf9d0dc, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 33756556ab708bda6107cfa012ae754b, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerInstructionPlacePendingConfirm
     busId: Voice
     priority: 1
@@ -2519,6 +3121,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: fe614875b210b759ad46bfccfbaa5202, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: de54df30b53c02e5f428536405e9186c, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerInstructionCannotPlaceHere
     busId: Voice
     priority: 1
@@ -2533,6 +3140,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 901f39737b3d76620eea9ecab203cf1c, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 6e6a2cbb1ff40646ca7846472bb0a230, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerFailureConnecting
     busId: Voice
     priority: 2
@@ -2547,6 +3159,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 8417260c0db3c6082baa1608e73694db, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 6ba6f36a8759ea8792d4a05f8e02915a, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerFailureNotEnoughMoney
     busId: Voice
     priority: 2
@@ -2561,6 +3178,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 841303acf07332da8aabb47f2bc3384d, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 0fc9a11a0c59a9b87ed4068d88ea6cca, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerFailureMissingProducerNamed
     busId: Voice
     priority: 2
@@ -2575,6 +3197,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 63092e4c3c32151fc8e79dcd3faac1ca, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 9ad0455f746935a582ff15a6a48f35c2, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerFailureMissingProducer
     busId: Voice
     priority: 2
@@ -2589,6 +3216,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 1e2faaed3ac9af41aec758d475825a2b, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: a79d666b18a983c9268ab2aa422ee1cd, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerFailureQueueFullNamed
     busId: Voice
     priority: 2
@@ -2603,6 +3235,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: d4f9146ccef8d09b9edd14f7121efcfc, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 4a2b7c85145fbd9b92be40ed165e7938, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerFailureQueueFull
     busId: Voice
     priority: 2
@@ -2617,6 +3254,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: d05b5c26056942be67ea7b16610d0037, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: f9a184e1a59e933a468cbab7efadd87e, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerFailureGlobalQueueFull
     busId: Voice
     priority: 2
@@ -2631,6 +3273,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 9a83d3ded9a7318002fcf85f18ba258d, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 891b363d4ed20231b1a5bb41eada5418, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerFailureInvalidSelection
     busId: Voice
     priority: 2
@@ -2645,6 +3292,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: ce482ed66d9d6b0850c48a63e706f0ba, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 76d228193ea05b5554890e11e27813c9, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerFailureUnavailable
     busId: Voice
     priority: 2
@@ -2659,6 +3311,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: dcda32ac978251d181ae168d2387704e, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 2a63eb0953dec948f243376f0fced7f0, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerFailureShortNotEnoughMoney
     busId: Voice
     priority: 2
@@ -2673,6 +3330,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 2791b7a8dd2cbb11c9eb541d31d994e3, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: f85b21b15d215a86bf6cb3057fa336b6, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerFailureShortRequiresNamed
     busId: Voice
     priority: 2
@@ -2687,6 +3349,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 3950b120a4bc932bd36cffa7fcc8b4d0, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: c6b3d287c82b6dbf2a5131d6bc285956, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerFailureShortMissingProducer
     busId: Voice
     priority: 2
@@ -2701,6 +3368,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 00c4ae5f462b5989b58e48bae4e12d79, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 0f385eb813d99ce75ffc9a30a3bffd52, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerFailureShortQueueFullNamed
     busId: Voice
     priority: 2
@@ -2715,6 +3387,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 499a5fb7ea032dcb1378d7a1e4c4db56, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 017562ea2ef7be3800f132479c0165bd, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerFailureShortQueueFull
     busId: Voice
     priority: 2
@@ -2729,6 +3406,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 79761d1a67345041b42e0b4ba8e599b9, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: b5380de00bfd9624907e8f44cd2ed2a3, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerFailureShortGlobalQueueFull
     busId: Voice
     priority: 2
@@ -2743,6 +3425,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: a837e271d8c483d33267577b26874cc9, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: fde21125262ac7df087ac81199a38d9a, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerFailureShortUnavailable
     busId: Voice
     priority: 2
@@ -2757,6 +3444,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: df51f519e6b77b9c9a6780dcc364ffe6, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 1380a7ed38604e3b8635ef201d0b9c58, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerEmptyBuildings
     busId: Voice
     priority: 1
@@ -2771,6 +3463,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 8282f7cc95d1cc14230780ee61bcd2c5, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 37692f26c510cdc9c0f4ebfc3eaa3c15, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerEmptyVehicles
     busId: Voice
     priority: 1
@@ -2785,6 +3482,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: dfb46442c3ed4577b0ceee4a64c80af3, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 57933881db5a99a5b69bb06c26bb4116, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerEmptyAircraft
     busId: Voice
     priority: 1
@@ -2799,6 +3501,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 5ed972283566ee304c3255e9b53a5476, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: fad7af4a8b978be7b1d2ae908fc404a0, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerEmptySoldiers
     busId: Voice
     priority: 1
@@ -2813,6 +3520,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 8c1dc6f0ce9c6dfba54f3f63e580efba, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 2f6725727d1576263a032132013a3bf0, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerEmptyDefault
     busId: Voice
     priority: 1
@@ -2827,6 +3539,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 6ac20f6f74da4a1240515e762fe1c5d9, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 020c91abc0992348c3638dba00ac5230, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerEmptySelectItem
     busId: Voice
     priority: 1
@@ -2841,6 +3558,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 8327c302bb03dd1dde77d25aa741470a, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: ccbc7fabfe9bce600032a238c7cf1533, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerPlacementInvalid
     busId: Voice
     priority: 2
@@ -2855,6 +3577,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 6686c73a21f9f52ba3d167280814d88a, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: e3cc5a8691366a6c387a82711245159e, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerActionPlaceChooseFootprint
     busId: Voice
     priority: 1
@@ -2869,6 +3596,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 151b8393b5e8905b7d3387a2e6041b5a, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 01a3a34f7cc1ac14fd51fd994ec70cc8, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildFeedbackPlaceBuilding
     busId: Voice
     priority: 1
@@ -2883,6 +3615,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: d2da9f817aa5833505e87026f3ddc0e9, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: ad36c9d0b7f98d0d2cadadff961db3b7, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildFeedbackProductionRequested
     busId: Voice
     priority: 1
@@ -2897,6 +3634,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: e1dec9d0447ed8c8a3e5bbf88a0d590a, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 737cfc936bfdca8e5e28bf553021f116, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerSuccessRecruitmentQueued
     busId: Voice
     priority: 1
@@ -2911,6 +3653,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 0903d648a3a1a9e28b37416620c6b7cc, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 6e40f29bcb6411e4b988f39ec688f5a3, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildDrawerSuccessProductionQueued
     busId: Voice
     priority: 1
@@ -2925,6 +3672,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 75224a5648492cc7da932f7cf9a262ca, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 69699df460b413e0b7d776cf02298d2f, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildFeedbackProductionCancelUnavailable
     busId: Voice
     priority: 2
@@ -2939,6 +3691,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: e2ebc2f07a0171f16da92c4729b0b52a, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 607afd8781ba6ac95eeeaad28463502d, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildFeedbackProductionCancelledNamed
     busId: Voice
     priority: 1
@@ -2953,6 +3710,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: efda8b706ccf413e10dd785b01e9d1b2, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: e582279d21ef711ce9cedbefe13f6792, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildFeedbackProductionCancelled
     busId: Voice
     priority: 1
@@ -2967,6 +3729,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 22044ca1a19a6bf73bbe6bc797084bc0, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: c990fd5c07e7386b5b99b754c525d8ff, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildFeedbackProductionQueueEmpty
     busId: Voice
     priority: 1
@@ -2981,6 +3748,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 86b62549c391bbc0037bd56a66e15263, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 31914add42a6e7d914f531185a1388c8, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildFeedbackProductionQueueClearedSentence
     busId: Voice
     priority: 1
@@ -2995,6 +3767,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 9444435509641214340673204aea7e4c, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 2152c47f50daef896e42c4e432282fc1, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildFeedbackProductionClearUnavailable
     busId: Voice
     priority: 2
@@ -3009,6 +3786,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: fa78040cc82103387da167a20c8f2bb3, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 46155d1a01ad09ec6b603a03d13728ac, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildFeedbackProductionQueueCleared
     busId: Voice
     priority: 1
@@ -3023,6 +3805,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 633b2a25a2b62c7d1e61f69fea0b0c32, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 11928a8b7f85def896384e727eede2b5, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildFeedbackPlacementCancelled
     busId: Voice
     priority: 1
@@ -3037,6 +3824,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 3041967ab28f1e579f6ed7a26faa63bc, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: ae8727f833bf6eb970a99adea2a49c18, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildFeedbackRotated90
     busId: Voice
     priority: 1
@@ -3051,6 +3843,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: e15ec92acfde9d69912722fc1609a8e7, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: f59a0362ae0100bbb18a16381fcc46e5, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildFeedbackNoActivePlacement
     busId: Voice
     priority: 1
@@ -3065,6 +3862,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: d91d498d86895288a882d581d0013458, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 8f364355b70358a0c8322667a7ed8bd3, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildFeedbackBuildingPlaced
     busId: Voice
     priority: 1
@@ -3079,6 +3881,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: d46ed5f260f04758285aa915c6334f0c, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: d36831321994fc55a9b23e0a04a7b095, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildFeedbackPlaceOnValidGround
     busId: Voice
     priority: 1
@@ -3093,6 +3900,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 6ab9217e28105f16761d6deab4e71e97, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: f1decf62540e6568e3b2b4b8ae084c8c, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildFeedbackDrawerNotReady
     busId: Voice
     priority: 1
@@ -3107,6 +3919,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 9cea8504afcd8be42437c3cf7548b6d5, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: e378ad6a956da8895a7babeed97664d0, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildPlacementStatusDragToPosition
     busId: Voice
     priority: 1
@@ -3121,6 +3938,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 4f6a424239b2a965003b506c7914fa35, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: cf4467455a9b3fec2193d71e74f6dbe7, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildPlacementStatusValidGround
     busId: Voice
     priority: 1
@@ -3135,6 +3957,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: eb3d1dea6534b38232395a2f277adc68, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: f4e98c7d031eee074ad79025c60dc561, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildPlacementTitleDefault
     busId: Voice
     priority: 1
@@ -3149,6 +3976,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 02a8a736b7de9a0ef5fd89afd2fae076, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 59ebaf9fd8315334462252bf32048644, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildPlacementTitleNamed
     busId: Voice
     priority: 1
@@ -3163,6 +3995,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: aacbcea3d0274d9b26f80649c1a718cd, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 56e2cf42ca75d3b7e6f0e3ba25c4c70f, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildPlacementInstructionConfirm
     busId: Voice
     priority: 1
@@ -3177,6 +4014,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: fc918509483a321f2e554e448c2af5c6, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: b14c965f8e7e116039739138677b28e8, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.BuildPlacementTitleFallbackSubject
     busId: Voice
     priority: 1
@@ -3191,6 +4033,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 8eeafe7171d2d6b6baafca386f7608e9, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: a223513f394504b8ce4eb32bf08b5af0, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.MatchFeedbackTacticalMapNotReady
     busId: Voice
     priority: 1
@@ -3205,6 +4052,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 71caa87ea4a946c810711bb427dfb147, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 014e651a78d88c1403232bfa161ab9cb, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.MatchFeedbackBlockedCivilianZone
     busId: Voice
     priority: 2
@@ -3219,6 +4071,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: a07e6e48df0aaa7629fc03c2878e8a03, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: ce0572b5b1781fbe27d0c560f9eab0d3, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.SelectionFeedbackUnitSingular
     busId: Voice
     priority: 1
@@ -3233,6 +4090,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: c042de88c9026606971631342d395de3, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 16e4708a3fa9949c34e2ff903b1ebcaa, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.SelectionFeedbackUnitPlural
     busId: Voice
     priority: 1
@@ -3247,6 +4109,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 2d54c8f59429bd4bc99a8d986c98012c, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 92b0160e9a40bc8e30e32d62873a84e7, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.SelectionFeedbackVehicleSingular
     busId: Voice
     priority: 1
@@ -3261,6 +4128,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 84585cd63d186107445587a4bb750b89, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: eff9d418f8da8ac30f947538a360601a, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.SelectionFeedbackSoldierSingular
     busId: Voice
     priority: 1
@@ -3275,6 +4147,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: be8cadda4ff5edb68599568203f1b711, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 612ed649da7db50a49fa19ef41b15a71, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.SelectionFeedbackSquadCount
     busId: Voice
     priority: 1
@@ -3289,6 +4166,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 84b52b9c520a3bf4673f13f2743fbb83, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 740ee5859672b09b3010f82019da00c7, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Message.SelectionFeedbackSquadSelected
     busId: Voice
     priority: 1
@@ -3303,6 +4185,11 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: c5be8c99139f0a89fbf1260adabb408b, type: 3}
       weight: 1
+    localizedClips:
+    - localeCode: fa-IR
+      clips:
+      - clip: {fileID: 8300000, guid: 1a56f83a1921ca29ec58eee83bad2486, type: 3}
+        weight: 1
   - eventId: VO.ARIA.Tutorial.M01.FindSquad.En
     busId: Voice
     priority: 2
@@ -3317,6 +4204,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 17380119c69fd43038a41acb31024711, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: VO.ARIA.Tutorial.M01.MoveToCover.En
     busId: Voice
     priority: 2
@@ -3331,6 +4219,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 52f2bc1f8461b435ca356bb00ed92051, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: VO.ARIA.Tutorial.M01.MoveDestination.En
     busId: Voice
     priority: 2
@@ -3345,6 +4234,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 9c4f9c5afe06242a981f8c678ffdf6ca, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: VO.ARIA.Tutorial.M01.ConfirmThreat.En
     busId: Voice
     priority: 2
@@ -3359,6 +4249,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: a771f068c4cab449180d8cc8a7dc42d1, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: VO.ARIA.Tutorial.M01.Engage.En
     busId: Voice
     priority: 2
@@ -3373,6 +4264,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: a6f299b6db0ab4bbea569d7d2ce617fc, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: VO.ARIA.Tutorial.M01.AttackTarget.En
     busId: Voice
     priority: 2
@@ -3387,6 +4279,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 361c0ab42eab0492f8cf77aa96bdd128, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: VO.ARIA.Tutorial.M01.SecureCorridor.En
     busId: Voice
     priority: 2
@@ -3401,6 +4294,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: a421e004dd9d7474f90693f9b3bc7bd7, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: VO.ARIA.Tutorial.M01.FindSquad.Fa
     busId: Voice
     priority: 2
@@ -3415,6 +4309,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: d3f49949ff3af4e6ba960757181a163e, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: VO.ARIA.Tutorial.M01.MoveToCover.Fa
     busId: Voice
     priority: 2
@@ -3429,6 +4324,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 8eb8df825195e497c9d37fa317dd17da, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: VO.ARIA.Tutorial.M01.MoveDestination.Fa
     busId: Voice
     priority: 2
@@ -3443,6 +4339,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 79c2b12e689c24091895730b8062e218, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: VO.ARIA.Tutorial.M01.ConfirmThreat.Fa
     busId: Voice
     priority: 2
@@ -3457,6 +4354,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 1d0b06145a2124379a49dcdcac2077ee, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: VO.ARIA.Tutorial.M01.Engage.Fa
     busId: Voice
     priority: 2
@@ -3471,6 +4369,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 49c06679ef210474c9d22b9239031481, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: VO.ARIA.Tutorial.M01.AttackTarget.Fa
     busId: Voice
     priority: 2
@@ -3485,6 +4384,7 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 02ac441a364ae4d91b1936dcfc711316, type: 3}
       weight: 1
+    localizedClips: []
   - eventId: VO.ARIA.Tutorial.M01.SecureCorridor.Fa
     busId: Voice
     priority: 2
@@ -3499,3 +4399,4 @@ MonoBehaviour:
     clips:
     - clip: {fileID: 8300000, guid: 5d715bc3aaee94923892c85540ad502e, type: 3}
       weight: 1
+    localizedClips: []

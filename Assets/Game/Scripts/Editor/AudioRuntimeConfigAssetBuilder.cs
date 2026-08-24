@@ -87,6 +87,42 @@ namespace Game.Editor
                     clipProperty.FindPropertyRelative("clip").objectReferenceValue = clip;
                     clipProperty.FindPropertyRelative("weight").intValue = Math.Max(0, clipJson.weight);
                 }
+
+                SerializedProperty localizedClips = eventProperty.FindPropertyRelative("localizedClips");
+                localizedClips.ClearArray();
+                LocalizedAudioClipSetJson[] localizedClipSets = eventJson.localizedClips ?? Array.Empty<LocalizedAudioClipSetJson>();
+                for (int setIndex = 0; setIndex < localizedClipSets.Length; setIndex++)
+                {
+                    LocalizedAudioClipSetJson localizedJson = localizedClipSets[setIndex];
+                    if (localizedJson == null || string.IsNullOrWhiteSpace(localizedJson.localeCode))
+                    {
+                        throw new InvalidOperationException(
+                            $"Localized clip set {setIndex} for {eventJson.eventId} has no localeCode.");
+                    }
+
+                    localizedClips.InsertArrayElementAtIndex(setIndex);
+                    SerializedProperty localizedProperty = localizedClips.GetArrayElementAtIndex(setIndex);
+                    localizedProperty.FindPropertyRelative("localeCode").stringValue = localizedJson.localeCode;
+                    SerializedProperty localizedEntries = localizedProperty.FindPropertyRelative("clips");
+                    localizedEntries.ClearArray();
+                    AudioClipJson[] localizedClipJson = localizedJson.clips ?? Array.Empty<AudioClipJson>();
+                    for (int clipIndex = 0; clipIndex < localizedClipJson.Length; clipIndex++)
+                    {
+                        AudioClipJson clipJson = localizedClipJson[clipIndex];
+                        AudioClip clip = AssetDatabase.LoadAssetAtPath<AudioClip>(clipJson.assetPath);
+                        if (clip == null)
+                        {
+                            throw new InvalidOperationException(
+                                $"Missing localized AudioClip for {eventJson.eventId} ({localizedJson.localeCode}): " +
+                                clipJson.assetPath);
+                        }
+
+                        localizedEntries.InsertArrayElementAtIndex(clipIndex);
+                        SerializedProperty clipProperty = localizedEntries.GetArrayElementAtIndex(clipIndex);
+                        clipProperty.FindPropertyRelative("clip").objectReferenceValue = clip;
+                        clipProperty.FindPropertyRelative("weight").intValue = Math.Max(0, clipJson.weight);
+                    }
+                }
             }
 
             serialized.ApplyModifiedPropertiesWithoutUndo();
@@ -201,6 +237,14 @@ namespace Game.Editor
             public float volumeDb;
             public PitchVarianceJson pitchVariance;
             public PlaybackJson playback;
+            public AudioClipJson[] clips;
+            public LocalizedAudioClipSetJson[] localizedClips;
+        }
+
+        [Serializable]
+        private sealed class LocalizedAudioClipSetJson
+        {
+            public string localeCode;
             public AudioClipJson[] clips;
         }
 

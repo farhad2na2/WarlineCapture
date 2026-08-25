@@ -1,8 +1,8 @@
 # M02 Establish The Base Implementation Tracker
 
 Date: 2026-08-25
-Status: Active; M02EB-018 accepted and M02EB-019 dependency-ready
-Progress: 18/34 accepted items (52.9%)
+Status: Active; M02EB-019 accepted and M02EB-020 dependency-ready
+Progress: 19/34 accepted items (55.9%)
 Parent design: `Design/SagaChapters/Saga_Chapter01_First_Response.md` (`M02 Detailed Spec`)
 Technical architecture: `Design/Architecture/m02_establish_base_technical_architecture.md`
 Mission: `saga.ch01.m02.establish_base`
@@ -173,9 +173,10 @@ Every item records an exact path allowlist before editing. Unexpected user chang
   **Acceptance:** hostiles cannot move/target/fire before activation; one warning precedes activation; existing ECS AI/combat owns the active wave.
   **Evidence:** the existing Campaign catalog projection now carries the canonical delayed-wave group, route, target role, 90-second warning, and 120-second activation into unmanaged attempt state. The exact hostile roster spawns with movement and combat suppression, remains absent from enemy minimap/acquisition populations, and cannot take or deliver attack damage before activation. One dedicated Burst-capable system validates session, attempt, source version, route, faction, and exact roster count; it issues one existing ground-threat warning, then removes suppression through one ECB on a later update and restores normal `UnitCombat`/patrol/attack ownership. Retry resets the state, elapsed-time jumps still warn before activating, stale or ambiguous data fails closed, player minimap visibility and M01 opening suppression remain unchanged, and no parallel AI/combat path was added. `[M02EstablishBaseWaveValidation] result=Passed tests=9`; `[ThreatWarningValidation] result=Passed`; `[MatchHudMinimapMarkerFocusedValidation] result=Passed tests=5`; `[M02EstablishBaseWaveRegressionValidation] result=Passed suites=5`; `[M02EstablishBaseLaunchValidation] result=Passed tests=14`; `[M01FirstContactConsolidatedContractValidation] result=Passed suites=23`; `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; compiler errors are zero. Wrapper-launched live-Editor log: `/private/tmp/warline-m02eb-011-live-editor.log`.
 
-- [ ] **M02EB-019 - Defend the authoritative forward post**
+- [x] **M02EB-019 - Defend the authoritative forward post**
   **Depends on:** M02EB-014 and M02EB-018.
   **Acceptance:** existing building health/destruction truth drives damage, defense objective, and defeat; no parallel base-health state exists.
+  **Evidence:** the existing Campaign catalog projection now carries the canonical `role.friendly.forward_post` and `anchor.ch01.m02.forward_post` identities into unmanaged mission data. The sole attempt-fact projection binds that role to exactly one player-owned authoritative operation-map building whose physical source map and footprint contain the canonical base anchor, then derives monotonic bound/damaged/destroyed facts only from the building's existing `UnitHealth` and enableable `OperationMapBuildingDestroyedComponent`. Wrong-map, wrong-faction, outside-footprint, ambiguous-building, ambiguous-objective, stale-session, and conflicting-role candidates fail closed; retry rebinds the same building to the new attempt without copying health into a parallel base-health value. The forward-post logic was split into 384-line and 145-line partials to remain below the enforced production review threshold. `[M02EstablishBaseObjectiveValidation] result=Passed tests=22`; `[OperationMapBuildingDestructionValidation] result=Passed tests=4`; `[M02EstablishBaseObjectiveRegressionValidation] result=Passed suites=3`; `[M02EstablishBaseLaunchRegressionValidation] result=Passed suites=3`; `[M02EstablishBaseWaveValidation] result=Passed tests=9`; `[M02EstablishBaseWaveRegressionValidation] result=Passed suites=5`; `[M01FirstContactConsolidatedContractValidation] result=Passed suites=23`; `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; compiler errors are zero. Wrapper-launched live-Editor log: `/private/tmp/warline-m02eb-011-live-editor.log`.
 
 - [ ] **M02EB-020 - Generalize the sole objective projection writer**
   **Depends on:** M02EB-015, M02EB-017, and M02EB-019.
@@ -283,16 +284,18 @@ The first user review occurs at M02EB-029:
 | 2026-08-25 | M02EB-016 routed the required rifle through the existing production owners with exact dual-resource preflight/spend/rollback, five-second queue completion, authoritative ECS spawn/faction/read-model projection, and no parallel M02 production implementation. | Accepted |
 | 2026-08-25 | M02EB-017 projected exact produced-rifle completion from the append-only production read model into attempt facts using a retry-safe baseline and live ECS source/faction/health correlation; invalid, duplicate, stale, destroyed, and unrelated units fail closed while accepted progress stays monotonic. | Accepted |
 | 2026-08-25 | M02EB-018 added one exact delayed-wave lifecycle owner: the canonical patrol is movement/combat/minimap suppressed until one 90-second warning and later 120-second activation release it into the existing patrol, targeting, attack, health, and death systems; stale identity and roster ambiguity fail closed. | Accepted |
+| 2026-08-25 | M02EB-019 bound the canonical forward-post role to the unique authoritative operation-map building at the base anchor and projected only monotonic damage/destruction facts from existing building health and destruction truth; no parallel base-health state or combat path was added. | Accepted |
 
 ## 8. Current Validation And Blockers
 
 | Item | Result | Evidence |
 |---|---|---|
-| M02EB-018 delayed patrol lifecycle | Passed | `[M02EstablishBaseWaveValidation] result=Passed tests=9`; exact roster is held, warned once, activated once on a later update, and stale/ambiguous attempts fail closed |
-| Shared warning/minimap/combat owners | Passed | `[ThreatWarningValidation] result=Passed`; `[MatchHudMinimapMarkerFocusedValidation] result=Passed tests=5`; suppressed enemies cannot auto-acquire or receive attack damage before release |
-| M02 catalog/launch compatibility | Passed | `[M02EstablishBaseLaunchValidation] result=Passed tests=14`; retry/replay resets preserve canonical source and attempt identity |
+| M02EB-019 authoritative forward post | Passed | `[M02EstablishBaseObjectiveValidation] result=Passed tests=22`; exact source-map/anchor/faction/footprint binding, retry rebinding, monotonic damage/destruction, and fail-closed ambiguity are covered |
+| Existing building health/destruction owner | Passed | `[OperationMapBuildingDestructionValidation] result=Passed tests=4`; forward-post facts read existing `UnitHealth` and enabled destruction state without copying base health |
+| M02 objective/placement regressions | Passed | `[M02EstablishBaseObjectiveRegressionValidation] result=Passed suites=3`; includes placement, canonical M02 data, M01, and architecture dependencies |
+| M02 catalog/launch compatibility | Passed | `[M02EstablishBaseLaunchValidation] result=Passed tests=14`; `[M02EstablishBaseLaunchRegressionValidation] result=Passed suites=3` |
+| M02 delayed-wave compatibility | Passed | `[M02EstablishBaseWaveValidation] result=Passed tests=9`; `[M02EstablishBaseWaveRegressionValidation] result=Passed suites=5`; target role remains the canonical forward post |
 | Shared M01 compatibility | Passed | `[M01FirstContactConsolidatedContractValidation] result=Passed suites=23` |
-| Consolidated M02 wave regressions | Passed | `[M02EstablishBaseWaveRegressionValidation] result=Passed suites=5` |
-| Architecture/source growth | Passed | `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; zero compiler errors |
+| Architecture/source growth | Passed | `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; production partials are 384/145 lines; zero compiler errors |
 
-No blocker prevents M02EB-019. Android/Samsung certification remains owner-deferred and is not counted as passed. Final comic and voice production remains gated by M02EB-029.
+No blocker prevents M02EB-020. Android/Samsung certification remains owner-deferred and is not counted as passed. Final comic and voice production remains gated by M02EB-029.

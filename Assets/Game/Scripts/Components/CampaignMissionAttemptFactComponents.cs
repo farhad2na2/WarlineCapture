@@ -12,6 +12,9 @@ namespace Game.Components
         public int RequiredBuildingPlacedCount;
         public int RequiredBuildingCompletedCount;
         public int RequiredUnitProducedCount;
+        public byte ForwardPostBound;
+        public byte ForwardPostDamaged;
+        public byte ForwardPostDestroyed;
         public byte DefenseWaveWarningIssued;
         public byte DefenseWaveActivated;
         public byte CommandSquadSpawned;

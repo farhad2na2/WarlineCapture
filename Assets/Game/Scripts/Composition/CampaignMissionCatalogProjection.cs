@@ -165,6 +165,10 @@ namespace Game.Composition
             definition.EncounterStartMilliseconds = scenario.EncounterStartMilliseconds;
             definition.StartingCredits = scenario.MissionRuntime.StartingCredits;
             definition.StartingMaterials = scenario.MissionRuntime.StartingMaterials;
+            definition.BaseMissionRoleId =
+                new FixedString64Bytes(scenario.MissionRuntime.BaseMissionRoleId ?? string.Empty);
+            definition.BaseAnchorId =
+                new FixedString64Bytes(scenario.MissionRuntime.BaseAnchorId ?? string.Empty);
             ScenarioDelayedWaveConfig delayedWave = scenario.MissionRuntime.DelayedWave;
             definition.DelayedWaveWarningAtMilliseconds = delayedWave.WarningAtMilliseconds;
             definition.DelayedWaveActivationAtMilliseconds = delayedWave.ActivationAtMilliseconds;

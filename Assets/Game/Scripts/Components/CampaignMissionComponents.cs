@@ -251,6 +251,8 @@ namespace Game.Components
         public int EncounterStartMilliseconds;
         public int StartingCredits;
         public int StartingMaterials;
+        public FixedString64Bytes BaseMissionRoleId;
+        public FixedString64Bytes BaseAnchorId;
         public int DelayedWaveWarningAtMilliseconds;
         public int DelayedWaveActivationAtMilliseconds;
         public FixedString64Bytes DelayedWaveUnitGroupId;

@@ -15,6 +15,8 @@ namespace Game.Runtime
     {
         private EntityQuery _missionRootQuery;
         private EntityQuery _buildingBoundaryQuery;
+        private EntityQuery _operationMapMetadataQuery;
+        private EntityQuery _forwardPostCandidateQuery;
 
         [BurstCompile]
         public void OnCreate(ref SystemState state)
@@ -29,6 +31,14 @@ namespace Game.Runtime
                 ComponentType.ReadOnly<BuildingRuntimeStateTag>(),
                 ComponentType.ReadOnly<BuildingRuntimeSpawnRequest>(),
                 ComponentType.ReadOnly<BuildingProducedUnitReadModel>());
+            _operationMapMetadataQuery = state.GetEntityQuery(
+                ComponentType.ReadOnly<OperationMapMetadataComponent>());
+            _forwardPostCandidateQuery = state.GetEntityQuery(
+                ComponentType.ReadOnly<RuntimeBuildingCombatTag>(),
+                ComponentType.ReadOnly<RuntimeBuildingCombatInfo>(),
+                ComponentType.ReadOnly<OperationMapBuildingComponent>(),
+                ComponentType.ReadOnly<Faction>(),
+                ComponentType.ReadOnly<UnitHealth>());
             state.RequireForUpdate(_missionRootQuery);
             state.RequireForUpdate(_buildingBoundaryQuery);
         }
@@ -58,7 +68,12 @@ namespace Game.Runtime
                     in runtime,
                     out FixedString128Bytes requiredUnitId,
                     out int requiredUnitCount);
-            if (!hasRequiredBuilding && !hasRequiredUnit)
+            bool hasForwardPost = TryResolveForwardPost(
+                in catalog,
+                in runtime,
+                out FixedString64Bytes forwardPostRoleId,
+                out FixedString64Bytes forwardPostAnchorId);
+            if (!hasRequiredBuilding && !hasRequiredUnit && !hasForwardPost)
                 return;
 
             Entity buildingBoundary = _buildingBoundaryQuery.GetSingletonEntity();
@@ -124,6 +139,34 @@ namespace Game.Runtime
                     math.min(requiredUnitCount, observedProducedCount));
                 changed |= nextProducedCount != facts.RequiredUnitProducedCount;
                 facts.RequiredUnitProducedCount = nextProducedCount;
+            }
+
+            if (hasForwardPost && TryFindAuthoritativeForwardPost(
+                    entityManager,
+                    _operationMapMetadataQuery,
+                    _forwardPostCandidateQuery,
+                    in runtime,
+                    in forwardPostAnchorId,
+                    in forwardPostRoleId,
+                    out Entity forwardPost))
+            {
+                BindForwardPostRole(
+                    entityManager,
+                    forwardPost,
+                    in runtime.SessionToken,
+                    in forwardPostRoleId);
+                UnitHealth health = entityManager.GetComponentData<UnitHealth>(forwardPost);
+                bool destroyed = health.Current <= 0 ||
+                    entityManager.IsComponentEnabled<OperationMapBuildingDestroyedComponent>(forwardPost);
+                byte nextBound = 1;
+                byte nextDamaged = health.Current < health.Max ? (byte)1 : facts.ForwardPostDamaged;
+                byte nextDestroyed = destroyed ? (byte)1 : facts.ForwardPostDestroyed;
+                changed |= facts.ForwardPostBound != nextBound ||
+                           facts.ForwardPostDamaged != nextDamaged ||
+                           facts.ForwardPostDestroyed != nextDestroyed;
+                facts.ForwardPostBound = nextBound;
+                facts.ForwardPostDamaged = nextDamaged;
+                facts.ForwardPostDestroyed = nextDestroyed;
             }
 
             if (!changed)

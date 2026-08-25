@@ -15,12 +15,15 @@ using UnityEngine;
 
 public sealed class M02EstablishBaseObjectiveTests
 {
-    private const string Marker = "[M02EstablishBaseObjectiveValidation] result=Passed tests=16";
+    private const string Marker = "[M02EstablishBaseObjectiveValidation] result=Passed tests=22";
     private const string MissionId = "saga.ch01.m02.establish_base";
     private const string ScenarioId = "scenario.ch01.m02.establish_base";
     private const string MapId = "opmap.ch01.forward_post_01";
     private const string BarracksId = "Building_Barrack";
     private const string RifleId = "Unit_Chr_Soldier_Male_02_Alt_04";
+    private const string ForwardPostRoleId = "role.friendly.forward_post";
+    private const string ForwardPostAnchorId = "anchor.ch01.m02.forward_post";
+    private const string SourceMapId = "opmap.skirmish.desert_base_01";
 
     [MenuItem("Game/Validation/Run M02 Establish Base Objective Focused")]
     public static void RunFocusedValidation()
@@ -44,6 +47,12 @@ public sealed class M02EstablishBaseObjectiveTests
             tests.ProducedUnitFactRemainsMonotonicAfterDestruction();
             tests.NewAttemptCapturesASeparateProducedUnitBaseline();
             tests.AmbiguousProduceUnitObjectiveFailsClosed();
+            tests.AuthoritativeForwardPostBindsAndProjectsDamageAndDestruction();
+            tests.EnabledDestroyedStateProjectsForwardPostDestruction();
+            tests.InvalidForwardPostCandidatesFailClosed();
+            tests.AmbiguousForwardPostCandidatesFailClosed();
+            tests.NewAttemptRebindsForwardPostSession();
+            tests.AmbiguousDefendObjectiveFailsClosed();
             Debug.Log(Marker);
             ValidationExit.Passed();
         }
@@ -61,8 +70,9 @@ public sealed class M02EstablishBaseObjectiveTests
         try
         {
             RunValidation(RunFocusedValidation);
+            RunValidation(OperationMapBuildingDestructionSystemTests.RunFocusedValidation);
             RunValidation(M02EstablishBasePlacementTests.RunRegressionValidation);
-            Debug.Log("[M02EstablishBaseObjectiveRegressionValidation] result=Passed suites=2");
+            Debug.Log("[M02EstablishBaseObjectiveRegressionValidation] result=Passed suites=3");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -87,6 +97,11 @@ public sealed class M02EstablishBaseObjectiveTests
             world.EntityManager, mission, scenario, maps, 1, out Entity root, out string error), error);
         Assert.IsTrue(world.EntityManager.HasComponent<CampaignMissionAttemptFactsComponent>(root));
         Assert.IsTrue(world.EntityManager.HasComponent<CampaignMissionAttemptFactProjectionStateComponent>(root));
+        CampaignMissionCatalogComponent catalog =
+            world.EntityManager.GetComponentData<CampaignMissionCatalogComponent>(root);
+        ref CampaignMissionDefinitionBlob definition = ref catalog.Blob.Value.Missions[0];
+        Assert.AreEqual(ForwardPostRoleId, definition.BaseMissionRoleId.ToString());
+        Assert.AreEqual(ForwardPostAnchorId, definition.BaseAnchorId.ToString());
         DisposeCatalog(world.EntityManager, root);
     }
 
@@ -440,11 +455,176 @@ public sealed class M02EstablishBaseObjectiveTests
         }
     }
 
+    [Test]
+    public void AuthoritativeForwardPostBindsAndProjectsDamageAndDestruction()
+    {
+        using World world = CreateRuntimeWorld(true, false, out BlobAssetReference<CampaignMissionCatalogBlob> blob);
+        BlobAssetReference<OperationMapBlob> mapBlob = AddMapMetadata(world.EntityManager);
+        try
+        {
+            EntityManager entityManager = world.EntityManager;
+            Entity post = CreateForwardPost(entityManager, 7001, SourceMapId,
+                FactionIdentity.PlayerFactionId, new int2(936, 347), new int2(10, 10));
+            InitializeAttempt(world);
+            UpdateFacts(world);
+
+            CampaignMissionAttemptFactsComponent facts = GetFacts(entityManager);
+            Assert.AreEqual(1, facts.ForwardPostBound);
+            Assert.AreEqual(0, facts.ForwardPostDamaged);
+            Assert.AreEqual(0, facts.ForwardPostDestroyed);
+            CampaignMissionUnitRoleComponent role =
+                entityManager.GetComponentData<CampaignMissionUnitRoleComponent>(post);
+            Assert.AreEqual(ForwardPostRoleId, role.MissionRoleId.ToString());
+            Assert.AreEqual("m02-facts-attempt-1", role.SessionToken.ToString());
+
+            entityManager.SetComponentData(post, new UnitHealth { Current = 750, Max = 1000 });
+            UpdateFacts(world);
+            Assert.AreEqual(1, GetFacts(entityManager).ForwardPostDamaged);
+
+            entityManager.SetComponentData(post, new UnitHealth { Current = 0, Max = 1000 });
+            UpdateFacts(world);
+            facts = GetFacts(entityManager);
+            Assert.AreEqual(1, facts.ForwardPostDamaged);
+            Assert.AreEqual(1, facts.ForwardPostDestroyed);
+        }
+        finally
+        {
+            mapBlob.Dispose();
+            blob.Dispose();
+        }
+    }
+
+    [Test]
+    public void EnabledDestroyedStateProjectsForwardPostDestruction()
+    {
+        using World world = CreateRuntimeWorld(true, false, out BlobAssetReference<CampaignMissionCatalogBlob> blob);
+        BlobAssetReference<OperationMapBlob> mapBlob = AddMapMetadata(world.EntityManager);
+        try
+        {
+            Entity post = CreateForwardPost(world.EntityManager, 7001, SourceMapId,
+                FactionIdentity.PlayerFactionId, new int2(936, 347), new int2(10, 10));
+            world.EntityManager.SetComponentEnabled<OperationMapBuildingDestroyedComponent>(post, true);
+            InitializeAttempt(world);
+            UpdateFacts(world);
+            Assert.AreEqual(1, GetFacts(world.EntityManager).ForwardPostDestroyed);
+        }
+        finally
+        {
+            mapBlob.Dispose();
+            blob.Dispose();
+        }
+    }
+
+    [Test]
+    public void InvalidForwardPostCandidatesFailClosed()
+    {
+        using World world = CreateRuntimeWorld(true, false, out BlobAssetReference<CampaignMissionCatalogBlob> blob);
+        BlobAssetReference<OperationMapBlob> mapBlob = AddMapMetadata(world.EntityManager);
+        try
+        {
+            EntityManager entityManager = world.EntityManager;
+            CreateForwardPost(entityManager, 7001, "opmap.other", FactionIdentity.PlayerFactionId,
+                new int2(936, 347), new int2(10, 10));
+            CreateForwardPost(entityManager, 7002, SourceMapId, FactionIdentity.EnemyFactionId,
+                new int2(936, 347), new int2(10, 10));
+            CreateForwardPost(entityManager, 7003, SourceMapId, FactionIdentity.PlayerFactionId,
+                new int2(900, 300), new int2(10, 10));
+            InitializeAttempt(world);
+            UpdateFacts(world);
+            Assert.AreEqual(0, GetFacts(entityManager).ForwardPostBound);
+        }
+        finally
+        {
+            mapBlob.Dispose();
+            blob.Dispose();
+        }
+    }
+
+    [Test]
+    public void AmbiguousForwardPostCandidatesFailClosed()
+    {
+        using World world = CreateRuntimeWorld(true, false, out BlobAssetReference<CampaignMissionCatalogBlob> blob);
+        BlobAssetReference<OperationMapBlob> mapBlob = AddMapMetadata(world.EntityManager);
+        try
+        {
+            CreateForwardPost(world.EntityManager, 7001, SourceMapId, FactionIdentity.PlayerFactionId,
+                new int2(936, 347), new int2(10, 10));
+            CreateForwardPost(world.EntityManager, 7002, SourceMapId, FactionIdentity.PlayerFactionId,
+                new int2(938, 349), new int2(10, 10));
+            InitializeAttempt(world);
+            UpdateFacts(world);
+            Assert.AreEqual(0, GetFacts(world.EntityManager).ForwardPostBound);
+        }
+        finally
+        {
+            mapBlob.Dispose();
+            blob.Dispose();
+        }
+    }
+
+    [Test]
+    public void NewAttemptRebindsForwardPostSession()
+    {
+        using World world = CreateRuntimeWorld(true, false, out BlobAssetReference<CampaignMissionCatalogBlob> blob);
+        BlobAssetReference<OperationMapBlob> mapBlob = AddMapMetadata(world.EntityManager);
+        try
+        {
+            EntityManager entityManager = world.EntityManager;
+            Entity post = CreateForwardPost(entityManager, 7001, SourceMapId,
+                FactionIdentity.PlayerFactionId, new int2(936, 347), new int2(10, 10));
+            InitializeAttempt(world);
+            UpdateFacts(world);
+
+            Entity root = GetRoot(entityManager);
+            CampaignMissionRuntimeComponent runtime =
+                entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root);
+            runtime.SessionToken = "m02-forward-post-attempt-2";
+            runtime.AttemptOrdinal = 1;
+            runtime.Version++;
+            entityManager.SetComponentData(root, runtime);
+            entityManager.SetComponentData(root, default(CampaignMissionAttemptFactsComponent));
+            UpdateFacts(world);
+            UpdateFacts(world);
+
+            Assert.AreEqual(1, GetFacts(entityManager).ForwardPostBound);
+            Assert.AreEqual("m02-forward-post-attempt-2",
+                entityManager.GetComponentData<CampaignMissionUnitRoleComponent>(post).SessionToken.ToString());
+        }
+        finally
+        {
+            mapBlob.Dispose();
+            blob.Dispose();
+        }
+    }
+
+    [Test]
+    public void AmbiguousDefendObjectiveFailsClosed()
+    {
+        using World world = CreateRuntimeWorld(
+            true, false, out BlobAssetReference<CampaignMissionCatalogBlob> blob,
+            duplicateDefendObjective: true);
+        BlobAssetReference<OperationMapBlob> mapBlob = AddMapMetadata(world.EntityManager);
+        try
+        {
+            CreateForwardPost(world.EntityManager, 7001, SourceMapId, FactionIdentity.PlayerFactionId,
+                new int2(936, 347), new int2(10, 10));
+            InitializeAttempt(world);
+            UpdateFacts(world);
+            Assert.AreEqual(0, GetFacts(world.EntityManager).ForwardPostBound);
+        }
+        finally
+        {
+            mapBlob.Dispose();
+            blob.Dispose();
+        }
+    }
+
     private static World CreateRuntimeWorld(
         bool enabled,
         bool duplicateBuildObjective,
         out BlobAssetReference<CampaignMissionCatalogBlob> blob,
-        bool duplicateProduceObjective = false)
+        bool duplicateProduceObjective = false,
+        bool duplicateDefendObjective = false)
     {
         World world = new($"M02 facts enabled={enabled} duplicate={duplicateBuildObjective}");
         EntityManager entityManager = world.EntityManager;
@@ -461,7 +641,11 @@ public sealed class M02EstablishBaseObjectiveTests
         missions[0].ScenarioId = ScenarioId;
         missions[0].OperationMapId = MapId;
         missions[0].MissionRuntimeEnabled = enabled ? (byte)1 : (byte)0;
-        int objectiveCount = 2 + (duplicateBuildObjective ? 1 : 0) + (duplicateProduceObjective ? 1 : 0);
+        missions[0].BaseMissionRoleId = ForwardPostRoleId;
+        missions[0].BaseAnchorId = ForwardPostAnchorId;
+        missions[0].DelayedWaveTargetMissionRoleId = ForwardPostRoleId;
+        int objectiveCount = 3 + (duplicateBuildObjective ? 1 : 0) +
+            (duplicateProduceObjective ? 1 : 0) + (duplicateDefendObjective ? 1 : 0);
         BlobBuilderArray<CampaignMissionObjectiveBlob> objectives =
             builder.Allocate(ref missions[0].Objectives, objectiveCount);
         int objectiveIndex = 0;
@@ -491,12 +675,31 @@ public sealed class M02EstablishBaseObjectiveTests
         };
         if (duplicateProduceObjective)
         {
-            objectives[objectiveIndex] = new CampaignMissionObjectiveBlob
+            objectives[objectiveIndex++] = new CampaignMissionObjectiveBlob
             {
                 ObjectiveId = "obj.ch01.m02.produce_duplicate",
                 TargetConfigId = RifleId,
                 Rule = MissionObjectiveRuleKind.ProduceUnit,
                 RequiredCount = 1
+            };
+        }
+        objectives[objectiveIndex++] = new CampaignMissionObjectiveBlob
+        {
+            ObjectiveId = "obj.ch01.m02.defend_forward_post",
+            MissionRoleId = ForwardPostRoleId,
+            Rule = MissionObjectiveRuleKind.DefendMissionRole,
+            RequiredCount = 1,
+            FailureOnRuleBreak = 1
+        };
+        if (duplicateDefendObjective)
+        {
+            objectives[objectiveIndex] = new CampaignMissionObjectiveBlob
+            {
+                ObjectiveId = "obj.ch01.m02.defend_duplicate",
+                MissionRoleId = ForwardPostRoleId,
+                Rule = MissionObjectiveRuleKind.DefendMissionRole,
+                RequiredCount = 1,
+                FailureOnRuleBreak = 1
             };
         }
 
@@ -521,6 +724,77 @@ public sealed class M02EstablishBaseObjectiveTests
         entityManager.AddBuffer<BuildingRuntimeSpawnRequest>(boundary);
         entityManager.AddBuffer<BuildingProducedUnitReadModel>(boundary);
         return world;
+    }
+
+    private static BlobAssetReference<OperationMapBlob> AddMapMetadata(EntityManager entityManager)
+    {
+        using BlobBuilder builder = new(Allocator.Temp);
+        ref OperationMapBlob map = ref builder.ConstructRoot<OperationMapBlob>();
+        map.OperationMapId = MapId;
+        map.SourceOperationMapId = SourceMapId;
+        map.Grid = new OperationMapGridBlob
+        {
+            Origin = float3.zero,
+            Dimensions = new int2(2048, 1024),
+            CellSize = 1f
+        };
+        BlobBuilderArray<OperationMapAnchorBlob> anchors = builder.Allocate(ref map.Anchors, 1);
+        anchors[0] = new OperationMapAnchorBlob
+        {
+            Id = ForwardPostAnchorId,
+            Kind = OperationMapAnchorKind.Base,
+            Position = new float3(940.5f, 0f, 351.5f),
+            Radius = 12f,
+            FactionId = FactionIdentity.PlayerFactionId,
+            LaneIndex = -1
+        };
+        BlobAssetReference<OperationMapBlob> blob =
+            builder.CreateBlobAssetReference<OperationMapBlob>(Allocator.Persistent);
+        Entity metadata = entityManager.CreateEntity(typeof(OperationMapMetadataComponent));
+        entityManager.SetComponentData(metadata, new OperationMapMetadataComponent
+        {
+            Blob = blob,
+            Generation = 1,
+            PhysicalSourceValidated = 1
+        });
+        return blob;
+    }
+
+    private static Entity CreateForwardPost(
+        EntityManager entityManager,
+        int runtimeBuildingId,
+        string operationMapId,
+        byte factionId,
+        int2 origin,
+        int2 footprint)
+    {
+        Entity post = entityManager.CreateEntity(
+            typeof(RuntimeBuildingCombatTag),
+            typeof(RuntimeBuildingCombatInfo),
+            typeof(OperationMapBuildingComponent),
+            typeof(OperationMapBuildingDestroyedComponent),
+            typeof(Faction),
+            typeof(UnitHealth),
+            typeof(UnitGrid));
+        entityManager.SetComponentData(post, new RuntimeBuildingCombatInfo
+        {
+            RuntimeBuildingId = runtimeBuildingId,
+            OwnerFactionId = factionId,
+            OriginCell = origin,
+            FootprintCells = footprint
+        });
+        entityManager.SetComponentData(post, new OperationMapBuildingComponent
+        {
+            OperationMapId = operationMapId,
+            StableId = $"building.forward-post.{runtimeBuildingId}",
+            PlacementIndex = runtimeBuildingId - 1,
+            BlockerPolicy = OperationMapBuildingBlockerPolicy.RubbleRemainsBlocked
+        });
+        entityManager.SetComponentData(post, new Faction { Id = factionId });
+        entityManager.SetComponentData(post, new UnitHealth { Current = 1000, Max = 1000 });
+        entityManager.SetComponentData(post, new UnitGrid { Cell = origin + footprint / 2 });
+        entityManager.SetComponentEnabled<OperationMapBuildingDestroyedComponent>(post, false);
+        return post;
     }
 
     private static void InitializeAttempt(World world) => UpdateFacts(world);

@@ -13,7 +13,7 @@ namespace Game.Runtime
     using CampRequestFailure = BuildingUiCommandSystemHelper.CampRequestFailure;
     using ProductionTransportMode = BuildingProductionQueueCompositionSystemHelper.ProductionTransportMode;
 
-    internal sealed class BuildingProductionRequestSystemHelper
+    internal sealed partial class BuildingProductionRequestSystemHelper
     {
         public enum OperationMapProductionSchedulerOutcome : byte
         {
@@ -123,6 +123,14 @@ namespace Game.Runtime
         public delegate FactionConstructionResourceMutationResult EvaluateConstructionResourcesDelegate(
             int creditsCost,
             int materialsCost);
+        public delegate FactionConstructionResourceMutationResult MutateConstructionResourcesDelegate(
+            int creditsCost,
+            int materialsCost);
+        public delegate bool TryResolveUnitResourceCostsDelegate(
+            GameObject prefab,
+            int fallbackMaterialsCost,
+            out int creditsCost,
+            out int materialsCost);
         public delegate bool TryGetConfiguredUnitReadModelDelegate(
             int index,
             out GameObject prefab,
@@ -163,6 +171,9 @@ namespace Game.Runtime
             public readonly TryGetConfiguredUnitReadModelDelegate TryGetConfiguredUnitReadModel;
             public readonly TryGetEntityManagerDelegate TryGetEntityManager;
             public readonly EvaluateConstructionResourcesDelegate EvaluateConstructionResources;
+            public readonly TryResolveUnitResourceCostsDelegate TryResolveUnitResourceCosts;
+            public readonly MutateConstructionResourcesDelegate TrySpendConstructionResources;
+            public readonly MutateConstructionResourcesDelegate TryRestoreConstructionResources;
             public readonly UpdateOperationMapProductionDeliveryDelegate UpdateOperationMapProductionDelivery;
             public readonly UpdateOperationMapProductionDeliveryLifecycleDelegate UpdateOperationMapProductionDeliveryLifecycle;
 
@@ -198,7 +209,10 @@ namespace Game.Runtime
                 TryGetEntityManagerDelegate tryGetEntityManager = null,
                 EvaluateConstructionResourcesDelegate evaluateConstructionResources = null,
                 UpdateOperationMapProductionDeliveryDelegate updateOperationMapProductionDelivery = null,
-                UpdateOperationMapProductionDeliveryLifecycleDelegate updateOperationMapProductionDeliveryLifecycle = null)
+                UpdateOperationMapProductionDeliveryLifecycleDelegate updateOperationMapProductionDeliveryLifecycle = null,
+                TryResolveUnitResourceCostsDelegate tryResolveUnitResourceCosts = null,
+                MutateConstructionResourcesDelegate trySpendConstructionResources = null,
+                MutateConstructionResourcesDelegate tryRestoreConstructionResources = null)
             {
                 RuntimeBuildings = runtimeBuildings;
                 ConfiguredSpawnableDefinitions = configuredSpawnableDefinitions;
@@ -230,6 +244,9 @@ namespace Game.Runtime
                 TryGetConfiguredUnitReadModel = tryGetConfiguredUnitReadModel;
                 TryGetEntityManager = tryGetEntityManager;
                 EvaluateConstructionResources = evaluateConstructionResources;
+                TryResolveUnitResourceCosts = tryResolveUnitResourceCosts;
+                TrySpendConstructionResources = trySpendConstructionResources;
+                TryRestoreConstructionResources = tryRestoreConstructionResources;
                 UpdateOperationMapProductionDelivery = updateOperationMapProductionDelivery;
                 UpdateOperationMapProductionDeliveryLifecycle = updateOperationMapProductionDeliveryLifecycle;
             }
@@ -577,146 +594,6 @@ namespace Game.Runtime
                 preserveActiveProgress: pendingProductionIndex > 0);
             resultCode = BuildingUiProductionCommandResultElement.Cancelled;
             return true;
-        }
-
-        public CampRequestFailure GetCampRequestFailure(Context context, GameObject prefab, int price, out string requiredBuildingDisplayName)
-        {
-            requiredBuildingDisplayName = string.Empty;
-            if (prefab == null)
-                return CampRequestFailure.InvalidSelection;
-
-            if (context.ConfiguredDefinitionsByPrefab != null &&
-                context.ConfiguredDefinitionsByPrefab.TryGetValue(prefab, out BuildingDefinition buildingDefinition))
-            {
-                int materialsCost = Mathf.Max(0, buildingDefinition?.MaterialsCost ?? 0);
-                if (context.EvaluateConstructionResources == null)
-                    return context.ResourceMaterials < materialsCost ? CampRequestFailure.InsufficientMaterials : CampRequestFailure.None;
-
-                return BuildingCampItemCommandPolicySystemHelper.MapConstructionResourceFailure(
-                    context.EvaluateConstructionResources(0, materialsCost));
-            }
-
-            int normalizedPrice = Mathf.Max(0, price);
-            if (context.ResourceMaterials < normalizedPrice)
-                return CampRequestFailure.InsufficientMaterials;
-
-            if (!TryFindFirstFriendlyProducerBuilding(context, prefab, requireQueueCapacity: false, out _, out _, out string producerDisplayName))
-            {
-                if (TryFindFirstFriendlyOperationMapProducer(
-                        context,
-                        prefab,
-                        out Entity operationMapProducer,
-                        out _,
-                        out _) &&
-                    context.TryGetEntityManager != null &&
-                    context.TryGetEntityManager(out EntityManager em) &&
-                    em.HasComponent<OperationMapBuildingProductionQueueComponent>(operationMapProducer) &&
-                    em.HasBuffer<OperationMapBuildingUnitProductionRequest>(operationMapProducer))
-                {
-                    return HasGlobalQueueCapacity(context)
-                        ? CampRequestFailure.None
-                        : CampRequestFailure.GlobalProductionQueueFull;
-                }
-
-                TryGetRequiredProducerDisplayName(context, prefab, out requiredBuildingDisplayName);
-                return CampRequestFailure.MissingProducerBuilding;
-            }
-
-            if (!HasGlobalQueueCapacity(context))
-                return CampRequestFailure.GlobalProductionQueueFull;
-
-            if (TryFindFirstFriendlyProducerBuilding(context, prefab, requireQueueCapacity: true, out _, out _, out _))
-                return CampRequestFailure.None;
-
-            requiredBuildingDisplayName = producerDisplayName;
-            return CampRequestFailure.ProductionQueueFull;
-        }
-
-        public CampRequestFailure TryRequestCampItem(
-            Context context,
-            GameObject prefab,
-            int price,
-            bool focusProducerOnSuccess,
-            int frameCount,
-            out string requiredBuildingDisplayName)
-        {
-            CampRequestFailure failure = GetCampRequestFailure(context, prefab, price, out requiredBuildingDisplayName);
-            if (failure != CampRequestFailure.None)
-                return failure;
-
-            if (context.ConfiguredDefinitionsByPrefab != null && context.ConfiguredDefinitionsByPrefab.ContainsKey(prefab))
-            {
-                if (context.BeginPlacementForConfiguredSpawnable == null || !context.BeginPlacementForConfiguredSpawnable(prefab))
-                    return CampRequestFailure.InvalidSelection;
-
-                return CampRequestFailure.None;
-            }
-
-            if (!HasGlobalQueueCapacity(context))
-                return CampRequestFailure.GlobalProductionQueueFull;
-
-            if (!TryFindFirstFriendlyProducerBuilding(context, prefab, requireQueueCapacity: true, out int producerBuildingId, out int productionIndex, out _))
-            {
-                if (TryFindFirstFriendlyProducerBuilding(context, prefab, requireQueueCapacity: false, out _, out _, out string fullProducerDisplayName))
-                {
-                    requiredBuildingDisplayName = fullProducerDisplayName;
-                    return CampRequestFailure.ProductionQueueFull;
-                }
-
-                if (TryFindFirstFriendlyOperationMapProducer(context, prefab, out _, out _, out _))
-                {
-                    if (context.TrySpendMaterials == null || !context.TrySpendMaterials(price))
-                        return CampRequestFailure.InsufficientMaterials;
-
-                    if (!TryEnqueueFriendlyOperationMapProduction(
-                            context,
-                            prefab,
-                            Time.time,
-                            out _,
-                            out _,
-                            out _))
-                    {
-                        context.RefundMaterials?.Invoke(Mathf.Max(0, price));
-                        return HasGlobalQueueCapacity(context)
-                            ? CampRequestFailure.InvalidSelection
-                            : CampRequestFailure.GlobalProductionQueueFull;
-                    }
-
-                    context.RecordUnitOrdered?.Invoke(prefab);
-                    return CampRequestFailure.None;
-                }
-
-                TryGetRequiredProducerDisplayName(context, prefab, out requiredBuildingDisplayName);
-                return CampRequestFailure.MissingProducerBuilding;
-            }
-
-            if (context.TrySpendMaterials == null || !context.TrySpendMaterials(price))
-                return CampRequestFailure.InsufficientMaterials;
-
-            if (context.RuntimeBuildings == null ||
-                !context.RuntimeBuildings.TryGetValue(producerBuildingId, out RuntimeBuildingEntity producerBuilding) ||
-                producerBuilding == null)
-            {
-                context.RefundMaterials?.Invoke(Mathf.Max(0, price));
-                return CampRequestFailure.InvalidSelection;
-            }
-
-            if (focusProducerOnSuccess)
-                SelectBuildingForProductionRequest(context, producerBuilding, prefab);
-
-            if (!TryCreateUnitFromBuilding(context, producerBuildingId, productionIndex, frameCount, frameCount, out byte resultCode))
-            {
-                context.RefundMaterials?.Invoke(Mathf.Max(0, price));
-                return resultCode switch
-                {
-                    BuildingUiProductionCommandResultElement.GlobalQueueFull => CampRequestFailure.GlobalProductionQueueFull,
-                    BuildingUiProductionCommandResultElement.QueueFull => CampRequestFailure.ProductionQueueFull,
-                    _ => CampRequestFailure.InvalidSelection
-                };
-            }
-
-            context.RecordUnitOrdered?.Invoke(prefab);
-            return CampRequestFailure.None;
         }
 
         public int EnqueueCampItemRequest(

@@ -5,7 +5,7 @@ using Game.Components;
 
 namespace Game.Runtime
 {
-    internal sealed class BuildingProductionCompositionSystemHelper
+    internal sealed partial class BuildingProductionCompositionSystemHelper
     {
         public BuildingProductionContextCompositionSystemHelper.Source CreateRuntimeContextSource(
             BuildingGameplaySourceCompositionSystemHelper source,
@@ -72,10 +72,14 @@ namespace Game.Runtime
                 runtimeSource.GetEffectivePlacementRect,
                 source.PrepareTransportDropVisual,
                 source.RuntimeFactionResourceSystemHelper.EvaluateConstructionResources,
-                source.BuildingGameplayEcsQueryCompositionSystemHelper.AIOilInputSystemHelper.TryResolveFactionAIOilAllocationInput);
+                source.BuildingGameplayEcsQueryCompositionSystemHelper.AIOilInputSystemHelper.TryResolveFactionAIOilAllocationInput,
+                source.BuildingDefinitionPrefabSystemHelper.TryResolveConfiguredUnitResourceCosts,
+                source.RuntimeFactionResourceSystemHelper.TrySpendConstructionResources,
+                source.RuntimeFactionResourceSystemHelper.TryRestoreConstructionResources);
             return productionSource;
         }
 
+        // Preserve the no-EntityManager placement fallback used by editor-first production tests.
         private static bool EnqueueAndProcessBeginPlacementForConfiguredSpawnable(
             BuildingGameplaySourceCompositionSystemHelper source,
             BuildingPlacementCommandRequestCompositionSystemHelper.Context context,
@@ -84,20 +88,6 @@ namespace Game.Runtime
             return source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager entityManager)
                 ? source.BuildingPlacementCommandRequestCompositionSystemHelper.EnqueueAndProcessBeginPlacementForConfiguredSpawnable(entityManager, context, prefab)
                 : BeginPlacementForConfiguredSpawnableWithoutEntityManager(context, prefab);
-        }
-
-        private static bool BeginPlacementForConfiguredSpawnableWithoutEntityManager(
-            BuildingPlacementCommandRequestCompositionSystemHelper.Context context,
-            GameObject prefab)
-        {
-            if (context.DefinitionSystem == null ||
-                !context.DefinitionSystem.TryGetConfiguredDefinition(prefab, out BuildingDefinition definition))
-            {
-                return false;
-            }
-
-            context.SessionSystem?.BeginPlacement(context.SessionContext, definition);
-            return true;
         }
     }
 }

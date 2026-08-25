@@ -212,8 +212,11 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             var tests = new BuildingProductionQueueCompositionSystemHelperTests();
             tests.OperationMapCampProductionBridge_PreflightRecognizesCanonicalTent();
             tests.OperationMapCampProductionBridge_SpendsOnceAndQueuesCanonicalRequest();
+            tests.OperationMapCampProductionBridge_AtomicConstructionResourcesSpendOnceAndQueueCanonicalRequest();
+            tests.OperationMapCampProductionBridge_AtomicConstructionResourcesRejectBeforeSpend();
+            tests.OperationMapCampProductionBridge_AtomicConstructionResourcesRestoreAfterQueueFailure();
             tests.OperationMapCampProductionBridge_CombinedGlobalLimitRejectsBeforeSpend();
-            Debug.Log("[OperationMapCampProductionBridgeValidation] result=Passed tests=3");
+            Debug.Log("[OperationMapCampProductionBridgeValidation] result=Passed tests=6");
             ValidationExit.Passed();
         }
         catch (Exception ex)
@@ -257,7 +260,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             RunValidationSuite(RunProductionCameraFocusValidation);
             RunValidationSuite(RtsSelectionInputSystemTests.RunFocusedValidation);
             RunValidationSuite(MatchHudSquadTraySelectionUiSystemHelperTests.RunFocusedValidation);
-            Debug.Log("[EditorFirstProductionFunctionalBatchValidation] result=Passed suites=8 tests=93");
+            Debug.Log("[EditorFirstProductionFunctionalBatchValidation] result=Passed suites=8 tests=96");
             ValidationExit.Passed();
         }
         catch (Exception ex)
@@ -3190,6 +3193,185 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     }
 
     [Test]
+    public void OperationMapCampProductionBridge_AtomicConstructionResourcesSpendOnceAndQueueCanonicalRequest()
+    {
+        using var world = new World(nameof(OperationMapCampProductionBridge_AtomicConstructionResourcesSpendOnceAndQueueCanonicalRequest));
+        EntityManager em = world.EntityManager;
+        GameObject unitPrefab = new("Mission 2 Rifleman");
+        try
+        {
+            Entity prefabEntity = CreateOperationMapUnitPrefab(em);
+            Entity producer = CreateOperationMapProducer(
+                em, prefabEntity, unitPrefab.name, FactionIdentity.PlayerFactionId, 4, "Mission 2 Barracks");
+            int credits = 15000;
+            int materials = 30;
+            int spendCount = 0;
+            int restoreCount = 0;
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                new BuildingProductionQueueCompositionSystemHelper(),
+                unitPrefab,
+                em,
+                evaluateConstructionResources: (_, _) => FactionConstructionResourceMutationResult.Applied,
+                tryResolveUnitResourceCosts: ResolveMission2RifleCosts,
+                trySpendConstructionResources: (creditsCost, materialsCost) =>
+                {
+                    spendCount++;
+                    credits -= creditsCost;
+                    materials -= materialsCost;
+                    return FactionConstructionResourceMutationResult.Applied;
+                },
+                tryRestoreConstructionResources: (creditsCost, materialsCost) =>
+                {
+                    restoreCount++;
+                    credits += creditsCost;
+                    materials += materialsCost;
+                    return FactionConstructionResourceMutationResult.Applied;
+                });
+
+            var requestSystem = new BuildingProductionRequestSystemHelper();
+            Assert.AreEqual(
+                BuildingUiCommandSystemHelper.CampRequestFailure.None,
+                requestSystem.TryRequestCampItem(
+                    context,
+                    unitPrefab,
+                    price: 20,
+                    focusProducerOnSuccess: false,
+                    frameCount: 1,
+                    out _));
+
+            Assert.AreEqual(1, spendCount);
+            Assert.AreEqual(0, restoreCount);
+            Assert.AreEqual(5000, credits);
+            Assert.AreEqual(10, materials);
+            Assert.AreEqual(1, em.GetBuffer<OperationMapBuildingUnitProductionRequest>(producer, true).Length);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
+    public void OperationMapCampProductionBridge_AtomicConstructionResourcesRejectBeforeSpend()
+    {
+        using var world = new World(nameof(OperationMapCampProductionBridge_AtomicConstructionResourcesRejectBeforeSpend));
+        EntityManager em = world.EntityManager;
+        GameObject unitPrefab = new("Mission 2 Rifleman");
+        try
+        {
+            Entity prefabEntity = CreateOperationMapUnitPrefab(em);
+            Entity producer = CreateOperationMapProducer(
+                em, prefabEntity, unitPrefab.name, FactionIdentity.PlayerFactionId, 5, "Mission 2 Barracks");
+            int spendCount = 0;
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                new BuildingProductionQueueCompositionSystemHelper(),
+                unitPrefab,
+                em,
+                evaluateConstructionResources: (_, _) => FactionConstructionResourceMutationResult.InsufficientCredits,
+                tryResolveUnitResourceCosts: ResolveMission2RifleCosts,
+                trySpendConstructionResources: (_, _) =>
+                {
+                    spendCount++;
+                    return FactionConstructionResourceMutationResult.Applied;
+                },
+                tryRestoreConstructionResources: (_, _) => FactionConstructionResourceMutationResult.Applied);
+
+            var requestSystem = new BuildingProductionRequestSystemHelper();
+            Assert.AreEqual(
+                BuildingUiCommandSystemHelper.CampRequestFailure.InsufficientCredits,
+                requestSystem.TryRequestCampItem(
+                    context,
+                    unitPrefab,
+                    price: 20,
+                    focusProducerOnSuccess: false,
+                    frameCount: 1,
+                    out _));
+            Assert.AreEqual(0, spendCount);
+            Assert.AreEqual(0, em.GetBuffer<OperationMapBuildingUnitProductionRequest>(producer, true).Length);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
+    public void OperationMapCampProductionBridge_AtomicConstructionResourcesRestoreAfterQueueFailure()
+    {
+        using var world = new World(nameof(OperationMapCampProductionBridge_AtomicConstructionResourcesRestoreAfterQueueFailure));
+        GameObject unitPrefab = new("Mission 2 Rifleman");
+        try
+        {
+            RuntimeBuildingEntity producer = CreateProducerBuilding(
+                id: 40,
+                displayName: "Mission 2 Barracks",
+                unitPrefab,
+                hasOwnerFaction: true,
+                ownerFactionId: FactionIdentity.PlayerFactionId);
+            var runtimeBuildings = new Dictionary<int, RuntimeBuildingEntity> { [producer.Id] = producer };
+            int credits = 15000;
+            int materials = 30;
+            int spendCount = 0;
+            int restoreCount = 0;
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
+                runtimeBuildings,
+                new BuildingProductionQueueCompositionSystemHelper(),
+                unitPrefab,
+                world.EntityManager,
+                tryQueuePlayerUnit: (_, _, _) => false,
+                evaluateConstructionResources: (_, _) => FactionConstructionResourceMutationResult.Applied,
+                tryResolveUnitResourceCosts: ResolveMission2RifleCosts,
+                trySpendConstructionResources: (creditsCost, materialsCost) =>
+                {
+                    spendCount++;
+                    credits -= creditsCost;
+                    materials -= materialsCost;
+                    return FactionConstructionResourceMutationResult.Applied;
+                },
+                tryRestoreConstructionResources: (creditsCost, materialsCost) =>
+                {
+                    restoreCount++;
+                    credits += creditsCost;
+                    materials += materialsCost;
+                    return FactionConstructionResourceMutationResult.Applied;
+                });
+
+            var requestSystem = new BuildingProductionRequestSystemHelper();
+            Assert.AreEqual(
+                BuildingUiCommandSystemHelper.CampRequestFailure.ProductionQueueFull,
+                requestSystem.TryRequestCampItem(
+                    context,
+                    unitPrefab,
+                    price: 20,
+                    focusProducerOnSuccess: false,
+                    frameCount: 1,
+                    out _));
+            Assert.AreEqual(1, spendCount);
+            Assert.AreEqual(1, restoreCount);
+            Assert.AreEqual(15000, credits);
+            Assert.AreEqual(30, materials);
+            Assert.AreEqual(0, producer.PendingProductions.Count);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    private static bool ResolveMission2RifleCosts(
+        GameObject prefab,
+        int fallbackMaterialsCost,
+        out int creditsCost,
+        out int materialsCost)
+    {
+        creditsCost = prefab != null ? 10000 : 0;
+        materialsCost = prefab != null ? 20 : fallbackMaterialsCost;
+        return prefab != null;
+    }
+
+    [Test]
     public void OperationMapCampProductionBridge_CombinedGlobalLimitRejectsBeforeSpend()
     {
         using var world = new World(nameof(OperationMapCampProductionBridge_CombinedGlobalLimitRejectsBeforeSpend));
@@ -5178,7 +5360,11 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         BuildingProductionRequestSystemHelper.RefundMaterialsDelegate refundMaterials = null,
         int maxQueuedUnitProductions = 25,
         BuildingProductionRequestSystemHelper.UpdateOperationMapProductionDeliveryDelegate updateOperationMapProductionDelivery = null,
-        BuildingProductionRequestSystemHelper.UpdateOperationMapProductionDeliveryLifecycleDelegate updateOperationMapProductionDeliveryLifecycle = null)
+        BuildingProductionRequestSystemHelper.UpdateOperationMapProductionDeliveryLifecycleDelegate updateOperationMapProductionDeliveryLifecycle = null,
+        BuildingProductionRequestSystemHelper.EvaluateConstructionResourcesDelegate evaluateConstructionResources = null,
+        BuildingProductionRequestSystemHelper.TryResolveUnitResourceCostsDelegate tryResolveUnitResourceCosts = null,
+        BuildingProductionRequestSystemHelper.MutateConstructionResourcesDelegate trySpendConstructionResources = null,
+        BuildingProductionRequestSystemHelper.MutateConstructionResourcesDelegate tryRestoreConstructionResources = null)
     {
         var unitPrefabs = new List<GameObject> { unitPrefab };
         var unitPrefabsByKey = new Dictionary<string, GameObject>
@@ -5233,8 +5419,12 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             (_, _) => 0,
             (_, _) => 0,
             tryGetEntityManager: TryGetEntityManager,
+            evaluateConstructionResources: evaluateConstructionResources,
             updateOperationMapProductionDelivery: updateOperationMapProductionDelivery,
-            updateOperationMapProductionDeliveryLifecycle: updateOperationMapProductionDeliveryLifecycle);
+            updateOperationMapProductionDeliveryLifecycle: updateOperationMapProductionDeliveryLifecycle,
+            tryResolveUnitResourceCosts: tryResolveUnitResourceCosts,
+            trySpendConstructionResources: trySpendConstructionResources,
+            tryRestoreConstructionResources: tryRestoreConstructionResources);
     }
 
     private static Entity CreateOperationMapProducer(

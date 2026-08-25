@@ -1,8 +1,8 @@
 # M02 Establish The Base Implementation Tracker
 
 Date: 2026-08-25
-Status: Active; M02EB-015 accepted and M02EB-016 dependency-ready
-Progress: 15/34 accepted items (44.1%)
+Status: Active; M02EB-016 accepted and M02EB-017 dependency-ready
+Progress: 16/34 accepted items (47.1%)
 Parent design: `Design/SagaChapters/Saga_Chapter01_First_Response.md` (`M02 Detailed Spec`)
 Technical architecture: `Design/Architecture/m02_establish_base_technical_architecture.md`
 Mission: `saga.ch01.m02.establish_base`
@@ -158,9 +158,10 @@ Every item records an exact path allowlist before editing. Unexpected user chang
   **Acceptance:** the sole mission fact owner observes authoritative completion monotonically; UI/tutorial cannot forge it.
   **Evidence:** the existing attempt-facts schema now carries additive required-building placed/completed counts, while one Burst-capable unmanaged projection system resolves the exact `BuildStructure` target and count from the active mission definition. Each attempt captures the existing building-request maximum as a replay-safe baseline, then accepts only a post-baseline successful player-owned `KindBuilding` request for `Building_Barrack` that correlates to one live authoritative `RuntimeBuildingCombatInfo` entity with matching faction, runtime id, origin, footprint, and valid authored health. Successful requests without ECS buildings, ECS buildings without successful transactions, pre-attempt results, failed/wrong/non-player requests, and ambiguous objective definitions fail closed; accepted counts remain monotonic after later removal. Retry/session/source changes establish a new baseline, M01/default-disabled mission runtime remains unchanged, and the fact is ready for the sole objective writer's planned M02 generalization in M02EB-020 without adding a second writer. `[M02EstablishBaseObjectiveValidation] result=Passed tests=10`; `[M02EstablishBasePlacementValidation] result=Passed tests=8`; `[BuildingPlacementConstructionTransactionValidation] result=Passed tests=6`; `[BuildingPlacementCommitFocusedValidation] result=Passed tests=5`; `[BuildingPlacementLiveOccupancyValidation] result=Passed tests=2`; `[M02EstablishBaseBuildCatalogValidation] result=Passed tests=7`; `[M02EstablishBaseConsolidatedDataValidation] result=Passed suites=5`; `[M01FirstContactConsolidatedContractValidation] result=Passed suites=23`; `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; `[M02EstablishBasePlacementRegressionValidation] result=Passed suites=8`; `[M02EstablishBaseObjectiveRegressionValidation] result=Passed suites=2`; compiler errors are zero. Wrapper-launched live-Editor log: `/private/tmp/warline-m02eb-011-live-editor.log`.
 
-- [ ] **M02EB-016 - Queue and complete the required rifle squad**
+- [x] **M02EB-016 - Queue and complete the required rifle squad**
   **Depends on:** M02EB-006 and M02EB-015.
   **Acceptance:** affordability, queue, timer, spawn, faction, selection, read model, and one-time spend use existing production owners.
+  **Evidence:** the existing unit-definition metadata owner now projects the canonical rifle's distinct 10,000-Credit and 20-Material costs while preserving the established Materials-facing catalog price. The sole camp production request path evaluates and spends both resources atomically through `RuntimeFactionResourceSystemHelper`, restores both exactly once after any rejected queue mutation, and preserves the legacy Materials-only fallback for callers without the additive transaction delegates. Both runtime-building and operation-map producer paths retain their established queue, five-second timer, ECS spawn, player-faction, focus/selection, and produced-unit read-model owners; no M02-only queue, scheduler, spawner, or resource ledger was added. `[M02EstablishBaseProductionValidation] result=Passed tests=8`; `[OperationMapCampProductionBridgeValidation] result=Passed tests=6`; `[EditorFirstProductionFunctionalBatchValidation] result=Passed suites=8 tests=96`; `[M02EstablishBaseObjectiveValidation] result=Passed tests=10`; `[M01FirstContactConsolidatedContractValidation] result=Passed suites=23`; `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; `[M02EstablishBaseProductionRegressionValidation] result=Passed suites=5`; compiler errors are zero. Wrapper-launched live-Editor log: `/private/tmp/warline-m02eb-011-live-editor.log`.
 
 - [ ] **M02EB-017 - Project produced-unit completion into mission facts and objectives**
   **Depends on:** M02EB-016.
@@ -277,17 +278,17 @@ The first user review occurs at M02EB-029:
 | 2026-08-25 | M02EB-013 projected the canonical Barracks-only mission catalog through the existing Campaign blob/UI gateway and applied a bounded reusable Build Drawer source filter; unrestricted catalogs remain exact, missing definitions fail closed, and all six focused/shared regression suites pass. | Accepted |
 | 2026-08-25 | M02EB-014 routed the exact mission build lot through the existing placement preview/confirm owner, rejected out-of-zone and stale-data placement visibly, corrected the authoritative transaction to spend and roll back both Credits and Materials exactly once, and passed all eight focused/shared suites without source-growth regression. | Accepted |
 | 2026-08-25 | M02EB-015 added one unmanaged, attempt-correlated Barracks fact projection that requires a post-baseline successful authoritative building transaction plus its matching live ECS building, advances monotonically, rejects stale/forged/unrelated state, and preserves the sole objective writer for M02EB-020. | Accepted |
+| 2026-08-25 | M02EB-016 routed the required rifle through the existing production owners with exact dual-resource preflight/spend/rollback, five-second queue completion, authoritative ECS spawn/faction/read-model projection, and no parallel M02 production implementation. | Accepted |
 
 ## 8. Current Validation And Blockers
 
 | Item | Result | Evidence |
 |---|---|---|
-| M02EB-015 authoritative fact projection | Passed | `[M02EstablishBaseObjectiveValidation] result=Passed tests=10`; transaction plus matching live ECS building required; replay baseline and monotonicity proven |
-| Placement/construction boundary | Passed | `[M02EstablishBasePlacementValidation] result=Passed tests=8`; `[BuildingPlacementConstructionTransactionValidation] result=Passed tests=6`; `[BuildingPlacementCommitFocusedValidation] result=Passed tests=5`; `[BuildingPlacementLiveOccupancyValidation] result=Passed tests=2` |
-| Mission build catalog | Passed | `[M02EstablishBaseBuildCatalogValidation] result=Passed tests=7` |
-| Canonical M02 data | Passed | `[M02EstablishBaseConsolidatedDataValidation] result=Passed suites=5` |
+| M02EB-016 rifle production | Passed | `[M02EstablishBaseProductionValidation] result=Passed tests=8`; exact 10,000 Credits plus 20 Materials, one-time spend/restore, five-second timer, spawn, player faction, focus, selection, and read model proven |
+| Shared production owners | Passed | `[OperationMapCampProductionBridgeValidation] result=Passed tests=6`; `[EditorFirstProductionFunctionalBatchValidation] result=Passed suites=8 tests=96` |
+| M02 objective compatibility | Passed | `[M02EstablishBaseObjectiveValidation] result=Passed tests=10` |
 | Shared M01 compatibility | Passed | `[M01FirstContactConsolidatedContractValidation] result=Passed suites=23` |
-| Consolidated M02 fact regressions | Passed | `[M02EstablishBasePlacementRegressionValidation] result=Passed suites=8`; `[M02EstablishBaseObjectiveRegressionValidation] result=Passed suites=2` |
+| Consolidated M02 production regressions | Passed | `[M02EstablishBaseProductionRegressionValidation] result=Passed suites=5` |
 | Architecture/source growth | Passed | `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; zero compiler errors |
 
-No blocker prevents M02EB-016. Android/Samsung certification remains owner-deferred and is not counted as passed. Final comic and voice production remains gated by M02EB-029.
+No blocker prevents M02EB-017. Android/Samsung certification remains owner-deferred and is not counted as passed. Final comic and voice production remains gated by M02EB-029.

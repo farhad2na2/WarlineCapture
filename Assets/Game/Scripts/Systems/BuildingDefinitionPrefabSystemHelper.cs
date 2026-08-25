@@ -11,7 +11,7 @@ namespace Game.Runtime
     using ConfiguredSpawnableEntry = BuildingUiCommandSystemHelper.ConfiguredSpawnableEntry;
     using ConfiguredUnitEntry = BuildingUiCommandSystemHelper.ConfiguredUnitEntry;
 
-    internal sealed class BuildingDefinitionPrefabSystemHelper
+    internal sealed partial class BuildingDefinitionPrefabSystemHelper
     {
         public delegate void ObjectAction(UnityEngine.Object target);
         public delegate bool TryGetBuildingDefinitionMetadataDelegate(GameObject prefab, out BuildingDefinitionMetadata metadata);
@@ -70,6 +70,7 @@ namespace Game.Runtime
             public Vector2Int FootprintCells;
             public bool CanRequest;
             public int Price;
+            public int CreditsCost;
         }
 
         private sealed class CachedRuntimeBuildingMetadata
@@ -349,27 +350,6 @@ namespace Game.Runtime
             price = entry.Price;
             canRequest = entry.CanRequest;
             return true;
-        }
-
-        private ConfiguredUnitEntry BuildConfiguredUnitEntry(GameObject prefab)
-        {
-            bool hasMetadata = TryGetUnitDefinitionMetadata(prefab, out UnitDefinitionMetadata metadata);
-            string displayName = ResolveConfiguredUnitDisplayName(prefab, hasMetadata, metadata);
-            string description = hasMetadata ? metadata.Description : string.Empty;
-            Vector2Int footprint = hasMetadata ? metadata.FootprintCells : Vector2Int.one;
-            bool isVehicle = footprint.x > 1 ||
-                             footprint.y > 1 ||
-                             (prefab != null && prefab.name.IndexOf("Veh", System.StringComparison.OrdinalIgnoreCase) >= 0);
-            int price = hasMetadata ? metadata.Price : (isVehicle ? 15000 : 10000);
-            return new ConfiguredUnitEntry(displayName, description, prefab, isVehicle, !hasMetadata || metadata.CanRequest, price);
-        }
-
-        private static string ResolveConfiguredUnitDisplayName(GameObject prefab, bool hasMetadata, UnitDefinitionMetadata metadata)
-        {
-            if (hasMetadata && !string.IsNullOrWhiteSpace(metadata.DisplayName))
-                return metadata.DisplayName;
-
-            return prefab != null ? prefab.name : "Unit";
         }
 
         public BuildingDefinition CreateRuntimeBuildingDefinition(

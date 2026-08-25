@@ -7,7 +7,7 @@ using Game.Components;
 
 namespace Game.Runtime
 {
-    internal sealed class BuildingProductionContextCompositionSystemHelper
+    internal sealed partial class BuildingProductionContextCompositionSystemHelper
     {
         public readonly struct Source
         {
@@ -53,6 +53,9 @@ namespace Game.Runtime
             public readonly BuildingResourceHaulerBridgeCompositionSystemHelper.TryResolveFactionAIOilAllocationInputDelegate TryResolveFactionAIOilAllocationInput;
             public readonly BuildingProductionTransportPresentationSystemHelper.PrepareTransportDropVisualDelegate PrepareTransportDropVisual;
             public readonly BuildingProductionRequestSystemHelper.EvaluateConstructionResourcesDelegate EvaluateConstructionResources;
+            public readonly BuildingProductionRequestSystemHelper.TryResolveUnitResourceCostsDelegate TryResolveUnitResourceCosts;
+            public readonly BuildingProductionRequestSystemHelper.MutateConstructionResourcesDelegate TrySpendConstructionResources;
+            public readonly BuildingProductionRequestSystemHelper.MutateConstructionResourcesDelegate TryRestoreConstructionResources;
 
             public Source(
                 IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
@@ -96,7 +99,10 @@ namespace Game.Runtime
                 BuildingResourceHaulerBridgeCompositionSystemHelper.GetEffectivePlacementRectDelegate getEffectivePlacementRect,
                 BuildingProductionTransportPresentationSystemHelper.PrepareTransportDropVisualDelegate prepareTransportDropVisual = null,
                 BuildingProductionRequestSystemHelper.EvaluateConstructionResourcesDelegate evaluateConstructionResources = null,
-                BuildingResourceHaulerBridgeCompositionSystemHelper.TryResolveFactionAIOilAllocationInputDelegate tryResolveFactionAIOilAllocationInput = null)
+                BuildingResourceHaulerBridgeCompositionSystemHelper.TryResolveFactionAIOilAllocationInputDelegate tryResolveFactionAIOilAllocationInput = null,
+                BuildingProductionRequestSystemHelper.TryResolveUnitResourceCostsDelegate tryResolveUnitResourceCosts = null,
+                BuildingProductionRequestSystemHelper.MutateConstructionResourcesDelegate trySpendConstructionResources = null,
+                BuildingProductionRequestSystemHelper.MutateConstructionResourcesDelegate tryRestoreConstructionResources = null)
             {
                 RuntimeBuildings = runtimeBuildings;
                 WorldCamera = worldCamera;
@@ -140,6 +146,9 @@ namespace Game.Runtime
                 TryResolveFactionAIOilAllocationInput = tryResolveFactionAIOilAllocationInput;
                 PrepareTransportDropVisual = prepareTransportDropVisual;
                 EvaluateConstructionResources = evaluateConstructionResources;
+                TryResolveUnitResourceCosts = tryResolveUnitResourceCosts;
+                TrySpendConstructionResources = trySpendConstructionResources;
+                TryRestoreConstructionResources = tryRestoreConstructionResources;
             }
         }
 
@@ -185,7 +194,10 @@ namespace Game.Runtime
             BuildingResourceHaulerBridgeCompositionSystemHelper.GetEffectivePlacementRectDelegate getEffectivePlacementRect,
             BuildingProductionTransportPresentationSystemHelper.PrepareTransportDropVisualDelegate prepareTransportDropVisual = null,
             BuildingProductionRequestSystemHelper.EvaluateConstructionResourcesDelegate evaluateConstructionResources = null,
-            BuildingResourceHaulerBridgeCompositionSystemHelper.TryResolveFactionAIOilAllocationInputDelegate tryResolveFactionAIOilAllocationInput = null)
+            BuildingResourceHaulerBridgeCompositionSystemHelper.TryResolveFactionAIOilAllocationInputDelegate tryResolveFactionAIOilAllocationInput = null,
+            BuildingProductionRequestSystemHelper.TryResolveUnitResourceCostsDelegate tryResolveUnitResourceCosts = null,
+            BuildingProductionRequestSystemHelper.MutateConstructionResourcesDelegate trySpendConstructionResources = null,
+            BuildingProductionRequestSystemHelper.MutateConstructionResourcesDelegate tryRestoreConstructionResources = null)
         {
             return new Source(
                 runtimeBuildings,
@@ -229,7 +241,10 @@ namespace Game.Runtime
                 getEffectivePlacementRect,
                 prepareTransportDropVisual,
                 evaluateConstructionResources,
-                tryResolveFactionAIOilAllocationInput);
+                tryResolveFactionAIOilAllocationInput,
+                tryResolveUnitResourceCosts,
+                trySpendConstructionResources,
+                tryRestoreConstructionResources);
         }
 
         public BuildingProductionUpdateCompositionSystemHelper.Context CreateProductionUpdateContext(Source source)
@@ -276,72 +291,6 @@ namespace Game.Runtime
                 source.SpawnContext,
                 () => source.IsBuildDrawerOpen?.Invoke() == true,
                 worldPosition => source.SmoothMoveCameraGroundCenterTo?.Invoke(worldPosition));
-        }
-
-        public BuildingProductionRequestSystemHelper.Context CreateProductionRequestContext(Source source)
-        {
-            source.ProductionSystem?.PrewarmPendingProductionPool();
-            source.ProductionSystem?.PrewarmProductionTransportSettings(
-                source.DefinitionSystem.ConfiguredUnitSpawnPrefabs,
-                source.DefinitionSystem.UnitSpawnPrefabsByKey,
-                BuildingDefinitionPrefabSystemHelper.TryGetPrefabLocalBounds);
-
-            return new BuildingProductionRequestSystemHelper.Context(
-                source.RuntimeBuildings,
-                source.DefinitionSystem.ConfiguredSpawnableDefinitions,
-                source.DefinitionSystem.ConfiguredDefinitionsByPrefab,
-                source.DefinitionSystem.ConfiguredUnitSpawnPrefabs,
-                source.DefinitionSystem.UnitSpawnPrefabsByKey,
-                source.ResourceMaterials,
-                source.MaxQueuedUnitProductions,
-                source.ProductionSystem,
-                CreateProductionQueueContext(source),
-                source.RunwaySystem,
-                BuildingDefinitionPrefabSystemHelper.GetProductionPrefab,
-                BuildingDefinitionPrefabSystemHelper.TryGetPrefabLocalBounds,
-                source.BeginPlacementForConfiguredSpawnable,
-                source.TrySpendMaterials,
-                source.RefundMaterials,
-                source.SetActivePlacementCost,
-                source.TryQueuePlayerUnit,
-                source.SelectRuntimeBuilding,
-                source.SuppressNextWorldClick,
-                source.RefreshBuildingMarkers,
-                source.ClearFocusedUnit,
-                source.SmoothMoveCameraGroundCenterTo,
-                source.ResolveBuildingFocusWorldPosition,
-                source.RecordUnitOrdered,
-                source.LogWarning,
-                source.CountPendingProductionsForFaction,
-                source.CountRuntimeProducedUnitsForFaction,
-                source.DefinitionSystem.TryGetConfiguredUnitReadModel,
-                source.TryGetEntityManager == null
-                    ? null
-                    : (BuildingProductionRequestSystemHelper.TryGetEntityManagerDelegate)(
-                        (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager)),
-                source.EvaluateConstructionResources,
-                source.TransportSystem == null || source.ProductionSystem == null
-                    ? null
-                    : (Entity producer, int requestId, GameObject unitPrefab, float3 dropPosition, float now) =>
-                    {
-                        BuildingProductionQueueCompositionSystemHelper.ProductionTransportSettings settings =
-                            source.ProductionSystem.ResolveProductionTransportSettings(
-                                unitPrefab,
-                                source.DefinitionSystem.ConfiguredUnitSpawnPrefabs,
-                                source.DefinitionSystem.UnitSpawnPrefabsByKey,
-                                BuildingDefinitionPrefabSystemHelper.TryGetPrefabLocalBounds);
-                        return source.TransportSystem.UpdateCanonicalOperationMapProductionDelivery(
-                            CreateProductionTransportContext(source),
-                            producer,
-                            requestId,
-                            unitPrefab,
-                            settings,
-                            dropPosition,
-                            now);
-                    },
-                source.TransportSystem == null
-                    ? null
-                    : now => source.TransportSystem.UpdateCanonicalOperationMapProductionDeliveryLifecycle(now));
         }
 
         public BuildingProductionQueueCompositionSystemHelper.QueueContext CreateProductionQueueContext(Source source)

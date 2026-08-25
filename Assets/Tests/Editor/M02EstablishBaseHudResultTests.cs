@@ -1,0 +1,218 @@
+#if UNITY_INCLUDE_TESTS && UNITY_EDITOR
+using System;
+using System.IO;
+using Game.Components;
+using Game.Missions.Contracts;
+using Game.UI.Contracts;
+using Game.UI.Shell.Ecs;
+using NUnit.Framework;
+using Unity.Collections;
+using Unity.Entities;
+using UnityEngine;
+
+public sealed class M02EstablishBaseHudResultTests
+{
+    private const string Marker =
+        "[M02EstablishBaseHudResultValidation] result=Passed tests=4";
+    private const string MissionId = "saga.ch01.m02.establish_base";
+
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            M02EstablishBaseHudResultTests tests = new();
+            tests.FirstClearResultCarriesDebriefAndM03RevealTruth();
+            tests.ReplayResultReturnsWithoutRepeatingFirstClearRewards();
+            tests.FirstClearButtonDefersRouteToDebriefOwner();
+            tests.DebriefOwnerReturnsThroughCampaignOperations();
+            Debug.Log(Marker);
+            ValidationExit.Passed();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[M02EstablishBaseHudResultValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
+    public static void RunRegressionValidation()
+    {
+        try
+        {
+            RunValidation(RunFocusedValidation);
+            RunValidation(M02EstablishBaseNarrativeTests.RunFocusedValidation);
+            RunValidation(M02EstablishBaseResultSettlementTests.RunFocusedValidation);
+            RunValidation(M02EstablishBaseCampaignUiTests.RunFocusedValidation);
+            RunValidation(M01FirstContactHudResultTests.RunFocusedValidation);
+            RunValidation(ProductionSourceGrowthArchitectureTests.RunFocusedValidation);
+            Debug.Log(
+                "[M02EstablishBaseHudResultRegressionValidation] result=Passed suites=6");
+            ValidationExit.Passed();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError(
+                "[M02EstablishBaseHudResultRegressionValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
+    [Test]
+    public void FirstClearResultCarriesDebriefAndM03RevealTruth()
+    {
+        UiMissionResultPopupModel model = ReadModel(firstClear: true);
+        Assert.AreEqual("ESTABLISH THE BASE • FORWARD POST", model.Subtitle);
+        StringAssert.Contains("Dalia Rahim accepts field-lead duty", model.SummaryBody);
+        StringAssert.Contains("warning sector has gone dark", model.SummaryBody);
+        StringAssert.Contains("BARRACKS UNLOCK", model.RewardsText);
+        Assert.AreEqual("DEBRIEF", model.PrimaryActionLabel);
+        Assert.IsTrue(model.FirstClear);
+        Assert.IsTrue(model.DebriefRequired);
+    }
+
+    [Test]
+    public void ReplayResultReturnsWithoutRepeatingFirstClearRewards()
+    {
+        UiMissionResultPopupModel model = ReadModel(firstClear: false);
+        Assert.AreEqual("CONTINUE", model.PrimaryActionLabel);
+        Assert.AreEqual("300 CREDITS", model.RewardsText);
+        StringAssert.DoesNotContain("field-lead", model.SummaryBody);
+        Assert.IsFalse(model.FirstClear);
+        Assert.IsFalse(model.DebriefRequired);
+    }
+
+    [Test]
+    public void FirstClearButtonDefersRouteToDebriefOwner()
+    {
+        string source = File.ReadAllText(
+            "Assets/Game/Scripts/UI/Screens/CampaignMissionHudResultBinder.cs");
+        StringAssert.Contains("!activeModel.DebriefRequired", source);
+    }
+
+    [Test]
+    public void DebriefOwnerReturnsThroughCampaignOperations()
+    {
+        string source = File.ReadAllText(
+            "Assets/Game/Scripts/Composition/Narrative/CampaignMissionDebriefCompositionSystemHelper.cs");
+        StringAssert.Contains("MissionPhaseKind.DebriefFirstClear", source);
+        StringAssert.Contains("UiShellRouteIntent.ReturnToMainMenu", source);
+        StringAssert.Contains("UIRoute.Campaign", source);
+        StringAssert.Contains("DebriefSequenceId", source);
+    }
+
+    private static UiMissionResultPopupModel ReadModel(bool firstClear)
+    {
+        World previous = World.DefaultGameObjectInjectionWorld;
+        using World world = new("M02 HUD result");
+        using BlobAssetReference<CampaignMissionCatalogBlob> blob = CreateCatalog();
+        try
+        {
+            EntityManager entityManager = world.EntityManager;
+            Entity root = entityManager.CreateEntity(typeof(CampaignMissionRootComponent));
+            FixedString64Bytes missionId = new(MissionId);
+            FixedString64Bytes session = new("m02-hud-result");
+            entityManager.AddComponentData(root, new CampaignMissionRuntimeComponent
+            {
+                MissionId = missionId,
+                ScenarioId = new FixedString64Bytes("scenario.ch01.m02.establish_base"),
+                OperationMapId = new FixedString64Bytes("opmap.ch01.forward_post_01"),
+                SessionToken = session,
+                Phase = MissionPhaseKind.Result,
+                Outcome = MissionOutcomeKind.Victory,
+                LaunchOrigin = MissionLaunchOriginKind.CampaignOperations,
+                RunKind = firstClear ? MissionRunKind.FirstClear : MissionRunKind.Replay,
+                ReturnDestination = MissionReturnDestinationKind.CampaignOperations,
+                Version = 8,
+                SourceVersion = 3,
+                AttemptOrdinal = 1,
+                DeterministicSeed = 2002001
+            });
+            entityManager.AddComponentData(root, new CampaignMissionResultComponent
+            {
+                MissionId = missionId,
+                SessionToken = session,
+                AttemptOrdinal = 1,
+                SourceVersion = 8,
+                Outcome = MissionOutcomeKind.Victory,
+                ReturnDestination = MissionReturnDestinationKind.CampaignOperations,
+                Stars = 3,
+                ElapsedMilliseconds = 210000
+            });
+            entityManager.AddComponentData(root, new CampaignMissionAttemptFactsComponent
+            {
+                HostileTotalCount = 3,
+                HostileDefeatedCount = 3
+            });
+            entityManager.AddComponentData(root, new CampaignMissionCatalogComponent
+            {
+                Blob = blob,
+                SourceVersion = 3,
+                OwnsBlob = 0
+            });
+            entityManager.AddBuffer<CampaignMissionSettlementResultElement>(root).Add(new()
+            {
+                SourceVersion = 8,
+                SessionToken = session,
+                Accepted = 1,
+                FirstClear = firstClear ? (byte)1 : (byte)0
+            });
+            World.DefaultGameObjectInjectionWorld = world;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+            Assert.IsTrue(UiShellEcsGateway.TryReadMissionResult(out UiMissionResultPopupModel model));
+            return model;
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previous;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+        }
+    }
+
+    private static BlobAssetReference<CampaignMissionCatalogBlob> CreateCatalog()
+    {
+        BlobBuilder builder = new(Allocator.Temp);
+        ref CampaignMissionCatalogBlob catalog = ref builder.ConstructRoot<CampaignMissionCatalogBlob>();
+        BlobBuilderArray<CampaignMissionDefinitionBlob> missions =
+            builder.Allocate(ref catalog.Missions, 1);
+        ref CampaignMissionDefinitionBlob definition = ref missions[0];
+        definition.MissionId = new FixedString64Bytes(MissionId);
+        definition.ScenarioId = new FixedString64Bytes("scenario.ch01.m02.establish_base");
+        definition.OperationMapId = new FixedString64Bytes("opmap.ch01.forward_post_01");
+        definition.DebriefSequenceId = new FixedString64Bytes("seq.ch01.m02.debrief");
+        BlobBuilderArray<CampaignMissionRewardBlob> first =
+            builder.Allocate(ref definition.FirstClearRewards, 3);
+        first[0] = Reward(MissionRewardKind.None, "reward.commander_xp", 320);
+        first[1] = Reward(MissionRewardKind.Credits, string.Empty, 1500);
+        first[2] = Reward(MissionRewardKind.None, "reward.ch01.m02.production_unlock", 1);
+        BlobBuilderArray<CampaignMissionRewardBlob> replay =
+            builder.Allocate(ref definition.ReplayRewards, 1);
+        replay[0] = Reward(MissionRewardKind.Credits, string.Empty, 300);
+        BlobAssetReference<CampaignMissionCatalogBlob> blob =
+            builder.CreateBlobAssetReference<CampaignMissionCatalogBlob>(Allocator.Persistent);
+        builder.Dispose();
+        return blob;
+    }
+
+    private static CampaignMissionRewardBlob Reward(
+        MissionRewardKind kind,
+        string id,
+        int amount) => new()
+    {
+        Kind = kind,
+        RewardConfigId = new FixedString64Bytes(id),
+        Amount = amount
+    };
+
+    private static void RunValidation(Action validation)
+    {
+        ValidationExit.ClearLastExitCode();
+        using (ValidationExit.SuppressProcessExit())
+            validation();
+        if (ValidationExit.LastExitCode is int exitCode && exitCode != 0)
+            throw new InvalidOperationException(
+                $"{validation.Method.DeclaringType?.Name}.{validation.Method.Name} failed validation.");
+    }
+}
+#endif

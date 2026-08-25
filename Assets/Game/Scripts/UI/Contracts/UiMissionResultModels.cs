@@ -30,6 +30,8 @@ namespace Game.UI.Contracts
         public readonly string PrimaryActionLabel;
         public readonly bool PrimaryActionEnabled;
         public readonly bool RetryVisible;
+        public readonly bool FirstClear;
+        public readonly bool DebriefRequired;
 
         public UiMissionResultPopupModel(
             UiMissionResultOutcome outcome,
@@ -53,13 +55,16 @@ namespace Game.UI.Contracts
             PrimaryActionLabel = string.Empty;
             PrimaryActionEnabled = false;
             RetryVisible = replayEnabled;
+            FirstClear = false;
+            DebriefRequired = false;
         }
 
         public UiMissionResultPopupModel(
             uint version, string missionId, UiMissionResultOutcome outcome, string title,
             string subtitle, string summaryBody, byte stars, string elapsedText,
             string squadLossText, string enemiesDefeatedText, string rewardsText,
-            string primaryActionLabel, bool primaryActionEnabled, bool retryVisible)
+            string primaryActionLabel, bool primaryActionEnabled, bool retryVisible,
+            bool firstClear = false, bool debriefRequired = false)
         {
             Version = version;
             MissionId = missionId ?? string.Empty;
@@ -76,6 +81,8 @@ namespace Game.UI.Contracts
             PrimaryActionLabel = primaryActionLabel ?? string.Empty;
             PrimaryActionEnabled = primaryActionEnabled;
             RetryVisible = retryVisible;
+            FirstClear = firstClear;
+            DebriefRequired = debriefRequired;
         }
 
         public static UiMissionResultPopupModel VictoryDefault =>

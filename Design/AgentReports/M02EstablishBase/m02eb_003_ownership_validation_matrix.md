@@ -178,6 +178,8 @@ Approved existing paths:
 - `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Actions.cs`
 - `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Assistant.cs`
 - `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Core.cs`
+- `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Mission.cs`
+- `Assets/Game/Scripts/UI/Contracts/UiMissionResultModels.cs`
 - `Assets/Game/Scripts/UI/Contracts/UiCampaignMissionModels.cs`
 - `Assets/Game/Scripts/UI/Shell/Ecs/Contracts/UiCampaignMissionComponents.cs`
 - `Assets/Game/Scripts/UI/Screens/CampaignMissionScreenBinder.cs`
@@ -221,6 +223,11 @@ Approved existing paths:
 - `Assets/Game/Scripts/Configs/Narrative/NarrativeSequenceConfig.cs`
 - `Assets/Game/Scripts/Configs/Narrative/NarrativeLocaleConfig.cs`
 - `Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeSequencePresentationSystemHelper.cs`
+- `Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs`
+- `Assets/Game/Scripts/Composition/MenuBootstrapView.cs`
+- `Assets/Game/Scenes/Menu.unity`
+- `Design/Architecture/production_source_growth_baseline.md`
+- `Design/Architecture/architecture_performance_hardening_implementation_tracker.md`
 
 Approved new paths before M02EB-029:
 
@@ -237,6 +244,7 @@ Approved new paths before M02EB-029:
 - `Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs`
 - `Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs`
 - `Assets/Game/Scripts/Editor/M02EstablishBaseVisualCapture.cs`
+- `Assets/Game/Scripts/Composition/Narrative/CampaignMissionDebriefCompositionSystemHelper.cs`
 - `Build/EditorEvidence/M02EstablishBase/` capture output only; never stage unless a tracker evidence item explicitly names the file.
 
 M02EB-023 may extend the existing Campaign UI read model with default-safe starting-resource,

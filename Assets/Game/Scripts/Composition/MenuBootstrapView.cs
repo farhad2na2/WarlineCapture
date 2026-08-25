@@ -28,6 +28,9 @@ namespace Game.Composition
         [SerializeField] private NarrativePunctuationConfig firstLaunchPunctuationProfile;
         [SerializeField] private FirstLaunchLanguageChoiceView firstLaunchLanguageChoiceView;
         [SerializeField] private NarrativeLocaleConfig firstLaunchPersianLocale;
+        [Header("Campaign Narrative")]
+        [SerializeField] private NarrativeSequenceConfig[] campaignMissionNarrativeConfigs =
+            System.Array.Empty<NarrativeSequenceConfig>();
         [Header("Campaign Mission Runtime")]
         [SerializeField] private MissionDefinitionCatalogConfig campaignMissionCatalog;
         [SerializeField] private MissionDefinitionConfig campaignMissionDefinition;
@@ -48,6 +51,7 @@ namespace Game.Composition
         public NarrativePunctuationConfig FirstLaunchPunctuationProfile => firstLaunchPunctuationProfile;
         public FirstLaunchLanguageChoiceView FirstLaunchLanguageChoiceView => firstLaunchLanguageChoiceView;
         public NarrativeLocaleConfig FirstLaunchPersianLocale => firstLaunchPersianLocale;
+        public NarrativeSequenceConfig[] CampaignMissionNarrativeConfigs => campaignMissionNarrativeConfigs;
         public MissionDefinitionCatalogConfig CampaignMissionCatalog => campaignMissionCatalog;
         public MissionDefinitionConfig CampaignMissionDefinition => campaignMissionDefinition;
         public ScenarioSetupConfig CampaignScenarioSetup => campaignScenarioSetup;
@@ -89,6 +93,7 @@ namespace Game.Composition
             NarrativePunctuationConfig configuredFirstLaunchPunctuationProfile = null,
             FirstLaunchLanguageChoiceView configuredFirstLaunchLanguageChoiceView = null,
             NarrativeLocaleConfig configuredFirstLaunchPersianLocale = null,
+            NarrativeSequenceConfig[] configuredCampaignMissionNarrativeConfigs = null,
             MissionDefinitionConfig configuredCampaignMissionDefinition = null,
             ScenarioSetupConfig configuredCampaignScenarioSetup = null,
             OperationMapCatalogConfig configuredCampaignOperationMapCatalog = null,
@@ -114,6 +119,8 @@ namespace Game.Composition
                 firstLaunchLanguageChoiceView = configuredFirstLaunchLanguageChoiceView;
             if (configuredFirstLaunchPersianLocale != null)
                 firstLaunchPersianLocale = configuredFirstLaunchPersianLocale;
+            if (configuredCampaignMissionNarrativeConfigs != null)
+                campaignMissionNarrativeConfigs = configuredCampaignMissionNarrativeConfigs;
             if (configuredCampaignMissionDefinition != null)
                 campaignMissionDefinition = configuredCampaignMissionDefinition;
             if (configuredCampaignScenarioSetup != null)
@@ -163,7 +170,7 @@ namespace Game.Composition
             {
     #endif
             menuBootstrapSystem.Update(this, Time.unscaledDeltaTime);
-            campaignMissionBootstrap.Update(this);
+            campaignMissionBootstrap.Update(this, Time.unscaledDeltaTime);
     #if UNITY_EDITOR
             }
             finally

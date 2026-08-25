@@ -163,26 +163,42 @@ namespace Game.UI.Shell.Ecs
                 entityManager.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
             bool victory = projection.Outcome == MissionOutcomeKind.Victory;
             bool firstClear = settlementAccepted != 0 && settlementFirstClear != 0;
+            bool establishBase = projection.MissionId.Equals(
+                new FixedString64Bytes("saga.ch01.m02.establish_base"));
             ref BlobArray<CampaignMissionRewardBlob> rewards = ref (
                 firstClear ? ref definition.FirstClearRewards : ref definition.ReplayRewards);
             string rewardText = victory ? BuildMissionRewardText(ref rewards) : "NO REWARD";
             int elapsedSeconds = projection.ElapsedMilliseconds / 1000;
+            string subtitle = establishBase
+                ? "ESTABLISH THE BASE • FORWARD POST"
+                : "FIRST CONTACT • OLD MARKET";
+            string summary = establishBase
+                ? victory
+                    ? firstClear
+                        ? "Forward post operational. Dalia Rahim accepts field-lead duty. The clinic-route warning sector has gone dark."
+                        : "Forward post defended. The clinic route remains under coalition control."
+                    : "The forward post fell before the defense was secured. Rebuild and redeploy."
+                : victory
+                    ? "Hostile patrol neutralized. The Old Market corridor is secure."
+                    : "The command squad was lost. Regroup and redeploy.";
+            bool debriefRequired = establishBase && victory && firstClear;
             result = new UiMissionResultPopupModel(
                 projection.SourceVersion,
                 projection.MissionId.ToString(),
                 victory ? UiMissionResultOutcome.Victory : UiMissionResultOutcome.Loss,
                 victory ? "VICTORY" : "MISSION FAILED",
-                "FIRST CONTACT • OLD MARKET",
-                victory ? "Hostile patrol neutralized. The Old Market corridor is secure."
-                    : "The command squad was lost. Regroup and redeploy.",
+                subtitle,
+                summary,
                 projection.Stars,
                 $"{elapsedSeconds / 60:00}:{elapsedSeconds % 60:00}",
                 projection.SquadLossCount.ToString(),
                 $"{facts.HostileDefeatedCount}/{facts.HostileTotalCount}",
                 rewardText,
-                victory ? "CONTINUE" : "RETRY",
+                debriefRequired ? "DEBRIEF" : victory ? "CONTINUE" : "RETRY",
                 !victory || settlementAccepted != 0,
-                !victory);
+                !victory,
+                firstClear,
+                debriefRequired);
             cachedMissionResultVersion = projection.SourceVersion;
             cachedMissionSettlementAccepted = settlementAccepted;
             cachedMissionSettlementFirstClear = settlementFirstClear;
@@ -228,8 +244,15 @@ namespace Game.UI.Shell.Ecs
             {
                 ref CampaignMissionRewardBlob reward = ref rewards[index];
                 if (index > 0) text += "  ·  ";
-                string label = reward.Kind == MissionRewardKind.None
-                    ? "COMMANDER XP" : reward.Kind.ToString().ToUpperInvariant();
+                string label = reward.Kind != MissionRewardKind.None
+                    ? reward.Kind.ToString().ToUpperInvariant()
+                    : reward.RewardConfigId.Equals(
+                        new FixedString64Bytes("reward.commander_xp"))
+                        ? "COMMANDER XP"
+                        : reward.RewardConfigId.Equals(
+                            new FixedString64Bytes("reward.ch01.m02.production_unlock"))
+                            ? "BARRACKS UNLOCK"
+                            : "REWARD";
                 text += $"{reward.Amount:N0} {label}";
             }
             return text;

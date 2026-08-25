@@ -2002,6 +2002,14 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
   ],
   "approvedExceptions": [
     {
+      "path": "Assets/Game/Scripts/Composition/Narrative/CampaignMissionDebriefCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-712",
+      "decisionId": "D-212",
+      "maxLines": 248,
+      "maxBytes": 9684,
+      "scope": "system-helper"
+    },
+    {
       "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeAudioPresentationSystemHelper.cs",
       "trackerTaskId": "APH-712",
       "decisionId": "D-024",

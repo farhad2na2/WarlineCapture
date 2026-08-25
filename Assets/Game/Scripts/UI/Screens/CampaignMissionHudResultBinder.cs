@@ -77,7 +77,7 @@ namespace Game.UI.Runtime
             UiMissionResultActionKind action = activeModel.Outcome == UiMissionResultOutcome.Victory
                 ? UiMissionResultActionKind.Continue : UiMissionResultActionKind.Retry;
             bool queued = UiShellRuntimeGateway.TryEnqueueMissionResultAction(action);
-            if (queued && action == UiMissionResultActionKind.Continue)
+            if (queued && action == UiMissionResultActionKind.Continue && !activeModel.DebriefRequired)
             {
                 UiShellRuntimeGateway.TryEnqueueRouteRequest(
                     UiShellRouteIntent.ReturnToMainMenu,

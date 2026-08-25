@@ -1,5 +1,7 @@
 using Game.Components;
 using Game.Configs;
+using Game.UI.Contracts;
+using Game.UI.Shell.Contracts.Ecs;
 using Unity.Collections;
 using Unity.Entities;
 
@@ -8,20 +10,50 @@ namespace Game.Composition
     internal sealed class CampaignMissionMenuBootstrapRuntime
     {
         private const uint CampaignMissionSourceVersion = 1;
+        private readonly CampaignMissionDebriefCompositionSystemHelper debrief = new();
+        private readonly IGameTextResolver textResolver = new GameTextResolverAdapter();
         private OperationMapRuntimeBootstrapSceneSystemHelper campaignOperationMapBootstrap;
         private World campaignMissionWorld;
         private Entity campaignMissionRoot;
         private Entity campaignOperationMapRoot;
+        private EntityQuery shellBoundaryQuery;
+        private bool hasShellBoundaryQuery;
+        private bool debriefInitialized;
         private bool campaignMissionCatalogProjected;
         private int campaignOperationMapGeneration;
 
-        public void Update(MenuBootstrapView view)
+        public void Update(MenuBootstrapView view, float unscaledDeltaTime = 0f)
         {
             World world = World.DefaultGameObjectInjectionWorld;
             if (world == null || !world.IsCreated)
                 return;
 
             Prepare(view, world.EntityManager);
+            TickDebrief(view, world.EntityManager, unscaledDeltaTime);
+        }
+
+        private void TickDebrief(
+            MenuBootstrapView view,
+            EntityManager entityManager,
+            float unscaledDeltaTime)
+        {
+            if (!debriefInitialized)
+            {
+                debrief.Initialize(view, textResolver);
+                debriefInitialized = true;
+            }
+            if (!hasShellBoundaryQuery)
+            {
+                shellBoundaryQuery = entityManager.CreateEntityQuery(
+                    ComponentType.ReadOnly<UiShellStateComponent>());
+                hasShellBoundaryQuery = true;
+            }
+            if (shellBoundaryQuery.CalculateEntityCount() != 1)
+                return;
+            Entity boundary = shellBoundaryQuery.GetSingletonEntity();
+            UiShellStateComponent shellState =
+                entityManager.GetComponentData<UiShellStateComponent>(boundary);
+            debrief.Tick(unscaledDeltaTime, entityManager, boundary, in shellState);
         }
 
         private void Prepare(MenuBootstrapView view, EntityManager entityManager)
@@ -166,6 +198,11 @@ namespace Game.Composition
 
         public void Shutdown()
         {
+            debrief.Shutdown();
+            debriefInitialized = false;
+            if (hasShellBoundaryQuery && campaignMissionWorld != null && campaignMissionWorld.IsCreated)
+                shellBoundaryQuery.Dispose();
+            hasShellBoundaryQuery = false;
             campaignOperationMapBootstrap?.Dispose();
             campaignOperationMapBootstrap = null;
             campaignMissionWorld = null;

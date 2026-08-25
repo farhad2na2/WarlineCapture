@@ -11,6 +11,7 @@ namespace Game.Components
         public int HostileDefeatedCount;
         public int RequiredBuildingPlacedCount;
         public int RequiredBuildingCompletedCount;
+        public int RequiredUnitProducedCount;
         public byte CommandSquadSpawned;
         public byte CommandSquadAlive;
         public byte MoveToCoverComplete;
@@ -25,6 +26,7 @@ namespace Game.Components
         public FixedString64Bytes SessionToken;
         public int AttemptOrdinal;
         public int BuildingRequestBaselineId;
+        public int ProducedUnitReadModelBaselineCount;
         public uint SourceVersion;
         public byte Initialized;
     }

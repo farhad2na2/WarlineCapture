@@ -15,11 +15,12 @@ using UnityEngine;
 
 public sealed class M02EstablishBaseObjectiveTests
 {
-    private const string Marker = "[M02EstablishBaseObjectiveValidation] result=Passed tests=10";
+    private const string Marker = "[M02EstablishBaseObjectiveValidation] result=Passed tests=16";
     private const string MissionId = "saga.ch01.m02.establish_base";
     private const string ScenarioId = "scenario.ch01.m02.establish_base";
     private const string MapId = "opmap.ch01.forward_post_01";
     private const string BarracksId = "Building_Barrack";
+    private const string RifleId = "Unit_Chr_Soldier_Male_02_Alt_04";
 
     [MenuItem("Game/Validation/Run M02 Establish Base Objective Focused")]
     public static void RunFocusedValidation()
@@ -37,6 +38,12 @@ public sealed class M02EstablishBaseObjectiveTests
             tests.NewAttemptCapturesASeparateRequestBaseline();
             tests.DisabledMissionRuntimeLeavesFactsUntouched();
             tests.AmbiguousBuildObjectiveFailsClosed();
+            tests.AuthoritativeProducedUnitCompletionAdvancesFactOnce();
+            tests.PreAttemptProducedUnitIsIgnored();
+            tests.DestroyedInvalidAndUnrelatedProducedUnitsAreIgnored();
+            tests.ProducedUnitFactRemainsMonotonicAfterDestruction();
+            tests.NewAttemptCapturesASeparateProducedUnitBaseline();
+            tests.AmbiguousProduceUnitObjectiveFailsClosed();
             Debug.Log(Marker);
             ValidationExit.Passed();
         }
@@ -272,10 +279,172 @@ public sealed class M02EstablishBaseObjectiveTests
         }
     }
 
+    [Test]
+    public void AuthoritativeProducedUnitCompletionAdvancesFactOnce()
+    {
+        using World world = CreateRuntimeWorld(true, false, out BlobAssetReference<CampaignMissionCatalogBlob> blob);
+        try
+        {
+            InitializeAttempt(world);
+            Entity unit = CreateProducedUnit(
+                world.EntityManager, RifleId, FactionIdentity.PlayerFactionId, currentHealth: 100);
+            AddProducedUnitRow(world.EntityManager, unit, RifleId, FactionIdentity.PlayerFactionId);
+
+            UpdateFacts(world);
+            UpdateFacts(world);
+
+            Assert.AreEqual(1, GetFacts(world.EntityManager).RequiredUnitProducedCount);
+        }
+        finally
+        {
+            blob.Dispose();
+        }
+    }
+
+    [Test]
+    public void PreAttemptProducedUnitIsIgnored()
+    {
+        using World world = CreateRuntimeWorld(true, false, out BlobAssetReference<CampaignMissionCatalogBlob> blob);
+        try
+        {
+            Entity unit = CreateProducedUnit(
+                world.EntityManager, RifleId, FactionIdentity.PlayerFactionId, currentHealth: 100);
+            AddProducedUnitRow(world.EntityManager, unit, RifleId, FactionIdentity.PlayerFactionId);
+
+            InitializeAttempt(world);
+            UpdateFacts(world);
+
+            Assert.AreEqual(0, GetFacts(world.EntityManager).RequiredUnitProducedCount);
+        }
+        finally
+        {
+            blob.Dispose();
+        }
+    }
+
+    [Test]
+    public void DestroyedInvalidAndUnrelatedProducedUnitsAreIgnored()
+    {
+        using World world = CreateRuntimeWorld(true, false, out BlobAssetReference<CampaignMissionCatalogBlob> blob);
+        try
+        {
+            EntityManager entityManager = world.EntityManager;
+            InitializeAttempt(world);
+
+            Entity dead = CreateProducedUnit(
+                entityManager, RifleId, FactionIdentity.PlayerFactionId, currentHealth: 0);
+            AddProducedUnitRow(entityManager, dead, RifleId, FactionIdentity.PlayerFactionId);
+            Entity unrelated = CreateProducedUnit(
+                entityManager, "Unit_Chr_Enemy", FactionIdentity.PlayerFactionId, currentHealth: 100);
+            AddProducedUnitRow(entityManager, unrelated, "Unit_Chr_Enemy", FactionIdentity.PlayerFactionId);
+            Entity enemy = CreateProducedUnit(
+                entityManager, RifleId, FactionIdentity.EnemyFactionId, currentHealth: 100);
+            AddProducedUnitRow(entityManager, enemy, RifleId, FactionIdentity.EnemyFactionId);
+            Entity mismatchedSource = CreateProducedUnit(
+                entityManager, "Unit_Chr_Enemy", FactionIdentity.PlayerFactionId, currentHealth: 100);
+            AddProducedUnitRow(entityManager, mismatchedSource, RifleId, FactionIdentity.PlayerFactionId);
+            AddProducedUnitRow(entityManager, Entity.Null, RifleId, FactionIdentity.PlayerFactionId);
+
+            UpdateFacts(world);
+
+            Assert.AreEqual(0, GetFacts(entityManager).RequiredUnitProducedCount);
+        }
+        finally
+        {
+            blob.Dispose();
+        }
+    }
+
+    [Test]
+    public void ProducedUnitFactRemainsMonotonicAfterDestruction()
+    {
+        using World world = CreateRuntimeWorld(true, false, out BlobAssetReference<CampaignMissionCatalogBlob> blob);
+        try
+        {
+            EntityManager entityManager = world.EntityManager;
+            InitializeAttempt(world);
+            Entity unit = CreateProducedUnit(
+                entityManager, RifleId, FactionIdentity.PlayerFactionId, currentHealth: 100);
+            AddProducedUnitRow(entityManager, unit, RifleId, FactionIdentity.PlayerFactionId);
+            UpdateFacts(world);
+            Assert.AreEqual(1, GetFacts(entityManager).RequiredUnitProducedCount);
+
+            entityManager.DestroyEntity(unit);
+            UpdateFacts(world);
+
+            Assert.AreEqual(1, GetFacts(entityManager).RequiredUnitProducedCount);
+        }
+        finally
+        {
+            blob.Dispose();
+        }
+    }
+
+    [Test]
+    public void NewAttemptCapturesASeparateProducedUnitBaseline()
+    {
+        using World world = CreateRuntimeWorld(true, false, out BlobAssetReference<CampaignMissionCatalogBlob> blob);
+        try
+        {
+            EntityManager entityManager = world.EntityManager;
+            InitializeAttempt(world);
+            Entity first = CreateProducedUnit(
+                entityManager, RifleId, FactionIdentity.PlayerFactionId, currentHealth: 100);
+            AddProducedUnitRow(entityManager, first, RifleId, FactionIdentity.PlayerFactionId);
+            UpdateFacts(world);
+            Assert.AreEqual(1, GetFacts(entityManager).RequiredUnitProducedCount);
+
+            Entity root = GetRoot(entityManager);
+            CampaignMissionRuntimeComponent runtime =
+                entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root);
+            runtime.SessionToken = "m02-unit-facts-attempt-2";
+            runtime.AttemptOrdinal = 1;
+            runtime.Version++;
+            entityManager.SetComponentData(root, runtime);
+            entityManager.SetComponentData(root, default(CampaignMissionAttemptFactsComponent));
+            UpdateFacts(world);
+            Assert.AreEqual(0, GetFacts(entityManager).RequiredUnitProducedCount);
+
+            Entity second = CreateProducedUnit(
+                entityManager, RifleId, FactionIdentity.PlayerFactionId, currentHealth: 100);
+            AddProducedUnitRow(entityManager, second, RifleId, FactionIdentity.PlayerFactionId);
+            UpdateFacts(world);
+            Assert.AreEqual(1, GetFacts(entityManager).RequiredUnitProducedCount);
+        }
+        finally
+        {
+            blob.Dispose();
+        }
+    }
+
+    [Test]
+    public void AmbiguousProduceUnitObjectiveFailsClosed()
+    {
+        using World world = CreateRuntimeWorld(
+            true,
+            false,
+            out BlobAssetReference<CampaignMissionCatalogBlob> blob,
+            duplicateProduceObjective: true);
+        try
+        {
+            InitializeAttempt(world);
+            Entity unit = CreateProducedUnit(
+                world.EntityManager, RifleId, FactionIdentity.PlayerFactionId, currentHealth: 100);
+            AddProducedUnitRow(world.EntityManager, unit, RifleId, FactionIdentity.PlayerFactionId);
+            UpdateFacts(world);
+            Assert.AreEqual(0, GetFacts(world.EntityManager).RequiredUnitProducedCount);
+        }
+        finally
+        {
+            blob.Dispose();
+        }
+    }
+
     private static World CreateRuntimeWorld(
         bool enabled,
         bool duplicateBuildObjective,
-        out BlobAssetReference<CampaignMissionCatalogBlob> blob)
+        out BlobAssetReference<CampaignMissionCatalogBlob> blob,
+        bool duplicateProduceObjective = false)
     {
         World world = new($"M02 facts enabled={enabled} duplicate={duplicateBuildObjective}");
         EntityManager entityManager = world.EntityManager;
@@ -292,16 +461,41 @@ public sealed class M02EstablishBaseObjectiveTests
         missions[0].ScenarioId = ScenarioId;
         missions[0].OperationMapId = MapId;
         missions[0].MissionRuntimeEnabled = enabled ? (byte)1 : (byte)0;
-        int objectiveCount = duplicateBuildObjective ? 2 : 1;
+        int objectiveCount = 2 + (duplicateBuildObjective ? 1 : 0) + (duplicateProduceObjective ? 1 : 0);
         BlobBuilderArray<CampaignMissionObjectiveBlob> objectives =
             builder.Allocate(ref missions[0].Objectives, objectiveCount);
-        for (int index = 0; index < objectiveCount; index++)
+        int objectiveIndex = 0;
+        objectives[objectiveIndex++] = new CampaignMissionObjectiveBlob
         {
-            objectives[index] = new CampaignMissionObjectiveBlob
+            ObjectiveId = "obj.ch01.m02.build_barracks",
+            TargetConfigId = BarracksId,
+            Rule = MissionObjectiveRuleKind.BuildStructure,
+            RequiredCount = 1
+        };
+        if (duplicateBuildObjective)
+        {
+            objectives[objectiveIndex++] = new CampaignMissionObjectiveBlob
             {
-                ObjectiveId = index == 0 ? "obj.ch01.m02.build_barracks" : "obj.ch01.m02.build_duplicate",
+                ObjectiveId = "obj.ch01.m02.build_duplicate",
                 TargetConfigId = BarracksId,
                 Rule = MissionObjectiveRuleKind.BuildStructure,
+                RequiredCount = 1
+            };
+        }
+        objectives[objectiveIndex++] = new CampaignMissionObjectiveBlob
+        {
+            ObjectiveId = "obj.ch01.m02.produce_rifle",
+            TargetConfigId = RifleId,
+            Rule = MissionObjectiveRuleKind.ProduceUnit,
+            RequiredCount = 1
+        };
+        if (duplicateProduceObjective)
+        {
+            objectives[objectiveIndex] = new CampaignMissionObjectiveBlob
+            {
+                ObjectiveId = "obj.ch01.m02.produce_duplicate",
+                TargetConfigId = RifleId,
+                Rule = MissionObjectiveRuleKind.ProduceUnit,
                 RequiredCount = 1
             };
         }
@@ -325,6 +519,7 @@ public sealed class M02EstablishBaseObjectiveTests
         });
         Entity boundary = entityManager.CreateEntity(typeof(BuildingRuntimeStateTag));
         entityManager.AddBuffer<BuildingRuntimeSpawnRequest>(boundary);
+        entityManager.AddBuffer<BuildingProducedUnitReadModel>(boundary);
         return world;
     }
 
@@ -387,6 +582,48 @@ public sealed class M02EstablishBaseObjectiveTests
     {
         using EntityQuery query = entityManager.CreateEntityQuery(typeof(BuildingRuntimeStateTag));
         return entityManager.GetBuffer<BuildingRuntimeSpawnRequest>(query.GetSingletonEntity());
+    }
+
+    private static Entity CreateProducedUnit(
+        EntityManager entityManager,
+        string sourceKey,
+        byte factionId,
+        int currentHealth)
+    {
+        Entity unit = entityManager.CreateEntity(
+            typeof(Faction),
+            typeof(UnitHealth),
+            typeof(UnitSourcePrefabKey));
+        entityManager.SetComponentData(unit, new Faction { Id = factionId });
+        entityManager.SetComponentData(unit, new UnitHealth { Current = currentHealth, Max = 100 });
+        entityManager.SetComponentData(unit, new UnitSourcePrefabKey
+        {
+            Value = new FixedString64Bytes(sourceKey)
+        });
+        return unit;
+    }
+
+    private static void AddProducedUnitRow(
+        EntityManager entityManager,
+        Entity unit,
+        string sourceKey,
+        byte factionId)
+    {
+        GetProducedUnits(entityManager).Add(new BuildingProducedUnitReadModel
+        {
+            BuildingRuntimeId = 1001,
+            ProductionIndex = 0,
+            OwnerFactionId = factionId,
+            HasOwnerFaction = 1,
+            Unit = unit,
+            UnitSourceKey = new FixedString64Bytes(sourceKey)
+        });
+    }
+
+    private static DynamicBuffer<BuildingProducedUnitReadModel> GetProducedUnits(EntityManager entityManager)
+    {
+        using EntityQuery query = entityManager.CreateEntityQuery(typeof(BuildingRuntimeStateTag));
+        return entityManager.GetBuffer<BuildingProducedUnitReadModel>(query.GetSingletonEntity());
     }
 
     private static CampaignMissionAttemptFactsComponent GetFacts(EntityManager entityManager) =>

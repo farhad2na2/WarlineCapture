@@ -27,7 +27,8 @@ namespace Game.Runtime
                 ComponentType.ReadWrite<CampaignMissionAttemptFactProjectionStateComponent>());
             _buildingBoundaryQuery = state.GetEntityQuery(
                 ComponentType.ReadOnly<BuildingRuntimeStateTag>(),
-                ComponentType.ReadOnly<BuildingRuntimeSpawnRequest>());
+                ComponentType.ReadOnly<BuildingRuntimeSpawnRequest>(),
+                ComponentType.ReadOnly<BuildingProducedUnitReadModel>());
             state.RequireForUpdate(_missionRootQuery);
             state.RequireForUpdate(_buildingBoundaryQuery);
         }
@@ -47,55 +48,87 @@ namespace Game.Runtime
                 entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root);
             CampaignMissionAttemptFactProjectionStateComponent projectionState =
                 entityManager.GetComponentData<CampaignMissionAttemptFactProjectionStateComponent>(root);
-            if (!TryResolveRequiredBuilding(
+            bool hasRequiredBuilding = TryResolveRequiredBuilding(
                     in catalog,
                     in runtime,
                     out FixedString128Bytes requiredBuildingId,
-                    out int requiredCount))
+                    out int requiredBuildingCount);
+            bool hasRequiredUnit = TryResolveRequiredUnit(
+                    in catalog,
+                    in runtime,
+                    out FixedString128Bytes requiredUnitId,
+                    out int requiredUnitCount);
+            if (!hasRequiredBuilding && !hasRequiredUnit)
                 return;
 
             Entity buildingBoundary = _buildingBoundaryQuery.GetSingletonEntity();
             DynamicBuffer<BuildingRuntimeSpawnRequest> requests =
                 entityManager.GetBuffer<BuildingRuntimeSpawnRequest>(buildingBoundary, true);
+            DynamicBuffer<BuildingProducedUnitReadModel> producedUnits =
+                entityManager.GetBuffer<BuildingProducedUnitReadModel>(buildingBoundary, true);
             int currentMaximumRequestId = FindMaximumRequestId(requests);
             if (!IsCurrentAttempt(in projectionState, in runtime, catalog.SourceVersion))
             {
                 entityManager.SetComponentData(root, CreateAttemptState(
-                    in runtime, catalog.SourceVersion, currentMaximumRequestId));
+                    in runtime,
+                    catalog.SourceVersion,
+                    currentMaximumRequestId,
+                    producedUnits.Length));
                 return;
             }
 
-            int observedCount = 0;
-            foreach ((RefRO<RuntimeBuildingCombatInfo> info,
-                      RefRO<Faction> faction,
-                      RefRO<UnitHealth> health)
-                     in SystemAPI.Query<RefRO<RuntimeBuildingCombatInfo>, RefRO<Faction>, RefRO<UnitHealth>>()
-                         .WithAll<RuntimeBuildingCombatTag>())
-            {
-                if (faction.ValueRO.Id != FactionIdentity.PlayerFactionId || health.ValueRO.Max <= 0 ||
-                    !HasMatchingCompletedRequest(
-                        requests,
-                        projectionState.BuildingRequestBaselineId,
-                        requiredBuildingId,
-                        in info.ValueRO))
-                    continue;
-
-                observedCount++;
-                if (observedCount >= requiredCount)
-                    break;
-            }
-
-            int completedCount = math.min(requiredCount, observedCount);
             CampaignMissionAttemptFactsComponent facts =
                 entityManager.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
-            int nextPlacedCount = math.max(facts.RequiredBuildingPlacedCount, completedCount);
-            int nextCompletedCount = math.max(facts.RequiredBuildingCompletedCount, completedCount);
-            if (nextPlacedCount == facts.RequiredBuildingPlacedCount &&
-                nextCompletedCount == facts.RequiredBuildingCompletedCount)
+            bool changed = false;
+            if (hasRequiredBuilding)
+            {
+                int observedBuildingCount = 0;
+                foreach ((RefRO<RuntimeBuildingCombatInfo> info,
+                          RefRO<Faction> faction,
+                          RefRO<UnitHealth> health)
+                         in SystemAPI.Query<RefRO<RuntimeBuildingCombatInfo>, RefRO<Faction>, RefRO<UnitHealth>>()
+                             .WithAll<RuntimeBuildingCombatTag>())
+                {
+                    if (faction.ValueRO.Id != FactionIdentity.PlayerFactionId || health.ValueRO.Max <= 0 ||
+                        !HasMatchingCompletedRequest(
+                            requests,
+                            projectionState.BuildingRequestBaselineId,
+                            requiredBuildingId,
+                            in info.ValueRO))
+                        continue;
+
+                    observedBuildingCount++;
+                    if (observedBuildingCount >= requiredBuildingCount)
+                        break;
+                }
+
+                int completedBuildingCount = math.min(requiredBuildingCount, observedBuildingCount);
+                int nextPlacedCount = math.max(facts.RequiredBuildingPlacedCount, completedBuildingCount);
+                int nextCompletedCount = math.max(facts.RequiredBuildingCompletedCount, completedBuildingCount);
+                changed |= nextPlacedCount != facts.RequiredBuildingPlacedCount ||
+                           nextCompletedCount != facts.RequiredBuildingCompletedCount;
+                facts.RequiredBuildingPlacedCount = nextPlacedCount;
+                facts.RequiredBuildingCompletedCount = nextCompletedCount;
+            }
+
+            if (hasRequiredUnit)
+            {
+                int observedProducedCount = CountMatchingProducedUnits(
+                    entityManager,
+                    producedUnits,
+                    projectionState.ProducedUnitReadModelBaselineCount,
+                    requiredUnitId,
+                    requiredUnitCount);
+                int nextProducedCount = math.max(
+                    facts.RequiredUnitProducedCount,
+                    math.min(requiredUnitCount, observedProducedCount));
+                changed |= nextProducedCount != facts.RequiredUnitProducedCount;
+                facts.RequiredUnitProducedCount = nextProducedCount;
+            }
+
+            if (!changed)
                 return;
 
-            facts.RequiredBuildingPlacedCount = nextPlacedCount;
-            facts.RequiredBuildingCompletedCount = nextCompletedCount;
             entityManager.SetComponentData(root, facts);
         }
 
@@ -132,6 +165,39 @@ namespace Game.Runtime
             return matchCount == 1 && !requiredBuildingId.IsEmpty && requiredCount > 0;
         }
 
+        internal static bool TryResolveRequiredUnit(
+            in CampaignMissionCatalogComponent catalog,
+            in CampaignMissionRuntimeComponent runtime,
+            out FixedString128Bytes requiredUnitId,
+            out int requiredCount)
+        {
+            requiredUnitId = default;
+            requiredCount = 0;
+            if (runtime.Version == 0 || runtime.SourceVersion == 0 ||
+                runtime.SourceVersion != catalog.SourceVersion || runtime.SessionToken.IsEmpty ||
+                runtime.AttemptOrdinal < 0 ||
+                !CampaignMissionSpawnSystem.TryFindDefinition(in catalog, in runtime, out int definitionIndex))
+                return false;
+
+            ref CampaignMissionDefinitionBlob definition = ref catalog.Blob.Value.Missions[definitionIndex];
+            if (definition.MissionRuntimeEnabled == 0)
+                return false;
+
+            int matchCount = 0;
+            for (int index = 0; index < definition.Objectives.Length; index++)
+            {
+                ref CampaignMissionObjectiveBlob objective = ref definition.Objectives[index];
+                if (objective.Rule != MissionObjectiveRuleKind.ProduceUnit)
+                    continue;
+
+                matchCount++;
+                requiredUnitId = objective.TargetConfigId;
+                requiredCount = objective.RequiredCount;
+            }
+
+            return matchCount == 1 && !requiredUnitId.IsEmpty && requiredCount > 0;
+        }
+
         internal static bool HasMatchingCompletedRequest(
             DynamicBuffer<BuildingRuntimeSpawnRequest> requests,
             int baselineRequestId,
@@ -159,15 +225,99 @@ namespace Game.Runtime
             return false;
         }
 
+        internal static int CountMatchingProducedUnits(
+            EntityManager entityManager,
+            DynamicBuffer<BuildingProducedUnitReadModel> producedUnits,
+            int baselineCount,
+            in FixedString128Bytes requiredUnitId,
+            int requiredCount)
+        {
+            if (baselineCount < 0 || baselineCount > producedUnits.Length ||
+                requiredUnitId.IsEmpty || requiredCount <= 0)
+                return 0;
+
+            int observedCount = 0;
+            for (int index = baselineCount; index < producedUnits.Length; index++)
+            {
+                BuildingProducedUnitReadModel produced = producedUnits[index];
+                if (HasEarlierProducedUnit(producedUnits, baselineCount, index, produced.Unit) ||
+                    !IsMatchingProducedUnit(entityManager, in produced, in requiredUnitId))
+                    continue;
+
+                observedCount++;
+                if (observedCount >= requiredCount)
+                    break;
+            }
+
+            return observedCount;
+        }
+
+        private static bool IsMatchingProducedUnit(
+            EntityManager entityManager,
+            in BuildingProducedUnitReadModel produced,
+            in FixedString128Bytes requiredUnitId)
+        {
+            if (produced.HasOwnerFaction == 0 || produced.OwnerFactionId != FactionIdentity.PlayerFactionId ||
+                produced.Unit == Entity.Null || !entityManager.Exists(produced.Unit) ||
+                entityManager.HasComponent<Prefab>(produced.Unit) ||
+                !entityManager.HasComponent<Faction>(produced.Unit) ||
+                !entityManager.HasComponent<UnitHealth>(produced.Unit) ||
+                !entityManager.HasComponent<UnitSourcePrefabKey>(produced.Unit) ||
+                !FixedStringsEqual(in produced.UnitSourceKey, in requiredUnitId))
+                return false;
+
+            Faction faction = entityManager.GetComponentData<Faction>(produced.Unit);
+            UnitHealth health = entityManager.GetComponentData<UnitHealth>(produced.Unit);
+            UnitSourcePrefabKey source = entityManager.GetComponentData<UnitSourcePrefabKey>(produced.Unit);
+            return faction.Id == FactionIdentity.PlayerFactionId && health.Max > 0 && health.Current > 0 &&
+                   source.Value.Equals(produced.UnitSourceKey);
+        }
+
+        private static bool HasEarlierProducedUnit(
+            DynamicBuffer<BuildingProducedUnitReadModel> producedUnits,
+            int baselineCount,
+            int index,
+            Entity unit)
+        {
+            if (unit == Entity.Null)
+                return false;
+
+            for (int prior = baselineCount; prior < index; prior++)
+            {
+                if (producedUnits[prior].Unit == unit)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static bool FixedStringsEqual(
+            in FixedString64Bytes left,
+            in FixedString128Bytes right)
+        {
+            if (left.Length != right.Length)
+                return false;
+
+            for (int index = 0; index < left.Length; index++)
+            {
+                if (left[index] != right[index])
+                    return false;
+            }
+
+            return true;
+        }
+
         private static CampaignMissionAttemptFactProjectionStateComponent CreateAttemptState(
             in CampaignMissionRuntimeComponent runtime,
             uint sourceVersion,
-            int buildingRequestBaselineId) =>
+            int buildingRequestBaselineId,
+            int producedUnitReadModelBaselineCount) =>
             new()
             {
                 SessionToken = runtime.SessionToken,
                 AttemptOrdinal = runtime.AttemptOrdinal,
                 BuildingRequestBaselineId = buildingRequestBaselineId,
+                ProducedUnitReadModelBaselineCount = producedUnitReadModelBaselineCount,
                 SourceVersion = sourceVersion,
                 Initialized = 1
             };

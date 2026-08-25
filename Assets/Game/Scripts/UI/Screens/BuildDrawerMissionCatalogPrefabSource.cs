@@ -11,13 +11,15 @@ namespace Game.UI.Runtime
         private static readonly IReadOnlyList<GameObject> EmptyPrefabs = Array.Empty<GameObject>();
 
         private readonly List<string> _allowedBuildingConfigIds = new();
+        private readonly List<GameObject> _filteredUnits = new();
         private readonly List<GameObject> _filteredBuildings = new();
         private ICatalogPrefabSource _unitSource;
         private ICatalogPrefabSource _buildingSource;
+        private string _requiredUnitConfigId = string.Empty;
         private bool _restricted;
 
         public IReadOnlyList<GameObject> UnitSpawnPrefabs =>
-            _restricted ? EmptyPrefabs : _unitSource?.UnitSpawnPrefabs;
+            _restricted ? _filteredUnits : _unitSource?.UnitSpawnPrefabs;
 
         public IReadOnlyList<GameObject> BuildingSpawnPrefabs =>
             _restricted ? _filteredBuildings : _buildingSource?.BuildingSpawnPrefabs;
@@ -27,7 +29,9 @@ namespace Game.UI.Runtime
             _unitSource = unitSource;
             _buildingSource = buildingSource;
             _allowedBuildingConfigIds.Clear();
+            _filteredUnits.Clear();
             _filteredBuildings.Clear();
+            _requiredUnitConfigId = string.Empty;
             _restricted = UiShellRuntimeGateway.TryReadMissionBuildCatalog(
                 out UiMissionBuildCatalogModel catalog);
             if (!_restricted)
@@ -43,6 +47,9 @@ namespace Game.UI.Runtime
                 }
             }
 
+            if (catalog.CanRequestRequiredUnit)
+                _requiredUnitConfigId = catalog.RequiredUnitConfigId;
+            PopulateFilteredUnits();
             PopulateFilteredBuildings();
         }
 
@@ -50,13 +57,16 @@ namespace Game.UI.Runtime
             ICatalogPrefabSource unitSource,
             ICatalogPrefabSource buildingSource,
             bool restricted,
-            IReadOnlyList<UiMissionBuildCatalogEntryModel> entries)
+            IReadOnlyList<UiMissionBuildCatalogEntryModel> entries,
+            string requiredUnitConfigId = null)
         {
             _unitSource = unitSource;
             _buildingSource = buildingSource;
             _restricted = restricted;
             _allowedBuildingConfigIds.Clear();
+            _filteredUnits.Clear();
             _filteredBuildings.Clear();
+            _requiredUnitConfigId = requiredUnitConfigId ?? string.Empty;
             if (!restricted)
                 return;
 
@@ -69,7 +79,28 @@ namespace Game.UI.Runtime
                 }
             }
 
+            PopulateFilteredUnits();
             PopulateFilteredBuildings();
+        }
+
+        private void PopulateFilteredUnits()
+        {
+            if (string.IsNullOrWhiteSpace(_requiredUnitConfigId))
+                return;
+
+            IReadOnlyList<GameObject> units = _unitSource?.UnitSpawnPrefabs;
+            if (units == null)
+                return;
+
+            for (int index = 0; index < units.Count; index++)
+            {
+                GameObject prefab = units[index];
+                if (prefab != null && string.Equals(
+                        prefab.name, _requiredUnitConfigId, StringComparison.Ordinal))
+                {
+                    _filteredUnits.Add(prefab);
+                }
+            }
         }
 
         private void PopulateFilteredBuildings()

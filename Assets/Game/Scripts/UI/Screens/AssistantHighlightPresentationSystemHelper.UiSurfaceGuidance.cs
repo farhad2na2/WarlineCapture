@@ -21,6 +21,10 @@ namespace Game.UI.Runtime
         {
             DetachBarracksGuidanceButton();
             _buildDrawerView = buildDrawerView;
+            _buildDrawerCatalogRuntimeView =
+                _buildDrawerView != null
+                    ? _buildDrawerView.GetComponent<BuildDrawerCatalogRuntimeView>()
+                    : null;
             _barracksGuidanceButton = _buildDrawerView?.ItemTemplate?.SelectionButton;
             _barracksGuidanceButton?.onClick.AddListener(AcknowledgeBarracksSelection);
             ApplyVisual(LastAppliedModel);
@@ -41,6 +45,25 @@ namespace Game.UI.Runtime
                 if (_resourceGuidanceTarget == null || !_resourceGuidanceTarget.gameObject.activeInHierarchy)
                     return false;
                 AcknowledgeResourceSpend();
+                return true;
+            }
+            if (recommendationKind == ProduceRecommendationKind)
+            {
+                if ((_buildDrawerView == null || !_buildDrawerView.IsOpen) &&
+                    _buildGuidanceButton != null && _buildGuidanceButton.IsActive() &&
+                    _buildGuidanceButton.IsInteractable())
+                {
+                    _buildGuidanceButton.onClick.Invoke();
+                }
+
+                if (_buildDrawerCatalogRuntimeView == null ||
+                    !_buildDrawerCatalogRuntimeView.TryInvokeRifleProductionFromGuidance())
+                {
+                    return false;
+                }
+
+                ClearUiSurfaceCue();
+                _uiSurfaceAcknowledged?.Invoke(ProduceRecommendationKind);
                 return true;
             }
             Button target = recommendationKind switch
@@ -76,6 +99,13 @@ namespace Game.UI.Runtime
                     SelectRecommendationKind => _barracksGuidanceButton,
                     _ => null
                 };
+                if (model.RecommendationKind == ProduceRecommendationKind)
+                {
+                    return _buildDrawerCatalogRuntimeView?.ResolveRifleProductionGuidanceTarget() ??
+                           (_buildGuidanceButton != null
+                               ? _buildGuidanceButton.transform as RectTransform
+                               : null);
+                }
                 if (model.RecommendationKind == ExplainRecommendationKind)
                     return _resourceGuidanceTarget;
                 return uiButton != null ? uiButton.transform as RectTransform : null;
@@ -102,6 +132,9 @@ namespace Game.UI.Runtime
             if (model.TargetKind == UiSurfaceTargetKind &&
                 model.RecommendationKind == ExplainRecommendationKind)
                 return "RESOURCE SPEND\n\u25bc";
+            if (model.TargetKind == UiSurfaceTargetKind &&
+                model.RecommendationKind == ProduceRecommendationKind)
+                return "QUEUE RIFLE\n\u25bc";
             if (model.RecommendationKind == SelectRecommendationKind)
                 return "SELECT SQUAD\n\u25bc";
             if (model.RecommendationKind == MoveRecommendationKind)
@@ -150,6 +183,7 @@ namespace Game.UI.Runtime
             _barracksGuidanceButton?.onClick.RemoveListener(AcknowledgeBarracksSelection);
             _barracksGuidanceButton = null;
             _buildDrawerView = null;
+            _buildDrawerCatalogRuntimeView = null;
         }
 
         private void DetachResourceGuidanceTarget()

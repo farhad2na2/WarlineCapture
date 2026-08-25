@@ -193,7 +193,7 @@ namespace Game.UI.Runtime
             ApplyInstruction(BuildDrawerCatalogPresentationSystemHelper.FormatPrimarySuccessInstruction(_gameTextResolver, _selectedItem), BuildDrawerInstructionSeverity.Ready);
             BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Success(
                 _gameTextResolver.Format("build.feedback.production_requested", "{0}: {1}", _selectedItem.ActionLabel, _selectedItem.DisplayName)), _gameTextResolver);
-            RefreshQueue();
+            AcceptUnit();
         }
 
         private void OnCancelProductionClicked()

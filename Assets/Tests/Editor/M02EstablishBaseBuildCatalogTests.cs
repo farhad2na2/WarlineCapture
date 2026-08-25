@@ -19,7 +19,7 @@ using UnityEngine;
 
 public sealed class M02EstablishBaseBuildCatalogTests
 {
-    private const string Marker = "[M02EstablishBaseBuildCatalogValidation] result=Passed tests=7";
+    private const string Marker = "[M02EstablishBaseBuildCatalogValidation] result=Passed tests=8";
     private const string MissionId = "saga.ch01.m02.establish_base";
     private const string ScenarioId = "scenario.ch01.m02.establish_base";
     private const string MapId = "opmap.ch01.forward_post_01";
@@ -35,6 +35,7 @@ public sealed class M02EstablishBaseBuildCatalogTests
             tests.SameVersionCatalogContentChangeReprojectsBuildCatalog();
             tests.M02GatewayReturnsExactCatalogEntry();
             tests.M02BuildDrawerSourceExposesOnlyBarracks();
+            tests.CompletedBarracksExposesOnlyCanonicalRifle();
             tests.MissionCatalogMissingFromGlobalSourceFailsClosed();
             tests.DisabledMissionRuntimeDoesNotRestrictCatalog();
             tests.UnrestrictedBuildDrawerSourcePreservesFullCatalog();
@@ -195,6 +196,51 @@ public sealed class M02EstablishBaseBuildCatalogTests
         finally
         {
             UnityEngine.Object.DestroyImmediate(tent);
+        }
+    }
+
+    [Test]
+    public void CompletedBarracksExposesOnlyCanonicalRifle()
+    {
+        World previous = World.DefaultGameObjectInjectionWorld;
+        using World world = ProjectCanonicalCatalog(1, out Entity root);
+        GameObject rifle = new("Unit_Chr_Soldier_Male_02_Alt_04");
+        GameObject other = new("Unit_Chr_Soldier_Male_01_Alt_01");
+        GameObject barracks = new(BarracksId);
+        try
+        {
+            SetActiveMission(world.EntityManager, root, MissionId);
+            if (!world.EntityManager.HasComponent<CampaignMissionAttemptFactsComponent>(root))
+                world.EntityManager.AddComponent<CampaignMissionAttemptFactsComponent>(root);
+            world.EntityManager.SetComponentData(root, new CampaignMissionAttemptFactsComponent
+            {
+                RequiredBuildingPlacedCount = 1,
+                RequiredBuildingCompletedCount = 1
+            });
+            World.DefaultGameObjectInjectionWorld = world;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+            PrefabSource units = new(new[] { other, rifle }, Array.Empty<GameObject>());
+            PrefabSource buildings = new(Array.Empty<GameObject>(), new[] { barracks });
+            BuildDrawerMissionCatalogPrefabSource filtered = new();
+            filtered.Refresh(units, buildings);
+
+            Assert.IsTrue(UiShellRuntimeGateway.TryReadMissionBuildCatalog(
+                out UiMissionBuildCatalogModel catalog));
+            Assert.AreEqual("Unit_Chr_Soldier_Male_02_Alt_04", catalog.RequiredUnitConfigId);
+            Assert.IsTrue(catalog.RequiredProducerCompleted);
+            Assert.IsTrue(catalog.CanRequestRequiredUnit);
+            Assert.AreEqual(1, filtered.UnitSpawnPrefabs.Count);
+            Assert.AreSame(rifle, filtered.UnitSpawnPrefabs[0]);
+            Assert.AreEqual(1, filtered.BuildingSpawnPrefabs.Count);
+        }
+        finally
+        {
+            UiShellRuntimeGateway.Register(null);
+            World.DefaultGameObjectInjectionWorld = previous;
+            DisposeCatalog(world.EntityManager, root);
+            UnityEngine.Object.DestroyImmediate(rifle);
+            UnityEngine.Object.DestroyImmediate(other);
+            UnityEngine.Object.DestroyImmediate(barracks);
         }
     }
 

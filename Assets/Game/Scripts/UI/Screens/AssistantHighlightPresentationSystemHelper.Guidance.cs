@@ -19,6 +19,7 @@ namespace Game.UI.Runtime
         private const byte MoveRecommendationKind = 2;
         private const byte AttackRecommendationKind = 3;
         private const byte BuildRecommendationKind = 4;
+        private const byte ProduceRecommendationKind = 5;
         private const byte WorldPositionTargetKind = 1;
         private const byte UiSurfaceTargetKind = 4;
 
@@ -46,6 +47,7 @@ namespace Game.UI.Runtime
         private Button _buildGuidanceButton;
         private Button _barracksGuidanceButton;
         private BuildDrawerView _buildDrawerView;
+        private BuildDrawerCatalogRuntimeView _buildDrawerCatalogRuntimeView;
         private TacticalCommandMode _activeCommandMode;
         private TacticalCommandMode _awaitingWorldTargetMode;
         private Action<TacticalCommandMode> _commandModeAcknowledged;
@@ -86,6 +88,7 @@ namespace Game.UI.Runtime
             _squadTrayView = null;
             _commandControlsView = null;
             _buildDrawerView = null;
+            _buildDrawerCatalogRuntimeView = null;
             _resourceGuidanceTarget = null;
             DestroyObject(_worldRingRoot);
             DestroyObject(_worldRingMaterial);

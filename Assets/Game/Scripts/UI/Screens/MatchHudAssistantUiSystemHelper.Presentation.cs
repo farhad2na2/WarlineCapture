@@ -466,6 +466,7 @@ namespace Game.UI.Runtime
             {
                 4 => 2,
                 1 => 3,
+                5 => 6,
                 9 => 5,
                 _ => (byte)0
             };

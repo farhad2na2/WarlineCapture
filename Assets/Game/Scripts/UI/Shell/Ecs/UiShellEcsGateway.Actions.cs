@@ -222,6 +222,8 @@ namespace Game.UI.Shell.Ecs
                     CampaignMissionGuidancePromptKind.EstablishBaseSelectBarracks,
                 UiCampaignGuidanceTargetKind.ResourceStrip =>
                     CampaignMissionGuidancePromptKind.EstablishBaseObserveResourceSpend,
+                UiCampaignGuidanceTargetKind.RifleProduction =>
+                    CampaignMissionGuidancePromptKind.EstablishBaseQueueRifle,
                 _ => CampaignMissionGuidancePromptKind.None
             };
             if (expected == CampaignMissionGuidancePromptKind.None ||

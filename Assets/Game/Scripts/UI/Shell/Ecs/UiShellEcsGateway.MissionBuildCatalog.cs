@@ -10,7 +10,8 @@ namespace Game.UI.Shell.Ecs
         public bool TryReadMissionBuildCatalog(out UiMissionBuildCatalogModel catalog)
         {
             catalog = UiMissionBuildCatalogModel.Inactive;
-            if (!TryResolveMissionBuildCatalog(out CampaignMissionRuntimeComponent runtime,
+            if (!TryResolveMissionBuildCatalog(out EntityManager entityManager, out Entity root,
+                    out CampaignMissionRuntimeComponent runtime,
                     out CampaignMissionCatalogComponent source, out int definitionIndex))
                 return false;
 
@@ -18,8 +19,27 @@ namespace Game.UI.Shell.Ecs
             if (definition.MissionRuntimeEnabled == 0)
                 return false;
 
+            string requiredUnitConfigId = string.Empty;
+            int produceObjectiveCount = 0;
+            for (int index = 0; index < definition.Objectives.Length; index++)
+            {
+                ref CampaignMissionObjectiveBlob objective = ref definition.Objectives[index];
+                if (objective.Rule != MissionObjectiveRuleKind.ProduceUnit)
+                    continue;
+
+                produceObjectiveCount++;
+                requiredUnitConfigId = objective.TargetConfigId.ToString();
+            }
+
+            bool requiredProducerCompleted =
+                entityManager.HasComponent<CampaignMissionAttemptFactsComponent>(root) &&
+                entityManager.GetComponentData<CampaignMissionAttemptFactsComponent>(root)
+                    .RequiredBuildingCompletedCount > 0;
             catalog = new UiMissionBuildCatalogModel(
-                runtime.MissionId.ToString(), definition.BuildCatalog.Length);
+                runtime.MissionId.ToString(),
+                definition.BuildCatalog.Length,
+                produceObjectiveCount == 1 ? requiredUnitConfigId : string.Empty,
+                requiredProducerCompleted);
             return true;
         }
 
@@ -28,7 +48,8 @@ namespace Game.UI.Shell.Ecs
             out UiMissionBuildCatalogEntryModel entry)
         {
             entry = default;
-            if (!TryResolveMissionBuildCatalog(out _, out CampaignMissionCatalogComponent source,
+            if (!TryResolveMissionBuildCatalog(out _, out _, out _,
+                    out CampaignMissionCatalogComponent source,
                     out int definitionIndex))
                 return false;
 
@@ -43,14 +64,18 @@ namespace Game.UI.Shell.Ecs
         }
 
         private static bool TryResolveMissionBuildCatalog(
+            out EntityManager entityManager,
+            out Entity root,
             out CampaignMissionRuntimeComponent runtime,
             out CampaignMissionCatalogComponent catalog,
             out int definitionIndex)
         {
+            entityManager = default;
+            root = Entity.Null;
             runtime = default;
             catalog = default;
             definitionIndex = -1;
-            if (!TryGetMissionRoot(out EntityManager entityManager, out Entity root) ||
+            if (!TryGetMissionRoot(out entityManager, out root) ||
                 !entityManager.HasComponent<CampaignMissionRuntimeComponent>(root) ||
                 !entityManager.HasComponent<CampaignMissionCatalogComponent>(root))
                 return false;

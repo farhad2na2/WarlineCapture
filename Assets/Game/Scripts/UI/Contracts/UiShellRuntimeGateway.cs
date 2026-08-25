@@ -111,7 +111,8 @@ namespace Game.UI.Contracts
         None = 0,
         BuildButton = 1,
         BarracksCatalogItem = 2,
-        ResourceStrip = 3
+        ResourceStrip = 3,
+        RifleProduction = 4
     }
 
     public interface IUiCampaignGuidanceGateway

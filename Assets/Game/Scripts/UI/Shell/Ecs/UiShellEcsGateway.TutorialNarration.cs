@@ -161,6 +161,50 @@ namespace Game.UI.Shell.Ecs
             return tutorialStep is >= 1 and <= 5;
         }
 
+        public static bool TryResolveM02GuidancePresentationText(
+            in AssistantRecommendationElement recommendation,
+            FirstLaunchNarrativeLanguage language,
+            out string title,
+            out string body,
+            out bool rightToLeft)
+        {
+            title = string.Empty;
+            body = string.Empty;
+            rightToLeft = language == FirstLaunchNarrativeLanguage.Persian;
+            string targetId = recommendation.TargetId.ToString();
+            if (string.Equals(targetId, "ui.build_drawer.barracks", StringComparison.Ordinal))
+            {
+                if (rightToLeft)
+                {
+                    title = "پادگان را انتخاب کنید";
+                    body = "پادگان را از فهرست ساختمان‌ها انتخاب کنید.";
+                }
+                else
+                {
+                    title = "Select Barracks";
+                    body = "Select Barracks from the building catalog.";
+                }
+
+                return true;
+            }
+
+            if (!string.Equals(targetId, "ui.build_drawer.rifle", StringComparison.Ordinal))
+                return false;
+
+            if (rightToLeft)
+            {
+                title = "یک گروه تفنگدار در صف بگذارید";
+                body = "بخش تولید را باز کنید، سربازان را انتخاب کنید و گروه تفنگدار موردنیاز را به صف آموزش اضافه کنید.";
+            }
+            else
+            {
+                title = "Queue a rifle squad";
+                body = "Open production, select Soldiers, and recruit the required rifle squad.";
+            }
+
+            return true;
+        }
+
         private static FirstLaunchNarrativeLanguage ResolveTutorialNarrationLanguage()
         {
             if (hasCachedTutorialNarrationLanguage)

@@ -20,6 +20,7 @@ namespace Game.Runtime
         private static readonly FixedString64Bytes SelectBarracksTitle = "Select Barracks";
         private static readonly FixedString64Bytes PlaceBarracksTitle = "Place the Barracks";
         private static readonly FixedString64Bytes ReviewResourceSpendTitle = "Review resource spend";
+        private static readonly FixedString64Bytes QueueRifleTitle = "Queue a rifle squad";
         private static readonly FixedString128Bytes FindSquadBody = "Select the command squad to begin.";
         private static readonly FixedString128Bytes MoveToCoverBody = "Move the squad to the marked cover position.";
         private static readonly FixedString128Bytes ConfirmThreatBody = "Inspect the armed patrol near the civilians.";
@@ -29,6 +30,7 @@ namespace Game.Runtime
         private static readonly FixedString128Bytes SelectBarracksBody = "Select Barracks from the building catalog.";
         private static readonly FixedString128Bytes PlaceBarracksBody = "Place the Barracks inside the green footprint. The confirmation bar shows its exact cost.";
         private static readonly FixedString128Bytes ReviewResourceSpendBody = "Credits and Materials were spent by the real construction order. Check the resource bar.";
+        private static readonly FixedString128Bytes QueueRifleBody = "Open production, select Soldiers, and recruit the required rifle squad.";
         private static readonly FixedString128Bytes ContextualTargetHint = " Use Show Me if you need the exact target.";
         private static readonly FixedString64Bytes DoItAction = "DO IT";
         private static readonly FixedString64Bytes ShowMeAction = "SHOW ME";
@@ -41,6 +43,7 @@ namespace Game.Runtime
         private static readonly FixedString64Bytes BuildButtonTarget = "ui.match.build";
         private static readonly FixedString64Bytes BarracksCatalogTarget = "ui.build_drawer.barracks";
         private static readonly FixedString64Bytes ResourceStripTarget = "ui.match.resources";
+        private static readonly FixedString64Bytes RifleProductionTarget = "ui.build_drawer.rifle";
 
         [BurstCompile] public void OnCreate(ref SystemState state) => state.RequireForUpdate<CampaignMissionRootComponent>();
 
@@ -150,6 +153,9 @@ namespace Game.Runtime
                 case CampaignMissionGuidancePromptKind.EstablishBaseObserveResourceSpend:
                     Set(ref next, AssistantRecommendationKind.Explain, AssistantTargetKind.UiSurface, ReviewResourceSpendTitle, ReviewResourceSpendBody, ContinueAction);
                     next.TargetId = ResourceStripTarget; next.CanExecute = 1; break;
+                case CampaignMissionGuidancePromptKind.EstablishBaseQueueRifle:
+                    Set(ref next, AssistantRecommendationKind.Produce, AssistantTargetKind.UiSurface, QueueRifleTitle, QueueRifleBody, DoItAction);
+                    next.TargetId = RifleProductionTarget; next.CanExecute = 1; break;
             }
             ApplyModePolicy(ref next);
             return next;
@@ -165,7 +171,8 @@ namespace Game.Runtime
                 next.Prompt != CampaignMissionGuidancePromptKind.EstablishBaseOpenBuild &&
                 next.Prompt != CampaignMissionGuidancePromptKind.EstablishBaseSelectBarracks &&
                 next.Prompt != CampaignMissionGuidancePromptKind.EstablishBasePlaceBarracks &&
-                next.Prompt != CampaignMissionGuidancePromptKind.EstablishBaseObserveResourceSpend)
+                next.Prompt != CampaignMissionGuidancePromptKind.EstablishBaseObserveResourceSpend &&
+                next.Prompt != CampaignMissionGuidancePromptKind.EstablishBaseQueueRifle)
             { next.CanExecute = 0; next.ActionLabel = ShowMeAction; }
             if (next.HintStrength >= 2)
             {
@@ -214,9 +221,19 @@ namespace Game.Runtime
 
             if (facts.RequiredBuildingPlacedCount > 0)
             {
+                if (facts.RequiredUnitProducedCount > 0)
+                    return CampaignMissionGuidancePromptKind.None;
+                if (current.Prompt == CampaignMissionGuidancePromptKind.EstablishBaseQueueRifle)
+                    return current.GuidanceId != 0 && current.AcknowledgedGuidanceId == current.GuidanceId
+                        ? CampaignMissionGuidancePromptKind.None
+                        : CampaignMissionGuidancePromptKind.EstablishBaseQueueRifle;
                 if (current.Prompt == CampaignMissionGuidancePromptKind.EstablishBaseObserveResourceSpend &&
                     current.GuidanceId != 0 && current.AcknowledgedGuidanceId == current.GuidanceId)
-                    return CampaignMissionGuidancePromptKind.None;
+                {
+                    return facts.RequiredBuildingCompletedCount > 0
+                        ? CampaignMissionGuidancePromptKind.EstablishBaseQueueRifle
+                        : CampaignMissionGuidancePromptKind.EstablishBaseObserveResourceSpend;
+                }
                 return CampaignMissionGuidancePromptKind.EstablishBaseObserveResourceSpend;
             }
 

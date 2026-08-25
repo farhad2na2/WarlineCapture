@@ -268,6 +268,17 @@ existing cost label can display both CR and MAT. Guidance may acknowledge observ
 write resources, placement state, building facts, or objective progress. Final bilingual copy and audio
 media remain gated by M02EB-031 and M02EB-032.
 
+M02EB-026 may append one default-safe rifle-production prompt after authoritative Barracks completion.
+The required unit identity must resolve from the active mission's exact single `ProduceUnit` objective;
+missing or ambiguous objectives fail closed. The mission-scoped Build Drawer may expose that exact unit
+only after `RequiredBuildingCompletedCount` confirms the Barracks is complete. SHOW ME and DO IT bind
+the existing Soldiers tab, catalog item, and RECRUIT button, and DO IT invokes their real `Button.onClick`
+paths. Guidance acknowledgement is permitted only after the established `TryRequestCampItem` production
+transaction accepts the typed request. The existing production queue, resource transaction, produced-unit
+read model, mission fact projector, and objective writer remain sole owners; this item may not write their
+state directly. Barracks selection and rifle queueing retain distinct typed target identities and exact
+English/Persian display copy. Final localized voice media remains gated by M02EB-031 and M02EB-032.
+
 Additional new art/audio paths become writable only after M02EB-029 acceptance and an updated matrix entry. Final media must be chapter-scoped and must not alter FirstLaunch exact-set assets/importers.
 
 ### Final Acceptance: M02EB-033 Through M02EB-034

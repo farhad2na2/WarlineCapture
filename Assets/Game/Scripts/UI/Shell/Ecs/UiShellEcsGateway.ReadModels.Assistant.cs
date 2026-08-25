@@ -167,6 +167,21 @@ namespace Game.UI.Shell.Ecs
                 : string.Empty;
             bool tutorialRightToLeft = false;
             if (topRecommendation.RecommendationId != 0 &&
+                topRecommendation.TutorialStepCount == 9)
+            {
+                if (TryResolveM02GuidancePresentationText(
+                    in topRecommendation,
+                    ResolveTutorialNarrationLanguage(),
+                    out string localizedTitle,
+                    out string localizedBody,
+                    out bool localizedRightToLeft))
+                {
+                    recommendationTitle = localizedTitle;
+                    recommendationBody = localizedBody;
+                    tutorialRightToLeft = localizedRightToLeft;
+                }
+            }
+            if (topRecommendation.RecommendationId != 0 &&
                 topRecommendation.TutorialStep > 0 &&
                 topRecommendation.TutorialStepCount != 9 &&
                 topRecommendation.TargetKind != AssistantTargetKind.UiSurface)

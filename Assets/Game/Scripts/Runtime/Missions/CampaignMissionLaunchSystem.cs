@@ -102,22 +102,166 @@ namespace Game.Runtime
         internal static void QueueAttemptCleanup(
             EntityManager entityManager, ref EntityCommandBuffer cleanup, Entity root)
         {
-            using EntityQuery units = entityManager.CreateEntityQuery(
-                ComponentType.ReadOnly<CampaignMissionUnitRoleComponent>());
-            using NativeArray<Entity> entities = units.ToEntityArray(Allocator.Temp);
-            for (int i = 0; i < entities.Length; i++)
-                cleanup.DestroyEntity(entities[i]);
+            using EntityQuery persistentMapRoles = new EntityQueryBuilder(Allocator.Temp)
+                .WithAll<CampaignMissionUnitRoleComponent, OperationMapBuildingComponent>()
+                .Build(entityManager);
+            using EntityQuery transientMissionUnits = new EntityQueryBuilder(Allocator.Temp)
+                .WithAll<CampaignMissionUnitRoleComponent>()
+                .WithNone<OperationMapBuildingComponent>()
+                .Build(entityManager);
+            using EntityQuery ambientCivilians = new EntityQueryBuilder(Allocator.Temp)
+                .WithAll<CampaignMissionAmbientCivilianComponent>()
+                .Build(entityManager);
+#pragma warning disable 0618 // Capture the exact attempt-owned set before deferred playback.
+            cleanup.RemoveComponent<CampaignMissionUnitRoleComponent>(
+                persistentMapRoles, EntityQueryCaptureMode.AtRecord);
+            cleanup.DestroyEntity(transientMissionUnits, EntityQueryCaptureMode.AtRecord);
+            cleanup.DestroyEntity(ambientCivilians, EntityQueryCaptureMode.AtRecord);
+#pragma warning restore 0618
 
+            QueueAttemptOwnedRuntimeCleanup(entityManager, ref cleanup, root);
+            ThreatWarningRuntimeState.Reset(entityManager);
+            ResetRuntimeCameraFocus(entityManager);
             ClearBufferIfPresent<CampaignMissionActionRequestElement>(entityManager, root);
             ClearBufferIfPresent<CampaignMissionActionResultElement>(entityManager, root);
             ClearBufferIfPresent<CampaignMissionLaunchResultElement>(entityManager, root);
             ClearBufferIfPresent<CampaignMissionSettlementRequestElement>(entityManager, root);
             ClearBufferIfPresent<CampaignMissionSettlementResultElement>(entityManager, root);
             ClearBufferIfPresent<CampaignMissionGuidanceAcknowledgementRequestElement>(entityManager, root);
-            if (entityManager.HasComponent<CampaignMissionGuidanceProjectionComponent>(root))
-                entityManager.SetComponentData(root, default(CampaignMissionGuidanceProjectionComponent));
-            if (entityManager.HasComponent<CampaignMissionResultComponent>(root))
-                entityManager.SetComponentData(root, default(CampaignMissionResultComponent));
+            ResetComponentIfPresent<CampaignMissionAttemptResourceInitializationComponent>(entityManager, root);
+            ResetComponentIfPresent<CampaignMissionAttemptFactProjectionStateComponent>(entityManager, root);
+            ResetComponentIfPresent<CampaignMissionDelayedWaveStateComponent>(entityManager, root);
+            ResetComponentIfPresent<CampaignMissionOpeningPresentationComponent>(entityManager, root);
+            ResetComponentIfPresent<CampaignMissionFinalePresentationComponent>(entityManager, root);
+            ResetComponentIfPresent<CampaignMissionGuidanceProjectionComponent>(entityManager, root);
+            ResetComponentIfPresent<CampaignMissionResultComponent>(entityManager, root);
+        }
+
+        private static void QueueAttemptOwnedRuntimeCleanup(
+            EntityManager entityManager,
+            ref EntityCommandBuffer cleanup,
+            Entity root)
+        {
+            if (!entityManager.HasComponent<CampaignMissionCatalogComponent>(root) ||
+                !entityManager.HasComponent<CampaignMissionRuntimeComponent>(root) ||
+                !entityManager.HasComponent<CampaignMissionAttemptFactProjectionStateComponent>(root))
+                return;
+
+            CampaignMissionCatalogComponent catalog =
+                entityManager.GetComponentData<CampaignMissionCatalogComponent>(root);
+            CampaignMissionRuntimeComponent runtime =
+                entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root);
+            CampaignMissionAttemptFactProjectionStateComponent projection =
+                entityManager.GetComponentData<CampaignMissionAttemptFactProjectionStateComponent>(root);
+            if (projection.Initialized == 0 || projection.SourceVersion != catalog.SourceVersion ||
+                !projection.SessionToken.Equals(runtime.SessionToken) ||
+                projection.AttemptOrdinal != runtime.AttemptOrdinal)
+                return;
+
+            bool hasRequiredBuilding = CampaignMissionAttemptFactProjectionSystem.TryResolveRequiredBuilding(
+                in catalog, in runtime, out FixedString128Bytes requiredBuildingId, out _);
+            bool hasRequiredUnit = CampaignMissionAttemptFactProjectionSystem.TryResolveRequiredUnit(
+                in catalog, in runtime, out FixedString128Bytes requiredUnitId, out _);
+            if (!hasRequiredBuilding && !hasRequiredUnit)
+                return;
+
+            using EntityQuery boundaryQuery = new EntityQueryBuilder(Allocator.Temp)
+                .WithAll<
+                    BuildingRuntimeStateTag,
+                    BuildingRuntimeSpawnRequest,
+                    BuildingRuntimeDeleteRequest,
+                    BuildingProducedUnitReadModel>()
+                .Build(entityManager);
+            if (boundaryQuery.CalculateEntityCount() != 1)
+                return;
+
+            Entity boundary = boundaryQuery.GetSingletonEntity();
+            if (hasRequiredBuilding)
+            {
+                DynamicBuffer<BuildingRuntimeSpawnRequest> spawnRequests =
+                    entityManager.GetBuffer<BuildingRuntimeSpawnRequest>(boundary, true);
+                DynamicBuffer<BuildingRuntimeDeleteRequest> deleteRequests =
+                    entityManager.GetBuffer<BuildingRuntimeDeleteRequest>(boundary);
+                for (int index = 0; index < spawnRequests.Length; index++)
+                {
+                    BuildingRuntimeSpawnRequest request = spawnRequests[index];
+                    if (request.RequestId <= projection.BuildingRequestBaselineId ||
+                        request.RequestKind != BuildingRuntimeSpawnRequest.KindBuilding ||
+                        request.Status != BuildingRuntimeSpawnRequest.Succeeded ||
+                        request.HasOwnerFaction == 0 ||
+                        request.FactionId != FactionIdentity.PlayerFactionId ||
+                        request.BuildingRuntimeId <= 0 ||
+                        !request.BuildingId.Equals(requiredBuildingId) ||
+                        ContainsDeleteRequest(deleteRequests, request.BuildingRuntimeId))
+                        continue;
+
+                    deleteRequests.Add(new BuildingRuntimeDeleteRequest
+                    {
+                        BuildingRuntimeId = request.BuildingRuntimeId
+                    });
+                }
+            }
+
+            if (!hasRequiredUnit)
+                return;
+
+            DynamicBuffer<BuildingProducedUnitReadModel> producedUnits =
+                entityManager.GetBuffer<BuildingProducedUnitReadModel>(boundary, true);
+            int baseline = projection.ProducedUnitReadModelBaselineCount;
+            if (baseline < 0 || baseline > producedUnits.Length)
+                return;
+
+            for (int index = baseline; index < producedUnits.Length; index++)
+            {
+                BuildingProducedUnitReadModel produced = producedUnits[index];
+                if (produced.HasOwnerFaction == 0 ||
+                    produced.OwnerFactionId != FactionIdentity.PlayerFactionId ||
+                    !FixedStringsEqual(in produced.UnitSourceKey, in requiredUnitId) ||
+                    produced.Unit == Entity.Null || !entityManager.Exists(produced.Unit) ||
+                    entityManager.HasComponent<Prefab>(produced.Unit) ||
+                    entityManager.HasComponent<CampaignMissionUnitRoleComponent>(produced.Unit))
+                    continue;
+
+                cleanup.DestroyEntity(produced.Unit);
+            }
+        }
+
+        private static bool ContainsDeleteRequest(
+            DynamicBuffer<BuildingRuntimeDeleteRequest> requests,
+            int buildingRuntimeId)
+        {
+            for (int index = 0; index < requests.Length; index++)
+            {
+                if (requests[index].BuildingRuntimeId == buildingRuntimeId)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static bool FixedStringsEqual(
+            in FixedString64Bytes left,
+            in FixedString128Bytes right)
+        {
+            if (left.Length != right.Length)
+                return false;
+
+            for (int index = 0; index < left.Length; index++)
+            {
+                if (left[index] != right[index])
+                    return false;
+            }
+
+            return true;
+        }
+
+        private static void ResetRuntimeCameraFocus(EntityManager entityManager)
+        {
+            using EntityQuery query = new EntityQueryBuilder(Allocator.Temp)
+                .WithAllRW<RuntimeCameraFocusRequestComponent>()
+                .Build(entityManager);
+            if (query.CalculateEntityCount() == 1)
+                entityManager.SetComponentData(query.GetSingletonEntity(), default(RuntimeCameraFocusRequestComponent));
         }
 
         private static void ClearBufferIfPresent<T>(EntityManager entityManager, Entity root)
@@ -125,6 +269,13 @@ namespace Game.Runtime
         {
             if (entityManager.HasBuffer<T>(root))
                 entityManager.GetBuffer<T>(root).Clear();
+        }
+
+        private static void ResetComponentIfPresent<T>(EntityManager entityManager, Entity root)
+            where T : unmanaged, IComponentData
+        {
+            if (entityManager.HasComponent<T>(root))
+                entityManager.SetComponentData(root, default(T));
         }
 
         public static bool TryValidate(

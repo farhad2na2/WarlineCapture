@@ -5,6 +5,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 using Game.Components;
+using static Game.Runtime.BuildingRuntimeBoundaryBuffers;
 using RuntimeSignature = Game.Runtime.BuildingRuntimeSignatureUtility;
 
 namespace Game.Runtime
@@ -16,6 +17,8 @@ namespace Game.Runtime
         private const int MaxRuntimeSpawnRequestsPerUpdate = 16;
 
         private readonly List<byte> _factionIds = new();
+        private readonly BuildingRuntimeDeleteCommandProcessor _deleteCommandProcessor = new();
+        private Func<int, bool> _delete;
         private readonly List<int> _pendingSpawnRequestIndices = new();
         private readonly Dictionary<GameObject, FixedString128Bytes> _boundaryIdsByPrefab = new();
         private readonly Dictionary<string, FixedString128Bytes> _boundaryIdsByFallback = new();
@@ -148,6 +151,7 @@ namespace Game.Runtime
             float now,
             int frameCount)
         {
+            _deleteCommandProcessor.Process(_delete, em, boundaryEntity);
             ProcessResourceSellRequests(factionResourceSystem, runtimeBuildings, em, boundaryEntity, now);
             ProcessUiProductionRequests(productionRequestSystem, productionRequestContext, em, frameCount, now);
             ProcessProductionRequests(productionRequestSystem, productionRequestContext, runtimeQuerySystem, runtimeQueryContext, em, boundaryEntity, now);
@@ -159,6 +163,9 @@ namespace Game.Runtime
                 out _);
             ProcessRuntimeSpawnRequests(definitionSystem, runtimeSpawnSystem, runtimeSpawnContext, em, boundaryEntity, now);
         }
+
+        internal void ConfigureDeleteBuildingById(Func<int, bool> deleteBuildingById) =>
+            _delete = deleteBuildingById;
 
         internal void ProcessRuntimeSpawnRequestsForBoundary(
             BuildingDefinitionPrefabSystemHelper definitionSystem,
@@ -1633,15 +1640,6 @@ namespace Game.Runtime
             return true;
         }
 
-        private static DynamicBuffer<T> EnsureBoundaryBuffer<T>(EntityManager em, Entity entity)
-            where T : unmanaged, IBufferElementData
-        {
-            if (!em.HasBuffer<T>(entity))
-                em.AddBuffer<T>(entity);
-
-            return em.GetBuffer<T>(entity);
-        }
-
         private FixedString128Bytes ResolveBoundaryId(GameObject prefab, string fallback)
         {
             if (prefab != null)
@@ -1665,14 +1663,5 @@ namespace Game.Runtime
             return fallbackResolved;
         }
 
-        private static FixedString128Bytes ToFixedString128(string value)
-        {
-            return new FixedString128Bytes(value ?? string.Empty);
-        }
-
-        private static FixedString64Bytes ToUnitSourceKey(GameObject prefab)
-        {
-            return new FixedString64Bytes(prefab != null ? prefab.name : string.Empty);
-        }
     }
 }

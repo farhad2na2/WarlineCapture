@@ -487,4 +487,9 @@ namespace Game.Components
         public int2 ActualFootprint;
         public int SpawnedCount;
     }
+
+    public struct BuildingRuntimeDeleteRequest : IBufferElementData
+    {
+        public int BuildingRuntimeId;
+    }
 }

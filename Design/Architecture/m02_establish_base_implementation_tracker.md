@@ -1,8 +1,8 @@
 # M02 Establish The Base Implementation Tracker
 
 Date: 2026-08-25
-Status: Active; M02EB-021 accepted and M02EB-022 dependency-ready
-Progress: 21/34 accepted items (61.8%)
+Status: Active; M02EB-022 accepted and M02EB-023 dependency-ready
+Progress: 22/34 accepted items (64.7%)
 Parent design: `Design/SagaChapters/Saga_Chapter01_First_Response.md` (`M02 Detailed Spec`)
 Technical architecture: `Design/Architecture/m02_establish_base_technical_architecture.md`
 Mission: `saga.ch01.m02.establish_base`
@@ -188,9 +188,10 @@ Every item records an exact path allowlist before editing. Unexpected user chang
   **Acceptance:** all required objectives resolve deterministically; civilian and five-minute stars are independent; Barracks/M03 unlock and rewards settle exactly once.
   **Evidence:** the existing mission runtime remains the sole outcome writer and now resolves the canonical M02 definition only after Barracks completion, rifle production, forward-post survival, delayed-wave activation, and authoritative hostile defeat; destruction of the failure-on-break forward post resolves defeat. The sole result projector validates the authored objective schema against attempt facts, projects independent no-civilian-loss and five-minute stars, and records civilian losses. The existing settlement owner maps M02 to M03, while the progress store accepts only the exact M02 first-clear production-unlock reward, grants `Building_Barrack` once, converts an already-owned Barracks to one Training Facilities Blueprint Part once, and preserves duplicate-token idempotence across restart. `[M02EstablishBaseResultSettlementValidation] result=Passed tests=10`; `[M02EstablishBaseResultSettlementRegressionValidation] result=Passed suites=6`; `[M02EstablishBaseLaunchRegressionValidation] result=Passed suites=3`; `[M02EstablishBaseLaunchValidation] result=Passed tests=14`; `[M01FirstContactConsolidatedContractValidation] result=Passed suites=23`; `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; final Unity CLI Pipeline recompile is up to date with zero compiler errors. The aggregate ECS/Burst debt probe still reports its pre-existing 26 array snapshots in seven unrelated `Assets/Game/Scripts/Systems/` files; no M02EB-021 write path uses those snapshot APIs, so this step adds zero debt. Pipeline log: `/private/tmp/warline-m02eb-021-pipeline-editor.log`.
 
-- [ ] **M02EB-022 - Prove lifecycle, retry, replay, and M01 compatibility**
+- [x] **M02EB-022 - Prove lifecycle, retry, replay, and M01 compatibility**
   **Depends on:** M02EB-011 through M02EB-021.
   **Acceptance:** repeated M01/M02 runs, retry, exit, return, and World recreation have no stale facts, duplicate rewards, entities, handles, or presentation owners.
+  **Evidence:** attempt cleanup now preserves accepted operation-map buildings while removing mission roles from them, destroys exact transient mission units and ambient civilians, queues the attempt-created Barracks through the canonical building-delete owner, destroys only post-baseline attempt-produced rifle entities, and clears warning, camera, resource, fact, delayed-wave, opening/finale, guidance/result, and command state. Retry settlement now derives first-clear versus replay rewards from the durable progress store, so retry-before-first-clear grants the first-clear reward exactly once and retry-after-clear grants replay rewards only. The existing result read model now resolves the exact mission from a multi-mission Chapter catalog instead of assuming catalog index zero. Unity CLI Pipeline 0.5.0-exp.1 drove a wrapper-launched warm Editor: recompile completed with zero errors; lifecycle 6/6, result settlement 12/12, launch 14/14, objective 22/22, building composition 2/2, and source-growth 17/17 passed. Final checked-wrapper evidence is `[M02EstablishBaseLifecycleValidation] result=Passed tests=14` in `/private/tmp/warline-m02eb-022-focused.log` and `[M02EstablishBaseLifecycleRegressionValidation] result=Passed suites=5` in `/private/tmp/warline-m02eb-022-regression.log`, including `[M01FirstContactConsolidatedContractValidation] result=Passed suites=23` and `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`. The broader building-runtime suite remains 9/12 only because of its pre-existing authored `Tent_Regular` fixture expectations; every lifecycle/delete boundary test affected by this step passes and this task does not alter that authored-content debt.
 
 ### Phase D - Guidance, Narrative, And UI
 
@@ -289,15 +290,17 @@ The first user review occurs at M02EB-029:
 | 2026-08-25 | M02EB-019 bound the canonical forward-post role to the unique authoritative operation-map building at the base anchor and projected only monotonic damage/destruction facts from existing building health and destruction truth; no parallel base-health state or combat path was added. | Accepted |
 | 2026-08-25 | M02EB-020 generalized the sole objective projection writer across M01 and M02, preserving exact M01 behavior while projecting ordered Build, Produce, and Defend state from authoritative facts with retry-safe monotonic publication and fail-closed schema/source validation. | Accepted |
 | 2026-08-25 | M02EB-021 generalized the sole runtime/result/settlement path for canonical M02 victory, forward-post defeat, independent civilian/time stars, exact Barracks reward handling, and one-time M03 progression without adding a parallel mission or persistence owner. | Accepted |
+| 2026-08-25 | M02EB-022 proved exact retry/replay/exit/return cleanup, canonical attempt-building deletion, durable first-clear settlement, multi-mission result resolution, World recreation, and M01 compatibility through the warm Unity CLI Pipeline and final checked-wrapper regression gates. | Accepted |
 
 ## 8. Current Validation And Blockers
 
 | Item | Result | Evidence |
 |---|---|---|
-| M02EB-021 outcome and settlement | Passed | `[M02EstablishBaseResultSettlementValidation] result=Passed tests=10`; deterministic objective/wave victory, forward-post defeat, independent stars, exact rewards, restart persistence, and duplicate settlement are covered |
-| M02 result/launch regressions | Passed | `[M02EstablishBaseResultSettlementRegressionValidation] result=Passed suites=6`; `[M02EstablishBaseLaunchRegressionValidation] result=Passed suites=3`; `[M02EstablishBaseLaunchValidation] result=Passed tests=14` |
-| Shared M01 compatibility | Passed | `[M01FirstContactConsolidatedContractValidation] result=Passed suites=23` |
-| Architecture/source growth and compilation | Passed | `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; final live Pipeline recompile is up to date with zero compiler errors; all changed production files remain below 500 lines |
-| Aggregate ECS/Burst debt probe | Pre-existing debt, no task regression | Current 26 snapshot calls are confined to seven unrelated `Assets/Game/Scripts/Systems/` files; M02EB-021 write paths add zero `ToEntityArray`/`ToComponentDataArray` calls |
+| M02EB-022 lifecycle and cleanup | Passed | Pipeline lifecycle 6/6 plus `[M02EstablishBaseLifecycleValidation] result=Passed tests=14`; retry, replay, exit, return, World recreation, exact Barracks/rifle cleanup, and presentation reset are covered |
+| M02 result/launch/objective regressions | Passed | Pipeline settlement 12/12, launch 14/14, and objective 22/22; checked regression includes the focused launch and settlement runners |
+| Shared M01 compatibility | Passed | `[M01FirstContactConsolidatedContractValidation] result=Passed suites=23` inside `[M02EstablishBaseLifecycleRegressionValidation] result=Passed suites=5` |
+| Architecture/source growth and compilation | Passed | Pipeline compile completed with zero errors; building composition 2/2; `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; changed production files remain under their enforced ceilings |
+| Building authored-content aggregate | Pre-existing debt, no task regression | `BuildingRuntimeValidationTests` remains 9/12 on the existing authored `Tent_Regular` fixture expectations; all affected canonical bootstrap/delete boundary tests pass |
+| Aggregate ECS/Burst debt probe | Pre-existing debt, no task regression | Current snapshot calls remain confined to unrelated established systems; M02EB-022 adds no managed hot-loop snapshot path |
 
-No blocker prevents M02EB-022. Android/Samsung certification remains owner-deferred and is not counted as passed. Final comic and voice production remains gated by M02EB-029. The pre-existing aggregate ECS/Burst snapshot debt remains an M02EB-033 closeout concern and is not widened by M02EB-021.
+No blocker prevents M02EB-023. Android/Samsung certification remains owner-deferred and is not counted as passed. Final comic and voice production remains gated by M02EB-029. The pre-existing aggregate ECS/Burst and authored Tent fixture debts remain closeout concerns and are not widened by M02EB-022.

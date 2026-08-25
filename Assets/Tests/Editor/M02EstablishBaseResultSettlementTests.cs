@@ -17,7 +17,7 @@ public sealed class M02EstablishBaseResultSettlementTests
     private const string Barracks = "Building_Barrack";
     private const string TrainingFacilities = "upgrade.building.training_facilities";
     private const string FocusedMarker =
-        "[M02EstablishBaseResultSettlementValidation] result=Passed tests=10";
+        "[M02EstablishBaseResultSettlementValidation] result=Passed tests=12";
 
     [MenuItem("Game/Validation/Run M02 Establish Base Result Settlement Focused")]
     public static void RunFocusedValidation()
@@ -33,6 +33,8 @@ public sealed class M02EstablishBaseResultSettlementTests
             tests.FirstClearGrantsRewardsBarracksAndM03ExactlyOnce();
             tests.ExistingBarracksConvertsUnlockToBlueprintPartsExactlyOnce();
             tests.ReplayGrantsOnlyReplayCredits();
+            tests.CampaignRetryBeforeFirstClearGrantsFirstClearRewards();
+            tests.ReplayRetryAfterFirstClearGrantsOnlyReplayRewards();
             tests.RestartPreservesUnlockRewardsAndSettlementHistory();
             tests.UnknownOrMisScopedCustomRewardsFailClosed();
             Debug.Log(FocusedMarker);
@@ -190,6 +192,46 @@ public sealed class M02EstablishBaseResultSettlementTests
         Assert.AreEqual(0, profile.blueprintParts.Length);
         Assert.AreEqual(1, Array.Find(context.Store.ReadAll(), entry => entry.missionId == M02)
             .successfulReplayCount);
+    });
+
+    [Test]
+    public void CampaignRetryBeforeFirstClearGrantsFirstClearRewards() => WithStore(context =>
+    {
+        context.Store.SetPendingResume(M02, true, 1);
+        using BlobAssetReference<CampaignMissionCatalogBlob> blob = CreateBlob();
+
+        CampaignMissionSettlementResultElement result = Settle(
+            context.Store, blob, "retry-first-clear", 2, MissionRunKind.Retry, 3, 210000);
+
+        PlayerProfileSaveData profile = context.Service.LoadProfile();
+        Assert.AreEqual(1, result.Accepted, result.ReasonCode.ToString());
+        Assert.AreEqual(320, profile.commanderXp);
+        Assert.AreEqual(1500, profile.credits);
+        CollectionAssert.AreEqual(new[] { Barracks }, profile.ownedBuildingUnlocks);
+        CampaignMissionProgressSaveData progress =
+            Array.Find(context.Store.ReadAll(), entry => entry.missionId == M02);
+        Assert.IsTrue(progress.firstClearCompleted);
+        Assert.IsFalse(progress.pendingResume);
+    });
+
+    [Test]
+    public void ReplayRetryAfterFirstClearGrantsOnlyReplayRewards() => WithStore(context =>
+    {
+        using BlobAssetReference<CampaignMissionCatalogBlob> blob = CreateBlob();
+        Settle(context.Store, blob, "first", 1, MissionRunKind.FirstClear, 2, 260000);
+        context.Store.SetPendingResume(M02, true, 2);
+
+        CampaignMissionSettlementResultElement result = Settle(
+            context.Store, blob, "retry-replay", 3, MissionRunKind.Retry, 3, 180000);
+
+        PlayerProfileSaveData profile = context.Service.LoadProfile();
+        Assert.AreEqual(1, result.Accepted, result.ReasonCode.ToString());
+        Assert.AreEqual(320, profile.commanderXp);
+        Assert.AreEqual(1800, profile.credits);
+        CampaignMissionProgressSaveData progress =
+            Array.Find(context.Store.ReadAll(), entry => entry.missionId == M02);
+        Assert.AreEqual(1, progress.successfulReplayCount);
+        Assert.IsFalse(progress.pendingResume);
     });
 
     [Test]

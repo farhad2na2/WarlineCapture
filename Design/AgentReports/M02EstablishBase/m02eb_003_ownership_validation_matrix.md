@@ -109,6 +109,10 @@ Approved existing paths:
 - `Assets/Game/Scripts/Systems/BuildingProductionRuntimeTickCompositionSystemHelper.cs`
 - `Assets/Game/Scripts/Systems/BuildingProductionQueueCompositionSystemHelper.cs`
 - `Assets/Game/Scripts/Systems/BuildingRuntimeReadModelCompositionSystemHelper.cs`
+- `Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs`
+- `Assets/Game/Scripts/Systems/BuildingRuntimePublishCompositionSystemHelper.cs`
+- `Assets/Game/Scripts/Systems/BuildingRuntimeCompositionSystemHelper.cs`
+- `Assets/Game/Scripts/Composition/MatchBuildingRuntimeBootstrapStartupSystemHelper.cs`
 - `Assets/Game/Scripts/Components/BuildingRuntimeEcsComponents.cs`
 - `Assets/Game/Scripts/UI/Contracts/UiMissionHudRestrictionsModel.cs`
 - `Assets/Game/Scripts/UI/Contracts/UiMatchHudResourceValuesModel.cs`
@@ -123,6 +127,8 @@ Approved existing paths:
 Approved new paths:
 
 - `Assets/Game/Scripts/Components/CampaignMissionAttemptFactComponents.cs`
+- `Assets/Game/Scripts/Systems/BuildingRuntimeBoundaryCommands.cs`
+- `Assets/Game/Scripts/Systems/BuildingRuntimeComposition.PublishContext.cs`
 - `Assets/Game/Scripts/Runtime/Missions/CampaignMissionAttemptResourceInitializationSystem.cs`
 - `Assets/Game/Scripts/Runtime/Missions/CampaignMissionAttemptFactProjectionSystem.cs`
 - `Assets/Game/Scripts/Runtime/Missions/CampaignMissionDelayedWaveSystem.cs`
@@ -143,6 +149,12 @@ Approved new paths:
 - `Assets/Tests/PlayMode/M02EstablishBaseVerticalSlicePlayModeTests.cs`
 
 Any fact projection must be unmanaged and monotonic. Structural changes use an EntityCommandBuffer outside entity iteration. Existing placement, resource, construction, production, movement, combat, health, death, and settlement systems remain authoritative.
+
+M02EB-022 may publish a bounded building-delete command on the existing building runtime boundary.
+Only the established building runtime composition owner may consume that command through its existing
+`DeleteBuildingById` delegate so retry/exit cleanup removes the visual, blocker, production queue,
+combat entity, and runtime dictionary entry together. This amendment does not authorize a mission-owned
+managed building lookup or deletion path.
 
 M02EB-012 may project the scenario-owned attempt resource seed into the existing Campaign catalog,
 apply it once after the canonical startup resource owner is ready, and hide M02-disabled logistics

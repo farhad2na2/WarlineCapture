@@ -153,10 +153,9 @@ namespace Game.UI.Shell.Ecs
 
             CampaignMissionCatalogComponent catalog =
                 entityManager.GetComponentData<CampaignMissionCatalogComponent>(root);
-            if (!catalog.Blob.IsCreated || catalog.Blob.Value.Missions.Length != 1 ||
-                !catalog.Blob.Value.Missions[0].MissionId.Equals(runtime.MissionId))
+            if (!TryFindMissionDefinition(in catalog, in runtime, out int definitionIndex))
                 return false;
-            ref CampaignMissionDefinitionBlob definition = ref catalog.Blob.Value.Missions[0];
+            ref CampaignMissionDefinitionBlob definition = ref catalog.Blob.Value.Missions[definitionIndex];
             CampaignMissionAttemptFactsComponent facts =
                 entityManager.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
             bool victory = projection.Outcome == MissionOutcomeKind.Victory;
@@ -189,6 +188,31 @@ namespace Game.UI.Shell.Ecs
             cachedMissionResultSession = projection.SessionToken;
             cachedMissionResultAttempt = projection.AttemptOrdinal;
             return true;
+        }
+
+        private static bool TryFindMissionDefinition(
+            in CampaignMissionCatalogComponent catalog,
+            in CampaignMissionRuntimeComponent runtime,
+            out int definitionIndex)
+        {
+            definitionIndex = -1;
+            if (!catalog.Blob.IsCreated)
+                return false;
+
+            ref BlobArray<CampaignMissionDefinitionBlob> missions = ref catalog.Blob.Value.Missions;
+            for (int index = 0; index < missions.Length; index++)
+            {
+                ref CampaignMissionDefinitionBlob candidate = ref missions[index];
+                if (candidate.MissionId.Equals(runtime.MissionId) &&
+                    candidate.ScenarioId.Equals(runtime.ScenarioId) &&
+                    candidate.OperationMapId.Equals(runtime.OperationMapId))
+                {
+                    definitionIndex = index;
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static string BuildMissionRewardText(ref BlobArray<CampaignMissionRewardBlob> rewards)

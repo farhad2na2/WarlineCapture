@@ -32,29 +32,29 @@ namespace Game.Composition
             return boundaryEntity;
         }
 
-        private static void EnsureBuffers(EntityManager em, Entity entity)
+        private static void EnsureBuffers(EntityManager em, Entity e)
         {
-            if (!em.HasComponent<BuildingRuntimeStateTag>(entity))
-                em.AddComponent<BuildingRuntimeStateTag>(entity);
-            EnsureBuffer<BuildingConfiguredSpawnableReadModel>(em, entity);
-            EnsureBuffer<BuildingConfiguredUnitReadModel>(em, entity);
-            EnsureBuffer<BuildingProductionSlotReadModel>(em, entity);
-            EnsureBuffer<BuildingProductionSpawnRequest>(em, entity);
-            EnsureBuffer<BuildingRecentSpawnReservation>(em, entity);
-            EnsureBuffer<BuildingProducedUnitReadModel>(em, entity);
-            EnsureBuffer<MapVehiclePlacementReadModel>(em, entity);
-            EnsureBuffer<BuildingRuntimeFactionSummary>(em, entity);
-            EnsureBuffer<BuildingRuntimeFactionUsableFuelSummary>(em, entity);
-            EnsureBuffer<BuildingRuntimeOwnedBuildingSummary>(em, entity);
-            EnsureBuffer<BuildingRuntimeUnitProductionSummary>(em, entity);
-            EnsureBuffer<BuildingFactionProductionSpawnPointReadModel>(em, entity);
-            EnsureBuffer<BuildingFactionRunwayReadModel>(em, entity);
-            EnsureBuffer<BuildingFactionUnitProductionRequest>(em, entity);
-            EnsureBuffer<BuildingFactionResourceSellRequest>(em, entity);
-            EnsureBuffer<BuildingRuntimeSpawnRequest>(em, entity);
-            EnsureBuffer<BuildingRuntimeSurfaceOverlay>(em, entity);
+            if (!em.HasComponent<BuildingRuntimeStateTag>(e))
+                em.AddComponent<BuildingRuntimeStateTag>(e);
+            EnsureBuffer<BuildingConfiguredSpawnableReadModel>(em, e);
+            EnsureBuffer<BuildingConfiguredUnitReadModel>(em, e);
+            EnsureBuffer<BuildingProductionSlotReadModel>(em, e);
+            EnsureBuffer<BuildingProductionSpawnRequest>(em, e);
+            EnsureBuffer<BuildingRecentSpawnReservation>(em, e);
+            EnsureBuffer<BuildingProducedUnitReadModel>(em, e);
+            EnsureBuffer<MapVehiclePlacementReadModel>(em, e);
+            EnsureBuffer<BuildingRuntimeFactionSummary>(em, e);
+            EnsureBuffer<BuildingRuntimeFactionUsableFuelSummary>(em, e);
+            EnsureBuffer<BuildingRuntimeOwnedBuildingSummary>(em, e);
+            EnsureBuffer<BuildingRuntimeUnitProductionSummary>(em, e);
+            EnsureBuffer<BuildingFactionProductionSpawnPointReadModel>(em, e);
+            EnsureBuffer<BuildingFactionRunwayReadModel>(em, e);
+            EnsureBuffer<BuildingFactionUnitProductionRequest>(em, e);
+            EnsureBuffer<BuildingFactionResourceSellRequest>(em, e);
+            EnsureBuffer<BuildingRuntimeSpawnRequest>(em, e);
+            EnsureBuffer<BuildingRuntimeDeleteRequest>(em, e);
+            EnsureBuffer<BuildingRuntimeSurfaceOverlay>(em, e);
         }
-
         private static void EnsureBuffer<T>(EntityManager em, Entity entity)
             where T : unmanaged, IBufferElementData
         {

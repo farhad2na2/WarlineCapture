@@ -80,9 +80,6 @@ namespace Game.Runtime
                 return response;
             }
 
-            bool firstClear = runtime.RunKind == MissionRunKind.FirstClear ||
-                              runtime.RunKind == MissionRunKind.Retry &&
-                              runtime.LaunchOrigin == MissionLaunchOriginKind.FirstLaunch;
             MissionReturnDestinationKind expectedReturn = runtime.LaunchOrigin == MissionLaunchOriginKind.FirstLaunch
                 ? MissionReturnDestinationKind.CommandBase
                 : MissionReturnDestinationKind.CampaignOperations;
@@ -92,12 +89,13 @@ namespace Game.Runtime
                 return response;
             }
 
-            ref BlobArray<CampaignMissionRewardBlob> rewardSet = ref (
-                firstClear ? ref definition.FirstClearRewards : ref definition.ReplayRewards);
-            CampaignMissionRewardGrant[] grants = ProjectRewards(ref rewardSet);
             CampaignMissionSettlementReceipt receipt;
             try
             {
+                bool firstClear = ResolveFirstClearSettlement(store, in runtime);
+                ref BlobArray<CampaignMissionRewardBlob> rewardSet = ref (
+                    firstClear ? ref definition.FirstClearRewards : ref definition.ReplayRewards);
+                CampaignMissionRewardGrant[] grants = ProjectRewards(ref rewardSet);
                 receipt = store.SettleWithRewards(
                     request.MissionId.ToString(), request.SessionToken.ToString(), request.AttemptOrdinal,
                     firstClear, result.Stars, result.ElapsedMilliseconds,
@@ -112,6 +110,27 @@ namespace Game.Runtime
             response.Accepted = receipt.Applied || receipt.IsDuplicate ? (byte)1 : (byte)0;
             response.ReasonCode = new FixedString64Bytes(receipt.Reason);
             return response;
+        }
+
+        private static bool ResolveFirstClearSettlement(
+            CampaignMissionProgressStore store,
+            in CampaignMissionRuntimeComponent runtime)
+        {
+            if (runtime.RunKind == MissionRunKind.FirstClear)
+                return true;
+            if (runtime.RunKind != MissionRunKind.Retry)
+                return false;
+
+            string missionId = runtime.MissionId.ToString();
+            CampaignMissionProgressSaveData[] progress = store.ReadAll();
+            for (int index = 0; index < progress.Length; index++)
+            {
+                CampaignMissionProgressSaveData entry = progress[index];
+                if (entry.missionId == missionId)
+                    return !entry.firstClearCompleted;
+            }
+
+            return true;
         }
 
         internal static string ResolveNextMissionId(in FixedString64Bytes missionId)

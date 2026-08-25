@@ -59,6 +59,16 @@ namespace Game.Runtime
                                 AttemptOrdinal = request.AttemptOrdinal
                             });
                     }
+                    if (state.EntityManager.HasComponent<CampaignMissionAttemptFactProjectionStateComponent>(root))
+                    {
+                        state.EntityManager.SetComponentData(root,
+                            new CampaignMissionAttemptFactProjectionStateComponent
+                            {
+                                SessionToken = request.SessionToken,
+                                AttemptOrdinal = request.AttemptOrdinal,
+                                SourceVersion = catalog.ValueRO.SourceVersion
+                            });
+                    }
                     CampaignMissionLaunchQueueComponent nextQueue = queue.ValueRO;
                     nextQueue.LastTransitionToken = request.TransitionToken;
                     nextQueue.Version++;

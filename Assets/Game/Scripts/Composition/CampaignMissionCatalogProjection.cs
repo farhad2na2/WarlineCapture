@@ -115,6 +115,7 @@ namespace Game.Composition
             root = roots.Length == 1 ? roots[0] : CreateRoot(entityManager);
             EnsureProgressStore(entityManager, root);
             EnsureAttemptResourceState(entityManager, root);
+            EnsureAttemptFactProjectionState(entityManager, root);
             CampaignMissionCatalogComponent previous = entityManager.GetComponentData<CampaignMissionCatalogComponent>(root);
             if (previous.SourceVersion == sourceVersion && previous.Blob.IsCreated &&
                 MatchesProjectedCatalog(in previous, missions, scenarios))
@@ -254,6 +255,7 @@ namespace Game.Composition
                 typeof(CampaignMissionRootComponent), typeof(CampaignMissionCatalogComponent),
                 typeof(CampaignMissionLaunchQueueComponent), typeof(CampaignMissionRuntimeComponent),
                 typeof(CampaignMissionAttemptFactsComponent),
+                typeof(CampaignMissionAttemptFactProjectionStateComponent),
                 typeof(CampaignMissionAttemptResourceInitializationComponent),
                 typeof(CampaignMissionGuidanceProjectionComponent));
             entityManager.AddBuffer<CampaignMissionLaunchRequestElement>(root);
@@ -280,6 +282,12 @@ namespace Game.Composition
         {
             if (!entityManager.HasComponent<CampaignMissionAttemptResourceInitializationComponent>(root))
                 entityManager.AddComponent<CampaignMissionAttemptResourceInitializationComponent>(root);
+        }
+
+        private static void EnsureAttemptFactProjectionState(EntityManager entityManager, Entity root)
+        {
+            if (!entityManager.HasComponent<CampaignMissionAttemptFactProjectionStateComponent>(root))
+                entityManager.AddComponent<CampaignMissionAttemptFactProjectionStateComponent>(root);
         }
 
         private static void ProjectAmbient(

@@ -79,21 +79,6 @@ namespace Game.Components
         public byte Applied;
     }
 
-    public struct CampaignMissionAttemptFactsComponent : IComponentData
-    {
-        public int ElapsedMilliseconds;
-        public int SquadLossCount;
-        public int HostileTotalCount;
-        public int HostileDefeatedCount;
-        public byte CommandSquadSpawned;
-        public byte CommandSquadAlive;
-        public byte MoveToCoverComplete;
-        public byte ThreatConfirmed;
-        public byte AttackIssued;
-        public byte FinalePresentationRequired;
-        public byte FinalePresentationComplete;
-    }
-
     [InternalBufferCapacity(4)]
     public struct CampaignMissionActionRequestElement : IBufferElementData
     {

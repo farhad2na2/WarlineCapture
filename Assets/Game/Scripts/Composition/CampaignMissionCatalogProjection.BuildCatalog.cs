@@ -13,6 +13,13 @@ namespace Game.Composition
             ref CampaignMissionDefinitionBlob definition,
             ScenarioSetupConfig scenario)
         {
+            ScenarioMissionBuildZoneConfig buildZone = scenario.MissionRuntime.BuildZone;
+            definition.BuildZone = new CampaignMissionBuildZoneBlob
+            {
+                AnchorId = new FixedString64Bytes(buildZone.AnchorId ?? string.Empty),
+                HalfWidthCells = buildZone.HalfWidthCells,
+                HalfHeightCells = buildZone.HalfHeightCells
+            };
             ReadOnlySpan<ScenarioMissionBuildEntryConfig> source = scenario.MissionRuntime.BuildCatalog;
             BlobBuilderArray<CampaignMissionBuildEntryBlob> projected =
                 builder.Allocate(ref definition.BuildCatalog, source.Length);
@@ -27,9 +34,17 @@ namespace Game.Composition
         }
 
         private static bool MatchesBuildCatalog(
+            ref CampaignMissionBuildZoneBlob projectedZone,
             ref BlobArray<CampaignMissionBuildEntryBlob> projected,
-            ReadOnlySpan<ScenarioMissionBuildEntryConfig> source)
+            in ScenarioMissionRuntimeConfig missionRuntime)
         {
+            ScenarioMissionBuildZoneConfig sourceZone = missionRuntime.BuildZone;
+            if (!Matches(projectedZone.AnchorId, sourceZone.AnchorId) ||
+                projectedZone.HalfWidthCells != sourceZone.HalfWidthCells ||
+                projectedZone.HalfHeightCells != sourceZone.HalfHeightCells)
+                return false;
+
+            ReadOnlySpan<ScenarioMissionBuildEntryConfig> source = missionRuntime.BuildCatalog;
             if (projected.Length != source.Length)
                 return false;
 

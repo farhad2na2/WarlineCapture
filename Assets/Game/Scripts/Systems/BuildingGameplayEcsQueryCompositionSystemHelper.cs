@@ -7,16 +7,9 @@ namespace Game.Runtime
     internal sealed class BuildingGameplayEcsQueryCompositionSystemHelper
     {
         private World _queryWorld;
-        private EntityQuery _gridDataQuery;
-        private EntityQuery _redirectQuery;
-        private EntityQuery _prefabRegistryQuery;
-        private EntityQuery _spawnPrefabsQuery;
-        private EntityQuery _selectedQuery;
-        private EntityQuery _haulerQuery;
-        private EntityQuery _playerUnitsQuery;
-        private EntityQuery _liveUnitFootprintQuery;
-        private EntityQuery _factionUnitsQuery;
-        private EntityQuery _runtimeBoundaryQuery;
+        private EntityQuery _gridDataQuery, _redirectQuery, _prefabRegistryQuery, _spawnPrefabsQuery;
+        private EntityQuery _selectedQuery, _haulerQuery, _playerUnitsQuery, _liveUnitFootprintQuery;
+        private EntityQuery _factionUnitsQuery, _runtimeBoundaryQuery, _missionQuery, _operationMapQuery;
         internal readonly BuildingFactionAIOilAllocationInputSystemHelper AIOilInputSystemHelper;
 
         internal BuildingGameplayEcsQueryCompositionSystemHelper() => AIOilInputSystemHelper = new(this);
@@ -31,6 +24,8 @@ namespace Game.Runtime
         internal EntityQuery LiveUnitFootprintQuery => _liveUnitFootprintQuery;
         internal EntityQuery LiveFactionUnitsQuery => _factionUnitsQuery;
         internal EntityQuery BuildingRuntimeStateQuery => _runtimeBoundaryQuery;
+        internal EntityQuery CampaignMissionQuery => _missionQuery;
+        internal EntityQuery OperationMapQuery => _operationMapQuery;
 
         internal bool TryResolveFactionAIOilAllocationInput(
             EntityManager em,
@@ -45,28 +40,26 @@ namespace Game.Runtime
                 return;
 
             _queryWorld = world;
-            _gridDataQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>(),
-                ComponentType.ReadOnly<GridRoad>(), ComponentType.ReadOnly<DynamicBlockerComponent>());
-            _redirectQuery = em.CreateEntityQuery(ComponentType.ReadOnly<UnitMove>(),
-                ComponentType.ReadOnly<UnitGrid>(), ComponentType.ReadOnly<LocalTransform>());
-            _prefabRegistryQuery = em.CreateEntityQuery(ComponentType.ReadOnly<UnitPrefabRegistryTag>(),
-                ComponentType.ReadOnly<UnitPrefabRegistryEntry>());
-            _spawnPrefabsQuery = em.CreateEntityQuery(ComponentType.ReadOnly<Prefab>(),
-                ComponentType.ReadOnly<UnitMove>());
-            _selectedQuery = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>(),
-                ComponentType.ReadOnly<UnitGrid>(), ComponentType.ReadOnly<UnitMove>());
-            _haulerQuery = em.CreateEntityQuery(ComponentType.ReadOnly<UnitResourceHauler>(),
-                ComponentType.ReadOnly<UnitGrid>(), ComponentType.ReadOnly<UnitMove>());
-            _playerUnitsQuery = em.CreateEntityQuery(ComponentType.ReadOnly<Faction>(),
-                ComponentType.ReadOnly<UnitRespawnPrefab>(), ComponentType.ReadOnly<UnitMove>());
-            _liveUnitFootprintQuery = em.CreateEntityQuery(ComponentType.ReadOnly<UnitGrid>(),
-                ComponentType.ReadOnly<UnitFootprint>());
+            _gridDataQuery = em.CreateEntityQuery(R<GridConfig>(), R<GridRoad>(), R<DynamicBlockerComponent>());
+            _redirectQuery = em.CreateEntityQuery(R<UnitMove>(), R<UnitGrid>(), R<LocalTransform>());
+            _prefabRegistryQuery = em.CreateEntityQuery(R<UnitPrefabRegistryTag>(), R<UnitPrefabRegistryEntry>());
+            _spawnPrefabsQuery = em.CreateEntityQuery(R<Prefab>(), R<UnitMove>());
+            _selectedQuery = em.CreateEntityQuery(R<SelectedUnitTag>(), R<UnitGrid>(), R<UnitMove>());
+            _haulerQuery = em.CreateEntityQuery(R<UnitResourceHauler>(), R<UnitGrid>(), R<UnitMove>());
+            _playerUnitsQuery = em.CreateEntityQuery(R<Faction>(), R<UnitRespawnPrefab>(), R<UnitMove>());
+            _liveUnitFootprintQuery = em.CreateEntityQuery(R<UnitGrid>(), R<UnitFootprint>());
             _factionUnitsQuery = em.CreateEntityQuery(new EntityQueryDesc
             {
                 All = new[] { ComponentType.ReadOnly<Faction>(), ComponentType.ReadOnly<UnitGrid>(), ComponentType.ReadOnly<UnitFootprint>() },
                 None = new[] { ComponentType.ReadOnly<StaticGridBlocker>(), ComponentType.ReadOnly<RuntimeBuildingCombatTag>() }
             });
             _runtimeBoundaryQuery = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeStateTag>());
+            _missionQuery = em.CreateEntityQuery(R<CampaignMissionRootComponent>(),
+                R<CampaignMissionCatalogComponent>(), R<CampaignMissionRuntimeComponent>());
+            _operationMapQuery = em.CreateEntityQuery(R<OperationMapRootComponent>(),
+                R<ActiveOperationMapComponent>(), R<OperationMapMetadataComponent>());
         }
+
+        private static ComponentType R<T>() => ComponentType.ReadOnly<T>();
     }
 }

@@ -33,7 +33,6 @@ namespace Game.Runtime
         internal delegate bool OverlapsAnyPlacementOccupantDelegate(
             BuildingGameplaySourceCompositionSystemHelper source,
             RectInt candidateRect);
-
         internal delegate bool IsPlacementValidDelegate(
             BuildingGameplaySourceCompositionSystemHelper source,
             BuildingDefinition definition,
@@ -49,21 +48,21 @@ namespace Game.Runtime
             BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext,
             MaterialPropertyBlock markerPropertyBlock,
             BuildingDefinition definition,
-            Vector2Int preferredOrigin,
-            CreateBuildingRuntimeContextSourceDelegate createBuildingRuntimeContextSource,
-            out Vector2Int resolvedOrigin)
+            Vector2Int origin,
+            CreateBuildingRuntimeContextSourceDelegate createContext,
+            out Vector2Int resolved)
         {
-            resolvedOrigin = preferredOrigin;
+            resolved = origin;
             if (source.BuildingRuntimeSpawnCompositionSystemHelper == null)
                 return false;
 
             BuildingRuntimeSpawnCompositionSystemHelper.Context context = source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateSpawnContext(
-                createBuildingRuntimeContextSource(source, interactionContext, markerPropertyBlock));
+                createContext(source, interactionContext, markerPropertyBlock));
             return source.BuildingRuntimeSpawnCompositionSystemHelper.TryResolveInitialPlacementOrigin(
                        context,
                        definition,
-                       preferredOrigin,
-                       out resolvedOrigin);
+                       origin,
+                       out resolved);
         }
 
         public Vector2Int GetCenterScreenPlacementOrigin(
@@ -89,12 +88,12 @@ namespace Game.Runtime
             GridConfig grid,
             DynamicBuffer<GridRoad> roads,
             DynamicBlockerComponent blockerData,
-            CreateRuntimeContextSourceDelegate createRuntimeContextSource,
+            CreateRuntimeContextSourceDelegate createContext,
             IsPlacementValidDelegate isPlacementValid)
         {
             PlacementState activePlacement = source.BuildingPlacementLifecycleCompositionSystemHelper.ActivePlacement;
             bool rotateVertical = source.BuildingBarrierUtilitySystemHelper.ResolvePlacementRotateVertical(
-                source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateBarrierContext(createRuntimeContextSource(source)),
+                source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateBarrierContext(createContext(source)),
                 source.BuildingPlacementInputUiSystemHelper,
                 activePlacement);
             return isPlacementValid(source, activePlacement?.Definition, originCell, footprintCells, rotateVertical, grid, roads, blockerData);
@@ -104,11 +103,11 @@ namespace Game.Runtime
             BuildingGameplaySourceCompositionSystemHelper source,
             Vector2Int originCell,
             BuildingDefinition definition,
-            CreateRuntimeContextSourceDelegate createRuntimeContextSource,
+            CreateRuntimeContextSourceDelegate createContext,
             out bool gateVertical)
         {
             return source.BuildingBarrierUtilitySystemHelper.ShouldAlignGateToNearbyWall(
-                source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateBarrierContext(createRuntimeContextSource(source)),
+                source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateBarrierContext(createContext(source)),
                 originCell,
                 definition,
                 out gateVertical);
@@ -126,7 +125,8 @@ namespace Game.Runtime
             GetEffectivePlacementRectDelegate getEffectivePlacementRect,
             OverlapsAnyPlacementOccupantDelegate overlapsAnyPlacementOccupant)
         {
-            return source.BuildingPlacementInvalidCellCacheCompositionSystemHelper.IsPlacementValid(
+            return CampaignMissionBuildingPlacementPolicy.IsAllowed(source, definition, new RectInt(originCell, footprintCells)) &&
+                source.BuildingPlacementInvalidCellCacheCompositionSystemHelper.IsPlacementValid(
                 definition,
                 originCell,
                 footprintCells,

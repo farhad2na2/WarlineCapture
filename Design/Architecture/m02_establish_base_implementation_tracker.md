@@ -1,8 +1,8 @@
 # M02 Establish The Base Implementation Tracker
 
 Date: 2026-08-25
-Status: Active; M02EB-013 accepted and M02EB-014 dependency-ready
-Progress: 13/34 accepted items (38.2%)
+Status: Active; M02EB-014 accepted and M02EB-015 dependency-ready
+Progress: 14/34 accepted items (41.2%)
 Parent design: `Design/SagaChapters/Saga_Chapter01_First_Response.md` (`M02 Detailed Spec`)
 Technical architecture: `Design/Architecture/m02_establish_base_technical_architecture.md`
 Mission: `saga.ch01.m02.establish_base`
@@ -148,9 +148,10 @@ Every item records an exact path allowlist before editing. Unexpected user chang
   **Acceptance:** Build Drawer exposes only Barracks for M02 and preserves normal Skirmish/full-catalog behavior elsewhere.
   **Evidence:** the canonical scenario build catalog is projected into the existing unmanaged Campaign mission blob and read through the established UI gateway. The Build Drawer wraps its existing prefab sources with a mission-scoped, fail-closed adapter: active M02 exposes exactly `Building_Barrack` with max count 1 and no unrelated unit/building catalog entries, while disabled mission runtime preserves the original M01/Skirmish lists exactly. Same-version build-catalog content changes force reprojection; a missing global Barracks definition fails closed. `[M02EstablishBaseBuildCatalogValidation] result=Passed tests=7`; `[BuildDrawerCatalogQueryValidation] result=Passed tests=25`; `[M02EstablishBaseConsolidatedDataValidation] result=Passed suites=5`; `[M02EstablishBaseLaunchValidation] result=Passed tests=14`; `[M01FirstContactConsolidatedContractValidation] result=Passed suites=23`; `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; `[M02EstablishBaseBuildCatalogRegressionValidation] result=Passed suites=6`; compiler errors are zero. Unity CLI drove the wrapper-launched live Editor; log: `/private/tmp/warline-m02eb-011-live-editor.log`.
 
-- [ ] **M02EB-014 - Complete validated Barracks placement and construction**
+- [x] **M02EB-014 - Complete validated Barracks placement and construction**
   **Depends on:** M02EB-009 and M02EB-013.
   **Acceptance:** invalid placement is rejected visibly; valid placement spends resources once and creates the authoritative ECS/runtime building on the accepted surface.
+  **Evidence:** the sole existing placement preview/confirm owner now applies the active Campaign mission's exact build zone and catalog before its canonical surface/occupancy validator. M02 resolves `anchor.ch01.m02.build_lot` through the active operation-map grid to `(1018,392,24,14)`, accepts only the 20x10 `Building_Barrack` fully contained in that lot, and fails closed on stale, missing, or ambiguous mission/map data; disabled mission runtime preserves unrestricted M01/Skirmish placement. The authoritative construction transaction now reserves, debits, finalizes, and rolls back both Credits and Materials exactly once before the existing ECS/runtime registration path. `[M02EstablishBasePlacementValidation] result=Passed tests=8`; `[BuildingPlacementConstructionTransactionValidation] result=Passed tests=6`; `[BuildingPlacementCommitFocusedValidation] result=Passed tests=5`; `[BuildingPlacementLiveOccupancyValidation] result=Passed tests=2`; `[M02EstablishBaseBuildCatalogValidation] result=Passed tests=7`; `[M02EstablishBaseConsolidatedDataValidation] result=Passed suites=5`; `[M01FirstContactConsolidatedContractValidation] result=Passed suites=23`; `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; `[M02EstablishBasePlacementRegressionValidation] result=Passed suites=8`; warm placement-policy allocation is zero and compiler errors are zero. Wrapper-launched live-Editor log: `/private/tmp/warline-m02eb-011-live-editor.log`.
 
 - [ ] **M02EB-015 - Project Barracks completion into mission facts and objectives**
   **Depends on:** M02EB-014.
@@ -273,17 +274,19 @@ The first user review occurs at M02EB-029:
 | 2026-08-25 | M02EB-011 generalized the sole Campaign catalog, selection, payload, map-bootstrap, and launch owners to M02; exact catalog reprojection, typed deploy/retry/replay, same-World map generation, World recreation, fail-closed identity checks, caller-seed preservation, and M01 compatibility passed without adding a parallel mission pipeline. | Accepted |
 | 2026-08-25 | M02EB-012 added one attempt-scoped ECS resource initializer and default-safe HUD restrictions: M02 receives exact Credits/Materials once per attempt, retry rearms without profile mutation, logistics and unrelated controls hide, and shared M01/source-growth contracts remain intact. | Accepted |
 | 2026-08-25 | M02EB-013 projected the canonical Barracks-only mission catalog through the existing Campaign blob/UI gateway and applied a bounded reusable Build Drawer source filter; unrestricted catalogs remain exact, missing definitions fail closed, and all six focused/shared regression suites pass. | Accepted |
+| 2026-08-25 | M02EB-014 routed the exact mission build lot through the existing placement preview/confirm owner, rejected out-of-zone and stale-data placement visibly, corrected the authoritative transaction to spend and roll back both Credits and Materials exactly once, and passed all eight focused/shared suites without source-growth regression. | Accepted |
 
 ## 8. Current Validation And Blockers
 
 | Item | Result | Evidence |
 |---|---|---|
-| M02EB-013 focused build catalog | Passed | `[M02EstablishBaseBuildCatalogValidation] result=Passed tests=7` |
-| Build Drawer regression | Passed | `[BuildDrawerCatalogQueryValidation] result=Passed tests=25` |
-| Shared launch/retry/replay | Passed | `[M02EstablishBaseLaunchValidation] result=Passed tests=14` |
+| M02EB-014 focused placement policy | Passed | `[M02EstablishBasePlacementValidation] result=Passed tests=8`; exact lot `(1018,392,24,14)`; zero warm managed allocation |
+| Construction transaction | Passed | `[BuildingPlacementConstructionTransactionValidation] result=Passed tests=6`; Credits and Materials spend/rollback exactly once |
+| Authoritative placement commit | Passed | `[BuildingPlacementCommitFocusedValidation] result=Passed tests=5`; `[BuildingPlacementLiveOccupancyValidation] result=Passed tests=2` |
+| Mission build catalog | Passed | `[M02EstablishBaseBuildCatalogValidation] result=Passed tests=7` |
 | Canonical M02 data | Passed | `[M02EstablishBaseConsolidatedDataValidation] result=Passed suites=5` |
 | Shared M01 compatibility | Passed | `[M01FirstContactConsolidatedContractValidation] result=Passed suites=23` |
-| Consolidated catalog regressions | Passed | `[M02EstablishBaseBuildCatalogRegressionValidation] result=Passed suites=6` |
+| Consolidated placement regressions | Passed | `[M02EstablishBasePlacementRegressionValidation] result=Passed suites=8` |
 | Architecture/source growth | Passed | `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; zero compiler errors |
 
-No blocker prevents M02EB-014. Android/Samsung certification remains owner-deferred and is not counted as passed. Final comic and voice production remains gated by M02EB-029.
+No blocker prevents M02EB-015. Android/Samsung certification remains owner-deferred and is not counted as passed. Final comic and voice production remains gated by M02EB-029.

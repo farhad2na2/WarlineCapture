@@ -264,6 +264,7 @@ namespace Game.Components
         public byte AirDisabled;
         public byte ReplayAllowed;
         public byte ReplayTutorialDefaultEnabled;
+        public CampaignMissionBuildZoneBlob BuildZone;
         public BlobArray<CampaignMissionBuildEntryBlob> BuildCatalog;
         public BlobArray<CampaignMissionObjectiveBlob> Objectives;
         public BlobArray<CampaignMissionForceGroupBlob> ForceGroups;
@@ -278,6 +279,13 @@ namespace Game.Components
     {
         public FixedString64Bytes BuildingConfigId;
         public int MaxCount;
+    }
+
+    public struct CampaignMissionBuildZoneBlob
+    {
+        public FixedString64Bytes AnchorId;
+        public int HalfWidthCells;
+        public int HalfHeightCells;
     }
 
     public struct CampaignMissionObjectiveBlob

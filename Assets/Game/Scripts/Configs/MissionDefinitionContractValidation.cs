@@ -25,13 +25,26 @@ namespace Game.Configs
 
             for (int index = 0; index < entries.Length; index++)
             {
-                MissionDefinitionCatalogEntryConfig entry = entries[index];
-                if (!IsValidMissionId(entry.MissionId))
+                string missionId = entries[index].MissionId;
+                if (!IsValidMissionId(missionId))
                 {
-                    error = $"Mission catalog entry at index {index} has invalid id '{entry.MissionId ?? "<null>"}'.";
+                    error = $"Mission catalog entry at index {index} has invalid id '{missionId ?? "<null>"}'.";
                     return false;
                 }
 
+                for (int previous = 0; previous < index; previous++)
+                {
+                    if (string.Equals(missionId, entries[previous].MissionId, StringComparison.Ordinal))
+                    {
+                        error = $"Duplicate mission catalog id: '{missionId}'.";
+                        return false;
+                    }
+                }
+            }
+
+            for (int index = 0; index < entries.Length; index++)
+            {
+                MissionDefinitionCatalogEntryConfig entry = entries[index];
                 if (entry.Definition == null)
                 {
                     error = $"Mission catalog entry '{entry.MissionId}' has no definition.";
@@ -47,14 +60,25 @@ namespace Game.Configs
                 if (!TryValidateDefinition(entry.Definition, out error))
                     return false;
 
-                for (int previous = 0; previous < index; previous++)
+                if (entry.Scenario == null || !entry.Scenario.TryValidate(out error))
                 {
-                    if (string.Equals(entry.MissionId, entries[previous].MissionId, StringComparison.Ordinal))
-                    {
-                        error = $"Duplicate mission catalog id: '{entry.MissionId}'.";
-                        return false;
-                    }
+                    error ??= $"Mission catalog entry '{entry.MissionId}' has no valid canonical scenario.";
+                    return false;
                 }
+
+                if (!string.Equals(
+                        entry.Definition.ScenarioId,
+                        entry.Scenario.ScenarioId,
+                        StringComparison.Ordinal) ||
+                    !string.Equals(
+                        entry.Definition.OperationMapId,
+                        entry.Scenario.OperationMapId,
+                        StringComparison.Ordinal))
+                {
+                    error = $"Mission catalog entry '{entry.MissionId}' does not close over its scenario identity.";
+                    return false;
+                }
+
             }
 
             error = null;

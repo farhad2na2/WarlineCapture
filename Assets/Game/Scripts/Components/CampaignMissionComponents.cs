@@ -268,6 +268,7 @@ namespace Game.Components
         public FixedString64Bytes ObjectiveId;
         public FixedString64Bytes DisplayTextKey;
         public FixedString64Bytes MissionRoleId;
+        public FixedString64Bytes TargetConfigId;
         public MissionObjectiveRuleKind Rule;
         public int RequiredCount;
         public byte FailureOnRuleBreak;

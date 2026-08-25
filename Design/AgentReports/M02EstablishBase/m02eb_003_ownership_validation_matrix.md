@@ -72,6 +72,26 @@ The builder may create Unity-generated `.meta` files beside approved new files. 
 
 Approved existing paths:
 
+- `Assets/Game/Scripts/Configs/MissionDefinitionCatalogConfig.cs`
+- `Assets/Game/Scripts/Configs/MissionDefinitionContractValidation.cs`
+- `Assets/Game/Scripts/Components/CampaignMissionComponents.cs`
+- `Assets/Game/Scripts/Composition/CampaignMissionCatalogProjection.cs`
+- `Assets/Game/Scripts/Composition/MenuBootstrapView.cs`
+- `Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs`
+- `Assets/Game/Scripts/Editor/M01FirstContactConfigBuilder.cs`
+- `Assets/Game/Configs/Campaign/CampaignMissionCatalog.asset`
+- `Assets/Game/Configs/Missions/Chapter01/MissionDefinition_Ch01_M01_FirstContact.asset`
+- `Assets/Game/Configs/Scenarios/Chapter01/ScenarioSetup_Ch01_M01_FirstContact.asset`
+- `Assets/Game/Scenes/Menu.unity`
+- `Assets/Game/Scripts/UI/Shell/Ecs/UiCampaignMissionProjectionSystem.cs`
+- `Assets/Game/Scripts/UI/Shell/Ecs/UiCampaignMissionProjectionSystem.Catalog.cs`
+- `Assets/Game/Scripts/Composition/CampaignMissionCatalogProjection.Matching.cs`
+- `Assets/Game/Scripts/UI/Shell/Ecs/Contracts/UiCampaignMissionComponents.cs`
+- `Assets/Tests/Editor/M01FirstContactFirstLaunchHandoffTests.cs`
+- `Assets/Tests/Editor/M01FirstContactLaunchBootstrapTests.cs`
+- `Design/AgentReports/M01FirstContact/m01dc_014_operation_map.json`
+- `Design/AgentReports/M01FirstContact/m01dc_015_camera_continuity.json`
+- `Design/AgentReports/M01FirstContact/m01dc_015_camera_continuity_contact_sheet.png`
 - `Assets/Game/Scripts/Runtime/Missions/CampaignMissionLaunchSystem.cs`
 - `Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.cs`
 - `Assets/Game/Scripts/Runtime/Missions/CampaignMissionSpawnSystem.cs`
@@ -108,6 +128,8 @@ Approved new paths:
 - `Assets/Tests/PlayMode/M02EstablishBaseVerticalSlicePlayModeTests.cs`
 
 Any fact projection must be unmanaged and monotonic. Structural changes use an EntityCommandBuffer outside entity iteration. Existing placement, resource, construction, production, movement, combat, health, death, and settlement systems remain authoritative.
+
+M02EB-011 may generalize the existing single Campaign selection, catalog projection, and menu map-bootstrap owners only far enough to prove a typed M02 deploy reaches the canonical payload and logical map. It must preserve the M01 serialized fallback and does not authorize final M02 card copy, layout, briefing presentation, or reveal behavior before M02EB-023. `Menu.unity` and the Campaign catalog are changed only through the connected Editor/builder path. The shared builder may normalize default-safe M01 schema fields and refresh checked M01 regression reports after the Chapter 1 catalogs gain M02; those outputs must remain behavior-compatible and deterministic for their current source inputs.
 
 ### Campaign UI, ARIA, Narrative, And Review: M02EB-023 Through M02EB-032
 

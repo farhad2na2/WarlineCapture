@@ -1,6 +1,6 @@
 {
   "artifactId":"m01dc-014-operation-map-v1", "taskId":"M01DC-014", "result":"Passed",
-  "catalogPath":"Assets/Game/Configs/OperationMaps/Chapter01/OperationMapCatalog_Chapter01.asset", "definitionCount":1,
+  "catalogPath":"Assets/Game/Configs/OperationMaps/Chapter01/OperationMapCatalog_Chapter01.asset", "definitionCount":2,
   "operationMapId":"opmap.ch01.district_edge_01", "contentVersion":1,
   "contentHash":"95ddbb2a59e91270a839db2f1f1d547dfc6cda46534eb6d67d1e23fdb0adeee2", "generatedMetadataHash":"dd72f1e25ca09444a7819de78ec7e727c3fca32b36bc6fffa901413fb88ce8e7",
   "contentPackId":"opmap-pack.ch01.district_edge_01", "deliveryKind":"BuiltInLocal",

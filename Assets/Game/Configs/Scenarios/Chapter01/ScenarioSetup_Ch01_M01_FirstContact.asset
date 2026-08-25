@@ -107,3 +107,22 @@ MonoBehaviour:
     anchorId: anchor.ch01.m01.civilian_safe_zone
     routeId: route.ch01.m01.civilian_evacuation
     instanceCount: 24
+  missionRuntime:
+    enabled: 0
+    startingCredits: 0
+    startingMaterials: 0
+    buildCatalog: []
+    requiredProducerConfigId: 
+    requiredUnitConfigId: 
+    baseMissionRoleId: 
+    baseAnchorId: 
+    buildZone:
+      anchorId: 
+      halfWidthCells: 0
+      halfHeightCells: 0
+    delayedWave:
+      unitGroupId: 
+      routeId: 
+      targetMissionRoleId: 
+      warningAtMilliseconds: 0
+      activationAtMilliseconds: 0

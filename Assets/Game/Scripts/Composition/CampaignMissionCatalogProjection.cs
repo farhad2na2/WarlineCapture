@@ -7,7 +7,7 @@ using Unity.Entities;
 
 namespace Game.Composition
 {
-    internal static class CampaignMissionCatalogProjection
+    internal static partial class CampaignMissionCatalogProjection
     {
         public static bool TryProject(
             EntityManager entityManager,
@@ -31,6 +31,78 @@ namespace Game.Composition
                 return false;
             }
 
+            return TryProjectValidated(
+                entityManager,
+                new[] { mission },
+                new[] { scenario },
+                operationMaps,
+                sourceVersion,
+                out root,
+                out error);
+        }
+
+        public static bool TryProject(
+            EntityManager entityManager,
+            MissionDefinitionCatalogConfig missions,
+            OperationMapCatalogConfig operationMaps,
+            uint sourceVersion,
+            out Entity root,
+            out string error)
+        {
+            root = Entity.Null;
+            error = null;
+            if (sourceVersion == 0 ||
+                !MissionDefinitionContractValidation.TryValidateCatalog(missions, out error) ||
+                operationMaps == null || !operationMaps.TryValidate(out error))
+            {
+                error ??= "Mission catalog and operation-map catalog are required.";
+                return false;
+            }
+
+            ReadOnlySpan<MissionDefinitionCatalogEntryConfig> entries = missions.Entries;
+            MissionDefinitionConfig[] definitions = new MissionDefinitionConfig[entries.Length];
+            ScenarioSetupConfig[] scenarios = new ScenarioSetupConfig[entries.Length];
+            int schemaVersion = entries[0].Definition.SchemaVersion;
+            for (int index = 0; index < entries.Length; index++)
+            {
+                MissionDefinitionConfig mission = entries[index].Definition;
+                ScenarioSetupConfig scenario = entries[index].Scenario;
+                if (mission.SchemaVersion != schemaVersion || scenario == null ||
+                    !scenario.TryValidate(out error) ||
+                    !string.Equals(mission.ScenarioId, scenario.ScenarioId, StringComparison.Ordinal) ||
+                    !string.Equals(mission.OperationMapId, scenario.OperationMapId, StringComparison.Ordinal) ||
+                    !operationMaps.TryResolve(mission.OperationMapId, out _))
+                {
+                    error ??= $"Mission catalog entry '{mission.MissionId}' does not close over its canonical scenario and operation map.";
+                    return false;
+                }
+
+                definitions[index] = mission;
+                scenarios[index] = scenario;
+            }
+
+            return TryProjectValidated(
+                entityManager,
+                definitions,
+                scenarios,
+                operationMaps,
+                sourceVersion,
+                out root,
+                out error);
+        }
+
+        private static bool TryProjectValidated(
+            EntityManager entityManager,
+            MissionDefinitionConfig[] missions,
+            ScenarioSetupConfig[] scenarios,
+            OperationMapCatalogConfig operationMaps,
+            uint sourceVersion,
+            out Entity root,
+            out string error)
+        {
+            root = Entity.Null;
+            error = null;
+
             using EntityQuery query = entityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<CampaignMissionRootComponent>());
             using NativeArray<Entity> roots = query.ToEntityArray(Allocator.Temp);
@@ -44,8 +116,7 @@ namespace Game.Composition
             EnsureProgressStore(entityManager, root);
             CampaignMissionCatalogComponent previous = entityManager.GetComponentData<CampaignMissionCatalogComponent>(root);
             if (previous.SourceVersion == sourceVersion && previous.Blob.IsCreated &&
-                previous.Blob.Value.Missions.Length == 1 &&
-                previous.Blob.Value.Missions[0].MissionId.Equals(new FixedString64Bytes(mission.MissionId)))
+                MatchesProjectedCatalog(in previous, missions, scenarios))
             {
                 error = null;
                 return true;
@@ -53,9 +124,32 @@ namespace Game.Composition
 
             BlobBuilder builder = new(Allocator.Temp);
             ref CampaignMissionCatalogBlob catalog = ref builder.ConstructRoot<CampaignMissionCatalogBlob>();
-            catalog.SchemaVersion = mission.SchemaVersion;
-            BlobBuilderArray<CampaignMissionDefinitionBlob> definitions = builder.Allocate(ref catalog.Missions, 1);
-            ref CampaignMissionDefinitionBlob definition = ref definitions[0];
+            catalog.SchemaVersion = missions[0].SchemaVersion;
+            BlobBuilderArray<CampaignMissionDefinitionBlob> definitions =
+                builder.Allocate(ref catalog.Missions, missions.Length);
+            for (int index = 0; index < missions.Length; index++)
+                ProjectDefinition(ref builder, ref definitions[index], missions[index], scenarios[index]);
+            BlobAssetReference<CampaignMissionCatalogBlob> projected =
+                builder.CreateBlobAssetReference<CampaignMissionCatalogBlob>(Allocator.Persistent);
+            builder.Dispose();
+
+            CampaignMissionCatalogDisposalSystem.DisposeOwned(ref previous);
+            entityManager.SetComponentData(root, new CampaignMissionCatalogComponent
+            {
+                Blob = projected,
+                SourceVersion = sourceVersion,
+                OwnsBlob = 1
+            });
+            error = null;
+            return true;
+        }
+
+        private static void ProjectDefinition(
+            ref BlobBuilder builder,
+            ref CampaignMissionDefinitionBlob definition,
+            MissionDefinitionConfig mission,
+            ScenarioSetupConfig scenario)
+        {
             definition.MissionId = new FixedString64Bytes(mission.MissionId);
             definition.ScenarioId = new FixedString64Bytes(scenario.ScenarioId);
             definition.OperationMapId = new FixedString64Bytes(mission.OperationMapId);
@@ -78,19 +172,6 @@ namespace Game.Composition
             ProjectAmbient(ref builder, ref definition, scenario);
             ProjectStars(ref builder, ref definition, mission);
             ProjectRewards(ref builder, ref definition, mission);
-            BlobAssetReference<CampaignMissionCatalogBlob> projected =
-                builder.CreateBlobAssetReference<CampaignMissionCatalogBlob>(Allocator.Persistent);
-            builder.Dispose();
-
-            CampaignMissionCatalogDisposalSystem.DisposeOwned(ref previous);
-            entityManager.SetComponentData(root, new CampaignMissionCatalogComponent
-            {
-                Blob = projected,
-                SourceVersion = sourceVersion,
-                OwnsBlob = 1
-            });
-            error = null;
-            return true;
         }
 
         private static void ProjectObjectives(
@@ -106,6 +187,7 @@ namespace Game.Composition
                     ObjectiveId = new FixedString64Bytes(source[i].ObjectiveId),
                     DisplayTextKey = new FixedString64Bytes(source[i].DisplayTextKey),
                     MissionRoleId = new FixedString64Bytes(source[i].MissionRoleId),
+                    TargetConfigId = new FixedString64Bytes(source[i].TargetConfigId ?? string.Empty),
                     Rule = source[i].Rule,
                     RequiredCount = source[i].RequiredCount,
                     FailureOnRuleBreak = source[i].FailureOnRuleBreak ? (byte)1 : (byte)0

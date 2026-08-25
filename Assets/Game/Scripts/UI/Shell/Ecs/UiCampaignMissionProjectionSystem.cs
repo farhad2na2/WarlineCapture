@@ -41,7 +41,7 @@ namespace Game.UI.Shell.Ecs
 
             CampaignMissionCatalogComponent catalog =
                 entityManager.GetComponentData<CampaignMissionCatalogComponent>(campaignRoot);
-            if (!catalog.Blob.IsCreated || catalog.Blob.Value.Missions.Length != 1)
+            if (!catalog.Blob.IsCreated || catalog.Blob.Value.Missions.Length == 0)
                 return;
             CampaignMissionProgressStore store = entityManager
                 .GetComponentObject<CampaignMissionProgressStoreReferenceComponent>(campaignRoot).Store;
@@ -64,18 +64,32 @@ namespace Game.UI.Shell.Ecs
                 entityManager.GetBuffer<UiCampaignMissionActionRequestElement>(uiRoot);
             CampaignMissionProgressSaveData[] progress = store.ReadAll();
             uint settlementSourceVersion = ReadLatestSettlementSourceVersion(entityManager, campaignRoot);
-            ref CampaignMissionDefinitionBlob definition = ref catalog.Blob.Value.Missions[0];
+            ref CampaignMissionCatalogBlob catalogBlob = ref catalog.Blob.Value;
+            int definitionIndex = FindDefinitionIndex(ref catalogBlob, current.SelectedMissionId);
+            if (definitionIndex < 0)
+                definitionIndex = 0;
 
-            UiCampaignOperationsComponent next = Project(
-                catalog.SourceVersion, settlementSourceVersion,
-                definition.MissionId, definition.ScenarioId, definition.OperationMapId,
-                progress, in current);
+            bool actionRequested = requests.Length > 0;
+            for (int index = 0; index < requests.Length; index++)
+            {
+                UiCampaignMissionActionRequestElement request = requests[index];
+                if (request.Action != UiCampaignMissionActionKind.Select &&
+                    request.Action != UiCampaignMissionActionKind.OpenBriefing &&
+                    request.Action != UiCampaignMissionActionKind.Deploy)
+                    continue;
+                int requestedIndex = FindDefinitionIndex(ref catalogBlob, request.MissionId);
+                if (requestedIndex >= 0)
+                    definitionIndex = requestedIndex;
+            }
+
+            ref CampaignMissionDefinitionBlob definition = ref catalogBlob.Missions[definitionIndex];
+            UiCampaignOperationsComponent next = ProjectDefinition(
+                catalog.SourceVersion, settlementSourceVersion, ref definition, progress, in current);
             bool replayTutorial = currentBriefing.Version != 0 &&
                                   currentBriefing.MissionId.Equals(definition.MissionId)
                 ? currentBriefing.ReplayTutorialEnabled != 0
                 : definition.ReplayTutorialDefaultEnabled != 0;
             bool deployRequested = false;
-            bool actionRequested = requests.Length > 0;
             for (int index = 0; index < requests.Length; index++)
             {
                 UiCampaignMissionActionRequestElement request = requests[index];
@@ -85,7 +99,6 @@ namespace Game.UI.Shell.Ecs
                 {
                     case UiCampaignMissionActionKind.Select:
                     case UiCampaignMissionActionKind.OpenBriefing:
-                        next.SelectedMissionId = request.MissionId;
                         break;
                     case UiCampaignMissionActionKind.SetReplayTutorial:
                         if (next.FirstClearCompleted != 0 && definition.ReplayAllowed != 0)
@@ -137,49 +150,11 @@ namespace Game.UI.Shell.Ecs
             CampaignMissionProgressSaveData[] progress,
             in UiCampaignOperationsComponent current)
         {
-            CampaignMissionProgressSaveData m01 = Find(progress, M01MissionId);
-            CampaignMissionProgressSaveData m02 = Find(progress, M02MissionId);
-            bool available = m01 == null || m01.available;
-            bool completed = m01 != null && m01.firstClearCompleted;
-            bool pending = m01 != null && m01.pendingResume;
-            UiCampaignMissionPrimaryActionKind action = !available
-                ? UiCampaignMissionPrimaryActionKind.Locked
-                : pending ? UiCampaignMissionPrimaryActionKind.Continue
-                : completed ? UiCampaignMissionPrimaryActionKind.Replay
-                : UiCampaignMissionPrimaryActionKind.Start;
-            FixedString64Bytes label = new(action switch
-            {
-                UiCampaignMissionPrimaryActionKind.Start => "START OPERATION",
-                UiCampaignMissionPrimaryActionKind.Continue => "CONTINUE",
-                UiCampaignMissionPrimaryActionKind.Replay => "REPLAY",
-                _ => "LOCKED"
-            });
-
-            UiCampaignOperationsComponent next = new()
-            {
-                CatalogSourceVersion = catalogSourceVersion,
-                ProgressSourceVersion = HashProgress(progress),
-                ObservedSettlementSourceVersion = settlementSourceVersion,
-                SelectedMissionId = missionId,
-                ScenarioId = scenarioId,
-                OperationMapId = operationMapId,
-                DisplayName = new FixedString64Bytes("M01 - FIRST CONTACT"),
-                PrimaryActionLabel = label,
-                NextMissionId = new FixedString64Bytes(M02MissionId),
-                BestStars = m01?.bestStars ?? 0,
-                BestCompletionMilliseconds = m01?.bestCompletionMilliseconds ?? 0,
-                SuccessfulReplayCount = m01?.successfulReplayCount ?? 0,
-                LastAttemptOrdinal = m01?.lastAttemptOrdinal ?? -1,
-                PrimaryAction = action,
-                Available = available ? (byte)1 : (byte)0,
-                FirstClearCompleted = completed ? (byte)1 : (byte)0,
-                PendingResume = pending ? (byte)1 : (byte)0,
-                NextMissionRevealed = m02 != null && m02.available ? (byte)1 : (byte)0
-            };
-            next.Version = SameOperations(in current, in next)
-                ? current.Version
-                : NextVersion(current.Version);
-            return next;
+            return ProjectMission(
+                catalogSourceVersion, settlementSourceVersion,
+                missionId, scenarioId, operationMapId,
+                new FixedString64Bytes("M01 - FIRST CONTACT"), new FixedString64Bytes(M02MissionId),
+                progress, in current);
         }
 
         public static UiMissionBriefingComponent ProjectBriefing(
@@ -286,11 +261,14 @@ namespace Game.UI.Shell.Ecs
                 ? MissionRunKind.Retry
                 : operations.FirstClearCompleted != 0 ? MissionRunKind.Replay : MissionRunKind.FirstClear;
             NarrativeGuidanceMode guidance = ResolveGuidance(entityManager);
+            string sessionPrefix = definition.MissionId.Equals(new FixedString64Bytes(M02MissionId))
+                ? "campaign-m02-"
+                : "campaign-m01-";
             MissionLaunchPayload payload = MissionLaunchPayloadFactory.Create(
                 definition.MissionId.ToString(), definition.ScenarioId.ToString(),
                 definition.OperationMapId.ToString(), MissionLaunchOriginKind.CampaignOperations,
                 runKind, guidance, briefing.ReplayTutorialEnabled != 0,
-                transitionToken, $"campaign-m01-{transitionToken:x16}",
+                transitionToken, $"{sessionPrefix}{transitionToken:x16}",
                 operations.LastAttemptOrdinal + 1, definition.DeterministicSeed);
             launches.Add(FirstLaunchMissionHandoffOperation.ToRequest(in payload));
             return true;
@@ -335,6 +313,22 @@ namespace Game.UI.Shell.Ecs
             if (progress == null) return null;
             for (int index = 0; index < progress.Length; index++)
                 if (progress[index]?.missionId == missionId) return progress[index];
+            return null;
+        }
+
+        private static CampaignMissionProgressSaveData Find(
+            CampaignMissionProgressSaveData[] progress,
+            in FixedString64Bytes missionId)
+        {
+            if (progress == null || missionId.IsEmpty)
+                return null;
+            for (int index = 0; index < progress.Length; index++)
+            {
+                CampaignMissionProgressSaveData entry = progress[index];
+                if (entry != null && missionId.Equals(new FixedString64Bytes(entry.missionId)))
+                    return entry;
+            }
+
             return null;
         }
 
@@ -392,7 +386,9 @@ namespace Game.UI.Shell.Ecs
             left.CatalogSourceVersion == right.CatalogSourceVersion &&
             left.ProgressSourceVersion == right.ProgressSourceVersion &&
             left.SelectedMissionId.Equals(right.SelectedMissionId) && left.ScenarioId.Equals(right.ScenarioId) &&
-            left.OperationMapId.Equals(right.OperationMapId) && left.PrimaryAction == right.PrimaryAction &&
+            left.OperationMapId.Equals(right.OperationMapId) && left.DisplayName.Equals(right.DisplayName) &&
+            left.PrimaryActionLabel.Equals(right.PrimaryActionLabel) &&
+            left.NextMissionId.Equals(right.NextMissionId) && left.PrimaryAction == right.PrimaryAction &&
             left.BestStars == right.BestStars &&
             left.BestCompletionMilliseconds == right.BestCompletionMilliseconds &&
             left.SuccessfulReplayCount == right.SuccessfulReplayCount &&

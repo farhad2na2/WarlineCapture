@@ -112,9 +112,19 @@ namespace Game.Runtime
                 request.DeterministicSeed == 0 || !catalog.Blob.IsCreated || catalog.SourceVersion == 0)
                 return Reject("invalid-launch-request", out reason);
             ref CampaignMissionCatalogBlob blob = ref catalog.Blob.Value;
-            if (blob.Missions.Length != 1 || !blob.Missions[0].MissionId.Equals(request.MissionId) ||
-                !blob.Missions[0].ScenarioId.Equals(request.ScenarioId) ||
-                !blob.Missions[0].OperationMapId.Equals(request.OperationMapId))
+            int matchingDefinition = -1;
+            for (int index = 0; index < blob.Missions.Length; index++)
+            {
+                ref CampaignMissionDefinitionBlob definition = ref blob.Missions[index];
+                if (!definition.MissionId.Equals(request.MissionId) ||
+                    !definition.ScenarioId.Equals(request.ScenarioId) ||
+                    !definition.OperationMapId.Equals(request.OperationMapId))
+                    continue;
+                if (matchingDefinition >= 0)
+                    return Reject("mission-catalog-ambiguous", out reason);
+                matchingDefinition = index;
+            }
+            if (matchingDefinition < 0)
                 return Reject("mission-catalog-mismatch", out reason);
             if (!activeMap.MissionId.Equals(request.MissionId) ||
                 !activeMap.ScenarioId.Equals(request.ScenarioId) ||

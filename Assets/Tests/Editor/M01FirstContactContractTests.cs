@@ -5,11 +5,14 @@ using Game.Configs;
 using Game.Missions.Contracts;
 using Game.Tactical.Contracts;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEngine;
 
 public sealed class M01FirstContactContractTests
 {
     private const string PassMarker = "[M01FirstContactContractValidation] result=Passed tests=12";
+    private const string ScenarioPath =
+        "Assets/Game/Configs/Scenarios/Chapter01/ScenarioSetup_Ch01_M01_FirstContact.asset";
 
     public static void RunFocusedValidation()
     {
@@ -297,11 +300,17 @@ public sealed class M01FirstContactContractTests
         MissionDefinitionConfig definition,
         MissionDefinitionConfig duplicate = null)
     {
+        ScenarioSetupConfig scenario = AssetDatabase.LoadAssetAtPath<ScenarioSetupConfig>(ScenarioPath);
+        Assert.IsNotNull(scenario, $"Missing canonical M1 scenario at '{ScenarioPath}'.");
         MissionDefinitionCatalogConfig catalog = ScriptableObject.CreateInstance<MissionDefinitionCatalogConfig>();
-        MissionDefinitionCatalogEntryConfig entry = new(definition.MissionId, definition);
+        MissionDefinitionCatalogEntryConfig entry = new(definition.MissionId, definition, scenario);
         SetField(catalog, "entries", duplicate == null
             ? new[] { entry }
-            : new[] { entry, new MissionDefinitionCatalogEntryConfig(duplicate.MissionId, duplicate) });
+            : new[]
+            {
+                entry,
+                new MissionDefinitionCatalogEntryConfig(duplicate.MissionId, duplicate, scenario)
+            });
         return catalog;
     }
 

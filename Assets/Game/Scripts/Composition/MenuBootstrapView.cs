@@ -29,6 +29,7 @@ namespace Game.Composition
         [SerializeField] private FirstLaunchLanguageChoiceView firstLaunchLanguageChoiceView;
         [SerializeField] private NarrativeLocaleConfig firstLaunchPersianLocale;
         [Header("Campaign Mission Runtime")]
+        [SerializeField] private MissionDefinitionCatalogConfig campaignMissionCatalog;
         [SerializeField] private MissionDefinitionConfig campaignMissionDefinition;
         [SerializeField] private ScenarioSetupConfig campaignScenarioSetup;
         [SerializeField] private OperationMapCatalogConfig campaignOperationMapCatalog;
@@ -47,6 +48,7 @@ namespace Game.Composition
         public NarrativePunctuationConfig FirstLaunchPunctuationProfile => firstLaunchPunctuationProfile;
         public FirstLaunchLanguageChoiceView FirstLaunchLanguageChoiceView => firstLaunchLanguageChoiceView;
         public NarrativeLocaleConfig FirstLaunchPersianLocale => firstLaunchPersianLocale;
+        public MissionDefinitionCatalogConfig CampaignMissionCatalog => campaignMissionCatalog;
         public MissionDefinitionConfig CampaignMissionDefinition => campaignMissionDefinition;
         public ScenarioSetupConfig CampaignScenarioSetup => campaignScenarioSetup;
         public OperationMapCatalogConfig CampaignOperationMapCatalog => campaignOperationMapCatalog;
@@ -89,7 +91,8 @@ namespace Game.Composition
             NarrativeLocaleConfig configuredFirstLaunchPersianLocale = null,
             MissionDefinitionConfig configuredCampaignMissionDefinition = null,
             ScenarioSetupConfig configuredCampaignScenarioSetup = null,
-            OperationMapCatalogConfig configuredCampaignOperationMapCatalog = null)
+            OperationMapCatalogConfig configuredCampaignOperationMapCatalog = null,
+            MissionDefinitionCatalogConfig configuredCampaignMissionCatalog = null)
         {
             if (configuredRuntimeUiConfig != null)
                 runtimeUiConfig = configuredRuntimeUiConfig;
@@ -117,6 +120,8 @@ namespace Game.Composition
                 campaignScenarioSetup = configuredCampaignScenarioSetup;
             if (configuredCampaignOperationMapCatalog != null)
                 campaignOperationMapCatalog = configuredCampaignOperationMapCatalog;
+            if (configuredCampaignMissionCatalog != null)
+                campaignMissionCatalog = configuredCampaignMissionCatalog;
         }
 
         public void ApplyRuntimeUiMode()

@@ -2646,6 +2646,7 @@ MonoBehaviour:
   firstLaunchPunctuationProfile: {fileID: 11400000, guid: 41962bf6a30dd4001a1f63f4944774d9, type: 2}
   firstLaunchLanguageChoiceView: {fileID: 1005864321}
   firstLaunchPersianLocale: {fileID: 11400000, guid: ce5d2d1e7043e9b4a9af776495d80673, type: 2}
+  campaignMissionCatalog: {fileID: 11400000, guid: cb1a7fecce22b2f4b9182d8feebcaed0, type: 2}
   campaignMissionDefinition: {fileID: 11400000, guid: 7284111cf4349bf4bb7bb0faa0b53619, type: 2}
   campaignScenarioSetup: {fileID: 11400000, guid: ccf43b60d0265424291475c15a79ef9a, type: 2}
   campaignOperationMapCatalog: {fileID: 11400000, guid: f5eb5c2d2e932c548a01876109d52b46, type: 2}

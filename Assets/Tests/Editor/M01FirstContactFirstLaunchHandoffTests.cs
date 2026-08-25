@@ -84,6 +84,7 @@ public static class M01FirstContactFirstLaunchHandoffTests
     [Test] public static void ProductionSceneSerializesCampaignConfigs()
     {
         string scene = File.ReadAllText("Assets/Game/Scenes/Menu.unity");
+        Assert.That(scene, Does.Contain("campaignMissionCatalog: {fileID: 11400000, guid: cb1a7fecce22b2f4b9182d8feebcaed0"));
         Assert.That(scene, Does.Contain("campaignMissionDefinition: {fileID: 11400000, guid: 7284111cf4349bf4bb7bb0faa0b53619"));
         Assert.That(scene, Does.Contain("campaignScenarioSetup: {fileID: 11400000, guid: ccf43b60d0265424291475c15a79ef9a"));
         Assert.That(scene, Does.Contain("campaignOperationMapCatalog: {fileID: 11400000, guid: f5eb5c2d2e932c548a01876109d52b46"));

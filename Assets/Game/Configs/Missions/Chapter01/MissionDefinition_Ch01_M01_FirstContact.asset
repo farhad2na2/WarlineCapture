@@ -27,12 +27,14 @@ MonoBehaviour:
     displayTextKey: mission.m01.objective.secure_corridor
     rule: 1
     missionRoleId: role.hostile.patrol
+    targetConfigId: 
     requiredCount: 3
     failureOnRuleBreak: 0
   - objectiveId: obj.ch01.m01.keep_command_squad_alive
     displayTextKey: mission.m01.failure.command_squad_destroyed
     rule: 2
     missionRoleId: role.friendly.command_squad
+    targetConfigId: 
     requiredCount: 1
     failureOnRuleBreak: 1
   stars:

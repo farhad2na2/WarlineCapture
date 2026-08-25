@@ -225,12 +225,18 @@ namespace Game.Editor
         private static void PopulateCatalog(MissionDefinitionCatalogConfig target)
         {
             MissionDefinitionConfig[] missions = LoadChapterMissionDefinitions();
+            ScenarioSetupConfig[] scenarios = LoadChapterScenarios();
             SerializedObject serialized = new(target);
             SetArray(serialized, "entries", missions.Length, (entry, index) =>
             {
                 MissionDefinitionConfig mission = missions[index];
+                ScenarioSetupConfig scenario = ResolveScenario(scenarios, mission.ScenarioId);
+                if (scenario == null)
+                    throw new InvalidOperationException(
+                        $"Mission '{mission.MissionId}' has no canonical Chapter 1 scenario '{mission.ScenarioId}'.");
                 Set(entry, "missionId", mission.MissionId);
                 entry.FindPropertyRelative("definition").objectReferenceValue = mission;
+                entry.FindPropertyRelative("scenario").objectReferenceValue = scenario;
             });
             serialized.ApplyModifiedPropertiesWithoutUndo();
         }
@@ -269,6 +275,39 @@ namespace Game.Editor
 
             missions.Sort((left, right) => string.CompareOrdinal(left.MissionId, right.MissionId));
             return missions.ToArray();
+        }
+
+        private static ScenarioSetupConfig[] LoadChapterScenarios()
+        {
+            List<ScenarioSetupConfig> scenarios = new();
+            foreach (string guid in AssetDatabase.FindAssets(
+                         "t:ScenarioSetupConfig",
+                         new[] { "Assets/Game/Configs/Scenarios/Chapter01" }))
+            {
+                ScenarioSetupConfig scenario = AssetDatabase.LoadAssetAtPath<ScenarioSetupConfig>(
+                    AssetDatabase.GUIDToAssetPath(guid));
+                if (scenario != null)
+                    scenarios.Add(scenario);
+            }
+
+            scenarios.Sort((left, right) => string.CompareOrdinal(left.ScenarioId, right.ScenarioId));
+            return scenarios.ToArray();
+        }
+
+        private static ScenarioSetupConfig ResolveScenario(
+            ScenarioSetupConfig[] scenarios,
+            string scenarioId)
+        {
+            ScenarioSetupConfig resolved = null;
+            for (int index = 0; index < scenarios.Length; index++)
+                if (string.Equals(scenarios[index].ScenarioId, scenarioId, StringComparison.Ordinal))
+                {
+                    if (resolved != null)
+                        throw new InvalidOperationException(
+                            $"Chapter 1 has duplicate canonical scenarios for '{scenarioId}'.");
+                    resolved = scenarios[index];
+                }
+            return resolved;
         }
 
         private static OperationMapDefinition[] LoadChapterOperationMaps()

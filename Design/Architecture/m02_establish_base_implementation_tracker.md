@@ -1,8 +1,8 @@
 # M02 Establish The Base Implementation Tracker
 
 Date: 2026-08-25
-Status: Active; M02EB-017 accepted and M02EB-018 dependency-ready
-Progress: 17/34 accepted items (50.0%)
+Status: Active; M02EB-018 accepted and M02EB-019 dependency-ready
+Progress: 18/34 accepted items (52.9%)
 Parent design: `Design/SagaChapters/Saga_Chapter01_First_Response.md` (`M02 Detailed Spec`)
 Technical architecture: `Design/Architecture/m02_establish_base_technical_architecture.md`
 Mission: `saga.ch01.m02.establish_base`
@@ -168,9 +168,10 @@ Every item records an exact path allowlist before editing. Unexpected user chang
   **Acceptance:** one authoritative produced-unit completion advances the objective once; destroyed/invalid/unrelated units do not.
   **Evidence:** the existing attempt-facts schema now carries the additive required-unit produced count and the sole Campaign mission fact projection resolves exactly one active `ProduceUnit` objective. Each attempt captures the append-only `BuildingProducedUnitReadModel` length as its replay-safe baseline, then accepts only distinct post-baseline player-owned rows whose source key matches the exact objective target and whose correlated authoritative ECS unit is live, non-prefab, player-faction, positively healthy, and carries the same `UnitSourcePrefabKey`. Pre-attempt, duplicate, destroyed, missing, wrong-faction, wrong-source, source-mismatched, and ambiguous-definition rows fail closed; accepted completion saturates at the required count and remains monotonic after later destruction. Retry/session/source changes establish a new baseline, M01/default-disabled mission runtime remains unchanged, and the sole objective writer remains reserved for M02EB-020. `[M02EstablishBaseObjectiveValidation] result=Passed tests=16`; `[M02EstablishBaseProductionValidation] result=Passed tests=8`; `[M01FirstContactConsolidatedContractValidation] result=Passed suites=23`; `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; `[M02EstablishBaseProductionRegressionValidation] result=Passed suites=5`; `[M02EstablishBaseObjectiveRegressionValidation] result=Passed suites=2`; compiler errors are zero. Wrapper-launched live-Editor log: `/private/tmp/warline-m02eb-011-live-editor.log`.
 
-- [ ] **M02EB-018 - Activate the delayed patrol and warning**
+- [x] **M02EB-018 - Activate the delayed patrol and warning**
   **Depends on:** M02EB-008 and M02EB-011.
   **Acceptance:** hostiles cannot move/target/fire before activation; one warning precedes activation; existing ECS AI/combat owns the active wave.
+  **Evidence:** the existing Campaign catalog projection now carries the canonical delayed-wave group, route, target role, 90-second warning, and 120-second activation into unmanaged attempt state. The exact hostile roster spawns with movement and combat suppression, remains absent from enemy minimap/acquisition populations, and cannot take or deliver attack damage before activation. One dedicated Burst-capable system validates session, attempt, source version, route, faction, and exact roster count; it issues one existing ground-threat warning, then removes suppression through one ECB on a later update and restores normal `UnitCombat`/patrol/attack ownership. Retry resets the state, elapsed-time jumps still warn before activating, stale or ambiguous data fails closed, player minimap visibility and M01 opening suppression remain unchanged, and no parallel AI/combat path was added. `[M02EstablishBaseWaveValidation] result=Passed tests=9`; `[ThreatWarningValidation] result=Passed`; `[MatchHudMinimapMarkerFocusedValidation] result=Passed tests=5`; `[M02EstablishBaseWaveRegressionValidation] result=Passed suites=5`; `[M02EstablishBaseLaunchValidation] result=Passed tests=14`; `[M01FirstContactConsolidatedContractValidation] result=Passed suites=23`; `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; compiler errors are zero. Wrapper-launched live-Editor log: `/private/tmp/warline-m02eb-011-live-editor.log`.
 
 - [ ] **M02EB-019 - Defend the authoritative forward post**
   **Depends on:** M02EB-014 and M02EB-018.
@@ -281,16 +282,17 @@ The first user review occurs at M02EB-029:
 | 2026-08-25 | M02EB-015 added one unmanaged, attempt-correlated Barracks fact projection that requires a post-baseline successful authoritative building transaction plus its matching live ECS building, advances monotonically, rejects stale/forged/unrelated state, and preserves the sole objective writer for M02EB-020. | Accepted |
 | 2026-08-25 | M02EB-016 routed the required rifle through the existing production owners with exact dual-resource preflight/spend/rollback, five-second queue completion, authoritative ECS spawn/faction/read-model projection, and no parallel M02 production implementation. | Accepted |
 | 2026-08-25 | M02EB-017 projected exact produced-rifle completion from the append-only production read model into attempt facts using a retry-safe baseline and live ECS source/faction/health correlation; invalid, duplicate, stale, destroyed, and unrelated units fail closed while accepted progress stays monotonic. | Accepted |
+| 2026-08-25 | M02EB-018 added one exact delayed-wave lifecycle owner: the canonical patrol is movement/combat/minimap suppressed until one 90-second warning and later 120-second activation release it into the existing patrol, targeting, attack, health, and death systems; stale identity and roster ambiguity fail closed. | Accepted |
 
 ## 8. Current Validation And Blockers
 
 | Item | Result | Evidence |
 |---|---|---|
-| M02EB-017 produced-unit fact projection | Passed | `[M02EstablishBaseObjectiveValidation] result=Passed tests=16`; authoritative live rifle advances once, stale/invalid/unrelated rows fail closed, retry baselines separate attempts, and accepted progress remains monotonic after destruction |
-| Shared production owners | Passed | `[M02EstablishBaseProductionValidation] result=Passed tests=8`; exact queue, completion, player-faction spawn, source identity, and append-only read model remain authoritative |
-| M02 objective compatibility | Passed | `[M02EstablishBaseObjectiveRegressionValidation] result=Passed suites=2`; no second objective writer was added |
+| M02EB-018 delayed patrol lifecycle | Passed | `[M02EstablishBaseWaveValidation] result=Passed tests=9`; exact roster is held, warned once, activated once on a later update, and stale/ambiguous attempts fail closed |
+| Shared warning/minimap/combat owners | Passed | `[ThreatWarningValidation] result=Passed`; `[MatchHudMinimapMarkerFocusedValidation] result=Passed tests=5`; suppressed enemies cannot auto-acquire or receive attack damage before release |
+| M02 catalog/launch compatibility | Passed | `[M02EstablishBaseLaunchValidation] result=Passed tests=14`; retry/replay resets preserve canonical source and attempt identity |
 | Shared M01 compatibility | Passed | `[M01FirstContactConsolidatedContractValidation] result=Passed suites=23` |
-| Consolidated M02 production regressions | Passed | `[M02EstablishBaseProductionRegressionValidation] result=Passed suites=5` |
+| Consolidated M02 wave regressions | Passed | `[M02EstablishBaseWaveRegressionValidation] result=Passed suites=5` |
 | Architecture/source growth | Passed | `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; zero compiler errors |
 
-No blocker prevents M02EB-018. Android/Samsung certification remains owner-deferred and is not counted as passed. Final comic and voice production remains gated by M02EB-029.
+No blocker prevents M02EB-019. Android/Samsung certification remains owner-deferred and is not counted as passed. Final comic and voice production remains gated by M02EB-029.

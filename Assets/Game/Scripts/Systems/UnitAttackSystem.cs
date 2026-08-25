@@ -160,7 +160,7 @@ namespace Game.Runtime
                 {
                     Entity target = engageRw.Target;
                     bool hasTarget = target != Entity.Null;
-                    bool targetExists = hasTarget && em.Exists(target);
+                    bool targetExists = hasTarget && IsTargetAvailableForCombat(em, target);
                     bool targetHasHealth = targetExists && em.HasComponent<UnitHealth>(target);
                     bool targetHasTransform = targetExists && em.HasComponent<LocalTransform>(target);
                     bool targetIsStaticGridBlocker = targetExists && em.HasComponent<StaticGridBlocker>(target);
@@ -215,7 +215,7 @@ namespace Game.Runtime
                 if (engageRw.Target == Entity.Null)
                     continue;
 
-                if (!em.Exists(engageRw.Target) || !em.HasComponent<UnitHealth>(engageRw.Target) || !em.HasComponent<LocalTransform>(engageRw.Target))
+                if (!IsTargetAvailableForCombat(em, engageRw.Target) || !em.HasComponent<UnitHealth>(engageRw.Target) || !em.HasComponent<LocalTransform>(engageRw.Target))
                 {
                     engageRw.Target = Entity.Null;
                     continue;
@@ -275,9 +275,7 @@ namespace Game.Runtime
                     continue;
                 }
 
-                // Wind-up: if the unit was idle (gun down), raise the weapon first and fire
-                // the first bullet a moment later so shots line up with the shoot animation.
-                // Gated on the animation-order buffer so logic-only tests are unaffected.
+                // Delay the first shot for weapon raise; logic-only tests have no animation buffer.
                 if (attackAnimRw.TimeRemaining <= 0f && em.HasBuffer<UnitAnimationOrderEntry>(entity))
                 {
                     attackAnimRw.TimeRemaining = math.max(0.01f, animationSettingsRo.AttackAnimationSeconds);

@@ -30,16 +30,20 @@ namespace Game.Runtime
 
             _nextMarkerRefreshTime = now + MarkerRefreshIntervalSeconds;
             var markerScratch = new NativeList<MatchHudMinimapMarkerElement>(MaxMarkers, Allocator.TempJob);
+            ComponentLookup<CampaignMissionCombatSuppressedTag> combatSuppressionLookup =
+                SystemAPI.GetComponentLookup<CampaignMissionCombatSuppressedTag>(true);
             state.Dependency = new CollectMarkersJob
             {
                 MaxMarkers = MaxMarkers,
                 CollectMode = CollectPlayerMarkers,
+                CombatSuppressionLookup = combatSuppressionLookup,
                 Markers = markerScratch
             }.Schedule(state.Dependency);
             state.Dependency = new CollectMarkersJob
             {
                 MaxMarkers = MaxMarkers,
                 CollectMode = CollectEnemyMarkers,
+                CombatSuppressionLookup = combatSuppressionLookup,
                 Markers = markerScratch
             }.Schedule(state.Dependency);
             state.Dependency = new CollectScanIntelMarkersJob
@@ -97,12 +101,18 @@ namespace Game.Runtime
         {
             public int MaxMarkers;
             public byte CollectMode;
+            [ReadOnly] public ComponentLookup<CampaignMissionCombatSuppressedTag> CombatSuppressionLookup;
             public NativeList<MatchHudMinimapMarkerElement> Markers;
 
-            private void Execute(in UnitHealth health, in LocalTransform transform, in Faction faction)
+            private void Execute(
+                Entity entity,
+                in UnitHealth health,
+                in LocalTransform transform,
+                in Faction faction)
             {
                 if (Markers.Length >= MaxMarkers ||
                     health.Current <= 0 ||
+                    (CollectMode == CollectEnemyMarkers && CombatSuppressionLookup.HasComponent(entity)) ||
                     !ShouldCollectFaction(faction.Id))
                     return;
 

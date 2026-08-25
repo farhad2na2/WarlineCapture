@@ -69,6 +69,16 @@ namespace Game.Runtime
                                 SourceVersion = catalog.ValueRO.SourceVersion
                             });
                     }
+                    if (state.EntityManager.HasComponent<CampaignMissionDelayedWaveStateComponent>(root))
+                    {
+                        state.EntityManager.SetComponentData(root, new CampaignMissionDelayedWaveStateComponent
+                        {
+                            SessionToken = request.SessionToken,
+                            AttemptOrdinal = request.AttemptOrdinal,
+                            SourceVersion = catalog.ValueRO.SourceVersion,
+                            Initialized = 1
+                        });
+                    }
                     CampaignMissionLaunchQueueComponent nextQueue = queue.ValueRO;
                     nextQueue.LastTransitionToken = request.TransitionToken;
                     nextQueue.Version++;

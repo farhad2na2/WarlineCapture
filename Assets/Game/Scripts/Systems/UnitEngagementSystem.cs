@@ -42,7 +42,8 @@ namespace Game.Runtime
                 },
                 None = new[]
                 {
-                    ComponentType.ReadOnly<StaticGridBlocker>()
+                    ComponentType.ReadOnly<StaticGridBlocker>(),
+                    ComponentType.ReadOnly<CampaignMissionCombatSuppressedTag>()
                 }
             });
 
@@ -61,7 +62,8 @@ namespace Game.Runtime
                     ComponentType.ReadOnly<StaticGridBlocker>(),
                     ComponentType.ReadOnly<EngageTarget>(),
                     ComponentType.ReadOnly<GroundMissileInFlightComponent>(),
-                    ComponentType.ReadOnly<GroundMissileLauncherComponent>()
+                    ComponentType.ReadOnly<GroundMissileLauncherComponent>(),
+                    ComponentType.ReadOnly<CampaignMissionCombatSuppressedTag>()
                 }
             });
 
@@ -145,7 +147,7 @@ namespace Game.Runtime
         }
 
         [BurstCompile]
-        [WithNone(typeof(StaticGridBlocker))]
+        [WithNone(typeof(StaticGridBlocker), typeof(CampaignMissionCombatSuppressedTag))]
         private partial struct BuildSpatialMapJob : IJobEntity
         {
             public GridConfig Grid;
@@ -164,7 +166,7 @@ namespace Game.Runtime
         }
 
         [BurstCompile]
-        [WithNone(typeof(StaticGridBlocker), typeof(EngageTarget), typeof(GroundMissileInFlightComponent), typeof(GroundMissileLauncherComponent))]
+        [WithNone(typeof(StaticGridBlocker), typeof(EngageTarget), typeof(GroundMissileInFlightComponent), typeof(GroundMissileLauncherComponent), typeof(CampaignMissionCombatSuppressedTag))]
         private partial struct AcquireTargetsJob : IJobEntity
         {
             [ReadOnly] public GridConfig Grid;

@@ -189,12 +189,16 @@ namespace Game.Runtime
                             MissionRoleId = unit.MissionRoleId, UnitGroupId = group.GroupId, RouteId = routeId,
                             SessionToken = runtime.SessionToken
                         });
-                        if (ShouldUseTutorialFinale(in runtime) &&
+                        if ((ShouldUseTutorialFinale(in runtime) ||
+                             CampaignMissionDelayedWaveUtility.ShouldSuppressAtSpawn(ref definition, group.GroupId)) &&
                             !em.HasComponent<CampaignMissionCombatSuppressedTag>(instance))
                         {
                             em.AddComponent<CampaignMissionCombatSuppressedTag>(instance);
                         }
-                        if (ShouldKeepStationary(runtime.MissionId, group.FactionId) &&
+                        CampaignMissionDelayedWaveUtility.ApplyCombatHoldAtSpawn(
+                            em, instance, ref definition, group.GroupId);
+                        if ((ShouldKeepStationary(runtime.MissionId, group.FactionId) ||
+                             CampaignMissionDelayedWaveUtility.ShouldSuppressAtSpawn(ref definition, group.GroupId)) &&
                             !em.HasComponent<CampaignMissionStationaryUnitTag>(instance))
                         {
                             em.AddComponent<CampaignMissionStationaryUnitTag>(instance);

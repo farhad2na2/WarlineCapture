@@ -154,6 +154,16 @@ namespace Game.Components
     {
     }
 
+    public struct CampaignMissionDelayedWaveStateComponent : IComponentData
+    {
+        public FixedString64Bytes SessionToken;
+        public int AttemptOrdinal;
+        public uint SourceVersion;
+        public byte WarningIssued;
+        public byte Activated;
+        public byte Initialized;
+    }
+
     public struct CampaignMissionOpeningPresentationComponent : IComponentData
     {
         public FixedString64Bytes SessionToken;
@@ -241,6 +251,11 @@ namespace Game.Components
         public int EncounterStartMilliseconds;
         public int StartingCredits;
         public int StartingMaterials;
+        public int DelayedWaveWarningAtMilliseconds;
+        public int DelayedWaveActivationAtMilliseconds;
+        public FixedString64Bytes DelayedWaveUnitGroupId;
+        public FixedString64Bytes DelayedWaveRouteId;
+        public FixedString64Bytes DelayedWaveTargetMissionRoleId;
         public byte MissionRuntimeEnabled;
         public byte BuildingDisabled;
         public byte ProductionDisabled;

@@ -63,12 +63,14 @@ namespace Game.Runtime
             if (!metadata.Blob.IsCreated || facts.CommandSquadSpawned == 0 ||
                 !CampaignMissionSpawnSystem.TryFindDefinition(in catalog, in runtime, out int definitionIndex))
                 return;
+            ref CampaignMissionDefinitionBlob definition = ref catalog.Blob.Value.Missions[definitionIndex];
             int routeElapsedMilliseconds = facts.ElapsedMilliseconds;
             foreach (RefRO<CampaignMissionOpeningPresentationComponent> opening in
                      SystemAPI.Query<RefRO<CampaignMissionOpeningPresentationComponent>>())
             {
                 CampaignMissionOpeningPresentationComponent current = opening.ValueRO;
-                if (current.SessionToken.Equals(runtime.SessionToken) && current.Stage <= 6)
+                if (definition.MissionRuntimeEnabled == 0 &&
+                    current.SessionToken.Equals(runtime.SessionToken) && current.Stage <= 6)
                 {
                     routeElapsedMilliseconds = current.Stage < 6
                         ? 0
@@ -86,8 +88,8 @@ namespace Game.Runtime
             }
             if (runtime.Outcome == MissionOutcomeKind.None)
             {
-                bool holdCombat = runtime.Phase < MissionPhaseKind.Engage;
-                bool releaseCombat = ShouldReleaseCombat(
+                bool holdCombat = definition.MissionRuntimeEnabled == 0 && runtime.Phase < MissionPhaseKind.Engage;
+                bool releaseCombat = definition.MissionRuntimeEnabled == 0 && ShouldReleaseCombat(
                     runtime.Phase,
                     tutorialFinaleActive,
                     tutorialFinaleStage);
@@ -343,14 +345,15 @@ namespace Game.Runtime
                     (float)SystemAPI.Time.ElapsedTime,
                     cooldownSeconds: 20f);
             }
-            ref CampaignMissionDefinitionBlob definition = ref catalog.Blob.Value.Missions[definitionIndex];
             NativeList<Entity> targets = new(Allocator.Temp);
             NativeList<int2> goals = new(Allocator.Temp);
             foreach ((RefRW<CampaignMissionUnitRoleComponent> role, Entity entity) in
                      SystemAPI.Query<RefRW<CampaignMissionUnitRoleComponent>>().WithEntityAccess())
             {
                 CampaignMissionUnitRoleComponent current = role.ValueRO;
-                if (!ShouldIssuePatrolRoute(runtime.MissionId, runtime.Phase) ||
+                if (!CampaignMissionDelayedWaveUtility.ShouldIssuePatrolRoute(
+                        runtime.MissionId, runtime.Phase,
+                        definition.MissionRuntimeEnabled, facts.DefenseWaveActivated) ||
                     current.RouteId.IsEmpty || !current.SessionToken.Equals(runtime.SessionToken) ||
                     current.PatrolOrderVersion != 0 ||
                     !TryFindRoute(ref definition, current.RouteId, out int routeIndex)) continue;

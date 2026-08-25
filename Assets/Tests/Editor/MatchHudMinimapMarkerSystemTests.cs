@@ -21,7 +21,8 @@ public sealed class MatchHudMinimapMarkerSystemTests
             tests.MinimapMarkerSystemPublishesScanRevealedHostileLastSeenMarkers();
             tests.MinimapMarkerSystemPublishesSelectedPlayerUnitsAndScanRevealedHostilesTogether();
             tests.MinimapMarkerSystemRetainsMarkersBetweenBoundedRefreshes();
-            Debug.Log("[MatchHudMinimapMarkerFocusedValidation] result=Passed tests=4");
+            tests.MinimapMarkerSystemHidesSuppressedEnemiesButKeepsSuppressedPlayers();
+            Debug.Log("[MatchHudMinimapMarkerFocusedValidation] result=Passed tests=5");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -30,6 +31,32 @@ public sealed class MatchHudMinimapMarkerSystemTests
             Debug.LogError("[MatchHudMinimapMarkerFocusedValidation] result=Failed");
             ValidationExit.Exit(1);
         }
+    }
+
+    [Test]
+    public void MinimapMarkerSystemHidesSuppressedEnemiesButKeepsSuppressedPlayers()
+    {
+        using var world = new World(nameof(MinimapMarkerSystemHidesSuppressedEnemiesButKeepsSuppressedPlayers));
+        EntityManager em = world.EntityManager;
+        Entity player = CreateUnit(
+            em, FactionIdentity.PlayerFactionId, new float3(10f, 0f, 10f), 100);
+        Entity enemy = CreateUnit(
+            em, FactionIdentity.EnemyFactionId, new float3(20f, 0f, 20f), 100);
+        em.AddComponent<CampaignMissionCombatSuppressedTag>(player);
+        em.AddComponent<CampaignMissionCombatSuppressedTag>(enemy);
+
+        SystemHandle system = world.CreateSystem<MatchHudMinimapMarkerSystem>();
+        system.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs();
+
+        using EntityQuery markerQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<MatchHudMinimapMarkerStateComponent>(),
+            ComponentType.ReadOnly<MatchHudMinimapMarkerElement>());
+        DynamicBuffer<MatchHudMinimapMarkerElement> markers =
+            em.GetBuffer<MatchHudMinimapMarkerElement>(markerQuery.GetSingletonEntity());
+        Assert.AreEqual(1, markers.Length);
+        Assert.AreEqual(FactionIdentity.PlayerFactionId, markers[0].FactionId);
+        Assert.AreEqual(new float3(10f, 0f, 10f), markers[0].Position);
     }
 
     [Test]

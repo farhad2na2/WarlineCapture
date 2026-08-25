@@ -116,6 +116,7 @@ namespace Game.Composition
             EnsureProgressStore(entityManager, root);
             EnsureAttemptResourceState(entityManager, root);
             EnsureAttemptFactProjectionState(entityManager, root);
+            EnsureDelayedWaveState(entityManager, root);
             CampaignMissionCatalogComponent previous = entityManager.GetComponentData<CampaignMissionCatalogComponent>(root);
             if (previous.SourceVersion == sourceVersion && previous.Blob.IsCreated &&
                 MatchesProjectedCatalog(in previous, missions, scenarios))
@@ -164,6 +165,13 @@ namespace Game.Composition
             definition.EncounterStartMilliseconds = scenario.EncounterStartMilliseconds;
             definition.StartingCredits = scenario.MissionRuntime.StartingCredits;
             definition.StartingMaterials = scenario.MissionRuntime.StartingMaterials;
+            ScenarioDelayedWaveConfig delayedWave = scenario.MissionRuntime.DelayedWave;
+            definition.DelayedWaveWarningAtMilliseconds = delayedWave.WarningAtMilliseconds;
+            definition.DelayedWaveActivationAtMilliseconds = delayedWave.ActivationAtMilliseconds;
+            definition.DelayedWaveUnitGroupId = new FixedString64Bytes(delayedWave.UnitGroupId ?? string.Empty);
+            definition.DelayedWaveRouteId = new FixedString64Bytes(delayedWave.RouteId ?? string.Empty);
+            definition.DelayedWaveTargetMissionRoleId =
+                new FixedString64Bytes(delayedWave.TargetMissionRoleId ?? string.Empty);
             definition.MissionRuntimeEnabled = scenario.MissionRuntime.Enabled ? (byte)1 : (byte)0;
             definition.BuildingDisabled = scenario.Restrictions.BuildingDisabled ? (byte)1 : (byte)0;
             definition.ProductionDisabled = scenario.Restrictions.ProductionDisabled ? (byte)1 : (byte)0;
@@ -257,6 +265,7 @@ namespace Game.Composition
                 typeof(CampaignMissionAttemptFactsComponent),
                 typeof(CampaignMissionAttemptFactProjectionStateComponent),
                 typeof(CampaignMissionAttemptResourceInitializationComponent),
+                typeof(CampaignMissionDelayedWaveStateComponent),
                 typeof(CampaignMissionGuidanceProjectionComponent));
             entityManager.AddBuffer<CampaignMissionLaunchRequestElement>(root);
             entityManager.AddBuffer<CampaignMissionLaunchResultElement>(root);
@@ -288,6 +297,12 @@ namespace Game.Composition
         {
             if (!entityManager.HasComponent<CampaignMissionAttemptFactProjectionStateComponent>(root))
                 entityManager.AddComponent<CampaignMissionAttemptFactProjectionStateComponent>(root);
+        }
+
+        private static void EnsureDelayedWaveState(EntityManager entityManager, Entity root)
+        {
+            if (!entityManager.HasComponent<CampaignMissionDelayedWaveStateComponent>(root))
+                entityManager.AddComponent<CampaignMissionDelayedWaveStateComponent>(root);
         }
 
         private static void ProjectAmbient(

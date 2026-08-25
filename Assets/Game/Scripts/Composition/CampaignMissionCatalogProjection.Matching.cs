@@ -44,6 +44,12 @@ namespace Game.Composition
                 projected.EncounterStartMilliseconds != scenario.EncounterStartMilliseconds ||
                 projected.StartingCredits != scenario.MissionRuntime.StartingCredits ||
                 projected.StartingMaterials != scenario.MissionRuntime.StartingMaterials ||
+                projected.DelayedWaveWarningAtMilliseconds != scenario.MissionRuntime.DelayedWave.WarningAtMilliseconds ||
+                projected.DelayedWaveActivationAtMilliseconds != scenario.MissionRuntime.DelayedWave.ActivationAtMilliseconds ||
+                !Matches(projected.DelayedWaveUnitGroupId, scenario.MissionRuntime.DelayedWave.UnitGroupId) ||
+                !Matches(projected.DelayedWaveRouteId, scenario.MissionRuntime.DelayedWave.RouteId) ||
+                !Matches(projected.DelayedWaveTargetMissionRoleId,
+                    scenario.MissionRuntime.DelayedWave.TargetMissionRoleId) ||
                 projected.MissionRuntimeEnabled != Flag(scenario.MissionRuntime.Enabled) ||
                 projected.BuildingDisabled != Flag(scenario.Restrictions.BuildingDisabled) ||
                 projected.ProductionDisabled != Flag(scenario.Restrictions.ProductionDisabled) ||

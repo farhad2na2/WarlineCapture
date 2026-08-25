@@ -1,3 +1,4 @@
+using System.Collections;
 using Game.UI.Contracts;
 using UnityEngine;
 
@@ -10,6 +11,7 @@ namespace Game.UI.Runtime
         [SerializeField] private MissionBriefingScreenView missionBriefingView;
         [SerializeField] private string missionId = "saga.ch01.m01.first_contact";
         private bool _bound;
+        private Coroutine _selectionRefresh;
 
         public void Configure(CampaignOperationsScreenView view, string selectedMissionId)
         {
@@ -31,7 +33,11 @@ namespace Game.UI.Runtime
             missionBriefingView ??= GetComponent<MissionBriefingScreenView>();
             if (_bound) return;
             if (campaignOperationsView != null)
+            {
                 campaignOperationsView.LaunchMissionButton.onClick.AddListener(OpenBriefing);
+                BindMissionNode(0, SelectM01);
+                BindMissionNode(1, SelectM02);
+            }
             if (missionBriefingView != null)
             {
                 missionBriefingView.DeployOperationButton.onClick.AddListener(Deploy);
@@ -46,7 +52,11 @@ namespace Game.UI.Runtime
         {
             if (!_bound) return;
             if (campaignOperationsView != null)
+            {
                 campaignOperationsView.LaunchMissionButton.onClick.RemoveListener(OpenBriefing);
+                UnbindMissionNode(0, SelectM01);
+                UnbindMissionNode(1, SelectM02);
+            }
             if (missionBriefingView != null)
             {
                 missionBriefingView.DeployOperationButton.onClick.RemoveListener(Deploy);
@@ -54,6 +64,11 @@ namespace Game.UI.Runtime
                     missionBriefingView.ReplayTutorialToggle.onValueChanged.RemoveListener(SetReplayTutorial);
             }
             _bound = false;
+            if (_selectionRefresh != null)
+            {
+                StopCoroutine(_selectionRefresh);
+                _selectionRefresh = null;
+            }
         }
 
         public void Refresh()
@@ -62,14 +77,20 @@ namespace Game.UI.Runtime
             if (campaignOperationsView != null)
             {
                 if (UiShellRuntimeGateway.TryReadCampaignOperations(out UiCampaignOperationsModel campaign))
+                {
+                    missionId = campaign.SelectedMission.MissionId;
                     campaignOperationsView.Apply(campaign);
+                }
                 else
                     campaignOperationsView.ApplyUnavailable();
             }
             if (missionBriefingView != null)
             {
                 if (UiShellRuntimeGateway.TryReadMissionBriefing(out UiMissionBriefingModel briefing))
+                {
+                    missionId = briefing.MissionId;
                     missionBriefingView.Apply(in briefing);
+                }
                 else
                     missionBriefingView.ApplyUnavailable();
             }
@@ -82,6 +103,44 @@ namespace Game.UI.Runtime
                 return;
             UiShellRuntimeGateway.TryEnqueueRouteRequest(
                 UiShellRouteIntent.OpenMenuRoute, UIRoute.MissionBriefing, true);
+        }
+
+        private void SelectM01() => SelectMission(UiCampaignMissionProjectionIds.M01);
+        private void SelectM02() => SelectMission(UiCampaignMissionProjectionIds.M02);
+
+        private void SelectMission(string selectedMissionId)
+        {
+            if (!UiShellRuntimeGateway.TryEnqueueCampaignMissionAction(
+                    UiCampaignMissionActionKind.Select, selectedMissionId))
+                return;
+            missionId = selectedMissionId;
+            if (_selectionRefresh != null)
+                StopCoroutine(_selectionRefresh);
+            _selectionRefresh = StartCoroutine(RefreshAfterProjection());
+        }
+
+        private IEnumerator RefreshAfterProjection()
+        {
+            yield return null;
+            yield return null;
+            _selectionRefresh = null;
+            Refresh();
+        }
+
+        private void BindMissionNode(int index, UnityEngine.Events.UnityAction action)
+        {
+            if (campaignOperationsView.MissionNodeButtons != null &&
+                index < campaignOperationsView.MissionNodeButtons.Length &&
+                campaignOperationsView.MissionNodeButtons[index] != null)
+                campaignOperationsView.MissionNodeButtons[index].onClick.AddListener(action);
+        }
+
+        private void UnbindMissionNode(int index, UnityEngine.Events.UnityAction action)
+        {
+            if (campaignOperationsView.MissionNodeButtons != null &&
+                index < campaignOperationsView.MissionNodeButtons.Length &&
+                campaignOperationsView.MissionNodeButtons[index] != null)
+                campaignOperationsView.MissionNodeButtons[index].onClick.RemoveListener(action);
         }
 
         private void SetReplayTutorial(bool enabled)

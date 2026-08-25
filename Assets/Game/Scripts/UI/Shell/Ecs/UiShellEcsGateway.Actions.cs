@@ -83,7 +83,8 @@ namespace Game.UI.Shell.Ecs
                 return false;
 
             FixedString64Bytes fixedMissionId = new(missionId.Trim());
-            if (action != UiCampaignMissionActionKind.Refresh)
+            if (action != UiCampaignMissionActionKind.Refresh &&
+                action != UiCampaignMissionActionKind.Select)
             {
                 if (!entityManager.HasComponent<UiCampaignOperationsComponent>(boundary)) return false;
                 UiCampaignOperationsComponent campaign =

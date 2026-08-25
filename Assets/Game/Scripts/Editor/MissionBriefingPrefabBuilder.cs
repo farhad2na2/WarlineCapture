@@ -18,6 +18,7 @@ namespace Game.Editor
         private const string PrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN06_MissionBriefingContent.prefab";
         private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
         private const string MissionArtPath = "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P01.png";
+        private const string M02MissionArtPath = "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Barrack_Action_512.png";
         private const string PanelSpritePath = "Assets/Game/Art/UI/Generated/ResourceExchange/LayeredOneGo/pop12_chrome_01_popup_outer_frame.png";
         private const string DetailPanelSpritePath = "Assets/Game/Art/UI/Generated/ResourceExchange/LayeredOneGo/pop12_chrome_03_detail_panel_frame.png";
         private const string SecondarySpritePath = "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_15_secondary_dark_cta_frame.png";
@@ -95,6 +96,9 @@ namespace Game.Editor
             if (view == null || prefab.GetComponent<CampaignMissionScreenBinder>() == null ||
                 view.MissionArtImage == null || view.MissionArtImage.texture == null ||
                 view.MissionTitle == null || view.DeployOperationButton == null ||
+                view.MissionNumber == null || view.OperationCodename == null ||
+                view.ConditionNameLabels is not { Length: 2 } ||
+                view.RewardLabels is not { Length: 3 } ||
                 view.ReplayTutorialToggle == null ||
                 AssetDatabase.GetAssetPath(view.MissionArtImage.texture) != MissionArtPath)
                 return false;
@@ -160,13 +164,15 @@ namespace Game.Editor
             SetTextRect(backLabel.rectTransform, 135f, 0f, 350f, 165f);
 
             TMP_Text screenTitle = CreateText("ScreenTitle", root.transform, 690f, 292f, 2080f, 175f, "MISSION BRIEFING", 118f, Text, TextAlignmentOptions.MidlineLeft);
-            CreateText("ScreenSubtitle", root.transform, 2970f, 335f, 1720f, 100f, "FIRST RESPONSE  /  MISSION 01", 40f, Muted, TextAlignmentOptions.MidlineRight);
+            TMP_Text screenSubtitle = CreateText("ScreenSubtitle", root.transform, 2970f, 335f, 1720f, 100f, "FIRST RESPONSE  /  MISSION 01", 40f, Muted, TextAlignmentOptions.MidlineRight);
 
             RectTransform overview = BuildMissionOverview(
-                root.transform, out RawImage missionArt, out TMP_Text missionTitle,
+                root.transform, out RawImage missionArt, out TMP_Text missionNumber,
+                out TMP_Text missionTitle, out TMP_Text operationCodename,
                 out TMP_Text missionSummary, out TMP_Text locationLabel);
             RectTransform objectives = BuildObjectives(root.transform, out TMP_Text[] objectiveLabels);
-            RectTransform conditions = BuildConditions(root.transform, out TMP_Text[] conditionLabels);
+            RectTransform conditions = BuildConditions(
+                root.transform, out TMP_Text[] conditionNameLabels, out TMP_Text[] conditionLabels);
             RectTransform intel = BuildEnemyIntel(root.transform, out TMP_Text enemyIntelLabel);
             RectTransform progress = BuildChapterProgress(root.transform, out RectTransform[] progressNodes);
             BuildFooter(
@@ -185,12 +191,18 @@ namespace Game.Editor
             SetReference(serialized, "rewards", rewards);
             SetArray(serialized, "progressNodes", progressNodes);
             SetReference(serialized, "missionArtImage", missionArt);
+            SetReference(serialized, "m01MissionArt", AssetDatabase.LoadAssetAtPath<Texture2D>(MissionArtPath));
+            SetReference(serialized, "m02MissionArt", AssetDatabase.LoadAssetAtPath<Texture2D>(M02MissionArtPath));
             SetReference(serialized, "screenTitle", screenTitle);
+            SetReference(serialized, "screenSubtitle", screenSubtitle);
+            SetReference(serialized, "missionNumber", missionNumber);
             SetReference(serialized, "missionTitle", missionTitle);
+            SetReference(serialized, "operationCodename", operationCodename);
             SetReference(serialized, "missionSummary", missionSummary);
             SetReference(serialized, "locationLabel", locationLabel);
             SetArray(serialized, "objectiveLabels", objectiveLabels);
             SetArray(serialized, "conditionLabels", conditionLabels);
+            SetArray(serialized, "conditionNameLabels", conditionNameLabels);
             SetReference(serialized, "enemyIntelLabel", enemyIntelLabel);
             SetArray(serialized, "rewardRows", rewardRows);
             SetArray(serialized, "rewardLabels", rewardLabels);
@@ -205,7 +217,8 @@ namespace Game.Editor
         }
 
         private static RectTransform BuildMissionOverview(
-            Transform root, out RawImage missionArt, out TMP_Text missionTitle,
+            Transform root, out RawImage missionArt, out TMP_Text missionNumber,
+            out TMP_Text missionTitle, out TMP_Text operationCodename,
             out TMP_Text missionSummary, out TMP_Text locationLabel)
         {
             Transform panel = CreatePanel("MissionOverview", root, 80f, 500f, 2920f, 1060f);
@@ -213,11 +226,11 @@ namespace Game.Editor
             missionArt = CreateCroppedPreview("MissionArt", panel, 48f, 48f, 2824f, 964f, MissionArtPath);
 
             CreateSolid("IdentityScrim", panel, 54f, 52f, 1370f, 620f, new Color(0.006f, 0.009f, 0.008f, 0.82f));
-            CreateText("MissionNumber", panel, 92f, 84f, 1000f, 64f, "MISSION 01", 54f, Gold, TextAlignmentOptions.MidlineLeft);
+            missionNumber = CreateText("MissionNumber", panel, 92f, 84f, 1000f, 64f, "MISSION 01", 54f, Gold, TextAlignmentOptions.MidlineLeft);
             missionTitle = CreateText("MissionTitle", panel, 92f, 164f, 1260f, 112f, string.Empty, 88f, Text, TextAlignmentOptions.MidlineLeft);
             ConfigureAutoSize(missionTitle, 58f, 88f);
             CreateIcon("OperationIcon", panel, ObjectiveIconPath, 92f, 310f, 104f, 104f, Gold);
-            CreateText("OperationCodename", panel, 224f, 310f, 1050f, 104f, "FIRST CONTACT", 56f, Olive, TextAlignmentOptions.MidlineLeft);
+            operationCodename = CreateText("OperationCodename", panel, 224f, 310f, 1050f, 104f, "FIRST CONTACT", 56f, Olive, TextAlignmentOptions.MidlineLeft);
             CreateDivider(panel, 92f, 440f, 1050f, new Color(0.66f, 0.55f, 0.29f, 0.65f));
             CreateIcon("LocationIcon", panel, IntelIconPath, 92f, 480f, 92f, 92f, Muted);
             locationLabel = CreateText("Location", panel, 220f, 476f, 1050f, 100f, string.Empty, 48f, Text, TextAlignmentOptions.MidlineLeft);
@@ -252,15 +265,19 @@ namespace Game.Editor
             return panel as RectTransform;
         }
 
-        private static RectTransform BuildConditions(Transform root, out TMP_Text[] labels)
+        private static RectTransform BuildConditions(
+            Transform root, out TMP_Text[] nameLabels, out TMP_Text[] labels)
         {
             Transform panel = CreateDetailPanel("TacticalConditions", root, 3030f, 1000f, 1690f, 330f);
             CreateSectionHeader(panel, "TACTICAL CONDITIONS", ShieldIconPath, Olive);
-            labels = new[]
-            {
-                CreateMetricRow(panel, "CommandRestrictions", CivilianIconPath, "BUILDING / PRODUCTION", "PENDING", 148f, Gold),
-                CreateMetricRow(panel, "SupportRestrictions", IntelIconPath, "ECONOMY / TRANSPORT / AIR", "PENDING", 238f, Gold)
-            };
+            nameLabels = new TMP_Text[2];
+            labels = new TMP_Text[2];
+            labels[0] = CreateMetricRow(
+                panel, "CommandRestrictions", CivilianIconPath, "BUILDING / PRODUCTION",
+                "PENDING", 148f, Gold, out nameLabels[0]);
+            labels[1] = CreateMetricRow(
+                panel, "SupportRestrictions", IntelIconPath, "ECONOMY / TRANSPORT / AIR",
+                "PENDING", 238f, Gold, out nameLabels[1]);
             return panel as RectTransform;
         }
 
@@ -294,13 +311,14 @@ namespace Game.Editor
             rewards = rewardPanel as RectTransform;
             SetBottomAnchored(rewards, 80f, 45f, 2920f, 305f);
             CreateText("Title", rewardPanel, 54f, 32f, 420f, 90f, "REWARDS", 56f, Olive, TextAlignmentOptions.MidlineLeft);
-            rewardRows = new RectTransform[2];
-            rewardLabels = new TMP_Text[2];
-            rewardValues = new TMP_Text[2];
-            rewardRows[0] = CreateRewardMetric(rewardPanel, "Reward01", RankIconPath, "REWARD 01", "PENDING", 520f, Gold, out rewardLabels[0], out rewardValues[0]);
-            CreateDivider(rewardPanel, 1290f, 40f, 1f, new Color(0.58f, 0.49f, 0.28f, 0.62f), 220f);
-            rewardRows[1] = CreateRewardMetric(rewardPanel, "Reward02", CreditsIconPath, "REWARD 02", "PENDING", 1360f, Gold, out rewardLabels[1], out rewardValues[1]);
-            CreateDivider(rewardPanel, 2130f, 40f, 1f, new Color(0.58f, 0.49f, 0.28f, 0.62f), 220f);
+            rewardRows = new RectTransform[3];
+            rewardLabels = new TMP_Text[3];
+            rewardValues = new TMP_Text[3];
+            rewardRows[0] = CreateRewardMetric(rewardPanel, "Reward01", RankIconPath, "REWARD 01", "PENDING", 470f, Gold, out rewardLabels[0], out rewardValues[0]);
+            CreateDivider(rewardPanel, 1120f, 40f, 1f, new Color(0.58f, 0.49f, 0.28f, 0.62f), 220f);
+            rewardRows[1] = CreateRewardMetric(rewardPanel, "Reward02", CreditsIconPath, "REWARD 02", "PENDING", 1180f, Gold, out rewardLabels[1], out rewardValues[1]);
+            CreateDivider(rewardPanel, 1830f, 40f, 1f, new Color(0.58f, 0.49f, 0.28f, 0.62f), 220f);
+            rewardRows[2] = CreateRewardMetric(rewardPanel, "Reward03", ObjectiveIconPath, "REWARD 03", "PENDING", 1890f, Gold, out rewardLabels[2], out rewardValues[2]);
             RectTransform tutorialRoot = CreateRect("ReplayTutorial", rewardPanel, 2200f, 38f, 660f, 225f).GetComponent<RectTransform>();
             Image toggleBackground = CreateSolid("ToggleBackground", tutorialRoot, 10f, 76f, 90f, 90f, new Color(0.12f, 0.14f, 0.11f, 1f));
             Image toggleCheck = CreateSolid("ToggleCheck", toggleBackground.transform, 18f, 18f, 54f, 54f, Gold);
@@ -336,21 +354,32 @@ namespace Game.Editor
 
         private static TMP_Text CreateMetricRow(Transform panel, string name, string iconPath, string label, string value, float y, Color valueColor)
         {
+            return CreateMetricRow(panel, name, iconPath, label, value, y, valueColor, out _);
+        }
+
+        private static TMP_Text CreateMetricRow(
+            Transform panel, string name, string iconPath, string label, string value,
+            float y, Color valueColor, out TMP_Text labelText)
+        {
             Transform row = CreateRect(name, panel, 52f, y, 1580f, 80f).transform;
             CreateIcon("Icon", row, iconPath, 10f, 1f, 76f, 76f, Muted);
-            TMP_Text labelText = CreateText("Label", row, 116f, 0f, 1030f, 80f, label, 39f, Text, TextAlignmentOptions.MidlineLeft);
+            labelText = CreateText("Label", row, 116f, 0f, 760f, 80f, label, 39f, Text, TextAlignmentOptions.MidlineLeft);
             ConfigureAutoSize(labelText, 30f, 39f);
-            return CreateText("Value", row, 1190f, 0f, 350f, 80f, value, 38f, valueColor, TextAlignmentOptions.MidlineRight);
+            TMP_Text valueText = CreateText("Value", row, 900f, 0f, 640f, 80f, value, 38f, valueColor, TextAlignmentOptions.MidlineRight);
+            ConfigureAutoSize(valueText, 24f, 38f);
+            return valueText;
         }
 
         private static RectTransform CreateRewardMetric(
             Transform panel, string name, string iconPath, string label, string value,
             float x, Color valueColor, out TMP_Text labelText, out TMP_Text valueText)
         {
-            Transform metric = CreateRect(name, panel, x, 38f, 750f, 225f).transform;
+            Transform metric = CreateRect(name, panel, x, 38f, 620f, 225f).transform;
             CreateIcon("Icon", metric, iconPath, 12f, 34f, 150f, 150f, valueColor);
-            labelText = CreateText("Label", metric, 194f, 34f, 520f, 70f, label, 38f, Text, TextAlignmentOptions.MidlineLeft);
-            valueText = CreateText("Value", metric, 194f, 108f, 520f, 78f, value, 58f, valueColor, TextAlignmentOptions.MidlineLeft);
+            labelText = CreateText("Label", metric, 172f, 34f, 430f, 70f, label, 36f, Text, TextAlignmentOptions.MidlineLeft);
+            valueText = CreateText("Value", metric, 172f, 108f, 430f, 78f, value, 54f, valueColor, TextAlignmentOptions.MidlineLeft);
+            ConfigureAutoSize(labelText, 24f, 36f);
+            ConfigureAutoSize(valueText, 34f, 54f);
             return metric as RectTransform;
         }
 

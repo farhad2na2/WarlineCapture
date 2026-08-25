@@ -174,9 +174,19 @@ M02EB-011 may generalize the existing single Campaign selection, catalog project
 Approved existing paths:
 
 - `Assets/Game/Scripts/UI/Shell/Ecs/UiCampaignMissionProjectionSystem.cs`
+- `Assets/Game/Scripts/UI/Shell/Ecs/UiCampaignMissionProjectionSystem.Catalog.cs`
+- `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Actions.cs`
+- `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Core.cs`
 - `Assets/Game/Scripts/UI/Contracts/UiCampaignMissionModels.cs`
 - `Assets/Game/Scripts/UI/Shell/Ecs/Contracts/UiCampaignMissionComponents.cs`
 - `Assets/Game/Scripts/UI/Screens/CampaignMissionScreenBinder.cs`
+- `Assets/Game/Scripts/UI/Screens/CampaignOperationsScreenView.cs`
+- `Assets/Game/Scripts/UI/Screens/MissionBriefingScreenView.cs`
+- `Assets/Game/Scripts/UI/Shell/MenuOverlayRoutePresentation.cs`
+- `Assets/Game/Scripts/Editor/CampaignOperationsPrefabBuilder.cs`
+- `Assets/Game/Scripts/Editor/MissionBriefingPrefabBuilder.cs`
+- `Assets/Game/Prefabs/UI/Shell/Content/SCN05_CampaignOperationsContent.prefab`
+- `Assets/Game/Prefabs/UI/Shell/Content/SCN06_MissionBriefingContent.prefab`
 - `Assets/Game/Scripts/UI/Screens/CampaignMissionHudResultBinder.cs`
 - `Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogPresentationSystemHelper.cs`
 - `Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogQueryUiSystemHelper.cs`
@@ -202,6 +212,16 @@ Approved new paths before M02EB-029:
 - `Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs`
 - `Assets/Game/Scripts/Editor/M02EstablishBaseVisualCapture.cs`
 - `Build/EditorEvidence/M02EstablishBase/` capture output only; never stage unless a tracker evidence item explicitly names the file.
+
+M02EB-023 may extend the existing Campaign UI read model with default-safe starting-resource,
+build-catalog, and objective-target fields already owned by the canonical mission blob. The existing
+Campaign projection remains the sole selection and briefing writer, validates a requested mission
+against catalog availability, and may expose the first two Chapter 1 nodes through the established
+screen binder. SCN-05 and SCN-06 prefab changes are generated only by their existing `Game/UI/...`
+builders through the connected Editor. Presentation copy must resolve through `IGameTextResolver`
+with readable source-backed fallbacks; no final narrative media or unapproved Farsi translation is
+authorized by this amendment. Existing M01 behavior and serialized fallbacks remain covered by the
+M01 Campaign and briefing regressions.
 
 Additional new art/audio paths become writable only after M02EB-029 acceptance and an updated matrix entry. Final media must be chapter-scoped and must not alter FirstLaunch exact-set assets/importers.
 

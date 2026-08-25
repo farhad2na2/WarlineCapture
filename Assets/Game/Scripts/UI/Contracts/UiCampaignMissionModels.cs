@@ -24,7 +24,10 @@ namespace Game.UI.Contracts
     {
         None = 0,
         DestroyMissionRole = 1,
-        ProtectMissionRole = 2
+        ProtectMissionRole = 2,
+        BuildStructure = 3,
+        ProduceUnit = 4,
+        DefendMissionRole = 5
     }
 
     public enum UiMissionRewardKind : byte
@@ -115,10 +118,19 @@ namespace Game.UI.Contracts
         public UiMissionObjectiveModel(
             string objectiveId, string displayTextKey, string missionRoleId,
             UiMissionObjectiveRuleKind rule, int requiredCount, bool failureOnRuleBreak)
+            : this(objectiveId, displayTextKey, missionRoleId, string.Empty,
+                rule, requiredCount, failureOnRuleBreak)
+        {
+        }
+
+        public UiMissionObjectiveModel(
+            string objectiveId, string displayTextKey, string missionRoleId, string targetConfigId,
+            UiMissionObjectiveRuleKind rule, int requiredCount, bool failureOnRuleBreak)
         {
             ObjectiveId = objectiveId ?? string.Empty;
             DisplayTextKey = displayTextKey ?? string.Empty;
             MissionRoleId = missionRoleId ?? string.Empty;
+            TargetConfigId = targetConfigId ?? string.Empty;
             Rule = rule;
             RequiredCount = Math.Max(1, requiredCount);
             FailureOnRuleBreak = failureOnRuleBreak;
@@ -127,6 +139,7 @@ namespace Game.UI.Contracts
         public string ObjectiveId { get; }
         public string DisplayTextKey { get; }
         public string MissionRoleId { get; }
+        public string TargetConfigId { get; }
         public UiMissionObjectiveRuleKind Rule { get; }
         public int RequiredCount { get; }
         public bool FailureOnRuleBreak { get; }
@@ -159,6 +172,24 @@ namespace Game.UI.Contracts
             bool economyDisabled, bool transportDisabled, bool airDisabled,
             bool replay, bool replayAllowed, bool replayTutorialEnabled,
             bool replayTutorialToggleVisible, bool deployQueued)
+            : this(version, missionId, scenarioId, operationMapId,
+                displayNameKey, displaySummaryKey, locationNameKey,
+                objectives, rewards, hostileUnitCount, 0, 0, string.Empty, 0,
+                buildingDisabled, productionDisabled, economyDisabled, transportDisabled, airDisabled,
+                replay, replayAllowed, replayTutorialEnabled, replayTutorialToggleVisible, deployQueued)
+        {
+        }
+
+        public UiMissionBriefingModel(
+            uint version, string missionId, string scenarioId, string operationMapId,
+            string displayNameKey, string displaySummaryKey, string locationNameKey,
+            UiMissionObjectiveModel[] objectives, UiMissionRewardModel[] rewards,
+            int hostileUnitCount, int startingCredits, int startingMaterials,
+            string allowedBuildingConfigId, int allowedBuildingCount,
+            bool buildingDisabled, bool productionDisabled,
+            bool economyDisabled, bool transportDisabled, bool airDisabled,
+            bool replay, bool replayAllowed, bool replayTutorialEnabled,
+            bool replayTutorialToggleVisible, bool deployQueued)
         {
             Version = version;
             MissionId = missionId ?? string.Empty;
@@ -170,6 +201,10 @@ namespace Game.UI.Contracts
             Objectives = objectives ?? Array.Empty<UiMissionObjectiveModel>();
             Rewards = rewards ?? Array.Empty<UiMissionRewardModel>();
             HostileUnitCount = Math.Max(0, hostileUnitCount);
+            StartingCredits = Math.Max(0, startingCredits);
+            StartingMaterials = Math.Max(0, startingMaterials);
+            AllowedBuildingConfigId = allowedBuildingConfigId ?? string.Empty;
+            AllowedBuildingCount = Math.Max(0, allowedBuildingCount);
             BuildingDisabled = buildingDisabled;
             ProductionDisabled = productionDisabled;
             EconomyDisabled = economyDisabled;
@@ -192,6 +227,10 @@ namespace Game.UI.Contracts
         public UiMissionObjectiveModel[] Objectives { get; }
         public UiMissionRewardModel[] Rewards { get; }
         public int HostileUnitCount { get; }
+        public int StartingCredits { get; }
+        public int StartingMaterials { get; }
+        public string AllowedBuildingConfigId { get; }
+        public int AllowedBuildingCount { get; }
         public bool BuildingDisabled { get; }
         public bool ProductionDisabled { get; }
         public bool EconomyDisabled { get; }

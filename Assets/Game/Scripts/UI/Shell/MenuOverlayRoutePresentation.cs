@@ -42,7 +42,12 @@ namespace Game.UI.Runtime
 
         internal static void InstallCampaignBody(this UIShellContentView contentView)
         {
-            InstallBody(contentView, contentView.CampaignContentPrefab);
+            GameObject body = InstallBody(contentView, contentView.CampaignContentPrefab);
+            CampaignOperationsScreenView view = body != null
+                ? body.GetComponentInChildren<CampaignOperationsScreenView>(true)
+                : null;
+            view?.BindGameTextResolver(contentView.GameTextResolver);
+            body?.GetComponentInChildren<CampaignMissionScreenBinder>(true)?.Refresh();
         }
 
         internal static void InstallMissionBriefingBody(this UIShellContentView contentView)
@@ -52,6 +57,7 @@ namespace Game.UI.Runtime
                 ? body.GetComponentInChildren<MissionBriefingScreenView>(true)
                 : null;
             view?.BindGameTextResolver(contentView.GameTextResolver);
+            body?.GetComponentInChildren<CampaignMissionScreenBinder>(true)?.Refresh();
         }
 
         internal static void InstallOperationsBody(this UIShellContentView contentView)

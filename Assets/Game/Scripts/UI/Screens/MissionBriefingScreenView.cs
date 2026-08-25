@@ -18,12 +18,18 @@ namespace Game.UI.Runtime
         [SerializeField] private RectTransform rewards;
         [SerializeField] private RectTransform[] progressNodes;
         [SerializeField] private RawImage missionArtImage;
+        [SerializeField] private Texture m01MissionArt;
+        [SerializeField] private Texture m02MissionArt;
         [SerializeField] private TMP_Text screenTitle;
+        [SerializeField] private TMP_Text screenSubtitle;
+        [SerializeField] private TMP_Text missionNumber;
         [SerializeField] private TMP_Text missionTitle;
+        [SerializeField] private TMP_Text operationCodename;
         [SerializeField] private TMP_Text missionSummary;
         [SerializeField] private TMP_Text locationLabel;
         [SerializeField] private TMP_Text[] objectiveLabels;
         [SerializeField] private TMP_Text[] conditionLabels;
+        [SerializeField] private TMP_Text[] conditionNameLabels;
         [SerializeField] private TMP_Text enemyIntelLabel;
         [SerializeField] private RectTransform[] rewardRows;
         [SerializeField] private TMP_Text[] rewardLabels;
@@ -44,6 +50,16 @@ namespace Game.UI.Runtime
         public RawImage MissionArtImage => missionArtImage;
         public TMP_Text ScreenTitle => screenTitle;
         public TMP_Text MissionTitle => missionTitle;
+        public TMP_Text MissionNumber => missionNumber;
+        public TMP_Text OperationCodename => operationCodename;
+        public TMP_Text MissionSummary => missionSummary;
+        public TMP_Text LocationLabel => locationLabel;
+        public TMP_Text[] ObjectiveLabels => objectiveLabels;
+        public TMP_Text[] ConditionLabels => conditionLabels;
+        public TMP_Text[] ConditionNameLabels => conditionNameLabels;
+        public TMP_Text EnemyIntelLabel => enemyIntelLabel;
+        public TMP_Text[] RewardLabels => rewardLabels;
+        public TMP_Text[] RewardValues => rewardValues;
         public Button DeployOperationButton => deployOperationButton;
         public Toggle ReplayTutorialToggle => replayTutorialToggle;
 
@@ -60,19 +76,25 @@ namespace Game.UI.Runtime
                 return;
             }
 
+            bool m02 = model.MissionId == UiCampaignMissionProjectionIds.M02;
+            Set(screenTitle, _gameTextResolver.Get("mission.briefing.title", "MISSION BRIEFING"));
+            Set(screenSubtitle, m02 ? "FIRST RESPONSE  /  MISSION 02" : "FIRST RESPONSE  /  MISSION 01");
+            Set(missionNumber, m02 ? "MISSION 02" : "MISSION 01");
+            Set(operationCodename, m02 ? "ESTABLISH THE BASE" : "FIRST CONTACT");
+            if (missionArtImage != null)
+                missionArtImage.texture = m02 ? m02MissionArt : m01MissionArt;
             string title = _gameTextResolver.Get(model.DisplayNameKey, MissionTitleFromId(model.MissionId));
             Set(missionTitle, title.ToUpperInvariant());
-            Set(missionSummary, $"BRIEFING: {_gameTextResolver.Get(model.DisplaySummaryKey, "Secure the Old Market corridor and protect the civilian route.")}");
-            Set(locationLabel, $"LOCATION: {_gameTextResolver.Get(model.LocationNameKey, "Old Market, Sahrin")}");
+            Set(missionSummary, $"BRIEFING: {_gameTextResolver.Get(model.DisplaySummaryKey, SummaryFallback(model.MissionId))}");
+            Set(locationLabel, $"LOCATION: {_gameTextResolver.Get(model.LocationNameKey, LocationFallback(model.MissionId))}");
             for (int index = 0; index < (objectiveLabels?.Length ?? 0); index++)
                 Set(objectiveLabels[index], index < model.Objectives.Length
                     ? FormatObjective(in model.Objectives[index], _gameTextResolver)
                     : string.Empty);
-            if (conditionLabels != null && conditionLabels.Length > 0)
-                Set(conditionLabels[0], Restriction(model.BuildingDisabled || model.ProductionDisabled));
-            if (conditionLabels != null && conditionLabels.Length > 1)
-                Set(conditionLabels[1], Restriction(model.EconomyDisabled || model.TransportDisabled || model.AirDisabled));
-            Set(enemyIntelLabel, $"{model.HostileUnitCount} CONFIRMED");
+            ApplyConditions(in model, m02);
+            Set(enemyIntelLabel, _gameTextResolver.Get(
+                m02 ? "mission.m02.enemy_intel" : "mission.m01.enemy_intel",
+                m02 ? $"{model.HostileUnitCount} HOSTILES | DELAYED PATROL" : $"{model.HostileUnitCount} CONFIRMED"));
             for (int index = 0; index < (rewardLabels?.Length ?? 0); index++)
             {
                 bool visible = index < model.Rewards.Length;
@@ -114,10 +136,12 @@ namespace Game.UI.Runtime
 
         private static string MissionTitleFromId(string missionId)
         {
+            if (missionId == UiCampaignMissionProjectionIds.M01) return "FIRST CONTACT";
+            if (missionId == UiCampaignMissionProjectionIds.M02) return "ESTABLISH THE BASE";
             if (string.IsNullOrWhiteSpace(missionId)) return "MISSION";
             int separator = missionId.LastIndexOf('.');
             string token = separator >= 0 ? missionId[(separator + 1)..] : missionId;
-            return "MISSION 01 - " + token.Replace('_', ' ').ToUpperInvariant();
+            return token.Replace('_', ' ').ToUpperInvariant();
         }
 
         private static string FormatObjective(
@@ -128,6 +152,9 @@ namespace Game.UI.Runtime
             {
                 UiMissionObjectiveRuleKind.DestroyMissionRole => $"DESTROY THE HOSTILE PATROL ({objective.RequiredCount})",
                 UiMissionObjectiveRuleKind.ProtectMissionRole => "KEEP THE COMMAND SQUAD ALIVE",
+                UiMissionObjectiveRuleKind.BuildStructure => "BUILD THE FORWARD BARRACKS",
+                UiMissionObjectiveRuleKind.ProduceUnit => "PRODUCE ONE RIFLE SQUAD",
+                UiMissionObjectiveRuleKind.DefendMissionRole => "DEFEND THE FORWARD POST",
                 _ => "MISSION OBJECTIVE"
             };
             return gameTextResolver.Get(objective.DisplayTextKey, fallback).ToUpperInvariant();
@@ -139,11 +166,55 @@ namespace Game.UI.Runtime
         {
             string fallback = reward.Kind != UiMissionRewardKind.None
                 ? reward.Kind.ToString().ToUpperInvariant()
-                : "COMMANDER XP";
+                : reward.RewardConfigId.Contains("production_unlock", StringComparison.Ordinal)
+                    ? "BARRACKS UNLOCK"
+                    : "COMMANDER XP";
             return gameTextResolver.Get(reward.DisplayTextKey, fallback).ToUpperInvariant();
         }
 
+        private void ApplyConditions(in UiMissionBriefingModel model, bool m02)
+        {
+            if (m02)
+            {
+                SetAt(conditionNameLabels, 0, _gameTextResolver.Get(
+                    "mission.m02.resources.label", "STARTING RESOURCES"));
+                SetAt(conditionLabels, 0, _gameTextResolver.Get(
+                    "mission.m02.resources.value",
+                    $"{model.StartingCredits:N0} CR / {model.StartingMaterials:N0} MAT"));
+                SetAt(conditionNameLabels, 1, _gameTextResolver.Get(
+                    "mission.m02.restrictions.label", "MISSION ACCESS"));
+                string build = string.IsNullOrWhiteSpace(model.AllowedBuildingConfigId)
+                    ? "BUILD OFF"
+                    : $"BARRACKS x{model.AllowedBuildingCount}";
+                SetAt(conditionLabels, 1, _gameTextResolver.Get(
+                    "mission.m02.restrictions.value",
+                    $"{build} | TRANSPORT / AIR OFF"));
+                return;
+            }
+
+            SetAt(conditionNameLabels, 0, "BUILDING / PRODUCTION");
+            SetAt(conditionLabels, 0, Restriction(model.BuildingDisabled || model.ProductionDisabled));
+            SetAt(conditionNameLabels, 1, "ECONOMY / TRANSPORT / AIR");
+            SetAt(conditionLabels, 1,
+                Restriction(model.EconomyDisabled || model.TransportDisabled || model.AirDisabled));
+        }
+
+        private static string SummaryFallback(string missionId) =>
+            missionId == UiCampaignMissionProjectionIds.M02
+                ? "Reopen an abandoned JRC forward post before a second hostile cell reaches it."
+                : "Secure the Old Market corridor and protect the civilian route.";
+
+        private static string LocationFallback(string missionId) =>
+            missionId == UiCampaignMissionProjectionIds.M02
+                ? "Abandoned JRC Forward Post, Sahrin  |  MAP: FORWARD POST 01"
+                : "Old Market, Sahrin  |  MAP: DISTRICT EDGE 01";
+
         private static string Restriction(bool disabled) => disabled ? "DISABLED" : "ENABLED";
+        private static void SetAt(TMP_Text[] targets, int index, string value)
+        {
+            if (targets != null && index >= 0 && index < targets.Length)
+                Set(targets[index], value);
+        }
         private static void Set(TMP_Text target, string value)
         {
             if (target != null) target.text = value ?? string.Empty;

@@ -19,6 +19,7 @@ namespace Game.Editor
         private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
         private const string MapPath = "Assets/Game/Art/UI/Generated/CampaignOperations/TargetLockV01/scn05_sahrin_district_map_v01.png";
         private const string MissionPreviewPath = "Assets/Game/Art/UI/Generated/CampaignOperations/TargetLockV01/scn05_blackout_relay_preview_v01.png";
+        private const string M02MissionPreviewPath = "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Barrack_Action_512.png";
         private const string PanelSpritePath = "Assets/Game/Art/UI/Generated/ResourceExchange/LayeredOneGo/pop12_chrome_01_popup_outer_frame.png";
         private const string DetailPanelSpritePath = "Assets/Game/Art/UI/Generated/ResourceExchange/LayeredOneGo/pop12_chrome_03_detail_panel_frame.png";
         private const string SelectedSpritePath = "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_card_frame_selected.png";
@@ -106,10 +107,13 @@ namespace Game.Editor
             return view != null && binder != null && view.BackRouteButton != null && view.ChapterRail != null &&
                    view.StrategicMap != null && view.MissionBriefing != null &&
                    view.ChapterCards is { Length: > 0 } && view.MissionNodes is { Length: > 0 } &&
+                   view.MissionNodeButtons is { Length: 5 } &&
                    view.ProgressNodes is { Length: 5 } && view.DistrictMapImage != null &&
                    view.DistrictMapImage.texture != null && view.MissionPreviewImage != null &&
                    view.MissionPreviewImage.texture != null && view.ScreenTitle != null &&
                    view.MissionName != null && view.StoryArchiveButton != null &&
+                   view.MissionNumber != null && view.MissionBriefingText != null &&
+                   view.PrimaryObjectiveText != null && view.RewardSummaryText != null &&
                    view.ChapterIntelButton != null && view.LaunchMissionButton != null;
         }
 
@@ -189,9 +193,14 @@ namespace Game.Editor
             CreateText("ScreenSubtitle", root.transform, 2730f, 335f, 820f, 100f, "FIRST RESPONSE", 40f, Muted, TextAlignmentOptions.MidlineLeft);
 
             RectTransform chapterRail = BuildChapterRail(root.transform, out RectTransform[] chapterCards);
-            RectTransform strategicMap = BuildStrategicMap(root.transform, out RawImage districtMap, out RectTransform[] missionNodes, out RectTransform[] progressNodes);
-            RectTransform missionBriefing = BuildMissionBriefing(root.transform, out RawImage missionPreview, out TMP_Text missionName);
-            BuildFooter(root.transform, out Button archive, out Button intel, out Button launch);
+            RectTransform strategicMap = BuildStrategicMap(
+                root.transform, out RawImage districtMap, out RectTransform[] missionNodes,
+                out Button[] missionNodeButtons, out RectTransform[] progressNodes);
+            RectTransform missionBriefing = BuildMissionBriefing(
+                root.transform, out RawImage missionPreview, out TMP_Text missionNumber,
+                out TMP_Text missionName, out TMP_Text missionBriefingText,
+                out TMP_Text primaryObjectiveText, out TMP_Text rewardSummaryText);
+            BuildFooter(root.transform, out Button archive, out Button intel, out Button launch, out TMP_Text launchLabel);
 
             SerializedObject serialized = new(screen);
             SetReference(serialized, "backRouteButton", backRoute);
@@ -200,11 +209,19 @@ namespace Game.Editor
             SetReference(serialized, "missionBriefing", missionBriefing);
             SetArray(serialized, "chapterCards", chapterCards);
             SetArray(serialized, "missionNodes", missionNodes);
+            SetArray(serialized, "missionNodeButtons", missionNodeButtons);
             SetArray(serialized, "progressNodes", progressNodes);
             SetReference(serialized, "districtMapImage", districtMap);
             SetReference(serialized, "missionPreviewImage", missionPreview);
+            SetReference(serialized, "m01MissionPreview", AssetDatabase.LoadAssetAtPath<Texture2D>(MissionPreviewPath));
+            SetReference(serialized, "m02MissionPreview", AssetDatabase.LoadAssetAtPath<Texture2D>(M02MissionPreviewPath));
             SetReference(serialized, "screenTitle", screenTitle);
+            SetReference(serialized, "missionNumber", missionNumber);
             SetReference(serialized, "missionName", missionName);
+            SetReference(serialized, "missionBriefingText", missionBriefingText);
+            SetReference(serialized, "primaryObjectiveText", primaryObjectiveText);
+            SetReference(serialized, "rewardSummaryText", rewardSummaryText);
+            SetReference(serialized, "launchMissionLabel", launchLabel);
             SetReference(serialized, "storyArchiveButton", archive);
             SetReference(serialized, "chapterIntelButton", intel);
             SetReference(serialized, "launchMissionButton", launch);
@@ -269,6 +286,7 @@ namespace Game.Editor
             Transform root,
             out RawImage districtMap,
             out RectTransform[] missionNodes,
+            out Button[] missionNodeButtons,
             out RectTransform[] progressNodes)
         {
             Transform panel = CreatePanel("StrategicMap", root, 1380f, 500f, 1770f, 1420f);
@@ -286,9 +304,11 @@ namespace Game.Editor
             SetVerticalCenter(route.rectTransform, 0.50f);
             float[] nodeXs = { 215f, 522.5f, 830f, 1137.5f, 1445f };
             missionNodes = new RectTransform[nodeXs.Length];
+            missionNodeButtons = new Button[nodeXs.Length];
             for (int i = 0; i < nodeXs.Length; i++)
             {
-                missionNodes[i] = CreateMissionNode(mapOverlay, i + 1, nodeXs[i], 465f, i == 0);
+                missionNodes[i] = CreateMissionNode(
+                    mapOverlay, i + 1, nodeXs[i], 465f, i == 0, out missionNodeButtons[i]);
                 SetVerticalCenter(missionNodes[i], 0.50f);
             }
 
@@ -303,7 +323,8 @@ namespace Game.Editor
             return panel as RectTransform;
         }
 
-        private static RectTransform CreateMissionNode(Transform parent, int mission, float centerX, float centerY, bool active)
+        private static RectTransform CreateMissionNode(
+            Transform parent, int mission, float centerX, float centerY, bool active, out Button button)
         {
             float size = active ? 224f : 190f;
             Image frame = CreateIcon(
@@ -315,6 +336,15 @@ namespace Game.Editor
                 size,
                 size,
                 active ? Color.white : new Color(0.34f, 0.35f, 0.32f, 1f));
+            button = frame.gameObject.AddComponent<Button>();
+            button.targetGraphic = frame;
+            button.interactable = active;
+            ColorBlock colors = button.colors;
+            colors.normalColor = Color.white;
+            colors.highlightedColor = new Color(1f, 0.92f, 0.56f, 1f);
+            colors.pressedColor = new Color(0.78f, 0.66f, 0.32f, 1f);
+            colors.disabledColor = new Color(0.46f, 0.46f, 0.42f, 0.72f);
+            button.colors = colors;
             if (active)
             {
                 Image glow = CreateIcon("ActiveGlow", frame.transform, ActiveNodeSpritePath, -24f, -24f, size + 48f, size + 48f, new Color(1f, 0.72f, 0.12f, 0.30f));
@@ -342,11 +372,14 @@ namespace Game.Editor
             return frame.rectTransform;
         }
 
-        private static RectTransform BuildMissionBriefing(Transform root, out RawImage missionPreview, out TMP_Text missionName)
+        private static RectTransform BuildMissionBriefing(
+            Transform root, out RawImage missionPreview, out TMP_Text missionNumber,
+            out TMP_Text missionName, out TMP_Text missionBriefingText,
+            out TMP_Text primaryObjectiveText, out TMP_Text rewardSummaryText)
         {
             Transform panel = CreatePanel("MissionBriefing", root, 3190f, 500f, 1530f, 1420f);
             SetVerticalStretch(panel as RectTransform, 500f, 380f);
-            CreateText("MissionNumber", panel, 55f, 28f, 680f, 68f, "MISSION 01", 56f, Olive, TextAlignmentOptions.MidlineLeft);
+            missionNumber = CreateText("MissionNumber", panel, 55f, 28f, 680f, 68f, "MISSION 01", 56f, Olive, TextAlignmentOptions.MidlineLeft);
             Transform available = CreateDetailPanel("Availability", panel, 1135f, 26f, 330f, 78f);
             CreateText("Label", available, 10f, 0f, 310f, 78f, "AVAILABLE", 42f, Olive, TextAlignmentOptions.Center);
             NormalizeVerticalChildren(available, 78f, "PanelFill");
@@ -354,15 +387,15 @@ namespace Game.Editor
 
             CreateFramed("PreviewFrame", panel, 45f, 205f, 1440f, 410f, DetailPanelSpritePath, Color.white);
             missionPreview = CreateCroppedPreview("MissionPreview", panel, 62f, 222f, 1406f, 376f, MissionPreviewPath);
-            TMP_Text briefing = CreateText("Briefing", panel, 62f, 635f, 1406f, 130f,
+            missionBriefingText = CreateText("Briefing", panel, 62f, 635f, 1406f, 130f,
                 "Enemy jamming has cut communications across Sahrin District. Secure the eastern relay and bring the network back online.",
                 38f, Text, TextAlignmentOptions.TopLeft);
-            briefing.textWrappingMode = TextWrappingModes.Normal;
-            briefing.overflowMode = TextOverflowModes.Ellipsis;
+            missionBriefingText.textWrappingMode = TextWrappingModes.Normal;
+            missionBriefingText.overflowMode = TextOverflowModes.Ellipsis;
 
             Transform objective = CreateDetailPanel("PrimaryObjective", panel, 45f, 785f, 1440f, 125f);
             CreateIcon("Icon", objective, ObjectiveIconPath, 28f, 18f, 90f, 90f, Gold);
-            CreateText("Label", objective, 145f, 0f, 1230f, 125f, "RESTORE THE RELAY", 68f, Text, TextAlignmentOptions.MidlineLeft);
+            primaryObjectiveText = CreateText("Label", objective, 145f, 0f, 1230f, 125f, "ELIMINATE THE HOSTILE PATROL", 68f, Text, TextAlignmentOptions.MidlineLeft);
             NormalizeVerticalChildren(objective, 125f, "PanelFill");
 
             CreateMetricCard("CivilianRisk", panel, 45f, 935f, 695f, "CIVILIAN RISK", "MED", CivilianIconPath, Gold);
@@ -370,10 +403,10 @@ namespace Game.Editor
 
             Transform rewards = CreateDetailPanel("Rewards", panel, 45f, 1150f, 1440f, 220f);
             CreateText("Title", rewards, 30f, 16f, 320f, 50f, "REWARDS", 38f, Muted, TextAlignmentOptions.MidlineLeft);
-            CreateText("Credits", rewards, 30f, 70f, 360f, 78f, "2,500 CREDITS", 44f, Cyan, TextAlignmentOptions.MidlineLeft);
-            CreateStarGoal(rewards, 420f, "COMPLETE", "MISSION");
-            CreateStarGoal(rewards, 750f, "NO UNIT", "LOSSES");
-            CreateStarGoal(rewards, 1080f, "UNDER 15:00", "MINUTES");
+            rewardSummaryText = CreateText(
+                "RewardSummary", rewards, 30f, 70f, 1360f, 104f,
+                "260 XP  |  1,200 CREDITS", 50f, Cyan, TextAlignmentOptions.MidlineLeft);
+            ConfigureAutoSize(rewardSummaryText, 34f, 50f);
             NormalizeVerticalChildren(rewards, 220f, "PanelFill");
             NormalizeVerticalChildren(panel, 1420f, "PanelFill");
             return panel as RectTransform;
@@ -395,7 +428,9 @@ namespace Game.Editor
             CreateText("LineTwo", parent, x, 164f, 230f, 38f, lineTwo, 25f, Muted, TextAlignmentOptions.Center);
         }
 
-        private static void BuildFooter(Transform root, out Button archive, out Button intel, out Button launch)
+        private static void BuildFooter(
+            Transform root, out Button archive, out Button intel, out Button launch,
+            out TMP_Text launchLabel)
         {
             archive = CreateButton("StoryArchiveButton", root, 120f, 1890f, 1300f, 230f, "STORY ARCHIVE", SecondarySpritePath, 82f, Text, out TMP_Text archiveLabel);
             SetBottomAnchored(archive.GetComponent<RectTransform>(), 120f, 55f, 1300f, 230f);
@@ -407,7 +442,7 @@ namespace Game.Editor
             CreateIcon("Icon", intel.transform, IntelIconPath, 72f, 54f, 118f, 118f, Olive);
             SetTextRect(intelLabel.rectTransform, 220f, 0f, 930f, 230f);
 
-            launch = CreateButton("LaunchMissionButton", root, 2810f, 1870f, 1910f, 250f, "LAUNCH MISSION", GoldSpritePath, 108f, Text, out _);
+            launch = CreateButton("LaunchMissionButton", root, 2810f, 1870f, 1910f, 250f, "START OPERATION", GoldSpritePath, 108f, Text, out launchLabel);
             SetBottomAnchored(launch.GetComponent<RectTransform>(), 2810f, 35f, 1910f, 250f);
             UIShellRouteButtonView briefingRoute = launch.gameObject.AddComponent<UIShellRouteButtonView>();
             briefingRoute.Configure(UiShellRouteIntent.OpenMenuRoute, UIRoute.MissionBriefing, true);

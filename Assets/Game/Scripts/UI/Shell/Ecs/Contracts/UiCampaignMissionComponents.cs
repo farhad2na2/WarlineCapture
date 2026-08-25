@@ -32,6 +32,7 @@ namespace Game.UI.Shell.Contracts.Ecs
         public FixedString64Bytes ObjectiveId;
         public FixedString64Bytes DisplayTextKey;
         public FixedString64Bytes MissionRoleId;
+        public FixedString64Bytes TargetConfigId;
         public UiMissionObjectiveRuleKind Rule;
         public int RequiredCount;
         public byte FailureOnRuleBreak;
@@ -58,6 +59,10 @@ namespace Game.UI.Shell.Contracts.Ecs
         public FixedList512Bytes<UiMissionRewardProjectionData> Rewards;
         public ulong DeployTransitionToken;
         public int HostileUnitCount;
+        public int StartingCredits;
+        public int StartingMaterials;
+        public FixedString64Bytes AllowedBuildingConfigId;
+        public int AllowedBuildingCount;
         public byte BuildingDisabled;
         public byte ProductionDisabled;
         public byte EconomyDisabled;

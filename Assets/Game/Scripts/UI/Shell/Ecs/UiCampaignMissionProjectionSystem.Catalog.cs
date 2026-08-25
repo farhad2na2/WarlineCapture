@@ -40,6 +40,16 @@ namespace Game.UI.Shell.Ecs
                 displayName, nextMissionId, progress, in current);
         }
 
+        private static bool IsDefinitionAvailable(
+            ref CampaignMissionDefinitionBlob definition,
+            CampaignMissionProgressSaveData[] progress)
+        {
+            CampaignMissionProgressSaveData entry = Find(progress, definition.MissionId);
+            return entry != null
+                ? entry.available
+                : definition.MissionId.Equals(new FixedString64Bytes(M01MissionId));
+        }
+
         private static UiCampaignOperationsComponent ProjectMission(
             uint catalogSourceVersion,
             uint settlementSourceVersion,

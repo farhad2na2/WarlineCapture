@@ -78,7 +78,8 @@ namespace Game.UI.Shell.Ecs
                     request.Action != UiCampaignMissionActionKind.Deploy)
                     continue;
                 int requestedIndex = FindDefinitionIndex(ref catalogBlob, request.MissionId);
-                if (requestedIndex >= 0)
+                if (requestedIndex >= 0 && IsDefinitionAvailable(
+                        ref catalogBlob.Missions[requestedIndex], progress))
                     definitionIndex = requestedIndex;
             }
 
@@ -174,6 +175,15 @@ namespace Game.UI.Shell.Ecs
                 DisplayNameKey = definition.DisplayNameKey,
                 DisplaySummaryKey = definition.DisplaySummaryKey,
                 LocationNameKey = definition.LocationNameKey,
+                StartingCredits = definition.StartingCredits,
+                StartingMaterials = definition.StartingMaterials,
+                AllowedBuildingConfigId = definition.BuildCatalog.Length > 0
+                    ? definition.BuildCatalog[0].BuildingConfigId
+                    : default,
+                AllowedBuildingCount = definition.BuildCatalog.Length > 0
+                    ? definition.BuildCatalog[0].MaxCount
+                    : 0,
+                HostileUnitCount = CountGroupUnits(ref definition, definition.DelayedWaveUnitGroupId),
                 BuildingDisabled = definition.BuildingDisabled,
                 ProductionDisabled = definition.ProductionDisabled,
                 EconomyDisabled = definition.EconomyDisabled,
@@ -196,6 +206,7 @@ namespace Game.UI.Shell.Ecs
                     ObjectiveId = source.ObjectiveId,
                     DisplayTextKey = source.DisplayTextKey,
                     MissionRoleId = source.MissionRoleId,
+                    TargetConfigId = source.TargetConfigId,
                     Rule = (UiMissionObjectiveRuleKind)source.Rule,
                     RequiredCount = source.RequiredCount,
                     FailureOnRuleBreak = source.FailureOnRuleBreak
@@ -236,6 +247,24 @@ namespace Game.UI.Shell.Ecs
                         count += group.Units[unitIndex].Count;
             }
             return count;
+        }
+
+        private static int CountGroupUnits(
+            ref CampaignMissionDefinitionBlob definition, FixedString64Bytes groupId)
+        {
+            if (groupId.IsEmpty)
+                return 0;
+            for (int groupIndex = 0; groupIndex < definition.ForceGroups.Length; groupIndex++)
+            {
+                ref CampaignMissionForceGroupBlob group = ref definition.ForceGroups[groupIndex];
+                if (!group.GroupId.Equals(groupId))
+                    continue;
+                int count = 0;
+                for (int unitIndex = 0; unitIndex < group.Units.Length; unitIndex++)
+                    count += group.Units[unitIndex].Count;
+                return count;
+            }
+            return 0;
         }
 
         private static bool TryQueueLaunch(
@@ -405,6 +434,10 @@ namespace Game.UI.Shell.Ecs
                 !left.DisplaySummaryKey.Equals(right.DisplaySummaryKey) ||
                 !left.LocationNameKey.Equals(right.LocationNameKey) ||
                 left.HostileUnitCount != right.HostileUnitCount ||
+                left.StartingCredits != right.StartingCredits ||
+                left.StartingMaterials != right.StartingMaterials ||
+                !left.AllowedBuildingConfigId.Equals(right.AllowedBuildingConfigId) ||
+                left.AllowedBuildingCount != right.AllowedBuildingCount ||
                 left.BuildingDisabled != right.BuildingDisabled || left.ProductionDisabled != right.ProductionDisabled ||
                 left.EconomyDisabled != right.EconomyDisabled || left.TransportDisabled != right.TransportDisabled ||
                 left.AirDisabled != right.AirDisabled || left.Replay != right.Replay ||
@@ -421,7 +454,8 @@ namespace Game.UI.Shell.Ecs
                 UiMissionObjectiveProjectionData a = left.Objectives[index];
                 UiMissionObjectiveProjectionData b = right.Objectives[index];
                 if (!a.ObjectiveId.Equals(b.ObjectiveId) || !a.DisplayTextKey.Equals(b.DisplayTextKey) ||
-                    !a.MissionRoleId.Equals(b.MissionRoleId) || a.Rule != b.Rule ||
+                    !a.MissionRoleId.Equals(b.MissionRoleId) || !a.TargetConfigId.Equals(b.TargetConfigId) ||
+                    a.Rule != b.Rule ||
                     a.RequiredCount != b.RequiredCount || a.FailureOnRuleBreak != b.FailureOnRuleBreak)
                     return false;
             }

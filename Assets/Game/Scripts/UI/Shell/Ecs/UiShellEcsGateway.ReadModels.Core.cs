@@ -271,7 +271,8 @@ namespace Game.UI.Shell.Ecs
                 UiMissionObjectiveProjectionData source = component.Objectives[index];
                 objectives[index] = new UiMissionObjectiveModel(
                     source.ObjectiveId.ToString(), source.DisplayTextKey.ToString(),
-                    source.MissionRoleId.ToString(), source.Rule, source.RequiredCount,
+                    source.MissionRoleId.ToString(), source.TargetConfigId.ToString(),
+                    source.Rule, source.RequiredCount,
                     source.FailureOnRuleBreak != 0);
             }
             UiMissionRewardModel[] rewards = new UiMissionRewardModel[component.Rewards.Length];
@@ -287,6 +288,8 @@ namespace Game.UI.Shell.Ecs
                 component.OperationMapId.ToString(), component.DisplayNameKey.ToString(),
                 component.DisplaySummaryKey.ToString(), component.LocationNameKey.ToString(),
                 objectives, rewards, component.HostileUnitCount,
+                component.StartingCredits, component.StartingMaterials,
+                component.AllowedBuildingConfigId.ToString(), component.AllowedBuildingCount,
                 component.BuildingDisabled != 0, component.ProductionDisabled != 0,
                 component.EconomyDisabled != 0, component.TransportDisabled != 0,
                 component.AirDisabled != 0, component.Replay != 0, component.ReplayAllowed != 0,

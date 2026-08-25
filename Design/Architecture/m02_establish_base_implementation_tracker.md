@@ -1,8 +1,8 @@
 # M02 Establish The Base Implementation Tracker
 
-Date: 2026-08-24
-Status: Active; M02EB-012 accepted and M02EB-013 dependency-ready
-Progress: 12/34 accepted items (35.3%)
+Date: 2026-08-25
+Status: Active; M02EB-013 accepted and M02EB-014 dependency-ready
+Progress: 13/34 accepted items (38.2%)
 Parent design: `Design/SagaChapters/Saga_Chapter01_First_Response.md` (`M02 Detailed Spec`)
 Technical architecture: `Design/Architecture/m02_establish_base_technical_architecture.md`
 Mission: `saga.ch01.m02.establish_base`
@@ -143,9 +143,10 @@ Every item records an exact path allowlist before editing. Unexpected user chang
   **Acceptance:** exact Credits/Materials initialize once; Fuel/Oil and unrelated controls stay hidden; retries reset attempt resources without mutating profile economy.
   **Evidence:** the sole Campaign mission projection now carries default-safe starting Credits, starting Materials, and mission-runtime enablement into one unmanaged attempt initializer. M02 applies exactly 55,000 Credits and 120 Materials once per session/attempt, clears mission Oil/Fuel, rearms on retry, and leaves profile persistence untouched; M01 remains disabled by default. The existing Match HUD projects Credits through its established resource header, hides Oil/logistics, Support, and unrelated squad controls only for M02, and preserves M01 visible-disabled behavior. `[M02EstablishBaseResourceValidation] result=Passed tests=9`; `[M02EstablishBaseLaunchValidation] result=Passed tests=14`; `[M02EstablishBaseConsolidatedDataValidation] result=Passed suites=5`; `[M01FirstContactConsolidatedContractValidation] result=Passed suites=23`; `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; `[M02EstablishBaseLaunchRegressionValidation] result=Passed suites=3`; compiler and final Editor console errors are zero. Unity CLI drove the wrapper-launched live Editor; log: `/private/tmp/warline-m02eb-011-live-editor.log`.
 
-- [ ] **M02EB-013 - Project the mission-scoped Barracks build catalog**
+- [x] **M02EB-013 - Project the mission-scoped Barracks build catalog**
   **Depends on:** M02EB-006 and M02EB-012.
   **Acceptance:** Build Drawer exposes only Barracks for M02 and preserves normal Skirmish/full-catalog behavior elsewhere.
+  **Evidence:** the canonical scenario build catalog is projected into the existing unmanaged Campaign mission blob and read through the established UI gateway. The Build Drawer wraps its existing prefab sources with a mission-scoped, fail-closed adapter: active M02 exposes exactly `Building_Barrack` with max count 1 and no unrelated unit/building catalog entries, while disabled mission runtime preserves the original M01/Skirmish lists exactly. Same-version build-catalog content changes force reprojection; a missing global Barracks definition fails closed. `[M02EstablishBaseBuildCatalogValidation] result=Passed tests=7`; `[BuildDrawerCatalogQueryValidation] result=Passed tests=25`; `[M02EstablishBaseConsolidatedDataValidation] result=Passed suites=5`; `[M02EstablishBaseLaunchValidation] result=Passed tests=14`; `[M01FirstContactConsolidatedContractValidation] result=Passed suites=23`; `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; `[M02EstablishBaseBuildCatalogRegressionValidation] result=Passed suites=6`; compiler errors are zero. Unity CLI drove the wrapper-launched live Editor; log: `/private/tmp/warline-m02eb-011-live-editor.log`.
 
 - [ ] **M02EB-014 - Complete validated Barracks placement and construction**
   **Depends on:** M02EB-009 and M02EB-013.
@@ -271,16 +272,18 @@ The first user review occurs at M02EB-029:
 | 2026-08-25 | M02EB-010 made the existing Chapter 1 Editor builder the deterministic merge-and-sort owner for mission and map catalogs, added exact M01/M02 graph validation, and proved duplicate, missing, stale, and cross-builder preservation failures close safely. | Accepted |
 | 2026-08-25 | M02EB-011 generalized the sole Campaign catalog, selection, payload, map-bootstrap, and launch owners to M02; exact catalog reprojection, typed deploy/retry/replay, same-World map generation, World recreation, fail-closed identity checks, caller-seed preservation, and M01 compatibility passed without adding a parallel mission pipeline. | Accepted |
 | 2026-08-25 | M02EB-012 added one attempt-scoped ECS resource initializer and default-safe HUD restrictions: M02 receives exact Credits/Materials once per attempt, retry rearms without profile mutation, logistics and unrelated controls hide, and shared M01/source-growth contracts remain intact. | Accepted |
+| 2026-08-25 | M02EB-013 projected the canonical Barracks-only mission catalog through the existing Campaign blob/UI gateway and applied a bounded reusable Build Drawer source filter; unrestricted catalogs remain exact, missing definitions fail closed, and all six focused/shared regression suites pass. | Accepted |
 
 ## 8. Current Validation And Blockers
 
 | Item | Result | Evidence |
 |---|---|---|
-| M02EB-012 focused resources/restrictions | Passed | `[M02EstablishBaseResourceValidation] result=Passed tests=9` |
+| M02EB-013 focused build catalog | Passed | `[M02EstablishBaseBuildCatalogValidation] result=Passed tests=7` |
+| Build Drawer regression | Passed | `[BuildDrawerCatalogQueryValidation] result=Passed tests=25` |
 | Shared launch/retry/replay | Passed | `[M02EstablishBaseLaunchValidation] result=Passed tests=14` |
 | Canonical M02 data | Passed | `[M02EstablishBaseConsolidatedDataValidation] result=Passed suites=5` |
 | Shared M01 compatibility | Passed | `[M01FirstContactConsolidatedContractValidation] result=Passed suites=23` |
-| Consolidated launch regressions | Passed | `[M02EstablishBaseLaunchRegressionValidation] result=Passed suites=3` |
-| Architecture/source growth | Passed | `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; zero compiler and final console errors |
+| Consolidated catalog regressions | Passed | `[M02EstablishBaseBuildCatalogRegressionValidation] result=Passed suites=6` |
+| Architecture/source growth | Passed | `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; zero compiler errors |
 
-No blocker prevents M02EB-013. Android/Samsung certification remains owner-deferred and is not counted as passed. Final comic and voice production remains gated by M02EB-029.
+No blocker prevents M02EB-014. Android/Samsung certification remains owner-deferred and is not counted as passed. Final comic and voice production remains gated by M02EB-029.

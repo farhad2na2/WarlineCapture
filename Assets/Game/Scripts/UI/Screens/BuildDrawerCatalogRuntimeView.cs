@@ -17,10 +17,10 @@ namespace Game.UI.Runtime
         [SerializeField] private BuildDrawerView view;
         [SerializeField] private ScriptableObject unitPrefabRegistryConfig;
         [SerializeField] private ScriptableObject buildingPlacementConfig;
-
         private readonly BuildDrawerCatalogQueryUiSystemHelper _query = new();
         private readonly List<BuildDrawerCatalogItem> _items = new();
         private readonly List<BuildDrawerCatalogItem> _countScratch = new();
+        private readonly BuildDrawerMissionCatalogPrefabSource _cat = new();
         private readonly List<BuildingPendingProductionUiEntry> _pendingProductions = new();
         private readonly List<BuildingPendingProductionUiEntry> _clearProductionScratch = new();
         private readonly List<BuildDrawerItemView> _runtimeItems = new();
@@ -154,6 +154,7 @@ namespace Game.UI.Runtime
             if (view == null)
                 return;
 
+            _cat.Refresh(UnitPrefabSource, BuildingPrefabSource);
             bool hasItems = BuildDrawerCatalogPresentationSystemHelper.RefreshCatalog(
                 CreatePresentationContext(),
                 _activeCategory);
@@ -285,10 +286,7 @@ namespace Game.UI.Runtime
             RefreshQueue();
         }
 
-        private void RefreshQueue()
-        {
-            BuildDrawerProductionQueueUiSystemHelper.Refresh(CreateQueueContext());
-        }
+        private void RefreshQueue() => BuildDrawerProductionQueueUiSystemHelper.Refresh(CreateQueueContext());
 
         private void ApplyBuildDrawerCommandResult(
             BuildingUiCommandFailure failure,
@@ -378,10 +376,7 @@ namespace Game.UI.Runtime
                 : BuildingUiCommandFailure.InvalidSelection;
         }
 
-        private void ApplyInstruction(string text, BuildDrawerInstructionSeverity severity)
-        {
-            view?.ApplyInstruction(text, severity);
-        }
+        private void ApplyInstruction(string text, BuildDrawerInstructionSeverity severity) => view?.ApplyInstruction(text, severity);
 
         private void WirePrimaryAction()
         {
@@ -434,8 +429,8 @@ namespace Game.UI.Runtime
             return new BuildDrawerCatalogPresentationSystemHelper.Context(
                 view,
                 _query,
-                UnitPrefabSource,
-                BuildingPrefabSource,
+                _cat,
+                _cat,
                 _gameTextResolver,
                 _items,
                 _countScratch,
@@ -452,20 +447,18 @@ namespace Game.UI.Runtime
                 _uiQuerySystem,
                 _uiCommandSystem,
                 _query,
-                UnitPrefabSource,
-                BuildingPrefabSource,
+                _cat,
+                _cat,
                 _gameTextResolver,
                 _pendingProductions,
                 _clearProductionScratch,
                 _runtimeQueueItems);
         }
 
-        private static bool IsResourceFailure(BuildingUiCommandFailure failure)
-        {
-            return failure == BuildingUiCommandFailure.NotEnoughMoney ||
-                   failure == BuildingUiCommandFailure.InsufficientCredits ||
-                   failure == BuildingUiCommandFailure.InsufficientMaterials ||
-                   failure == BuildingUiCommandFailure.InsufficientCreditsAndMaterials;
-        }
+        private static bool IsResourceFailure(BuildingUiCommandFailure failure) =>
+            failure == BuildingUiCommandFailure.NotEnoughMoney ||
+            failure == BuildingUiCommandFailure.InsufficientCredits ||
+            failure == BuildingUiCommandFailure.InsufficientMaterials ||
+            failure == BuildingUiCommandFailure.InsufficientCreditsAndMaterials;
     }
 }

@@ -171,6 +171,7 @@ namespace Game.Composition
             definition.AirDisabled = scenario.Restrictions.AirDisabled ? (byte)1 : (byte)0;
             definition.ReplayAllowed = mission.ReplayAllowed ? (byte)1 : (byte)0;
             definition.ReplayTutorialDefaultEnabled = mission.ReplayTutorialDefaultEnabled ? (byte)1 : (byte)0;
+            ProjectBuildCatalog(ref builder, ref definition, scenario);
             ProjectObjectives(ref builder, ref definition, mission);
             ProjectForces(ref builder, ref definition, scenario);
             ProjectAmbient(ref builder, ref definition, scenario);

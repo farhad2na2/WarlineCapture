@@ -264,6 +264,7 @@ namespace Game.Components
         public byte AirDisabled;
         public byte ReplayAllowed;
         public byte ReplayTutorialDefaultEnabled;
+        public BlobArray<CampaignMissionBuildEntryBlob> BuildCatalog;
         public BlobArray<CampaignMissionObjectiveBlob> Objectives;
         public BlobArray<CampaignMissionForceGroupBlob> ForceGroups;
         public BlobArray<CampaignMissionPatrolRouteBlob> PatrolRoutes;
@@ -271,6 +272,12 @@ namespace Game.Components
         public BlobArray<CampaignMissionStarRuleBlob> StarRules;
         public BlobArray<CampaignMissionRewardBlob> FirstClearRewards;
         public BlobArray<CampaignMissionRewardBlob> ReplayRewards;
+    }
+
+    public struct CampaignMissionBuildEntryBlob
+    {
+        public FixedString64Bytes BuildingConfigId;
+        public int MaxCount;
     }
 
     public struct CampaignMissionObjectiveBlob

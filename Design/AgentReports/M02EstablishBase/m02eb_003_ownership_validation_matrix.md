@@ -118,6 +118,7 @@ Approved existing paths:
 - `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.MissionHudRestrictions.cs`
 - `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.ResourceValues.cs`
 - `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Lifecycle.cs`
+- `Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.cs`
 
 Approved new paths:
 
@@ -125,6 +126,11 @@ Approved new paths:
 - `Assets/Game/Scripts/Runtime/Missions/CampaignMissionAttemptResourceInitializationSystem.cs`
 - `Assets/Game/Scripts/Runtime/Missions/CampaignMissionAttemptFactProjectionSystem.cs`
 - `Assets/Game/Scripts/Runtime/Missions/CampaignMissionDelayedWaveSystem.cs`
+- `Assets/Game/Scripts/Composition/CampaignMissionCatalogProjection.BuildCatalog.cs`
+- `Assets/Game/Scripts/UI/Contracts/UiMissionBuildCatalogModel.cs`
+- `Assets/Game/Scripts/UI/Shell/UiShellRuntimeGateway.MissionBuildCatalog.cs`
+- `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.MissionBuildCatalog.cs`
+- `Assets/Game/Scripts/UI/Screens/BuildDrawerMissionCatalogPrefabSource.cs`
 - `Assets/Tests/Editor/M02EstablishBaseLaunchTests.cs`
 - `Assets/Tests/Editor/M02EstablishBaseResourceTests.cs`
 - `Assets/Tests/Editor/M02EstablishBaseBuildCatalogTests.cs`
@@ -143,6 +149,11 @@ apply it once after the canonical startup resource owner is ready, and hide M02-
 resources and controls through the existing HUD restriction gateway. The initializer may update only
 the canonical player `FactionEconomy` and `FactionTacticalMaterialsComponent`; it may not add a
 parallel economy, persist attempt spend, or alter M01/Skirmish defaults.
+
+M02EB-013 may project the scenario-owned build catalog into the existing Campaign mission blob and
+expose it through the existing UI gateway. The Build Drawer may wrap its established prefab sources
+with a bounded reusable mission filter, but it may not own mission truth, mutate the global catalogs,
+or change unrestricted M01/Skirmish behavior. A missing mission entry fails closed.
 
 M02EB-011 may generalize the existing single Campaign selection, catalog projection, and menu map-bootstrap owners only far enough to prove a typed M02 deploy reaches the canonical payload and logical map. It must preserve the M01 serialized fallback and does not authorize final M02 card copy, layout, briefing presentation, or reveal behavior before M02EB-023. `Menu.unity` and the Campaign catalog are changed only through the connected Editor/builder path. The shared builder may normalize default-safe M01 schema fields and refresh checked M01 regression reports after the Chapter 1 catalogs gain M02; those outputs must remain behavior-compatible and deterministic for their current source inputs.
 

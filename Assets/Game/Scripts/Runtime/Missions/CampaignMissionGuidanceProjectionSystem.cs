@@ -21,6 +21,8 @@ namespace Game.Runtime
         private static readonly FixedString64Bytes PlaceBarracksTitle = "Place the Barracks";
         private static readonly FixedString64Bytes ReviewResourceSpendTitle = "Review resource spend";
         private static readonly FixedString64Bytes QueueRifleTitle = "Queue a rifle squad";
+        private static readonly FixedString64Bytes IncomingPatrolTitle = "Incoming patrol";
+        private static readonly FixedString64Bytes DefendPostTitle = "Defend the forward post";
         private static readonly FixedString128Bytes FindSquadBody = "Select the command squad to begin.";
         private static readonly FixedString128Bytes MoveToCoverBody = "Move the squad to the marked cover position.";
         private static readonly FixedString128Bytes ConfirmThreatBody = "Inspect the armed patrol near the civilians.";
@@ -31,6 +33,8 @@ namespace Game.Runtime
         private static readonly FixedString128Bytes PlaceBarracksBody = "Place the Barracks inside the green footprint. The confirmation bar shows its exact cost.";
         private static readonly FixedString128Bytes ReviewResourceSpendBody = "Credits and Materials were spent by the real construction order. Check the resource bar.";
         private static readonly FixedString128Bytes QueueRifleBody = "Open production, select Soldiers, and recruit the required rifle squad.";
+        private static readonly FixedString128Bytes IncomingPatrolBody = "Hostile patrol approaching the marked defense lane. Prepare your squad before contact.";
+        private static readonly FixedString128Bytes DefendPostBody = "Hold the defense lane and protect the forward post. Tactical decisions are yours.";
         private static readonly FixedString128Bytes ContextualTargetHint = " Use Show Me if you need the exact target.";
         private static readonly FixedString64Bytes DoItAction = "DO IT";
         private static readonly FixedString64Bytes ShowMeAction = "SHOW ME";
@@ -44,6 +48,7 @@ namespace Game.Runtime
         private static readonly FixedString64Bytes BarracksCatalogTarget = "ui.build_drawer.barracks";
         private static readonly FixedString64Bytes ResourceStripTarget = "ui.match.resources";
         private static readonly FixedString64Bytes RifleProductionTarget = "ui.build_drawer.rifle";
+        private static readonly FixedString64Bytes DefenseBoundaryAnchor = "anchor.ch01.m02.defense_boundary";
 
         [BurstCompile] public void OnCreate(ref SystemState state) => state.RequireForUpdate<CampaignMissionRootComponent>();
 
@@ -156,6 +161,13 @@ namespace Game.Runtime
                 case CampaignMissionGuidancePromptKind.EstablishBaseQueueRifle:
                     Set(ref next, AssistantRecommendationKind.Produce, AssistantTargetKind.UiSurface, QueueRifleTitle, QueueRifleBody, DoItAction);
                     next.TargetId = RifleProductionTarget; next.CanExecute = 1; break;
+                case CampaignMissionGuidancePromptKind.EstablishBaseIncomingPatrol:
+                    Set(ref next, AssistantRecommendationKind.DefensiveAlert, AssistantTargetKind.Objective, IncomingPatrolTitle, IncomingPatrolBody, ShowMeAction);
+                    next.Priority = AssistantMessagePriority.Critical; next.TargetId = DefenseBoundaryAnchor;
+                    next.CanExecute = 0; break;
+                case CampaignMissionGuidancePromptKind.EstablishBaseDefendPost:
+                    Set(ref next, AssistantRecommendationKind.DefensiveAlert, AssistantTargetKind.Objective, DefendPostTitle, DefendPostBody, ShowMeAction);
+                    next.TargetId = DefenseBoundaryAnchor; next.CanExecute = 0; break;
             }
             ApplyModePolicy(ref next);
             return next;
@@ -182,7 +194,8 @@ namespace Game.Runtime
 
         private static bool Permits(NarrativeGuidanceMode mode, CampaignMissionGuidancePromptKind prompt) =>
             mode != NarrativeGuidanceMode.Minimal || prompt == CampaignMissionGuidancePromptKind.ConfirmThreat ||
-            prompt == CampaignMissionGuidancePromptKind.SecureCorridor;
+            prompt == CampaignMissionGuidancePromptKind.SecureCorridor ||
+            prompt == CampaignMissionGuidancePromptKind.EstablishBaseIncomingPatrol;
 
         private static byte ResolveStrength(in CampaignMissionGuidanceProjectionComponent current,
             in CampaignMissionRuntimeComponent runtime, in CampaignMissionAttemptFactsComponent facts,
@@ -221,6 +234,14 @@ namespace Game.Runtime
 
             if (facts.RequiredBuildingPlacedCount > 0)
             {
+                if (facts.DefenseWaveWarningIssued != 0 && facts.HostileTotalCount > 0)
+                {
+                    if (facts.DefenseWaveActivated == 0)
+                        return CampaignMissionGuidancePromptKind.EstablishBaseIncomingPatrol;
+                    return facts.HostileDefeatedCount >= facts.HostileTotalCount
+                        ? CampaignMissionGuidancePromptKind.None
+                        : CampaignMissionGuidancePromptKind.EstablishBaseDefendPost;
+                }
                 if (facts.RequiredUnitProducedCount > 0)
                     return CampaignMissionGuidancePromptKind.None;
                 if (current.Prompt == CampaignMissionGuidancePromptKind.EstablishBaseQueueRifle)

@@ -172,6 +172,27 @@ namespace Game.UI.Shell.Ecs
             body = string.Empty;
             rightToLeft = language == FirstLaunchNarrativeLanguage.Persian;
             string targetId = recommendation.TargetId.ToString();
+            if (string.Equals(targetId, "anchor.ch01.m02.defense_boundary", StringComparison.Ordinal))
+            {
+                if (recommendation.TutorialStep == 7)
+                {
+                    (title, body) = rightToLeft
+                        ? ("گشت دشمن نزدیک می‌شود", "گشت دشمن از مسیر دفاعی علامت‌گذاری‌شده نزدیک می‌شود. پیش از درگیری، گروه خود را آماده کنید.")
+                        : ("Incoming patrol", "Hostile patrol approaching the marked defense lane. Prepare your squad before contact.");
+                    return true;
+                }
+
+                if (recommendation.TutorialStep == 8)
+                {
+                    (title, body) = rightToLeft
+                        ? ("از پاسگاه پیشرو دفاع کنید", "مسیر دفاعی را نگه دارید و از پاسگاه پیشرو محافظت کنید. تصمیم‌های تاکتیکی با شماست.")
+                        : ("Defend the forward post", "Hold the defense lane and protect the forward post. Tactical decisions are yours.");
+                    return true;
+                }
+
+                return false;
+            }
+
             if (string.Equals(targetId, "ui.build_drawer.barracks", StringComparison.Ordinal))
             {
                 if (rightToLeft)

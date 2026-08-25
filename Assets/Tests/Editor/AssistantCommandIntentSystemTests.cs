@@ -33,7 +33,7 @@ public sealed class AssistantCommandIntentSystemTests
             passed++;
             RunCase(test => test.AssistantCommandIntentSystem_QueuesObjectivePreviewFromNamedHostileAnchor());
             passed++;
-            RunCase(test => test.AssistantCommandIntentSystem_RejectsPreviewWithoutWorldTarget());
+            RunCase(test => test.AssistantCommandIntentSystem_PreviewsUiSurfaceWithoutWorldTarget());
             passed++;
             RunCase(test => test.AssistantCommandIntentSystem_QueuesSelectionModeFromUiSurfaceDoIt());
             passed++;
@@ -652,7 +652,7 @@ public sealed class AssistantCommandIntentSystemTests
     }
 
     [Test]
-    public void AssistantCommandIntentSystem_RejectsPreviewWithoutWorldTarget()
+    public void AssistantCommandIntentSystem_PreviewsUiSurfaceWithoutWorldTarget()
     {
         Entity boundary = CreateBoundary();
         _entityManager.AddBuffer<AssistantPreviewHighlightElement>(boundary).Add(new AssistantPreviewHighlightElement
@@ -681,11 +681,18 @@ public sealed class AssistantCommandIntentSystemTests
 
         DynamicBuffer<AssistantCommandIntentResultElement> results =
             _entityManager.GetBuffer<AssistantCommandIntentResultElement>(boundary);
-        Assert.AreEqual(1, results.Length);
+        Assert.AreEqual(2, results.Length);
         Assert.AreEqual(3, results[0].RequestId);
-        Assert.AreEqual(AssistantCommandIntentStatus.Rejected, results[0].Status);
-        Assert.AreEqual("No preview target is available.", results[0].Message.ToString());
+        Assert.AreEqual(AssistantCommandIntentStatus.Accepted, results[0].Status);
+        Assert.AreEqual("UI target preview queued.", results[0].Message.ToString());
+        Assert.AreEqual(AssistantCommandIntentStatus.Completed, results[1].Status);
+        Assert.AreEqual("UI target preview active.", results[1].Message.ToString());
         Assert.AreEqual(0, _entityManager.GetBuffer<AssistantPreviewHighlightElement>(boundary).Length);
+
+        AssistantStateComponent assistantState = _entityManager.GetComponentData<AssistantStateComponent>(boundary);
+        Assert.AreEqual(AssistantControlState.AssistantPreview, assistantState.ControlState);
+        Assert.AreEqual(3001, assistantState.ActiveRecommendationId);
+        Assert.AreEqual(1, assistantState.UiDirty);
 
         using EntityQuery cameraQuery = _entityManager.CreateEntityQuery(
             ComponentType.ReadOnly<RtsCameraRequestQueueComponent>(),

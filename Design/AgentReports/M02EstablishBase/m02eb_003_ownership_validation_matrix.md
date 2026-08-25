@@ -279,6 +279,19 @@ read model, mission fact projector, and objective writer remain sole owners; thi
 state directly. Barracks selection and rifle queueing retain distinct typed target identities and exact
 English/Persian display copy. Final localized voice media remains gated by M02EB-031 and M02EB-032.
 
+M02EB-027 may append one pre-contact warning prompt and one active-defense prompt driven only by the
+authoritative `DefenseWaveWarningIssued`, `DefenseWaveActivated`, hostile-count, and hostile-defeat facts.
+Both prompts may resolve and highlight only `anchor.ch01.m02.defense_boundary`. The guidance projection
+must remain inactive after rifle completion until the real delayed-wave warning fact, and the existing
+tutorial presentation delay owns hiding ARIA between state changes. The authoritative warning and
+activation facts preempt unfinished production guidance so a slow player cannot miss contact. The
+critical pre-contact warning remains available in every guidance mode. Warning/defense assistance is
+SHOW ME only: it may focus or highlight the lane, but it must not select units, change tactical mode,
+enqueue move/attack orders, alter delayed-wave timing, release suppression, mutate combat, write objective
+progress, or resolve the mission. The established delayed-wave, warning, patrol, acquisition, attack,
+health, death, objective, result, and settlement owners remain sole authorities. Exact English/Persian
+display copy is allowed; final localized tutorial voice remains gated by M02EB-031 and M02EB-032.
+
 Additional new art/audio paths become writable only after M02EB-029 acceptance and an updated matrix entry. Final media must be chapter-scoped and must not alter FirstLaunch exact-set assets/importers.
 
 ### Final Acceptance: M02EB-033 Through M02EB-034

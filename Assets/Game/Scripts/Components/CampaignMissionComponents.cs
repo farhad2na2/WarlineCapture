@@ -219,7 +219,9 @@ namespace Game.Components
         EstablishBaseSelectBarracks = 7,
         EstablishBasePlaceBarracks = 8,
         EstablishBaseObserveResourceSpend = 9,
-        EstablishBaseQueueRifle = 10
+        EstablishBaseQueueRifle = 10,
+        EstablishBaseIncomingPatrol = 11,
+        EstablishBaseDefendPost = 12
     }
 
     public struct CampaignMissionGuidanceProjectionComponent : IComponentData

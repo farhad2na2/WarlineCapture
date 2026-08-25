@@ -134,6 +134,8 @@ namespace Game.UI.Shell.Ecs
             CampaignMissionGuidancePromptKind.EstablishBasePlaceBarracks => 4,
             CampaignMissionGuidancePromptKind.EstablishBaseObserveResourceSpend => 5,
             CampaignMissionGuidancePromptKind.EstablishBaseQueueRifle => 6,
+            CampaignMissionGuidancePromptKind.EstablishBaseIncomingPatrol => 7,
+            CampaignMissionGuidancePromptKind.EstablishBaseDefendPost => 8,
             _ => (byte)prompt
         };
 
@@ -142,7 +144,9 @@ namespace Game.UI.Shell.Ecs
                 CampaignMissionGuidancePromptKind.EstablishBaseSelectBarracks or
                 CampaignMissionGuidancePromptKind.EstablishBasePlaceBarracks or
                 CampaignMissionGuidancePromptKind.EstablishBaseObserveResourceSpend or
-                CampaignMissionGuidancePromptKind.EstablishBaseQueueRifle
+                CampaignMissionGuidancePromptKind.EstablishBaseQueueRifle or
+                CampaignMissionGuidancePromptKind.EstablishBaseIncomingPatrol or
+                CampaignMissionGuidancePromptKind.EstablishBaseDefendPost
                 ? (byte)9
                 : (byte)CampaignMissionGuidancePromptKind.SecureCorridor;
 

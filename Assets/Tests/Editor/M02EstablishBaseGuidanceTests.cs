@@ -22,7 +22,7 @@ using UnityEngine.UI;
 public sealed class M02EstablishBaseGuidanceTests
 {
     private const string FocusedMarker =
-        "[M02EstablishBaseGuidanceValidation] result=Passed tests=22";
+        "[M02EstablishBaseGuidanceValidation] result=Passed tests=30";
     private static readonly float3 CanonicalBuildAnchor = new(1030.5f, 0.009179778f, 399.5f);
 
     [MenuItem("Game/Validation/Run M02 Establish Base Guidance Focused")]
@@ -40,6 +40,14 @@ public sealed class M02EstablishBaseGuidanceTests
             tests.AcknowledgedResourceSpendWaitsForCompletionThenQueuesRifle();
             tests.RifleStepTargetsTheRealProductionControls();
             tests.AcknowledgedRifleQueueClearsGuidance();
+            tests.CompletedRifleKeepsAriaHiddenUntilWaveWarning();
+            tests.WaveWarningPreemptsIncompleteRifleProduction();
+            tests.WaveActivationPreemptsIncompleteRifleProduction();
+            tests.CriticalWarningSurvivesContextualAndMinimalGuidanceModes();
+            tests.WaveWarningTargetsCanonicalDefenseLaneWithoutCombatControl();
+            tests.WaveActivationTransitionsToDefenseWithoutIssuingACommand();
+            tests.DefeatedWaveClearsDefenseGuidance();
+            tests.WarningAndDefenseTextMatchesEnglishAndPersian();
             tests.BarracksAndRifleGuidanceHaveDistinctTypedTargets();
             tests.BarracksAndRifleGuidanceTextMatchesEnglishAndPersian();
             tests.M02UsesItsOwnNineStepTutorialSequence();
@@ -76,9 +84,14 @@ public sealed class M02EstablishBaseGuidanceTests
             RunValidation(M01FirstContactGuidanceTests.RunFocusedValidation);
             RunValidation(M02EstablishBaseBuildCatalogTests.RunFocusedValidation);
             RunValidation(M02EstablishBaseProductionTests.RunFocusedValidation);
+            RunValidation(M02EstablishBaseWaveTests.RunFocusedValidation);
+            RunValidation(ThreatWarningValidationTests.RunBatchValidation);
+            RunValidation(M02EstablishBaseOperationMapTests.RunFocusedValidation);
+            RunValidation(AssistantCommandIntentGatewayTests.RunFocusedValidation);
+            RunValidation(AssistantCommandIntentSystemTests.RunFocusedValidation);
             RunValidation(MatchHudAssistantUiSystemHelperTests.RunFocusedValidation);
             RunValidation(ProductionSourceGrowthArchitectureTests.RunFocusedValidation);
-            Debug.Log("[M02EstablishBaseGuidanceRegressionValidation] result=Passed suites=9");
+            Debug.Log("[M02EstablishBaseGuidanceRegressionValidation] result=Passed suites=14");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -227,6 +240,167 @@ public sealed class M02EstablishBaseGuidanceTests
     }
 
     [Test]
+    public void CompletedRifleKeepsAriaHiddenUntilWaveWarning()
+    {
+        CampaignMissionGuidanceProjectionComponent queue = ProjectRifleQueueStep();
+        queue.AcknowledgedGuidanceId = queue.GuidanceId;
+        CampaignMissionAttemptFactsComponent facts = DefenseFacts();
+
+        Assert.IsTrue(TryProject(queue, facts, out CampaignMissionGuidanceProjectionComponent hidden));
+        Assert.AreEqual(0, hidden.Active);
+        Assert.AreEqual(CampaignMissionGuidancePromptKind.None, hidden.Prompt);
+        Assert.IsFalse(TryProject(hidden, facts, out _),
+            "ARIA must remain hidden between rifle completion and the real delayed-wave warning.");
+    }
+
+    [Test]
+    public void WaveWarningPreemptsIncompleteRifleProduction()
+    {
+        CampaignMissionAttemptFactsComponent facts = DefenseFacts();
+        facts.RequiredUnitProducedCount = 0;
+        facts.DefenseWaveWarningIssued = 1;
+
+        Assert.IsTrue(TryProject(ProjectRifleQueueStep(), facts,
+            out CampaignMissionGuidanceProjectionComponent warning));
+        Assert.AreEqual(CampaignMissionGuidancePromptKind.EstablishBaseIncomingPatrol, warning.Prompt);
+    }
+
+    [Test]
+    public void WaveActivationPreemptsIncompleteRifleProduction()
+    {
+        CampaignMissionAttemptFactsComponent facts = DefenseFacts();
+        facts.RequiredUnitProducedCount = 0;
+        facts.DefenseWaveWarningIssued = 1;
+        facts.DefenseWaveActivated = 1;
+
+        Assert.IsTrue(TryProject(ProjectRifleQueueStep(), facts,
+            out CampaignMissionGuidanceProjectionComponent defense));
+        Assert.AreEqual(CampaignMissionGuidancePromptKind.EstablishBaseDefendPost, defense.Prompt);
+    }
+
+    [Test]
+    public void CriticalWarningSurvivesContextualAndMinimalGuidanceModes()
+    {
+        CampaignMissionAttemptFactsComponent facts = DefenseFacts();
+        facts.DefenseWaveWarningIssued = 1;
+        foreach (NarrativeGuidanceMode mode in new[]
+                 {
+                     NarrativeGuidanceMode.Contextual,
+                     NarrativeGuidanceMode.Minimal
+                 })
+        {
+            Assert.IsTrue(TryProjectWithGuidance(default, facts, mode,
+                out CampaignMissionGuidanceProjectionComponent warning), mode.ToString());
+            Assert.AreEqual(CampaignMissionGuidancePromptKind.EstablishBaseIncomingPatrol, warning.Prompt);
+            Assert.AreEqual(AssistantMessagePriority.Critical, warning.Priority);
+            Assert.AreEqual(0, warning.CanExecute);
+        }
+    }
+
+    [Test]
+    public void WaveWarningTargetsCanonicalDefenseLaneWithoutCombatControl()
+    {
+        CampaignMissionGuidanceProjectionComponent warning = ProjectWarningStep();
+        Assert.AreEqual(CampaignMissionGuidancePromptKind.EstablishBaseIncomingPatrol, warning.Prompt);
+        Assert.AreEqual(AssistantRecommendationKind.DefensiveAlert, warning.RecommendationKind);
+        Assert.AreEqual(AssistantTargetKind.Objective, warning.TargetKind);
+        Assert.AreEqual("anchor.ch01.m02.defense_boundary", warning.TargetId.ToString());
+        Assert.AreEqual(float3.zero, warning.WorldPosition);
+        Assert.AreEqual(0, warning.HasWorldPosition,
+            "The objective resolver must fail closed instead of accepting a fallback world-origin target.");
+        Assert.AreEqual(1, warning.CanShow);
+        Assert.AreEqual(0, warning.CanExecute);
+        Assert.AreEqual("SHOW ME", warning.ActionLabel.ToString());
+        Assert.AreEqual(Entity.Null, warning.SourceEntity);
+        Assert.AreEqual(Entity.Null, warning.TargetEntity);
+
+        Assert.IsTrue(AssistantObjectiveProjectionUtility.TryBuildCampaignGuidanceRecommendation(
+            warning,
+            out AssistantRecommendationElement recommendation));
+        Assert.AreEqual(7, recommendation.TutorialStep);
+        Assert.AreEqual(9, recommendation.TutorialStepCount);
+    }
+
+    [Test]
+    public void WaveActivationTransitionsToDefenseWithoutIssuingACommand()
+    {
+        CampaignMissionGuidanceProjectionComponent warning = ProjectWarningStep();
+        CampaignMissionAttemptFactsComponent facts = DefenseFacts();
+        facts.DefenseWaveWarningIssued = 1;
+        facts.DefenseWaveActivated = 1;
+
+        Assert.IsTrue(TryProject(warning, facts, out CampaignMissionGuidanceProjectionComponent defense));
+        Assert.AreEqual(CampaignMissionGuidancePromptKind.EstablishBaseDefendPost, defense.Prompt);
+        Assert.AreNotEqual(warning.GuidanceId, defense.GuidanceId);
+        Assert.AreEqual(AssistantRecommendationKind.DefensiveAlert, defense.RecommendationKind);
+        Assert.AreEqual(AssistantTargetKind.Objective, defense.TargetKind);
+        Assert.AreEqual("anchor.ch01.m02.defense_boundary", defense.TargetId.ToString());
+        Assert.AreEqual(0, defense.HasWorldPosition);
+        Assert.AreEqual(0, defense.CanExecute);
+        Assert.AreEqual(Entity.Null, defense.SourceEntity);
+        Assert.AreEqual(Entity.Null, defense.TargetEntity);
+
+        Assert.IsTrue(AssistantObjectiveProjectionUtility.TryBuildCampaignGuidanceRecommendation(
+            defense,
+            out AssistantRecommendationElement recommendation));
+        Assert.AreEqual(8, recommendation.TutorialStep);
+        Assert.AreEqual(9, recommendation.TutorialStepCount);
+    }
+
+    [Test]
+    public void DefeatedWaveClearsDefenseGuidance()
+    {
+        CampaignMissionGuidanceProjectionComponent defense = ProjectDefenseStep();
+        CampaignMissionAttemptFactsComponent facts = DefenseFacts();
+        facts.DefenseWaveWarningIssued = 1;
+        facts.DefenseWaveActivated = 1;
+        facts.HostileDefeatedCount = facts.HostileTotalCount;
+
+        Assert.IsTrue(TryProject(defense, facts, out CampaignMissionGuidanceProjectionComponent cleared));
+        Assert.AreEqual(0, cleared.Active);
+        Assert.AreEqual(CampaignMissionGuidancePromptKind.None, cleared.Prompt);
+    }
+
+    [Test]
+    public void WarningAndDefenseTextMatchesEnglishAndPersian()
+    {
+        Assert.IsTrue(AssistantObjectiveProjectionUtility.TryBuildCampaignGuidanceRecommendation(
+            ProjectWarningStep(),
+            out AssistantRecommendationElement warning));
+        Assert.IsTrue(UiShellEcsGateway.TryResolveM02GuidancePresentationText(
+            in warning,
+            FirstLaunchNarrativeLanguage.English,
+            out string warningEnglishTitle,
+            out string warningEnglishBody,
+            out bool warningEnglishRtl));
+        Assert.AreEqual("Incoming patrol", warningEnglishTitle);
+        Assert.That(warningEnglishBody, Does.Contain("marked defense lane"));
+        Assert.IsFalse(warningEnglishRtl);
+        Assert.IsTrue(UiShellEcsGateway.TryResolveM02GuidancePresentationText(
+            in warning,
+            FirstLaunchNarrativeLanguage.Persian,
+            out string warningPersianTitle,
+            out string warningPersianBody,
+            out bool warningPersianRtl));
+        Assert.AreEqual("گشت دشمن نزدیک می‌شود", warningPersianTitle);
+        Assert.That(warningPersianBody, Does.Contain("مسیر دفاعی"));
+        Assert.IsTrue(warningPersianRtl);
+
+        Assert.IsTrue(AssistantObjectiveProjectionUtility.TryBuildCampaignGuidanceRecommendation(
+            ProjectDefenseStep(),
+            out AssistantRecommendationElement defense));
+        Assert.IsTrue(UiShellEcsGateway.TryResolveM02GuidancePresentationText(
+            in defense,
+            FirstLaunchNarrativeLanguage.Persian,
+            out string defensePersianTitle,
+            out string defensePersianBody,
+            out bool defensePersianRtl));
+        Assert.AreEqual("از پاسگاه پیشرو دفاع کنید", defensePersianTitle);
+        Assert.That(defensePersianBody, Does.Contain("تصمیم‌های تاکتیکی"));
+        Assert.IsTrue(defensePersianRtl);
+    }
+
+    [Test]
     public void BarracksAndRifleGuidanceHaveDistinctTypedTargets()
     {
         CampaignMissionGuidanceProjectionComponent barracks = ProjectBarracksStep();
@@ -315,6 +489,18 @@ public sealed class M02EstablishBaseGuidanceTests
             out AssistantRecommendationElement rifleRecommendation));
         Assert.AreEqual(6, rifleRecommendation.TutorialStep);
         Assert.AreEqual(9, rifleRecommendation.TutorialStepCount);
+
+        Assert.IsTrue(AssistantObjectiveProjectionUtility.TryBuildCampaignGuidanceRecommendation(
+            ProjectWarningStep(),
+            out AssistantRecommendationElement warningRecommendation));
+        Assert.AreEqual(7, warningRecommendation.TutorialStep);
+        Assert.AreEqual(9, warningRecommendation.TutorialStepCount);
+
+        Assert.IsTrue(AssistantObjectiveProjectionUtility.TryBuildCampaignGuidanceRecommendation(
+            ProjectDefenseStep(),
+            out AssistantRecommendationElement defenseRecommendation));
+        Assert.AreEqual(8, defenseRecommendation.TutorialStep);
+        Assert.AreEqual(9, defenseRecommendation.TutorialStepCount);
     }
 
     [Test]
@@ -645,6 +831,34 @@ public sealed class M02EstablishBaseGuidanceTests
         return queue;
     }
 
+    private static CampaignMissionGuidanceProjectionComponent ProjectWarningStep()
+    {
+        CampaignMissionGuidanceProjectionComponent queue = ProjectRifleQueueStep();
+        queue.AcknowledgedGuidanceId = queue.GuidanceId;
+        CampaignMissionAttemptFactsComponent facts = DefenseFacts();
+        facts.DefenseWaveWarningIssued = 1;
+        Assert.IsTrue(TryProject(queue, facts, out CampaignMissionGuidanceProjectionComponent warning));
+        return warning;
+    }
+
+    private static CampaignMissionGuidanceProjectionComponent ProjectDefenseStep()
+    {
+        CampaignMissionGuidanceProjectionComponent warning = ProjectWarningStep();
+        CampaignMissionAttemptFactsComponent facts = DefenseFacts();
+        facts.DefenseWaveWarningIssued = 1;
+        facts.DefenseWaveActivated = 1;
+        Assert.IsTrue(TryProject(warning, facts, out CampaignMissionGuidanceProjectionComponent defense));
+        return defense;
+    }
+
+    private static CampaignMissionAttemptFactsComponent DefenseFacts() => new()
+    {
+        RequiredBuildingPlacedCount = 1,
+        RequiredBuildingCompletedCount = 1,
+        RequiredUnitProducedCount = 1,
+        HostileTotalCount = 3
+    };
+
     private static bool TryProject(
         in CampaignMissionGuidanceProjectionComponent current,
         in CampaignMissionAttemptFactsComponent facts,
@@ -660,6 +874,27 @@ public sealed class M02EstablishBaseGuidanceTests
             default,
             CanonicalBuildAnchor,
             out guidance);
+
+    private static bool TryProjectWithGuidance(
+        in CampaignMissionGuidanceProjectionComponent current,
+        in CampaignMissionAttemptFactsComponent facts,
+        NarrativeGuidanceMode mode,
+        out CampaignMissionGuidanceProjectionComponent guidance)
+    {
+        CampaignMissionRuntimeComponent runtime = Runtime("saga.ch01.m02.establish_base");
+        runtime.Guidance = mode;
+        return CampaignMissionGuidanceProjectionSystem.TryBuildProjection(
+            current,
+            runtime,
+            facts,
+            Settings(),
+            Entity.Null,
+            Entity.Null,
+            default,
+            default,
+            CanonicalBuildAnchor,
+            out guidance);
+    }
 
     private static CampaignMissionRuntimeComponent Runtime(string missionId) => new()
     {

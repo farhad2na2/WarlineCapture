@@ -68,10 +68,13 @@ namespace Game.Runtime
                 runtime.Phase < MissionPhaseKind.Result || runtime.Outcome == MissionOutcomeKind.None ||
                 runtime.ReturnDestination == MissionReturnDestinationKind.None ||
                 facts.ElapsedMilliseconds < 0 || facts.SquadLossCount < 0 ||
-                facts.CommandSquadSpawned == 0 || facts.HostileTotalCount <= 0 ||
+                facts.HostileTotalCount < 0 ||
                 facts.HostileDefeatedCount < 0 || facts.HostileDefeatedCount > facts.HostileTotalCount ||
-                !FactsMatchOutcome(runtime.Outcome, in facts) || !TryEvaluateStars(
-                    runtime.Outcome, facts.ElapsedMilliseconds, facts.SquadLossCount,
+                facts.RequiredBuildingCompletedCount < 0 || facts.RequiredUnitProducedCount < 0 ||
+                facts.CivilianTotalCount < 0 || facts.CivilianLossCount < 0 ||
+                facts.CivilianLossCount > facts.CivilianTotalCount ||
+                !FactsMatchOutcome(runtime.Outcome, in facts, ref definition) || !TryEvaluateStars(
+                    runtime.Outcome, facts.ElapsedMilliseconds, facts.SquadLossCount, facts.CivilianLossCount,
                     ref definition.StarRules, out byte stars))
                 return false;
 
@@ -85,7 +88,8 @@ namespace Game.Runtime
                 ReturnDestination = runtime.ReturnDestination,
                 Stars = stars,
                 ElapsedMilliseconds = facts.ElapsedMilliseconds,
-                SquadLossCount = facts.SquadLossCount
+                SquadLossCount = facts.SquadLossCount,
+                CivilianLossCount = facts.CivilianLossCount
             };
             return true;
         }
@@ -93,9 +97,16 @@ namespace Game.Runtime
         internal static bool TryEvaluateStars(
             MissionOutcomeKind outcome, int elapsedMilliseconds, int squadLossCount,
             ref BlobArray<CampaignMissionStarRuleBlob> rules, out byte stars)
+            => TryEvaluateStars(
+                outcome, elapsedMilliseconds, squadLossCount, 0, ref rules, out stars);
+
+        internal static bool TryEvaluateStars(
+            MissionOutcomeKind outcome, int elapsedMilliseconds, int squadLossCount, int civilianLossCount,
+            ref BlobArray<CampaignMissionStarRuleBlob> rules, out byte stars)
         {
             stars = 0;
-            if (rules.Length is < 1 or > 3 || elapsedMilliseconds < 0 || squadLossCount < 0)
+            if (rules.Length is < 1 or > 3 || elapsedMilliseconds < 0 || squadLossCount < 0 ||
+                civilianLossCount < 0)
                 return false;
             byte seen = 0;
             for (int i = 0; i < rules.Length; i++)
@@ -111,6 +122,8 @@ namespace Game.Runtime
                 {
                     MissionStarRuleKind.CompleteMission => outcome == MissionOutcomeKind.Victory,
                     MissionStarRuleKind.NoSquadLoss => outcome == MissionOutcomeKind.Victory && squadLossCount == 0,
+                    MissionStarRuleKind.NoCivilianLoss =>
+                        outcome == MissionOutcomeKind.Victory && civilianLossCount == 0,
                     MissionStarRuleKind.CompleteUnderMilliseconds =>
                         outcome == MissionOutcomeKind.Victory && elapsedMilliseconds < rule.Threshold,
                     _ => false
@@ -121,10 +134,78 @@ namespace Game.Runtime
         }
 
         private static bool FactsMatchOutcome(
-            MissionOutcomeKind outcome, in CampaignMissionAttemptFactsComponent facts) =>
-            outcome == MissionOutcomeKind.Victory
-                ? facts.CommandSquadAlive != 0 && facts.HostileDefeatedCount == facts.HostileTotalCount
-                : outcome == MissionOutcomeKind.Defeat && facts.CommandSquadAlive == 0;
+            MissionOutcomeKind outcome,
+            in CampaignMissionAttemptFactsComponent facts,
+            ref CampaignMissionDefinitionBlob definition)
+        {
+            if (definition.Objectives.Length == 0)
+                return false;
+
+            bool allComplete = true;
+            bool failureBroken = false;
+            for (int index = 0; index < definition.Objectives.Length; index++)
+            {
+                ref CampaignMissionObjectiveBlob objective = ref definition.Objectives[index];
+                if (!IsValidObjective(ref definition, index, in objective))
+                    return false;
+
+                bool complete;
+                bool broken = false;
+                switch (objective.Rule)
+                {
+                    case MissionObjectiveRuleKind.DestroyMissionRole:
+                        complete = facts.HostileTotalCount == objective.RequiredCount &&
+                                   facts.HostileDefeatedCount >= objective.RequiredCount;
+                        break;
+                    case MissionObjectiveRuleKind.ProtectMissionRole:
+                        complete = facts.CommandSquadSpawned != 0 && facts.CommandSquadAlive != 0;
+                        broken = facts.CommandSquadSpawned != 0 && facts.CommandSquadAlive == 0;
+                        break;
+                    case MissionObjectiveRuleKind.BuildStructure:
+                        complete = facts.RequiredBuildingCompletedCount >= objective.RequiredCount;
+                        break;
+                    case MissionObjectiveRuleKind.ProduceUnit:
+                        complete = facts.RequiredUnitProducedCount >= objective.RequiredCount;
+                        break;
+                    case MissionObjectiveRuleKind.DefendMissionRole:
+                        complete = facts.ForwardPostBound != 0 && facts.ForwardPostDestroyed == 0 &&
+                                   facts.DefenseWaveActivated != 0 && facts.HostileTotalCount > 0 &&
+                                   facts.HostileDefeatedCount >= facts.HostileTotalCount;
+                        broken = facts.ForwardPostBound != 0 && facts.ForwardPostDestroyed != 0;
+                        break;
+                    default:
+                        return false;
+                }
+                allComplete &= complete;
+                failureBroken |= objective.FailureOnRuleBreak != 0 && broken;
+            }
+
+            return outcome == MissionOutcomeKind.Victory
+                ? allComplete
+                : outcome == MissionOutcomeKind.Defeat && failureBroken;
+        }
+
+        private static bool IsValidObjective(
+            ref CampaignMissionDefinitionBlob definition,
+            int index,
+            in CampaignMissionObjectiveBlob objective)
+        {
+            if (objective.ObjectiveId.IsEmpty || objective.RequiredCount <= 0)
+                return false;
+            for (int previous = 0; previous < index; previous++)
+                if (definition.Objectives[previous].ObjectiveId.Equals(objective.ObjectiveId))
+                    return false;
+
+            return objective.Rule switch
+            {
+                MissionObjectiveRuleKind.DestroyMissionRole or MissionObjectiveRuleKind.ProtectMissionRole or
+                    MissionObjectiveRuleKind.DefendMissionRole =>
+                    !objective.MissionRoleId.IsEmpty && objective.TargetConfigId.IsEmpty,
+                MissionObjectiveRuleKind.BuildStructure or MissionObjectiveRuleKind.ProduceUnit =>
+                    objective.MissionRoleId.IsEmpty && !objective.TargetConfigId.IsEmpty,
+                _ => false
+            };
+        }
 
         private static bool SameAttempt(
             in CampaignMissionResultComponent left, in CampaignMissionResultComponent right) =>

@@ -111,6 +111,7 @@ namespace Game.Components
         public byte Stars;
         public int ElapsedMilliseconds;
         public int SquadLossCount;
+        public int CivilianLossCount;
     }
 
     [InternalBufferCapacity(1)]

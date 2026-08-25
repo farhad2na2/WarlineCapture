@@ -233,6 +233,23 @@ public sealed class M01FirstContactResultRuleTests
             definition.MissionId = new FixedString64Bytes("saga.ch01.m01.first_contact");
             definition.ScenarioId = new FixedString64Bytes("scenario.ch01.m01.first_contact");
             definition.OperationMapId = new FixedString64Bytes("opmap.ch01.district_edge_01");
+            BlobBuilderArray<CampaignMissionObjectiveBlob> objectives =
+                builder.Allocate(ref definition.Objectives, 2);
+            objectives[0] = new CampaignMissionObjectiveBlob
+            {
+                ObjectiveId = new FixedString64Bytes("obj.ch01.m01.destroy_patrol"),
+                MissionRoleId = new FixedString64Bytes("role.hostile.patrol"),
+                Rule = MissionObjectiveRuleKind.DestroyMissionRole,
+                RequiredCount = 3
+            };
+            objectives[1] = new CampaignMissionObjectiveBlob
+            {
+                ObjectiveId = new FixedString64Bytes("obj.ch01.m01.keep_command_squad_alive"),
+                MissionRoleId = new FixedString64Bytes("role.friendly.command_squad"),
+                Rule = MissionObjectiveRuleKind.ProtectMissionRole,
+                RequiredCount = 1,
+                FailureOnRuleBreak = 1
+            };
             BlobBuilderArray<CampaignMissionStarRuleBlob> stars = builder.Allocate(ref definition.StarRules, 3);
             stars[0] = new CampaignMissionStarRuleBlob { StarIndex = 1, Rule = MissionStarRuleKind.CompleteMission };
             stars[1] = new CampaignMissionStarRuleBlob { StarIndex = 2, Rule = MissionStarRuleKind.NoSquadLoss };

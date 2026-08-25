@@ -1,8 +1,8 @@
 # M02 Establish The Base Implementation Tracker
 
 Date: 2026-08-25
-Status: Active; M02EB-020 accepted and M02EB-021 dependency-ready
-Progress: 20/34 accepted items (58.8%)
+Status: Active; M02EB-021 accepted and M02EB-022 dependency-ready
+Progress: 21/34 accepted items (61.8%)
 Parent design: `Design/SagaChapters/Saga_Chapter01_First_Response.md` (`M02 Detailed Spec`)
 Technical architecture: `Design/Architecture/m02_establish_base_technical_architecture.md`
 Mission: `saga.ch01.m02.establish_base`
@@ -183,9 +183,10 @@ Every item records an exact path allowlist before editing. Unexpected user chang
   **Acceptance:** M01 and M02 project definition/fact-driven objectives with monotonic versions and no second writer.
   **Evidence:** the existing `CampaignMissionObjectiveProjectionSystem` is now the sole definition-driven writer for both M01 and M02. It validates exact catalog/runtime source identity, authored objective order, unique ids, supported rule and target shape, required counts, and canonical anchors before replacing the objective buffer once. M01 retains its exact destroy/protect presentation and phase completion; M02 BuildStructure and ProduceUnit progress only from authoritative attempt facts, while DefendMissionRole publishes blocked, active, warning, or failed state from the bound/damaged/destroyed forward-post facts. Stale or regressive facts cannot advance progress, retry resets attempt progress while the published boundary version remains monotonic, and M01-to-M02 replacement leaves no stale rows. The shared fact projector now creates its queries through Burst-safe `EntityQueryBuilder` definitions rather than managed `ComponentType[]` allocation. `[M02EstablishBaseObjectiveWriterValidation] result=Passed tests=8`; `[M02EstablishBaseObjectiveValidation] result=Passed tests=22`; `[M02EstablishBaseObjectiveRegressionValidation] result=Passed suites=4`; `[M02EstablishBaseLaunchValidation] result=Passed tests=14`; `[M02EstablishBaseWaveValidation] result=Passed tests=9`; `[M01FirstContactConsolidatedContractValidation] result=Passed suites=23`; `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; live recompile completed with zero errors and the post-fix log slice contains no compiler, Burst, exception, or failed-validation marker. Unity CLI Pipeline drove the wrapper-launched live Editor; log: `/private/tmp/warline-m02eb-011-live-editor.log`.
 
-- [ ] **M02EB-021 - Resolve victory, defeat, stars, and settlement**
+- [x] **M02EB-021 - Resolve victory, defeat, stars, and settlement**
   **Depends on:** M02EB-017 through M02EB-020.
   **Acceptance:** all required objectives resolve deterministically; civilian and five-minute stars are independent; Barracks/M03 unlock and rewards settle exactly once.
+  **Evidence:** the existing mission runtime remains the sole outcome writer and now resolves the canonical M02 definition only after Barracks completion, rifle production, forward-post survival, delayed-wave activation, and authoritative hostile defeat; destruction of the failure-on-break forward post resolves defeat. The sole result projector validates the authored objective schema against attempt facts, projects independent no-civilian-loss and five-minute stars, and records civilian losses. The existing settlement owner maps M02 to M03, while the progress store accepts only the exact M02 first-clear production-unlock reward, grants `Building_Barrack` once, converts an already-owned Barracks to one Training Facilities Blueprint Part once, and preserves duplicate-token idempotence across restart. `[M02EstablishBaseResultSettlementValidation] result=Passed tests=10`; `[M02EstablishBaseResultSettlementRegressionValidation] result=Passed suites=6`; `[M02EstablishBaseLaunchRegressionValidation] result=Passed suites=3`; `[M02EstablishBaseLaunchValidation] result=Passed tests=14`; `[M01FirstContactConsolidatedContractValidation] result=Passed suites=23`; `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; final Unity CLI Pipeline recompile is up to date with zero compiler errors. The aggregate ECS/Burst debt probe still reports its pre-existing 26 array snapshots in seven unrelated `Assets/Game/Scripts/Systems/` files; no M02EB-021 write path uses those snapshot APIs, so this step adds zero debt. Pipeline log: `/private/tmp/warline-m02eb-021-pipeline-editor.log`.
 
 - [ ] **M02EB-022 - Prove lifecycle, retry, replay, and M01 compatibility**
   **Depends on:** M02EB-011 through M02EB-021.
@@ -287,16 +288,16 @@ The first user review occurs at M02EB-029:
 | 2026-08-25 | M02EB-018 added one exact delayed-wave lifecycle owner: the canonical patrol is movement/combat/minimap suppressed until one 90-second warning and later 120-second activation release it into the existing patrol, targeting, attack, health, and death systems; stale identity and roster ambiguity fail closed. | Accepted |
 | 2026-08-25 | M02EB-019 bound the canonical forward-post role to the unique authoritative operation-map building at the base anchor and projected only monotonic damage/destruction facts from existing building health and destruction truth; no parallel base-health state or combat path was added. | Accepted |
 | 2026-08-25 | M02EB-020 generalized the sole objective projection writer across M01 and M02, preserving exact M01 behavior while projecting ordered Build, Produce, and Defend state from authoritative facts with retry-safe monotonic publication and fail-closed schema/source validation. | Accepted |
+| 2026-08-25 | M02EB-021 generalized the sole runtime/result/settlement path for canonical M02 victory, forward-post defeat, independent civilian/time stars, exact Barracks reward handling, and one-time M03 progression without adding a parallel mission or persistence owner. | Accepted |
 
 ## 8. Current Validation And Blockers
 
 | Item | Result | Evidence |
 |---|---|---|
-| M02EB-020 sole objective writer | Passed | `[M02EstablishBaseObjectiveWriterValidation] result=Passed tests=8`; exact M01/M02 order, states, fact monotonicity, retry reset, transition replacement, and fail-closed definitions are covered |
-| Authoritative M02 facts and objective regressions | Passed | `[M02EstablishBaseObjectiveValidation] result=Passed tests=22`; `[M02EstablishBaseObjectiveRegressionValidation] result=Passed suites=4`; includes destruction, placement, canonical data, M01, writer, and architecture dependencies |
-| M02 catalog/launch compatibility | Passed | `[M02EstablishBaseLaunchValidation] result=Passed tests=14` |
-| M02 delayed-wave compatibility | Passed | `[M02EstablishBaseWaveValidation] result=Passed tests=9`; target role remains the canonical forward post |
+| M02EB-021 outcome and settlement | Passed | `[M02EstablishBaseResultSettlementValidation] result=Passed tests=10`; deterministic objective/wave victory, forward-post defeat, independent stars, exact rewards, restart persistence, and duplicate settlement are covered |
+| M02 result/launch regressions | Passed | `[M02EstablishBaseResultSettlementRegressionValidation] result=Passed suites=6`; `[M02EstablishBaseLaunchRegressionValidation] result=Passed suites=3`; `[M02EstablishBaseLaunchValidation] result=Passed tests=14` |
 | Shared M01 compatibility | Passed | `[M01FirstContactConsolidatedContractValidation] result=Passed suites=23` |
-| Architecture/source growth and compilation | Passed | `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; objective writer is 398 lines; live Pipeline recompile completed with zero errors and no post-fix Burst error |
+| Architecture/source growth and compilation | Passed | `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; final live Pipeline recompile is up to date with zero compiler errors; all changed production files remain below 500 lines |
+| Aggregate ECS/Burst debt probe | Pre-existing debt, no task regression | Current 26 snapshot calls are confined to seven unrelated `Assets/Game/Scripts/Systems/` files; M02EB-021 write paths add zero `ToEntityArray`/`ToComponentDataArray` calls |
 
-No blocker prevents M02EB-021. Android/Samsung certification remains owner-deferred and is not counted as passed. Final comic and voice production remains gated by M02EB-029.
+No blocker prevents M02EB-022. Android/Samsung certification remains owner-deferred and is not counted as passed. Final comic and voice production remains gated by M02EB-029. The pre-existing aggregate ECS/Burst snapshot debt remains an M02EB-033 closeout concern and is not widened by M02EB-021.

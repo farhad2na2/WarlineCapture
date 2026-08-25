@@ -12,6 +12,8 @@ namespace Game.Components
         public int RequiredBuildingPlacedCount;
         public int RequiredBuildingCompletedCount;
         public int RequiredUnitProducedCount;
+        public int CivilianTotalCount;
+        public int CivilianLossCount;
         public byte ForwardPostBound;
         public byte ForwardPostDamaged;
         public byte ForwardPostDestroyed;

@@ -15,7 +15,9 @@ namespace Game.Runtime
     [UpdateAfter(typeof(CampaignMissionResultProjectionSystem))]
     public partial struct CampaignMissionProgressSettlementSystem : ISystem
     {
+        private const string M01MissionId = "saga.ch01.m01.first_contact";
         private const string M02MissionId = "saga.ch01.m02.establish_base";
+        private const string M03MissionId = "saga.ch01.m03.radar_warning";
 
         public void OnCreate(ref SystemState state)
         {
@@ -98,7 +100,8 @@ namespace Game.Runtime
             {
                 receipt = store.SettleWithRewards(
                     request.MissionId.ToString(), request.SessionToken.ToString(), request.AttemptOrdinal,
-                    firstClear, result.Stars, result.ElapsedMilliseconds, M02MissionId, grants);
+                    firstClear, result.Stars, result.ElapsedMilliseconds,
+                    ResolveNextMissionId(in request.MissionId), grants);
             }
             catch (Exception)
             {
@@ -109,6 +112,15 @@ namespace Game.Runtime
             response.Accepted = receipt.Applied || receipt.IsDuplicate ? (byte)1 : (byte)0;
             response.ReasonCode = new FixedString64Bytes(receipt.Reason);
             return response;
+        }
+
+        internal static string ResolveNextMissionId(in FixedString64Bytes missionId)
+        {
+            if (missionId.Equals(new FixedString64Bytes(M01MissionId)))
+                return M02MissionId;
+            if (missionId.Equals(new FixedString64Bytes(M02MissionId)))
+                return M03MissionId;
+            return string.Empty;
         }
 
         private static CampaignMissionRewardGrant[] ProjectRewards(ref BlobArray<CampaignMissionRewardBlob> source)

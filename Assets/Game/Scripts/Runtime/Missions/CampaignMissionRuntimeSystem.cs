@@ -186,12 +186,16 @@ namespace Game.Runtime
                 SystemAPI.GetSingletonRW<CampaignMissionRuntimeComponent>();
             CampaignMissionRuntimeComponent currentRuntime = runtimeRw.ValueRO;
             CampaignMissionRuntimeComponent nextRuntime = currentRuntime;
-            if (progressProjectionReady &&
-                CampaignMissionRuntimeProgressUtility.TryEvaluateSettled(
-                    in currentRuntime,
-                    in projectedFacts,
-                    commandSquadSelected,
-                    out nextRuntime))
+            bool transitioned = false;
+            if (progressProjectionReady)
+            {
+                transitioned = SystemAPI.TryGetSingleton(out CampaignMissionCatalogComponent missionCatalog)
+                    ? CampaignMissionRuntimeProgressUtility.TryEvaluateSettled(
+                        in currentRuntime, in projectedFacts, commandSquadSelected, in missionCatalog, out nextRuntime)
+                    : CampaignMissionRuntimeProgressUtility.TryEvaluateSettled(
+                        in currentRuntime, in projectedFacts, commandSquadSelected, out nextRuntime);
+            }
+            if (transitioned)
             {
                 runtimeRw.ValueRW = nextRuntime;
             }

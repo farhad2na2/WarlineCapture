@@ -7,6 +7,11 @@ namespace Game.Runtime
     public sealed class CampaignMissionProgressStore
     {
         public const int CurrentEntrySchemaVersion = 2;
+        private const string M02MissionId = "saga.ch01.m02.establish_base";
+        private const string CommanderXpRewardId = "reward.commander_xp";
+        private const string M02ProductionUnlockRewardId = "reward.ch01.m02.production_unlock";
+        private const string BarracksBuildingId = "Building_Barrack";
+        private const string TrainingFacilitiesUpgradeId = "upgrade.building.training_facilities";
         private readonly SaveService _saveService;
 
         public CampaignMissionProgressStore(SaveService saveService)
@@ -79,7 +84,7 @@ namespace Game.Runtime
             if (stars > 3) throw new ArgumentOutOfRangeException(nameof(stars));
             if (completionMilliseconds < 0) throw new ArgumentOutOfRangeException(nameof(completionMilliseconds));
             rewards ??= Array.Empty<CampaignMissionRewardGrant>();
-            ValidateRewards(rewards);
+            ValidateRewards(missionId, firstClear, rewards);
             string settlementToken = sessionToken.Trim() + ":" + attemptOrdinal;
 
             PlayerProfileSaveData profile = _saveService.LoadProfile();
@@ -100,7 +105,25 @@ namespace Game.Runtime
             {
                 CampaignMissionRewardGrant reward = rewards[index];
                 if (reward.Kind == MissionRewardKind.None)
-                    commanderXp = checked(commanderXp + reward.Amount);
+                {
+                    if (reward.RewardConfigId == CommanderXpRewardId)
+                    {
+                        commanderXp = checked(commanderXp + reward.Amount);
+                    }
+                    else if (Contains(profile.ownedBuildingUnlocks, BarracksBuildingId))
+                    {
+                        profile.blueprintParts = AddBlueprintParts(
+                            profile.blueprintParts,
+                            TrainingFacilitiesUpgradeId,
+                            reward.Amount);
+                    }
+                    else
+                    {
+                        profile.ownedBuildingUnlocks = Append(
+                            profile.ownedBuildingUnlocks,
+                            BarracksBuildingId);
+                    }
+                }
                 else if (reward.Kind == MissionRewardKind.Credits)
                     credits = checked(credits + reward.Amount);
                 else if (reward.Kind == MissionRewardKind.Materials)
@@ -204,22 +227,53 @@ namespace Game.Runtime
                 throw new ArgumentException("A scoped mission id is required.", nameof(missionId));
         }
 
-        private static void ValidateRewards(CampaignMissionRewardGrant[] rewards)
+        private static void ValidateRewards(
+            string missionId,
+            bool firstClear,
+            CampaignMissionRewardGrant[] rewards)
         {
             HashSet<string> identities = new(StringComparer.Ordinal);
             for (int index = 0; index < rewards.Length; index++)
             {
                 CampaignMissionRewardGrant reward = rewards[index];
                 if (reward.Amount <= 0 || reward.Kind == MissionRewardKind.Intel)
-                    throw new ArgumentException("Settlement rewards must be positive and M01 cannot grant Intel.", nameof(rewards));
+                    throw new ArgumentException(
+                        "Settlement rewards must be positive and Campaign tutorial missions cannot grant Intel.",
+                        nameof(rewards));
                 string identity = reward.Kind == MissionRewardKind.None
                     ? reward.RewardConfigId?.Trim() ?? string.Empty
                     : reward.Kind.ToString();
-                if (reward.Kind == MissionRewardKind.None && identity != "reward.commander_xp")
-                    throw new ArgumentException("The only supported custom M01 reward is reward.commander_xp.", nameof(rewards));
+                if (reward.Kind == MissionRewardKind.None && identity != CommanderXpRewardId &&
+                    !(identity == M02ProductionUnlockRewardId && missionId == M02MissionId &&
+                      firstClear && reward.Amount == 1))
+                    throw new ArgumentException("Unsupported custom Campaign settlement reward.", nameof(rewards));
                 if (!identities.Add(identity))
                     throw new ArgumentException("Duplicate settlement reward identity.", nameof(rewards));
             }
+        }
+
+        private static BlueprintPartSaveData[] AddBlueprintParts(
+            BlueprintPartSaveData[] source,
+            string targetItemId,
+            int amount)
+        {
+            source ??= Array.Empty<BlueprintPartSaveData>();
+            for (int index = 0; index < source.Length; index++)
+            {
+                BlueprintPartSaveData entry = source[index];
+                if (entry == null || entry.targetItemId != targetItemId)
+                    continue;
+                entry.amount = checked(Math.Max(0, entry.amount) + amount);
+                return source;
+            }
+
+            BlueprintPartSaveData[] result = new BlueprintPartSaveData[source.Length + 1];
+            Array.Copy(source, result, source.Length);
+            result[^1] = new BlueprintPartSaveData { targetItemId = targetItemId, amount = amount };
+            Array.Sort(result, (left, right) => string.CompareOrdinal(
+                left?.targetItemId ?? string.Empty,
+                right?.targetItemId ?? string.Empty));
+            return result;
         }
 
         private static bool Contains(string[] values, string value) =>

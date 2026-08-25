@@ -115,6 +115,8 @@ namespace Game.Runtime
             rootFacts.CommandSquadSpawned = 1;
             rootFacts.CommandSquadAlive = 1;
             rootFacts.HostileTotalCount = CountHostiles(ref definition);
+            rootFacts.CivilianTotalCount = CountAmbientInstances(ref definition);
+            rootFacts.CivilianLossCount = 0;
             rootFacts.FinalePresentationRequired = finaleRequired ? (byte)1 : (byte)0;
             rootFacts.FinalePresentationComplete = finaleRequired ? (byte)0 : (byte)1;
             em.SetComponentData(root, rootFacts);
@@ -344,6 +346,14 @@ namespace Game.Runtime
                 if (group.FactionId <= 1) continue;
                 for (int unitIndex = 0; unitIndex < group.Units.Length; unitIndex++) count += group.Units[unitIndex].Count;
             }
+            return count;
+        }
+
+        private static int CountAmbientInstances(ref CampaignMissionDefinitionBlob definition)
+        {
+            int count = 0;
+            for (int index = 0; index < definition.AmbientPresentations.Length; index++)
+                count += math.max(0, definition.AmbientPresentations[index].InstanceCount);
             return count;
         }
 

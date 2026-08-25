@@ -20,6 +20,7 @@ namespace Game.Components
     public struct MatchObjectiveRuntimeStateComponent : IComponentData
     {
         public uint Version;
+        public uint MissionCatalogSourceVersion;
         public uint MissionSourceVersion;
         public FixedString64Bytes MissionId;
         public FixedString64Bytes SessionToken;
@@ -28,7 +29,12 @@ namespace Game.Components
         public int ElapsedWholeSeconds;
         public int HostileTotalCount;
         public int HostileDefeatedCount;
+        public int RequiredBuildingCompletedCount;
+        public int RequiredUnitProducedCount;
         public byte CommandSquadAlive;
+        public byte ForwardPostBound;
+        public byte ForwardPostDamaged;
+        public byte ForwardPostDestroyed;
         public byte MatchActive;
     }
 

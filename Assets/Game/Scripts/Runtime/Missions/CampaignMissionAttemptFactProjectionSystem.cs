@@ -21,24 +21,31 @@ namespace Game.Runtime
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            _missionRootQuery = state.GetEntityQuery(
-                ComponentType.ReadOnly<CampaignMissionRootComponent>(),
-                ComponentType.ReadOnly<CampaignMissionCatalogComponent>(),
-                ComponentType.ReadOnly<CampaignMissionRuntimeComponent>(),
-                ComponentType.ReadWrite<CampaignMissionAttemptFactsComponent>(),
-                ComponentType.ReadWrite<CampaignMissionAttemptFactProjectionStateComponent>());
-            _buildingBoundaryQuery = state.GetEntityQuery(
-                ComponentType.ReadOnly<BuildingRuntimeStateTag>(),
-                ComponentType.ReadOnly<BuildingRuntimeSpawnRequest>(),
-                ComponentType.ReadOnly<BuildingProducedUnitReadModel>());
-            _operationMapMetadataQuery = state.GetEntityQuery(
-                ComponentType.ReadOnly<OperationMapMetadataComponent>());
-            _forwardPostCandidateQuery = state.GetEntityQuery(
-                ComponentType.ReadOnly<RuntimeBuildingCombatTag>(),
-                ComponentType.ReadOnly<RuntimeBuildingCombatInfo>(),
-                ComponentType.ReadOnly<OperationMapBuildingComponent>(),
-                ComponentType.ReadOnly<Faction>(),
-                ComponentType.ReadOnly<UnitHealth>());
+            _missionRootQuery = new EntityQueryBuilder(Allocator.Temp)
+                .WithAll<
+                    CampaignMissionRootComponent,
+                    CampaignMissionCatalogComponent,
+                    CampaignMissionRuntimeComponent>()
+                .WithAllRW<CampaignMissionAttemptFactsComponent>()
+                .WithAllRW<CampaignMissionAttemptFactProjectionStateComponent>()
+                .Build(ref state);
+            _buildingBoundaryQuery = new EntityQueryBuilder(Allocator.Temp)
+                .WithAll<
+                    BuildingRuntimeStateTag,
+                    BuildingRuntimeSpawnRequest,
+                    BuildingProducedUnitReadModel>()
+                .Build(ref state);
+            _operationMapMetadataQuery = new EntityQueryBuilder(Allocator.Temp)
+                .WithAll<OperationMapMetadataComponent>()
+                .Build(ref state);
+            _forwardPostCandidateQuery = new EntityQueryBuilder(Allocator.Temp)
+                .WithAll<
+                    RuntimeBuildingCombatTag,
+                    RuntimeBuildingCombatInfo,
+                    OperationMapBuildingComponent,
+                    Faction,
+                    UnitHealth>()
+                .Build(ref state);
             state.RequireForUpdate(_missionRootQuery);
             state.RequireForUpdate(_buildingBoundaryQuery);
         }

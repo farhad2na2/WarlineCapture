@@ -72,7 +72,8 @@ public sealed class M02EstablishBaseObjectiveTests
             RunValidation(RunFocusedValidation);
             RunValidation(OperationMapBuildingDestructionSystemTests.RunFocusedValidation);
             RunValidation(M02EstablishBasePlacementTests.RunRegressionValidation);
-            Debug.Log("[M02EstablishBaseObjectiveRegressionValidation] result=Passed suites=3");
+            RunValidation(M02EstablishBaseObjectiveWriterTests.RunFocusedValidation);
+            Debug.Log("[M02EstablishBaseObjectiveRegressionValidation] result=Passed suites=4");
             ValidationExit.Passed();
         }
         catch (Exception exception)

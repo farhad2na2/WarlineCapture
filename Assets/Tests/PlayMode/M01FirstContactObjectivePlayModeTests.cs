@@ -18,8 +18,10 @@ public sealed class M01FirstContactObjectivePlayModeTests
         using World world = new(nameof(M01FirstContactObjectivePlayModeTests));
         EntityManager em = world.EntityManager;
         Entity root = em.CreateEntity(
-            typeof(CampaignMissionRootComponent), typeof(CampaignMissionRuntimeComponent),
+            typeof(CampaignMissionRootComponent), typeof(CampaignMissionCatalogComponent),
+            typeof(CampaignMissionRuntimeComponent),
             typeof(CampaignMissionAttemptFactsComponent));
+        em.SetComponentData(root, CreateCatalog());
         em.SetComponentData(root, new CampaignMissionRuntimeComponent
         {
             MissionId = new FixedString64Bytes("saga.ch01.m01.first_contact"),
@@ -55,6 +57,7 @@ public sealed class M01FirstContactObjectivePlayModeTests
         Entity matchStart = em.CreateEntity(typeof(MatchStartQueueComponent));
         em.SetComponentData(matchStart, new MatchStartQueueComponent { HasStarted = 1 });
 
+        world.GetOrCreateSystem<CampaignMissionCatalogDisposalSystem>();
         SystemHandle writer = world.GetOrCreateSystem<CampaignMissionObjectiveProjectionSystem>();
         world.Unmanaged.GetUnsafeSystemRef<CampaignMissionObjectiveProjectionSystem>(writer)
             .OnUpdate(ref world.Unmanaged.ResolveSystemStateRef(writer));
@@ -73,5 +76,41 @@ public sealed class M01FirstContactObjectivePlayModeTests
         Assert.AreEqual(beforeReader.Version,
             em.GetComponentData<MatchObjectiveRuntimeStateComponent>(boundary).Version);
         yield break;
+    }
+
+    private static CampaignMissionCatalogComponent CreateCatalog()
+    {
+        using BlobBuilder builder = new(Allocator.Temp);
+        ref CampaignMissionCatalogBlob catalog = ref builder.ConstructRoot<CampaignMissionCatalogBlob>();
+        catalog.SchemaVersion = 1;
+        BlobBuilderArray<CampaignMissionDefinitionBlob> missions = builder.Allocate(ref catalog.Missions, 1);
+        missions[0].MissionId = "saga.ch01.m01.first_contact";
+        missions[0].ScenarioId = "scenario.ch01.m01.first_contact";
+        missions[0].OperationMapId = "opmap.ch01.district_edge_01";
+        BlobBuilderArray<CampaignMissionObjectiveBlob> objectives =
+            builder.Allocate(ref missions[0].Objectives, 2);
+        objectives[0] = new CampaignMissionObjectiveBlob
+        {
+            ObjectiveId = "obj.ch01.m01.destroy_patrol",
+            DisplayTextKey = "mission.m01.objective.secure_corridor",
+            MissionRoleId = "role.hostile.patrol",
+            Rule = MissionObjectiveRuleKind.DestroyMissionRole,
+            RequiredCount = 3
+        };
+        objectives[1] = new CampaignMissionObjectiveBlob
+        {
+            ObjectiveId = "obj.ch01.m01.keep_command_squad_alive",
+            DisplayTextKey = "mission.m01.failure.command_squad_destroyed",
+            MissionRoleId = "role.friendly.command_squad",
+            Rule = MissionObjectiveRuleKind.ProtectMissionRole,
+            RequiredCount = 1,
+            FailureOnRuleBreak = 1
+        };
+        return new CampaignMissionCatalogComponent
+        {
+            Blob = builder.CreateBlobAssetReference<CampaignMissionCatalogBlob>(Allocator.Persistent),
+            SourceVersion = 8,
+            OwnsBlob = 1
+        };
     }
 }

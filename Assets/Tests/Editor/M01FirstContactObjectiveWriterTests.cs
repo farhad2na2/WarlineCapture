@@ -164,8 +164,10 @@ public sealed class M01FirstContactObjectiveWriterTests
         EntityManager em = world.EntityManager;
         root = em.CreateEntity(
             typeof(CampaignMissionRootComponent),
+            typeof(CampaignMissionCatalogComponent),
             typeof(CampaignMissionRuntimeComponent),
             typeof(CampaignMissionAttemptFactsComponent));
+        em.SetComponentData(root, CreateCatalog());
         em.SetComponentData(root, ValidRuntime());
         em.SetComponentData(root, new CampaignMissionAttemptFactsComponent
         {
@@ -176,8 +178,45 @@ public sealed class M01FirstContactObjectiveWriterTests
             CommandSquadAlive = 1
         });
         boundary = em.CreateEntity(typeof(MatchObjectiveProjectionBoundaryComponent));
+        world.GetOrCreateSystem<CampaignMissionCatalogDisposalSystem>();
         writer = world.GetOrCreateSystem<CampaignMissionObjectiveProjectionSystem>();
         return world;
+    }
+
+    private static CampaignMissionCatalogComponent CreateCatalog()
+    {
+        using BlobBuilder builder = new(Allocator.Temp);
+        ref CampaignMissionCatalogBlob catalog = ref builder.ConstructRoot<CampaignMissionCatalogBlob>();
+        catalog.SchemaVersion = 1;
+        BlobBuilderArray<CampaignMissionDefinitionBlob> missions = builder.Allocate(ref catalog.Missions, 1);
+        missions[0].MissionId = "saga.ch01.m01.first_contact";
+        missions[0].ScenarioId = "scenario.ch01.m01.first_contact";
+        missions[0].OperationMapId = "opmap.ch01.district_edge_01";
+        BlobBuilderArray<CampaignMissionObjectiveBlob> objectives =
+            builder.Allocate(ref missions[0].Objectives, 2);
+        objectives[0] = new CampaignMissionObjectiveBlob
+        {
+            ObjectiveId = "obj.ch01.m01.destroy_patrol",
+            DisplayTextKey = "mission.m01.objective.secure_corridor",
+            MissionRoleId = "role.hostile.patrol",
+            Rule = MissionObjectiveRuleKind.DestroyMissionRole,
+            RequiredCount = 3
+        };
+        objectives[1] = new CampaignMissionObjectiveBlob
+        {
+            ObjectiveId = "obj.ch01.m01.keep_command_squad_alive",
+            DisplayTextKey = "mission.m01.failure.command_squad_destroyed",
+            MissionRoleId = "role.friendly.command_squad",
+            Rule = MissionObjectiveRuleKind.ProtectMissionRole,
+            RequiredCount = 1,
+            FailureOnRuleBreak = 1
+        };
+        return new CampaignMissionCatalogComponent
+        {
+            Blob = builder.CreateBlobAssetReference<CampaignMissionCatalogBlob>(Allocator.Persistent),
+            SourceVersion = 7,
+            OwnsBlob = 1
+        };
     }
 
     private static CampaignMissionRuntimeComponent ValidRuntime() => new()

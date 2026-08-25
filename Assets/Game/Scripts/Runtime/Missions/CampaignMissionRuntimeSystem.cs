@@ -343,6 +343,7 @@ namespace Game.Runtime
             DynamicBuffer<CampaignMissionSettlementResultElement> settlements =
                 entityManager.GetBuffer<CampaignMissionSettlementResultElement>(root, true);
             bool settled = false;
+            bool firstClear = false;
             for (int index = settlements.Length - 1; index >= 0; index--)
             {
                 CampaignMissionSettlementResultElement candidate = settlements[index];
@@ -350,6 +351,7 @@ namespace Game.Runtime
                     candidate.SessionToken.Equals(runtime.SessionToken) && candidate.Accepted != 0)
                 {
                     settled = true;
+                    firstClear = candidate.FirstClear != 0;
                     break;
                 }
             }
@@ -358,7 +360,7 @@ namespace Game.Runtime
                 reason = ResultNotSettledReason;
                 return false;
             }
-            MissionPhaseKind nextPhase = runtime.ReturnDestination == MissionReturnDestinationKind.CommandBase
+            MissionPhaseKind nextPhase = firstClear
                 ? MissionPhaseKind.DebriefFirstClear : MissionPhaseKind.ReturnReplay;
             if (!TryTransition(in runtime, nextPhase, runtime.Outcome, runtime.ReturnDestination, out runtime))
             {

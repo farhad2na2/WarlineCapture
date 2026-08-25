@@ -72,7 +72,8 @@ public sealed class M01FirstContactHudResultTests
         using World world = CreateResultWorld(MissionOutcomeKind.Victory, out Entity root);
         world.EntityManager.GetBuffer<CampaignMissionSettlementResultElement>(root).Add(new()
         {
-            SourceVersion = 8, SessionToken = new FixedString64Bytes("session.m01"), Accepted = 1
+            SourceVersion = 8, SessionToken = new FixedString64Bytes("session.m01"), Accepted = 1,
+            FirstClear = 1
         });
         AddAction(world.EntityManager, root, MissionActionKind.Continue);
         Assert.That(CampaignMissionRuntimeSystem.TryConsumeAction(world.EntityManager, root), Is.True);
@@ -170,7 +171,7 @@ public sealed class M01FirstContactHudResultTests
             "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Core.cs");
         StringAssert.Contains("victory ? BuildMissionRewardText(ref rewards) : \"NO REWARD\"", source);
         StringAssert.Contains("? \"COMMANDER XP\"", source);
-        StringAssert.Contains("runtime.ReturnDestination == MissionReturnDestinationKind.CommandBase", source);
+        StringAssert.Contains("settlementAccepted != 0 && settlementFirstClear != 0", source);
     }
 
     [Test] public static void ResultPopupCapturesSupportedAspects()

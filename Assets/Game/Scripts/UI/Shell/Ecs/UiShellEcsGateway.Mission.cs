@@ -14,6 +14,7 @@ namespace Game.UI.Shell.Ecs
         private static bool hasMissionRootQuery;
         private static uint cachedMissionResultVersion;
         private static byte cachedMissionSettlementAccepted;
+        private static byte cachedMissionSettlementFirstClear;
         private static UiMissionResultPopupModel cachedMissionResult;
         private static World cachedMissionResultWorld;
         private static Entity cachedMissionResultRoot;
@@ -30,6 +31,7 @@ namespace Game.UI.Shell.Ecs
         {
             cachedMissionResultVersion = 0;
             cachedMissionSettlementAccepted = 0;
+            cachedMissionSettlementFirstClear = 0;
             cachedMissionResult = UiMissionResultPopupModel.VictoryDefault;
             cachedMissionResultWorld = null;
             cachedMissionResultRoot = Entity.Null;

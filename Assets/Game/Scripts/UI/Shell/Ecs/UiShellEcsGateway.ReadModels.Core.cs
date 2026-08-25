@@ -124,6 +124,7 @@ namespace Game.UI.Shell.Ecs
                 return false;
 
             byte settlementAccepted = 0;
+            byte settlementFirstClear = 0;
             if (projection.Outcome == MissionOutcomeKind.Victory &&
                 entityManager.HasBuffer<CampaignMissionSettlementResultElement>(root))
             {
@@ -136,6 +137,7 @@ namespace Game.UI.Shell.Ecs
                         candidate.SessionToken.Equals(projection.SessionToken))
                     {
                         settlementAccepted = candidate.Accepted;
+                        settlementFirstClear = candidate.FirstClear;
                         break;
                     }
                 }
@@ -145,7 +147,8 @@ namespace Game.UI.Shell.Ecs
                 cachedMissionResultSession.Equals(projection.SessionToken) &&
                 cachedMissionResultAttempt == projection.AttemptOrdinal &&
                 cachedMissionResultVersion == projection.SourceVersion &&
-                cachedMissionSettlementAccepted == settlementAccepted)
+                cachedMissionSettlementAccepted == settlementAccepted &&
+                cachedMissionSettlementFirstClear == settlementFirstClear)
             {
                 result = cachedMissionResult;
                 return true;
@@ -159,7 +162,7 @@ namespace Game.UI.Shell.Ecs
             CampaignMissionAttemptFactsComponent facts =
                 entityManager.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
             bool victory = projection.Outcome == MissionOutcomeKind.Victory;
-            bool firstClear = runtime.ReturnDestination == MissionReturnDestinationKind.CommandBase;
+            bool firstClear = settlementAccepted != 0 && settlementFirstClear != 0;
             ref BlobArray<CampaignMissionRewardBlob> rewards = ref (
                 firstClear ? ref definition.FirstClearRewards : ref definition.ReplayRewards);
             string rewardText = victory ? BuildMissionRewardText(ref rewards) : "NO REWARD";
@@ -182,6 +185,7 @@ namespace Game.UI.Shell.Ecs
                 !victory);
             cachedMissionResultVersion = projection.SourceVersion;
             cachedMissionSettlementAccepted = settlementAccepted;
+            cachedMissionSettlementFirstClear = settlementFirstClear;
             cachedMissionResult = result;
             cachedMissionResultWorld = entityManager.World;
             cachedMissionResultRoot = root;

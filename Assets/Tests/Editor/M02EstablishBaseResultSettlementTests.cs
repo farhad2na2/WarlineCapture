@@ -17,7 +17,7 @@ public sealed class M02EstablishBaseResultSettlementTests
     private const string Barracks = "Building_Barrack";
     private const string TrainingFacilities = "upgrade.building.training_facilities";
     private const string FocusedMarker =
-        "[M02EstablishBaseResultSettlementValidation] result=Passed tests=12";
+        "[M02EstablishBaseResultSettlementValidation] result=Passed tests=13";
 
     [MenuItem("Game/Validation/Run M02 Establish Base Result Settlement Focused")]
     public static void RunFocusedValidation()
@@ -35,6 +35,7 @@ public sealed class M02EstablishBaseResultSettlementTests
             tests.ReplayGrantsOnlyReplayCredits();
             tests.CampaignRetryBeforeFirstClearGrantsFirstClearRewards();
             tests.ReplayRetryAfterFirstClearGrantsOnlyReplayRewards();
+            tests.FirstClearUsesDebriefWhileReplayReturnsDirectly();
             tests.RestartPreservesUnlockRewardsAndSettlementHistory();
             tests.UnknownOrMisScopedCustomRewardsFailClosed();
             Debug.Log(FocusedMarker);
@@ -155,6 +156,8 @@ public sealed class M02EstablishBaseResultSettlementTests
             context.Store, blob, "first", 1, MissionRunKind.FirstClear, 1, 100000);
         PlayerProfileSaveData profile = context.Service.LoadProfile();
         Assert.AreEqual(1, first.Accepted);
+        Assert.AreEqual(1, first.FirstClear);
+        Assert.AreEqual(1, duplicate.FirstClear);
         Assert.AreEqual("already-settled", duplicate.ReasonCode.ToString());
         Assert.AreEqual(320, profile.commanderXp);
         Assert.AreEqual(1500, profile.credits);
@@ -185,7 +188,9 @@ public sealed class M02EstablishBaseResultSettlementTests
     {
         using BlobAssetReference<CampaignMissionCatalogBlob> blob = CreateBlob();
         Settle(context.Store, blob, "first", 1, MissionRunKind.FirstClear, 2, 260000);
-        Settle(context.Store, blob, "replay", 2, MissionRunKind.Replay, 3, 180000);
+        CampaignMissionSettlementResultElement replay = Settle(
+            context.Store, blob, "replay", 2, MissionRunKind.Replay, 3, 180000);
+        Assert.AreEqual(0, replay.FirstClear);
         PlayerProfileSaveData profile = context.Service.LoadProfile();
         Assert.AreEqual(320, profile.commanderXp);
         Assert.AreEqual(1800, profile.credits);
@@ -205,6 +210,7 @@ public sealed class M02EstablishBaseResultSettlementTests
 
         PlayerProfileSaveData profile = context.Service.LoadProfile();
         Assert.AreEqual(1, result.Accepted, result.ReasonCode.ToString());
+        Assert.AreEqual(1, result.FirstClear);
         Assert.AreEqual(320, profile.commanderXp);
         Assert.AreEqual(1500, profile.credits);
         CollectionAssert.AreEqual(new[] { Barracks }, profile.ownedBuildingUnlocks);
@@ -226,6 +232,7 @@ public sealed class M02EstablishBaseResultSettlementTests
 
         PlayerProfileSaveData profile = context.Service.LoadProfile();
         Assert.AreEqual(1, result.Accepted, result.ReasonCode.ToString());
+        Assert.AreEqual(0, result.FirstClear);
         Assert.AreEqual(320, profile.commanderXp);
         Assert.AreEqual(1800, profile.credits);
         CampaignMissionProgressSaveData progress =
@@ -233,6 +240,13 @@ public sealed class M02EstablishBaseResultSettlementTests
         Assert.AreEqual(1, progress.successfulReplayCount);
         Assert.IsFalse(progress.pendingResume);
     });
+
+    [Test]
+    public void FirstClearUsesDebriefWhileReplayReturnsDirectly()
+    {
+        Assert.AreEqual(MissionPhaseKind.DebriefFirstClear, ContinuePhase(firstClear: true));
+        Assert.AreEqual(MissionPhaseKind.ReturnReplay, ContinuePhase(firstClear: false));
+    }
 
     [Test]
     public void RestartPreservesUnlockRewardsAndSettlementHistory() => WithStore(context =>
@@ -274,6 +288,35 @@ public sealed class M02EstablishBaseResultSettlementTests
             in runtime, in facts, ref definition, out CampaignMissionResultComponent result));
         Assert.AreEqual(expected, result.Stars);
         Assert.AreEqual(civilianLosses, result.CivilianLossCount);
+    }
+
+    private static MissionPhaseKind ContinuePhase(bool firstClear)
+    {
+        using World world = new("M02 result route");
+        EntityManager entityManager = world.EntityManager;
+        Entity root = entityManager.CreateEntity(typeof(CampaignMissionRootComponent));
+        CampaignMissionRuntimeComponent runtime = Runtime(
+            MissionPhaseKind.Result, MissionOutcomeKind.Victory);
+        runtime.TransitionToken = 41;
+        entityManager.AddComponentData(root, runtime);
+        entityManager.AddBuffer<CampaignMissionActionRequestElement>(root).Add(new()
+        {
+            Action = MissionActionKind.Continue,
+            TransitionToken = 41,
+            SessionToken = runtime.SessionToken,
+            AttemptOrdinal = runtime.AttemptOrdinal
+        });
+        entityManager.AddBuffer<CampaignMissionActionResultElement>(root);
+        entityManager.AddBuffer<CampaignMissionLaunchRequestElement>(root);
+        entityManager.AddBuffer<CampaignMissionSettlementResultElement>(root).Add(new()
+        {
+            SourceVersion = runtime.Version,
+            SessionToken = runtime.SessionToken,
+            Accepted = 1,
+            FirstClear = firstClear ? (byte)1 : (byte)0
+        });
+        Assert.IsTrue(CampaignMissionRuntimeSystem.TryConsumeAction(entityManager, root));
+        return entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root).Phase;
     }
 
     private static CampaignMissionSettlementResultElement Settle(

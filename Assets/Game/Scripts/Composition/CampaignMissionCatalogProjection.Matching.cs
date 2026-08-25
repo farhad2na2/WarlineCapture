@@ -39,6 +39,8 @@ namespace Game.Composition
                 !Matches(projected.DisplaySummaryKey, mission.DisplaySummaryKey) ||
                 !Matches(projected.LocationNameKey, mission.LocationNameKey) ||
                 !Matches(projected.BriefingSequenceId, mission.BriefingSequenceId) ||
+                !Matches(projected.CommsSequenceId, mission.CommsSequenceId) ||
+                !Matches(projected.DebriefSequenceId, mission.DebriefSequenceId) ||
                 projected.SchemaVersion != mission.SchemaVersion ||
                 projected.DeterministicSeed != scenario.DeterministicSeed ||
                 projected.EncounterStartMilliseconds != scenario.EncounterStartMilliseconds ||

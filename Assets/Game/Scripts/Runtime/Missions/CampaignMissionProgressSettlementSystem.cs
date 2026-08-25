@@ -90,9 +90,10 @@ namespace Game.Runtime
             }
 
             CampaignMissionSettlementReceipt receipt;
+            bool firstClear;
             try
             {
-                bool firstClear = ResolveFirstClearSettlement(store, in runtime);
+                firstClear = ResolveFirstClearSettlement(store, in runtime);
                 ref BlobArray<CampaignMissionRewardBlob> rewardSet = ref (
                     firstClear ? ref definition.FirstClearRewards : ref definition.ReplayRewards);
                 CampaignMissionRewardGrant[] grants = ProjectRewards(ref rewardSet);
@@ -108,6 +109,7 @@ namespace Game.Runtime
             }
 
             response.Accepted = receipt.Applied || receipt.IsDuplicate ? (byte)1 : (byte)0;
+            response.FirstClear = response.Accepted != 0 && firstClear ? (byte)1 : (byte)0;
             response.ReasonCode = new FixedString64Bytes(receipt.Reason);
             return response;
         }

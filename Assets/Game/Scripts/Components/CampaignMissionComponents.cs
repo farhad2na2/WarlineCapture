@@ -130,6 +130,7 @@ namespace Game.Components
         public uint SourceVersion;
         public FixedString64Bytes SessionToken;
         public byte Accepted;
+        public byte FirstClear;
         public FixedString64Bytes ReasonCode;
     }
 
@@ -259,6 +260,8 @@ namespace Game.Components
         public FixedString64Bytes DisplaySummaryKey;
         public FixedString64Bytes LocationNameKey;
         public FixedString64Bytes BriefingSequenceId;
+        public FixedString64Bytes CommsSequenceId;
+        public FixedString64Bytes DebriefSequenceId;
         public int SchemaVersion;
         public int DeterministicSeed;
         public int EncounterStartMilliseconds;

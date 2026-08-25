@@ -160,6 +160,8 @@ namespace Game.Composition
             definition.DisplaySummaryKey = new FixedString64Bytes(mission.DisplaySummaryKey);
             definition.LocationNameKey = new FixedString64Bytes(mission.LocationNameKey);
             definition.BriefingSequenceId = new FixedString64Bytes(mission.BriefingSequenceId);
+            definition.CommsSequenceId = new FixedString64Bytes(mission.CommsSequenceId);
+            definition.DebriefSequenceId = new FixedString64Bytes(mission.DebriefSequenceId);
             definition.SchemaVersion = mission.SchemaVersion;
             definition.DeterministicSeed = scenario.DeterministicSeed;
             definition.EncounterStartMilliseconds = scenario.EncounterStartMilliseconds;

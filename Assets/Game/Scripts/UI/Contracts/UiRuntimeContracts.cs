@@ -71,6 +71,7 @@ namespace Game.UI.Contracts
         bool CanConfirmBuildingPlacement { get; }
         string PlacementStatusText { get; }
         int ActivePlacementCost { get; }
+        int ActivePlacementCreditsCost { get; }
         float ActivePlacementDurationSeconds { get; }
         int MaxQueuedUnitProductions { get; }
 

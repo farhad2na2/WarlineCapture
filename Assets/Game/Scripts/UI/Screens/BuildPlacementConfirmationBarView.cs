@@ -47,6 +47,8 @@ namespace Game.UI.Runtime
         private Canvas _cachedCanvas;
 
         public RectTransform Root => root != null ? root : transform as RectTransform;
+        public bool HasPendingPlacement =>
+            _commandSystem != null && _commandSystem.HasPendingBuildingPlacement;
 
         private void Awake()
         {
@@ -109,6 +111,22 @@ namespace Game.UI.Runtime
             _gameTextResolver = gameTextResolver ?? FallbackGameTextResolver.Instance;
             WireButtons();
             Refresh(force: true);
+        }
+
+        internal bool TryInvokeConfirmFromGuidance()
+        {
+            Refresh(force: true);
+            if (!HasPendingPlacement ||
+                !_commandSystem.CanConfirmBuildingPlacement ||
+                confirmButton == null ||
+                !confirmButton.IsActive() ||
+                !confirmButton.IsInteractable())
+            {
+                return false;
+            }
+
+            confirmButton.onClick.Invoke();
+            return !HasPendingPlacement;
         }
 
         private void OnEnable()
@@ -187,7 +205,9 @@ namespace Game.UI.Runtime
             SetText(titleText, string.IsNullOrWhiteSpace(title)
                 ? _gameTextResolver.Get("build.placement.title.default", "PLACE BUILDING")
                 : _gameTextResolver.Format("build.placement.title.named", "PLACE {0}", title.ToUpperInvariant()));
-            SetText(costText, FormatCost(_commandSystem.ActivePlacementCost));
+            SetText(costText, FormatCost(
+                _commandSystem.ActivePlacementCreditsCost,
+                _commandSystem.ActivePlacementCost));
             SetText(durationText, FormatDuration(_commandSystem.ActivePlacementDurationSeconds));
             SetText(instructionText, _gameTextResolver.Get("build.placement.instruction.confirm", "DRAG TO POSITION, CONFIRM TO BUILD"));
 
@@ -328,8 +348,12 @@ namespace Game.UI.Runtime
             status = rawStatus.Substring(separator + 1).Trim();
         }
 
-        private static string FormatCost(int cost) =>
-            cost > 0 ? cost.ToString("N0", CultureInfo.InvariantCulture) : "0";
+        private static string FormatCost(int creditsCost, int materialsCost) =>
+            $"{Mathf.Max(0, creditsCost).ToString("N0", CultureInfo.InvariantCulture)} CR / " +
+            $"{Mathf.Max(0, materialsCost).ToString("N0", CultureInfo.InvariantCulture)} MAT";
+
+        internal static string FormatCostForTests(int creditsCost, int materialsCost) =>
+            FormatCost(creditsCost, materialsCost);
 
         private static string FormatDuration(float seconds)
         {

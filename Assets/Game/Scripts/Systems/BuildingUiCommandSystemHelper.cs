@@ -82,6 +82,7 @@ namespace Game.Runtime
             public readonly Action CancelBuildingPlacement;
             public readonly CancelProductionDelegate CancelProduction;
             public readonly Func<bool> RotateBuildingPlacement;
+            public readonly Func<int> GetActivePlacementCreditsCost;
 
             public Context(
                 Func<int> getCurrentDollars,
@@ -101,7 +102,8 @@ namespace Game.Runtime
                 Func<bool> confirmBuildingPlacement,
                 Action cancelBuildingPlacement,
                 CancelProductionDelegate cancelProduction,
-                Func<bool> rotateBuildingPlacement = null)
+                Func<bool> rotateBuildingPlacement = null,
+                Func<int> getActivePlacementCreditsCost = null)
             {
                 GetCurrentDollars = getCurrentDollars;
                 GetMaxQueuedUnitProductions = getMaxQueuedUnitProductions;
@@ -121,23 +123,16 @@ namespace Game.Runtime
                 CancelBuildingPlacement = cancelBuildingPlacement;
                 CancelProduction = cancelProduction;
                 RotateBuildingPlacement = rotateBuildingPlacement;
+                GetActivePlacementCreditsCost = getActivePlacementCreditsCost;
             }
         }
 
-        public int CurrentDollars(Context context)
-        {
-            return context.GetCurrentDollars?.Invoke() ?? 0;
-        }
+        public int CurrentDollars(Context context) => context.GetCurrentDollars?.Invoke() ?? 0;
 
-        public int MaxQueuedUnitProductions(Context context)
-        {
-            return Mathf.Max(0, context.GetMaxQueuedUnitProductions?.Invoke() ?? 25);
-        }
+        public int MaxQueuedUnitProductions(Context context) =>
+            Mathf.Max(0, context.GetMaxQueuedUnitProductions?.Invoke() ?? 25);
 
-        public int ConfiguredSpawnableCount(Context context)
-        {
-            return context.GetConfiguredSpawnableCount?.Invoke() ?? 0;
-        }
+        public int ConfiguredSpawnableCount(Context context) => context.GetConfiguredSpawnableCount?.Invoke() ?? 0;
 
         public bool TryGetConfiguredSpawnable(Context context, int index, out ConfiguredSpawnableEntry entry)
         {
@@ -146,10 +141,7 @@ namespace Game.Runtime
                    context.TryGetConfiguredSpawnable(index, out entry);
         }
 
-        public int ConfiguredUnitCount(Context context)
-        {
-            return context.GetConfiguredUnitCount?.Invoke() ?? 0;
-        }
+        public int ConfiguredUnitCount(Context context) => context.GetConfiguredUnitCount?.Invoke() ?? 0;
 
         public bool TryGetConfiguredUnit(Context context, int index, out ConfiguredUnitEntry entry)
         {
@@ -199,20 +191,13 @@ namespace Game.Runtime
                    context.CanConfirmBuildingPlacement();
         }
 
-        public string PlacementStatusText(Context context)
-        {
-            return context.GetPlacementStatusText?.Invoke() ?? string.Empty;
-        }
+        public string PlacementStatusText(Context context) => context.GetPlacementStatusText?.Invoke() ?? string.Empty;
 
-        public int ActivePlacementCost(Context context)
-        {
-            return Mathf.Max(0, context.GetActivePlacementCost?.Invoke() ?? 0);
-        }
+        public int ActivePlacementCost(Context context) =>
+            Mathf.Max(0, context.GetActivePlacementCost?.Invoke() ?? 0);
 
-        public float ActivePlacementDurationSeconds(Context context)
-        {
-            return Mathf.Max(0f, context.GetActivePlacementDurationSeconds?.Invoke() ?? 0f);
-        }
+        public float ActivePlacementDurationSeconds(Context context) =>
+            Mathf.Max(0f, context.GetActivePlacementDurationSeconds?.Invoke() ?? 0f);
 
         public bool CancelProduction(Context context, int buildingId, int pendingProductionIndex)
         {
@@ -226,10 +211,7 @@ namespace Game.Runtime
                    context.ConfirmBuildingPlacement();
         }
 
-        public void CancelBuildingPlacement(Context context)
-        {
-            context.CancelBuildingPlacement?.Invoke();
-        }
+        public void CancelBuildingPlacement(Context context) => context.CancelBuildingPlacement?.Invoke();
 
         public bool RotateBuildingPlacement(Context context)
         {

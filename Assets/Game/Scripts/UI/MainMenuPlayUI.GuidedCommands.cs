@@ -7,6 +7,7 @@ namespace Game.UI.Runtime
     {
         private readonly GuidedHudRuntime _guidedHudRuntime = new();
         private UnityEngine.Camera _guidanceWorldCamera;
+        private UnityEngine.RectTransform _guidedResourceStrip;
 
         private void TickGuidedHudRuntime()
         {
@@ -14,6 +15,13 @@ namespace Game.UI.Runtime
             if (activeCamera != null)
                 _guidanceWorldCamera = activeCamera;
             _matchHudAssistantUiSystem.BindWorldCamera(_guidanceWorldCamera);
+            UnityEngine.RectTransform resourceStrip =
+                _matchHudHeaderReferences?.ResourceStrip as UnityEngine.RectTransform;
+            if (_guidedResourceStrip != resourceStrip)
+            {
+                _guidedResourceStrip = resourceStrip;
+                _matchHudAssistantUiSystem.BindResourceStrip(_guidedResourceStrip);
+            }
             _guidedHudRuntime.Tick(this, _matchHudCommandControlsView);
         }
 
@@ -21,10 +29,15 @@ namespace Game.UI.Runtime
         {
             _guidedHudRuntime.Dispose();
             _guidanceWorldCamera = null;
+            _guidedResourceStrip = null;
+            _matchHudAssistantUiSystem.BindResourceStrip(null);
+            _matchHudAssistantUiSystem.BindBuildingPlacementStepExecutor(null);
         }
 
         public void BindGuidedHudRuntime(UIShellContentView shellContent)
         {
+            _matchHudAssistantUiSystem.BindBuildingPlacementStepExecutor(
+                TryExecuteGuidedBuildingPlacement);
             if (!_guidedHudRuntime.BindShellContent(shellContent))
                 return;
 
@@ -91,6 +104,22 @@ namespace Game.UI.Runtime
             _bindMatchHudSquadTray?.Invoke(_matchHudSquadTrayView);
             // Bind() replaces button listeners, so ARIA must register afterward.
             _matchHudAssistantUiSystem.BindSquadTray(_matchHudSquadTrayView);
+        }
+
+        private bool TryExecuteGuidedBuildingPlacement()
+        {
+            if (_buildPlacementConfirmationBarView?.HasPendingPlacement == true)
+                return _buildPlacementConfirmationBarView.TryInvokeConfirmFromGuidance();
+
+            BuildDrawerCatalogRuntimeView catalog =
+                _buildDrawerView != null
+                    ? _buildDrawerView.GetComponent<BuildDrawerCatalogRuntimeView>()
+                    : null;
+            if (catalog == null || !catalog.TryInvokePrimaryActionFromGuidance())
+                return false;
+
+            return _buildPlacementConfirmationBarView != null &&
+                   _buildPlacementConfirmationBarView.TryInvokeConfirmFromGuidance();
         }
     }
 }

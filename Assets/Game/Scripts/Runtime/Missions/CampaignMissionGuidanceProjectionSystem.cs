@@ -18,6 +18,8 @@ namespace Game.Runtime
         private static readonly FixedString64Bytes SecureCorridorTitle = "Secure the corridor";
         private static readonly FixedString64Bytes OpenBuildTitle = "Open Build";
         private static readonly FixedString64Bytes SelectBarracksTitle = "Select Barracks";
+        private static readonly FixedString64Bytes PlaceBarracksTitle = "Place the Barracks";
+        private static readonly FixedString64Bytes ReviewResourceSpendTitle = "Review resource spend";
         private static readonly FixedString128Bytes FindSquadBody = "Select the command squad to begin.";
         private static readonly FixedString128Bytes MoveToCoverBody = "Move the squad to the marked cover position.";
         private static readonly FixedString128Bytes ConfirmThreatBody = "Inspect the armed patrol near the civilians.";
@@ -25,15 +27,20 @@ namespace Game.Runtime
         private static readonly FixedString128Bytes SecureCorridorBody = "Check the objective and secure the civilian route.";
         private static readonly FixedString128Bytes OpenBuildBody = "Open Build to restore the forward post.";
         private static readonly FixedString128Bytes SelectBarracksBody = "Select Barracks from the building catalog.";
+        private static readonly FixedString128Bytes PlaceBarracksBody = "Place the Barracks inside the green footprint. The confirmation bar shows its exact cost.";
+        private static readonly FixedString128Bytes ReviewResourceSpendBody = "Credits and Materials were spent by the real construction order. Check the resource bar.";
         private static readonly FixedString128Bytes ContextualTargetHint = " Use Show Me if you need the exact target.";
         private static readonly FixedString64Bytes DoItAction = "DO IT";
         private static readonly FixedString64Bytes ShowMeAction = "SHOW ME";
+        private static readonly FixedString64Bytes ContinueAction = "CONTINUE";
         private static readonly FixedString64Bytes MoveTargetAnchor = "anchor.ch01.m01.move_target";
         private static readonly FixedString64Bytes PatrolObjectiveAnchor = "anchor.ch01.m01.patrol_objective";
         private static readonly FixedString64Bytes CivilianSafeZoneAnchor = "anchor.ch01.m01.civilian_safe_zone";
         private static readonly FixedString64Bytes EstablishBaseMissionId = "saga.ch01.m02.establish_base";
+        private static readonly FixedString64Bytes EstablishBaseBuildAnchor = "anchor.ch01.m02.build_lot";
         private static readonly FixedString64Bytes BuildButtonTarget = "ui.match.build";
         private static readonly FixedString64Bytes BarracksCatalogTarget = "ui.build_drawer.barracks";
+        private static readonly FixedString64Bytes ResourceStripTarget = "ui.match.resources";
 
         [BurstCompile] public void OnCreate(ref SystemState state) => state.RequireForUpdate<CampaignMissionRootComponent>();
 
@@ -50,8 +57,9 @@ namespace Game.Runtime
             DynamicBuffer<CampaignMissionGuidanceAcknowledgementRequestElement> acknowledgements = em.GetBuffer<CampaignMissionGuidanceAcknowledgementRequestElement>(root);
             bool acknowledged = ConsumeAcknowledgements(ref current, acknowledgements, in runtime);
             Entity friendly = Entity.Null, hostile = Entity.Null; ResolveMissionEntities(ref state, in runtime, ref friendly, ref hostile);
-            float3 move = default, patrol = default; ResolveAnchors(ref state, ref move, ref patrol);
-            if (!TryBuildProjection(in current, in runtime, in facts, in settings, friendly, hostile, move, patrol, out var next))
+            float3 move = default, patrol = default, build = default;
+            ResolveAnchors(ref state, ref move, ref patrol, ref build);
+            if (!TryBuildProjection(in current, in runtime, in facts, in settings, friendly, hostile, move, patrol, build, out var next))
             { if (acknowledged) em.SetComponentData(root, current); return; }
             em.SetComponentData(root, next);
         }
@@ -59,6 +67,14 @@ namespace Game.Runtime
         internal static bool TryBuildProjection(in CampaignMissionGuidanceProjectionComponent current,
             in CampaignMissionRuntimeComponent runtime, in CampaignMissionAttemptFactsComponent facts,
             in AssistantSettingsComponent settings, Entity friendly, Entity hostile, float3 move, float3 patrol,
+            out CampaignMissionGuidanceProjectionComponent next) =>
+            TryBuildProjection(in current, in runtime, in facts, in settings, friendly, hostile, move, patrol,
+                default, out next);
+
+        internal static bool TryBuildProjection(in CampaignMissionGuidanceProjectionComponent current,
+            in CampaignMissionRuntimeComponent runtime, in CampaignMissionAttemptFactsComponent facts,
+            in AssistantSettingsComponent settings, Entity friendly, Entity hostile, float3 move, float3 patrol,
+            float3 build,
             out CampaignMissionGuidanceProjectionComponent next)
         {
             next = current;
@@ -77,7 +93,7 @@ namespace Game.Runtime
             bool same = current.Active != 0 && current.GuidanceId == id && current.MissionSourceVersion == runtime.Version &&
                         current.GuidanceMode == runtime.Guidance;
             if (same && current.AcknowledgedGuidanceId == id) return false;
-            next = Build(prompt, id, in current, in runtime, in facts, in settings, friendly, hostile, move, patrol);
+            next = Build(prompt, id, in current, in runtime, in facts, in settings, friendly, hostile, move, patrol, build);
             return !same || !ProjectionEquals(in current, in next);
         }
 
@@ -85,6 +101,12 @@ namespace Game.Runtime
             in CampaignMissionGuidanceProjectionComponent current, in CampaignMissionRuntimeComponent runtime,
             in CampaignMissionAttemptFactsComponent facts, in AssistantSettingsComponent settings,
             Entity friendly, Entity hostile, float3 move, float3 patrol)
+            => Build(prompt, id, in current, in runtime, in facts, in settings, friendly, hostile, move, patrol, default);
+
+        private static CampaignMissionGuidanceProjectionComponent Build(CampaignMissionGuidancePromptKind prompt, int id,
+            in CampaignMissionGuidanceProjectionComponent current, in CampaignMissionRuntimeComponent runtime,
+            in CampaignMissionAttemptFactsComponent facts, in AssistantSettingsComponent settings,
+            Entity friendly, Entity hostile, float3 move, float3 patrol, float3 build)
         {
             CampaignMissionGuidanceProjectionComponent next = new()
             {
@@ -121,6 +143,13 @@ namespace Game.Runtime
                 case CampaignMissionGuidancePromptKind.EstablishBaseSelectBarracks:
                     Set(ref next, AssistantRecommendationKind.Select, AssistantTargetKind.UiSurface, SelectBarracksTitle, SelectBarracksBody, DoItAction);
                     next.TargetId = BarracksCatalogTarget; next.CanExecute = 1; break;
+                case CampaignMissionGuidancePromptKind.EstablishBasePlaceBarracks:
+                    Set(ref next, AssistantRecommendationKind.Build, AssistantTargetKind.WorldPosition, PlaceBarracksTitle, PlaceBarracksBody, DoItAction);
+                    next.TargetId = EstablishBaseBuildAnchor; next.WorldPosition = build; next.HasWorldPosition = 1;
+                    next.CanExecute = 1; break;
+                case CampaignMissionGuidancePromptKind.EstablishBaseObserveResourceSpend:
+                    Set(ref next, AssistantRecommendationKind.Explain, AssistantTargetKind.UiSurface, ReviewResourceSpendTitle, ReviewResourceSpendBody, ContinueAction);
+                    next.TargetId = ResourceStripTarget; next.CanExecute = 1; break;
             }
             ApplyModePolicy(ref next);
             return next;
@@ -134,7 +163,9 @@ namespace Game.Runtime
             if (next.Prompt != CampaignMissionGuidancePromptKind.FindSquad &&
                 next.Prompt != CampaignMissionGuidancePromptKind.MoveToCover &&
                 next.Prompt != CampaignMissionGuidancePromptKind.EstablishBaseOpenBuild &&
-                next.Prompt != CampaignMissionGuidancePromptKind.EstablishBaseSelectBarracks)
+                next.Prompt != CampaignMissionGuidancePromptKind.EstablishBaseSelectBarracks &&
+                next.Prompt != CampaignMissionGuidancePromptKind.EstablishBasePlaceBarracks &&
+                next.Prompt != CampaignMissionGuidancePromptKind.EstablishBaseObserveResourceSpend)
             { next.CanExecute = 0; next.ActionLabel = ShowMeAction; }
             if (next.HintStrength >= 2)
             {
@@ -176,14 +207,25 @@ namespace Game.Runtime
             in CampaignMissionAttemptFactsComponent facts)
         {
             if (!runtime.MissionId.Equals(EstablishBaseMissionId) ||
-                runtime.Phase is not (MissionPhaseKind.FindSquad or MissionPhaseKind.Engage) ||
-                facts.RequiredBuildingPlacedCount > 0)
+                runtime.Phase is not (MissionPhaseKind.FindSquad or MissionPhaseKind.Engage))
             {
                 return CampaignMissionGuidancePromptKind.None;
             }
 
+            if (facts.RequiredBuildingPlacedCount > 0)
+            {
+                if (current.Prompt == CampaignMissionGuidancePromptKind.EstablishBaseObserveResourceSpend &&
+                    current.GuidanceId != 0 && current.AcknowledgedGuidanceId == current.GuidanceId)
+                    return CampaignMissionGuidancePromptKind.None;
+                return CampaignMissionGuidancePromptKind.EstablishBaseObserveResourceSpend;
+            }
+
+            if (current.Prompt == CampaignMissionGuidancePromptKind.EstablishBasePlaceBarracks)
+                return CampaignMissionGuidancePromptKind.EstablishBasePlaceBarracks;
             if (current.Prompt == CampaignMissionGuidancePromptKind.EstablishBaseSelectBarracks)
-                return CampaignMissionGuidancePromptKind.EstablishBaseSelectBarracks;
+                return current.GuidanceId != 0 && current.AcknowledgedGuidanceId == current.GuidanceId
+                    ? CampaignMissionGuidancePromptKind.EstablishBasePlaceBarracks
+                    : CampaignMissionGuidancePromptKind.EstablishBaseSelectBarracks;
             if (current.Prompt == CampaignMissionGuidancePromptKind.EstablishBaseOpenBuild &&
                 current.GuidanceId != 0 && current.AcknowledgedGuidanceId == current.GuidanceId)
             {
@@ -212,13 +254,14 @@ namespace Game.Runtime
               else if (!FactionIdentity.IsPlayerControlled(faction.ValueRO.Id) && hostile == Entity.Null) hostile = entity; }
         }
 
-        private void ResolveAnchors(ref SystemState state, ref float3 move, ref float3 patrol)
+        private void ResolveAnchors(ref SystemState state, ref float3 move, ref float3 patrol, ref float3 build)
         {
             if (!SystemAPI.TryGetSingleton(out ActiveOperationMapComponent active) || !SystemAPI.TryGetSingleton(out OperationMapMetadataComponent metadata) ||
                 !metadata.Blob.IsCreated || metadata.Generation != active.Generation) return;
             ref OperationMapBlob map = ref metadata.Blob.Value;
             if (CampaignMissionSpawnSystem.TryFindAnchor(ref map, MoveTargetAnchor, out var a)) move = a.Position;
             if (CampaignMissionSpawnSystem.TryFindAnchor(ref map, PatrolObjectiveAnchor, out var b)) patrol = b.Position;
+            if (CampaignMissionSpawnSystem.TryFindAnchor(ref map, EstablishBaseBuildAnchor, out var c)) build = c.Position;
         }
 
         private static bool ProjectionEquals(in CampaignMissionGuidanceProjectionComponent a, in CampaignMissionGuidanceProjectionComponent b) =>

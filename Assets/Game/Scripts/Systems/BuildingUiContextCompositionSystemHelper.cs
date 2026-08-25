@@ -39,6 +39,7 @@ namespace Game.Runtime
             public readonly Func<bool> ConfirmBuildingPlacement;
             public readonly Action CancelBuildingPlacement;
             public readonly Func<bool> RotateBuildingPlacement;
+            public readonly Func<int> GetActivePlacementCreditsCost;
 
             public Source(
                 RuntimeFactionResourceSystemHelper factionResourceSystem,
@@ -70,7 +71,8 @@ namespace Game.Runtime
                 BuildingUiQueryUiSystemHelper.TryResolveLiveUnitPreviewPrefabDelegate tryResolveLiveUnitPreviewPrefab,
                 Func<bool> confirmBuildingPlacement,
                 Action cancelBuildingPlacement,
-                Func<bool> rotateBuildingPlacement = null)
+                Func<bool> rotateBuildingPlacement = null,
+                Func<int> getPlacementCreditsCost = null)
             {
                 RuntimeFactionResourceSystemHelper = factionResourceSystem;
                 DefinitionSystem = definitionSystem;
@@ -102,72 +104,49 @@ namespace Game.Runtime
                 ConfirmBuildingPlacement = confirmBuildingPlacement;
                 CancelBuildingPlacement = cancelBuildingPlacement;
                 RotateBuildingPlacement = rotateBuildingPlacement;
+                GetActivePlacementCreditsCost = getPlacementCreditsCost;
             }
         }
 
         public Source CreateSource(
-            RuntimeFactionResourceSystemHelper factionResourceSystem,
-            BuildingDefinitionPrefabSystemHelper definitionSystem,
-            RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem,
-            BuildingProductionQueueCompositionSystemHelper productionSystem,
-            BuildingProductionRequestSystemHelper productionRequestSystem,
-            Func<BuildingProductionRequestSystemHelper.Context> createProductionRequestContext,
-            Func<int?> getActiveBuildingId,
-            Func<int> getFrameCount,
-            BuildingUiQueryUiSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager,
-            Func<float> getNow,
-            Func<bool> hasSelectedBuilding,
-            Func<bool> hasActiveBuilding,
-            Func<bool> hasPendingBuildingPlacement,
-            Func<bool> canConfirmBuildingPlacement,
-            Func<string> getPlacementStatusText,
-            Func<string> getSelectedBuildingLabel,
-            Func<int> getActivePlacementCost,
-            Func<float> getActivePlacementDurationSeconds,
-            Func<string> getSelectedBuildingDisplayName,
-            Func<string> getSelectedBuildingDescription,
-            BuildingUiQueryUiSystemHelper.TryGetSelectedBuildingHealthDelegate tryGetSelectedBuildingHealth,
-            BuildingUiQueryUiSystemHelper.TryGetSelectedBuildingPreviewPrefabDelegate tryGetSelectedBuildingPreviewPrefab,
-            Func<int, bool> isRuntimeBuildingWall,
-            Func<int, bool> isRuntimeBuildingCityGenerated,
-            BuildingUiQueryUiSystemHelper.TryGetRuntimeBuildingOwnerFactionDelegate tryGetRuntimeBuildingOwnerFaction,
-            Func<Camera, bool> hasVisibleSelectableBuilding,
+            RuntimeFactionResourceSystemHelper factionResourceSystem, BuildingDefinitionPrefabSystemHelper definitionSystem,
+            RuntimeBuildingCollection<RuntimeBuildingEntity> runtimeBuildingSystem, BuildingProductionQueueCompositionSystemHelper productionSystem,
+            BuildingProductionRequestSystemHelper productionRequestSystem, Func<BuildingProductionRequestSystemHelper.Context> createProductionRequestContext,
+            Func<int?> getActiveBuildingId, Func<int> getFrameCount,
+            BuildingUiQueryUiSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager, Func<float> getNow,
+            Func<bool> hasSelectedBuilding, Func<bool> hasActiveBuilding,
+            Func<bool> hasPendingBuildingPlacement, Func<bool> canConfirmBuildingPlacement,
+            Func<string> getPlacementStatusText, Func<string> getSelectedBuildingLabel,
+            Func<int> getActivePlacementCost, Func<float> getActivePlacementDurationSeconds,
+            Func<string> getSelectedBuildingDisplayName, Func<string> getSelectedBuildingDescription,
+            BuildingUiQueryUiSystemHelper.TryGetSelectedBuildingHealthDelegate tryGetSelectedBuildingHealth, BuildingUiQueryUiSystemHelper.TryGetSelectedBuildingPreviewPrefabDelegate tryGetSelectedBuildingPreviewPrefab,
+            Func<int, bool> isRuntimeBuildingWall, Func<int, bool> isRuntimeBuildingCityGenerated,
+            BuildingUiQueryUiSystemHelper.TryGetRuntimeBuildingOwnerFactionDelegate tryGetRuntimeBuildingOwnerFaction, Func<Camera, bool> hasVisibleSelectableBuilding,
             BuildingUiQueryUiSystemHelper.TryResolveLiveUnitPreviewPrefabDelegate tryResolveLiveUnitPreviewPrefab,
             Func<bool> confirmBuildingPlacement,
             Action cancelBuildingPlacement,
-            Func<bool> rotateBuildingPlacement = null)
+            Func<bool> rotateBuildingPlacement = null,
+            Func<int> getPlacementCreditsCost = null)
         {
             return new Source(
-                factionResourceSystem,
-                definitionSystem,
-                runtimeBuildingSystem,
-                productionSystem,
-                productionRequestSystem,
-                createProductionRequestContext,
-                getActiveBuildingId,
-                getFrameCount,
-                tryGetEntityManager,
-                getNow,
-                hasSelectedBuilding,
-                hasActiveBuilding,
-                hasPendingBuildingPlacement,
-                canConfirmBuildingPlacement,
-                getPlacementStatusText,
-                getSelectedBuildingLabel,
-                getActivePlacementCost,
-                getActivePlacementDurationSeconds,
-                getSelectedBuildingDisplayName,
-                getSelectedBuildingDescription,
-                tryGetSelectedBuildingHealth,
-                tryGetSelectedBuildingPreviewPrefab,
-                isRuntimeBuildingWall,
-                isRuntimeBuildingCityGenerated,
-                tryGetRuntimeBuildingOwnerFaction,
-                hasVisibleSelectableBuilding,
+                factionResourceSystem, definitionSystem,
+                runtimeBuildingSystem, productionSystem,
+                productionRequestSystem, createProductionRequestContext,
+                getActiveBuildingId, getFrameCount,
+                tryGetEntityManager, getNow,
+                hasSelectedBuilding, hasActiveBuilding,
+                hasPendingBuildingPlacement, canConfirmBuildingPlacement,
+                getPlacementStatusText, getSelectedBuildingLabel,
+                getActivePlacementCost, getActivePlacementDurationSeconds,
+                getSelectedBuildingDisplayName, getSelectedBuildingDescription,
+                tryGetSelectedBuildingHealth, tryGetSelectedBuildingPreviewPrefab,
+                isRuntimeBuildingWall, isRuntimeBuildingCityGenerated,
+                tryGetRuntimeBuildingOwnerFaction, hasVisibleSelectableBuilding,
                 tryResolveLiveUnitPreviewPrefab,
                 confirmBuildingPlacement,
                 cancelBuildingPlacement,
-                rotateBuildingPlacement);
+                rotateBuildingPlacement,
+                getPlacementCreditsCost);
         }
 
         public BuildingUiCommandSystemHelper.Context CreateCommandContext(Source source)
@@ -205,7 +184,8 @@ namespace Game.Runtime
                 source.ConfirmBuildingPlacement,
                 source.CancelBuildingPlacement,
                 (buildingId, pendingProductionIndex) => CancelProduction(source, buildingId, pendingProductionIndex),
-                source.RotateBuildingPlacement);
+                source.RotateBuildingPlacement,
+                source.GetActivePlacementCreditsCost);
         }
 
         private static bool CancelProduction(Source source, int buildingId, int pendingProductionIndex)

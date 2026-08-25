@@ -2,10 +2,12 @@
 using System;
 using System.IO;
 using System.Reflection;
+using Game.Catalog.Contracts;
 using Game.Components;
 using Game.Missions.Contracts;
 using Game.Narrative.Contracts;
 using Game.Runtime;
+using Game.UI.Contracts;
 using Game.UI.Runtime;
 using Game.UI.Shell.Ecs;
 using NUnit.Framework;
@@ -19,7 +21,8 @@ using UnityEngine.UI;
 public sealed class M02EstablishBaseGuidanceTests
 {
     private const string FocusedMarker =
-        "[M02EstablishBaseGuidanceValidation] result=Passed tests=11";
+        "[M02EstablishBaseGuidanceValidation] result=Passed tests=17";
+    private static readonly float3 CanonicalBuildAnchor = new(1030.5f, 0.009179778f, 399.5f);
 
     [MenuItem("Game/Validation/Run M02 Establish Base Guidance Focused")]
     public static void RunFocusedValidation()
@@ -30,12 +33,18 @@ public sealed class M02EstablishBaseGuidanceTests
             tests.FirstStepTargetsTheRealBuildControl();
             tests.BuildAcknowledgementAdvancesToBarracksSelection();
             tests.SecondStepTargetsTheRealBarracksControl();
-            tests.AcknowledgedBarracksSelectionIsNotRepublished();
-            tests.AuthoritativePlacementClearsSelectionGuidance();
+            tests.AcknowledgedBarracksSelectionAdvancesToFootprintPlacement();
+            tests.FootprintPlacementTargetsTheCanonicalBuildLot();
+            tests.AuthoritativePlacementAdvancesToResourceSpendReview();
+            tests.AcknowledgedResourceSpendClearsGuidance();
             tests.M02UsesItsOwnNineStepTutorialSequence();
             tests.UiSurfacePreviewCompletesWithoutWorldResolution();
             tests.BuildDoItInvokesTheBoundBuildButton();
             tests.BarracksDoItInvokesSelectionWithoutPlacement();
+            tests.PlacementDoItUsesTheRealPlaceAndConfirmButtons();
+            tests.ResourceSpendContinueUsesTheTypedResourceStrip();
+            tests.PlacementBarDisplaysCreditsAndMaterialsCost();
+            tests.M02GuidanceCannotBorrowM01NarrationEvents();
             tests.M01TutorialProjectionRemainsUnchanged();
             tests.UiSurfaceGuidanceUsesTypedControlsWithoutScreenCoordinates();
             Debug.Log(FocusedMarker);
@@ -55,11 +64,14 @@ public sealed class M02EstablishBaseGuidanceTests
         try
         {
             RunValidation(RunFocusedValidation);
+            RunValidation(M02EstablishBasePlacementTests.RunFocusedValidation);
+            RunValidation(BuildingPlacementConstructionTransactionTests.RunFocusedValidation);
+            RunValidation(BuildingConstructionResourceTransactionSystemHelperTests.RunFocusedValidation);
             RunValidation(M01FirstContactGuidanceTests.RunFocusedValidation);
             RunValidation(M02EstablishBaseBuildCatalogTests.RunFocusedValidation);
             RunValidation(MatchHudAssistantUiSystemHelperTests.RunFocusedValidation);
             RunValidation(ProductionSourceGrowthArchitectureTests.RunFocusedValidation);
-            Debug.Log("[M02EstablishBaseGuidanceRegressionValidation] result=Passed suites=5");
+            Debug.Log("[M02EstablishBaseGuidanceRegressionValidation] result=Passed suites=8");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -110,24 +122,58 @@ public sealed class M02EstablishBaseGuidanceTests
     }
 
     [Test]
-    public void AcknowledgedBarracksSelectionIsNotRepublished()
+    public void AcknowledgedBarracksSelectionAdvancesToFootprintPlacement()
     {
         CampaignMissionGuidanceProjectionComponent barracks = ProjectBarracksStep();
         barracks.AcknowledgedGuidanceId = barracks.GuidanceId;
         Assert.IsFalse(AssistantObjectiveProjectionUtility.TryBuildCampaignGuidanceRecommendation(
             barracks,
             out _));
-        Assert.IsFalse(TryProject(barracks, default, out _));
+        Assert.IsTrue(TryProject(barracks, default, out CampaignMissionGuidanceProjectionComponent placement));
+        Assert.AreEqual(CampaignMissionGuidancePromptKind.EstablishBasePlaceBarracks, placement.Prompt);
+        Assert.AreNotEqual(barracks.GuidanceId, placement.GuidanceId);
     }
 
     [Test]
-    public void AuthoritativePlacementClearsSelectionGuidance()
+    public void FootprintPlacementTargetsTheCanonicalBuildLot()
     {
-        CampaignMissionGuidanceProjectionComponent barracks = ProjectBarracksStep();
+        CampaignMissionGuidanceProjectionComponent placement = ProjectPlacementStep();
+        Assert.AreEqual(AssistantRecommendationKind.Build, placement.RecommendationKind);
+        Assert.AreEqual(AssistantTargetKind.WorldPosition, placement.TargetKind);
+        Assert.AreEqual("anchor.ch01.m02.build_lot", placement.TargetId.ToString());
+        Assert.AreEqual(CanonicalBuildAnchor, placement.WorldPosition);
+        Assert.AreEqual(1, placement.HasWorldPosition);
+        Assert.AreEqual("Place the Barracks", placement.Title.ToString());
+        Assert.That(placement.Body.ToString(), Does.Contain("green footprint"));
+        Assert.That(placement.Body.ToString(), Does.Contain("exact cost"));
+        Assert.AreEqual("DO IT", placement.ActionLabel.ToString());
+    }
+
+    [Test]
+    public void AuthoritativePlacementAdvancesToResourceSpendReview()
+    {
+        CampaignMissionGuidanceProjectionComponent placement = ProjectPlacementStep();
         CampaignMissionAttemptFactsComponent facts = default;
         facts.RequiredBuildingPlacedCount = 1;
 
-        Assert.IsTrue(TryProject(barracks, facts, out CampaignMissionGuidanceProjectionComponent cleared));
+        Assert.IsTrue(TryProject(placement, facts, out CampaignMissionGuidanceProjectionComponent resource));
+        Assert.AreEqual(CampaignMissionGuidancePromptKind.EstablishBaseObserveResourceSpend, resource.Prompt);
+        Assert.AreEqual(AssistantRecommendationKind.Explain, resource.RecommendationKind);
+        Assert.AreEqual(AssistantTargetKind.UiSurface, resource.TargetKind);
+        Assert.AreEqual("ui.match.resources", resource.TargetId.ToString());
+        Assert.AreEqual("CONTINUE", resource.ActionLabel.ToString());
+        Assert.That(resource.Body.ToString(), Does.Contain("Credits and Materials"));
+    }
+
+    [Test]
+    public void AcknowledgedResourceSpendClearsGuidance()
+    {
+        CampaignMissionAttemptFactsComponent facts = default;
+        facts.RequiredBuildingPlacedCount = 1;
+        Assert.IsTrue(TryProject(ProjectPlacementStep(), facts, out CampaignMissionGuidanceProjectionComponent resource));
+        resource.AcknowledgedGuidanceId = resource.GuidanceId;
+
+        Assert.IsTrue(TryProject(resource, facts, out CampaignMissionGuidanceProjectionComponent cleared));
         Assert.AreEqual(0, cleared.Active);
         Assert.AreEqual(CampaignMissionGuidancePromptKind.None, cleared.Prompt);
     }
@@ -148,6 +194,22 @@ public sealed class M02EstablishBaseGuidanceTests
             out AssistantRecommendationElement barracksRecommendation));
         Assert.AreEqual(3, barracksRecommendation.TutorialStep);
         Assert.AreEqual(9, barracksRecommendation.TutorialStepCount);
+
+        CampaignMissionGuidanceProjectionComponent placement = ProjectPlacementStep();
+        Assert.IsTrue(AssistantObjectiveProjectionUtility.TryBuildCampaignGuidanceRecommendation(
+            placement,
+            out AssistantRecommendationElement placementRecommendation));
+        Assert.AreEqual(4, placementRecommendation.TutorialStep);
+        Assert.AreEqual(9, placementRecommendation.TutorialStepCount);
+
+        CampaignMissionAttemptFactsComponent facts = default;
+        facts.RequiredBuildingPlacedCount = 1;
+        Assert.IsTrue(TryProject(placement, facts, out CampaignMissionGuidanceProjectionComponent resource));
+        Assert.IsTrue(AssistantObjectiveProjectionUtility.TryBuildCampaignGuidanceRecommendation(
+            resource,
+            out AssistantRecommendationElement resourceRecommendation));
+        Assert.AreEqual(5, resourceRecommendation.TutorialStep);
+        Assert.AreEqual(9, resourceRecommendation.TutorialStepCount);
     }
 
     [Test]
@@ -240,6 +302,101 @@ public sealed class M02EstablishBaseGuidanceTests
     }
 
     [Test]
+    public void PlacementDoItUsesTheRealPlaceAndConfirmButtons()
+    {
+        GameObject drawerObject = new("M02 Placement Command Test", typeof(RectTransform));
+        GameObject primaryObject = new("Place", typeof(RectTransform), typeof(Image), typeof(Button));
+        primaryObject.transform.SetParent(drawerObject.transform, false);
+        GameObject placementObject = new("M02 Confirmation Command Test", typeof(RectTransform));
+        GameObject confirmObject = new("Confirm", typeof(RectTransform), typeof(Image), typeof(Button));
+        confirmObject.transform.SetParent(placementObject.transform, false);
+        GameObject prefab = new("Building_Barrack");
+        TestBuildingUiCommand command = new();
+        try
+        {
+            BuildDrawerView drawer = drawerObject.AddComponent<BuildDrawerView>();
+            SetPrivateField(drawer, "buildButton", primaryObject.GetComponent<Button>());
+            BuildDrawerCatalogRuntimeView catalog = drawerObject.AddComponent<BuildDrawerCatalogRuntimeView>();
+            catalog.ConfigureForTests(drawer, null, null);
+            catalog.BindRuntimeCommands(command, null);
+            SetPrivateField(catalog, "_selectedItem", new BuildDrawerCatalogItem(
+                BuildDrawerCategory.Buildings,
+                prefab,
+                "Barracks",
+                "BUILDINGS",
+                "Forward post barracks",
+                90,
+                0,
+                30f,
+                new Vector2Int(20, 10),
+                null,
+                null,
+                null));
+            SetPrivateField(catalog, "_hasSelectedItem", true);
+
+            Assert.IsTrue(catalog.TryInvokePrimaryActionFromGuidance());
+            Assert.AreEqual(1, command.PlaceRequests);
+            Assert.IsTrue(command.HasPendingBuildingPlacement);
+
+            BuildPlacementConfirmationBarView confirmation =
+                placementObject.AddComponent<BuildPlacementConfirmationBarView>();
+            SetPrivateField(confirmation, "root", placementObject.transform as RectTransform);
+            SetPrivateField(confirmation, "confirmButton", confirmObject.GetComponent<Button>());
+            confirmation.BindRuntimeCommands(command);
+
+            Assert.IsTrue(confirmation.TryInvokeConfirmFromGuidance());
+            Assert.AreEqual(1, command.ConfirmRequests);
+            Assert.IsFalse(command.HasPendingBuildingPlacement);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(prefab);
+            UnityEngine.Object.DestroyImmediate(placementObject);
+            UnityEngine.Object.DestroyImmediate(drawerObject);
+        }
+    }
+
+    [Test]
+    public void ResourceSpendContinueUsesTheTypedResourceStrip()
+    {
+        GameObject resourceObject = new("ResourceStrip", typeof(RectTransform));
+        AssistantHighlightPresentationSystemHelper helper = new();
+        try
+        {
+            byte acknowledgedKind = 0;
+            helper.Bind(null, uiSurfaceAcknowledged: kind => acknowledgedKind = kind);
+            helper.BindResourceStrip(resourceObject.transform as RectTransform);
+            helper.BeginPendingShowMe(
+                (byte)AssistantRecommendationKind.Explain,
+                (byte)AssistantTargetKind.UiSurface);
+
+            Assert.IsTrue(helper.TryExecuteUiSurface(
+                (byte)AssistantRecommendationKind.Explain,
+                (byte)AssistantTargetKind.UiSurface));
+            Assert.AreEqual((byte)AssistantRecommendationKind.Explain, acknowledgedKind);
+        }
+        finally
+        {
+            helper.Unbind();
+            UnityEngine.Object.DestroyImmediate(resourceObject);
+        }
+    }
+
+    [Test]
+    public void PlacementBarDisplaysCreditsAndMaterialsCost()
+    {
+        Assert.AreEqual("40,000 CR / 90 MAT",
+            BuildPlacementConfirmationBarView.FormatCostForTests(40000, 90));
+    }
+
+    [Test]
+    public void M02GuidanceCannotBorrowM01NarrationEvents()
+    {
+        Assert.IsFalse(MatchHudAssistantUiSystemHelper.CanUseLegacyTutorialNarration(9));
+        Assert.IsTrue(MatchHudAssistantUiSystemHelper.CanUseLegacyTutorialNarration(5));
+    }
+
+    [Test]
     public void M01TutorialProjectionRemainsUnchanged()
     {
         CampaignMissionRuntimeComponent runtime = Runtime("saga.ch01.m01.first_contact");
@@ -281,13 +438,17 @@ public sealed class M02EstablishBaseGuidanceTests
         Assert.That(guidance, Does.Contain("AssistantTargetKind.UiSurface"));
         Assert.That(guidance, Does.Contain("ui.match.build"));
         Assert.That(guidance, Does.Contain("ui.build_drawer.barracks"));
+        Assert.That(guidance, Does.Contain("anchor.ch01.m02.build_lot"));
+        Assert.That(guidance, Does.Contain("ui.match.resources"));
         Assert.That(highlight, Does.Contain("BindBuildButton"));
         Assert.That(highlight, Does.Contain("BindBuildDrawer"));
+        Assert.That(highlight, Does.Contain("BindResourceStrip"));
         Assert.That(highlight, Does.Contain("target.onClick.Invoke()"));
         Assert.That(highlightLayout, Does.Contain("GetWorldCorners"));
         Assert.That(buildDrawerGuidance, Does.Contain("UiCampaignGuidanceTargetKind.BuildButton"));
         Assert.That(buildDrawerGuidance, Does.Contain("UiCampaignGuidanceTargetKind.BarracksCatalogItem"));
         Assert.That(readModel, Does.Contain("topRecommendation.TargetKind != AssistantTargetKind.UiSurface"));
+        Assert.That(readModel, Does.Contain("topRecommendation.TutorialStepCount != 9"));
         Assert.That(guidance, Does.Not.Contain("Screen.width"));
         Assert.That(guidance, Does.Not.Contain("Screen.height"));
     }
@@ -298,6 +459,14 @@ public sealed class M02EstablishBaseGuidanceTests
         build.AcknowledgedGuidanceId = build.GuidanceId;
         Assert.IsTrue(TryProject(build, default, out CampaignMissionGuidanceProjectionComponent barracks));
         return barracks;
+    }
+
+    private static CampaignMissionGuidanceProjectionComponent ProjectPlacementStep()
+    {
+        CampaignMissionGuidanceProjectionComponent barracks = ProjectBarracksStep();
+        barracks.AcknowledgedGuidanceId = barracks.GuidanceId;
+        Assert.IsTrue(TryProject(barracks, default, out CampaignMissionGuidanceProjectionComponent placement));
+        return placement;
     }
 
     private static bool TryProject(
@@ -313,6 +482,7 @@ public sealed class M02EstablishBaseGuidanceTests
             Entity.Null,
             default,
             default,
+            CanonicalBuildAnchor,
             out guidance);
 
     private static CampaignMissionRuntimeComponent Runtime(string missionId) => new()
@@ -354,6 +524,54 @@ public sealed class M02EstablishBaseGuidanceTests
             throw new InvalidOperationException(
                 $"{validation.Method.DeclaringType?.Name}.{validation.Method.Name} failed validation.");
         }
+    }
+
+    private sealed class TestBuildingUiCommand : IBuildingUiCommand
+    {
+        public int CurrentDollars => 100000;
+        public bool HasPendingBuildingPlacement { get; private set; }
+        public bool CanConfirmBuildingPlacement => HasPendingBuildingPlacement;
+        public string PlacementStatusText => "Barracks: Valid placement";
+        public int ActivePlacementCost => 90;
+        public int ActivePlacementCreditsCost => 40000;
+        public float ActivePlacementDurationSeconds => 30f;
+        public int MaxQueuedUnitProductions => 25;
+        public int PlaceRequests { get; private set; }
+        public int ConfirmRequests { get; private set; }
+
+        public BuildingUiCommandFailure GetCampRequestFailure(
+            GameObject prefab,
+            int materialsCost,
+            out string requiredBuildingDisplayName)
+        {
+            requiredBuildingDisplayName = string.Empty;
+            return BuildingUiCommandFailure.None;
+        }
+
+        public BuildingUiCommandFailure TryRequestCampItem(
+            GameObject prefab,
+            int materialsCost,
+            out string requiredBuildingDisplayName,
+            bool focusProducerOnSuccess)
+        {
+            requiredBuildingDisplayName = string.Empty;
+            PlaceRequests++;
+            HasPendingBuildingPlacement = true;
+            return BuildingUiCommandFailure.None;
+        }
+
+        public bool CancelProduction(int buildingId, int pendingProductionIndex) => false;
+
+        public bool ConfirmBuildingPlacement()
+        {
+            ConfirmRequests++;
+            HasPendingBuildingPlacement = false;
+            return true;
+        }
+
+        public void CancelBuildingPlacement() => HasPendingBuildingPlacement = false;
+
+        public bool RotateBuildingPlacement() => HasPendingBuildingPlacement;
     }
 }
 #endif

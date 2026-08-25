@@ -6,6 +6,9 @@ namespace Game.UI.Runtime
 {
     internal sealed partial class AssistantHighlightPresentationSystemHelper
     {
+        private const byte ExplainRecommendationKind = 9;
+        private RectTransform _resourceGuidanceTarget;
+
         public void BindBuildButton(Button buildButton)
         {
             DetachBuildGuidanceButton();
@@ -23,10 +26,23 @@ namespace Game.UI.Runtime
             ApplyVisual(LastAppliedModel);
         }
 
+        public void BindResourceStrip(RectTransform resourceStrip)
+        {
+            _resourceGuidanceTarget = resourceStrip;
+            ApplyVisual(LastAppliedModel);
+        }
+
         public bool TryExecuteUiSurface(byte recommendationKind, byte targetKind)
         {
             if (targetKind != UiSurfaceTargetKind)
                 return false;
+            if (recommendationKind == ExplainRecommendationKind)
+            {
+                if (_resourceGuidanceTarget == null || !_resourceGuidanceTarget.gameObject.activeInHierarchy)
+                    return false;
+                AcknowledgeResourceSpend();
+                return true;
+            }
             Button target = recommendationKind switch
             {
                 BuildRecommendationKind => _buildGuidanceButton,
@@ -60,6 +76,8 @@ namespace Game.UI.Runtime
                     SelectRecommendationKind => _barracksGuidanceButton,
                     _ => null
                 };
+                if (model.RecommendationKind == ExplainRecommendationKind)
+                    return _resourceGuidanceTarget;
                 return uiButton != null ? uiButton.transform as RectTransform : null;
             }
             if (model.RecommendationKind == SelectRecommendationKind)
@@ -81,6 +99,9 @@ namespace Game.UI.Runtime
             if (model.TargetKind == UiSurfaceTargetKind &&
                 model.RecommendationKind == SelectRecommendationKind)
                 return "SELECT BARRACKS\n\u25bc";
+            if (model.TargetKind == UiSurfaceTargetKind &&
+                model.RecommendationKind == ExplainRecommendationKind)
+                return "RESOURCE SPEND\n\u25bc";
             if (model.RecommendationKind == SelectRecommendationKind)
                 return "SELECT SQUAD\n\u25bc";
             if (model.RecommendationKind == MoveRecommendationKind)
@@ -106,6 +127,14 @@ namespace Game.UI.Runtime
             _uiSurfaceAcknowledged?.Invoke(SelectRecommendationKind);
         }
 
+        private void AcknowledgeResourceSpend()
+        {
+            if (!MatchesUiSurface(ExplainRecommendationKind))
+                return;
+            ClearUiSurfaceCue();
+            _uiSurfaceAcknowledged?.Invoke(ExplainRecommendationKind);
+        }
+
         private bool MatchesUiSurface(byte recommendationKind) =>
             LastAppliedModel.Active && LastAppliedModel.TargetKind == UiSurfaceTargetKind &&
             LastAppliedModel.RecommendationKind == recommendationKind;
@@ -121,6 +150,11 @@ namespace Game.UI.Runtime
             _barracksGuidanceButton?.onClick.RemoveListener(AcknowledgeBarracksSelection);
             _barracksGuidanceButton = null;
             _buildDrawerView = null;
+        }
+
+        private void DetachResourceGuidanceTarget()
+        {
+            _resourceGuidanceTarget = null;
         }
     }
 }

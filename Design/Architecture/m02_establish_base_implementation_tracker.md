@@ -1,8 +1,8 @@
 # M02 Establish The Base Implementation Tracker
 
 Date: 2026-08-25
-Status: Active; M02EB-024 accepted and M02EB-025 dependency-ready
-Progress: 24/34 accepted items (70.6%)
+Status: Active; M02EB-025 accepted and M02EB-026 dependency-ready
+Progress: 25/34 accepted items (73.5%)
 Parent design: `Design/SagaChapters/Saga_Chapter01_First_Response.md` (`M02 Detailed Spec`)
 Technical architecture: `Design/Architecture/m02_establish_base_technical_architecture.md`
 Mission: `saga.ch01.m02.establish_base`
@@ -205,9 +205,10 @@ Every item records an exact path allowlist before editing. Unexpected user chang
   **Acceptance:** distinct typed steps, automatic indicators, SHOW ME, and DO IT target the correct controls without screen coordinates.
   **Evidence:** the sole Campaign guidance projection now publishes distinct M02 `EstablishBaseOpenBuild` and `EstablishBaseSelectBarracks` prompts as typed `UiSurface` recommendations targeting `ui.match.build` and `ui.build_drawer.barracks`. Automatic cues, SHOW ME, and DO IT bind the existing Build and Barracks `Button` instances and invoke their real `onClick` paths without screen coordinates, synthetic placement, or parallel UI ownership. The Build drawer acknowledges opening only after its real `OnEnable`, suppresses legacy first-item auto-selection for the M02 steps, and advances Barracks selection through the existing guidance acknowledgment buffer. Guarded production owners remain at or below their ratcheted ceilings through narrow partials. Unity Pipeline passed M02 guidance 11/11, Build catalog 7/7, Match HUD 21/21, and source-growth architecture 17/17. Final checked-wrapper evidence is `[M02EstablishBaseGuidanceValidation] result=Passed tests=11`, `[M01FirstContactGuidanceValidation] result=Passed tests=14`, `[M02EstablishBaseBuildCatalogValidation] result=Passed tests=7`, `[MatchHudAssistantUiValidation] result=Passed tests=21`, `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`, and `[M02EstablishBaseGuidanceRegressionValidation] result=Passed suites=5` with zero compiler errors in `/private/tmp/warline-m02eb-024-regression.log`.
 
-- [ ] **M02EB-025 - Guide footprint placement and resource spend**
+- [x] **M02EB-025 - Guide footprint placement and resource spend**
   **Depends on:** M02EB-014 and M02EB-024.
   **Acceptance:** placement highlight, valid/invalid feedback, displayed cost, spoken/displayed copy, and DO IT use the real command path.
+  **Evidence:** the sole Campaign guidance owner now advances from Barracks selection to the exact `anchor.ch01.m02.build_lot`, while the established placement lifecycle remains the sole owner of the green/red footprint, blocked/invalid feedback, confirmation availability, and active definition. DO IT invokes the real Build Drawer `PLACE` button and then the real confirmation-bar `CONFIRM` button; the authoritative construction transaction remains the sole writer and spends 40,000 Credits plus 90 Materials atomically. The confirmation bar displays `40,000 CR / 90 MAT`, the real resource strip receives a typed CONTINUE review step, and the M02 count-nine sequence is isolated from M01 text/audio until final bilingual copy and voice production at M02EB-031/032. Guarded helper files stay within their exact ratcheted line/byte ceilings through the narrow `BuildingUiPlacementCostReadModel` and M02 guidance partial. Final checked-wrapper evidence in `/private/tmp/warline-m02eb-025-regression-final2.log` is `[M02EstablishBaseGuidanceValidation] result=Passed tests=17`, `[M02EstablishBasePlacementValidation] result=Passed tests=8`, `[BuildingPlacementConstructionTransactionValidation] result=Passed tests=6`, `[BuildingConstructionResourceTransactionValidation] result=Passed tests=3`, `[M01FirstContactGuidanceValidation] result=Passed tests=14`, `[M02EstablishBaseBuildCatalogValidation] result=Passed tests=7`, `[MatchHudAssistantUiValidation] result=Passed tests=21`, `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`, and `[M02EstablishBaseGuidanceRegressionValidation] result=Passed suites=8` with zero compiler errors.
 
 - [ ] **M02EB-026 - Guide rifle production**
   **Depends on:** M02EB-016 and M02EB-025.
@@ -295,16 +296,17 @@ The first user review occurs at M02EB-029:
 | 2026-08-25 | M02EB-022 proved exact retry/replay/exit/return cleanup, canonical attempt-building deletion, durable first-clear settlement, multi-mission result resolution, World recreation, and M01 compatibility through the warm Unity CLI Pipeline and final checked-wrapper regression gates. | Accepted |
 | 2026-08-25 | M02EB-023 generalized the existing Campaign card and briefing projection/view/binder path to exact M02 catalog truth, regenerated both shared prefabs through Unity Pipeline, preserved locked-mission fail-closed behavior and M01 presentation, and passed focused UI plus production architecture gates. | Accepted |
 | 2026-08-25 | M02EB-024 added typed Build and Barracks UI-surface guidance through the existing Campaign/ARIA owners, bound automatic cues and DO IT to the real controls, preserved explicit catalog selection, and passed Pipeline plus checked-wrapper M01/UI/architecture regressions. | Accepted |
+| 2026-08-25 | M02EB-025 bound the canonical Barracks footprint, real PLACE/CONFIRM controls, exact dual-resource cost display, and resource-strip review to the existing placement and transaction owners; M02 cannot borrow M01 tutorial copy/audio, and all eight functional/architecture suites pass. | Accepted |
 
 ## 8. Current Validation And Blockers
 
 | Item | Result | Evidence |
 |---|---|---|
-| M02EB-024 Build/Barracks guidance | Passed | Pipeline M02 guidance 11/11, Build catalog 7/7, and Match HUD 21/21; automatic cues, SHOW ME, and DO IT use exact real controls and typed acknowledgment paths |
+| M02EB-025 footprint/resource guidance | Passed | Checked M02 guidance 17/17, placement 8/8, construction transaction 6/6, and resource transaction 3/3; canonical green/red preview and real PLACE/CONFIRM paths preserve the sole placement and spend owners |
 | Shared M01 guidance | Passed | Checked `[M01FirstContactGuidanceValidation] result=Passed tests=14`; M01 prompt sequencing and world-target behavior remain unchanged |
-| Architecture/source growth and compilation | Passed | Pipeline source-growth 17/17 and checked `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; zero compiler errors and no widened production exception |
-| Pipeline workflow | Passed | `com.unity.pipeline` 0.5.0-exp.1 served the wrapper-launched Editor; authenticated local Pipeline commands ran focused fixtures and exposed the source-growth/log-scope regressions before final wrapper acceptance |
+| Architecture/source growth and compilation | Passed | Checked `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; zero compiler errors, new cost read model is narrow, and established helper ceilings remain intact |
+| Checked wrapper workflow | Passed | `Tools/CI/invoke_unity_macos.sh` drove the final focused aggregate and required every functional plus architecture marker in `/private/tmp/warline-m02eb-025-regression-final2.log` |
 | Building authored-content aggregate | Pre-existing debt, no task regression | `BuildingRuntimeValidationTests` remains 9/12 on the existing authored `Tent_Regular` fixture expectations; all affected canonical bootstrap/delete boundary tests pass |
 | Aggregate ECS/Burst debt probe | Pre-existing debt, no task regression | Current snapshot calls remain confined to unrelated established systems; M02EB-022 adds no managed hot-loop snapshot path |
 
-No blocker prevents M02EB-025. Android/Samsung certification remains owner-deferred and is not counted as passed. Final comic and voice production remains gated by M02EB-029. The pre-existing aggregate ECS/Burst and authored Tent fixture debts remain closeout concerns and are not widened by M02EB-024.
+No blocker prevents M02EB-026. Android/Samsung certification remains owner-deferred and is not counted as passed. Final bilingual copy, comic, and voice production remains gated by M02EB-029 through M02EB-032; M02EB-025 intentionally prevents provisional M02 steps from resolving M01 media. The pre-existing aggregate ECS/Burst and authored Tent fixture debts remain closeout concerns and are not widened by M02EB-025.

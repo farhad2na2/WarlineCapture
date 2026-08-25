@@ -205,7 +205,15 @@ Approved existing paths:
 - `Assets/Game/Scripts/UI/Shell/Ecs/AssistantCommandIntentSystem.cs`
 - `Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.cs`
 - `Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Presentation.cs`
+- `Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.M02PlacementGuidance.cs`
 - `Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.cs`
+- `Assets/Game/Scripts/UI/Screens/BuildPlacementConfirmationBarView.cs`
+- `Assets/Game/Scripts/UI/Contracts/UiRuntimeContracts.cs`
+- `Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs`
+- `Assets/Game/Scripts/Systems/BuildingUiCommandSystemHelper.cs`
+- `Assets/Game/Scripts/Systems/BuildingUiContextCompositionSystemHelper.cs`
+- `Assets/Game/Scripts/Systems/BuildingUiCompositionSystemHelper.cs`
+- `Assets/Game/Scripts/Systems/BuildingPlacementLifecycleCompositionSystemHelper.cs`
 - `Assets/Tests/Editor/MatchHudAssistantUiSystemHelperTests.cs`
 - `Assets/Game/Scripts/UI/MainMenuPlayUI.cs`
 - `Assets/Game/Scripts/UI/MainMenuPlayUI.GuidedCommands.cs`
@@ -218,6 +226,7 @@ Approved new paths before M02EB-029:
 
 - `Assets/Game/Scripts/UI/Screens/AssistantHighlightPresentationSystemHelper.UiSurfaceGuidance.cs`
 - `Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.MissionGuidance.cs`
+- `Assets/Game/Scripts/Systems/BuildingUiPlacementCostReadModel.cs`
 - `Assets/Game/Scripts/UI/Shell/Ecs/AssistantCommandIntentSystem.UiSurfacePreview.cs`
 - `Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs`
 - `Assets/Game/Configs/Narrative/Chapter01/M02_EstablishBase_Narrative.asset`
@@ -247,6 +256,17 @@ screen coordinates are prohibited. DO IT invokes the same bound `Button.onClick`
 and the existing Build Drawer remains the only catalog selection owner. The drawer may suppress its
 legacy first-item auto-selection only while the typed M02 Barracks-selection guidance is active. It may
 not request placement, spend resources, mutate mission facts, or implement M02EB-025 early.
+
+M02EB-025 may append default-safe typed placement and resource-review prompts, resolve the placement
+target only from `anchor.ch01.m02.build_lot`, and bind guidance only to the existing Build Drawer,
+placement confirmation bar, and Match HUD resource strip. SHOW ME may use the existing world highlight
+and target `RectTransform`; authored screen coordinates remain prohibited. DO IT must invoke the real
+PLACE and CONFIRM `Button.onClick` paths. The existing placement validator remains the sole valid/invalid
+owner, and the existing construction transaction remains the sole Credits/Materials mutation owner.
+The placement confirmation read model may expose the active definition's Credits cost additively so the
+existing cost label can display both CR and MAT. Guidance may acknowledge observation, but it may not
+write resources, placement state, building facts, or objective progress. Final bilingual copy and audio
+media remain gated by M02EB-031 and M02EB-032.
 
 Additional new art/audio paths become writable only after M02EB-029 acceptance and an updated matrix entry. Final media must be chapter-scoped and must not alter FirstLaunch exact-set assets/importers.
 

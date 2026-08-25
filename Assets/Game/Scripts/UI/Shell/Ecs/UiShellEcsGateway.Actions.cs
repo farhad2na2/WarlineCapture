@@ -220,6 +220,8 @@ namespace Game.UI.Shell.Ecs
                     CampaignMissionGuidancePromptKind.EstablishBaseOpenBuild,
                 UiCampaignGuidanceTargetKind.BarracksCatalogItem =>
                     CampaignMissionGuidancePromptKind.EstablishBaseSelectBarracks,
+                UiCampaignGuidanceTargetKind.ResourceStrip =>
+                    CampaignMissionGuidancePromptKind.EstablishBaseObserveResourceSpend,
                 _ => CampaignMissionGuidancePromptKind.None
             };
             if (expected == CampaignMissionGuidancePromptKind.None ||

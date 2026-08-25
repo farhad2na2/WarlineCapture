@@ -216,7 +216,9 @@ namespace Game.Components
         Engage = 4,
         SecureCorridor = 5,
         EstablishBaseOpenBuild = 6,
-        EstablishBaseSelectBarracks = 7
+        EstablishBaseSelectBarracks = 7,
+        EstablishBasePlaceBarracks = 8,
+        EstablishBaseObserveResourceSpend = 9
     }
 
     public struct CampaignMissionGuidanceProjectionComponent : IComponentData

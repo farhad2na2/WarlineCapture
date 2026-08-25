@@ -91,7 +91,8 @@ namespace Game.UI.Runtime
             {
                 MarkTutorialCueAutoShown(_displayedTutorialStep, _displayedTutorialPhase);
             }
-            if (_lastPanelModel.RecommendationTargetKind != 4 &&
+            if (CanUseLegacyTutorialNarration(_lastPanelModel.TutorialStepCount) &&
+                _lastPanelModel.RecommendationTargetKind != 4 &&
                 !WasTutorialCueNarrated(
                     _displayedTutorialStep,
                     _displayedTutorialPhase))
@@ -189,5 +190,8 @@ namespace Game.UI.Runtime
                 return -1;
             return ((step - 1) * 2) + (int)phase;
         }
+
+        internal static bool CanUseLegacyTutorialNarration(byte tutorialStepCount) =>
+            tutorialStepCount != 9;
     }
 }

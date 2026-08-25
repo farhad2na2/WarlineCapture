@@ -67,5 +67,20 @@ namespace Game.UI.Runtime
         private static bool RequiresExplicitMissionSelection() =>
             UiShellRuntimeGateway.TryReadMatchHudAssistantPanel(out UiAssistantPanelModel model) &&
             RequiresExplicitMissionSelection(model);
+
+        internal bool TryInvokePrimaryActionFromGuidance()
+        {
+            if (!_hasSelectedItem ||
+                _selectedItem.Category != BuildDrawerCategory.Buildings ||
+                _primaryActionButton == null ||
+                !_primaryActionButton.IsActive() ||
+                !_primaryActionButton.IsInteractable())
+            {
+                return false;
+            }
+
+            _primaryActionButton.onClick.Invoke();
+            return _uiCommandSystem?.HasPendingBuildingPlacement == true;
+        }
     }
 }

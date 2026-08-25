@@ -131,12 +131,16 @@ namespace Game.UI.Shell.Ecs
         {
             CampaignMissionGuidancePromptKind.EstablishBaseOpenBuild => 2,
             CampaignMissionGuidancePromptKind.EstablishBaseSelectBarracks => 3,
+            CampaignMissionGuidancePromptKind.EstablishBasePlaceBarracks => 4,
+            CampaignMissionGuidancePromptKind.EstablishBaseObserveResourceSpend => 5,
             _ => (byte)prompt
         };
 
         internal static byte TutorialStepCountFor(CampaignMissionGuidancePromptKind prompt) =>
             prompt is CampaignMissionGuidancePromptKind.EstablishBaseOpenBuild or
-                CampaignMissionGuidancePromptKind.EstablishBaseSelectBarracks
+                CampaignMissionGuidancePromptKind.EstablishBaseSelectBarracks or
+                CampaignMissionGuidancePromptKind.EstablishBasePlaceBarracks or
+                CampaignMissionGuidancePromptKind.EstablishBaseObserveResourceSpend
                 ? (byte)9
                 : (byte)CampaignMissionGuidancePromptKind.SecureCorridor;
 

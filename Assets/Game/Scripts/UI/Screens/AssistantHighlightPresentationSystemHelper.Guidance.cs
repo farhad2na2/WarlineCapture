@@ -80,11 +80,13 @@ namespace Game.UI.Runtime
             DetachCommandGuidanceButtons();
             DetachBuildGuidanceButton();
             DetachBarracksGuidanceButton();
+            DetachResourceGuidanceTarget();
             _squadTrayView?.ClearAssistantGuidance();
             _panelPulse = null;
             _squadTrayView = null;
             _commandControlsView = null;
             _buildDrawerView = null;
+            _resourceGuidanceTarget = null;
             DestroyObject(_worldRingRoot);
             DestroyObject(_worldRingMaterial);
             DestroyObject(_screenTargetIndicator != null ? _screenTargetIndicator.gameObject : null);

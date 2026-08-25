@@ -29,6 +29,7 @@ namespace Game.Composition
         public bool CanConfirmBuildingPlacement => boundary != null && boundary.CanConfirmBuildingPlacement(context);
         public string PlacementStatusText => boundary != null ? boundary.PlacementStatusText(context) : string.Empty;
         public int ActivePlacementCost => boundary != null ? boundary.ActivePlacementCost(context) : 0;
+        public int ActivePlacementCreditsCost => boundary!=null ? BuildingUiPlacementCostReadModel.ActiveCredits(context) : 0;
         public float ActivePlacementDurationSeconds => boundary != null ? boundary.ActivePlacementDurationSeconds(context) : 0f;
         public int MaxQueuedUnitProductions => boundary != null ? boundary.MaxQueuedUnitProductions(context) : 25;
 
@@ -48,25 +49,11 @@ namespace Game.Composition
                 : BuildingUiCommandFailure.InvalidSelection;
         }
 
-        public bool CancelProduction(int buildingId, int pendingProductionIndex)
-        {
-            return boundary != null && boundary.CancelProduction(context, buildingId, pendingProductionIndex);
-        }
-
-        public bool ConfirmBuildingPlacement()
-        {
-            return boundary != null && boundary.ConfirmBuildingPlacement(context);
-        }
-
-        public void CancelBuildingPlacement()
-        {
-            boundary?.CancelBuildingPlacement(context);
-        }
-
-        public bool RotateBuildingPlacement()
-        {
-            return boundary != null && boundary.RotateBuildingPlacement(context);
-        }
+        public bool CancelProduction(int buildingId, int pendingProductionIndex) =>
+            boundary != null && boundary.CancelProduction(context, buildingId, pendingProductionIndex);
+        public bool ConfirmBuildingPlacement() => boundary != null && boundary.ConfirmBuildingPlacement(context);
+        public void CancelBuildingPlacement() => boundary?.CancelBuildingPlacement(context);
+        public bool RotateBuildingPlacement() => boundary != null && boundary.RotateBuildingPlacement(context);
 
         private static BuildingUiCommandFailure Map(BuildingUiCommandSystemHelper.CampRequestFailure failure)
         {

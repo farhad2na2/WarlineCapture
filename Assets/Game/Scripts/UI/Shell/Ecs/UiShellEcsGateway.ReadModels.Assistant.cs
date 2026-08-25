@@ -168,6 +168,7 @@ namespace Game.UI.Shell.Ecs
             bool tutorialRightToLeft = false;
             if (topRecommendation.RecommendationId != 0 &&
                 topRecommendation.TutorialStep > 0 &&
+                topRecommendation.TutorialStepCount != 9 &&
                 topRecommendation.TargetKind != AssistantTargetKind.UiSurface)
             {
                 TryResolveTutorialPresentationText(

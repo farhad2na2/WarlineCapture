@@ -45,7 +45,12 @@ namespace Game.UI.Runtime
             Action beforePanelOpen,
             Action<bool> panelOpenChanged)
         {
+            Func<bool> executeBuildingPlacementStep = _executeBuildingPlacementStep;
+            RectTransform boundResourceStrip = _boundResourceStrip;
             Unbind();
+            _executeBuildingPlacementStep = executeBuildingPlacementStep;
+            _boundResourceStrip = boundResourceStrip;
+            _highlightPresentationSystem.BindResourceStrip(_boundResourceStrip);
             _captureGameplayUiClick = captureGameplayUiClick;
             _beforePanelOpen = beforePanelOpen;
             _panelOpenChanged = panelOpenChanged;
@@ -121,6 +126,8 @@ namespace Game.UI.Runtime
             _commandControlsView = null;
             _activeCommandMode = TacticalCommandMode.None;
             _tutorialWorldTargetCompleted = false;
+            _executeBuildingPlacementStep = null;
+            _boundResourceStrip = null;
             ClearTutorialPresentationState();
         }
 
@@ -188,11 +195,6 @@ namespace Game.UI.Runtime
 
         public void BindBuildDrawer(BuildDrawerView buildDrawerView) =>
             _highlightPresentationSystem.BindBuildDrawer(buildDrawerView);
-
-        public bool IsBuildDrawerSelectionGuidance =>
-            _lastPanelModel.HasRecommendation &&
-            _lastPanelModel.RecommendationTargetKind == 4 &&
-            _lastPanelModel.RecommendationKind == 1;
 
         public void BindWorldCamera(Camera worldCamera)
         {
@@ -366,6 +368,14 @@ namespace Game.UI.Runtime
         private void ExecuteRecommendation()
         {
             CaptureUiOnly();
+            if (_lastPanelModel.TutorialStepCount == 9 &&
+                _lastPanelModel.TutorialStep == 4 &&
+                _lastPanelModel.RecommendationKind == 4)
+            {
+                if (_executeBuildingPlacementStep?.Invoke() == true)
+                    ClosePanelWithoutInputCapture();
+                return;
+            }
             if (_lastPanelModel.RecommendationTargetKind == 4)
             {
                 _highlightPresentationSystem.TryExecuteUiSurface(
@@ -456,10 +466,18 @@ namespace Game.UI.Runtime
             {
                 4 => 2,
                 1 => 3,
+                9 => 5,
                 _ => (byte)0
             };
-            if (step != 0)
-                CompleteTutorialStep(step, finalStep: false);
+            if (step == 0)
+                return;
+
+            if (step == 5)
+            {
+                UiShellRuntimeGateway.TryAcknowledgeCampaignGuidanceTarget(
+                    UiCampaignGuidanceTargetKind.ResourceStrip);
+            }
+            CompleteTutorialStep(step, finalStep: false);
         }
 
     }

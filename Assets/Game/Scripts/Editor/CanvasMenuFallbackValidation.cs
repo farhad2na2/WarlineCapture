@@ -3265,6 +3265,7 @@ namespace Game.Editor
             public bool CanConfirmBuildingPlacement => true;
             public string PlacementStatusText => "Barracks: Valid placement";
             public int ActivePlacementCost => 650;
+            public int ActivePlacementCreditsCost => 40000;
             public float ActivePlacementDurationSeconds => 45f;
             public int MaxQueuedUnitProductions => 25;
 

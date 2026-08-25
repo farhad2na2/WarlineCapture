@@ -42,6 +42,9 @@ namespace Game.Composition
                 projected.SchemaVersion != mission.SchemaVersion ||
                 projected.DeterministicSeed != scenario.DeterministicSeed ||
                 projected.EncounterStartMilliseconds != scenario.EncounterStartMilliseconds ||
+                projected.StartingCredits != scenario.MissionRuntime.StartingCredits ||
+                projected.StartingMaterials != scenario.MissionRuntime.StartingMaterials ||
+                projected.MissionRuntimeEnabled != Flag(scenario.MissionRuntime.Enabled) ||
                 projected.BuildingDisabled != Flag(scenario.Restrictions.BuildingDisabled) ||
                 projected.ProductionDisabled != Flag(scenario.Restrictions.ProductionDisabled) ||
                 projected.EconomyDisabled != Flag(scenario.Restrictions.EconomyDisabled) ||

@@ -50,6 +50,15 @@ namespace Game.Runtime
                     cleanupQueued = true;
                     runtime.ValueRW = CreateRuntime(in request, catalog.ValueRO.SourceVersion, readiness);
                     facts.ValueRW = default;
+                    if (state.EntityManager.HasComponent<CampaignMissionAttemptResourceInitializationComponent>(root))
+                    {
+                        state.EntityManager.SetComponentData(root,
+                            new CampaignMissionAttemptResourceInitializationComponent
+                            {
+                                SessionToken = request.SessionToken,
+                                AttemptOrdinal = request.AttemptOrdinal
+                            });
+                    }
                     CampaignMissionLaunchQueueComponent nextQueue = queue.ValueRO;
                     nextQueue.LastTransitionToken = request.TransitionToken;
                     nextQueue.Version++;

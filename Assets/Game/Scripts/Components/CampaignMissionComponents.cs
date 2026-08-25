@@ -72,6 +72,13 @@ namespace Game.Components
         public byte ReplayTutorialEnabled;
     }
 
+    public struct CampaignMissionAttemptResourceInitializationComponent : IComponentData
+    {
+        public FixedString64Bytes SessionToken;
+        public int AttemptOrdinal;
+        public byte Applied;
+    }
+
     public struct CampaignMissionAttemptFactsComponent : IComponentData
     {
         public int ElapsedMilliseconds;
@@ -247,6 +254,9 @@ namespace Game.Components
         public int SchemaVersion;
         public int DeterministicSeed;
         public int EncounterStartMilliseconds;
+        public int StartingCredits;
+        public int StartingMaterials;
+        public byte MissionRuntimeEnabled;
         public byte BuildingDisabled;
         public byte ProductionDisabled;
         public byte EconomyDisabled;

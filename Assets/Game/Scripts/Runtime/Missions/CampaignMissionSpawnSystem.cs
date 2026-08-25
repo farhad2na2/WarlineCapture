@@ -316,9 +316,20 @@ namespace Game.Runtime
             return false;
         }
 
-        private static bool HasRequiredRestrictions(ref CampaignMissionDefinitionBlob definition) =>
-            definition.BuildingDisabled != 0 && definition.ProductionDisabled != 0 &&
-            definition.EconomyDisabled != 0 && definition.TransportDisabled != 0 && definition.AirDisabled != 0;
+        internal static bool HasRequiredRestrictions(ref CampaignMissionDefinitionBlob definition)
+        {
+            if (definition.MissionRuntimeEnabled != 0)
+            {
+                return definition.StartingCredits > 0 && definition.StartingMaterials > 0 &&
+                       definition.BuildingDisabled == 0 && definition.ProductionDisabled == 0 &&
+                       definition.EconomyDisabled == 0 && definition.TransportDisabled != 0 &&
+                       definition.AirDisabled != 0;
+            }
+
+            return definition.BuildingDisabled != 0 && definition.ProductionDisabled != 0 &&
+                   definition.EconomyDisabled != 0 && definition.TransportDisabled != 0 &&
+                   definition.AirDisabled != 0;
+        }
 
         private static int CountHostiles(ref CampaignMissionDefinitionBlob definition)
         {

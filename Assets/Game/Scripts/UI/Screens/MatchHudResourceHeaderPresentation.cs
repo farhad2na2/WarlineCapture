@@ -32,6 +32,8 @@ namespace Game.UI.Runtime
         private bool _lastFuelWasNumeric;
         private bool _lastShowOil;
         private bool _lastHideEconomyResources;
+        private bool _lastHideLogisticsResources;
+        private bool _lastShowMissionCredits;
         private bool _resourceVisibilityApplied;
         private bool _labelsApplied;
         private float _nextRefreshTime;
@@ -98,6 +100,8 @@ namespace Game.UI.Runtime
             _lastFuelWasNumeric = false;
             _lastShowOil = false;
             _lastHideEconomyResources = false;
+            _lastHideLogisticsResources = false;
+            _lastShowMissionCredits = false;
             _resourceVisibilityApplied = false;
             _labelsApplied = false;
             _nextRefreshTime = 0f;
@@ -123,10 +127,13 @@ namespace Game.UI.Runtime
                 ApplyVisibility(showOil: false);
 
             bool appliedNumericValues = false;
+            bool showMissionCredits = UiShellRuntimeGateway.TryReadMissionHudRestrictions(
+                out UiMissionHudRestrictionsModel missionRestrictions) &&
+                missionRestrictions.ShowMissionCredits;
             if (UiShellRuntimeGateway.TryReadMatchHudResourceValues(
                     out UiMatchHudResourceValuesModel values) &&
                 values.IsValid &&
-                !values.RequiresTextFallback)
+                (!values.RequiresTextFallback || showMissionCredits))
             {
                 ApplyVisibility(values.ShowOil);
                 ApplyLabels();
@@ -154,11 +161,14 @@ namespace Game.UI.Runtime
                 _lastOilWasNumeric = true;
             }
 
+            bool showMissionCredits = UiShellRuntimeGateway.TryReadMissionHudRestrictions(
+                out UiMissionHudRestrictionsModel restrictions) && restrictions.ShowMissionCredits;
+            int fuelOrCredits = showMissionCredits ? values.Credits : values.Fuel;
             if (_fuelSlotValue != null &&
-                (!_lastFuelWasNumeric || _lastFuelValue != values.Fuel))
+                (!_lastFuelWasNumeric || _lastFuelValue != fuelOrCredits))
             {
-                SetCompactText(_fuelSlotValue, values.Fuel);
-                _lastFuelValue = values.Fuel;
+                SetCompactText(_fuelSlotValue, fuelOrCredits);
+                _lastFuelValue = fuelOrCredits;
                 _lastFuelText = null;
                 _lastFuelWasNumeric = true;
             }
@@ -198,26 +208,30 @@ namespace Game.UI.Runtime
                 UiShellRuntimeGateway.TryReadMissionHudRestrictions(
                     out UiMissionHudRestrictionsModel restrictions) &&
                 restrictions.EconomyDisabled;
+            bool hideLogisticsResources = restrictions.IsActive && restrictions.HideLogisticsResources;
+            bool showMissionCredits = restrictions.IsActive && restrictions.ShowMissionCredits;
             if (_resourceVisibilityApplied && _lastShowOil == showOil &&
-                _lastHideEconomyResources == hideEconomyResources)
+                _lastHideEconomyResources == hideEconomyResources &&
+                _lastHideLogisticsResources == hideLogisticsResources &&
+                _lastShowMissionCredits == showMissionCredits)
                 return;
 
             SetVisible(_materialsSlotRoot, true);
-            SetVisible(_oilSlotRoot, showOil || hideEconomyResources);
-            SetVisible(_fuelSlotRoot, true);
+            SetVisible(_oilSlotRoot, !hideLogisticsResources && (showOil || hideEconomyResources));
+            SetVisible(_fuelSlotRoot, !hideLogisticsResources || showMissionCredits);
             if (_resourceStripButton != null)
             {
                 UiDisabledMaterialUtility.SetSelectableDisabled(
                     _resourceStripButton,
                     UiDisabledVisualReason.MissionRestriction,
                     hideEconomyResources);
-                _resourceStripButton.interactable = !hideEconomyResources;
+                _resourceStripButton.interactable = !hideEconomyResources && !hideLogisticsResources;
             }
             if (_resourceStripCanvasGroup != null)
             {
                 _resourceStripCanvasGroup.alpha = 1f;
-                _resourceStripCanvasGroup.interactable = !hideEconomyResources;
-                _resourceStripCanvasGroup.blocksRaycasts = !hideEconomyResources;
+                _resourceStripCanvasGroup.interactable = !hideEconomyResources && !hideLogisticsResources;
+                _resourceStripCanvasGroup.blocksRaycasts = !hideEconomyResources && !hideLogisticsResources;
             }
             UiDisabledMaterialUtility.SetDisabled(
                 _materialsSlotRoot,
@@ -233,6 +247,8 @@ namespace Game.UI.Runtime
                 hideEconomyResources);
             _lastShowOil = showOil;
             _lastHideEconomyResources = hideEconomyResources;
+            _lastHideLogisticsResources = hideLogisticsResources;
+            _lastShowMissionCredits = showMissionCredits;
             _resourceVisibilityApplied = true;
         }
 
@@ -244,15 +260,16 @@ namespace Game.UI.Runtime
 
         private void ApplyLabels()
         {
-            if (_labelsApplied)
-                return;
-
             if (_materialsSlotLabel != null && _materialsSlotLabel.text != "Materials")
                 _materialsSlotLabel.text = "Materials";
             if (_oilSlotLabel != null && _oilSlotLabel.text != "Oil")
                 _oilSlotLabel.text = "Oil";
-            if (_fuelSlotLabel != null && _fuelSlotLabel.text != "Fuel")
-                _fuelSlotLabel.text = "Fuel";
+            string fuelLabel = UiShellRuntimeGateway.TryReadMissionHudRestrictions(
+                out UiMissionHudRestrictionsModel restrictions) && restrictions.ShowMissionCredits
+                ? "Credits"
+                : "Fuel";
+            if (_fuelSlotLabel != null && _fuelSlotLabel.text != fuelLabel)
+                _fuelSlotLabel.text = fuelLabel;
             if (_civilianRiskSlotLabel != null && _civilianRiskSlotLabel.text != "Civilian Risk")
                 _civilianRiskSlotLabel.text = "Civilian Risk";
             _labelsApplied = true;

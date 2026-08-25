@@ -15,6 +15,7 @@ namespace Game.UI.Shell.Ecs
                 if (hasMinimapMarkerQuery) minimapMarkerQuery.Dispose();
                 if (hasGridConfigQuery) gridConfigQuery.Dispose();
                 if (hasResourceStorageQuery) resourceStorageQuery.Dispose();
+                if (hasFactionEconomyQuery) factionEconomyQuery.Dispose();
                 if (hasAssistantMatchStartQuery) assistantMatchStartQuery.Dispose();
                 if (hasMissionRootQuery) missionRootQuery.Dispose();
             }
@@ -27,6 +28,7 @@ namespace Game.UI.Shell.Ecs
             minimapMarkerQuery = default;
             gridConfigQuery = default;
             resourceStorageQuery = default;
+            factionEconomyQuery = default;
             assistantMatchStartQuery = default;
             missionRootQuery = default;
             hasBoundaryQuery = false;
@@ -36,6 +38,7 @@ namespace Game.UI.Shell.Ecs
             hasMinimapMarkerQuery = false;
             hasGridConfigQuery = false;
             hasResourceStorageQuery = false;
+            hasFactionEconomyQuery = false;
             hasAssistantMatchStartQuery = false;
             hasMissionRootQuery = false;
         }

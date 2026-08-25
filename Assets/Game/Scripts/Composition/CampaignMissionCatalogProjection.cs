@@ -114,6 +114,7 @@ namespace Game.Composition
 
             root = roots.Length == 1 ? roots[0] : CreateRoot(entityManager);
             EnsureProgressStore(entityManager, root);
+            EnsureAttemptResourceState(entityManager, root);
             CampaignMissionCatalogComponent previous = entityManager.GetComponentData<CampaignMissionCatalogComponent>(root);
             if (previous.SourceVersion == sourceVersion && previous.Blob.IsCreated &&
                 MatchesProjectedCatalog(in previous, missions, scenarios))
@@ -160,6 +161,9 @@ namespace Game.Composition
             definition.SchemaVersion = mission.SchemaVersion;
             definition.DeterministicSeed = scenario.DeterministicSeed;
             definition.EncounterStartMilliseconds = scenario.EncounterStartMilliseconds;
+            definition.StartingCredits = scenario.MissionRuntime.StartingCredits;
+            definition.StartingMaterials = scenario.MissionRuntime.StartingMaterials;
+            definition.MissionRuntimeEnabled = scenario.MissionRuntime.Enabled ? (byte)1 : (byte)0;
             definition.BuildingDisabled = scenario.Restrictions.BuildingDisabled ? (byte)1 : (byte)0;
             definition.ProductionDisabled = scenario.Restrictions.ProductionDisabled ? (byte)1 : (byte)0;
             definition.EconomyDisabled = scenario.Restrictions.EconomyDisabled ? (byte)1 : (byte)0;
@@ -248,7 +252,9 @@ namespace Game.Composition
             Entity root = entityManager.CreateEntity(
                 typeof(CampaignMissionRootComponent), typeof(CampaignMissionCatalogComponent),
                 typeof(CampaignMissionLaunchQueueComponent), typeof(CampaignMissionRuntimeComponent),
-                typeof(CampaignMissionAttemptFactsComponent), typeof(CampaignMissionGuidanceProjectionComponent));
+                typeof(CampaignMissionAttemptFactsComponent),
+                typeof(CampaignMissionAttemptResourceInitializationComponent),
+                typeof(CampaignMissionGuidanceProjectionComponent));
             entityManager.AddBuffer<CampaignMissionLaunchRequestElement>(root);
             entityManager.AddBuffer<CampaignMissionLaunchResultElement>(root);
             entityManager.AddBuffer<CampaignMissionActionRequestElement>(root);
@@ -267,6 +273,12 @@ namespace Game.Composition
             {
                 Store = new CampaignMissionProgressStore(SaveService.CreateDefault())
             });
+        }
+
+        private static void EnsureAttemptResourceState(EntityManager entityManager, Entity root)
+        {
+            if (!entityManager.HasComponent<CampaignMissionAttemptResourceInitializationComponent>(root))
+                entityManager.AddComponent<CampaignMissionAttemptResourceInitializationComponent>(root);
         }
 
         private static void ProjectAmbient(

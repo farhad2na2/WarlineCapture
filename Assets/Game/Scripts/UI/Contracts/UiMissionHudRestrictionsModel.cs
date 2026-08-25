@@ -11,7 +11,10 @@ namespace Game.UI.Contracts
             bool economyDisabled,
             bool transportDisabled,
             bool airDisabled,
-            bool cinematicInteractionLocked = false)
+            bool cinematicInteractionLocked = false,
+            bool hideLogisticsResources = false,
+            bool hideUnrelatedControls = false,
+            bool showMissionCredits = false)
         {
             IsActive = true;
             MissionId = missionId ?? string.Empty;
@@ -21,6 +24,9 @@ namespace Game.UI.Contracts
             TransportDisabled = transportDisabled;
             AirDisabled = airDisabled;
             CinematicInteractionLocked = cinematicInteractionLocked;
+            HideLogisticsResources = hideLogisticsResources;
+            HideUnrelatedControls = hideUnrelatedControls;
+            ShowMissionCredits = showMissionCredits;
         }
 
         public bool IsActive { get; }
@@ -31,6 +37,9 @@ namespace Game.UI.Contracts
         public bool TransportDisabled { get; }
         public bool AirDisabled { get; }
         public bool CinematicInteractionLocked { get; }
+        public bool HideLogisticsResources { get; }
+        public bool HideUnrelatedControls { get; }
+        public bool ShowMissionCredits { get; }
     }
 
     public interface IUiMissionHudRestrictionsGateway

@@ -173,26 +173,30 @@ namespace Game.UI.Runtime
             bool combatVehiclesDisabled = false;
             bool airDisabled = false;
             bool transportDisabled = false;
+            bool hideUnrelatedControls = false;
             if (UiShellRuntimeGateway.TryReadMissionHudRestrictions(out UiMissionHudRestrictionsModel restrictions))
             {
                 combatVehiclesDisabled = restrictions.ProductionDisabled;
                 airDisabled = restrictions.AirDisabled;
                 transportDisabled = restrictions.TransportDisabled;
+                hideUnrelatedControls = restrictions.HideUnrelatedControls;
             }
 
-            ApplyMissionRestrictionVisibility(combatVehiclesDisabled, airDisabled, transportDisabled);
+            ApplyMissionRestrictionVisibility(
+                combatVehiclesDisabled, airDisabled, transportDisabled, hideUnrelatedControls);
         }
 
         internal void ApplyMissionRestrictionVisibility(
             bool combatVehiclesDisabled,
             bool airDisabled,
-            bool transportDisabled)
+            bool transportDisabled,
+            bool hideUnrelatedControls = false)
         {
-            SetCardDisabled(0, disabled: false);
-            SetCardDisabled(1, combatVehiclesDisabled);
-            SetCardDisabled(2, airDisabled);
-            SetCardDisabled(3, airDisabled);
-            SetCardDisabled(4, transportDisabled);
+            SetCardDisabled(0, disabled: false, hidden: false);
+            SetCardDisabled(1, combatVehiclesDisabled, hideUnrelatedControls);
+            SetCardDisabled(2, airDisabled, hideUnrelatedControls);
+            SetCardDisabled(3, airDisabled, hideUnrelatedControls);
+            SetCardDisabled(4, transportDisabled, hideUnrelatedControls);
         }
 
         public void Unbind()
@@ -297,23 +301,24 @@ namespace Game.UI.Runtime
             return card != null;
         }
 
-        private void SetCardDisabled(int index, bool disabled)
+        private void SetCardDisabled(int index, bool disabled, bool hidden)
         {
             if (!TryGetCard(index, out Card card) || card.Button == null)
                 return;
 
-            _missionDisabled[index] = disabled;
-            if (!card.Button.gameObject.activeSelf)
-                card.Button.gameObject.SetActive(true);
+            bool unavailable = disabled || hidden;
+            _missionDisabled[index] = unavailable;
+            if (card.Button.gameObject.activeSelf == hidden)
+                card.Button.gameObject.SetActive(!hidden);
             UiDisabledMaterialUtility.SetSelectableDisabled(
                 card.Button,
                 UiDisabledVisualReason.MissionRestriction,
-                disabled);
+                unavailable);
             UiDisabledMaterialUtility.SetDisabled(
                 card.Button.gameObject,
                 UiDisabledVisualReason.MissionRestriction,
-                disabled);
-            card.Button.interactable = !disabled;
+                unavailable);
+            card.Button.interactable = !unavailable;
         }
 
         private void OnCardClicked(int index)

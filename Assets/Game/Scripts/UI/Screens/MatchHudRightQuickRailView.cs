@@ -18,6 +18,7 @@ namespace Game.UI.Runtime
         private bool _missionRestrictionVisibilityApplied;
         private bool _lastBuildDisabled;
         private bool _lastSupportDisabled;
+        private bool _lastHideUnrelatedControls;
 
         private Action _buildCommandClicked;
         private Action _zoomInClicked;
@@ -289,37 +290,44 @@ namespace Game.UI.Runtime
         {
             bool buildDisabled = false;
             bool supportDisabled = false;
+            bool hideUnrelatedControls = false;
             if (UiShellRuntimeGateway.TryReadMissionHudRestrictions(
                     out UiMissionHudRestrictionsModel restrictions))
             {
                 buildDisabled = restrictions.BuildingDisabled || restrictions.ProductionDisabled;
                 supportDisabled = restrictions.AirDisabled || restrictions.TransportDisabled;
+                hideUnrelatedControls = restrictions.HideUnrelatedControls;
             }
 
-            ApplyMissionRestrictionVisibility(buildDisabled, supportDisabled);
+            ApplyMissionRestrictionVisibility(buildDisabled, supportDisabled, hideUnrelatedControls);
         }
 
-        internal void ApplyMissionRestrictionVisibility(bool buildDisabled, bool supportDisabled)
+        internal void ApplyMissionRestrictionVisibility(
+            bool buildDisabled,
+            bool supportDisabled,
+            bool hideUnrelatedControls = false)
         {
             ResolveZoomButtonsFromChildren();
             if (_missionRestrictionVisibilityApplied &&
-                _lastBuildDisabled == buildDisabled && _lastSupportDisabled == supportDisabled)
+                _lastBuildDisabled == buildDisabled && _lastSupportDisabled == supportDisabled &&
+                _lastHideUnrelatedControls == hideUnrelatedControls)
                 return;
 
-            SetButtonDisabled(buildButton, buildDisabled);
-            SetButtonDisabled(_supportButton, supportDisabled);
+            SetButtonDisabled(buildButton, buildDisabled, hidden: false);
+            SetButtonDisabled(_supportButton, supportDisabled, hideUnrelatedControls && supportDisabled);
             _lastBuildDisabled = buildDisabled;
             _lastSupportDisabled = supportDisabled;
+            _lastHideUnrelatedControls = hideUnrelatedControls;
             _missionRestrictionVisibilityApplied = true;
         }
 
-        private static void SetButtonDisabled(Button button, bool disabled)
+        private static void SetButtonDisabled(Button button, bool disabled, bool hidden)
         {
             if (button == null)
                 return;
 
-            if (!button.gameObject.activeSelf)
-                button.gameObject.SetActive(true);
+            if (button.gameObject.activeSelf == hidden)
+                button.gameObject.SetActive(!hidden);
             UiDisabledMaterialUtility.SetSelectableDisabled(
                 button,
                 UiDisabledVisualReason.MissionRestriction,
@@ -328,13 +336,13 @@ namespace Game.UI.Runtime
                 button.gameObject,
                 UiDisabledVisualReason.MissionRestriction,
                 disabled);
-            button.interactable = !disabled;
+            button.interactable = !disabled && !hidden;
             CanvasGroup group = button.GetComponent<CanvasGroup>();
             if (group == null)
                 group = button.gameObject.AddComponent<CanvasGroup>();
             group.alpha = 1f;
-            group.interactable = !disabled;
-            group.blocksRaycasts = !disabled;
+            group.interactable = !disabled && !hidden;
+            group.blocksRaycasts = !disabled && !hidden;
         }
 
         private Camera ResolveEventCamera()

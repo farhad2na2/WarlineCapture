@@ -10,6 +10,9 @@ namespace Game.UI.Shell.Ecs
 {
     public sealed partial class UiShellEcsGateway
     {
+        private static EntityQuery factionEconomyQuery;
+        private static bool hasFactionEconomyQuery;
+
         public static bool TryReadMatchHudResourceValues(out UiMatchHudResourceValuesModel values) =>
             UiShellReadModelAdapter.TryReadMatchHudResourceValues(out values);
 
@@ -22,6 +25,9 @@ namespace Game.UI.Shell.Ecs
                     return false;
 
                 EnsureMatchHudHeaderState(entityManager, boundary);
+                int credits = TryReadPlayerCredits(entityManager, out int resolvedCredits)
+                    ? resolvedCredits
+                    : 0;
                 bool hasUsableFuelSummaryBuffer =
                     entityManager.HasBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary);
                 if (TryReadPlayerUsableFuelSummary(
@@ -34,7 +40,7 @@ namespace Game.UI.Shell.Ecs
                 {
                     bool showOil = usableOilVisible ||
                                    TryHasPlayerOilResourceSummary(entityManager, boundary);
-                    values = UiMatchHudResourceValuesModel.FromValues(usableOil, usableFuel, showOil);
+                    values = UiMatchHudResourceValuesModel.FromValues(usableOil, usableFuel, showOil, credits);
                     return true;
                 }
 
@@ -46,7 +52,7 @@ namespace Game.UI.Shell.Ecs
                 {
                     bool showOil = liveOilVisible ||
                                    TryHasPlayerOilResourceSummary(entityManager, boundary);
-                    values = UiMatchHudResourceValuesModel.FromValues(liveOil, liveFuel, showOil);
+                    values = UiMatchHudResourceValuesModel.FromValues(liveOil, liveFuel, showOil, credits);
                     return true;
                 }
 
@@ -55,7 +61,8 @@ namespace Game.UI.Shell.Ecs
                     values = UiMatchHudResourceValuesModel.FromValues(
                         0,
                         0,
-                        TryHasPlayerOilResourceSummary(entityManager, boundary));
+                        TryHasPlayerOilResourceSummary(entityManager, boundary),
+                        credits);
                     return true;
                 }
 
@@ -69,13 +76,38 @@ namespace Game.UI.Shell.Ecs
                     values = UiMatchHudResourceValuesModel.FromValues(
                         summaryOil,
                         summaryFuel,
-                        summaryOilVisible);
+                        summaryOilVisible,
+                        credits);
                     return true;
                 }
 
                 values = UiMatchHudResourceValuesModel.TextFallback(
-                    TryHasPlayerOilResourceSummary(entityManager, boundary));
+                    TryHasPlayerOilResourceSummary(entityManager, boundary),
+                    credits);
                 return true;
+            }
+
+            private static bool TryReadPlayerCredits(EntityManager entityManager, out int credits)
+            {
+                credits = 0;
+                EnsureFactionEconomyQuery(entityManager);
+                if (factionEconomyQuery.IsEmptyIgnoreFilter)
+                    return false;
+
+                bool found = false;
+                using NativeArray<FactionEconomy> economies =
+                    factionEconomyQuery.ToComponentDataArray<FactionEconomy>(Allocator.Temp);
+                for (int i = 0; i < economies.Length; i++)
+                {
+                    if (!FactionIdentity.IsPlayerControlled(economies[i].FactionId))
+                        continue;
+                    if (found)
+                        return false;
+                    credits = math.max(0, economies[i].Money);
+                    found = true;
+                }
+
+                return found;
             }
 
             private static bool TryReadPlayerUsableFuelSummary(
@@ -266,6 +298,16 @@ namespace Game.UI.Shell.Ecs
                     ComponentType.ReadOnly<BuildingResourceStorageComponent>(),
                     ComponentType.ReadOnly<Faction>());
                 hasResourceStorageQuery = true;
+            }
+
+            private static void EnsureFactionEconomyQuery(EntityManager entityManager)
+            {
+                if (hasFactionEconomyQuery && cachedWorld == entityManager.World)
+                    return;
+
+                factionEconomyQuery = entityManager.CreateEntityQuery(
+                    ComponentType.ReadOnly<FactionEconomy>());
+                hasFactionEconomyQuery = true;
             }
 
             private static string FormatCompact(int value)

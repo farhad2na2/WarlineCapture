@@ -48,7 +48,10 @@ namespace Game.UI.Shell.Ecs
                     definition.EconomyDisabled != 0,
                     definition.TransportDisabled != 0,
                     definition.AirDisabled != 0,
-                    cinematicInteractionLocked);
+                    cinematicInteractionLocked,
+                    definition.MissionRuntimeEnabled != 0,
+                    definition.MissionRuntimeEnabled != 0,
+                    definition.MissionRuntimeEnabled != 0);
                 return true;
             }
 

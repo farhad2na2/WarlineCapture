@@ -28,6 +28,7 @@ namespace Game.UI.Runtime
         private Action _executeRecommendationRequested;
         private byte _tutorialStep;
         private byte _tutorialStepCount;
+        private byte _recommendationKind;
         private string _defaultTitle = string.Empty;
         private string _defaultBody = string.Empty;
         private string _currentInstructionBody = string.Empty;
@@ -89,6 +90,7 @@ namespace Game.UI.Runtime
         {
             _tutorialStep = model.TutorialStep;
             _tutorialStepCount = model.TutorialStepCount;
+            _recommendationKind = model.RecommendationKind;
             _rightToLeft = model.TutorialRightToLeft;
             ApplyLanguagePresentation();
             _defaultTitle = _rightToLeft
@@ -107,7 +109,7 @@ namespace Game.UI.Runtime
             TacticalCommandMode mode,
             bool worldTargetCompleted)
         {
-            if (_tutorialStep == 2)
+            if (_tutorialStep == 2 && _recommendationKind == 2)
             {
                 if (worldTargetCompleted)
                 {
@@ -138,7 +140,7 @@ namespace Game.UI.Runtime
                 return;
             }
 
-            if (_tutorialStep is 3 or 4)
+            if (_tutorialStep is 3 or 4 && _recommendationKind == 3)
             {
                 if (worldTargetCompleted)
                 {

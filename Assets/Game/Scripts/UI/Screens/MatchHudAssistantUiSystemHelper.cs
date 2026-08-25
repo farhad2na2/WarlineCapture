@@ -91,7 +91,8 @@ namespace Game.UI.Runtime
             {
                 MarkTutorialCueAutoShown(_displayedTutorialStep, _displayedTutorialPhase);
             }
-            if (!WasTutorialCueNarrated(
+            if (_lastPanelModel.RecommendationTargetKind != 4 &&
+                !WasTutorialCueNarrated(
                     _displayedTutorialStep,
                     _displayedTutorialPhase))
             {

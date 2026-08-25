@@ -127,6 +127,8 @@ namespace Game.UI.Runtime
         public void ApplyReadModel(UiAssistantPanelModel model)
         {
             byte previousTutorialStep = _lastPanelModel.TutorialStep;
+            if (previousTutorialStep != model.TutorialStep)
+                _highlightPresentationSystem.ClearUiSurfaceCue();
             _lastPanelModel = model;
             if (previousTutorialStep != model.TutorialStep)
                 _tutorialWorldTargetCompleted = false;
@@ -180,6 +182,17 @@ namespace Game.UI.Runtime
             _commandControlsView = commandControlsView;
             _highlightPresentationSystem.BindCommandControls(commandControlsView);
         }
+
+        public void BindBuildButton(Button buildButton) =>
+            _highlightPresentationSystem.BindBuildButton(buildButton);
+
+        public void BindBuildDrawer(BuildDrawerView buildDrawerView) =>
+            _highlightPresentationSystem.BindBuildDrawer(buildDrawerView);
+
+        public bool IsBuildDrawerSelectionGuidance =>
+            _lastPanelModel.HasRecommendation &&
+            _lastPanelModel.RecommendationTargetKind == 4 &&
+            _lastPanelModel.RecommendationKind == 1;
 
         public void BindWorldCamera(Camera worldCamera)
         {
@@ -280,7 +293,8 @@ namespace Game.UI.Runtime
             _highlightPresentationSystem.Bind(
                 _popupView.PreviewHighlight,
                 HandleGuidedCommandModeAcknowledged,
-                HandleSquadSelectionAcknowledged);
+                HandleSquadSelectionAcknowledged,
+                HandleUiSurfaceAcknowledged);
             _panelUiSystem.ApplyReadModel(_lastPanelModel);
             _highlightPresentationSystem.ApplyReadModel(_lastHighlightModel);
             _popupView.Hide();
@@ -352,6 +366,13 @@ namespace Game.UI.Runtime
         private void ExecuteRecommendation()
         {
             CaptureUiOnly();
+            if (_lastPanelModel.RecommendationTargetKind == 4)
+            {
+                _highlightPresentationSystem.TryExecuteUiSurface(
+                    _lastPanelModel.RecommendationKind,
+                    _lastPanelModel.RecommendationTargetKind);
+                return;
+            }
             if (TryAdvanceTutorialCommandSubstep())
                 return;
 
@@ -427,6 +448,18 @@ namespace Game.UI.Runtime
             {
                 ScheduleTutorialSubstep(_lastPanelModel.TutorialStep, Time.unscaledTime);
             }
+        }
+
+        private void HandleUiSurfaceAcknowledged(byte recommendationKind)
+        {
+            byte step = recommendationKind switch
+            {
+                4 => 2,
+                1 => 3,
+                _ => (byte)0
+            };
+            if (step != 0)
+                CompleteTutorialStep(step, finalStep: false);
         }
 
     }

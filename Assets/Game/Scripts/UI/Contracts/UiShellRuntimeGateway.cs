@@ -105,4 +105,16 @@ namespace Game.UI.Contracts
             UiTutorialNarrationPhase phase,
             string text);
     }
+
+    public enum UiCampaignGuidanceTargetKind : byte
+    {
+        None = 0,
+        BuildButton = 1,
+        BarracksCatalogItem = 2
+    }
+
+    public interface IUiCampaignGuidanceGateway
+    {
+        bool TryAcknowledgeCampaignGuidanceTarget(UiCampaignGuidanceTargetKind target);
+    }
 }

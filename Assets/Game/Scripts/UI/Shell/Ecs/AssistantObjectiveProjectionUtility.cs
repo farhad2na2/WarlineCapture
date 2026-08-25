@@ -121,11 +121,24 @@ namespace Game.UI.Shell.Ecs
                 TargetId = guidance.TargetId, Score = 94f, Title = guidance.Title, Reason = guidance.Body,
                 ActionLabel = guidance.ActionLabel, HasTargetCell = guidance.HasTargetCell, HasWorldPosition = guidance.HasWorldPosition,
                 CanShow = guidance.CanShow, CanExecute = guidance.CanExecute,
-                TutorialStep = (byte)guidance.Prompt,
-                TutorialStepCount = (byte)CampaignMissionGuidancePromptKind.SecureCorridor
+                TutorialStep = TutorialStepFor(guidance.Prompt),
+                TutorialStepCount = TutorialStepCountFor(guidance.Prompt)
             };
             return true;
         }
+
+        internal static byte TutorialStepFor(CampaignMissionGuidancePromptKind prompt) => prompt switch
+        {
+            CampaignMissionGuidancePromptKind.EstablishBaseOpenBuild => 2,
+            CampaignMissionGuidancePromptKind.EstablishBaseSelectBarracks => 3,
+            _ => (byte)prompt
+        };
+
+        internal static byte TutorialStepCountFor(CampaignMissionGuidancePromptKind prompt) =>
+            prompt is CampaignMissionGuidancePromptKind.EstablishBaseOpenBuild or
+                CampaignMissionGuidancePromptKind.EstablishBaseSelectBarracks
+                ? (byte)9
+                : (byte)CampaignMissionGuidancePromptKind.SecureCorridor;
 
         public static bool RecommendationsMatch(DynamicBuffer<AssistantRecommendationElement> recommendations,
             AssistantRecommendationElement expected)

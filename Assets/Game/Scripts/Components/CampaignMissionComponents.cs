@@ -209,7 +209,14 @@ namespace Game.Components
 
     public enum CampaignMissionGuidancePromptKind : byte
     {
-        None = 0, FindSquad = 1, MoveToCover = 2, ConfirmThreat = 3, Engage = 4, SecureCorridor = 5
+        None = 0,
+        FindSquad = 1,
+        MoveToCover = 2,
+        ConfirmThreat = 3,
+        Engage = 4,
+        SecureCorridor = 5,
+        EstablishBaseOpenBuild = 6,
+        EstablishBaseSelectBarracks = 7
     }
 
     public struct CampaignMissionGuidanceProjectionComponent : IComponentData

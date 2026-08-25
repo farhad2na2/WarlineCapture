@@ -303,6 +303,12 @@ namespace Game.UI.Shell.Ecs
                     continue;
                 }
 
+                if (TryHandleUiSurfacePreview(in request, highlights, results, ref assistantState))
+                {
+                    assistantStateChanged = true;
+                    continue;
+                }
+
                 if (!AssistantPreviewTargetUtility.TryResolve(
                         state.EntityManager,
                         operationMapMetadataQuery,
@@ -362,12 +368,6 @@ namespace Game.UI.Shell.Ecs
             // otherwise Unity invalidates the live result/dispatch handles before AddResult.
             if (continueMissionSquadAttack)
                 CampaignMissionGroupAttackUtility.TryContinueActiveMissionSquadAttack(state.EntityManager);
-        }
-
-        private static bool IsPreviewIntent(AssistantCommandIntentKind kind)
-        {
-            return kind == AssistantCommandIntentKind.ShowRecommendation ||
-                   kind == AssistantCommandIntentKind.FocusCamera;
         }
 
         private static bool IsTimedOut(AssistantCommandIntentRequestElement request, int currentFrame)

@@ -18,7 +18,9 @@ namespace Game.UI.Runtime
         private const byte SelectRecommendationKind = 1;
         private const byte MoveRecommendationKind = 2;
         private const byte AttackRecommendationKind = 3;
+        private const byte BuildRecommendationKind = 4;
         private const byte WorldPositionTargetKind = 1;
+        private const byte UiSurfaceTargetKind = 4;
 
         private Image _panelPulse;
         private GameObject _worldRingRoot;
@@ -41,10 +43,14 @@ namespace Game.UI.Runtime
         private Button _squadGuidanceButton;
         private Button _moveGuidanceButton;
         private Button _attackGuidanceButton;
+        private Button _buildGuidanceButton;
+        private Button _barracksGuidanceButton;
+        private BuildDrawerView _buildDrawerView;
         private TacticalCommandMode _activeCommandMode;
         private TacticalCommandMode _awaitingWorldTargetMode;
         private Action<TacticalCommandMode> _commandModeAcknowledged;
         private Action _squadSelectionAcknowledged;
+        private Action<byte> _uiSurfaceAcknowledged;
         private readonly Vector3[] _commandButtonCorners = new Vector3[4];
         private uint _lastVersion = uint.MaxValue;
 
@@ -53,11 +59,13 @@ namespace Game.UI.Runtime
         public void Bind(
             Image panelPulse,
             Action<TacticalCommandMode> commandModeAcknowledged = null,
-            Action squadSelectionAcknowledged = null)
+            Action squadSelectionAcknowledged = null,
+            Action<byte> uiSurfaceAcknowledged = null)
         {
             _panelPulse = panelPulse;
             _commandModeAcknowledged = commandModeAcknowledged;
             _squadSelectionAcknowledged = squadSelectionAcknowledged;
+            _uiSurfaceAcknowledged = uiSurfaceAcknowledged;
             if (_panelPulse != null)
                 _panelPulse.raycastTarget = false;
             _lastVersion = uint.MaxValue;
@@ -70,10 +78,13 @@ namespace Game.UI.Runtime
         {
             DetachSquadGuidanceButton();
             DetachCommandGuidanceButtons();
+            DetachBuildGuidanceButton();
+            DetachBarracksGuidanceButton();
             _squadTrayView?.ClearAssistantGuidance();
             _panelPulse = null;
             _squadTrayView = null;
             _commandControlsView = null;
+            _buildDrawerView = null;
             DestroyObject(_worldRingRoot);
             DestroyObject(_worldRingMaterial);
             DestroyObject(_screenTargetIndicator != null ? _screenTargetIndicator.gameObject : null);
@@ -91,10 +102,12 @@ namespace Game.UI.Runtime
             _worldTargetShowRequested = false;
             _pendingFirstShowMe = false;
             _selectSquadCompleted = false;
+            _localUiCueActive = false;
             _activeCommandMode = TacticalCommandMode.None;
             _awaitingWorldTargetMode = TacticalCommandMode.None;
             _commandModeAcknowledged = null;
             _squadSelectionAcknowledged = null;
+            _uiSurfaceAcknowledged = null;
             _lastVersion = uint.MaxValue;
             LastAppliedModel = UiAssistantHighlightModel.Empty;
         }
@@ -109,6 +122,7 @@ namespace Game.UI.Runtime
             _worldTargetShowRequested = false;
             _pendingFirstShowMe = false;
             _selectSquadCompleted = false;
+            _localUiCueActive = false;
             _activeCommandMode = TacticalCommandMode.None;
             _awaitingWorldTargetMode = TacticalCommandMode.None;
             _lastVersion = uint.MaxValue;
@@ -189,7 +203,8 @@ namespace Game.UI.Runtime
             // The squad selection callback runs after the real tray selection callback.
             // If the ECS panel projection is one frame behind, never teach Select twice:
             // the next explicit Show Me step is the Move command button.
-            if (_selectSquadCompleted && recommendationKind == SelectRecommendationKind)
+            if (_selectSquadCompleted && recommendationKind == SelectRecommendationKind &&
+                targetKind != UiSurfaceTargetKind)
             {
                 recommendationKind = MoveRecommendationKind;
                 targetKind = WorldPositionTargetKind;
@@ -224,7 +239,8 @@ namespace Game.UI.Runtime
                 _awaitingWorldTargetMode = TacticalCommandMode.None;
             }
 
-            _pendingFirstShowMe = true;
+            _localUiCueActive = targetKind == UiSurfaceTargetKind;
+            _pendingFirstShowMe = !_localUiCueActive;
             LastAppliedModel = new UiAssistantHighlightModel(
                 uint.MaxValue,
                 true,
@@ -241,6 +257,8 @@ namespace Game.UI.Runtime
 
         public void ApplyReadModel(UiAssistantHighlightModel model)
         {
+            if (_localUiCueActive && !model.Active)
+                return;
             if (model.Active &&
                 model.RecommendationKind == SelectRecommendationKind &&
                 _selectSquadCompleted)
@@ -387,8 +405,12 @@ namespace Game.UI.Runtime
         private bool ShouldShowCommandCue(UiAssistantHighlightModel model)
         {
             bool selectSquad = model.RecommendationKind == SelectRecommendationKind &&
+                               model.TargetKind != UiSurfaceTargetKind &&
                                _squadTrayView?.AssistantGuidanceTarget != null;
-            return model.Active && (selectSquad || IsGuidedCommand(model)) && !_commandGuidanceArmed;
+            bool uiSurface = model.TargetKind == UiSurfaceTargetKind &&
+                             ResolveGuidedCommandButton(model) != null;
+            return model.Active && (selectSquad || uiSurface || IsGuidedCommand(model)) &&
+                   !_commandGuidanceArmed;
         }
 
         private static bool IsGuidedCommand(UiAssistantHighlightModel model)
@@ -411,30 +433,6 @@ namespace Game.UI.Runtime
             return model.Active &&
                    (model.RecommendationKind == MoveRecommendationKind && mode == TacticalCommandMode.Move ||
                     model.RecommendationKind == AttackRecommendationKind && mode == TacticalCommandMode.Attack);
-        }
-
-        private RectTransform ResolveGuidedCommandButton(UiAssistantHighlightModel model)
-        {
-            if (model.RecommendationKind == SelectRecommendationKind)
-                return _squadTrayView?.AssistantGuidanceTarget;
-
-            Button button = model.RecommendationKind == MoveRecommendationKind
-                ? _commandControlsView != null ? _commandControlsView.MoveButton : null
-                : model.RecommendationKind == AttackRecommendationKind
-                    ? _commandControlsView != null ? _commandControlsView.AttackButton : null
-                    : null;
-            return button != null ? button.transform as RectTransform : null;
-        }
-
-        private static string ResolveIndicatorText(UiAssistantHighlightModel model, bool commandCue)
-        {
-            if (model.RecommendationKind == SelectRecommendationKind)
-                return "SELECT SQUAD\n\u25bc";
-            if (model.RecommendationKind == MoveRecommendationKind)
-                return commandCue ? "PRESS MOVE\n\u25bc" : "CLICK DESTINATION\n\u25bc";
-            if (model.RecommendationKind == AttackRecommendationKind)
-                return commandCue ? "PRESS ATTACK\n\u25bc" : "CLICK ENEMY\n\u25bc";
-            return "ARIA TARGET\n\u25bc";
         }
 
         private void AcknowledgeSquadSelection()

@@ -14,8 +14,12 @@ using Game.Missions.Contracts;
 
 namespace Game.UI.Shell.Ecs
 {
-    public sealed partial class UiShellEcsGateway
+    public sealed partial class UiShellEcsGateway : IUiCampaignGuidanceGateway
     {
+        bool IUiCampaignGuidanceGateway.TryAcknowledgeCampaignGuidanceTarget(
+            UiCampaignGuidanceTargetKind target) =>
+            UiShellActionAdapter.TryAcknowledgeCampaignGuidanceTarget(target);
+
         private static class UiShellActionAdapter
         {
         public static bool TryEnqueueUiAction(UiActionKind kind, int payloadId)
@@ -205,6 +209,62 @@ namespace Game.UI.Shell.Ecs
                 AssistantRecommendationKind.Stop => AssistantCommandIntentKind.StopAssistantControl,
                 _ => AssistantCommandIntentKind.None
             };
+        }
+
+        internal static bool TryAcknowledgeCampaignGuidanceTarget(
+            UiCampaignGuidanceTargetKind target)
+        {
+            CampaignMissionGuidancePromptKind expected = target switch
+            {
+                UiCampaignGuidanceTargetKind.BuildButton =>
+                    CampaignMissionGuidancePromptKind.EstablishBaseOpenBuild,
+                UiCampaignGuidanceTargetKind.BarracksCatalogItem =>
+                    CampaignMissionGuidancePromptKind.EstablishBaseSelectBarracks,
+                _ => CampaignMissionGuidancePromptKind.None
+            };
+            if (expected == CampaignMissionGuidancePromptKind.None ||
+                !TryGetBoundary(out EntityManager entityManager, out _))
+            {
+                return false;
+            }
+
+            using EntityQuery query = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<CampaignMissionRootComponent>(),
+                ComponentType.ReadOnly<CampaignMissionRuntimeComponent>(),
+                ComponentType.ReadOnly<CampaignMissionGuidanceProjectionComponent>(),
+                ComponentType.ReadWrite<CampaignMissionGuidanceAcknowledgementRequestElement>());
+            if (query.CalculateEntityCount() != 1)
+                return false;
+
+            Entity root = query.GetSingletonEntity();
+            CampaignMissionRuntimeComponent runtime =
+                entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root);
+            CampaignMissionGuidanceProjectionComponent guidance =
+                entityManager.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root);
+            if (guidance.Active == 0 || guidance.GuidanceId == 0 || guidance.Prompt != expected ||
+                runtime.SessionToken.IsEmpty || runtime.AttemptOrdinal <= 0)
+            {
+                return false;
+            }
+
+            DynamicBuffer<CampaignMissionGuidanceAcknowledgementRequestElement> requests =
+                entityManager.GetBuffer<CampaignMissionGuidanceAcknowledgementRequestElement>(root);
+            for (int index = 0; index < requests.Length; index++)
+            {
+                if (requests[index].GuidanceId == guidance.GuidanceId &&
+                    requests[index].SessionToken.Equals(runtime.SessionToken) &&
+                    requests[index].AttemptOrdinal == runtime.AttemptOrdinal)
+                {
+                    return true;
+                }
+            }
+            requests.Add(new CampaignMissionGuidanceAcknowledgementRequestElement
+            {
+                GuidanceId = guidance.GuidanceId,
+                SessionToken = runtime.SessionToken,
+                AttemptOrdinal = runtime.AttemptOrdinal
+            });
+            return true;
         }
 
         public static bool TrySetLoadingProgress(float progress01, string status, bool complete)

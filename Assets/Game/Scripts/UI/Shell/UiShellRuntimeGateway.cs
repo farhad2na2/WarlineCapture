@@ -133,6 +133,13 @@ namespace Game.UI.Runtime
                    tutorialNarration.TryEnqueueTutorialNarration(tutorialStep, phase, text);
         }
 
+        public static bool TryAcknowledgeCampaignGuidanceTarget(
+            UiCampaignGuidanceTargetKind target)
+        {
+            return current is IUiCampaignGuidanceGateway campaignGuidance &&
+                   campaignGuidance.TryAcknowledgeCampaignGuidanceTarget(target);
+        }
+
         public static bool TryReadMatchHudAssistantHighlight(out UiAssistantHighlightModel assistantHighlight)
         {
             return current.TryReadMatchHudAssistantHighlight(out assistantHighlight);

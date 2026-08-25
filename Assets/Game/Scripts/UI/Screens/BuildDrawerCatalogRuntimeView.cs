@@ -10,7 +10,7 @@ using UnityEngine.UI;
 namespace Game.UI.Runtime
 {
     [DisallowMultipleComponent]
-    public sealed class BuildDrawerCatalogRuntimeView : MonoBehaviour
+    public sealed partial class BuildDrawerCatalogRuntimeView : MonoBehaviour
     {
         private const float QueueRefreshIntervalSeconds = 0.2f;
 
@@ -56,15 +56,6 @@ namespace Game.UI.Runtime
         {
             if (view == null)
                 view = GetComponent<BuildDrawerView>();
-        }
-
-        private void OnEnable()
-        {
-            _nextQueueRefreshTime = 0f;
-            BuildDrawerCatalogPresentationSystemHelper.WireTabs(view, _tabBindings, SelectCategory);
-            WirePrimaryAction();
-            WireQueueControls();
-            Refresh();
         }
 
         private void Update()
@@ -147,35 +138,6 @@ namespace Game.UI.Runtime
 
             _activeCategory = category;
             Refresh();
-        }
-
-        private void Refresh()
-        {
-            if (view == null)
-                return;
-
-            _cat.Refresh(UnitPrefabSource, BuildingPrefabSource);
-            bool hasItems = BuildDrawerCatalogPresentationSystemHelper.RefreshCatalog(
-                CreatePresentationContext(),
-                _activeCategory);
-            if (hasItems)
-                SelectItem(view.ItemTemplate, _items[0]);
-            else
-                ClearSelection();
-
-            RefreshQueue();
-        }
-
-        private void SelectItem(BuildDrawerItemView item, BuildDrawerCatalogItem model)
-        {
-            BuildDrawerCatalogPresentationSystemHelper.SelectItem(
-                CreatePresentationContext(),
-                item,
-                model,
-                ref _selectedItemView);
-            _selectedItem = model;
-            _hasSelectedItem = true;
-            ApplyInstructionForCurrentSelection();
         }
 
         private void ClearSelection()

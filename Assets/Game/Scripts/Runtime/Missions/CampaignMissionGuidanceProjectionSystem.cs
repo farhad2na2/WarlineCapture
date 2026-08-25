@@ -16,17 +16,24 @@ namespace Game.Runtime
         private static readonly FixedString64Bytes ConfirmThreatTitle = "Confirm the threat";
         private static readonly FixedString64Bytes EngagePatrolTitle = "Engage the patrol";
         private static readonly FixedString64Bytes SecureCorridorTitle = "Secure the corridor";
+        private static readonly FixedString64Bytes OpenBuildTitle = "Open Build";
+        private static readonly FixedString64Bytes SelectBarracksTitle = "Select Barracks";
         private static readonly FixedString128Bytes FindSquadBody = "Select the command squad to begin.";
         private static readonly FixedString128Bytes MoveToCoverBody = "Move the squad to the marked cover position.";
         private static readonly FixedString128Bytes ConfirmThreatBody = "Inspect the armed patrol near the civilians.";
         private static readonly FixedString128Bytes EngagePatrolBody = "Attack the confirmed hostile patrol.";
         private static readonly FixedString128Bytes SecureCorridorBody = "Check the objective and secure the civilian route.";
+        private static readonly FixedString128Bytes OpenBuildBody = "Open Build to restore the forward post.";
+        private static readonly FixedString128Bytes SelectBarracksBody = "Select Barracks from the building catalog.";
         private static readonly FixedString128Bytes ContextualTargetHint = " Use Show Me if you need the exact target.";
         private static readonly FixedString64Bytes DoItAction = "DO IT";
         private static readonly FixedString64Bytes ShowMeAction = "SHOW ME";
         private static readonly FixedString64Bytes MoveTargetAnchor = "anchor.ch01.m01.move_target";
         private static readonly FixedString64Bytes PatrolObjectiveAnchor = "anchor.ch01.m01.patrol_objective";
         private static readonly FixedString64Bytes CivilianSafeZoneAnchor = "anchor.ch01.m01.civilian_safe_zone";
+        private static readonly FixedString64Bytes EstablishBaseMissionId = "saga.ch01.m02.establish_base";
+        private static readonly FixedString64Bytes BuildButtonTarget = "ui.match.build";
+        private static readonly FixedString64Bytes BarracksCatalogTarget = "ui.build_drawer.barracks";
 
         [BurstCompile] public void OnCreate(ref SystemState state) => state.RequireForUpdate<CampaignMissionRootComponent>();
 
@@ -58,11 +65,15 @@ namespace Game.Runtime
             bool suppressed = runtime.RunKind != MissionRunKind.FirstClear && runtime.ReplayTutorialEnabled == 0;
             if (runtime.Version == 0 || runtime.Outcome != MissionOutcomeKind.None || suppressed)
             { if (current.Active == 0) return false; next = default; next.Version = Next(current.Version); return true; }
-            CampaignMissionGuidancePromptKind prompt = PromptFor(runtime.Phase);
+            bool establishBase = runtime.MissionId.Equals(EstablishBaseMissionId);
+            CampaignMissionGuidancePromptKind prompt = establishBase
+                ? PromptForEstablishBase(in current, in runtime, in facts)
+                : PromptFor(runtime.Phase);
             if (prompt == CampaignMissionGuidancePromptKind.None || !Permits(runtime.Guidance, prompt))
             { if (current.Active == 0) return false; next = default; next.Version = Next(current.Version); return true; }
             byte strength = ResolveStrength(in current, in runtime, in facts, prompt);
-            int id = 25000 + (int)runtime.Guidance * 100 + (int)prompt * 10 + strength;
+            int id = (establishBase ? 35000 : 25000) +
+                     (int)runtime.Guidance * 100 + (int)prompt * 10 + strength;
             bool same = current.Active != 0 && current.GuidanceId == id && current.MissionSourceVersion == runtime.Version &&
                         current.GuidanceMode == runtime.Guidance;
             if (same && current.AcknowledgedGuidanceId == id) return false;
@@ -100,10 +111,16 @@ namespace Game.Runtime
                 case CampaignMissionGuidancePromptKind.Engage:
                     Set(ref next, AssistantRecommendationKind.Attack, AssistantTargetKind.Entity, EngagePatrolTitle, EngagePatrolBody, DoItAction);
                     next.SourceEntity = friendly; next.TargetEntity = hostile; next.CanExecute = friendly != Entity.Null && hostile != Entity.Null ? (byte)1 : (byte)0; break;
-                default:
+                case CampaignMissionGuidancePromptKind.SecureCorridor:
                     Set(ref next, AssistantRecommendationKind.CameraFocus, AssistantTargetKind.Objective, SecureCorridorTitle, SecureCorridorBody, DoItAction);
                     next.TargetId = CivilianSafeZoneAnchor; next.WorldPosition = patrol; next.HasWorldPosition = 1;
                     next.CanExecute = 1; break;
+                case CampaignMissionGuidancePromptKind.EstablishBaseOpenBuild:
+                    Set(ref next, AssistantRecommendationKind.Build, AssistantTargetKind.UiSurface, OpenBuildTitle, OpenBuildBody, DoItAction);
+                    next.TargetId = BuildButtonTarget; next.CanExecute = 1; break;
+                case CampaignMissionGuidancePromptKind.EstablishBaseSelectBarracks:
+                    Set(ref next, AssistantRecommendationKind.Select, AssistantTargetKind.UiSurface, SelectBarracksTitle, SelectBarracksBody, DoItAction);
+                    next.TargetId = BarracksCatalogTarget; next.CanExecute = 1; break;
             }
             ApplyModePolicy(ref next);
             return next;
@@ -114,7 +131,10 @@ namespace Game.Runtime
             if (next.GuidanceMode == NarrativeGuidanceMode.Full) return;
             if (next.GuidanceMode == NarrativeGuidanceMode.Minimal)
             { next.CanExecute = 0; next.ActionLabel = ShowMeAction; return; }
-            if (next.Prompt != CampaignMissionGuidancePromptKind.FindSquad && next.Prompt != CampaignMissionGuidancePromptKind.MoveToCover)
+            if (next.Prompt != CampaignMissionGuidancePromptKind.FindSquad &&
+                next.Prompt != CampaignMissionGuidancePromptKind.MoveToCover &&
+                next.Prompt != CampaignMissionGuidancePromptKind.EstablishBaseOpenBuild &&
+                next.Prompt != CampaignMissionGuidancePromptKind.EstablishBaseSelectBarracks)
             { next.CanExecute = 0; next.ActionLabel = ShowMeAction; }
             if (next.HintStrength >= 2)
             {
@@ -149,6 +169,28 @@ namespace Game.Runtime
             MissionPhaseKind.Engage => CampaignMissionGuidancePromptKind.Engage,
             MissionPhaseKind.SecureCorridor => CampaignMissionGuidancePromptKind.SecureCorridor, _ => CampaignMissionGuidancePromptKind.None
         };
+
+        internal static CampaignMissionGuidancePromptKind PromptForEstablishBase(
+            in CampaignMissionGuidanceProjectionComponent current,
+            in CampaignMissionRuntimeComponent runtime,
+            in CampaignMissionAttemptFactsComponent facts)
+        {
+            if (!runtime.MissionId.Equals(EstablishBaseMissionId) ||
+                runtime.Phase is not (MissionPhaseKind.FindSquad or MissionPhaseKind.Engage) ||
+                facts.RequiredBuildingPlacedCount > 0)
+            {
+                return CampaignMissionGuidancePromptKind.None;
+            }
+
+            if (current.Prompt == CampaignMissionGuidancePromptKind.EstablishBaseSelectBarracks)
+                return CampaignMissionGuidancePromptKind.EstablishBaseSelectBarracks;
+            if (current.Prompt == CampaignMissionGuidancePromptKind.EstablishBaseOpenBuild &&
+                current.GuidanceId != 0 && current.AcknowledgedGuidanceId == current.GuidanceId)
+            {
+                return CampaignMissionGuidancePromptKind.EstablishBaseSelectBarracks;
+            }
+            return CampaignMissionGuidancePromptKind.EstablishBaseOpenBuild;
+        }
 
         private static bool ConsumeAcknowledgements(ref CampaignMissionGuidanceProjectionComponent current,
             DynamicBuffer<CampaignMissionGuidanceAcknowledgementRequestElement> requests, in CampaignMissionRuntimeComponent runtime)

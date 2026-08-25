@@ -783,6 +783,15 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         ui.Init(null, new FakeMatchRuntimeState());
         const string expectedError =
             "[ARIA] Match HUD prefab is missing HeaderContent/AriaAssistantButton; runtime button creation is disabled.";
+        try
+        {
+            LogAssert.Expect(LogType.Error, expectedError);
+        }
+        catch (InvalidOperationException exception) when (
+            exception.Message.Contains("No log scope is available", StringComparison.Ordinal))
+        {
+            // Focused executeMethod validation invokes the same case without a Test Runner log scope.
+        }
         string capturedError = null;
         Application.LogCallback captureError = (condition, _, logType) =>
         {

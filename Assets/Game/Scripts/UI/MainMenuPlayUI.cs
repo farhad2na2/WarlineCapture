@@ -230,6 +230,8 @@ namespace Game.UI.Runtime
         {
             _matchHudRightQuickRailView?.UnbindZoomControls();
             _matchHudRightQuickRailView = rightQuickRailView;
+            _matchHudAssistantUiSystem.BindBuildButton(
+                _matchHudRightQuickRailView != null ? _matchHudRightQuickRailView.BuildButton : null);
             _nextZoomControlRefreshTime = 0f;
             _matchHudRightQuickRailView?.BindZoomControls(
                 RequestMatchHudZoomIn,
@@ -325,7 +327,11 @@ namespace Game.UI.Runtime
             if (popup != MatchHudLargeTacticalPopup.Assistant)
                 _matchHudAssistantUiSystem.ClosePanelWithoutInputCapture();
 
+            bool preserveBuildDrawerForGuidance =
+                popup == MatchHudLargeTacticalPopup.Assistant &&
+                _matchHudAssistantUiSystem.IsBuildDrawerSelectionGuidance;
             if (popup != MatchHudLargeTacticalPopup.BuildDrawer &&
+                !preserveBuildDrawerForGuidance &&
                 _buildDrawerView != null &&
                 _buildDrawerView.IsOpen)
             {
@@ -460,6 +466,7 @@ namespace Game.UI.Runtime
         public void BindBuildDrawer(BuildDrawerView buildDrawerView)
         {
             _buildDrawerView = buildDrawerView;
+            _matchHudAssistantUiSystem.BindBuildDrawer(buildDrawerView);
         }
 
         public void BindBuildPlacementConfirmationBar(BuildPlacementConfirmationBarView buildPlacementConfirmationBarView)

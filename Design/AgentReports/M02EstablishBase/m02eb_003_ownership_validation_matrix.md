@@ -176,6 +176,7 @@ Approved existing paths:
 - `Assets/Game/Scripts/UI/Shell/Ecs/UiCampaignMissionProjectionSystem.cs`
 - `Assets/Game/Scripts/UI/Shell/Ecs/UiCampaignMissionProjectionSystem.Catalog.cs`
 - `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Actions.cs`
+- `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Assistant.cs`
 - `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Core.cs`
 - `Assets/Game/Scripts/UI/Contracts/UiCampaignMissionModels.cs`
 - `Assets/Game/Scripts/UI/Shell/Ecs/Contracts/UiCampaignMissionComponents.cs`
@@ -196,12 +197,28 @@ Approved existing paths:
 - `Assets/Game/Scripts/UI/Screens/AssistantHighlightPresentationSystemHelper.TargetVisuals.cs`
 - `Assets/Game/Scripts/UI/Screens/AriaTutorialBriefingView.cs`
 - `Assets/Game/Scripts/UI/Screens/AriaCommandAssistantPopupView.cs`
+- `Assets/Game/Scripts/Components/CampaignMissionComponents.cs`
+- `Assets/Game/Scripts/UI/Contracts/UiShellRuntimeGateway.cs`
+- `Assets/Game/Scripts/UI/Shell/UiShellRuntimeGateway.cs`
+- `Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.cs`
+- `Assets/Game/Scripts/UI/Shell/Ecs/AssistantObjectiveProjectionUtility.cs`
+- `Assets/Game/Scripts/UI/Shell/Ecs/AssistantCommandIntentSystem.cs`
+- `Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.cs`
+- `Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Presentation.cs`
+- `Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.cs`
+- `Assets/Tests/Editor/MatchHudAssistantUiSystemHelperTests.cs`
+- `Assets/Game/Scripts/UI/MainMenuPlayUI.cs`
+- `Assets/Game/Scripts/UI/MainMenuPlayUI.GuidedCommands.cs`
+- `Assets/Game/Scripts/UI/Shell/UIShellContentView.cs`
 - `Assets/Game/Scripts/Configs/Narrative/NarrativeSequenceConfig.cs`
 - `Assets/Game/Scripts/Configs/Narrative/NarrativeLocaleConfig.cs`
 - `Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeSequencePresentationSystemHelper.cs`
 
 Approved new paths before M02EB-029:
 
+- `Assets/Game/Scripts/UI/Screens/AssistantHighlightPresentationSystemHelper.UiSurfaceGuidance.cs`
+- `Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.MissionGuidance.cs`
+- `Assets/Game/Scripts/UI/Shell/Ecs/AssistantCommandIntentSystem.UiSurfacePreview.cs`
 - `Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs`
 - `Assets/Game/Configs/Narrative/Chapter01/M02_EstablishBase_Narrative.asset`
 - `Assets/Game/Data/Narrative/Chapter01/M02/m02_english_text_catalog.json`
@@ -222,6 +239,14 @@ builders through the connected Editor. Presentation copy must resolve through `I
 with readable source-backed fallbacks; no final narrative media or unapproved Farsi translation is
 authorized by this amendment. Existing M01 behavior and serialized fallbacks remain covered by the
 M01 Campaign and briefing regressions.
+
+M02EB-024 may append default-safe M02 guidance prompt values, advance them only through the existing
+mission-scoped acknowledgement buffer, and map typed UI-surface targets to the already-bound Build
+and Barracks buttons. SHOW ME may position its cue from the target `RectTransform`; stored or authored
+screen coordinates are prohibited. DO IT invokes the same bound `Button.onClick` path as player input,
+and the existing Build Drawer remains the only catalog selection owner. The drawer may suppress its
+legacy first-item auto-selection only while the typed M02 Barracks-selection guidance is active. It may
+not request placement, spend resources, mutate mission facts, or implement M02EB-025 early.
 
 Additional new art/audio paths become writable only after M02EB-029 acceptance and an updated matrix entry. Final media must be chapter-scoped and must not alter FirstLaunch exact-set assets/importers.
 

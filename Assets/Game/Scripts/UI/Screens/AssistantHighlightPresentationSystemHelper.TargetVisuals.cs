@@ -8,6 +8,7 @@ namespace Game.UI.Runtime
 {
     internal sealed partial class AssistantHighlightPresentationSystemHelper
     {
+        private bool _localUiCueActive;
         private void ApplyScreenTargetIndicator(UiAssistantHighlightModel model)
         {
             _commandCueActive = ShouldShowCommandCue(model);

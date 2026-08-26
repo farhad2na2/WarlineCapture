@@ -166,10 +166,16 @@ public sealed class M02EstablishBaseCanonicalDataTests
         Vector2Int footprint = barracks.ConfiguredFootprintCells;
         ScenarioMissionBuildZoneConfig zone = Scenario().MissionRuntime.BuildZone;
         Assert.AreEqual(new Vector2Int(20, 10), footprint);
-        Assert.AreEqual(24, zone.HalfWidthCells * 2);
-        Assert.AreEqual(14, zone.HalfHeightCells * 2);
+        Assert.AreEqual(M02EstablishBaseForwardPostWindowValidation.BuildLotSize.x,
+            zone.HalfWidthCells * 2);
+        Assert.AreEqual(M02EstablishBaseForwardPostWindowValidation.BuildLotSize.y,
+            zone.HalfHeightCells * 2);
         Assert.GreaterOrEqual(zone.HalfWidthCells * 2, footprint.x);
         Assert.GreaterOrEqual(zone.HalfHeightCells * 2, footprint.y);
+        Assert.GreaterOrEqual(zone.HalfWidthCells * 2 - footprint.x, 16,
+            "The Barracks lot must allow meaningful horizontal placement choice.");
+        Assert.GreaterOrEqual(zone.HalfHeightCells * 2 - footprint.y, 8,
+            "The Barracks lot must allow multiple valid placement rows.");
     }
 
     [Test]

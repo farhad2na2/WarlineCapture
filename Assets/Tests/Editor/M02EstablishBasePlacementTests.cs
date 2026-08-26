@@ -88,8 +88,8 @@ public sealed class M02EstablishBasePlacementTests
             world.EntityManager.GetComponentData<CampaignMissionCatalogComponent>(root);
         ref CampaignMissionBuildZoneBlob zone = ref catalog.Blob.Value.Missions[0].BuildZone;
         Assert.AreEqual(BuildAnchorId, zone.AnchorId.ToString());
-        Assert.AreEqual(12, zone.HalfWidthCells);
-        Assert.AreEqual(7, zone.HalfHeightCells);
+        Assert.AreEqual(24, zone.HalfWidthCells);
+        Assert.AreEqual(12, zone.HalfHeightCells);
         DisposeCatalog(world.EntityManager, root);
     }
 
@@ -104,7 +104,7 @@ public sealed class M02EstablishBasePlacementTests
             world.EntityManager, Mission(), Scenario(), Maps(), 1, out root, out string error), error);
         CampaignMissionCatalogComponent repaired =
             world.EntityManager.GetComponentData<CampaignMissionCatalogComponent>(root);
-        Assert.AreEqual(12, repaired.Blob.Value.Missions[0].BuildZone.HalfWidthCells);
+        Assert.AreEqual(24, repaired.Blob.Value.Missions[0].BuildZone.HalfWidthCells);
         DisposeCatalog(world.EntityManager, root);
     }
 

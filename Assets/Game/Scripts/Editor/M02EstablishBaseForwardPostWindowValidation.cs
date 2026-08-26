@@ -32,8 +32,8 @@ namespace Game.Editor
         public const int ExpectedAnchorCount = 14;
 
         public static readonly RectInt PlayableWindow = new(780, 270, 320, 200);
-        public static readonly RectInt BuildLotSearch = new(1018, 392, 72, 64);
-        public static readonly Vector2Int BuildLotSize = new(24, 14);
+        public static readonly RectInt BuildLotSearch = new(1014, 382, 72, 32);
+        public static readonly Vector2Int BuildLotSize = new(48, 24);
 
         private const string Marker =
             "[M02EstablishBaseForwardPostWindowValidation] result=Passed tests=9";
@@ -116,7 +116,8 @@ namespace Game.Editor
             }
 
             throw new InvalidOperationException(
-                "The reviewed forward-post search area contains no valid 24x14 Barracks lot.");
+                $"The reviewed forward-post search area contains no valid " +
+                $"{BuildLotSize.x}x{BuildLotSize.y} Barracks lot.");
         }
 
         private static bool IsBuildLotSurfaceValid(ref MapSurfaceBlob surface, RectInt lot)
@@ -187,9 +188,10 @@ namespace Game.Editor
             for (int index = 0; index < seeds.Length; index++)
                 positions[index] = ResolveAnchorPosition(ref surface, seeds[index]);
 
-            Vector3 planningPosition = new(985f, 80f, 468f);
+            Vector3 planningPosition = new(995f, 95f, 468f);
             Vector3 battlePosition = new(952f, 36f, 430f);
-            Vector3 planningEuler = LookEuler(planningPosition, new Vector3(985f, positions[2].y, 375f));
+            Vector3 planningTarget = Vector3.Lerp(positions[2], positions[3], 0.56f);
+            Vector3 planningEuler = LookEuler(planningPosition, planningTarget);
             Vector3 battleEuler = LookEuler(battlePosition, new Vector3(900f, positions[8].y, 345f));
 
             SerializedObject target = new(logical);
@@ -229,7 +231,7 @@ namespace Game.Editor
                 Set(camera, "position", planning ? planningPosition : battlePosition);
                 Set(camera, "eulerAngles", planning ? planningEuler : battleEuler);
                 Set(camera, "orthographic", false);
-                Set(camera, "fieldOfView", planning ? 55f : 40f);
+                Set(camera, "fieldOfView", planning ? 72f : 40f);
                 Set(camera, "orthographicSize", 5f);
                 Set(camera, "clampToCameraBounds", true);
             });
@@ -328,9 +330,16 @@ namespace Game.Editor
         {
             OperationMapCameraConfig planning = FindCamera(logical, PlanningCameraId);
             OperationMapCameraConfig battle = FindCamera(logical, BattleCameraId);
+            Vector3 buildLot = FindAnchor(logical, "anchor.ch01.m02.build_lot").Position;
+            float halfWidth = BuildLotSize.x * 0.5f;
+            float halfHeight = BuildLotSize.y * 0.5f;
             Require(IsVisible(planning, FindAnchor(logical, "anchor.ch01.m02.forward_post").Position) &&
-                    IsVisible(planning, FindAnchor(logical, "anchor.ch01.m02.build_lot").Position),
-                "Planning camera does not frame the base and Barracks lot.");
+                    IsVisible(planning, buildLot) &&
+                    IsVisible(planning, buildLot + new Vector3(-halfWidth, 0f, -halfHeight)) &&
+                    IsVisible(planning, buildLot + new Vector3(-halfWidth, 0f, halfHeight)) &&
+                    IsVisible(planning, buildLot + new Vector3(halfWidth, 0f, -halfHeight)) &&
+                    IsVisible(planning, buildLot + new Vector3(halfWidth, 0f, halfHeight)),
+                "Planning camera does not frame the base and full Barracks lot.");
             Require(IsVisible(battle, FindAnchor(logical, "anchor.ch01.m02.defense_boundary").Position) &&
                     IsVisible(battle, FindAnchor(logical, "anchor.ch01.m02.lane_c").Position),
                 "Battle camera does not frame the defense contact.");

@@ -146,8 +146,10 @@ namespace Game.Editor
             Set(runtime, "baseAnchorId", "anchor.ch01.m02.forward_post");
             SerializedProperty buildZone = runtime.FindPropertyRelative("buildZone");
             Set(buildZone, "anchorId", "anchor.ch01.m02.build_lot");
-            Set(buildZone, "halfWidthCells", 12);
-            Set(buildZone, "halfHeightCells", 7);
+            Set(buildZone, "halfWidthCells",
+                M02EstablishBaseForwardPostWindowValidation.BuildLotSize.x / 2);
+            Set(buildZone, "halfHeightCells",
+                M02EstablishBaseForwardPostWindowValidation.BuildLotSize.y / 2);
             SerializedProperty wave = runtime.FindPropertyRelative("delayedWave");
             Set(wave, "unitGroupId", "group.ch01.m02.hostile_patrol");
             Set(wave, "routeId", "route.ch01.m02.hostile_patrol");

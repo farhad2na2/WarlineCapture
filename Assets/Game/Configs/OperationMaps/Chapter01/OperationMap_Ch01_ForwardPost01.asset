@@ -16,7 +16,7 @@ MonoBehaviour:
   schemaVersion: 1
   contentVersion: 1
   sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
-  contentHash: 7905484067858c1db0db99bb2fd97aa328895ba2a805da44885f22f49864bdc6
+  contentHash: a0c70607393cc20ff68b5ecc4e7a4ee9d6bfee0d68cd31e123352276f9effa57
   generatedMetadataHash: 39219ca2c0e2ca663fa2ccf2ed252def4e91b7b93895fd68e13740dfadc80c9a
   sourceBinding:
     sourceOperationMapId: opmap.skirmish.desert_base_01
@@ -54,10 +54,10 @@ MonoBehaviour:
     supportsDynamicOccupancy: 1
   cameras:
   - cameraId: camera.ch01.m02.forward_post_planning
-    position: {x: 985, y: 80, z: 468}
-    eulerAngles: {x: 40.699368, y: 180, z: 0}
+    position: {x: 995, y: 95, z: 468}
+    eulerAngles: {x: 45.782135, y: 179.07016, z: 0.000000038257614}
     orthographic: 0
-    fieldOfView: 55
+    fieldOfView: 72
     orthographicSize: 5
     clampToCameraBounds: 1
   - cameraId: camera.ch01.m02.forward_post_battle
@@ -98,9 +98,9 @@ MonoBehaviour:
     laneIndex: -1
   - anchorId: anchor.ch01.m02.build_lot
     kind: 4
-    position: {x: 1030.5, y: 0.009179778, z: 399.5}
+    position: {x: 1040.5, y: 0.009179778, z: 394.5}
     eulerAngles: {x: 0, y: 0, z: 0}
-    radius: 12
+    radius: 24
     factionId: 1
     laneIndex: -1
   - anchorId: anchor.ch01.m02.hostile_spawn

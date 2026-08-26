@@ -165,8 +165,9 @@ public sealed class M02EstablishBaseGuidanceTests
             RunValidation(AssistantCommandIntentGatewayTests.RunFocusedValidation);
             RunValidation(AssistantCommandIntentSystemTests.RunFocusedValidation);
             RunValidation(MatchHudAssistantUiSystemHelperTests.RunFocusedValidation);
+            RunValidation(M02EstablishBaseAmbientTests.RunFocusedValidation);
             RunValidation(ProductionSourceGrowthArchitectureTests.RunFocusedValidation);
-            Debug.Log("[M02EstablishBaseGuidanceRegressionValidation] result=Passed suites=14");
+            Debug.Log("[M02EstablishBaseGuidanceRegressionValidation] result=Passed suites=15");
             ValidationExit.Passed();
         }
         catch (Exception exception)

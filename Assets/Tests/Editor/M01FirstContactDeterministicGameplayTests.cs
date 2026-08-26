@@ -233,7 +233,8 @@ public static class M01FirstContactDeterministicGameplayTests
     private static CampaignMissionAttemptFactsComponent Facts(byte alive, int defeated, int elapsed) => new()
     {
         ElapsedMilliseconds = elapsed, HostileTotalCount = 3, HostileDefeatedCount = defeated,
-        CommandSquadSpawned = 1, CommandSquadAlive = alive
+        CommandSquadSpawned = 1, CommandSquadAlive = alive,
+        SquadLossCount = alive == 0 ? 1 : 0
     };
 
     private static BlobAssetReference<CampaignMissionCatalogBlob> StarCatalog()

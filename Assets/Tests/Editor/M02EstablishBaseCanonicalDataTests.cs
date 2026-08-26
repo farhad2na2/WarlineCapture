@@ -142,7 +142,7 @@ public sealed class M02EstablishBaseCanonicalDataTests
         foreach (ScenarioAnchorRequirementConfig anchor in scenario.RequiredAnchors)
             Assert.IsTrue(anchors.Add(anchor.AnchorId), $"Duplicate anchor '{anchor.AnchorId}'.");
 
-        Assert.AreEqual(12, anchors.Count);
+        Assert.AreEqual(13, anchors.Count);
         foreach (ScenarioUnitGroupConfig group in scenario.UnitGroups)
             foreach (ScenarioUnitEntryConfig unit in group.Units)
                 Assert.IsTrue(anchors.Contains(unit.SpawnAnchorId), unit.SpawnAnchorId);
@@ -205,12 +205,17 @@ public sealed class M02EstablishBaseCanonicalDataTests
         Assert.IsFalse(scenario.Restrictions.EconomyDisabled);
         Assert.IsTrue(scenario.Restrictions.TransportDisabled);
         Assert.IsTrue(scenario.Restrictions.AirDisabled);
-        Assert.AreEqual(1, scenario.AmbientPresentations.Length);
+        Assert.AreEqual(2, scenario.AmbientPresentations.Length);
         ScenarioAmbientPresentationConfig civilians = scenario.AmbientPresentations[0];
         Assert.AreEqual("ambient.ch01.m02.civilians", civilians.PresentationId);
         Assert.AreEqual("anchor.ch01.m02.civilian_edge", civilians.AnchorId);
-        Assert.AreEqual("route.ch01.m02.civilian_evacuation", civilians.RouteId);
-        Assert.AreEqual(12, civilians.InstanceCount);
+        Assert.AreEqual("route.ch01.m02.civilian_patrol", civilians.RouteId);
+        Assert.AreEqual(4, civilians.InstanceCount);
+        ScenarioAmbientPresentationConfig personnel = scenario.AmbientPresentations[1];
+        Assert.AreEqual("ambient.ch01.m02.base_personnel", personnel.PresentationId);
+        Assert.AreEqual("anchor.ch01.m02.resource_focus", personnel.AnchorId);
+        Assert.AreEqual("route.ch01.m02.base_patrol", personnel.RouteId);
+        Assert.AreEqual(8, personnel.InstanceCount);
     }
 
     [Test]

@@ -39,6 +39,8 @@ MonoBehaviour:
     kind: 5
   - anchorId: anchor.ch01.m02.minimap_start
     kind: 13
+  - anchorId: anchor.ch01.m02.resource_focus
+    kind: 8
   deterministicSeed: 2002001
   encounterStartMilliseconds: 120000
   unitGroups:
@@ -107,8 +109,12 @@ MonoBehaviour:
   ambientPresentations:
   - presentationId: ambient.ch01.m02.civilians
     anchorId: anchor.ch01.m02.civilian_edge
-    routeId: route.ch01.m02.civilian_evacuation
-    instanceCount: 12
+    routeId: route.ch01.m02.civilian_patrol
+    instanceCount: 4
+  - presentationId: ambient.ch01.m02.base_personnel
+    anchorId: anchor.ch01.m02.resource_focus
+    routeId: route.ch01.m02.base_patrol
+    instanceCount: 8
   missionRuntime:
     enabled: 1
     startingCredits: 55000

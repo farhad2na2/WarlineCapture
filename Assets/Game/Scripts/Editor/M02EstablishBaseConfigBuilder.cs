@@ -85,7 +85,7 @@ namespace Game.Editor
             {
                 "friendly_spawn", "camera_start", "forward_post", "build_lot",
                 "hostile_spawn", "lane_a", "lane_b", "lane_c", "defense_boundary",
-                "civilian_edge", "civilian_evacuation", "minimap_start"
+                "civilian_edge", "civilian_evacuation", "minimap_start", "resource_focus"
             };
             OperationMapAnchorKind[] anchorKinds =
             {
@@ -94,7 +94,8 @@ namespace Game.Editor
                 OperationMapAnchorKind.Spawn, OperationMapAnchorKind.Lane,
                 OperationMapAnchorKind.Lane, OperationMapAnchorKind.Lane,
                 OperationMapAnchorKind.Hostile, OperationMapAnchorKind.Civilian,
-                OperationMapAnchorKind.Civilian, OperationMapAnchorKind.Minimap
+                OperationMapAnchorKind.Civilian, OperationMapAnchorKind.Minimap,
+                OperationMapAnchorKind.Resource
             };
             SetArray(serialized, "requiredAnchors", anchorNames.Length, (anchor, index) =>
             {
@@ -124,12 +125,21 @@ namespace Game.Editor
             Set(restrictions, "economyDisabled", false);
             Set(restrictions, "transportDisabled", true);
             Set(restrictions, "airDisabled", true);
-            SetArray(serialized, "ambientPresentations", 1, (ambient, _) =>
+            SetArray(serialized, "ambientPresentations", 2, (ambient, index) =>
             {
-                Set(ambient, "presentationId", "ambient.ch01.m02.civilians");
-                Set(ambient, "anchorId", "anchor.ch01.m02.civilian_edge");
-                Set(ambient, "routeId", "route.ch01.m02.civilian_evacuation");
-                Set(ambient, "instanceCount", 12);
+                if (index == 0)
+                {
+                    Set(ambient, "presentationId", "ambient.ch01.m02.civilians");
+                    Set(ambient, "anchorId", "anchor.ch01.m02.civilian_edge");
+                    Set(ambient, "routeId", "route.ch01.m02.civilian_patrol");
+                    Set(ambient, "instanceCount", 4);
+                    return;
+                }
+
+                Set(ambient, "presentationId", "ambient.ch01.m02.base_personnel");
+                Set(ambient, "anchorId", "anchor.ch01.m02.resource_focus");
+                Set(ambient, "routeId", "route.ch01.m02.base_patrol");
+                Set(ambient, "instanceCount", 8);
             });
 
             SerializedProperty runtime = serialized.FindProperty("missionRuntime");

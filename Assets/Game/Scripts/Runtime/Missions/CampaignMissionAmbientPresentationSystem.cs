@@ -46,8 +46,7 @@ namespace Game.Runtime
             }
 
             ref CampaignMissionDefinitionBlob definition = ref catalog.Blob.Value.Missions[definitionIndex];
-            if (!TryResolveContract(ref definition, ref metadata.Blob.Value, out var ambient,
-                    out OperationMapAnchorBlob player, out OperationMapAnchorBlob hostile))
+            if (!TryValidatePresentations(ref definition, ref metadata.Blob.Value, out int instanceCount))
             {
                 Cleanup(ref state, _ambientQuery, default, -1);
                 return;
@@ -63,7 +62,7 @@ namespace Game.Runtime
             Cleanup(ref state, _ambientQuery, runtime.SessionToken, runtime.AttemptOrdinal);
             bool created = EnsurePresentation(
                 ref state, _ambientQuery, _prefabRegistryQuery, in runtime,
-                ref ambient, in player, in hostile);
+                ref definition, ref metadata.Blob.Value, instanceCount);
             _capacityUnavailable = created ? (byte)0 : (byte)1;
             _presentationStarted = created ? (byte)1 : (byte)0;
             _processedSessionToken = runtime.SessionToken;
@@ -77,36 +76,39 @@ namespace Game.Runtime
                 DestroyIndividually(state.EntityManager, _ambientQuery);
         }
 
-        private static bool TryResolveContract(
-            ref CampaignMissionDefinitionBlob definition, ref OperationMapBlob map,
-            out CampaignMissionAmbientPresentationBlob ambient,
-            out OperationMapAnchorBlob player, out OperationMapAnchorBlob hostile)
+        private static bool TryValidatePresentations(
+            ref CampaignMissionDefinitionBlob definition,
+            ref OperationMapBlob map,
+            out int instanceCount)
         {
-            ambient = default;
-            player = default;
-            hostile = default;
-            if (definition.AmbientPresentations.Length != 1)
+            instanceCount = 0;
+            if (definition.AmbientPresentations.Length == 0)
                 return false;
-            ambient = definition.AmbientPresentations[0];
-            return ambient.InstanceCount is > 0 and <= MaxCivilianPresentations &&
-                   !ambient.PresentationId.IsEmpty && !ambient.RouteId.IsEmpty &&
-                   CampaignMissionSpawnSystem.TryFindAnchor(ref map, ambient.AnchorId, out _) &&
-                   CampaignMissionSpawnSystem.TryFindAnchor(
-                       ref map, new FixedString64Bytes("anchor.ch01.m01.civilian_evacuation"), out _) &&
-                   CampaignMissionSpawnSystem.TryFindAnchor(
-                       ref map, new FixedString64Bytes("anchor.ch01.m01.player_spawn"), out player) &&
-                   CampaignMissionSpawnSystem.TryFindAnchor(
-                       ref map, new FixedString64Bytes("anchor.ch01.m01.patrol_spawn"), out hostile);
+
+            for (int index = 0; index < definition.AmbientPresentations.Length; index++)
+            {
+                ref CampaignMissionAmbientPresentationBlob ambient =
+                    ref definition.AmbientPresentations[index];
+                if (ambient.InstanceCount <= 0 || !TryResolveRouteContract(
+                        ref map, ref ambient, out _, out _))
+                    return false;
+                instanceCount += ambient.InstanceCount;
+                if (instanceCount > MaxCivilianPresentations)
+                    return false;
+            }
+
+            return instanceCount > 0;
         }
 
         private static bool EnsurePresentation(
             ref SystemState state, EntityQuery query, EntityQuery prefabRegistryQuery,
             in CampaignMissionRuntimeComponent runtime,
-            ref CampaignMissionAmbientPresentationBlob ambient,
-            in OperationMapAnchorBlob player, in OperationMapAnchorBlob hostile)
+            ref CampaignMissionDefinitionBlob definition,
+            ref OperationMapBlob map,
+            int instanceCount)
         {
             EntityManager em = state.EntityManager;
-            if (query.CalculateEntityCount() == ambient.InstanceCount)
+            if (query.CalculateEntityCount() == instanceCount)
             {
                 bool matches = true;
                 using NativeArray<CampaignMissionAmbientCivilianComponent> civilians =
@@ -121,43 +123,80 @@ namespace Game.Runtime
 
             if (!query.IsEmptyIgnoreFilter)
                 DestroyIndividually(em, query);
-            FixedList128Bytes<Entity> prefabs = ResolveCivilianPrefabs(em, prefabRegistryQuery);
-            if (prefabs.Length != CivilianPrefabKeyCount)
-                return false;
-            for (int i = 0; i < ambient.InstanceCount; i++)
+            for (int presentationIndex = 0;
+                 presentationIndex < definition.AmbientPresentations.Length;
+                 presentationIndex++)
             {
-                PanicRoute route = CreatePanicRoute(in player, in hostile, i, runtime.DeterministicSeed);
-                Entity entity = em.Instantiate(prefabs[i % prefabs.Length]);
-                StripGameplayComponents(em, entity);
-                SetOrAdd(em, entity, new CivilianUnitTag());
-                SetOrAdd(em, entity, new UnitForceDetailedVisualTag());
-                SetOrAdd(em, entity, new CampaignMissionAmbientCivilianComponent
+                ref CampaignMissionAmbientPresentationBlob ambient =
+                    ref definition.AmbientPresentations[presentationIndex];
+                if (!TryResolveRouteContract(
+                        ref map, ref ambient, out byte presentationKind, out AmbientRouteAnchors anchors))
                 {
-                    PresentationId = ambient.PresentationId, RouteId = ambient.RouteId,
-                    SessionToken = runtime.SessionToken, RouteIndex = route.RouteIndex,
-                    AttemptOrdinal = runtime.AttemptOrdinal, Evacuating = 1
-                });
-                SetOrAdd(em, entity, new CampaignMissionAmbientCivilianMotionComponent
+                    DestroyIndividually(em, query);
+                    return false;
+                }
+
+                FixedList128Bytes<Entity> prefabs = ResolvePresentationPrefabs(
+                    em, prefabRegistryQuery, presentationKind);
+                if (prefabs.Length != CivilianPrefabKeyCount)
                 {
-                    AlleyMerge = route.AlleyMerge,
-                    SquadPass = route.SquadPass,
-                    Exit = route.Exit,
-                    Speed = route.Speed,
-                    DelaySeconds = route.DelaySeconds
-                });
-                SetOrAdd(em, entity, new UnitPrevWorldPos { Value = route.Start });
-                SetOrAdd(em, entity, new UnitMoveVisualComponent());
-                SetRunAnimation(em, entity);
-                em.SetComponentData(entity, LocalTransform.FromPositionRotationScale(
-                    route.Start,
-                    quaternion.LookRotationSafe(route.AlleyMerge - route.Start, math.up()),
-                    1f));
+                    DestroyIndividually(em, query);
+                    return false;
+                }
+
+                for (int instanceIndex = 0; instanceIndex < ambient.InstanceCount; instanceIndex++)
+                {
+                    AmbientRoute route = CreateAmbientRoute(
+                        presentationKind,
+                        in anchors,
+                        instanceIndex,
+                        runtime.DeterministicSeed);
+                    Entity entity = em.Instantiate(prefabs[instanceIndex % prefabs.Length]);
+                    StripGameplayComponents(em, entity);
+                    if (presentationKind != BasePersonnelPresentationKind)
+                        SetOrAdd(em, entity, new CivilianUnitTag());
+                    else
+                        RemoveIfPresent<CivilianUnitTag>(em, entity);
+                    SetOrAdd(em, entity, new UnitForceDetailedVisualTag());
+                    SetOrAdd(em, entity, new CampaignMissionAmbientCivilianComponent
+                    {
+                        PresentationId = ambient.PresentationId,
+                        RouteId = ambient.RouteId,
+                        SessionToken = runtime.SessionToken,
+                        RouteIndex = route.RouteIndex,
+                        AttemptOrdinal = runtime.AttemptOrdinal,
+                        Evacuating = presentationKind == PanicCivilianPresentationKind ? (byte)1 : (byte)0
+                    });
+                    SetOrAdd(em, entity, new CampaignMissionAmbientCivilianMotionComponent
+                    {
+                        AlleyMerge = route.AlleyMerge,
+                        SquadPass = route.SquadPass,
+                        Exit = route.Exit,
+                        Speed = route.Speed,
+                        DelaySeconds = route.DelaySeconds,
+                        Loop = route.Loop
+                    });
+                    SetOrAdd(em, entity, new UnitPrevWorldPos { Value = route.Start });
+                    SetOrAdd(em, entity, new UnitMoveVisualComponent());
+                    SetLocomotionAnimation(
+                        em,
+                        entity,
+                        presentationKind == PanicCivilianPresentationKind
+                            ? UnitAnimationKind.Run
+                            : UnitAnimationKind.Walk);
+                    em.SetComponentData(entity, LocalTransform.FromPositionRotationScale(
+                        route.Start,
+                        quaternion.LookRotationSafe(route.AlleyMerge - route.Start, math.up()),
+                        1f));
+                }
             }
             return true;
         }
 
-        private static FixedList128Bytes<Entity> ResolveCivilianPrefabs(
-            EntityManager em, EntityQuery query)
+        private static FixedList128Bytes<Entity> ResolvePresentationPrefabs(
+            EntityManager em,
+            EntityQuery query,
+            byte presentationKind)
         {
             FixedList128Bytes<Entity> result = default;
             if (query.CalculateEntityCount() != 1)
@@ -166,7 +205,7 @@ namespace Game.Runtime
                 em.GetBuffer<UnitPrefabRegistryEntry>(query.GetSingletonEntity());
             for (int keyIndex = 0; keyIndex < CivilianPrefabKeyCount; keyIndex++)
             {
-                FixedString64Bytes key = CivilianPrefabKey(keyIndex);
+                FixedString64Bytes key = PresentationPrefabKey(presentationKind, keyIndex);
                 for (int i = 0; i < registry.Length; i++)
                 {
                     Entity prefab = registry[i].Prefab;
@@ -181,14 +220,6 @@ namespace Game.Runtime
             }
             return result;
         }
-
-        private static FixedString64Bytes CivilianPrefabKey(int index) => index switch
-        {
-            0 => new FixedString64Bytes("Unit_Chr_Civilian_Male_01"),
-            1 => new FixedString64Bytes("Unit_Chr_Civilian_Female_01"),
-            2 => new FixedString64Bytes("Unit_Chr_Civilian_Male_02"),
-            _ => new FixedString64Bytes("Unit_Chr_Civilian_Female_02")
-        };
 
         private static void StripGameplayComponents(EntityManager em, Entity entity)
         {
@@ -263,121 +294,6 @@ namespace Game.Runtime
             }
         }
 
-        private static void SetRunAnimation(EntityManager em, Entity entity)
-        {
-            if (!em.HasBuffer<UnitAnimationOrderEntry>(entity))
-                return;
-
-            DynamicBuffer<UnitAnimationOrderEntry> animationOrder = em.GetBuffer<UnitAnimationOrderEntry>(entity);
-            byte animationIndex = byte.MaxValue;
-            for (int i = 0; i < animationOrder.Length; i++)
-            {
-                if (animationOrder[i].Kind == (byte)UnitAnimationKind.Run)
-                {
-                    animationIndex = (byte)(i + 1);
-                    break;
-                }
-                if (animationIndex == byte.MaxValue && animationOrder[i].Kind == (byte)UnitAnimationKind.Walk)
-                    animationIndex = (byte)(i + 1);
-            }
-
-            if (animationIndex != byte.MaxValue)
-                SetOrAdd(em, entity, new UnitResolvedAnimationIndex { Value = animationIndex, Changed = 1, Updated = 1 });
-        }
-
-        private static PanicRoute CreatePanicRoute(
-            in OperationMapAnchorBlob player,
-            in OperationMapAnchorBlob hostile,
-            int ordinal,
-            int seed)
-        {
-            uint hashA = math.hash(new int3(seed ^ 0x51A7, ordinal + 1, 0x2B));
-            uint hashB = math.hash(new int3(seed ^ 0x2C31, ordinal + 1, 0x73));
-            float3 towardSquad = math.normalizesafe(
-                player.Position - hostile.Position,
-                new float3(0f, 0f, -1f));
-            towardSquad.y = 0f;
-            towardSquad = math.normalizesafe(towardSquad, new float3(0f, 0f, -1f));
-            float3 lateral = new(towardSquad.z, 0f, -towardSquad.x);
-            int routeIndex = ordinal & 7;
-            float side = (routeIndex & 1) == 0 ? 1f : -1f;
-            float alongJitter = SignedUnit(hashA, 0);
-            float lateralJitter = SignedUnit(hashA, 8);
-            float waypointJitter = SignedUnit(hashA, 16);
-            float exitJitter = SignedUnit(hashB, 8);
-            float speedJitter = UnsignedUnit(hashB, 24);
-
-            float3 start;
-            float3 alleyMerge;
-            if (routeIndex <= 1)
-            {
-                start = hostile.Position + towardSquad * (7f + alongJitter * 5f) +
-                        lateral * (side * (17f + lateralJitter * 3f));
-                alleyMerge = hostile.Position + towardSquad * (18f + waypointJitter * 3f) +
-                             lateral * (side * (7f + lateralJitter * 2f));
-            }
-            else if (routeIndex <= 3)
-            {
-                start = hostile.Position + towardSquad * (5f + alongJitter * 8f) +
-                        lateral * (side * (9f + lateralJitter * 3f));
-                alleyMerge = hostile.Position + towardSquad * (19f + waypointJitter * 4f) +
-                             lateral * (side * (4f + lateralJitter * 2f));
-            }
-            else if (routeIndex <= 5)
-            {
-                start = hostile.Position + towardSquad * (3f + alongJitter * 6f) +
-                        lateral * (side * (4.5f + lateralJitter * 2f));
-                alleyMerge = hostile.Position + towardSquad * (20f + waypointJitter * 4f) +
-                             lateral * (side * (6f + lateralJitter * 3f));
-            }
-            else
-            {
-                start = hostile.Position + towardSquad * (4f + alongJitter * 8f) +
-                        lateral * (side * (15f + lateralJitter * 4f));
-                alleyMerge = hostile.Position + towardSquad * (11f + waypointJitter * 5f) +
-                             lateral * (side * (27f + lateralJitter * 5f));
-            }
-
-            bool towardFriendlyLine = routeIndex <= 5;
-            float3 squadPass = towardFriendlyLine
-                ? player.Position - towardSquad * (10f + waypointJitter * 5f) +
-                  lateral * (side * (8f + lateralJitter * 6f))
-                : hostile.Position + towardSquad * (19f + waypointJitter * 5f) +
-                  lateral * (side * (38f + lateralJitter * 6f));
-            float3 exit = towardFriendlyLine
-                ? player.Position + towardSquad * (27f + exitJitter * 7f) +
-                  lateral * (side * (19f + lateralJitter * 8f))
-                : player.Position - towardSquad * (2f + exitJitter * 7f) +
-                  lateral * (side * (55f + lateralJitter * 8f));
-
-            return new PanicRoute
-            {
-                Start = start,
-                AlleyMerge = alleyMerge,
-                SquadPass = squadPass,
-                Exit = exit,
-                Speed = 6.4f + speedJitter * 1.6f,
-                DelaySeconds = 0f,
-                RouteIndex = routeIndex
-            };
-        }
-
-        private static float SignedUnit(uint hash, int shift) =>
-            UnsignedUnit(hash, shift) * 2f - 1f;
-
-        private static float UnsignedUnit(uint hash, int shift) =>
-            ((hash >> shift) & 255u) / 255f;
-
-        private struct PanicRoute
-        {
-            public float3 Start;
-            public float3 AlleyMerge;
-            public float3 SquadPass;
-            public float3 Exit;
-            public float Speed;
-            public float DelaySeconds;
-            public int RouteIndex;
-        }
     }
 
     [BurstCompile]
@@ -457,7 +373,12 @@ namespace Game.Runtime
                     moveVisual.IsMoving = 1;
                     moveVisual.StillSeconds = 0f;
                     if (motion.Segment > 2)
-                        Ecb.DestroyEntity(sortKey, entity);
+                    {
+                        if (motion.Loop != 0)
+                            motion.Segment = 0;
+                        else
+                            Ecb.DestroyEntity(sortKey, entity);
+                    }
                     return;
                 }
 

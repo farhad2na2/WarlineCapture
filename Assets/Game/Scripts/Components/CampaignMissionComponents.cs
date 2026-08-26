@@ -206,6 +206,7 @@ namespace Game.Components
         public float Speed;
         public float DelaySeconds;
         public byte Segment;
+        public byte Loop;
     }
 
     public enum CampaignMissionGuidancePromptKind : byte

@@ -7,6 +7,7 @@ namespace Game.UI.Runtime
 {
     public sealed partial class BuildDrawerCatalogRuntimeView
     {
+        private const string BarracksPrefabName = "Building_Barrack";
         private const byte SelectRecommendationKind = 1;
         private const byte BuildRecommendationKind = 4;
         private const byte ProduceRecommendationKind = 5;
@@ -89,6 +90,30 @@ namespace Game.UI.Runtime
 
             _primaryActionButton.onClick.Invoke();
             return _uiCommandSystem?.HasPendingBuildingPlacement == true;
+        }
+
+        internal Button ResolveBarracksGuidanceButton()
+        {
+            if (view == null || !view.IsOpen || _activeCategory != BuildDrawerCategory.Buildings)
+                return null;
+
+            for (int index = 0; index < _items.Count; index++)
+            {
+                GameObject prefab = _items[index].Prefab;
+                if (prefab == null || prefab.name != BarracksPrefabName)
+                    continue;
+
+                BuildDrawerItemView item = index == 0
+                    ? view.ItemTemplate
+                    : index - 1 < _runtimeItems.Count
+                        ? _runtimeItems[index - 1]
+                        : null;
+                return item != null && item.gameObject.activeInHierarchy
+                    ? item.SelectionButton
+                    : null;
+            }
+
+            return null;
         }
 
         internal bool TryInvokeRifleProductionFromGuidance()

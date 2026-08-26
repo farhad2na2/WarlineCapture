@@ -12,7 +12,10 @@ namespace Game.UI.Runtime
         private void ApplyScreenTargetIndicator(UiAssistantHighlightModel model)
         {
             _commandCueActive = ShouldShowCommandCue(model);
-            _screenTargetActive = model.Active && !_commandCueActive && !_pendingFirstShowMe;
+            _screenTargetActive = model.Active &&
+                                  model.TargetKind != UiSurfaceTargetKind &&
+                                  !_commandCueActive &&
+                                  !_pendingFirstShowMe;
             _screenTargetWorld = new Vector3(model.WorldX, model.WorldY, model.WorldZ);
             EnsureScreenTargetIndicator();
             if (_screenTargetIndicator != null)

@@ -1,5 +1,6 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Game.Catalog.Contracts;
@@ -22,7 +23,7 @@ using UnityEngine.UI;
 public sealed class M02EstablishBaseGuidanceTests
 {
     private const string FocusedMarker =
-        "[M02EstablishBaseGuidanceValidation] result=Passed tests=33";
+        "[M02EstablishBaseGuidanceValidation] result=Passed tests=35";
     private static readonly float3 CanonicalBuildAnchor = new(1040.5f, 0.009179778f, 394.5f);
 
     [MenuItem("Game/Validation/Run M02 Establish Base Guidance Focused")]
@@ -54,6 +55,8 @@ public sealed class M02EstablishBaseGuidanceTests
             tests.UiSurfacePreviewCompletesWithoutWorldResolution();
             tests.BuildDoItInvokesTheBoundBuildButton();
             tests.BarracksDoItInvokesSelectionWithoutPlacement();
+            tests.BarracksGuidanceTargetsTheRenderedBarracksItemView();
+            tests.MissingUiSurfaceControlDoesNotFallBackToWorldPosition();
             tests.PlacementDoItUsesTheRealPlaceAndConfirmButtons();
             tests.ResourceSpendContinueUsesTheTypedResourceStrip();
             tests.RifleDoItUsesTheRealRecruitButton();
@@ -665,6 +668,81 @@ public sealed class M02EstablishBaseGuidanceTests
     }
 
     [Test]
+    public void BarracksGuidanceTargetsTheRenderedBarracksItemView()
+    {
+        GameObject drawerObject = new("M02 Ordered Build Drawer Guidance Test", typeof(RectTransform));
+        GameObject tentItemObject = new("Tent Item", typeof(RectTransform), typeof(Image), typeof(Button));
+        GameObject barracksItemObject = new("Barracks Item", typeof(RectTransform), typeof(Image), typeof(Button));
+        GameObject tentPrefab = new("Tent_Regular");
+        GameObject barracksPrefab = new("Building_Barrack");
+        tentItemObject.transform.SetParent(drawerObject.transform, false);
+        barracksItemObject.transform.SetParent(drawerObject.transform, false);
+        BuildDrawerView drawer = drawerObject.AddComponent<BuildDrawerView>();
+        BuildDrawerItemView tentItem = tentItemObject.AddComponent<BuildDrawerItemView>();
+        BuildDrawerItemView barracksItem = barracksItemObject.AddComponent<BuildDrawerItemView>();
+        Button tentButton = tentItemObject.GetComponent<Button>();
+        Button barracksButton = barracksItemObject.GetComponent<Button>();
+        SetPrivateField(tentItem, "selectionButton", tentButton);
+        SetPrivateField(barracksItem, "selectionButton", barracksButton);
+        SetPrivateField(drawer, "itemTemplate", tentItem);
+        BuildDrawerCatalogRuntimeView catalog = drawerObject.AddComponent<BuildDrawerCatalogRuntimeView>();
+        catalog.ConfigureForTests(drawer, null, null);
+        GetPrivateField<List<BuildDrawerCatalogItem>>(catalog, "_items").Add(
+            CreateBuildingCatalogItem(tentPrefab));
+        GetPrivateField<List<BuildDrawerCatalogItem>>(catalog, "_items").Add(
+            CreateBuildingCatalogItem(barracksPrefab));
+        GetPrivateField<List<BuildDrawerItemView>>(catalog, "_runtimeItems").Add(barracksItem);
+
+        AssistantHighlightPresentationSystemHelper helper = new();
+        try
+        {
+            int tentClicks = 0;
+            int barracksClicks = 0;
+            tentButton.onClick.AddListener(() => tentClicks++);
+            barracksButton.onClick.AddListener(() => barracksClicks++);
+            helper.Bind(null);
+            helper.BindBuildDrawer(drawer);
+            helper.BeginPendingShowMe(
+                (byte)AssistantRecommendationKind.Select,
+                (byte)AssistantTargetKind.UiSurface);
+
+            Assert.AreSame(barracksButton, catalog.ResolveBarracksGuidanceButton());
+            Assert.IsTrue(helper.TryExecuteUiSurface(
+                (byte)AssistantRecommendationKind.Select,
+                (byte)AssistantTargetKind.UiSurface));
+            Assert.AreEqual(0, tentClicks);
+            Assert.AreEqual(1, barracksClicks);
+        }
+        finally
+        {
+            helper.Unbind();
+            UnityEngine.Object.DestroyImmediate(drawerObject);
+            UnityEngine.Object.DestroyImmediate(tentPrefab);
+            UnityEngine.Object.DestroyImmediate(barracksPrefab);
+        }
+    }
+
+    [Test]
+    public void MissingUiSurfaceControlDoesNotFallBackToWorldPosition()
+    {
+        AssistantHighlightPresentationSystemHelper helper = new();
+        try
+        {
+            helper.Bind(null);
+            helper.BeginPendingShowMe(
+                (byte)AssistantRecommendationKind.Select,
+                (byte)AssistantTargetKind.UiSurface);
+
+            Assert.IsFalse(GetPrivateField<bool>(helper, "_screenTargetActive"));
+            Assert.IsFalse(GetPrivateField<bool>(helper, "_commandCueActive"));
+        }
+        finally
+        {
+            helper.Unbind();
+        }
+    }
+
+    [Test]
     public void PlacementDoItUsesTheRealPlaceAndConfirmButtons()
     {
         GameObject drawerObject = new("M02 Placement Command Test", typeof(RectTransform));
@@ -996,6 +1074,29 @@ public sealed class M02EstablishBaseGuidanceTests
         Assert.NotNull(field, $"Missing serialized field {target.GetType().Name}.{fieldName}.");
         field.SetValue(target, value);
     }
+
+    private static T GetPrivateField<T>(object target, string fieldName)
+    {
+        FieldInfo field = target.GetType().GetField(
+            fieldName,
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.NotNull(field, $"Missing field {target.GetType().Name}.{fieldName}.");
+        return (T)field.GetValue(target);
+    }
+
+    private static BuildDrawerCatalogItem CreateBuildingCatalogItem(GameObject prefab) => new(
+        BuildDrawerCategory.Buildings,
+        prefab,
+        prefab.name,
+        "BUILDING",
+        string.Empty,
+        0,
+        0,
+        0f,
+        Vector2Int.one,
+        null,
+        null,
+        null);
 
     private static void RunValidation(Action validation)
     {

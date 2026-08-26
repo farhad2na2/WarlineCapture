@@ -25,8 +25,7 @@ namespace Game.UI.Runtime
                 _buildDrawerView != null
                     ? _buildDrawerView.GetComponent<BuildDrawerCatalogRuntimeView>()
                     : null;
-            _barracksGuidanceButton = _buildDrawerView?.ItemTemplate?.SelectionButton;
-            _barracksGuidanceButton?.onClick.AddListener(AcknowledgeBarracksSelection);
+            ResolveBarracksGuidanceButton();
             ApplyVisual(LastAppliedModel);
         }
 
@@ -69,7 +68,7 @@ namespace Game.UI.Runtime
             Button target = recommendationKind switch
             {
                 BuildRecommendationKind => _buildGuidanceButton,
-                SelectRecommendationKind => _barracksGuidanceButton,
+                SelectRecommendationKind => ResolveBarracksGuidanceButton(),
                 _ => null
             };
             if (target == null || !target.IsActive() || !target.IsInteractable())
@@ -96,7 +95,7 @@ namespace Game.UI.Runtime
                 Button uiButton = model.RecommendationKind switch
                 {
                     BuildRecommendationKind => _buildGuidanceButton,
-                    SelectRecommendationKind => _barracksGuidanceButton,
+                    SelectRecommendationKind => ResolveBarracksGuidanceButton(),
                     _ => null
                 };
                 if (model.RecommendationKind == ProduceRecommendationKind)
@@ -119,6 +118,20 @@ namespace Game.UI.Runtime
                     ? _commandControlsView != null ? _commandControlsView.AttackButton : null
                     : null;
             return button != null ? button.transform as RectTransform : null;
+        }
+
+        private Button ResolveBarracksGuidanceButton()
+        {
+            Button resolved = _buildDrawerCatalogRuntimeView != null
+                ? _buildDrawerCatalogRuntimeView.ResolveBarracksGuidanceButton()
+                : _buildDrawerView?.ItemTemplate?.SelectionButton;
+            if (resolved == _barracksGuidanceButton)
+                return resolved;
+
+            _barracksGuidanceButton?.onClick.RemoveListener(AcknowledgeBarracksSelection);
+            _barracksGuidanceButton = resolved;
+            _barracksGuidanceButton?.onClick.AddListener(AcknowledgeBarracksSelection);
+            return resolved;
         }
 
         private static string ResolveIndicatorText(UiAssistantHighlightModel model, bool commandCue)

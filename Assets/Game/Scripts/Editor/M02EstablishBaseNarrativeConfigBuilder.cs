@@ -32,6 +32,7 @@ namespace Game.Editor
 
         public static void Build()
         {
+            M02EstablishBaseNarrativeArtImporter.ConfigureProvisionalArtImports();
             EnsureFolder("Assets/Game/Configs/Narrative/Chapter01");
             Configure(
                 Sequence(BriefSequenceId, "M02_EstablishBase_Brief"),
@@ -41,6 +42,7 @@ namespace Game.Editor
                 "request.m02.interactive_brief.complete",
                 new[] { "story_archive.seq.ch01.m02.brief" },
                 new[] { "story.m02.forward_post_civic_purpose" },
+                M02EstablishBaseNarrativeArtImporter.BriefPanelPath,
                 (NarrativeSpeakerId.Dalia, "brief.dalia",
                     "The abandoned JRC forward post is the only command point left on this district edge. Restore it, then hold its defense lane."),
                 (NarrativeSpeakerId.Aria, "brief.aria",
@@ -63,6 +65,7 @@ namespace Game.Editor
                     "story.m02.municipal_access_list_recovered",
                     "story.m02.access_list_stolen_before_attack"
                 },
+                M02EstablishBaseNarrativeArtImporter.CommsPanelPath,
                 (NarrativeSpeakerId.Dalia, "comms.dalia",
                     "Hold the post. The incoming cell cannot be allowed through to the clinic route."),
                 (NarrativeSpeakerId.Aria, "comms.aria",
@@ -87,6 +90,7 @@ namespace Game.Editor
                     "story.m02.warning_sector_dark",
                     "campaign.highlight." + M03MissionId
                 },
+                M02EstablishBaseNarrativeArtImporter.DebriefPanelPath,
                 (NarrativeSpeakerId.Samira, "debrief.samira",
                     "The forward post is operational. Clinic and municipal response channels are back online."),
                 (NarrativeSpeakerId.Dalia, "debrief.dalia",
@@ -171,6 +175,7 @@ namespace Game.Editor
             string payloadId,
             string[] evidenceIds,
             string[] contextFlags,
+            string panelPath,
             params (NarrativeSpeakerId speaker, string key, string text)[] lines)
         {
             SerializedObject serialized = new(target);
@@ -192,6 +197,7 @@ namespace Game.Editor
                 string.Empty,
                 Array.Empty<string>(),
                 Array.Empty<string>());
+            BindProvisionalPanel(states.GetArrayElementAtIndex(0), panelPath);
 
             SerializedProperty authoredLines = states.GetArrayElementAtIndex(0).FindPropertyRelative("lines");
             authoredLines.arraySize = lines.Length;
@@ -223,6 +229,15 @@ namespace Game.Editor
                 contextFlags);
             serialized.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(target);
+        }
+
+        private static void BindProvisionalPanel(SerializedProperty state, string panelPath)
+        {
+            Sprite panel = AssetDatabase.LoadAssetAtPath<Sprite>(panelPath);
+            if (panel == null)
+                throw new InvalidOperationException($"M02 provisional narrative panel is missing: {panelPath}");
+            state.FindPropertyRelative("panel16x9").objectReferenceValue = panel;
+            state.FindPropertyRelative("panel20x9").objectReferenceValue = panel;
         }
 
         private static void PopulateState(

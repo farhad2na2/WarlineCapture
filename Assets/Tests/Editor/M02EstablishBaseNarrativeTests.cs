@@ -29,8 +29,8 @@ public static class M02EstablishBaseNarrativeTests
             BriefEstablishesPostDirectionAndCivicPurpose();
             CommsRecoverPreAttackMunicipalAccessList();
             DebriefClosesPostDaliaAndM03WarningSectorBeats();
-            ProvisionalSequencesContainFallbackTextWithoutFinalMedia();
-            PanelFreeProvisionalDialogueStartsWithoutAComicBinding();
+            ProvisionalSequencesBindReviewPanelsWithoutFinalVoice();
+            ProvisionalComicDialogueRequiresItsPanelBinding();
             AuthoredComicDialogueStillRequiresItsPanel();
             SkipReducedMotionAndCaptionsAreSupported();
             M02NarrativeIdentityDoesNotBorrowM01OrFirstLaunchContent();
@@ -140,14 +140,17 @@ public static class M02EstablishBaseNarrativeTests
     }
 
     [Test]
-    public static void ProvisionalSequencesContainFallbackTextWithoutFinalMedia()
+    public static void ProvisionalSequencesBindReviewPanelsWithoutFinalVoice()
     {
         EnsureBuilt();
         foreach (NarrativeSequenceConfig sequence in Sequences())
         {
             NarrativeStateRecord dialogue = sequence.States[0];
-            Assert.IsNull(dialogue.Panel16x9);
-            Assert.IsNull(dialogue.Panel20x9);
+            Assert.IsNotNull(dialogue.Panel16x9);
+            Assert.AreSame(dialogue.Panel16x9, dialogue.Panel20x9);
+            Assert.That(
+                AssetDatabase.GetAssetPath(dialogue.Panel16x9),
+                Does.StartWith(M02EstablishBaseNarrativeArtImporter.PanelRoot + "/"));
             Assert.IsFalse(dialogue.Panel16x9Reference?.RuntimeKeyIsValid() ?? false);
             Assert.IsFalse(dialogue.Panel20x9Reference?.RuntimeKeyIsValid() ?? false);
             foreach (NarrativeDialogueLineRecord line in dialogue.Lines)
@@ -162,23 +165,15 @@ public static class M02EstablishBaseNarrativeTests
     }
 
     [Test]
-    public static void PanelFreeProvisionalDialogueStartsWithoutAComicBinding()
+    public static void ProvisionalComicDialogueRequiresItsPanelBinding()
     {
         EnsureBuilt();
         foreach (NarrativeSequenceConfig sequence in Sequences())
         {
             NarrativeStateRecord dialogue = sequence.States[0];
             Assert.AreEqual(NarrativeStateKind.PanelDialogue, dialogue.Kind);
-            Assert.IsFalse(FirstLaunchNarrativePanelPresentationSystemHelper.RequiresPanel(dialogue));
-
-            FirstLaunchNarrativePanelPresentationSystemHelper presenter = new();
-            presenter.Initialize(
-                null,
-                sequence.States.ToDictionary(state => state.StateId, StringComparer.Ordinal));
-            Assert.IsTrue(
-                presenter.Present(dialogue, 1),
-                $"Panel-free provisional dialogue stalled for {dialogue.StateId}.");
-            presenter.Clear();
+            Assert.IsTrue(dialogue.HasPanelBinding);
+            Assert.IsTrue(FirstLaunchNarrativePanelPresentationSystemHelper.RequiresPanel(dialogue));
         }
     }
 

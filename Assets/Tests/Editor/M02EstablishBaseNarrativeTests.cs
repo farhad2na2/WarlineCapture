@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -9,14 +10,20 @@ using Game.Composition;
 using Game.Editor;
 using Game.Missions.Contracts;
 using Game.Narrative.Contracts;
+using Game.Runtime;
+using Game.UI.Contracts;
+using Game.UI.Runtime;
+using Game.UI.Shell.Contracts.Ecs;
 using NUnit.Framework;
+using Unity.Collections;
+using Unity.Entities;
 using UnityEditor;
 using UnityEngine;
 
 public static class M02EstablishBaseNarrativeTests
 {
     private const string PassMarker =
-        "[M02EstablishBaseNarrativeValidation] result=Passed tests=17";
+        "[M02EstablishBaseNarrativeValidation] result=Passed tests=20";
 
     [MenuItem("Game/Validation/Run M02 Establish Base Narrative Focused")]
     public static void RunFocusedValidation()
@@ -31,16 +38,19 @@ public static class M02EstablishBaseNarrativeTests
             DebriefClosesPostDaliaAndM03WarningSectorBeats();
             ProvisionalSequencesBindReviewPanelsWithoutFinalVoice();
             ProvisionalComicDialogueRequiresItsPanelBinding();
+            ProvisionalComicDirectPanelPresentsImmediately();
             AuthoredComicDialogueStillRequiresItsPanel();
             SkipReducedMotionAndCaptionsAreSupported();
             M02NarrativeIdentityDoesNotBorrowM01OrFirstLaunchContent();
             MenuSceneCarriesAllM02NarrativeBindings();
             InteractiveBriefSelectsBriefSequenceStage();
+            BriefHandoffAcknowledgesExactAttempt();
             WarningSelectsCommsOnlyBeforeActivation();
             ConsumedStagesDoNotRepeatWithinAttempt();
             RetryAttemptRearmsBriefAndComms();
             M01NeverSelectsM02Narrative();
             BriefAndCommsPauseWhileOnlyDebriefReturnsToCampaign();
+            NarrativeWaitsForSettledMatchHud();
             Debug.Log(PassMarker);
             ValidationExit.Passed();
         }
@@ -178,6 +188,41 @@ public static class M02EstablishBaseNarrativeTests
     }
 
     [Test]
+    public static void ProvisionalComicDirectPanelPresentsImmediately()
+    {
+        EnsureBuilt();
+        NarrativeStateRecord dialogue = Sequence(
+            M02EstablishBaseNarrativeConfigBuilder.BriefSequenceId).States[0];
+        GameObject root = new("M02DirectPanelPresentationTest", typeof(CanvasGroup));
+        GameObject panelObject = new("Panel", typeof(RectTransform), typeof(UnityEngine.UI.Image));
+        panelObject.transform.SetParent(root.transform, false);
+        NarrativeSequenceView view = root.AddComponent<NarrativeSequenceView>();
+        SerializedObject serializedView = new(view);
+        serializedView.FindProperty("rootGroup").objectReferenceValue = root.GetComponent<CanvasGroup>();
+        serializedView.FindProperty("panelImage").objectReferenceValue =
+            panelObject.GetComponent<UnityEngine.UI.Image>();
+        serializedView.ApplyModifiedPropertiesWithoutUndo();
+        FirstLaunchNarrativePanelPresentationSystemHelper panels = new();
+        panels.Initialize(
+            view,
+            new Dictionary<string, NarrativeStateRecord>(StringComparer.Ordinal)
+            {
+                [dialogue.StateId] = dialogue
+            });
+
+        try
+        {
+            Assert.IsTrue(panels.Present(dialogue, transitionToken: 1));
+            Assert.AreSame(dialogue.Panel16x9, view.CurrentPanelSprite);
+        }
+        finally
+        {
+            panels.Clear();
+            UnityEngine.Object.DestroyImmediate(root);
+        }
+    }
+
+    [Test]
     public static void AuthoredComicDialogueStillRequiresItsPanel()
     {
         NarrativeSequenceConfig firstLaunch = AssetDatabase.LoadAssetAtPath<NarrativeSequenceConfig>(
@@ -247,6 +292,26 @@ public static class M02EstablishBaseNarrativeTests
             CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Brief,
             CampaignMissionDebriefCompositionSystemHelper.ResolveStage(
                 in runtime, default, briefConsumed: false, commsConsumed: false));
+    }
+
+    [Test]
+    public static void BriefHandoffAcknowledgesExactAttempt()
+    {
+        using World world = new(nameof(BriefHandoffAcknowledgesExactAttempt));
+        Entity root = world.EntityManager.CreateEntity(
+            typeof(CampaignMissionRuntimeComponent), typeof(CampaignMissionAttemptFactsComponent));
+        CampaignMissionRuntimeComponent runtime = Runtime(MissionPhaseKind.InteractiveBrief);
+        world.EntityManager.SetComponentData(root, runtime);
+        using EntityQuery query = world.EntityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<CampaignMissionRuntimeComponent>(),
+            ComponentType.ReadWrite<CampaignMissionAttemptFactsComponent>());
+
+        Assert.IsFalse(CampaignMissionRuntimeProgressUtility.TryCompleteBrief(
+            world.EntityManager, query, new FixedString64Bytes("wrong-session"), runtime.AttemptOrdinal));
+        Assert.IsTrue(CampaignMissionRuntimeProgressUtility.TryCompleteBrief(
+            world.EntityManager, query, runtime.SessionToken, runtime.AttemptOrdinal));
+        Assert.AreEqual(1, world.EntityManager
+            .GetComponentData<CampaignMissionAttemptFactsComponent>(root).InteractiveBriefCompleted);
     }
 
     [Test]
@@ -324,6 +389,25 @@ public static class M02EstablishBaseNarrativeTests
             CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Comms));
         Assert.IsTrue(CampaignMissionDebriefCompositionSystemHelper.ReturnsToCampaign(
             CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Debrief));
+    }
+
+    [Test]
+    public static void NarrativeWaitsForSettledMatchHud()
+    {
+        UiShellStateComponent shell = new()
+        {
+            CurrentMode = UiShellMode.Loading,
+            ActiveRoute = UIRoute.Match
+        };
+        Assert.IsFalse(CampaignMissionNarrativeCompositionUtility.IsPresentationReady(
+            CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Brief, in shell));
+        shell.CurrentMode = UiShellMode.MatchHud;
+        shell.IsTransitionRunning = 1;
+        Assert.IsFalse(CampaignMissionNarrativeCompositionUtility.IsPresentationReady(
+            CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Brief, in shell));
+        shell.IsTransitionRunning = 0;
+        Assert.IsTrue(CampaignMissionNarrativeCompositionUtility.IsPresentationReady(
+            CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Brief, in shell));
     }
 
     private static CampaignMissionRuntimeComponent Runtime(MissionPhaseKind phase) => new()

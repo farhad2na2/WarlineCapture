@@ -9,6 +9,7 @@ Status: Ready for project-owner Editor review; acceptance remains open
 - The existing Campaign selector and deploy pipeline launch the exact M02 mission, scenario, and logical operation map.
 - Match preserves that correlated Campaign selection and loads accepted source GUID `dad0bd13fb20943dfb2f881cbe225f05`; it no longer substitutes the serialized Skirmish fallback after leaving Menu.
 - The provisional brief, delayed-wave comms, and first-clear debrief reuse the established narrative presenter and pause mission simulation while brief/comms are visible.
+- Provisional M2 panels use their direct Sprite bindings until final media acceptance; they no longer disappear merely because their future Addressables references are intentionally unset.
 - The complete typed guidance path remains active: Build, Barracks selection, valid footprint, confirmation, resource review, rifle production, warning, and defense.
 - Final comic panels, bilingual copy polish, and voices remain intentionally unproduced until the owner accepts this playable timing gate.
 
@@ -37,6 +38,15 @@ The checked macOS wrapper ran `MobileVisualQualityPlayModeCapture.CaptureFromEnv
 - `/private/tmp/warline-m02eb-029-source-growth-final.log`: final post-documentation source-growth and architecture metadata check `17/17`.
 - Final accepted runs contain zero compiler errors and no failed validation marker.
 
+## Exact Editor Route Verification
+
+The live `WarlineCapture` Editor ran `Game/Rendering/Capture Mobile Visual Quality/Mission 2 Playable Review` after the direct-panel correction. The route logged the exact Campaign identity (`saga.ch01.m02.establish_base`, `scenario.ch01.m02.establish_base`, `opmap.ch01.forward_post_01`), presented the provisional M2 briefing over the forward-post map, completed its handoff, and then projected the first M2 guidance step onto the real Build control. The Editor was paused at both boundaries for inspection; neither capture is the inert fallback screen reported by the owner.
+
+- Briefing proof: `m02eb_029_exact_campaign_briefing_verified.png`, SHA-256 `faeea0bc7ac93ab3fd82b3bbe5ed449c2af167fbf8b679027f945497a729705e`.
+- First-guidance proof: `m02eb_029_first_guidance_verified.png`, SHA-256 `b2ad39fcf770f8660bc8abd817fa08d12b166add22051e2ec1083ef9e95c027f`.
+- Live ECS inspection after the briefing reported `phase=Engage`, `briefDone=1`, `guidanceActive=1`, and `prompt=EstablishBaseOpenBuild`.
+- Live EditMode regression after a real script reload: M2 Establish Base `236/236`; first-launch narrative `43/43`; the exact language-choice lifecycle regression `1/1`.
+
 ## Exact Launch-Map Correction
 
 The latest owner replay exposed a boundary not covered by the earlier metadata-only proof. Menu correctly published `saga.ch01.m02.establish_base`, `scenario.ch01.m02.establish_base`, and `opmap.ch01.forward_post_01`, but Match independently resolved its serialized `opmap.skirmish.desert_base_01` compatibility definition and loaded the wrong scene. The M2 runtime then could not accept the physical source, which left the route inert and prevented the mission-owned brief from starting.
@@ -52,7 +62,7 @@ The existing Campaign root now carries one composition-owned, request-correlated
 - `/private/tmp/warline-m02-launch-route-proof.log`: graphics-enabled Campaign route logged `source=Campaign`, loaded `opmap_skirmish_desert_base_01_dense_city_entity_scene_runtime.unity`, reached full source/metadata/surface/presentation readiness, and passed at Metal 1280x720.
 - `/private/tmp/warline-m02-launch-route-proof/current_gameplay_zoom_grounding.txt`: seven mission units spawned and all seven were grounded on the accepted surface.
 
-The first owner route attempt exposed two additional launch blockers after the original review-readiness capture: an older M01-complete profile could remain on M01, and the provisional M02 briefing failed because its intentionally absent comic was treated as required. Both paths now fail closed only for real missing authored media, retain the existing Campaign/narrative owners, and pass the focused and aggregate gates above. Visible owner review remains open.
+The first owner route attempt exposed two additional launch blockers after the original review-readiness capture: an older M01-complete profile could remain on M01, and the provisional M02 briefing could fail to present its valid direct panel because its future Addressables reference was intentionally unset. Both paths now fail closed only for real missing authored media, retain the existing Campaign/narrative owners, and pass the focused and aggregate gates above. The exact live Editor route now proves both the comic and first actionable guidance screen; the owner's remaining full-play review stays open.
 
 ## Owner Review Boundary
 

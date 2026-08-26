@@ -19,6 +19,7 @@ namespace Game.Components
         public byte ForwardPostDestroyed;
         public byte DefenseWaveWarningIssued;
         public byte DefenseWaveActivated;
+        public byte InteractiveBriefCompleted;
         public byte CommandSquadSpawned;
         public byte CommandSquadAlive;
         public byte MoveToCoverComplete;

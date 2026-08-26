@@ -122,12 +122,18 @@ public sealed class M02EstablishBaseLifecycleTests
     [Test]
     public void NarrativePauseStopsAutomaticMissionPhaseProgression()
     {
+        using BlobAssetReference<CampaignMissionCatalogBlob> catalogBlob = CreateLifecycleCatalog();
         using World world = new(nameof(NarrativePauseStopsAutomaticMissionPhaseProgression));
         EntityManager entityManager = world.EntityManager;
         Entity root = entityManager.CreateEntity(
             typeof(CampaignMissionRootComponent),
             typeof(CampaignMissionRuntimeComponent),
             typeof(CampaignMissionAttemptFactsComponent));
+        entityManager.AddComponentData(root, new CampaignMissionCatalogComponent
+        {
+            Blob = catalogBlob,
+            SourceVersion = 1
+        });
         entityManager.AddBuffer<CampaignMissionActionRequestElement>(root);
         entityManager.AddBuffer<CampaignMissionActionResultElement>(root);
         entityManager.SetComponentData(root, new CampaignMissionRuntimeComponent
@@ -162,6 +168,16 @@ public sealed class M02EstablishBaseLifecycleTests
             entityManager.GetComponentData<RuntimeGameplayStateComponent>(gameplay);
         state.SimulationActive = 1;
         entityManager.SetComponentData(gameplay, state);
+        world.Unmanaged.GetUnsafeSystemRef<CampaignMissionRuntimeSystem>(handle)
+            .OnUpdate(ref world.Unmanaged.ResolveSystemStateRef(handle));
+        Assert.AreEqual(MissionPhaseKind.InteractiveBrief,
+            entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root).Phase,
+            "M02 advanced before the narrative presenter acknowledged the brief.");
+
+        CampaignMissionAttemptFactsComponent facts =
+            entityManager.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
+        facts.InteractiveBriefCompleted = 1;
+        entityManager.SetComponentData(root, facts);
         world.Unmanaged.GetUnsafeSystemRef<CampaignMissionRuntimeSystem>(handle)
             .OnUpdate(ref world.Unmanaged.ResolveSystemStateRef(handle));
         Assert.AreEqual(MissionPhaseKind.FindSquad,
@@ -579,7 +595,7 @@ public sealed class M02EstablishBaseLifecycleTests
         definition.ScenarioId = new FixedString64Bytes(ScenarioId);
         definition.OperationMapId = new FixedString64Bytes(OperationMapId);
         definition.MissionRuntimeEnabled = 1;
-        BlobBuilderArray<CampaignMissionObjectiveBlob> objectives = builder.Allocate(ref definition.Objectives, 2);
+        BlobBuilderArray<CampaignMissionObjectiveBlob> objectives = builder.Allocate(ref definition.Objectives, 3);
         objectives[0] = new CampaignMissionObjectiveBlob
         {
             ObjectiveId = new FixedString64Bytes("objective.build.barracks"),
@@ -593,6 +609,14 @@ public sealed class M02EstablishBaseLifecycleTests
             Rule = MissionObjectiveRuleKind.ProduceUnit,
             TargetConfigId = new FixedString64Bytes(RifleId),
             RequiredCount = 1
+        };
+        objectives[2] = new CampaignMissionObjectiveBlob
+        {
+            ObjectiveId = new FixedString64Bytes("objective.defend.forward_post"),
+            Rule = MissionObjectiveRuleKind.DefendMissionRole,
+            MissionRoleId = new FixedString64Bytes("role.friendly.forward_post"),
+            RequiredCount = 1,
+            FailureOnRuleBreak = 1
         };
         BlobBuilderArray<CampaignMissionRewardBlob> replayRewards =
             builder.Allocate(ref definition.ReplayRewards, 1);

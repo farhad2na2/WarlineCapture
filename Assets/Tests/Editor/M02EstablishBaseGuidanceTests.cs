@@ -23,7 +23,7 @@ using UnityEngine.UI;
 public sealed class M02EstablishBaseGuidanceTests
 {
     private const string FocusedMarker =
-        "[M02EstablishBaseGuidanceValidation] result=Passed tests=35";
+        "[M02EstablishBaseGuidanceValidation] result=Passed tests=36";
     private static readonly float3 CanonicalBuildAnchor = new(1040.5f, 0.009179778f, 394.5f);
 
     [MenuItem("Game/Validation/Run M02 Establish Base Guidance Focused")]
@@ -63,6 +63,7 @@ public sealed class M02EstablishBaseGuidanceTests
             tests.PlacementBarDisplaysCreditsAndMaterialsCost();
             tests.M02GuidanceCannotBorrowM01NarrationEvents();
             tests.M01TutorialProjectionRemainsUnchanged();
+            tests.IncompleteM02RetryProjectsRequiredBuildGuidance();
             tests.UiSurfaceGuidanceUsesTypedControlsWithoutScreenCoordinates();
             tests.M02OpeningUsesAHorizontalBaseSweep();
             tests.M02OpeningCannotEmitM01CivilianPanicAudio();
@@ -111,6 +112,19 @@ public sealed class M02EstablishBaseGuidanceTests
         Assert.AreEqual(math.lerp(start, end, 0.5f), midpoint);
         Assert.Greater(end.x - start.x, 150f);
         Assert.Less(math.abs(end.z - start.z), 40f);
+
+        using World world = new(nameof(M02OpeningUsesAHorizontalBaseSweep));
+        Entity focus = world.EntityManager.CreateEntity(typeof(RuntimeCameraFocusRequestComponent));
+        CampaignMissionSpawnSystem.QueueInitialRtsOverview(
+            world.EntityManager,
+            focus,
+            start,
+            useEstablishBaseFraming: true);
+        RuntimeCameraFocusRequestComponent request =
+            world.EntityManager.GetComponentData<RuntimeCameraFocusRequestComponent>(focus);
+        Assert.AreEqual(3, request.UseTacticalRevealZoom,
+            "M2 must start in the closer establishing framing instead of the generic full-map RTS view.");
+        Assert.AreEqual(start, request.World);
     }
 
     [Test]
@@ -914,6 +928,19 @@ public sealed class M02EstablishBaseGuidanceTests
             out AssistantRecommendationElement recommendation));
         Assert.AreEqual(2, recommendation.TutorialStep);
         Assert.AreEqual(5, recommendation.TutorialStepCount);
+    }
+
+    [Test]
+    public void IncompleteM02RetryProjectsRequiredBuildGuidance()
+    {
+        CampaignMissionRuntimeComponent runtime = Runtime("saga.ch01.m02.establish_base");
+        runtime.RunKind = MissionRunKind.Retry;
+        runtime.ReplayTutorialEnabled = 0;
+        Assert.IsTrue(CampaignMissionGuidanceProjectionSystem.TryBuildProjection(
+            default, runtime, default, Settings(), Entity.Null, Entity.Null, default, default,
+            CanonicalBuildAnchor, out CampaignMissionGuidanceProjectionComponent guidance));
+        Assert.AreEqual(CampaignMissionGuidancePromptKind.EstablishBaseOpenBuild, guidance.Prompt);
+        Assert.AreEqual(NarrativeGuidanceMode.Full, guidance.GuidanceMode);
     }
 
     [Test]

@@ -45,13 +45,8 @@ namespace Game.Composition
         private int completedBriefAttemptOrdinal = -1;
         private FixedString64Bytes completedCommsSession;
         private int completedCommsAttemptOrdinal = -1;
-        private bool running;
-        private bool handoffPending;
-        private bool handoffComplete;
-        private bool pauseOwned;
-        private bool returnToMenuQueued;
-        private bool campaignRouteQueued;
-        private bool configurationFailureLogged;
+        private bool running, handoffPending, handoffComplete, pauseOwned, returnToMenuQueued,
+            campaignRouteQueued, configurationFailureLogged;
 
         public void Initialize(MenuBootstrapView menuView, IGameTextResolver textResolver)
         {
@@ -88,7 +83,7 @@ namespace Game.Composition
                     out FixedString64Bytes sequenceId,
                     out SequenceStage stage))
                 return;
-            if (!TryPauseForSequence(entityManager, stage))
+            if (!CampaignMissionNarrativeCompositionUtility.IsPresentationReady(stage, in shellState))
                 return;
             if (!TryFindConfig(in sequenceId, out NarrativeSequenceConfig config) ||
                 view == null || speakers == null || punctuation == null)
@@ -101,8 +96,11 @@ namespace Game.Composition
                 }
                 return;
             }
+            if (!TryPauseForSequence(entityManager, stage))
+                return;
 
-            FirstLaunchNarrativeLanguage language = ReadLanguage();
+            FirstLaunchNarrativeLanguage language =
+                CampaignMissionNarrativeCompositionUtility.ReadLanguage();
             NarrativeLocaleConfig locale = language == FirstLaunchNarrativeLanguage.Persian
                 ? persianLocale
                 : null;
@@ -119,6 +117,7 @@ namespace Game.Composition
                     locale) ||
                 !presentation.Start())
             {
+                ReleasePause(entityManager);
                 if (!configurationFailureLogged)
                 {
                     Debug.LogError(
@@ -133,6 +132,8 @@ namespace Game.Composition
             activeStage = stage;
             running = true;
             configurationFailureLogged = false;
+            CampaignMissionNarrativeCompositionUtility.LogStage(
+                "started", stage, in sequenceId, in activeSession, activeAttemptOrdinal);
         }
 
         public void Shutdown()
@@ -155,13 +156,8 @@ namespace Game.Composition
             completedBriefAttemptOrdinal = -1;
             completedCommsSession = default;
             completedCommsAttemptOrdinal = -1;
-            running = false;
-            handoffPending = false;
-            handoffComplete = false;
-            pauseOwned = false;
-            returnToMenuQueued = false;
-            campaignRouteQueued = false;
-            configurationFailureLogged = false;
+            running = handoffPending = handoffComplete = pauseOwned = false;
+            returnToMenuQueued = campaignRouteQueued = configurationFailureLogged = false;
         }
 
         private bool TryReadSequence(
@@ -253,11 +249,8 @@ namespace Game.Composition
             completedBriefAttemptOrdinal = -1;
             completedCommsSession = default;
             completedCommsAttemptOrdinal = -1;
-            running = false;
-            handoffPending = false;
-            handoffComplete = false;
-            returnToMenuQueued = false;
-            campaignRouteQueued = false;
+            running = handoffPending = handoffComplete = false;
+            returnToMenuQueued = campaignRouteQueued = false;
         }
 
         private bool TryPauseForSequence(EntityManager entityManager, SequenceStage stage)
@@ -289,6 +282,9 @@ namespace Game.Composition
 
             if (activeStage == SequenceStage.Brief)
             {
+                if (!CampaignMissionRuntimeProgressUtility.TryCompleteBrief(
+                    entityManager, missionRootQuery, activeSession, activeAttemptOrdinal))
+                { ReleasePause(entityManager); activeStage = SequenceStage.None; return; }
                 completedBriefSession = activeSession;
                 completedBriefAttemptOrdinal = activeAttemptOrdinal;
             }
@@ -399,18 +395,6 @@ namespace Game.Composition
                 PushHistory = 0
             });
             campaignRouteQueued = true;
-        }
-
-        private static FirstLaunchNarrativeLanguage ReadLanguage()
-        {
-            PlayerProfileSaveData profile = SaveService.CreateDefault().LoadProfile();
-            return Enum.TryParse(
-                    profile?.firstLaunchLanguage,
-                    true,
-                    out FirstLaunchNarrativeLanguage language) &&
-                language == FirstLaunchNarrativeLanguage.Persian
-                    ? FirstLaunchNarrativeLanguage.Persian
-                    : FirstLaunchNarrativeLanguage.English;
         }
 
         private void HandleHandoff(NarrativeHandoffResult result)

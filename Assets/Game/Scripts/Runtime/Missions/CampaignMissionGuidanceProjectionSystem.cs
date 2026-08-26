@@ -86,10 +86,13 @@ namespace Game.Runtime
             out CampaignMissionGuidanceProjectionComponent next)
         {
             next = current;
-            bool suppressed = runtime.RunKind != MissionRunKind.FirstClear && runtime.ReplayTutorialEnabled == 0;
+            bool establishBase = runtime.MissionId.Equals(EstablishBaseMissionId);
+            bool requiredRetryGuidance = establishBase && runtime.RunKind == MissionRunKind.Retry &&
+                                         runtime.Guidance == NarrativeGuidanceMode.Full;
+            bool suppressed = runtime.RunKind != MissionRunKind.FirstClear && runtime.ReplayTutorialEnabled == 0 &&
+                              !requiredRetryGuidance;
             if (runtime.Version == 0 || runtime.Outcome != MissionOutcomeKind.None || suppressed)
             { if (current.Active == 0) return false; next = default; next.Version = Next(current.Version); return true; }
-            bool establishBase = runtime.MissionId.Equals(EstablishBaseMissionId);
             CampaignMissionGuidancePromptKind prompt = establishBase
                 ? PromptForEstablishBase(in current, in runtime, in facts)
                 : PromptFor(runtime.Phase);

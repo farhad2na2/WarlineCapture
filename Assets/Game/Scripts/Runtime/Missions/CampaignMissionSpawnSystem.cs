@@ -100,7 +100,11 @@ namespace Game.Runtime
             };
             if (_cameraFocusQuery.CalculateEntityCount() == 1)
             {
-                QueueInitialRtsOverview(em, _cameraFocusQuery.GetSingletonEntity(), openingStartFocus);
+                QueueInitialRtsOverview(
+                    em,
+                    _cameraFocusQuery.GetSingletonEntity(),
+                    openingStartFocus,
+                    rootRuntime.MissionId.Equals(EstablishBaseMissionId));
                 opening.InitialRtsOverviewRequested = 1;
             }
             SetOrAdd(em, root, opening);
@@ -237,12 +241,13 @@ namespace Game.Runtime
         internal static void QueueInitialRtsOverview(
             EntityManager entityManager,
             Entity cameraFocusEntity,
-            float3 friendlyFocus)
+            float3 friendlyFocus,
+            bool useEstablishBaseFraming = false)
         {
             entityManager.SetComponentData(cameraFocusEntity, new RuntimeCameraFocusRequestComponent
             {
                 Requested = 1,
-                UseTacticalRevealZoom = 4,
+                UseTacticalRevealZoom = useEstablishBaseFraming ? (byte)3 : (byte)4,
                 World = friendlyFocus
             });
         }

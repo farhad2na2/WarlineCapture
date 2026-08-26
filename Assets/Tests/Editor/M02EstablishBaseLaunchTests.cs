@@ -20,7 +20,7 @@ using UnityEngine;
 
 public sealed class M02EstablishBaseLaunchTests
 {
-    private const string Marker = "[M02EstablishBaseLaunchValidation] result=Passed tests=14";
+    private const string Marker = "[M02EstablishBaseLaunchValidation] result=Passed tests=15";
     private const string M01MissionPath =
         "Assets/Game/Configs/Missions/Chapter01/MissionDefinition_Ch01_M01_FirstContact.asset";
     private const string M01ScenarioPath =
@@ -42,6 +42,7 @@ public sealed class M02EstablishBaseLaunchTests
             tests.SameVersionCatalogContentChangeReprojects();
             tests.ChapterCatalogDoesNotFallBackToLegacyMission();
             tests.CampaignDeployQueuesCanonicalM02PayloadAndRoute();
+            tests.IncompleteM02RetryKeepsFullTutorialGuidance();
             tests.CampaignDeployBootstrapsForwardPostAndAccepts();
             tests.M02RetryPreservesSeedAndIncrementsAttemptIdentity();
             tests.M02RetryLaunchClearsPriorAttemptState();
@@ -282,12 +283,19 @@ public sealed class M02EstablishBaseLaunchTests
     public void CampaignDeployQueuesCanonicalM02PayloadAndRoute()
     {
         using ProjectionFixture fixture = CreateProjectionFixture(m02Completed: false);
+        Entity settings = fixture.World.EntityManager.CreateEntity(typeof(AssistantSettingsComponent));
+        fixture.World.EntityManager.SetComponentData(settings, new AssistantSettingsComponent
+        {
+            GuidanceLevel = AssistantGuidanceLevel.Minimal
+        });
         CampaignMissionLaunchRequestElement request = QueueM02Deploy(fixture.World, fixture.UiRoot);
         Assert.AreEqual(M02MissionId, request.MissionId.ToString());
         Assert.AreEqual(M02ScenarioId, request.ScenarioId.ToString());
         Assert.AreEqual(M02MapId, request.OperationMapId.ToString());
         Assert.AreEqual(MissionLaunchOriginKind.CampaignOperations, request.LaunchOrigin);
         Assert.AreEqual(MissionRunKind.FirstClear, request.RunKind);
+        Assert.AreEqual(NarrativeGuidanceMode.Full, request.Guidance,
+            "The first-clear M2 tutorial must not inherit a saved minimal-guidance preference.");
         Assert.AreEqual(M02Seed, request.DeterministicSeed);
         StringAssert.StartsWith("campaign-m02-", request.SessionToken.ToString());
         DynamicBuffer<UiShellRouteRequestComponent> routes =
@@ -295,6 +303,21 @@ public sealed class M02EstablishBaseLaunchTests
         Assert.AreEqual(1, routes.Length);
         Assert.AreEqual(UiShellRouteIntent.EnterMatch, routes[0].Intent);
         Assert.AreEqual(UIRoute.Match, routes[0].Route);
+    }
+
+    [Test]
+    public void IncompleteM02RetryKeepsFullTutorialGuidance()
+    {
+        using ProjectionFixture fixture = CreateProjectionFixture(m02Completed: false, pendingResume: true);
+        Entity settings = fixture.World.EntityManager.CreateEntity(typeof(AssistantSettingsComponent));
+        fixture.World.EntityManager.SetComponentData(settings, new AssistantSettingsComponent
+        {
+            GuidanceLevel = AssistantGuidanceLevel.Minimal
+        });
+        CampaignMissionLaunchRequestElement request = QueueM02Deploy(fixture.World, fixture.UiRoot);
+        Assert.AreEqual(MissionRunKind.Retry, request.RunKind);
+        Assert.AreEqual(NarrativeGuidanceMode.Full, request.Guidance,
+            "An incomplete M2 retry must retain the required build tutorial.");
     }
 
     [Test]
@@ -588,7 +611,7 @@ public sealed class M02EstablishBaseLaunchTests
         }
     }
 
-    private static ProjectionFixture CreateProjectionFixture(bool m02Completed)
+    private static ProjectionFixture CreateProjectionFixture(bool m02Completed, bool pendingResume = false)
     {
         World world = new("m02-campaign-projection");
         Assert.IsTrue(ProjectChapter(world.EntityManager, 1, out Entity missionRoot, out string error), error);
@@ -599,6 +622,8 @@ public sealed class M02EstablishBaseLaunchTests
             "m01-complete", 0, true, 3, 60000, M02MissionId));
         if (m02Completed)
             Assert.IsTrue(store.Settle(M02MissionId, "m02-complete", 1, true, 3, 60000, null));
+        else if (pendingResume)
+            Assert.IsTrue(store.SetPendingResume(M02MissionId, true, 2));
         world.EntityManager.GetComponentObject<CampaignMissionProgressStoreReferenceComponent>(missionRoot).Store = store;
         Entity uiRoot = world.EntityManager.CreateEntity(typeof(UiShellRootComponent));
         world.EntityManager.AddBuffer<UiShellRouteRequestComponent>(uiRoot);

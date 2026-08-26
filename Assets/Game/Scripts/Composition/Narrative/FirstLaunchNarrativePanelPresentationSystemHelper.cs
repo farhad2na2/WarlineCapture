@@ -42,14 +42,12 @@ namespace Game.Composition
             var currentReference = ResolvePanelReference(state);
             var nextReference = ResolvePanelReference(FindNextPanelState(state));
             var direct = ResolveDirectPanel(state);
-            Sprite panel = !IsReferenceValid(currentReference)
-                ? residency.KeepCurrentAndPrepareNext(nextReference, transitionToken)
-                : residency.RequestCurrentAndPrepareNext(
-                    currentReference,
-                    nextReference,
-                    transitionToken,
-                    direct);
-            if (panel != null)
+            var panel = IsReferenceValid(currentReference)
+                ? residency.RequestCurrentAndPrepareNext(currentReference, nextReference, transitionToken, direct)
+                : direct
+                    ? residency.RequestCurrentAndPrepareNext(null, nextReference, transitionToken, direct)
+                    : residency.KeepCurrentAndPrepareNext(nextReference, transitionToken);
+            if (panel)
             {
                 ApplyPanel(state, panel);
                 return true;

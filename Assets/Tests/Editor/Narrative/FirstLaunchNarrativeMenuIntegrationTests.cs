@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Reflection;
 using Game.Composition;
 using Game.Configs;
 using Game.Editor;
@@ -51,7 +52,11 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
             Assert.IsFalse(languageView.IsVisible);
 
             languageView.SetVisible(true);
-            languageView.SendMessage("Awake");
+            MethodInfo awake = typeof(FirstLaunchLanguageChoiceView).GetMethod(
+                "Awake",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.NotNull(awake);
+            awake.Invoke(languageView, null);
 
             Assert.IsTrue(languageView.IsVisible,
                 "Awake must not hide a selector already shown by MenuBootstrap initialization.");

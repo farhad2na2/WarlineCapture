@@ -1,5 +1,8 @@
+using System;
 using Game.Components;
 using Game.Configs;
+using Game.Narrative.Contracts;
+using Game.Runtime;
 using Game.UI.Contracts;
 using Game.UI.Shell.Contracts.Ecs;
 using Unity.Collections;
@@ -230,5 +233,37 @@ namespace Game.Composition
             campaignMissionCatalogProjected = false;
             campaignOperationMapGeneration = 0;
         }
+    }
+
+    internal static class CampaignMissionNarrativeCompositionUtility
+    {
+        internal static bool IsPresentationReady(
+            CampaignMissionDebriefCompositionSystemHelper.SequenceStage stage,
+            in UiShellStateComponent shellState) =>
+            stage != CampaignMissionDebriefCompositionSystemHelper.SequenceStage.None &&
+            shellState.CurrentMode == UiShellMode.MatchHud &&
+            shellState.ActiveRoute == UIRoute.Match &&
+            shellState.IsTransitionRunning == 0;
+
+        internal static FirstLaunchNarrativeLanguage ReadLanguage()
+        {
+            PlayerProfileSaveData profile = SaveService.CreateDefault().LoadProfile();
+            return Enum.TryParse(
+                    profile?.firstLaunchLanguage,
+                    true,
+                    out FirstLaunchNarrativeLanguage language) &&
+                language == FirstLaunchNarrativeLanguage.Persian
+                    ? FirstLaunchNarrativeLanguage.Persian
+                    : FirstLaunchNarrativeLanguage.English;
+        }
+
+        internal static void LogStage(
+            string status,
+            CampaignMissionDebriefCompositionSystemHelper.SequenceStage stage,
+            in FixedString64Bytes sequenceId,
+            in FixedString64Bytes session,
+            int attemptOrdinal) => UnityEngine.Debug.Log(
+            $"[CampaignMissionNarrative] status={status} stage={stage} sequence={sequenceId} " +
+            $"session={session} attempt={attemptOrdinal}");
     }
 }

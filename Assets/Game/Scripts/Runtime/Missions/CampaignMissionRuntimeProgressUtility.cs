@@ -1,11 +1,34 @@
 using Game.Components;
 using Game.Missions.Contracts;
+using Unity.Collections;
+using Unity.Entities;
 using Unity.Mathematics;
 
 namespace Game.Runtime
 {
     internal static class CampaignMissionRuntimeProgressUtility
     {
+        internal static bool TryCompleteBrief(
+            EntityManager entityManager,
+            EntityQuery rootQuery,
+            in FixedString64Bytes session,
+            int attemptOrdinal)
+        {
+            if (rootQuery.CalculateEntityCount() != 1)
+                return false;
+            Entity root = rootQuery.GetSingletonEntity();
+            CampaignMissionRuntimeComponent runtime =
+                entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root);
+            if (!runtime.SessionToken.Equals(session) || runtime.AttemptOrdinal != attemptOrdinal ||
+                runtime.Phase != MissionPhaseKind.InteractiveBrief)
+                return false;
+            CampaignMissionAttemptFactsComponent facts =
+                entityManager.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
+            facts.InteractiveBriefCompleted = 1;
+            entityManager.SetComponentData(root, facts);
+            return true;
+        }
+
         internal readonly struct MoveTargetContext
         {
             public MoveTargetContext(
@@ -265,7 +288,8 @@ namespace Game.Runtime
             if (current.Phase == MissionPhaseKind.Preparing &&
                 (current.ReadyReadiness & current.RequiredReadiness) == current.RequiredReadiness)
                 phase = MissionPhaseKind.InteractiveBrief;
-            else if (current.Phase == MissionPhaseKind.InteractiveBrief)
+            else if (current.Phase == MissionPhaseKind.InteractiveBrief &&
+                     facts.InteractiveBriefCompleted != 0)
                 phase = MissionPhaseKind.FindSquad;
             else if (current.Phase >= MissionPhaseKind.FindSquad &&
                      current.Phase <= MissionPhaseKind.SecureCorridor &&

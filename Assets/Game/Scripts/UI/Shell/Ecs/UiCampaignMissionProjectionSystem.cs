@@ -304,7 +304,12 @@ namespace Game.UI.Shell.Ecs
             MissionRunKind runKind = operations.PendingResume != 0
                 ? MissionRunKind.Retry
                 : operations.FirstClearCompleted != 0 ? MissionRunKind.Replay : MissionRunKind.FirstClear;
-            NarrativeGuidanceMode guidance = ResolveGuidance(entityManager);
+            bool requiresTutorialGuidance =
+                definition.MissionId.Equals(new FixedString64Bytes(M02MissionId)) &&
+                (operations.FirstClearCompleted == 0 || briefing.ReplayTutorialEnabled != 0);
+            NarrativeGuidanceMode guidance = requiresTutorialGuidance
+                ? NarrativeGuidanceMode.Full
+                : ResolveGuidance(entityManager);
             string sessionPrefix = definition.MissionId.Equals(new FixedString64Bytes(M02MissionId))
                 ? "campaign-m02-"
                 : "campaign-m01-";

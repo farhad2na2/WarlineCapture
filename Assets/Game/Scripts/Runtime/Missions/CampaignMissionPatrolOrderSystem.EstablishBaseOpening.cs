@@ -56,7 +56,7 @@ namespace Game.Runtime
                 {
                     Requested = 1,
                     Smooth = 1,
-                    UseTacticalRevealZoom = 4,
+                    UseTacticalRevealZoom = 3,
                     SmoothTimeSeconds = EstablishBaseOpeningSmoothTimeSeconds,
                     World = opening.HostileFocus
                 });

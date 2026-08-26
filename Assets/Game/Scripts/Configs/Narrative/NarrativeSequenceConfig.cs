@@ -97,6 +97,9 @@ namespace Game.Configs
         public Sprite Panel20x9 => panel20x9;
         public AssetReferenceSprite Panel16x9Reference => panel16x9Reference;
         public AssetReferenceSprite Panel20x9Reference => panel20x9Reference;
+        public bool HasPanelBinding => panel16x9 != null || panel20x9 != null ||
+            panel16x9Reference != null && !string.IsNullOrEmpty(panel16x9Reference.AssetGUID) ||
+            panel20x9Reference != null && !string.IsNullOrEmpty(panel20x9Reference.AssetGUID);
         public IReadOnlyList<NarrativeDialogueLineRecord> Lines => lines;
         public string ContinueStateId => continueStateId;
         public string SkipStateId => skipStateId;

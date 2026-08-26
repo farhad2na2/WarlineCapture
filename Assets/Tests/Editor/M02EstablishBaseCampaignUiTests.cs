@@ -40,6 +40,7 @@ public sealed class M02EstablishBaseCampaignUiTests
             M02EstablishBaseCampaignUiTests tests = new();
             tests.CanonicalBriefingProjectsEveryM02UiField();
             tests.LockedM02SelectionFailsClosed();
+            tests.LegacyM01CompletionUnlocksAndDefaultsToM02();
             tests.UnlockedM02SelectionProjectsTheExactCardAndBriefing();
             tests.CampaignPrefabExposesTwoTypedMissionNodes();
             tests.CampaignCardShowsM02WithoutM01CopyOrRawKeys();
@@ -47,7 +48,7 @@ public sealed class M02EstablishBaseCampaignUiTests
             tests.ResolverOverridesM02CopyWithoutLeakingKeys();
             tests.ViewsAndBinderKeepSingleEventDrivenUiOwnership();
             tests.PlayableReviewCaptureSelectsExactM02Mission();
-            Debug.Log("[M02EstablishBaseCampaignUiValidation] result=Passed tests=9");
+            Debug.Log("[M02EstablishBaseCampaignUiValidation] result=Passed tests=10");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -165,6 +166,25 @@ public sealed class M02EstablishBaseCampaignUiTests
         Assert.That(briefing.MissionId.ToString(), Is.EqualTo(M02));
         Assert.That(briefing.OperationMapId.ToString(), Is.EqualTo(M02Map));
         Assert.That(briefing.Rewards.Length, Is.EqualTo(3));
+    }
+
+    [Test]
+    public void LegacyM01CompletionUnlocksAndDefaultsToM02()
+    {
+        using ProjectionFixture fixture = CreateFixture(unlockM02: false);
+        CampaignMissionProgressStore store = fixture.World.EntityManager
+            .GetComponentObject<CampaignMissionProgressStoreReferenceComponent>(fixture.Root).Store;
+        Assert.That(store.Settle(M01, "legacy-m01-complete", 0, true, 3, 60000, null), Is.True);
+
+        UpdateProjection(fixture.World);
+
+        UiCampaignOperationsComponent card =
+            fixture.World.EntityManager.GetComponentData<UiCampaignOperationsComponent>(fixture.UiRoot);
+        CampaignMissionProgressSaveData m02 = store.ReadAll().Single(entry => entry.missionId == M02);
+        Assert.That(m02.available, Is.True);
+        Assert.That(card.SelectedMissionId.ToString(), Is.EqualTo(M02));
+        Assert.That(card.PrimaryAction, Is.EqualTo(UiCampaignMissionPrimaryActionKind.Start));
+        Assert.That(ReadBriefing(fixture.World.EntityManager).MissionId.ToString(), Is.EqualTo(M02));
     }
 
     [Test]

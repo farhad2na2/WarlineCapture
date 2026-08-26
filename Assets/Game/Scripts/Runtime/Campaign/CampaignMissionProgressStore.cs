@@ -38,6 +38,27 @@ namespace Game.Runtime
             return true;
         }
 
+        public bool EnsureAvailableAfterFirstClear(string completedMissionId, string nextMissionId)
+        {
+            RequireMissionId(completedMissionId);
+            RequireMissionId(nextMissionId);
+            if (string.Equals(completedMissionId, nextMissionId, StringComparison.Ordinal))
+                throw new ArgumentException("Completed and next mission ids must differ.", nameof(nextMissionId));
+
+            PlayerProfileSaveData profile = _saveService.LoadProfile();
+            List<CampaignMissionProgressSaveData> entries = ToList(profile.campaignMissionProgress);
+            CampaignMissionProgressSaveData completed = Find(entries, completedMissionId);
+            if (completed == null || !completed.firstClearCompleted)
+                return false;
+
+            CampaignMissionProgressSaveData next = FindOrAdd(entries, nextMissionId);
+            if (next.available)
+                return false;
+            next.available = true;
+            Save(profile, entries);
+            return true;
+        }
+
         public bool SetPendingResume(string missionId, bool pending, int attemptOrdinal)
         {
             RequireMissionId(missionId);
@@ -167,11 +188,22 @@ namespace Game.Runtime
             List<CampaignMissionProgressSaveData> entries,
             string missionId)
         {
-            for (int index = 0; index < entries.Count; index++)
-                if (entries[index].missionId == missionId) return entries[index];
+            CampaignMissionProgressSaveData existing = Find(entries, missionId);
+            if (existing != null)
+                return existing;
             CampaignMissionProgressSaveData entry = new() { missionId = missionId };
             entries.Add(entry);
             return entry;
+        }
+
+        private static CampaignMissionProgressSaveData Find(
+            List<CampaignMissionProgressSaveData> entries,
+            string missionId)
+        {
+            for (int index = 0; index < entries.Count; index++)
+                if (entries[index].missionId == missionId)
+                    return entries[index];
+            return null;
         }
 
         private static CampaignMissionProgressSaveData[] Normalize(CampaignMissionProgressSaveData[] source)

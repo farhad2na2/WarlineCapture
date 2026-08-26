@@ -28,8 +28,15 @@ The checked macOS wrapper ran `MobileVisualQualityPlayModeCapture.CaptureFromEnv
 - `/private/tmp/warline-m02eb-029-hud-result-regression.log`: HUD/result `4/4`, narrative `15/15`, settlement `13/13`, Campaign UI `9/9`, M01 HUD/result `11/11` with three captures, source growth `17/17`, aggregate `6/6`.
 - `/private/tmp/warline-m02eb-029-lifecycle-regression-r2.log`: lifecycle `15/15`, launch `14/14`, settlement `13/13`, M01 consolidated contracts `23/23`, source growth `17/17`, aggregate `5/5`.
 - `/private/tmp/warline-m02eb-029-guidance-regression.log`: guidance `30/30`, placement `8/8`, construction transaction `6/6`, dual-resource construction `3/3`, M01 guidance `14/14`, build catalog `8/8`, production `8/8`, wave `9/9`, operation map `10/10`, command gateway `7/7`, command system `16/16`, Match HUD `21/21`, source growth `17/17`, aggregate `14/14`.
+- `/private/tmp/warline-m01-progress-m02-unlock.log`: progress compatibility `16/16`; a legacy M01 first clear unlocks M02 exactly once.
+- `/private/tmp/warline-m02-campaign-ui-regression.log`: Campaign UI `10/10`, M01 Campaign and briefing compatibility, source growth `17/17`, aggregate `4/4`; the selector defaults to the first available incomplete mission.
+- `/private/tmp/warline-m02-panel-free-narrative.log`: narrative `17/17`; intentionally panel-free provisional M02 dialogue starts without a comic, while authored comic dialogue still requires its configured panel.
+- `/private/tmp/warline-m02-lifecycle-regression-rerun.log`: lifecycle `15/15`, launch/result/M01 compatibility, source growth `17/17`, aggregate `5/5`.
+- `/private/tmp/warline-m02-hud-result-regression.log`: HUD/result `4/4`, narrative `17/17`, Campaign UI `10/10`, source growth `17/17`, aggregate `6/6`.
 - `/private/tmp/warline-m02eb-029-source-growth-final.log`: final post-documentation source-growth and architecture metadata check `17/17`.
 - Final accepted runs contain zero compiler errors and no failed validation marker.
+
+The first owner route attempt exposed two additional launch blockers after the original review-readiness capture: an older M01-complete profile could remain on M01, and the provisional M02 briefing failed because its intentionally absent comic was treated as required. Both paths now fail closed only for real missing authored media, retain the existing Campaign/narrative owners, and pass the focused and aggregate gates above. Visible owner review remains open.
 
 ## Owner Review Boundary
 

@@ -7,9 +7,9 @@ using UnityEngine;
 
 public sealed class M01FirstContactProgressStoreTests
 {
-    private const string PassMarker = "[M01FirstContactProgressStoreValidation] result=Passed tests=15";
+    private const string PassMarker = "[M01FirstContactProgressStoreValidation] result=Passed tests=16";
     private const string M01 = "saga.ch01.m01.first_contact";
-    private const string M02 = "saga.ch01.m02.next";
+    private const string M02 = "saga.ch01.m02.establish_base";
 
     public static void RunFocusedValidation()
     {
@@ -20,6 +20,7 @@ public sealed class M01FirstContactProgressStoreTests
             tests.OlderProfileMigratesAdditively();
             tests.EntriesNormalizeAndSortDeterministically();
             tests.EnsureAvailableIsIdempotent();
+            tests.LegacyM01FirstClearUnlocksM02Once();
             tests.FirstClearSettlementPersists();
             tests.DuplicateSettlementTokenIsIgnored();
             tests.ReplaySettlementCountsOnce();
@@ -70,6 +71,20 @@ public sealed class M01FirstContactProgressStoreTests
         Assert.IsTrue(context.Store.EnsureAvailable(M01));
         Assert.IsFalse(context.Store.EnsureAvailable(M01));
         Assert.IsTrue(context.Store.ReadAll()[0].available);
+    });
+
+    [Test] public void LegacyM01FirstClearUnlocksM02Once() => WithContext(context =>
+    {
+        Assert.IsTrue(context.Store.Settle(M01, "legacy-first-clear", 0, true, 3, 100000, null));
+        Assert.That(context.Store.ReadAll(), Has.Length.EqualTo(1));
+        Assert.IsTrue(context.Store.EnsureAvailableAfterFirstClear(M01, M02));
+        Assert.IsFalse(context.Store.EnsureAvailableAfterFirstClear(M01, M02));
+
+        CampaignMissionProgressSaveData[] entries =
+            new CampaignMissionProgressStore(context.Service).ReadAll();
+        Assert.That(entries, Has.Length.EqualTo(2));
+        Assert.That(entries[1].missionId, Is.EqualTo(M02));
+        Assert.IsTrue(entries[1].available);
     });
 
     [Test] public void FirstClearSettlementPersists() => WithContext(context =>

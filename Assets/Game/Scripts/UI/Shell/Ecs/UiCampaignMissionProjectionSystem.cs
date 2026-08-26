@@ -18,6 +18,7 @@ namespace Game.UI.Shell.Ecs
         private EntityQuery _uiRootQuery;
         private EntityQuery _briefingQuery;
         private EntityQuery _campaignRootQuery;
+        private byte _progressionCompatibilityChecked;
 
         public void OnCreate(ref SystemState state)
         {
@@ -56,6 +57,14 @@ namespace Game.UI.Shell.Ecs
             if (store == null)
                 return;
 
+            bool progressionCompatibilityApplied = false;
+            if (_progressionCompatibilityChecked == 0)
+            {
+                progressionCompatibilityApplied =
+                    store.EnsureAvailableAfterFirstClear(M01MissionId, M02MissionId);
+                _progressionCompatibilityChecked = 1;
+            }
+
             UiCampaignOperationsComponent current =
                 entityManager.GetComponentData<UiCampaignOperationsComponent>(uiRoot);
             UiMissionBriefingComponent currentBriefing =
@@ -74,8 +83,8 @@ namespace Game.UI.Shell.Ecs
             uint settlementSourceVersion = ReadLatestSettlementSourceVersion(entityManager, campaignRoot);
             ref CampaignMissionCatalogBlob catalogBlob = ref catalog.Blob.Value;
             int definitionIndex = FindDefinitionIndex(ref catalogBlob, current.SelectedMissionId);
-            if (definitionIndex < 0)
-                definitionIndex = 0;
+            if (definitionIndex < 0 || progressionCompatibilityApplied)
+                definitionIndex = FindDefaultDefinitionIndex(ref catalogBlob, progress);
 
             bool actionRequested = requests.Length > 0;
             for (int index = 0; index < requests.Length; index++)

@@ -39,9 +39,9 @@ namespace Game.Composition
         {
             activeState = state;
             activeToken = transitionToken;
-            AssetReferenceSprite currentReference = ResolvePanelReference(state);
-            AssetReferenceSprite nextReference = ResolvePanelReference(FindNextPanelState(state));
-            Sprite direct = ResolveDirectPanel(state);
+            var currentReference = ResolvePanelReference(state);
+            var nextReference = ResolvePanelReference(FindNextPanelState(state));
+            var direct = ResolveDirectPanel(state);
             Sprite panel = !IsReferenceValid(currentReference)
                 ? residency.KeepCurrentAndPrepareNext(nextReference, transitionToken)
                 : residency.RequestCurrentAndPrepareNext(
@@ -133,8 +133,8 @@ namespace Game.Composition
         private static bool IsReferenceValid(AssetReferenceSprite reference) =>
             reference != null && reference.RuntimeKeyIsValid();
 
-        private static bool RequiresPanel(NarrativeStateRecord state) =>
-            state != null && (state.Kind == NarrativeStateKind.PanelDialogue ||
-                              state.Kind == NarrativeStateKind.InteractiveIdentity);
+        internal static bool RequiresPanel(NarrativeStateRecord state) =>
+            state?.Kind == NarrativeStateKind.InteractiveIdentity ||
+            state?.Kind == NarrativeStateKind.PanelDialogue && state.HasPanelBinding;
     }
 }

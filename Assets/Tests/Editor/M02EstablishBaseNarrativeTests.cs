@@ -16,7 +16,7 @@ using UnityEngine;
 public static class M02EstablishBaseNarrativeTests
 {
     private const string PassMarker =
-        "[M02EstablishBaseNarrativeValidation] result=Passed tests=15";
+        "[M02EstablishBaseNarrativeValidation] result=Passed tests=17";
 
     [MenuItem("Game/Validation/Run M02 Establish Base Narrative Focused")]
     public static void RunFocusedValidation()
@@ -30,6 +30,8 @@ public static class M02EstablishBaseNarrativeTests
             CommsRecoverPreAttackMunicipalAccessList();
             DebriefClosesPostDaliaAndM03WarningSectorBeats();
             ProvisionalSequencesContainFallbackTextWithoutFinalMedia();
+            PanelFreeProvisionalDialogueStartsWithoutAComicBinding();
+            AuthoredComicDialogueStillRequiresItsPanel();
             SkipReducedMotionAndCaptionsAreSupported();
             M02NarrativeIdentityDoesNotBorrowM01OrFirstLaunchContent();
             MenuSceneCarriesAllM02NarrativeBindings();
@@ -157,6 +159,38 @@ public static class M02EstablishBaseNarrativeTests
                 Assert.IsNull(line.NeutralVoiceClip);
             }
         }
+    }
+
+    [Test]
+    public static void PanelFreeProvisionalDialogueStartsWithoutAComicBinding()
+    {
+        EnsureBuilt();
+        foreach (NarrativeSequenceConfig sequence in Sequences())
+        {
+            NarrativeStateRecord dialogue = sequence.States[0];
+            Assert.AreEqual(NarrativeStateKind.PanelDialogue, dialogue.Kind);
+            Assert.IsFalse(FirstLaunchNarrativePanelPresentationSystemHelper.RequiresPanel(dialogue));
+
+            FirstLaunchNarrativePanelPresentationSystemHelper presenter = new();
+            presenter.Initialize(
+                null,
+                sequence.States.ToDictionary(state => state.StateId, StringComparer.Ordinal));
+            Assert.IsTrue(
+                presenter.Present(dialogue, 1),
+                $"Panel-free provisional dialogue stalled for {dialogue.StateId}.");
+            presenter.Clear();
+        }
+    }
+
+    [Test]
+    public static void AuthoredComicDialogueStillRequiresItsPanel()
+    {
+        NarrativeSequenceConfig firstLaunch = AssetDatabase.LoadAssetAtPath<NarrativeSequenceConfig>(
+            "Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchSequence.asset");
+        Assert.IsNotNull(firstLaunch);
+        NarrativeStateRecord authoredPanel = firstLaunch.States.First(state => state.HasPanelBinding);
+        Assert.AreEqual(NarrativeStateKind.PanelDialogue, authoredPanel.Kind);
+        Assert.IsTrue(FirstLaunchNarrativePanelPresentationSystemHelper.RequiresPanel(authoredPanel));
     }
 
     [Test]

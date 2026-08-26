@@ -20,6 +20,26 @@ namespace Game.UI.Shell.Ecs
             return -1;
         }
 
+        private static int FindDefaultDefinitionIndex(
+            ref CampaignMissionCatalogBlob catalog,
+            CampaignMissionProgressSaveData[] progress)
+        {
+            int firstAvailableIndex = -1;
+            for (int index = 0; index < catalog.Missions.Length; index++)
+            {
+                ref CampaignMissionDefinitionBlob definition = ref catalog.Missions[index];
+                if (!IsDefinitionAvailable(ref definition, progress))
+                    continue;
+                if (firstAvailableIndex < 0)
+                    firstAvailableIndex = index;
+                CampaignMissionProgressSaveData entry = Find(progress, definition.MissionId);
+                if (entry == null || !entry.firstClearCompleted)
+                    return index;
+            }
+
+            return firstAvailableIndex >= 0 ? firstAvailableIndex : 0;
+        }
+
         private static UiCampaignOperationsComponent ProjectDefinition(
             uint catalogSourceVersion,
             uint settlementSourceVersion,

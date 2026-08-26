@@ -78,15 +78,19 @@ namespace Game.Runtime
                 out float3 playerFocus,
                 out float3 hostileFocus);
             prefabs.Dispose();
-            // The live RTS frame begins on the road-side squad. The following establishing
-            // glide advances into the street while keeping both sides and the civic hall
-            // readable before it continues to the patrol.
-            float3 establishingFocus = math.lerp(playerFocus, hostileFocus, 0.40f);
+            ResolveOpeningPresentationFocus(
+                rootRuntime.MissionId,
+                ref metadata.Blob.Value,
+                playerFocus,
+                hostileFocus,
+                out float3 openingStartFocus,
+                out float3 openingEndFocus,
+                out float3 establishingFocus);
             CampaignMissionOpeningPresentationComponent opening = new()
             {
                 SessionToken = rootRuntime.SessionToken,
-                FriendlyFocus = playerFocus,
-                HostileFocus = hostileFocus,
+                FriendlyFocus = openingStartFocus,
+                HostileFocus = openingEndFocus,
                 EstablishingFocus = establishingFocus,
                 ElapsedMilliseconds = 0,
                 // The HUD/camera composition initializes after mission entities. Stage zero
@@ -96,7 +100,7 @@ namespace Game.Runtime
             };
             if (_cameraFocusQuery.CalculateEntityCount() == 1)
             {
-                QueueInitialRtsOverview(em, _cameraFocusQuery.GetSingletonEntity(), playerFocus);
+                QueueInitialRtsOverview(em, _cameraFocusQuery.GetSingletonEntity(), openingStartFocus);
                 opening.InitialRtsOverviewRequested = 1;
             }
             SetOrAdd(em, root, opening);

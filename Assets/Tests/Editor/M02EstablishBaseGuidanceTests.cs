@@ -22,8 +22,8 @@ using UnityEngine.UI;
 public sealed class M02EstablishBaseGuidanceTests
 {
     private const string FocusedMarker =
-        "[M02EstablishBaseGuidanceValidation] result=Passed tests=30";
-    private static readonly float3 CanonicalBuildAnchor = new(1030.5f, 0.009179778f, 399.5f);
+        "[M02EstablishBaseGuidanceValidation] result=Passed tests=33";
+    private static readonly float3 CanonicalBuildAnchor = new(1040.5f, 0.009179778f, 394.5f);
 
     [MenuItem("Game/Validation/Run M02 Establish Base Guidance Focused")]
     public static void RunFocusedValidation()
@@ -61,6 +61,9 @@ public sealed class M02EstablishBaseGuidanceTests
             tests.M02GuidanceCannotBorrowM01NarrationEvents();
             tests.M01TutorialProjectionRemainsUnchanged();
             tests.UiSurfaceGuidanceUsesTypedControlsWithoutScreenCoordinates();
+            tests.M02OpeningUsesAHorizontalBaseSweep();
+            tests.M02OpeningCannotEmitM01CivilianPanicAudio();
+            tests.M02OpeningCompletesAfterTheSingleSweep();
             Debug.Log(FocusedMarker);
             ValidationExit.Passed();
         }
@@ -70,6 +73,75 @@ public sealed class M02EstablishBaseGuidanceTests
             Debug.Log("[M02EstablishBaseGuidanceValidation] result=Failed");
             ValidationExit.Failed();
         }
+    }
+
+    [Test]
+    public void M02OpeningUsesAHorizontalBaseSweep()
+    {
+        using BlobBuilder builder = new(Allocator.Temp);
+        ref OperationMapBlob map = ref builder.ConstructRoot<OperationMapBlob>();
+        BlobBuilderArray<OperationMapAnchorBlob> anchors = builder.Allocate(ref map.Anchors, 2);
+        anchors[0] = new OperationMapAnchorBlob
+        {
+            Id = new FixedString64Bytes("anchor.ch01.m02.resource_focus"),
+            Position = new float3(830.5f, 0f, 375.5f)
+        };
+        anchors[1] = new OperationMapAnchorBlob
+        {
+            Id = new FixedString64Bytes("anchor.ch01.m02.build_lot"),
+            Position = CanonicalBuildAnchor
+        };
+        using BlobAssetReference<OperationMapBlob> blob =
+            builder.CreateBlobAssetReference<OperationMapBlob>(Allocator.Temp);
+
+        CampaignMissionSpawnSystem.ResolveOpeningPresentationFocus(
+            new FixedString64Bytes("saga.ch01.m02.establish_base"),
+            ref blob.Value,
+            new float3(1f),
+            new float3(2f),
+            out float3 start,
+            out float3 end,
+            out float3 midpoint);
+
+        Assert.AreEqual(anchors[0].Position, start);
+        Assert.AreEqual(CanonicalBuildAnchor, end);
+        Assert.AreEqual(math.lerp(start, end, 0.5f), midpoint);
+        Assert.Greater(end.x - start.x, 150f);
+        Assert.Less(math.abs(end.z - start.z), 40f);
+    }
+
+    [Test]
+    public void M02OpeningCannotEmitM01CivilianPanicAudio()
+    {
+        FixedString64Bytes m01 = new("saga.ch01.m01.first_contact");
+        FixedString64Bytes m02 = new("saga.ch01.m02.establish_base");
+        Assert.IsTrue(CampaignMissionPatrolOrderSystem.ShouldEmitOpeningPanicAudio(m01));
+        Assert.IsFalse(CampaignMissionPatrolOrderSystem.ShouldEmitOpeningPanicAudio(m02));
+        Assert.IsFalse(CampaignMissionPatrolOrderSystem.ShouldUseEstablishBaseOpening(m01));
+        Assert.IsTrue(CampaignMissionPatrolOrderSystem.ShouldUseEstablishBaseOpening(m02));
+    }
+
+    [Test]
+    public void M02OpeningCompletesAfterTheSingleSweep()
+    {
+        Assert.AreEqual(1, CampaignMissionPatrolOrderSystem.EvaluateEstablishBaseOpeningStage(
+            0,
+            CampaignMissionPatrolOrderSystem.EstablishBaseOpeningHoldMilliseconds,
+            0,
+            out byte queueSweep));
+        Assert.AreEqual(1, queueSweep);
+        Assert.AreEqual(1, CampaignMissionPatrolOrderSystem.EvaluateEstablishBaseOpeningStage(
+            1,
+            CampaignMissionPatrolOrderSystem.EstablishBaseOpeningCompleteMilliseconds,
+            1,
+            out queueSweep));
+        Assert.AreEqual(0, queueSweep);
+        Assert.AreEqual(6, CampaignMissionPatrolOrderSystem.EvaluateEstablishBaseOpeningStage(
+            1,
+            CampaignMissionPatrolOrderSystem.EstablishBaseOpeningCompleteMilliseconds,
+            0,
+            out queueSweep));
+        Assert.AreEqual(0, queueSweep);
     }
 
     [MenuItem("Game/Validation/Run M02 Establish Base Guidance Regressions")]

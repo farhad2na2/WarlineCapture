@@ -284,8 +284,7 @@ namespace Game.UI.Shell.Ecs
         public static bool TryReadMissionBriefing(out UiMissionBriefingModel briefing)
         {
             briefing = default;
-            if (!TryGetBoundary(out EntityManager entityManager, out Entity boundary) ||
-                !entityManager.HasComponent<UiMissionBriefingComponent>(boundary))
+            if (!TryGetMissionBriefingBoundary(out EntityManager entityManager, out Entity boundary))
                 return false;
             UiMissionBriefingComponent component =
                 entityManager.GetComponentData<UiMissionBriefingComponent>(boundary);

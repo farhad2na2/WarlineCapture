@@ -6,6 +6,7 @@ using System.Linq;
 using Game.Components;
 using Game.Composition;
 using Game.Configs;
+using Game.Editor;
 using Game.Runtime;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
@@ -45,7 +46,8 @@ public sealed class M02EstablishBaseCampaignUiTests
             tests.MissionBriefingShowsObjectivesResourcesRestrictionsMapAndThreeRewards();
             tests.ResolverOverridesM02CopyWithoutLeakingKeys();
             tests.ViewsAndBinderKeepSingleEventDrivenUiOwnership();
-            Debug.Log("[M02EstablishBaseCampaignUiValidation] result=Passed tests=8");
+            tests.PlayableReviewCaptureSelectsExactM02Mission();
+            Debug.Log("[M02EstablishBaseCampaignUiValidation] result=Passed tests=9");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -54,6 +56,16 @@ public sealed class M02EstablishBaseCampaignUiTests
             Debug.LogError("[M02EstablishBaseCampaignUiValidation] result=Failed");
             ValidationExit.Failed();
         }
+    }
+
+    [Test]
+    public void PlayableReviewCaptureSelectsExactM02Mission()
+    {
+        Assert.That(MobileVisualQualityPlayModeCapture.ResolveCaptureMissionId("m02"), Is.EqualTo(M02));
+        Assert.That(MobileVisualQualityPlayModeCapture.ResolveCaptureMissionId(M02), Is.EqualTo(M02));
+        Assert.That(MobileVisualQualityPlayModeCapture.ResolveCaptureMissionId("m01"), Is.EqualTo(M01));
+        Assert.Throws<InvalidOperationException>(() =>
+            MobileVisualQualityPlayModeCapture.ResolveCaptureMissionId("mission-two"));
     }
 
     [MenuItem("Game/Validation/Run M02 Establish Base Campaign UI Regressions")]
@@ -146,8 +158,7 @@ public sealed class M02EstablishBaseCampaignUiTests
 
         UiCampaignOperationsComponent card =
             fixture.World.EntityManager.GetComponentData<UiCampaignOperationsComponent>(fixture.UiRoot);
-        UiMissionBriefingComponent briefing =
-            fixture.World.EntityManager.GetComponentData<UiMissionBriefingComponent>(fixture.UiRoot);
+        UiMissionBriefingComponent briefing = ReadBriefing(fixture.World.EntityManager);
         Assert.That(card.SelectedMissionId.ToString(), Is.EqualTo(M02));
         Assert.That(card.DisplayName.ToString(), Is.EqualTo("M02 - ESTABLISH THE BASE"));
         Assert.That(card.PrimaryAction, Is.EqualTo(UiCampaignMissionPrimaryActionKind.Start));
@@ -371,6 +382,14 @@ public sealed class M02EstablishBaseCampaignUiTests
         state.Dependency.Complete();
         world.EntityManager.CompleteAllTrackedJobs();
         world.DestroySystem(handle);
+    }
+
+    private static UiMissionBriefingComponent ReadBriefing(EntityManager manager)
+    {
+        using EntityQuery query = manager.CreateEntityQuery(
+            ComponentType.ReadOnly<UiMissionBriefingComponent>());
+        Assert.That(query.CalculateEntityCount(), Is.EqualTo(1));
+        return query.GetSingleton<UiMissionBriefingComponent>();
     }
 
     private static string AllText(GameObject root) => string.Join(

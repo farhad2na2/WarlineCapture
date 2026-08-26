@@ -1,7 +1,7 @@
 # M02 Establish The Base Implementation Tracker
 
 Date: 2026-08-25
-Status: Active; M02EB-028 accepted and M02EB-029 dependency-ready
+Status: Active; M02EB-029 implementation ready for project-owner Editor review
 Progress: 28/34 accepted items (82.4%)
 Parent design: `Design/SagaChapters/Saga_Chapter01_First_Response.md` (`M02 Detailed Spec`)
 Technical architecture: `Design/Architecture/m02_establish_base_technical_architecture.md`
@@ -232,6 +232,8 @@ Every item records an exact path allowlist before editing. Unexpected user chang
   **Deliverable:** graphics-enabled full-screen M02 run from Campaign briefing through build, produce, defend, result, and debrief with provisional storyboard presentation.
   **Acceptance:** automated gates pass; the visible map, camera, controls, tutorial, pacing, combat, and transitions are reviewable; project owner accepts timing or supplies findings.
   **Stop rule:** do not generate final comic panels or voices before this item is accepted.
+  **Review readiness:** implementation and automated gates pass. The exact M02 route is graphics-enabled and ready for project-owner Editor playthrough; this checkbox remains open until that visible timing review is accepted.
+  **Evidence:** `[MobileVisualQualityPlayModeCapture] result=Passed profile=current mission=saga.ch01.m02.establish_base` at Metal 1920x1080; M02 HUD/result aggregate `6/6`, lifecycle aggregate `5/5`, guidance aggregate `14/14`, narrative `15/15`, Campaign UI `9/9`, M01 consolidated contracts `23/23`, and source growth `17/17`, all with zero compiler errors. The first live capture found the real HUD archetype overflow caused by the 5 KB mission briefing payload; one dedicated ECS read-model singleton now owns that payload and the repeated capture passes. Review images, diagnostics, exact logs, and the remaining owner boundary are recorded in `Design/AgentReports/M02EstablishBase/M02EB-029/m02eb_029_playable_review_readiness.md`.
 
 - [ ] **M02EB-030 - Author and approve final comic panel set**
   **Depends on:** M02EB-029.
@@ -303,16 +305,18 @@ The first user review occurs at M02EB-029:
 | 2026-08-25 | M02EB-026 exposed the exact canonical rifle only after Barracks completion, bound typed assistance to the real Soldiers/item/RECRUIT controls, acknowledged only accepted production transactions, preserved distinct English/Persian Barracks and rifle prompts, and passed all nine functional/architecture suites. | Accepted |
 | 2026-08-25 | M02EB-027 made ARIA remain hidden until the real wave warning, preempt stale production guidance at contact, resolve the canonical defense-boundary objective without a world-origin fallback, clear after authoritative defeat, and stay SHOW ME-only so existing ECS AI/combat and player tactical decisions remain sole owners; all 14 suites pass. | Accepted |
 | 2026-08-26 | M02EB-028 projected exact first-clear/replay result truth, installed deterministic provisional M02 narrative bindings, presented the exact first-clear debrief through the existing narrative and shell owners, preserved settlement-owned M03 unlock, and passed result, lifecycle, M01, and source-growth regressions. | Accepted |
+| 2026-08-26 | M02EB-029 implementation reached review readiness: real M02 graphics capture found and closed a live UI archetype overflow, Metal evidence is nonblank and grounded, and result/lifecycle/guidance aggregates pass. Final acceptance remains with the project owner's full Editor playthrough. | Ready for owner review |
 
 ## 8. Current Validation And Blockers
 
 | Item | Result | Evidence |
 |---|---|---|
-| M02EB-028 result/debrief/progression | Passed | Checked M02 HUD/result 4/4, narrative 9/9, settlement 13/13, Campaign UI 8/8, lifecycle 14/14, and launch 14/14; first-clear presents the exact debrief and M03 reveal while replay follows the established return path |
-| Shared M01 result/lifecycle contracts | Passed | Checked M01 HUD/result 11/11 with three captures and `[M01FirstContactConsolidatedContractValidation] result=Passed suites=23`; M01 launch, settlement, guidance, narrative, and result behavior remain unchanged |
-| Architecture/source growth and compilation | Passed | Checked `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; zero compiler errors, exact approved debrief-helper ceiling, and no duplicate route, narrative, persistence, or mission owner |
-| Checked wrapper workflow | Passed | `Tools/CI/invoke_unity_macos.sh` drove the final six-suite result aggregate and five-suite lifecycle aggregate in `/private/tmp/warline-m02eb-028-regression2.log` and `/private/tmp/warline-m02eb-028-lifecycle-regression.log` |
+| M02EB-029 playable implementation | Ready for owner review | Exact M02 Campaign selection/deploy, provisional brief/comms/debrief, typed tutorial path, result, and return route are integrated; owner review remains required before acceptance |
+| Graphics-enabled M02 route | Passed | Checked Metal 1920x1080 capture passed with nonblank overview/detail images, authored fog/lights/`Military_Demo` volume, and seven grounded mission units; evidence is under `Design/AgentReports/M02EstablishBase/M02EB-029/` |
+| Shared M02/M01 functional contracts | Passed | HUD/result aggregate 6/6, lifecycle aggregate 5/5, guidance aggregate 14/14, M01 consolidated contracts 23/23, and M01 HUD/result 11/11 with three captures |
+| Architecture/source growth and compilation | Passed | Checked `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; zero compiler errors, exact approved narrative-helper ceiling, dedicated mission-briefing singleton, and no duplicate route, UI, narrative, persistence, or mission owner |
+| Checked wrapper workflow | Passed | `Tools/CI/invoke_unity_macos.sh` drove the final graphics capture and regression logs recorded in `m02eb_029_playable_review_readiness.md` |
 | Building authored-content aggregate | Pre-existing debt, no task regression | `BuildingRuntimeValidationTests` remains 9/12 on the existing authored `Tent_Regular` fixture expectations; all affected canonical bootstrap/delete boundary tests pass |
 | Aggregate ECS/Burst debt probe | Pre-existing debt, no task regression | Current snapshot calls remain confined to unrelated established systems; M02EB-022 adds no managed hot-loop snapshot path |
 
-No blocker prevents M02EB-029. Android/Samsung certification remains owner-deferred and is not counted as passed. Final bilingual voice, comic, and polished copy production remains gated by M02EB-029 through M02EB-032; M02EB-028 installs only deterministic provisional fallback text and intentionally prevents M02 sequences from borrowing M01 or first-launch media. The pre-existing aggregate ECS/Burst and authored Tent fixture debts remain closeout concerns and are not widened by M02EB-028.
+No implementation blocker prevents the M02EB-029 owner review. Project-owner acceptance of the full visible Editor playthrough is now the only open M02EB-029 gate, so progress remains 28/34 accepted items (82.4%). Android/Samsung certification remains owner-deferred and is not counted as passed. Final bilingual voice, comic, and polished copy production remains gated by M02EB-029 through M02EB-032; the current slice uses deterministic provisional fallback text and intentionally prevents M02 sequences from borrowing M01 or first-launch media. The pre-existing aggregate ECS/Burst and authored Tent fixture debts remain closeout concerns and are not widened by M02EB-029.

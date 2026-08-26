@@ -33,6 +33,7 @@ namespace Game.Editor
         private const string DefaultArtifactDirectory = "Design/AgentReports/Captures/MobileVisualQuality";
         private const string CaptureMissionEnvironmentVariable = "WARLINE_MOBILE_VISUAL_CAPTURE_MISSION";
         private const string FirstContactMissionId = "saga.ch01.m01.first_contact";
+        private const string EstablishBaseMissionId = "saga.ch01.m02.establish_base";
         private const int DefaultCaptureWidth = 1920;
         private const int DefaultCaptureHeight = 1080;
         private const int WarmupFrames = 90;
@@ -81,7 +82,9 @@ namespace Game.Editor
         private static bool profileApplied;
         private static bool completed;
         private static bool exitEditorAfterCapture;
+        private static bool captureProgressPrepared;
         private static string captureMissionId;
+        private static string captureProgressDirectory;
         private static double startedAt;
         private static MobileVisualQualityCaptureMatrix matrixCapture;
 
@@ -107,6 +110,16 @@ namespace Game.Editor
                 CaptureProfile.Current,
                 FirstContactMissionId,
                 Path.Combine(Path.GetTempPath(), "warline-m01-grounding-proof"));
+        }
+
+        [MenuItem("Game/Rendering/Capture Mobile Visual Quality/Mission 2 Playable Review")]
+        public static void CaptureMissionTwoPlayableReview()
+        {
+            exitEditorAfterCapture = false;
+            Run(
+                CaptureProfile.Current,
+                EstablishBaseMissionId,
+                Path.Combine(Path.GetTempPath(), "warline-m02-playable-review"));
         }
 
         public static void CaptureFromEnvironment()
@@ -275,6 +288,8 @@ namespace Game.Editor
                 phaseFrame = 0;
                 deploySubmitted = false;
                 profileApplied = false;
+                captureProgressPrepared = false;
+                captureProgressDirectory = string.Empty;
                 completed = false;
                 startedAt = EditorApplication.timeSinceStartup;
                 SetPhase(CapturePhase.WaitingForPlayMode);
@@ -1011,10 +1026,17 @@ namespace Game.Editor
         {
             if (!string.IsNullOrEmpty(captureMissionId))
             {
+                if (!PrepareCaptureProgress())
+                    return false;
                 if (!UiShellRuntimeGateway.TryReadCampaignOperations(out UiCampaignOperationsModel campaign) ||
-                    !campaign.IsValid ||
-                    !string.Equals(campaign.SelectedMission.MissionId, captureMissionId, StringComparison.Ordinal))
+                    !campaign.IsValid)
+                    return false;
+
+                if (!string.Equals(campaign.SelectedMission.MissionId, captureMissionId, StringComparison.Ordinal))
                 {
+                    UiShellRuntimeGateway.TryEnqueueCampaignMissionAction(
+                        UiCampaignMissionActionKind.Select,
+                        captureMissionId);
                     return false;
                 }
 
@@ -1029,6 +1051,42 @@ namespace Game.Editor
 
             deployButton.onClick.Invoke();
             return true;
+        }
+
+        private static bool PrepareCaptureProgress()
+        {
+            if (!string.Equals(captureMissionId, EstablishBaseMissionId, StringComparison.Ordinal))
+                return true;
+            if (captureProgressPrepared)
+                return true;
+
+            World world = World.DefaultGameObjectInjectionWorld;
+            if (world == null || !world.IsCreated)
+                return false;
+
+            EntityManager entityManager = world.EntityManager;
+            using EntityQuery query = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<CampaignMissionRootComponent>(),
+                ComponentType.ReadOnly<CampaignMissionProgressStoreReferenceComponent>());
+            if (query.CalculateEntityCount() != 1)
+                return false;
+
+            captureProgressDirectory = Path.Combine(
+                Path.GetTempPath(),
+                "warline-mobile-visual-capture-progress",
+                "m02");
+            if (Directory.Exists(captureProgressDirectory))
+                Directory.Delete(captureProgressDirectory, true);
+            Directory.CreateDirectory(captureProgressDirectory);
+
+            CampaignMissionProgressStore store = new(
+                new SaveService(new JsonSaveRepository(captureProgressDirectory)));
+            store.EnsureAvailable(EstablishBaseMissionId);
+            CampaignMissionProgressStoreReferenceComponent reference = entityManager.GetComponentObject<
+                CampaignMissionProgressStoreReferenceComponent>(query.GetSingletonEntity());
+            reference.Store = store;
+            captureProgressPrepared = true;
+            return false;
         }
 
         private static bool IsExpectedMissionActive()
@@ -1139,7 +1197,12 @@ namespace Game.Editor
 
         private static string ResolveCaptureMissionId()
         {
-            string value = Environment.GetEnvironmentVariable(CaptureMissionEnvironmentVariable);
+            return ResolveCaptureMissionId(
+                Environment.GetEnvironmentVariable(CaptureMissionEnvironmentVariable));
+        }
+
+        internal static string ResolveCaptureMissionId(string value)
+        {
             if (string.IsNullOrWhiteSpace(value))
                 return string.Empty;
             if (string.Equals(value.Trim(), "m01", StringComparison.OrdinalIgnoreCase) ||
@@ -1147,9 +1210,15 @@ namespace Game.Editor
             {
                 return FirstContactMissionId;
             }
+            if (string.Equals(value.Trim(), "m02", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(value.Trim(), EstablishBaseMissionId, StringComparison.Ordinal))
+            {
+                return EstablishBaseMissionId;
+            }
 
             throw new InvalidOperationException(
-                $"Unsupported visual capture mission '{value}'. Expected 'm01' or '{FirstContactMissionId}'.");
+                $"Unsupported visual capture mission '{value}'. Expected m01, m02, " +
+                $"'{FirstContactMissionId}', or '{EstablishBaseMissionId}'.");
         }
 
         private static string Format(Vector3 value)

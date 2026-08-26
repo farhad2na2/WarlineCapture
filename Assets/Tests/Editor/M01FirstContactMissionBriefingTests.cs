@@ -150,7 +150,7 @@ public static class M01FirstContactMissionBriefingTests
         actions.Add(deploy);
         UpdateProjection(world);
         Assert.That(world.EntityManager.GetBuffer<CampaignMissionLaunchRequestElement>(missionRoot).Length, Is.EqualTo(1));
-        Assert.That(world.EntityManager.GetComponentData<UiMissionBriefingComponent>(uiRoot).DeployQueued, Is.EqualTo(1));
+        Assert.That(ReadBriefing(world.EntityManager).DeployQueued, Is.EqualTo(1));
         DynamicBuffer<UiShellRouteRequestComponent> routes =
             world.EntityManager.GetBuffer<UiShellRouteRequestComponent>(uiRoot);
         Assert.That(routes.Length, Is.EqualTo(1));
@@ -172,8 +172,7 @@ public static class M01FirstContactMissionBriefingTests
             MissionId = new FixedString64Bytes(UiCampaignMissionProjectionSystem.M01MissionId)
         });
         UpdateProjection(world);
-        UiMissionBriefingComponent briefing =
-            world.EntityManager.GetComponentData<UiMissionBriefingComponent>(uiRoot);
+        UiMissionBriefingComponent briefing = ReadBriefing(world.EntityManager);
         Assert.That(briefing.DeployQueued, Is.EqualTo(1));
         Assert.That(briefing.DeployTransitionToken, Is.EqualTo(1UL));
 
@@ -183,7 +182,7 @@ public static class M01FirstContactMissionBriefingTests
         queue.LastTransitionToken = briefing.DeployTransitionToken;
         world.EntityManager.SetComponentData(missionRoot, queue);
         UpdateProjection(world);
-        briefing = world.EntityManager.GetComponentData<UiMissionBriefingComponent>(uiRoot);
+        briefing = ReadBriefing(world.EntityManager);
         Assert.That(briefing.DeployQueued, Is.Zero);
 
         actions = world.EntityManager.GetBuffer<UiCampaignMissionActionRequestElement>(uiRoot);
@@ -193,7 +192,7 @@ public static class M01FirstContactMissionBriefingTests
             MissionId = new FixedString64Bytes(UiCampaignMissionProjectionSystem.M01MissionId)
         });
         UpdateProjection(world);
-        briefing = world.EntityManager.GetComponentData<UiMissionBriefingComponent>(uiRoot);
+        briefing = ReadBriefing(world.EntityManager);
         Assert.That(briefing.DeployTransitionToken, Is.EqualTo(2UL));
         world.EntityManager.GetBuffer<CampaignMissionLaunchRequestElement>(missionRoot).Clear();
         world.EntityManager.GetBuffer<CampaignMissionLaunchResultElement>(missionRoot).Add(
@@ -204,7 +203,7 @@ public static class M01FirstContactMissionBriefingTests
                 ReasonCode = new FixedString64Bytes("readiness-failed")
             });
         UpdateProjection(world);
-        Assert.That(world.EntityManager.GetComponentData<UiMissionBriefingComponent>(uiRoot).DeployQueued, Is.Zero);
+        Assert.That(ReadBriefing(world.EntityManager).DeployQueued, Is.Zero);
         DisposeCatalog(world.EntityManager, missionRoot);
     }
 
@@ -486,6 +485,14 @@ public static class M01FirstContactMissionBriefingTests
         state.Dependency.Complete();
         world.EntityManager.CompleteAllTrackedJobs();
         world.DestroySystem(handle);
+    }
+
+    private static UiMissionBriefingComponent ReadBriefing(EntityManager manager)
+    {
+        using EntityQuery query = manager.CreateEntityQuery(
+            ComponentType.ReadOnly<UiMissionBriefingComponent>());
+        Assert.That(query.CalculateEntityCount(), Is.EqualTo(1));
+        return query.GetSingleton<UiMissionBriefingComponent>();
     }
 
     private static void DisposeCatalog(EntityManager manager, Entity root)

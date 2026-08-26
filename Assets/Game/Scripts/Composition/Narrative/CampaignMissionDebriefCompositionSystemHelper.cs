@@ -15,6 +15,14 @@ namespace Game.Composition
 {
     internal sealed class CampaignMissionDebriefCompositionSystemHelper
     {
+        internal enum SequenceStage : byte
+        {
+            None = 0,
+            Brief = 1,
+            Comms = 2,
+            Debrief = 3
+        }
+
         private static readonly FixedString64Bytes EstablishBaseMissionId =
             new("saga.ch01.m02.establish_base");
 
@@ -27,10 +35,20 @@ namespace Game.Composition
         private IGameTextResolver baseTextResolver;
         private World queryWorld;
         private EntityQuery missionRootQuery;
+        private EntityQuery gameplayStateQuery;
         private bool hasMissionRootQuery;
+        private bool hasGameplayStateQuery;
         private FixedString64Bytes activeSession;
+        private int activeAttemptOrdinal = -1;
+        private SequenceStage activeStage;
+        private FixedString64Bytes completedBriefSession;
+        private int completedBriefAttemptOrdinal = -1;
+        private FixedString64Bytes completedCommsSession;
+        private int completedCommsAttemptOrdinal = -1;
         private bool running;
+        private bool handoffPending;
         private bool handoffComplete;
+        private bool pauseOwned;
         private bool returnToMenuQueued;
         private bool campaignRouteQueued;
         private bool configurationFailureLogged;
@@ -55,6 +73,8 @@ namespace Game.Composition
         {
             if (running)
                 presentation.Tick(unscaledDeltaTime);
+            if (handoffPending)
+                CompleteActiveSequence(entityManager);
 
             if (handoffComplete)
             {
@@ -62,20 +82,21 @@ namespace Game.Composition
                 return;
             }
 
-            if (!TryReadDebrief(
+            if (running || !TryReadSequence(
                     entityManager,
                     out CampaignMissionRuntimeComponent runtime,
-                    out FixedString64Bytes debriefSequenceId))
+                    out FixedString64Bytes sequenceId,
+                    out SequenceStage stage))
                 return;
-            if (running && activeSession.Equals(runtime.SessionToken))
+            if (!TryPauseForSequence(entityManager, stage))
                 return;
-            if (!TryFindConfig(in debriefSequenceId, out NarrativeSequenceConfig config) ||
+            if (!TryFindConfig(in sequenceId, out NarrativeSequenceConfig config) ||
                 view == null || speakers == null || punctuation == null)
             {
                 if (!configurationFailureLogged)
                 {
                     Debug.LogError(
-                        $"[CampaignMissionDebrief] Missing presentation binding for {debriefSequenceId}.");
+                        $"[CampaignMissionNarrative] Missing presentation binding for {sequenceId}.");
                     configurationFailureLogged = true;
                 }
                 return;
@@ -101,21 +122,25 @@ namespace Game.Composition
                 if (!configurationFailureLogged)
                 {
                     Debug.LogError(
-                        $"[CampaignMissionDebrief] Failed to start {debriefSequenceId}.");
+                        $"[CampaignMissionNarrative] Failed to start {sequenceId}.");
                     configurationFailureLogged = true;
                 }
                 return;
             }
 
             activeSession = runtime.SessionToken;
+            activeAttemptOrdinal = runtime.AttemptOrdinal;
+            activeStage = stage;
             running = true;
             configurationFailureLogged = false;
         }
 
         public void Shutdown()
         {
+            ReleasePause();
             presentation.HandoffRequested -= HandleHandoff;
             presentation.Cancel();
+            DisposeQueries();
             configs = Array.Empty<NarrativeSequenceConfig>();
             view = null;
             speakers = null;
@@ -123,53 +148,204 @@ namespace Game.Composition
             persianLocale = null;
             baseTextResolver = null;
             queryWorld = null;
-            hasMissionRootQuery = false;
             activeSession = default;
+            activeAttemptOrdinal = -1;
+            activeStage = SequenceStage.None;
+            completedBriefSession = default;
+            completedBriefAttemptOrdinal = -1;
+            completedCommsSession = default;
+            completedCommsAttemptOrdinal = -1;
             running = false;
+            handoffPending = false;
             handoffComplete = false;
+            pauseOwned = false;
             returnToMenuQueued = false;
             campaignRouteQueued = false;
             configurationFailureLogged = false;
         }
 
-        private bool TryReadDebrief(
+        private bool TryReadSequence(
             EntityManager entityManager,
             out CampaignMissionRuntimeComponent runtime,
-            out FixedString64Bytes sequenceId)
+            out FixedString64Bytes sequenceId,
+            out SequenceStage stage)
         {
             runtime = default;
             sequenceId = default;
+            stage = SequenceStage.None;
             if (queryWorld != entityManager.World)
-            {
-                presentation.Cancel();
-                view?.SetVisible(false);
-                queryWorld = entityManager.World;
-                missionRootQuery = entityManager.CreateEntityQuery(
-                    ComponentType.ReadOnly<CampaignMissionRootComponent>(),
-                    ComponentType.ReadOnly<CampaignMissionRuntimeComponent>(),
-                    ComponentType.ReadOnly<CampaignMissionCatalogComponent>());
-                hasMissionRootQuery = true;
-                activeSession = default;
-                running = false;
-                handoffComplete = false;
-                returnToMenuQueued = false;
-                campaignRouteQueued = false;
-            }
+                BindWorld(entityManager);
             if (!hasMissionRootQuery || missionRootQuery.CalculateEntityCount() != 1)
                 return false;
 
             Entity root = missionRootQuery.GetSingletonEntity();
             runtime = entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root);
-            if (runtime.Phase != MissionPhaseKind.DebriefFirstClear ||
-                !runtime.MissionId.Equals(EstablishBaseMissionId))
+            if (!runtime.MissionId.Equals(EstablishBaseMissionId))
                 return false;
+            CampaignMissionAttemptFactsComponent facts =
+                entityManager.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
             CampaignMissionCatalogComponent catalog =
                 entityManager.GetComponentData<CampaignMissionCatalogComponent>(root);
             if (!CampaignMissionSpawnSystem.TryFindDefinition(in catalog, in runtime, out int definitionIndex))
                 return false;
-            sequenceId = catalog.Blob.Value.Missions[definitionIndex].DebriefSequenceId;
+            bool briefConsumed = IsSameAttempt(
+                in runtime, in completedBriefSession, completedBriefAttemptOrdinal);
+            bool commsConsumed = IsSameAttempt(
+                in runtime, in completedCommsSession, completedCommsAttemptOrdinal);
+            stage = ResolveStage(in runtime, in facts, briefConsumed, commsConsumed);
+            ref CampaignMissionDefinitionBlob definition =
+                ref catalog.Blob.Value.Missions[definitionIndex];
+            sequenceId = stage switch
+            {
+                SequenceStage.Brief => definition.BriefingSequenceId,
+                SequenceStage.Comms => definition.CommsSequenceId,
+                SequenceStage.Debrief => definition.DebriefSequenceId,
+                _ => default
+            };
             return !sequenceId.IsEmpty;
         }
+
+        internal static SequenceStage ResolveStage(
+            in CampaignMissionRuntimeComponent runtime,
+            in CampaignMissionAttemptFactsComponent facts,
+            bool briefConsumed,
+            bool commsConsumed)
+        {
+            if (!runtime.MissionId.Equals(EstablishBaseMissionId))
+                return SequenceStage.None;
+            if (runtime.Phase == MissionPhaseKind.DebriefFirstClear)
+                return SequenceStage.Debrief;
+            if (runtime.Phase == MissionPhaseKind.InteractiveBrief && !briefConsumed)
+                return SequenceStage.Brief;
+            if (runtime.Phase is >= MissionPhaseKind.FindSquad and <= MissionPhaseKind.SecureCorridor &&
+                facts.DefenseWaveWarningIssued != 0 && facts.DefenseWaveActivated == 0 &&
+                !commsConsumed)
+                return SequenceStage.Comms;
+            return SequenceStage.None;
+        }
+
+        internal static bool RequiresSimulationPause(SequenceStage stage) =>
+            stage is SequenceStage.Brief or SequenceStage.Comms;
+
+        internal static bool ReturnsToCampaign(SequenceStage stage) =>
+            stage == SequenceStage.Debrief;
+
+        private void BindWorld(EntityManager entityManager)
+        {
+            ReleasePause();
+            presentation.Cancel();
+            view?.SetVisible(false);
+            DisposeQueries();
+            queryWorld = entityManager.World;
+            missionRootQuery = entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<CampaignMissionRootComponent>(),
+                ComponentType.ReadOnly<CampaignMissionRuntimeComponent>(),
+                ComponentType.ReadOnly<CampaignMissionAttemptFactsComponent>(),
+                ComponentType.ReadOnly<CampaignMissionCatalogComponent>());
+            gameplayStateQuery = entityManager.CreateEntityQuery(
+                ComponentType.ReadWrite<RuntimeGameplayStateComponent>());
+            hasMissionRootQuery = true;
+            hasGameplayStateQuery = true;
+            activeSession = default;
+            activeAttemptOrdinal = -1;
+            activeStage = SequenceStage.None;
+            completedBriefSession = default;
+            completedBriefAttemptOrdinal = -1;
+            completedCommsSession = default;
+            completedCommsAttemptOrdinal = -1;
+            running = false;
+            handoffPending = false;
+            handoffComplete = false;
+            returnToMenuQueued = false;
+            campaignRouteQueued = false;
+        }
+
+        private bool TryPauseForSequence(EntityManager entityManager, SequenceStage stage)
+        {
+            if (!RequiresSimulationPause(stage) || pauseOwned)
+                return true;
+            if (!hasGameplayStateQuery || gameplayStateQuery.CalculateEntityCount() != 1)
+                return false;
+            Entity stateEntity = gameplayStateQuery.GetSingletonEntity();
+            RuntimeGameplayStateComponent gameplayState =
+                entityManager.GetComponentData<RuntimeGameplayStateComponent>(stateEntity);
+            if (gameplayState.PlayRequested == 0 || gameplayState.SimulationActive == 0)
+                return false;
+            gameplayState.SimulationActive = 0;
+            entityManager.SetComponentData(stateEntity, gameplayState);
+            pauseOwned = true;
+            return true;
+        }
+
+        private void CompleteActiveSequence(EntityManager entityManager)
+        {
+            handoffPending = false;
+            if (ReturnsToCampaign(activeStage))
+            {
+                handoffComplete = true;
+                activeStage = SequenceStage.None;
+                return;
+            }
+
+            if (activeStage == SequenceStage.Brief)
+            {
+                completedBriefSession = activeSession;
+                completedBriefAttemptOrdinal = activeAttemptOrdinal;
+            }
+            else if (activeStage == SequenceStage.Comms)
+            {
+                completedCommsSession = activeSession;
+                completedCommsAttemptOrdinal = activeAttemptOrdinal;
+            }
+            ReleasePause(entityManager);
+            activeSession = default;
+            activeAttemptOrdinal = -1;
+            activeStage = SequenceStage.None;
+        }
+
+        private void ReleasePause()
+        {
+            if (!pauseOwned)
+                return;
+            if (queryWorld != null && queryWorld.IsCreated)
+                ReleasePause(queryWorld.EntityManager);
+            else
+                pauseOwned = false;
+        }
+
+        private void ReleasePause(EntityManager entityManager)
+        {
+            if (!pauseOwned)
+                return;
+            if (hasGameplayStateQuery && gameplayStateQuery.CalculateEntityCount() == 1)
+            {
+                Entity stateEntity = gameplayStateQuery.GetSingletonEntity();
+                RuntimeGameplayStateComponent gameplayState =
+                    entityManager.GetComponentData<RuntimeGameplayStateComponent>(stateEntity);
+                if (gameplayState.PlayRequested != 0)
+                {
+                    gameplayState.SimulationActive = 1;
+                    entityManager.SetComponentData(stateEntity, gameplayState);
+                }
+            }
+            pauseOwned = false;
+        }
+
+        private void DisposeQueries()
+        {
+            if (hasMissionRootQuery && queryWorld != null && queryWorld.IsCreated)
+                missionRootQuery.Dispose();
+            if (hasGameplayStateQuery && queryWorld != null && queryWorld.IsCreated)
+                gameplayStateQuery.Dispose();
+            hasMissionRootQuery = false;
+            hasGameplayStateQuery = false;
+        }
+
+        private static bool IsSameAttempt(
+            in CampaignMissionRuntimeComponent runtime,
+            in FixedString64Bytes session,
+            int attemptOrdinal) =>
+            attemptOrdinal == runtime.AttemptOrdinal && session.Equals(runtime.SessionToken);
 
         private bool TryFindConfig(
             in FixedString64Bytes sequenceId,
@@ -241,7 +417,7 @@ namespace Game.Composition
         {
             presentation.Cancel();
             running = false;
-            handoffComplete = true;
+            handoffPending = true;
             view?.SetVisible(false);
         }
     }

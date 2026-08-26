@@ -3,9 +3,11 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using Game.Catalog.Contracts;
+using Game.Components;
 using Game.Configs;
 using Game.Composition;
 using Game.Editor;
+using Game.Missions.Contracts;
 using Game.Narrative.Contracts;
 using NUnit.Framework;
 using UnityEditor;
@@ -14,7 +16,7 @@ using UnityEngine;
 public static class M02EstablishBaseNarrativeTests
 {
     private const string PassMarker =
-        "[M02EstablishBaseNarrativeValidation] result=Passed tests=9";
+        "[M02EstablishBaseNarrativeValidation] result=Passed tests=15";
 
     [MenuItem("Game/Validation/Run M02 Establish Base Narrative Focused")]
     public static void RunFocusedValidation()
@@ -31,6 +33,12 @@ public static class M02EstablishBaseNarrativeTests
             SkipReducedMotionAndCaptionsAreSupported();
             M02NarrativeIdentityDoesNotBorrowM01OrFirstLaunchContent();
             MenuSceneCarriesAllM02NarrativeBindings();
+            InteractiveBriefSelectsBriefSequenceStage();
+            WarningSelectsCommsOnlyBeforeActivation();
+            ConsumedStagesDoNotRepeatWithinAttempt();
+            RetryAttemptRearmsBriefAndComms();
+            M01NeverSelectsM02Narrative();
+            BriefAndCommsPauseWhileOnlyDebriefReturnsToCampaign();
             Debug.Log(PassMarker);
             ValidationExit.Passed();
         }
@@ -201,6 +209,101 @@ public static class M02EstablishBaseNarrativeTests
             },
             bootstrap.CampaignMissionNarrativeConfigs.Select(sequence => sequence.SequenceId).ToArray());
     }
+
+    [Test]
+    public static void InteractiveBriefSelectsBriefSequenceStage()
+    {
+        CampaignMissionRuntimeComponent runtime = Runtime(MissionPhaseKind.InteractiveBrief);
+        Assert.AreEqual(
+            CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Brief,
+            CampaignMissionDebriefCompositionSystemHelper.ResolveStage(
+                in runtime, default, briefConsumed: false, commsConsumed: false));
+    }
+
+    [Test]
+    public static void WarningSelectsCommsOnlyBeforeActivation()
+    {
+        CampaignMissionRuntimeComponent runtime = Runtime(MissionPhaseKind.Engage);
+        CampaignMissionAttemptFactsComponent warning = new() { DefenseWaveWarningIssued = 1 };
+        Assert.AreEqual(
+            CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Comms,
+            CampaignMissionDebriefCompositionSystemHelper.ResolveStage(
+                in runtime, in warning, briefConsumed: true, commsConsumed: false));
+        warning.DefenseWaveActivated = 1;
+        Assert.AreEqual(
+            CampaignMissionDebriefCompositionSystemHelper.SequenceStage.None,
+            CampaignMissionDebriefCompositionSystemHelper.ResolveStage(
+                in runtime, in warning, briefConsumed: true, commsConsumed: false));
+    }
+
+    [Test]
+    public static void ConsumedStagesDoNotRepeatWithinAttempt()
+    {
+        CampaignMissionRuntimeComponent brief = Runtime(MissionPhaseKind.InteractiveBrief);
+        Assert.AreEqual(
+            CampaignMissionDebriefCompositionSystemHelper.SequenceStage.None,
+            CampaignMissionDebriefCompositionSystemHelper.ResolveStage(
+                in brief, default, briefConsumed: true, commsConsumed: false));
+        CampaignMissionRuntimeComponent combat = Runtime(MissionPhaseKind.Engage);
+        CampaignMissionAttemptFactsComponent warning = new() { DefenseWaveWarningIssued = 1 };
+        Assert.AreEqual(
+            CampaignMissionDebriefCompositionSystemHelper.SequenceStage.None,
+            CampaignMissionDebriefCompositionSystemHelper.ResolveStage(
+                in combat, in warning, briefConsumed: true, commsConsumed: true));
+    }
+
+    [Test]
+    public static void RetryAttemptRearmsBriefAndComms()
+    {
+        CampaignMissionRuntimeComponent retry = Runtime(MissionPhaseKind.InteractiveBrief);
+        retry.AttemptOrdinal = 2;
+        Assert.AreEqual(
+            CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Brief,
+            CampaignMissionDebriefCompositionSystemHelper.ResolveStage(
+                in retry, default, briefConsumed: false, commsConsumed: false));
+        retry.Phase = MissionPhaseKind.Engage;
+        CampaignMissionAttemptFactsComponent warning = new() { DefenseWaveWarningIssued = 1 };
+        Assert.AreEqual(
+            CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Comms,
+            CampaignMissionDebriefCompositionSystemHelper.ResolveStage(
+                in retry, in warning, briefConsumed: true, commsConsumed: false));
+    }
+
+    [Test]
+    public static void M01NeverSelectsM02Narrative()
+    {
+        CampaignMissionRuntimeComponent runtime = Runtime(MissionPhaseKind.InteractiveBrief);
+        runtime.MissionId = new Unity.Collections.FixedString64Bytes("saga.ch01.m01.first_contact");
+        Assert.AreEqual(
+            CampaignMissionDebriefCompositionSystemHelper.SequenceStage.None,
+            CampaignMissionDebriefCompositionSystemHelper.ResolveStage(
+                in runtime, default, briefConsumed: false, commsConsumed: false));
+    }
+
+    [Test]
+    public static void BriefAndCommsPauseWhileOnlyDebriefReturnsToCampaign()
+    {
+        Assert.IsTrue(CampaignMissionDebriefCompositionSystemHelper.RequiresSimulationPause(
+            CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Brief));
+        Assert.IsTrue(CampaignMissionDebriefCompositionSystemHelper.RequiresSimulationPause(
+            CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Comms));
+        Assert.IsFalse(CampaignMissionDebriefCompositionSystemHelper.RequiresSimulationPause(
+            CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Debrief));
+        Assert.IsFalse(CampaignMissionDebriefCompositionSystemHelper.ReturnsToCampaign(
+            CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Brief));
+        Assert.IsFalse(CampaignMissionDebriefCompositionSystemHelper.ReturnsToCampaign(
+            CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Comms));
+        Assert.IsTrue(CampaignMissionDebriefCompositionSystemHelper.ReturnsToCampaign(
+            CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Debrief));
+    }
+
+    private static CampaignMissionRuntimeComponent Runtime(MissionPhaseKind phase) => new()
+    {
+        MissionId = new Unity.Collections.FixedString64Bytes("saga.ch01.m02.establish_base"),
+        SessionToken = new Unity.Collections.FixedString64Bytes("m02-narrative-attempt"),
+        AttemptOrdinal = 1,
+        Phase = phase
+    };
 
     private static NarrativeSequenceConfig[] Sequences() =>
         AssetDatabase.LoadAllAssetsAtPath(M02EstablishBaseNarrativeConfigBuilder.NarrativePath)

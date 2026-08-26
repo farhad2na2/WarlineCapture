@@ -16,11 +16,18 @@ namespace Game.UI.Shell.Ecs
         public const string M02MissionId = "saga.ch01.m02.establish_base";
 
         private EntityQuery _uiRootQuery;
+        private EntityQuery _briefingQuery;
         private EntityQuery _campaignRootQuery;
 
         public void OnCreate(ref SystemState state)
         {
             _uiRootQuery = state.GetEntityQuery(ComponentType.ReadOnly<UiShellRootComponent>());
+            _briefingQuery = state.GetEntityQuery(ComponentType.ReadOnly<UiMissionBriefingComponent>());
+            if (_briefingQuery.IsEmptyIgnoreFilter)
+            {
+                Entity briefing = state.EntityManager.CreateEntity(typeof(UiMissionBriefingComponent));
+                state.EntityManager.SetName(briefing, "UiMissionBriefingReadModel");
+            }
             _campaignRootQuery = state.GetEntityQuery(
                 ComponentType.ReadOnly<CampaignMissionRootComponent>(),
                 ComponentType.ReadOnly<CampaignMissionCatalogComponent>(),
@@ -36,6 +43,7 @@ namespace Game.UI.Shell.Ecs
 
             EntityManager entityManager = state.EntityManager;
             Entity uiRoot = _uiRootQuery.GetSingletonEntity();
+            Entity briefingRoot = _briefingQuery.GetSingletonEntity();
             Entity campaignRoot = _campaignRootQuery.GetSingletonEntity();
             EnsureUiBoundary(entityManager, uiRoot);
 
@@ -51,7 +59,7 @@ namespace Game.UI.Shell.Ecs
             UiCampaignOperationsComponent current =
                 entityManager.GetComponentData<UiCampaignOperationsComponent>(uiRoot);
             UiMissionBriefingComponent currentBriefing =
-                entityManager.GetComponentData<UiMissionBriefingComponent>(uiRoot);
+                entityManager.GetComponentData<UiMissionBriefingComponent>(briefingRoot);
             UiMissionBriefingComponent storedBriefing = currentBriefing;
             if (currentBriefing.DeployQueued != 0 && IsLaunchTerminal(
                     entityManager, campaignRoot, currentBriefing.DeployTransitionToken))
@@ -129,15 +137,13 @@ namespace Game.UI.Shell.Ecs
             if (sourceChanged || actionRequested || !SameOperations(in current, in next))
                 entityManager.SetComponentData(uiRoot, next);
             if (sourceChanged || actionRequested || !SameBriefing(in storedBriefing, in nextBriefing))
-                entityManager.SetComponentData(uiRoot, nextBriefing);
+                entityManager.SetComponentData(briefingRoot, nextBriefing);
         }
 
         private static void EnsureUiBoundary(EntityManager entityManager, Entity uiRoot)
         {
             if (!entityManager.HasComponent<UiCampaignOperationsComponent>(uiRoot))
                 entityManager.AddComponentData(uiRoot, default(UiCampaignOperationsComponent));
-            if (!entityManager.HasComponent<UiMissionBriefingComponent>(uiRoot))
-                entityManager.AddComponentData(uiRoot, default(UiMissionBriefingComponent));
             if (!entityManager.HasBuffer<UiCampaignMissionActionRequestElement>(uiRoot))
                 entityManager.AddBuffer<UiCampaignMissionActionRequestElement>(uiRoot);
         }

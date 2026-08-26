@@ -22,7 +22,7 @@ public sealed class M02EstablishBaseLifecycleTests
     private const string BarracksId = "Building_Barrack";
     private const string RifleId = "Unit_Chr_Soldier_Male_02_Alt_04";
     private const string FocusedMarker =
-        "[M02EstablishBaseLifecycleValidation] result=Passed tests=14";
+        "[M02EstablishBaseLifecycleValidation] result=Passed tests=15";
 
     [MenuItem("Game/Validation/Run M02 Establish Base Lifecycle Focused")]
     public static void RunFocusedValidation()
@@ -36,6 +36,7 @@ public sealed class M02EstablishBaseLifecycleTests
             tests.BuildingOwnerConsumesDeleteRequestsExactlyOnce();
             tests.M02ResultResolvesFromTwoMissionChapterCatalog();
             tests.ExitPersistsResumeAndClearsAttemptOwnership();
+            tests.NarrativePauseStopsAutomaticMissionPhaseProgression();
 
             M02EstablishBaseLaunchTests launch = new();
             launch.M02RetryPreservesSeedAndIncrementsAttemptIdentity();
@@ -116,6 +117,55 @@ public sealed class M02EstablishBaseLifecycleTests
         Assert.IsFalse(entityManager.Exists(spawnedUnit));
         Assert.IsFalse(entityManager.Exists(ambientCivilian));
         AssertTransientRootStateCleared(entityManager, root);
+    }
+
+    [Test]
+    public void NarrativePauseStopsAutomaticMissionPhaseProgression()
+    {
+        using World world = new(nameof(NarrativePauseStopsAutomaticMissionPhaseProgression));
+        EntityManager entityManager = world.EntityManager;
+        Entity root = entityManager.CreateEntity(
+            typeof(CampaignMissionRootComponent),
+            typeof(CampaignMissionRuntimeComponent),
+            typeof(CampaignMissionAttemptFactsComponent));
+        entityManager.AddBuffer<CampaignMissionActionRequestElement>(root);
+        entityManager.AddBuffer<CampaignMissionActionResultElement>(root);
+        entityManager.SetComponentData(root, new CampaignMissionRuntimeComponent
+        {
+            MissionId = new FixedString64Bytes(MissionId),
+            ScenarioId = new FixedString64Bytes(ScenarioId),
+            OperationMapId = new FixedString64Bytes(OperationMapId),
+            SessionToken = new FixedString64Bytes(Session),
+            Phase = MissionPhaseKind.InteractiveBrief,
+            LaunchOrigin = MissionLaunchOriginKind.CampaignOperations,
+            RunKind = MissionRunKind.FirstClear,
+            TransitionToken = 21,
+            Version = 1,
+            SourceVersion = 1,
+            AttemptOrdinal = 1,
+            DeterministicSeed = 2202
+        });
+        Entity gameplay = entityManager.CreateEntity(typeof(RuntimeGameplayStateComponent));
+        entityManager.SetComponentData(gameplay, new RuntimeGameplayStateComponent
+        {
+            PlayRequested = 1,
+            SimulationActive = 0
+        });
+        SystemHandle handle = world.GetOrCreateSystem<CampaignMissionRuntimeSystem>();
+
+        world.Unmanaged.GetUnsafeSystemRef<CampaignMissionRuntimeSystem>(handle)
+            .OnUpdate(ref world.Unmanaged.ResolveSystemStateRef(handle));
+        Assert.AreEqual(MissionPhaseKind.InteractiveBrief,
+            entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root).Phase);
+
+        RuntimeGameplayStateComponent state =
+            entityManager.GetComponentData<RuntimeGameplayStateComponent>(gameplay);
+        state.SimulationActive = 1;
+        entityManager.SetComponentData(gameplay, state);
+        world.Unmanaged.GetUnsafeSystemRef<CampaignMissionRuntimeSystem>(handle)
+            .OnUpdate(ref world.Unmanaged.ResolveSystemStateRef(handle));
+        Assert.AreEqual(MissionPhaseKind.FindSquad,
+            entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root).Phase);
     }
 
     [Test]

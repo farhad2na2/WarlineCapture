@@ -9,6 +9,7 @@ namespace Game.UI.Shell.Ecs
             if (cachedWorld != null && cachedWorld.IsCreated)
             {
                 if (hasBoundaryQuery) boundaryQuery.Dispose();
+                if (hasMissionBriefingQuery) missionBriefingQuery.Dispose();
                 if (hasFocusedSelectionQuery) focusedSelectionQuery.Dispose();
                 if (hasSelectionInputQuery) selectionInputQuery.Dispose();
                 if (hasSelectedUnitsQuery) selectedUnitsQuery.Dispose();
@@ -22,6 +23,7 @@ namespace Game.UI.Shell.Ecs
 
             cachedWorld = nextWorld;
             boundaryQuery = default;
+            missionBriefingQuery = default;
             focusedSelectionQuery = default;
             selectionInputQuery = default;
             selectedUnitsQuery = default;
@@ -32,6 +34,7 @@ namespace Game.UI.Shell.Ecs
             assistantMatchStartQuery = default;
             missionRootQuery = default;
             hasBoundaryQuery = false;
+            hasMissionBriefingQuery = false;
             hasFocusedSelectionQuery = false;
             hasSelectionInputQuery = false;
             hasSelectedUnitsQuery = false;

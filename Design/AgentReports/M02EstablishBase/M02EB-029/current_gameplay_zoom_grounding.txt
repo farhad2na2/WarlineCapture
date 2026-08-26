@@ -1,0 +1,20 @@
+managedSurfaceAuthorings=1 managedBakeGroups=0
+surfaceEntities=1
+sceneOverlays=3434
+missionUnits=7
+unit=734:5 role=role.hostile.patrol health=95 position=802.5,0.785,296.5 sampledHeight=0.784984 groundOffset=0 hasSurface=1 grounded=1
+  overlay=1006 type=Road height=0.784984 center=882.2,0.042,317.05 halfExtents=104.772,20.916
+unit=309:35 role=role.friendly.command_squad health=125 position=925.5,0.913,422.5 sampledHeight=0.813152 groundOffset=0.1 hasSurface=1 grounded=1
+  overlay=324 type=Road height=0.813152 center=925,0.262,429.666 halfExtents=25.1,7.898
+  overlay=325 type=Road height=0.813152 center=925,0.262,419.895 halfExtents=25.1,7.898
+unit=710:5 role=role.friendly.command_squad health=125 position=918.5,0.913,421.5 sampledHeight=0.813152 groundOffset=0.1 hasSurface=1 grounded=1
+  overlay=325 type=Road height=0.813152 center=925,0.262,419.895 halfExtents=25.1,7.898
+unit=721:5 role=role.friendly.command_squad health=125 position=926.5,0.913,427.5 sampledHeight=0.813152 groundOffset=0.1 hasSurface=1 grounded=1
+  overlay=324 type=Road height=0.813152 center=925,0.262,429.666 halfExtents=25.1,7.898
+  overlay=325 type=Road height=0.813152 center=925,0.262,419.895 halfExtents=25.1,7.898
+unit=701:5 role=role.friendly.command_squad health=125 position=920.5,0.913,431.5 sampledHeight=0.813152 groundOffset=0.1 hasSurface=1 grounded=1
+  overlay=324 type=Road height=0.813152 center=925,0.262,429.666 halfExtents=25.1,7.898
+unit=727:5 role=role.hostile.patrol health=75 position=796.5,0.785,303.5 sampledHeight=0.784984 groundOffset=0 hasSurface=1 grounded=1
+  overlay=1006 type=Road height=0.784984 center=882.2,0.042,317.05 halfExtents=104.772,20.916
+unit=741:5 role=role.hostile.patrol health=65 position=803.5,0.785,305.5 sampledHeight=0.784984 groundOffset=0 hasSurface=1 grounded=1
+  overlay=1006 type=Road height=0.784984 center=882.2,0.042,317.05 halfExtents=104.772,20.916

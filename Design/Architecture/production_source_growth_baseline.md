@@ -2004,9 +2004,9 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
     {
       "path": "Assets/Game/Scripts/Composition/Narrative/CampaignMissionDebriefCompositionSystemHelper.cs",
       "trackerTaskId": "APH-712",
-      "decisionId": "D-212",
-      "maxLines": 248,
-      "maxBytes": 9684,
+      "decisionId": "D-213",
+      "maxLines": 424,
+      "maxBytes": 17005,
       "scope": "system-helper"
     },
     {

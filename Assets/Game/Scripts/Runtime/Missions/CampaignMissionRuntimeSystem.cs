@@ -37,6 +37,9 @@ namespace Game.Runtime
             if (SystemAPI.TryGetSingletonEntity<CampaignMissionRootComponent>(out Entity root) &&
                 TryConsumeAction(state.EntityManager, root))
                 return;
+            if (SystemAPI.TryGetSingleton(out RuntimeGameplayStateComponent gameplayState) &&
+                (gameplayState.PlayRequested == 0 || gameplayState.SimulationActive == 0))
+                return;
 
             if (!SystemAPI.TryGetSingleton(out CampaignMissionRuntimeComponent activeRuntime) ||
                 !SystemAPI.TryGetSingleton(out CampaignMissionAttemptFactsComponent _))

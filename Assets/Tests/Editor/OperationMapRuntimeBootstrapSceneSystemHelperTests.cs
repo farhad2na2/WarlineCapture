@@ -31,6 +31,8 @@ public sealed class OperationMapRuntimeBootstrapSceneSystemHelperTests
             Run(tests.MatchBootstrapCompatibilityPublish_InvalidIdentityFailsWithoutRoot, ref passed);
             Run(tests.MatchRuntimeBind_MissingCatalogFailsBeforeBootstrap, ref passed);
             Run(tests.MatchRuntimeBind_MissingDefinitionFailsBeforeBootstrap, ref passed);
+            Run(tests.MatchLaunchSelection_WithoutCampaignUsesCompatibilityIdentity, ref passed);
+            Run(tests.MatchLaunchSelection_AmbiguousCampaignRequestsFailClosed, ref passed);
             Run(() => tests.ValidateMatchSourceLoad_MissingOrInvalidIdPublishesTypedFailure(
                 "opmap.skirmish.missing",
                 OperationMapLoadResultCode.MissingDefinition,
@@ -527,6 +529,50 @@ public sealed class OperationMapRuntimeBootstrapSceneSystemHelperTests
             Object.DestroyImmediate(catalog);
             Object.DestroyImmediate(definition);
         }
+    }
+
+    [Test]
+    public void MatchLaunchSelection_WithoutCampaignUsesCompatibilityIdentity()
+    {
+        using World world = new("OperationMapCompatibilityLaunchSelection");
+        Assert.That(CampaignMissionOperationMapLaunchResolver.TryResolve(
+            world,
+            "skirmish",
+            "scenario.skirmish.desert_base_standard",
+            "opmap.skirmish.desert_base_01",
+            out OperationMapLaunchSelection selection,
+            out OperationMapLoadResultCode failureCode,
+            out string error), Is.True, error);
+        Assert.That(failureCode, Is.EqualTo(OperationMapLoadResultCode.None));
+        Assert.That(selection.IsCampaign, Is.False);
+        Assert.That(selection.Definition, Is.Null);
+        Assert.That(selection.MissionId.ToString(), Is.EqualTo("skirmish"));
+        Assert.That(selection.ScenarioId.ToString(),
+            Is.EqualTo("scenario.skirmish.desert_base_standard"));
+        Assert.That(selection.OperationMapId.ToString(),
+            Is.EqualTo("opmap.skirmish.desert_base_01"));
+    }
+
+    [Test]
+    public void MatchLaunchSelection_AmbiguousCampaignRequestsFailClosed()
+    {
+        using World world = new("OperationMapAmbiguousCampaignLaunchSelection");
+        Entity root = world.EntityManager.CreateEntity(typeof(CampaignMissionRootComponent));
+        DynamicBuffer<CampaignMissionLaunchRequestElement> requests =
+            world.EntityManager.AddBuffer<CampaignMissionLaunchRequestElement>(root);
+        requests.Add(default);
+        requests.Add(default);
+
+        Assert.That(CampaignMissionOperationMapLaunchResolver.TryResolve(
+            world,
+            "skirmish",
+            "scenario.skirmish.desert_base_standard",
+            "opmap.skirmish.desert_base_01",
+            out _,
+            out OperationMapLoadResultCode failureCode,
+            out string error), Is.False);
+        Assert.That(failureCode, Is.EqualTo(OperationMapLoadResultCode.InvalidRequest));
+        StringAssert.Contains("exactly one pending request", error);
     }
 
     [TestCase(

@@ -316,6 +316,23 @@ public sealed class M02EstablishBaseLaunchTests
                 configuredCampaignMissionCatalog: missions);
             bootstrap.Update(view);
 
+            Assert.IsTrue(CampaignMissionOperationMapLaunchResolver.TryResolve(
+                fixture.World,
+                "skirmish",
+                "scenario.skirmish.desert_base_standard",
+                "opmap.skirmish.desert_base_01",
+                out OperationMapLaunchSelection launchSelection,
+                out OperationMapLoadResultCode launchFailureCode,
+                out string launchError), launchError);
+            Assert.AreEqual(OperationMapLoadResultCode.None, launchFailureCode);
+            Assert.IsTrue(launchSelection.IsCampaign);
+            Assert.AreEqual(M02MissionId, launchSelection.MissionId.ToString());
+            Assert.AreEqual(M02ScenarioId, launchSelection.ScenarioId.ToString());
+            Assert.AreEqual(M02MapId, launchSelection.OperationMapId.ToString());
+            Assert.AreEqual(M02MapId, launchSelection.Definition.OperationMapId);
+            Assert.AreEqual("dad0bd13fb20943dfb2f881cbe225f05",
+                launchSelection.Definition.SourceSceneReference.AssetGUID);
+
             using EntityQuery mapQuery = fixture.World.EntityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<ActiveOperationMapComponent>(),
                 ComponentType.ReadOnly<OperationMapReadinessComponent>());

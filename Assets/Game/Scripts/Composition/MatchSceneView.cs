@@ -27,6 +27,8 @@ namespace Game.Composition
         private readonly OperationMapDenseCityCandidateRuntimeOverride
             denseCityCandidateRuntimeOverride = new();
         private OperationMapDefinition resolvedOperationMapDefinition;
+        private OperationMapLaunchSelection resolvedOperationMapLaunchSelection;
+        private bool hasResolvedOperationMapLaunchSelection;
         private OperationMapSceneView activeOperationMapSceneView;
         private OperationMapCanonicalPresentationMode loadedOperationMapCanonicalPresentationMode =
             OperationMapCanonicalPresentationMode.SourceRenderersPresent;
@@ -145,9 +147,15 @@ namespace Game.Composition
         public ResourceExchangeRecipeConfigSet ResourceExchangeConfig => resourceExchangeConfig;
         public IReadOnlyList<AIControllerConfig> AIControllerConfigs => aiControllerConfigs;
         public OperationMapCatalogConfig OperationMapCatalog => ResolveOperationMapCatalog();
-        public string OperationMapId => operationMapId;
-        public string ScenarioId => scenarioId;
-        public string MissionId => missionId;
+        public string OperationMapId => hasResolvedOperationMapLaunchSelection
+            ? resolvedOperationMapLaunchSelection.OperationMapId.ToString()
+            : operationMapId;
+        public string ScenarioId => hasResolvedOperationMapLaunchSelection
+            ? resolvedOperationMapLaunchSelection.ScenarioId.ToString()
+            : scenarioId;
+        public string MissionId => hasResolvedOperationMapLaunchSelection
+            ? resolvedOperationMapLaunchSelection.MissionId.ToString()
+            : missionId;
         public bool OperationMapContentReady =>
             operationMapSceneLoadingSystem == null || operationMapSceneLoadingSystem.IsReady;
         internal bool OperationMapSourceSceneLoadComplete =>

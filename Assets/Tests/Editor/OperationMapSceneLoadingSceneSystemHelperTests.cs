@@ -35,6 +35,7 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
             Run(nameof(PendingLoadPublishesProgress), test => test.PendingLoadPublishesProgress(), ref passed);
             Run(nameof(SuccessfulLoadResolvesValidatedStagedView), test => test.SuccessfulLoadResolvesValidatedStagedView(), ref passed);
             Run(nameof(EntitySceneLoadSkipsManifestAndResolvesWithoutStaticOwnership), test => test.EntitySceneLoadSkipsManifestAndResolvesWithoutStaticOwnership(), ref passed);
+            Run(nameof(EntitySceneLogicalBindingResolvesExactPhysicalSceneIdentity), test => test.EntitySceneLogicalBindingResolvesExactPhysicalSceneIdentity(), ref passed);
             Run(nameof(EntitySceneLoadWaitsForPresentationReadinessContract), test => test.EntitySceneLoadWaitsForPresentationReadinessContract(), ref passed);
             Run(nameof(EntitySceneLoadFailsClosedWhenPresentationReadinessContractRejects), test => test.EntitySceneLoadFailsClosedWhenPresentationReadinessContractRejects(), ref passed);
             Run(nameof(EntitySceneReadinessFailureBlocksResetUntilOwnedCleanupCompletes), test => test.EntitySceneReadinessFailureBlocksResetUntilOwnedCleanupCompletes(), ref passed);
@@ -165,6 +166,49 @@ public sealed class OperationMapSceneLoadingSceneSystemHelperTests
         Assert.That(entitySceneApi.ReleaseOwnedCount, Is.EqualTo(1));
         Assert.That(operation.DisposeCount, Is.EqualTo(1));
         UnityEngine.Object.DestroyImmediate(definition);
+    }
+
+    [Test]
+    public void EntitySceneLogicalBindingResolvesExactPhysicalSceneIdentity()
+    {
+        const string physicalMapId = "opmap.skirmish.physical_source";
+        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        OperationMapDefinition physical = CreateEntitySceneDefinition(physicalMapId);
+        OperationMapDefinition logical = CreateEntitySceneDefinition("opmap.ch01.logical_alias");
+        Set(logical, "sourceBinding", new OperationMapSourceBindingConfig(
+            physicalMapId,
+            new string('a', 64),
+            new string('b', 64)));
+        OperationMapSceneView view = CreateEntitySceneView(scene, physical);
+        FakeManifestApi manifestApi = new(new FakeManifestOperation());
+        var operation = new FakeSceneOperation
+        {
+            Done = true,
+            Success = true,
+            LoadedScene = scene,
+            Progress = 1f
+        };
+        FakeEntitySceneApi entitySceneApi = new();
+        var helper = new OperationMapSceneLoadingSceneSystemHelper(
+            new FakeSceneApi(operation),
+            manifestApi,
+            entitySceneApi: entitySceneApi);
+        try
+        {
+            Assert.That(helper.TryStart(logical, out string error), Is.True, error);
+            helper.Update();
+
+            Assert.That(helper.IsReady, Is.True, helper.Failure);
+            Assert.That(helper.SceneView, Is.SameAs(view));
+            Assert.That(helper.SceneView.OperationMapId, Is.EqualTo(physicalMapId));
+            Assert.That(manifestApi.LoadCount, Is.Zero);
+        }
+        finally
+        {
+            helper.Dispose();
+            UnityEngine.Object.DestroyImmediate(logical);
+            UnityEngine.Object.DestroyImmediate(physical);
+        }
     }
 
     [Test]

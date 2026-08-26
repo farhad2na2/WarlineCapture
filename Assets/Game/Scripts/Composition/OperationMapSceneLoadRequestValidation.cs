@@ -79,10 +79,13 @@ namespace Game.Composition
                 return false;
             }
 
+            string expectedSceneOperationMapId = definition.SourceBinding.IsConfigured
+                ? definition.SourceBinding.SourceOperationMapId
+                : definition.OperationMapId;
             request = new OperationMapSceneLoadRequest(
                 sourceReference.RuntimeKey,
                 entityScene ? null : manifestReference.RuntimeKey,
-                definition.OperationMapId,
+                expectedSceneOperationMapId,
                 sourceReference.AssetGUID,
                 entityScene);
             failureCode = OperationMapLoadResultCode.None;

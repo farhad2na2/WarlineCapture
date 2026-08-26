@@ -114,6 +114,7 @@ namespace Game.Composition
 
             root = roots.Length == 1 ? roots[0] : CreateRoot(entityManager);
             EnsureProgressStore(entityManager, root);
+            EnsureOperationMapReference(entityManager, root);
             EnsureAttemptResourceState(entityManager, root);
             EnsureAttemptFactProjectionState(entityManager, root);
             EnsureDelayedWaveState(entityManager, root);
@@ -280,8 +281,15 @@ namespace Game.Composition
             entityManager.AddBuffer<CampaignMissionSettlementRequestElement>(root);
             entityManager.AddBuffer<CampaignMissionSettlementResultElement>(root);
             entityManager.AddBuffer<CampaignMissionGuidanceAcknowledgementRequestElement>(root);
+            entityManager.AddComponentObject(root, new CampaignMissionOperationMapReferenceComponent());
             entityManager.SetName(root, "CampaignMissionRoot");
             return root;
+        }
+
+        private static void EnsureOperationMapReference(EntityManager entityManager, Entity root)
+        {
+            if (!entityManager.HasComponent<CampaignMissionOperationMapReferenceComponent>(root))
+                entityManager.AddComponentObject(root, new CampaignMissionOperationMapReferenceComponent());
         }
 
         private static void EnsureProgressStore(EntityManager entityManager, Entity root)

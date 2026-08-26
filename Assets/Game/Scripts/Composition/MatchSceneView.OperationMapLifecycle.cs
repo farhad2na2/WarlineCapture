@@ -14,13 +14,11 @@ namespace Game.Composition
         {
             if (matchRuntimeBound)
                 return;
-
             if (!HasCompatibilityMapReferences())
             {
                 EnsureOperationMapSourceSceneLoad();
                 return;
             }
-
             if (!TryBindMatchRuntime(
                     World.DefaultGameObjectInjectionWorld,
                     out string operationMapError))
@@ -34,7 +32,6 @@ namespace Game.Composition
                 error = null;
                 return true;
             }
-
             ApplyMatchEnvironmentAuthority();
             if (!TryPublishCompatibilityOperationMapMetadata(world, out error))
                 return false;
@@ -114,39 +111,46 @@ namespace Game.Composition
                 return false;
             }
 
-            if (!OperationMapIdentityRules.IsValidOperationMapId(operationMapId))
+            if (resolvedOperationMapDefinition == null &&
+                !TryResolveOperationMapDefinition(
+                    world,
+                    out resolvedOperationMapDefinition,
+                    out bool waiting,
+                    out OperationMapLoadResultCode resolveFailureCode,
+                    out error))
             {
-                error = $"Invalid compatibility operation-map id '{operationMapId ?? "<null>"}'.";
+                if (waiting)
+                    error = "Operation-map definition is still loading.";
+                else if (resolveFailureCode == OperationMapLoadResultCode.InvalidOperationMapId)
+                    error = $"Invalid compatibility operation-map id '{operationMapId ?? "<null>"}'.";
                 return false;
             }
 
-            if (!OperationMapIdentityRules.IsValidScenarioId(scenarioId))
+            string resolvedOperationMapId = resolvedOperationMapLaunchSelection.OperationMapId.ToString();
+            string resolvedScenarioId = resolvedOperationMapLaunchSelection.ScenarioId.ToString();
+            string resolvedMissionId = resolvedOperationMapLaunchSelection.MissionId.ToString();
+            if (!OperationMapIdentityRules.IsValidOperationMapId(resolvedOperationMapId))
             {
-                error = $"Invalid compatibility scenario id '{scenarioId ?? "<null>"}'.";
+                error = $"Invalid compatibility operation-map id '{resolvedOperationMapId}'.";
                 return false;
             }
-
-            if (string.IsNullOrWhiteSpace(missionId) ||
-                missionId.Length > OperationMapIdentityRules.MaximumIdLength)
+            if (!OperationMapIdentityRules.IsValidScenarioId(resolvedScenarioId))
+            {
+                error = $"Invalid compatibility scenario id '{resolvedScenarioId}'.";
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(resolvedMissionId) ||
+                resolvedMissionId.Length > OperationMapIdentityRules.MaximumIdLength)
             {
                 error = "Compatibility mission id is required and must fit the operation-map identity budget.";
                 return false;
             }
 
-            if (resolvedOperationMapDefinition == null &&
-                !TryResolveOperationMapDefinition(
-                    out resolvedOperationMapDefinition,
-                    out bool waiting,
-                    out error))
-            {
-                if (waiting)
-                    error = "Operation-map definition is still loading.";
-                return false;
-            }
-
             operationMapRuntimeBootstrapSystem = new OperationMapRuntimeBootstrapSceneSystemHelper(world);
-            var fixedScenarioId = new Unity.Collections.FixedString64Bytes(scenarioId);
-            var fixedMissionId = new Unity.Collections.FixedString64Bytes(missionId);
+            Unity.Collections.FixedString64Bytes fixedScenarioId =
+                resolvedOperationMapLaunchSelection.ScenarioId;
+            Unity.Collections.FixedString64Bytes fixedMissionId =
+                resolvedOperationMapLaunchSelection.MissionId;
             ResolveInitialOperationMapReadiness(
                 activeOperationMapSceneView != null &&
                 operationMapSceneLoadingSystem != null &&
@@ -160,9 +164,32 @@ namespace Game.Composition
                     1,
                     readyFlags,
                     requiredFlags,
-                    out _,
+                    out Entity mapRoot,
                     out error))
-                return true;
+            {
+                if (!resolvedOperationMapDefinition.SourceBinding.IsConfigured)
+                    return true;
+                if (activeOperationMapSceneView == null ||
+                    !CampaignMissionOperationMapReuseUtility.TryReuse(
+                        world.EntityManager,
+                        activeOperationMapSceneView.Definition,
+                        out Entity validatedRoot,
+                        out error) ||
+                    validatedRoot != mapRoot)
+                {
+                    error = string.IsNullOrEmpty(error)
+                        ? "Loaded operation-map content does not match the campaign physical source."
+                        : error;
+                }
+                else
+                {
+                    OperationMapMetadataComponent metadata =
+                        world.EntityManager.GetComponentData<OperationMapMetadataComponent>(mapRoot);
+                    if (metadata.PhysicalSourceValidated != 0)
+                        return true;
+                    error = "Campaign physical source validation did not publish readiness ownership.";
+                }
+            }
 
             DisposeOperationMapMetadataBootstrap();
             return false;
@@ -285,16 +312,16 @@ namespace Game.Composition
                 return;
 
             if (!TryResolveOperationMapDefinition(
+                    World.DefaultGameObjectInjectionWorld,
                     out OperationMapDefinition definition,
                     out bool waiting,
+                    out OperationMapLoadResultCode failureCode,
                     out string resolveError))
             {
                 if (waiting)
                     return;
                 ReportOperationMapLoadFailure(
-                    OperationMapIdentityRules.IsValidOperationMapId(operationMapId)
-                        ? OperationMapLoadResultCode.MissingDefinition
-                        : OperationMapLoadResultCode.InvalidOperationMapId,
+                    failureCode,
                     resolveError);
                 return;
             }
@@ -303,10 +330,10 @@ namespace Game.Composition
             operationMapSceneLoadingSystem = new OperationMapSceneLoadingSceneSystemHelper();
             if (!operationMapSceneLoadingSystem.TryStart(definition, out string error))
             {
-                OperationMapLoadResultCode failureCode = operationMapSceneLoadingSystem.FailureCode;
+                OperationMapLoadResultCode startFailureCode = operationMapSceneLoadingSystem.FailureCode;
                 operationMapSceneLoadingSystem.Dispose();
                 operationMapSceneLoadingSystem = null;
-                ReportOperationMapLoadFailure(failureCode, error);
+                ReportOperationMapLoadFailure(startFailureCode, error);
             }
         }
 
@@ -320,16 +347,64 @@ namespace Game.Composition
         }
 
         private bool TryResolveOperationMapDefinition(
+            World world,
             out OperationMapDefinition definition,
             out bool waiting,
+            out OperationMapLoadResultCode failureCode,
             out string error)
         {
-            return denseCityCandidateRuntimeOverride.TryResolve(
+            if (!hasResolvedOperationMapLaunchSelection)
+            {
+                if (!CampaignMissionOperationMapLaunchResolver.TryResolve(
+                        world,
+                        missionId,
+                        scenarioId,
+                        operationMapId,
+                        out resolvedOperationMapLaunchSelection,
+                        out failureCode,
+                        out error))
+                {
+                    definition = null;
+                    waiting = false;
+                    return false;
+                }
+
+                hasResolvedOperationMapLaunchSelection = true;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                string source = resolvedOperationMapLaunchSelection.IsCampaign
+                    ? "Campaign"
+                    : "Compatibility";
+                Debug.Log(
+                    $"[OperationMapLaunchIdentity] source={source} " +
+                    $"mission={resolvedOperationMapLaunchSelection.MissionId} " +
+                    $"scenario={resolvedOperationMapLaunchSelection.ScenarioId} " +
+                    $"operationMap={resolvedOperationMapLaunchSelection.OperationMapId}");
+#endif
+            }
+
+            if (resolvedOperationMapLaunchSelection.Definition != null)
+            {
+                definition = resolvedOperationMapLaunchSelection.Definition;
+                waiting = false;
+                failureCode = OperationMapLoadResultCode.None;
+                error = null;
+                return true;
+            }
+
+            string selectedOperationMapId =
+                resolvedOperationMapLaunchSelection.OperationMapId.ToString();
+            bool resolved = denseCityCandidateRuntimeOverride.TryResolve(
                 ResolveOperationMapCatalog(),
-                operationMapId,
+                selectedOperationMapId,
                 out definition,
                 out waiting,
                 out error);
+            failureCode = resolved || waiting
+                ? OperationMapLoadResultCode.None
+                : OperationMapIdentityRules.IsValidOperationMapId(selectedOperationMapId)
+                    ? OperationMapLoadResultCode.MissingDefinition
+                    : OperationMapLoadResultCode.InvalidOperationMapId;
+            return resolved;
         }
 
 #if UNITY_EDITOR
@@ -388,6 +463,8 @@ namespace Game.Composition
             operationMapSceneLoadingSystem?.Dispose();
             operationMapSceneLoadingSystem = null;
             resolvedOperationMapDefinition = null;
+            resolvedOperationMapLaunchSelection = default;
+            hasResolvedOperationMapLaunchSelection = false;
             operationMapLoadFailureReported = false;
             operationMapLoadFailureCode = OperationMapLoadResultCode.None;
             operationMapLoadFailure = null;

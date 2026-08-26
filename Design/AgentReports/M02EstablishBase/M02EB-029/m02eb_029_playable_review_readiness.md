@@ -7,6 +7,7 @@ Status: Ready for project-owner Editor review; acceptance remains open
 ## Review Build
 
 - The existing Campaign selector and deploy pipeline launch the exact M02 mission, scenario, and logical operation map.
+- Match preserves that correlated Campaign selection and loads accepted source GUID `dad0bd13fb20943dfb2f881cbe225f05`; it no longer substitutes the serialized Skirmish fallback after leaving Menu.
 - The provisional brief, delayed-wave comms, and first-clear debrief reuse the established narrative presenter and pause mission simulation while brief/comms are visible.
 - The complete typed guidance path remains active: Build, Barracks selection, valid footprint, confirmation, resource review, rifle production, warning, and defense.
 - Final comic panels, bilingual copy polish, and voices remain intentionally unproduced until the owner accepts this playable timing gate.
@@ -35,6 +36,21 @@ The checked macOS wrapper ran `MobileVisualQualityPlayModeCapture.CaptureFromEnv
 - `/private/tmp/warline-m02-hud-result-regression.log`: HUD/result `4/4`, narrative `17/17`, Campaign UI `10/10`, source growth `17/17`, aggregate `6/6`.
 - `/private/tmp/warline-m02eb-029-source-growth-final.log`: final post-documentation source-growth and architecture metadata check `17/17`.
 - Final accepted runs contain zero compiler errors and no failed validation marker.
+
+## Exact Launch-Map Correction
+
+The latest owner replay exposed a boundary not covered by the earlier metadata-only proof. Menu correctly published `saga.ch01.m02.establish_base`, `scenario.ch01.m02.establish_base`, and `opmap.ch01.forward_post_01`, but Match independently resolved its serialized `opmap.skirmish.desert_base_01` compatibility definition and loaded the wrong scene. The M2 runtime then could not accept the physical source, which left the route inert and prevented the mission-owned brief from starting.
+
+The existing Campaign root now carries one composition-owned, request-correlated operation-map definition reference. Match resolves it before source loading, rejects stale or ambiguous requests, loads the logical definition's accepted entity-scene reference, validates the physical scene identity through `SourceBinding.SourceOperationMapId`, and retains the old compatibility path only when no Campaign request exists.
+
+- `/private/tmp/warline-m02-map-launch-fix-2.log`: M2 launch `14/14`; exact source GUID assertion passed.
+- `/private/tmp/warline-operation-map-loading-alias.log`: logical-to-physical scene loading `20/20`.
+- `/private/tmp/warline-operation-map-bootstrap-fallback.log`: Match selection and fallback `17/17`.
+- `/private/tmp/warline-m01-source-binding-regression.log`: M1 source binding `14/14`.
+- `/private/tmp/warline-production-source-growth-regression-2.log`: architecture/source growth `17/17`.
+- `/private/tmp/warline-m02-launch-regression.log`: aggregate M2 launch regression `3/3`.
+- `/private/tmp/warline-m02-launch-route-proof.log`: graphics-enabled Campaign route logged `source=Campaign`, loaded `opmap_skirmish_desert_base_01_dense_city_entity_scene_runtime.unity`, reached full source/metadata/surface/presentation readiness, and passed at Metal 1280x720.
+- `/private/tmp/warline-m02-launch-route-proof/current_gameplay_zoom_grounding.txt`: seven mission units spawned and all seven were grounded on the accepted surface.
 
 The first owner route attempt exposed two additional launch blockers after the original review-readiness capture: an older M01-complete profile could remain on M01, and the provisional M02 briefing failed because its intentionally absent comic was treated as required. Both paths now fail closed only for real missing authored media, retain the existing Campaign/narrative owners, and pass the focused and aggregate gates above. Visible owner review remains open.
 

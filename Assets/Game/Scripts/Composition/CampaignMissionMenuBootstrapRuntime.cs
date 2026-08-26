@@ -88,10 +88,29 @@ namespace Game.Composition
                 return;
 
             CampaignMissionLaunchRequestElement request = requests[0];
-            if (!MatchesConfiguredMission(view, in request) ||
-                !view.CampaignOperationMapCatalog.TryResolve(
-                    request.OperationMapId.ToString(), out OperationMapDefinition definition))
+            if (!MatchesConfiguredMission(view, in request))
                 return;
+            if (!view.CampaignOperationMapCatalog.TryResolve(
+                    request.OperationMapId.ToString(), out OperationMapDefinition definition))
+            {
+                UnityEngine.Debug.LogError(
+                    $"[CampaignMissionBootstrap] operation-map definition is missing for " +
+                    $"'{request.OperationMapId}'.");
+                return;
+            }
+
+            CampaignMissionOperationMapReferenceComponent operationMapReference =
+                entityManager.GetComponentObject<CampaignMissionOperationMapReferenceComponent>(
+                    campaignMissionRoot);
+            operationMapReference.MissionId = request.MissionId;
+            operationMapReference.ScenarioId = request.ScenarioId;
+            operationMapReference.OperationMapId = request.OperationMapId;
+            operationMapReference.SessionToken = request.SessionToken;
+            operationMapReference.Definition = definition;
+            operationMapReference.TransitionToken = request.TransitionToken;
+            operationMapReference.SourceVersion = entityManager
+                .GetComponentData<CampaignMissionCatalogComponent>(campaignMissionRoot).SourceVersion;
+            operationMapReference.AttemptOrdinal = request.AttemptOrdinal;
 
             if (HasMatchingOperationMap(entityManager, in request))
                 return;

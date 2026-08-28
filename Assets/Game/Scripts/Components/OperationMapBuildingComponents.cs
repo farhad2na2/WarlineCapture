@@ -38,6 +38,7 @@ namespace Game.Components
         public FixedString64Bytes UnitSourceKey;
         public float QueuedAt;
         public float ReadyAt;
+        public int RemainingQuantity;
         public byte Status;
     }
 }

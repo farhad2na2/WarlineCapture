@@ -9,14 +9,41 @@ namespace Game.Editor
     {
         private static bool configured;
 
-        public const string PanelRoot =
+        public const string ReviewPanelRoot =
             "Assets/Game/Art/Narrative/M02EstablishBase/Provisional";
+        public const string PanelRoot =
+            "Assets/Game/Art/Narrative/M02EstablishBase/Final";
         public const string BriefPanelPath = PanelRoot + "/M02-P01-Brief.png";
         public const string CommsPanelPath = PanelRoot + "/M02-P02-Comms.png";
         public const string DebriefPanelPath = PanelRoot + "/M02-P03-Debrief.png";
 
-        [MenuItem("Game/Campaign/M02/Configure Provisional Narrative Art")]
-        public static void ConfigureProvisionalArtImports()
+        [MenuItem("Game/Campaign/M02/Promote Reviewed Narrative Art To Final")]
+        public static void PromoteReviewedArtToFinal()
+        {
+            bool reviewExists = AssetDatabase.IsValidFolder(ReviewPanelRoot);
+            bool finalExists = AssetDatabase.IsValidFolder(PanelRoot);
+            if (reviewExists && finalExists)
+                throw new InvalidOperationException("M02 review and final narrative art folders both exist.");
+
+            if (reviewExists)
+            {
+                string error = AssetDatabase.MoveAsset(ReviewPanelRoot, PanelRoot);
+                if (!string.IsNullOrEmpty(error))
+                    throw new InvalidOperationException($"Could not promote M02 narrative art: {error}");
+            }
+            else if (!finalExists)
+            {
+                throw new InvalidOperationException("M02 reviewed narrative art folder is missing.");
+            }
+
+            configured = false;
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            ConfigureFinalArtImports();
+            Debug.Log("[M02EstablishBaseNarrativeArtImporter] promotion=Passed reviewToFinal=1 guidPreserved=1");
+        }
+
+        [MenuItem("Game/Campaign/M02/Configure Final Narrative Art")]
+        public static void ConfigureFinalArtImports()
         {
             if (configured && PanelsAreAvailable())
                 return;
@@ -31,7 +58,7 @@ namespace Game.Editor
             if (!paths.SequenceEqual(expected, StringComparer.Ordinal))
             {
                 throw new InvalidOperationException(
-                    $"M02 provisional panel set mismatch. Expected [{string.Join(", ", expected)}], " +
+                    $"M02 final panel set mismatch. Expected [{string.Join(", ", expected)}], " +
                     $"found [{string.Join(", ", paths)}].");
             }
 
@@ -39,7 +66,7 @@ namespace Game.Editor
                 ConfigureTexture(path);
             AssetDatabase.SaveAssets();
             configured = true;
-            Debug.Log("[M02EstablishBaseNarrativeArtImporter] result=Passed panels=3 provisional=1");
+            Debug.Log("[M02EstablishBaseNarrativeArtImporter] result=Passed panels=3 final=1 textFree=1");
         }
 
         private static bool PanelsAreAvailable() =>

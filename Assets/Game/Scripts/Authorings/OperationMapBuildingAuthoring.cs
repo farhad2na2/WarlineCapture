@@ -441,7 +441,8 @@ namespace Game.Authoring
                     {
                         ProductionIndex = index,
                         Prefab = GetEntity(production.spawnUnitPrefab, TransformUsageFlags.Dynamic),
-                        SourceKey = new FixedString64Bytes(production.spawnUnitPrefab.name)
+                        SourceKey = new FixedString64Bytes(production.spawnUnitPrefab.name),
+                        Quantity = math.max(1, production.quantity)
                     });
                 }
 

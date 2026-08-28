@@ -335,7 +335,7 @@ public sealed class M02EstablishBaseCampaignUiTests
             new UiMissionObjectiveModel(
                 "obj.ch01.m02.produce_rifle_squad",
                 "mission.m02.objective.produce_rifle_squad", string.Empty, Rifle,
-                UiMissionObjectiveRuleKind.ProduceUnit, 1, false),
+                UiMissionObjectiveRuleKind.ProduceUnit, 4, false),
             new UiMissionObjectiveModel(
                 "obj.ch01.m02.defend_forward_post",
                 "mission.m02.objective.defend_forward_post", "role.friendly.forward_post", string.Empty,

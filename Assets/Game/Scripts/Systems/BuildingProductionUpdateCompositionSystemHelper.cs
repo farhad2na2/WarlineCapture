@@ -143,7 +143,7 @@ namespace Game.Runtime
             float deltaTime,
             ref uint randomState,
             ref int remainingTransportLaunches,
-            ref int remainingImmediateProductionSpawns)
+            ref int remainingSpawns)
         {
             if (building == null)
                 return false;
@@ -193,7 +193,7 @@ namespace Game.Runtime
                 if (progress.RemainingSeconds > 0f || !context.ProductionSystem.IsReady(pending, now))
                     continue;
 
-                if (remainingImmediateProductionSpawns <= 0)
+                if (remainingSpawns <= 0)
                     continue;
 
                 if (BuildingProductionTransportPresentationSystemHelper.TrySpawnPlayerUnitNearBuilding(
@@ -205,8 +205,8 @@ namespace Game.Runtime
                         null,
                         ref randomState))
                 {
-                    remainingImmediateProductionSpawns--;
-                    if (context.ProductionSystem.RemovePendingAt(building.PendingProductions, i))
+                    remainingSpawns--;
+                    if (pending.ConsumeUnit() && context.ProductionSystem.RemovePendingAt(building.PendingProductions, i))
                         context.ProductionSystem.RebuildPendingProductionTimeline(building.PendingProductions, now, preserveActiveProgress: false);
                 }
             }

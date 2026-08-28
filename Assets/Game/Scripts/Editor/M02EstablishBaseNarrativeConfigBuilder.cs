@@ -32,7 +32,8 @@ namespace Game.Editor
 
         public static void Build()
         {
-            M02EstablishBaseNarrativeArtImporter.ConfigureProvisionalArtImports();
+            M02EstablishBaseNarrativeArtImporter.ConfigureFinalArtImports();
+            M02EstablishBaseNarrativeVoiceImporter.ConfigureImports();
             EnsureFolder("Assets/Game/Configs/Narrative/Chapter01");
             Configure(
                 Sequence(BriefSequenceId, "M02_EstablishBase_Brief"),
@@ -43,12 +44,7 @@ namespace Game.Editor
                 new[] { "story_archive.seq.ch01.m02.brief" },
                 new[] { "story.m02.forward_post_civic_purpose" },
                 M02EstablishBaseNarrativeArtImporter.BriefPanelPath,
-                (NarrativeSpeakerId.Dalia, "brief.dalia",
-                    "The abandoned JRC forward post is the only command point left on this district edge. Restore it, then hold its defense lane."),
-                (NarrativeSpeakerId.Aria, "brief.aria",
-                    "Once the Barracks and rifle squad are operational, the post can restore local response channels."),
-                (NarrativeSpeakerId.Samira, "brief.samira",
-                    "This post protects the clinic route and municipal crews still moving through Old Market. Reopening it is a civic lifeline, not only a military position."));
+                M02EstablishBaseLocalizedText.Brief);
             Configure(
                 Sequence(CommsSequenceId, "M02_EstablishBase_Comms"),
                 CommsSequenceId,
@@ -66,12 +62,7 @@ namespace Game.Editor
                     "story.m02.access_list_stolen_before_attack"
                 },
                 M02EstablishBaseNarrativeArtImporter.CommsPanelPath,
-                (NarrativeSpeakerId.Dalia, "comms.dalia",
-                    "Hold the post. The incoming cell cannot be allowed through to the clinic route."),
-                (NarrativeSpeakerId.Aria, "comms.aria",
-                    "A municipal access list was recovered from the attackers. Its copy timestamp predates the first strike."),
-                (NarrativeSpeakerId.Samira, "comms.samira",
-                    "That list maps substations, maintenance gates, and service tunnels. It was stolen before the attack."));
+                M02EstablishBaseLocalizedText.Comms);
             Configure(
                 Sequence(DebriefSequenceId, "M02_EstablishBase_Debrief"),
                 DebriefSequenceId,
@@ -91,12 +82,8 @@ namespace Game.Editor
                     "campaign.highlight." + M03MissionId
                 },
                 M02EstablishBaseNarrativeArtImporter.DebriefPanelPath,
-                (NarrativeSpeakerId.Samira, "debrief.samira",
-                    "The forward post is operational. Clinic and municipal response channels are back online."),
-                (NarrativeSpeakerId.Dalia, "debrief.dalia",
-                    "Commander, Dalia Rahim. I accept the field-lead role. I will direct the ground response from this post."),
-                (NarrativeSpeakerId.Aria, "debrief.aria",
-                    "The warning sector toward the next operation has gone dark. Armored movement is approaching through it."));
+                M02EstablishBaseLocalizedText.Debrief);
+            M02EstablishBaseNarrativeLocaleBuilder.BuildPersianLocale();
             AssetDatabase.SaveAssets();
         }
 
@@ -176,7 +163,7 @@ namespace Game.Editor
             string[] evidenceIds,
             string[] contextFlags,
             string panelPath,
-            params (NarrativeSpeakerId speaker, string key, string text)[] lines)
+            IReadOnlyList<M02NarrativeLocalizedLine> lines)
         {
             SerializedObject serialized = new(target);
             string dialogueId = prefix + "-DIALOGUE";
@@ -197,23 +184,34 @@ namespace Game.Editor
                 string.Empty,
                 Array.Empty<string>(),
                 Array.Empty<string>());
-            BindProvisionalPanel(states.GetArrayElementAtIndex(0), panelPath);
+            BindFinalPanel(states.GetArrayElementAtIndex(0), panelPath);
 
             SerializedProperty authoredLines = states.GetArrayElementAtIndex(0).FindPropertyRelative("lines");
-            authoredLines.arraySize = lines.Length;
-            for (int index = 0; index < lines.Length; index++)
+            authoredLines.arraySize = lines.Count;
+            float cursor = 0f;
+            for (int index = 0; index < lines.Count; index++)
             {
                 SerializedProperty line = authoredLines.GetArrayElementAtIndex(index);
-                Set(line.FindPropertyRelative("lineId"), prefix.ToLowerInvariant() + ".line." + (index + 1));
-                Set(line.FindPropertyRelative("textKey"), "narrative.m02." + lines[index].key);
-                Set(line.FindPropertyRelative("englishFallback"), lines[index].text);
-                line.FindPropertyRelative("speaker").enumValueIndex = (int)lines[index].speaker;
-                line.FindPropertyRelative("startSeconds").floatValue = index * 4f;
-                line.FindPropertyRelative("deadlineSeconds").floatValue = index * 4f + 3.75f;
+                M02NarrativeLocalizedLine definition = lines[index];
+                AudioClip englishVoice = RequireVoice(
+                    M02EstablishBaseNarrativeVoiceImporter.GetEnglishClipPath(definition.LineId));
+                AudioClip persianVoice = RequireVoice(
+                    M02EstablishBaseNarrativeVoiceImporter.GetPersianClipPath(definition.LineId));
+                float slotDuration = Mathf.Max(englishVoice.length, persianVoice.length) + 0.35f;
+                Set(line.FindPropertyRelative("lineId"), definition.LineId);
+                Set(line.FindPropertyRelative("textKey"), definition.TextKey);
+                Set(line.FindPropertyRelative("englishFallback"), definition.English);
+                line.FindPropertyRelative("speaker").enumValueIndex = (int)definition.Speaker;
+                line.FindPropertyRelative("voiceClip").objectReferenceValue = englishVoice;
+                line.FindPropertyRelative("femaleVoiceClip").objectReferenceValue = null;
+                line.FindPropertyRelative("neutralVoiceClip").objectReferenceValue = null;
+                line.FindPropertyRelative("startSeconds").floatValue = cursor;
+                line.FindPropertyRelative("deadlineSeconds").floatValue = cursor + slotDuration;
                 line.FindPropertyRelative("essentialCaption").boolValue = true;
+                cursor += slotDuration + 0.25f;
             }
 
-            states.GetArrayElementAtIndex(0).FindPropertyRelative("durationSeconds").floatValue = lines.Length * 4f;
+            states.GetArrayElementAtIndex(0).FindPropertyRelative("durationSeconds").floatValue = cursor;
             NarrativeStateKind completionKind = routeRole == NarrativeRouteRole.DebriefArrival
                 ? NarrativeStateKind.RouteArrival
                 : NarrativeStateKind.RouteHandoff;
@@ -231,13 +229,19 @@ namespace Game.Editor
             EditorUtility.SetDirty(target);
         }
 
-        private static void BindProvisionalPanel(SerializedProperty state, string panelPath)
+        private static void BindFinalPanel(SerializedProperty state, string panelPath)
         {
             Sprite panel = AssetDatabase.LoadAssetAtPath<Sprite>(panelPath);
             if (panel == null)
-                throw new InvalidOperationException($"M02 provisional narrative panel is missing: {panelPath}");
+                throw new InvalidOperationException($"M02 final narrative panel is missing: {panelPath}");
             state.FindPropertyRelative("panel16x9").objectReferenceValue = panel;
             state.FindPropertyRelative("panel20x9").objectReferenceValue = panel;
+        }
+
+        private static AudioClip RequireVoice(string path)
+        {
+            AudioClip clip = AssetDatabase.LoadAssetAtPath<AudioClip>(path);
+            return clip != null ? clip : throw new InvalidOperationException($"Missing M02 English voice: {path}");
         }
 
         private static void PopulateState(

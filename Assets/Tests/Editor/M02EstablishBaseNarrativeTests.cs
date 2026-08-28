@@ -23,7 +23,7 @@ using UnityEngine;
 public static class M02EstablishBaseNarrativeTests
 {
     private const string PassMarker =
-        "[M02EstablishBaseNarrativeValidation] result=Passed tests=20";
+        "[M02EstablishBaseNarrativeValidation] result=Passed tests=22";
 
     [MenuItem("Game/Validation/Run M02 Establish Base Narrative Focused")]
     public static void RunFocusedValidation()
@@ -36,9 +36,11 @@ public static class M02EstablishBaseNarrativeTests
             BriefEstablishesPostDirectionAndCivicPurpose();
             CommsRecoverPreAttackMunicipalAccessList();
             DebriefClosesPostDaliaAndM03WarningSectorBeats();
-            ProvisionalSequencesBindReviewPanelsWithoutFinalVoice();
-            ProvisionalComicDialogueRequiresItsPanelBinding();
-            ProvisionalComicDirectPanelPresentsImmediately();
+            FinalSequencesBindReviewedPanelsAndEnglishVoice();
+            PersianLocaleMatchesEveryFinalNarrativeLine();
+            TutorialVoiceAssetsMatchEveryDisplayedInstruction();
+            FinalComicDialogueRequiresItsPanelBinding();
+            FinalComicDirectPanelPresentsImmediately();
             AuthoredComicDialogueStillRequiresItsPanel();
             SkipReducedMotionAndCaptionsAreSupported();
             M02NarrativeIdentityDoesNotBorrowM01OrFirstLaunchContent();
@@ -97,11 +99,11 @@ public static class M02EstablishBaseNarrativeTests
         EnsureBuilt();
         NarrativeSequenceConfig brief = Sequence(M02EstablishBaseNarrativeConfigBuilder.BriefSequenceId);
         string transcript = Transcript(brief);
-        StringAssert.Contains("abandoned JRC forward post", transcript);
+        StringAssert.Contains("forward post is abandoned", transcript);
         StringAssert.Contains("Restore it", transcript);
-        StringAssert.Contains("defense lane", transcript);
-        StringAssert.Contains("clinic route", transcript);
-        StringAssert.Contains("civic lifeline", transcript);
+        StringAssert.Contains("Build a Barracks", transcript);
+        StringAssert.Contains("clinic road", transcript);
+        StringAssert.Contains("route open", transcript);
         Assert.AreEqual(NarrativeSpeakerId.Dalia, brief.States[0].Lines[0].Speaker);
         CollectionAssert.Contains(brief.States[1].MissionContextFlags, "story.m02.forward_post_civic_purpose");
         Assert.AreEqual("request.m02.interactive_brief.complete", brief.States[1].CompletionPayloadId);
@@ -113,9 +115,9 @@ public static class M02EstablishBaseNarrativeTests
         EnsureBuilt();
         NarrativeSequenceConfig comms = Sequence(M02EstablishBaseNarrativeConfigBuilder.CommsSequenceId);
         string transcript = Transcript(comms);
-        StringAssert.Contains("municipal access list", transcript);
-        StringAssert.Contains("predates the first strike", transcript);
-        StringAssert.Contains("stolen before the attack", transcript);
+        StringAssert.Contains("city access list", transcript);
+        StringAssert.Contains("copied before the first strike", transcript);
+        StringAssert.Contains("stole it before the attack", transcript);
         Assert.AreEqual(NarrativeSpeakerId.Aria, comms.States[0].Lines[1].Speaker);
         Assert.AreEqual(NarrativeSpeakerId.Samira, comms.States[0].Lines[2].Speaker);
         CollectionAssert.Contains(comms.States[1].EvidenceIds, "evidence.m02.municipal_access_list");
@@ -133,10 +135,10 @@ public static class M02EstablishBaseNarrativeTests
         NarrativeSequenceConfig debrief = Sequence(M02EstablishBaseNarrativeConfigBuilder.DebriefSequenceId);
         NarrativeStateRecord route = debrief.States[1];
         string transcript = Transcript(debrief);
-        StringAssert.Contains("forward post is operational", transcript);
+        StringAssert.Contains("post is active again", transcript);
         StringAssert.Contains("Dalia Rahim", transcript);
-        StringAssert.Contains("accept the field-lead role", transcript);
-        StringAssert.Contains("warning sector", transcript);
+        StringAssert.Contains("lead the ground response", transcript);
+        StringAssert.Contains("warning network", transcript);
         StringAssert.Contains("gone dark", transcript);
         Assert.AreEqual(NarrativeSpeakerId.Dalia, debrief.States[0].Lines[1].Speaker);
         Assert.AreEqual(NarrativeRouteRole.DebriefArrival, route.RouteRole);
@@ -150,9 +152,10 @@ public static class M02EstablishBaseNarrativeTests
     }
 
     [Test]
-    public static void ProvisionalSequencesBindReviewPanelsWithoutFinalVoice()
+    public static void FinalSequencesBindReviewedPanelsAndEnglishVoice()
     {
         EnsureBuilt();
+        M02EstablishBaseNarrativeVoiceImporter.ValidateImports();
         foreach (NarrativeSequenceConfig sequence in Sequences())
         {
             NarrativeStateRecord dialogue = sequence.States[0];
@@ -167,7 +170,11 @@ public static class M02EstablishBaseNarrativeTests
             {
                 Assert.IsNotEmpty(line.EnglishFallback);
                 Assert.That(line.TextKey, Does.StartWith("narrative.m02."));
-                Assert.IsNull(line.VoiceClip);
+                Assert.IsNotNull(line.VoiceClip);
+                Assert.That(
+                    AssetDatabase.GetAssetPath(line.VoiceClip),
+                    Does.StartWith(M02EstablishBaseNarrativeVoiceImporter.EnglishRoot + "/"));
+                Assert.GreaterOrEqual(line.DeadlineSeconds - line.StartSeconds, line.VoiceClip.length);
                 Assert.IsNull(line.FemaleVoiceClip);
                 Assert.IsNull(line.NeutralVoiceClip);
             }
@@ -175,7 +182,84 @@ public static class M02EstablishBaseNarrativeTests
     }
 
     [Test]
-    public static void ProvisionalComicDialogueRequiresItsPanelBinding()
+    public static void PersianLocaleMatchesEveryFinalNarrativeLine()
+    {
+        EnsureBuilt();
+        VoiceManifest manifest = LoadVoiceManifest(
+            "Assets/Game/Audio/Narrative/M02EstablishBase/m02_narrative_voice_manifest.json",
+            expectedClipCount: M02EstablishBaseNarrativeVoiceImporter.ExpectedClipCount);
+        NarrativeLocaleConfig locale = AssetDatabase.LoadAssetAtPath<NarrativeLocaleConfig>(
+            M02EstablishBaseNarrativeLocaleBuilder.PersianLocalePath);
+        Assert.IsNotNull(locale);
+        Assert.AreEqual(FirstLaunchNarrativeLanguage.Persian, locale.Language);
+        Assert.IsTrue(locale.RightToLeft);
+        Dictionary<string, NarrativeLocaleTextRecord> text = locale.Text
+            .Where(entry => entry.Key.StartsWith("narrative.m02.", StringComparison.Ordinal))
+            .ToDictionary(entry => entry.Key);
+        Dictionary<string, NarrativeLocaleVoiceRecord> voices = locale.Voices
+            .Where(entry => entry.LineId.StartsWith("m02-", StringComparison.Ordinal))
+            .ToDictionary(entry => entry.LineId);
+
+        M02NarrativeLocalizedLine[] expected = M02EstablishBaseNarrativeVoiceImporter.AllLines().ToArray();
+        Assert.AreEqual(9, expected.Length);
+        Assert.AreEqual(expected.Length, text.Count);
+        Assert.AreEqual(expected.Length, voices.Count);
+        foreach (M02NarrativeLocalizedLine line in expected)
+        {
+            Assert.AreEqual(line.Persian, text[line.TextKey].Value, line.TextKey);
+            Assert.IsNotNull(voices[line.LineId].VoiceClip, line.LineId);
+            Assert.AreEqual(
+                M02EstablishBaseNarrativeVoiceImporter.GetPersianClipPath(line.LineId),
+                AssetDatabase.GetAssetPath(voices[line.LineId].VoiceClip));
+            AssertManifestClip(
+                manifest,
+                M02EstablishBaseNarrativeVoiceImporter.GetEnglishClipPath(line.LineId),
+                line.Speaker.ToString().ToUpperInvariant(),
+                "en-US",
+                line.English);
+            AssertManifestClip(
+                manifest,
+                M02EstablishBaseNarrativeVoiceImporter.GetPersianClipPath(line.LineId),
+                line.Speaker.ToString().ToUpperInvariant(),
+                "fa-IR",
+                line.Persian);
+        }
+    }
+
+    [Test]
+    public static void TutorialVoiceAssetsMatchEveryDisplayedInstruction()
+    {
+        M02TutorialNarrationAudioImporter.ValidateImports();
+        VoiceManifest manifest = LoadVoiceManifest(
+            "Assets/Game/Audio/Voice/Tutorial/tutorial_m02_aria_voice_manifest.json",
+            expectedClipCount: M02TutorialNarrationAudioImporter.StableClipPaths.Length);
+        string catalog = File.ReadAllText(
+            "Assets/Game/Audio/Config/audio_event_catalog_v0_1.json");
+        for (byte step = 2; step <= 8; step++)
+        {
+            Assert.IsTrue(M02EstablishBaseLocalizedText.TryGetTutorial(
+                step, FirstLaunchNarrativeLanguage.English, out _, out string english));
+            Assert.IsTrue(M02EstablishBaseLocalizedText.TryGetTutorial(
+                step, FirstLaunchNarrativeLanguage.Persian, out _, out string persian));
+            int index = step - 2;
+            AssertManifestClip(
+                manifest,
+                M02TutorialNarrationAudioImporter.StableClipPaths[index],
+                "ARIA",
+                "en-US",
+                english);
+            AssertManifestClip(
+                manifest,
+                M02TutorialNarrationAudioImporter.StableClipPaths[index + 7],
+                "ARIA",
+                "fa-IR",
+                persian);
+        }
+        Assert.AreEqual(14, Count(catalog, "VO.ARIA.Tutorial.M02."));
+    }
+
+    [Test]
+    public static void FinalComicDialogueRequiresItsPanelBinding()
     {
         EnsureBuilt();
         foreach (NarrativeSequenceConfig sequence in Sequences())
@@ -188,7 +272,7 @@ public static class M02EstablishBaseNarrativeTests
     }
 
     [Test]
-    public static void ProvisionalComicDirectPanelPresentsImmediately()
+    public static void FinalComicDirectPanelPresentsImmediately()
     {
         EnsureBuilt();
         NarrativeStateRecord dialogue = Sequence(
@@ -435,11 +519,79 @@ public static class M02EstablishBaseNarrativeTests
     private static string Transcript(NarrativeSequenceConfig sequence) =>
         string.Join(" ", sequence.States.SelectMany(state => state.Lines).Select(line => line.EnglishFallback));
 
+    private static int Count(string source, string value)
+    {
+        int count = 0;
+        int offset = 0;
+        while ((offset = source.IndexOf(value, offset, StringComparison.Ordinal)) >= 0)
+        {
+            count++;
+            offset += value.Length;
+        }
+        return count;
+    }
+
+    private static VoiceManifest LoadVoiceManifest(string path, int expectedClipCount)
+    {
+        VoiceManifest manifest = JsonUtility.FromJson<VoiceManifest>(File.ReadAllText(path));
+        Assert.IsNotNull(manifest, path);
+        Assert.AreEqual("ElevenLabs", manifest.provider, path);
+        Assert.AreEqual("eleven_v3", manifest.model, path);
+        Assert.AreEqual(M02EstablishBaseNarrativeVoiceImporter.RightsStatus, manifest.license, path);
+        Assert.IsFalse(manifest.runtimeNetworkTts, path);
+        Assert.IsNotNull(manifest.clips, path);
+        Assert.AreEqual(expectedClipCount, manifest.clips.Length, path);
+        CollectionAssert.AllItemsAreUnique(manifest.clips.Select(clip => clip.assetPath).ToArray());
+        return manifest;
+    }
+
+    private static void AssertManifestClip(
+        VoiceManifest manifest,
+        string assetPath,
+        string expectedSpeaker,
+        string locale,
+        string expectedText)
+    {
+        VoiceManifestClip clip = manifest.clips.Single(entry => entry.assetPath == assetPath);
+        Assert.AreEqual(expectedSpeaker, clip.speaker, assetPath);
+        Assert.AreEqual(locale, clip.locale, assetPath);
+        Assert.AreEqual(expectedText, clip.text, assetPath);
+        Assert.AreEqual(Sha256(assetPath), clip.sha256, assetPath);
+    }
+
+    private static string Sha256(string path)
+    {
+        using SHA256 sha = SHA256.Create();
+        return BitConverter.ToString(sha.ComputeHash(File.ReadAllBytes(path)))
+            .Replace("-", string.Empty)
+            .ToLowerInvariant();
+    }
+
     private static string Hash()
     {
         using SHA256 sha = SHA256.Create();
         return BitConverter.ToString(
                 sha.ComputeHash(File.ReadAllBytes(M02EstablishBaseNarrativeConfigBuilder.NarrativePath)))
             .Replace("-", string.Empty);
+    }
+
+    [Serializable]
+    private sealed class VoiceManifest
+    {
+        public string provider;
+        public string license;
+        public bool runtimeNetworkTts;
+        public string model;
+        public VoiceManifestClip[] clips;
+    }
+
+    [Serializable]
+    private sealed class VoiceManifestClip
+    {
+        public string speaker;
+        public string locale;
+        public string text;
+        public string assetPath;
+        public string sha256;
     }
 }

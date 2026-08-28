@@ -17,7 +17,7 @@ public sealed class M02EstablishBaseBarracksProductionTests
     private const string BarracksPrefabPath =
         "Assets/Game/Prefabs/Buildings/Building_Barrack.prefab";
     private const string Marker =
-        "[M02EstablishBaseBarracksProductionValidation] result=Passed tests=4";
+        "[M02EstablishBaseBarracksProductionValidation] result=Passed tests=6";
 
     public static void RunFocusedValidation()
     {
@@ -27,6 +27,9 @@ public sealed class M02EstablishBaseBarracksProductionTests
             tests.BarracksConfigContainsOnlyTheApprovedRifle();
             tests.BarracksAuthoringConsumesTheCanonicalProductionEntry();
             tests.ExistingProductionMetadataResolvesTheApprovedRifle();
+            tests.OneBarracksOrderQueuesTheCanonicalFourSoldierSquad();
+            new BuildingProductionQueueCompositionSystemHelperTests()
+                .OperationMapProducerQueueConsumer_CompletesConfiguredQuantityBeforeNextRequest();
             tests.UnrelatedProducerCatalogsRemainUnchanged();
             Debug.Log(Marker);
             ValidationExit.Passed();
@@ -49,6 +52,8 @@ public sealed class M02EstablishBaseBarracksProductionTests
         Assert.That(config.Productions, Has.Count.EqualTo(1));
         Assert.That(config.Productions[0], Is.Not.Null);
         Assert.That(config.Productions[0].SpawnUnitPrefab, Is.SameAs(expected));
+        Assert.That(config.Productions[0].Quantity, Is.EqualTo(4));
+        Assert.That(config.Role, Is.EqualTo(BuildingRole.MilitaryCamp));
     }
 
     [Test]
@@ -62,6 +67,7 @@ public sealed class M02EstablishBaseBarracksProductionTests
         Assert.That(authoring.ConfiguredProductionCount, Is.EqualTo(1));
         Assert.That(authoring.GetProductionOrDefault(0), Is.Not.Null);
         Assert.That(authoring.GetProductionOrDefault(0).spawnUnitPrefab, Is.SameAs(expected));
+        Assert.That(authoring.GetProductionOrDefault(0).quantity, Is.EqualTo(4));
         Assert.That(authoring.GetProductionOrDefault(1), Is.Null);
     }
 
@@ -78,6 +84,30 @@ public sealed class M02EstablishBaseBarracksProductionTests
         Assert.That(production.ResolveProductionDurationSeconds(riflePrefab),
             Is.EqualTo(authoring.ProductionDurationSeconds).Within(0.0001f));
         Assert.That(authoring.ProductionDurationSeconds, Is.GreaterThan(0f));
+    }
+
+    [Test]
+    public void OneBarracksOrderQueuesTheCanonicalFourSoldierSquad()
+    {
+        GameObject barracksPrefab = Load<GameObject>(BarracksPrefabPath);
+        GameObject riflePrefab = Load<GameObject>(M02EstablishBaseConfigBuilder.RequiredRiflePrefabPath);
+        BuildingDefinitionPrefabSystemHelper definitions = new();
+        definitions.ConfigureAuthoringMetadataResolvers(
+            BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetBuildingDefinitionMetadata,
+            BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetUnitDefinitionMetadata);
+        BuildingDefinition definition = definitions.CreateRuntimeBuildingDefinition(
+            barracksPrefab, "Barracks", "", Vector2Int.one, 1, new BuildingRunwaySystem());
+        RuntimeBuildingEntity building = new() { Definition = definition };
+        BuildingProductionQueueCompositionSystemHelper production = new();
+        BuildingProductionQueueCompositionSystemHelper.QueueContext context = new(
+            new[] { riflePrefab }, definitions.UnitSpawnPrefabsByKey,
+            new BuildingProductionSlotUtilitySystemHelper(), null, null);
+        using Unity.Entities.World world = new(nameof(OneBarracksOrderQueuesTheCanonicalFourSoldierSquad));
+
+        Assert.That(production.TryQueuePlayerUnitFromBuilding(
+            context, building, 0, riflePrefab, world.EntityManager, 10f), Is.True);
+        Assert.That(building.PendingProductions, Has.Count.EqualTo(1));
+        Assert.That(building.PendingProductions[0].RemainingQuantity, Is.EqualTo(4));
     }
 
     [Test]

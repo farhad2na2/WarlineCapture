@@ -12,6 +12,7 @@ namespace Game.Runtime
         {
             public GameObject SpawnUnitPrefab;
             public FixedString64Bytes SpawnUnitSourceKey;
+            public int Quantity = 1;
         }
 
         public string DisplayName;

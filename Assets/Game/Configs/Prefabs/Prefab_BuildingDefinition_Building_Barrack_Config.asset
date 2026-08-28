@@ -18,7 +18,7 @@ MonoBehaviour:
   portraitCardSprite: {fileID: 21300000, guid: 94511c40b67240f2a1e24191786fa562, type: 3}
   portraitActionSprite: {fileID: 21300000, guid: be90410793f74c698476e6f9a0fc0769, type: 3}
   maxHealth: 1200
-  role: 0
+  role: 5
   isWall: 0
   canRequest: 1
   price: 40000
@@ -55,3 +55,4 @@ MonoBehaviour:
   destroyedVisualPrefab: {fileID: 9083467568423483946, guid: 81a72a361a4ec4f20b4327e0dfe7a61a, type: 3}
   productions:
   - spawnUnitPrefab: {fileID: 3282182154612916099, guid: ff73c8b7cbf844778916da330e9cd3e3, type: 3}
+    quantity: 4

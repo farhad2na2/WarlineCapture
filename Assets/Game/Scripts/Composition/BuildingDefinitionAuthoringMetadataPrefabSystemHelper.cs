@@ -18,8 +18,13 @@ namespace Game.Composition
             authoring.ApplyConfigIfAvailable();
             int productionCount = Mathf.Max(0, authoring.ConfiguredProductionCount);
             GameObject[] productionPrefabs = productionCount > 0 ? new GameObject[productionCount] : null;
+            int[] productionQuantities = productionCount > 0 ? new int[productionCount] : null;
             for (int i = 0; i < productionCount; i++)
-                productionPrefabs[i] = authoring.GetProductionOrDefault(i)?.spawnUnitPrefab;
+            {
+                BuildingDefinitionAuthoring.ProductionDefinition production = authoring.GetProductionOrDefault(i);
+                productionPrefabs[i] = production?.spawnUnitPrefab;
+                productionQuantities[i] = Mathf.Max(1, production?.quantity ?? 1);
+            }
 
             metadata = new BuildingDefinitionPrefabSystemHelper.BuildingDefinitionMetadata
             {
@@ -68,7 +73,8 @@ namespace Game.Composition
                 AttackTraceDashDensity = authoring.ConfiguredAttackTraceDashDensity,
                 AttackTraceVisibleSeconds = authoring.ConfiguredAttackTraceVisibleSeconds,
                 AttackTracerEveryNthShot = authoring.ConfiguredAttackTracerEveryNthShot,
-                ProductionSpawnUnitPrefabs = productionPrefabs
+                ProductionSpawnUnitPrefabs = productionPrefabs,
+                ProductionQuantities = productionQuantities
             };
             return true;
         }

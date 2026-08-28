@@ -63,8 +63,16 @@ namespace Game.Runtime
             public float TransportArrivalSeconds { get; set; }
             public float TransportHoldForNextReadySeconds { get; set; }
             public int TransportMaxConcurrent { get; set; }
+            public int RemainingQuantity { get; set; }
             public ProductionTransportMode TransportMode { get; set; }
             public bool TransportRequiresAirportRunway { get; set; }
+
+            public bool ConsumeUnit()
+            {
+                RemainingQuantity = Mathf.Max(1, RemainingQuantity) - 1;
+                ReservedProductionSlotIndex = -1;
+                return RemainingQuantity == 0;
+            }
         }
 
         public int Id { get; set; }

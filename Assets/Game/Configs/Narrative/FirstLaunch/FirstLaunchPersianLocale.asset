@@ -200,6 +200,65 @@ MonoBehaviour:
       \u067E\u0648\u0634\u0634 \u0645\u0646\u062A\u0642\u0644\u200C\u0634\u0627\u0646
       \u06A9\u0646\u06CC\u062F. \u0645\u0633\u06CC\u0631 \u0631\u0627 \u0627\u0645\u0646
       \u06A9\u0646\u06CC\u062F."
+  - key: narrative.m02.brief.dalia
+    value: "\u0627\u06CC\u0646 \u067E\u0627\u0633\u06AF\u0627\u0647 \u0645\u062A\u0631\u0648\u06A9\u0647
+      \u0627\u0633\u062A\u060C \u0627\u0645\u0627 \u0628\u0647 \u0622\u0646 \u0646\u06CC\u0627\u0632
+      \u062F\u0627\u0631\u06CC\u0645. \u0622\u0646 \u0631\u0627 \u062F\u0648\u0628\u0627\u0631\u0647
+      \u0641\u0639\u0627\u0644 \u06A9\u0646\u06CC\u062F \u0648 \u0628\u0631\u0627\u06CC
+      \u062F\u0641\u0627\u0639 \u0627\u0632 \u0645\u0633\u06CC\u0631 \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647
+      \u0622\u0645\u0627\u062F\u0647 \u0634\u0648\u06CC\u062F."
+  - key: narrative.m02.brief.aria
+    value: "\u0627\u06CC\u0646\u062C\u0627 \u06CC\u06A9 \u0633\u0631\u0628\u0627\u0632\u062E\u0627\u0646\u0647
+      \u0628\u0633\u0627\u0632\u06CC\u062F\u060C \u0633\u067E\u0633 \u06CC\u06A9
+      \u06AF\u0631\u0648\u0647 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \u0622\u0645\u0648\u0632\u0634
+      \u062F\u0647\u06CC\u062F. \u0628\u0627 \u0627\u06CC\u0646 \u06A9\u0627\u0631
+      \u067E\u0627\u0633\u06AF\u0627\u0647 \u062F\u0648\u0628\u0627\u0631\u0647 \u0641\u0639\u0627\u0644
+      \u0645\u06CC\u200C\u0634\u0648\u062F."
+  - key: narrative.m02.brief.samira
+    value: "\u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647 \u0648 \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC
+      \u062E\u062F\u0645\u0627\u062A \u0634\u0647\u0631\u06CC \u0627\u0632 \u0627\u06CC\u0646
+      \u0645\u0633\u06CC\u0631 \u0627\u0633\u062A\u0641\u0627\u062F\u0647 \u0645\u06CC\u200C\u06A9\u0646\u0646\u062F.
+      \u062D\u0641\u0638 \u067E\u0627\u0633\u06AF\u0627\u0647\u060C \u0631\u0627\u0647
+      \u0622\u0646\u200C\u0647\u0627 \u0631\u0627 \u0628\u0627\u0632 \u0646\u06AF\u0647
+      \u0645\u06CC\u200C\u062F\u0627\u0631\u062F."
+  - key: narrative.m02.comms.dalia
+    value: "\u06CC\u06A9 \u06AF\u0634\u062A \u062F\u0634\u0645\u0646 \u0627\u0632
+      \u063A\u0631\u0628 \u0646\u0632\u062F\u06CC\u06A9 \u0645\u06CC\u200C\u0634\u0648\u062F.
+      \u067E\u0627\u0633\u06AF\u0627\u0647 \u0631\u0627 \u062D\u0641\u0638 \u06A9\u0646\u06CC\u062F
+      \u0648 \u0646\u06AF\u0630\u0627\u0631\u06CC\u062F \u0628\u0647 \u0645\u0633\u06CC\u0631
+      \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647 \u0628\u0631\u0633\u0646\u062F."
+  - key: narrative.m02.comms.aria
+    value: "\u06CC\u06A9 \u0641\u0647\u0631\u0633\u062A \u062F\u0633\u062A\u0631\u0633\u06CC
+      \u0634\u0647\u0631\u06CC \u0647\u0645\u0631\u0627\u0647 \u06CC\u06A9\u06CC
+      \u0627\u0632 \u0645\u0647\u0627\u062C\u0645\u0627\u0646 \u067E\u06CC\u062F\u0627
+      \u0634\u062F. \u0627\u06CC\u0646 \u0641\u0647\u0631\u0633\u062A \u067E\u06CC\u0634
+      \u0627\u0632 \u0646\u062E\u0633\u062A\u06CC\u0646 \u062D\u0645\u0644\u0647
+      \u06A9\u067E\u06CC \u0634\u062F\u0647 \u0627\u0633\u062A."
+  - key: narrative.m02.comms.samira
+    value: "\u062F\u0631 \u0622\u0646\u060C \u067E\u0633\u062A\u200C\u0647\u0627\u06CC
+      \u0628\u0631\u0642\u060C \u0648\u0631\u0648\u062F\u06CC\u200C\u0647\u0627\u06CC
+      \u062E\u062F\u0645\u0627\u062A\u06CC \u0648 \u062A\u0648\u0646\u0644\u200C\u0647\u0627
+      \u0645\u0634\u062E\u0635 \u0634\u062F\u0647\u200C\u0627\u0646\u062F. \u06A9\u0633\u06CC
+      \u067E\u06CC\u0634 \u0627\u0632 \u062D\u0645\u0644\u0647 \u0622\u0646 \u0631\u0627
+      \u062F\u0632\u062F\u06CC\u062F\u0647 \u0627\u0633\u062A."
+  - key: narrative.m02.debrief.samira
+    value: "\u067E\u0627\u0633\u06AF\u0627\u0647 \u062F\u0648\u0628\u0627\u0631\u0647
+      \u0641\u0639\u0627\u0644 \u0627\u0633\u062A. \u0645\u0633\u06CC\u0631 \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647
+      \u0648 \u062A\u06CC\u0645\u200C\u0647\u0627\u06CC \u0627\u0645\u062F\u0627\u062F
+      \u0634\u0647\u0631\u06CC \u062F\u0648\u0628\u0627\u0631\u0647 \u0628\u0647
+      \u0647\u0645 \u0645\u062A\u0635\u0644 \u0634\u062F\u0647\u200C\u0627\u0646\u062F."
+  - key: narrative.m02.debrief.dalia
+    value: "\u0641\u0631\u0645\u0627\u0646\u062F\u0647\u060C \u062F\u0627\u0644\u06CC\u0627
+      \u0631\u062D\u06CC\u0645 \u0647\u0633\u062A\u0645. \u0627\u0632 \u0627\u06CC\u0646
+      \u067E\u0627\u0633\u06AF\u0627\u0647\u060C \u0647\u062F\u0627\u06CC\u062A \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC
+      \u0632\u0645\u06CC\u0646\u06CC \u0631\u0627 \u0628\u0631 \u0639\u0647\u062F\u0647
+      \u0645\u06CC\u200C\u06AF\u06CC\u0631\u0645."
+  - key: narrative.m02.debrief.aria
+    value: "\u0634\u0628\u06A9\u0647 \u0647\u0634\u062F\u0627\u0631 \u062F\u0631
+      \u0645\u0633\u06CC\u0631 \u067E\u06CC\u0634 \u0631\u0648 \u062E\u0627\u0645\u0648\u0634
+      \u0634\u062F\u0647 \u0627\u0633\u062A. \u062E\u0648\u062F\u0631\u0648\u0647\u0627\u06CC
+      \u0632\u0631\u0647\u06CC \u0628\u0647 \u0633\u0645\u062A \u0645\u0646\u0637\u0642\u0647
+      \u0628\u0639\u062F\u06CC \u062D\u0631\u06A9\u062A \u0645\u06CC\u200C\u06A9\u0646\u0646\u062F."
   voices:
   - lineId: p02_radio
     voiceClip: {fileID: 8300000, guid: 6cd070eada461c94f9d6b136f08268c6, type: 3}
@@ -267,5 +326,41 @@ MonoBehaviour:
     neutralVoiceClip: {fileID: 0}
   - lineId: p18_aria
     voiceClip: {fileID: 8300000, guid: 52dab67d75be03b489f0fa4621c20657, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: m02-brief.line.1
+    voiceClip: {fileID: 8300000, guid: a91d6765dd4d44fd08e0134eadf19c9a, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: m02-brief.line.2
+    voiceClip: {fileID: 8300000, guid: 830101b1f35234b68971033a7be86131, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: m02-brief.line.3
+    voiceClip: {fileID: 8300000, guid: eb72efafa88b84a1d8a0f2367d355c5b, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: m02-comms.line.1
+    voiceClip: {fileID: 8300000, guid: 96a7089b26ee04d0791511b9c4e09762, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: m02-comms.line.2
+    voiceClip: {fileID: 8300000, guid: bb951770c213949bcb31330e6b0053d9, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: m02-comms.line.3
+    voiceClip: {fileID: 8300000, guid: 0d32ec98e18a64b90b04c2ee980a58db, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: m02-debrief.line.1
+    voiceClip: {fileID: 8300000, guid: 0187f6635dbdc44c69cbdc990be4e182, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: m02-debrief.line.2
+    voiceClip: {fileID: 8300000, guid: 554ed277eb1bb4559bc613a9c21eed53, type: 3}
+    femaleVoiceClip: {fileID: 0}
+    neutralVoiceClip: {fileID: 0}
+  - lineId: m02-debrief.line.3
+    voiceClip: {fileID: 8300000, guid: b6e0e8112392747c1b5b8a0cd74fa46e, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}

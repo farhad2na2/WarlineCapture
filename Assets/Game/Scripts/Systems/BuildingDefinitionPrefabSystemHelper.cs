@@ -61,6 +61,7 @@ namespace Game.Runtime
             public float AttackTraceVisibleSeconds;
             public int AttackTracerEveryNthShot;
             public GameObject[] ProductionSpawnUnitPrefabs;
+            public int[] ProductionQuantities;
         }
 
         public struct UnitDefinitionMetadata
@@ -581,6 +582,14 @@ namespace Game.Runtime
             };
         }
 
+        public static int GetProductionQuantity(BuildingDefinition definition, int index)
+        {
+            if (definition?.ProductionSlots == null || index < 0 || index >= definition.ProductionSlots.Count)
+                return 1;
+
+            return Mathf.Max(1, definition.ProductionSlots[index]?.Quantity ?? 1);
+        }
+
         public static bool TryGetProductionSourceKey(BuildingDefinition definition, int index, out FixedString64Bytes sourceKey)
         {
             sourceKey = default;
@@ -792,7 +801,10 @@ namespace Game.Runtime
                     return new BuildingDefinition.ProductionSlotDefinition
                     {
                         SpawnUnitPrefab = configuredPrefab,
-                        SpawnUnitSourceKey = ToUnitSourceKey(configuredPrefab)
+                        SpawnUnitSourceKey = ToUnitSourceKey(configuredPrefab),
+                        Quantity = metadata.ProductionQuantities != null && index < metadata.ProductionQuantities.Length
+                            ? Mathf.Max(1, metadata.ProductionQuantities[index])
+                            : 1
                     };
                 }
             }
@@ -800,7 +812,8 @@ namespace Game.Runtime
             return new BuildingDefinition.ProductionSlotDefinition
             {
                 SpawnUnitPrefab = fallbackSpawnUnitPrefab,
-                SpawnUnitSourceKey = ToUnitSourceKey(fallbackSpawnUnitPrefab)
+                SpawnUnitSourceKey = ToUnitSourceKey(fallbackSpawnUnitPrefab),
+                Quantity = 1
             };
         }
 

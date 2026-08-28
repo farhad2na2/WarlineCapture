@@ -258,6 +258,20 @@ namespace Game.Configs
             VOARIATutorialM01EngageFa,
             VOARIATutorialM01AttackTargetFa,
             VOARIATutorialM01SecureCorridorFa,
+            VOARIATutorialM02OpenBuildEn,
+            VOARIATutorialM02OpenBuildFa,
+            VOARIATutorialM02SelectBarracksEn,
+            VOARIATutorialM02SelectBarracksFa,
+            VOARIATutorialM02PlaceBarracksEn,
+            VOARIATutorialM02PlaceBarracksFa,
+            VOARIATutorialM02CheckCostEn,
+            VOARIATutorialM02CheckCostFa,
+            VOARIATutorialM02TrainRifleSquadEn,
+            VOARIATutorialM02TrainRifleSquadFa,
+            VOARIATutorialM02IncomingPatrolEn,
+            VOARIATutorialM02IncomingPatrolFa,
+            VOARIATutorialM02DefendPostEn,
+            VOARIATutorialM02DefendPostFa,
         };
 
     }

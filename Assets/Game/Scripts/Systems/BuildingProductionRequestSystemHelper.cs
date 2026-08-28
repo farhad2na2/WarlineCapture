@@ -1237,7 +1237,8 @@ namespace Game.Runtime
                 em,
                 buildingEntity,
                 productionIndex,
-                unitPrefab.name);
+                unitPrefab.name,
+                out int productionQuantity);
             if (productionPrefab == Entity.Null)
                 return false;
 
@@ -1261,6 +1262,7 @@ namespace Game.Runtime
                 UnitSourceKey = new FixedString64Bytes(unitPrefab.name),
                 QueuedAt = queuedAt,
                 ReadyAt = readyAt,
+                RemainingQuantity = productionQuantity,
                 Status = OperationMapBuildingUnitProductionRequest.Pending
             });
             return true;
@@ -1312,7 +1314,8 @@ namespace Game.Runtime
                     em,
                     buildingEntity,
                     candidate.ProductionIndex,
-                    candidate.UnitSourceKey.ToString());
+                    candidate.UnitSourceKey.ToString(),
+                    out _);
                 if (expectedPrefab != candidate.UnitPrefab)
                     continue;
 
@@ -1346,7 +1349,12 @@ namespace Game.Runtime
                 if (queue[index].RequestId != requestId)
                     continue;
 
-                queue.RemoveAt(index);
+                OperationMapBuildingUnitProductionRequest completed = queue[index];
+                completed.RemainingQuantity = math.max(1, completed.RemainingQuantity) - 1;
+                if (completed.RemainingQuantity > 0)
+                    queue[index] = completed;
+                else
+                    queue.RemoveAt(index);
                 return true;
             }
 
@@ -1981,8 +1989,10 @@ namespace Game.Runtime
             EntityManager em,
             Entity buildingEntity,
             int productionIndex,
-            string unitSourceKey)
+            string unitSourceKey,
+            out int quantity)
         {
+            quantity = 1;
             FixedString64Bytes sourceKey = new(unitSourceKey);
             DynamicBuffer<OperationMapBuildingProductionPrefab> productions =
                 em.GetBuffer<OperationMapBuildingProductionPrefab>(buildingEntity, true);
@@ -1994,6 +2004,7 @@ namespace Game.Runtime
                     production.Prefab != Entity.Null &&
                     em.Exists(production.Prefab))
                 {
+                    quantity = math.max(1, production.Quantity);
                     return production.Prefab;
                 }
             }

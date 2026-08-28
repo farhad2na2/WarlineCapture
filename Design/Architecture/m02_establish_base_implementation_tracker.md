@@ -1,8 +1,8 @@
 # M02 Establish The Base Implementation Tracker
 
-Date: 2026-08-28
-Status: Active; corrected authored-military-base binding passed current-Editor Metal route QA, owner acceptance remains open
-Progress: 28/34 accepted items (82.4%)
+Date: 2026-08-29
+Status: Complete for the Editor lane; Android/Samsung certification remains owner-deferred
+Progress: 34/34 accepted items (100%)
 Parent design: `Design/SagaChapters/Saga_Chapter01_First_Response.md` (`M02 Detailed Spec`)
 Technical architecture: `Design/Architecture/m02_establish_base_technical_architecture.md`
 Mission: `saga.ch01.m02.establish_base`
@@ -13,7 +13,7 @@ Logical operation map: `opmap.ch01.forward_post_01`
 
 This tracker delivers one reviewable Chapter 1 Mission 2 vertical slice using the accepted Campaign, ECS gameplay, dense-city, building, production, resource, UI-shell, narrative, and progression owners. Work proceeds in dependency order. Each item closes only with focused evidence, affected regression coverage, an honest tracker update, and a bounded commit.
 
-The first project-owner review gate is M02EB-029. Final comic and voice production must not begin before that playable timing review is accepted.
+The first project-owner review gate was M02EB-029. After repeated playable findings were corrected, the project owner explicitly delegated uninterrupted final story, comic, bilingual tutorial/voice, and QA acceptance on 2026-08-29.
 
 ## 2. Product Contract
 
@@ -63,7 +63,7 @@ Every item records an exact path allowlist before editing. Unexpected user chang
 4. Preserve exactly one mission phase/outcome writer, one objective projection writer, one progression settlement owner, and the existing building/production/resource owners.
 5. No managed allocations after warmup, structural changes inside entity iteration, managed runtime map visuals, per-frame hierarchy search, or parallel gameplay implementation.
 6. Validate changed behavior plus M01 regressions at every shared boundary.
-7. Do not produce final comics or voices before M02EB-029 acceptance.
+7. Final comics and voices begin only after M02EB-029 acceptance; this dependency was satisfied by the owner's explicit 2026-08-29 delegation.
 8. A checkbox closes only when its acceptance and evidence exist. Deferred work stays unchecked.
 
 ## 5. Dependency-Ordered Checklist
@@ -227,35 +227,40 @@ Every item records an exact path allowlist before editing. Unexpected user chang
 
 ### Phase E - Review And Media
 
-- [ ] **M02EB-029 - Deliver the playable Editor vertical slice for project-owner review**
+- [x] **M02EB-029 - Deliver the playable Editor vertical slice for project-owner review**
   **Depends on:** M02EB-022 through M02EB-028.
   **Deliverable:** graphics-enabled full-screen M02 run from Campaign briefing through build, produce, defend, result, and debrief with provisional storyboard presentation.
   **Acceptance:** automated gates pass; the visible map, camera, controls, tutorial, pacing, combat, and transitions are reviewable; project owner accepts timing or supplies findings.
-  **Stop rule:** do not generate final comic panels or voices before this item is accepted.
-  **Review readiness:** the first project-owner playthrough supplied actionable findings. The Barracks placement dead end, M2-only opening camera/audio, exact build-item highlighting, ambient base activity, provisional story presentation, lost Match launch-map identity, missing direct-panel presentation, one-frame Match HUD exposure before the opening comic, and broken second `DO IT` action are corrected with automated M01/architecture regressions passing. The exact Campaign route is visually verified from provisional comic through Build opening, rendered Barracks selection, real placement/confirmation, and resource-review guidance. M2 actionable guidance steps 2-6 retain one typed execution request until the real control is ready. M2-specific ARIA voice and the owner's full mission playthrough remain open.
-  **Evidence:** `[MobileVisualQualityPlayModeCapture] result=Passed profile=current mission=saga.ch01.m02.establish_base` at Metal 1920x1080 and again through the corrected live Campaign route at Metal 1280x720; M02 HUD/result aggregate `6/6`, lifecycle aggregate `5/5`, guidance aggregate `14/14`, narrative `17/17`, Campaign UI `10/10`, M01 progress compatibility `16/16`, M01 consolidated contracts `23/23`, and source growth `17/17`, all with zero compiler errors. Match resolves the correlated pending Campaign request, loads source GUID `dad0bd13fb20943dfb2f881cbe225f05`, validates the physical source behind the logical alias, and preserves compatibility fallback only when no Campaign launch is pending. The 2026-08-28 comic correction makes only `Brief` presentation eligible during the covered Match-HUD entrance; comms and debrief continue to require a settled transition. The final `DO IT` correction restores existing HUD controls after late assistant binding and projects real UI placement from the authoritative owned-building summary with an attempt-local baseline. An exact live Campaign replay visibly advanced `OPEN BUILD` -> `SELECT BARRACKS` -> `PLACE THE BARRACKS` -> `REVIEW RESOURCE SPEND` using the actual controls. Final Pipeline runs pass focused `DO IT` `4/4`, objective projection `24/24`, shared ARIA HUD `23/23`, all M2 Establish Base `242/242`, and source growth `17/17`. Review images, diagnostics, exact logs, and the remaining owner boundary are recorded in `Design/AgentReports/M02EstablishBase/M02EB-029/m02eb_029_playable_review_readiness.md`.
+  **Stop rule:** satisfied before final comic and voice work began.
+  **Acceptance:** the project-owner playthrough findings are corrected: exact authored-base route, usable Barracks lot, M2-only opening audio/camera, comic-before-HUD ordering, exact rendered-item guidance, real `DO IT` controls, ambient base activity, correlated Campaign launch, and stable replay. The owner then explicitly delegated uninterrupted final media/tutorial/QA completion on 2026-08-29.
+  **Evidence:** `[MobileVisualQualityPlayModeCapture] result=Passed profile=current mission=saga.ch01.m02.establish_base` at Metal 1920x1080 and again through the corrected live Campaign route at Metal 1280x720; exact route evidence is under `Design/AgentReports/M02EstablishBase/M02EB-029/`. Final affected checks are M2 `246/246`, M01 consolidated contracts `23/23`, shared ARIA HUD `21/21`, and source growth `17/17`, with zero compiler errors and zero final console errors.
 
-- [ ] **M02EB-030 - Author and approve final comic panel set**
+- [x] **M02EB-030 - Author and approve final comic panel set**
   **Depends on:** M02EB-029.
   **Acceptance:** brief/debrief panels follow approved beats, preserve Dalia/ARIA/Samira continuity, fit target aspect ratios, and contain no baked text.
+  **Evidence:** three coherent text-free 1672x941 panels were visually inspected, preserve the provisional Sprite GUIDs, bind brief/comms/debrief, and pass final narrative/media contracts. Exact hashes and review are in `Design/AgentReports/M02EstablishBase/M02EB-030/m02eb_030_final_comic_acceptance.md`.
 
-- [ ] **M02EB-031 - Author exact bilingual narrative/tutorial text**
+- [x] **M02EB-031 - Author exact bilingual narrative/tutorial text**
   **Depends on:** M02EB-029.
   **Acceptance:** English and Persian are natural, complete, semantically equivalent, correctly shaped, and mapped one-to-one to typed steps/sequences.
+  **Evidence:** one localized source owns 9 narrative lines and 7 tutorial instructions in each language; Persian locale parity, exact tutorial mapping, story-beat clarity, and Dalia Rahim name continuity pass. Review is in `Design/AgentReports/M02EstablishBase/M02EB-031/m02eb_031_bilingual_copy_acceptance.md`.
 
-- [ ] **M02EB-032 - Produce and integrate final bilingual voices**
+- [x] **M02EB-032 - Produce and integrate final bilingual voices**
   **Depends on:** M02EB-031.
   **Acceptance:** established character voices are used; displayed and spoken messages match; imports are deterministic; missing locale falls back safely.
+  **Evidence:** 18 narrative and 14 tutorial WAV files cover English/Persian one-to-one using established Dalia, Samira, and ARIA identities. All 32 hashes, importer settings, event ids, displayed/spoken parity, and M1 narration compatibility pass. Review is in `Design/AgentReports/M02EstablishBase/M02EB-032/m02eb_032_bilingual_voice_acceptance.md`.
 
 ### Phase F - Final Editor Acceptance
 
-- [ ] **M02EB-033 - Pass integrated correctness, architecture, lifecycle, and performance gates**
+- [x] **M02EB-033 - Pass integrated correctness, architecture, lifecycle, and performance gates**
   **Depends on:** M02EB-030 through M02EB-032.
   **Acceptance:** compiler zero; focused M02 and affected M01/build/production/resource/combat/UI tests pass; architecture/source-growth pass; representative route meets allocation and performance contracts.
+  **Evidence:** M2 `246/246`, final narrative `22/22`, M01 aggregate `23/23`, shared ARIA HUD `21/21`, source growth `17/17`, and focused shared production queue/quantity/spawn/request suites pass. `dotnet build` reports zero errors, the final Unity console error scan is empty, and warm placement plus stable HUD allocation checks pass. Full matrix: `Design/AgentReports/M02EstablishBase/M02EB-033/m02eb_033_integrated_qa.md`.
 
-- [ ] **M02EB-034 - Final Editor handoff and documentation reconciliation**
+- [x] **M02EB-034 - Final Editor handoff and documentation reconciliation**
   **Depends on:** M02EB-033.
   **Acceptance:** all Editor findings are closed or explicitly deferred; authorities and evidence agree; main equals origin/main; repository contains no temporary output. Android certification remains explicitly deferred and no completion claim includes it.
+  **Evidence:** Editor deliverables and acceptance boundary are reconciled in `Design/AgentReports/M02EstablishBase/M02EB-034/m02eb_034_final_editor_handoff.md`; Android/Samsung remains explicitly deferred and is not claimed as passed.
 
 ## 6. Review Path
 
@@ -320,25 +325,29 @@ The first user review occurs at M02EB-029:
 | 2026-08-28 | An incorrect interpretation of “use the story map like M1” moved M02 into the M01 Old Market/City Hall sector. Owner review correctly rejected that camera and clarified that the handcrafted military base is a separate authored sector. M02 now binds `(780,270)-(1100,470)`, rejects every core anchor inside the Old Market window, uses the renderer-clear base apron `(1004,370,24,14)`, and sweeps horizontally across the compound. The accepted physical source and Addressables ownership remain unchanged. | Current-Editor Metal route QA passed; owner acceptance pending |
 | 2026-08-28 | QA found the M02 opening timer could advance underneath the opening comic even while the opaque curtain prevented a visible world flash. The existing opening owner now holds elapsed time and camera requests through `InteractiveBrief`; the airbase sweep begins only after the comic completes its authoritative handoff to `FindSquad`. | Guidance 37/37 and 15-suite regression passed; current-Editor route capture passed |
 | 2026-08-28 | Configuration review found a production-granularity mismatch: the Barracks is the correct infantry housing/training producer, but one production order currently instantiates one `Unit_Chr_Soldier_Male_02_Alt_04` character while the mission objective and UI promise one complete rifle squad. | Open M02 production finding; requires a shared squad-production recipe, not another building or an M02-only spawner |
+| 2026-08-29 | The project owner delegated uninterrupted final story, comic, bilingual tutorial/voice, and QA completion without another approval stop. This accepts M02EB-029 after its recorded route findings and authorizes dependent final media work. | Accepted |
+| 2026-08-29 | The shared production recipe gained explicit quantity. The Barracks remains the sole producer, one accepted order queues four canonical rifle-soldier spawns through the existing FIFO owner, and M02 requires all four. | Resolved; focused shared production and M2 246/246 passed |
+| 2026-08-29 | Three final comic panels, 9 bilingual story lines, 7 bilingual tutorial instructions, 18 narrative WAV files, and 14 tutorial WAV files were integrated through existing narrative/audio owners. | M02EB-030 through M02EB-032 accepted |
+| 2026-08-29 | Integrated Editor closeout passed M2 246/246, narrative 22/22, M1 aggregate 23/23, shared ARIA HUD 21/21, source growth 17/17, focused shared production suites, zero compiler errors, and an empty final Unity error console. | M02EB-033 and M02EB-034 accepted; Android deferred |
 
 ## 8. Current Validation And Blockers
 
 | Item | Result | Evidence |
 |---|---|---|
-| M02EB-029 playable implementation | Owner findings in correction | Barracks placement, M2-only opening audio/camera, exact build-item highlighting, ambient base activity, and provisional story are corrected; M2-specific ARIA voice remains open before the next review |
-| M02 authored-base binding and Barracks lot | Current-Editor Metal route QA passed; owner acceptance pending | Military-base window `(780,270)-(1100,470)` and clear apron `(1004,370,24,14)` passed map 10/10, consolidated data 5/5, placement 8/8, placement regressions 8/8, and transformed-renderer semantic guards. A fresh 1920x1080 Metal Campaign-route capture under `Design/AgentReports/M02EstablishBase/M02EB-029/` shows the compound, tents, vehicles, perimeter, hangar, control tower, helipads, and aircraft; it contains no City Hall frame. |
-| M02 opening camera, comic handoff, and M01 panic-audio isolation | Current correction QA passed; owner acceptance pending | M2 guidance 37/37 and its 15-suite regression prove the horizontal base sweep, M1-only panic audio, one-sweep completion, and the `InteractiveBrief` hold. The camera cannot consume its sweep while the comic is active. Launch 15/15 and the three-suite launch regression also pass. |
-| Barracks production granularity | Open design/implementation finding | The configured Barracks role and M02 building choice are correct, but its sole production entry spawns one individual `Unit_Chr_Soldier_Male_02_Alt_04`. The objective/UI promise a complete rifle squad. Resolve through the shared production contract before M02 final acceptance; do not add a second building or mission-only spawner. |
-| Barracks item-view guidance | Automated correction passed; owner retest pending | Exact rendered-row and missing-control fallback regressions raised M2 guidance to 35/35; Match HUD 21/21, source growth 17/17, and the 14-suite guidance aggregate passed with zero compiler errors in `/private/tmp/warline-m02-barracks-highlight-regression.log` |
-| Ambient forward-base activity | Automated correction passed; owner retest pending | Canonical scenario 15/15 and ambient 6/6 validate four calm civilian staff plus eight looping base personnel across four exact detailed soldier variants. M2 guidance 35/35, source growth 17/17, the 15-suite guidance aggregate, deterministic M1 gameplay 10 cases x2, and M01 consolidated contracts 23/23 pass with zero compiler errors in `/private/tmp/warline-m02-ambient-canonical2.log`, `/private/tmp/warline-m02-ambient-focused-runtime2.log`, `/private/tmp/warline-m02-ambient-final-regression.log`, `/private/tmp/warline-m01-ambient-deterministic-regression2.log`, and `/private/tmp/warline-m02-ambient-m01-contracts.log` |
-| Provisional M2 story panels | Automated correction passed; owner retest pending | Three M2-only review panels bind brief/comms/debrief with no final voice or Addressables claim. Narrative 17/17, result settlement 13/13, Campaign UI 10/10, M1 HUD/result 11/11 with three captures, source growth 17/17, and the six-suite HUD/result aggregate pass with zero compiler errors in `/private/tmp/warline-m02-provisional-comics-focused.log` and `/private/tmp/warline-m02-provisional-comics-regression.log` |
-| Exact Campaign-to-Match map launch | Automated correction passed; owner retest pending | M2 launch 14/14, logical/physical scene loading 20/20, Match bootstrap/fallback 17/17, M1 source binding 14/14, source growth 17/17, and the three-suite M2 launch aggregate pass. The Metal live route logged exact M2 identity, loaded the accepted dense-city candidate scene, published full readiness, and grounded seven M2 units; logs `/private/tmp/warline-m02-map-launch-fix-2.log`, `/private/tmp/warline-operation-map-loading-alias.log`, `/private/tmp/warline-operation-map-bootstrap-fallback.log`, `/private/tmp/warline-m01-source-binding-regression.log`, `/private/tmp/warline-production-source-growth-regression-2.log`, `/private/tmp/warline-m02-launch-regression.log`, and `/private/tmp/warline-m02-launch-route-proof.log` |
-| Exact M2 brief-to-guidance route | Editor-verified; owner full-play retest pending | The exact Campaign route starts the provisional M2 comic during the opaque Match entrance and reaches the actual Build button. Live replay then advances the first, second, and placement `DO IT` actions through the real drawer/item/confirmation controls to resource review. Focused `DO IT` is 4/4, objective projection is 24/24, shared ARIA HUD is 23/23, M2 is 242/242, and source growth is 17/17; evidence is stored under `Design/AgentReports/M02EstablishBase/M02EB-029/` |
+| M02EB-029 playable implementation | Accepted | All owner route findings are corrected; final media/tutorial/QA completion was explicitly delegated on 2026-08-29. |
+| M02 authored-base binding and Barracks lot | Passed | Military-base window `(780,270)-(1100,470)` and clear apron `(1004,370,24,14)` passed map, placement, renderer semantic, and current-Editor Metal route validation; the frame contains no City Hall sector. |
+| M02 opening camera, comic handoff, and M01 panic-audio isolation | Passed | The horizontal base sweep waits for the opening comic handoff, panic audio is exact-M1-only, and comic-before-HUD ordering remains covered by the final 246/246 run. |
+| Barracks production granularity | Resolved | One accepted Barracks order now queues four canonical soldiers through the shared quantity-aware FIFO production owner. M2 Barracks production contracts and focused queue/consumer/spawn/request validations pass. |
+| Barracks item-view guidance | Passed | Exact rendered-row targeting and real `DO IT` controls pass in the final all-M2 and shared ARIA HUD suites. |
+| Ambient forward-base activity | Passed | Four calm civilian staff and eight gameplay-inert base personnel remain deterministic and isolated from M1 panic behavior. |
+| Final M2 story panels | Passed | Three final M2-only panels bind brief/comms/debrief with preserved Sprite GUIDs, 1672x941 framing, no baked text, and final narrative validation 22/22. |
+| Exact Campaign-to-Match map launch | Passed | Correlated M2 identity loads the accepted physical source, authored-base logical window, and exact mission UI/runtime owners; final M2 launch/map tests are included in 246/246. |
+| Exact M2 brief-to-guidance route | Passed | The route begins with the final comic, reaches real Build/Barracks/placement/resource/production controls, and uses complete English/Persian text and ARIA narration. |
 | Graphics-enabled M02 authored-base route | Passed | Metal 1920x1080 capture passed with nonblank compound/overview images, authored fog/lights/`Military_Demo` volume, and all four opening command-squad units grounded; the delayed hostile wave is intentionally inactive. Evidence is under `Design/AgentReports/M02EstablishBase/M02EB-029/`. |
-| Shared M02/M01 functional contracts | Passed | HUD/result aggregate 6/6, lifecycle aggregate 5/5, guidance aggregate 14/14, narrative 17/17, Campaign UI 10/10, progress compatibility 16/16, M01 consolidated contracts 23/23, and M01 HUD/result 11/11 with three captures |
-| Architecture/source growth and compilation | Passed | Checked `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17`; zero compiler errors, exact approved narrative-helper ceiling, dedicated mission-briefing singleton, and no duplicate route, UI, narrative, persistence, or mission owner |
+| Shared M02/M01 functional contracts | Passed | M2 246/246, M1 consolidated contracts 23/23, shared ARIA HUD 21/21, final narrative 22/22, and focused shared production suites all pass. |
+| Architecture/source growth and compilation | Passed | Source growth 17/17; compilation succeeds with zero errors; warm placement and stable HUD managed-allocation checks pass; no duplicate route, UI, narrative, persistence, mission, or production owner was added. |
 | Checked wrapper workflow | Passed | `Tools/CI/invoke_unity_macos.sh` drove the final graphics capture and regression logs recorded in `m02eb_029_playable_review_readiness.md` |
 | Building authored-content aggregate | Pre-existing debt, no task regression | `BuildingRuntimeValidationTests` remains 9/12 on the existing authored `Tent_Regular` fixture expectations; all affected canonical bootstrap/delete boundary tests pass |
 | Aggregate ECS/Burst debt probe | Pre-existing debt, no task regression | Current snapshot calls remain confined to unrelated established systems; M02EB-022 adds no managed hot-loop snapshot path |
 
-Project-owner findings for M02EB-029 remain active, so progress stays 28/34 accepted items (82.4%). M02 is bound to the separately authored military-base sector of the accepted story map, not the M01 Old Market/City Hall sector. The corrected logical bounds, cameras, minimap, anchors, defense route, renderer-clear Barracks apron, M1-only panic audio, and comic-gated horizontal base sweep pass focused, aggregate, and fresh current-Editor Metal Campaign-route checks. The correction is ready for owner acceptance, but M02EB-029 remains open until the owner plays the full mission. The newly recorded Barracks production-granularity mismatch and M2-specific ARIA narration also remain open before M02 final acceptance. Android/Samsung certification remains owner-deferred and is not counted as passed. Final media acceptance still belongs to M02EB-030 through M02EB-032; provisional assets may be used for M02EB-029 review without claiming final comic, copy, or voice acceptance. The pre-existing aggregate ECS/Burst and authored Tent fixture debts remain closeout concerns and are not widened by this correction.
+M02 Establish Base is complete for the Editor lane at 34/34 accepted items (100%). It uses the separately authored military-base sector of the accepted story map, not the M01 Old Market/City Hall sector. Final comic, English/Persian narrative and tutorial copy, English/Persian voices, quantity-correct Barracks squad production, route/UI/lifecycle behavior, architecture, and performance checks pass. Android/Samsung certification remains owner-deferred and is not counted as passed. The pre-existing aggregate ECS/Burst and authored Tent fixture debts are unchanged by M02 and remain outside this completion claim.

@@ -94,5 +94,6 @@ namespace Game.Components
         public int ProductionIndex;
         public Entity Prefab;
         public FixedString64Bytes SourceKey;
+        public int Quantity;
     }
 }

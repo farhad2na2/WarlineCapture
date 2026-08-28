@@ -1633,6 +1633,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
 
         public bool TryEnqueueTutorialNarration(
             byte tutorialStep,
+            byte tutorialStepCount,
             UiTutorialNarrationPhase phase,
             string text)
         {

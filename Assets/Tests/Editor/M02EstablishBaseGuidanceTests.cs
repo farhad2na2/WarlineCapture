@@ -62,7 +62,7 @@ public sealed class M02EstablishBaseGuidanceTests
             tests.ResourceSpendContinueUsesTheTypedResourceStrip();
             tests.RifleDoItUsesTheRealRecruitButton();
             tests.PlacementBarDisplaysCreditsAndMaterialsCost();
-            tests.M02GuidanceCannotBorrowM01NarrationEvents();
+            tests.M02GuidanceUsesOnlyItsOwnNarrationEvents();
             tests.M01TutorialProjectionRemainsUnchanged();
             tests.IncompleteM02RetryProjectsRequiredBuildGuidance();
             tests.UiSurfaceGuidanceUsesTypedControlsWithoutScreenCoordinates();
@@ -479,8 +479,8 @@ public sealed class M02EstablishBaseGuidanceTests
             out string warningEnglishTitle,
             out string warningEnglishBody,
             out bool warningEnglishRtl));
-        Assert.AreEqual("Incoming patrol", warningEnglishTitle);
-        Assert.That(warningEnglishBody, Does.Contain("marked defense lane"));
+        Assert.AreEqual("Enemy patrol incoming", warningEnglishTitle);
+        Assert.That(warningEnglishBody, Does.Contain("marked lane"));
         Assert.IsFalse(warningEnglishRtl);
         Assert.IsTrue(UiShellEcsGateway.TryResolveM02GuidancePresentationText(
             in warning,
@@ -489,7 +489,7 @@ public sealed class M02EstablishBaseGuidanceTests
             out string warningPersianBody,
             out bool warningPersianRtl));
         Assert.AreEqual("گشت دشمن نزدیک می‌شود", warningPersianTitle);
-        Assert.That(warningPersianBody, Does.Contain("مسیر دفاعی"));
+        Assert.That(warningPersianBody, Does.Contain("مسیر علامت‌گذاری‌شده"));
         Assert.IsTrue(warningPersianRtl);
 
         Assert.IsTrue(AssistantObjectiveProjectionUtility.TryBuildCampaignGuidanceRecommendation(
@@ -501,8 +501,8 @@ public sealed class M02EstablishBaseGuidanceTests
             out string defensePersianTitle,
             out string defensePersianBody,
             out bool defensePersianRtl));
-        Assert.AreEqual("از پاسگاه پیشرو دفاع کنید", defensePersianTitle);
-        Assert.That(defensePersianBody, Does.Contain("تصمیم‌های تاکتیکی"));
+        Assert.AreEqual("از پاسگاه دفاع کنید", defensePersianTitle);
+        Assert.That(defensePersianBody, Does.Contain("از پاسگاه دفاع کنید"));
         Assert.IsTrue(defensePersianRtl);
     }
 
@@ -530,7 +530,7 @@ public sealed class M02EstablishBaseGuidanceTests
             out string barracksEnglishBody,
             out bool barracksEnglishRtl));
         Assert.AreEqual("Select Barracks", barracksEnglishTitle);
-        Assert.AreEqual("Select Barracks from the building catalog.", barracksEnglishBody);
+        Assert.AreEqual("Select Barracks from the building list.", barracksEnglishBody);
         Assert.IsFalse(barracksEnglishRtl);
         Assert.IsTrue(UiShellEcsGateway.TryResolveM02GuidancePresentationText(
             in barracks,
@@ -538,8 +538,8 @@ public sealed class M02EstablishBaseGuidanceTests
             out string barracksPersianTitle,
             out string barracksPersianBody,
             out bool barracksPersianRtl));
-        Assert.AreEqual("پادگان را انتخاب کنید", barracksPersianTitle);
-        Assert.AreEqual("پادگان را از فهرست ساختمان‌ها انتخاب کنید.", barracksPersianBody);
+        Assert.AreEqual("سربازخانه را انتخاب کنید", barracksPersianTitle);
+        Assert.AreEqual("سربازخانه را از فهرست ساختمان‌ها انتخاب کنید.", barracksPersianBody);
         Assert.IsTrue(barracksPersianRtl);
 
         Assert.IsTrue(AssistantObjectiveProjectionUtility.TryBuildCampaignGuidanceRecommendation(
@@ -551,8 +551,8 @@ public sealed class M02EstablishBaseGuidanceTests
             out string riflePersianTitle,
             out string riflePersianBody,
             out bool riflePersianRtl));
-        Assert.AreEqual("یک گروه تفنگدار در صف بگذارید", riflePersianTitle);
-        Assert.That(riflePersianBody, Does.Contain("سربازان"));
+        Assert.AreEqual("یک گروه تفنگدار آموزش دهید", riflePersianTitle);
+        Assert.That(riflePersianBody, Does.Contain("بخش تولید"));
         Assert.IsTrue(riflePersianRtl);
     }
 
@@ -915,10 +915,34 @@ public sealed class M02EstablishBaseGuidanceTests
     }
 
     [Test]
-    public void M02GuidanceCannotBorrowM01NarrationEvents()
+    public void M02GuidanceUsesOnlyItsOwnNarrationEvents()
     {
-        Assert.IsFalse(MatchHudAssistantUiSystemHelper.CanUseLegacyTutorialNarration(9));
-        Assert.IsTrue(MatchHudAssistantUiSystemHelper.CanUseLegacyTutorialNarration(5));
+        Assert.IsTrue(MatchHudAssistantUiSystemHelper.CanUseTutorialNarration(9));
+        Assert.IsTrue(MatchHudAssistantUiSystemHelper.CanUseTutorialNarration(5));
+        for (byte step = 2; step <= 8; step++)
+        {
+            string english = UiShellEcsGateway.ResolveTutorialAudioEventId(
+                step,
+                9,
+                UiTutorialNarrationPhase.PrimaryAction,
+                FirstLaunchNarrativeLanguage.English).ToString();
+            string persian = UiShellEcsGateway.ResolveTutorialAudioEventId(
+                step,
+                9,
+                UiTutorialNarrationPhase.PrimaryAction,
+                FirstLaunchNarrativeLanguage.Persian).ToString();
+            Assert.That(english, Does.StartWith("VO.ARIA.Tutorial.M02."));
+            Assert.That(english, Does.EndWith(".En"));
+            Assert.That(persian, Does.StartWith("VO.ARIA.Tutorial.M02."));
+            Assert.That(persian, Does.EndWith(".Fa"));
+        }
+        Assert.That(
+            UiShellEcsGateway.ResolveTutorialAudioEventId(
+                2,
+                5,
+                UiTutorialNarrationPhase.PrimaryAction,
+                FirstLaunchNarrativeLanguage.English).ToString(),
+            Does.StartWith("VO.ARIA.Tutorial.M01."));
     }
 
     [Test]

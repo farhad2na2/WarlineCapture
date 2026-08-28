@@ -133,8 +133,9 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             var tests = new BuildingProductionQueueCompositionSystemHelperTests();
             tests.OperationMapProducerQueueConsumer_WaitsForReadyTime();
             tests.OperationMapProducerQueueConsumer_CompletesStrictFifoOnce();
+            tests.OperationMapProducerQueueConsumer_CompletesConfiguredQuantityBeforeNextRequest();
             tests.OperationMapProducerQueueConsumer_RejectsDestroyedProducerAndMissingPrefab();
-            Debug.Log("[OperationMapProducerQueueConsumerValidation] result=Passed tests=3");
+            Debug.Log("[OperationMapProducerQueueConsumerValidation] result=Passed tests=4");
             ValidationExit.Passed();
         }
         catch (Exception ex)
@@ -2368,6 +2369,60 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             Assert.IsFalse(requestSystem.TryCompleteReadyOperationMapProduction(em, producer, firstRequestId, 100f));
             Assert.IsTrue(requestSystem.TryPeekReadyOperationMapProduction(em, producer, 100f, out OperationMapBuildingUnitProductionRequest next));
             Assert.AreEqual(secondRequestId, next.RequestId);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
+    public void OperationMapProducerQueueConsumer_CompletesConfiguredQuantityBeforeNextRequest()
+    {
+        using var world = new World(nameof(OperationMapProducerQueueConsumer_CompletesConfiguredQuantityBeforeNextRequest));
+        EntityManager em = world.EntityManager;
+        GameObject unitPrefab = new("Rifleman");
+        try
+        {
+            Entity prefabEntity = em.CreateEntity(typeof(Prefab));
+            Entity producer = CreateOperationMapProducer(
+                em,
+                prefabEntity,
+                unitPrefab.name,
+                FactionIdentity.PlayerFactionId,
+                1,
+                "Player Barracks",
+                quantity: 4);
+            var requestSystem = new BuildingProductionRequestSystemHelper();
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                new BuildingProductionQueueCompositionSystemHelper(),
+                unitPrefab,
+                em);
+            Assert.IsTrue(requestSystem.TryEnqueueFriendlyOperationMapProduction(
+                context, unitPrefab, 1f, out _, out int firstRequestId, out _));
+            Assert.IsTrue(requestSystem.TryEnqueueFriendlyOperationMapProduction(
+                context, unitPrefab, 2f, out _, out int secondRequestId, out _));
+
+            for (int remaining = 3; remaining >= 0; remaining--)
+            {
+                Assert.IsTrue(requestSystem.TryCompleteReadyOperationMapProduction(
+                    em, producer, firstRequestId, 100f));
+                if (remaining > 0)
+                {
+                    Assert.IsTrue(requestSystem.TryPeekReadyOperationMapProduction(
+                        em, producer, 100f, out OperationMapBuildingUnitProductionRequest current));
+                    Assert.AreEqual(firstRequestId, current.RequestId);
+                    Assert.AreEqual(remaining, current.RemainingQuantity);
+                }
+            }
+
+            Assert.IsFalse(requestSystem.TryCompleteReadyOperationMapProduction(
+                em, producer, firstRequestId, 100f));
+            Assert.IsTrue(requestSystem.TryPeekReadyOperationMapProduction(
+                em, producer, 100f, out OperationMapBuildingUnitProductionRequest next));
+            Assert.AreEqual(secondRequestId, next.RequestId);
+            Assert.AreEqual(4, next.RemainingQuantity);
         }
         finally
         {
@@ -5211,6 +5266,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         public float TransportArrivalSeconds { get; set; }
         public float TransportHoldForNextReadySeconds { get; set; }
         public int TransportMaxConcurrent { get; set; }
+        public int RemainingQuantity { get; set; }
         public BuildingProductionQueueCompositionSystemHelper.ProductionTransportMode TransportMode { get; set; }
         public bool TransportRequiresAirportRunway { get; set; }
     }
@@ -5433,7 +5489,8 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         string unitSourceKey,
         byte factionId,
         int placementIndex,
-        string displayName)
+        string displayName,
+        int quantity = 1)
     {
         Entity producer = entityManager.CreateEntity(
             typeof(OperationMapBuildingComponent),
@@ -5462,7 +5519,8 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         {
             ProductionIndex = 0,
             Prefab = prefabEntity,
-            SourceKey = new FixedString64Bytes(unitSourceKey)
+            SourceKey = new FixedString64Bytes(unitSourceKey),
+            Quantity = quantity
         });
         entityManager.AddComponentData(producer, new OperationMapBuildingProductionQueueComponent());
         entityManager.AddBuffer<OperationMapBuildingUnitProductionRequest>(producer);

@@ -4,6 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 using Game.Components;
+using Production = Game.Runtime.RuntimeBuildingEntity.PendingProduction;
 
 namespace Game.Runtime
 {
@@ -13,7 +14,7 @@ namespace Game.Runtime
         private const string HelicopterTransportLookupKey = "unit_veh_helicopter_transport";
         private const string PlaneTransportPrefabName = "Unit_Veh_Plane_Transport";
         private const string PlaneTransportLookupKey = "unit_veh_plane_transport";
-        private const int DefaultPendingProductionPoolPrewarmCount = 256;
+        private const int DefaultPoolPrewarmCount = 256;
 
         public delegate bool TryGetPrefabLocalBoundsDelegate(GameObject prefab, out Bounds localBounds);
         public delegate bool TryGetUnitProductionMetadataDelegate(GameObject prefab, out UnitProductionMetadata metadata);
@@ -112,9 +113,8 @@ namespace Game.Runtime
         private GameObject _cachedDefaultHelicopterTransportPrefab;
         private GameObject _cachedDefaultPlaneTransportPrefab;
         private TryGetUnitProductionMetadataDelegate _tryGetUnitProductionMetadata;
-        private readonly Stack<RuntimeBuildingEntity.PendingProduction> _pendingProductionPool = new();
-        private int _createdPendingProductionCount;
-
+        private readonly Stack<Production> _pendingProductionPool = new();
+        private int _createdCount;
         public readonly struct PendingProductionProgress
         {
             public readonly float DurationSeconds;
@@ -128,7 +128,6 @@ namespace Game.Runtime
                 Progress01 = progress01;
             }
         }
-
         internal readonly struct QueueContext
         {
             public readonly IReadOnlyList<GameObject> UnitSpawnPrefabs;
@@ -198,7 +197,7 @@ namespace Game.Runtime
                 context.UnitSpawnPrefabsByKey,
                 context.TryGetPrefabLocalBounds);
 
-            RuntimeBuildingEntity.PendingProduction queuedProduction = AcquirePendingProduction();
+            Production queuedProduction = AcquirePendingProduction();
             InitializePendingProduction(
                 queuedProduction,
                 productionIndex,
@@ -212,6 +211,7 @@ namespace Game.Runtime
                 transportSettings.MaxConcurrent,
                 transportSettings.Mode,
                 transportSettings.RequiresAirportRunway);
+            queuedProduction.RemainingQuantity = transportSettings.TransportPrefab == null ? BuildingDefinitionPrefabSystemHelper.GetProductionQuantity(building.Definition, productionIndex) : 1;
             building.PendingProductions.Add(queuedProduction);
             RebuildPendingProductionTimeline(building.PendingProductions, now, preserveActiveProgress: true);
             return true;
@@ -355,16 +355,16 @@ namespace Game.Runtime
             pending.TransportRequiresAirportRunway = transportRequiresAirportRunway;
         }
 
-        public void PrewarmPendingProductionPool(int count = DefaultPendingProductionPoolPrewarmCount)
+        public void PrewarmPendingProductionPool(int count = DefaultPoolPrewarmCount)
         {
-            while (_createdPendingProductionCount < count)
+            while (_createdCount < count)
             {
-                _pendingProductionPool.Push(new RuntimeBuildingEntity.PendingProduction());
-                _createdPendingProductionCount++;
+                _pendingProductionPool.Push(new Production());
+                _createdCount++;
             }
         }
 
-        internal void ReleasePendingProduction(RuntimeBuildingEntity.PendingProduction pending)
+        internal void ReleasePendingProduction(Production pending)
         {
             if (pending == null)
                 return;
@@ -377,19 +377,19 @@ namespace Game.Runtime
             pending.TransportPrefab = null;
             pending.TransportArrivalSeconds = 0f;
             pending.TransportHoldForNextReadySeconds = 0f;
-            pending.TransportMaxConcurrent = 0;
+            pending.TransportMaxConcurrent = pending.RemainingQuantity = 0;
             pending.TransportMode = default;
             pending.TransportRequiresAirportRunway = false;
             _pendingProductionPool.Push(pending);
         }
 
-        private RuntimeBuildingEntity.PendingProduction AcquirePendingProduction()
+        private Production AcquirePendingProduction()
         {
             if (_pendingProductionPool.Count > 0)
                 return _pendingProductionPool.Pop();
 
-            _createdPendingProductionCount++;
-            return new RuntimeBuildingEntity.PendingProduction();
+            _createdCount++;
+            return new Production();
         }
 
         public float ResolveProductionDurationSeconds(GameObject spawnUnitPrefab)
@@ -750,7 +750,7 @@ namespace Game.Runtime
 
             TPending pending = pendingProductions[index];
             pendingProductions.RemoveAt(index);
-            if (pending is RuntimeBuildingEntity.PendingProduction runtimePending)
+            if (pending is Production runtimePending)
                 ReleasePendingProduction(runtimePending);
             return true;
         }

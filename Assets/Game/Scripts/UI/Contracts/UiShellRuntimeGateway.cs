@@ -102,6 +102,7 @@ namespace Game.UI.Contracts
     {
         bool TryEnqueueTutorialNarration(
             byte tutorialStep,
+            byte tutorialStepCount,
             UiTutorialNarrationPhase phase,
             string text);
     }

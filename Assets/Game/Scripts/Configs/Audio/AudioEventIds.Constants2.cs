@@ -154,5 +154,47 @@ namespace Game.Configs
         public const string VOARIATutorialM01SecureCorridorFa = "VO.ARIA.Tutorial.M01.SecureCorridor.Fa";
         public const uint VOARIATutorialM01SecureCorridorFaHash = 2679046913u;
 
+        public const string VOARIATutorialM02OpenBuildEn = "VO.ARIA.Tutorial.M02.OpenBuild.En";
+        public const uint VOARIATutorialM02OpenBuildEnHash = 2146463555u;
+
+        public const string VOARIATutorialM02OpenBuildFa = "VO.ARIA.Tutorial.M02.OpenBuild.Fa";
+        public const uint VOARIATutorialM02OpenBuildFaHash = 1962160009u;
+
+        public const string VOARIATutorialM02SelectBarracksEn = "VO.ARIA.Tutorial.M02.SelectBarracks.En";
+        public const uint VOARIATutorialM02SelectBarracksEnHash = 710888218u;
+
+        public const string VOARIATutorialM02SelectBarracksFa = "VO.ARIA.Tutorial.M02.SelectBarracks.Fa";
+        public const uint VOARIATutorialM02SelectBarracksFaHash = 224881720u;
+
+        public const string VOARIATutorialM02PlaceBarracksEn = "VO.ARIA.Tutorial.M02.PlaceBarracks.En";
+        public const uint VOARIATutorialM02PlaceBarracksEnHash = 755193143u;
+
+        public const string VOARIATutorialM02PlaceBarracksFa = "VO.ARIA.Tutorial.M02.PlaceBarracks.Fa";
+        public const uint VOARIATutorialM02PlaceBarracksFaHash = 1241891189u;
+
+        public const string VOARIATutorialM02CheckCostEn = "VO.ARIA.Tutorial.M02.CheckCost.En";
+        public const uint VOARIATutorialM02CheckCostEnHash = 610849292u;
+
+        public const string VOARIATutorialM02CheckCostFa = "VO.ARIA.Tutorial.M02.CheckCost.Fa";
+        public const uint VOARIATutorialM02CheckCostFaHash = 1130808386u;
+
+        public const string VOARIATutorialM02TrainRifleSquadEn = "VO.ARIA.Tutorial.M02.TrainRifleSquad.En";
+        public const uint VOARIATutorialM02TrainRifleSquadEnHash = 718340173u;
+
+        public const string VOARIATutorialM02TrainRifleSquadFa = "VO.ARIA.Tutorial.M02.TrainRifleSquad.Fa";
+        public const uint VOARIATutorialM02TrainRifleSquadFaHash = 734676507u;
+
+        public const string VOARIATutorialM02IncomingPatrolEn = "VO.ARIA.Tutorial.M02.IncomingPatrol.En";
+        public const uint VOARIATutorialM02IncomingPatrolEnHash = 143983277u;
+
+        public const string VOARIATutorialM02IncomingPatrolFa = "VO.ARIA.Tutorial.M02.IncomingPatrol.Fa";
+        public const uint VOARIATutorialM02IncomingPatrolFaHash = 160319611u;
+
+        public const string VOARIATutorialM02DefendPostEn = "VO.ARIA.Tutorial.M02.DefendPost.En";
+        public const uint VOARIATutorialM02DefendPostEnHash = 426694301u;
+
+        public const string VOARIATutorialM02DefendPostFa = "VO.ARIA.Tutorial.M02.DefendPost.Fa";
+        public const uint VOARIATutorialM02DefendPostFaHash = 443030635u;
+
     }
 }

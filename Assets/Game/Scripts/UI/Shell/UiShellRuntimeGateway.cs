@@ -126,11 +126,16 @@ namespace Game.UI.Runtime
 
         public static bool TryEnqueueTutorialNarration(
             byte tutorialStep,
+            byte tutorialStepCount,
             UiTutorialNarrationPhase phase,
             string text)
         {
             return current is IUiTutorialNarrationGateway tutorialNarration &&
-                   tutorialNarration.TryEnqueueTutorialNarration(tutorialStep, phase, text);
+                   tutorialNarration.TryEnqueueTutorialNarration(
+                       tutorialStep,
+                       tutorialStepCount,
+                       phase,
+                       text);
         }
 
         public static bool TryAcknowledgeCampaignGuidanceTarget(

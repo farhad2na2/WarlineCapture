@@ -258,6 +258,20 @@ namespace Game.Configs
             VOARIATutorialM01EngageFaHash,
             VOARIATutorialM01AttackTargetFaHash,
             VOARIATutorialM01SecureCorridorFaHash,
+            VOARIATutorialM02OpenBuildEnHash,
+            VOARIATutorialM02OpenBuildFaHash,
+            VOARIATutorialM02SelectBarracksEnHash,
+            VOARIATutorialM02SelectBarracksFaHash,
+            VOARIATutorialM02PlaceBarracksEnHash,
+            VOARIATutorialM02PlaceBarracksFaHash,
+            VOARIATutorialM02CheckCostEnHash,
+            VOARIATutorialM02CheckCostFaHash,
+            VOARIATutorialM02TrainRifleSquadEnHash,
+            VOARIATutorialM02TrainRifleSquadFaHash,
+            VOARIATutorialM02IncomingPatrolEnHash,
+            VOARIATutorialM02IncomingPatrolFaHash,
+            VOARIATutorialM02DefendPostEnHash,
+            VOARIATutorialM02DefendPostFaHash,
         };
 
     }

@@ -91,8 +91,9 @@ namespace Game.UI.Runtime
             {
                 MarkTutorialCueAutoShown(_displayedTutorialStep, _displayedTutorialPhase);
             }
-            if (CanUseLegacyTutorialNarration(_lastPanelModel.TutorialStepCount) &&
-                _lastPanelModel.RecommendationTargetKind != 4 &&
+            if (CanUseTutorialNarration(_lastPanelModel.TutorialStepCount) &&
+                (_lastPanelModel.TutorialStepCount == 9 ||
+                 _lastPanelModel.RecommendationTargetKind != 4) &&
                 !WasTutorialCueNarrated(
                     _displayedTutorialStep,
                     _displayedTutorialPhase))
@@ -102,6 +103,7 @@ namespace Game.UI.Runtime
                     narrationText = _lastPanelModel.RecommendationBody;
                 if (UiShellRuntimeGateway.TryEnqueueTutorialNarration(
                         _displayedTutorialStep,
+                        _lastPanelModel.TutorialStepCount,
                         _displayedTutorialPhase,
                         narrationText))
                 {
@@ -192,7 +194,7 @@ namespace Game.UI.Runtime
             return ((step - 1) * 2) + (int)phase;
         }
 
-        internal static bool CanUseLegacyTutorialNarration(byte tutorialStepCount) =>
-            tutorialStepCount != 9;
+        internal static bool CanUseTutorialNarration(byte tutorialStepCount) =>
+            tutorialStepCount is 5 or 9;
     }
 }

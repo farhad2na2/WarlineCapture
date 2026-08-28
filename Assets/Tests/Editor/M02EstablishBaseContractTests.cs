@@ -57,12 +57,12 @@ public sealed class M02EstablishBaseContractTests
         ReadOnlySpan<MissionObjectiveDefinitionConfig> objectives = LoadMission().Objectives;
         Assert.AreEqual(3, objectives.Length);
         AssertObjective(objectives[0], "obj.ch01.m02.build_forward_barracks",
-            MissionObjectiveRuleKind.BuildStructure, string.Empty, "Building_Barrack", false);
+            MissionObjectiveRuleKind.BuildStructure, string.Empty, "Building_Barrack", 1, false);
         AssertObjective(objectives[1], "obj.ch01.m02.produce_rifle_squad",
             MissionObjectiveRuleKind.ProduceUnit, string.Empty,
-            "Unit_Chr_Soldier_Male_02_Alt_04", false);
+            "Unit_Chr_Soldier_Male_02_Alt_04", 4, false);
         AssertObjective(objectives[2], "obj.ch01.m02.defend_forward_post",
-            MissionObjectiveRuleKind.DefendMissionRole, "role.friendly.forward_post", string.Empty, true);
+            MissionObjectiveRuleKind.DefendMissionRole, "role.friendly.forward_post", string.Empty, 1, true);
     }
 
     [Test]
@@ -148,13 +148,14 @@ public sealed class M02EstablishBaseContractTests
         MissionObjectiveRuleKind rule,
         string role,
         string config,
+        int requiredCount,
         bool failure)
     {
         Assert.AreEqual(id, objective.ObjectiveId);
         Assert.AreEqual(rule, objective.Rule);
         Assert.AreEqual(role, objective.MissionRoleId);
         Assert.AreEqual(config, objective.TargetConfigId);
-        Assert.AreEqual(1, objective.RequiredCount);
+        Assert.AreEqual(requiredCount, objective.RequiredCount);
         Assert.AreEqual(failure, objective.FailureOnRuleBreak);
     }
 

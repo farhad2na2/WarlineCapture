@@ -21,67 +21,66 @@ MonoBehaviour:
     panel16x9: {fileID: 21300000, guid: 211ff501900b0438789722fab6f7b3a7, type: 3}
     panel20x9: {fileID: 21300000, guid: 211ff501900b0438789722fab6f7b3a7, type: 3}
     panel16x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: m02-brief.line.1
       textKey: narrative.m02.brief.dalia
-      englishFallback: The abandoned JRC forward post is the only command point left
-        on this district edge. Restore it, then hold its defense lane.
+      englishFallback: This forward post is abandoned, but we need it. Restore it
+        and prepare to defend the clinic road.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 46cbc7b1f2f034cea867ea4017fbd224, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 3.75
+      deadlineSeconds: 10.030001
       essentialCaption: 1
     - lineId: m02-brief.line.2
       textKey: narrative.m02.brief.aria
-      englishFallback: Once the Barracks and rifle squad are operational, the post
-        can restore local response channels.
+      englishFallback: Build a Barracks here, then train one rifle squad. That will
+        make the post operational.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: f96cfe69e17c24416aed81bb3e48b3bd, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
-      startSeconds: 4
-      deadlineSeconds: 7.75
+      startSeconds: 10.280001
+      deadlineSeconds: 19.03
       essentialCaption: 1
     - lineId: m02-brief.line.3
       textKey: narrative.m02.brief.samira
-      englishFallback: This post protects the clinic route and municipal crews still
-        moving through Old Market. Reopening it is a civic lifeline, not only a military
-        position.
+      englishFallback: The clinic and city crews use this road. Holding the post
+        keeps their route open.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 7ed03ee80b3fc459ea084fb159cf902d, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
-      startSeconds: 8
-      deadlineSeconds: 11.75
+      startSeconds: 19.28
+      deadlineSeconds: 27.87
       essentialCaption: 1
     continueStateId: M02-BRIEF-COMPLETE
     skipStateId: M02-BRIEF-COMPLETE
     reducedMotionSupported: 1
-    durationSeconds: 12
+    durationSeconds: 28.12
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: M02-BRIEF-COMPLETE
@@ -89,27 +88,27 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines: []
-    continueStateId:
-    skipStateId:
+    continueStateId: 
+    skipStateId: 
     reducedMotionSupported: 1
     durationSeconds: 0
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
@@ -141,66 +140,66 @@ MonoBehaviour:
     panel16x9: {fileID: 21300000, guid: 96505a723997b4ab3a20d460b23e78cd, type: 3}
     panel20x9: {fileID: 21300000, guid: 96505a723997b4ab3a20d460b23e78cd, type: 3}
     panel16x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: m02-debrief.line.1
       textKey: narrative.m02.debrief.samira
-      englishFallback: The forward post is operational. Clinic and municipal response
-        channels are back online.
+      englishFallback: The post is active again. The clinic road and city response
+        teams are connected.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: e9b68851e55c04450adde06013331fd2, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 3.75
+      deadlineSeconds: 7.63
       essentialCaption: 1
     - lineId: m02-debrief.line.2
       textKey: narrative.m02.debrief.dalia
-      englishFallback: Commander, Dalia Rahim. I accept the field-lead role. I will
-        direct the ground response from this post.
+      englishFallback: Commander, Dalia Rahim. I will lead the ground response from
+        this post.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 01d27a48490754b4dba2d2527cfcce49, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
-      startSeconds: 4
-      deadlineSeconds: 7.75
+      startSeconds: 7.88
+      deadlineSeconds: 15.27
       essentialCaption: 1
     - lineId: m02-debrief.line.3
       textKey: narrative.m02.debrief.aria
-      englishFallback: The warning sector toward the next operation has gone dark.
-        Armored movement is approaching through it.
+      englishFallback: The warning network ahead has gone dark. Armored vehicles
+        are moving toward the next sector.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 83ca18b0363864a188aaa00a2cf3c5d6, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
-      startSeconds: 8
-      deadlineSeconds: 11.75
+      startSeconds: 15.52
+      deadlineSeconds: 24.19
       essentialCaption: 1
     continueStateId: M02-DEBRIEF-COMPLETE
     skipStateId: M02-DEBRIEF-COMPLETE
     reducedMotionSupported: 1
-    durationSeconds: 12
+    durationSeconds: 24.44
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: M02-DEBRIEF-COMPLETE
@@ -208,27 +207,27 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines: []
-    continueStateId:
-    skipStateId:
+    continueStateId: 
+    skipStateId: 
     reducedMotionSupported: 1
     durationSeconds: 0
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
@@ -264,66 +263,66 @@ MonoBehaviour:
     panel16x9: {fileID: 21300000, guid: 1eca674676ff340e891d7e12e956f8fd, type: 3}
     panel20x9: {fileID: 21300000, guid: 1eca674676ff340e891d7e12e956f8fd, type: 3}
     panel16x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: m02-comms.line.1
       textKey: narrative.m02.comms.dalia
-      englishFallback: Hold the post. The incoming cell cannot be allowed through
-        to the clinic route.
+      englishFallback: Enemy patrol approaching from the west. Hold the post and
+        keep them away from the clinic road.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: f723ab16eb70b4c81bc8ecc69ca065e7, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 3.75
+      deadlineSeconds: 7.79
       essentialCaption: 1
     - lineId: m02-comms.line.2
       textKey: narrative.m02.comms.aria
-      englishFallback: A municipal access list was recovered from the attackers.
-        Its copy timestamp predates the first strike.
+      englishFallback: We found a city access list on one attacker. It was copied
+        before the first strike.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: aa7e094ed06a449ac8c434e56625a5c3, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
-      startSeconds: 4
-      deadlineSeconds: 7.75
+      startSeconds: 8.04
+      deadlineSeconds: 16.79
       essentialCaption: 1
     - lineId: m02-comms.line.3
       textKey: narrative.m02.comms.samira
-      englishFallback: That list maps substations, maintenance gates, and service
-        tunnels. It was stolen before the attack.
+      englishFallback: It marks power stations, service gates, and tunnels. Someone
+        stole it before the attack.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 4d2c2c8435c4f4a568e4786f8056e9b2, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
-      startSeconds: 8
-      deadlineSeconds: 11.75
+      startSeconds: 17.04
+      deadlineSeconds: 25.390001
       essentialCaption: 1
     continueStateId: M02-COMMS-COMPLETE
     skipStateId: M02-COMMS-COMPLETE
     reducedMotionSupported: 1
-    durationSeconds: 12
+    durationSeconds: 25.640001
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: M02-COMMS-COMPLETE
@@ -331,27 +330,27 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines: []
-    continueStateId:
-    skipStateId:
+    continueStateId: 
+    skipStateId: 
     reducedMotionSupported: 1
     durationSeconds: 0
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0

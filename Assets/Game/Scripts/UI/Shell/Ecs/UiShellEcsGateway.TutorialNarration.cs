@@ -22,10 +22,13 @@ namespace Game.UI.Shell.Ecs
 
         bool IUiTutorialNarrationGateway.TryEnqueueTutorialNarration(
             byte tutorialStep,
+            byte tutorialStepCount,
             UiTutorialNarrationPhase phase,
             string text)
         {
-            if (tutorialStep is < 1 or > 5 || string.IsNullOrWhiteSpace(text) ||
+            bool m01Step = tutorialStepCount == 5 && tutorialStep is >= 1 and <= 5;
+            bool m02Step = tutorialStepCount == 9 && tutorialStep is >= 2 and <= 8;
+            if ((!m01Step && !m02Step) || string.IsNullOrWhiteSpace(text) ||
                 !TryGetBoundary(out EntityManager entityManager, out Entity boundary) ||
                 !UiShellActionAdapter.IsAssistantRuntimeActive(entityManager, boundary) ||
                 !entityManager.HasBuffer<AssistantMessageElement>(boundary))
@@ -35,6 +38,7 @@ namespace Game.UI.Shell.Ecs
 
             FixedString64Bytes audioEventId = ResolveTutorialAudioEventId(
                 tutorialStep,
+                tutorialStepCount,
                 phase,
                 ResolveTutorialNarrationLanguage());
             if (audioEventId.Length == 0)
@@ -42,7 +46,9 @@ namespace Game.UI.Shell.Ecs
 
             int sequence = NextTutorialNarrationSequence();
             int messageId = TutorialMessageBaseId + sequence;
-            FixedString64Bytes suppressionKey = new("assistant.tutorial.m01.");
+            FixedString64Bytes suppressionKey = tutorialStepCount == 9
+                ? new FixedString64Bytes("assistant.tutorial.m02.")
+                : new FixedString64Bytes("assistant.tutorial.m01.");
             suppressionKey.Append(sequence);
             float now = (float)entityManager.World.Time.ElapsedTime;
             DynamicBuffer<AssistantMessageElement> messages =
@@ -88,12 +94,29 @@ namespace Game.UI.Shell.Ecs
             return retired;
         }
 
-        internal static FixedString64Bytes ResolveTutorialAudioEventId(
+        public static FixedString64Bytes ResolveTutorialAudioEventId(
             byte tutorialStep,
+            byte tutorialStepCount,
             UiTutorialNarrationPhase phase,
             FirstLaunchNarrativeLanguage language)
         {
             bool persian = language == FirstLaunchNarrativeLanguage.Persian;
+            if (tutorialStepCount == 9)
+            {
+                string m02EventId = tutorialStep switch
+                {
+                    2 => persian ? AudioEventIds.VOARIATutorialM02OpenBuildFa : AudioEventIds.VOARIATutorialM02OpenBuildEn,
+                    3 => persian ? AudioEventIds.VOARIATutorialM02SelectBarracksFa : AudioEventIds.VOARIATutorialM02SelectBarracksEn,
+                    4 => persian ? AudioEventIds.VOARIATutorialM02PlaceBarracksFa : AudioEventIds.VOARIATutorialM02PlaceBarracksEn,
+                    5 => persian ? AudioEventIds.VOARIATutorialM02CheckCostFa : AudioEventIds.VOARIATutorialM02CheckCostEn,
+                    6 => persian ? AudioEventIds.VOARIATutorialM02TrainRifleSquadFa : AudioEventIds.VOARIATutorialM02TrainRifleSquadEn,
+                    7 => persian ? AudioEventIds.VOARIATutorialM02IncomingPatrolFa : AudioEventIds.VOARIATutorialM02IncomingPatrolEn,
+                    8 => persian ? AudioEventIds.VOARIATutorialM02DefendPostFa : AudioEventIds.VOARIATutorialM02DefendPostEn,
+                    _ => string.Empty
+                };
+                return new FixedString64Bytes(m02EventId);
+            }
+
             string eventId = (tutorialStep, phase) switch
             {
                 (1, _) => persian
@@ -124,6 +147,12 @@ namespace Game.UI.Shell.Ecs
             };
             return new FixedString64Bytes(eventId);
         }
+
+        private static FixedString64Bytes ResolveTutorialAudioEventId(
+            byte tutorialStep,
+            UiTutorialNarrationPhase phase,
+            FirstLaunchNarrativeLanguage language) =>
+            ResolveTutorialAudioEventId(tutorialStep, 5, phase, language);
 
         internal static bool TryResolveTutorialPresentationText(
             byte tutorialStep,
@@ -168,62 +197,12 @@ namespace Game.UI.Shell.Ecs
             out string body,
             out bool rightToLeft)
         {
-            title = string.Empty;
-            body = string.Empty;
             rightToLeft = language == FirstLaunchNarrativeLanguage.Persian;
-            string targetId = recommendation.TargetId.ToString();
-            if (string.Equals(targetId, "anchor.ch01.m02.defense_boundary", StringComparison.Ordinal))
-            {
-                if (recommendation.TutorialStep == 7)
-                {
-                    (title, body) = rightToLeft
-                        ? ("گشت دشمن نزدیک می‌شود", "گشت دشمن از مسیر دفاعی علامت‌گذاری‌شده نزدیک می‌شود. پیش از درگیری، گروه خود را آماده کنید.")
-                        : ("Incoming patrol", "Hostile patrol approaching the marked defense lane. Prepare your squad before contact.");
-                    return true;
-                }
-
-                if (recommendation.TutorialStep == 8)
-                {
-                    (title, body) = rightToLeft
-                        ? ("از پاسگاه پیشرو دفاع کنید", "مسیر دفاعی را نگه دارید و از پاسگاه پیشرو محافظت کنید. تصمیم‌های تاکتیکی با شماست.")
-                        : ("Defend the forward post", "Hold the defense lane and protect the forward post. Tactical decisions are yours.");
-                    return true;
-                }
-
-                return false;
-            }
-
-            if (string.Equals(targetId, "ui.build_drawer.barracks", StringComparison.Ordinal))
-            {
-                if (rightToLeft)
-                {
-                    title = "پادگان را انتخاب کنید";
-                    body = "پادگان را از فهرست ساختمان‌ها انتخاب کنید.";
-                }
-                else
-                {
-                    title = "Select Barracks";
-                    body = "Select Barracks from the building catalog.";
-                }
-
-                return true;
-            }
-
-            if (!string.Equals(targetId, "ui.build_drawer.rifle", StringComparison.Ordinal))
-                return false;
-
-            if (rightToLeft)
-            {
-                title = "یک گروه تفنگدار در صف بگذارید";
-                body = "بخش تولید را باز کنید، سربازان را انتخاب کنید و گروه تفنگدار موردنیاز را به صف آموزش اضافه کنید.";
-            }
-            else
-            {
-                title = "Queue a rifle squad";
-                body = "Open production, select Soldiers, and recruit the required rifle squad.";
-            }
-
-            return true;
+            return M02EstablishBaseLocalizedText.TryGetTutorial(
+                recommendation.TutorialStep,
+                language,
+                out title,
+                out body);
         }
 
         private static FirstLaunchNarrativeLanguage ResolveTutorialNarrationLanguage()

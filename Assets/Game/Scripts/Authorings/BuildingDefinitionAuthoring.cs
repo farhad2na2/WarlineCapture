@@ -13,6 +13,7 @@ namespace Game.Authoring
         public sealed class ProductionDefinition
         {
             public GameObject spawnUnitPrefab;
+            [Min(1)] public int quantity = 1;
         }
 
         [SerializeField] private BuildingDefinitionAuthoringConfig config;
@@ -219,7 +220,8 @@ namespace Game.Authoring
 
                 productions.Add(new ProductionDefinition
                 {
-                    spawnUnitPrefab = entry.SpawnUnitPrefab
+                    spawnUnitPrefab = entry.SpawnUnitPrefab,
+                    quantity = entry.Quantity
                 });
             }
         }
@@ -242,7 +244,8 @@ namespace Game.Authoring
 
             productions.Add(new ProductionDefinition
             {
-                spawnUnitPrefab = spawnUnitPrefab
+                spawnUnitPrefab = spawnUnitPrefab,
+                quantity = 1
             });
         }
     }

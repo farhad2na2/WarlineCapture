@@ -255,13 +255,16 @@ namespace Game.Editor
             productions.GetArrayElementAtIndex(0)
                 .FindPropertyRelative("spawnUnitPrefab")
                 .objectReferenceValue = riflePrefab;
+            productions.GetArrayElementAtIndex(0)
+                .FindPropertyRelative("quantity")
+                .intValue = 4;
             serialized.ApplyModifiedPropertiesWithoutUndo();
 
             EditorUtility.SetDirty(barracks);
             AssetDatabase.SaveAssets();
             Debug.Log(
                 "[M02EstablishBaseConfigBuilder] result=Passed " +
-                "scope=BarracksProduction entries=1 unit=Unit_Chr_Soldier_Male_02_Alt_04");
+                "scope=BarracksProduction entries=1 quantity=4 unit=Unit_Chr_Soldier_Male_02_Alt_04");
         }
 
         private static void PopulateObjective(SerializedProperty objective, int index)
@@ -289,7 +292,7 @@ namespace Game.Editor
                 1 => "Unit_Chr_Soldier_Male_02_Alt_04",
                 _ => string.Empty
             });
-            Set(objective, "requiredCount", 1);
+            Set(objective, "requiredCount", index == 1 ? 4 : 1);
             Set(objective, "failureOnRuleBreak", index == 2);
         }
 

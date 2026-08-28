@@ -1,0 +1,189 @@
+{
+  "schema": "WarlineCapture.M02BilingualVoice.v1",
+  "missionId": "saga.ch01.m02.establish_base",
+  "generatedAtUtc": "2026-08-28T21:07:04.398968+00:00",
+  "provider": "ElevenLabs",
+  "license": "ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE",
+  "runtimeNetworkTts": false,
+  "model": "eleven_v3",
+  "subscription": {
+    "tier": "creator",
+    "status": "active"
+  },
+  "processing": {
+    "sampleRateHz": 44100,
+    "channels": 1,
+    "sourceEncoding": "PCM_S16LE",
+    "runtimeImportProfile": "Voice"
+  },
+  "clips": [
+    {
+      "kind": "tutorial",
+      "id": "2",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Open the Build menu.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m02_open_build_aria.wav",
+      "durationSeconds": 1.6,
+      "sha256": "e993b315606551ac298007c39fc54eaf33ce46a869aa1981253882f83551e1e2"
+    },
+    {
+      "kind": "tutorial",
+      "id": "2",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "منوی ساخت را باز کنید.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_open_build_aria_fa.wav",
+      "durationSeconds": 1.92,
+      "sha256": "d61a2024ba4bf193b414f0099283e03ef2f2e0aa0f7714dd8434e3e632f94373"
+    },
+    {
+      "kind": "tutorial",
+      "id": "3",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Select Barracks from the building list.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m02_select_barracks_aria.wav",
+      "durationSeconds": 2.4,
+      "sha256": "67bd566ac20009ebe54e9db0da0a30cc06a037f12d5e1e0947c3e6ef4a765fdb"
+    },
+    {
+      "kind": "tutorial",
+      "id": "3",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "سربازخانه را از فهرست ساختمان‌ها انتخاب کنید.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_select_barracks_aria_fa.wav",
+      "durationSeconds": 3.6,
+      "sha256": "34131e90b60d6611fee365569ba4dafba0c664fba91a2daf274ce0d598c1c188"
+    },
+    {
+      "kind": "tutorial",
+      "id": "4",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Place the Barracks inside the green area, then confirm construction.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m02_place_barracks_aria.wav",
+      "durationSeconds": 4.32,
+      "sha256": "6af679e78153a6a646a26a0a46d1abdbc4d8154cac4107f6816f8d0b49944ffe"
+    },
+    {
+      "kind": "tutorial",
+      "id": "4",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "سربازخانه را داخل محدوده سبز قرار دهید و ساخت را تأیید کنید.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_place_barracks_aria_fa.wav",
+      "durationSeconds": 5.12,
+      "sha256": "38b727cd7e8b36c5abae42ecfbe2896ea38b01a55fdec8fdf5b0844871db4e32"
+    },
+    {
+      "kind": "tutorial",
+      "id": "5",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Check the resource bar. The Barracks cost 40,000 Credits and 90 Materials.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m02_check_cost_aria.wav",
+      "durationSeconds": 5.84,
+      "sha256": "ffdd226d7141c493d6ce65d5be5eeac9156750cb35f8b2c8e7967c998af12ce7"
+    },
+    {
+      "kind": "tutorial",
+      "id": "5",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "نوار منابع را بررسی کنید. سربازخانه ۴۰ هزار اعتبار و ۹۰ واحد مصالح هزینه دارد.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_check_cost_aria_fa.wav",
+      "durationSeconds": 8.08,
+      "sha256": "5ad8742eb8c318427708eebd0157076afbeadef7382f2e0ab93c397b94f138c9"
+    },
+    {
+      "kind": "tutorial",
+      "id": "6",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Open production and recruit one rifle squad.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m02_train_rifle_squad_aria.wav",
+      "durationSeconds": 3.2,
+      "sha256": "40be8af62e1f88ffcee336c5f13f3befb7a12c5882f8fd9a44617036c7076acf"
+    },
+    {
+      "kind": "tutorial",
+      "id": "6",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "بخش تولید را باز کنید و یک گروه تفنگدار آموزش دهید.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_train_rifle_squad_aria_fa.wav",
+      "durationSeconds": 4.64,
+      "sha256": "be372866bf075c47e1812a5a62703d54181c09aa06e8d8e3c7ed38ffd22b8883"
+    },
+    {
+      "kind": "tutorial",
+      "id": "7",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "An enemy patrol is approaching from the west. Prepare your squad at the marked lane.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m02_incoming_patrol_aria.wav",
+      "durationSeconds": 4.96,
+      "sha256": "a915ba2ca7a245c97f0d809012a55c44ddb3e9b052611d8050733b3a7128ac1b"
+    },
+    {
+      "kind": "tutorial",
+      "id": "7",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "یک گشت دشمن از غرب نزدیک می‌شود. گروه خود را در مسیر علامت‌گذاری‌شده آماده کنید.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_incoming_patrol_aria_fa.wav",
+      "durationSeconds": 8.72,
+      "sha256": "dacea688ade938043ac3890a9eb93f6b0a072b4ff8ad66d33f7ebb7e81c7d192"
+    },
+    {
+      "kind": "tutorial",
+      "id": "8",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Hold the marked lane and protect the forward post.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m02_defend_post_aria.wav",
+      "durationSeconds": 3.04,
+      "sha256": "11a772c88998b29536080956e71f181e02b08ea22c903a741cc718bbc56d47c4"
+    },
+    {
+      "kind": "tutorial",
+      "id": "8",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "مسیر علامت‌گذاری‌شده را حفظ کنید و از پاسگاه دفاع کنید.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_defend_post_aria_fa.wav",
+      "durationSeconds": 4.56,
+      "sha256": "51dc4c937dda68f896dc7f9f9c23ba5d6e825ed62e95182a229f43168282c972"
+    }
+  ]
+}

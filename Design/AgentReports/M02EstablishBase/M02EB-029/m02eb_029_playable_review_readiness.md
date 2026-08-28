@@ -1,6 +1,6 @@
 # M02EB-029 Playable Review Readiness
 
-Date: 2026-08-26
+Date: 2026-08-28
 Mission: `saga.ch01.m02.establish_base`
 Status: Ready for project-owner Editor review; acceptance remains open
 
@@ -9,6 +9,7 @@ Status: Ready for project-owner Editor review; acceptance remains open
 - The existing Campaign selector and deploy pipeline launch the exact M02 mission, scenario, and logical operation map.
 - Match preserves that correlated Campaign selection and loads accepted source GUID `dad0bd13fb20943dfb2f881cbe225f05`; it no longer substitutes the serialized Skirmish fallback after leaving Menu.
 - The provisional brief, delayed-wave comms, and first-clear debrief reuse the established narrative presenter and pause mission simulation while brief/comms are visible.
+- The opening brief claims the still-opaque Match entrance before `EnterMatchHud` completes; the battlefield HUD is not exposed before the comic. Later comms and debrief presentation still wait for a settled Match HUD.
 - Provisional M2 panels use their direct Sprite bindings until final media acceptance; they no longer disappear merely because their future Addressables references are intentionally unset.
 - The complete typed guidance path remains active: Build, Barracks selection, valid footprint, confirmation, resource review, rifle production, warning, and defense.
 - Final comic panels, bilingual copy polish, and voices remain intentionally unproduced until the owner accepts this playable timing gate.
@@ -36,6 +37,7 @@ The checked macOS wrapper ran `MobileVisualQualityPlayModeCapture.CaptureFromEnv
 - `/private/tmp/warline-m02-lifecycle-regression-rerun.log`: lifecycle `15/15`, launch/result/M01 compatibility, source growth `17/17`, aggregate `5/5`.
 - `/private/tmp/warline-m02-hud-result-regression.log`: HUD/result `4/4`, narrative `17/17`, Campaign UI `10/10`, source growth `17/17`, aggregate `6/6`.
 - `/private/tmp/warline-m02eb-029-source-growth-final.log`: final post-documentation source-growth and architecture metadata check `17/17`.
+- Live Unity Pipeline correction runs: focused M2 narrative `20/20`, all M2 Establish Base tests `236/236`, first-launch narrative `43/43`, and production source growth `17/17`.
 - Final accepted runs contain zero compiler errors and no failed validation marker.
 
 ## Exact Editor Route Verification
@@ -46,6 +48,19 @@ The live `WarlineCapture` Editor ran `Game/Rendering/Capture Mobile Visual Quali
 - First-guidance proof: `m02eb_029_first_guidance_verified.png`, SHA-256 `b2ad39fcf770f8660bc8abd817fa08d12b166add22051e2ec1083ef9e95c027f`.
 - Live ECS inspection after the briefing reported `phase=Engage`, `briefDone=1`, `guidanceActive=1`, and `prompt=EstablishBaseOpenBuild`.
 - Live EditMode regression after a real script reload: M2 Establish Base `236/236`; first-launch narrative `43/43`; the exact language-choice lifecycle regression `1/1`.
+
+## Brief-Before-HUD Ordering Correction
+
+The owner observed the Match battlefield for one frame before the opening comic. The former readiness gate delayed every Campaign narrative stage until the complete `EnterMatchHud` motion sequence had settled, including the final curtain fade. The opening brief now becomes eligible as soon as the Match route and HUD mode are authoritative, while the opaque intro curtain still covers the transition. Comms and debrief retain the settled-transition requirement.
+
+The exact live Campaign route records the required order:
+
+1. `EnterMatchHud` command started;
+2. `CampaignMissionNarrative` started `stage=Brief` for `seq.ch01.m02.brief`;
+3. `EnterMatchHud` command completed and flushed;
+4. the Metal M2 playable-review capture passed.
+
+Durable excerpt: `m02eb_029_brief_ordering_editor_log.txt`. The focused regression explicitly rejects early loading-route presentation, accepts only `Brief` during the covered Match entrance, rejects `Comms` and `Debrief` during that transition, and accepts later stages after settlement.
 
 ## Exact Launch-Map Correction
 

@@ -243,7 +243,9 @@ namespace Game.Composition
             stage != CampaignMissionDebriefCompositionSystemHelper.SequenceStage.None &&
             shellState.CurrentMode == UiShellMode.MatchHud &&
             shellState.ActiveRoute == UIRoute.Match &&
-            shellState.IsTransitionRunning == 0;
+            // The opening comic claims the opaque match-intro curtain before any HUD frame is exposed.
+            (stage == CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Brief ||
+             shellState.IsTransitionRunning == 0);
 
         internal static FirstLaunchNarrativeLanguage ReadLanguage()
         {

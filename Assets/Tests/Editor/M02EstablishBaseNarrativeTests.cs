@@ -50,7 +50,7 @@ public static class M02EstablishBaseNarrativeTests
             RetryAttemptRearmsBriefAndComms();
             M01NeverSelectsM02Narrative();
             BriefAndCommsPauseWhileOnlyDebriefReturnsToCampaign();
-            NarrativeWaitsForSettledMatchHud();
+            OpeningBriefClaimsEnteringMatchBeforeHudIsExposed();
             Debug.Log(PassMarker);
             ValidationExit.Passed();
         }
@@ -392,7 +392,7 @@ public static class M02EstablishBaseNarrativeTests
     }
 
     [Test]
-    public static void NarrativeWaitsForSettledMatchHud()
+    public static void OpeningBriefClaimsEnteringMatchBeforeHudIsExposed()
     {
         UiShellStateComponent shell = new()
         {
@@ -403,11 +403,15 @@ public static class M02EstablishBaseNarrativeTests
             CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Brief, in shell));
         shell.CurrentMode = UiShellMode.MatchHud;
         shell.IsTransitionRunning = 1;
-        Assert.IsFalse(CampaignMissionNarrativeCompositionUtility.IsPresentationReady(
-            CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Brief, in shell));
-        shell.IsTransitionRunning = 0;
         Assert.IsTrue(CampaignMissionNarrativeCompositionUtility.IsPresentationReady(
             CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Brief, in shell));
+        Assert.IsFalse(CampaignMissionNarrativeCompositionUtility.IsPresentationReady(
+            CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Comms, in shell));
+        Assert.IsFalse(CampaignMissionNarrativeCompositionUtility.IsPresentationReady(
+            CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Debrief, in shell));
+        shell.IsTransitionRunning = 0;
+        Assert.IsTrue(CampaignMissionNarrativeCompositionUtility.IsPresentationReady(
+            CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Comms, in shell));
     }
 
     private static CampaignMissionRuntimeComponent Runtime(MissionPhaseKind phase) => new()

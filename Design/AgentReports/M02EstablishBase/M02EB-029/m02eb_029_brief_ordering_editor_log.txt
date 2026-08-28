@@ -1,0 +1,11 @@
+[UiShellPresentation] stage=CommandStarted sequence=3 kind=EnterMatchHud region=None route=Match
+[CampaignMissionNarrative] status=started stage=Brief sequence=seq.ch01.m02.brief session=campaign-m02-0000000000000001 attempt=1
+[UiShellPresentation] stage=CommandCompleted sequence=3 kind=EnterMatchHud region=None route=Match
+[UiShellPresentation] stage=CompletionFlushed sequence=3 kind=EnterMatchHud region=None
+[MobileVisualQualityPlayModeCapture] result=Passed profile=current mission=saga.ch01.m02.establish_base manifest=/var/folders/db/jvv773z13272j7lkn6ydkmvm0000gn/T/warline-m02-playable-review/current_manifest.md
+
+Live Unity Pipeline validation:
+- M02EstablishBaseNarrativeTests: 20/20 passed
+- M02EstablishBase*: 236/236 passed
+- FirstLaunchNarrative*: 43/43 passed
+- ProductionSourceGrowthArchitectureTests: 17/17 passed

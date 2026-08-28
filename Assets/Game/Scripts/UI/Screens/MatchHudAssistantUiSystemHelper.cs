@@ -146,6 +146,7 @@ namespace Game.UI.Runtime
 
         private void ClearTutorialPresentationState()
         {
+            ClearPendingM02DoIt();
             _pendingTutorialStep = 0;
             _completedTutorialStep = 0;
             _displayedTutorialStep = 0;

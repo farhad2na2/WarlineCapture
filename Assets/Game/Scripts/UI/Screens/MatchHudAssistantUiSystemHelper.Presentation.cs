@@ -135,7 +135,10 @@ namespace Game.UI.Runtime
         {
             byte previousTutorialStep = _lastPanelModel.TutorialStep;
             if (previousTutorialStep != model.TutorialStep)
+            {
                 _highlightPresentationSystem.ClearUiSurfaceCue();
+                ClearPendingM02DoIt();
+            }
             _lastPanelModel = model;
             if (previousTutorialStep != model.TutorialStep)
                 _tutorialWorldTargetCompleted = false;
@@ -237,6 +240,7 @@ namespace Game.UI.Runtime
         public void TickHighlight(float unscaledTime)
         {
             _highlightPresentationSystem.Tick();
+            TickPendingM02DoIt(unscaledTime);
             TickTutorialPresentation(unscaledTime);
         }
 
@@ -368,19 +372,17 @@ namespace Game.UI.Runtime
         private void ExecuteRecommendation()
         {
             CaptureUiOnly();
-            if (_lastPanelModel.TutorialStepCount == 9 &&
-                _lastPanelModel.TutorialStep == 4 &&
-                _lastPanelModel.RecommendationKind == 4)
+            if (IsM02DoItStep(in _lastPanelModel))
             {
-                if (_executeBuildingPlacementStep?.Invoke() == true)
+                if (TryExecuteM02DoIt(in _lastPanelModel))
+                {
+                    ClearPendingM02DoIt();
                     ClosePanelWithoutInputCapture();
-                return;
-            }
-            if (_lastPanelModel.RecommendationTargetKind == 4)
-            {
-                _highlightPresentationSystem.TryExecuteUiSurface(
-                    _lastPanelModel.RecommendationKind,
-                    _lastPanelModel.RecommendationTargetKind);
+                }
+                else
+                {
+                    QueueM02DoItRetry(_lastPanelModel.TutorialStep, Time.unscaledTime);
+                }
                 return;
             }
             if (TryAdvanceTutorialCommandSubstep())

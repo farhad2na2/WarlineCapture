@@ -1,0 +1,14 @@
+M02 retained DO IT dispatch validation - 2026-08-28
+
+Live Unity Pipeline / EditMode:
+- Final asset refresh: Tundra script build succeeded with zero compiler errors
+- M02EstablishBaseDoItTests: 3/3 passed
+  - every actionable M2 step 2-6 has one exact typed route
+  - an asynchronously opened Build drawer selects the rendered Barracks item and can reopen later
+  - one request issued before control readiness completes once after binding
+- M02EstablishBaseGuidanceTests: 36/36 passed
+- MatchHudAssistantUiSystemHelperTests: 21/21 passed
+- M02EstablishBase*: 239/239 passed
+
+Required final gates:
+- ProductionSourceGrowthArchitectureTests: 17/17 passed after documentation update

@@ -10,6 +10,7 @@ Status: Ready for project-owner Editor review; acceptance remains open
 - Match preserves that correlated Campaign selection and loads accepted source GUID `dad0bd13fb20943dfb2f881cbe225f05`; it no longer substitutes the serialized Skirmish fallback after leaving Menu.
 - The provisional brief, delayed-wave comms, and first-clear debrief reuse the established narrative presenter and pause mission simulation while brief/comms are visible.
 - The opening brief claims the still-opaque Match entrance before `EnterMatchHud` completes; the battlefield HUD is not exposed before the comic. Later comms and debrief presentation still wait for a settled Match HUD.
+- M2 actionable ARIA steps 2-6 retain one `DO IT` request until their real typed control is ready. Barracks selection and rifle production reopen the existing Build drawer when needed; no coordinate click or parallel tutorial state is used.
 - Provisional M2 panels use their direct Sprite bindings until final media acceptance; they no longer disappear merely because their future Addressables references are intentionally unset.
 - The complete typed guidance path remains active: Build, Barracks selection, valid footprint, confirmation, resource review, rifle production, warning, and defense.
 - Final comic panels, bilingual copy polish, and voices remain intentionally unproduced until the owner accepts this playable timing gate.
@@ -38,6 +39,7 @@ The checked macOS wrapper ran `MobileVisualQualityPlayModeCapture.CaptureFromEnv
 - `/private/tmp/warline-m02-hud-result-regression.log`: HUD/result `4/4`, narrative `17/17`, Campaign UI `10/10`, source growth `17/17`, aggregate `6/6`.
 - `/private/tmp/warline-m02eb-029-source-growth-final.log`: final post-documentation source-growth and architecture metadata check `17/17`.
 - Live Unity Pipeline correction runs: focused M2 narrative `20/20`, all M2 Establish Base tests `236/236`, first-launch narrative `43/43`, and production source growth `17/17`.
+- Retained `DO IT` correction runs: exact control-readiness regression `3/3`, focused M2 guidance `36/36`, shared ARIA HUD `21/21`, and all M2 Establish Base `239/239`.
 - Final accepted runs contain zero compiler errors and no failed validation marker.
 
 ## Exact Editor Route Verification
@@ -61,6 +63,12 @@ The exact live Campaign route records the required order:
 4. the Metal M2 playable-review capture passed.
 
 Durable excerpt: `m02eb_029_brief_ordering_editor_log.txt`. The focused regression explicitly rejects early loading-route presentation, accepts only `Brief` during the covered Match entrance, rejects `Comms` and `Debrief` during that transition, and accepts later stages after settlement.
+
+## Retained DO IT Dispatch Correction
+
+The owner confirmed that the first `DO IT` opened Build but the second did nothing. The former UI path attempted generated controls only once; a Barracks item that was not active during that frame caused a silent return. Actionable M2 steps now have exact typed mappings for Open Build, Select Barracks, Place/Confirm Barracks, Review Resource Spend, and Queue Rifle. One click retries only that same request for up to three seconds while the existing drawer/item/confirmation control binds, then clears on success, timeout, mission reset, or guidance-step change.
+
+The focused proof closes the Build drawer before the second step, clicks `DO IT` once, verifies the drawer reopens, and verifies the rendered Barracks button receives exactly one click. A second case issues `DO IT` before the Barracks control exists, binds it afterward, and verifies the pending request completes once without another player click. Evidence totals are recorded in `m02eb_029_do_it_validation.txt`.
 
 ## Exact Launch-Map Correction
 

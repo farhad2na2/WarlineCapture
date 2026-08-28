@@ -20,6 +20,7 @@ namespace Game.UI.Runtime
         public void BindBuildDrawer(BuildDrawerView buildDrawerView)
         {
             DetachBarracksGuidanceButton();
+            _buildDrawerOpenRequested = false;
             _buildDrawerView = buildDrawerView;
             _buildDrawerCatalogRuntimeView =
                 _buildDrawerView != null
@@ -48,12 +49,8 @@ namespace Game.UI.Runtime
             }
             if (recommendationKind == ProduceRecommendationKind)
             {
-                if ((_buildDrawerView == null || !_buildDrawerView.IsOpen) &&
-                    _buildGuidanceButton != null && _buildGuidanceButton.IsActive() &&
-                    _buildGuidanceButton.IsInteractable())
-                {
-                    _buildGuidanceButton.onClick.Invoke();
-                }
+                if (!EnsureBuildDrawerOpen())
+                    return false;
 
                 if (_buildDrawerCatalogRuntimeView == null ||
                     !_buildDrawerCatalogRuntimeView.TryInvokeRifleProductionFromGuidance())
@@ -65,6 +62,8 @@ namespace Game.UI.Runtime
                 _uiSurfaceAcknowledged?.Invoke(ProduceRecommendationKind);
                 return true;
             }
+            if (recommendationKind == SelectRecommendationKind && !EnsureBuildDrawerOpen())
+                return false;
             Button target = recommendationKind switch
             {
                 BuildRecommendationKind => _buildGuidanceButton,
@@ -75,6 +74,25 @@ namespace Game.UI.Runtime
                 return false;
             target.onClick.Invoke();
             return true;
+        }
+
+        private bool EnsureBuildDrawerOpen()
+        {
+            if (_buildDrawerView != null && _buildDrawerView.IsOpen)
+            {
+                _buildDrawerOpenRequested = false;
+                return true;
+            }
+            if (_buildGuidanceButton == null || !_buildGuidanceButton.IsActive() ||
+                !_buildGuidanceButton.IsInteractable() || _buildDrawerOpenRequested)
+            {
+                return false;
+            }
+
+            _buildGuidanceButton.onClick.Invoke();
+            bool open = _buildDrawerView != null && _buildDrawerView.IsOpen;
+            _buildDrawerOpenRequested = !open;
+            return open;
         }
 
         public void ClearUiSurfaceCue()
@@ -197,6 +215,7 @@ namespace Game.UI.Runtime
             _barracksGuidanceButton = null;
             _buildDrawerView = null;
             _buildDrawerCatalogRuntimeView = null;
+            _buildDrawerOpenRequested = false;
         }
 
         private void DetachResourceGuidanceTarget()

@@ -46,6 +46,7 @@ namespace Game.UI.Runtime
         private Button _attackGuidanceButton;
         private Button _buildGuidanceButton;
         private Button _barracksGuidanceButton;
+        private bool _buildDrawerOpenRequested;
         private BuildDrawerView _buildDrawerView;
         private BuildDrawerCatalogRuntimeView _buildDrawerCatalogRuntimeView;
         private TacticalCommandMode _activeCommandMode;
@@ -89,6 +90,7 @@ namespace Game.UI.Runtime
             _commandControlsView = null;
             _buildDrawerView = null;
             _buildDrawerCatalogRuntimeView = null;
+            _buildDrawerOpenRequested = false;
             _resourceGuidanceTarget = null;
             DestroyObject(_worldRingRoot);
             DestroyObject(_worldRingMaterial);
@@ -120,6 +122,7 @@ namespace Game.UI.Runtime
         public void ResetForMissionAttempt()
         {
             _squadTrayView?.ClearAssistantGuidance();
+            _buildDrawerOpenRequested = false;
             _screenTargetActive = false;
             _commandCueActive = false;
             _commandGuidanceArmed = false;

@@ -159,6 +159,40 @@ public sealed class M02EstablishBaseDoItTests
         }
     }
 
+    [Test]
+    public void LateAssistantBindRestoresTheAlreadyOpenBuildDrawer()
+    {
+        GameObject drawerObject = new("Live Build Drawer", typeof(RectTransform));
+        BuildDrawerView drawer = drawerObject.AddComponent<BuildDrawerView>();
+        MainMenuPlayUI owner = new();
+
+        try
+        {
+            owner.BindBuildDrawer(drawer);
+
+            // Production can install/open the drawer before the ARIA HUD finishes binding.
+            // The assistant bind internally resets its presentation helper.
+            owner.BindMatchHudAssistant(null, null, null);
+
+            MatchHudAssistantUiSystemHelper assistant =
+                GetField<MatchHudAssistantUiSystemHelper>(owner, "_matchHudAssistantUiSystem");
+            AssistantHighlightPresentationSystemHelper highlight =
+                GetField<AssistantHighlightPresentationSystemHelper>(
+                    assistant,
+                    "_highlightPresentationSystem");
+
+            Assert.That(
+                GetField<BuildDrawerView>(highlight, "_buildDrawerView"),
+                Is.SameAs(drawer),
+                "A late ARIA bind must retain the open drawer used by the second M2 DO IT action.");
+        }
+        finally
+        {
+            owner.Dispose();
+            UnityEngine.Object.DestroyImmediate(drawerObject);
+        }
+    }
+
     private static UiAssistantPanelModel Panel(
         byte step,
         AssistantRecommendationKind recommendation,

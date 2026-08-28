@@ -33,6 +33,7 @@ namespace Game.Runtime
                 .WithAll<
                     BuildingRuntimeStateTag,
                     BuildingRuntimeSpawnRequest,
+                    BuildingRuntimeOwnedBuildingSummary,
                     BuildingProducedUnitReadModel>()
                 .Build(ref state);
             _operationMapMetadataQuery = new EntityQueryBuilder(Allocator.Temp)
@@ -86,15 +87,21 @@ namespace Game.Runtime
             Entity buildingBoundary = _buildingBoundaryQuery.GetSingletonEntity();
             DynamicBuffer<BuildingRuntimeSpawnRequest> requests =
                 entityManager.GetBuffer<BuildingRuntimeSpawnRequest>(buildingBoundary, true);
+            DynamicBuffer<BuildingRuntimeOwnedBuildingSummary> ownedBuildings =
+                entityManager.GetBuffer<BuildingRuntimeOwnedBuildingSummary>(buildingBoundary, true);
             DynamicBuffer<BuildingProducedUnitReadModel> producedUnits =
                 entityManager.GetBuffer<BuildingProducedUnitReadModel>(buildingBoundary, true);
             int currentMaximumRequestId = FindMaximumRequestId(requests);
+            int currentRequiredBuildingOwnedCount = hasRequiredBuilding
+                ? CountMatchingOwnedBuildings(ownedBuildings, requiredBuildingId)
+                : 0;
             if (!IsCurrentAttempt(in projectionState, in runtime, catalog.SourceVersion))
             {
                 entityManager.SetComponentData(root, CreateAttemptState(
                     in runtime,
                     catalog.SourceVersion,
                     currentMaximumRequestId,
+                    currentRequiredBuildingOwnedCount,
                     producedUnits.Length));
                 return;
             }
@@ -124,7 +131,12 @@ namespace Game.Runtime
                         break;
                 }
 
-                int completedBuildingCount = math.min(requiredBuildingCount, observedBuildingCount);
+                int ownedBuildingCountSinceAttempt = math.max(
+                    0,
+                    currentRequiredBuildingOwnedCount - projectionState.RequiredBuildingOwnedCountBaseline);
+                int completedBuildingCount = math.min(
+                    requiredBuildingCount,
+                    math.max(observedBuildingCount, ownedBuildingCountSinceAttempt));
                 int nextPlacedCount = math.max(facts.RequiredBuildingPlacedCount, completedBuildingCount);
                 int nextCompletedCount = math.max(facts.RequiredBuildingCompletedCount, completedBuildingCount);
                 changed |= nextPlacedCount != facts.RequiredBuildingPlacedCount ||
@@ -275,6 +287,24 @@ namespace Game.Runtime
             return false;
         }
 
+        internal static int CountMatchingOwnedBuildings(
+            DynamicBuffer<BuildingRuntimeOwnedBuildingSummary> summaries,
+            in FixedString128Bytes requiredBuildingId)
+        {
+            int count = 0;
+            for (int index = 0; index < summaries.Length; index++)
+            {
+                BuildingRuntimeOwnedBuildingSummary summary = summaries[index];
+                if (summary.FactionId != FactionIdentity.PlayerFactionId || summary.Count <= 0 ||
+                    !FixedStringsEqualIgnoreCase(in summary.BuildingId, in requiredBuildingId))
+                    continue;
+
+                count = math.max(count, summary.Count);
+            }
+
+            return count;
+        }
+
         internal static int CountMatchingProducedUnits(
             EntityManager entityManager,
             DynamicBuffer<BuildingProducedUnitReadModel> producedUnits,
@@ -361,12 +391,14 @@ namespace Game.Runtime
             in CampaignMissionRuntimeComponent runtime,
             uint sourceVersion,
             int buildingRequestBaselineId,
+            int requiredBuildingOwnedCountBaseline,
             int producedUnitReadModelBaselineCount) =>
             new()
             {
                 SessionToken = runtime.SessionToken,
                 AttemptOrdinal = runtime.AttemptOrdinal,
                 BuildingRequestBaselineId = buildingRequestBaselineId,
+                RequiredBuildingOwnedCountBaseline = requiredBuildingOwnedCountBaseline,
                 ProducedUnitReadModelBaselineCount = producedUnitReadModelBaselineCount,
                 SourceVersion = sourceVersion,
                 Initialized = 1
@@ -386,6 +418,28 @@ namespace Game.Runtime
             for (int index = 0; index < requests.Length; index++)
                 maximum = math.max(maximum, requests[index].RequestId);
             return maximum;
+        }
+
+        private static bool FixedStringsEqualIgnoreCase(
+            in FixedString128Bytes left,
+            in FixedString128Bytes right)
+        {
+            if (left.Length != right.Length)
+                return false;
+
+            for (int index = 0; index < left.Length; index++)
+            {
+                byte leftValue = left[index];
+                byte rightValue = right[index];
+                if (leftValue >= (byte)'A' && leftValue <= (byte)'Z')
+                    leftValue = (byte)(leftValue + ('a' - 'A'));
+                if (rightValue >= (byte)'A' && rightValue <= (byte)'Z')
+                    rightValue = (byte)(rightValue + ('a' - 'A'));
+                if (leftValue != rightValue)
+                    return false;
+            }
+
+            return true;
         }
     }
 }

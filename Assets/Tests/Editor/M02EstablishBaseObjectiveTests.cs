@@ -15,7 +15,7 @@ using UnityEngine;
 
 public sealed class M02EstablishBaseObjectiveTests
 {
-    private const string Marker = "[M02EstablishBaseObjectiveValidation] result=Passed tests=22";
+    private const string Marker = "[M02EstablishBaseObjectiveValidation] result=Passed tests=24";
     private const string MissionId = "saga.ch01.m02.establish_base";
     private const string ScenarioId = "scenario.ch01.m02.establish_base";
     private const string MapId = "opmap.ch01.forward_post_01";
@@ -33,6 +33,8 @@ public sealed class M02EstablishBaseObjectiveTests
             M02EstablishBaseObjectiveTests tests = new();
             tests.CanonicalProjectionCreatesAttemptFactState();
             tests.AuthoritativeBarracksCompletionAdvancesFacts();
+            tests.AuthoritativeUiPlacementSummaryAdvancesFactsWithoutSpawnRequest();
+            tests.PreAttemptOwnedBarracksIsIgnored();
             tests.SuccessfulRequestWithoutLiveBuildingFailsClosed();
             tests.LiveBuildingWithoutSuccessfulRequestFailsClosed();
             tests.PreAttemptBarracksIsIgnored();
@@ -120,6 +122,48 @@ public sealed class M02EstablishBaseObjectiveTests
             CampaignMissionAttemptFactsComponent facts = GetFacts(world.EntityManager);
             Assert.AreEqual(1, facts.RequiredBuildingPlacedCount);
             Assert.AreEqual(1, facts.RequiredBuildingCompletedCount);
+        }
+        finally
+        {
+            blob.Dispose();
+        }
+    }
+
+    [Test]
+    public void AuthoritativeUiPlacementSummaryAdvancesFactsWithoutSpawnRequest()
+    {
+        using World world = CreateRuntimeWorld(enabled: true, duplicateBuildObjective: false,
+            out BlobAssetReference<CampaignMissionCatalogBlob> blob);
+        try
+        {
+            InitializeAttempt(world);
+            SetOwnedBuildingCount(world.EntityManager, "building_barrack", 1);
+            UpdateFacts(world);
+
+            CampaignMissionAttemptFactsComponent facts = GetFacts(world.EntityManager);
+            Assert.AreEqual(1, facts.RequiredBuildingPlacedCount);
+            Assert.AreEqual(1, facts.RequiredBuildingCompletedCount);
+        }
+        finally
+        {
+            blob.Dispose();
+        }
+    }
+
+    [Test]
+    public void PreAttemptOwnedBarracksIsIgnored()
+    {
+        using World world = CreateRuntimeWorld(enabled: true, duplicateBuildObjective: false,
+            out BlobAssetReference<CampaignMissionCatalogBlob> blob);
+        try
+        {
+            SetOwnedBuildingCount(world.EntityManager, "building_barrack", 1);
+            InitializeAttempt(world);
+            UpdateFacts(world);
+
+            CampaignMissionAttemptFactsComponent facts = GetFacts(world.EntityManager);
+            Assert.AreEqual(0, facts.RequiredBuildingPlacedCount);
+            Assert.AreEqual(0, facts.RequiredBuildingCompletedCount);
         }
         finally
         {
@@ -723,6 +767,7 @@ public sealed class M02EstablishBaseObjectiveTests
         });
         Entity boundary = entityManager.CreateEntity(typeof(BuildingRuntimeStateTag));
         entityManager.AddBuffer<BuildingRuntimeSpawnRequest>(boundary);
+        entityManager.AddBuffer<BuildingRuntimeOwnedBuildingSummary>(boundary);
         entityManager.AddBuffer<BuildingProducedUnitReadModel>(boundary);
         return world;
     }
@@ -857,6 +902,23 @@ public sealed class M02EstablishBaseObjectiveTests
     {
         using EntityQuery query = entityManager.CreateEntityQuery(typeof(BuildingRuntimeStateTag));
         return entityManager.GetBuffer<BuildingRuntimeSpawnRequest>(query.GetSingletonEntity());
+    }
+
+    private static void SetOwnedBuildingCount(
+        EntityManager entityManager,
+        string buildingId,
+        int count)
+    {
+        using EntityQuery query = entityManager.CreateEntityQuery(typeof(BuildingRuntimeStateTag));
+        DynamicBuffer<BuildingRuntimeOwnedBuildingSummary> summaries =
+            entityManager.GetBuffer<BuildingRuntimeOwnedBuildingSummary>(query.GetSingletonEntity());
+        summaries.Clear();
+        summaries.Add(new BuildingRuntimeOwnedBuildingSummary
+        {
+            FactionId = FactionIdentity.PlayerFactionId,
+            BuildingId = buildingId,
+            Count = count
+        });
     }
 
     private static Entity CreateProducedUnit(

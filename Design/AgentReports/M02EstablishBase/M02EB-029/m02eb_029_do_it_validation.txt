@@ -1,14 +1,26 @@
 M02 retained DO IT dispatch validation - 2026-08-28
 
-Live Unity Pipeline / EditMode:
-- Final asset refresh: Tundra script build succeeded with zero compiler errors
-- M02EstablishBaseDoItTests: 3/3 passed
-  - every actionable M2 step 2-6 has one exact typed route
-  - an asynchronously opened Build drawer selects the rendered Barracks item and can reopen later
-  - one request issued before control readiness completes once after binding
-- M02EstablishBaseGuidanceTests: 36/36 passed
-- MatchHudAssistantUiSystemHelperTests: 21/21 passed
-- M02EstablishBase*: 239/239 passed
+Live Campaign replay in the open WarlineCapture Editor:
+- Campaign -> Mission 02 -> Deploy presented the M2 opening and reached ARIA step 2.
+- First DO IT opened the real Build drawer and advanced to SELECT BARRACKS.
+- Second DO IT selected the rendered Barracks item and visibly advanced to PLACE THE BARRACKS.
+- Third DO IT used the real placement and confirmation controls, created the Barracks, spent resources,
+  and visibly advanced to REVIEW RESOURCE SPEND.
+- No coordinate-based runtime action, duplicate tutorial state, or synthetic building request was added.
 
-Required final gates:
-- ProductionSourceGrowthArchitectureTests: 17/17 passed after documentation update
+Corrected boundaries:
+- A late Match HUD assistant Bind reset its presentation helper after the Build drawer had already bound.
+  MainMenuPlayUI now restores every existing HUD control immediately after that reset.
+- The normal UI placement path updates BuildingRuntimeOwnedBuildingSummary directly and does not create an
+  ECS BuildingRuntimeSpawnRequest. The attempt-fact projector now consumes the authoritative player-owned
+  summary delta with a per-attempt baseline while retaining the request/live-entity path and monotonic facts.
+
+Final Unity Pipeline / EditMode after script reload:
+- Tundra script build succeeded with zero compiler errors.
+- M02EstablishBaseDoItTests: 4/4 passed.
+- M02EstablishBaseObjectiveTests: 24/24 passed.
+- M02EstablishBase*: 242/242 passed.
+- MatchHudAssistant*: 23/23 passed.
+- ProductionSourceGrowthArchitectureTests: 17/17 passed.
+- The first architecture run rejected direct growth in MainMenuPlayUI; the restoration moved to the narrow
+  MainMenuPlayUI.AssistantBinding partial, and the unchanged behavior passed the final architecture rerun.

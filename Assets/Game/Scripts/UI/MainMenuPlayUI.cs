@@ -302,7 +302,7 @@ namespace Game.UI.Runtime
                 CaptureGameplayUiClickSequence,
                 PrepareToOpenMatchHudAssistant,
                 NotifyMatchHudAssistantPanelOpenChanged);
-            _nextAssistantPanelRefreshTime = 0f;
+            RebindAssistant();
         }
 
         public void ConfigureLargeTacticalPopupCloseActions(

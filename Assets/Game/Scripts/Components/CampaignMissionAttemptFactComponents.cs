@@ -34,6 +34,7 @@ namespace Game.Components
         public FixedString64Bytes SessionToken;
         public int AttemptOrdinal;
         public int BuildingRequestBaselineId;
+        public int RequiredBuildingOwnedCountBaseline;
         public int ProducedUnitReadModelBaselineCount;
         public uint SourceVersion;
         public byte Initialized;

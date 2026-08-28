@@ -14,6 +14,7 @@ public sealed class M02EstablishBaseOperationMapTests
     private const string Marker =
         "[M02EstablishBaseOperationMapValidation] result=Passed tests=10";
 
+    [MenuItem("Game/Validation/Run M02 Establish Base Operation Map Focused")]
     public static void RunFocusedValidation()
     {
         try
@@ -25,7 +26,7 @@ public sealed class M02EstablishBaseOperationMapTests
             tests.ExactAcceptedPhysicalSourceIsReused();
             tests.PhysicalSourceFilesRemainFrozen();
             tests.WorldGridSurfaceAndNavigationRemainCanonical();
-            tests.PlayableAndCameraBoundsAreCroppedToForwardPost();
+            tests.PlayableAndCameraBoundsReuseM01StoryDistrict();
             tests.CameraAndMinimapMetadataIsMissionScoped();
             tests.RequiredScenarioAnchorsResolveWithExactKinds();
             tests.AdditionalResourceAndCommsAnchorsResolve();
@@ -97,7 +98,7 @@ public sealed class M02EstablishBaseOperationMapTests
     }
 
     [Test]
-    public void PlayableAndCameraBoundsAreCroppedToForwardPost()
+    public void PlayableAndCameraBoundsReuseM01StoryDistrict()
     {
         OperationMapDefinition map = Map();
         RectInt window = M02EstablishBaseForwardPostWindowValidation.PlayableWindow;
@@ -161,6 +162,7 @@ public sealed class M02EstablishBaseOperationMapTests
     {
         RectInt lot = M02EstablishBaseForwardPostWindowValidation.ValidateCurrentDefinition();
         Assert.AreEqual(M02EstablishBaseForwardPostWindowValidation.BuildLotSize, lot.size);
+        Assert.AreEqual(M02EstablishBaseForwardPostWindowValidation.BuildLotSearch, lot);
         Assert.IsTrue(M02EstablishBaseForwardPostWindowValidation.PlayableWindow.Contains(lot.min));
         Assert.IsTrue(M02EstablishBaseForwardPostWindowValidation.PlayableWindow.Contains(
             new Vector2Int(lot.xMax - 1, lot.yMax - 1)));

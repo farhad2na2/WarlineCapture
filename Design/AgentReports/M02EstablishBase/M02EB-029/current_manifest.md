@@ -6,5 +6,5 @@
 - Resolution: `1920x1080`
 - Authored mission lighting, gameplay zoom: `current_gameplay_zoom.png`
 - Authored mission lighting, max zoom out: `current_max_zoom_out.png`
-- Camera position after captures: `940.72,35.435,421.131`
-- Camera rotation after captures: `40.699,180,0`
+- Camera position after captures: `1781.282,58.448,694.806`
+- Camera rotation after captures: `39.996,9.991,0`

@@ -20,6 +20,7 @@ public sealed class M02EstablishBasePlacementTests
     private const string MapId = "opmap.ch01.forward_post_01";
     private const string BarracksId = "Building_Barrack";
     private const string BuildAnchorId = "anchor.ch01.m02.build_lot";
+    private static readonly RectInt CanonicalPlacement = new(1750, 773, 20, 10);
 
     [MenuItem("Game/Validation/Run M02 Establish Base Placement Focused")]
     public static void RunFocusedValidation()
@@ -112,18 +113,18 @@ public sealed class M02EstablishBasePlacementTests
     public void BarracksInsideCanonicalLotIsAccepted()
     {
         using Fixture fixture = new();
-        Assert.IsTrue(fixture.IsAllowed(new RectInt(1018, 392, 20, 10)));
-        Assert.IsTrue(fixture.IsAllowed(new RectInt(1022, 396, 20, 10)));
+        Assert.IsTrue(fixture.IsAllowed(CanonicalPlacement));
+        Assert.IsTrue(fixture.IsAllowed(new RectInt(1754, 777, 20, 10)));
     }
 
     [Test]
     public void BarracksCrossingAnyCanonicalLotEdgeIsRejected()
     {
         using Fixture fixture = new();
-        Assert.IsFalse(fixture.IsAllowed(new RectInt(1017, 392, 20, 10)));
-        Assert.IsFalse(fixture.IsAllowed(new RectInt(1018, 391, 20, 10)));
-        Assert.IsFalse(fixture.IsAllowed(new RectInt(1023, 392, 20, 10)));
-        Assert.IsFalse(fixture.IsAllowed(new RectInt(1018, 397, 20, 10)));
+        Assert.IsFalse(fixture.IsAllowed(new RectInt(1749, 773, 20, 10)));
+        Assert.IsFalse(fixture.IsAllowed(new RectInt(1750, 772, 20, 10)));
+        Assert.IsFalse(fixture.IsAllowed(new RectInt(1755, 773, 20, 10)));
+        Assert.IsFalse(fixture.IsAllowed(new RectInt(1750, 778, 20, 10)));
     }
 
     [Test]
@@ -131,16 +132,16 @@ public sealed class M02EstablishBasePlacementTests
     {
         using Fixture fixture = new();
         fixture.Prefab.name = "Tent_Regular";
-        Assert.IsFalse(fixture.IsAllowed(new RectInt(1018, 392, 20, 10)));
+        Assert.IsFalse(fixture.IsAllowed(CanonicalPlacement));
     }
 
     [Test]
     public void MissingOrStaleMapDataFailsClosed()
     {
         using (Fixture missingAnchor = new(includeBuildAnchor: false))
-            Assert.IsFalse(missingAnchor.IsAllowed(new RectInt(1018, 392, 20, 10)));
+            Assert.IsFalse(missingAnchor.IsAllowed(CanonicalPlacement));
         using (Fixture staleMap = new(activeMapMissionId: "saga.ch01.m01.first_contact"))
-            Assert.IsFalse(staleMap.IsAllowed(new RectInt(1018, 392, 20, 10)));
+            Assert.IsFalse(staleMap.IsAllowed(CanonicalPlacement));
     }
 
     [Test]
@@ -155,11 +156,11 @@ public sealed class M02EstablishBasePlacementTests
     public void WarmPlacementPolicyDoesNotAllocateManagedMemory()
     {
         using Fixture fixture = new();
-        Assert.IsTrue(fixture.IsAllowed(new RectInt(1018, 392, 20, 10)));
+        Assert.IsTrue(fixture.IsAllowed(CanonicalPlacement));
         long before = GC.GetAllocatedBytesForCurrentThread();
         bool allAllowed = true;
         for (int index = 0; index < 300; index++)
-            allAllowed &= fixture.IsAllowed(new RectInt(1018, 392, 20, 10));
+            allAllowed &= fixture.IsAllowed(CanonicalPlacement);
         long allocated = GC.GetAllocatedBytesForCurrentThread() - before;
         Assert.IsTrue(allAllowed);
         Assert.AreEqual(0L, allocated);
@@ -269,7 +270,7 @@ public sealed class M02EstablishBasePlacementTests
                     {
                         Id = BuildAnchorId,
                         Kind = OperationMapAnchorKind.Build,
-                        Position = new float3(1030.5f, 0f, 399.5f),
+                        Position = new float3(1762.5f, 0f, 780.5f),
                         Rotation = quaternion.identity,
                         Radius = 12f,
                         FactionId = 1,

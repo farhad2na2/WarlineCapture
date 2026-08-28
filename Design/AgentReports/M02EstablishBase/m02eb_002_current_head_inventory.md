@@ -43,11 +43,11 @@ Physical source ownership remains unchanged:
 - accepted EntityScene, surface, blocker, minimap raster, and render database references;
 - existing M01 protected-source hash coverage in `Assets/Tests/Editor/M01FirstContactMapSourceBindingTests.cs`.
 
-M02 creates only `Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_ForwardPost01.asset`. It copies the canonical 2048 x 1024 world/grid/surface/navigation metadata and exact physical references, while owning a cropped forward-post playable window, camera bounds, logical hashes, camera ids, minimap id, and mission anchors.
+M02 creates only `Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_ForwardPost01.asset`. It copies the canonical 2048 x 1024 world/grid/surface/navigation metadata and exact physical references, while owning a logical view of the same Old Market story district used by M01, mission camera metadata, logical hashes, camera ids, minimap id, and mission anchors.
 
 Required logical anchors are player Deployment; forward-post Base; Barracks Build footprint; Resource focus; hostile Spawn; ordered Lane waypoints; Objective/Hostile defense focus; Civilian route/edge; narrative/comms focus; camera and minimap focus. Exact ids, coordinates, radii, and lane indices remain M02EB-009 data.
 
-The physical district near the accepted faction-1 deployment around `(949, 344.7)` is suitable, but it already includes authored Barracks, tents, and barriers. A Build anchor alone cannot reserve an empty lot: current placement validation checks grid, buildings, roads, and blockers but does not consume operation-map anchors or playable bounds. M02 therefore needs one unmanaged mission build-zone/footprint projection consumed by the existing placement validator.
+The reviewed physical district is the exact M01 Old Market story window `(1672,680)-(1912,856)`. Its canonical M02 Barracks lot `(1738,768,48,24)` is flat, accepted by the map surface, clear of authored building placements, and clear of transformed dense-city renderer bounds. A Build anchor alone cannot reserve that lot: current placement validation checks grid, buildings, roads, and blockers but does not consume operation-map anchors or playable bounds. M02 therefore needs one unmanaged mission build-zone/footprint projection consumed by the existing placement validator.
 
 No new source scene, SubScene, physical bake, minimap raster, Addressables owner, runtime city generator, static streamer, or render database is allowed.
 

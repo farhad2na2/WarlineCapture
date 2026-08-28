@@ -21,6 +21,9 @@ namespace Game.Editor
             "OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset";
         public const string BuildingPlacementsPath =
             "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01_BuildingPlacements.asset";
+        public const string RenderDatabasePath =
+            "Assets/Game/GeneratedOperationMapEntityPresentationCandidate/VirtualizedPresentation/" +
+            "OperationMapRenderDatabaseBakeConfig.asset";
         public const string SourceDefinitionSha256 =
             "f91b737280d8950d97264b54589b963f605a8d8911a0f4e17397bef667e4eba6";
         public const string BuildingPlacementsSha256 =
@@ -31,12 +34,12 @@ namespace Game.Editor
         public const string MinimapId = "minimap.ch01.m02.forward_post";
         public const int ExpectedAnchorCount = 14;
 
-        public static readonly RectInt PlayableWindow = new(780, 270, 320, 200);
-        public static readonly RectInt BuildLotSearch = new(1014, 382, 72, 32);
+        public static readonly RectInt PlayableWindow = new(1672, 680, 240, 176);
+        public static readonly RectInt BuildLotSearch = new(1738, 768, 48, 24);
         public static readonly Vector2Int BuildLotSize = new(48, 24);
 
         private const string Marker =
-            "[M02EstablishBaseForwardPostWindowValidation] result=Passed tests=9";
+            "[M02EstablishBaseForwardPostWindowValidation] result=Passed tests=10";
 
         [MenuItem("Game/Campaign/M02/Build And Validate Forward Post Map")]
         public static void RunFocusedValidation()
@@ -48,16 +51,19 @@ namespace Game.Editor
                     AssetDatabase.GUIDToAssetPath(source.MapSurfaceDataReference.AssetGUID));
                 MapBuildingPlacementConfig placements =
                     Load<MapBuildingPlacementConfig>(BuildingPlacementsPath);
+                OperationMapRenderDatabaseBakeConfig renderDatabase =
+                    Load<OperationMapRenderDatabaseBakeConfig>(RenderDatabasePath);
 
                 ValidateProtectedPhysicalContent(source);
                 Require(surface.TryCreateRuntimeBlobAsset(Allocator.Temp, out BlobAssetReference<MapSurfaceBlob> blob),
                     "Accepted map surface payload could not be opened.");
                 using (blob)
                 {
-                    RectInt buildLot = SelectBuildLot(ref blob.Value, placements);
+                    RectInt buildLot = SelectBuildLot(ref blob.Value, placements, renderDatabase);
                     OperationMapDefinition logical = LoadOrCreateDefinition();
                     PopulateLogicalDefinition(logical, source, ref blob.Value, buildLot);
-                    ValidateLogicalDefinition(logical, source, ref blob.Value, placements, buildLot);
+                    ValidateLogicalDefinition(
+                        logical, source, ref blob.Value, placements, renderDatabase, buildLot);
                     Debug.Log($"{Marker} buildLot={buildLot.xMin},{buildLot.yMin},{buildLot.width},{buildLot.height}");
                 }
             }
@@ -76,12 +82,15 @@ namespace Game.Editor
             MapSurfaceDataAsset surface = Load<MapSurfaceDataAsset>(
                 AssetDatabase.GUIDToAssetPath(source.MapSurfaceDataReference.AssetGUID));
             MapBuildingPlacementConfig placements = Load<MapBuildingPlacementConfig>(BuildingPlacementsPath);
+            OperationMapRenderDatabaseBakeConfig renderDatabase =
+                Load<OperationMapRenderDatabaseBakeConfig>(RenderDatabasePath);
             Require(surface.TryCreateRuntimeBlobAsset(Allocator.Temp, out BlobAssetReference<MapSurfaceBlob> blob),
                 "Accepted map surface payload could not be opened.");
             using (blob)
             {
                 RectInt buildLot = BuildLotFromAnchor(logical);
-                ValidateLogicalDefinition(logical, source, ref blob.Value, placements, buildLot);
+                ValidateLogicalDefinition(
+                    logical, source, ref blob.Value, placements, renderDatabase, buildLot);
                 return buildLot;
             }
         }
@@ -100,24 +109,44 @@ namespace Game.Editor
 
         private static RectInt SelectBuildLot(
             ref MapSurfaceBlob surface,
-            MapBuildingPlacementConfig placements)
+            MapBuildingPlacementConfig placements,
+            OperationMapRenderDatabaseBakeConfig renderDatabase)
         {
             int halfWidth = BuildLotSize.x / 2;
             int halfHeight = BuildLotSize.y / 2;
-            for (int z = BuildLotSearch.yMin + halfHeight; z <= BuildLotSearch.yMax - halfHeight; z += 2)
+            for (int z = BuildLotSearch.yMin + halfHeight;
+                 z <= BuildLotSearch.yMax - halfHeight;
+                 z += 2)
             {
-                for (int x = BuildLotSearch.xMin + halfWidth; x <= BuildLotSearch.xMax - halfWidth; x += 2)
+                for (int x = BuildLotSearch.xMin + halfWidth;
+                     x <= BuildLotSearch.xMax - halfWidth;
+                     x += 2)
                 {
                     RectInt lot = new(x - halfWidth, z - halfHeight, BuildLotSize.x, BuildLotSize.y);
                     if (IsBuildLotSurfaceValid(ref surface, lot) &&
-                        !OverlapsAuthoredPlacement(lot, placements))
+                        !OverlapsAuthoredPlacement(lot, placements) &&
+                        !OverlapsDenseCityPresentation(lot, renderDatabase))
                         return lot;
                 }
             }
 
             throw new InvalidOperationException(
-                $"The reviewed forward-post search area contains no valid " +
+                $"The reviewed Campaign story district contains no valid " +
                 $"{BuildLotSize.x}x{BuildLotSize.y} Barracks lot.");
+        }
+
+        private static Bounds TransformBounds(Bounds localBounds, Matrix4x4 matrix)
+        {
+            Vector3 center = matrix.MultiplyPoint3x4(localBounds.center);
+            Vector3 extents = localBounds.extents;
+            Vector3 axisX = matrix.MultiplyVector(new Vector3(extents.x, 0f, 0f));
+            Vector3 axisY = matrix.MultiplyVector(new Vector3(0f, extents.y, 0f));
+            Vector3 axisZ = matrix.MultiplyVector(new Vector3(0f, 0f, extents.z));
+            Vector3 worldExtents = new(
+                Mathf.Abs(axisX.x) + Mathf.Abs(axisY.x) + Mathf.Abs(axisZ.x),
+                Mathf.Abs(axisX.y) + Mathf.Abs(axisY.y) + Mathf.Abs(axisZ.y),
+                Mathf.Abs(axisX.z) + Mathf.Abs(axisY.z) + Mathf.Abs(axisZ.z));
+            return new Bounds(center, worldExtents * 2f);
         }
 
         private static bool IsBuildLotSurfaceValid(ref MapSurfaceBlob surface, RectInt lot)
@@ -159,6 +188,30 @@ namespace Game.Editor
             return false;
         }
 
+        private static bool OverlapsDenseCityPresentation(
+            RectInt lot,
+            OperationMapRenderDatabaseBakeConfig renderDatabase)
+        {
+            Rect footprint = new(lot.xMin - 2f, lot.yMin - 2f, lot.width + 4f, lot.height + 4f);
+            foreach (OperationMapRenderPlacementConfigRecord placement in renderDatabase.Placements)
+            {
+                if (placement.SemanticCategory == DenseCityPresentationSemanticCategory.Horizon)
+                    continue;
+
+                OperationMapRenderPrototypeConfigRecord prototype =
+                    renderDatabase.Prototypes[placement.PrototypeIndex];
+                Bounds bounds = TransformBounds(prototype.CombinedLocalBounds, placement.WorldMatrix);
+                if (footprint.Overlaps(new Rect(
+                        bounds.min.x,
+                        bounds.min.z,
+                        bounds.size.x,
+                        bounds.size.z)))
+                    return true;
+            }
+
+            return false;
+        }
+
         private static void PopulateLogicalDefinition(
             OperationMapDefinition logical,
             OperationMapDefinition source,
@@ -167,32 +220,33 @@ namespace Game.Editor
         {
             AnchorSeed[] seeds =
             {
-                new("anchor.ch01.m02.friendly_spawn", OperationMapAnchorKind.Deployment, 920, 425, 8f, 1),
-                new("anchor.ch01.m02.camera_start", OperationMapAnchorKind.Camera, 935, 390, 4f),
-                new("anchor.ch01.m02.forward_post", OperationMapAnchorKind.Base, 937, 348, 12f, 1),
+                new("anchor.ch01.m02.friendly_spawn", OperationMapAnchorKind.Deployment, 1792, 744, 8f, 1),
+                new("anchor.ch01.m02.camera_start", OperationMapAnchorKind.Camera, 1792, 742, 4f),
+                new("anchor.ch01.m02.forward_post", OperationMapAnchorKind.Base,
+                    buildLot.center.x, buildLot.center.y, 12f, 1),
                 new("anchor.ch01.m02.build_lot", OperationMapAnchorKind.Build,
                     buildLot.center.x, buildLot.center.y, Mathf.Max(buildLot.width, buildLot.height) * 0.5f, 1),
-                new("anchor.ch01.m02.hostile_spawn", OperationMapAnchorKind.Spawn, 800, 300, 8f, 2),
-                new("anchor.ch01.m02.lane_a", OperationMapAnchorKind.Lane, 825, 315, 5f, 2, 0),
-                new("anchor.ch01.m02.lane_b", OperationMapAnchorKind.Lane, 850, 330, 5f, 2, 1),
-                new("anchor.ch01.m02.lane_c", OperationMapAnchorKind.Lane, 885, 342, 5f, 2, 2),
-                new("anchor.ch01.m02.defense_boundary", OperationMapAnchorKind.Hostile, 910, 350, 10f, 2),
-                new("anchor.ch01.m02.civilian_edge", OperationMapAnchorKind.Civilian, 1060, 430, 10f),
-                new("anchor.ch01.m02.civilian_evacuation", OperationMapAnchorKind.Civilian, 1080, 450, 8f),
-                new("anchor.ch01.m02.minimap_start", OperationMapAnchorKind.Minimap, 935, 380, 3f),
-                new("anchor.ch01.m02.resource_focus", OperationMapAnchorKind.Resource, 830, 375, 8f, 1),
-                new("anchor.ch01.m02.comms_focus", OperationMapAnchorKind.Objective, 925, 360, 6f)
+                new("anchor.ch01.m02.hostile_spawn", OperationMapAnchorKind.Spawn, 1792, 840, 8f, 2),
+                new("anchor.ch01.m02.lane_a", OperationMapAnchorKind.Lane, 1792, 824, 5f, 2, 0),
+                new("anchor.ch01.m02.lane_b", OperationMapAnchorKind.Lane, 1792, 808, 5f, 2, 1),
+                new("anchor.ch01.m02.lane_c", OperationMapAnchorKind.Lane, 1784, 794, 5f, 2, 2),
+                new("anchor.ch01.m02.defense_boundary", OperationMapAnchorKind.Hostile, 1774, 784, 10f, 2),
+                new("anchor.ch01.m02.civilian_edge", OperationMapAnchorKind.Civilian, 1738, 812, 10f),
+                new("anchor.ch01.m02.civilian_evacuation", OperationMapAnchorKind.Civilian, 1718, 832, 8f),
+                new("anchor.ch01.m02.minimap_start", OperationMapAnchorKind.Minimap, 1792, 744, 3f),
+                new("anchor.ch01.m02.resource_focus", OperationMapAnchorKind.Resource, 1822, 780, 8f, 1),
+                new("anchor.ch01.m02.comms_focus", OperationMapAnchorKind.Objective, 1778, 782, 6f)
             };
 
             Vector3[] positions = new Vector3[seeds.Length];
             for (int index = 0; index < seeds.Length; index++)
                 positions[index] = ResolveAnchorPosition(ref surface, seeds[index]);
 
-            Vector3 planningPosition = new(995f, 95f, 468f);
-            Vector3 battlePosition = new(952f, 36f, 430f);
+            Vector3 planningPosition = new(1792f, 78f, 700f);
+            Vector3 battlePosition = new(1794f, 28f, 744f);
             Vector3 planningTarget = Vector3.Lerp(positions[2], positions[3], 0.56f);
             Vector3 planningEuler = LookEuler(planningPosition, planningTarget);
-            Vector3 battleEuler = LookEuler(battlePosition, new Vector3(900f, positions[8].y, 345f));
+            Vector3 battleEuler = LookEuler(battlePosition, Vector3.Lerp(positions[7], positions[8], 0.5f));
 
             SerializedObject target = new(logical);
             SerializedObject sourceSerialized = new(source);
@@ -206,7 +260,7 @@ namespace Game.Editor
             Set(target, "contentVersion", 1);
             Set(target, "sourceIdentityHash", source.SourceIdentityHash);
             Set(target, "contentHash", HashText(BuildCanonicalPayload(source, buildLot, positions)));
-            Set(target, "generatedMetadataHash", HashText("m02eb-009|forward-post-window-v1|surface-v3"));
+            Set(target, "generatedMetadataHash", HashText("m02eb-009|m01-story-district-v2|surface-v3"));
 
             SerializedProperty binding = target.FindProperty("sourceBinding");
             Set(binding, "sourceOperationMapId", source.OperationMapId);
@@ -231,7 +285,7 @@ namespace Game.Editor
                 Set(camera, "position", planning ? planningPosition : battlePosition);
                 Set(camera, "eulerAngles", planning ? planningEuler : battleEuler);
                 Set(camera, "orthographic", false);
-                Set(camera, "fieldOfView", planning ? 72f : 40f);
+                Set(camera, "fieldOfView", planning ? 58f : 42f);
                 Set(camera, "orthographicSize", 5f);
                 Set(camera, "clampToCameraBounds", true);
             });
@@ -269,6 +323,7 @@ namespace Game.Editor
             OperationMapDefinition source,
             ref MapSurfaceBlob surface,
             MapBuildingPlacementConfig placements,
+            OperationMapRenderDatabaseBakeConfig renderDatabase,
             RectInt buildLot)
         {
             Require(logical.TryValidateMetadata(out string error), error);
@@ -291,7 +346,7 @@ namespace Game.Editor
                     logical.Bounds.PlayableMin.z == PlayableWindow.yMin &&
                     logical.Bounds.PlayableMax.x == PlayableWindow.xMax &&
                     logical.Bounds.PlayableMax.z == PlayableWindow.yMax,
-                "M02 playable bounds left the reviewed forward-post window.");
+                "M02 playable bounds left the reviewed M1 Campaign story district.");
             Require(logical.PlanningCameraId == PlanningCameraId &&
                     logical.BattleCameraId == BattleCameraId && logical.Cameras.Length == 2,
                 "M02 camera identities are incomplete.");
@@ -303,8 +358,9 @@ namespace Game.Editor
             Require(logical.Anchors.Length == ExpectedAnchorCount,
                 "M02 logical map must own exactly 14 mission anchors.");
             Require(buildLot.size == BuildLotSize && IsBuildLotSurfaceValid(ref surface, buildLot) &&
-                    !OverlapsAuthoredPlacement(buildLot, placements),
-                "M02 Barracks lot is no longer clear, flat, and buildable.");
+                    !OverlapsAuthoredPlacement(buildLot, placements) &&
+                    !OverlapsDenseCityPresentation(buildLot, renderDatabase),
+                "M02 Barracks lot is no longer clear, flat, visible-content-free, and buildable.");
             ValidateAnchorRoute(logical);
             ValidateCameraSightlines(logical);
         }

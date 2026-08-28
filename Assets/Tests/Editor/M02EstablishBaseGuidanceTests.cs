@@ -23,8 +23,9 @@ using UnityEngine.UI;
 public sealed class M02EstablishBaseGuidanceTests
 {
     private const string FocusedMarker =
-        "[M02EstablishBaseGuidanceValidation] result=Passed tests=36";
-    private static readonly float3 CanonicalBuildAnchor = new(1040.5f, 0.009179778f, 394.5f);
+        "[M02EstablishBaseGuidanceValidation] result=Passed tests=37";
+    private static readonly float3 CanonicalOpeningStartAnchor = new(826.5f, 1.1591798f, 379.5f);
+    private static readonly float3 CanonicalBuildAnchor = new(1016.5f, 0.009179778f, 377.5f);
 
     [MenuItem("Game/Validation/Run M02 Establish Base Guidance Focused")]
     public static void RunFocusedValidation()
@@ -67,6 +68,7 @@ public sealed class M02EstablishBaseGuidanceTests
             tests.UiSurfaceGuidanceUsesTypedControlsWithoutScreenCoordinates();
             tests.M02OpeningUsesAHorizontalBaseSweep();
             tests.M02OpeningCannotEmitM01CivilianPanicAudio();
+            tests.M02OpeningWaitsForComicHandoff();
             tests.M02OpeningCompletesAfterTheSingleSweep();
             Debug.Log(FocusedMarker);
             ValidationExit.Passed();
@@ -88,7 +90,7 @@ public sealed class M02EstablishBaseGuidanceTests
         anchors[0] = new OperationMapAnchorBlob
         {
             Id = new FixedString64Bytes("anchor.ch01.m02.resource_focus"),
-            Position = new float3(830.5f, 0f, 375.5f)
+            Position = CanonicalOpeningStartAnchor
         };
         anchors[1] = new OperationMapAnchorBlob
         {
@@ -136,6 +138,20 @@ public sealed class M02EstablishBaseGuidanceTests
         Assert.IsFalse(CampaignMissionPatrolOrderSystem.ShouldEmitOpeningPanicAudio(m02));
         Assert.IsFalse(CampaignMissionPatrolOrderSystem.ShouldUseEstablishBaseOpening(m01));
         Assert.IsTrue(CampaignMissionPatrolOrderSystem.ShouldUseEstablishBaseOpening(m02));
+    }
+
+    [Test]
+    public void M02OpeningWaitsForComicHandoff()
+    {
+        Assert.IsFalse(CampaignMissionPatrolOrderSystem.CanAdvanceEstablishBaseOpening(
+            MissionPhaseKind.Preparing));
+        Assert.IsFalse(CampaignMissionPatrolOrderSystem.CanAdvanceEstablishBaseOpening(
+            MissionPhaseKind.InteractiveBrief),
+            "The airbase sweep must not run underneath the opening comic.");
+        Assert.IsTrue(CampaignMissionPatrolOrderSystem.CanAdvanceEstablishBaseOpening(
+            MissionPhaseKind.FindSquad));
+        Assert.IsFalse(CampaignMissionPatrolOrderSystem.CanAdvanceEstablishBaseOpening(
+            MissionPhaseKind.Result));
     }
 
     [Test]

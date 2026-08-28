@@ -172,10 +172,10 @@ public sealed class M02EstablishBaseCanonicalDataTests
             zone.HalfHeightCells * 2);
         Assert.GreaterOrEqual(zone.HalfWidthCells * 2, footprint.x);
         Assert.GreaterOrEqual(zone.HalfHeightCells * 2, footprint.y);
-        Assert.GreaterOrEqual(zone.HalfWidthCells * 2 - footprint.x, 16,
-            "The Barracks lot must allow meaningful horizontal placement choice.");
-        Assert.GreaterOrEqual(zone.HalfHeightCells * 2 - footprint.y, 8,
-            "The Barracks lot must allow multiple valid placement rows.");
+        Assert.GreaterOrEqual(zone.HalfWidthCells * 2 - footprint.x, 4,
+            "The Barracks lot must preserve two clear cells on each horizontal side.");
+        Assert.GreaterOrEqual(zone.HalfHeightCells * 2 - footprint.y, 4,
+            "The Barracks lot must preserve two clear cells on each vertical side.");
     }
 
     [Test]

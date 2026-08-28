@@ -20,7 +20,11 @@ public sealed class M02EstablishBasePlacementTests
     private const string MapId = "opmap.ch01.forward_post_01";
     private const string BarracksId = "Building_Barrack";
     private const string BuildAnchorId = "anchor.ch01.m02.build_lot";
-    private static readonly RectInt CanonicalPlacement = new(1750, 773, 20, 10);
+    private static RectInt CanonicalLot =>
+        M02EstablishBaseForwardPostWindowValidation.ValidateCurrentDefinition();
+
+    private static RectInt CanonicalPlacement =>
+        new(CanonicalLot.xMin + 2, CanonicalLot.yMin + 2, 20, 10);
 
     [MenuItem("Game/Validation/Run M02 Establish Base Placement Focused")]
     public static void RunFocusedValidation()
@@ -89,8 +93,10 @@ public sealed class M02EstablishBasePlacementTests
             world.EntityManager.GetComponentData<CampaignMissionCatalogComponent>(root);
         ref CampaignMissionBuildZoneBlob zone = ref catalog.Blob.Value.Missions[0].BuildZone;
         Assert.AreEqual(BuildAnchorId, zone.AnchorId.ToString());
-        Assert.AreEqual(24, zone.HalfWidthCells);
-        Assert.AreEqual(12, zone.HalfHeightCells);
+        Assert.AreEqual(M02EstablishBaseForwardPostWindowValidation.BuildLotSize.x / 2,
+            zone.HalfWidthCells);
+        Assert.AreEqual(M02EstablishBaseForwardPostWindowValidation.BuildLotSize.y / 2,
+            zone.HalfHeightCells);
         DisposeCatalog(world.EntityManager, root);
     }
 
@@ -105,7 +111,8 @@ public sealed class M02EstablishBasePlacementTests
             world.EntityManager, Mission(), Scenario(), Maps(), 1, out root, out string error), error);
         CampaignMissionCatalogComponent repaired =
             world.EntityManager.GetComponentData<CampaignMissionCatalogComponent>(root);
-        Assert.AreEqual(24, repaired.Blob.Value.Missions[0].BuildZone.HalfWidthCells);
+        Assert.AreEqual(M02EstablishBaseForwardPostWindowValidation.BuildLotSize.x / 2,
+            repaired.Blob.Value.Missions[0].BuildZone.HalfWidthCells);
         DisposeCatalog(world.EntityManager, root);
     }
 
@@ -113,18 +120,20 @@ public sealed class M02EstablishBasePlacementTests
     public void BarracksInsideCanonicalLotIsAccepted()
     {
         using Fixture fixture = new();
+        RectInt lot = CanonicalLot;
         Assert.IsTrue(fixture.IsAllowed(CanonicalPlacement));
-        Assert.IsTrue(fixture.IsAllowed(new RectInt(1754, 777, 20, 10)));
+        Assert.IsTrue(fixture.IsAllowed(new RectInt(lot.xMin + 3, lot.yMin + 3, 20, 10)));
     }
 
     [Test]
     public void BarracksCrossingAnyCanonicalLotEdgeIsRejected()
     {
         using Fixture fixture = new();
-        Assert.IsFalse(fixture.IsAllowed(new RectInt(1749, 773, 20, 10)));
-        Assert.IsFalse(fixture.IsAllowed(new RectInt(1750, 772, 20, 10)));
-        Assert.IsFalse(fixture.IsAllowed(new RectInt(1755, 773, 20, 10)));
-        Assert.IsFalse(fixture.IsAllowed(new RectInt(1750, 778, 20, 10)));
+        RectInt lot = CanonicalLot;
+        Assert.IsFalse(fixture.IsAllowed(new RectInt(lot.xMin - 1, lot.yMin + 2, 20, 10)));
+        Assert.IsFalse(fixture.IsAllowed(new RectInt(lot.xMin + 2, lot.yMin - 1, 20, 10)));
+        Assert.IsFalse(fixture.IsAllowed(new RectInt(lot.xMin + 5, lot.yMin + 2, 20, 10)));
+        Assert.IsFalse(fixture.IsAllowed(new RectInt(lot.xMin + 2, lot.yMin + 5, 20, 10)));
     }
 
     [Test]
@@ -156,11 +165,12 @@ public sealed class M02EstablishBasePlacementTests
     public void WarmPlacementPolicyDoesNotAllocateManagedMemory()
     {
         using Fixture fixture = new();
-        Assert.IsTrue(fixture.IsAllowed(CanonicalPlacement));
+        RectInt canonicalPlacement = CanonicalPlacement;
+        Assert.IsTrue(fixture.IsAllowed(canonicalPlacement));
         long before = GC.GetAllocatedBytesForCurrentThread();
         bool allAllowed = true;
         for (int index = 0; index < 300; index++)
-            allAllowed &= fixture.IsAllowed(CanonicalPlacement);
+            allAllowed &= fixture.IsAllowed(canonicalPlacement);
         long allocated = GC.GetAllocatedBytesForCurrentThread() - before;
         Assert.IsTrue(allAllowed);
         Assert.AreEqual(0L, allocated);
@@ -207,6 +217,7 @@ public sealed class M02EstablishBasePlacementTests
             bool missionRuntimeEnabled = true,
             string activeMapMissionId = MissionId)
         {
+            RectInt canonicalLot = CanonicalLot;
             _world = new("M02 placement policy");
             EntityManager entityManager = _world.EntityManager;
             _missionRoot = entityManager.CreateEntity(
@@ -270,7 +281,10 @@ public sealed class M02EstablishBasePlacementTests
                     {
                         Id = BuildAnchorId,
                         Kind = OperationMapAnchorKind.Build,
-                        Position = new float3(1762.5f, 0f, 780.5f),
+                        Position = new float3(
+                            canonicalLot.center.x + 0.5f,
+                            0f,
+                            canonicalLot.center.y + 0.5f),
                         Rotation = quaternion.identity,
                         Radius = 12f,
                         FactionId = 1,

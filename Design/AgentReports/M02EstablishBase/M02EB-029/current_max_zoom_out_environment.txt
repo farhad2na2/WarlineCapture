@@ -1,5 +1,5 @@
 scene=Assets/Game/Scenes/Match.unity
-camera=Main Camera position=1781.282,58.448,694.806 rotation=39.996,9.991,0
+camera=Main Camera position=886.14,77.097,257.44 rotation=39.996,9.993,0
 cameraPostProcessing=True cameraAntialiasing=FastApproximateAntialiasing cameraVolumeLayerMask=1
 renderSettings fog=True fogColor=0.857,0.795,0.697,1 fogDensity=0.002 ambientMode=Trilight ambientSky=0.517,0.466,0.424,1 ambientEquator=0.382,0.553,0.668,1 ambientGround=0.047,0.043,0.035,1 ambientIntensity=1 reflectionIntensity=1
 ambientProbe[0]=0.119296,0.061625,0,0,0,0,0.000188,0,0.000565

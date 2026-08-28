@@ -16,8 +16,8 @@ MonoBehaviour:
   schemaVersion: 1
   contentVersion: 1
   sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
-  contentHash: 4f893be1f2fd9306676c5b6372fbdab7e0ea4cb9dcc2d16a7454bf51ae4e0f56
-  generatedMetadataHash: 1b3d6897864735c9a838d8ee2a72f2327e94ae4c9f9db681019149a5ce0d0df0
+  contentHash: b40d9ff3d0ca3781701d06109b3004223fc21a4c1734cc584dad4246511b2c3a
+  generatedMetadataHash: 1f53a71389736b2b6910a630deb3a1c1163d494bec09bf26ffde8d7a47dbfcca
   sourceBinding:
     sourceOperationMapId: opmap.skirmish.desert_base_01
     sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
@@ -25,10 +25,10 @@ MonoBehaviour:
   bounds:
     worldMin: {x: 0, y: -6.9545445, z: 0}
     worldMax: {x: 2048, y: 100, z: 1024}
-    playableMin: {x: 1672, y: -6.9545445, z: 680}
-    playableMax: {x: 1912, y: 40.375454, z: 856}
-    cameraMin: {x: 1672, y: 4, z: 680}
-    cameraMax: {x: 1912, y: 100, z: 856}
+    playableMin: {x: 780, y: -6.9545445, z: 270}
+    playableMax: {x: 1100, y: 40.375454, z: 470}
+    cameraMin: {x: 780, y: 4, z: 270}
+    cameraMax: {x: 1100, y: 100, z: 470}
   gridMetadata:
     assetGuid: b201000000000000000000000000000b
     contentHash: 8ef1b3f17074774040111a48ea82901b3355da8b8b86c8dc5c6e2a0bcccc2cfb
@@ -54,15 +54,15 @@ MonoBehaviour:
     supportsDynamicOccupancy: 1
   cameras:
   - cameraId: camera.ch01.m02.forward_post_planning
-    position: {x: 1792, y: 78, z: 700}
-    eulerAngles: {x: 42.291927, y: 339.87415, z: 0.0000011541756}
+    position: {x: 995, y: 95, z: 468}
+    eulerAngles: {x: 42.784386, y: 186.68048, z: 0.00000029082847}
     orthographic: 0
     fieldOfView: 58
     orthographicSize: 5
     clampToCameraBounds: 1
   - cameraId: camera.ch01.m02.forward_post_battle
-    position: {x: 1794, y: 28, z: 744}
-    eulerAngles: {x: 30.376228, y: 342.32388, z: -0.000000494813}
+    position: {x: 952, y: 36, z: 430}
+    eulerAngles: {x: 19.200748, y: 212.97589, z: 0.0000004520324}
     orthographic: 0
     fieldOfView: 42
     orthographicSize: 5
@@ -71,104 +71,104 @@ MonoBehaviour:
   battleCameraId: camera.ch01.m02.forward_post_battle
   minimap:
     minimapId: minimap.ch01.m02.forward_post
-    projectionOrigin: {x: 1672, y: 0, z: 680}
-    projectionSize: {x: 240, y: 176}
+    projectionOrigin: {x: 780, y: 0, z: 270}
+    projectionSize: {x: 320, y: 200}
     orientationDegrees: 0
   anchors:
   - anchorId: anchor.ch01.m02.friendly_spawn
     kind: 3
-    position: {x: 1792.5, y: 0.009179778, z: 744.5}
+    position: {x: 920.5, y: 0.45917976, z: 425.5}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 8
     factionId: 1
     laneIndex: -1
   - anchorId: anchor.ch01.m02.camera_start
     kind: 12
-    position: {x: 1792.5, y: 0.009179778, z: 742.5}
+    position: {x: 935.5, y: 0.009179778, z: 390.5}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 4
     factionId: -1
     laneIndex: -1
   - anchorId: anchor.ch01.m02.forward_post
     kind: 7
-    position: {x: 1762.5, y: 0.009179778, z: 780.5}
+    position: {x: 940.5, y: 0.009179778, z: 351.5}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 12
     factionId: 1
     laneIndex: -1
   - anchorId: anchor.ch01.m02.build_lot
     kind: 4
-    position: {x: 1762.5, y: 0.009179778, z: 780.5}
+    position: {x: 1016.5, y: 0.009179778, z: 377.5}
     eulerAngles: {x: 0, y: 0, z: 0}
-    radius: 24
+    radius: 12
     factionId: 1
     laneIndex: -1
   - anchorId: anchor.ch01.m02.hostile_spawn
     kind: 1
-    position: {x: 1792.5, y: -0.0008202214, z: 840.5}
+    position: {x: 800.5, y: -0.12082022, z: 300.5}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 8
     factionId: 2
     laneIndex: -1
   - anchorId: anchor.ch01.m02.lane_a
     kind: 11
-    position: {x: 1792.5, y: -0.0008202214, z: 824.5}
+    position: {x: 825.5, y: 0.51917976, z: 315.5}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 5
     factionId: 2
     laneIndex: 0
   - anchorId: anchor.ch01.m02.lane_b
     kind: 11
-    position: {x: 1792.5, y: -0.0008202214, z: 808.5}
+    position: {x: 850.5, y: 0.17917977, z: 330.5}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 5
     factionId: 2
     laneIndex: 1
   - anchorId: anchor.ch01.m02.lane_c
     kind: 11
-    position: {x: 1784.5, y: 0.009179778, z: 794.5}
+    position: {x: 885.5, y: 1.1791798, z: 342.5}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 5
     factionId: 2
     laneIndex: 2
   - anchorId: anchor.ch01.m02.defense_boundary
     kind: 6
-    position: {x: 1774.5, y: 0.009179778, z: 784.5}
+    position: {x: 909.5, y: 1.0791798, z: 349.5}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 10
     factionId: 2
     laneIndex: -1
   - anchorId: anchor.ch01.m02.civilian_edge
     kind: 5
-    position: {x: 1738.5, y: 0.009179778, z: 812.5}
+    position: {x: 1060.5, y: 0.44917977, z: 430.5}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 10
     factionId: -1
     laneIndex: -1
   - anchorId: anchor.ch01.m02.civilian_evacuation
     kind: 5
-    position: {x: 1718.5, y: 0.009179778, z: 832.5}
+    position: {x: 1080.5, y: 0.009179778, z: 450.5}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 8
     factionId: -1
     laneIndex: -1
   - anchorId: anchor.ch01.m02.minimap_start
     kind: 13
-    position: {x: 1792.5, y: 0.009179778, z: 744.5}
+    position: {x: 935.5, y: 0.009179778, z: 380.5}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 3
     factionId: -1
     laneIndex: -1
   - anchorId: anchor.ch01.m02.resource_focus
     kind: 8
-    position: {x: 1822.5, y: 0.009179778, z: 780.5}
+    position: {x: 826.5, y: 1.1591798, z: 379.5}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 8
     factionId: 1
     laneIndex: -1
   - anchorId: anchor.ch01.m02.comms_focus
     kind: 2
-    position: {x: 1778.5, y: 0.009179778, z: 782.5}
+    position: {x: 925.5, y: 1.1291797, z: 360.5}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 6
     factionId: -1

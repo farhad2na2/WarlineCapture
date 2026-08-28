@@ -168,16 +168,23 @@ namespace Game.Runtime
                         break;
                     }
 
-                    if (current.Stage <= 5 && focus.Requested == 0 && IsOpeningVisible(state.EntityManager))
+                    bool useEstablishBaseOpening = ShouldUseEstablishBaseOpening(runtime.MissionId);
+                    bool openingCanAdvance = !useEstablishBaseOpening ||
+                                             CanAdvanceEstablishBaseOpening(runtime.Phase);
+                    if (current.Stage <= 5 && focus.Requested == 0 && openingCanAdvance &&
+                        IsOpeningVisible(state.EntityManager))
                         current.ElapsedMilliseconds = SaturatingAddMilliseconds(
                             current.ElapsedMilliseconds, SystemAPI.Time.DeltaTime);
-                    if (ShouldUseEstablishBaseOpening(runtime.MissionId))
+                    if (useEstablishBaseOpening)
                     {
-                        AdvanceEstablishBaseOpening(
-                            state.EntityManager,
-                            focusEntity,
-                            in focus,
-                            ref current);
+                        if (openingCanAdvance)
+                        {
+                            AdvanceEstablishBaseOpening(
+                                state.EntityManager,
+                                focusEntity,
+                                in focus,
+                                ref current);
+                        }
                         opening.ValueRW = current;
                         break;
                     }

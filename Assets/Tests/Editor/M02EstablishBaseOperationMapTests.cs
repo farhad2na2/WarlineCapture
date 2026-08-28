@@ -26,7 +26,7 @@ public sealed class M02EstablishBaseOperationMapTests
             tests.ExactAcceptedPhysicalSourceIsReused();
             tests.PhysicalSourceFilesRemainFrozen();
             tests.WorldGridSurfaceAndNavigationRemainCanonical();
-            tests.PlayableAndCameraBoundsReuseM01StoryDistrict();
+            tests.PlayableAndCameraBoundsReuseAuthoredMilitaryBaseDistrict();
             tests.CameraAndMinimapMetadataIsMissionScoped();
             tests.RequiredScenarioAnchorsResolveWithExactKinds();
             tests.AdditionalResourceAndCommsAnchorsResolve();
@@ -98,7 +98,7 @@ public sealed class M02EstablishBaseOperationMapTests
     }
 
     [Test]
-    public void PlayableAndCameraBoundsReuseM01StoryDistrict()
+    public void PlayableAndCameraBoundsReuseAuthoredMilitaryBaseDistrict()
     {
         OperationMapDefinition map = Map();
         RectInt window = M02EstablishBaseForwardPostWindowValidation.PlayableWindow;

@@ -63,7 +63,7 @@ public sealed class M02EstablishBaseAmbientTests
         {
             First = Anchor(826.5f, 379.5f),
             Second = Anchor(940.5f, 351.5f),
-            Third = Anchor(1040.5f, 394.5f)
+            Third = Anchor(1016.5f, 377.5f)
         };
         float minX = float.MaxValue;
         float maxX = float.MinValue;
@@ -116,7 +116,7 @@ public sealed class M02EstablishBaseAmbientTests
         {
             First = Anchor(1060.5f, 430.5f),
             Second = Anchor(1080.5f, 450.5f),
-            Third = Anchor(1040.5f, 394.5f)
+            Third = Anchor(1016.5f, 377.5f)
         };
         CampaignMissionAmbientPresentationSystem.AmbientRoute route =
             CampaignMissionAmbientPresentationSystem.CreateAmbientRoute(
@@ -277,7 +277,7 @@ public sealed class M02EstablishBaseAmbientTests
         BlobBuilderArray<OperationMapAnchorBlob> anchors = builder.Allocate(ref root.Anchors, 5);
         anchors[0] = NamedAnchor("anchor.ch01.m02.civilian_edge", 1060.5f, 430.5f);
         anchors[1] = NamedAnchor("anchor.ch01.m02.civilian_evacuation", 1080.5f, 450.5f);
-        anchors[2] = NamedAnchor("anchor.ch01.m02.build_lot", 1040.5f, 394.5f);
+        anchors[2] = NamedAnchor("anchor.ch01.m02.build_lot", 1016.5f, 377.5f);
         anchors[3] = NamedAnchor("anchor.ch01.m02.resource_focus", 826.5f, 379.5f);
         anchors[4] = NamedAnchor("anchor.ch01.m02.forward_post", 940.5f, 351.5f);
         return builder.CreateBlobAssetReference<OperationMapBlob>(Allocator.Persistent);

@@ -2,7 +2,7 @@
 
 Date: 2026-08-28
 Mission: `saga.ch01.m02.establish_base`
-Status: Ready for project-owner Editor review; acceptance remains open
+Status: Corrected map/camera route passed current-Editor QA; owner acceptance remains open
 
 ## Review Build
 
@@ -17,15 +17,28 @@ Status: Ready for project-owner Editor review; acceptance remains open
 
 ## Graphics Evidence
 
-The checked macOS wrapper ran `MobileVisualQualityPlayModeCapture.CaptureFromEnvironment` with M02 selected, the current quality profile, Metal, and a 1920x1080 target. The first live run exposed a real integration defect: the large mission-briefing payload exceeded the real HUD root archetype capacity. The payload now resides in one dedicated ECS read-model singleton owned by the existing Campaign projection and gateway. The repeated capture passed.
+The running macOS Editor ran the M02 playable-review capture with M02 selected, the current quality profile, Metal, and a 1920x1080 target after the authored-base correction. The resulting images replace the rejected City Hall evidence and are the only images in this directory that may be used as current map-location proof.
 
-- Wrapper log: `/private/tmp/warline-m02eb-029-graphics-capture2.log`
 - Pass marker: `[MobileVisualQualityPlayModeCapture] result=Passed profile=current mission=saga.ch01.m02.establish_base`
-- Overview: `current_gameplay_zoom.png`, SHA-256 `0c8c757fbe0eae5893f6eeccd519417c7d104fa089a8c9374b1d42f4f8a13806`
-- Forward-post detail: `current_max_zoom_out.png`, SHA-256 `1133cfb2c83295ddcb3dd5bb090d75c4eb1ad680ee11965edd824feb1701bf16`
+- Compound detail: `current_gameplay_zoom.png`, SHA-256 `f53fe24070a618046befc234859a1a78c0d4bcf4f2778cc67c7c93a8b11d78f8`
+- Military-base overview: `current_max_zoom_out.png`, SHA-256 `65852fffe9f70de5a3314010bbd8730996d87d80a909817810484fe649024487`
 - Environment diagnostics confirm authored fog, both directional lights, and the `Military_Demo` global volume.
-- Grounding diagnostics report all seven mission units grounded on the accepted surface with no `grounded=0` row.
+- Grounding diagnostics report all four opening command-squad units grounded on the accepted surface with no `grounded=0` row; the delayed hostile wave is not active during this capture.
 - The capture uses an isolated temporary progress store under `/tmp`; it does not mutate the project owner's Campaign save.
+
+## Authored Military-Base Binding Correction
+
+The earlier M02 correction incorrectly interpreted “use the story map like M1” as “reuse M1's exact Old Market/City Hall window.” That was rejected by the owner and is not accepted evidence. M02 now uses the separately authored military-base sector `(780,270)-(1100,470)` in the same accepted physical story map. A semantic validation fails if any core M02 base anchor re-enters the Old Market/City Hall window.
+
+The corrected evidence shows the compound, tents, military vehicles, perimeter walls, hangar, control tower, helipads, and aircraft. The Barracks tutorial lot is the reviewed clear apron `(1004,370,24,14)`, not a visually empty but blocked road cell and not the former City Hall lot. The opening route travels west-to-east from the resource side of the compound to this build apron.
+
+QA also found that the opening timer could advance while the comic covered the world. The M02 opening owner now holds both elapsed time and camera requests through `InteractiveBrief`; the horizontal base sweep becomes eligible only after the comic's authoritative handoff to `FindSquad`. `[M02EstablishBaseGuidanceValidation] result=Passed tests=37` covers the exact location, horizontal route, M1-only panic audio, comic hold, and one-sweep completion.
+
+The fresh current-Editor run entered M02 through the real Campaign selection/deploy boundary, reached the corrected physical source, and produced the two Metal captures above. The same post-change Editor session passed placement `8/8`, placement regressions `8/8`, guidance `37/37`, guidance regressions `15/15`, launch `15/15`, launch regressions `3/3`, narrative `20/20`, Campaign UI `10/10`, consolidated data `5/5`, M01 consolidated contracts `23/23`, and source growth `17/17`.
+
+## Barracks Production Finding
+
+The Barracks remains the correct M02 building: its canonical role is military housing and infantry training. Its current production configuration, however, contains one entry for `Unit_Chr_Soldier_Male_02_Alt_04`, and the shared runtime instantiates that character prefab once. The mission objective and UI call the result a complete rifle squad. This granularity mismatch remains open for a shared squad-production recipe; it must not be concealed by changing the building, adding an M02-only spawner, or claiming one individual soldier is a squad.
 
 ## Automated Validation
 
@@ -44,7 +57,7 @@ The checked macOS wrapper ran `MobileVisualQualityPlayModeCapture.CaptureFromEnv
 
 ## Exact Editor Route Verification
 
-The live `WarlineCapture` Editor ran `Game/Rendering/Capture Mobile Visual Quality/Mission 2 Playable Review` after the direct-panel correction. The route logged the exact Campaign identity (`saga.ch01.m02.establish_base`, `scenario.ch01.m02.establish_base`, `opmap.ch01.forward_post_01`), presented the provisional M2 briefing over the forward-post map, completed its handoff, and then projected the first M2 guidance step onto the real Build control. The Editor was paused at both boundaries for inspection; neither capture is the inert fallback screen reported by the owner.
+The earlier live route proved the comic and typed `DO IT` plumbing but predates the authored-base location correction, so its screenshots are retained only as flow evidence and are not current map-framing proof. Current map-framing proof comes from the fresh Campaign-route Metal captures and post-change camera/interaction regression suites above. Owner full-mission acceptance remains required before closing M02EB-029.
 
 - Briefing proof: `m02eb_029_exact_campaign_briefing_verified.png`, SHA-256 `faeea0bc7ac93ab3fd82b3bbe5ed449c2af167fbf8b679027f945497a729705e`.
 - First-guidance proof: `m02eb_029_first_guidance_verified.png`, SHA-256 `b2ad39fcf770f8660bc8abd817fa08d12b166add22051e2ec1083ef9e95c027f`.

@@ -1,4 +1,5 @@
 using Game.Components;
+using Game.Missions.Contracts;
 using Unity.Collections;
 using Unity.Entities;
 
@@ -14,6 +15,13 @@ namespace Game.Runtime
 
         internal static bool ShouldUseEstablishBaseOpening(in FixedString64Bytes missionId) =>
             missionId.Equals(EstablishBaseMissionId);
+
+        internal static bool CanAdvanceEstablishBaseOpening(MissionPhaseKind phase) =>
+            phase is MissionPhaseKind.FindSquad or
+                MissionPhaseKind.MoveToCover or
+                MissionPhaseKind.ConfirmThreat or
+                MissionPhaseKind.Engage or
+                MissionPhaseKind.SecureCorridor;
 
         internal static bool ShouldEmitOpeningPanicAudio(in FixedString64Bytes missionId) =>
             missionId.Equals(FirstContactMissionId);

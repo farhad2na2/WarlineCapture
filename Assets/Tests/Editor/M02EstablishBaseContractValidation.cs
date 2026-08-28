@@ -1,5 +1,6 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System;
+using UnityEditor;
 using UnityEngine;
 
 public static class M02EstablishBaseContractValidation
@@ -7,6 +8,7 @@ public static class M02EstablishBaseContractValidation
     public const string PassMarker =
         "[M02EstablishBaseConsolidatedDataValidation] result=Passed suites=5";
 
+    [MenuItem("Game/Validation/Run M02 Establish Base Consolidated Data Focused")]
     public static void RunFocusedValidation()
     {
         try

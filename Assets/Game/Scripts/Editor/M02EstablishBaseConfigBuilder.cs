@@ -191,7 +191,7 @@ namespace Game.Editor
             Set(serialized, "briefingSequenceId", "seq.ch01.m02.brief");
             Set(serialized, "commsSequenceId", "seq.ch01.m02.comms");
             Set(serialized, "debriefSequenceId", "seq.ch01.m02.debrief");
-            SetArray(serialized, "objectives", 3, PopulateObjective);
+            SetArray(serialized, "objectives", 2, PopulateObjective);
             SetArray(serialized, "stars", 3, PopulateStar);
             SetArray(serialized, "firstClearRewards", 3, PopulateFirstClearReward);
             SetArray(serialized, "replayRewards", 1, (reward, _) =>
@@ -272,28 +272,26 @@ namespace Game.Editor
             string[] ids =
             {
                 "obj.ch01.m02.build_forward_barracks",
-                "obj.ch01.m02.produce_rifle_squad",
-                "obj.ch01.m02.defend_forward_post"
+                "obj.ch01.m02.produce_rifle_squad"
             };
             string[] textKeys =
             {
                 "mission.m02.objective.build_forward_barracks",
-                "mission.m02.objective.produce_rifle_squad",
-                "mission.m02.objective.defend_forward_post"
+                "mission.m02.objective.produce_rifle_squad"
             };
-            int[] rules = { 3, 4, 5 };
+            int[] rules = { 3, 4 };
             Set(objective, "objectiveId", ids[index]);
             Set(objective, "displayTextKey", textKeys[index]);
             Set(objective, "rule", rules[index]);
-            Set(objective, "missionRoleId", index == 2 ? "role.friendly.forward_post" : string.Empty);
+            Set(objective, "missionRoleId", string.Empty);
             Set(objective, "targetConfigId", index switch
             {
                 0 => "Building_Barrack",
                 1 => "Unit_Chr_Soldier_Male_02_Alt_04",
-                _ => string.Empty
+                _ => "Unit_Chr_Soldier_Male_02_Alt_04"
             });
-            Set(objective, "requiredCount", index == 1 ? 4 : 1);
-            Set(objective, "failureOnRuleBreak", index == 2);
+            Set(objective, "requiredCount", 1);
+            Set(objective, "failureOnRuleBreak", false);
         }
 
         private static void PopulateStar(SerializedProperty star, int index)

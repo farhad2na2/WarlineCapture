@@ -347,8 +347,12 @@ public sealed class M02EstablishBaseObjectiveTests
         {
             InitializeAttempt(world);
             Entity unit = CreateProducedUnit(
-                world.EntityManager, RifleId, FactionIdentity.PlayerFactionId, currentHealth: 100);
-            AddProducedUnitRow(world.EntityManager, unit, RifleId, FactionIdentity.PlayerFactionId);
+                world.EntityManager, RifleId.ToLowerInvariant(), FactionIdentity.PlayerFactionId, currentHealth: 100);
+            AddProducedUnitRow(
+                world.EntityManager,
+                unit,
+                RifleId.ToLowerInvariant(),
+                FactionIdentity.PlayerFactionId);
 
             UpdateFacts(world);
             UpdateFacts(world);
@@ -767,6 +771,7 @@ public sealed class M02EstablishBaseObjectiveTests
         });
         Entity boundary = entityManager.CreateEntity(typeof(BuildingRuntimeStateTag));
         entityManager.AddBuffer<BuildingRuntimeSpawnRequest>(boundary);
+        entityManager.AddBuffer<BuildingRuntimeDeleteRequest>(boundary);
         entityManager.AddBuffer<BuildingRuntimeOwnedBuildingSummary>(boundary);
         entityManager.AddBuffer<BuildingProducedUnitReadModel>(boundary);
         return world;

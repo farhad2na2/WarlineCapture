@@ -1128,6 +1128,7 @@ namespace Game.Runtime
             {
                 Entity bestEntity = Entity.Null;
                 int bestProductionIndex = -1;
+                int bestProductionQuantity = int.MinValue;
                 int bestPlacementIndex = int.MaxValue;
                 string bestDisplayName = string.Empty;
                 for (int candidateIndex = 0; candidateIndex < candidates.Length; candidateIndex++)
@@ -1150,6 +1151,7 @@ namespace Game.Runtime
                     DynamicBuffer<OperationMapBuildingProductionPrefab> productions =
                         em.GetBuffer<OperationMapBuildingProductionPrefab>(candidate, true);
                     int matchingProductionIndex = -1;
+                    int matchingProductionQuantity = 0;
                     for (int bufferIndex = 0; bufferIndex < productions.Length; bufferIndex++)
                     {
                         OperationMapBuildingProductionPrefab production = productions[bufferIndex];
@@ -1161,6 +1163,7 @@ namespace Game.Runtime
                         }
 
                         matchingProductionIndex = production.ProductionIndex;
+                        matchingProductionQuantity = math.max(1, production.Quantity);
                         break;
                     }
 
@@ -1169,14 +1172,17 @@ namespace Game.Runtime
 
                     int placementIndex = em.GetComponentData<OperationMapBuildingComponent>(candidate).PlacementIndex;
                     if (bestEntity != Entity.Null &&
-                        (placementIndex > bestPlacementIndex ||
-                         (placementIndex == bestPlacementIndex && candidate.Index >= bestEntity.Index)))
+                        (matchingProductionQuantity < bestProductionQuantity ||
+                         (matchingProductionQuantity == bestProductionQuantity &&
+                          (placementIndex > bestPlacementIndex ||
+                           (placementIndex == bestPlacementIndex && candidate.Index >= bestEntity.Index)))))
                     {
                         continue;
                     }
 
                     bestEntity = candidate;
                     bestProductionIndex = matchingProductionIndex;
+                    bestProductionQuantity = matchingProductionQuantity;
                     bestPlacementIndex = placementIndex;
                     bestDisplayName = em.GetComponentData<UnitDisplayInfo>(candidate).Name.ToString();
                 }
@@ -1370,6 +1376,27 @@ namespace Game.Runtime
             float3 spawnPosition,
             out Entity spawnedUnit)
         {
+            return TrySpawnReadyOperationMapProduction(
+                default,
+                em,
+                buildingEntity,
+                requestId,
+                now,
+                spawnCell,
+                spawnPosition,
+                out spawnedUnit);
+        }
+
+        private bool TrySpawnReadyOperationMapProduction(
+            in Context context,
+            EntityManager em,
+            Entity buildingEntity,
+            int requestId,
+            float now,
+            int2 spawnCell,
+            float3 spawnPosition,
+            out Entity spawnedUnit)
+        {
             spawnedUnit = Entity.Null;
             if (spawnCell.x < 0 ||
                 spawnCell.y < 0 ||
@@ -1383,7 +1410,8 @@ namespace Game.Runtime
                 !em.HasComponent<Prefab>(request.UnitPrefab) ||
                 !em.HasComponent<UnitHealth>(request.UnitPrefab) ||
                 !em.HasComponent<UnitFootprint>(request.UnitPrefab) ||
-                !em.HasComponent<Faction>(buildingEntity))
+                !em.HasComponent<Faction>(buildingEntity) ||
+                !TryResolveOperationMapProducedUnitBoundary(in context, em, out Entity producedUnitBoundary))
             {
                 return false;
             }
@@ -1433,6 +1461,13 @@ namespace Game.Runtime
                 return false;
             }
 
+            PublishOperationMapProducedUnitReadModel(
+                em,
+                producedUnitBoundary,
+                request.ProductionIndex,
+                request.UnitSourceKey,
+                spawnedFaction,
+                instance);
             spawnedUnit = instance;
             return true;
         }
@@ -1797,6 +1832,7 @@ namespace Game.Runtime
                     }
 
                     if (TrySpawnReadyOperationMapProduction(
+                            in context,
                             em,
                             spawn.Building,
                             spawn.RequestId,
@@ -1983,6 +2019,65 @@ namespace Game.Runtime
         {
             if (em.HasComponent<T>(entity))
                 em.RemoveComponent<T>(entity);
+        }
+
+        private static bool TryResolveOperationMapProducedUnitBoundary(
+            in Context context,
+            EntityManager em,
+            out Entity boundary)
+        {
+            boundary = Entity.Null;
+            BuildingProductionQueueCompositionSystemHelper.TryGetRuntimeBoundaryEntityDelegate resolver =
+                context.ProductionQueueContext.TryGetRuntimeBoundaryEntity;
+            if (resolver != null && resolver(em, out Entity resolved) &&
+                IsOperationMapProducedUnitBoundary(em, resolved))
+            {
+                boundary = resolved;
+                return true;
+            }
+
+            using EntityQuery boundaryQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<BuildingRuntimeStateTag>(),
+                ComponentType.ReadOnly<BuildingRuntimeSpawnRequest>(),
+                ComponentType.ReadOnly<BuildingRuntimeDeleteRequest>(),
+                ComponentType.ReadOnly<BuildingRuntimeOwnedBuildingSummary>(),
+                ComponentType.ReadWrite<BuildingProducedUnitReadModel>());
+            if (boundaryQuery.CalculateEntityCount() != 1)
+                return false;
+
+            boundary = boundaryQuery.GetSingletonEntity();
+            return true;
+        }
+
+        private static bool IsOperationMapProducedUnitBoundary(EntityManager em, Entity boundary) =>
+            boundary != Entity.Null && em.Exists(boundary) &&
+            em.HasComponent<BuildingRuntimeStateTag>(boundary) &&
+            em.HasBuffer<BuildingRuntimeSpawnRequest>(boundary) &&
+            em.HasBuffer<BuildingRuntimeDeleteRequest>(boundary) &&
+            em.HasBuffer<BuildingRuntimeOwnedBuildingSummary>(boundary) &&
+            em.HasBuffer<BuildingProducedUnitReadModel>(boundary);
+
+        private static void PublishOperationMapProducedUnitReadModel(
+            EntityManager em,
+            Entity boundary,
+            int productionIndex,
+            in FixedString64Bytes unitSourceKey,
+            byte ownerFactionId,
+            Entity producedUnit)
+        {
+            DynamicBuffer<BuildingProducedUnitReadModel> producedUnits =
+                em.GetBuffer<BuildingProducedUnitReadModel>(boundary);
+            producedUnits.Add(new BuildingProducedUnitReadModel
+            {
+                BuildingRuntimeId = 0,
+                ProductionSlotBuildingRuntimeId = 0,
+                ProductionIndex = productionIndex,
+                ProductionSlotIndex = -1,
+                OwnerFactionId = ownerFactionId,
+                HasOwnerFaction = 1,
+                Unit = producedUnit,
+                UnitSourceKey = unitSourceKey
+            });
         }
 
         private static Entity ResolveOperationMapProductionPrefab(

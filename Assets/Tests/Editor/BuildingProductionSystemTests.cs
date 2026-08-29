@@ -478,7 +478,9 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             Renderer[] dropRenderers = dropVisual.GetComponentsInChildren<Renderer>(true);
             Assert.IsTrue(Array.Exists(dropRenderers, renderer => renderer != null && renderer.enabled && renderer.gameObject.activeInHierarchy),
                 "Canonical soldier drop visual must contain an enabled, active renderer.");
-            LineRenderer rope = UnityEngine.Object.FindAnyObjectByType<LineRenderer>(FindObjectsInactive.Include);
+            LineRenderer rope = Array.Find(
+                transportVisual.GetComponentsInChildren<LineRenderer>(true),
+                candidate => candidate != null && candidate.gameObject.activeInHierarchy);
             Assert.IsNotNull(rope, "Canonical delivery should expose a visible helicopter rope during the drop.");
             Assert.AreEqual(2, rope.positionCount);
             CaptureCanonicalTransportEvidence(camera);
@@ -2155,6 +2157,54 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     }
 
     [Test]
+    public void OperationMapProducerLookup_PrefersCanonicalSquadQuantityBeforePlacement()
+    {
+        using var world = new World(nameof(OperationMapProducerLookup_PrefersCanonicalSquadQuantityBeforePlacement));
+        EntityManager em = world.EntityManager;
+        GameObject unitPrefab = new("Rifleman");
+        try
+        {
+            Entity prefabEntity = em.CreateEntity(typeof(Prefab));
+            CreateOperationMapProducer(
+                em,
+                prefabEntity,
+                unitPrefab.name,
+                FactionIdentity.PlayerFactionId,
+                1,
+                "Legacy Barracks",
+                quantity: 1);
+            Entity expected = CreateOperationMapProducer(
+                em,
+                prefabEntity,
+                unitPrefab.name,
+                FactionIdentity.PlayerFactionId,
+                9,
+                "Canonical Barracks",
+                quantity: 4);
+            var requestSystem = new BuildingProductionRequestSystemHelper();
+            BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
+                new Dictionary<int, RuntimeBuildingEntity>(),
+                new BuildingProductionQueueCompositionSystemHelper(),
+                unitPrefab,
+                em);
+
+            Assert.IsTrue(requestSystem.TryFindFirstFriendlyOperationMapProducer(
+                context,
+                unitPrefab,
+                out Entity producer,
+                out int productionIndex,
+                out string displayName));
+            Assert.AreEqual(expected, producer);
+            Assert.AreEqual(0, productionIndex);
+            Assert.AreEqual("Canonical Barracks", displayName);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+        }
+    }
+
+    [Test]
     public void OperationMapProducerLookup_FallsBackToLiveNeutralProducer()
     {
         using var world = new World(nameof(OperationMapProducerLookup_FallsBackToLiveNeutralProducer));
@@ -2476,6 +2526,15 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         GameObject unitPrefab = new("Rifleman");
         try
         {
+            Entity auxiliaryBoundary = em.CreateEntity(typeof(BuildingRuntimeStateTag));
+            em.AddBuffer<BuildingRuntimeSpawnRequest>(auxiliaryBoundary);
+            em.AddBuffer<BuildingRuntimeOwnedBuildingSummary>(auxiliaryBoundary);
+            em.AddBuffer<BuildingProducedUnitReadModel>(auxiliaryBoundary);
+            Entity boundary = em.CreateEntity(typeof(BuildingRuntimeStateTag));
+            em.AddBuffer<BuildingRuntimeSpawnRequest>(boundary);
+            em.AddBuffer<BuildingRuntimeDeleteRequest>(boundary);
+            em.AddBuffer<BuildingRuntimeOwnedBuildingSummary>(boundary);
+            em.AddBuffer<BuildingProducedUnitReadModel>(boundary);
             Entity prefabEntity = CreateOperationMapUnitPrefab(em);
             Entity producer = CreateOperationMapProducer(
                 em,
@@ -2483,7 +2542,8 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                 unitPrefab.name,
                 FactionIdentity.PlayerFactionId,
                 1,
-                "Player Tent");
+                "Player Barracks",
+                quantity: 4);
             var requestSystem = new BuildingProductionRequestSystemHelper();
             BuildingProductionRequestSystemHelper.Context context = CreateProducerSelectionContext(
                 new Dictionary<int, RuntimeBuildingEntity>(),
@@ -2493,16 +2553,22 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             Assert.IsTrue(requestSystem.TryEnqueueFriendlyOperationMapProduction(
                 context, unitPrefab, 0f, out _, out int requestId, out _));
 
-            int2 spawnCell = new(21, 34);
-            float3 spawnPosition = new(215f, 2f, 345f);
-            Assert.IsTrue(requestSystem.TrySpawnReadyOperationMapProduction(
-                em,
-                producer,
-                requestId,
-                60f,
-                spawnCell,
-                spawnPosition,
-                out Entity spawned));
+            Entity spawned = Entity.Null;
+            int2 spawnCell = default;
+            float3 spawnPosition = default;
+            for (int index = 0; index < 4; index++)
+            {
+                spawnCell = new int2(21 + index, 34);
+                spawnPosition = new float3(215f + index, 2f, 345f);
+                Assert.IsTrue(requestSystem.TrySpawnReadyOperationMapProduction(
+                    em,
+                    producer,
+                    requestId,
+                    60f,
+                    spawnCell,
+                    spawnPosition,
+                    out spawned));
+            }
             Assert.IsTrue(em.Exists(spawned));
             Assert.IsFalse(em.HasComponent<Prefab>(spawned));
             Assert.AreEqual(spawnCell, em.GetComponentData<UnitGrid>(spawned).Cell);
@@ -2512,6 +2578,23 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             Assert.AreEqual(unitPrefab.name, em.GetComponentData<UnitSourcePrefabKey>(spawned).Value.ToString());
             Assert.IsFalse(em.HasComponent<UnitGridInitialized>(spawned));
             Assert.AreEqual(0, em.GetBuffer<OperationMapBuildingUnitProductionRequest>(producer, true).Length);
+            DynamicBuffer<BuildingProducedUnitReadModel> producedUnits =
+                em.GetBuffer<BuildingProducedUnitReadModel>(boundary, true);
+            Assert.AreEqual(4, producedUnits.Length);
+            for (int index = 0; index < producedUnits.Length; index++)
+            {
+                Assert.AreEqual(0, producedUnits[index].BuildingRuntimeId);
+                Assert.AreEqual(0, producedUnits[index].ProductionIndex);
+                Assert.AreEqual(-1, producedUnits[index].ProductionSlotIndex);
+                Assert.AreEqual(FactionIdentity.PlayerFactionId, producedUnits[index].OwnerFactionId);
+                Assert.AreEqual(1, producedUnits[index].HasOwnerFaction);
+                Assert.AreEqual(unitPrefab.name, producedUnits[index].UnitSourceKey.ToString());
+            }
+            Assert.AreEqual(spawned, producedUnits[3].Unit);
+            Assert.AreEqual(
+                0,
+                em.GetBuffer<BuildingProducedUnitReadModel>(auxiliaryBoundary, true).Length,
+                "Operation-map production must publish to the canonical runtime boundary, not an auxiliary state owner.");
         }
         finally
         {
@@ -5593,6 +5676,12 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         walkable.ResizeUninitialized(gridSize);
         for (int index = 0; index < gridSize; index++)
             walkable[index] = new GridWalkable { Value = 1 };
+
+        Entity boundary = entityManager.CreateEntity(typeof(BuildingRuntimeStateTag));
+        entityManager.AddBuffer<BuildingRuntimeSpawnRequest>(boundary);
+        entityManager.AddBuffer<BuildingRuntimeDeleteRequest>(boundary);
+        entityManager.AddBuffer<BuildingRuntimeOwnedBuildingSummary>(boundary);
+        entityManager.AddBuffer<BuildingProducedUnitReadModel>(boundary);
         return gridEntity;
     }
 

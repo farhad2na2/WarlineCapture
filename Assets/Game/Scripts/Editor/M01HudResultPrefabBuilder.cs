@@ -124,7 +124,8 @@ namespace Game.Editor
                         Find(root.transform, "CommanderXpReward").gameObject,
                         Find(root.transform, "CreditsReward").gameObject,
                         Find(root.transform, "MaterialsReward").gameObject,
-                        Find(root.transform, "IntelReward").gameObject
+                        Find(root.transform, "IntelReward").gameObject,
+                        Find(root.transform, "MissionIdentityBlock").gameObject
                     });
                 PrefabUtility.SaveAsPrefabAsset(root, ResultPath);
             }

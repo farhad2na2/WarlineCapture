@@ -4,16 +4,19 @@ using System.IO;
 using Game.Components;
 using Game.Missions.Contracts;
 using Game.UI.Contracts;
+using Game.UI.Runtime;
 using Game.UI.Shell.Ecs;
 using NUnit.Framework;
+using TMPro;
 using Unity.Collections;
 using Unity.Entities;
+using UnityEditor;
 using UnityEngine;
 
 public sealed class M02EstablishBaseHudResultTests
 {
     private const string Marker =
-        "[M02EstablishBaseHudResultValidation] result=Passed tests=4";
+        "[M02EstablishBaseHudResultValidation] result=Passed tests=5";
     private const string MissionId = "saga.ch01.m02.establish_base";
 
     public static void RunFocusedValidation()
@@ -25,6 +28,7 @@ public sealed class M02EstablishBaseHudResultTests
             tests.ReplayResultReturnsWithoutRepeatingFirstClearRewards();
             tests.FirstClearButtonDefersRouteToDebriefOwner();
             tests.DebriefOwnerReturnsThroughCampaignOperations();
+            tests.ResultPopupHidesLegacyM01Identity();
             Debug.Log(Marker);
             ValidationExit.Passed();
         }
@@ -102,6 +106,36 @@ public sealed class M02EstablishBaseHudResultTests
         StringAssert.Contains("DebriefSequenceId", source);
     }
 
+    [Test]
+    public void ResultPopupHidesLegacyM01Identity()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+            "Assets/Game/Prefabs/UI/Popups/MissionResultPopup.prefab");
+        Assert.NotNull(prefab);
+
+        GameObject instance = UnityEngine.Object.Instantiate(prefab);
+        try
+        {
+            UiMissionResultPopupModel model = ReadModel(firstClear: true);
+            MissionResultPopupView view = instance.GetComponent<MissionResultPopupView>();
+            Assert.NotNull(view);
+            view.Apply(in model);
+
+            Transform legacyIdentity = Find(instance.transform, "MissionIdentityBlock");
+            Assert.NotNull(legacyIdentity);
+            Assert.IsFalse(legacyIdentity.gameObject.activeSelf,
+                "The shared result popup must not expose its authored M01 placeholder during M02.");
+
+            TMP_Text missionName = Find(instance.transform, "MissionNameText")?.GetComponent<TMP_Text>();
+            Assert.NotNull(missionName);
+            Assert.AreEqual("ESTABLISH THE BASE • FORWARD POST", missionName.text);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(instance);
+        }
+    }
+
     private static UiMissionResultPopupModel ReadModel(bool firstClear)
     {
         World previous = World.DefaultGameObjectInjectionWorld;
@@ -142,8 +176,8 @@ public sealed class M02EstablishBaseHudResultTests
             });
             entityManager.AddComponentData(root, new CampaignMissionAttemptFactsComponent
             {
-                HostileTotalCount = 3,
-                HostileDefeatedCount = 3
+                HostileTotalCount = 0,
+                HostileDefeatedCount = 0
             });
             entityManager.AddComponentData(root, new CampaignMissionCatalogComponent
             {
@@ -204,6 +238,14 @@ public sealed class M02EstablishBaseHudResultTests
         RewardConfigId = new FixedString64Bytes(id),
         Amount = amount
     };
+
+    private static Transform Find(Transform root, string name)
+    {
+        foreach (Transform candidate in root.GetComponentsInChildren<Transform>(true))
+            if (candidate.name == name)
+                return candidate;
+        return null;
+    }
 
     private static void RunValidation(Action validation)
     {

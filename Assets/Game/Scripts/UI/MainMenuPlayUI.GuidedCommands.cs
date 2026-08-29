@@ -118,8 +118,11 @@ namespace Game.UI.Runtime
             if (catalog == null || !catalog.TryInvokePrimaryActionFromGuidance())
                 return false;
 
+            // Starting placement and confirming it are separate player-facing steps. Returning
+            // here lets the real confirmation bar render before either the player or a later
+            // guidance invocation accepts the placement.
             return _buildPlacementConfirmationBarView != null &&
-                   _buildPlacementConfirmationBarView.TryInvokeConfirmFromGuidance();
+                   _buildPlacementConfirmationBarView.HasPendingPlacement;
         }
     }
 }

@@ -25,9 +25,9 @@ public sealed class M02EstablishBaseResultSettlementTests
         try
         {
             M02EstablishBaseResultSettlementTests tests = new();
-            tests.RuntimeCompletesOnlyAfterEveryObjectiveAndWaveResolve();
+            tests.RuntimeCompletesAfterBuildingAndRifleProductionResolve();
             tests.IncompleteRequirementsCannotResolveVictory();
-            tests.DestroyedForwardPostResolvesDefeat();
+            tests.M02VictoryDoesNotRequireHostilesOrDefenseWave();
             tests.CivilianAndFiveMinuteStarsAreIndependent();
             tests.InvalidOrContradictoryResultFactsFailClosed();
             tests.FirstClearGrantsRewardsBarracksAndM03ExactlyOnce();
@@ -72,7 +72,7 @@ public sealed class M02EstablishBaseResultSettlementTests
     }
 
     [Test]
-    public void RuntimeCompletesOnlyAfterEveryObjectiveAndWaveResolve()
+    public void RuntimeCompletesAfterBuildingAndRifleProductionResolve()
     {
         using BlobAssetReference<CampaignMissionCatalogBlob> blob = CreateBlob();
         ref CampaignMissionDefinitionBlob definition = ref blob.Value.Missions[0];
@@ -95,10 +95,7 @@ public sealed class M02EstablishBaseResultSettlementTests
         CampaignMissionAttemptFactsComponent[] incomplete =
         {
             WithBuildingCount(complete, 0),
-            WithUnitCount(complete, 0),
-            WithWaveActivation(complete, 0),
-            WithHostilesDefeated(complete, 2),
-            WithForwardPostBound(complete, 0)
+            WithUnitCount(complete, 0)
         };
         for (int index = 0; index < incomplete.Length; index++)
             Assert.IsFalse(CampaignMissionRuntimeProgressUtility.TryEvaluateSettled(
@@ -106,17 +103,20 @@ public sealed class M02EstablishBaseResultSettlementTests
     }
 
     [Test]
-    public void DestroyedForwardPostResolvesDefeat()
+    public void M02VictoryDoesNotRequireHostilesOrDefenseWave()
     {
         using BlobAssetReference<CampaignMissionCatalogBlob> blob = CreateBlob();
         ref CampaignMissionDefinitionBlob definition = ref blob.Value.Missions[0];
         CampaignMissionRuntimeComponent runtime = Runtime(MissionPhaseKind.Engage);
         CampaignMissionAttemptFactsComponent facts = CompleteFacts();
-        facts.RequiredBuildingCompletedCount = 0;
+        facts.HostileTotalCount = 0;
+        facts.HostileDefeatedCount = 0;
+        facts.DefenseWaveActivated = 0;
+        facts.ForwardPostBound = 0;
         facts.ForwardPostDestroyed = 1;
         Assert.IsTrue(CampaignMissionRuntimeProgressUtility.TryEvaluateSettled(
             in runtime, in facts, false, ref definition, out CampaignMissionRuntimeComponent result));
-        Assert.AreEqual(MissionOutcomeKind.Defeat, result.Outcome);
+        Assert.AreEqual(MissionOutcomeKind.Victory, result.Outcome);
         Assert.AreEqual(MissionReturnDestinationKind.CampaignOperations, result.ReturnDestination);
     }
 
@@ -384,14 +384,14 @@ public sealed class M02EstablishBaseResultSettlementTests
     private static CampaignMissionAttemptFactsComponent CompleteFacts() => new()
     {
         ElapsedMilliseconds = 240000,
-        HostileTotalCount = 3,
-        HostileDefeatedCount = 3,
+        HostileTotalCount = 0,
+        HostileDefeatedCount = 0,
         RequiredBuildingPlacedCount = 1,
         RequiredBuildingCompletedCount = 1,
         RequiredUnitProducedCount = 1,
         CivilianTotalCount = 12,
-        ForwardPostBound = 1,
-        DefenseWaveActivated = 1,
+        ForwardPostBound = 0,
+        DefenseWaveActivated = 0,
         CommandSquadSpawned = 1,
         CommandSquadAlive = 1,
         FinalePresentationComplete = 1
@@ -449,16 +449,13 @@ public sealed class M02EstablishBaseResultSettlementTests
         mission.ScenarioId = new FixedString64Bytes("scenario.ch01.m02.establish_base");
         mission.OperationMapId = new FixedString64Bytes("opmap.ch01.forward_post_01");
         BlobBuilderArray<CampaignMissionObjectiveBlob> objectives =
-            builder.Allocate(ref mission.Objectives, 3);
+            builder.Allocate(ref mission.Objectives, 2);
         objectives[0] = Objective(
             "obj.ch01.m02.build_forward_barracks", MissionObjectiveRuleKind.BuildStructure,
-            string.Empty, Barracks, false);
+            string.Empty, Barracks, 1, false);
         objectives[1] = Objective(
             "obj.ch01.m02.produce_rifle_squad", MissionObjectiveRuleKind.ProduceUnit,
-            string.Empty, "Unit_Chr_Soldier_Male_02_Alt_04", false);
-        objectives[2] = Objective(
-            "obj.ch01.m02.defend_forward_post", MissionObjectiveRuleKind.DefendMissionRole,
-            "role.friendly.forward_post", string.Empty, true);
+            string.Empty, "Unit_Chr_Soldier_Male_02_Alt_04", 1, false);
         BlobBuilderArray<CampaignMissionStarRuleBlob> stars = builder.Allocate(ref mission.StarRules, 3);
         stars[0] = new CampaignMissionStarRuleBlob
             { StarIndex = 1, Rule = MissionStarRuleKind.CompleteMission };
@@ -489,13 +486,14 @@ public sealed class M02EstablishBaseResultSettlementTests
         MissionObjectiveRuleKind rule,
         string role,
         string target,
+        int requiredCount,
         bool failure) => new()
     {
         ObjectiveId = new FixedString64Bytes(id),
         MissionRoleId = new FixedString64Bytes(role),
         TargetConfigId = new FixedString64Bytes(target),
         Rule = rule,
-        RequiredCount = 1,
+        RequiredCount = requiredCount,
         FailureOnRuleBreak = failure ? (byte)1 : (byte)0
     };
 

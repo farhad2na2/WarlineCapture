@@ -198,7 +198,8 @@ namespace Game.UI.Shell.Ecs
                 AllowedBuildingCount = definition.BuildCatalog.Length > 0
                     ? definition.BuildCatalog[0].MaxCount
                     : 0,
-                HostileUnitCount = CountGroupUnits(ref definition, definition.DelayedWaveUnitGroupId),
+                HostileUnitCount = HasDefenseObjective(ref definition) ?
+                    CountGroupUnits(ref definition, definition.DelayedWaveUnitGroupId) : 0,
                 BuildingDisabled = definition.BuildingDisabled,
                 ProductionDisabled = definition.ProductionDisabled,
                 EconomyDisabled = definition.EconomyDisabled,
@@ -282,6 +283,12 @@ namespace Game.UI.Shell.Ecs
             return 0;
         }
 
+        private static bool HasDefenseObjective(ref CampaignMissionDefinitionBlob definition)
+        {
+            for (int index = 0; index < definition.Objectives.Length; index++)
+                if (definition.Objectives[index].Rule == MissionObjectiveRuleKind.DefendMissionRole) return true;
+            return false;
+        }
         private static bool TryQueueLaunch(
             EntityManager entityManager,
             Entity campaignRoot,

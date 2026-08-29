@@ -239,20 +239,22 @@ namespace Game.Runtime
                         return false;
                 }
             }
-            return definition.Objectives.Length == 3 && buildRules == 1 && produceRules == 1 && defendRules == 1;
+            return definition.Objectives.Length is 2 or 3 && buildRules == 1 && produceRules == 1 &&
+                   defendRules == definition.Objectives.Length - 2;
         }
 
         internal static bool AllEstablishBaseObjectivesComplete(
             in CampaignMissionAttemptFactsComponent facts,
             ref CampaignMissionDefinitionBlob definition)
         {
-            if (!IsEstablishBaseDefinition(ref definition) || facts.HostileTotalCount <= 0 ||
-                facts.HostileDefeatedCount < facts.HostileTotalCount || facts.DefenseWaveActivated == 0)
+            if (!IsEstablishBaseDefinition(ref definition))
                 return false;
 
+            bool requiresDefense = false;
             for (int index = 0; index < definition.Objectives.Length; index++)
             {
                 ref CampaignMissionObjectiveBlob objective = ref definition.Objectives[index];
+                requiresDefense |= objective.Rule == MissionObjectiveRuleKind.DefendMissionRole;
                 bool complete = objective.Rule switch
                 {
                     MissionObjectiveRuleKind.BuildStructure =>
@@ -266,7 +268,9 @@ namespace Game.Runtime
                 if (!complete)
                     return false;
             }
-            return true;
+            return !requiresDefense || facts.HostileTotalCount > 0 &&
+                   facts.HostileDefeatedCount >= facts.HostileTotalCount &&
+                   facts.DefenseWaveActivated != 0;
         }
 
         private static bool TryResolveEstablishBaseTransition(

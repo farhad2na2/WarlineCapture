@@ -92,9 +92,14 @@ namespace Game.UI.Runtime
                     ? FormatObjective(in model.Objectives[index], _gameTextResolver)
                     : string.Empty);
             ApplyConditions(in model, m02);
+            string enemyIntelFallback = m02
+                ? model.HostileUnitCount > 0
+                    ? $"{model.HostileUnitCount} HOSTILES | DELAYED PATROL"
+                    : "SECURED BUILD ZONE | NO HOSTILES"
+                : $"{model.HostileUnitCount} CONFIRMED";
             Set(enemyIntelLabel, _gameTextResolver.Get(
                 m02 ? "mission.m02.enemy_intel" : "mission.m01.enemy_intel",
-                m02 ? $"{model.HostileUnitCount} HOSTILES | DELAYED PATROL" : $"{model.HostileUnitCount} CONFIRMED"));
+                enemyIntelFallback));
             for (int index = 0; index < (rewardLabels?.Length ?? 0); index++)
             {
                 bool visible = index < model.Rewards.Length;

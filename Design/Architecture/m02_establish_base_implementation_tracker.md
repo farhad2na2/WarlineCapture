@@ -1,8 +1,8 @@
 # M02 Establish The Base Implementation Tracker
 
 Date: 2026-08-29
-Status: Complete for the Editor lane; Android/Samsung certification remains owner-deferred
-Progress: 34/34 accepted items (100%)
+Status: Editor implementation complete; all owner findings and checked-wrapper acceptance gates pass, with Android/Samsung certification deferred by the project owner
+Progress: 35/35 accepted items (100%)
 Parent design: `Design/SagaChapters/Saga_Chapter01_First_Response.md` (`M02 Detailed Spec`)
 Technical architecture: `Design/Architecture/m02_establish_base_technical_architecture.md`
 Mission: `saga.ch01.m02.establish_base`
@@ -20,8 +20,8 @@ The first project-owner review gate was M02EB-029. After repeated playable findi
 1. Barracks is the sole M02 tutorial building and canonical rifle producer.
 2. Mission-scoped Barracks access becomes a permanent unlock only on first clear.
 3. The player places the Barracks in the world, spends real mission Credits/Materials, and queues one real rifle squad.
-4. One delayed patrol threatens the forward post. Existing ECS movement, targeting, combat, health, and death systems own the encounter.
-5. Victory requires Barracks completion, one produced rifle squad, and survival of the forward post through the defense wave.
+4. M02 is a non-combat build-and-production tutorial. Reserved delayed-patrol data remains authored for later use but does not spawn without a Defend objective.
+5. Victory requires Barracks completion and one accepted rifle-squad production order; it does not wait for nonexistent hostiles or a defense wave.
 6. Stars are completion, zero civilian losses, and build/produce completion under five minutes.
 7. Retry does not persist resource spend or first-clear rewards. Settlement remains idempotent.
 8. Dalia is introduced as the recurring field lead. ARIA and Samira retain their existing identities and voices.
@@ -262,6 +262,11 @@ Every item records an exact path allowlist before editing. Unexpected user chang
   **Acceptance:** all Editor findings are closed or explicitly deferred; authorities and evidence agree; main equals origin/main; repository contains no temporary output. Android certification remains explicitly deferred and no completion claim includes it.
   **Evidence:** Editor deliverables and acceptance boundary are reconciled in `Design/AgentReports/M02EstablishBase/M02EB-034/m02eb_034_final_editor_handoff.md`; Android/Samsung remains explicitly deferred and is not claimed as passed.
 
+- [x] **M02EB-035 - Close final placement, delivery visibility, audio isolation, and completion findings**
+  **Depends on:** M02EB-034.
+  **Acceptance:** guided Barracks placement stops at the real confirmation bar; ARIA and the Build drawer close after an accepted rifle order so helicopter delivery is visible; M02 spawns no reserved hostile patrol and emits no combat fire; one authoritative rifle-squad production fact completes M02 and opens the correct M02 result without legacy M01 identity copy.
+  **Evidence:** current-Editor full replay visibly presented the real `PLACE BARRACKS` confirmation bar, hid tutorial/build overlays during helicopter delivery, emitted no weapon-fire events after the M02 acceptance marker, and reached the authoritative `ESTABLISH THE BASE - FORWARD POST` Victory result. The final checked-wrapper matrix passed `[M02EstablishBaseGuidanceValidation] result=Passed tests=41`, `[M02EstablishBaseGuidanceRegressionValidation] result=Passed suites=15`, `[M02EstablishBaseHudResultValidation] result=Passed tests=5`, `[M02EstablishBaseHudResultRegressionValidation] result=Passed suites=6`, `[M02EstablishBaseContractValidation] result=Passed tests=8`, `[EditorFirstProductionFunctionalBatchValidation] result=Passed suites=8 tests=96`, `[M02EstablishBaseResultSettlementValidation] result=Passed tests=13`, `[M02EstablishBaseResultSettlementRegressionValidation] result=Passed suites=6`, and repeated `[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17` with zero compiler-error or failed-result markers. Logs: `/private/tmp/warline-m02eb-035-guidance-regression.log`, `/private/tmp/warline-m02eb-035-hud-result-regression.log`, `/private/tmp/warline-m02eb-035-contract.log`, `/private/tmp/warline-m02eb-035-production-batch.log`, and `/private/tmp/warline-m02eb-035-result-regression.log`.
+
 ## 6. Review Path
 
 The first user review occurs at M02EB-029:
@@ -272,8 +277,8 @@ The first user review occurs at M02EB-029:
 4. place Barracks on the highlighted valid footprint;
 5. observe Credits/Materials spend;
 6. queue and complete one rifle squad;
-7. respond to the warning and defend the post;
-8. inspect result/debrief and M03 reveal.
+7. observe the helicopter deliver the produced rifle squad with the world unobscured;
+8. inspect the automatic result/debrief and M03 reveal.
 
 ## 7. Decision Log
 
@@ -333,6 +338,7 @@ The first user review occurs at M02EB-029:
 | 2026-08-29 | Owner review rejected the horizontal base pan. The existing mission camera owner now starts M02 at the authoritative RTS pose centered on `camera_start`, waits for the comic handoff, smoothly zooms for `2.25 s` to the forward-post/build-lot focus, holds for `1 s`, and smoothly restores the same RTS focus and perspective in `2.25 s`. No second camera controller or map/content change was introduced. | Resolved; M2 247/247, opening guidance 38/38, operation map 10/10, M1 opening/replay 8/8, HUD lock 7/7, Burst/AOT 3/3, source growth 17/17, zero compile errors |
 | 2026-08-29 | Owner replay found rifle-production guidance repeating after popup changes, the opening ending at the base midpoint, and the guided Barracks placement touching the helipads. Popup content-version changes were incorrectly treated as new mission attempts, so Build Drawer rebinding cleared pending `DO IT`, narration, and step state. The existing HUD owner now distinguishes a replaced Match HUD from ordinary popup content, preserves pending guidance across valid rebinds, and acknowledges every accepted M2 UI action through the canonical guidance target. The opening still uses the approved smooth RTS focus sequence but returns to RTS zoom centered on the canonical Barracks lot, so the real center-screen placement path starts farther right and clear of the helipads. | Resolved; M2 251/251, M2 DO IT 8/8, opening guidance 38/38, shared ARIA HUD 23/23, source growth 17/17, zero compile errors |
 | 2026-08-29 | Full M2 Play-mode QA reproduced the remaining flashing rifle-production popup. Two state-contract defects were present: an accepted Queue Rifle acknowledgement did not increment the guidance projection version, leaving presentation caches stale, and the projection rebuilt the prior resource-review step while the accepted production request was still pending. The canonical guidance owner now versions every new acknowledgement, keeps Queue Rifle acknowledged while production is pending, and preserves the open Soldiers drawer for the exact step-six UI target. The guided Barracks uses the centered valid origin `(1012,370)`, away from the helipads. | Resolved and played end to end; exact Campaign route accepted one click each for steps `2,3,4,5,6`, created one real production queue entry, and recorded one drawer plus one ARIA transition without popup flashing. Focused guidance 41/41 and the 15-suite M2 regression aggregate passed. |
+| 2026-08-29 | Final owner review clarified that M02 has no combat encounter: placement confirmation must remain visible, helicopter delivery must be unobscured, reserved hostiles and rifle fire must remain absent, and production must resolve Victory. The canonical objective set is now Build plus Produce, reserved force groups spawn only when a Defend objective exists, authoritative operation-map production publishes through the existing produced-unit boundary, and one accepted squad-production fact completes the mission. | Accepted; current-Editor full replay reached Victory and the final checked-wrapper matrix passed. |
 
 ## 8. Current Validation And Blockers
 
@@ -343,6 +349,7 @@ The first user review occurs at M02EB-029:
 | M02 opening camera, comic handoff, and M01 panic-audio isolation | Passed | M02 starts at the authoritative RTS pose, waits for the opening comic handoff, smoothly focuses the authored forward-post/build-lot area, holds, and returns to RTS zoom centered on the canonical Barracks lot. Panic audio remains exact-M1-only. Current M2 coverage is 251/251. |
 | Barracks production granularity | Resolved | One accepted Barracks order now queues four canonical soldiers through the shared quantity-aware FIFO production owner. M2 Barracks production contracts and focused queue/consumer/spawn/request validations pass. |
 | Barracks item-view guidance | Passed | Exact rendered-row targeting and all real `DO IT` controls pass. The full Play-mode Campaign route accepted one click each for steps `2,3,4,5,6`, retained the Soldiers drawer through step 6, created one real rifle production queue entry, and observed exactly one drawer plus one ARIA transition without flashing or rollback. New acknowledgement-version and pending-production regressions bring focused guidance to 41/41; shared ARIA HUD remains 23/23. Live proof: `/private/tmp/warline-m02-guided-production-live-qa.png`. |
+| Final M02 placement/delivery/completion findings | Passed | The current Editor showed the real placement confirmation bar, closed ARIA and the Build drawer for helicopter delivery, produced no M02 weapon-fire events, and reached the authoritative M02 Victory result. The legacy body-level `M01 FIRST CONTACT` result block is hidden by the existing result-popup legacy-root path, and the focused HUD/result regression passes 5 tests across its 6-suite aggregate. |
 | Ambient forward-base activity | Passed | Four calm civilian staff and eight gameplay-inert base personnel remain deterministic and isolated from M1 panic behavior. |
 | Final M2 story panels | Passed | Three final M2-only panels bind brief/comms/debrief with preserved Sprite GUIDs, 1672x941 framing, no baked text, and final narrative validation 22/22. |
 | Exact Campaign-to-Match map launch | Passed | Correlated M2 identity loads the accepted physical source, authored-base logical window, and exact mission UI/runtime owners; final M2 launch/map tests are included in 251/251. |
@@ -351,8 +358,8 @@ The first user review occurs at M02EB-029:
 | Shared M02/M01 functional contracts | Passed | M2 251/251, focused guidance 41/41, the current 15-suite M2 guidance regression aggregate, M1 opening/replay PlayMode 8/8, M1 consolidated contracts 23/23, shared ARIA HUD 23/23, final narrative 22/22, and focused shared production suites all pass. |
 | Persian tutorial narration payload | Passed | The exact 140-byte M2 resource-review instruction survives gateway and narration projection unchanged. Gateway 3/3, narration 14/14, message priority 6/6, command intent 16/16, ECS contract 3/3, M1 guidance 14/14, and final clean-console validation pass. |
 | Architecture/source growth and compilation | Passed | Source growth 17/17; compilation succeeds with zero errors; warm placement and stable HUD managed-allocation checks pass; no duplicate route, UI, narrative, persistence, mission, or production owner was added. |
-| Checked wrapper workflow | Passed | `Tools/CI/invoke_unity_macos.sh` drove the final graphics capture and regression logs recorded in `m02eb_029_playable_review_readiness.md` |
+| Checked wrapper workflow | Passed | After the owner-authorized licensing reset, all five final GUI-licensed wrapper runs completed normally: guidance 41 tests/15 suites, HUD/result 5 tests/6 suites, contract 8 tests, shared production 96 tests/8 suites, result/settlement 13 tests/6 suites, and source growth 17 tests. No compiler-error or failed-result marker was present. |
 | Building authored-content aggregate | Pre-existing debt, no task regression | `BuildingRuntimeValidationTests` remains 9/12 on the existing authored `Tent_Regular` fixture expectations; all affected canonical bootstrap/delete boundary tests pass |
 | Aggregate ECS/Burst debt probe | Pre-existing debt, no task regression | Current snapshot calls remain confined to unrelated established systems; M02EB-022 adds no managed hot-loop snapshot path |
 
-M02 Establish Base is complete for the Editor lane at 34/34 accepted items (100%). It uses the separately authored military-base sector of the accepted story map, not the M01 Old Market/City Hall sector. Final comic, English/Persian narrative and tutorial copy, English/Persian voices, quantity-correct Barracks squad production, route/UI/lifecycle behavior, architecture, and performance checks pass. Android/Samsung certification remains owner-deferred and is not counted as passed. The pre-existing aggregate ECS/Burst and authored Tent fixture debts are unchanged by M02 and remain outside this completion claim.
+M02 Establish Base is at 35/35 accepted items (100%) for the Editor implementation. The final current-Editor replay passes the owner-visible placement, delivery, audio-isolation, and Victory route, and every final checked-wrapper focused/shared regression gate passes with zero compiler errors. Android/Samsung certification remains owner-deferred and is not counted as passed. The pre-existing aggregate ECS/Burst and authored Tent fixture debts are unchanged by M02 and remain outside this completion claim.

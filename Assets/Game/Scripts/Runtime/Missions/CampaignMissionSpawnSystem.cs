@@ -137,6 +137,8 @@ namespace Game.Runtime
             for (int groupIndex = 0; groupIndex < definition.ForceGroups.Length; groupIndex++)
             {
                 ref CampaignMissionForceGroupBlob group = ref definition.ForceGroups[groupIndex];
+                if (!ShouldSpawnForceGroup(ref definition, group.GroupId))
+                    continue;
                 for (int unitIndex = 0; unitIndex < group.Units.Length; unitIndex++)
                 {
                     ref CampaignMissionForceUnitBlob unit = ref group.Units[unitIndex];
@@ -148,7 +150,8 @@ namespace Game.Runtime
                             em, prefabs, unit.RuntimePrefabSourceKey, out _)) return false;
                 }
             }
-            return total == 7 && CountHostiles(ref definition) == 3;
+            int hostileCount = CountHostiles(ref definition);
+            return total == (hostileCount == 0 ? 4 : 7) && hostileCount is 0 or 3;
         }
 
         private static void SpawnAll(
@@ -166,6 +169,8 @@ namespace Game.Runtime
             for (int groupIndex = 0; groupIndex < definition.ForceGroups.Length; groupIndex++)
             {
                 ref CampaignMissionForceGroupBlob group = ref definition.ForceGroups[groupIndex];
+                if (!ShouldSpawnForceGroup(ref definition, group.GroupId))
+                    continue;
                 FixedString64Bytes routeId = FindRouteForGroup(ref definition, group.GroupId);
                 for (int unitIndex = 0; unitIndex < group.Units.Length; unitIndex++)
                 {
@@ -350,10 +355,25 @@ namespace Game.Runtime
             for (int groupIndex = 0; groupIndex < definition.ForceGroups.Length; groupIndex++)
             {
                 ref CampaignMissionForceGroupBlob group = ref definition.ForceGroups[groupIndex];
+                if (!ShouldSpawnForceGroup(ref definition, group.GroupId)) continue;
                 if (group.FactionId <= 1) continue;
                 for (int unitIndex = 0; unitIndex < group.Units.Length; unitIndex++) count += group.Units[unitIndex].Count;
             }
             return count;
+        }
+
+        internal static bool ShouldSpawnForceGroup(
+            ref CampaignMissionDefinitionBlob definition,
+            in FixedString64Bytes groupId)
+        {
+            if (definition.MissionRuntimeEnabled == 0 || definition.DelayedWaveUnitGroupId.IsEmpty ||
+                !definition.DelayedWaveUnitGroupId.Equals(groupId))
+                return true;
+
+            for (int index = 0; index < definition.Objectives.Length; index++)
+                if (definition.Objectives[index].Rule == Game.Missions.Contracts.MissionObjectiveRuleKind.DefendMissionRole)
+                    return true;
+            return false;
         }
 
         private static int CountAmbientInstances(ref CampaignMissionDefinitionBlob definition)

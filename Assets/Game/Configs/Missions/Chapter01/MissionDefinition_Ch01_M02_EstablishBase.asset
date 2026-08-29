@@ -35,15 +35,8 @@ MonoBehaviour:
     rule: 4
     missionRoleId: 
     targetConfigId: Unit_Chr_Soldier_Male_02_Alt_04
-    requiredCount: 4
-    failureOnRuleBreak: 0
-  - objectiveId: obj.ch01.m02.defend_forward_post
-    displayTextKey: mission.m02.objective.defend_forward_post
-    rule: 5
-    missionRoleId: role.friendly.forward_post
-    targetConfigId: 
     requiredCount: 1
-    failureOnRuleBreak: 1
+    failureOnRuleBreak: 0
   stars:
   - starIndex: 1
     rule: 1

@@ -60,7 +60,7 @@ public sealed class M02EstablishBaseGuidanceTests
             tests.BarracksDoItInvokesSelectionWithoutPlacement();
             tests.BarracksGuidanceTargetsTheRenderedBarracksItemView();
             tests.MissingUiSurfaceControlDoesNotFallBackToWorldPosition();
-            tests.PlacementDoItUsesTheRealPlaceAndConfirmButtons();
+            tests.PlacementDoItShowsTheRealConfirmationBeforeAccepting();
             tests.ResourceSpendContinueUsesTheTypedResourceStrip();
             tests.RifleDoItUsesTheRealRecruitButton();
             tests.RifleDoItWaitsForTheSoldierCatalogBeforeRecruiting();
@@ -850,7 +850,7 @@ public sealed class M02EstablishBaseGuidanceTests
     }
 
     [Test]
-    public void PlacementDoItUsesTheRealPlaceAndConfirmButtons()
+    public void PlacementDoItShowsTheRealConfirmationBeforeAccepting()
     {
         GameObject drawerObject = new("M02 Placement Command Test", typeof(RectTransform));
         GameObject primaryObject = new("Place", typeof(RectTransform), typeof(Image), typeof(Button));
@@ -882,17 +882,27 @@ public sealed class M02EstablishBaseGuidanceTests
                 null));
             SetPrivateField(catalog, "_hasSelectedItem", true);
 
-            Assert.IsTrue(catalog.TryInvokePrimaryActionFromGuidance());
-            Assert.AreEqual(1, command.PlaceRequests);
-            Assert.IsTrue(command.HasPendingBuildingPlacement);
-
             BuildPlacementConfirmationBarView confirmation =
                 placementObject.AddComponent<BuildPlacementConfirmationBarView>();
             SetPrivateField(confirmation, "root", placementObject.transform as RectTransform);
             SetPrivateField(confirmation, "confirmButton", confirmObject.GetComponent<Button>());
             confirmation.BindRuntimeCommands(command);
 
-            Assert.IsTrue(confirmation.TryInvokeConfirmFromGuidance());
+            MainMenuPlayUI ui = new();
+            SetPrivateField(ui, "_buildDrawerView", drawer);
+            SetPrivateField(ui, "_buildPlacementConfirmationBarView", confirmation);
+            MethodInfo execute = typeof(MainMenuPlayUI).GetMethod(
+                "TryExecuteGuidedBuildingPlacement",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.NotNull(execute);
+
+            Assert.IsTrue((bool)execute.Invoke(ui, null));
+            Assert.AreEqual(1, command.PlaceRequests);
+            Assert.AreEqual(0, command.ConfirmRequests,
+                "The first guided placement action must leave the confirmation bar visible.");
+            Assert.IsTrue(command.HasPendingBuildingPlacement);
+
+            Assert.IsTrue((bool)execute.Invoke(ui, null));
             Assert.AreEqual(1, command.ConfirmRequests);
             Assert.IsFalse(command.HasPendingBuildingPlacement);
         }
@@ -939,13 +949,14 @@ public sealed class M02EstablishBaseGuidanceTests
         GameObject rifle = new("Unit_Chr_Soldier_Male_02_Alt_04");
         AssistantHighlightPresentationSystemHelper helper = new();
         TestBuildingUiCommand command = new();
+        int closeRequests = 0;
         try
         {
             BuildDrawerView drawer = drawerObject.AddComponent<BuildDrawerView>();
             SetPrivateField(drawer, "buildButton", primaryObject.GetComponent<Button>());
             BuildDrawerCatalogRuntimeView catalog = drawerObject.AddComponent<BuildDrawerCatalogRuntimeView>();
             catalog.ConfigureForTests(drawer, null, null);
-            catalog.BindRuntimeCommands(command, null);
+            catalog.BindRuntimeCommands(command, () => closeRequests++);
             SetPrivateField(catalog, "_activeCategory", BuildDrawerCategory.Soldiers);
             SetPrivateField(catalog, "_selectedItem", new BuildDrawerCatalogItem(
                 BuildDrawerCategory.Soldiers,
@@ -974,6 +985,8 @@ public sealed class M02EstablishBaseGuidanceTests
             Assert.AreEqual(1, command.ProductionRequests);
             Assert.AreEqual(0, command.PlaceRequests);
             Assert.AreEqual((byte)AssistantRecommendationKind.Produce, acknowledgedKind);
+            Assert.AreEqual(1, closeRequests,
+                "Accepted guided production must close the drawer before helicopter delivery.");
         }
         finally
         {

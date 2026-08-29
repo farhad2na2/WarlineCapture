@@ -13,6 +13,7 @@ namespace Game.UI.Runtime
         private const byte ProduceRecommendationKind = 5;
         private const byte UiSurfaceTargetKind = 4;
         private bool _lastPrimaryActionAccepted;
+        private bool _guidedProductionInvocation;
 
         private void OnEnable()
         {
@@ -153,7 +154,15 @@ namespace Game.UI.Runtime
             }
 
             _lastPrimaryActionAccepted = false;
-            _primaryActionButton.onClick.Invoke();
+            _guidedProductionInvocation = true;
+            try
+            {
+                _primaryActionButton.onClick.Invoke();
+            }
+            finally
+            {
+                _guidedProductionInvocation = false;
+            }
             return _lastPrimaryActionAccepted;
         }
 
@@ -163,6 +172,8 @@ namespace Game.UI.Runtime
             RefreshQueue();
             UiShellRuntimeGateway.TryAcknowledgeCampaignGuidanceTarget(
                 UiCampaignGuidanceTargetKind.RifleProduction);
+            if (_guidedProductionInvocation)
+                _closeDrawer?.Invoke();
         }
 
         internal RectTransform ResolveRifleProductionGuidanceTarget()

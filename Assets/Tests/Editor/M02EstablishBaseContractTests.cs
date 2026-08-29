@@ -55,14 +55,12 @@ public sealed class M02EstablishBaseContractTests
     public void ObjectivesMatchTheDetailedSpec()
     {
         ReadOnlySpan<MissionObjectiveDefinitionConfig> objectives = LoadMission().Objectives;
-        Assert.AreEqual(3, objectives.Length);
+        Assert.AreEqual(2, objectives.Length);
         AssertObjective(objectives[0], "obj.ch01.m02.build_forward_barracks",
             MissionObjectiveRuleKind.BuildStructure, string.Empty, "Building_Barrack", 1, false);
         AssertObjective(objectives[1], "obj.ch01.m02.produce_rifle_squad",
             MissionObjectiveRuleKind.ProduceUnit, string.Empty,
-            "Unit_Chr_Soldier_Male_02_Alt_04", 4, false);
-        AssertObjective(objectives[2], "obj.ch01.m02.defend_forward_post",
-            MissionObjectiveRuleKind.DefendMissionRole, "role.friendly.forward_post", string.Empty, 1, true);
+            "Unit_Chr_Soldier_Male_02_Alt_04", 1, false);
     }
 
     [Test]

@@ -33,6 +33,7 @@ namespace Game.Runtime
                 .WithAll<
                     BuildingRuntimeStateTag,
                     BuildingRuntimeSpawnRequest,
+                    BuildingRuntimeDeleteRequest,
                     BuildingRuntimeOwnedBuildingSummary,
                     BuildingProducedUnitReadModel>()
                 .Build(ref state);
@@ -343,14 +344,14 @@ namespace Game.Runtime
                 !entityManager.HasComponent<Faction>(produced.Unit) ||
                 !entityManager.HasComponent<UnitHealth>(produced.Unit) ||
                 !entityManager.HasComponent<UnitSourcePrefabKey>(produced.Unit) ||
-                !FixedStringsEqual(in produced.UnitSourceKey, in requiredUnitId))
+                !FixedStringsEqualIgnoreCase(in produced.UnitSourceKey, in requiredUnitId))
                 return false;
 
             Faction faction = entityManager.GetComponentData<Faction>(produced.Unit);
             UnitHealth health = entityManager.GetComponentData<UnitHealth>(produced.Unit);
             UnitSourcePrefabKey source = entityManager.GetComponentData<UnitSourcePrefabKey>(produced.Unit);
             return faction.Id == FactionIdentity.PlayerFactionId && health.Max > 0 && health.Current > 0 &&
-                   source.Value.Equals(produced.UnitSourceKey);
+                   FixedStringsEqualIgnoreCase(in source.Value, in produced.UnitSourceKey);
         }
 
         private static bool HasEarlierProducedUnit(
@@ -371,7 +372,7 @@ namespace Game.Runtime
             return false;
         }
 
-        private static bool FixedStringsEqual(
+        private static bool FixedStringsEqualIgnoreCase(
             in FixedString64Bytes left,
             in FixedString128Bytes right)
         {
@@ -380,7 +381,23 @@ namespace Game.Runtime
 
             for (int index = 0; index < left.Length; index++)
             {
-                if (left[index] != right[index])
+                if (ToAsciiLower(left[index]) != ToAsciiLower(right[index]))
+                    return false;
+            }
+
+            return true;
+        }
+
+        private static bool FixedStringsEqualIgnoreCase(
+            in FixedString64Bytes left,
+            in FixedString64Bytes right)
+        {
+            if (left.Length != right.Length)
+                return false;
+
+            for (int index = 0; index < left.Length; index++)
+            {
+                if (ToAsciiLower(left[index]) != ToAsciiLower(right[index]))
                     return false;
             }
 
@@ -429,17 +446,18 @@ namespace Game.Runtime
 
             for (int index = 0; index < left.Length; index++)
             {
-                byte leftValue = left[index];
-                byte rightValue = right[index];
-                if (leftValue >= (byte)'A' && leftValue <= (byte)'Z')
-                    leftValue = (byte)(leftValue + ('a' - 'A'));
-                if (rightValue >= (byte)'A' && rightValue <= (byte)'Z')
-                    rightValue = (byte)(rightValue + ('a' - 'A'));
+                byte leftValue = ToAsciiLower(left[index]);
+                byte rightValue = ToAsciiLower(right[index]);
                 if (leftValue != rightValue)
                     return false;
             }
 
             return true;
         }
+
+        private static byte ToAsciiLower(byte value) =>
+            value >= (byte)'A' && value <= (byte)'Z'
+                ? (byte)(value + ('a' - 'A'))
+                : value;
     }
 }

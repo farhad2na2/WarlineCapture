@@ -11,7 +11,7 @@ using UnityEngine;
 public sealed class M02EstablishBaseProductionTests
 {
     private const string Marker =
-        "[M02EstablishBaseProductionValidation] result=Passed tests=8";
+        "[M02EstablishBaseProductionValidation] result=Passed tests=9";
 
     [MenuItem("Game/Validation/Run M02 Establish Base Production Focused")]
     public static void RunFocusedValidation()
@@ -22,6 +22,7 @@ public sealed class M02EstablishBaseProductionTests
             BuildingProductionQueueCompositionSystemHelperTests shared = new();
             tests.CanonicalRifleResolvesExactResourceCostsAndTimer();
             shared.OperationMapCampProductionBridge_AtomicConstructionResourcesSpendOnceAndQueueCanonicalRequest();
+            shared.OperationMapProducerLookup_PrefersCanonicalSquadQuantityBeforePlacement();
             shared.OperationMapProducerQueueConsumer_CompletesStrictFifoOnce();
             shared.OperationMapProducerSpawnTransaction_InstantiatesConfiguredUnitAndCompletesRequest();
             shared.ResolveProducedUnitFaction_DefaultsNeutralOrUnownedProductionToPlayer();

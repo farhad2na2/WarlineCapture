@@ -116,10 +116,16 @@ public sealed class M02EstablishBaseCampaignUiTests
         Assert.That(briefing.ProductionDisabled, Is.Zero);
         Assert.That(briefing.TransportDisabled, Is.EqualTo(1));
         Assert.That(briefing.AirDisabled, Is.EqualTo(1));
-        Assert.That(briefing.HostileUnitCount, Is.EqualTo(3));
-        Assert.That(briefing.Objectives.Length, Is.EqualTo(3));
+        Assert.That(briefing.HostileUnitCount, Is.Zero);
+        Assert.That(briefing.Objectives.Length, Is.EqualTo(2));
+        Assert.That(CampaignMissionSpawnSystem.ShouldSpawnForceGroup(
+            ref definition,
+            definition.DelayedWaveUnitGroupId), Is.False,
+            "M2 has no defense objective, so its reserved patrol data must not create runtime enemies.");
         Assert.That(briefing.Objectives[0].TargetConfigId.ToString(), Is.EqualTo(Barracks));
         Assert.That(briefing.Objectives[1].TargetConfigId.ToString(), Is.EqualTo(Rifle));
+        Assert.That(briefing.Objectives[1].RequiredCount, Is.EqualTo(1),
+            "One production order delivers the canonical four-soldier rifle squad.");
         Assert.That(briefing.Rewards[0].Amount, Is.EqualTo(320));
         Assert.That(briefing.Rewards[1].Amount, Is.EqualTo(1500));
         Assert.That(briefing.Rewards[2].Amount, Is.EqualTo(1));
@@ -335,7 +341,7 @@ public sealed class M02EstablishBaseCampaignUiTests
             new UiMissionObjectiveModel(
                 "obj.ch01.m02.produce_rifle_squad",
                 "mission.m02.objective.produce_rifle_squad", string.Empty, Rifle,
-                UiMissionObjectiveRuleKind.ProduceUnit, 4, false),
+                UiMissionObjectiveRuleKind.ProduceUnit, 1, false),
             new UiMissionObjectiveModel(
                 "obj.ch01.m02.defend_forward_post",
                 "mission.m02.objective.defend_forward_post", "role.friendly.forward_post", string.Empty,

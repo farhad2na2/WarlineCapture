@@ -19,7 +19,7 @@ using UnityEngine;
 
 public sealed class M02EstablishBaseBuildCatalogTests
 {
-    private const string Marker = "[M02EstablishBaseBuildCatalogValidation] result=Passed tests=8";
+    private const string Marker = "[M02EstablishBaseBuildCatalogValidation] result=Passed tests=10";
     private const string MissionId = "saga.ch01.m02.establish_base";
     private const string ScenarioId = "scenario.ch01.m02.establish_base";
     private const string MapId = "opmap.ch01.forward_post_01";
@@ -36,6 +36,8 @@ public sealed class M02EstablishBaseBuildCatalogTests
             tests.M02GatewayReturnsExactCatalogEntry();
             tests.M02BuildDrawerSourceExposesOnlyBarracks();
             tests.CompletedBarracksExposesOnlyCanonicalRifle();
+            tests.CompletedBarracksFallsBackToBuildingPlacementUnitRegistry();
+            tests.CanonicalDrawerSourcesResolveActualRifleItem();
             tests.MissionCatalogMissingFromGlobalSourceFailsClosed();
             tests.DisabledMissionRuntimeDoesNotRestrictCatalog();
             tests.UnrestrictedBuildDrawerSourcePreservesFullCatalog();
@@ -242,6 +244,66 @@ public sealed class M02EstablishBaseBuildCatalogTests
             UnityEngine.Object.DestroyImmediate(other);
             UnityEngine.Object.DestroyImmediate(barracks);
         }
+    }
+
+    [Test]
+    public void CompletedBarracksFallsBackToBuildingPlacementUnitRegistry()
+    {
+        GameObject rifle = new("Unit_Chr_Soldier_Male_02_Alt_04");
+        GameObject barracks = new(BarracksId);
+        try
+        {
+            PrefabSource missingDedicatedRegistry = new(null, Array.Empty<GameObject>());
+            PrefabSource placementRegistry = new(new[] { rifle }, new[] { barracks });
+            BuildDrawerMissionCatalogPrefabSource filtered = new();
+            filtered.ApplyForTests(
+                missingDedicatedRegistry,
+                placementRegistry,
+                true,
+                new[] { new UiMissionBuildCatalogEntryModel(BarracksId, 1) },
+                rifle.name);
+
+            Assert.AreEqual(1, filtered.UnitSpawnPrefabs.Count);
+            Assert.AreSame(rifle, filtered.UnitSpawnPrefabs[0]);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(rifle);
+            UnityEngine.Object.DestroyImmediate(barracks);
+        }
+    }
+
+    [Test]
+    public void CanonicalDrawerSourcesResolveActualRifleItem()
+    {
+        UnitPrefabRegistryAuthoringConfig unitRegistry =
+            AssetDatabase.LoadAssetAtPath<UnitPrefabRegistryAuthoringConfig>(
+                "Assets/Game/Configs/Scene/Game_UnitPrefabRegistry_Config.asset");
+        BuildingPlacementSystemConfig buildingPlacement =
+            AssetDatabase.LoadAssetAtPath<BuildingPlacementSystemConfig>(
+                "Assets/Game/Configs/Scene/Game_BuildingPlacement_Config.asset");
+        Assert.NotNull(unitRegistry);
+        Assert.NotNull(buildingPlacement);
+
+        BuildDrawerMissionCatalogPrefabSource filtered = new();
+        filtered.ApplyForTests(
+            unitRegistry,
+            buildingPlacement,
+            true,
+            new[] { new UiMissionBuildCatalogEntryModel(BarracksId, 1) },
+            "Unit_Chr_Soldier_Male_02_Alt_04");
+        Assert.AreEqual(1, filtered.UnitSpawnPrefabs.Count);
+        Assert.AreEqual("Unit_Chr_Soldier_Male_02_Alt_04", filtered.UnitSpawnPrefabs[0].name);
+
+        BuildDrawerCatalogQueryUiSystemHelper query = new();
+        query.ConfigureMetadataResolvers(
+            UiCatalogAuthoringMetadataUiSystemHelper.TryGetBuildingMetadata,
+            UiCatalogAuthoringMetadataUiSystemHelper.TryGetUnitMetadata);
+        List<BuildDrawerCatalogItem> items = new();
+        query.Collect(filtered, filtered, BuildDrawerCategory.Soldiers, items);
+        Assert.AreEqual(1, items.Count);
+        Assert.AreSame(filtered.UnitSpawnPrefabs[0], items[0].Prefab);
+        Assert.AreEqual(BuildDrawerCategory.Soldiers, items[0].Category);
     }
 
     [Test]

@@ -206,6 +206,17 @@ public sealed class M02EstablishBaseDoItTests
         }
     }
 
+    [Test]
+    public void RifleDoItKeepsBuildDrawerOpenWhileTheStagedActionRetries()
+    {
+        MatchHudAssistantUiSystemHelper helper = new();
+        SetField(helper, "_lastPanelModel",
+            Panel(6, AssistantRecommendationKind.Produce, AssistantTargetKind.UiSurface));
+
+        Assert.That(helper.IsBuildDrawerSelectionGuidance, Is.True,
+            "Reopening ARIA while rifle production is staged must not close the Build drawer and flash it.");
+    }
+
     private static UiAssistantPanelModel Panel(
         byte step,
         AssistantRecommendationKind recommendation,

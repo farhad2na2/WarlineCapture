@@ -123,10 +123,15 @@ namespace Game.UI.Runtime
 
             if (_activeCategory != BuildDrawerCategory.Soldiers)
             {
+                // Mission facts and prefab metadata can arrive one presentation update after
+                // the drawer opens. Refresh before resolving the typed tab, then let its UI
+                // rebuild complete before selecting the requested item.
+                Refresh();
                 Button soldiersTab = ResolveCategoryButton(BuildDrawerCategory.Soldiers);
-                if (soldiersTab == null || !soldiersTab.IsActive() || !soldiersTab.IsInteractable())
+                if (soldiersTab == null || !soldiersTab.IsActive())
                     return false;
                 soldiersTab.onClick.Invoke();
+                return false;
             }
 
             if (!_hasSelectedItem || _selectedItem.Category != BuildDrawerCategory.Soldiers)
@@ -137,6 +142,7 @@ namespace Game.UI.Runtime
                 if (itemButton == null || !itemButton.IsActive() || !itemButton.IsInteractable())
                     return false;
                 itemButton.onClick.Invoke();
+                return false;
             }
 
             if (!_hasSelectedItem || _selectedItem.Category != BuildDrawerCategory.Soldiers ||

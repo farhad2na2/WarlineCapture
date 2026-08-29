@@ -7,7 +7,7 @@ namespace Game.UI.Runtime
 {
     internal sealed partial class MatchHudAssistantUiSystemHelper
     {
-        private const float M02DoItReadyTimeoutSeconds = 3f;
+        private const float M02DoItReadyTimeoutSeconds = 8f;
         private const byte RecommendationSelect = 1;
         private const byte RecommendationBuild = 4;
         private const byte RecommendationProduce = 5;
@@ -171,7 +171,10 @@ namespace Game.UI.Runtime
             ((_lastPanelModel.RecommendationTargetKind == 4 &&
               _lastPanelModel.RecommendationKind == 1) ||
              (_lastPanelModel.TutorialStepCount == 9 &&
-              _lastPanelModel.TutorialStep == 4 &&
-              _lastPanelModel.RecommendationKind == 4));
+              ((_lastPanelModel.TutorialStep == 4 &&
+                _lastPanelModel.RecommendationKind == 4) ||
+               (_lastPanelModel.TutorialStep == 6 &&
+                _lastPanelModel.RecommendationKind == 5 &&
+                _lastPanelModel.RecommendationTargetKind == 4))));
     }
 }

@@ -20,11 +20,16 @@ public sealed class M02EstablishBasePlacementTests
     private const string MapId = "opmap.ch01.forward_post_01";
     private const string BarracksId = "Building_Barrack";
     private const string BuildAnchorId = "anchor.ch01.m02.build_lot";
+    private static readonly Vector2Int CanonicalBarracksFootprint = new(8, 14);
     private static RectInt CanonicalLot =>
         M02EstablishBaseForwardPostWindowValidation.ValidateCurrentDefinition();
 
     private static RectInt CanonicalPlacement =>
-        new(CanonicalLot.xMin + 2, CanonicalLot.yMin + 2, 20, 10);
+        new(
+            CanonicalLot.xMin + ((CanonicalLot.width - CanonicalBarracksFootprint.x) / 2),
+            CanonicalLot.yMin + ((CanonicalLot.height - CanonicalBarracksFootprint.y) / 2),
+            CanonicalBarracksFootprint.x,
+            CanonicalBarracksFootprint.y);
 
     [MenuItem("Game/Validation/Run M02 Establish Base Placement Focused")]
     public static void RunFocusedValidation()
@@ -34,13 +39,14 @@ public sealed class M02EstablishBasePlacementTests
             M02EstablishBasePlacementTests tests = new();
             tests.CanonicalProjectionCarriesExactBuildZone();
             tests.SameVersionBuildZoneChangeReprojectsExactData();
+            tests.BarracksPreferredOriginIsCenteredInsideCanonicalLot();
             tests.BarracksInsideCanonicalLotIsAccepted();
             tests.BarracksCrossingAnyCanonicalLotEdgeIsRejected();
             tests.UnlistedBuildingIsRejectedForActiveM02();
             tests.MissingOrStaleMapDataFailsClosed();
             tests.DisabledMissionRuntimePreservesUnrestrictedPlacement();
             tests.WarmPlacementPolicyDoesNotAllocateManagedMemory();
-            Debug.Log("[M02EstablishBasePlacementValidation] result=Passed tests=8");
+            Debug.Log("[M02EstablishBasePlacementValidation] result=Passed tests=9");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -122,7 +128,22 @@ public sealed class M02EstablishBasePlacementTests
         using Fixture fixture = new();
         RectInt lot = CanonicalLot;
         Assert.IsTrue(fixture.IsAllowed(CanonicalPlacement));
-        Assert.IsTrue(fixture.IsAllowed(new RectInt(lot.xMin + 3, lot.yMin + 3, 20, 10)));
+        Assert.IsTrue(fixture.IsAllowed(new RectInt(
+            lot.xMin + 1,
+            lot.yMin,
+            CanonicalBarracksFootprint.x,
+            CanonicalBarracksFootprint.y)));
+    }
+
+    [Test]
+    public void BarracksPreferredOriginIsCenteredInsideCanonicalLot()
+    {
+        using Fixture fixture = new();
+        Assert.IsTrue(fixture.TryResolvePreferredOrigin(
+            CanonicalBarracksFootprint,
+            out Vector2Int origin));
+        Assert.AreEqual(CanonicalPlacement.position, origin);
+        Assert.AreEqual(new Vector2Int(1012, 370), origin);
     }
 
     [Test]
@@ -130,10 +151,20 @@ public sealed class M02EstablishBasePlacementTests
     {
         using Fixture fixture = new();
         RectInt lot = CanonicalLot;
-        Assert.IsFalse(fixture.IsAllowed(new RectInt(lot.xMin - 1, lot.yMin + 2, 20, 10)));
-        Assert.IsFalse(fixture.IsAllowed(new RectInt(lot.xMin + 2, lot.yMin - 1, 20, 10)));
-        Assert.IsFalse(fixture.IsAllowed(new RectInt(lot.xMin + 5, lot.yMin + 2, 20, 10)));
-        Assert.IsFalse(fixture.IsAllowed(new RectInt(lot.xMin + 2, lot.yMin + 5, 20, 10)));
+        Assert.IsFalse(fixture.IsAllowed(new RectInt(
+            lot.xMin - 1, lot.yMin, CanonicalBarracksFootprint.x, CanonicalBarracksFootprint.y)));
+        Assert.IsFalse(fixture.IsAllowed(new RectInt(
+            lot.xMin, lot.yMin - 1, CanonicalBarracksFootprint.x, CanonicalBarracksFootprint.y)));
+        Assert.IsFalse(fixture.IsAllowed(new RectInt(
+            lot.xMax - CanonicalBarracksFootprint.x + 1,
+            lot.yMin,
+            CanonicalBarracksFootprint.x,
+            CanonicalBarracksFootprint.y)));
+        Assert.IsFalse(fixture.IsAllowed(new RectInt(
+            lot.xMin,
+            lot.yMin + 1,
+            CanonicalBarracksFootprint.x,
+            CanonicalBarracksFootprint.y)));
     }
 
     [Test]
@@ -316,13 +347,21 @@ public sealed class M02EstablishBasePlacementTests
             {
                 Prefab = Prefab,
                 DisplayName = "Barracks",
-                FootprintCells = new Vector2Int(20, 10)
+                FootprintCells = CanonicalBarracksFootprint
             };
         }
 
         internal bool IsAllowed(RectInt placement) =>
             CampaignMissionBuildingPlacementPolicy.IsAllowed(
                 _world.EntityManager, _queries, _building, placement);
+
+        internal bool TryResolvePreferredOrigin(Vector2Int footprint, out Vector2Int origin) =>
+            CampaignMissionBuildingPlacementPolicy.TryResolvePreferredOrigin(
+                _world.EntityManager,
+                _queries,
+                _building,
+                footprint,
+                out origin);
 
         public void Dispose()
         {

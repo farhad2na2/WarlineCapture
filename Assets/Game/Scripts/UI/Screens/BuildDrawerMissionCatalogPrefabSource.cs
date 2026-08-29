@@ -8,6 +8,10 @@ namespace Game.UI.Runtime
 {
     internal sealed class BuildDrawerMissionCatalogPrefabSource : ICatalogPrefabSource
     {
+        private const byte ProduceRecommendationKind = 5;
+        private const byte UiSurfaceTargetKind = 4;
+        private const byte EstablishBaseRifleStep = 6;
+        private const byte EstablishBaseTutorialStepCount = 9;
         private static readonly IReadOnlyList<GameObject> EmptyPrefabs = Array.Empty<GameObject>();
 
         private readonly List<string> _allowedBuildingConfigIds = new();
@@ -19,7 +23,7 @@ namespace Game.UI.Runtime
         private bool _restricted;
 
         public IReadOnlyList<GameObject> UnitSpawnPrefabs =>
-            _restricted ? _filteredUnits : _unitSource?.UnitSpawnPrefabs;
+            _restricted ? _filteredUnits : ResolveUnitPrefabs(_unitSource, _buildingSource);
 
         public IReadOnlyList<GameObject> BuildingSpawnPrefabs =>
             _restricted ? _filteredBuildings : _buildingSource?.BuildingSpawnPrefabs;
@@ -47,7 +51,7 @@ namespace Game.UI.Runtime
                 }
             }
 
-            if (catalog.CanRequestRequiredUnit)
+            if (catalog.CanRequestRequiredUnit || IsGuidedRifleProductionActive())
                 _requiredUnitConfigId = catalog.RequiredUnitConfigId;
             PopulateFilteredUnits();
             PopulateFilteredBuildings();
@@ -88,7 +92,12 @@ namespace Game.UI.Runtime
             if (string.IsNullOrWhiteSpace(_requiredUnitConfigId))
                 return;
 
-            IReadOnlyList<GameObject> units = _unitSource?.UnitSpawnPrefabs;
+            AppendMatchingUnitPrefabs(_unitSource?.UnitSpawnPrefabs);
+            AppendMatchingUnitPrefabs(_buildingSource?.UnitSpawnPrefabs);
+        }
+
+        private void AppendMatchingUnitPrefabs(IReadOnlyList<GameObject> units)
+        {
             if (units == null)
                 return;
 
@@ -96,12 +105,25 @@ namespace Game.UI.Runtime
             {
                 GameObject prefab = units[index];
                 if (prefab != null && string.Equals(
-                        prefab.name, _requiredUnitConfigId, StringComparison.Ordinal))
+                        prefab.name, _requiredUnitConfigId, StringComparison.Ordinal) &&
+                    !_filteredUnits.Contains(prefab))
                 {
                     _filteredUnits.Add(prefab);
                 }
             }
         }
+
+        private static IReadOnlyList<GameObject> ResolveUnitPrefabs(
+            ICatalogPrefabSource unitSource,
+            ICatalogPrefabSource buildingSource) =>
+            unitSource?.UnitSpawnPrefabs ?? buildingSource?.UnitSpawnPrefabs ?? EmptyPrefabs;
+
+        private static bool IsGuidedRifleProductionActive() =>
+            UiShellRuntimeGateway.TryReadMatchHudAssistantPanel(out UiAssistantPanelModel model) &&
+            model.TutorialStep == EstablishBaseRifleStep &&
+            model.TutorialStepCount == EstablishBaseTutorialStepCount &&
+            model.RecommendationKind == ProduceRecommendationKind &&
+            model.RecommendationTargetKind == UiSurfaceTargetKind;
 
         private void PopulateFilteredBuildings()
         {

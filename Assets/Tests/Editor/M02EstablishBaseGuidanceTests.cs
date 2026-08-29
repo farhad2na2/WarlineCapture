@@ -23,7 +23,7 @@ using UnityEngine.UI;
 public sealed class M02EstablishBaseGuidanceTests
 {
     private const string FocusedMarker =
-        "[M02EstablishBaseGuidanceValidation] result=Passed tests=38";
+        "[M02EstablishBaseGuidanceValidation] result=Passed tests=41";
     private static readonly float3 CanonicalCameraStartAnchor = new(935.5f, 0.009179778f, 390.5f);
     private static readonly float3 CanonicalForwardPostAnchor = new(940.5f, 0.009179778f, 351.5f);
     private static readonly float3 CanonicalBuildAnchor = new(1016.5f, 0.009179778f, 377.5f);
@@ -42,7 +42,8 @@ public sealed class M02EstablishBaseGuidanceTests
             tests.AuthoritativePlacementAdvancesToResourceSpendReview();
             tests.AcknowledgedResourceSpendWaitsForCompletionThenQueuesRifle();
             tests.RifleStepTargetsTheRealProductionControls();
-            tests.AcknowledgedRifleQueueClearsGuidance();
+            tests.AcknowledgedRifleQueueStaysHiddenWhileProductionIsPending();
+            tests.RifleQueueAcknowledgementInvalidatesThePresentationReadModel();
             tests.CompletedRifleKeepsAriaHiddenUntilWaveWarning();
             tests.WaveWarningPreemptsIncompleteRifleProduction();
             tests.WaveActivationPreemptsIncompleteRifleProduction();
@@ -62,6 +63,8 @@ public sealed class M02EstablishBaseGuidanceTests
             tests.PlacementDoItUsesTheRealPlaceAndConfirmButtons();
             tests.ResourceSpendContinueUsesTheTypedResourceStrip();
             tests.RifleDoItUsesTheRealRecruitButton();
+            tests.RifleDoItWaitsForTheSoldierCatalogBeforeRecruiting();
+            tests.RifleDoItPreservesBuildDrawerAcrossAriaRetry();
             tests.PlacementBarDisplaysCreditsAndMaterialsCost();
             tests.M02GuidanceUsesOnlyItsOwnNarrationEvents();
             tests.M01TutorialProjectionRemainsUnchanged();
@@ -382,7 +385,7 @@ public sealed class M02EstablishBaseGuidanceTests
     }
 
     [Test]
-    public void AcknowledgedRifleQueueClearsGuidance()
+    public void AcknowledgedRifleQueueStaysHiddenWhileProductionIsPending()
     {
         CampaignMissionGuidanceProjectionComponent queue = ProjectRifleQueueStep();
         queue.AcknowledgedGuidanceId = queue.GuidanceId;
@@ -392,9 +395,30 @@ public sealed class M02EstablishBaseGuidanceTests
             RequiredBuildingCompletedCount = 1
         };
 
-        Assert.IsTrue(TryProject(queue, facts, out CampaignMissionGuidanceProjectionComponent cleared));
-        Assert.AreEqual(0, cleared.Active);
-        Assert.AreEqual(CampaignMissionGuidancePromptKind.None, cleared.Prompt);
+        Assert.IsFalse(TryProject(queue, facts, out _),
+            "The acknowledged rifle instruction must remain stored and hidden until production completes.");
+        Assert.IsFalse(AssistantObjectiveProjectionUtility.TryBuildCampaignGuidanceRecommendation(
+            queue,
+            out _),
+            "An acknowledged queued-production instruction must not reopen ARIA while the queue runs.");
+    }
+
+    [Test]
+    public void RifleQueueAcknowledgementInvalidatesThePresentationReadModel()
+    {
+        CampaignMissionGuidanceProjectionComponent queue = ProjectRifleQueueStep();
+        uint previousVersion = queue.Version;
+
+        Assert.IsTrue(CampaignMissionGuidanceProjectionSystem.ApplyAcknowledgement(
+            ref queue,
+            queue.GuidanceId));
+        Assert.AreEqual(queue.GuidanceId, queue.AcknowledgedGuidanceId);
+        Assert.Greater(queue.Version, previousVersion,
+            "Acknowledging a retained instruction must invalidate the cached UI recommendation.");
+        Assert.IsFalse(CampaignMissionGuidanceProjectionSystem.ApplyAcknowledgement(
+            ref queue,
+            queue.GuidanceId),
+            "Duplicate UI callbacks must remain idempotent.");
     }
 
     [Test]
@@ -960,6 +984,104 @@ public sealed class M02EstablishBaseGuidanceTests
     }
 
     [Test]
+    public void RifleDoItWaitsForTheSoldierCatalogBeforeRecruiting()
+    {
+        UiShellRuntimeGateway.Register(null);
+        GameObject drawerObject = new("M02 Staged Rifle Production Guidance", typeof(RectTransform));
+        drawerObject.SetActive(false);
+        GameObject contentObject = new("Items", typeof(RectTransform));
+        contentObject.transform.SetParent(drawerObject.transform, false);
+        GameObject itemObject = new("Rifle Item", typeof(RectTransform), typeof(Image), typeof(Button));
+        itemObject.transform.SetParent(contentObject.transform, false);
+        GameObject primaryObject = new("Recruit", typeof(RectTransform), typeof(Image), typeof(Button));
+        primaryObject.transform.SetParent(drawerObject.transform, false);
+        GameObject rifle = new("Unit_Chr_Soldier_Male_02_Alt_04");
+        TestBuildingUiCommand command = new();
+        try
+        {
+            BuildDrawerView drawer = drawerObject.AddComponent<BuildDrawerView>();
+            BuildDrawerItemView item = itemObject.AddComponent<BuildDrawerItemView>();
+            SetPrivateField(item, "selectionButton", itemObject.GetComponent<Button>());
+            SetPrivateField(drawer, "drawerRoot", drawerObject);
+            SetPrivateField(drawer, "itemContentRoot", contentObject.transform as RectTransform);
+            SetPrivateField(drawer, "itemTemplate", item);
+            SetPrivateField(drawer, "buildButton", primaryObject.GetComponent<Button>());
+            SetPrivateField(drawer, "tabs", CreateCategoryTabs(drawerObject.transform));
+
+            BuildDrawerCatalogRuntimeView catalog = drawerObject.AddComponent<BuildDrawerCatalogRuntimeView>();
+            TestPrefabSource units = new(new[] { rifle }, Array.Empty<GameObject>());
+            catalog.ConfigureForTests(drawer, units, new TestPrefabSource(
+                Array.Empty<GameObject>(), Array.Empty<GameObject>()));
+            catalog.ConfigureCatalogMetadataResolvers(null, ResolveRequestableRifleMetadata);
+            catalog.BindRuntimeCommands(command, null);
+            drawerObject.SetActive(true);
+            BuildDrawerCatalogPresentationSystemHelper.WireTabs(
+                drawer,
+                GetPrivateField<List<BuildDrawerCatalogPresentationSystemHelper.ButtonBinding>>(
+                    catalog,
+                    "_tabBindings"),
+                catalog.SelectCategoryForTests);
+
+            Assert.IsFalse(catalog.TryInvokeRifleProductionFromGuidance(),
+                "The first update must switch and rebuild the Soldiers catalog only.");
+            Assert.AreEqual(0, command.ProductionRequests);
+            Assert.AreEqual(BuildDrawerCategory.Soldiers,
+                GetPrivateField<BuildDrawerCategory>(catalog, "_activeCategory"));
+            SetPrivateField(catalog, "_hasSelectedItem", false);
+            Assert.IsFalse(catalog.TryInvokeRifleProductionFromGuidance(),
+                "The explicit M2 selection update must select the typed rifle item only.");
+            Assert.AreEqual(0, command.ProductionRequests);
+            Assert.IsTrue(catalog.TryInvokeRifleProductionFromGuidance(),
+                "A later update may recruit only after the typed rifle item is selected.");
+            Assert.AreEqual(1, command.ProductionRequests);
+        }
+        finally
+        {
+            UiShellRuntimeGateway.Register(null);
+            UnityEngine.Object.DestroyImmediate(rifle);
+            UnityEngine.Object.DestroyImmediate(drawerObject);
+        }
+    }
+
+    [Test]
+    public void RifleDoItPreservesBuildDrawerAcrossAriaRetry()
+    {
+        MatchHudAssistantUiSystemHelper helper = new();
+        SetPrivateField(helper, "_lastPanelModel", new UiAssistantPanelModel(
+            1,
+            false,
+            0,
+            UiAssistantGoalRowModel.Empty,
+            UiAssistantGoalRowModel.Empty,
+            UiAssistantGoalRowModel.Empty,
+            UiAssistantMessageRowModel.Empty,
+            UiAssistantMessageRowModel.Empty,
+            UiAssistantMessageRowModel.Empty,
+            UiAssistantMessageRowModel.Empty,
+            UiAssistantMessageRowModel.Empty,
+            UiAssistantTargetLockModel.Empty,
+            UiAssistantNarrationModel.Empty,
+            true,
+            "Queue a rifle squad",
+            "Open production, select Soldiers, and recruit the required rifle squad.",
+            "HIGH",
+            "DO IT",
+            true,
+            true,
+            false,
+            false,
+            string.Empty,
+            string.Empty,
+            recommendationKind: (byte)AssistantRecommendationKind.Produce,
+            recommendationTargetKind: (byte)AssistantTargetKind.UiSurface,
+            tutorialStep: 6,
+            tutorialStepCount: 9));
+
+        Assert.IsTrue(helper.IsBuildDrawerSelectionGuidance,
+            "The ARIA retry must preserve the open Build drawer while Soldiers, rifle, and Recruit stage.");
+    }
+
+    [Test]
     public void PlacementBarDisplaysCreditsAndMaterialsCost()
     {
         Assert.AreEqual("40,000 CR / 90 MAT",
@@ -1218,6 +1340,54 @@ public sealed class M02EstablishBaseGuidanceTests
         null,
         null);
 
+    private static BuildDrawerTabView[] CreateCategoryTabs(Transform parent)
+    {
+        BuildDrawerTabView[] tabs = new BuildDrawerTabView[4];
+        for (int index = 0; index < tabs.Length; index++)
+        {
+            GameObject tabObject = new(
+                $"{(BuildDrawerCategory)index} Tab",
+                typeof(RectTransform),
+                typeof(Image),
+                typeof(Button));
+            tabObject.transform.SetParent(parent, false);
+            BuildDrawerTabView tab = new();
+            SetPrivateField(tab, "category", (BuildDrawerCategory)index);
+            SetPrivateField(tab, "button", tabObject.GetComponent<Button>());
+            SetPrivateField(tab, "frame", tabObject.GetComponent<Image>());
+            tabs[index] = tab;
+        }
+
+        return tabs;
+    }
+
+    private static bool ResolveRequestableRifleMetadata(
+        GameObject prefab,
+        out UiUnitCatalogMetadata metadata)
+    {
+        metadata = new UiUnitCatalogMetadata(
+            "Rifle Squad",
+            "Required rifle squad",
+            canRequest: prefab != null && prefab.name == "Unit_Chr_Soldier_Male_02_Alt_04",
+            materialsCost: 20,
+            productionDurationSeconds: 5f,
+            footprintCells: Vector2Int.one,
+            portrait: null,
+            cardPortrait: null,
+            actionPortrait: null,
+            isAirUnit: false,
+            isProductionTransportUnit: false,
+            soldierTransportCapacity: 0,
+            allowIdleWander: false,
+            resourceHaulerBarrelCapacity: 0,
+            canAttack: true,
+            attackDamage: 1,
+            attackRange: 1f,
+            speed: 1f,
+            maxHealth: 1);
+        return metadata.CanRequest;
+    }
+
     private static void RunValidation(Action validation)
     {
         ValidationExit.ClearLastExitCode();
@@ -1284,6 +1454,20 @@ public sealed class M02EstablishBaseGuidanceTests
         public void CancelBuildingPlacement() => HasPendingBuildingPlacement = false;
 
         public bool RotateBuildingPlacement() => HasPendingBuildingPlacement;
+    }
+
+    private sealed class TestPrefabSource : ICatalogPrefabSource
+    {
+        public TestPrefabSource(
+            IReadOnlyList<GameObject> units,
+            IReadOnlyList<GameObject> buildings)
+        {
+            UnitSpawnPrefabs = units;
+            BuildingSpawnPrefabs = buildings;
+        }
+
+        public IReadOnlyList<GameObject> UnitSpawnPrefabs { get; }
+        public IReadOnlyList<GameObject> BuildingSpawnPrefabs { get; }
     }
 }
 #endif

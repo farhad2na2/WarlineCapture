@@ -248,9 +248,7 @@ namespace Game.Runtime
                 if (facts.RequiredUnitProducedCount > 0)
                     return CampaignMissionGuidancePromptKind.None;
                 if (current.Prompt == CampaignMissionGuidancePromptKind.EstablishBaseQueueRifle)
-                    return current.GuidanceId != 0 && current.AcknowledgedGuidanceId == current.GuidanceId
-                        ? CampaignMissionGuidancePromptKind.None
-                        : CampaignMissionGuidancePromptKind.EstablishBaseQueueRifle;
+                    return CampaignMissionGuidancePromptKind.EstablishBaseQueueRifle;
                 if (current.Prompt == CampaignMissionGuidancePromptKind.EstablishBaseObserveResourceSpend &&
                     current.GuidanceId != 0 && current.AcknowledgedGuidanceId == current.GuidanceId)
                 {
@@ -278,11 +276,23 @@ namespace Game.Runtime
         private static bool ConsumeAcknowledgements(ref CampaignMissionGuidanceProjectionComponent current,
             DynamicBuffer<CampaignMissionGuidanceAcknowledgementRequestElement> requests, in CampaignMissionRuntimeComponent runtime)
         {
-            int before = current.AcknowledgedGuidanceId;
+            bool acknowledged = false;
             for (int i = 0; i < requests.Length; i++) if (requests[i].GuidanceId == current.GuidanceId &&
                 requests[i].SessionToken.Equals(runtime.SessionToken) && requests[i].AttemptOrdinal == runtime.AttemptOrdinal)
-                current.AcknowledgedGuidanceId = requests[i].GuidanceId;
-            requests.Clear(); return before != current.AcknowledgedGuidanceId;
+                acknowledged |= ApplyAcknowledgement(ref current, requests[i].GuidanceId);
+            requests.Clear(); return acknowledged;
+        }
+
+        internal static bool ApplyAcknowledgement(
+            ref CampaignMissionGuidanceProjectionComponent current,
+            int guidanceId)
+        {
+            if (guidanceId == 0 || current.AcknowledgedGuidanceId == guidanceId)
+                return false;
+
+            current.AcknowledgedGuidanceId = guidanceId;
+            current.Version = Next(current.Version);
+            return true;
         }
 
         private void ResolveMissionEntities(ref SystemState state, in CampaignMissionRuntimeComponent runtime,

@@ -271,7 +271,7 @@ namespace Game.Components
         public AssistantMessagePriority Priority;
         public AssistantRecommendationKind RelatedKind;
         public FixedString64Bytes SuppressionKey;
-        public FixedString128Bytes Text;
+        public FixedString512Bytes Text;
         public FixedString64Bytes AudioEventId;
         public float CreatedAt;
         public float ExpiresAt;
@@ -286,7 +286,7 @@ namespace Game.Components
         public int MessageId;
         public AssistantMessagePriority Priority;
         public AssistantCommandIntentStatus Status;
-        public FixedString128Bytes Text;
+        public FixedString512Bytes Text;
         public FixedString64Bytes AudioEventId;
         public uint AudioEventHash;
         public int AudioPlaybackRequestId;

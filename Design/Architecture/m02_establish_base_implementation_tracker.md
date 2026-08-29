@@ -329,6 +329,7 @@ The first user review occurs at M02EB-029:
 | 2026-08-29 | The shared production recipe gained explicit quantity. The Barracks remains the sole producer, one accepted order queues four canonical rifle-soldier spawns through the existing FIFO owner, and M02 requires all four. | Resolved; focused shared production and M2 246/246 passed |
 | 2026-08-29 | Three final comic panels, 9 bilingual story lines, 7 bilingual tutorial instructions, 18 narrative WAV files, and 14 tutorial WAV files were integrated through existing narrative/audio owners. | M02EB-030 through M02EB-032 accepted |
 | 2026-08-29 | Integrated Editor closeout passed M2 246/246, narrative 22/22, M1 aggregate 23/23, shared ARIA HUD 21/21, source growth 17/17, focused shared production suites, zero compiler errors, and an empty final Unity error console. | M02EB-033 and M02EB-034 accepted; Android deferred |
+| 2026-08-29 | Owner playthrough exposed a 140-byte Persian tutorial instruction exceeding the shared `FixedString128Bytes` ECS narration payload. The existing external-buffer message and narration elements now use `FixedString512Bytes`, with every producer using the same unmanaged type. | Resolved; exact Persian gateway/narration regressions, M2 246/246, affected M1/shared UI, source growth, and steady-state diagnostics passed |
 
 ## 8. Current Validation And Blockers
 
@@ -345,6 +346,7 @@ The first user review occurs at M02EB-029:
 | Exact M2 brief-to-guidance route | Passed | The route begins with the final comic, reaches real Build/Barracks/placement/resource/production controls, and uses complete English/Persian text and ARIA narration. |
 | Graphics-enabled M02 authored-base route | Passed | Metal 1920x1080 capture passed with nonblank compound/overview images, authored fog/lights/`Military_Demo` volume, and all four opening command-squad units grounded; the delayed hostile wave is intentionally inactive. Evidence is under `Design/AgentReports/M02EstablishBase/M02EB-029/`. |
 | Shared M02/M01 functional contracts | Passed | M2 246/246, M1 consolidated contracts 23/23, shared ARIA HUD 21/21, final narrative 22/22, and focused shared production suites all pass. |
+| Persian tutorial narration payload | Passed | The exact 140-byte M2 resource-review instruction survives gateway and narration projection unchanged. Gateway 3/3, narration 14/14, message priority 6/6, command intent 16/16, ECS contract 3/3, M1 guidance 14/14, and final clean-console validation pass. |
 | Architecture/source growth and compilation | Passed | Source growth 17/17; compilation succeeds with zero errors; warm placement and stable HUD managed-allocation checks pass; no duplicate route, UI, narrative, persistence, mission, or production owner was added. |
 | Checked wrapper workflow | Passed | `Tools/CI/invoke_unity_macos.sh` drove the final graphics capture and regression logs recorded in `m02eb_029_playable_review_readiness.md` |
 | Building authored-content aggregate | Pre-existing debt, no task regression | `BuildingRuntimeValidationTests` remains 9/12 on the existing authored `Tent_Regular` fixture expectations; all affected canonical bootstrap/delete boundary tests pass |

@@ -27,6 +27,8 @@ public sealed class AssistantNarrationRequestSystemTests
         {
             RunCase(test => test.AssistantNarrationRequestSystem_CreatesRequestForImportantMessage());
             passed++;
+            RunCase(test => test.AssistantNarrationRequestSystem_PreservesLongPersianUtf8Text());
+            passed++;
             RunCase(test => test.AssistantNarrationRequestSystem_SuppressesDuplicateRequests());
             passed++;
             RunCase(test => test.AssistantNarrationRequestSystem_RespectsNarrationModeGate());
@@ -124,6 +126,22 @@ public sealed class AssistantNarrationRequestSystemTests
         Assert.AreEqual(0, narrationState.LastSpokenMessageId);
         Assert.AreEqual(AssistantNarrationMode.Important, narrationState.Mode);
         Assert.AreEqual(1, narrationState.UiDirty);
+    }
+
+    [Test]
+    public void AssistantNarrationRequestSystem_PreservesLongPersianUtf8Text()
+    {
+        const string text =
+            "نوار منابع را بررسی کنید. سربازخانه ۴۰ هزار اعتبار و ۹۰ واحد مصالح هزینه دارد.";
+        Entity boundary = CreateBoundary(AssistantNarrationMode.Important);
+        AddMessage(boundary, 1006, AssistantMessagePriority.High, text, requiresNarration: 1);
+
+        _narrationSystem.Update(_world.Unmanaged);
+
+        DynamicBuffer<AssistantNarrationRequestElement> requests =
+            _entityManager.GetBuffer<AssistantNarrationRequestElement>(boundary);
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(text, requests[0].Text.ToString());
     }
 
     [Test]
@@ -509,7 +527,7 @@ public sealed class AssistantNarrationRequestSystemTests
         };
         AssistantNarrationRequestElement request = new()
         {
-            Text = new FixedString128Bytes("Hostile cell spotted"),
+            Text = new FixedString512Bytes("Hostile cell spotted"),
             AudioEventId = new FixedString64Bytes(AudioEventIds.VOARIAMessageWarningGroundAttackType),
             AudioPlaybackRequestId = 7
         };
@@ -643,7 +661,7 @@ public sealed class AssistantNarrationRequestSystemTests
             Priority = priority,
             RelatedKind = AssistantRecommendationKind.Explain,
             SuppressionKey = new FixedString64Bytes(suppressionKey ?? $"test.{messageId}"),
-            Text = new FixedString128Bytes(text),
+            Text = new FixedString512Bytes(text),
             AudioEventId = new FixedString64Bytes(audioEventId ?? $"aria.{messageId}"),
             RequiresNarration = requiresNarration,
             Acknowledged = 0

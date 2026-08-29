@@ -95,7 +95,7 @@ namespace Game.UI.Shell.Ecs
                 int messageId = ThreatMessageBaseId + normalizedThreatId;
                 FixedString64Bytes suppressionKey = new("assistant.threat.");
                 suppressionKey.Append(normalizedThreatId);
-                FixedString128Bytes body = BuildThreatBody(threat);
+                FixedString512Bytes body = BuildThreatBody(threat);
                 FixedString64Bytes audioEventId = ThreatAudioEventId(threat.Kind);
                 changed |= UpsertMessage(
                     messages,
@@ -149,7 +149,7 @@ namespace Game.UI.Shell.Ecs
                         ? AssistantRecommendationKind.Explain
                         : AssistantRecommendationKind.DefensiveAlert,
                     suppressionKey,
-                    CopyTo128(result.Message),
+                    CopyTo512(result.Message),
                     default,
                     now,
                     now + 6f,
@@ -172,7 +172,7 @@ namespace Game.UI.Shell.Ecs
             AssistantMessagePriority priority,
             AssistantRecommendationKind relatedKind,
             FixedString64Bytes suppressionKey,
-            FixedString128Bytes text,
+            FixedString512Bytes text,
             FixedString64Bytes audioEventId,
             float createdAt,
             float expiresAt,
@@ -324,9 +324,9 @@ namespace Game.UI.Shell.Ecs
             return -1;
         }
 
-        private static FixedString128Bytes BuildThreatBody(AssistantThreatReadModelElement threat)
+        private static FixedString512Bytes BuildThreatBody(AssistantThreatReadModelElement threat)
         {
-            FixedString128Bytes text = default;
+            FixedString512Bytes text = default;
             text.Append(threat.FriendlyName.Length > 0
                 ? threat.FriendlyName
                 : new FixedString64Bytes("FRIENDLY UNIT"));
@@ -351,9 +351,9 @@ namespace Game.UI.Shell.Ecs
             return default;
         }
 
-        private static FixedString128Bytes CopyTo128(FixedString64Bytes source)
+        private static FixedString512Bytes CopyTo512(FixedString64Bytes source)
         {
-            FixedString128Bytes result = default;
+            FixedString512Bytes result = default;
             result.Append(source);
             return result;
         }

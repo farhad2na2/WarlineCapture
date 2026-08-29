@@ -647,12 +647,12 @@ namespace Game.UI.Shell.Ecs
             AssistantCommandIntentRequestElement request,
             int reasonCode)
         {
-            FixedString128Bytes text = reasonCode switch
+            FixedString512Bytes text = reasonCode switch
             {
-                ReasonMissingPreviewTarget => new FixedString128Bytes("ARIA needs a map target before it can show that action."),
-                ReasonMissingSelectionTarget => new FixedString128Bytes("ARIA could not find a selectable unit for that action."),
-                ReasonUnsupportedIntent => new FixedString128Bytes("That ARIA action is not available yet. Try Show Me first."),
-                _ => new FixedString128Bytes("ARIA could not complete that action.")
+                ReasonMissingPreviewTarget => new FixedString512Bytes("ARIA needs a map target before it can show that action."),
+                ReasonMissingSelectionTarget => new FixedString512Bytes("ARIA could not find a selectable unit for that action."),
+                ReasonUnsupportedIntent => new FixedString512Bytes("That ARIA action is not available yet. Try Show Me first."),
+                _ => new FixedString512Bytes("ARIA could not complete that action.")
             };
 
             messages.Add(new AssistantMessageElement

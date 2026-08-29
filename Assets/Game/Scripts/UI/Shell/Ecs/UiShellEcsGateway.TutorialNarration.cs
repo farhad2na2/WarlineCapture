@@ -61,7 +61,7 @@ namespace Game.UI.Shell.Ecs
                 Priority = AssistantMessagePriority.High,
                 RelatedKind = AssistantRecommendationKind.Explain,
                 SuppressionKey = suppressionKey,
-                Text = new FixedString128Bytes(text.Trim()),
+                Text = new FixedString512Bytes(text.Trim()),
                 AudioEventId = audioEventId,
                 CreatedAt = now,
                 ExpiresAt = now + TutorialMessageLifetimeSeconds,

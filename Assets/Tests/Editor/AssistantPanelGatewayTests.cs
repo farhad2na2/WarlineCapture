@@ -1,6 +1,8 @@
 using System;
+using System.Text;
 using Game.Components;
 using Game.UI.Contracts;
+using Game.UI.Runtime;
 using Game.UI.Shell.Contracts.Ecs;
 using Game.UI.Shell.Ecs;
 using NUnit.Framework;
@@ -24,7 +26,10 @@ public sealed class AssistantPanelGatewayTests
             tests.TearDown();
             tests.SetUp();
             tests.UnchangedGatewayPollsAllocateZeroManagedBytes();
-            Debug.Log("[AssistantPanelGatewayValidation] result=Passed tests=2");
+            tests.TearDown();
+            tests.SetUp();
+            tests.TutorialNarrationGatewayPreservesLongPersianUtf8Text();
+            Debug.Log("[AssistantPanelGatewayValidation] result=Passed tests=3");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -100,6 +105,27 @@ public sealed class AssistantPanelGatewayTests
         Assert.IsTrue(allReadsSucceeded);
         Assert.AreEqual(0, allocatedBytes, "Unchanged assistant gateway polling must allocate zero managed bytes.");
         GC.KeepAlive(model.Version);
+    }
+
+    [Test]
+    public void TutorialNarrationGatewayPreservesLongPersianUtf8Text()
+    {
+        const string text =
+            "نوار منابع را بررسی کنید. سربازخانه ۴۰ هزار اعتبار و ۹۰ واحد مصالح هزینه دارد.";
+        Entity boundary = CreateBoundary();
+
+        Assert.Greater(Encoding.UTF8.GetByteCount(text), 127,
+            "The regression text must exceed FixedString128Bytes UTF-8 capacity.");
+        Assert.IsTrue(UiShellRuntimeGateway.TryEnqueueTutorialNarration(
+            5,
+            9,
+            UiTutorialNarrationPhase.PrimaryAction,
+            text));
+
+        DynamicBuffer<AssistantMessageElement> messages =
+            _entityManager.GetBuffer<AssistantMessageElement>(boundary);
+        Assert.AreEqual(1, messages.Length);
+        Assert.AreEqual(text, messages[0].Text.ToString());
     }
 
     private Entity CreateBoundary()

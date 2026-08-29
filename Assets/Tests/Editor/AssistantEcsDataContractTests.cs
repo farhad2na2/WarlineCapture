@@ -129,7 +129,7 @@ public sealed class AssistantEcsDataContractTests
             Priority = AssistantMessagePriority.Critical,
             RelatedKind = AssistantRecommendationKind.DefensiveAlert,
             SuppressionKey = new FixedString64Bytes("threat.warning"),
-            Text = new FixedString128Bytes("Hostile movement detected."),
+            Text = new FixedString512Bytes("Hostile movement detected."),
             AudioEventId = new FixedString64Bytes("VO.Assistant.Threat.Warning.01"),
             RequiresNarration = 1
         });
@@ -140,7 +140,7 @@ public sealed class AssistantEcsDataContractTests
             MessageId = 11,
             Priority = AssistantMessagePriority.Critical,
             Status = AssistantCommandIntentStatus.Pending,
-            Text = new FixedString128Bytes("Hostile movement detected."),
+            Text = new FixedString512Bytes("Hostile movement detected."),
             AudioEventId = new FixedString64Bytes("VO.Assistant.Threat.Warning.01"),
             InterruptsLowerPriority = 1
         });

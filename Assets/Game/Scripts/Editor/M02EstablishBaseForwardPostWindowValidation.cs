@@ -394,11 +394,20 @@ namespace Game.Editor
                     BuildLotSearch.Contains(new Vector2Int(buildLot.xMax - 1, buildLot.yMax - 1)),
                 "M02 Barracks lot left the reviewed clear apron beside the authored military base.");
 
-            Vector3 sweepStart = FindAnchor(logical, "anchor.ch01.m02.resource_focus").Position;
-            Vector3 sweepEnd = FindAnchor(logical, "anchor.ch01.m02.build_lot").Position;
-            float sweepDistance = HorizontalDistance(sweepStart, sweepEnd);
-            Require(sweepDistance >= 120f && sweepDistance <= 280f,
-                $"M02 opening sweep no longer travels horizontally across the military base ({sweepDistance:F2}m).");
+            Vector3 cameraStart = FindAnchor(logical, "anchor.ch01.m02.camera_start").Position;
+            Vector3 forwardPost = FindAnchor(logical, "anchor.ch01.m02.forward_post").Position;
+            Vector3 buildLotFocus = FindAnchor(logical, "anchor.ch01.m02.build_lot").Position;
+            Vector3 cinematicFocus = Vector3.Lerp(
+                forwardPost,
+                buildLotFocus,
+                0.56f);
+            Require(HorizontalDistance(cameraStart, cinematicFocus) <= 65f,
+                "M02 opening focus must remain a local zoom over the authored military-base area.");
+            Vector2Int focusCell = new(
+                Mathf.FloorToInt(cinematicFocus.x),
+                Mathf.FloorToInt(cinematicFocus.z));
+            Require(MilitaryBaseOperationalCore.Contains(focusCell),
+                "M02 opening focus left the authored military-base operational core.");
         }
 
         private static void ValidateAnchorRoute(OperationMapDefinition logical)

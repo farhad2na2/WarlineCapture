@@ -161,8 +161,7 @@ namespace Game.Runtime
                         CampaignMissionSpawnSystem.QueueInitialRtsOverview(
                             state.EntityManager,
                             focusEntity,
-                            current.FriendlyFocus,
-                            ShouldUseEstablishBaseOpening(runtime.MissionId));
+                            current.FriendlyFocus);
                         current.InitialRtsOverviewRequested = 1;
                         opening.ValueRW = current;
                         break;

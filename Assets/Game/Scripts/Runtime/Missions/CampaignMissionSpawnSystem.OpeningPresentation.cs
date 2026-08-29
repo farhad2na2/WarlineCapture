@@ -8,10 +8,13 @@ namespace Game.Runtime
     {
         private static readonly FixedString64Bytes EstablishBaseMissionId =
             "saga.ch01.m02.establish_base";
-        private static readonly FixedString64Bytes EstablishBaseSweepStartAnchorId =
-            "anchor.ch01.m02.resource_focus";
-        private static readonly FixedString64Bytes EstablishBaseSweepEndAnchorId =
+        private static readonly FixedString64Bytes EstablishBaseCameraStartAnchorId =
+            "anchor.ch01.m02.camera_start";
+        private static readonly FixedString64Bytes EstablishBaseForwardPostAnchorId =
+            "anchor.ch01.m02.forward_post";
+        private static readonly FixedString64Bytes EstablishBaseBuildLotAnchorId =
             "anchor.ch01.m02.build_lot";
+        internal const float EstablishBaseFocusTowardBuildLot = 0.56f;
 
         internal static void ResolveOpeningPresentationFocus(
             in FixedString64Bytes missionId,
@@ -26,13 +29,17 @@ namespace Game.Runtime
             openingEndFocus = hostileFocus;
             establishingFocus = math.lerp(playerFocus, hostileFocus, 0.40f);
             if (!missionId.Equals(EstablishBaseMissionId) ||
-                !TryFindAnchor(ref map, EstablishBaseSweepStartAnchorId, out OperationMapAnchorBlob start) ||
-                !TryFindAnchor(ref map, EstablishBaseSweepEndAnchorId, out OperationMapAnchorBlob end))
+                !TryFindAnchor(ref map, EstablishBaseCameraStartAnchorId, out OperationMapAnchorBlob cameraStart) ||
+                !TryFindAnchor(ref map, EstablishBaseForwardPostAnchorId, out OperationMapAnchorBlob forwardPost) ||
+                !TryFindAnchor(ref map, EstablishBaseBuildLotAnchorId, out OperationMapAnchorBlob buildLot))
                 return;
 
-            openingStartFocus = start.Position;
-            openingEndFocus = end.Position;
-            establishingFocus = math.lerp(start.Position, end.Position, 0.5f);
+            openingStartFocus = cameraStart.Position;
+            openingEndFocus = buildLot.Position;
+            establishingFocus = math.lerp(
+                forwardPost.Position,
+                buildLot.Position,
+                EstablishBaseFocusTowardBuildLot);
         }
     }
 }

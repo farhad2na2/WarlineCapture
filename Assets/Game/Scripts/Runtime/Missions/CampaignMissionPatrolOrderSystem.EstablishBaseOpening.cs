@@ -10,8 +10,12 @@ namespace Game.Runtime
         private static readonly FixedString64Bytes EstablishBaseMissionId =
             "saga.ch01.m02.establish_base";
         internal const int EstablishBaseOpeningHoldMilliseconds = 750;
-        internal const int EstablishBaseOpeningCompleteMilliseconds = 5000;
-        internal const float EstablishBaseOpeningSmoothTimeSeconds = 2f;
+        internal const int EstablishBaseOpeningFocusArrivalMilliseconds = 3250;
+        internal const int EstablishBaseOpeningFocusHoldMilliseconds = 4250;
+        internal const int EstablishBaseOpeningCompleteMilliseconds = 6750;
+        internal const float EstablishBaseOpeningSmoothTimeSeconds = 2.25f;
+        internal const byte EstablishBaseOpeningFocusAction = 1;
+        internal const byte EstablishBaseOpeningReturnAction = 2;
 
         internal static bool ShouldUseEstablishBaseOpening(in FixedString64Bytes missionId) =>
             missionId.Equals(EstablishBaseMissionId);
@@ -30,21 +34,49 @@ namespace Game.Runtime
             byte stage,
             int elapsedMilliseconds,
             byte focusRequested,
-            out byte queueSweep)
+            out byte cameraAction)
         {
-            queueSweep = 0;
+            cameraAction = 0;
             if (stage == 0 && elapsedMilliseconds >= EstablishBaseOpeningHoldMilliseconds &&
                 focusRequested == 0)
             {
-                queueSweep = 1;
+                cameraAction = EstablishBaseOpeningFocusAction;
                 return 1;
             }
 
-            if (stage == 1 && elapsedMilliseconds >= EstablishBaseOpeningCompleteMilliseconds &&
+            if (stage == 1 && elapsedMilliseconds >= EstablishBaseOpeningFocusArrivalMilliseconds)
+                return 2;
+
+            if (stage == 2 && elapsedMilliseconds >= EstablishBaseOpeningFocusHoldMilliseconds &&
                 focusRequested == 0)
+            {
+                cameraAction = EstablishBaseOpeningReturnAction;
+                return 3;
+            }
+
+            if (stage == 3 && elapsedMilliseconds >= EstablishBaseOpeningCompleteMilliseconds)
                 return 6;
 
             return stage;
+        }
+
+        internal static RuntimeCameraFocusRequestComponent CreateEstablishBaseOpeningCameraRequest(
+            byte cameraAction,
+            in CampaignMissionOpeningPresentationComponent opening)
+        {
+            if (cameraAction != EstablishBaseOpeningFocusAction &&
+                cameraAction != EstablishBaseOpeningReturnAction)
+                return default;
+
+            bool returnToRts = cameraAction == EstablishBaseOpeningReturnAction;
+            return new RuntimeCameraFocusRequestComponent
+            {
+                Requested = 1,
+                Smooth = 1,
+                UseTacticalRevealZoom = returnToRts ? (byte)4 : (byte)3,
+                SmoothTimeSeconds = EstablishBaseOpeningSmoothTimeSeconds,
+                World = returnToRts ? opening.FriendlyFocus : opening.EstablishingFocus
+            };
         }
 
         private static void AdvanceEstablishBaseOpening(
@@ -57,18 +89,11 @@ namespace Game.Runtime
                 opening.Stage,
                 opening.ElapsedMilliseconds,
                 focus.Requested,
-                out byte queueSweep);
-            if (queueSweep != 0)
-            {
-                entityManager.SetComponentData(focusEntity, new RuntimeCameraFocusRequestComponent
-                {
-                    Requested = 1,
-                    Smooth = 1,
-                    UseTacticalRevealZoom = 3,
-                    SmoothTimeSeconds = EstablishBaseOpeningSmoothTimeSeconds,
-                    World = opening.HostileFocus
-                });
-            }
+                out byte cameraAction);
+            if (cameraAction != 0)
+                entityManager.SetComponentData(
+                    focusEntity,
+                    CreateEstablishBaseOpeningCameraRequest(cameraAction, in opening));
 
             opening.Stage = nextStage;
         }

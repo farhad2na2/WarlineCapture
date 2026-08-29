@@ -23,8 +23,9 @@ using UnityEngine.UI;
 public sealed class M02EstablishBaseGuidanceTests
 {
     private const string FocusedMarker =
-        "[M02EstablishBaseGuidanceValidation] result=Passed tests=37";
-    private static readonly float3 CanonicalOpeningStartAnchor = new(826.5f, 1.1591798f, 379.5f);
+        "[M02EstablishBaseGuidanceValidation] result=Passed tests=38";
+    private static readonly float3 CanonicalCameraStartAnchor = new(935.5f, 0.009179778f, 390.5f);
+    private static readonly float3 CanonicalForwardPostAnchor = new(940.5f, 0.009179778f, 351.5f);
     private static readonly float3 CanonicalBuildAnchor = new(1016.5f, 0.009179778f, 377.5f);
 
     [MenuItem("Game/Validation/Run M02 Establish Base Guidance Focused")]
@@ -66,10 +67,11 @@ public sealed class M02EstablishBaseGuidanceTests
             tests.M01TutorialProjectionRemainsUnchanged();
             tests.IncompleteM02RetryProjectsRequiredBuildGuidance();
             tests.UiSurfaceGuidanceUsesTypedControlsWithoutScreenCoordinates();
-            tests.M02OpeningUsesAHorizontalBaseSweep();
+            tests.M02OpeningStartsAtRtsAndFocusesTheAuthoredBase();
             tests.M02OpeningCannotEmitM01CivilianPanicAudio();
             tests.M02OpeningWaitsForComicHandoff();
-            tests.M02OpeningCompletesAfterTheSingleSweep();
+            tests.M02OpeningSmoothlyFocusesAndReturnsToRts();
+            tests.M02OpeningCameraRequestsMatchM01TransitionQuality();
             Debug.Log(FocusedMarker);
             ValidationExit.Passed();
         }
@@ -82,17 +84,22 @@ public sealed class M02EstablishBaseGuidanceTests
     }
 
     [Test]
-    public void M02OpeningUsesAHorizontalBaseSweep()
+    public void M02OpeningStartsAtRtsAndFocusesTheAuthoredBase()
     {
         using BlobBuilder builder = new(Allocator.Temp);
         ref OperationMapBlob map = ref builder.ConstructRoot<OperationMapBlob>();
-        BlobBuilderArray<OperationMapAnchorBlob> anchors = builder.Allocate(ref map.Anchors, 2);
+        BlobBuilderArray<OperationMapAnchorBlob> anchors = builder.Allocate(ref map.Anchors, 3);
         anchors[0] = new OperationMapAnchorBlob
         {
-            Id = new FixedString64Bytes("anchor.ch01.m02.resource_focus"),
-            Position = CanonicalOpeningStartAnchor
+            Id = new FixedString64Bytes("anchor.ch01.m02.camera_start"),
+            Position = CanonicalCameraStartAnchor
         };
         anchors[1] = new OperationMapAnchorBlob
+        {
+            Id = new FixedString64Bytes("anchor.ch01.m02.forward_post"),
+            Position = CanonicalForwardPostAnchor
+        };
+        anchors[2] = new OperationMapAnchorBlob
         {
             Id = new FixedString64Bytes("anchor.ch01.m02.build_lot"),
             Position = CanonicalBuildAnchor
@@ -109,23 +116,27 @@ public sealed class M02EstablishBaseGuidanceTests
             out float3 end,
             out float3 midpoint);
 
-        Assert.AreEqual(anchors[0].Position, start);
+        Assert.AreEqual(CanonicalCameraStartAnchor, start);
         Assert.AreEqual(CanonicalBuildAnchor, end);
-        Assert.AreEqual(math.lerp(start, end, 0.5f), midpoint);
-        Assert.Greater(end.x - start.x, 150f);
-        Assert.Less(math.abs(end.z - start.z), 40f);
+        Assert.AreEqual(
+            math.lerp(
+                CanonicalForwardPostAnchor,
+                CanonicalBuildAnchor,
+                CampaignMissionSpawnSystem.EstablishBaseFocusTowardBuildLot),
+            midpoint);
+        Assert.Less(math.distance(start.xz, midpoint.xz), 65f,
+            "The cinematic must zoom locally over the base instead of panning across the map.");
 
-        using World world = new(nameof(M02OpeningUsesAHorizontalBaseSweep));
+        using World world = new(nameof(M02OpeningStartsAtRtsAndFocusesTheAuthoredBase));
         Entity focus = world.EntityManager.CreateEntity(typeof(RuntimeCameraFocusRequestComponent));
         CampaignMissionSpawnSystem.QueueInitialRtsOverview(
             world.EntityManager,
             focus,
-            start,
-            useEstablishBaseFraming: true);
+            start);
         RuntimeCameraFocusRequestComponent request =
             world.EntityManager.GetComponentData<RuntimeCameraFocusRequestComponent>(focus);
-        Assert.AreEqual(3, request.UseTacticalRevealZoom,
-            "M2 must start in the closer establishing framing instead of the generic full-map RTS view.");
+        Assert.AreEqual(4, request.UseTacticalRevealZoom,
+            "M2 must begin in the authoritative RTS framing before its cinematic zoom.");
         Assert.AreEqual(start, request.World);
     }
 
@@ -147,7 +158,7 @@ public sealed class M02EstablishBaseGuidanceTests
             MissionPhaseKind.Preparing));
         Assert.IsFalse(CampaignMissionPatrolOrderSystem.CanAdvanceEstablishBaseOpening(
             MissionPhaseKind.InteractiveBrief),
-            "The airbase sweep must not run underneath the opening comic.");
+            "The airbase camera move must not run underneath the opening comic.");
         Assert.IsTrue(CampaignMissionPatrolOrderSystem.CanAdvanceEstablishBaseOpening(
             MissionPhaseKind.FindSquad));
         Assert.IsFalse(CampaignMissionPatrolOrderSystem.CanAdvanceEstablishBaseOpening(
@@ -155,26 +166,65 @@ public sealed class M02EstablishBaseGuidanceTests
     }
 
     [Test]
-    public void M02OpeningCompletesAfterTheSingleSweep()
+    public void M02OpeningSmoothlyFocusesAndReturnsToRts()
     {
         Assert.AreEqual(1, CampaignMissionPatrolOrderSystem.EvaluateEstablishBaseOpeningStage(
             0,
             CampaignMissionPatrolOrderSystem.EstablishBaseOpeningHoldMilliseconds,
             0,
-            out byte queueSweep));
-        Assert.AreEqual(1, queueSweep);
-        Assert.AreEqual(1, CampaignMissionPatrolOrderSystem.EvaluateEstablishBaseOpeningStage(
+            out byte cameraAction));
+        Assert.AreEqual(CampaignMissionPatrolOrderSystem.EstablishBaseOpeningFocusAction, cameraAction);
+        Assert.AreEqual(2, CampaignMissionPatrolOrderSystem.EvaluateEstablishBaseOpeningStage(
             1,
-            CampaignMissionPatrolOrderSystem.EstablishBaseOpeningCompleteMilliseconds,
-            1,
-            out queueSweep));
-        Assert.AreEqual(0, queueSweep);
+            CampaignMissionPatrolOrderSystem.EstablishBaseOpeningFocusArrivalMilliseconds,
+            0,
+            out cameraAction));
+        Assert.AreEqual(0, cameraAction);
+        Assert.AreEqual(3, CampaignMissionPatrolOrderSystem.EvaluateEstablishBaseOpeningStage(
+            2,
+            CampaignMissionPatrolOrderSystem.EstablishBaseOpeningFocusHoldMilliseconds,
+            0,
+            out cameraAction));
+        Assert.AreEqual(CampaignMissionPatrolOrderSystem.EstablishBaseOpeningReturnAction, cameraAction);
         Assert.AreEqual(6, CampaignMissionPatrolOrderSystem.EvaluateEstablishBaseOpeningStage(
-            1,
+            3,
             CampaignMissionPatrolOrderSystem.EstablishBaseOpeningCompleteMilliseconds,
             0,
-            out queueSweep));
-        Assert.AreEqual(0, queueSweep);
+            out cameraAction));
+        Assert.AreEqual(0, cameraAction);
+    }
+
+    [Test]
+    public void M02OpeningCameraRequestsMatchM01TransitionQuality()
+    {
+        CampaignMissionOpeningPresentationComponent opening = new()
+        {
+            FriendlyFocus = CanonicalCameraStartAnchor,
+            EstablishingFocus = math.lerp(
+                CanonicalForwardPostAnchor,
+                CanonicalBuildAnchor,
+                CampaignMissionSpawnSystem.EstablishBaseFocusTowardBuildLot)
+        };
+
+        RuntimeCameraFocusRequestComponent zoom =
+            CampaignMissionPatrolOrderSystem.CreateEstablishBaseOpeningCameraRequest(
+                CampaignMissionPatrolOrderSystem.EstablishBaseOpeningFocusAction,
+                in opening);
+        Assert.AreEqual(1, zoom.Requested);
+        Assert.AreEqual(1, zoom.Smooth);
+        Assert.AreEqual(3, zoom.UseTacticalRevealZoom);
+        Assert.AreEqual(2.25f, zoom.SmoothTimeSeconds);
+        Assert.AreEqual(opening.EstablishingFocus, zoom.World);
+
+        RuntimeCameraFocusRequestComponent restore =
+            CampaignMissionPatrolOrderSystem.CreateEstablishBaseOpeningCameraRequest(
+                CampaignMissionPatrolOrderSystem.EstablishBaseOpeningReturnAction,
+                in opening);
+        Assert.AreEqual(1, restore.Requested);
+        Assert.AreEqual(1, restore.Smooth);
+        Assert.AreEqual(4, restore.UseTacticalRevealZoom);
+        Assert.AreEqual(2.25f, restore.SmoothTimeSeconds);
+        Assert.AreEqual(opening.FriendlyFocus, restore.World);
     }
 
     [MenuItem("Game/Validation/Run M02 Establish Base Guidance Regressions")]

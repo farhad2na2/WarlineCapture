@@ -16,8 +16,6 @@ namespace Game.Runtime
     {
         private static readonly FixedString64Bytes StaleResultActionReason = "stale-result-action";
         private static readonly FixedString64Bytes UnsupportedResultActionReason = "unsupported-result-action";
-        private static readonly FixedString64Bytes ResultNotSettledReason = "result-not-settled";
-        private static readonly FixedString64Bytes InvalidResultTransitionReason = "invalid-result-transition";
         private static readonly FixedString64Bytes RetryUnavailableReason = "retry-unavailable";
         private static readonly FixedString64Bytes RetryAlreadyQueuedReason = "retry-already-queued";
         private static readonly FixedString64Bytes MoveTargetAnchorId = "anchor.ch01.m01.move_target";
@@ -235,10 +233,12 @@ namespace Game.Runtime
                               request.AttemptOrdinal == runtime.AttemptOrdinal;
             bool accepted = false;
             FixedString64Bytes reason = default;
-            if (!correlated || runtime.Phase != MissionPhaseKind.Result)
+            if (!correlated || runtime.Phase is not (
+                    MissionPhaseKind.Result or MissionPhaseKind.ResultAfterDebrief))
                 reason = StaleResultActionReason;
             else if (request.Action == MissionActionKind.Continue)
-                accepted = TryContinue(entityManager, root, ref runtime, out reason);
+                accepted = CampaignMissionResultDebriefTransitionUtility.TryContinueResult(
+                    entityManager, root, ref runtime, out reason);
             else if (request.Action == MissionActionKind.Retry)
                 accepted = TryQueueRetry(entityManager, root, in runtime, in request, out reason);
             else
@@ -332,46 +332,6 @@ namespace Game.Runtime
             entityManager.SetComponentData(root, default(CampaignMissionRuntimeComponent));
             return true;
         }
-        private static bool TryContinue(
-            EntityManager entityManager, Entity root, ref CampaignMissionRuntimeComponent runtime,
-            out FixedString64Bytes reason)
-        {
-            reason = default;
-            if (runtime.Outcome != MissionOutcomeKind.Victory ||
-                !entityManager.HasBuffer<CampaignMissionSettlementResultElement>(root))
-            {
-                reason = ResultNotSettledReason;
-                return false;
-            }
-            DynamicBuffer<CampaignMissionSettlementResultElement> settlements =
-                entityManager.GetBuffer<CampaignMissionSettlementResultElement>(root, true);
-            bool settled = false;
-            bool firstClear = false;
-            for (int index = settlements.Length - 1; index >= 0; index--)
-            {
-                CampaignMissionSettlementResultElement candidate = settlements[index];
-                if (candidate.SourceVersion == runtime.Version &&
-                    candidate.SessionToken.Equals(runtime.SessionToken) && candidate.Accepted != 0)
-                {
-                    settled = true;
-                    firstClear = candidate.FirstClear != 0;
-                    break;
-                }
-            }
-            if (!settled)
-            {
-                reason = ResultNotSettledReason;
-                return false;
-            }
-            MissionPhaseKind nextPhase = firstClear
-                ? MissionPhaseKind.DebriefFirstClear : MissionPhaseKind.ReturnReplay;
-            if (!TryTransition(in runtime, nextPhase, runtime.Outcome, runtime.ReturnDestination, out runtime))
-            {
-                reason = InvalidResultTransitionReason;
-                return false;
-            }
-            return true;
-        }
         private static bool TryQueueRetry(
             EntityManager entityManager, Entity root, in CampaignMissionRuntimeComponent runtime,
             in CampaignMissionActionRequestElement action, out FixedString64Bytes reason)
@@ -440,7 +400,9 @@ namespace Game.Runtime
                 return false;
 
             if (current.Outcome != MissionOutcomeKind.None &&
-                (current.Phase != MissionPhaseKind.Result || phase == MissionPhaseKind.Result ||
+                (current.Phase is not (
+                     MissionPhaseKind.Result or MissionPhaseKind.DebriefFirstClear or
+                     MissionPhaseKind.ResultAfterDebrief) ||
                  outcome != current.Outcome || destination != current.ReturnDestination))
                 return false;
 
@@ -470,6 +432,8 @@ namespace Game.Runtime
                 MissionPhaseKind.Engage => to is MissionPhaseKind.SecureCorridor or MissionPhaseKind.Result,
                 MissionPhaseKind.SecureCorridor => to == MissionPhaseKind.Result,
                 MissionPhaseKind.Result => to is MissionPhaseKind.DebriefFirstClear or MissionPhaseKind.ReturnReplay,
+                MissionPhaseKind.DebriefFirstClear => to == MissionPhaseKind.ResultAfterDebrief,
+                MissionPhaseKind.ResultAfterDebrief => to == MissionPhaseKind.ReturnReplay,
                 _ => false
             };
         }
@@ -479,7 +443,7 @@ namespace Game.Runtime
             state.DeterministicSeed != 0 && !state.MissionId.IsEmpty &&
             !state.ScenarioId.IsEmpty && !state.OperationMapId.IsEmpty &&
             !state.SessionToken.IsEmpty && state.Phase is >= MissionPhaseKind.Preparing and
-                <= MissionPhaseKind.ReturnReplay && state.Outcome is >= MissionOutcomeKind.None and
+                <= MissionPhaseKind.ResultAfterDebrief && state.Outcome is >= MissionOutcomeKind.None and
                 <= MissionOutcomeKind.Defeat;
 
         private static bool IsValidOutcome(

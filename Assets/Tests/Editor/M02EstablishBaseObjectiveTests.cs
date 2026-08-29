@@ -15,7 +15,7 @@ using UnityEngine;
 
 public sealed class M02EstablishBaseObjectiveTests
 {
-    private const string Marker = "[M02EstablishBaseObjectiveValidation] result=Passed tests=24";
+    private const string Marker = "[M02EstablishBaseObjectiveValidation] result=Passed tests=25";
     private const string MissionId = "saga.ch01.m02.establish_base";
     private const string ScenarioId = "scenario.ch01.m02.establish_base";
     private const string MapId = "opmap.ch01.forward_post_01";
@@ -44,6 +44,7 @@ public sealed class M02EstablishBaseObjectiveTests
             tests.DisabledMissionRuntimeLeavesFactsUntouched();
             tests.AmbiguousBuildObjectiveFailsClosed();
             tests.AuthoritativeProducedUnitCompletionAdvancesFactOnce();
+            tests.ProducedUnitFactWaitsForCanonicalDeliveryExit();
             tests.PreAttemptProducedUnitIsIgnored();
             tests.DestroyedInvalidAndUnrelatedProducedUnitsAreIgnored();
             tests.ProducedUnitFactRemainsMonotonicAfterDestruction();
@@ -358,6 +359,44 @@ public sealed class M02EstablishBaseObjectiveTests
             UpdateFacts(world);
 
             Assert.AreEqual(1, GetFacts(world.EntityManager).RequiredUnitProducedCount);
+        }
+        finally
+        {
+            blob.Dispose();
+        }
+    }
+
+    [Test]
+    public void ProducedUnitFactWaitsForCanonicalDeliveryExit()
+    {
+        using World world = CreateRuntimeWorld(true, false, out BlobAssetReference<CampaignMissionCatalogBlob> blob);
+        try
+        {
+            EntityManager entityManager = world.EntityManager;
+            InitializeAttempt(world);
+            using EntityQuery boundaryQuery = entityManager.CreateEntityQuery(typeof(BuildingRuntimeStateTag));
+            Entity boundary = boundaryQuery.GetSingletonEntity();
+            entityManager.SetComponentData(boundary, new BuildingProductionDeliveryReadModel
+            {
+                ActiveCanonicalDeliveryCount = 1,
+                Version = 1
+            });
+            Entity unit = CreateProducedUnit(
+                entityManager, RifleId, FactionIdentity.PlayerFactionId, currentHealth: 100);
+            AddProducedUnitRow(entityManager, unit, RifleId, FactionIdentity.PlayerFactionId);
+
+            UpdateFacts(world);
+            Assert.AreEqual(0, GetFacts(entityManager).RequiredUnitProducedCount,
+                "Victory facts must remain blocked while the helicopter delivery is still active.");
+
+            entityManager.SetComponentData(boundary, new BuildingProductionDeliveryReadModel
+            {
+                ActiveCanonicalDeliveryCount = 0,
+                Version = 2
+            });
+            UpdateFacts(world);
+            Assert.AreEqual(1, GetFacts(entityManager).RequiredUnitProducedCount,
+                "The produced-unit fact should advance after the helicopter exits.");
         }
         finally
         {
@@ -769,7 +808,9 @@ public sealed class M02EstablishBaseObjectiveTests
             SourceVersion = 1,
             AttemptOrdinal = 0
         });
-        Entity boundary = entityManager.CreateEntity(typeof(BuildingRuntimeStateTag));
+        Entity boundary = entityManager.CreateEntity(
+            typeof(BuildingRuntimeStateTag),
+            typeof(BuildingProductionDeliveryReadModel));
         entityManager.AddBuffer<BuildingRuntimeSpawnRequest>(boundary);
         entityManager.AddBuffer<BuildingRuntimeDeleteRequest>(boundary);
         entityManager.AddBuffer<BuildingRuntimeOwnedBuildingSummary>(boundary);

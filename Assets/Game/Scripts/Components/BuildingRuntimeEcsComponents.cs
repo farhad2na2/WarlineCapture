@@ -53,6 +53,11 @@ namespace Game.Components
     public struct BuildingRuntimeStateTag : IComponentData
     {
     }
+    public struct BuildingProductionDeliveryReadModel : IComponentData
+    {
+        public int ActiveCanonicalDeliveryCount;
+        public uint Version;
+    }
 
     public struct BuildingConfiguredSpawnableReadModel : IBufferElementData
     {

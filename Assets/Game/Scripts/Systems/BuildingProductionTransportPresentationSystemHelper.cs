@@ -38,8 +38,6 @@ namespace Game.Runtime
         private static readonly int SnivelerModelShownId = Shader.PropertyToID("_SnivelerModelShown");
         private static readonly int SnivelerRenderPixelId = Shader.PropertyToID("_SnivelerRenderPixel");
 
-        public delegate void PrepareTransportDropVisualDelegate(GameObject visual);
-
         private readonly Dictionary<GameObject, Stack<GameObject>> _transportPoolByPrefab = new();
         private readonly Dictionary<GameObject, Stack<GameObject>> _dropVisualPoolByPrefab = new();
         private readonly Dictionary<GameObject, Renderer[]> _transportRenderersByInstance = new();
@@ -60,38 +58,6 @@ namespace Game.Runtime
         private Material _dropRopeMaterial;
         private bool[] _laneUsage = new bool[4];
         private int _createdTransportStateCount;
-
-        public readonly struct Context
-        {
-            public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
-            public readonly Camera WorldCamera;
-            public readonly BuildingProductionQueueCompositionSystemHelper ProductionSystem;
-            public readonly BuildingVisualSystem VisualSystem;
-            public readonly BuildingRunwaySystem RunwaySystem;
-            public readonly BuildingProductionTransportBridgeCompositionSystemHelper TransportBridgeSystem;
-            public readonly BuildingProductionTransportBridgeCompositionSystemHelper.Context TransportBridgeContext;
-            public readonly PrepareTransportDropVisualDelegate PrepareTransportDropVisual;
-
-            public Context(
-                IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
-                Camera worldCamera,
-                BuildingProductionQueueCompositionSystemHelper productionSystem,
-                BuildingVisualSystem visualSystem,
-                BuildingRunwaySystem runwaySystem,
-                BuildingProductionTransportBridgeCompositionSystemHelper transportBridgeSystem,
-                BuildingProductionTransportBridgeCompositionSystemHelper.Context transportBridgeContext,
-                PrepareTransportDropVisualDelegate prepareTransportDropVisual = null)
-            {
-                RuntimeBuildings = runtimeBuildings;
-                WorldCamera = worldCamera;
-                ProductionSystem = productionSystem;
-                VisualSystem = visualSystem;
-                RunwaySystem = runwaySystem;
-                TransportBridgeSystem = transportBridgeSystem;
-                TransportBridgeContext = transportBridgeContext;
-                PrepareTransportDropVisual = prepareTransportDropVisual;
-            }
-        }
 
         public void SetRuntimeRoot(Transform runtimeRoot)
         {

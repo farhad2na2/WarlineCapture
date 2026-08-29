@@ -45,8 +45,7 @@ namespace Game.Composition
         private int completedBriefAttemptOrdinal = -1;
         private FixedString64Bytes completedCommsSession;
         private int completedCommsAttemptOrdinal = -1;
-        private bool running, handoffPending, handoffComplete, pauseOwned, returnToMenuQueued,
-            campaignRouteQueued, configurationFailureLogged;
+        private bool running, handoffPending, pauseOwned, configurationFailureLogged;
 
         public void Initialize(MenuBootstrapView menuView, IGameTextResolver textResolver)
         {
@@ -63,19 +62,17 @@ namespace Game.Composition
         public void Tick(
             float unscaledDeltaTime,
             EntityManager entityManager,
-            Entity shellBoundary,
             in UiShellStateComponent shellState)
         {
+            if (queryWorld != entityManager.World)
+                BindWorld(entityManager);
             if (running)
                 presentation.Tick(unscaledDeltaTime);
             if (handoffPending)
                 CompleteActiveSequence(entityManager);
-
-            if (handoffComplete)
-            {
-                AdvanceReturnRoute(entityManager, shellBoundary, in shellState);
+            if (!running && CampaignMissionResultDebriefTransitionUtility.TryQueueFirstClearDebrief(
+                    entityManager, missionRootQuery, EstablishBaseMissionId))
                 return;
-            }
 
             if (running || !TryReadSequence(
                     entityManager,
@@ -156,8 +153,7 @@ namespace Game.Composition
             completedBriefAttemptOrdinal = -1;
             completedCommsSession = default;
             completedCommsAttemptOrdinal = -1;
-            running = handoffPending = handoffComplete = pauseOwned = false;
-            returnToMenuQueued = campaignRouteQueued = configurationFailureLogged = false;
+            running = handoffPending = pauseOwned = configurationFailureLogged = false;
         }
 
         private bool TryReadSequence(
@@ -223,7 +219,7 @@ namespace Game.Composition
         internal static bool RequiresSimulationPause(SequenceStage stage) =>
             stage is SequenceStage.Brief or SequenceStage.Comms;
 
-        internal static bool ReturnsToCampaign(SequenceStage stage) =>
+        internal static bool RequiresFinalResult(SequenceStage stage) =>
             stage == SequenceStage.Debrief;
 
         private void BindWorld(EntityManager entityManager)
@@ -249,8 +245,7 @@ namespace Game.Composition
             completedBriefAttemptOrdinal = -1;
             completedCommsSession = default;
             completedCommsAttemptOrdinal = -1;
-            running = handoffPending = handoffComplete = false;
-            returnToMenuQueued = campaignRouteQueued = false;
+            running = handoffPending = false;
         }
 
         private bool TryPauseForSequence(EntityManager entityManager, SequenceStage stage)
@@ -273,9 +268,16 @@ namespace Game.Composition
         private void CompleteActiveSequence(EntityManager entityManager)
         {
             handoffPending = false;
-            if (ReturnsToCampaign(activeStage))
+            if (RequiresFinalResult(activeStage))
             {
-                handoffComplete = true;
+                if (!CampaignMissionRuntimeProgressUtility.TryCompleteDebrief(
+                        entityManager, missionRootQuery, activeSession, activeAttemptOrdinal))
+                {
+                    Debug.LogError(
+                        "[CampaignMissionNarrative] Failed to complete the M2 debrief transition.");
+                }
+                activeSession = default;
+                activeAttemptOrdinal = -1;
                 activeStage = SequenceStage.None;
                 return;
             }
@@ -363,38 +365,6 @@ namespace Game.Composition
 
             config = null;
             return false;
-        }
-
-        private void AdvanceReturnRoute(
-            EntityManager entityManager,
-            Entity shellBoundary,
-            in UiShellStateComponent shellState)
-        {
-            DynamicBuffer<UiShellRouteRequestComponent> requests =
-                entityManager.GetBuffer<UiShellRouteRequestComponent>(shellBoundary);
-            if (!returnToMenuQueued)
-            {
-                requests.Add(new UiShellRouteRequestComponent
-                {
-                    Intent = UiShellRouteIntent.ReturnToMainMenu,
-                    Route = UIRoute.MainMenu,
-                    PushHistory = 0
-                });
-                returnToMenuQueued = true;
-                return;
-            }
-
-            if (campaignRouteQueued || shellState.IsTransitionRunning != 0 ||
-                shellState.CurrentMode != UiShellMode.MainMenu ||
-                shellState.ActiveRoute != UIRoute.MainMenu)
-                return;
-            requests.Add(new UiShellRouteRequestComponent
-            {
-                Intent = UiShellRouteIntent.OpenMenuRoute,
-                Route = UIRoute.Campaign,
-                PushHistory = 0
-            });
-            campaignRouteQueued = true;
         }
 
         private void HandleHandoff(NarrativeHandoffResult result)

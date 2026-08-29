@@ -117,7 +117,7 @@ namespace Game.Runtime
             Entity producer,
             int requestId,
             GameObject unitPrefab,
-            float3 dropPosition,
+            ref float3 dropPosition,
             float now);
         public delegate void UpdateOperationMapProductionDeliveryLifecycleDelegate(float now);
         public delegate FactionConstructionResourceMutationResult EvaluateConstructionResourcesDelegate(
@@ -1813,13 +1813,14 @@ namespace Game.Runtime
                 for (int index = 0; index < resolved.Length; index++)
                 {
                     ResolvedOperationMapProductionSpawn spawn = resolved[index];
+                    float3 committedSpawnPosition = spawn.Position;
                     OperationMapProductionDeliveryResult deliveryResult =
                         ResolveOperationMapProductionDelivery(
                             context,
                             em,
                             spawn.Building,
                             spawn.RequestId,
-                            spawn.Position,
+                            ref committedSpawnPosition,
                             now);
                     if (deliveryResult == OperationMapProductionDeliveryResult.InProgress)
                     {
@@ -1837,8 +1838,8 @@ namespace Game.Runtime
                             spawn.Building,
                             spawn.RequestId,
                             now,
-                            spawn.Cell,
-                            spawn.Position,
+                            GridUtils.WorldToCell(grid, committedSpawnPosition),
+                            committedSpawnPosition,
                             out _))
                     {
                         spawnedCount++;
@@ -1879,7 +1880,7 @@ namespace Game.Runtime
             EntityManager em,
             Entity producer,
             int requestId,
-            float3 dropPosition,
+            ref float3 dropPosition,
             float now)
         {
             if (context.UpdateOperationMapProductionDelivery == null)
@@ -1901,7 +1902,7 @@ namespace Game.Runtime
                 producer,
                 requestId,
                 unitPrefab,
-                dropPosition,
+                ref dropPosition,
                 now);
         }
 

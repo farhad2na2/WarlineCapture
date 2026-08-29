@@ -1,5 +1,6 @@
 using Game.Components;
 using Game.Missions.Contracts;
+using Unity.Collections;
 using Unity.Entities;
 
 namespace Game.Runtime
@@ -211,5 +212,160 @@ namespace Game.Runtime
             in CampaignMissionResultComponent left, in CampaignMissionResultComponent right) =>
             left.MissionId.Equals(right.MissionId) && left.SessionToken.Equals(right.SessionToken) &&
             left.AttemptOrdinal == right.AttemptOrdinal;
+    }
+
+    internal static class CampaignMissionResultDebriefTransitionUtility
+    {
+        private static readonly FixedString64Bytes ResultNotSettledReason = "result-not-settled";
+        private static readonly FixedString64Bytes InvalidResultTransitionReason =
+            "invalid-result-transition";
+
+        internal static bool TryContinueResult(
+            EntityManager entityManager,
+            Entity root,
+            ref CampaignMissionRuntimeComponent runtime,
+            out FixedString64Bytes reason)
+        {
+            reason = default;
+            if (runtime.Phase == MissionPhaseKind.ResultAfterDebrief)
+                return TryTransition(MissionPhaseKind.ReturnReplay, ref runtime, out reason);
+            if (runtime.Outcome != MissionOutcomeKind.Victory ||
+                !entityManager.HasBuffer<CampaignMissionSettlementResultElement>(root))
+            {
+                reason = ResultNotSettledReason;
+                return false;
+            }
+
+            DynamicBuffer<CampaignMissionSettlementResultElement> settlements =
+                entityManager.GetBuffer<CampaignMissionSettlementResultElement>(root, true);
+            for (int index = settlements.Length - 1; index >= 0; index--)
+            {
+                CampaignMissionSettlementResultElement candidate = settlements[index];
+                if (candidate.SourceVersion != runtime.Version ||
+                    !candidate.SessionToken.Equals(runtime.SessionToken) || candidate.Accepted == 0)
+                {
+                    continue;
+                }
+                MissionPhaseKind phase = candidate.FirstClear != 0
+                    ? MissionPhaseKind.DebriefFirstClear
+                    : MissionPhaseKind.ReturnReplay;
+                return TryTransition(phase, ref runtime, out reason);
+            }
+
+            reason = ResultNotSettledReason;
+            return false;
+        }
+
+        internal static bool TryQueueFirstClearDebrief(
+            EntityManager entityManager,
+            EntityQuery rootQuery,
+            in FixedString64Bytes requiredMissionId)
+        {
+            if (rootQuery.CalculateEntityCount() != 1)
+                return false;
+            Entity root = rootQuery.GetSingletonEntity();
+            if (!entityManager.HasComponent<CampaignMissionResultComponent>(root) ||
+                !entityManager.HasBuffer<CampaignMissionSettlementResultElement>(root) ||
+                !entityManager.HasBuffer<CampaignMissionActionRequestElement>(root))
+            {
+                return false;
+            }
+
+            CampaignMissionRuntimeComponent runtime =
+                entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root);
+            if (!runtime.MissionId.Equals(requiredMissionId) ||
+                runtime.Phase != MissionPhaseKind.Result ||
+                runtime.Outcome != MissionOutcomeKind.Victory)
+            {
+                return false;
+            }
+
+            CampaignMissionResultComponent result =
+                entityManager.GetComponentData<CampaignMissionResultComponent>(root);
+            if (!result.SessionToken.Equals(runtime.SessionToken) ||
+                result.AttemptOrdinal != runtime.AttemptOrdinal ||
+                result.Outcome != runtime.Outcome ||
+                !HasAcceptedFirstClearSettlement(entityManager, root, in result) ||
+                !HasDebriefSequence(entityManager, root, in runtime))
+            {
+                return false;
+            }
+
+            DynamicBuffer<CampaignMissionActionRequestElement> requests =
+                entityManager.GetBuffer<CampaignMissionActionRequestElement>(root);
+            for (int index = 0; index < requests.Length; index++)
+            {
+                CampaignMissionActionRequestElement pending = requests[index];
+                if (pending.Action == MissionActionKind.Continue &&
+                    pending.TransitionToken == runtime.TransitionToken &&
+                    pending.SessionToken.Equals(runtime.SessionToken) &&
+                    pending.AttemptOrdinal == runtime.AttemptOrdinal)
+                {
+                    return true;
+                }
+            }
+
+            requests.Add(new CampaignMissionActionRequestElement
+            {
+                Action = MissionActionKind.Continue,
+                TransitionToken = runtime.TransitionToken,
+                SessionToken = runtime.SessionToken,
+                AttemptOrdinal = runtime.AttemptOrdinal,
+                ReplayTutorialEnabled = runtime.ReplayTutorialEnabled
+            });
+            return true;
+        }
+
+        private static bool HasAcceptedFirstClearSettlement(
+            EntityManager entityManager,
+            Entity root,
+            in CampaignMissionResultComponent result)
+        {
+            DynamicBuffer<CampaignMissionSettlementResultElement> settlements =
+                entityManager.GetBuffer<CampaignMissionSettlementResultElement>(root, true);
+            for (int index = settlements.Length - 1; index >= 0; index--)
+            {
+                CampaignMissionSettlementResultElement candidate = settlements[index];
+                if (candidate.SourceVersion == result.SourceVersion &&
+                    candidate.SessionToken.Equals(result.SessionToken) && candidate.Accepted != 0)
+                {
+                    return candidate.FirstClear != 0;
+                }
+            }
+            return false;
+        }
+
+        private static bool HasDebriefSequence(
+            EntityManager entityManager,
+            Entity root,
+            in CampaignMissionRuntimeComponent runtime)
+        {
+            CampaignMissionCatalogComponent catalog =
+                entityManager.GetComponentData<CampaignMissionCatalogComponent>(root);
+            return CampaignMissionSpawnSystem.TryFindDefinition(
+                       in catalog, in runtime, out int definitionIndex) &&
+                   !catalog.Blob.Value.Missions[definitionIndex].DebriefSequenceId.IsEmpty;
+        }
+
+        private static bool TryTransition(
+            MissionPhaseKind phase,
+            ref CampaignMissionRuntimeComponent runtime,
+            out FixedString64Bytes reason)
+        {
+            CampaignMissionRuntimeComponent current = runtime;
+            if (CampaignMissionRuntimeSystem.TryTransition(
+                    in current,
+                    phase,
+                    current.Outcome,
+                    current.ReturnDestination,
+                    out runtime))
+            {
+                reason = default;
+                return true;
+            }
+
+            reason = InvalidResultTransitionReason;
+            return false;
+        }
     }
 }

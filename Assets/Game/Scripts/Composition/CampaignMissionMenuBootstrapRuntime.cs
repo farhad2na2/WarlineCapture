@@ -56,7 +56,7 @@ namespace Game.Composition
             Entity boundary = shellBoundaryQuery.GetSingletonEntity();
             UiShellStateComponent shellState =
                 entityManager.GetComponentData<UiShellStateComponent>(boundary);
-            debrief.Tick(unscaledDeltaTime, entityManager, boundary, in shellState);
+            debrief.Tick(unscaledDeltaTime, entityManager, in shellState);
         }
 
         private void Prepare(MenuBootstrapView view, EntityManager entityManager)

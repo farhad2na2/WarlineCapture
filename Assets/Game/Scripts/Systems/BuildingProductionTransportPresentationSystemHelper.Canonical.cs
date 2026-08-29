@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Game.Components;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -7,6 +8,44 @@ namespace Game.Runtime
 {
     internal sealed partial class BuildingProductionTransportPresentationSystemHelper
     {
+        public delegate void PrepareTransportDropVisualDelegate(GameObject visual);
+        public delegate void FocusProductionDeliveryDelegate(Vector3 worldPosition);
+
+        public readonly struct Context
+        {
+            public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
+            public readonly Camera WorldCamera;
+            public readonly BuildingProductionQueueCompositionSystemHelper ProductionSystem;
+            public readonly BuildingVisualSystem VisualSystem;
+            public readonly BuildingRunwaySystem RunwaySystem;
+            public readonly BuildingProductionTransportBridgeCompositionSystemHelper TransportBridgeSystem;
+            public readonly BuildingProductionTransportBridgeCompositionSystemHelper.Context TransportBridgeContext;
+            public readonly PrepareTransportDropVisualDelegate PrepareTransportDropVisual;
+            public readonly FocusProductionDeliveryDelegate FocusProductionDelivery;
+
+            public Context(
+                IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
+                Camera worldCamera,
+                BuildingProductionQueueCompositionSystemHelper productionSystem,
+                BuildingVisualSystem visualSystem,
+                BuildingRunwaySystem runwaySystem,
+                BuildingProductionTransportBridgeCompositionSystemHelper transportBridgeSystem,
+                BuildingProductionTransportBridgeCompositionSystemHelper.Context transportBridgeContext,
+                PrepareTransportDropVisualDelegate prepareTransportDropVisual = null,
+                FocusProductionDeliveryDelegate focusProductionDelivery = null)
+            {
+                RuntimeBuildings = runtimeBuildings;
+                WorldCamera = worldCamera;
+                ProductionSystem = productionSystem;
+                VisualSystem = visualSystem;
+                RunwaySystem = runwaySystem;
+                TransportBridgeSystem = transportBridgeSystem;
+                TransportBridgeContext = transportBridgeContext;
+                PrepareTransportDropVisual = prepareTransportDropVisual;
+                FocusProductionDelivery = focusProductionDelivery;
+            }
+        }
+
         private readonly struct CanonicalDeliveryKey : System.IEquatable<CanonicalDeliveryKey>
         {
             public readonly Entity Producer;
@@ -70,7 +109,7 @@ namespace Game.Runtime
             int requestId,
             GameObject unitPrefab,
             BuildingProductionQueueCompositionSystemHelper.ProductionTransportSettings settings,
-            float3 dropPosition,
+            ref float3 dropPosition,
             float now)
         {
             if (producer == Entity.Null ||
@@ -103,16 +142,18 @@ namespace Game.Runtime
                     return BuildingProductionRequestSystemHelper.OperationMapProductionDeliveryResult.Rejected;
 
                 _canonicalDeliverySessions.Add(key, session);
+                PublishCanonicalDeliveryReadModel(context);
                 return BuildingProductionRequestSystemHelper.OperationMapProductionDeliveryResult.InProgress;
             }
 
             if (session.UnitPrefab != unitPrefab || session.TransportPrefab != settings.TransportPrefab)
                 return BuildingProductionRequestSystemHelper.OperationMapProductionDeliveryResult.Rejected;
 
+            dropPosition = session.DropEndPosition;
             return UpdateCanonicalDelivery(context, session, now);
         }
 
-        public void UpdateCanonicalOperationMapProductionDeliveryLifecycle(float now)
+        public void UpdateCanonicalOperationMapProductionDeliveryLifecycle(Context context, float now)
         {
             if (_canonicalDeliverySessions.Count == 0 || float.IsNaN(now) || float.IsInfinity(now))
                 return;
@@ -140,6 +181,8 @@ namespace Game.Runtime
 
             for (int index = 0; index < _canonicalDeliveryRemovalBuffer.Count; index++)
                 _canonicalDeliverySessions.Remove(_canonicalDeliveryRemovalBuffer[index]);
+            if (_canonicalDeliveryRemovalBuffer.Count > 0)
+                PublishCanonicalDeliveryReadModel(context);
             _canonicalDeliveryRemovalBuffer.Clear();
         }
 
@@ -268,6 +311,7 @@ namespace Game.Runtime
         {
             session.TransportTransform.position = session.HoverPosition;
             session.TransportTransform.rotation = session.HoverRotation;
+            context.FocusProductionDelivery?.Invoke(session.DropEndPosition);
             session.DropVisual = AcquireTransportDropVisual(session.UnitPrefab, context.PrepareTransportDropVisual);
             Vector3 anchor = ResolveCanonicalTransportVisualCenterWorld(session);
             session.DropStartPosition = new Vector3(session.DropEndPosition.x, anchor.y, session.DropEndPosition.z);
@@ -323,6 +367,32 @@ namespace Game.Runtime
                 session.DoorClosedLocalEulerX - 92f,
                 Mathf.Clamp01(open01));
             session.DoorTransform.localEulerAngles = euler;
+        }
+
+        private void PublishCanonicalDeliveryReadModel(Context context)
+        {
+            BuildingProductionTransportBridgeCompositionSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager =
+                context.TransportBridgeContext.TryGetEntityManager;
+            BuildingSpawnCompositionSystemHelper.TryGetRuntimeBoundaryEntityDelegate tryGetBoundary =
+                context.TransportBridgeContext.SpawnContext.TryGetRuntimeBoundaryEntity;
+            if (tryGetEntityManager == null || tryGetBoundary == null ||
+                !tryGetEntityManager(out EntityManager entityManager) ||
+                !tryGetBoundary(entityManager, out Entity boundary) ||
+                boundary == Entity.Null || !entityManager.Exists(boundary) ||
+                !entityManager.HasComponent<BuildingProductionDeliveryReadModel>(boundary))
+            {
+                return;
+            }
+
+            BuildingProductionDeliveryReadModel current =
+                entityManager.GetComponentData<BuildingProductionDeliveryReadModel>(boundary);
+            int activeCount = _canonicalDeliverySessions.Count;
+            if (current.ActiveCanonicalDeliveryCount == activeCount)
+                return;
+
+            current.ActiveCanonicalDeliveryCount = activeCount;
+            current.Version++;
+            entityManager.SetComponentData(boundary, current);
         }
 
         private void ClearCanonicalDeliverySessions()

@@ -78,20 +78,12 @@ namespace Game.Runtime
                    RuntimeCitySystem.IsConfiguredHousePrefab(prefab);
         }
 
-        internal void NotifyStaticMinimapChanged()
-        {
-            MainMenuPlayUi?.NotifyStaticMinimapChanged();
-        }
+        internal void NotifyStaticMinimapChanged() => MainMenuPlayUi?.NotifyStaticMinimapChanged();
 
-        internal void ApplyBuildCommandMode()
-        {
+        internal void ApplyBuildCommandMode() =>
             MainMenuPlayUi?.ApplyMatchHudCommandMode(TacticalCommandMode.Build);
-        }
 
-        internal void ClearCommandMode()
-        {
-            MainMenuPlayUi?.ClearMatchHudCommandMode();
-        }
+        internal void ClearCommandMode() => MainMenuPlayUi?.ClearMatchHudCommandMode();
 
         internal bool IsPointerOverPlacementUi(Vector2 screenPosition)
         {
@@ -104,25 +96,18 @@ namespace Game.Runtime
             return MainMenuPlayUi != null && MainMenuPlayUi.IsBuildDrawerOpen;
         }
 
-        internal void SmoothMoveCameraGroundCenterTo(Vector3 worldPosition)
-        {
+        internal void SmoothMoveCameraGroundCenterTo(Vector3 worldPosition) =>
             SelectionUiCameraSystemHelper?.SmoothMoveCameraGroundCenterTo(worldPosition);
-        }
 
-        internal void FollowCameraGroundCenterTo(Vector3 worldPosition)
-        {
+        internal void FocusProductionDelivery(Vector3 worldPosition) =>
+            SelectionUiCameraSystemHelper?.FocusProductionDelivery(worldPosition);
+        internal void FollowCameraGroundCenterTo(Vector3 worldPosition) =>
             SelectionUiCameraSystemHelper?.FollowCameraGroundCenterTo(worldPosition);
-        }
 
-        internal void ClearFocusedUnit()
-        {
-            SelectionBuildingInteraction?.ClearFocusedUnit();
-        }
+        internal void ClearFocusedUnit() => SelectionBuildingInteraction?.ClearFocusedUnit();
 
-        internal void ShowHudSelection(Sprite portraitSprite)
-        {
+        internal void ShowHudSelection(Sprite portraitSprite) =>
             SelectionBuildingInteraction?.ApplyBuildingSelectionHudFeedback(portraitSprite);
-        }
 
         internal bool IsBoardablePlayerTransportClick(Vector2 screenPosition)
         {

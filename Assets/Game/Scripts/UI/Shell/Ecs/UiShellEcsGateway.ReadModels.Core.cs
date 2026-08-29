@@ -117,7 +117,9 @@ namespace Game.UI.Shell.Ecs
                 entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root);
             CampaignMissionResultComponent projection =
                 entityManager.GetComponentData<CampaignMissionResultComponent>(root);
-            if (runtime.Phase != MissionPhaseKind.Result || projection.SourceVersion == 0 ||
+            if (runtime.Phase is not (
+                    MissionPhaseKind.Result or MissionPhaseKind.ResultAfterDebrief) ||
+                projection.SourceVersion == 0 ||
                 !runtime.MissionId.Equals(projection.MissionId) ||
                 !runtime.SessionToken.Equals(projection.SessionToken) ||
                 runtime.AttemptOrdinal != projection.AttemptOrdinal)
@@ -142,6 +144,8 @@ namespace Game.UI.Shell.Ecs
                     }
                 }
             }
+            if (projection.Outcome == MissionOutcomeKind.Victory && settlementAccepted == 0)
+                return false;
 
             if (cachedMissionResultWorld == entityManager.World && cachedMissionResultRoot == root &&
                 cachedMissionResultSession.Equals(projection.SessionToken) &&
@@ -181,7 +185,10 @@ namespace Game.UI.Shell.Ecs
                 : victory
                     ? "Hostile patrol neutralized. The Old Market corridor is secure."
                     : "The command squad was lost. Regroup and redeploy.";
-            bool debriefRequired = establishBase && victory && firstClear;
+            bool debriefRequired = establishBase && victory && firstClear &&
+                                   runtime.Phase != MissionPhaseKind.ResultAfterDebrief;
+            if (debriefRequired)
+                return false;
             result = new UiMissionResultPopupModel(
                 projection.SourceVersion,
                 projection.MissionId.ToString(),
@@ -194,7 +201,7 @@ namespace Game.UI.Shell.Ecs
                 projection.SquadLossCount.ToString(),
                 $"{facts.HostileDefeatedCount}/{facts.HostileTotalCount}",
                 rewardText,
-                debriefRequired ? "DEBRIEF" : victory ? "CONTINUE" : "RETRY",
+                victory ? "CONTINUE" : "RETRY",
                 !victory || settlementAccepted != 0,
                 !victory,
                 firstClear,

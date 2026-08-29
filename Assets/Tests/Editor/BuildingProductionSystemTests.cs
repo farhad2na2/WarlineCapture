@@ -416,6 +416,37 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
 
         try
         {
+            Entity boundary = world.EntityManager.CreateEntity(
+                typeof(BuildingRuntimeStateTag),
+                typeof(BuildingProductionDeliveryReadModel));
+            var spawnContext = new BuildingSpawnCompositionSystemHelper.Context(
+                null,
+                default,
+                null,
+                default,
+                default,
+                null,
+                null,
+                null,
+                (EntityManager _, out Entity runtimeBoundary) =>
+                {
+                    runtimeBoundary = boundary;
+                    return true;
+                });
+            var transportBridgeContext = new BuildingProductionTransportBridgeCompositionSystemHelper.Context(
+                (out EntityManager entityManager) =>
+                {
+                    entityManager = world.EntityManager;
+                    return true;
+                },
+                null,
+                null,
+                null,
+                spawnContext,
+                null,
+                null);
+            int focusCount = 0;
+            Vector3 focusedPosition = default;
             var context = new BuildingProductionTransportPresentationSystemHelper.Context(
                 null,
                 camera,
@@ -423,7 +454,13 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                 new BuildingVisualSystem(),
                 null,
                 null,
-                default);
+                transportBridgeContext,
+                null,
+                position =>
+                {
+                    focusCount++;
+                    focusedPosition = position;
+                });
             var settings = new BuildingProductionQueueCompositionSystemHelper.ProductionTransportSettings(
                 transportPrefab,
                 1f,
@@ -441,19 +478,14 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                     1,
                     unitPrefab,
                     settings,
-                    dropPosition,
+                    ref dropPosition,
                     0f));
             Assert.AreEqual(1, presentation.CanonicalDeliverySessionCount);
             Assert.AreEqual(
-                BuildingProductionRequestSystemHelper.OperationMapProductionDeliveryResult.InProgress,
-                presentation.UpdateCanonicalOperationMapProductionDelivery(
-                    context,
-                    producer,
-                    1,
-                    unitPrefab,
-                    settings,
-                    dropPosition,
-                    1f));
+                1,
+                world.EntityManager.GetComponentData<BuildingProductionDeliveryReadModel>(boundary)
+                    .ActiveCanonicalDeliveryCount);
+            dropPosition = new float3(20f, 0f, 20f);
             Assert.AreEqual(
                 BuildingProductionRequestSystemHelper.OperationMapProductionDeliveryResult.InProgress,
                 presentation.UpdateCanonicalOperationMapProductionDelivery(
@@ -462,8 +494,26 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                     1,
                     unitPrefab,
                     settings,
-                    dropPosition,
+                    ref dropPosition,
+                    1f));
+            Assert.AreEqual(float3.zero, dropPosition,
+                "An active delivery must retain its first committed free drop position.");
+            Assert.AreEqual(1, focusCount,
+                "The close delivery camera should be requested once when the helicopter begins the drop.");
+            Assert.AreEqual(Vector3.zero, focusedPosition);
+            dropPosition = new float3(-15f, 0f, 9f);
+            Assert.AreEqual(
+                BuildingProductionRequestSystemHelper.OperationMapProductionDeliveryResult.InProgress,
+                presentation.UpdateCanonicalOperationMapProductionDelivery(
+                    context,
+                    producer,
+                    1,
+                    unitPrefab,
+                    settings,
+                    ref dropPosition,
                     2f));
+            Assert.AreEqual(float3.zero, dropPosition);
+            Assert.AreEqual(1, focusCount);
 
             GameObject transportVisual = presentation.CanonicalDeliveryTransportInstanceForTests;
             Assert.IsNotNull(transportVisual, "Canonical delivery should retain the active helicopter presentation while the soldier is dropping.");
@@ -493,10 +543,23 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                     1,
                     unitPrefab,
                     settings,
-                    dropPosition,
+                    ref dropPosition,
                     3f));
-            presentation.UpdateCanonicalOperationMapProductionDeliveryLifecycle(4.1f);
+            Assert.AreEqual(1, presentation.CanonicalDeliverySessionCount,
+                "The delivery remains active while the helicopter departs after the ECS unit is spawned.");
+            presentation.UpdateCanonicalOperationMapProductionDeliveryLifecycle(context, 3.5f);
+            Assert.AreEqual(1, presentation.CanonicalDeliverySessionCount);
+            Assert.AreEqual(
+                1,
+                world.EntityManager.GetComponentData<BuildingProductionDeliveryReadModel>(boundary)
+                    .ActiveCanonicalDeliveryCount);
+            presentation.UpdateCanonicalOperationMapProductionDeliveryLifecycle(context, 4.1f);
             Assert.AreEqual(0, presentation.CanonicalDeliverySessionCount);
+            Assert.AreEqual(
+                0,
+                world.EntityManager.GetComponentData<BuildingProductionDeliveryReadModel>(boundary)
+                    .ActiveCanonicalDeliveryCount,
+                "Mission completion may proceed only after the helicopter has fully exited.");
         }
         finally
         {
@@ -2979,7 +3042,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             int deliveryUpdateCount = 0;
             int lifecycleUpdateCount = 0;
             BuildingProductionRequestSystemHelper.OperationMapProductionDeliveryResult UpdateDelivery(
-                Entity _, int requestId, GameObject prefab, float3 position, float now)
+                Entity _, int requestId, GameObject prefab, ref float3 position, float now)
             {
                 Assert.Greater(requestId, 0);
                 Assert.AreSame(unitPrefab, prefab);

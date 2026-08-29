@@ -75,7 +75,8 @@ namespace Game.Runtime
                 source.BuildingGameplayEcsQueryCompositionSystemHelper.AIOilInputSystemHelper.TryResolveFactionAIOilAllocationInput,
                 source.BuildingDefinitionPrefabSystemHelper.TryResolveConfiguredUnitResourceCosts,
                 source.RuntimeFactionResourceSystemHelper.TrySpendConstructionResources,
-                source.RuntimeFactionResourceSystemHelper.TryRestoreConstructionResources);
+                source.RuntimeFactionResourceSystemHelper.TryRestoreConstructionResources,
+                source.BuildingGameplayDependencyCompositionSystemHelper.FocusProductionDelivery);
             return productionSource;
         }
 

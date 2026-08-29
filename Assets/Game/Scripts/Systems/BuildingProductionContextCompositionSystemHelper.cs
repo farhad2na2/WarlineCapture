@@ -56,6 +56,7 @@ namespace Game.Runtime
             public readonly BuildingProductionRequestSystemHelper.TryResolveUnitResourceCostsDelegate TryResolveUnitResourceCosts;
             public readonly BuildingProductionRequestSystemHelper.MutateConstructionResourcesDelegate TrySpendConstructionResources;
             public readonly BuildingProductionRequestSystemHelper.MutateConstructionResourcesDelegate TryRestoreConstructionResources;
+            public readonly BuildingProductionTransportPresentationSystemHelper.FocusProductionDeliveryDelegate FocusProductionDelivery;
 
             public Source(
                 IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
@@ -102,7 +103,8 @@ namespace Game.Runtime
                 BuildingResourceHaulerBridgeCompositionSystemHelper.TryResolveFactionAIOilAllocationInputDelegate tryResolveFactionAIOilAllocationInput = null,
                 BuildingProductionRequestSystemHelper.TryResolveUnitResourceCostsDelegate tryResolveUnitResourceCosts = null,
                 BuildingProductionRequestSystemHelper.MutateConstructionResourcesDelegate trySpendConstructionResources = null,
-                BuildingProductionRequestSystemHelper.MutateConstructionResourcesDelegate tryRestoreConstructionResources = null)
+                BuildingProductionRequestSystemHelper.MutateConstructionResourcesDelegate tryRestoreConstructionResources = null,
+                BuildingProductionTransportPresentationSystemHelper.FocusProductionDeliveryDelegate focusProductionDelivery = null)
             {
                 RuntimeBuildings = runtimeBuildings;
                 WorldCamera = worldCamera;
@@ -149,6 +151,7 @@ namespace Game.Runtime
                 TryResolveUnitResourceCosts = tryResolveUnitResourceCosts;
                 TrySpendConstructionResources = trySpendConstructionResources;
                 TryRestoreConstructionResources = tryRestoreConstructionResources;
+                FocusProductionDelivery = focusProductionDelivery;
             }
         }
 
@@ -197,7 +200,8 @@ namespace Game.Runtime
             BuildingResourceHaulerBridgeCompositionSystemHelper.TryResolveFactionAIOilAllocationInputDelegate tryResolveFactionAIOilAllocationInput = null,
             BuildingProductionRequestSystemHelper.TryResolveUnitResourceCostsDelegate tryResolveUnitResourceCosts = null,
             BuildingProductionRequestSystemHelper.MutateConstructionResourcesDelegate trySpendConstructionResources = null,
-            BuildingProductionRequestSystemHelper.MutateConstructionResourcesDelegate tryRestoreConstructionResources = null)
+            BuildingProductionRequestSystemHelper.MutateConstructionResourcesDelegate tryRestoreConstructionResources = null,
+            BuildingProductionTransportPresentationSystemHelper.FocusProductionDeliveryDelegate focusProductionDelivery = null)
         {
             return new Source(
                 runtimeBuildings,
@@ -244,7 +248,8 @@ namespace Game.Runtime
                 tryResolveFactionAIOilAllocationInput,
                 tryResolveUnitResourceCosts,
                 trySpendConstructionResources,
-                tryRestoreConstructionResources);
+                tryRestoreConstructionResources,
+                focusProductionDelivery);
         }
 
         public BuildingProductionUpdateCompositionSystemHelper.Context CreateProductionUpdateContext(Source source)
@@ -277,7 +282,8 @@ namespace Game.Runtime
                 source.RunwaySystem,
                 source.TransportBridgeSystem,
                 CreateProductionTransportBridgeContext(source),
-                source.PrepareTransportDropVisual);
+                source.PrepareTransportDropVisual,
+                source.FocusProductionDelivery);
         }
 
         public BuildingProductionTransportBridgeCompositionSystemHelper.Context CreateProductionTransportBridgeContext(Source source)

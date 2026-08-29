@@ -29,6 +29,33 @@ namespace Game.Runtime
             return true;
         }
 
+        internal static bool TryCompleteDebrief(
+            EntityManager entityManager,
+            EntityQuery rootQuery,
+            in FixedString64Bytes session,
+            int attemptOrdinal)
+        {
+            if (rootQuery.CalculateEntityCount() != 1)
+                return false;
+            Entity root = rootQuery.GetSingletonEntity();
+            CampaignMissionRuntimeComponent runtime =
+                entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root);
+            if (!runtime.SessionToken.Equals(session) || runtime.AttemptOrdinal != attemptOrdinal ||
+                runtime.Phase != MissionPhaseKind.DebriefFirstClear ||
+                !CampaignMissionRuntimeSystem.TryTransition(
+                    in runtime,
+                    MissionPhaseKind.ResultAfterDebrief,
+                    runtime.Outcome,
+                    runtime.ReturnDestination,
+                    out CampaignMissionRuntimeComponent completed))
+            {
+                return false;
+            }
+
+            entityManager.SetComponentData(root, completed);
+            return true;
+        }
+
         internal readonly struct MoveTargetContext
         {
             public MoveTargetContext(

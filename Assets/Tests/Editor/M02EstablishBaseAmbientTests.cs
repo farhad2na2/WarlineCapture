@@ -63,8 +63,9 @@ public sealed class M02EstablishBaseAmbientTests
         {
             First = Anchor(826.5f, 379.5f),
             Second = Anchor(940.5f, 351.5f),
-            Third = Anchor(1016.5f, 377.5f)
+            Third = Anchor(920.5f, 425.5f)
         };
+        float3 buildLot = new(1016.5f, 0f, 377.5f);
         float minX = float.MaxValue;
         float maxX = float.MinValue;
         int[] centerCounts = new int[3];
@@ -81,11 +82,14 @@ public sealed class M02EstablishBaseAmbientTests
             Assert.Greater(math.distance(route.Start, route.AlleyMerge), 2f);
             Assert.Greater(math.distance(route.AlleyMerge, route.SquadPass), 2f);
             Assert.AreEqual(route.Start, route.Exit);
+            Assert.Greater(math.distance(route.Start.xz, buildLot.xz), 60f);
+            Assert.Greater(math.distance(route.AlleyMerge.xz, buildLot.xz), 60f);
+            Assert.Greater(math.distance(route.SquadPass.xz, buildLot.xz), 60f);
             minX = math.min(minX, route.Start.x);
             maxX = math.max(maxX, route.Start.x);
             centerCounts[ordinal % 3]++;
         }
-        Assert.Greater(maxX - minX, 190f);
+        Assert.Greater(maxX - minX, 100f);
         CollectionAssert.AreEqual(new[] { 3, 3, 2 }, centerCounts);
     }
 
@@ -274,12 +278,13 @@ public sealed class M02EstablishBaseAmbientTests
         using BlobBuilder builder = new(Allocator.Temp);
         ref OperationMapBlob root = ref builder.ConstructRoot<OperationMapBlob>();
         root.OperationMapId = MapId;
-        BlobBuilderArray<OperationMapAnchorBlob> anchors = builder.Allocate(ref root.Anchors, 5);
+        BlobBuilderArray<OperationMapAnchorBlob> anchors = builder.Allocate(ref root.Anchors, 6);
         anchors[0] = NamedAnchor("anchor.ch01.m02.civilian_edge", 1060.5f, 430.5f);
         anchors[1] = NamedAnchor("anchor.ch01.m02.civilian_evacuation", 1080.5f, 450.5f);
         anchors[2] = NamedAnchor("anchor.ch01.m02.build_lot", 1016.5f, 377.5f);
         anchors[3] = NamedAnchor("anchor.ch01.m02.resource_focus", 826.5f, 379.5f);
         anchors[4] = NamedAnchor("anchor.ch01.m02.forward_post", 940.5f, 351.5f);
+        anchors[5] = NamedAnchor("anchor.ch01.m02.friendly_spawn", 920.5f, 425.5f);
         return builder.CreateBlobAssetReference<OperationMapBlob>(Allocator.Persistent);
     }
 

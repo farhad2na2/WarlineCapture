@@ -50,7 +50,7 @@ namespace Game.Runtime
                 source.EvaluateConstructionResources,
                 source.TransportSystem == null || source.ProductionSystem == null
                     ? null
-                    : (Entity producer, int requestId, GameObject unitPrefab, float3 dropPosition, float now) =>
+                    : (Entity producer, int requestId, GameObject unitPrefab, ref float3 dropPosition, float now) =>
                     {
                         BuildingProductionQueueCompositionSystemHelper.ProductionTransportSettings settings =
                             source.ProductionSystem.ResolveProductionTransportSettings(
@@ -64,12 +64,14 @@ namespace Game.Runtime
                             requestId,
                             unitPrefab,
                             settings,
-                            dropPosition,
+                            ref dropPosition,
                             now);
                     },
                 source.TransportSystem == null
                     ? null
-                    : now => source.TransportSystem.UpdateCanonicalOperationMapProductionDeliveryLifecycle(now),
+                    : now => source.TransportSystem.UpdateCanonicalOperationMapProductionDeliveryLifecycle(
+                        CreateProductionTransportContext(source),
+                        now),
                 source.TryResolveUnitResourceCosts,
                 source.TrySpendConstructionResources,
                 source.TryRestoreConstructionResources);

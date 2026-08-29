@@ -30,7 +30,8 @@ namespace Game.Missions.Contracts
         SecureCorridor = 7,
         Result = 8,
         DebriefFirstClear = 9,
-        ReturnReplay = 10
+        ReturnReplay = 10,
+        ResultAfterDebrief = 11
     }
 
     public enum MissionOutcomeKind : byte

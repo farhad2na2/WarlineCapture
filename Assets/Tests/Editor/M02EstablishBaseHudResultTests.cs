@@ -16,18 +16,21 @@ using UnityEngine;
 public sealed class M02EstablishBaseHudResultTests
 {
     private const string Marker =
-        "[M02EstablishBaseHudResultValidation] result=Passed tests=5";
+        "[M02EstablishBaseHudResultValidation] result=Passed tests=7";
     private const string MissionId = "saga.ch01.m02.establish_base";
 
+    [MenuItem("Game/Validation/Run M02 Establish Base HUD Result Focused")]
     public static void RunFocusedValidation()
     {
         try
         {
             M02EstablishBaseHudResultTests tests = new();
-            tests.FirstClearResultCarriesDebriefAndM03RevealTruth();
+            tests.UnsettledVictoryDoesNotFlashBeforeDebrief();
+            tests.FirstClearResultWaitsForDebriefBeforeVictory();
+            tests.FirstClearFinalResultCarriesM03RevealTruth();
             tests.ReplayResultReturnsWithoutRepeatingFirstClearRewards();
-            tests.FirstClearButtonDefersRouteToDebriefOwner();
-            tests.DebriefOwnerReturnsThroughCampaignOperations();
+            tests.FinalVictoryButtonReturnsToMenu();
+            tests.DebriefOwnerReturnsToFinalResultBeforeMenu();
             tests.ResultPopupHidesLegacyM01Identity();
             Debug.Log(Marker);
             ValidationExit.Passed();
@@ -40,6 +43,7 @@ public sealed class M02EstablishBaseHudResultTests
         }
     }
 
+    [MenuItem("Game/Validation/Run M02 Establish Base HUD Result Regressions")]
     public static void RunRegressionValidation()
     {
         try
@@ -64,22 +68,45 @@ public sealed class M02EstablishBaseHudResultTests
     }
 
     [Test]
-    public void FirstClearResultCarriesDebriefAndM03RevealTruth()
+    public void UnsettledVictoryDoesNotFlashBeforeDebrief()
     {
-        UiMissionResultPopupModel model = ReadModel(firstClear: true);
+        Assert.IsFalse(TryReadModel(
+            firstClear: true,
+            MissionPhaseKind.Result,
+            out _,
+            settlementAccepted: false));
+    }
+
+    [Test]
+    public void FirstClearResultWaitsForDebriefBeforeVictory()
+    {
+        Assert.IsFalse(TryReadModel(
+            firstClear: true,
+            MissionPhaseKind.Result,
+            out _));
+    }
+
+    [Test]
+    public void FirstClearFinalResultCarriesM03RevealTruth()
+    {
+        UiMissionResultPopupModel model = ReadModel(
+            firstClear: true,
+            MissionPhaseKind.ResultAfterDebrief);
         Assert.AreEqual("ESTABLISH THE BASE • FORWARD POST", model.Subtitle);
         StringAssert.Contains("Dalia Rahim accepts field-lead duty", model.SummaryBody);
         StringAssert.Contains("warning sector has gone dark", model.SummaryBody);
         StringAssert.Contains("BARRACKS UNLOCK", model.RewardsText);
-        Assert.AreEqual("DEBRIEF", model.PrimaryActionLabel);
+        Assert.AreEqual("CONTINUE", model.PrimaryActionLabel);
         Assert.IsTrue(model.FirstClear);
-        Assert.IsTrue(model.DebriefRequired);
+        Assert.IsFalse(model.DebriefRequired);
     }
 
     [Test]
     public void ReplayResultReturnsWithoutRepeatingFirstClearRewards()
     {
-        UiMissionResultPopupModel model = ReadModel(firstClear: false);
+        UiMissionResultPopupModel model = ReadModel(
+            firstClear: false,
+            MissionPhaseKind.Result);
         Assert.AreEqual("CONTINUE", model.PrimaryActionLabel);
         Assert.AreEqual("300 CREDITS", model.RewardsText);
         StringAssert.DoesNotContain("field-lead", model.SummaryBody);
@@ -88,7 +115,7 @@ public sealed class M02EstablishBaseHudResultTests
     }
 
     [Test]
-    public void FirstClearButtonDefersRouteToDebriefOwner()
+    public void FinalVictoryButtonReturnsToMenu()
     {
         string source = File.ReadAllText(
             "Assets/Game/Scripts/UI/Screens/CampaignMissionHudResultBinder.cs");
@@ -96,13 +123,15 @@ public sealed class M02EstablishBaseHudResultTests
     }
 
     [Test]
-    public void DebriefOwnerReturnsThroughCampaignOperations()
+    public void DebriefOwnerReturnsToFinalResultBeforeMenu()
     {
         string source = File.ReadAllText(
             "Assets/Game/Scripts/Composition/Narrative/CampaignMissionDebriefCompositionSystemHelper.cs");
         StringAssert.Contains("MissionPhaseKind.DebriefFirstClear", source);
-        StringAssert.Contains("UiShellRouteIntent.ReturnToMainMenu", source);
-        StringAssert.Contains("UIRoute.Campaign", source);
+        StringAssert.Contains("TryCompleteDebrief", source);
+        StringAssert.Contains("ResultAfterDebrief", File.ReadAllText(
+            "Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeProgressUtility.cs"));
+        StringAssert.DoesNotContain("UiShellRouteIntent.ReturnToMainMenu", source);
         StringAssert.Contains("DebriefSequenceId", source);
     }
 
@@ -116,7 +145,9 @@ public sealed class M02EstablishBaseHudResultTests
         GameObject instance = UnityEngine.Object.Instantiate(prefab);
         try
         {
-            UiMissionResultPopupModel model = ReadModel(firstClear: true);
+            UiMissionResultPopupModel model = ReadModel(
+                firstClear: true,
+                MissionPhaseKind.ResultAfterDebrief);
             MissionResultPopupView view = instance.GetComponent<MissionResultPopupView>();
             Assert.NotNull(view);
             view.Apply(in model);
@@ -136,7 +167,19 @@ public sealed class M02EstablishBaseHudResultTests
         }
     }
 
-    private static UiMissionResultPopupModel ReadModel(bool firstClear)
+    private static UiMissionResultPopupModel ReadModel(
+        bool firstClear,
+        MissionPhaseKind phase)
+    {
+        Assert.IsTrue(TryReadModel(firstClear, phase, out UiMissionResultPopupModel model));
+        return model;
+    }
+
+    private static bool TryReadModel(
+        bool firstClear,
+        MissionPhaseKind phase,
+        out UiMissionResultPopupModel model,
+        bool settlementAccepted = true)
     {
         World previous = World.DefaultGameObjectInjectionWorld;
         using World world = new("M02 HUD result");
@@ -153,7 +196,7 @@ public sealed class M02EstablishBaseHudResultTests
                 ScenarioId = new FixedString64Bytes("scenario.ch01.m02.establish_base"),
                 OperationMapId = new FixedString64Bytes("opmap.ch01.forward_post_01"),
                 SessionToken = session,
-                Phase = MissionPhaseKind.Result,
+                Phase = phase,
                 Outcome = MissionOutcomeKind.Victory,
                 LaunchOrigin = MissionLaunchOriginKind.CampaignOperations,
                 RunKind = firstClear ? MissionRunKind.FirstClear : MissionRunKind.Replay,
@@ -185,17 +228,21 @@ public sealed class M02EstablishBaseHudResultTests
                 SourceVersion = 3,
                 OwnsBlob = 0
             });
-            entityManager.AddBuffer<CampaignMissionSettlementResultElement>(root).Add(new()
+            DynamicBuffer<CampaignMissionSettlementResultElement> settlements =
+                entityManager.AddBuffer<CampaignMissionSettlementResultElement>(root);
+            if (settlementAccepted)
             {
-                SourceVersion = 8,
-                SessionToken = session,
-                Accepted = 1,
-                FirstClear = firstClear ? (byte)1 : (byte)0
-            });
+                settlements.Add(new()
+                {
+                    SourceVersion = 8,
+                    SessionToken = session,
+                    Accepted = 1,
+                    FirstClear = firstClear ? (byte)1 : (byte)0
+                });
+            }
             World.DefaultGameObjectInjectionWorld = world;
             UiShellEcsGateway.RegisterAsRuntimeGateway();
-            Assert.IsTrue(UiShellEcsGateway.TryReadMissionResult(out UiMissionResultPopupModel model));
-            return model;
+            return UiShellEcsGateway.TryReadMissionResult(out model);
         }
         finally
         {

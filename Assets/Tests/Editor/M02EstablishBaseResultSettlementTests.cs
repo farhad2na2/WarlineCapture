@@ -17,7 +17,7 @@ public sealed class M02EstablishBaseResultSettlementTests
     private const string Barracks = "Building_Barrack";
     private const string TrainingFacilities = "upgrade.building.training_facilities";
     private const string FocusedMarker =
-        "[M02EstablishBaseResultSettlementValidation] result=Passed tests=13";
+        "[M02EstablishBaseResultSettlementValidation] result=Passed tests=15";
 
     [MenuItem("Game/Validation/Run M02 Establish Base Result Settlement Focused")]
     public static void RunFocusedValidation()
@@ -36,6 +36,8 @@ public sealed class M02EstablishBaseResultSettlementTests
             tests.CampaignRetryBeforeFirstClearGrantsFirstClearRewards();
             tests.ReplayRetryAfterFirstClearGrantsOnlyReplayRewards();
             tests.FirstClearUsesDebriefWhileReplayReturnsDirectly();
+            tests.FirstClearResultQueuesDebriefBeforeVictory();
+            tests.DebriefCompletionShowsFinalVictoryBeforeReturn();
             tests.RestartPreservesUnlockRewardsAndSettlementHistory();
             tests.UnknownOrMisScopedCustomRewardsFailClosed();
             Debug.Log(FocusedMarker);
@@ -249,6 +251,89 @@ public sealed class M02EstablishBaseResultSettlementTests
     }
 
     [Test]
+    public void DebriefCompletionShowsFinalVictoryBeforeReturn()
+    {
+        using World world = new(nameof(DebriefCompletionShowsFinalVictoryBeforeReturn));
+        EntityManager entityManager = world.EntityManager;
+        Entity root = entityManager.CreateEntity(typeof(CampaignMissionRootComponent));
+        CampaignMissionRuntimeComponent runtime = Runtime(
+            MissionPhaseKind.DebriefFirstClear,
+            MissionOutcomeKind.Victory);
+        runtime.TransitionToken = 41;
+        entityManager.AddComponentData(root, runtime);
+        entityManager.AddBuffer<CampaignMissionActionRequestElement>(root);
+        entityManager.AddBuffer<CampaignMissionActionResultElement>(root);
+        using EntityQuery query = entityManager.CreateEntityQuery(
+            ComponentType.ReadWrite<CampaignMissionRuntimeComponent>());
+
+        Assert.IsTrue(CampaignMissionRuntimeProgressUtility.TryCompleteDebrief(
+            entityManager, query, runtime.SessionToken, runtime.AttemptOrdinal));
+        CampaignMissionRuntimeComponent finalResult =
+            entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root);
+        Assert.AreEqual(MissionPhaseKind.ResultAfterDebrief, finalResult.Phase);
+
+        entityManager.GetBuffer<CampaignMissionActionRequestElement>(root).Add(new()
+        {
+            Action = MissionActionKind.Continue,
+            TransitionToken = finalResult.TransitionToken,
+            SessionToken = finalResult.SessionToken,
+            AttemptOrdinal = finalResult.AttemptOrdinal
+        });
+        Assert.IsTrue(CampaignMissionRuntimeSystem.TryConsumeAction(entityManager, root));
+        Assert.AreEqual(
+            MissionPhaseKind.ReturnReplay,
+            entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root).Phase);
+    }
+
+    [Test]
+    public void FirstClearResultQueuesDebriefBeforeVictory()
+    {
+        using BlobAssetReference<CampaignMissionCatalogBlob> blob = CreateBlob();
+        using World world = new(nameof(FirstClearResultQueuesDebriefBeforeVictory));
+        EntityManager entityManager = world.EntityManager;
+        Entity root = entityManager.CreateEntity(typeof(CampaignMissionRootComponent));
+        CampaignMissionRuntimeComponent runtime = Runtime(
+            MissionPhaseKind.Result,
+            MissionOutcomeKind.Victory);
+        runtime.TransitionToken = 41;
+        entityManager.AddComponentData(root, runtime);
+        entityManager.AddComponentData(root, new CampaignMissionCatalogComponent
+        {
+            Blob = blob,
+            SourceVersion = runtime.SourceVersion,
+            OwnsBlob = 0
+        });
+        entityManager.AddComponentData(root, new CampaignMissionResultComponent
+        {
+            MissionId = runtime.MissionId,
+            SessionToken = runtime.SessionToken,
+            AttemptOrdinal = runtime.AttemptOrdinal,
+            SourceVersion = runtime.Version,
+            Outcome = runtime.Outcome,
+            ReturnDestination = runtime.ReturnDestination
+        });
+        entityManager.AddBuffer<CampaignMissionSettlementResultElement>(root).Add(new()
+        {
+            SourceVersion = runtime.Version,
+            SessionToken = runtime.SessionToken,
+            Accepted = 1,
+            FirstClear = 1
+        });
+        DynamicBuffer<CampaignMissionActionRequestElement> requests =
+            entityManager.AddBuffer<CampaignMissionActionRequestElement>(root);
+        using EntityQuery query = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<CampaignMissionRuntimeComponent>());
+
+        Assert.IsTrue(CampaignMissionResultDebriefTransitionUtility.TryQueueFirstClearDebrief(
+            entityManager, query, runtime.MissionId));
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(MissionActionKind.Continue, requests[0].Action);
+        Assert.IsTrue(CampaignMissionResultDebriefTransitionUtility.TryQueueFirstClearDebrief(
+            entityManager, query, runtime.MissionId));
+        Assert.AreEqual(1, requests.Length, "The automatic debrief request must be idempotent.");
+    }
+
+    [Test]
     public void RestartPreservesUnlockRewardsAndSettlementHistory() => WithStore(context =>
     {
         using BlobAssetReference<CampaignMissionCatalogBlob> blob = CreateBlob();
@@ -448,6 +533,7 @@ public sealed class M02EstablishBaseResultSettlementTests
         mission.MissionId = new FixedString64Bytes(M02);
         mission.ScenarioId = new FixedString64Bytes("scenario.ch01.m02.establish_base");
         mission.OperationMapId = new FixedString64Bytes("opmap.ch01.forward_post_01");
+        mission.DebriefSequenceId = new FixedString64Bytes("seq.ch01.m02.debrief");
         BlobBuilderArray<CampaignMissionObjectiveBlob> objectives =
             builder.Allocate(ref mission.Objectives, 2);
         objectives[0] = Objective(

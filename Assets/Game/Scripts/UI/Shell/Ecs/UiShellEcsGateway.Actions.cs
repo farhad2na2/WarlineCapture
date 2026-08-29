@@ -51,7 +51,8 @@ namespace Game.UI.Shell.Ecs
 
             CampaignMissionRuntimeComponent runtime =
                 entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root);
-            if (runtime.Phase != MissionPhaseKind.Result ||
+            if (runtime.Phase is not (
+                    MissionPhaseKind.Result or MissionPhaseKind.ResultAfterDebrief) ||
                 action == UiMissionResultActionKind.Retry && runtime.Outcome != MissionOutcomeKind.Defeat ||
                 action == UiMissionResultActionKind.Continue && runtime.Outcome != MissionOutcomeKind.Victory)
                 return false;

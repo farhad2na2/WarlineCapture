@@ -23,7 +23,7 @@ using UnityEngine;
 public static class M02EstablishBaseNarrativeTests
 {
     private const string PassMarker =
-        "[M02EstablishBaseNarrativeValidation] result=Passed tests=22";
+        "[M02EstablishBaseNarrativeValidation] result=Passed tests=23";
 
     [MenuItem("Game/Validation/Run M02 Establish Base Narrative Focused")]
     public static void RunFocusedValidation()
@@ -51,7 +51,8 @@ public static class M02EstablishBaseNarrativeTests
             ConsumedStagesDoNotRepeatWithinAttempt();
             RetryAttemptRearmsBriefAndComms();
             M01NeverSelectsM02Narrative();
-            BriefAndCommsPauseWhileOnlyDebriefReturnsToCampaign();
+            BriefAndCommsPauseWhileDebriefRequiresFinalResult();
+            DebriefCompletionReturnsToFinalResult();
             OpeningBriefClaimsEnteringMatchBeforeHudIsExposed();
             Debug.Log(PassMarker);
             ValidationExit.Passed();
@@ -459,7 +460,7 @@ public static class M02EstablishBaseNarrativeTests
     }
 
     [Test]
-    public static void BriefAndCommsPauseWhileOnlyDebriefReturnsToCampaign()
+    public static void BriefAndCommsPauseWhileDebriefRequiresFinalResult()
     {
         Assert.IsTrue(CampaignMissionDebriefCompositionSystemHelper.RequiresSimulationPause(
             CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Brief));
@@ -467,12 +468,36 @@ public static class M02EstablishBaseNarrativeTests
             CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Comms));
         Assert.IsFalse(CampaignMissionDebriefCompositionSystemHelper.RequiresSimulationPause(
             CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Debrief));
-        Assert.IsFalse(CampaignMissionDebriefCompositionSystemHelper.ReturnsToCampaign(
+        Assert.IsFalse(CampaignMissionDebriefCompositionSystemHelper.RequiresFinalResult(
             CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Brief));
-        Assert.IsFalse(CampaignMissionDebriefCompositionSystemHelper.ReturnsToCampaign(
+        Assert.IsFalse(CampaignMissionDebriefCompositionSystemHelper.RequiresFinalResult(
             CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Comms));
-        Assert.IsTrue(CampaignMissionDebriefCompositionSystemHelper.ReturnsToCampaign(
+        Assert.IsTrue(CampaignMissionDebriefCompositionSystemHelper.RequiresFinalResult(
             CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Debrief));
+    }
+
+    [Test]
+    public static void DebriefCompletionReturnsToFinalResult()
+    {
+        using World world = new(nameof(DebriefCompletionReturnsToFinalResult));
+        Entity root = world.EntityManager.CreateEntity(typeof(CampaignMissionRuntimeComponent));
+        CampaignMissionRuntimeComponent runtime = Runtime(MissionPhaseKind.DebriefFirstClear);
+        runtime.Outcome = MissionOutcomeKind.Victory;
+        runtime.ReturnDestination = MissionReturnDestinationKind.CampaignOperations;
+        runtime.Version = 8;
+        runtime.SourceVersion = 3;
+        runtime.ScenarioId = new FixedString64Bytes("scenario.ch01.m02.establish_base");
+        runtime.OperationMapId = new FixedString64Bytes("opmap.ch01.forward_post_01");
+        runtime.DeterministicSeed = 2002001;
+        world.EntityManager.SetComponentData(root, runtime);
+        using EntityQuery query = world.EntityManager.CreateEntityQuery(
+            ComponentType.ReadWrite<CampaignMissionRuntimeComponent>());
+
+        Assert.IsTrue(CampaignMissionRuntimeProgressUtility.TryCompleteDebrief(
+            world.EntityManager, query, runtime.SessionToken, runtime.AttemptOrdinal));
+        Assert.AreEqual(
+            MissionPhaseKind.ResultAfterDebrief,
+            world.EntityManager.GetComponentData<CampaignMissionRuntimeComponent>(root).Phase);
     }
 
     [Test]

@@ -60,7 +60,7 @@ namespace Game.Runtime
                     ref map,
                     "anchor.ch01.m02.resource_focus",
                     "anchor.ch01.m02.forward_post",
-                    "anchor.ch01.m02.build_lot",
+                    "anchor.ch01.m02.friendly_spawn",
                     out anchors);
             }
 

@@ -31,6 +31,19 @@ public sealed class M02EstablishBaseDoItTests
             Panel(3, AssistantRecommendationKind.Select, AssistantTargetKind.UiSurface, 5)), Is.False);
     }
 
+    [TestCase(4, UiCampaignGuidanceTargetKind.BuildButton)]
+    [TestCase(1, UiCampaignGuidanceTargetKind.BarracksCatalogItem)]
+    [TestCase(9, UiCampaignGuidanceTargetKind.ResourceStrip)]
+    [TestCase(5, UiCampaignGuidanceTargetKind.RifleProduction)]
+    public void EverySuccessfulM02UiActionMapsToAuthoritativeAcknowledgement(
+        byte recommendationKind,
+        UiCampaignGuidanceTargetKind expected)
+    {
+        Assert.That(
+            MatchHudAssistantUiSystemHelper.ResolveM02AcknowledgementTarget(recommendationKind),
+            Is.EqualTo(expected));
+    }
+
     [Test]
     public void BarracksDoItReopensTheDrawerAndSelectsTheRenderedItem()
     {

@@ -45,11 +45,10 @@ namespace Game.UI.Runtime
             Action beforePanelOpen,
             Action<bool> panelOpenChanged)
         {
-            Func<bool> executeBuildingPlacementStep = _executeBuildingPlacementStep;
-            RectTransform boundResourceStrip = _boundResourceStrip;
+            RebindState rebindState = CaptureRebindState(
+                headerContent != null && popupLayer != null && popupPrefab != null);
             Unbind();
-            _executeBuildingPlacementStep = executeBuildingPlacementStep;
-            _boundResourceStrip = boundResourceStrip;
+            RestoreRebindState(in rebindState);
             _highlightPresentationSystem.BindResourceStrip(_boundResourceStrip);
             _captureGameplayUiClick = captureGameplayUiClick;
             _beforePanelOpen = beforePanelOpen;
@@ -475,11 +474,11 @@ namespace Game.UI.Runtime
             if (step == 0)
                 return;
 
-            if (step == 5)
-            {
+            UiCampaignGuidanceTargetKind target =
+                ResolveM02AcknowledgementTarget(recommendationKind);
+            if (target != UiCampaignGuidanceTargetKind.None)
                 UiShellRuntimeGateway.TryAcknowledgeCampaignGuidanceTarget(
-                    UiCampaignGuidanceTargetKind.ResourceStrip);
-            }
+                    target);
             CompleteTutorialStep(step, finalStep: false);
         }
 

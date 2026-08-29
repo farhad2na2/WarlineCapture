@@ -75,7 +75,7 @@ namespace Game.Runtime
                 Smooth = 1,
                 UseTacticalRevealZoom = returnToRts ? (byte)4 : (byte)3,
                 SmoothTimeSeconds = EstablishBaseOpeningSmoothTimeSeconds,
-                World = returnToRts ? opening.FriendlyFocus : opening.EstablishingFocus
+                World = returnToRts ? opening.HostileFocus : opening.EstablishingFocus
             };
         }
 

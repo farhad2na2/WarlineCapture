@@ -200,6 +200,7 @@ public sealed class M02EstablishBaseGuidanceTests
         CampaignMissionOpeningPresentationComponent opening = new()
         {
             FriendlyFocus = CanonicalCameraStartAnchor,
+            HostileFocus = CanonicalBuildAnchor,
             EstablishingFocus = math.lerp(
                 CanonicalForwardPostAnchor,
                 CanonicalBuildAnchor,
@@ -224,7 +225,8 @@ public sealed class M02EstablishBaseGuidanceTests
         Assert.AreEqual(1, restore.Smooth);
         Assert.AreEqual(4, restore.UseTacticalRevealZoom);
         Assert.AreEqual(2.25f, restore.SmoothTimeSeconds);
-        Assert.AreEqual(opening.FriendlyFocus, restore.World);
+        Assert.AreEqual(opening.HostileFocus, restore.World,
+            "The final RTS view must center the Barracks lot so guided placement starts clear of the helipads.");
     }
 
     [MenuItem("Game/Validation/Run M02 Establish Base Guidance Regressions")]

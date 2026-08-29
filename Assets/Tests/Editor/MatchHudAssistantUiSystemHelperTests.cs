@@ -54,6 +54,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             passed++;
             RunCase(test => test.BindMatchHudAssistant_AppliesStructuredRowsWithoutCreatingPopupObjects());
             passed++;
+            RunCase(test => test.BindMatchHudAssistant_RebindPreservesPendingM02Action());
+            passed++;
             RunCase(test => test.AssistantPanelUi_UnchangedModelApplicationsAllocateZeroManagedBytes());
             passed++;
             RunCase(test => test.BindMatchHudAssistant_EnforcesPopupExclusivity());
@@ -68,7 +70,9 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             passed++;
             RunCase(test => test.MissionReplay_ResetClearsCompletedGuidanceState());
             passed++;
-            RunCase(test => test.MissionReplay_ContentVersionChangeClearsPendingGuidanceState());
+            RunCase(test => test.PopupContentVersionChangePreservesPendingGuidanceState());
+            passed++;
+            RunCase(test => test.MissionReplay_ShellReplacementClearsPendingGuidanceState());
             passed++;
             RunCase(test => test.DelayedEcsHighlight_RemainsPendingUntilCanonicalTargetOrMissionReset());
             passed++;
@@ -1136,9 +1140,9 @@ public sealed class MatchHudAssistantUiSystemHelperTests
     }
 
     [Test]
-    public void MissionReplay_ContentVersionChangeClearsPendingGuidanceState()
+    public void PopupContentVersionChangePreservesPendingGuidanceState()
     {
-        var shellObject = new GameObject("MissionReplayShell");
+        var shellObject = new GameObject("ActiveMissionShell");
         var shellContent = shellObject.AddComponent<UIShellContentView>();
         var ui = new MainMenuPlayUI();
         ui.BindGuidedHudRuntime(shellContent);
@@ -1157,12 +1161,70 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         shellContent.MarkContentChanged();
         ui.BindGuidedHudRuntime(shellContent);
 
+        Assert.IsTrue(GetPrivateField<bool>(presentation, "_commandGuidanceArmed"));
+        Assert.IsTrue(GetPrivateField<bool>(presentation, "_awaitingNextShowMe"));
+        Assert.IsTrue(GetPrivateField<bool>(presentation, "_worldTargetShowRequested"));
+        Assert.IsTrue(presentation.LastAppliedModel.Active,
+            "Installing or closing a popup must not reset the active mission tutorial.");
+        ui.Dispose();
+        UnityEngine.Object.DestroyImmediate(shellObject);
+    }
+
+    [Test]
+    public void BindMatchHudAssistant_RebindPreservesPendingM02Action()
+    {
+        CreateHudHarness(true, out RectTransform overlay, out RectTransform header, out _);
+        var ui = new MainMenuPlayUI();
+        ui.Init(null, new FakeMatchRuntimeState());
+        GameObject popupPrefab = LoadPopupPrefab();
+        ui.BindMatchHudAssistant(header.gameObject, overlay, popupPrefab);
+
+        MatchHudAssistantUiSystemHelper assistant =
+            GetPrivateField<MatchHudAssistantUiSystemHelper>(ui, "_matchHudAssistantUiSystem");
+        SetPrivateField(assistant, "_pendingM02DoItStep", (byte)6);
+        SetPrivateField(assistant, "_pendingM02DoItUntilUnscaledTime", 123f);
+        SetPrivateField(assistant, "_narratedTutorialCues", (ushort)(1 << 5));
+
+        ui.BindMatchHudAssistant(header.gameObject, overlay, popupPrefab);
+
+        Assert.AreEqual(6, GetPrivateField<byte>(assistant, "_pendingM02DoItStep"));
+        Assert.AreEqual(123f,
+            GetPrivateField<float>(assistant, "_pendingM02DoItUntilUnscaledTime"));
+        Assert.AreEqual((ushort)(1 << 5),
+            GetPrivateField<ushort>(assistant, "_narratedTutorialCues"),
+            "Rebinding controls after opening the Build drawer must not replay ARIA or lose DO IT.");
+        ui.Dispose();
+    }
+
+    [Test]
+    public void MissionReplay_ShellReplacementClearsPendingGuidanceState()
+    {
+        var firstShellObject = new GameObject("FirstMissionShell");
+        var nextShellObject = new GameObject("NextMissionShell");
+        var ui = new MainMenuPlayUI();
+        ui.BindGuidedHudRuntime(firstShellObject.AddComponent<UIShellContentView>());
+
+        MatchHudAssistantUiSystemHelper assistant =
+            GetPrivateField<MatchHudAssistantUiSystemHelper>(ui, "_matchHudAssistantUiSystem");
+        AssistantHighlightPresentationSystemHelper presentation =
+            GetPrivateField<AssistantHighlightPresentationSystemHelper>(
+                assistant,
+                "_highlightPresentationSystem");
+        presentation.ApplyReadModel(CreateHighlightModel(702u, recommendationKind: 2));
+        SetPrivateField(presentation, "_commandGuidanceArmed", true);
+        SetPrivateField(presentation, "_awaitingNextShowMe", true);
+        SetPrivateField(presentation, "_worldTargetShowRequested", true);
+
+        ui.BindGuidedHudRuntime(nextShellObject.AddComponent<UIShellContentView>());
+
         Assert.IsFalse(GetPrivateField<bool>(presentation, "_commandGuidanceArmed"));
         Assert.IsFalse(GetPrivateField<bool>(presentation, "_awaitingNextShowMe"));
         Assert.IsFalse(GetPrivateField<bool>(presentation, "_worldTargetShowRequested"));
         Assert.IsFalse(presentation.LastAppliedModel.Active,
-            "A reinstalled Match HUD must clear destination guidance from the previous mission attempt.");
-        UnityEngine.Object.DestroyImmediate(shellObject);
+            "A new Match HUD owner must reset tutorial state for the next attempt.");
+        ui.Dispose();
+        UnityEngine.Object.DestroyImmediate(nextShellObject);
+        UnityEngine.Object.DestroyImmediate(firstShellObject);
     }
 
     [Test]

@@ -14,6 +14,7 @@ namespace Game.UI.Runtime
         private MatchOverlayCommandControlsView _recoveredCommandControls;
         private bool _cinematicHudLocked;
         private int _boundContentVersion = -1;
+        private int _boundMatchHudHeaderId;
         private int _lockedContentVersion = -1;
 
         private sealed class SelectableState
@@ -39,11 +40,15 @@ namespace Game.UI.Runtime
             if (_shellContent == shellContent && _boundContentVersion == contentVersion)
                 return false;
 
+            int matchHudHeaderId = ResolveMatchHudHeaderId(shellContent);
+            bool missionAttemptChanged =
+                _shellContent != shellContent || _boundMatchHudHeaderId != matchHudHeaderId;
             RestoreCinematicHudInteraction();
             _shellContent = shellContent;
             _boundContentVersion = contentVersion;
+            _boundMatchHudHeaderId = matchHudHeaderId;
             _recoveredCommandControls = null;
-            return true;
+            return missionAttemptChanged;
         }
 
         internal void Dispose()
@@ -51,7 +56,21 @@ namespace Game.UI.Runtime
             RestoreCinematicHudInteraction();
             _shellContent = null;
             _boundContentVersion = -1;
+            _boundMatchHudHeaderId = 0;
             _recoveredCommandControls = null;
+        }
+
+        private static int ResolveMatchHudHeaderId(UIShellContentView shellContent)
+        {
+            if (shellContent == null ||
+                !shellContent.TryGetRegionContentRoot(
+                    UIShellRegionId.HeaderRegion, out RectTransform headerRoot) ||
+                headerRoot == null || headerRoot.childCount == 0)
+            {
+                return 0;
+            }
+
+            return headerRoot.GetChild(0).gameObject.GetEntityId().GetHashCode();
         }
 
         private void RecoverLateCommandControls(

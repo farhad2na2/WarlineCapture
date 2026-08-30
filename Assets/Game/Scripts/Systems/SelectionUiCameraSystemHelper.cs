@@ -81,7 +81,7 @@ namespace Game.Runtime
             if (_matchHudZoomTransitionSmoothTime <= 0f)
                 _matchHudZoomTransitionSmoothTime = 0.25f;
             _matchHudZoomLevel = MatchHudZoomLevel.Default;
-            _matchHudZoomTransitionActive = false;
+            DeactivateMatchHudZoomTransition();
             _matchHudZoomTargetHeight = _normalModeZoomHeight;
         }
 
@@ -139,12 +139,12 @@ namespace Game.Runtime
                 return;
             if (_cameraSystem == null || _cameraRequestSystem == null || _worldCamera == null || !TryGetDefaultEntityManager(out EntityManager em))
             {
-                _matchHudZoomTransitionActive = false;
+                DeactivateMatchHudZoomTransition();
                 return;
             }
             if (HasValidTacticalFollowPose(em))
             {
-                _matchHudZoomTransitionActive = false;
+                DeactivateMatchHudZoomTransition();
                 return;
             }
 
@@ -154,14 +154,14 @@ namespace Game.Runtime
                 _normalModePitch,
                 _normalModeYaw,
                 _normalModeFieldOfView,
-                _matchHudZoomTransitionSmoothTime,
+                ResolveMatchHudZoomTransitionSmoothTime(),
                 completeTransitionOnArrive: false);
-            _cameraRequestSystem.QueueMoveGroundCenterTo(em, _matchHudZoomFocusWorldPosition);
+            QueueMatchHudZoomFocus(em);
             _cameraRequestSystem.QueueSetNormalIsoModeActive(em, false);
             ProcessCameraRequests(em);
 
             if (IsMatchHudZoomTransitionComplete())
-                _matchHudZoomTransitionActive = false;
+                DeactivateMatchHudZoomTransition();
         }
 
         public bool RequestZoomInLevel()
@@ -277,7 +277,7 @@ namespace Game.Runtime
             _matchHudZoomFocusWorldPosition = _cameraSystem.GetCameraGroundCenterWorld(_worldCamera);
             _matchHudZoomTargetHeight = ResolveMatchHudZoomHeight(targetLevel);
             _matchHudZoomLevel = targetLevel;
-            _matchHudZoomTransitionActive = true;
+            BeginMatchHudZoomTransition();
 
             _cameraRequestSystem.QueueClearSmoothFocusTarget(em);
             _cameraRequestSystem.QueueClearDragging(em);

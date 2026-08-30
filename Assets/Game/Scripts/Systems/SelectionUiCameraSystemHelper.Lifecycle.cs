@@ -7,6 +7,8 @@ namespace Game.Runtime
     {
         private const float ProductionDeliveryZoomHeight = 32f;
         private const float ProductionDeliveryFocusForwardOffset = 4f;
+        private const float ProductionDeliveryTransitionSmoothTime = 1.5f;
+        private bool _matchHudZoomUsesSmoothFocusTarget;
 
         public bool FocusProductionDelivery(Vector3 focusWorldPosition)
         {
@@ -21,8 +23,12 @@ namespace Game.Runtime
                 _worldCamera.transform.forward);
             _matchHudZoomTargetHeight = ResolveProductionDeliveryZoomHeight(_minZoomHeight, _maxZoomHeight);
             _matchHudZoomLevel = MatchHudZoomLevel.ZoomedIn;
-            _matchHudZoomTransitionActive = true;
-            _cameraRequestSystem.QueueClearSmoothFocusTarget(em);
+            BeginMatchHudZoomTransition(useSmoothFocusTarget: true);
+            _cameraRequestSystem.QueueSetSmoothFocusTarget(
+                em,
+                _matchHudZoomFocusWorldPosition,
+                resetVelocity: true,
+                smoothTimeSeconds: ProductionDeliveryTransitionSmoothTime);
             _cameraRequestSystem.QueueClearDragging(em);
             _cameraRequestSystem.QueueCompleteZoomTransition(em);
             _cameraRequestSystem.QueueResetTransitionVelocities(em);
@@ -30,6 +36,31 @@ namespace Game.Runtime
             ProcessCameraRequests(em);
             UpdateZoomTransition();
             return true;
+        }
+
+        private void BeginMatchHudZoomTransition(bool useSmoothFocusTarget = false)
+        {
+            _matchHudZoomTransitionActive = true;
+            _matchHudZoomUsesSmoothFocusTarget = useSmoothFocusTarget;
+        }
+
+        private void DeactivateMatchHudZoomTransition()
+        {
+            _matchHudZoomTransitionActive = false;
+            _matchHudZoomUsesSmoothFocusTarget = false;
+        }
+
+        private float ResolveMatchHudZoomTransitionSmoothTime()
+        {
+            return _matchHudZoomUsesSmoothFocusTarget
+                ? ProductionDeliveryTransitionSmoothTime
+                : _matchHudZoomTransitionSmoothTime;
+        }
+
+        private void QueueMatchHudZoomFocus(EntityManager entityManager)
+        {
+            if (!_matchHudZoomUsesSmoothFocusTarget)
+                _cameraRequestSystem.QueueMoveGroundCenterTo(entityManager, _matchHudZoomFocusWorldPosition);
         }
 
         internal static float ResolveProductionDeliveryZoomHeight(float minZoomHeight, float maxZoomHeight)

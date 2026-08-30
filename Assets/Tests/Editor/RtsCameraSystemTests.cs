@@ -767,6 +767,48 @@ public sealed class RtsCameraSystemTests
     }
 
     [Test]
+    public void FocusProductionDelivery_UsesSmoothPanWithoutImmediateSnap()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        RtsCameraSystem cameraSystem = CreateCameraSystem();
+        RtsCameraRequestSystem cameraRequestSystem =
+            _cameraSystemWorld.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
+        World.DefaultGameObjectInjectionWorld = _cameraSystemWorld;
+        Camera camera = CreateCamera(new Vector3(0f, 24f, -20f), Quaternion.Euler(58f, 10f, 0f));
+        var helper = new SelectionUiCameraSystemHelper(cameraSystem, cameraRequestSystem);
+
+        try
+        {
+            helper.Init(null, camera);
+            Vector3 initialGroundCenter = cameraSystem.GetCameraGroundCenterWorld(camera);
+            Vector3 requestedFocus = new(100f, 0f, 120f);
+            Vector3 expectedFocus = SelectionUiCameraSystemHelper.ResolveProductionDeliveryFocusPoint(
+                requestedFocus,
+                camera.transform.forward);
+
+            Assert.IsTrue(helper.FocusProductionDelivery(requestedFocus));
+
+            Vector3 firstFrameGroundCenter = cameraSystem.GetCameraGroundCenterWorld(camera);
+            Assert.IsTrue(cameraSystem.HasSmoothFocusTarget);
+            Assert.That(cameraSystem.SmoothFocusTarget.x, Is.EqualTo(expectedFocus.x).Within(0.0001f));
+            Assert.That(cameraSystem.SmoothFocusTarget.z, Is.EqualTo(expectedFocus.z).Within(0.0001f));
+            Assert.That(
+                Vector3.Distance(initialGroundCenter, firstFrameGroundCenter),
+                Is.LessThan(5f),
+                "The delivery request must not snap the ground center to its distant target in the first frame.");
+            Assert.That(
+                Vector3.Distance(firstFrameGroundCenter, expectedFocus),
+                Is.GreaterThan(50f),
+                "The camera must retain distance for the smooth-focus owner to resolve over subsequent frames.");
+        }
+        finally
+        {
+            helper.Dispose();
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
+    }
+
+    [Test]
     public void MatchHudZoomControlState_ReusesTacticalFollowPoseQueryWithoutManagedAllocation()
     {
         World previousWorld = World.DefaultGameObjectInjectionWorld;

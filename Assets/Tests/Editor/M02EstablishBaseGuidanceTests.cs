@@ -23,7 +23,7 @@ using UnityEngine.UI;
 public sealed class M02EstablishBaseGuidanceTests
 {
     private const string FocusedMarker =
-        "[M02EstablishBaseGuidanceValidation] result=Passed tests=41";
+        "[M02EstablishBaseGuidanceValidation] result=Passed tests=42";
     private static readonly float3 CanonicalCameraStartAnchor = new(935.5f, 0.009179778f, 390.5f);
     private static readonly float3 CanonicalForwardPostAnchor = new(940.5f, 0.009179778f, 351.5f);
     private static readonly float3 CanonicalBuildAnchor = new(1016.5f, 0.009179778f, 377.5f);
@@ -69,6 +69,7 @@ public sealed class M02EstablishBaseGuidanceTests
             tests.M02GuidanceUsesOnlyItsOwnNarrationEvents();
             tests.M01TutorialProjectionRemainsUnchanged();
             tests.IncompleteM02RetryProjectsRequiredBuildGuidance();
+            tests.CompletedM02ReplayProjectsRequiredBuildGuidance();
             tests.UiSurfaceGuidanceUsesTypedControlsWithoutScreenCoordinates();
             tests.M02OpeningStartsAtRtsAndFocusesTheAuthoredBase();
             tests.M02OpeningCannotEmitM01CivilianPanicAudio();
@@ -1168,6 +1169,20 @@ public sealed class M02EstablishBaseGuidanceTests
             CanonicalBuildAnchor, out CampaignMissionGuidanceProjectionComponent guidance));
         Assert.AreEqual(CampaignMissionGuidancePromptKind.EstablishBaseOpenBuild, guidance.Prompt);
         Assert.AreEqual(NarrativeGuidanceMode.Full, guidance.GuidanceMode);
+    }
+
+    [Test]
+    public void CompletedM02ReplayProjectsRequiredBuildGuidance()
+    {
+        CampaignMissionRuntimeComponent runtime = Runtime("saga.ch01.m02.establish_base");
+        runtime.RunKind = MissionRunKind.Replay;
+        runtime.ReplayTutorialEnabled = 0;
+        Assert.IsTrue(CampaignMissionGuidanceProjectionSystem.TryBuildProjection(
+            default, runtime, default, Settings(), Entity.Null, Entity.Null, default, default,
+            CanonicalBuildAnchor, out CampaignMissionGuidanceProjectionComponent guidance));
+        Assert.AreEqual(CampaignMissionGuidancePromptKind.EstablishBaseOpenBuild, guidance.Prompt);
+        Assert.AreEqual(NarrativeGuidanceMode.Full, guidance.GuidanceMode);
+        Assert.AreEqual(1, guidance.Active);
     }
 
     [Test]

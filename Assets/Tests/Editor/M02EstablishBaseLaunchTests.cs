@@ -20,7 +20,7 @@ using UnityEngine;
 
 public sealed class M02EstablishBaseLaunchTests
 {
-    private const string Marker = "[M02EstablishBaseLaunchValidation] result=Passed tests=17";
+    private const string Marker = "[M02EstablishBaseLaunchValidation] result=Passed tests=18";
     private const string M01MissionPath =
         "Assets/Game/Configs/Missions/Chapter01/MissionDefinition_Ch01_M01_FirstContact.asset";
     private const string M01ScenarioPath =
@@ -43,6 +43,7 @@ public sealed class M02EstablishBaseLaunchTests
             tests.ChapterCatalogDoesNotFallBackToLegacyMission();
             tests.CampaignDeployQueuesCanonicalM02PayloadAndRoute();
             tests.CompletedChapterDefaultsToLatestAvailableM02();
+            tests.CompletedM02ReplayKeepsRequiredTutorialGuidance();
             tests.IncompleteM02RetryKeepsFullTutorialGuidance();
             tests.CampaignDeployBootstrapsForwardPostAndAccepts();
             tests.ReusedCampaignMapPublishesItsActualGeneration();
@@ -333,6 +334,27 @@ public sealed class M02EstablishBaseLaunchTests
         Assert.AreEqual(M02MissionId, operations.SelectedMissionId.ToString());
         Assert.AreEqual(M02MapId, operations.OperationMapId.ToString());
         Assert.AreEqual(UiCampaignMissionPrimaryActionKind.Replay, operations.PrimaryAction);
+    }
+
+    [Test]
+    public void CompletedM02ReplayKeepsRequiredTutorialGuidance()
+    {
+        using ProjectionFixture fixture = CreateProjectionFixture(m02Completed: true);
+        Entity settings = fixture.World.EntityManager.CreateEntity(typeof(AssistantSettingsComponent));
+        fixture.World.EntityManager.SetComponentData(settings, new AssistantSettingsComponent
+        {
+            GuidanceLevel = AssistantGuidanceLevel.Minimal
+        });
+
+        CampaignMissionLaunchRequestElement request = QueueM02Deploy(fixture.World, fixture.UiRoot);
+        using EntityQuery briefingQuery = fixture.World.EntityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<UiMissionBriefingComponent>());
+        UiMissionBriefingComponent briefing = briefingQuery.GetSingleton<UiMissionBriefingComponent>();
+        Assert.AreEqual(MissionRunKind.Replay, request.RunKind);
+        Assert.AreEqual(NarrativeGuidanceMode.Full, request.Guidance);
+        Assert.AreEqual(1, request.ReplayTutorialEnabled);
+        Assert.AreEqual(1, briefing.ReplayTutorialEnabled);
+        Assert.AreEqual(0, briefing.ReplayTutorialToggleVisible);
     }
 
     [Test]

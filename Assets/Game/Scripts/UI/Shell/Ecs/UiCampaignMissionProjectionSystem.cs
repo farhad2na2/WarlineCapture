@@ -181,7 +181,7 @@ namespace Game.UI.Shell.Ecs
         {
             bool replay = operations.FirstClearCompleted != 0;
             FixedString64Bytes m01MissionId = new(M01MissionId);
-            bool tutorialRequired = definition.MissionId.Equals(m01MissionId);
+            bool tutorialRequired = definition.MissionId.Equals(m01MissionId) || definition.MissionId.Equals(new FixedString64Bytes(M02MissionId));
             UiMissionBriefingComponent next = new()
             {
                 MissionId = definition.MissionId,
@@ -311,9 +311,7 @@ namespace Game.UI.Shell.Ecs
             MissionRunKind runKind = operations.PendingResume != 0
                 ? MissionRunKind.Retry
                 : operations.FirstClearCompleted != 0 ? MissionRunKind.Replay : MissionRunKind.FirstClear;
-            bool requiresTutorialGuidance =
-                definition.MissionId.Equals(new FixedString64Bytes(M02MissionId)) &&
-                (operations.FirstClearCompleted == 0 || briefing.ReplayTutorialEnabled != 0);
+            bool requiresTutorialGuidance = definition.MissionId.Equals(new FixedString64Bytes(M02MissionId));
             NarrativeGuidanceMode guidance = requiresTutorialGuidance
                 ? NarrativeGuidanceMode.Full
                 : ResolveGuidance(entityManager);

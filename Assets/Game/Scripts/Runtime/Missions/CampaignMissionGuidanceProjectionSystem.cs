@@ -87,10 +87,9 @@ namespace Game.Runtime
         {
             next = current;
             bool establishBase = runtime.MissionId.Equals(EstablishBaseMissionId);
-            bool requiredRetryGuidance = establishBase && runtime.RunKind == MissionRunKind.Retry &&
-                                         runtime.Guidance == NarrativeGuidanceMode.Full;
+            bool requiredMissionGuidance = establishBase && runtime.Guidance == NarrativeGuidanceMode.Full;
             bool suppressed = runtime.RunKind != MissionRunKind.FirstClear && runtime.ReplayTutorialEnabled == 0 &&
-                              !requiredRetryGuidance;
+                              !requiredMissionGuidance;
             if (runtime.Version == 0 || runtime.Outcome != MissionOutcomeKind.None || suppressed)
             { if (current.Active == 0) return false; next = default; next.Version = Next(current.Version); return true; }
             CampaignMissionGuidancePromptKind prompt = establishBase

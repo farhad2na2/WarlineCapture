@@ -1,29 +1,32 @@
-# VisualLockLayered New Art Direction
+# Warline Capture V3 Visual Lock
 
-This folder now keeps only the current bright premium military command UI art direction.
+This folder contains the current bright premium military-command UI direction.
+The V3 set uses sharp 90-degree rectangular construction, solid charcoal panels,
+vivid functional color blocks, hard shadows, large mobile controls, and dry
+inland settings. V1/V2 images may remain as history, but they are not current
+targets.
 
-## Saved References
+The canonical screen-by-screen manifest is
+[`V3_SCREEN_INVENTORY.md`](V3_SCREEN_INVENTORY.md). It lists 46 final PNGs:
+17 previously approved finals and 29 finals added in the full-coverage pass.
 
-| Surface | Current reference |
+## V3 Coverage
+
+| Family | Final screens and states |
 |---|---|
-| `SCN-01_SplashLoading` | `SCN-01_SplashLoading/reference/SCN-01_SplashLoading_NewMainMenuArtDirection_TargetLock_V04.png` |
-| `SCN-02C_MainMenuBrightCommand` | `SCN-02C_MainMenuBrightCommand/reference/scn02c_target_lock_warline_capture_bright.png` |
-| `SCN-08_RTSBattleHUD` | `SCN-08_RTSBattleHUD/reference/SCN-08_RTSBattleHUD_NewMainMenuArtDirection_TargetLock_V02.png` |
-| `SCN-08_BuildPlacementConfirmationBar` | `SCN-08_BuildPlacementConfirmationBar/reference/SCN-08_BuildPlacementConfirmationBar_NewMainMenuArtDirection_TargetLock_V01.png` |
-| `SCN-09_BuildDrawer` | `SCN-09_BuildDrawer/reference/SCN-09_BuildDrawer_NewMainMenuArtDirection_TargetLock_V03.png` |
-| `SCN-19_Armory` | `SCN-19_Armory/reference/SCN-19_Armory_NewMainMenuArtDirection_TargetLock_V04.png` |
-| `POP-12_ResourceLogisticsExchange` | `POP-12_ResourceLogisticsExchange/reference/POP-12_ResourceLogisticsExchange_NewMainMenuArtDirection_TargetLock_V01.png` |
-
-## Pending Target Requests
-
-| Surface | Target-lock request | Required reference output |
-|---|---|---|
-| None | - | - |
+| First launch | Language choice, comic playback, commander identity, ARIA guidance |
+| Shell | Splash/loading, main menu, commander profile, settings, pause |
+| Campaign | Chapter select, mission select, mission briefing, loadout/squad prep |
+| Match | Main HUD, transport passengers, tactical feedback, tutorial presentation |
+| Match tools | Expanded ARIA, full tactical map, build drawer, disabled build drawer, placement confirmation, placement validity, unit command wheel, targeting state |
+| Operations | Dashboard, district detail, threat alert, route preview, raid confirmation, resource exchange, end-of-day report, intel reveal, ARIA takeover |
+| Progression | Armory, ability/upgrade detail, store, reward unlock, victory, defeat |
+| Connected routes | Inbox, events, commander ranking, command feed |
+| Other modes | Skirmish setup |
 
 ## Hard Rule
 
-A generated target is not accepted because it appeared in chat. It is accepted only when the exact PNG exists under:
-
-`Design/VisualLockLayered/<SurfaceId>/reference/`
-
-Do not build or layer a surface from a prompt-only entry, old target, screenshot crop, or chat-only preview.
+A target is accepted only when its exact canonical PNG exists under
+`Design/VisualLockLayered/<SurfaceId>/reference/` and is listed in the manifest.
+Do not build a surface from a prompt-only entry, archived target, screenshot crop,
+or chat-only preview.

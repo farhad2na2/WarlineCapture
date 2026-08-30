@@ -20,7 +20,7 @@ using UnityEngine;
 
 public sealed class M02EstablishBaseLaunchTests
 {
-    private const string Marker = "[M02EstablishBaseLaunchValidation] result=Passed tests=15";
+    private const string Marker = "[M02EstablishBaseLaunchValidation] result=Passed tests=17";
     private const string M01MissionPath =
         "Assets/Game/Configs/Missions/Chapter01/MissionDefinition_Ch01_M01_FirstContact.asset";
     private const string M01ScenarioPath =
@@ -42,8 +42,10 @@ public sealed class M02EstablishBaseLaunchTests
             tests.SameVersionCatalogContentChangeReprojects();
             tests.ChapterCatalogDoesNotFallBackToLegacyMission();
             tests.CampaignDeployQueuesCanonicalM02PayloadAndRoute();
+            tests.CompletedChapterDefaultsToLatestAvailableM02();
             tests.IncompleteM02RetryKeepsFullTutorialGuidance();
             tests.CampaignDeployBootstrapsForwardPostAndAccepts();
+            tests.ReusedCampaignMapPublishesItsActualGeneration();
             tests.M02RetryPreservesSeedAndIncrementsAttemptIdentity();
             tests.M02RetryLaunchClearsPriorAttemptState();
             tests.M02ReplayUsesCanonicalIdentityAndSeed();
@@ -321,6 +323,19 @@ public sealed class M02EstablishBaseLaunchTests
     }
 
     [Test]
+    public void CompletedChapterDefaultsToLatestAvailableM02()
+    {
+        using ProjectionFixture fixture = CreateProjectionFixture(m02Completed: true);
+        UpdateProjection(fixture.World);
+
+        UiCampaignOperationsComponent operations = fixture.World.EntityManager
+            .GetComponentData<UiCampaignOperationsComponent>(fixture.UiRoot);
+        Assert.AreEqual(M02MissionId, operations.SelectedMissionId.ToString());
+        Assert.AreEqual(M02MapId, operations.OperationMapId.ToString());
+        Assert.AreEqual(UiCampaignMissionPrimaryActionKind.Replay, operations.PrimaryAction);
+    }
+
+    [Test]
     public void CampaignDeployBootstrapsForwardPostAndAccepts()
     {
         using ProjectionFixture fixture = CreateProjectionFixture(m02Completed: false);
@@ -385,6 +400,43 @@ public sealed class M02EstablishBaseLaunchTests
             UnityEngine.Object.DestroyImmediate(menuObject);
             World.DefaultGameObjectInjectionWorld = previous;
         }
+    }
+
+    [Test]
+    public void ReusedCampaignMapPublishesItsActualGeneration()
+    {
+        using World world = new("m02-reused-campaign-generation");
+        Assert.IsTrue(ProjectChapter(world.EntityManager, 1, out Entity missionRoot, out string error), error);
+        CampaignMissionLaunchRequestElement request = Request(
+            MissionRunKind.Replay, "campaign-m02-generation", attempt: 2, transition: 505);
+        world.EntityManager.GetBuffer<CampaignMissionLaunchRequestElement>(missionRoot).Add(request);
+        LoadChapter(out _, out OperationMapCatalogConfig maps);
+        Assert.IsTrue(maps.TryResolve(M02MapId, out OperationMapDefinition definition));
+        FixedString64Bytes scenarioId = new(M02ScenarioId);
+        FixedString64Bytes missionId = new(M02MissionId);
+        OperationMapReadinessFlags initial = OperationMapReadinessFlags.Metadata;
+        OperationMapReadinessFlags required = AllReadiness();
+
+        using OperationMapRuntimeBootstrapSceneSystemHelper menuBootstrap = new(world);
+        using OperationMapRuntimeBootstrapSceneSystemHelper matchBootstrap = new(world);
+        Assert.IsTrue(menuBootstrap.TryPublish(
+            definition, in scenarioId, in missionId, 2, initial, required,
+            out Entity menuRoot, out string menuError), menuError);
+        Assert.AreEqual(2, menuBootstrap.PublishedGeneration);
+        Assert.IsTrue(matchBootstrap.TryPublish(
+            definition, in scenarioId, in missionId, 1, initial, required,
+            out Entity reusedRoot, out string matchError), matchError);
+        Assert.AreEqual(menuRoot, reusedRoot);
+        Assert.AreEqual(2, matchBootstrap.PublishedGeneration);
+        Assert.IsTrue(matchBootstrap.TryUpdateReadiness(
+            matchBootstrap.PublishedGeneration,
+            required,
+            OperationMapReadinessFlags.None,
+            out string readinessError), readinessError);
+        Assert.AreEqual(2, world.EntityManager
+            .GetComponentData<OperationMapReadinessComponent>(reusedRoot).Generation);
+
+        DisposeCatalog(world.EntityManager, missionRoot);
     }
 
     [Test]

@@ -408,6 +408,8 @@ public sealed class M02EstablishBaseLifecycleTests
                 Blob = catalogBlob,
                 SourceVersion = 7
             });
+            DynamicBuffer<CampaignMissionSettlementResultElement> settlements =
+                world.EntityManager.AddBuffer<CampaignMissionSettlementResultElement>(root);
             world.EntityManager.SetComponentData(root, new CampaignMissionRuntimeComponent
             {
                 MissionId = new FixedString64Bytes(MissionId),
@@ -431,6 +433,14 @@ public sealed class M02EstablishBaseLifecycleTests
                 ReturnDestination = MissionReturnDestinationKind.CampaignOperations,
                 Stars = 2,
                 ElapsedMilliseconds = 120000
+            });
+            settlements.Add(new CampaignMissionSettlementResultElement
+            {
+                SourceVersion = 7,
+                SessionToken = session,
+                Accepted = 1,
+                FirstClear = 0,
+                ReasonCode = new FixedString64Bytes("settled.replay")
             });
 
             Assert.IsTrue(UiShellEcsGateway.TryReadMissionResult(out var result));

@@ -24,20 +24,19 @@ namespace Game.UI.Shell.Ecs
             ref CampaignMissionCatalogBlob catalog,
             CampaignMissionProgressSaveData[] progress)
         {
-            int firstAvailableIndex = -1;
+            int latestAvailableIndex = -1;
             for (int index = 0; index < catalog.Missions.Length; index++)
             {
                 ref CampaignMissionDefinitionBlob definition = ref catalog.Missions[index];
                 if (!IsDefinitionAvailable(ref definition, progress))
                     continue;
-                if (firstAvailableIndex < 0)
-                    firstAvailableIndex = index;
+                latestAvailableIndex = index;
                 CampaignMissionProgressSaveData entry = Find(progress, definition.MissionId);
                 if (entry == null || !entry.firstClearCompleted)
                     return index;
             }
 
-            return firstAvailableIndex >= 0 ? firstAvailableIndex : 0;
+            return latestAvailableIndex >= 0 ? latestAvailableIndex : 0;
         }
 
         private static UiCampaignOperationsComponent ProjectDefinition(

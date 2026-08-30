@@ -13,6 +13,8 @@ namespace Game.Composition
         private BlobAssetReference<OperationMapBlob> ownedMetadataBlob;
         private bool disposed;
 
+        internal int PublishedGeneration { get; private set; }
+
         public OperationMapRuntimeBootstrapSceneSystemHelper(World world)
         {
             createdWorld = world;
@@ -136,7 +138,11 @@ namespace Game.Composition
 
             if (CampaignMissionOperationMapReuseUtility.TryReuse(
                     entityManager, definition, out rootEntity, out error))
+            {
+                PublishedGeneration = entityManager
+                    .GetComponentData<ActiveOperationMapComponent>(rootEntity).Generation;
                 return true;
+            }
 
             if (!OperationMapRuntimeRootContract.TryResolveSingle(
                     entityManager,
@@ -216,6 +222,7 @@ namespace Game.Composition
                     IsBusy = 0
                 });
                 entityManager.SetName(rootEntity, "OperationMapRuntimeRoot");
+                PublishedGeneration = generation;
 
                 BlobAssetReference<OperationMapBlob> previousOwnedBlob = ownedMetadataBlob;
                 ownedMetadataBlob = newMetadataBlob;
@@ -248,6 +255,7 @@ namespace Game.Composition
             }
 
             DisposeOwnedBlob();
+            PublishedGeneration = 0;
         }
 
         public void Dispose()

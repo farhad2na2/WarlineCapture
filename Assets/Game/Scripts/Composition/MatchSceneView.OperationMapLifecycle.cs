@@ -264,7 +264,7 @@ namespace Game.Composition
             }
 
             if (!operationMapRuntimeBootstrapSystem.TryUpdateReadiness(
-                    1,
+                    operationMapRuntimeBootstrapSystem.PublishedGeneration,
                     readyFlags,
                     failedFlags,
                     out error))

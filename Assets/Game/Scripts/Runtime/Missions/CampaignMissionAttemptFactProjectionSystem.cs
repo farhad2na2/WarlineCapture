@@ -92,9 +92,14 @@ namespace Game.Runtime
                 entityManager.GetBuffer<BuildingRuntimeOwnedBuildingSummary>(buildingBoundary, true);
             DynamicBuffer<BuildingProducedUnitReadModel> producedUnits =
                 entityManager.GetBuffer<BuildingProducedUnitReadModel>(buildingBoundary, true);
-            bool deliveryInProgress = entityManager.HasComponent<BuildingProductionDeliveryReadModel>(buildingBoundary) &&
-                                      entityManager.GetComponentData<BuildingProductionDeliveryReadModel>(buildingBoundary)
-                                          .ActiveCanonicalDeliveryCount > 0;
+            bool deliveryInProgress = false;
+            if (entityManager.HasComponent<BuildingProductionDeliveryReadModel>(buildingBoundary))
+            {
+                BuildingProductionDeliveryReadModel delivery =
+                    entityManager.GetComponentData<BuildingProductionDeliveryReadModel>(buildingBoundary);
+                deliveryInProgress = delivery.ActiveCanonicalDeliveryCount > 0 ||
+                                     delivery.ActiveManagedDeliveryCount > 0;
+            }
             int currentMaximumRequestId = FindMaximumRequestId(requests);
             int currentRequiredBuildingOwnedCount = hasRequiredBuilding
                 ? CountMatchingOwnedBuildings(ownedBuildings, requiredBuildingId)

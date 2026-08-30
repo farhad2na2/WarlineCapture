@@ -36,10 +36,13 @@ namespace Game.Runtime
             public Vector3 TouchdownPosition;
             public Vector3 HoverPosition;
             public Vector3 ExitPosition;
+            public Vector3 CommittedDropPosition;
+            public int2 CommittedDropCell;
             public Quaternion HoverRotation;
             public Quaternion EntryRotation;
             public Quaternion ExitRotation;
             public float ArrivalSeconds;
+            public float DepartureSeconds;
             public float HoldForNextReadySeconds;
             public float PhaseStartedAt;
             public byte Phase;
@@ -48,7 +51,10 @@ namespace Game.Runtime
             public float NextClearDropSearchAt;
             public byte ClearDropFailureCount;
             public int ClearDropSearchStartRadius;
+            public int DeliveredUnitCount;
             public ProductionTransportMode Mode;
+            public bool HasCommittedDropPosition;
+            public bool FocusRequested;
             public PendingDropVisual ActiveDrop;
         }
 
@@ -64,6 +70,7 @@ namespace Game.Runtime
             public float TransportHoldForNextReadySeconds { get; set; }
             public int TransportMaxConcurrent { get; set; }
             public int RemainingQuantity { get; set; }
+            public int TransportClearDropSearchStartRadius { get; set; }
             public ProductionTransportMode TransportMode { get; set; }
             public bool TransportRequiresAirportRunway { get; set; }
 

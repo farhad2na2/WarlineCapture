@@ -416,7 +416,7 @@ public sealed class M02EstablishBaseLifecycleTests
                 ScenarioId = new FixedString64Bytes(ScenarioId),
                 OperationMapId = new FixedString64Bytes(OperationMapId),
                 SessionToken = session,
-                Phase = MissionPhaseKind.Result,
+                Phase = MissionPhaseKind.ResultAfterDebrief,
                 Outcome = MissionOutcomeKind.Victory,
                 ReturnDestination = MissionReturnDestinationKind.CampaignOperations,
                 Version = 3,

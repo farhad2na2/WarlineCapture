@@ -28,6 +28,8 @@ namespace Game.Runtime
             _configuredPoolSourcePrefabs = null;
             _configuredPoolSourcePrefabsByKey = null;
             _createdTransportStateCount = 0;
+            _activeManagedDeliveryCount = 0;
+            _managedDeliveryCountPrimed = false;
             System.Array.Clear(_laneUsage, 0, _laneUsage.Length);
         }
 

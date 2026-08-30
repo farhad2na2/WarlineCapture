@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Game.Authoring;
 using Game.Composition;
 using Game.Configs;
@@ -16,6 +17,8 @@ public sealed class M02EstablishBaseBarracksProductionTests
         "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Road_Barrier_Config.asset";
     private const string BarracksPrefabPath =
         "Assets/Game/Prefabs/Buildings/Building_Barrack.prefab";
+    private const string HelicopterTransportPrefabPath =
+        "Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Transport.prefab";
     private const string Marker =
         "[M02EstablishBaseBarracksProductionValidation] result=Passed tests=6";
 
@@ -91,6 +94,7 @@ public sealed class M02EstablishBaseBarracksProductionTests
     {
         GameObject barracksPrefab = Load<GameObject>(BarracksPrefabPath);
         GameObject riflePrefab = Load<GameObject>(M02EstablishBaseConfigBuilder.RequiredRiflePrefabPath);
+        GameObject helicopterPrefab = Load<GameObject>(HelicopterTransportPrefabPath);
         BuildingDefinitionPrefabSystemHelper definitions = new();
         definitions.ConfigureAuthoringMetadataResolvers(
             BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetBuildingDefinitionMetadata,
@@ -99,14 +103,22 @@ public sealed class M02EstablishBaseBarracksProductionTests
             barracksPrefab, "Barracks", "", Vector2Int.one, 1, new BuildingRunwaySystem());
         RuntimeBuildingEntity building = new() { Definition = definition };
         BuildingProductionQueueCompositionSystemHelper production = new();
+        production.ConfigureUnitProductionMetadataResolver(
+            BuildingProductionUnitMetadataPrefabSystemHelper.TryGetMetadata);
+        Dictionary<string, GameObject> prefabsByKey = new(definitions.UnitSpawnPrefabsByKey)
+        {
+            ["unit_veh_helicopter_transport"] = helicopterPrefab
+        };
         BuildingProductionQueueCompositionSystemHelper.QueueContext context = new(
-            new[] { riflePrefab }, definitions.UnitSpawnPrefabsByKey,
+            new[] { riflePrefab, helicopterPrefab }, prefabsByKey,
             new BuildingProductionSlotUtilitySystemHelper(), null, null);
         using Unity.Entities.World world = new(nameof(OneBarracksOrderQueuesTheCanonicalFourSoldierSquad));
 
         Assert.That(production.TryQueuePlayerUnitFromBuilding(
             context, building, 0, riflePrefab, world.EntityManager, 10f), Is.True);
         Assert.That(building.PendingProductions, Has.Count.EqualTo(1));
+        Assert.That(building.PendingProductions[0].TransportPrefab, Is.SameAs(helicopterPrefab),
+            "The regression must exercise the managed helicopter queue used by M2.");
         Assert.That(building.PendingProductions[0].RemainingQuantity, Is.EqualTo(4));
     }
 

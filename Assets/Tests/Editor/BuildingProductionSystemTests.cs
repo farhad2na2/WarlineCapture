@@ -237,7 +237,9 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             tests.ResolveProductionTransportSettings_RebuildsAfterLatePackedTransportRegistryMutation();
             tests.ResolveProductionTransportSettings_DefaultsPackedInfantryWithoutAuthoringMetadataToHelicopter();
             tests.CanonicalTentTransportPresentation_ArrivesRopesAndDefersSpawnUntilDropCompletes();
-            Debug.Log("[CanonicalTentTransportPresentationValidation] result=Passed transportVisible=1 ropeVisible=1 dropVisualVisible=1 ownership=canonical latePackedTransport=1 packedInfantryFallback=1");
+            tests.ManagedBarracksTransport_LocksHoverAndPublishesDepartureReadiness();
+            tests.ManagedBarracksTransport_ReservesOccupiedStaticHelipad();
+            Debug.Log("[CanonicalTentTransportPresentationValidation] result=Passed transportVisible=1 ropeVisible=1 dropVisualVisible=1 ownership=canonical managedBarracks=1 staticHelipadAvoided=1 latePackedTransport=1 packedInfantryFallback=1");
             ValidationExit.Passed();
         }
         catch (Exception ex)
@@ -261,7 +263,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             RunValidationSuite(RunProductionCameraFocusValidation);
             RunValidationSuite(RtsSelectionInputSystemTests.RunFocusedValidation);
             RunValidationSuite(MatchHudSquadTraySelectionUiSystemHelperTests.RunFocusedValidation);
-            Debug.Log("[EditorFirstProductionFunctionalBatchValidation] result=Passed suites=8 tests=96");
+            Debug.Log("[EditorFirstProductionFunctionalBatchValidation] result=Passed suites=8 tests=97");
             ValidationExit.Passed();
         }
         catch (Exception ex)
@@ -635,6 +637,188 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             UnityEngine.Object.DestroyImmediate(groundMaterial);
             UnityEngine.Object.DestroyImmediate(unitMaterial);
             UnityEngine.Object.DestroyImmediate(transportMaterial);
+        }
+    }
+
+    [Test]
+    public void ManagedBarracksTransport_LocksHoverAndPublishesDepartureReadiness()
+    {
+        using var world = new World(nameof(ManagedBarracksTransport_LocksHoverAndPublishesDepartureReadiness));
+        Entity boundary = world.EntityManager.CreateEntity(
+            typeof(BuildingRuntimeStateTag),
+            typeof(BuildingProductionDeliveryReadModel));
+        var transportPrefab = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        transportPrefab.name = "ManagedBarracksTransport";
+        var transportInstance = UnityEngine.Object.Instantiate(transportPrefab);
+        var unitPrefab = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+        unitPrefab.name = "ManagedBarracksRifle";
+        var presentation = new BuildingProductionTransportPresentationSystemHelper();
+
+        try
+        {
+            Vector3 hoverPosition = new(20f, 8f, 20f);
+            var pending = new RuntimeBuildingEntity.PendingProduction
+            {
+                ProductionIndex = 0,
+                Prefab = unitPrefab,
+                ReadyAt = 0f,
+                ReservedProductionSlotIndex = -1,
+                TransportPrefab = transportPrefab,
+                TransportArrivalSeconds = 4f,
+                TransportHoldForNextReadySeconds = 0.5f,
+                TransportMaxConcurrent = 1,
+                RemainingQuantity = 4,
+                TransportMode = BuildingProductionQueueCompositionSystemHelper.ProductionTransportMode.Helicopter
+            };
+            var transport = new RuntimeBuildingEntity.ActiveProductionTransport
+            {
+                Prefab = transportPrefab,
+                Instance = transportInstance,
+                Transform = transportInstance.transform,
+                VisualRenderers = transportInstance.GetComponentsInChildren<Renderer>(true),
+                HoverPosition = hoverPosition,
+                EntryPosition = hoverPosition + new Vector3(-60f, 12f, 0f),
+                TouchdownPosition = hoverPosition,
+                ExitPosition = hoverPosition + new Vector3(180f, 32f, 0f),
+                CommittedDropPosition = new Vector3(20f, 0f, 20f),
+                CommittedDropCell = new int2(20, 20),
+                HoverRotation = Quaternion.identity,
+                EntryRotation = Quaternion.identity,
+                ExitRotation = Quaternion.identity,
+                ArrivalSeconds = 4f,
+                DepartureSeconds = 4f,
+                HoldForNextReadySeconds = 0.5f,
+                Phase = 1,
+                HoverEnteredAt = 0f,
+                NextDropReadyAt = 0f,
+                Mode = BuildingProductionQueueCompositionSystemHelper.ProductionTransportMode.Helicopter,
+                HasCommittedDropPosition = true
+            };
+            transportInstance.transform.position = hoverPosition;
+            var building = new RuntimeBuildingEntity
+            {
+                Id = 1006,
+                ActiveTransport = transport,
+                PendingProductions = new List<RuntimeBuildingEntity.PendingProduction> { pending }
+            };
+            var runtimeBuildings = new Dictionary<int, RuntimeBuildingEntity>
+            {
+                [building.Id] = building
+            };
+            var spawnContext = new BuildingSpawnCompositionSystemHelper.Context(
+                runtimeBuildings,
+                default,
+                null,
+                default,
+                default,
+                null,
+                null,
+                null,
+                (EntityManager _, out Entity runtimeBoundary) =>
+                {
+                    runtimeBoundary = boundary;
+                    return true;
+                });
+            var bridgeContext = new BuildingProductionTransportBridgeCompositionSystemHelper.Context(
+                (out EntityManager entityManager) =>
+                {
+                    entityManager = world.EntityManager;
+                    return true;
+                },
+                null,
+                null,
+                null,
+                spawnContext,
+                null,
+                null);
+            var context = new BuildingProductionTransportPresentationSystemHelper.Context(
+                runtimeBuildings,
+                null,
+                new BuildingProductionQueueCompositionSystemHelper(),
+                new BuildingVisualSystem(),
+                null,
+                null,
+                bridgeContext);
+            uint randomState = 1u;
+
+            presentation.UpdateActiveProductionTransport(context, building, 0f, 0f, ref randomState);
+            Assert.AreEqual(hoverPosition, transportInstance.transform.position,
+                "The first managed drop must begin from the committed hover transform.");
+            Assert.AreEqual(1, world.EntityManager.GetComponentData<BuildingProductionDeliveryReadModel>(boundary)
+                .ActiveManagedDeliveryCount);
+
+            presentation.UpdateActiveProductionTransport(context, building, 2.1f, 0.1f, ref randomState);
+            transport.DeliveredUnitCount = 1;
+            presentation.UpdateActiveProductionTransport(context, building, 2.2f, 0.1f, ref randomState);
+            Assert.AreEqual(hoverPosition, transportInstance.transform.position,
+                "Starting another managed squad-member drop must not realign the helicopter.");
+
+            presentation.UpdateActiveProductionTransport(context, building, 4.3f, 0.1f, ref randomState);
+            building.PendingProductions.Clear();
+            presentation.UpdateActiveProductionTransport(context, building, 4.4f, 0.1f, ref randomState);
+            Assert.AreEqual(hoverPosition, transportInstance.transform.position,
+                "Departure must begin continuously from the locked hover transform.");
+
+            presentation.UpdateActiveProductionTransport(context, building, 6.4f, 0.1f, ref randomState);
+            Assert.Greater(Vector3.Distance(hoverPosition, transportInstance.transform.position), 80f);
+            Assert.AreEqual(1, world.EntityManager.GetComponentData<BuildingProductionDeliveryReadModel>(boundary)
+                .ActiveManagedDeliveryCount,
+                "Managed delivery readiness must remain active while the helicopter is departing.");
+
+            presentation.UpdateActiveProductionTransport(context, building, 8.5f, 0.1f, ref randomState);
+            Assert.IsNull(building.ActiveTransport);
+            Assert.AreEqual(0, world.EntityManager.GetComponentData<BuildingProductionDeliveryReadModel>(boundary)
+                .ActiveManagedDeliveryCount,
+                "Mission completion may proceed only after the managed helicopter exits.");
+        }
+        finally
+        {
+            presentation.Dispose();
+            UnityEngine.Object.DestroyImmediate(unitPrefab);
+            UnityEngine.Object.DestroyImmediate(transportPrefab);
+        }
+    }
+
+    [Test]
+    public void ManagedBarracksTransport_ReservesOccupiedStaticHelipad()
+    {
+        using var world = new World(nameof(ManagedBarracksTransport_ReservesOccupiedStaticHelipad));
+        var grid = new GridConfig
+        {
+            Width = 64,
+            Height = 64,
+            CellSize = 1f,
+            Origin = float3.zero
+        };
+        Entity parkedHelicopter = world.EntityManager.CreateEntity(typeof(Unity.Rendering.WorldRenderBounds));
+        world.EntityManager.SetComponentData(parkedHelicopter, new Unity.Rendering.WorldRenderBounds
+        {
+            Value = new AABB
+            {
+                Center = new float3(20.5f, 1.5f, 20.5f),
+                Extents = new float3(3f, 1.5f, 6f)
+            }
+        });
+        var reserved = new NativeBitArray(grid.Width * grid.Height, Allocator.Temp);
+        try
+        {
+            BuildingProductionTransportPresentationSystemHelper.ReserveStaticRenderDropBuffers(
+                world.EntityManager,
+                ref reserved,
+                grid,
+                new int2(20, 20));
+
+            Assert.IsTrue(reserved.IsSet((20 * grid.Width) + 20),
+                "The parked helicopter footprint must reject the preferred delivery cell.");
+            Assert.IsTrue(reserved.IsSet((15 * grid.Width) + 17),
+                "The landing resolver must preserve clearance around the occupied helipad.");
+            Assert.IsFalse(reserved.IsSet((30 * grid.Width) + 30),
+                "The static-render reservation must remain local instead of blocking the whole search area.");
+        }
+        finally
+        {
+            if (reserved.IsCreated)
+                reserved.Dispose();
         }
     }
 

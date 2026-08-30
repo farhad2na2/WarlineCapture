@@ -8,7 +8,7 @@ using Production = Game.Runtime.RuntimeBuildingEntity.PendingProduction;
 
 namespace Game.Runtime
 {
-    public sealed class BuildingProductionQueueCompositionSystemHelper
+    public sealed partial class BuildingProductionQueueCompositionSystemHelper
     {
         private const string HelicopterTransportPrefabName = "Unit_Veh_Helicopter_Transport";
         private const string HelicopterTransportLookupKey = "unit_veh_helicopter_transport";
@@ -41,67 +41,6 @@ namespace Game.Runtime
             int TransportMaxConcurrent { get; set; }
             ProductionTransportMode TransportMode { get; set; }
             bool TransportRequiresAirportRunway { get; set; }
-        }
-
-        public readonly struct ProductionTransportSettings
-        {
-            public readonly GameObject TransportPrefab;
-            public readonly float ArrivalSeconds;
-            public readonly float HoldForNextReadySeconds;
-            public readonly int MaxConcurrent;
-            public readonly ProductionTransportMode Mode;
-            public readonly bool RequiresAirportRunway;
-
-            public ProductionTransportSettings(
-                GameObject transportPrefab,
-                float arrivalSeconds,
-                float holdForNextReadySeconds,
-                int maxConcurrent,
-                ProductionTransportMode mode,
-                bool requiresAirportRunway)
-            {
-                TransportPrefab = transportPrefab;
-                ArrivalSeconds = arrivalSeconds;
-                HoldForNextReadySeconds = holdForNextReadySeconds;
-                MaxConcurrent = maxConcurrent;
-                Mode = mode;
-                RequiresAirportRunway = requiresAirportRunway;
-            }
-        }
-
-        public readonly struct UnitProductionMetadata
-        {
-            public readonly float ProductionDurationSeconds;
-            public readonly GameObject ProductionTransportPrefab;
-            public readonly bool IsAirUnit;
-            public readonly float ProductionTransportArrivalSeconds;
-            public readonly float ProductionTransportHoldForNextReadySeconds;
-            public readonly int ProductionTransportMaxConcurrent;
-            public readonly bool ProductionTransportRequiresAirportRunway;
-            public readonly bool ProductionTransportUsesRunwayLanding;
-            public readonly Vector2Int FootprintCells;
-
-            public UnitProductionMetadata(
-                float productionDurationSeconds,
-                GameObject productionTransportPrefab,
-                bool isAirUnit,
-                float productionTransportArrivalSeconds,
-                float productionTransportHoldForNextReadySeconds,
-                int productionTransportMaxConcurrent,
-                bool productionTransportRequiresAirportRunway,
-                bool productionTransportUsesRunwayLanding,
-                Vector2Int footprintCells)
-            {
-                ProductionDurationSeconds = productionDurationSeconds;
-                ProductionTransportPrefab = productionTransportPrefab;
-                IsAirUnit = isAirUnit;
-                ProductionTransportArrivalSeconds = productionTransportArrivalSeconds;
-                ProductionTransportHoldForNextReadySeconds = productionTransportHoldForNextReadySeconds;
-                ProductionTransportMaxConcurrent = productionTransportMaxConcurrent;
-                ProductionTransportRequiresAirportRunway = productionTransportRequiresAirportRunway;
-                ProductionTransportUsesRunwayLanding = productionTransportUsesRunwayLanding;
-                FootprintCells = footprintCells;
-            }
         }
 
         private readonly Dictionary<GameObject, ProductionTransportSettings> _productionTransportSettingsByPrefab = new();
@@ -211,7 +150,7 @@ namespace Game.Runtime
                 transportSettings.MaxConcurrent,
                 transportSettings.Mode,
                 transportSettings.RequiresAirportRunway);
-            queuedProduction.RemainingQuantity = transportSettings.TransportPrefab == null ? BuildingDefinitionPrefabSystemHelper.GetProductionQuantity(building.Definition, productionIndex) : 1;
+            queuedProduction.RemainingQuantity = BuildingDefinitionPrefabSystemHelper.GetProductionQuantity(building.Definition, productionIndex);
             building.PendingProductions.Add(queuedProduction);
             RebuildPendingProductionTimeline(building.PendingProductions, now, preserveActiveProgress: true);
             return true;
@@ -377,7 +316,7 @@ namespace Game.Runtime
             pending.TransportPrefab = null;
             pending.TransportArrivalSeconds = 0f;
             pending.TransportHoldForNextReadySeconds = 0f;
-            pending.TransportMaxConcurrent = pending.RemainingQuantity = 0;
+            pending.TransportMaxConcurrent = pending.RemainingQuantity = pending.TransportClearDropSearchStartRadius = 0;
             pending.TransportMode = default;
             pending.TransportRequiresAirportRunway = false;
             _pendingProductionPool.Push(pending);

@@ -746,6 +746,27 @@ public sealed class RtsCameraSystemTests
     }
 
     [Test]
+    public void ProductionDeliveryZoom_KeepsElevatedTransportInsideCloseFraming()
+    {
+        Assert.That(
+            SelectionUiCameraSystemHelper.ResolveProductionDeliveryZoomHeight(10f, 45f),
+            Is.EqualTo(32f).Within(0.0001f));
+        Assert.That(
+            SelectionUiCameraSystemHelper.ResolveProductionDeliveryZoomHeight(34f, 45f),
+            Is.EqualTo(34f).Within(0.0001f));
+        Assert.That(
+            SelectionUiCameraSystemHelper.ResolveProductionDeliveryZoomHeight(10f, 14f),
+            Is.EqualTo(14f).Within(0.0001f));
+
+        Vector3 focus = SelectionUiCameraSystemHelper.ResolveProductionDeliveryFocusPoint(
+            new Vector3(100f, 0f, 200f),
+            new Vector3(0f, -0.8f, 0.6f));
+        Assert.That(focus.x, Is.EqualTo(100f).Within(0.0001f));
+        Assert.That(focus.y, Is.EqualTo(0f).Within(0.0001f));
+        Assert.That(focus.z, Is.EqualTo(204f).Within(0.0001f));
+    }
+
+    [Test]
     public void MatchHudZoomControlState_ReusesTacticalFollowPoseQueryWithoutManagedAllocation()
     {
         World previousWorld = World.DefaultGameObjectInjectionWorld;

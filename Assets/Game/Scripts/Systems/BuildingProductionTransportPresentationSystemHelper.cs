@@ -30,6 +30,8 @@ namespace Game.Runtime
         private const int HelicopterDropProducedAirUnitBufferCells = 8;
         private const int HelicopterDropProducedVehicleBufferCells = 8;
         private const int HelicopterDropProducedGroundUnitBufferCells = 2;
+        private const int HelicopterDropStaticRenderBufferCells = 2;
+        private const int HelicopterDropMaxStaticRenderExtentCells = 20;
         private const float HelicopterDropMaxNonRoadLandingHeightDelta = 0.75f;
         private const float BladeSpinDegreesPerSecond = 15000f;
         private const float DropVisualPoseSample01 = 0.35f;
@@ -64,149 +66,6 @@ namespace Game.Runtime
             _runtimeRoot = runtimeRoot;
         }
 
-        public bool TryEnsureActiveProductionTransport(
-            Context context,
-            RuntimeBuildingEntity building,
-            RuntimeBuildingEntity.PendingProduction pending,
-            float now,
-            ref uint randomState)
-        {
-            if (building == null || pending == null || pending.TransportPrefab == null || building.ActiveTransport != null)
-                return building?.ActiveTransport != null;
-
-            Vector3 hoverPosition;
-            Vector3 entryPosition;
-            Vector3 touchdownPosition;
-            Vector3 exitPosition;
-            Quaternion hoverRotation;
-            Quaternion entryRotation;
-            Quaternion exitRotation;
-            int laneIndex = 0;
-
-            if (pending.TransportMode == ProductionTransportMode.Plane)
-            {
-                if (context.RunwaySystem == null ||
-                    !context.RunwaySystem.TryGetNearestAirportRunway(
-                        context.RuntimeBuildings,
-                        building.Instance != null ? building.Instance.transform.position : Vector3.zero,
-                        out _,
-                        out Vector3 runwayCenter,
-                        out Quaternion runwayRotation,
-                        out Vector3 runwayHalfExtents))
-                {
-                    return false;
-                }
-
-                if (!TryAcquireProductionTransportLane(context, pending.TransportPrefab, pending.TransportMaxConcurrent, out laneIndex))
-                    return false;
-
-                Vector3 runwayAxis = runwayRotation * Vector3.forward;
-                runwayAxis.y = 0f;
-                if (runwayAxis.sqrMagnitude <= 0.0001f)
-                    runwayAxis = Vector3.forward;
-                runwayAxis.Normalize();
-
-                float runwayHalfLength = Mathf.Max(8f, runwayHalfExtents.z);
-                Vector3 runwayStart = runwayCenter - (runwayAxis * runwayHalfLength);
-                touchdownPosition = runwayStart + (runwayAxis * Mathf.Min(8f, runwayHalfLength * 0.35f));
-                touchdownPosition.y = runwayCenter.y + RunwaySurfaceClearance;
-                hoverPosition = runwayCenter;
-                hoverPosition.y = touchdownPosition.y;
-                entryPosition = touchdownPosition - (runwayAxis * Mathf.Max(80f, runwayHalfExtents.z * 5f)) + new Vector3(0f, 28f, 0f);
-                exitPosition = hoverPosition + (runwayAxis * Mathf.Max(90f, runwayHalfExtents.z * 6f)) + new Vector3(0f, 32f, 0f);
-                hoverRotation = Quaternion.LookRotation(runwayAxis, Vector3.up);
-                entryRotation = hoverRotation;
-                exitRotation = hoverRotation;
-            }
-            else if (pending.TransportMode == ProductionTransportMode.AirSelf)
-            {
-                if (!TryAcquireProductionTransportLane(context, pending.TransportPrefab, pending.TransportMaxConcurrent, out laneIndex))
-                    return false;
-
-                touchdownPosition = ResolveProductionTransportDropPosition(context, building, pending, ref randomState);
-                hoverPosition = touchdownPosition + new Vector3(0f, 6f, 0f);
-                hoverPosition += ResolveProductionTransportLaneOffset(context, laneIndex, pending.TransportMaxConcurrent);
-                Vector3 horizontalOffset = context.WorldCamera != null
-                    ? -context.WorldCamera.transform.right.normalized * 70f
-                    : new Vector3(-70f, 0f, 0f);
-                entryPosition = hoverPosition + horizontalOffset + new Vector3(0f, 16f, 0f);
-                exitPosition = hoverPosition;
-                hoverRotation = Quaternion.LookRotation((hoverPosition - entryPosition).normalized, Vector3.up);
-                entryRotation = hoverRotation;
-                exitRotation = hoverRotation;
-            }
-            else
-            {
-                if (!TryAcquireProductionTransportLane(context, pending.TransportPrefab, pending.TransportMaxConcurrent, out laneIndex))
-                    return false;
-
-                hoverPosition = ResolveProductionTransportHoverPosition(building, pending);
-                hoverPosition += ResolveProductionTransportLaneOffset(context, laneIndex, pending.TransportMaxConcurrent);
-                if (TryResolveClearHelicopterDropPosition(
-                        context,
-                        building,
-                        pending,
-                        hoverPosition,
-                        null,
-                        0,
-                        out _,
-                        out _,
-                        out _,
-                        out Vector3 clearDropPosition))
-                {
-                    hoverPosition.x = clearDropPosition.x;
-                    hoverPosition.z = clearDropPosition.z;
-                }
-                Vector3 horizontalOffset = context.WorldCamera != null
-                    ? -context.WorldCamera.transform.right.normalized * 60f
-                    : new Vector3(-60f, 0f, 0f);
-                entryPosition = hoverPosition + horizontalOffset;
-                exitPosition = hoverPosition - horizontalOffset;
-                entryPosition.y = hoverPosition.y + 12f;
-                exitPosition.y = hoverPosition.y + 12f;
-                touchdownPosition = hoverPosition;
-                hoverRotation = Quaternion.LookRotation((hoverPosition - entryPosition).normalized, Vector3.up);
-                entryRotation = hoverRotation;
-                exitRotation = Quaternion.LookRotation((exitPosition - hoverPosition).normalized, Vector3.up);
-            }
-
-            GameObject instance = AcquireProductionTransportInstance(pending.TransportPrefab, context.VisualSystem);
-            Transform doorTransform = GetProductionTransportDoorTransform(instance, context.VisualSystem);
-
-            RuntimeBuildingEntity.ActiveProductionTransport transport = AcquireProductionTransportState();
-            transport.LaneIndex = laneIndex;
-            transport.Prefab = pending.TransportPrefab;
-            transport.Instance = instance;
-            transport.Transform = instance.transform;
-            transport.VisualRenderers = GetProductionTransportRenderers(instance);
-            transport.DoorTransform = doorTransform;
-            transport.DoorOpenLocalEulerX = doorTransform != null ? doorTransform.localEulerAngles.x : 0f;
-            transport.HoverPosition = hoverPosition;
-            transport.EntryPosition = entryPosition;
-            transport.TouchdownPosition = touchdownPosition;
-            transport.ExitPosition = exitPosition;
-            transport.HoverRotation = hoverRotation;
-            transport.EntryRotation = entryRotation;
-            transport.ExitRotation = exitRotation;
-            transport.ArrivalSeconds = Mathf.Max(0.5f, pending.TransportArrivalSeconds);
-            transport.HoldForNextReadySeconds = Mathf.Max(0.5f, pending.TransportHoldForNextReadySeconds);
-            transport.PhaseStartedAt = now;
-            transport.HoverEnteredAt = -1f;
-            transport.NextDropReadyAt = now;
-            transport.NextClearDropSearchAt = now;
-            transport.ClearDropFailureCount = 0;
-            transport.ClearDropSearchStartRadius = 0;
-            transport.Phase = 0;
-            transport.Mode = pending.TransportMode;
-            transport.ActiveDrop = null;
-
-            transport.Transform.position = transport.EntryPosition;
-            transport.Transform.rotation = transport.EntryRotation;
-            SetProductionTransportDoorOpen01(transport, 0f);
-            building.ActiveTransport = transport;
-            return true;
-        }
-
         public void UpdateActiveProductionTransport(Context context, RuntimeBuildingEntity building, float now, float deltaTime, ref uint randomState)
         {
             if (building == null || building.ActiveTransport == null || building.ActiveTransport.Transform == null)
@@ -219,7 +78,7 @@ namespace Game.Runtime
             switch (transport.Phase)
             {
                 case 0:
-                    UpdateArrivalPhase(building, transport, now);
+                    UpdateArrivalPhase(context, building, transport, now);
                     break;
 
                 case 1:
@@ -230,9 +89,15 @@ namespace Game.Runtime
                     UpdateDeparturePhase(building, transport, now);
                     break;
             }
+
+            PublishManagedDeliveryReadModel(context);
         }
 
-        private void UpdateArrivalPhase(RuntimeBuildingEntity building, RuntimeBuildingEntity.ActiveProductionTransport transport, float now)
+        private void UpdateArrivalPhase(
+            Context context,
+            RuntimeBuildingEntity building,
+            RuntimeBuildingEntity.ActiveProductionTransport transport,
+            float now)
         {
             float duration = Mathf.Max(0.5f, transport.ArrivalSeconds);
             float t = Mathf.Clamp01((now - transport.PhaseStartedAt) / duration);
@@ -265,6 +130,13 @@ namespace Game.Runtime
             transport.PhaseStartedAt = now;
             transport.HoverEnteredAt = now;
             transport.NextDropReadyAt = transport.Mode == ProductionTransportMode.Plane ? now + 2f : now;
+            if (transport.Mode == ProductionTransportMode.Helicopter &&
+                transport.HasCommittedDropPosition &&
+                !transport.FocusRequested)
+            {
+                context.FocusProductionDelivery?.Invoke(transport.CommittedDropPosition);
+                transport.FocusRequested = true;
+            }
         }
 
         private void UpdateDeliveryPhase(Context context, RuntimeBuildingEntity building, RuntimeBuildingEntity.ActiveProductionTransport transport, float now, ref uint randomState)
@@ -411,7 +283,7 @@ namespace Game.Runtime
 
         private void UpdateDeparturePhase(RuntimeBuildingEntity building, RuntimeBuildingEntity.ActiveProductionTransport transport, float now)
         {
-            float duration = Mathf.Max(0.5f, transport.ArrivalSeconds);
+            float duration = Mathf.Max(0.5f, transport.DepartureSeconds);
             float t = Mathf.Clamp01((now - transport.PhaseStartedAt) / duration);
             transport.Transform.position = Vector3.Lerp(transport.HoverPosition, transport.ExitPosition, t);
             transport.Transform.rotation = Quaternion.Slerp(transport.HoverRotation, transport.ExitRotation, t);
@@ -561,52 +433,24 @@ namespace Game.Runtime
 
             if (transport.Mode == ProductionTransportMode.Helicopter)
             {
-                if (now < transport.NextClearDropSearchAt)
+                if (!transport.HasCommittedDropPosition ||
+                    !TryResolveCommittedHelicopterDropPosition(
+                        context,
+                        transport,
+                        out int2 committedDropCell,
+                        out Vector3 committedDropPosition))
                 {
-                    transport.NextDropReadyAt = transport.NextClearDropSearchAt;
+                    transport.NextDropReadyAt = now + HelicopterDropBlockedRetryBaseSeconds;
                     return;
                 }
 
-                Vector3 preferredDrop = new(transport.HoverPosition.x, finalSpawnPosition.y, transport.HoverPosition.z);
-                if (TryResolveClearHelicopterDropPosition(
-                        context,
-                        building,
-                        pending,
-                        preferredDrop,
-                        transport,
-                        transport.ClearDropSearchStartRadius,
-                        out bool exhaustedSearchBudget,
-                        out int nextSearchRadius,
-                        out int2 clearDropCell,
-                        out Vector3 clearDropPosition))
-                {
-                    transport.ClearDropFailureCount = 0;
-                    transport.ClearDropSearchStartRadius = 0;
-                    transport.NextClearDropSearchAt = now;
-                    AlignHelicopterTransportAnchorOverDrop(transport, clearDropPosition);
-                    Vector3 anchor = ResolveTransportVisualCenterWorld(transport);
-                    dropStartPosition = new Vector3(clearDropPosition.x, anchor.y, clearDropPosition.z);
-                    dropEndPosition = clearDropPosition;
-                    finalGoalCell = clearDropCell;
-                }
-                else if (exhaustedSearchBudget)
-                {
-                    transport.ClearDropSearchStartRadius = nextSearchRadius;
-                    transport.NextClearDropSearchAt = now + HelicopterDropPartialSearchRetrySeconds;
-                    transport.NextDropReadyAt = transport.NextClearDropSearchAt;
-                    return;
-                }
-                else
-                {
-                    transport.ClearDropSearchStartRadius = 0;
-                    transport.ClearDropFailureCount = (byte)Mathf.Min(transport.ClearDropFailureCount + 1, 6);
-                    float retryDelay = Mathf.Min(
-                        HelicopterDropBlockedRetryMaxSeconds,
-                        HelicopterDropBlockedRetryBaseSeconds * Mathf.Pow(1.35f, transport.ClearDropFailureCount - 1));
-                    transport.NextClearDropSearchAt = now + retryDelay;
-                    transport.NextDropReadyAt = transport.NextClearDropSearchAt;
-                    return;
-                }
+                Vector3 anchor = ResolveTransportVisualCenterWorld(transport);
+                dropStartPosition = new Vector3(
+                    committedDropPosition.x,
+                    anchor.y,
+                    committedDropPosition.z);
+                dropEndPosition = committedDropPosition;
+                finalGoalCell = committedDropCell;
             }
 
             GameObject visual = AcquireTransportDropVisual(pending.Prefab, context.PrepareTransportDropVisual);
@@ -924,14 +768,13 @@ namespace Game.Runtime
             ReturnTransportDropRope(drop.Rope);
 
             RuntimeBuildingEntity.PendingProduction production = drop.Production;
-            bool removedProduction = context.ProductionSystem.RemovePendingProduction(building.PendingProductions, production);
-            if (removedProduction)
-                context.ProductionSystem.RebuildPendingProductionTimeline(building.PendingProductions, now, preserveActiveProgress: false);
+            bool spawned = false;
 
             if (transport.Mode == ProductionTransportMode.Plane)
             {
                 int2 startCell = ResolveProductionGroundGoalCell(context, drop.EndPosition);
-                if (TrySpawnPlayerUnitNearBuilding(context, building, production.ProductionIndex, production.ReservedProductionSlotIndex, drop.EndPosition, startCell, ref randomState))
+                spawned = TrySpawnPlayerUnitNearBuilding(context, building, production.ProductionIndex, production.ReservedProductionSlotIndex, drop.EndPosition, startCell, ref randomState);
+                if (spawned)
                 {
                     AlignNewestProducedUnitRotation(context, building, -transport.Transform.forward);
                     MoveNewestProducedUnitToCell(context, building, drop.FinalGoalCell);
@@ -940,16 +783,34 @@ namespace Game.Runtime
             else if (transport.Mode == ProductionTransportMode.Helicopter)
             {
                 int2 startCell = ResolveProductionGroundGoalCell(context, drop.EndPosition);
-                if (TrySpawnPlayerUnitNearBuilding(context, building, production.ProductionIndex, production.ReservedProductionSlotIndex, drop.EndPosition, startCell, ref randomState))
+                spawned = TrySpawnPlayerUnitNearBuilding(context, building, production.ProductionIndex, production.ReservedProductionSlotIndex, drop.EndPosition, startCell, ref randomState);
+                if (spawned)
                     MoveNewestProducedUnitToCell(context, building, drop.FinalGoalCell);
             }
-            else if (TrySpawnPlayerUnitNearBuilding(context, building, production.ProductionIndex, production.ReservedProductionSlotIndex, null, null, ref randomState))
+            else if ((spawned = TrySpawnPlayerUnitNearBuilding(context, building, production.ProductionIndex, production.ReservedProductionSlotIndex, null, null, ref randomState)))
             {
                 MoveNewestProducedUnitToCell(context, building, drop.FinalGoalCell);
             }
 
-            if (removedProduction)
-                context.ProductionSystem.ReleasePendingProduction(production);
+            if (spawned && transport.Mode == ProductionTransportMode.Helicopter)
+                transport.DeliveredUnitCount++;
+
+            bool removedProduction = false;
+            if (spawned && production.ConsumeUnit())
+            {
+                removedProduction = context.ProductionSystem.RemovePendingProduction(
+                    building.PendingProductions,
+                    production);
+                if (removedProduction)
+                {
+                    context.ProductionSystem.RebuildPendingProductionTimeline(
+                        building.PendingProductions,
+                        now,
+                        preserveActiveProgress: false);
+                    context.ProductionSystem.ReleasePendingProduction(production);
+                }
+            }
+
             ReturnTransportDropState(drop);
             transport.ActiveDrop = null;
             transport.NextDropReadyAt = now;
@@ -1140,6 +1001,7 @@ namespace Game.Runtime
             {
                 ReserveRuntimeBuildingDropBuffers(context, ref reserved, grid, HelicopterDropBuildingBufferCells);
                 ReserveActiveProductionTransportDropBuffers(context, ignoredTransport, ref reserved, grid, HelicopterDropActiveTransportBufferCells);
+                ReserveStaticRenderDropBuffers(em, ref reserved, grid, preferredCell);
                 // Dynamic occupancy already rejects live and produced unit footprints. Avoid rebuilding
                 // broad per-unit safety reservations during the production transport frame tick.
                 int candidateChecks = 0;
@@ -1262,6 +1124,77 @@ namespace Game.Runtime
                    sample.SurfaceType == MapSurfaceType.BridgeDeck ||
                    sample.SurfaceType == MapSurfaceType.Ramp ||
                    (sample.Flags & (MapSurfaceFlags.Road | MapSurfaceFlags.Bridge | MapSurfaceFlags.Ramp)) != 0;
+        }
+
+        internal static void ReserveStaticRenderDropBuffers(
+            EntityManager entityManager,
+            ref NativeBitArray reserved,
+            GridConfig grid,
+            int2 preferredCell)
+        {
+            if (!reserved.IsCreated || entityManager.World == null || !entityManager.World.IsCreated)
+                return;
+
+            EntityQuery renderBoundsQuery = entityManager.CreateEntityQuery(new EntityQueryDesc
+            {
+                All = new[] { ComponentType.ReadOnly<Unity.Rendering.WorldRenderBounds>() },
+                None = new[]
+                {
+                    ComponentType.ReadOnly<Prefab>(),
+                    ComponentType.ReadOnly<Disabled>(),
+                    ComponentType.ReadOnly<UnitFootprint>()
+                }
+            });
+            NativeArray<Unity.Rendering.WorldRenderBounds> renderBounds =
+                renderBoundsQuery.ToComponentDataArray<Unity.Rendering.WorldRenderBounds>(Allocator.Temp);
+            try
+            {
+                float safeCellSize = math.max(0.01f, grid.CellSize);
+                float maxExtent = HelicopterDropMaxStaticRenderExtentCells * safeCellSize;
+                int searchPadding = HelicopterDropSearchRadiusCells + HelicopterDropStaticRenderBufferCells;
+                int2 searchMin = preferredCell - new int2(searchPadding, searchPadding);
+                int2 searchMax = preferredCell + new int2(searchPadding + 1, searchPadding + 1);
+                for (int index = 0; index < renderBounds.Length; index++)
+                {
+                    AABB bounds = renderBounds[index].Value;
+                    float2 horizontalExtents = new(bounds.Extents.x, bounds.Extents.z);
+                    float largestExtent = math.cmax(horizontalExtents);
+                    if (!math.all(math.isfinite(bounds.Center)) ||
+                        !math.all(math.isfinite(bounds.Extents)) ||
+                        largestExtent < safeCellSize * 0.25f ||
+                        largestExtent > maxExtent)
+                    {
+                        continue;
+                    }
+
+                    int2 minCell = GridUtils.WorldToCell(
+                        grid,
+                        bounds.Center - new float3(horizontalExtents.x, 0f, horizontalExtents.y));
+                    int2 maxCell = GridUtils.WorldToCell(
+                        grid,
+                        bounds.Center + new float3(horizontalExtents.x, 0f, horizontalExtents.y));
+                    if (maxCell.x < searchMin.x || maxCell.y < searchMin.y ||
+                        minCell.x >= searchMax.x || minCell.y >= searchMax.y)
+                    {
+                        continue;
+                    }
+
+                    int padding = HelicopterDropStaticRenderBufferCells;
+                    ReserveCellRect(
+                        ref reserved,
+                        grid,
+                        minCell.x - padding,
+                        minCell.y - padding,
+                        maxCell.x + padding + 1,
+                        maxCell.y + padding + 1);
+                }
+            }
+            finally
+            {
+                if (renderBounds.IsCreated)
+                    renderBounds.Dispose();
+                renderBoundsQuery.Dispose();
+            }
         }
 
         private static void ReserveRuntimeBuildingDropBuffers(Context context, ref NativeBitArray reserved, GridConfig grid, int extraRadius)
@@ -1609,6 +1542,8 @@ namespace Game.Runtime
                 ReturnProductionTransportInstance(transport.Prefab, transport.Instance);
             ReturnProductionTransportState(transport);
             building.ActiveTransport = null;
+            if (_managedDeliveryCountPrimed)
+                _activeManagedDeliveryCount = Mathf.Max(0, _activeManagedDeliveryCount - 1);
         }
 
         private void EnsureLaneUsageCapacity(int capacity)
@@ -1759,10 +1694,13 @@ namespace Game.Runtime
             transport.TouchdownPosition = default;
             transport.HoverPosition = default;
             transport.ExitPosition = default;
+            transport.CommittedDropPosition = default;
+            transport.CommittedDropCell = default;
             transport.HoverRotation = default;
             transport.EntryRotation = default;
             transport.ExitRotation = default;
             transport.ArrivalSeconds = 0f;
+            transport.DepartureSeconds = 0f;
             transport.HoldForNextReadySeconds = 0f;
             transport.PhaseStartedAt = 0f;
             transport.Phase = 0;
@@ -1771,7 +1709,10 @@ namespace Game.Runtime
             transport.NextClearDropSearchAt = 0f;
             transport.ClearDropFailureCount = 0;
             transport.ClearDropSearchStartRadius = 0;
+            transport.DeliveredUnitCount = 0;
             transport.Mode = default;
+            transport.HasCommittedDropPosition = false;
+            transport.FocusRequested = false;
             transport.ActiveDrop = null;
             _transportStatePool.Push(transport);
         }

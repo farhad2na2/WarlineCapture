@@ -55,7 +55,7 @@ namespace Game.Components
     }
     public struct BuildingProductionDeliveryReadModel : IComponentData
     {
-        public int ActiveCanonicalDeliveryCount;
+        public int ActiveCanonicalDeliveryCount, ActiveManagedDeliveryCount;
         public uint Version;
     }
 

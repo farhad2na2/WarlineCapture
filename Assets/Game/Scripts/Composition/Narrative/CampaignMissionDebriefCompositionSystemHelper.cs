@@ -70,7 +70,7 @@ namespace Game.Composition
                 presentation.Tick(unscaledDeltaTime);
             if (handoffPending)
                 CompleteActiveSequence(entityManager);
-            if (!running && CampaignMissionResultDebriefTransitionUtility.TryQueueFirstClearDebrief(
+            if (!running && CampaignMissionResultDebriefTransitionUtility.TryQueueDebrief(
                     entityManager, missionRootQuery, EstablishBaseMissionId))
                 return;
 

@@ -216,6 +216,8 @@ namespace Game.Runtime
 
     internal static class CampaignMissionResultDebriefTransitionUtility
     {
+        private static readonly FixedString64Bytes EstablishBaseMissionId =
+            "saga.ch01.m02.establish_base";
         private static readonly FixedString64Bytes ResultNotSettledReason = "result-not-settled";
         private static readonly FixedString64Bytes InvalidResultTransitionReason =
             "invalid-result-transition";
@@ -246,7 +248,8 @@ namespace Game.Runtime
                 {
                     continue;
                 }
-                MissionPhaseKind phase = candidate.FirstClear != 0
+                MissionPhaseKind phase = candidate.FirstClear != 0 ||
+                                         runtime.MissionId.Equals(EstablishBaseMissionId)
                     ? MissionPhaseKind.DebriefFirstClear
                     : MissionPhaseKind.ReturnReplay;
                 return TryTransition(phase, ref runtime, out reason);
@@ -256,7 +259,7 @@ namespace Game.Runtime
             return false;
         }
 
-        internal static bool TryQueueFirstClearDebrief(
+        internal static bool TryQueueDebrief(
             EntityManager entityManager,
             EntityQuery rootQuery,
             in FixedString64Bytes requiredMissionId)
@@ -285,7 +288,7 @@ namespace Game.Runtime
             if (!result.SessionToken.Equals(runtime.SessionToken) ||
                 result.AttemptOrdinal != runtime.AttemptOrdinal ||
                 result.Outcome != runtime.Outcome ||
-                !HasAcceptedFirstClearSettlement(entityManager, root, in result) ||
+                !HasAcceptedSettlement(entityManager, root, in result) ||
                 !HasDebriefSequence(entityManager, root, in runtime))
             {
                 return false;
@@ -316,7 +319,7 @@ namespace Game.Runtime
             return true;
         }
 
-        private static bool HasAcceptedFirstClearSettlement(
+        private static bool HasAcceptedSettlement(
             EntityManager entityManager,
             Entity root,
             in CampaignMissionResultComponent result)
@@ -329,7 +332,7 @@ namespace Game.Runtime
                 if (candidate.SourceVersion == result.SourceVersion &&
                     candidate.SessionToken.Equals(result.SessionToken) && candidate.Accepted != 0)
                 {
-                    return candidate.FirstClear != 0;
+                    return true;
                 }
             }
             return false;

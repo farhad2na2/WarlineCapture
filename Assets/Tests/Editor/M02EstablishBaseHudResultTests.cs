@@ -28,7 +28,7 @@ public sealed class M02EstablishBaseHudResultTests
             tests.UnsettledVictoryDoesNotFlashBeforeDebrief();
             tests.FirstClearResultWaitsForDebriefBeforeVictory();
             tests.FirstClearFinalResultCarriesM03RevealTruth();
-            tests.ReplayResultReturnsWithoutRepeatingFirstClearRewards();
+            tests.ReplayDebriefPrecedesVictoryWithoutRepeatingFirstClearRewards();
             tests.FinalVictoryButtonReturnsToMenu();
             tests.DebriefOwnerReturnsToFinalResultBeforeMenu();
             tests.ResultPopupHidesLegacyM01Identity();
@@ -102,11 +102,15 @@ public sealed class M02EstablishBaseHudResultTests
     }
 
     [Test]
-    public void ReplayResultReturnsWithoutRepeatingFirstClearRewards()
+    public void ReplayDebriefPrecedesVictoryWithoutRepeatingFirstClearRewards()
     {
+        Assert.IsFalse(TryReadModel(
+            firstClear: false,
+            MissionPhaseKind.Result,
+            out _));
         UiMissionResultPopupModel model = ReadModel(
             firstClear: false,
-            MissionPhaseKind.Result);
+            MissionPhaseKind.ResultAfterDebrief);
         Assert.AreEqual("CONTINUE", model.PrimaryActionLabel);
         Assert.AreEqual("300 CREDITS", model.RewardsText);
         StringAssert.DoesNotContain("field-lead", model.SummaryBody);

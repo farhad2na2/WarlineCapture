@@ -376,6 +376,14 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
     {
         using var world = new World(nameof(CanonicalTentTransportPresentation_ArrivesRopesAndDefersSpawnUntilDropCompletes));
         Entity producer = world.EntityManager.CreateEntity();
+        DynamicBuffer<OperationMapBuildingUnitProductionRequest> productionQueue =
+            world.EntityManager.AddBuffer<OperationMapBuildingUnitProductionRequest>(producer);
+        productionQueue.Add(new OperationMapBuildingUnitProductionRequest
+        {
+            RequestId = 1,
+            RemainingQuantity = 4,
+            Status = OperationMapBuildingUnitProductionRequest.Pending
+        });
         var transportPrefab = GameObject.CreatePrimitive(PrimitiveType.Cube);
         transportPrefab.name = "CanonicalTransportHelicopter";
         transportPrefab.transform.localScale = new Vector3(4f, 1.5f, 6f);
@@ -547,13 +555,68 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                     3f));
             Assert.AreEqual(1, presentation.CanonicalDeliverySessionCount,
                 "The delivery remains active while the helicopter departs after the ECS unit is spawned.");
-            presentation.UpdateCanonicalOperationMapProductionDeliveryLifecycle(context, 3.5f);
+
+            Vector3 lockedHoverPosition = transportVisual.transform.position;
+            SetRemainingQuantity(productionQueue, 3);
+            presentation.UpdateCanonicalOperationMapProductionDeliveryLifecycle(context, 3.1f);
+            Assert.AreEqual(lockedHoverPosition, transportVisual.transform.position,
+                "The helicopter must not relocate when the second squad member starts dropping.");
+            Assert.AreEqual(
+                BuildingProductionRequestSystemHelper.OperationMapProductionDeliveryResult.ReadyToSpawn,
+                presentation.UpdateCanonicalOperationMapProductionDelivery(
+                    context,
+                    producer,
+                    1,
+                    unitPrefab,
+                    settings,
+                    ref dropPosition,
+                    5.1f));
+
+            SetRemainingQuantity(productionQueue, 2);
+            presentation.UpdateCanonicalOperationMapProductionDeliveryLifecycle(context, 5.2f);
+            Assert.AreEqual(lockedHoverPosition, transportVisual.transform.position,
+                "The helicopter must remain at the committed hover point for the third squad member.");
+            Assert.AreEqual(
+                BuildingProductionRequestSystemHelper.OperationMapProductionDeliveryResult.ReadyToSpawn,
+                presentation.UpdateCanonicalOperationMapProductionDelivery(
+                    context,
+                    producer,
+                    1,
+                    unitPrefab,
+                    settings,
+                    ref dropPosition,
+                    7.2f));
+
+            SetRemainingQuantity(productionQueue, 1);
+            presentation.UpdateCanonicalOperationMapProductionDeliveryLifecycle(context, 7.3f);
+            Assert.AreEqual(lockedHoverPosition, transportVisual.transform.position,
+                "The helicopter must remain at the committed hover point for the fourth squad member.");
+            Assert.AreEqual(
+                BuildingProductionRequestSystemHelper.OperationMapProductionDeliveryResult.ReadyToSpawn,
+                presentation.UpdateCanonicalOperationMapProductionDelivery(
+                    context,
+                    producer,
+                    1,
+                    unitPrefab,
+                    settings,
+                    ref dropPosition,
+                    9.3f));
+            Assert.AreEqual(1, focusCount,
+                "The full four-soldier delivery must keep one camera focus and one committed drop point.");
+
+            productionQueue.Clear();
+            presentation.UpdateCanonicalOperationMapProductionDeliveryLifecycle(context, 9.4f);
+            Assert.AreEqual(lockedHoverPosition, transportVisual.transform.position,
+                "Departure must begin continuously from the locked hover point without a position jump.");
+            presentation.UpdateCanonicalOperationMapProductionDeliveryLifecycle(context, 11.4f);
             Assert.AreEqual(1, presentation.CanonicalDeliverySessionCount);
+            Assert.Greater(Vector3.Distance(lockedHoverPosition, transportVisual.transform.position), 80f,
+                "The helicopter must visibly fly away instead of disappearing over the drop point.");
             Assert.AreEqual(
                 1,
                 world.EntityManager.GetComponentData<BuildingProductionDeliveryReadModel>(boundary)
                     .ActiveCanonicalDeliveryCount);
-            presentation.UpdateCanonicalOperationMapProductionDeliveryLifecycle(context, 4.1f);
+            presentation.UpdateCanonicalOperationMapProductionDeliveryLifecycle(context, 13.5f);
             Assert.AreEqual(0, presentation.CanonicalDeliverySessionCount);
             Assert.AreEqual(
                 0,
@@ -573,6 +636,16 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             UnityEngine.Object.DestroyImmediate(unitMaterial);
             UnityEngine.Object.DestroyImmediate(transportMaterial);
         }
+    }
+
+    private static void SetRemainingQuantity(
+        DynamicBuffer<OperationMapBuildingUnitProductionRequest> queue,
+        int remainingQuantity)
+    {
+        Assert.AreEqual(1, queue.Length);
+        OperationMapBuildingUnitProductionRequest request = queue[0];
+        request.RemainingQuantity = remainingQuantity;
+        queue[0] = request;
     }
 
     private static Material CreateCanonicalTransportEvidenceMaterial(Color color)

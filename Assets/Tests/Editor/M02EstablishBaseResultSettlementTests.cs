@@ -35,8 +35,8 @@ public sealed class M02EstablishBaseResultSettlementTests
             tests.ReplayGrantsOnlyReplayCredits();
             tests.CampaignRetryBeforeFirstClearGrantsFirstClearRewards();
             tests.ReplayRetryAfterFirstClearGrantsOnlyReplayRewards();
-            tests.FirstClearUsesDebriefWhileReplayReturnsDirectly();
-            tests.FirstClearResultQueuesDebriefBeforeVictory();
+            tests.EveryM02VictoryUsesDebriefBeforeFinalResult();
+            tests.AcceptedM02ResultQueuesDebriefBeforeVictory();
             tests.DebriefCompletionShowsFinalVictoryBeforeReturn();
             tests.RestartPreservesUnlockRewardsAndSettlementHistory();
             tests.UnknownOrMisScopedCustomRewardsFailClosed();
@@ -244,10 +244,10 @@ public sealed class M02EstablishBaseResultSettlementTests
     });
 
     [Test]
-    public void FirstClearUsesDebriefWhileReplayReturnsDirectly()
+    public void EveryM02VictoryUsesDebriefBeforeFinalResult()
     {
         Assert.AreEqual(MissionPhaseKind.DebriefFirstClear, ContinuePhase(firstClear: true));
-        Assert.AreEqual(MissionPhaseKind.ReturnReplay, ContinuePhase(firstClear: false));
+        Assert.AreEqual(MissionPhaseKind.DebriefFirstClear, ContinuePhase(firstClear: false));
     }
 
     [Test]
@@ -286,10 +286,10 @@ public sealed class M02EstablishBaseResultSettlementTests
     }
 
     [Test]
-    public void FirstClearResultQueuesDebriefBeforeVictory()
+    public void AcceptedM02ResultQueuesDebriefBeforeVictory()
     {
         using BlobAssetReference<CampaignMissionCatalogBlob> blob = CreateBlob();
-        using World world = new(nameof(FirstClearResultQueuesDebriefBeforeVictory));
+        using World world = new(nameof(AcceptedM02ResultQueuesDebriefBeforeVictory));
         EntityManager entityManager = world.EntityManager;
         Entity root = entityManager.CreateEntity(typeof(CampaignMissionRootComponent));
         CampaignMissionRuntimeComponent runtime = Runtime(
@@ -317,18 +317,18 @@ public sealed class M02EstablishBaseResultSettlementTests
             SourceVersion = runtime.Version,
             SessionToken = runtime.SessionToken,
             Accepted = 1,
-            FirstClear = 1
+            FirstClear = 0
         });
         DynamicBuffer<CampaignMissionActionRequestElement> requests =
             entityManager.AddBuffer<CampaignMissionActionRequestElement>(root);
         using EntityQuery query = entityManager.CreateEntityQuery(
             ComponentType.ReadOnly<CampaignMissionRuntimeComponent>());
 
-        Assert.IsTrue(CampaignMissionResultDebriefTransitionUtility.TryQueueFirstClearDebrief(
+        Assert.IsTrue(CampaignMissionResultDebriefTransitionUtility.TryQueueDebrief(
             entityManager, query, runtime.MissionId));
         Assert.AreEqual(1, requests.Length);
         Assert.AreEqual(MissionActionKind.Continue, requests[0].Action);
-        Assert.IsTrue(CampaignMissionResultDebriefTransitionUtility.TryQueueFirstClearDebrief(
+        Assert.IsTrue(CampaignMissionResultDebriefTransitionUtility.TryQueueDebrief(
             entityManager, query, runtime.MissionId));
         Assert.AreEqual(1, requests.Length, "The automatic debrief request must be idempotent.");
     }

@@ -8,6 +8,14 @@ namespace Game.Runtime
 {
     internal sealed partial class BuildingProductionTransportPresentationSystemHelper
     {
+        private const byte CanonicalDeliveryArrivalPhase = 0;
+        private const byte CanonicalDeliveryDropPhase = 1;
+        private const byte CanonicalDeliveryAwaitSpawnPhase = 2;
+        private const byte CanonicalDeliveryDeparturePhase = 3;
+        private const float CanonicalHelicopterDepartureDistance = 180f;
+        private const float CanonicalHelicopterDepartureHeight = 32f;
+        private const float CanonicalHelicopterMinimumDepartureSeconds = 4f;
+
         public delegate void PrepareTransportDropVisualDelegate(GameObject visual);
         public delegate void FocusProductionDeliveryDelegate(Vector3 worldPosition);
 
@@ -95,8 +103,11 @@ namespace Game.Runtime
             public Vector3 DropStartPosition;
             public Vector3 DropEndPosition;
             public float ArrivalSeconds;
+            public float DepartureSeconds;
             public float PhaseStartedAt;
             public float LastUpdatedAt;
+            public int ExpectedRemainingQuantityBeforeSpawn;
+            public bool FocusRequested;
             public byte Phase;
         }
 
@@ -150,7 +161,7 @@ namespace Game.Runtime
                 return BuildingProductionRequestSystemHelper.OperationMapProductionDeliveryResult.Rejected;
 
             dropPosition = session.DropEndPosition;
-            return UpdateCanonicalDelivery(context, session, now);
+            return UpdateCanonicalDelivery(context, key, session, now);
         }
 
         public void UpdateCanonicalOperationMapProductionDeliveryLifecycle(Context context, float now)
@@ -162,13 +173,34 @@ namespace Game.Runtime
             foreach (KeyValuePair<CanonicalDeliveryKey, CanonicalDeliverySession> pair in _canonicalDeliverySessions)
             {
                 CanonicalDeliverySession session = pair.Value;
-                if (session == null || session.Phase != 2 || session.TransportTransform == null)
+                if (session == null || session.TransportTransform == null)
                     continue;
 
                 float deltaTime = Mathf.Max(0f, now - session.LastUpdatedAt);
                 session.LastUpdatedAt = now;
                 RotateProductionTransportBlades(session.TransportInstance, deltaTime);
-                float t = Mathf.Clamp01((now - session.PhaseStartedAt) / session.ArrivalSeconds);
+
+                if (session.Phase == CanonicalDeliveryAwaitSpawnPhase)
+                {
+                    session.TransportTransform.position = session.HoverPosition;
+                    session.TransportTransform.rotation = session.HoverRotation;
+                    if (TryReadCanonicalDeliveryRemainingQuantity(context, pair.Key, out int remainingQuantity))
+                    {
+                        if (remainingQuantity < session.ExpectedRemainingQuantityBeforeSpawn)
+                            BeginCanonicalDrop(context, session, now, remainingQuantity);
+                    }
+                    else
+                    {
+                        BeginCanonicalDeparture(session, now);
+                    }
+
+                    continue;
+                }
+
+                if (session.Phase != CanonicalDeliveryDeparturePhase)
+                    continue;
+
+                float t = Mathf.Clamp01((now - session.PhaseStartedAt) / session.DepartureSeconds);
                 session.TransportTransform.position = Vector3.Lerp(session.HoverPosition, session.ExitPosition, t);
                 session.TransportTransform.rotation = Quaternion.Slerp(session.HoverRotation, session.ExitRotation, t);
                 SetCanonicalTransportDoorOpen01(session, 1f - t);
@@ -221,7 +253,10 @@ namespace Game.Runtime
                 ? -context.WorldCamera.transform.right.normalized * 60f
                 : new Vector3(-60f, 0f, 0f);
             Vector3 entryPosition = hoverPosition + horizontalOffset + new Vector3(0f, 12f, 0f);
-            Vector3 exitPosition = hoverPosition - horizontalOffset + new Vector3(0f, 12f, 0f);
+            Vector3 departureDirection = -horizontalOffset.normalized;
+            Vector3 exitPosition = hoverPosition +
+                                   (departureDirection * CanonicalHelicopterDepartureDistance) +
+                                   new Vector3(0f, CanonicalHelicopterDepartureHeight, 0f);
             Quaternion hoverRotation = Quaternion.LookRotation((hoverPosition - entryPosition).normalized, Vector3.up);
             Quaternion exitRotation = Quaternion.LookRotation((exitPosition - hoverPosition).normalized, Vector3.up);
             GameObject transportInstance = AcquireProductionTransportInstance(transportPrefab, context.VisualSystem);
@@ -242,9 +277,12 @@ namespace Game.Runtime
                 ExitRotation = exitRotation,
                 DropEndPosition = dropPosition,
                 ArrivalSeconds = arrivalSeconds,
+                DepartureSeconds = Mathf.Max(CanonicalHelicopterMinimumDepartureSeconds, arrivalSeconds),
                 PhaseStartedAt = now,
                 LastUpdatedAt = now,
-                Phase = 0
+                ExpectedRemainingQuantityBeforeSpawn = 1,
+                FocusRequested = false,
+                Phase = CanonicalDeliveryArrivalPhase
             };
             session.DoorTransform = GetProductionTransportDoorTransform(transportInstance, context.VisualSystem);
             session.DoorClosedLocalEulerX = session.DoorTransform != null
@@ -258,6 +296,7 @@ namespace Game.Runtime
 
         private BuildingProductionRequestSystemHelper.OperationMapProductionDeliveryResult UpdateCanonicalDelivery(
             Context context,
+            CanonicalDeliveryKey key,
             CanonicalDeliverySession session,
             float now)
         {
@@ -265,7 +304,7 @@ namespace Game.Runtime
             session.LastUpdatedAt = now;
             RotateProductionTransportBlades(session.TransportInstance, deltaTime);
 
-            if (session.Phase == 0)
+            if (session.Phase == CanonicalDeliveryArrivalPhase)
             {
                 float arrivalT = Mathf.Clamp01((now - session.PhaseStartedAt) / session.ArrivalSeconds);
                 session.TransportTransform.position = Vector3.Lerp(session.EntryPosition, session.HoverPosition, arrivalT);
@@ -273,12 +312,18 @@ namespace Game.Runtime
                 if (arrivalT < 1f)
                     return BuildingProductionRequestSystemHelper.OperationMapProductionDeliveryResult.InProgress;
 
-                BeginCanonicalDrop(context, session, now);
+                int remainingQuantity = TryReadCanonicalDeliveryRemainingQuantity(
+                    context, key, out int queuedQuantity)
+                    ? queuedQuantity
+                    : 1;
+                BeginCanonicalDrop(context, session, now, remainingQuantity);
                 return BuildingProductionRequestSystemHelper.OperationMapProductionDeliveryResult.InProgress;
             }
 
-            if (session.Phase == 1)
+            if (session.Phase == CanonicalDeliveryDropPhase)
             {
+                session.TransportTransform.position = session.HoverPosition;
+                session.TransportTransform.rotation = session.HoverRotation;
                 const float dropDurationSeconds = 2f;
                 float dropT = Mathf.Clamp01((now - session.PhaseStartedAt) / dropDurationSeconds);
                 Vector3 unitPosition = Vector3.Lerp(session.DropStartPosition, session.DropEndPosition, dropT);
@@ -298,20 +343,34 @@ namespace Game.Runtime
                 ReturnTransportDropRope(session.Rope);
                 session.DropVisual = null;
                 session.Rope = null;
-                session.Phase = 2;
-                session.PhaseStartedAt = now;
+                session.Phase = CanonicalDeliveryAwaitSpawnPhase;
                 SetCanonicalTransportDoorOpen01(session, 1f);
                 return BuildingProductionRequestSystemHelper.OperationMapProductionDeliveryResult.ReadyToSpawn;
             }
 
-            return BuildingProductionRequestSystemHelper.OperationMapProductionDeliveryResult.ReadyToSpawn;
+            if (session.Phase == CanonicalDeliveryAwaitSpawnPhase)
+            {
+                session.TransportTransform.position = session.HoverPosition;
+                session.TransportTransform.rotation = session.HoverRotation;
+                return BuildingProductionRequestSystemHelper.OperationMapProductionDeliveryResult.ReadyToSpawn;
+            }
+
+            return BuildingProductionRequestSystemHelper.OperationMapProductionDeliveryResult.InProgress;
         }
 
-        private void BeginCanonicalDrop(Context context, CanonicalDeliverySession session, float now)
+        private void BeginCanonicalDrop(
+            Context context,
+            CanonicalDeliverySession session,
+            float now,
+            int remainingQuantity)
         {
             session.TransportTransform.position = session.HoverPosition;
             session.TransportTransform.rotation = session.HoverRotation;
-            context.FocusProductionDelivery?.Invoke(session.DropEndPosition);
+            if (!session.FocusRequested)
+            {
+                context.FocusProductionDelivery?.Invoke(session.DropEndPosition);
+                session.FocusRequested = true;
+            }
             session.DropVisual = AcquireTransportDropVisual(session.UnitPrefab, context.PrepareTransportDropVisual);
             Vector3 anchor = ResolveCanonicalTransportVisualCenterWorld(session);
             session.DropStartPosition = new Vector3(session.DropEndPosition.x, anchor.y, session.DropEndPosition.z);
@@ -324,7 +383,8 @@ namespace Game.Runtime
             session.Rope.widthMultiplier = 0.05f;
             session.Rope.startColor = new Color(0.82f, 0.82f, 0.82f, 0.95f);
             session.Rope.endColor = session.Rope.startColor;
-            session.Phase = 1;
+            session.ExpectedRemainingQuantityBeforeSpawn = Mathf.Max(1, remainingQuantity);
+            session.Phase = CanonicalDeliveryDropPhase;
             session.PhaseStartedAt = now;
             SetCanonicalTransportDoorOpen01(session, 1f);
         }

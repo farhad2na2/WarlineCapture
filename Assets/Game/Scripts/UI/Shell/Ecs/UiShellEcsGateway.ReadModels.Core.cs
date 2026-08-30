@@ -185,7 +185,7 @@ namespace Game.UI.Shell.Ecs
                 : victory
                     ? "Hostile patrol neutralized. The Old Market corridor is secure."
                     : "The command squad was lost. Regroup and redeploy.";
-            bool debriefRequired = establishBase && victory && firstClear &&
+            bool debriefRequired = establishBase && victory &&
                                    runtime.Phase != MissionPhaseKind.ResultAfterDebrief;
             if (debriefRequired)
                 return false;

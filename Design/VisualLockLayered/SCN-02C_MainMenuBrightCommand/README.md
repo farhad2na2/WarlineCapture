@@ -1,10 +1,13 @@
 # SCN-02C Main Menu Bright Command
 
-This folder contains the target lock and atomized sprite pack for the brighter, less-cartoon Warline Capture main menu art direction.
+This folder contains the target lock and atomized sprite pack for the Warline Capture main menu art direction.
+
+The tracked target-lock reference has been replaced by the approved Main Menu V3 sharp-edge concept. The older atomized sprite pack remains in this folder as historical implementation material until V3 slices are produced.
 
 ## Reference
 
 - `reference/scn02c_target_lock_warline_capture_bright.png`
+- V3 source: `Design/VisualLockLayered/SCN-02_MainMenuV3/reference/SCN-02_MainMenuV3_SharpSolid_Target.png`
 
 The reference is the visual target only. It should not be used as a baked runtime UI background.
 

@@ -1,15 +1,13 @@
 # SCN-08 RTS Battle HUD Visual Lock
 
-Status: Target-lock mockup and V01 implementation layer pack generated.
-Date: 2026-05-22
+Status: Target-lock mockup replaced by the approved Match HUD V3 sharp-edge concept; V01/V02 implementation layer packs remain historical until V3 slices are produced.
+Date: 2026-08-29
 
 ## Active Target
 
-- Reference target: `reference/SCN-08_RTSBattleHUD_Landscape_Target.png`
-- Candidate source: `reference/SCN-08_RTSBattleHUD_TargetLock_V01.png`
-- 16:9 reference target: `reference/SCN-08_RTSBattleHUD_16x9_Landscape_Target.png`
-- 16:9 candidate source: `reference/SCN-08_RTSBattleHUD_16x9_TargetLock_V01.png`
-- Canonical size: `2400 x 1080`
+- Reference target: `reference/SCN-08_RTSBattleHUD_NewMainMenuArtDirection_TargetLock_V02.png`
+- V3 source: `Design/VisualLockLayered/SCN-08_MatchHudV3/reference/SCN-08_MatchHudV3_SharpSolid_Target.png`
+- Canonical concept size: `1672 x 941`
 
 This target is the active 3D match screen for WarlineCapture. It shows the player commanding squads on one large 3D Middle East town map, with objective tracking, squad selection, command actions, minimap awareness, threat feed, and civilian-risk feedback.
 

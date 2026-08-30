@@ -1,7 +1,10 @@
 # POP-05 Mission Result Reference
 
-Approved source for Phase 9 result/victory/loss popup migration entry gate:
+Approved V3 sources for the result popup implementation entry gate:
 
-- `POP-05_MissionResult_NewMainMenuArtDirection_TargetLock_V01.png`
+- `POP-05_MissionResultV3_Victory_Final_Target.png`
+- `POP-05_MissionResultV3_Defeat_Final_Target.png`
 
-This is a target-lock reference mockup only. Implementation must rebuild the modal as live UI Toolkit panels, labels, icons, and buttons. Do not flatten the popup into one static screenshot.
+The older `POP-05_MissionResult_NewMainMenuArtDirection_TargetLock_V01.png` remains historical context and is not the active target.
+
+These are target-lock reference mockups only. Implementation must rebuild the result as live panels, labels, icons, and buttons. Do not flatten either state into one static screenshot.

@@ -5,7 +5,7 @@
   "mapContentHash":"95ddbb2a59e91270a839db2f1f1d547dfc6cda46534eb6d67d1e23fdb0adeee2", "rendererCount":75741,
   "layout":{"columns":["16:9","20:9","16:10-tablet"],"rowsTopToBottom":["FL-P18","live-planning","live-battle-start"]},
   "transition":{"cover":"FL-P18 retained through readiness","normalBlendSeconds":1.25,"reducedMotionBlendSeconds":0,"inputLockedUntilBattleStart":true,"mainMenuFrames":0,"unrelatedSceneFrames":0},
-  "contactSheet":"Design/AgentReports/M01FirstContact/m01dc_015_camera_continuity_contact_sheet.png", "contactSheetSha256":"a8509ae4ecf0b7610115e0b679be84c0dfc6dfe2ad64fdbd65e1f13f06a849fe",
+  "contactSheet":"Design/AgentReports/M01FirstContact/m01dc_015_camera_continuity_contact_sheet.png", "contactSheetSha256":"fc45c13628a0c5cc9549420836d3e8f376184cba310a8f50945622c42cc1673d",
   "review":{"operatorKind":"Agent","routeDirection":"Pass","bazaarLandmarkContinuity":"Pass","patrolAnchorFraming":"Pass","livePatrolActors":"DeferredToM01DC019","cityLitAndResident":"Pass","invalidCameraOrFlash":"Absent"},
   "validation":"[M01FirstContactCameraContinuityValidation] result=Passed tests=14"
 }

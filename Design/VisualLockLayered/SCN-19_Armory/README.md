@@ -1,13 +1,22 @@
-# SCN-19 Armory New Art Direction
+# SCN-19 Armory V3
 
-Status: blocked, missing saved reference PNG.
+Status: V3 Armory reference saved.
+Date: 2026-08-30
 
-The current new-art prompt is:
+## Saved V3 Reference
 
-`prompts/SCN-19_Armory_NewMainMenuArtDirection_TargetLock_V04.md`
+- Final target: `reference/SCN-19_ArmoryV3_Final_Target.png`
+- Active target: `reference/SCN-19_ArmoryV3_Target.png`
+- Iteration mirror: `reference/SCN-19_ArmoryV3_Target_v01.png`
+- Source generation: `/Users/farhad/.codex/generated_images/019e0cb1-e941-7eb0-b318-63b09c645a05/exec-5e8d049f-0ff2-433d-aa9c-8acfac46f14d.png`
+- Existing prefab source: `Assets/Game/Prefabs/UI/Shell/Content/SCN19_ArmoryContent.prefab`
 
-Before implementation or layer extraction continues, regenerate that prompt and save the resulting PNG as:
+## Direction
 
-`reference/SCN-19_Armory_NewMainMenuArtDirection_TargetLock_V04.png`
-
-Do not use older SCN19 references or layer packs for the bright new main-menu art direction.
+- Use the shared account header with exactly `Credits` and `Command`.
+- Use large left category tabs and a readable 2x4 inventory grid.
+- Keep product art large, with clear owned, locked, level, and selected states.
+- Keep the selected item detail panel wide enough for portrait, level, stats, `Upgrade`, and `Equip`.
+- Attach route navigation to the bottom edge with `Back` and `Commander Profile`.
+- Use sharp rectangular V3 panels, solid colors, and large mobile controls.
+- Avoid store purchase actions, match resources, rounded or chamfered frames, and old gold ornamental styling.

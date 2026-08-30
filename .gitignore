@@ -19,6 +19,7 @@ Assets/**/.DS_Store
 *.csproj
 *.unityproj
 *.sln
+*.slnx
 *.suo
 *.tmp
 *.user
@@ -33,6 +34,7 @@ Assets/**/.DS_Store
 
 # Auto-generated Visual Studio / Rider
 .vs/
+.vscode/
 .idea/
 ExportedObj/
 .consulo/

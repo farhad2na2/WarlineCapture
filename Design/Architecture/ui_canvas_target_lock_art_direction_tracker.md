@@ -153,12 +153,12 @@ These are the active Canvas shell and modal prefabs confirmed from scene and pre
 | Surface | Canvas prefab | Reference source |
 | --- | --- | --- |
 | Shell | `Assets/Game/Prefabs/UI/Shell/UIShellAppCanvas.prefab` | Approved shared shell/chrome contract |
-| SCN-01 Loading | `Assets/Game/Prefabs/UI/Shell/Content/SCN01_LoadingContent.prefab` | `Design/VisualLockLayered/SCN-01_SplashLoading/reference/SCN-01_SplashLoading_NewMainMenuArtDirection_TargetLock_V04.png` |
+| SCN-01 Loading | `Assets/Game/Prefabs/UI/Shell/Content/SCN01_LoadingContent.prefab` | `Design/VisualLockLayered/SCN-01_SplashLoading/reference/SCN-01_SplashLoadingV3_Final_Target.png` |
 | SCN-02 Main Menu | `Assets/Game/Prefabs/UI/Shell/Content/SCN02_MainMenuContent.prefab` | `Design/VisualLockLayered/SCN-02C_MainMenuBrightCommand/reference/scn02c_target_lock_warline_capture_bright.png` |
 | SCN-03 Commander Profile | `Assets/Game/Prefabs/UI/Shell/Content/SCN03_CommanderProfileContent.prefab` | `Design/VisualLockLayered/SCN-03_CommanderProfile/reference/SCN-03_CommanderProfile_NewMainMenuArtDirection_TargetLock_V01.png` |
 | SCN-08 Match HUD | `Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab` | `Design/VisualLockLayered/SCN-08_RTSBattleHUD/reference/SCN-08_RTSBattleHUD_NewMainMenuArtDirection_TargetLock_V02.png` |
 | SCN-08 Build Placement Bar | `Assets/Game/Prefabs/UI/Shell/Content/SCN08_BuildPlacementConfirmationBar.prefab` | `Design/VisualLockLayered/SCN-08_BuildPlacementConfirmationBar/reference/SCN-08_BuildPlacementConfirmationBar_NewMainMenuArtDirection_TargetLock_V01.png` |
-| SCN-09 Build Drawer Popup | `Assets/Game/Prefabs/UI/Shell/Popups/SCN09_BuildDrawerPopup.prefab` | `Design/VisualLockLayered/SCN-09_BuildDrawer/reference/SCN-09_BuildDrawer_NewMainMenuArtDirection_TargetLock_V03.png` |
+| SCN-09 Build Drawer Popup | `Assets/Game/Prefabs/UI/Shell/Popups/SCN09_BuildDrawerPopup.prefab` | `Design/VisualLockLayered/SCN-09_BuildDrawer/reference/SCN-09_BuildDrawer_MatchBuildPopupV3_SharpSolid_Target.png` |
 | SCN-19 Armory | `Assets/Game/Prefabs/UI/Shell/Content/SCN19_ArmoryContent.prefab` | `Design/VisualLockLayered/SCN-19_Armory/reference/SCN-19_Armory_NewMainMenuArtDirection_TargetLock_V04.png` |
 | POP-05 Mission Result | `Assets/Game/Prefabs/UI/Popups/MissionResultPopup.prefab` | `Design/VisualLockLayered/POP-05_MissionResult/reference/POP-05_MissionResult_NewMainMenuArtDirection_TargetLock_V01.png` |
 | Confirm Raid | `Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab` | Use shared Target Lock modal style until a specific reference exists |

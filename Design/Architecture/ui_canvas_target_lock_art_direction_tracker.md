@@ -6,7 +6,7 @@ Update the existing Unity Canvas screens and popups to use the approved Target L
 This is a Canvas visual migration tracker. It is not a UI Toolkit rewrite, not an ECS task, and not a gameplay behavior migration.
 
 Last updated:
-2026-06-26
+2026-09-01
 
 Approved visual source:
 
@@ -17,6 +17,12 @@ Approved visual source:
 - Latest Target Lock reference mockups under `Design/VisualLockLayered/**/reference/`.
 
 ## Progress Snapshot
+
+V3 continuation note:
+
+- The canonical 46-target V3 migration is tracked separately in `Design/Architecture/ui_canvas_v3_full_coverage_continuation_tracker.md`.
+- Completion against this older gold Target Lock tracker does not imply V3 completion.
+- Current V3 live-Canvas acceptance is `0 / 46`; the first current Main Menu baseline confirms a major visual-family mismatch and starts a new target-by-target pass.
 
 - Checklist progress: `99 / 158 complete (62.7%)`.
 - In progress: `1`.

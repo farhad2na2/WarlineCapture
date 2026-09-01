@@ -154,7 +154,8 @@ namespace Game.Editor
             catch (Exception exception)
             {
                 Debug.LogError($"[CanvasMenuFallbackValidation] result=Failed\n{exception}");
-                EditorApplication.Exit(1);
+                if (Application.isBatchMode)
+                    EditorApplication.Exit(1);
             }
         }
 
@@ -184,7 +185,8 @@ namespace Game.Editor
             catch (Exception exception)
             {
                 Debug.LogError($"[CanvasMenuDeployClickValidation] result=Failed\n{exception}");
-                EditorApplication.Exit(1);
+                if (Application.isBatchMode)
+                    EditorApplication.Exit(1);
             }
         }
 
@@ -230,7 +232,8 @@ namespace Game.Editor
             catch (Exception exception)
             {
                 Debug.LogError($"[CanvasRouteCaptureValidation] result=Failed\n{exception}");
-                EditorApplication.Exit(1);
+                if (Application.isBatchMode)
+                    EditorApplication.Exit(1);
             }
         }
 
@@ -289,7 +292,8 @@ namespace Game.Editor
             {
                 RestoreCommanderCapturePlayModeSettings();
                 Debug.LogError($"[CanvasRouteCaptureValidation] result=Failed\n{exception}");
-                EditorApplication.Exit(1);
+                if (Application.isBatchMode)
+                    EditorApplication.Exit(1);
             }
         }
 
@@ -324,7 +328,8 @@ namespace Game.Editor
             catch (Exception exception)
             {
                 Debug.LogError($"[CanvasPerformanceBaseline] result=Failed\n{exception}");
-                EditorApplication.Exit(1);
+                if (Application.isBatchMode)
+                    EditorApplication.Exit(1);
             }
         }
 
@@ -487,7 +492,8 @@ namespace Game.Editor
             catch (Exception exception)
             {
                 Debug.LogError($"[CanvasCommanderProfileTargetLockLayout] result=Failed\n{exception}");
-                EditorApplication.Exit(1);
+                if (Application.isBatchMode)
+                    EditorApplication.Exit(1);
                 return;
             }
             finally
@@ -498,7 +504,8 @@ namespace Game.Editor
 
             ApplyMainMenuCommanderRouteWiring();
             AssetDatabase.SaveAssets();
-            EditorApplication.Exit(0);
+            if (Application.isBatchMode)
+                EditorApplication.Exit(0);
         }
 
         private static void Continue()
@@ -891,6 +898,11 @@ namespace Game.Editor
                     break;
                 case UIRoute.MainMenu:
                 case UIRoute.Armory:
+                case UIRoute.CommandExchange:
+                case UIRoute.Inbox:
+                case UIRoute.Events:
+                case UIRoute.Ranking:
+                case UIRoute.LoadoutSquadPrep:
                     content.InstallMenuRouteBody(routeCaptureRoute);
                     ResetRouteCaptureRegions(
                         bootstrap,
@@ -986,6 +998,27 @@ namespace Game.Editor
                         UIShellRegionId.FooterRegion,
                         UIShellRegionId.PopupLayer);
                     break;
+                case UIRoute.Operations:
+                    content.PrepareForCommandSequence(new[]
+                    {
+                        new UiShellPresentationCommandModel(
+                            UiShellCommandKind.EnterMenu,
+                            UiShellRegionId.None,
+                            UIRoute.MainMenu,
+                            UiShellMode.MainMenu,
+                            1)
+                    });
+                    content.InstallMenuRouteBody(UIRoute.Operations);
+                    ResetRouteCaptureRegions(
+                        bootstrap,
+                        UIShellRegionId.MenuBackgroundRegion,
+                        UIShellRegionId.HeaderRegion,
+                        UIShellRegionId.LeftRegion,
+                        UIShellRegionId.MiddleRegion,
+                        UIShellRegionId.RightRegion,
+                        UIShellRegionId.FooterRegion,
+                        UIShellRegionId.PopupLayer);
+                    break;
                 case UIRoute.Match:
                     content.PrepareForCommandSequence(new[]
                     {
@@ -998,7 +1031,7 @@ namespace Game.Editor
                     });
                     break;
                 default:
-                    error = $"Canvas route capture does not support route={routeCaptureRoute}. Supported routes: Splash, MainMenu, Armory, CommandFeed, QuickCustomSetup, Campaign, MissionBriefing, Match.";
+                    error = $"Canvas route capture does not support route={routeCaptureRoute}.";
                     return false;
                 }
             }
@@ -1482,7 +1515,8 @@ namespace Game.Editor
 
             if (EditorApplication.isPlaying)
                 EditorApplication.ExitPlaymode();
-            EditorApplication.Exit(success ? 0 : 1);
+            if (Application.isBatchMode)
+                EditorApplication.Exit(success ? 0 : 1);
         }
 
         private static void CompleteDeployClickValidation(bool success, string message)
@@ -1499,7 +1533,8 @@ namespace Game.Editor
 
             if (EditorApplication.isPlaying)
                 EditorApplication.ExitPlaymode();
-            EditorApplication.Exit(success ? 0 : 1);
+            if (Application.isBatchMode)
+                EditorApplication.Exit(success ? 0 : 1);
         }
 
         private static void CompleteRouteCapture(bool success, string message)
@@ -1517,7 +1552,8 @@ namespace Game.Editor
 
             if (EditorApplication.isPlaying)
                 EditorApplication.ExitPlaymode();
-            EditorApplication.Exit(success ? 0 : 1);
+            if (Application.isBatchMode)
+                EditorApplication.Exit(success ? 0 : 1);
         }
 
         private static void RestoreCommanderCapturePlayModeSettings()
@@ -1569,7 +1605,8 @@ namespace Game.Editor
 
             if (EditorApplication.isPlaying)
                 EditorApplication.ExitPlaymode();
-            EditorApplication.Exit(success ? 0 : 1);
+            if (Application.isBatchMode)
+                EditorApplication.Exit(success ? 0 : 1);
         }
 
         private static void CountPerformanceCanvasRender()

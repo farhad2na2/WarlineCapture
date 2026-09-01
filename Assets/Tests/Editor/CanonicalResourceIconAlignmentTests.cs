@@ -26,6 +26,9 @@ public sealed class CanonicalResourceIconAlignmentTests
     private const string OilIcon = "Assets/Game/Art/UI/Resources/resource_oil.png";
     private const string FuelIcon = "Assets/Game/Art/UI/Resources/resource_fuel.png";
     private const string RushIcon = "Assets/Game/Art/UI/Resources/resource_rush.png";
+    private const string V3MaterialsIcon = "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_materials.png";
+    private const string V3OilIcon = "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_oil.png";
+    private const string V3FuelIcon = "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_fuel.png";
 
     [Test]
     public void PersistentHeader_UsesOnlyCanonicalPersistentResourceIcons()
@@ -43,8 +46,8 @@ public sealed class CanonicalResourceIconAlignmentTests
         AssertUses(BuildDrawerPrefab, MaterialsIcon, FuelIcon);
         AssertDoesNotUse(BuildDrawerPrefab, CreditsIcon, CommandIcon);
 
-        AssertUses(PlacementBarPrefab, MaterialsIcon);
-        AssertDoesNotUse(PlacementBarPrefab, CreditsIcon, CommandIcon);
+        AssertUses(PlacementBarPrefab, V3MaterialsIcon, V3OilIcon, V3FuelIcon);
+        AssertDoesNotUse(PlacementBarPrefab, CreditsIcon, CommandIcon, MaterialsIcon, OilIcon, FuelIcon);
 
         AssertUses(ResourceExchangePrefab, MaterialsIcon, OilIcon, FuelIcon, RushIcon);
         AssertDoesNotUse(ResourceExchangePrefab, CreditsIcon, CommandIcon);

@@ -79,6 +79,9 @@ namespace Game.UI.Runtime
 
         private void ConfigureView(MenuDiagnosticsView view)
         {
+            if (view.FpsButton != null)
+                view.FpsButton.gameObject.SetActive(view.ShowFpsButton);
+
             if (view.LogPanel != null)
                 view.LogPanel.SetActive(false);
 

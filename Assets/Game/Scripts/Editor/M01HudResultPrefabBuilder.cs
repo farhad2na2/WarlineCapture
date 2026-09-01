@@ -28,6 +28,13 @@ namespace Game.Editor
 
         private static void ConfigureResult()
         {
+            MissionResultV3PrefabBuilder.Build();
+        }
+
+        // Retained only as an audit trail for the pre-V3 prefab migration. All
+        // production rebuilds delegate to MissionResultV3PrefabBuilder above.
+        private static void ConfigureLegacyResult()
+        {
             GameObject root = PrefabUtility.LoadPrefabContents(ResultPath);
             try
             {

@@ -16,6 +16,9 @@ namespace Game.UI.Runtime
         [SerializeField] private Button zoomInButton;
         [SerializeField] private Button zoomOutButton;
         [SerializeField] private RectTransform markerRoot;
+        [SerializeField] private Sprite playerMarkerSprite;
+        [SerializeField] private Sprite enemyMarkerSprite;
+        [SerializeField] private Sprite neutralMarkerSprite;
 
         private bool _draggingViewport;
         private bool _dragMoved;
@@ -39,6 +42,9 @@ namespace Game.UI.Runtime
         public Button ZoomInButton => zoomInButton;
         public Button ZoomOutButton => zoomOutButton;
         public RectTransform MarkerRoot => markerRoot;
+        public Sprite PlayerMarkerSprite => playerMarkerSprite;
+        public Sprite EnemyMarkerSprite => enemyMarkerSprite;
+        public Sprite NeutralMarkerSprite => neutralMarkerSprite;
         public bool IsDraggingViewport => _draggingViewport;
         public bool HasManualViewportOverride => _hasManualViewportOverride;
         public Rect ManualViewportNormalizedRect => _manualViewportNormalizedRect;
@@ -110,12 +116,29 @@ namespace Game.UI.Runtime
 
             if (mapImage.sprite != sprite)
                 mapImage.sprite = sprite;
+            AspectRatioFitter aspectFitter = mapImage.GetComponent<AspectRatioFitter>();
+            if (aspectFitter != null && sprite != null && sprite.rect.height > 0f)
+                aspectFitter.aspectRatio = sprite.rect.width / sprite.rect.height;
             if (mapImage.preserveAspect)
                 mapImage.preserveAspect = false;
             if (!mapImage.enabled)
                 mapImage.enabled = true;
             if (!mapImage.raycastTarget)
                 mapImage.raycastTarget = true;
+        }
+
+        public void ConfigureMarkerSprites(Sprite player, Sprite enemy, Sprite neutral)
+        {
+            playerMarkerSprite = player;
+            enemyMarkerSprite = enemy;
+            neutralMarkerSprite = neutral;
+        }
+
+        public void RequestFocus(Vector2 normalizedCenter)
+        {
+            FocusRequested?.Invoke(new Vector2(
+                Mathf.Clamp01(normalizedCenter.x),
+                Mathf.Clamp01(normalizedCenter.y)));
         }
 
         public void SetProjectionMode(bool useFullMapProjection)

@@ -30,13 +30,15 @@ namespace Game.UI.Runtime
         private static readonly string[] CardLabels =
         {
             "RIFLE SQUAD",
-            "ARMOR",
-            "GUNSHIP",
-            "JET WING",
+            "APC",
+            "TANK",
+            "HELICOPTER",
             "TRANSPORT"
         };
         private static readonly Color CardLabelColor = new(0.86f, 0.84f, 0.74f, 1f);
         private static readonly Color CardLabelStripColor = new(0f, 0f, 0f, 0.45f);
+        private static readonly Color V3SelectedBorderColor = new Color32(0, 188, 224, 255);
+        private static readonly Color V3NormalBorderColor = new Color32(48, 166, 69, 255);
         private readonly Color[] _frameBaseColors = new Color[5];
         private readonly Color[] _portraitBaseColors = new Color[5];
         private readonly bool[] _missionDisabled = new bool[5];
@@ -87,38 +89,42 @@ namespace Game.UI.Runtime
                 if (cardRect == null)
                     continue;
 
-                GameObject stripObject = new("NameStrip");
-                stripObject.transform.SetParent(cardRect, false);
+                Transform existingStrip = cardRect.Find("NameStrip");
+                GameObject stripObject = existingStrip != null ? existingStrip.gameObject : new GameObject("NameStrip");
+                if (existingStrip == null)
+                    stripObject.transform.SetParent(cardRect, false);
                 stripObject.layer = cardRect.gameObject.layer;
-                RectTransform stripRect = stripObject.AddComponent<RectTransform>();
-                stripRect.anchorMin = new Vector2(0f, 1f);
-                stripRect.anchorMax = new Vector2(1f, 1f);
-                stripRect.pivot = new Vector2(0.5f, 1f);
-                stripRect.anchoredPosition = new Vector2(29f, -12f);
-                stripRect.sizeDelta = new Vector2(-82f, 40f);
-                Image stripImage = stripObject.AddComponent<Image>();
+                RectTransform stripRect = stripObject.GetComponent<RectTransform>() ?? stripObject.AddComponent<RectTransform>();
+                stripRect.anchorMin = new Vector2(0f, 0f);
+                stripRect.anchorMax = new Vector2(1f, 0f);
+                stripRect.pivot = new Vector2(0.5f, 0f);
+                stripRect.anchoredPosition = new Vector2(0f, 6f);
+                stripRect.sizeDelta = new Vector2(-12f, 34f);
+                Image stripImage = stripObject.GetComponent<Image>() ?? stripObject.AddComponent<Image>();
                 stripImage.color = CardLabelStripColor;
                 stripImage.raycastTarget = false;
 
-                GameObject labelObject = new("Label");
-                labelObject.transform.SetParent(stripRect, false);
+                Transform existingLabel = stripRect.Find("Label");
+                GameObject labelObject = existingLabel != null ? existingLabel.gameObject : new GameObject("Label");
+                if (existingLabel == null)
+                    labelObject.transform.SetParent(stripRect, false);
                 labelObject.layer = stripObject.layer;
-                RectTransform labelRect = labelObject.AddComponent<RectTransform>();
+                RectTransform labelRect = labelObject.GetComponent<RectTransform>() ?? labelObject.AddComponent<RectTransform>();
                 labelRect.anchorMin = Vector2.zero;
                 labelRect.anchorMax = Vector2.one;
-                labelRect.offsetMin = new Vector2(10f, 0f);
-                labelRect.offsetMax = new Vector2(-6f, 0f);
-                TextMeshProUGUI label = labelObject.AddComponent<TextMeshProUGUI>();
+                labelRect.offsetMin = new Vector2(4f, 0f);
+                labelRect.offsetMax = new Vector2(-4f, 0f);
+                TextMeshProUGUI label = labelObject.GetComponent<TextMeshProUGUI>() ?? labelObject.AddComponent<TextMeshProUGUI>();
                 if (cardLabelFont != null)
                     label.font = cardLabelFont;
                 label.text = CardLabels[i];
                 label.fontStyle = FontStyles.Bold;
-                label.fontSize = 26f;
+                label.fontSize = 21f;
                 label.enableAutoSizing = true;
-                label.fontSizeMin = 16f;
-                label.fontSizeMax = 26f;
+                label.fontSizeMin = 13f;
+                label.fontSizeMax = 21f;
                 label.color = CardLabelColor;
-                label.alignment = TextAlignmentOptions.MidlineLeft;
+                label.alignment = TextAlignmentOptions.Center;
                 label.textWrappingMode = TextWrappingModes.NoWrap;
                 label.overflowMode = TextOverflowModes.Overflow;
                 label.raycastTarget = false;
@@ -221,6 +227,9 @@ namespace Game.UI.Runtime
                 bool selected = ToSlot(i) == selectedSlot;
                 SetImageSprite(card.FrameImage, selected ? selectedFrameSprite : normalFrameSprite);
                 SetImageColor(card.FrameImage, _frameBaseColors[i]);
+                V3GradientGraphic v3Frame = card.Button.GetComponentInChildren<V3GradientGraphic>(true);
+                if (v3Frame != null)
+                    v3Frame.SetBorder(selected ? V3SelectedBorderColor : V3NormalBorderColor, 3f);
             }
         }
 

@@ -66,6 +66,18 @@ namespace Game.UI.Runtime
             return image != null ? image.sprite : null;
         }
 
+        public void ApplyV3SelectedCommand(TacticalCommandMode mode)
+        {
+            SetV3Selected(selectButton, mode == TacticalCommandMode.Select);
+            SetV3Selected(moveButton, mode == TacticalCommandMode.Move);
+            SetV3Selected(attackButton, mode == TacticalCommandMode.Attack);
+            SetV3Selected(holdButton, mode == TacticalCommandMode.Hold);
+            SetV3Selected(stopButton, mode == TacticalCommandMode.Stop);
+            SetV3Selected(scanButton, mode == TacticalCommandMode.Scan);
+            SetV3Selected(boardButton, mode == TacticalCommandMode.Board);
+            SetV3Selected(buildButton, mode == TacticalCommandMode.Build);
+        }
+
         private void OnTransformParentChanged()
         {
             _cachedCanvas = null;
@@ -139,6 +151,16 @@ namespace Game.UI.Runtime
             return rect != null &&
                    button.gameObject.activeInHierarchy &&
                    RectTransformUtility.RectangleContainsScreenPoint(rect, screenPosition, eventCamera);
+        }
+
+        private static void SetV3Selected(Button button, bool selected)
+        {
+            if (button == null)
+                return;
+
+            Transform selectedVisual = button.transform.Find("V3SelectedState");
+            if (selectedVisual != null && selectedVisual.gameObject.activeSelf != selected)
+                selectedVisual.gameObject.SetActive(selected);
         }
     }
 }

@@ -14,7 +14,7 @@ using Game.Missions.Contracts;
 
 namespace Game.UI.Shell.Ecs
 {
-    public sealed partial class UiShellEcsGateway : IUiMatchHudResourceValuesGateway
+    public sealed partial class UiShellEcsGateway : IUiMatchHudResourceValuesGateway, IUiCurrentMissionRestartGateway
     {
         bool IUiShellRuntimeGateway.TryEnqueueRouteRequest(UiShellRouteIntent intent, UIRoute route, bool pushHistory)
         {
@@ -76,6 +76,11 @@ namespace Game.UI.Shell.Ecs
         bool IUiShellRuntimeGateway.TryEnqueueMissionResultAction(UiMissionResultActionKind action)
         {
             return TryEnqueueMissionResultAction(action);
+        }
+
+        bool IUiCurrentMissionRestartGateway.TryRestartCurrentMission()
+        {
+            return TryRestartCurrentMission();
         }
 
         bool IUiShellRuntimeGateway.TryReadMatchHudSelection(out UiMatchHudSelectionPanelModel selection)

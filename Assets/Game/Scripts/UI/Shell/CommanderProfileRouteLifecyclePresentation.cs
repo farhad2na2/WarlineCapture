@@ -49,6 +49,12 @@ namespace Game.UI.Runtime
                 return;
             }
 
+            if (route == UIRoute.LoadoutSquadPrep)
+            {
+                contentView.InstallLoadoutSquadPrepBody();
+                return;
+            }
+
             InstallMainMenuBody(contentView);
         }
 
@@ -75,6 +81,7 @@ namespace Game.UI.Runtime
             contentView.UnbindMatchHudThreatWarningHeader();
             SetCommanderBackgroundScrim(contentView, true);
             GameObject prefab = contentView.CommanderProfileContentPrefab;
+            contentView.InstallSection(prefab, UIShellContentSectionId.Header, UIShellRegionId.HeaderRegion);
             contentView.InstallSection(prefab, UIShellContentSectionId.Left, UIShellRegionId.LeftRegion);
             GameObject middle = contentView.InstallSection(prefab, UIShellContentSectionId.Middle, UIShellRegionId.MiddleRegion);
             contentView.InstallSection(prefab, UIShellContentSectionId.Right, UIShellRegionId.RightRegion);
@@ -114,7 +121,7 @@ namespace Game.UI.Runtime
 
             UIShellContentView.Stretch(backgroundScrim.GetComponent<RectTransform>());
             Image image = backgroundScrim.GetComponent<Image>();
-            image.color = new Color(0.015f, 0.018f, 0.014f, 0.34f);
+            image.color = new Color(0.015f, 0.018f, 0.014f, 0.72f);
             image.raycastTarget = false;
             backgroundScrim.transform.SetAsLastSibling();
             contentView.MarkContentChanged();

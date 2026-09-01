@@ -25,6 +25,7 @@ public sealed class SkirmishSetupScreenTests
         try
         {
             Run(nameof(MenuSceneRoutesSkirmishSetupWithoutReplacingSharedHeader), test => test.MenuSceneRoutesSkirmishSetupWithoutReplacingSharedHeader(), ref passed);
+            Run(nameof(SkirmishSetupPrefabUsesLockedV3Structure), test => test.SkirmishSetupPrefabUsesLockedV3Structure(), ref passed);
             Run(nameof(MainMenuSkirmishEntryOpensSetupAndDeployRemainsDirect), test => test.MainMenuSkirmishEntryOpensSetupAndDeployRemainsDirect(), ref passed);
             Run(nameof(SkirmishAndBackButtonsDriveShellRouteHistory), test => test.SkirmishAndBackButtonsDriveShellRouteHistory(), ref passed);
             Run(nameof(SkirmishSetupReadsVisibleControlsAndLaunchesThroughContracts), test => test.SkirmishSetupReadsVisibleControlsAndLaunchesThroughContracts(), ref passed);
@@ -36,6 +37,55 @@ public sealed class SkirmishSetupScreenTests
             Debug.LogError($"[SkirmishSetupScreenValidation] result=Failed passed={passed}\n{exception}");
             EditorApplication.Exit(1);
         }
+    }
+
+    [Test]
+    public void SkirmishSetupPrefabUsesLockedV3Structure()
+    {
+        Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+        UIShellContentView content = FindInScene<UIShellContentView>(scene);
+        Assert.NotNull(content);
+        GameObject prefab = content.SkirmishSetupContentPrefab;
+        Assert.NotNull(prefab);
+        Assert.IsNull(FindRecursive(prefab.transform, "HeaderContent"), "SCN-13 route body must preserve the shared shell header.");
+
+        Transform composition = FindRecursive(prefab.transform, "SkirmishSetupComposition");
+        Assert.NotNull(composition);
+        MainMenuV3SectionLayoutView layout = composition.GetComponent<MainMenuV3SectionLayoutView>();
+        Assert.NotNull(layout);
+        Assert.AreEqual(new Vector2(1672f, 941f), layout.ReferenceResolution);
+        Assert.IsTrue(layout.ExpandToCanvasWidth, "SCN-13 must fill ultrawide canvases instead of leaving empty side bands.");
+
+        Transform rail = FindRecursive(prefab.transform, "PresetRail");
+        Assert.NotNull(rail);
+        for (int i = 0; i < 5; i++)
+            Assert.NotNull(FindRecursive(rail, $"Preset_{i}"), $"SCN-13 is missing preset card {i}.");
+
+        Transform mapTransform = FindRecursive(prefab.transform, "MapPreview");
+        Assert.NotNull(mapTransform);
+        RawImage map = mapTransform.GetComponent<RawImage>();
+        AspectRatioFitter mapFitter = mapTransform.GetComponent<AspectRatioFitter>();
+        Assert.NotNull(map);
+        Assert.NotNull(map.texture);
+        Assert.NotNull(mapFitter);
+        Assert.AreEqual(AspectRatioFitter.AspectMode.EnvelopeParent, mapFitter.aspectMode,
+            "SCN-13 preview must crop without stretching at both target aspect ratios.");
+
+        AssertOuterBorder(prefab.transform, "WarlineLogo");
+        AssertOuterBorder(prefab.transform, "ScreenTitlePanel");
+        AssertOuterBorder(prefab.transform, "OperationPreview");
+        AssertOuterBorder(prefab.transform, "OpposingForce");
+        AssertOuterBorder(prefab.transform, "MatchEconomy");
+        AssertOuterBorder(prefab.transform, "ResetButton");
+        AssertOuterBorder(prefab.transform, "RandomizeSeedButton");
+        AssertOuterBorder(prefab.transform, "LaunchMissionButton");
+
+        Assert.GreaterOrEqual(prefab.GetComponentsInChildren<V3GradientGraphic>(true).Length, 42,
+            "SCN-13 must render directional V3 gradients instead of solid legacy panels.");
+        Assert.NotNull(FindRecursive(prefab.transform, "StartingMaterialsRow")?.GetComponent<SkirmishSetupV3CycleControl>());
+        Assert.NotNull(FindRecursive(prefab.transform, "IncomeRow")?.GetComponent<SkirmishSetupV3CycleControl>());
+        Assert.NotNull(FindRecursive(prefab.transform, "AggressionRow")?.GetComponent<SkirmishSetupV3CycleControl>());
+        Assert.NotNull(FindRecursive(prefab.transform, "WinConditionRow")?.GetComponent<SkirmishSetupV3CycleControl>());
     }
 
     [TearDown]
@@ -301,6 +351,18 @@ public sealed class SkirmishSetupScreenTests
                 return found;
         }
         return null;
+    }
+
+    private static void AssertOuterBorder(Transform root, string name)
+    {
+        Transform target = FindRecursive(root, name);
+        Assert.NotNull(target, $"Missing V3 bordered element {name}.");
+        V3GradientGraphic gradient = target.GetComponent<V3GradientGraphic>();
+        Assert.NotNull(gradient, $"{name} must use procedural V3 gradient chrome.");
+        SerializedObject serialized = new(gradient);
+        SerializedProperty borderWidth = serialized.FindProperty("borderWidth");
+        Assert.NotNull(borderWidth);
+        Assert.AreEqual(3f, borderWidth.floatValue, .001f, $"{name} must use the locked constant 3 px border.");
     }
 
     private static T FindInScene<T>(Scene scene) where T : Component

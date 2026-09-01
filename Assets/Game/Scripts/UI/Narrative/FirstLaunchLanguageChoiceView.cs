@@ -11,8 +11,12 @@ namespace Game.UI.Runtime
         [SerializeField] private CanvasGroup group;
         [SerializeField] private Button englishButton;
         [SerializeField] private Button persianButton;
+        [SerializeField] private Button continueButton;
+        [SerializeField] private Behaviour englishSelectionImage;
+        [SerializeField] private Behaviour persianSelectionImage;
 
         private Action<FirstLaunchNarrativeLanguage> selectionHandler;
+        private FirstLaunchNarrativeLanguage selectedLanguage = FirstLaunchNarrativeLanguage.English;
         private bool bound;
 
         public bool IsVisible => group != null && group.alpha > 0f && group.interactable;
@@ -28,6 +32,7 @@ namespace Game.UI.Runtime
             {
                 englishButton?.onClick.RemoveListener(SelectEnglish);
                 persianButton?.onClick.RemoveListener(SelectPersian);
+                continueButton?.onClick.RemoveListener(ConfirmSelection);
             }
 
             selectionHandler = null;
@@ -53,6 +58,8 @@ namespace Game.UI.Runtime
             group.alpha = visible ? 1f : 0f;
             group.interactable = visible;
             group.blocksRaycasts = visible;
+            if (visible)
+                ApplySelectionVisuals();
         }
 
         private void EnsureBindings()
@@ -62,19 +69,43 @@ namespace Game.UI.Runtime
 
             englishButton?.onClick.AddListener(SelectEnglish);
             persianButton?.onClick.AddListener(SelectPersian);
+            continueButton?.onClick.AddListener(ConfirmSelection);
             bound = true;
         }
 
-        private void SelectEnglish() => Select(FirstLaunchNarrativeLanguage.English);
-        private void SelectPersian() => Select(FirstLaunchNarrativeLanguage.Persian);
+        private void SelectEnglish() => SetSelection(FirstLaunchNarrativeLanguage.English);
+        private void SelectPersian() => SetSelection(FirstLaunchNarrativeLanguage.Persian);
 
-        private void Select(FirstLaunchNarrativeLanguage language)
+        private void SetSelection(FirstLaunchNarrativeLanguage language)
+        {
+            if (group == null || !group.interactable)
+                return;
+
+            selectedLanguage = language;
+            ApplySelectionVisuals();
+        }
+
+        private void ConfirmSelection()
         {
             if (group == null || !group.interactable)
                 return;
 
             group.interactable = false;
-            selectionHandler?.Invoke(language);
+            selectionHandler?.Invoke(selectedLanguage);
+        }
+
+        private void ApplySelectionVisuals()
+        {
+            SetSelectionVisible(englishSelectionImage, selectedLanguage == FirstLaunchNarrativeLanguage.English);
+            SetSelectionVisible(persianSelectionImage, selectedLanguage == FirstLaunchNarrativeLanguage.Persian);
+        }
+
+        private static void SetSelectionVisible(Behaviour selection, bool visible)
+        {
+            if (selection is V3SelectionFrameView frame)
+                frame.SetVisible(visible);
+            else if (selection != null)
+                selection.enabled = visible;
         }
     }
 }

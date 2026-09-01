@@ -112,14 +112,14 @@ public sealed class MatchHudCurrentOrderBannerTests
 
         try
         {
-            Transform header = instance.transform.Find("HeaderContent");
+            MatchHudCurrentOrderBannerView bannerView = instance.GetComponentInChildren<MatchHudCurrentOrderBannerView>(true);
+            Transform header = bannerView != null ? bannerView.transform : null;
             Assert.That(header, Is.Not.Null, "HeaderContent is required for CurrentOrderBanner.");
 
             Transform banner = header.Find("CurrentOrderBanner");
             Assert.That(banner, Is.Not.Null, "HeaderContent/CurrentOrderBanner is required.");
             Assert.That(banner.gameObject.activeSelf, Is.False, "CurrentOrderBanner must start hidden.");
 
-            MatchHudCurrentOrderBannerView bannerView = header.GetComponent<MatchHudCurrentOrderBannerView>();
             Assert.That(bannerView, Is.Not.Null, "HeaderContent must own the serialized banner view binder.");
             Assert.That(bannerView.BannerRoot, Is.SameAs(banner.gameObject));
             Assert.That(bannerView.Chevrons, Is.Not.Null);
@@ -137,6 +137,35 @@ public sealed class MatchHudCurrentOrderBannerTests
             Assert.That(runtimeFeedback, Is.Not.Null);
             Assert.That(runtimeFeedback.CurrentOrderBanner, Is.SameAs(bannerView));
             Assert.That(runtimeFeedback.CommandIconSource, Is.Not.Null);
+        }
+        finally
+        {
+            Object.DestroyImmediate(instance);
+        }
+    }
+
+    [Test]
+    public void Prefab_V3AttackModeShowsOnlyAttackSelectionFrame()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+        Assert.That(prefab, Is.Not.Null, PrefabPath);
+        GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+
+        try
+        {
+            BattleHudRuntimeFeedbackView feedback = instance.GetComponentInChildren<BattleHudRuntimeFeedbackView>(true);
+            MatchOverlayCommandControlsView controls = instance.GetComponentInChildren<MatchOverlayCommandControlsView>(true);
+            Assert.That(feedback, Is.Not.Null);
+            Assert.That(controls, Is.Not.Null);
+
+            feedback.ApplyCommandModeTabs(TacticalCommandMode.Attack);
+
+            Assert.That(controls.AttackButton.transform.Find("V3SelectedState")?.gameObject.activeSelf, Is.True);
+            Assert.That(controls.MoveButton.transform.Find("V3SelectedState")?.gameObject.activeSelf, Is.False);
+            Assert.That(controls.SelectButton.transform.Find("V3SelectedState")?.gameObject.activeSelf, Is.False);
+
+            feedback.ClearCommandModeTabs();
+            Assert.That(controls.AttackButton.transform.Find("V3SelectedState")?.gameObject.activeSelf, Is.False);
         }
         finally
         {
@@ -365,6 +394,7 @@ public sealed class MatchHudCurrentOrderBannerTests
         tests.View_ApplyVisibleModel_ShowsCommandContent();
         tests.View_Hide_ClearsCommandContent();
         tests.Prefab_BindsCurrentOrderBannerAndCommandIconSource();
+        tests.Prefab_V3AttackModeShowsOnlyAttackSelectionFrame();
         tests.Prefab_CommandIconSourceMatchesActualButtonIcons();
         tests.RuntimeFeedback_AppliesAndClearsStickyCommandModeBanner();
         tests.RuntimeFeedback_DoesNotShowBannerForSelectMode();
@@ -377,7 +407,7 @@ public sealed class MatchHudCurrentOrderBannerTests
         tests.SelectionBoundary_BoardCommandModeFlowsThroughRuntimeFeedbackSink();
         tests.SelectionBoundary_ClearCommandModeHidesRuntimeFeedbackBanner();
 
-        Debug.Log("[MatchHudCurrentOrderBannerValidation] result=Passed tests=16");
+        Debug.Log("[MatchHudCurrentOrderBannerValidation] result=Passed tests=17");
     }
 
     private static Sprite CreateSprite()

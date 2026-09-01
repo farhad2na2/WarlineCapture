@@ -93,6 +93,11 @@ namespace Game.UI.Runtime
 
         public void SetInteractiveState(NarrativeInteractiveStateKind kind)
         {
+            bool interactive = kind != NarrativeInteractiveStateKind.None;
+            if (locationIntroView != null)
+                locationIntroView.gameObject.SetActive(!interactive);
+            if (playbackControls != null)
+                playbackControls.gameObject.SetActive(!interactive);
             if (commanderIdentityView != null)
                 commanderIdentityView.gameObject.SetActive(kind == NarrativeInteractiveStateKind.CommanderIdentity);
             if (guidanceChoiceView != null)

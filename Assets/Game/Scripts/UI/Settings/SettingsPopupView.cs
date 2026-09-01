@@ -91,7 +91,7 @@ namespace Game.UI.Runtime
         private void ApplyContextTitle()
         {
             if (titleText != null)
-                titleText.text = context == SettingsPopupContext.Match ? "MATCH SETTINGS" : "COMMAND SETTINGS";
+                titleText.text = "COMMAND SETTINGS";
         }
     }
 }

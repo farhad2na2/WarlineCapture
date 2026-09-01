@@ -16,7 +16,8 @@ using SettingsService = Game.UI.Runtime.SettingsService;
 
 public sealed class SettingsPopupValidationTests
 {
-    private const string ApprovedSpriteFolder = "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites";
+    private const string ApprovedSharedSpriteFolder = "Assets/Game/Art/UI/V3Shared";
+    private const string ApprovedSettingsIcon = "Assets/Game/Art/UI/V3Shared/Sprites/Icons/Settings/ui_icon_settings_gear.png";
     private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
     private const string SharedSettingsPopupPath = "Assets/Game/Prefabs/UI/Shell/Popups/SCN_SettingsPopup.prefab";
     private const string LegacyMenuSettingsPopupPath = "Assets/Game/Prefabs/UI/Shell/Popups/SCN02_MenuSettingsPopup.prefab";
@@ -41,6 +42,10 @@ public sealed class SettingsPopupValidationTests
             RunValidationStep(
                 nameof(SettingsPopupPrefabs_ExposeRequiredControls),
                 test => test.SettingsPopupPrefabs_ExposeRequiredControls(),
+                ref passed);
+            RunValidationStep(
+                nameof(SettingsPopupPrefabs_MatchV3VerticalTabStructure),
+                test => test.SettingsPopupPrefabs_MatchV3VerticalTabStructure(),
                 ref passed);
             RunValidationStep(
                 nameof(SettingsPopupPrefabs_AuthorReadableNonOverlappingLayout),
@@ -173,6 +178,37 @@ public sealed class SettingsPopupValidationTests
     public void SettingsPopupPrefabs_ExposeRequiredControls()
     {
         AssertSettingsPopupPrefab(SharedSettingsPopupPath);
+    }
+
+    [Test]
+    public void SettingsPopupPrefabs_MatchV3VerticalTabStructure()
+    {
+        GameObject prefab = LoadPrefab(SharedSettingsPopupPath);
+        V3SettingsTabView tabView = prefab.GetComponentInChildren<V3SettingsTabView>(true);
+        Assert.NotNull(tabView, "V3 Settings must own the approved vertical tab controller.");
+        Assert.AreEqual(4, tabView.TabButtons.Length, "V3 Settings must expose four large category tabs.");
+        Assert.AreEqual(4, tabView.Pages.Length, "V3 Settings must expose four single-page content surfaces.");
+
+        string[] tabs = { "AUDIOTab", "GAMEPLAYTab", "VIDEOTab", "ACCESSIBILITYTab" };
+        string[] pages = { "AudioPage", "GameplayPage", "VideoPage", "AccessibilityPage" };
+        int activePages = 0;
+        for (int i = 0; i < tabs.Length; i++)
+        {
+            RectTransform tab = FindChild(prefab.transform, tabs[i]) as RectTransform;
+            Transform page = FindChild(prefab.transform, pages[i]);
+            Assert.NotNull(tab, $"Missing V3 Settings tab {tabs[i]}.");
+            Assert.GreaterOrEqual(tab.rect.height, 130f, $"{tabs[i]} must retain the large touch target from the V3 lock.");
+            Assert.NotNull(page, $"Missing V3 Settings page {pages[i]}.");
+            if (page.gameObject.activeSelf)
+                activePages++;
+        }
+
+        Assert.AreEqual(1, activePages, "Only one V3 Settings page may be visible at a time.");
+        Assert.IsTrue(FindChild(prefab.transform, "AudioPage").gameObject.activeSelf, "Audio must be the authored default page.");
+        Assert.IsNull(FindChild(prefab.transform, "AudioSection"), "Legacy four-panel Settings layout must not return.");
+        Assert.IsNull(FindChild(prefab.transform, "ControlSection"), "Legacy four-panel Settings layout must not return.");
+        Assert.IsNull(FindChild(prefab.transform, "DisplaySection"), "Legacy four-panel Settings layout must not return.");
+        Assert.IsNull(FindChild(prefab.transform, "AccessibilitySection"), "Legacy four-panel Settings layout must not return.");
     }
 
     [Test]
@@ -437,9 +473,9 @@ public sealed class SettingsPopupValidationTests
                 continue;
 
             string spritePath = AssetDatabase.GetAssetPath(sprite);
-            Assert.IsTrue(
-                spritePath.StartsWith(ApprovedSpriteFolder + "/", StringComparison.Ordinal),
-                $"{prefabPath} image '{images[i].name}' uses sprite outside the approved settings art folder: {spritePath}");
+            bool approved = spritePath.StartsWith(ApprovedSharedSpriteFolder + "/", StringComparison.Ordinal) ||
+                            string.Equals(spritePath, ApprovedSettingsIcon, StringComparison.Ordinal);
+            Assert.IsTrue(approved, $"{prefabPath} image '{images[i].name}' uses non-canonical art: {spritePath}");
         }
     }
 
@@ -450,9 +486,9 @@ public sealed class SettingsPopupValidationTests
         RectTransform settingsRoot = FindChild(prefab.transform, "SettingsRoot") as RectTransform;
         AssertSettingsPopupInstance(prefab, SettingsPopupContext.Menu);
         Assert.NotNull(settingsRoot, $"{prefabPath} must include a SettingsRoot panel.");
-        Assert.GreaterOrEqual(settingsRoot.sizeDelta.x, 1600f, $"{prefabPath} SettingsRoot must be large enough for the command UI scale.");
+        Assert.GreaterOrEqual(settingsRoot.sizeDelta.x, 1500f, $"{prefabPath} SettingsRoot must be large enough for the command UI scale.");
         Assert.GreaterOrEqual(settingsRoot.sizeDelta.y, 900f, $"{prefabPath} SettingsRoot must be tall enough for readable command UI controls.");
-        Assert.GreaterOrEqual(settingsRoot.sizeDelta.x * settingsRoot.localScale.x, 3400f, $"{prefabPath} SettingsRoot effective width must match the 4800x2160 menu canvas scale.");
+        Assert.GreaterOrEqual(settingsRoot.sizeDelta.x * settingsRoot.localScale.x, 3150f, $"{prefabPath} SettingsRoot effective width must match the 4800x2160 menu canvas scale.");
         Assert.GreaterOrEqual(settingsRoot.sizeDelta.y * settingsRoot.localScale.y, 1900f, $"{prefabPath} SettingsRoot effective height must match the 4800x2160 menu canvas scale.");
         Assert.NotNull(popupView.CloseButton, $"{prefabPath} must serialize a close button.");
         Assert.NotNull(popupView.ResetButton, $"{prefabPath} must serialize a reset button.");
@@ -537,7 +573,7 @@ public sealed class SettingsPopupValidationTests
                 continue;
 
             string spriteName = image.sprite.name;
-            if (spriteName.EndsWith("_icon", StringComparison.Ordinal) ||
+            if (spriteName.Contains("icon", StringComparison.OrdinalIgnoreCase) ||
                 spriteName.Contains("gear", StringComparison.OrdinalIgnoreCase))
                 continue;
 

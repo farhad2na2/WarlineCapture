@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using TMPro;
 using Unity.Entities;
@@ -15,6 +16,7 @@ using Game.UI.Contracts;
 using Game.UI.Shell.Contracts.Ecs;
 using Game.Components;
 using Game.Configs;
+using Game.Tactical.Contracts;
 using Game.UI.Runtime;
 using Game.Runtime;
 using Game.Composition;
@@ -26,6 +28,16 @@ namespace Game.Editor
         private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
         private const string RuntimeUiConfigPath = "Assets/Game/Data/UI/RuntimeUiConfig.asset";
         private const string MainMenuContentPrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN02_MainMenuContent.prefab";
+        private const string TransportHelicopterPortraitPath =
+            "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Helicopter_Transport_Action_512.png";
+        private const string PassengerRiflePortraitPath =
+            "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Male_01_Alt_02_AdvancedRifle_Card_512.png";
+        private const string PassengerEngineerPortraitPath =
+            "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Male_02_Alt_04_Rifleman_Card_512.png";
+        private const string PassengerDaliaPortraitPath =
+            "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_dalia.png";
+        private const string PassengerRifleBPortraitPath =
+            "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Male_02_Alt_02_Rifleman_Card_512.png";
         private const string ScreenshotPath = "/private/tmp/warline-canvas-menu-fallback.png";
         private const int DefaultScreenshotWidth = 1280;
         private const int DefaultScreenshotHeight = 720;
@@ -35,6 +47,12 @@ namespace Game.Editor
         private const string CommanderCapturePathSessionKey = "Warline.CommanderCapture.Path";
         private const string CommanderCaptureWidthSessionKey = "Warline.CommanderCapture.Width";
         private const string CommanderCaptureHeightSessionKey = "Warline.CommanderCapture.Height";
+        private const string CommanderCaptureRouteSessionKey = "Warline.CommanderCapture.Route";
+        private const string CommanderCaptureShowPopupSessionKey = "Warline.CommanderCapture.ShowPopup";
+        private const string CommanderCapturePopupSessionKey = "Warline.CommanderCapture.Popup";
+        private const string CommanderCaptureOverlaySessionKey = "Warline.CommanderCapture.Overlay";
+        private const string CommanderCaptureModalSessionKey = "Warline.CommanderCapture.Modal";
+        private const string CommanderCaptureSelectButtonSessionKey = "Warline.CommanderCapture.SelectButton";
         private const string CommanderCapturePreviousFastPlayModeSessionKey = "Warline.CommanderCapture.PreviousFastPlayMode";
         private const string CommanderCapturePreviousPlayModeOptionsSessionKey = "Warline.CommanderCapture.PreviousPlayModeOptions";
 
@@ -69,6 +87,7 @@ namespace Game.Editor
         private static ArmoryCatalogCategory routeCaptureArmoryCategory;
         private static string routeCaptureSelectButtonName;
         private static bool routeCaptureButtonSelectionApplied;
+        private static int routeCaptureButtonSelectionIndex;
         private static int performanceFrameCount;
         private static int performanceConfiguredFrame;
         private static int performanceWarmupFrames;
@@ -101,16 +120,22 @@ namespace Game.Editor
             screenshotPath = SessionState.GetString(CommanderCapturePathSessionKey, string.Empty);
             screenshotWidth = SessionState.GetInt(CommanderCaptureWidthSessionKey, 1920);
             screenshotHeight = SessionState.GetInt(CommanderCaptureHeightSessionKey, 1080);
-            routeCaptureRoute = UIRoute.CommandFeed;
-            routeCaptureShouldShowPopup = false;
-            routeCapturePopup = default;
-            routeCaptureOverlay = string.Empty;
-            routeCaptureModal = string.Empty;
+            routeCaptureRoute = (UIRoute)SessionState.GetInt(
+                CommanderCaptureRouteSessionKey,
+                (int)UIRoute.CommandFeed);
+            routeCaptureShouldShowPopup = SessionState.GetBool(CommanderCaptureShowPopupSessionKey, false);
+            routeCapturePopup = (UiShellPopupKind)SessionState.GetInt(
+                CommanderCapturePopupSessionKey,
+                (int)UiShellPopupKind.BuildDrawer);
+            routeCaptureOverlay = SessionState.GetString(CommanderCaptureOverlaySessionKey, string.Empty);
+            routeCaptureModal = SessionState.GetString(CommanderCaptureModalSessionKey, string.Empty);
             routeCaptureStaticContentPrefabPath = string.Empty;
             routeCaptureStaticContentFullRoot = false;
             routeCaptureShouldSetArmoryCategory = false;
             routeCaptureArmoryCategory = default;
-            routeCaptureSelectButtonName = string.Empty;
+            routeCaptureSelectButtonName = SessionState.GetString(
+                CommanderCaptureSelectButtonSessionKey,
+                string.Empty);
             routeCaptureSettleFrames = 90;
             routeCaptureFrameCount = 0;
             routeCaptureConfiguredFrame = 0;
@@ -119,6 +144,7 @@ namespace Game.Editor
             routeCaptureCompleted = false;
             routeCaptureConfigured = false;
             routeCaptureButtonSelectionApplied = false;
+            routeCaptureButtonSelectionIndex = 0;
             EditorApplication.update -= ContinueRouteCapture;
             EditorApplication.update += ContinueRouteCapture;
         }
@@ -154,8 +180,7 @@ namespace Game.Editor
             catch (Exception exception)
             {
                 Debug.LogError($"[CanvasMenuFallbackValidation] result=Failed\n{exception}");
-                if (Application.isBatchMode)
-                    EditorApplication.Exit(1);
+                EditorApplication.Exit(1);
             }
         }
 
@@ -185,8 +210,7 @@ namespace Game.Editor
             catch (Exception exception)
             {
                 Debug.LogError($"[CanvasMenuDeployClickValidation] result=Failed\n{exception}");
-                if (Application.isBatchMode)
-                    EditorApplication.Exit(1);
+                EditorApplication.Exit(1);
             }
         }
 
@@ -225,6 +249,7 @@ namespace Game.Editor
                 routeCaptureCompleted = false;
                 routeCaptureConfigured = false;
                 routeCaptureButtonSelectionApplied = false;
+                routeCaptureButtonSelectionIndex = 0;
                 EditorApplication.update -= ContinueRouteCapture;
                 EditorApplication.update += ContinueRouteCapture;
                 EditorApplication.EnterPlaymode();
@@ -232,12 +257,658 @@ namespace Game.Editor
             catch (Exception exception)
             {
                 Debug.LogError($"[CanvasRouteCaptureValidation] result=Failed\n{exception}");
-                if (Application.isBatchMode)
-                    EditorApplication.Exit(1);
+                EditorApplication.Exit(1);
             }
         }
 
         public static void RunCommanderProfileRouteCapture()
+        {
+            StartCommanderProfileRouteCapture(null, 0, 0);
+        }
+
+        [MenuItem("Game/UI/V3/Capture Commander Profile 1920x1080")]
+        private static void CaptureCommanderProfile1920x1080()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-commander-profile-v3-16x9.png",
+                1920,
+                1080,
+                UIRoute.CommandFeed);
+        }
+
+        [MenuItem("Game/UI/V3/Capture Commander Profile 4800x2160")]
+        private static void CaptureCommanderProfile4800x2160()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-commander-profile-v3-20x9.png",
+                4800,
+                2160,
+                UIRoute.CommandFeed);
+        }
+
+        private static void StartCommanderProfileRouteCapture(
+            string capturePathOverride,
+            int captureWidthOverride,
+            int captureHeightOverride)
+        {
+            StartV3RouteCapture(
+                capturePathOverride,
+                captureWidthOverride,
+                captureHeightOverride,
+                UIRoute.CommandFeed);
+        }
+
+        [MenuItem("Game/UI/V3/Capture Campaign Mission Select 1920x1080")]
+        private static void CaptureCampaignMissionSelect1920x1080()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-campaign-mission-v3-16x9.png",
+                1920,
+                1080,
+                UIRoute.Campaign);
+        }
+
+        [MenuItem("Game/UI/V3/Capture Campaign Mission Select 4800x2160")]
+        private static void CaptureCampaignMissionSelect4800x2160()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-campaign-mission-v3-20x9.png",
+                4800,
+                2160,
+                UIRoute.Campaign);
+        }
+
+        [MenuItem("Game/UI/V3/Capture Campaign Chapter Select 1920x1080")]
+        private static void CaptureCampaignChapterSelect1920x1080()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-campaign-chapter-v3-16x9.png",
+                1920,
+                1080,
+                UIRoute.Campaign,
+                "ShowChapterSelectButton");
+        }
+
+        [MenuItem("Game/UI/V3/Capture Campaign Chapter Select 4800x2160")]
+        private static void CaptureCampaignChapterSelect4800x2160()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-campaign-chapter-v3-20x9.png",
+                4800,
+                2160,
+                UIRoute.Campaign,
+                "ShowChapterSelectButton");
+        }
+
+        [MenuItem("Game/UI/V3/Capture Mission Briefing 1920x1080")]
+        private static void CaptureMissionBriefing1920x1080()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-mission-briefing-v3-16x9.png",
+                1920,
+                1080,
+                UIRoute.MissionBriefing);
+        }
+
+        [MenuItem("Game/UI/V3/Capture Mission Briefing 4800x2160")]
+        private static void CaptureMissionBriefing4800x2160()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-mission-briefing-v3-20x9.png",
+                4800,
+                2160,
+                UIRoute.MissionBriefing);
+        }
+
+        [MenuItem("Game/UI/V3/Capture Loadout Squad Prep 1920x1080")]
+        public static void CaptureLoadoutSquadPrep1920x1080()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-loadout-squad-prep-v3-16x9.png",
+                1920,
+                1080,
+                UIRoute.LoadoutSquadPrep);
+        }
+
+        [MenuItem("Game/UI/V3/Capture Loadout Squad Prep 4800x2160")]
+        public static void CaptureLoadoutSquadPrep4800x2160()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-loadout-squad-prep-v3-20x9.png",
+                4800,
+                2160,
+                UIRoute.LoadoutSquadPrep);
+        }
+
+        [MenuItem("Game/UI/V3/Capture Operations Dashboard 1920x1080")]
+        public static void CaptureOperationsDashboard1920x1080()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-operations-dashboard-v3-16x9.png",
+                1920,
+                1080,
+                UIRoute.Operations);
+        }
+
+        [MenuItem("Game/UI/V3/Capture Operations Dashboard 4800x2160")]
+        public static void CaptureOperationsDashboard4800x2160()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-operations-dashboard-v3-20x9.png",
+                4800,
+                2160,
+                UIRoute.Operations);
+        }
+
+        [MenuItem("Game/UI/V3/Capture District Detail Actions 1920x1080")]
+        public static void CaptureDistrictDetailActions1920x1080()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-district-detail-actions-v3-16x9.png",
+                1920,
+                1080,
+                UIRoute.DistrictDetail);
+        }
+
+        [MenuItem("Game/UI/V3/Capture District Detail Actions 4800x2160")]
+        public static void CaptureDistrictDetailActions4800x2160()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-district-detail-actions-v3-20x9.png",
+                4800,
+                2160,
+                UIRoute.DistrictDetail);
+        }
+
+        [MenuItem("Game/UI/V3/Capture Build Drawer 1920x1080")]
+        public static void CaptureBuildDrawer1920x1080()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-build-drawer-v3-live-16x9.png",
+                1920,
+                1080,
+                UIRoute.Match,
+                string.Empty,
+                UiShellPopupKind.BuildDrawer);
+        }
+
+        [MenuItem("Game/UI/V3/Capture Build Drawer 4800x2160")]
+        public static void CaptureBuildDrawer4800x2160()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-build-drawer-v3-live-20x9.png",
+                4800,
+                2160,
+                UIRoute.Match,
+                string.Empty,
+                UiShellPopupKind.BuildDrawer);
+        }
+
+        [MenuItem("Game/UI/V3/Capture Unit Command Wheel 1920x1080")]
+        public static void CaptureUnitCommandWheel1920x1080()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-command-wheel-v3-live-16x9.png",
+                1920,
+                1080,
+                UIRoute.Match,
+                "PortraitFrame");
+        }
+
+        [MenuItem("Game/UI/V3/Capture Unit Command Wheel 4800x2160")]
+        public static void CaptureUnitCommandWheel4800x2160()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-command-wheel-v3-live-20x9.png",
+                4800,
+                2160,
+                UIRoute.Match,
+                "PortraitFrame");
+        }
+
+        [MenuItem("Game/UI/V3/Capture Unit Command Wheel Targeting 1920x1080")]
+        public static void CaptureUnitCommandWheelTargeting1920x1080()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-command-wheel-targeting-v3-live-16x9.png",
+                1920,
+                1080,
+                UIRoute.Match,
+                "PortraitFrame>AttackSector");
+        }
+
+        [MenuItem("Game/UI/V3/Capture Unit Command Wheel Targeting 4800x2160")]
+        public static void CaptureUnitCommandWheelTargeting4800x2160()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-command-wheel-targeting-v3-live-20x9.png",
+                4800,
+                2160,
+                UIRoute.Match,
+                "PortraitFrame>AttackSector");
+        }
+
+        [MenuItem("Game/UI/V3/Capture Transport Passengers 1920x1080")]
+        public static void CaptureTransportPassengers1920x1080()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-transport-passengers-v3-live-16x9.png",
+                1920,
+                1080,
+                UIRoute.Match,
+                "PassengerChip");
+        }
+
+        [MenuItem("Game/UI/V3/Capture Transport Passengers 4800x2160")]
+        public static void CaptureTransportPassengers4800x2160()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-transport-passengers-v3-live-20x9.png",
+                4800,
+                2160,
+                UIRoute.Match,
+                "PassengerChip");
+        }
+
+        [MenuItem("Game/UI/V3/Capture Tactical Feedback 1920x1080")]
+        public static void CaptureTacticalFeedback1920x1080()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-tactical-feedback-v3-live-16x9.png",
+                1920,
+                1080,
+                UIRoute.Match,
+                "AttackCommand");
+        }
+
+        [MenuItem("Game/UI/V3/Capture Tactical Feedback 4800x2160")]
+        public static void CaptureTacticalFeedback4800x2160()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-tactical-feedback-v3-live-20x9.png",
+                4800,
+                2160,
+                UIRoute.Match,
+                "AttackCommand");
+        }
+
+        [MenuItem("Game/UI/V3/Capture Full Map 1920x1080")]
+        public static void CaptureFullMap1920x1080()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-full-map-v3-live-16x9.png",
+                1920,
+                1080,
+                UIRoute.Match,
+                "OpenFullMap");
+        }
+
+        [MenuItem("Game/UI/V3/Capture Full Map 4800x2160")]
+        public static void CaptureFullMap4800x2160()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-full-map-v3-live-20x9.png",
+                4800,
+                2160,
+                UIRoute.Match,
+                "OpenFullMap");
+        }
+
+        [MenuItem("Game/UI/V3/Capture Build Placement Confirmation 1920x1080")]
+        public static void CaptureBuildPlacementConfirmation1920x1080()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-build-placement-v3-live-16x9.png",
+                1920,
+                1080,
+                UIRoute.Match,
+                captureOverlay: "BuildPlacementBar");
+        }
+
+        [MenuItem("Game/UI/V3/Capture Build Placement Confirmation 4800x2160")]
+        public static void CaptureBuildPlacementConfirmation4800x2160()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-build-placement-v3-live-20x9.png",
+                4800,
+                2160,
+                UIRoute.Match,
+                captureOverlay: "BuildPlacementBar");
+        }
+
+        [MenuItem("Game/UI/V3/Capture Build Placement Validity 1920x1080")]
+        public static void CaptureBuildPlacementValidity1920x1080()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-build-placement-validity-v3-live-16x9.png",
+                1920,
+                1080,
+                UIRoute.Match,
+                captureOverlay: "BuildPlacementInvalid");
+        }
+
+        [MenuItem("Game/UI/V3/Capture Build Placement Validity 4800x2160")]
+        public static void CaptureBuildPlacementValidity4800x2160()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-build-placement-validity-v3-live-20x9.png",
+                4800,
+                2160,
+                UIRoute.Match,
+                captureOverlay: "BuildPlacementInvalid");
+        }
+
+        [MenuItem("Game/UI/V3/Capture Tutorial Presentation 1920x1080")]
+        public static void CaptureTutorialPresentation1920x1080()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-tutorial-presentation-v3-live-16x9.png",
+                1920,
+                1080,
+                UIRoute.Match,
+                captureOverlay: "TutorialPresentation");
+        }
+
+        [MenuItem("Game/UI/V3/Capture Tutorial Presentation 4800x2160")]
+        public static void CaptureTutorialPresentation4800x2160()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-tutorial-presentation-v3-live-20x9.png",
+                4800,
+                2160,
+                UIRoute.Match,
+                captureOverlay: "TutorialPresentation");
+        }
+
+        [MenuItem("Game/UI/V3/Capture ARIA Command Assistant 1920x1080")]
+        public static void CaptureAriaCommandAssistant1920x1080()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-aria-command-assistant-v3-live-16x9.png",
+                1920,
+                1080,
+                UIRoute.Match,
+                captureOverlay: "AriaCommandAssistant");
+        }
+
+        [MenuItem("Game/UI/V3/Capture ARIA Command Assistant 4800x2160")]
+        public static void CaptureAriaCommandAssistant4800x2160()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-aria-command-assistant-v3-live-20x9.png",
+                4800,
+                2160,
+                UIRoute.Match,
+                captureOverlay: "AriaCommandAssistant");
+        }
+
+        [MenuItem("Game/UI/V3/Capture Assistant Takeover 1920x1080")]
+        public static void CaptureAssistantTakeover1920x1080()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-assistant-takeover-v3-live-16x9.png",
+                1920,
+                1080,
+                UIRoute.Match,
+                captureOverlay: "AssistantTakeover");
+        }
+
+        [MenuItem("Game/UI/V3/Capture Assistant Takeover 4800x2160")]
+        public static void CaptureAssistantTakeover4800x2160()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-assistant-takeover-v3-live-20x9.png",
+                4800,
+                2160,
+                UIRoute.Match,
+                captureOverlay: "AssistantTakeover");
+        }
+
+        [MenuItem("Game/UI/V3/Capture POP-01 Threat Alert 1920x1080")]
+        public static void CaptureThreatAlert1920x1080()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-threat-alert-v3-live-16x9.png",
+                1920,
+                1080,
+                UIRoute.Match,
+                captureOverlay: "ThreatAlert");
+        }
+
+        [MenuItem("Game/UI/V3/Capture POP-01 Threat Alert 4800x2160")]
+        public static void CaptureThreatAlert4800x2160()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-threat-alert-v3-live-20x9.png",
+                4800,
+                2160,
+                UIRoute.Match,
+                captureOverlay: "ThreatAlert");
+        }
+
+        [MenuItem("Game/UI/V3/Capture POP-01 Route Preview 1920x1080")]
+        public static void CaptureThreatRoutePreview1920x1080()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-threat-route-preview-v3-live-16x9.png",
+                1920,
+                1080,
+                UIRoute.Match,
+                captureOverlay: "ThreatRoutePreview");
+        }
+
+        [MenuItem("Game/UI/V3/Capture POP-01 Route Preview 4800x2160")]
+        public static void CaptureThreatRoutePreview4800x2160()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-threat-route-preview-v3-live-20x9.png",
+                4800,
+                2160,
+                UIRoute.Match,
+                captureOverlay: "ThreatRoutePreview");
+        }
+
+        [MenuItem("Game/UI/V3/Capture POP-02 Confirm Raid 1920x1080")]
+        public static void CaptureConfirmRaid1920x1080()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-confirm-raid-v3-live-16x9.png",
+                1920,
+                1080,
+                UIRoute.Operations,
+                captureModal: "ConfirmRaid");
+        }
+
+        [MenuItem("Game/UI/V3/Capture POP-02 Confirm Raid 4800x2160")]
+        public static void CaptureConfirmRaid4800x2160()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-confirm-raid-v3-live-20x9.png",
+                4800,
+                2160,
+                UIRoute.Operations,
+                captureModal: "ConfirmRaid");
+        }
+
+        [MenuItem("Game/UI/V3/Capture POP-08 Intel Reveal 1920x1080")]
+        public static void CaptureIntelReveal1920x1080()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-intel-reveal-v3-live-16x9.png",
+                1920,
+                1080,
+                UIRoute.Operations,
+                captureModal: "IntelReveal");
+        }
+
+        [MenuItem("Game/UI/V3/Capture POP-08 Intel Reveal 4800x2160")]
+        public static void CaptureIntelReveal4800x2160()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-intel-reveal-v3-live-20x9.png",
+                4800,
+                2160,
+                UIRoute.Operations,
+                captureModal: "IntelReveal");
+        }
+
+        [MenuItem("Game/UI/V3/Capture POP-09 Ability Upgrade Detail 1920x1080")]
+        public static void CaptureAbilityUpgradeDetail1920x1080()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-ability-upgrade-v3-live-16x9.png",
+                1920,
+                1080,
+                UIRoute.Armory,
+                captureModal: "AbilityUpgradeDetail");
+        }
+
+        [MenuItem("Game/UI/V3/Capture POP-09 Ability Upgrade Detail 4800x2160")]
+        public static void CaptureAbilityUpgradeDetail4800x2160()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-ability-upgrade-v3-live-20x9.png",
+                4800,
+                2160,
+                UIRoute.Armory,
+                captureModal: "AbilityUpgradeDetail");
+        }
+
+        [MenuItem("Game/UI/V3/Capture SCN-19 Armory 1920x1080")]
+        public static void CaptureArmory1920x1080()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-armory-v3-live-16x9.png",
+                1920,
+                1080,
+                UIRoute.Armory);
+        }
+
+        [MenuItem("Game/UI/V3/Capture SCN-19 Armory 4800x2160")]
+        public static void CaptureArmory4800x2160()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-armory-v3-live-20x9.png",
+                4800,
+                2160,
+                UIRoute.Armory);
+        }
+
+        [MenuItem("Game/UI/V3/Capture POP-07 Pause Options 1920x1080")]
+        public static void CapturePauseOptions1920x1080()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-pause-options-v3-live-16x9.png",
+                1920,
+                1080,
+                UIRoute.Match,
+                captureModal: "PauseMenu");
+        }
+
+        [MenuItem("Game/UI/V3/Capture POP-07 Pause Options 4800x2160")]
+        public static void CapturePauseOptions4800x2160()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-pause-options-v3-live-20x9.png",
+                4800,
+                2160,
+                UIRoute.Match,
+                captureModal: "PauseMenu");
+        }
+
+        [MenuItem("Game/UI/V3/Capture SCN-13 Skirmish Setup 1920x1080")]
+        public static void CaptureSkirmishSetup1920x1080()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-skirmish-setup-v3-live-16x9.png",
+                1920,
+                1080,
+                UIRoute.QuickCustomSetup);
+        }
+
+        [MenuItem("Game/UI/V3/Capture SCN-13 Skirmish Setup 4800x2160")]
+        public static void CaptureSkirmishSetup4800x2160()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-skirmish-setup-v3-live-20x9.png",
+                4800,
+                2160,
+                UIRoute.QuickCustomSetup);
+        }
+
+        [MenuItem("Game/UI/V3/Capture SCN-14 Store 1920x1080")]
+        public static void CaptureStore1920x1080()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-store-v3-live-16x9.png",
+                1920,
+                1080,
+                UIRoute.CommandExchange);
+        }
+
+        [MenuItem("Game/UI/V3/Capture SCN-14 Store 4800x2160")]
+        public static void CaptureStore4800x2160()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-store-v3-live-20x9.png",
+                4800,
+                2160,
+                UIRoute.CommandExchange);
+        }
+
+        [MenuItem("Game/UI/V3/Capture SCN-15 Inbox 1920x1080")]
+        public static void CaptureInbox1920x1080()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-inbox-v3-live-16x9.png",
+                1920,
+                1080,
+                UIRoute.Inbox);
+        }
+
+        [MenuItem("Game/UI/V3/Capture SCN-15 Inbox 4800x2160")]
+        public static void CaptureInbox4800x2160()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-inbox-v3-live-20x9.png",
+                4800,
+                2160,
+                UIRoute.Inbox);
+        }
+
+        [MenuItem("Game/UI/V3/Capture SCN-16 Events 1920x1080")]
+        public static void CaptureEvents1920x1080()
+        {
+            StartV3RouteCapture("/private/tmp/warline-events-v3-live-16x9.png", 1920, 1080, UIRoute.Events);
+        }
+
+        [MenuItem("Game/UI/V3/Capture SCN-16 Events 4800x2160")]
+        public static void CaptureEvents4800x2160()
+        {
+            StartV3RouteCapture("/private/tmp/warline-events-v3-live-20x9.png", 4800, 2160, UIRoute.Events);
+        }
+
+        [MenuItem("Game/UI/V3/Capture SCN-17 Ranking 1920x1080")]
+        public static void CaptureRanking1920x1080()
+        {
+            StartV3RouteCapture("/private/tmp/warline-ranking-v3-live-16x9.png", 1920, 1080, UIRoute.Ranking);
+        }
+
+        [MenuItem("Game/UI/V3/Capture SCN-17 Ranking 4800x2160")]
+        public static void CaptureRanking4800x2160()
+        {
+            StartV3RouteCapture("/private/tmp/warline-ranking-v3-live-20x9.png", 4800, 2160, UIRoute.Ranking);
+        }
+
+        private static void StartV3RouteCapture(
+            string capturePathOverride,
+            int captureWidthOverride,
+            int captureHeightOverride,
+            UIRoute captureRoute,
+            string selectButtonName = "",
+            UiShellPopupKind? capturePopup = null,
+            string captureOverlay = "",
+            string captureModal = "")
         {
             try
             {
@@ -250,22 +921,33 @@ namespace Game.Editor
                 AssetDatabase.SaveAssets();
 
                 string configuredCapturePath = Environment.GetEnvironmentVariable("WARLINE_COMMANDER_CAPTURE_PATH");
-                screenshotPath = Path.GetFullPath(string.IsNullOrWhiteSpace(configuredCapturePath)
-                    ? "Design/AgentReports/Captures/commander_profile_route_capture.png"
-                    : configuredCapturePath.Trim());
+                screenshotPath = Path.GetFullPath(!string.IsNullOrWhiteSpace(capturePathOverride)
+                    ? capturePathOverride.Trim()
+                    : string.IsNullOrWhiteSpace(configuredCapturePath)
+                        ? "Design/AgentReports/Captures/commander_profile_route_capture.png"
+                        : configuredCapturePath.Trim());
                 Directory.CreateDirectory(Path.GetDirectoryName(screenshotPath) ?? ".");
-                screenshotWidth = ResolveScreenshotDimension("WARLINE_CANVAS_SCREENSHOT_WIDTH", 1920);
-                screenshotHeight = ResolveScreenshotDimension("WARLINE_CANVAS_SCREENSHOT_HEIGHT", 1080);
-                routeCaptureRoute = UIRoute.CommandFeed;
-                routeCaptureShouldShowPopup = false;
-                routeCapturePopup = default;
-                routeCaptureOverlay = string.Empty;
-                routeCaptureModal = string.Empty;
+                screenshotWidth = captureWidthOverride > 0
+                    ? captureWidthOverride
+                    : ResolveScreenshotDimension("WARLINE_CANVAS_SCREENSHOT_WIDTH", 1920);
+                screenshotHeight = captureHeightOverride > 0
+                    ? captureHeightOverride
+                    : ResolveScreenshotDimension("WARLINE_CANVAS_SCREENSHOT_HEIGHT", 1080);
+                // The off-screen render target alone does not resize the runtime
+                // Canvas. Select the matching fixed Game View preset first so
+                // responsive layout is validated at the same aspect ratio that
+                // is written to disk.
+                MainMenuV3PrefabBuilder.SetGameViewResolution(screenshotWidth, screenshotHeight);
+                routeCaptureRoute = captureRoute;
+                routeCaptureShouldShowPopup = capturePopup.HasValue;
+                routeCapturePopup = capturePopup ?? default;
+                routeCaptureOverlay = captureOverlay ?? string.Empty;
+                routeCaptureModal = captureModal ?? string.Empty;
                 routeCaptureStaticContentPrefabPath = string.Empty;
                 routeCaptureStaticContentFullRoot = false;
                 routeCaptureShouldSetArmoryCategory = false;
                 routeCaptureArmoryCategory = default;
-                routeCaptureSelectButtonName = string.Empty;
+                routeCaptureSelectButtonName = selectButtonName ?? string.Empty;
                 routeCaptureSettleFrames = 90;
                 EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
                 if (File.Exists(screenshotPath))
@@ -277,12 +959,19 @@ namespace Game.Editor
                 routeCaptureCompleted = false;
                 routeCaptureConfigured = false;
                 routeCaptureButtonSelectionApplied = false;
+                routeCaptureButtonSelectionIndex = 0;
                 EditorApplication.update -= ContinueRouteCapture;
                 EditorApplication.update += ContinueRouteCapture;
                 SessionState.SetBool(CommanderCapturePendingSessionKey, true);
                 SessionState.SetString(CommanderCapturePathSessionKey, screenshotPath);
                 SessionState.SetInt(CommanderCaptureWidthSessionKey, screenshotWidth);
                 SessionState.SetInt(CommanderCaptureHeightSessionKey, screenshotHeight);
+                SessionState.SetInt(CommanderCaptureRouteSessionKey, (int)routeCaptureRoute);
+                SessionState.SetBool(CommanderCaptureShowPopupSessionKey, routeCaptureShouldShowPopup);
+                SessionState.SetInt(CommanderCapturePopupSessionKey, (int)routeCapturePopup);
+                SessionState.SetString(CommanderCaptureOverlaySessionKey, routeCaptureOverlay);
+                SessionState.SetString(CommanderCaptureModalSessionKey, routeCaptureModal);
+                SessionState.SetString(CommanderCaptureSelectButtonSessionKey, routeCaptureSelectButtonName);
                 SessionState.SetBool(CommanderCapturePreviousFastPlayModeSessionKey, EditorSettings.enterPlayModeOptionsEnabled);
                 SessionState.SetInt(CommanderCapturePreviousPlayModeOptionsSessionKey, (int)EditorSettings.enterPlayModeOptions);
                 EditorSettings.enterPlayModeOptionsEnabled = false;
@@ -328,11 +1017,11 @@ namespace Game.Editor
             catch (Exception exception)
             {
                 Debug.LogError($"[CanvasPerformanceBaseline] result=Failed\n{exception}");
-                if (Application.isBatchMode)
-                    EditorApplication.Exit(1);
+                EditorApplication.Exit(1);
             }
         }
 
+        [MenuItem("Game/UI/V3/Rebuild Commander Profile")]
         public static void ApplyCommanderProfileTargetLockLayout()
         {
             const string PrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN03_CommanderProfileContent.prefab";
@@ -728,8 +1417,6 @@ namespace Game.Editor
                     routeCaptureConfigured = true;
                     routeCaptureConfiguredFrame = routeCaptureFrameCount;
                     routeCaptureConfiguredAt = EditorApplication.timeSinceStartup;
-                    if (routeCaptureRoute == UIRoute.Splash)
-                        UiShellRuntimeGateway.TrySetLoadingProgress(0.68f, "LOADING REQUIRED DATA", false);
                     DisableMenuDiagnosticsOverlay();
                     return;
                 }
@@ -900,11 +1587,6 @@ namespace Game.Editor
                     break;
                 case UIRoute.MainMenu:
                 case UIRoute.Armory:
-                case UIRoute.CommandExchange:
-                case UIRoute.Inbox:
-                case UIRoute.Events:
-                case UIRoute.Ranking:
-                case UIRoute.LoadoutSquadPrep:
                     content.InstallMenuRouteBody(routeCaptureRoute);
                     ResetRouteCaptureRegions(
                         bootstrap,
@@ -958,6 +1640,82 @@ namespace Game.Editor
                         UIShellRegionId.FooterRegion,
                         UIShellRegionId.PopupLayer);
                     break;
+                case UIRoute.CommandExchange:
+                    content.PrepareForCommandSequence(new[]
+                    {
+                        new UiShellPresentationCommandModel(
+                            UiShellCommandKind.EnterMenu,
+                            UiShellRegionId.None,
+                            UIRoute.MainMenu,
+                            UiShellMode.MainMenu,
+                            1)
+                    });
+                    content.InstallMenuRouteBody(UIRoute.CommandExchange);
+                    ResetRouteCaptureRegions(
+                        bootstrap,
+                        UIShellRegionId.MenuBackgroundRegion,
+                        UIShellRegionId.HeaderRegion,
+                        UIShellRegionId.LeftRegion,
+                        UIShellRegionId.MiddleRegion,
+                        UIShellRegionId.RightRegion,
+                        UIShellRegionId.FooterRegion,
+                        UIShellRegionId.PopupLayer);
+                    break;
+                case UIRoute.Inbox:
+                    content.PrepareForCommandSequence(new[]
+                    {
+                        new UiShellPresentationCommandModel(
+                            UiShellCommandKind.EnterMenu,
+                            UiShellRegionId.None,
+                            UIRoute.MainMenu,
+                            UiShellMode.MainMenu,
+                            1)
+                    });
+                    content.InstallMenuRouteBody(UIRoute.Inbox);
+                    ResetRouteCaptureRegions(
+                        bootstrap,
+                        UIShellRegionId.MenuBackgroundRegion,
+                        UIShellRegionId.HeaderRegion,
+                        UIShellRegionId.LeftRegion,
+                        UIShellRegionId.MiddleRegion,
+                        UIShellRegionId.RightRegion,
+                        UIShellRegionId.FooterRegion,
+                        UIShellRegionId.PopupLayer);
+                    break;
+                case UIRoute.Events:
+                    content.PrepareForCommandSequence(new[]
+                    {
+                        new UiShellPresentationCommandModel(UiShellCommandKind.EnterMenu, UiShellRegionId.None,
+                            UIRoute.MainMenu, UiShellMode.MainMenu, 1)
+                    });
+                    content.InstallMenuRouteBody(UIRoute.Events);
+                    ResetRouteCaptureRegions(
+                        bootstrap,
+                        UIShellRegionId.MenuBackgroundRegion,
+                        UIShellRegionId.HeaderRegion,
+                        UIShellRegionId.LeftRegion,
+                        UIShellRegionId.MiddleRegion,
+                        UIShellRegionId.RightRegion,
+                        UIShellRegionId.FooterRegion,
+                        UIShellRegionId.PopupLayer);
+                    break;
+                case UIRoute.Ranking:
+                    content.PrepareForCommandSequence(new[]
+                    {
+                        new UiShellPresentationCommandModel(UiShellCommandKind.EnterMenu, UiShellRegionId.None,
+                            UIRoute.MainMenu, UiShellMode.MainMenu, 1)
+                    });
+                    content.InstallMenuRouteBody(UIRoute.Ranking);
+                    ResetRouteCaptureRegions(
+                        bootstrap,
+                        UIShellRegionId.MenuBackgroundRegion,
+                        UIShellRegionId.HeaderRegion,
+                        UIShellRegionId.LeftRegion,
+                        UIShellRegionId.MiddleRegion,
+                        UIShellRegionId.RightRegion,
+                        UIShellRegionId.FooterRegion,
+                        UIShellRegionId.PopupLayer);
+                    break;
                 case UIRoute.Campaign:
                     content.PrepareForCommandSequence(new[]
                     {
@@ -1000,6 +1758,27 @@ namespace Game.Editor
                         UIShellRegionId.FooterRegion,
                         UIShellRegionId.PopupLayer);
                     break;
+                case UIRoute.LoadoutSquadPrep:
+                    content.PrepareForCommandSequence(new[]
+                    {
+                        new UiShellPresentationCommandModel(
+                            UiShellCommandKind.EnterMenu,
+                            UiShellRegionId.None,
+                            UIRoute.Campaign,
+                            UiShellMode.MainMenu,
+                            1)
+                    });
+                    content.InstallMenuRouteBody(UIRoute.LoadoutSquadPrep);
+                    ResetRouteCaptureRegions(
+                        bootstrap,
+                        UIShellRegionId.MenuBackgroundRegion,
+                        UIShellRegionId.HeaderRegion,
+                        UIShellRegionId.LeftRegion,
+                        UIShellRegionId.MiddleRegion,
+                        UIShellRegionId.RightRegion,
+                        UIShellRegionId.FooterRegion,
+                        UIShellRegionId.PopupLayer);
+                    break;
                 case UIRoute.Operations:
                     content.PrepareForCommandSequence(new[]
                     {
@@ -1011,6 +1790,27 @@ namespace Game.Editor
                             1)
                     });
                     content.InstallMenuRouteBody(UIRoute.Operations);
+                    ResetRouteCaptureRegions(
+                        bootstrap,
+                        UIShellRegionId.MenuBackgroundRegion,
+                        UIShellRegionId.HeaderRegion,
+                        UIShellRegionId.LeftRegion,
+                        UIShellRegionId.MiddleRegion,
+                        UIShellRegionId.RightRegion,
+                        UIShellRegionId.FooterRegion,
+                        UIShellRegionId.PopupLayer);
+                    break;
+                case UIRoute.DistrictDetail:
+                    content.PrepareForCommandSequence(new[]
+                    {
+                        new UiShellPresentationCommandModel(
+                            UiShellCommandKind.EnterMenu,
+                            UiShellRegionId.None,
+                            UIRoute.Operations,
+                            UiShellMode.MainMenu,
+                            1)
+                    });
+                    content.InstallMenuRouteBody(UIRoute.DistrictDetail);
                     ResetRouteCaptureRegions(
                         bootstrap,
                         UIShellRegionId.MenuBackgroundRegion,
@@ -1033,7 +1833,7 @@ namespace Game.Editor
                     });
                     break;
                 default:
-                    error = $"Canvas route capture does not support route={routeCaptureRoute}.";
+                    error = $"Canvas route capture does not support route={routeCaptureRoute}. Supported routes: Splash, MainMenu, Armory, CommandExchange, Inbox, Events, CommandFeed, QuickCustomSetup, Campaign, MissionBriefing, LoadoutSquadPrep, Operations, DistrictDetail, Match.";
                     return false;
                 }
             }
@@ -1054,7 +1854,26 @@ namespace Game.Editor
                 }
             }
 
-            if (!TryConfigureRouteCaptureOverlay(out error))
+            if (routeCaptureRoute == UIRoute.Match &&
+                !string.IsNullOrWhiteSpace(routeCaptureSelectButtonName) &&
+                (routeCaptureSelectButtonName.IndexOf("PortraitFrame", StringComparison.Ordinal) >= 0 ||
+                 routeCaptureSelectButtonName.IndexOf("PassengerChip", StringComparison.Ordinal) >= 0 ||
+                 routeCaptureSelectButtonName.IndexOf("AttackCommand", StringComparison.Ordinal) >= 0))
+            {
+                MatchHudSelectionPanelView selection = UnityEngine.Object.FindAnyObjectByType<MatchHudSelectionPanelView>(FindObjectsInactive.Include);
+                if (selection == null)
+                {
+                    error = "Canvas route capture could not activate a selected squad before opening the command wheel.";
+                    return false;
+                }
+
+                if (routeCaptureSelectButtonName.IndexOf("PassengerChip", StringComparison.Ordinal) >= 0)
+                    ConfigureTransportPassengerCaptureSelection(selection, false);
+                else
+                    ConfigureCommandWheelCaptureSelection(selection);
+            }
+
+            if (!TryConfigureRouteCaptureOverlay(bootstrap, out error))
                 return false;
 
             if (!TryConfigureRouteCaptureModal(bootstrap, out error))
@@ -1285,23 +2104,50 @@ namespace Game.Editor
             }
         }
 
-        private static bool TryConfigureRouteCaptureOverlay(out string error)
+        private static bool TryConfigureRouteCaptureOverlay(MenuBootstrapView bootstrap, out string error)
         {
             error = null;
             if (string.IsNullOrWhiteSpace(routeCaptureOverlay))
                 return true;
 
-            if (!string.Equals(routeCaptureOverlay, "BuildPlacementBar", StringComparison.OrdinalIgnoreCase))
+            bool buildPlacement = string.Equals(
+                routeCaptureOverlay, "BuildPlacementBar", StringComparison.OrdinalIgnoreCase);
+            bool buildPlacementInvalid = string.Equals(
+                routeCaptureOverlay, "BuildPlacementInvalid", StringComparison.OrdinalIgnoreCase);
+            buildPlacement |= buildPlacementInvalid;
+            bool tutorialPresentation = string.Equals(
+                routeCaptureOverlay, "TutorialPresentation", StringComparison.OrdinalIgnoreCase);
+            bool ariaCommandAssistant = string.Equals(
+                routeCaptureOverlay, "AriaCommandAssistant", StringComparison.OrdinalIgnoreCase);
+            bool assistantTakeover = string.Equals(
+                routeCaptureOverlay, "AssistantTakeover", StringComparison.OrdinalIgnoreCase);
+            bool threatAlert = string.Equals(
+                routeCaptureOverlay, "ThreatAlert", StringComparison.OrdinalIgnoreCase);
+            bool threatRoutePreview = string.Equals(
+                routeCaptureOverlay, "ThreatRoutePreview", StringComparison.OrdinalIgnoreCase);
+            if (!buildPlacement && !tutorialPresentation && !ariaCommandAssistant && !assistantTakeover &&
+                !threatAlert && !threatRoutePreview)
             {
-                error = $"Canvas route capture does not support overlay={routeCaptureOverlay}. Supported overlay: BuildPlacementBar.";
+                error = $"Canvas route capture does not support overlay={routeCaptureOverlay}. " +
+                        "Supported overlays: BuildPlacementBar, BuildPlacementInvalid, TutorialPresentation, " +
+                        "AriaCommandAssistant, AssistantTakeover, ThreatAlert, ThreatRoutePreview.";
                 return false;
             }
 
             if (routeCaptureRoute != UIRoute.Match)
             {
-                error = "BuildPlacementBar overlay capture requires WARLINE_CANVAS_ROUTE=Match.";
+                error = $"{routeCaptureOverlay} overlay capture requires WARLINE_CANVAS_ROUTE=Match.";
                 return false;
             }
+
+            if (tutorialPresentation)
+                return TryConfigureTutorialPresentationCapture(bootstrap, out error);
+            if (ariaCommandAssistant)
+                return TryConfigureAriaCommandAssistantCapture(bootstrap, out error);
+            if (assistantTakeover)
+                return TryConfigureAssistantTakeoverCapture(bootstrap, out error);
+            if (threatAlert || threatRoutePreview)
+                return TryConfigureThreatAlertCapture(bootstrap, threatRoutePreview, out error);
 
             BuildPlacementConfirmationBarView placementBar =
                 UnityEngine.Object.FindAnyObjectByType<BuildPlacementConfirmationBarView>(FindObjectsInactive.Include);
@@ -1311,7 +2157,248 @@ namespace Game.Editor
                 return false;
             }
 
-            placementBar.BindRuntimeCommands(new RouteCaptureBuildingUiCommand(), null);
+            placementBar.BindRuntimeCommands(new RouteCaptureBuildingUiCommand(!buildPlacementInvalid), null);
+            TMP_Text ariaCopy = FindChild(placementBar.transform.root, "AlertCue")?.GetComponent<TMP_Text>();
+            if (ariaCopy != null)
+            {
+                ariaCopy.richText = true;
+                ariaCopy.text = "Select <color=#00C8EE>Power Plant</color>.\n" +
+                                "Then tap <color=#00C8EE>Place Building</color> to confirm.";
+            }
+            return true;
+        }
+
+        private static bool TryConfigureTutorialPresentationCapture(
+            MenuBootstrapView bootstrap,
+            out string error)
+        {
+            error = null;
+            if (bootstrap == null || bootstrap.UiCanvas == null)
+            {
+                error = "Tutorial Presentation capture could not find the live root Canvas.";
+                return false;
+            }
+
+            BattleHudRuntimeFeedbackView feedback =
+                UnityEngine.Object.FindAnyObjectByType<BattleHudRuntimeFeedbackView>(FindObjectsInactive.Include);
+            if (feedback != null && feedback.FeedbackPanel != null)
+                feedback.FeedbackPanel.SetActive(false);
+
+            MatchHudSelectionPanelView selection =
+                UnityEngine.Object.FindAnyObjectByType<MatchHudSelectionPanelView>(FindObjectsInactive.Include);
+            if (selection != null)
+                ConfigureCommandWheelCaptureSelection(selection);
+
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+                AriaTutorialBriefingPrefabBuilder.PrefabPath);
+            if (prefab == null)
+            {
+                error = "Tutorial Presentation capture could not load the POP-13 prefab.";
+                return false;
+            }
+
+            GameObject popupObject = UnityEngine.Object.Instantiate(
+                prefab, bootstrap.UiCanvas.transform, false);
+            popupObject.name = "TutorialPresentationLivePreview";
+            Stretch(popupObject.transform as RectTransform);
+            popupObject.SetActive(true);
+
+            AriaCommandAssistantPopupView popup =
+                popupObject.GetComponent<AriaCommandAssistantPopupView>();
+            if (popup == null || !popup.TryBindHierarchy())
+            {
+                error = "Tutorial Presentation live popup hierarchy did not bind.";
+                UnityEngine.Object.Destroy(popupObject);
+                return false;
+            }
+
+            popup.ApplyRecommendation(AriaTutorialBriefingPrefabBuilder.CreateTargetLockPreviewModel());
+            popup.ApplyAccessibility(false, false);
+            popup.Show();
+            popupObject.GetComponentInChildren<AriaTutorialHudVariantLayoutView>(true)?.RefreshLayout();
+            popupObject.transform.SetAsLastSibling();
+            Canvas.ForceUpdateCanvases();
+            foreach (MainMenuV3SectionLayoutView layout in
+                     popupObject.GetComponentsInChildren<MainMenuV3SectionLayoutView>(true))
+            {
+                layout.RefreshLayout();
+            }
+            return true;
+        }
+
+        private static bool TryConfigureAriaCommandAssistantCapture(
+            MenuBootstrapView bootstrap,
+            out string error)
+        {
+            error = null;
+            if (bootstrap == null || bootstrap.UiCanvas == null)
+            {
+                error = "ARIA Command Assistant capture could not find the live root Canvas.";
+                return false;
+            }
+
+            MatchHudSelectionPanelView selection =
+                UnityEngine.Object.FindAnyObjectByType<MatchHudSelectionPanelView>(FindObjectsInactive.Include);
+            if (selection != null)
+                ConfigureCommandWheelCaptureSelection(selection);
+
+            BattleHudRuntimeFeedbackView feedback =
+                UnityEngine.Object.FindAnyObjectByType<BattleHudRuntimeFeedbackView>(FindObjectsInactive.Include);
+            if (feedback != null && feedback.FeedbackPanel != null)
+            {
+                feedback.FeedbackPanel.SetActive(true);
+                TMP_Text feedbackText =
+                    FindChild(feedback.FeedbackPanel.transform, "Feedback")?.GetComponent<TMP_Text>();
+                if (feedbackText != null)
+                    feedbackText.text = "ATTACK UNAVAILABLE — SELECT A UNIT OR VALID TARGET";
+            }
+
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+                AriaCommandAssistantV3PrefabBuilder.PrefabPath);
+            if (prefab == null)
+            {
+                error = "ARIA Command Assistant capture could not load the POP-13 prefab.";
+                return false;
+            }
+
+            GameObject popupObject = UnityEngine.Object.Instantiate(
+                prefab, bootstrap.UiCanvas.transform, false);
+            popupObject.name = "AriaCommandAssistantLivePreview";
+            Stretch(popupObject.transform as RectTransform);
+            popupObject.SetActive(true);
+
+            AriaCommandAssistantPopupView popup =
+                popupObject.GetComponent<AriaCommandAssistantPopupView>();
+            if (popup == null || !popup.TryBindHierarchy())
+            {
+                error = "ARIA Command Assistant live popup hierarchy did not bind.";
+                UnityEngine.Object.Destroy(popupObject);
+                return false;
+            }
+
+            MatchHudV3PrefabBuilder.ApplyAriaCommandAssistantPreviewModel(
+                popup,
+                AriaTutorialBriefingPrefabBuilder.CreateCommandAssistantPreviewModel());
+            popup.ApplyAccessibility(false, false);
+            popup.Show();
+            popup.LandscapeLayout.GetComponent<AriaTutorialHudVariantLayoutView>()?.RefreshLayout();
+            popupObject.transform.SetAsLastSibling();
+            Canvas.ForceUpdateCanvases();
+            foreach (MainMenuV3SectionLayoutView layout in
+                     popupObject.GetComponentsInChildren<MainMenuV3SectionLayoutView>(true))
+            {
+                layout.RefreshLayout();
+            }
+            return true;
+        }
+
+        private static bool TryConfigureAssistantTakeoverCapture(
+            MenuBootstrapView bootstrap,
+            out string error)
+        {
+            error = null;
+            if (bootstrap == null || bootstrap.UiCanvas == null)
+            {
+                error = "Assistant Takeover capture could not find the live root Canvas.";
+                return false;
+            }
+
+            MatchHudSelectionPanelView selection =
+                UnityEngine.Object.FindAnyObjectByType<MatchHudSelectionPanelView>(FindObjectsInactive.Include);
+            if (selection != null)
+                ConfigureCommandWheelCaptureSelection(selection);
+
+            BattleHudRuntimeFeedbackView feedback =
+                UnityEngine.Object.FindAnyObjectByType<BattleHudRuntimeFeedbackView>(FindObjectsInactive.Include);
+            if (feedback != null && feedback.FeedbackPanel != null)
+                feedback.FeedbackPanel.SetActive(false);
+
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+                AriaCommandAssistantV3PrefabBuilder.PrefabPath);
+            if (prefab == null)
+            {
+                error = "Assistant Takeover capture could not load the shared POP-13 prefab.";
+                return false;
+            }
+
+            GameObject popupObject = UnityEngine.Object.Instantiate(
+                prefab, bootstrap.UiCanvas.transform, false);
+            popupObject.name = "AssistantTakeoverLivePreview";
+            Stretch(popupObject.transform as RectTransform);
+            popupObject.SetActive(true);
+
+            AriaCommandAssistantPopupView popup =
+                popupObject.GetComponent<AriaCommandAssistantPopupView>();
+            if (popup == null || !popup.TryBindHierarchy())
+            {
+                error = "Assistant Takeover live hierarchy did not bind.";
+                UnityEngine.Object.Destroy(popupObject);
+                return false;
+            }
+
+            MatchHudV3PrefabBuilder.ApplyAriaCommandAssistantPreviewModel(
+                popup,
+                AriaCommandAssistantV3PrefabBuilder.CreateAssistantTakeoverPreviewModel());
+            popup.ApplyAccessibility(false, false);
+            popup.Show();
+            popup.LandscapeLayout.GetComponent<AriaTutorialHudVariantLayoutView>()?.RefreshLayout();
+            popupObject.transform.SetAsLastSibling();
+            Canvas.ForceUpdateCanvases();
+            foreach (MainMenuV3SectionLayoutView layout in
+                     popupObject.GetComponentsInChildren<MainMenuV3SectionLayoutView>(true))
+            {
+                layout.RefreshLayout();
+            }
+            return true;
+        }
+
+        private static bool TryConfigureThreatAlertCapture(
+            MenuBootstrapView bootstrap,
+            bool routePreview,
+            out string error)
+        {
+            error = null;
+            if (bootstrap == null || bootstrap.UiCanvas == null)
+            {
+                error = "POP-01 Threat Alert capture could not find the live root Canvas.";
+                return false;
+            }
+
+            BattleHudRuntimeFeedbackView feedback =
+                UnityEngine.Object.FindAnyObjectByType<BattleHudRuntimeFeedbackView>(FindObjectsInactive.Include);
+            if (feedback != null && feedback.FeedbackPanel != null)
+                feedback.FeedbackPanel.SetActive(false);
+
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ThreatAlertV3PrefabBuilder.PrefabPath);
+            if (prefab == null)
+            {
+                error = "POP-01 Threat Alert capture could not load the V3 prefab.";
+                return false;
+            }
+
+            GameObject popupObject = UnityEngine.Object.Instantiate(prefab, bootstrap.UiCanvas.transform, false);
+            popupObject.name = routePreview ? "ThreatRoutePreviewLive" : "ThreatAlertLive";
+            Stretch(popupObject.transform as RectTransform);
+            popupObject.SetActive(true);
+            ThreatAlertV3PopupView popup = popupObject.GetComponent<ThreatAlertV3PopupView>();
+            if (popup == null)
+            {
+                error = "POP-01 Threat Alert live state view is missing.";
+                UnityEngine.Object.Destroy(popupObject);
+                return false;
+            }
+
+            if (routePreview)
+                popup.ShowRoutePreview();
+            else
+                popup.ShowAlert();
+            popupObject.transform.SetAsLastSibling();
+            Canvas.ForceUpdateCanvases();
+            foreach (MainMenuV3SectionLayoutView layout in
+                     popupObject.GetComponentsInChildren<MainMenuV3SectionLayoutView>(true))
+            {
+                layout.RefreshLayout();
+            }
             return true;
         }
 
@@ -1391,10 +2478,70 @@ namespace Game.Editor
             if (string.IsNullOrWhiteSpace(routeCaptureSelectButtonName) || routeCaptureButtonSelectionApplied)
                 return true;
 
-            Button button = FindActiveButtonByName(routeCaptureSelectButtonName);
+            string[] buttonSequence = routeCaptureSelectButtonName.Split('>');
+            if (routeCaptureButtonSelectionIndex >= buttonSequence.Length)
+            {
+                routeCaptureButtonSelectionApplied = true;
+                return true;
+            }
+
+            string currentButtonName = buttonSequence[routeCaptureButtonSelectionIndex].Trim();
+            if (string.Equals(currentButtonName, "OpenFullMap", StringComparison.Ordinal))
+            {
+                MatchHudMinimapView compactMinimap = FindCompactMatchHudMinimap();
+                if (compactMinimap == null)
+                {
+                    error = "The live Match HUD has no active compact minimap to open the Full Map popup.";
+                    return false;
+                }
+
+                FieldInfo openRequestField = typeof(MatchHudMinimapView).GetField(
+                    "FullMapOpenRequested",
+                    BindingFlags.Instance | BindingFlags.NonPublic);
+                if (openRequestField?.GetValue(compactMinimap) is Action openRequest)
+                {
+                    openRequest.Invoke();
+                }
+                else
+                {
+                    UIShellContentView content = UnityEngine.Object.FindAnyObjectByType<UIShellContentView>(FindObjectsInactive.Include);
+                    MethodInfo openFullMap = typeof(UIShellContentView).GetMethod(
+                        "OpenFullMapPopup",
+                        BindingFlags.Instance | BindingFlags.NonPublic);
+                    if (content == null || openFullMap == null)
+                    {
+                        error = "The live capture could not resolve either the compact minimap listener or the shell Full Map runtime path.";
+                        return false;
+                    }
+
+                    openFullMap.Invoke(content, null);
+                }
+                MatchHudFullMapPopupView fullMap = UnityEngine.Object.FindAnyObjectByType<MatchHudFullMapPopupView>(FindObjectsInactive.Exclude);
+                if (fullMap == null || !fullMap.IsOpen || fullMap.Minimap == null)
+                {
+                    error = "The compact minimap open request did not mount a live V3 Full Map popup.";
+                    return false;
+                }
+                if (!fullMap.Minimap.UseFullMapProjection)
+                    fullMap.Minimap.ApplyInteractionOptions(true, true, true, true, true, false);
+                if (!fullMap.Minimap.UseFullMapProjection || !fullMap.Minimap.ShowsViewport)
+                {
+                    error = "The mounted live V3 Full Map popup did not accept full-map projection and viewport interaction options.";
+                    return false;
+                }
+
+                routeCaptureButtonSelectionIndex++;
+                routeCaptureButtonSelectionApplied = routeCaptureButtonSelectionIndex >= buttonSequence.Length;
+                routeCaptureConfiguredFrame = routeCaptureFrameCount;
+                waitForSelectionSettle = true;
+                Debug.Log($"[CanvasRouteCaptureValidation] selectedButton={currentButtonName} step={routeCaptureButtonSelectionIndex}/{buttonSequence.Length}");
+                return true;
+            }
+
+            Button button = FindActiveButtonByName(currentButtonName);
             if (button == null)
             {
-                error = $"WARLINE_CANVAS_SELECT_BUTTON could not find active Button or child Button named '{routeCaptureSelectButtonName}'.";
+                error = $"WARLINE_CANVAS_SELECT_BUTTON could not find active Button or child Button named '{currentButtonName}' at sequence step {routeCaptureButtonSelectionIndex + 1}/{buttonSequence.Length}.";
                 return false;
             }
 
@@ -1403,11 +2550,234 @@ namespace Game.Editor
                 eventSystem.SetSelectedGameObject(button.gameObject);
 
             button.Select();
-            routeCaptureButtonSelectionApplied = true;
+            button.onClick.Invoke();
+            if (string.Equals(currentButtonName, "PortraitFrame", StringComparison.Ordinal) ||
+                string.Equals(currentButtonName, "CommandWheelOpenButton", StringComparison.Ordinal))
+            {
+                CommandWheelPanelView wheel = UnityEngine.Object.FindAnyObjectByType<CommandWheelPanelView>(FindObjectsInactive.Include);
+                if (wheel == null || !wheel.IsOpen)
+                {
+                    error = wheel == null
+                        ? "The selected-unit command cue clicked, but no live CommandWheelPanelView was mounted."
+                        : $"The selected-unit command cue clicked, but the wheel stayed closed. listeners={wheel.HasBoundListeners} boundOpen={wheel.OpenButton?.name ?? "null"} sameButton={ReferenceEquals(wheel.OpenButton, button)}";
+                    return false;
+                }
+            }
+            else if (string.Equals(currentButtonName, "AttackSector", StringComparison.Ordinal))
+            {
+                CommandWheelPanelView wheel = UnityEngine.Object.FindAnyObjectByType<CommandWheelPanelView>(FindObjectsInactive.Include);
+                wheel?.SetTargetingPreview(true);
+                BattleHudRuntimeFeedbackView feedback = UnityEngine.Object.FindAnyObjectByType<BattleHudRuntimeFeedbackView>(FindObjectsInactive.Include);
+                if (feedback != null && feedback.FeedbackPanel != null)
+                    feedback.FeedbackPanel.SetActive(false);
+            }
+            else if (string.Equals(currentButtonName, "AttackCommand", StringComparison.Ordinal))
+            {
+                BattleHudRuntimeFeedbackView feedback = UnityEngine.Object.FindAnyObjectByType<BattleHudRuntimeFeedbackView>(FindObjectsInactive.Include);
+                if (feedback == null)
+                {
+                    error = "The Attack command was clicked, but no live BattleHudRuntimeFeedbackView was mounted.";
+                    return false;
+                }
+
+                ConfigureTacticalFeedbackCaptureState(feedback);
+                Transform selectedVisual = button.transform.Find("V3SelectedState");
+                if (feedback.CurrentCommandMode != TacticalCommandMode.Attack ||
+                    selectedVisual == null ||
+                    !selectedVisual.gameObject.activeInHierarchy)
+                {
+                    error = "The Attack command was clicked, but the live V3 Attack selected state did not activate.";
+                    return false;
+                }
+            }
+            else if (string.Equals(currentButtonName, "PassengerChip", StringComparison.Ordinal))
+            {
+                MatchHudSelectionPanelView selection = UnityEngine.Object.FindAnyObjectByType<MatchHudSelectionPanelView>(FindObjectsInactive.Include);
+                if (selection == null)
+                {
+                    error = "The transport passenger chip was clicked, but no live MatchHudSelectionPanelView was mounted.";
+                    return false;
+                }
+
+                ConfigureTransportPassengerCaptureSelection(selection, true);
+                MatchHudTransportPassengerDrawerView drawer =
+                    selection.GetComponentInChildren<MatchHudTransportPassengerDrawerView>(true);
+                if (drawer == null || !drawer.gameObject.activeInHierarchy)
+                {
+                    error = drawer == null
+                        ? "The transport passenger chip was clicked, but no live passenger drawer was mounted."
+                        : "The transport passenger chip was clicked, but the live passenger drawer stayed closed.";
+                    return false;
+                }
+            }
+            routeCaptureButtonSelectionIndex++;
+            routeCaptureButtonSelectionApplied = routeCaptureButtonSelectionIndex >= buttonSequence.Length;
             routeCaptureConfiguredFrame = routeCaptureFrameCount;
             waitForSelectionSettle = true;
-            Debug.Log($"[CanvasRouteCaptureValidation] selectedButton={routeCaptureSelectButtonName}");
+            Debug.Log($"[CanvasRouteCaptureValidation] selectedButton={currentButtonName} step={routeCaptureButtonSelectionIndex}/{buttonSequence.Length}");
             return true;
+        }
+
+        private static void ConfigureCommandWheelCaptureSelection(MatchHudSelectionPanelView selection)
+        {
+            MatchHudSquadTrayView tray = UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>(FindObjectsInactive.Include);
+            Sprite portrait = null;
+            if (tray != null)
+            {
+                tray.SetSelectedSlot(MatchHudSquadTraySlot.Soldiers);
+                tray.TryGetPortraitSprite(MatchHudSquadTraySlot.Soldiers, out portrait);
+            }
+
+            Sprite badge = AssetDatabase.LoadAssetAtPath<Sprite>(V3UiFoundationBuilder.MatchRankBadgeIconPath);
+            selection.Apply(new MatchHudSelectionPanelModel(
+                true,
+                "RIFLE SQUAD",
+                "SQUAD 1  |  ANTI-INFANTRY",
+                "MOVING",
+                "100%",
+                1f,
+                portrait,
+                SelectionSummaryPortraitKind.Soldiers,
+                true,
+                badge,
+                true,
+                true,
+                true));
+            selection.ApplyTransportPassengers(new MatchHudTransportPassengersModel(
+                true,
+                false,
+                new UiEntityHandle(1, 1),
+                0,
+                4,
+                false,
+                Array.Empty<MatchHudSelectionPanelPassengerItemModel>()));
+        }
+
+        private static MatchHudMinimapView FindCompactMatchHudMinimap()
+        {
+            MatchHudMinimapView[] views = UnityEngine.Object.FindObjectsByType<MatchHudMinimapView>(FindObjectsInactive.Exclude);
+            for (int i = 0; i < views.Length; i++)
+            {
+                MatchHudMinimapView view = views[i];
+                if (view != null && !view.UseFullMapProjection)
+                    return view;
+            }
+
+            return null;
+        }
+
+        private static void ConfigureTransportPassengerCaptureSelection(
+            MatchHudSelectionPanelView selection,
+            bool forceDrawerOpen)
+        {
+            MatchHudSquadTrayView tray = UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>(FindObjectsInactive.Include);
+            if (tray != null)
+                tray.SetSelectedSlot(MatchHudSquadTraySlot.Transport);
+
+            Sprite transportPortrait = AssetDatabase.LoadAssetAtPath<Sprite>(TransportHelicopterPortraitPath);
+            selection.Apply(new MatchHudSelectionPanelModel(
+                true,
+                "TRANSPORT HELICOPTER",
+                "AIR TRANSPORT",
+                "HOLDING AT LZ",
+                "1,500 / 1,500",
+                1f,
+                transportPortrait,
+                SelectionSummaryPortraitKind.Transports,
+                false,
+                null,
+                true,
+                true,
+                true));
+
+            MatchHudSelectionPanelPassengerItemModel[] passengers =
+            {
+                new(new UiEntityHandle(101, 1), "RIFLE SQUAD A", "SOLDIER", "100 / 100", 1f,
+                    AssetDatabase.LoadAssetAtPath<Sprite>(PassengerRiflePortraitPath), true),
+                new(new UiEntityHandle(102, 1), "ENGINEER TEAM", "SOLDIER", "92 / 100", .92f,
+                    AssetDatabase.LoadAssetAtPath<Sprite>(PassengerEngineerPortraitPath), true),
+                new(new UiEntityHandle(103, 1), "DALIA TEAM", "FIELD LEAD", "85 / 100", .85f,
+                    AssetDatabase.LoadAssetAtPath<Sprite>(PassengerDaliaPortraitPath), true),
+                new(new UiEntityHandle(104, 1), "RIFLE SQUAD B", "SOLDIER", "78 / 100", .78f,
+                    AssetDatabase.LoadAssetAtPath<Sprite>(PassengerRifleBPortraitPath), true)
+            };
+            MatchHudTransportPassengersModel passengerModel = new(
+                true,
+                false,
+                new UiEntityHandle(1, 1),
+                passengers.Length,
+                10,
+                true,
+                passengers,
+                soldierPassengerCount: passengers.Length,
+                soldierCapacity: 10);
+            if (forceDrawerOpen)
+                selection.CloseTransportPassengerDrawer();
+            selection.ApplyTransportPassengers(passengerModel);
+            if (forceDrawerOpen)
+            {
+                selection.ToggleTransportPassengerDrawer();
+                selection.ApplyTransportPassengers(passengerModel);
+                MatchHudTransportPassengerDrawerView drawer =
+                    selection.GetComponentInChildren<MatchHudTransportPassengerDrawerView>(true);
+                drawer?.Apply(new MatchHudTransportPassengersModel(
+                    true,
+                    true,
+                    passengerModel.Transport,
+                    passengerModel.PassengerCount,
+                    passengerModel.Capacity,
+                    passengerModel.ExitAllEnabled,
+                    passengerModel.Passengers,
+                    passengerModel.SoldierPassengerCount,
+                    passengerModel.SoldierCapacity,
+                    passengerModel.VehiclePassengerCount,
+                    passengerModel.VehicleCapacity));
+            }
+
+            TMP_Text ariaCopy = FindChild(
+                    UnityEngine.Object.FindAnyObjectByType<MatchHudMinimapView>(FindObjectsInactive.Include)?.transform.root,
+                    "AlertCue")
+                ?.GetComponent<TMP_Text>();
+            if (ariaCopy != null)
+                ariaCopy.text = "Select Transport Helicopter.\nThen tap a passenger to exit.";
+            TMP_Text doItLabel = FindChild(ariaCopy != null ? ariaCopy.transform.root : null, "DoItButton")
+                ?.GetComponentInChildren<TMP_Text>(true);
+            if (doItLabel != null)
+                doItLabel.text = "GOT IT";
+            BattleHudRuntimeFeedbackView feedback = UnityEngine.Object.FindAnyObjectByType<BattleHudRuntimeFeedbackView>(FindObjectsInactive.Include);
+            feedback?.ShowFeedbackMessage("TRANSPORT READY — SELECT PASSENGER OR EXIT ALL", CommandFeedbackSeverity.Ready);
+            if (feedback != null && feedback.FeedbackIcon != null)
+            {
+                feedback.FeedbackIcon.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(V3UiFoundationBuilder.MatchInfoIconPath);
+                feedback.FeedbackIcon.color = new Color32(13, 194, 232, 255);
+            }
+        }
+
+        private static void ConfigureTacticalFeedbackCaptureState(BattleHudRuntimeFeedbackView feedback)
+        {
+            BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandMode(feedback, TacticalCommandMode.Attack);
+            feedback.ApplyPersistentCommandFeedback(
+                MatchHudCommandFeedbackModel.Show(
+                    "ATTACK UNAVAILABLE — TARGET OUT OF RANGE",
+                    CommandFeedbackSeverity.Error),
+                MatchHudCommandFeedbackActionsModel.Hidden);
+
+            MatchHudMinimapView minimap = UnityEngine.Object.FindAnyObjectByType<MatchHudMinimapView>(FindObjectsInactive.Include);
+            Transform uiRoot = minimap != null ? minimap.transform.root : feedback.transform.root;
+            Transform preview = FindChild(uiRoot, "V3TacticalFeedbackPreview");
+            if (preview != null)
+                preview.gameObject.SetActive(true);
+
+            Transform aria = FindChild(uiRoot, "AriaAssistantButton");
+            TMP_Text ariaState = aria != null ? aria.Find("State")?.GetComponent<TMP_Text>() : null;
+            if (ariaState != null)
+                ariaState.text = "TUTORIAL 1/5";
+            TMP_Text ariaCopy = aria != null ? FindChild(aria, "AlertCue")?.GetComponent<TMP_Text>() : null;
+            if (ariaCopy != null)
+            {
+                ariaCopy.richText = true;
+                ariaCopy.text = "Select <color=#00C8EE>Rifle Squad</color> first.\nThen tap <color=#FF6A24>ATTACK</color> to engage the enemy.";
+            }
         }
 
         private static Button FindActiveButtonByName(string buttonName)
@@ -1554,8 +2924,24 @@ namespace Game.Editor
 
             if (EditorApplication.isPlaying)
                 EditorApplication.ExitPlaymode();
-            if (Application.isBatchMode)
+            // macOS validation intentionally runs a GUI-licensed Editor through
+            // the repository wrapper. An executeMethod capture must therefore
+            // close its own automation Editor after Play Mode completes; a
+            // manually invoked menu capture keeps the user's Editor open.
+            if (Application.isBatchMode || IsExecuteMethodInvocation())
                 EditorApplication.Exit(success ? 0 : 1);
+        }
+
+        private static bool IsExecuteMethodInvocation()
+        {
+            string[] arguments = Environment.GetCommandLineArgs();
+            for (int i = 0; i < arguments.Length; i++)
+            {
+                if (string.Equals(arguments[i], "-executeMethod", StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+
+            return false;
         }
 
         private static void RestoreCommanderCapturePlayModeSettings()
@@ -1607,8 +2993,7 @@ namespace Game.Editor
 
             if (EditorApplication.isPlaying)
                 EditorApplication.ExitPlaymode();
-            if (Application.isBatchMode)
-                EditorApplication.Exit(success ? 0 : 1);
+            EditorApplication.Exit(success ? 0 : 1);
         }
 
         private static void CountPerformanceCanvasRender()
@@ -3299,12 +4684,21 @@ namespace Game.Editor
 
         private sealed class RouteCaptureBuildingUiCommand : IBuildingUiCommand
         {
+            private readonly bool canConfirm;
+
+            public RouteCaptureBuildingUiCommand(bool canConfirmPlacement)
+            {
+                canConfirm = canConfirmPlacement;
+            }
+
             public int CurrentDollars => 12500;
             public bool HasPendingBuildingPlacement => true;
-            public bool CanConfirmBuildingPlacement => true;
-            public string PlacementStatusText => "Barracks: Valid placement";
-            public int ActivePlacementCost => 650;
-            public int ActivePlacementCreditsCost => 40000;
+            public bool CanConfirmBuildingPlacement => canConfirm;
+            public string PlacementStatusText => canConfirm
+                ? "Power Plant: Valid placement"
+                : "Power Plant: Invalid placement";
+            public int ActivePlacementCost => 1500;
+            public int ActivePlacementCreditsCost => 250;
             public float ActivePlacementDurationSeconds => 45f;
             public int MaxQueuedUnitProductions => 25;
 
@@ -3327,7 +4721,7 @@ namespace Game.Editor
 
             public bool ConfirmBuildingPlacement()
             {
-                return true;
+                return canConfirm;
             }
 
             public void CancelBuildingPlacement()

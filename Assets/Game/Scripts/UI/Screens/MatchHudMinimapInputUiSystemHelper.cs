@@ -534,7 +534,7 @@ namespace Game.UI.Runtime
                 if (normalized.x < 0f || normalized.x > 1f || normalized.y < 0f || normalized.y > 1f)
                     continue;
 
-                SetMarker(markerIndex, normalized, ResolveMarkerColor(marker.Allegiance), mapRect, parentTopLeft);
+                SetMarker(markerIndex, normalized, marker.Allegiance, ResolveMarkerColor(marker.Allegiance), mapRect, parentTopLeft);
                 markerIndex++;
             }
 
@@ -550,11 +550,29 @@ namespace Game.UI.Runtime
             }
         }
 
-        private void SetMarker(int index, Vector2 normalized, Color color, Rect mapRect, Vector2 parentTopLeft)
+        private void SetMarker(
+            int index,
+            Vector2 normalized,
+            MatchHudMinimapMarkerAllegiance allegiance,
+            Color color,
+            Rect mapRect,
+            Vector2 parentTopLeft)
         {
             Image marker = EnsureMarker(index);
             if (marker == null)
                 return;
+
+            Sprite markerSprite = allegiance switch
+            {
+                MatchHudMinimapMarkerAllegiance.Player => _view.PlayerMarkerSprite,
+                MatchHudMinimapMarkerAllegiance.Enemy => _view.EnemyMarkerSprite,
+                _ => _view.NeutralMarkerSprite
+            };
+            if (marker.sprite != markerSprite)
+            {
+                marker.sprite = markerSprite;
+                marker.preserveAspect = markerSprite != null;
+            }
 
             RectTransform rect = marker.rectTransform;
 
@@ -605,7 +623,7 @@ namespace Game.UI.Runtime
                 markerObject.transform.SetParent(parent, false);
                 markerObject.layer = parent.gameObject.layer;
                 RectTransform rect = markerObject.AddComponent<RectTransform>();
-                rect.sizeDelta = new Vector2(16f, 16f);
+                rect.sizeDelta = new Vector2(22f, 22f);
                 rect.pivot = new Vector2(0.5f, 0.5f);
                 Image image = markerObject.AddComponent<Image>();
                 image.raycastTarget = false;

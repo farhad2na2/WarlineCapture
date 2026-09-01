@@ -1,9 +1,11 @@
-#if UNITY_EDITOR
 using System;
+using System.IO;
 using Game.UI.Runtime;
 using TMPro;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace Game.Editor
@@ -11,334 +13,503 @@ namespace Game.Editor
     public static class SplashLoadingV3PrefabBuilder
     {
         private const string PrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN01_LoadingContent.prefab";
-        private const string BackgroundPath = "Assets/Game/Art/UI/Generated/SplashLoading/V3/scn01_v3_command_post_background.png";
-        private const string RankIconPath = "Assets/Game/Art/UI/Icons/scn08_icon_shield_rank_badge.png";
+        private const string BackgroundPath = "Assets/Game/Art/UI/V3Shared/Backgrounds/SCN01_LoadingEnvironment_V3.png";
         private const string BoldFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold SDF.asset";
         private const string MediumFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium SDF.asset";
-
-        private static readonly Color Panel = new(0.018f, 0.041f, 0.047f, 0.965f);
-        private static readonly Color PanelOpaque = new(0.014f, 0.031f, 0.035f, 0.995f);
-        private static readonly Color Border = new(0.22f, 0.29f, 0.31f, 1f);
-        private static readonly Color White = new(0.94f, 0.95f, 0.93f, 1f);
-        private static readonly Color Muted = new(0.68f, 0.72f, 0.72f, 1f);
-        private static readonly Color Gold = new(1f, 0.67f, 0.015f, 1f);
-        private static readonly Color Cyan = new(0.035f, 0.82f, 0.88f, 1f);
-        private static readonly Color Green = new(0.49f, 0.78f, 0.08f, 1f);
+        private const string LightFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Light SDF.asset";
+        private static readonly Vector2 ReferenceResolution = new Vector2(1672f, 941f);
+        private static readonly Color ChromeBorder = new Color32(70, 82, 86, 255);
+        private static readonly Color GraphiteTop = new Color32(19, 31, 35, 248);
+        private static readonly Color GraphiteBottom = new Color32(6, 13, 16, 252);
 
         private static TMP_FontAsset boldFont;
         private static TMP_FontAsset mediumFont;
+        private static TMP_FontAsset lightFont;
+        private static V3UiTheme theme;
+        private static Sprite background;
 
-        [MenuItem("Game/UI/V3/Build SCN-01 Splash Loading")]
+        [MenuItem("Game/UI/Rebuild Splash Loading V3")]
         public static void Build()
         {
-            LoadStyleAssets();
-            EnsureSpriteImport(BackgroundPath);
-            GameObject root = PrefabUtility.LoadPrefabContents(PrefabPath);
+            V3UiFoundationBuilder.EnsureBuilt();
+            ConfigureBackgroundImport();
+            LoadAssets();
+
+            GameObject root = CreateRect("SCN01_LoadingContent", null, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero).gameObject;
+            UIShellLoadingProgressView progressView = root.AddComponent<UIShellLoadingProgressView>();
+            BuildScreen(root.transform, progressView);
+
+            PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
+            UnityEngine.Object.DestroyImmediate(root);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Validate();
+            Debug.Log("[SplashLoadingV3PrefabBuilder] result=Passed v3=True prefab rebuilt with one unique background and shared procedural chrome.");
+        }
+
+        [MenuItem("Game/UI/V3/Validate Splash Loading")]
+        public static void Validate()
+        {
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+            if (prefab == null)
+                throw new FileNotFoundException($"Missing Splash V3 prefab: {PrefabPath}");
+
+            UIShellLoadingProgressView progressView = prefab.GetComponent<UIShellLoadingProgressView>();
+            if (progressView == null)
+                throw new MissingComponentException("Splash V3 is missing UIShellLoadingProgressView.");
+
+            SerializedObject serializedView = new SerializedObject(progressView);
+            if (serializedView.FindProperty("progressFill")?.objectReferenceValue == null ||
+                serializedView.FindProperty("percentText")?.objectReferenceValue == null ||
+                serializedView.FindProperty("statusText")?.objectReferenceValue == null)
+                throw new MissingReferenceException("Splash V3 loading progress bindings are incomplete.");
+
+            Image[] images = prefab.GetComponentsInChildren<Image>(true);
+            int rasterSpriteCount = 0;
+            foreach (Image image in images)
+            {
+                if (image.sprite == null)
+                    continue;
+
+                rasterSpriteCount++;
+                string spritePath = AssetDatabase.GetAssetPath(image.sprite);
+                if (!string.Equals(spritePath, BackgroundPath, StringComparison.Ordinal) &&
+                    !string.Equals(spritePath, V3UiFoundationBuilder.MainMenuLogoPath, StringComparison.Ordinal))
+                    throw new InvalidOperationException($"Splash V3 references duplicated or historical raster UI art: {spritePath}");
+            }
+
+            if (rasterSpriteCount != 2)
+                throw new InvalidOperationException(
+                    $"Splash V3 must use one unique background plus the canonical shared brand logo; found {rasterSpriteCount} raster sprites.");
+            if (prefab.GetComponentsInChildren<V3GradientGraphic>(true).Length < 8)
+                throw new MissingComponentException("Splash V3 must use procedural gradients for its reusable chrome and progress treatment.");
+            if (FindDeepChild(prefab.transform, "IntegratedLoadingFooter") == null ||
+                FindDeepChild(prefab.transform, "BrandLogoPlate") == null ||
+                FindDeepChild(prefab.transform, "AndroidBuildChip") == null ||
+                FindDeepChild(prefab.transform, "SecureLinkChip") == null)
+                throw new MissingReferenceException("Splash V3 is missing target-lock structural regions.");
+            if (FindDeepChild(prefab.transform, "LoadingPanel_Frame") != null ||
+                FindDeepChild(prefab.transform, "CornerTL") != null)
+                throw new InvalidOperationException("Historical ornate Splash chrome is forbidden in V3.");
+
+            Image backgroundImage = FindDeepChild(prefab.transform, "LoadingEnvironment")?.GetComponent<Image>();
+            AspectRatioFitter backgroundFitter = backgroundImage != null
+                ? backgroundImage.GetComponent<AspectRatioFitter>()
+                : null;
+            if (backgroundFitter == null || backgroundFitter.aspectMode != AspectRatioFitter.AspectMode.EnvelopeParent)
+                throw new MissingComponentException("Splash V3 background must cover-crop without non-uniform stretching.");
+            if (FindDeepChild(prefab.transform, "SplashChromeReference")?.GetComponent<MainMenuV3SectionLayoutView>() == null)
+                throw new MissingComponentException("Splash V3 chrome must map its authored reference frame into the live shell canvas.");
+
+            Debug.Log($"[SplashLoadingV3PrefabBuilder] validation=Passed rasterSprites={rasterSpriteCount} gradients={prefab.GetComponentsInChildren<V3GradientGraphic>(true).Length} images={images.Length}");
+        }
+
+        [MenuItem("Game/UI/Capture Splash Loading V3 QA")]
+        public static void CaptureQa()
+        {
+            Capture("/private/tmp/warline-splash-v3-16x9.png", 1920, 1080);
+            Capture("/private/tmp/warline-splash-v3-20x9.png", 2400, 1080);
+            Debug.Log("[SplashLoadingV3PrefabBuilder] QA captures written to /private/tmp.");
+        }
+
+        private static void BuildScreen(Transform root, UIShellLoadingProgressView progressView)
+        {
+            Image backgroundImage = CreateImage("LoadingEnvironment", root, background, Color.white);
+            Stretch(backgroundImage.rectTransform);
+            AspectRatioFitter backgroundFitter = backgroundImage.gameObject.AddComponent<AspectRatioFitter>();
+            backgroundFitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+            backgroundFitter.aspectRatio = background.rect.width / background.rect.height;
+
+            RectTransform chromeReference = CreateTopLeftRect(
+                "SplashChromeReference",
+                root,
+                0f,
+                0f,
+                ReferenceResolution.x,
+                ReferenceResolution.y);
+            MainMenuV3SectionLayoutView chromeLayout = chromeReference.gameObject.AddComponent<MainMenuV3SectionLayoutView>();
+            chromeLayout.Configure(ReferenceResolution, MainMenuV3SectionAlignment.Center);
+
+            V3GradientGraphic topReadability = CreateGradient(
+                "TopReadability",
+                chromeReference,
+                new Color(0f, 0f, 0f, 0.34f),
+                new Color(0f, 0f, 0f, 0f),
+                Color.clear,
+                0f);
+            SetRect(topReadability.rectTransform, new Vector2(0f, 0.72f), Vector2.one, Vector2.zero, Vector2.zero);
+
+            BuildLogoPlate(chromeReference);
+            BuildStatusChip("CommandSystemChip", chromeReference, 18f, 209f, 361f, 70f, "COMMAND SYSTEM", theme.Amber, CreateSignalIcon);
+            BuildStatusChip("AndroidBuildChip", chromeReference, 960f, 21f, 283f, 70f, "ANDROID BUILD", new Color32(132, 202, 38, 255), CreateAndroidIcon);
+            BuildStatusChip("SecureLinkChip", chromeReference, 1254f, 21f, 282f, 70f, "SECURE LINK", new Color32(132, 202, 38, 255), CreateLockIcon);
+            BuildSignalOnlyChip(chromeReference);
+            BuildFooter(chromeReference, progressView);
+        }
+
+        private static void BuildLogoPlate(Transform root)
+        {
+            RectTransform plate = CreateTopLeftRect("BrandLogoPlate", root, 19f, 25f, 598f, 168f);
+            V3GradientGraphic fill = plate.gameObject.AddComponent<V3GradientGraphic>();
+            fill.ConfigureCorners(
+                new Color32(22, 34, 38, 252),
+                new Color32(13, 25, 29, 252),
+                new Color32(5, 12, 15, 252),
+                new Color32(8, 16, 19, 252),
+                ChromeBorder,
+                3f);
+
+            V3UiFoundationBuilder.AddMainMenuLogo(plate, left: 16f, top: 10f, right: 16f, bottom: 10f);
+        }
+
+        private static void BuildStatusChip(
+            string name,
+            Transform root,
+            float x,
+            float y,
+            float width,
+            float height,
+            string label,
+            Color accent,
+            Action<RectTransform, Color> iconBuilder)
+        {
+            RectTransform chip = CreateTopLeftRect(name, root, x, y, width, height);
+            V3GradientGraphic fill = chip.gameObject.AddComponent<V3GradientGraphic>();
+            fill.ConfigureCorners(GraphiteTop, new Color32(15, 27, 31, 248), GraphiteBottom, new Color32(8, 17, 20, 252), ChromeBorder, 3f);
+            RectTransform icon = CreateTopLeftRect("Icon", chip, 17f, 11f, 52f, 48f);
+            iconBuilder(icon, accent);
+            TMP_Text text = CreateText("Label", chip, label, 27f, boldFont, TextAlignmentOptions.MidlineLeft, theme.TextPrimary);
+            SetTopLeft(text.rectTransform, 75f, 8f, width - 82f, 54f);
+        }
+
+        private static void BuildSignalOnlyChip(Transform root)
+        {
+            RectTransform chip = CreateTopLeftRect("SignalStrengthChip", root, 1548f, 21f, 94f, 70f);
+            V3GradientGraphic fill = chip.gameObject.AddComponent<V3GradientGraphic>();
+            fill.Configure(GraphiteTop, GraphiteBottom, ChromeBorder, 3f);
+            CreateSignalIcon(CreateTopLeftRect("Icon", chip, 17f, 10f, 60f, 50f), new Color32(132, 202, 38, 255));
+        }
+
+        private static void BuildFooter(Transform root, UIShellLoadingProgressView progressView)
+        {
+            RectTransform footer = CreateRect(
+                "IntegratedLoadingFooter",
+                root,
+                Vector2.zero,
+                new Vector2(1f, 0.228f),
+                Vector2.zero,
+                Vector2.zero);
+            V3GradientGraphic footerFill = footer.gameObject.AddComponent<V3GradientGraphic>();
+            footerFill.ConfigureCorners(
+                new Color32(21, 35, 39, 252),
+                new Color32(15, 29, 33, 252),
+                new Color32(4, 10, 12, 255),
+                new Color32(7, 14, 16, 255),
+                ChromeBorder,
+                3f);
+
+            TMP_Text title = CreateText("LoadingTitle", footer, "LOADING OPERATION MAP", 50f, boldFont, TextAlignmentOptions.MidlineLeft, theme.TextPrimary);
+            SetTopLeft(title.rectTransform, 36f, 13f, 1110f, 75f);
+            TMP_Text percent = CreateText("LoadingPercent", footer, "68%", 67f, boldFont, TextAlignmentOptions.MidlineRight, theme.Cyan);
+            SetTopLeft(percent.rectTransform, 1435f, 8f, 200f, 80f);
+
+            RectTransform track = CreateTopLeftRect("ProgressTrack", footer, 38f, 96f, 1597f, 35f);
+            V3GradientGraphic trackGraphic = track.gameObject.AddComponent<V3GradientGraphic>();
+            trackGraphic.Configure(new Color32(12, 22, 25, 255), new Color32(4, 10, 12, 255), ChromeBorder, 2f);
+
+            RectTransform progressFill = CreateRect(
+                "ProgressFill",
+                track,
+                new Vector2(0f, 0.5f),
+                new Vector2(0f, 0.5f),
+                new Vector2(1085f, 27f),
+                new Vector2(4f, 0f));
+            progressFill.pivot = new Vector2(0f, 0.5f);
+            V3GradientGraphic progressGradient = progressFill.gameObject.AddComponent<V3GradientGraphic>();
+            progressGradient.ConfigureCorners(
+                new Color32(43, 227, 230, 255),
+                new Color32(25, 211, 218, 255),
+                new Color32(0, 144, 168, 255),
+                new Color32(0, 165, 181, 255),
+                new Color32(67, 238, 239, 255),
+                1f);
+
+            for (int i = 1; i < 6; i++)
+            {
+                float segmentX = 1597f * i / 6f;
+                CreateSolidTopLeft("SegmentDivider" + i, track, segmentX, 2f, 3f, 31f, new Color32(4, 16, 20, 220));
+            }
+
+            RectTransform spinner = CreateTopLeftRect("LoadingSpinner", footer, 38f, 155f, 39f, 39f);
+            CreateSpinner(spinner, theme.Cyan);
+            TMP_Text status = CreateText("LoadingStatus", footer, "LOADING REQUIRED DATA", 23f, boldFont, TextAlignmentOptions.MidlineLeft, theme.TextPrimary);
+            SetTopLeft(status.rectTransform, 94f, 151f, 640f, 48f);
+            status.rectTransform.localScale = new Vector3(0.74f, 1f, 1f);
+            TMP_Text tipLabel = CreateText("TipLabel", footer, "Tip:", 25f, mediumFont, TextAlignmentOptions.MidlineRight, theme.Cyan);
+            SetTopLeft(tipLabel.rectTransform, 1120f, 151f, 96f, 48f);
+            TMP_Text tip = CreateText("TipText", footer, "Scout streets before committing armor.", 22f, mediumFont, TextAlignmentOptions.MidlineLeft, theme.TextPrimary);
+            SetTopLeft(tip.rectTransform, 1224f, 151f, 410f, 48f);
+
+            SetObject(progressView, "progressFill", progressFill);
+            SetObject(progressView, "percentText", percent);
+            SetObject(progressView, "statusText", status);
+            SetFloat(progressView, "fillWidth", 1591f);
+        }
+
+        private static void CreateAndroidIcon(RectTransform root, Color color)
+        {
+            CreateSolid("Body", root, color, new Vector2(30f, 27f), new Vector2(0f, -3f));
+            CreateSolid("Head", root, color, new Vector2(30f, 15f), new Vector2(0f, 14f));
+            CreateSolid("ArmLeft", root, color, new Vector2(5f, 25f), new Vector2(-19f, -3f));
+            CreateSolid("ArmRight", root, color, new Vector2(5f, 25f), new Vector2(19f, -3f));
+            CreateSolid("LegLeft", root, color, new Vector2(6f, 14f), new Vector2(-7f, -22f));
+            CreateSolid("LegRight", root, color, new Vector2(6f, 14f), new Vector2(7f, -22f));
+            Image antennaLeft = CreateSolid("AntennaLeft", root, color, new Vector2(3f, 11f), new Vector2(-7f, 23f));
+            antennaLeft.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -28f);
+            Image antennaRight = CreateSolid("AntennaRight", root, color, new Vector2(3f, 11f), new Vector2(7f, 23f));
+            antennaRight.rectTransform.localRotation = Quaternion.Euler(0f, 0f, 28f);
+            CreateSolid("EyeLeft", root, GraphiteBottom, new Vector2(3f, 3f), new Vector2(-6f, 14f));
+            CreateSolid("EyeRight", root, GraphiteBottom, new Vector2(3f, 3f), new Vector2(6f, 14f));
+        }
+
+        private static void CreateLockIcon(RectTransform root, Color color)
+        {
+            CreateSolid("Body", root, color, new Vector2(31f, 28f), new Vector2(0f, -7f));
+            CreateSolid("ShackleTop", root, color, new Vector2(24f, 5f), new Vector2(0f, 17f));
+            CreateSolid("ShackleLeft", root, color, new Vector2(5f, 17f), new Vector2(-10f, 10f));
+            CreateSolid("ShackleRight", root, color, new Vector2(5f, 17f), new Vector2(10f, 10f));
+            CreateSolid("KeySlot", root, GraphiteBottom, new Vector2(5f, 13f), new Vector2(0f, -7f));
+        }
+
+        private static void CreateSignalIcon(RectTransform root, Color color)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                float height = 12f + i * 8f;
+                CreateSolid("SignalBar" + i, root, color, new Vector2(7f, height), new Vector2(-20f + i * 10f, -16f + height * 0.5f));
+            }
+        }
+
+        private static void CreateSpinner(RectTransform root, Color color)
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                float angle = i * 36f;
+                float radians = angle * Mathf.Deg2Rad;
+                Vector2 position = new Vector2(Mathf.Sin(radians) * 14f, Mathf.Cos(radians) * 14f);
+                Color segmentColor = new Color(color.r, color.g, color.b, 0.3f + i * 0.07f);
+                Image segment = CreateSolid("SpinnerSegment" + i, root, segmentColor, new Vector2(5f, 10f), position);
+                segment.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -angle);
+            }
+        }
+
+        private static void CreateChevron(string name, Transform parent, float centerX, float centerY, Color color)
+        {
+            Image left = CreateSolid(name + "Left", parent, color, new Vector2(38f, 7f), new Vector2(centerX - 13f, centerY));
+            left.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -28f);
+            Image right = CreateSolid(name + "Right", parent, color, new Vector2(38f, 7f), new Vector2(centerX + 13f, centerY));
+            right.rectTransform.localRotation = Quaternion.Euler(0f, 0f, 28f);
+        }
+
+        private static void ConfigureBackgroundImport()
+        {
+            AssetDatabase.ImportAsset(BackgroundPath, ImportAssetOptions.ForceSynchronousImport);
+            TextureImporter importer = AssetImporter.GetAtPath(BackgroundPath) as TextureImporter;
+            if (importer == null)
+                throw new InvalidOperationException($"Splash background did not import as a texture: {BackgroundPath}");
+
+            bool dirty = importer.textureType != TextureImporterType.Sprite ||
+                         importer.mipmapEnabled ||
+                         importer.wrapMode != TextureWrapMode.Clamp ||
+                         importer.maxTextureSize < 2048;
+            importer.textureType = TextureImporterType.Sprite;
+            importer.spriteImportMode = SpriteImportMode.Single;
+            importer.alphaIsTransparency = false;
+            importer.mipmapEnabled = false;
+            importer.wrapMode = TextureWrapMode.Clamp;
+            importer.filterMode = FilterMode.Bilinear;
+            importer.textureCompression = TextureImporterCompression.CompressedHQ;
+            importer.compressionQuality = 100;
+            importer.maxTextureSize = 4096;
+            if (dirty)
+                importer.SaveAndReimport();
+        }
+
+        private static void LoadAssets()
+        {
+            boldFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(BoldFontPath);
+            mediumFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(MediumFontPath);
+            lightFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(LightFontPath);
+            theme = V3UiFoundationBuilder.RequireTheme();
+            background = AssetDatabase.LoadAssetAtPath<Sprite>(BackgroundPath);
+            if (boldFont == null || mediumFont == null || lightFont == null || background == null)
+                throw new MissingReferenceException("Splash V3 is missing a required font or its unique background sprite.");
+        }
+
+        private static void Capture(string outputPath, int width, int height)
+        {
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+            if (prefab == null)
+                throw new FileNotFoundException($"Missing Splash prefab for capture: {PrefabPath}");
+
+            Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            GameObject cameraObject = new GameObject("SplashV3CaptureCamera");
+            Camera camera = cameraObject.AddComponent<Camera>();
+            camera.clearFlags = CameraClearFlags.SolidColor;
+            camera.backgroundColor = Color.black;
+            camera.orthographic = true;
+            camera.orthographicSize = height * 0.5f;
+            camera.nearClipPlane = 0.1f;
+            camera.farClipPlane = 1000f;
+            camera.transform.position = new Vector3(0f, 0f, -100f);
+
+            GameObject canvasObject = new GameObject("SplashV3CaptureCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler));
+            RectTransform canvasRect = canvasObject.GetComponent<RectTransform>();
+            canvasRect.sizeDelta = new Vector2(width, height);
+            Canvas canvas = canvasObject.GetComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceCamera;
+            canvas.worldCamera = camera;
+            canvas.planeDistance = 10f;
+            CanvasScaler scaler = canvasObject.GetComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = ReferenceResolution;
+            scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.Expand;
+
+            GameObject instance = UnityEngine.Object.Instantiate(prefab, canvasRect);
+            instance.name = prefab.name;
+            if (instance.transform is RectTransform instanceRect)
+                Stretch(instanceRect);
+
+            Canvas.ForceUpdateCanvases();
+            instance.GetComponentInChildren<MainMenuV3SectionLayoutView>(true)?.RefreshLayout();
+            Canvas.ForceUpdateCanvases();
+            RenderTexture renderTexture = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
+            Texture2D image = new Texture2D(width, height, TextureFormat.RGBA32, false);
             try
             {
-                ClearChildren(root.transform);
-                RectTransform rootRect = RequireRect(root);
-                Stretch(rootRect);
-
-                BuildBackground(root.transform);
-                BuildBrand(root.transform);
-                BuildStatus(root.transform);
-                UIShellLoadingProgressView progressView = BuildLoadingPanel(root.transform);
-                if (progressView == null)
-                    throw new InvalidOperationException("SCN-01 V3 loading progress view was not created.");
-
-                PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
+                camera.targetTexture = renderTexture;
+                RenderTexture.active = renderTexture;
+                camera.Render();
+                image.ReadPixels(new Rect(0f, 0f, width, height), 0, 0);
+                image.Apply();
+                File.WriteAllBytes(outputPath, image.EncodeToPNG());
+                Debug.Log($"[SplashLoadingV3PrefabBuilder] captured={outputPath} size={width}x{height} scene={scene.name}");
             }
             finally
             {
-                PrefabUtility.UnloadPrefabContents(root);
-            }
-
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-            Debug.Log($"[SplashLoadingV3PrefabBuilder] result=Passed prefab={PrefabPath}");
-        }
-
-        private static void BuildBackground(Transform root)
-        {
-            GameObject background = CreateRect("V3_Background", root);
-            Stretch(background.GetComponent<RectTransform>());
-            Image image = background.AddComponent<Image>();
-            image.sprite = RequireSprite(BackgroundPath);
-            image.color = Color.white;
-            image.preserveAspect = true;
-            image.raycastTarget = false;
-            AspectRatioFitter fitter = background.AddComponent<AspectRatioFitter>();
-            fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
-            fitter.aspectRatio = image.sprite.rect.width / image.sprite.rect.height;
-
-            Image grade = CreateSolid("V3_ReadabilityGrade", root, new Color(0.005f, 0.012f, 0.014f, 0.12f));
-            Stretch(grade.rectTransform);
-        }
-
-        private static void BuildBrand(Transform root)
-        {
-            RectTransform brand = CreateBorderedPanel("V3_Brand", root, new Vector2(54f, -54f), new Vector2(1720f, 410f), PanelOpaque);
-            CreateSolid("GoldRail", brand, Gold, new Vector2(48f, -64f), new Vector2(28f, 220f));
-            CreateText("Warline", brand, "WARLINE", 218f, White, TextAlignmentOptions.MidlineLeft,
-                new Vector2(112f, -26f), new Vector2(1300f, 245f), boldFont, 2.5f);
-            CreateSolid("WordDivider", brand, Gold, new Vector2(112f, -286f), new Vector2(260f, 12f));
-            CreateSolid("WordDividerRight", brand, Gold, new Vector2(1060f, -286f), new Vector2(190f, 12f));
-            CreateText("Capture", brand, "CAPTURE", 92f, Gold, TextAlignmentOptions.Center,
-                new Vector2(392f, -250f), new Vector2(640f, 100f), boldFont, 4f);
-            CreateIcon("Rank", brand, RankIconPath, new Vector2(1392f, -66f), new Vector2(245f, 245f), Gold);
-
-            RectTransform command = CreateBorderedPanel("V3_CommandSystem", root, new Vector2(54f, -492f), new Vector2(1180f, 172f), PanelOpaque);
-            for (int i = 0; i < 4; i++)
-            {
-                float height = 44f + i * 20f;
-                CreateSolid($"Signal{i + 1}", command, Gold, new Vector2(54f + i * 36f, -(118f - height)), new Vector2(24f, height));
-            }
-            CreateSolid("Divider", command, Border, new Vector2(218f, -34f), new Vector2(4f, 104f));
-            CreateText("Label", command, "COMMAND SYSTEM", 66f, White, TextAlignmentOptions.MidlineLeft,
-                new Vector2(264f, -20f), new Vector2(860f, 126f), boldFont, 1f);
-        }
-
-        private static void BuildStatus(Transform root)
-        {
-            RectTransform rail = CreateRect("V3_StatusRail", root).GetComponent<RectTransform>();
-            rail.anchorMin = new Vector2(1f, 1f);
-            rail.anchorMax = new Vector2(1f, 1f);
-            rail.pivot = new Vector2(1f, 1f);
-            rail.anchoredPosition = new Vector2(-56f, -52f);
-            rail.sizeDelta = new Vector2(1960f, 174f);
-
-            RectTransform android = CreateBorderedPanel("AndroidBuild", rail, new Vector2(0f, 0f), new Vector2(800f, 174f), PanelOpaque);
-            CreateText("Icon", android, "A", 72f, Green, TextAlignmentOptions.Center,
-                new Vector2(46f, -22f), new Vector2(116f, 118f), boldFont);
-            CreateText("Label", android, "ANDROID BUILD", 60f, White, TextAlignmentOptions.MidlineLeft,
-                new Vector2(190f, -18f), new Vector2(580f, 126f), boldFont, 0f);
-
-            RectTransform secure = CreateBorderedPanel("SecureLink", rail, new Vector2(832f, 0f), new Vector2(770f, 174f), PanelOpaque);
-            CreateText("Icon", secure, "LOCK", 34f, Green, TextAlignmentOptions.Center,
-                new Vector2(42f, -42f), new Vector2(146f, 78f), boldFont, 1f);
-            CreateText("Label", secure, "SECURE LINK", 67f, White, TextAlignmentOptions.MidlineLeft,
-                new Vector2(206f, -18f), new Vector2(510f, 126f), boldFont, 1f);
-
-            RectTransform signal = CreateBorderedPanel("Signal", rail, new Vector2(1634f, 0f), new Vector2(326f, 174f), PanelOpaque);
-            for (int i = 0; i < 5; i++)
-            {
-                float height = 34f + i * 19f;
-                CreateSolid($"Bar{i + 1}", signal, Green, new Vector2(56f + i * 45f, -(132f - height)), new Vector2(29f, height));
+                camera.targetTexture = null;
+                RenderTexture.active = null;
+                UnityEngine.Object.DestroyImmediate(image);
+                UnityEngine.Object.DestroyImmediate(renderTexture);
+                EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             }
         }
 
-        private static UIShellLoadingProgressView BuildLoadingPanel(Transform root)
+        private static RectTransform CreateRect(string name, Transform parent, Vector2 anchorMin, Vector2 anchorMax, Vector2 sizeDelta, Vector2 position)
         {
-            RectTransform panel = CreateBorderedPanel("V3_LoadingPanel", root, Vector2.zero, Vector2.zero, PanelOpaque);
-            panel.anchorMin = new Vector2(0f, 0f);
-            panel.anchorMax = new Vector2(1f, 0f);
-            panel.pivot = new Vector2(0.5f, 0f);
-            panel.anchoredPosition = Vector2.zero;
-            panel.sizeDelta = new Vector2(0f, 560f);
-            RectTransform panelFill = panel.Find("Fill")?.GetComponent<RectTransform>();
-            if (panelFill == null)
-                throw new InvalidOperationException("SCN-01 V3 loading panel is missing its fill.");
-            panelFill.anchorMin = Vector2.zero;
-            panelFill.anchorMax = Vector2.one;
-            panelFill.offsetMin = new Vector2(6f, 6f);
-            panelFill.offsetMax = new Vector2(-6f, -6f);
-
-            CreateText("Title", panel, "LOADING OPERATION MAP", 116f, White, TextAlignmentOptions.MidlineLeft,
-                new Vector2(92f, -40f), new Vector2(3300f, 150f), boldFont, 1f);
-            TMP_Text percent = CreateText("Percent", panel, "68%", 146f, Cyan, TextAlignmentOptions.MidlineRight,
-                new Vector2(3800f, -28f), new Vector2(910f, 170f), boldFont, 1f);
-
-            RectTransform track = CreateBorderedPanel("ProgressTrack", panel, new Vector2(96f, -208f), new Vector2(4608f, 84f), new Color(0.012f, 0.025f, 0.028f, 1f));
-            Image fill = CreateSolid("ProgressFill", track, Cyan, new Vector2(8f, -8f), new Vector2(0f, 68f));
-            fill.rectTransform.anchorMin = new Vector2(0f, 1f);
-            fill.rectTransform.anchorMax = new Vector2(0f, 1f);
-            fill.rectTransform.pivot = new Vector2(0f, 1f);
-            for (int i = 1; i < 6; i++)
-                CreateSolid($"SegmentDivider{i}", track, new Color(0.02f, 0.12f, 0.14f, 1f), new Vector2(i * 765f, -8f), new Vector2(6f, 68f));
-
-            BuildSpinner(panel, new Vector2(142f, -396f));
-            TMP_Text status = CreateText("Status", panel, "LOADING REQUIRED DATA", 56f, White, TextAlignmentOptions.MidlineLeft,
-                new Vector2(222f, -334f), new Vector2(1900f, 120f), boldFont, 1.5f);
-            CreateText("TipPrefix", panel, "Tip:", 54f, Cyan, TextAlignmentOptions.MidlineRight,
-                new Vector2(2980f, -334f), new Vector2(220f, 120f), mediumFont);
-            CreateText("Tip", panel, "Scout streets before committing armor.", 54f, White, TextAlignmentOptions.MidlineLeft,
-                new Vector2(3226f, -334f), new Vector2(1460f, 120f), mediumFont);
-
-            UIShellLoadingProgressView view = panel.gameObject.AddComponent<UIShellLoadingProgressView>();
-            view.Configure(fill.rectTransform, percent, status, 4592f);
-            return view;
+            return V3UiPrefabFactory.CreateRect(name, parent, anchorMin, anchorMax, sizeDelta, position);
         }
 
-        private static void BuildSpinner(Transform parent, Vector2 center)
+        private static RectTransform CreateTopLeftRect(string name, Transform parent, float x, float y, float width, float height)
         {
-            RectTransform root = CreateRect("Spinner", parent).GetComponent<RectTransform>();
-            root.anchoredPosition = new Vector2(center.x - 48f, center.y + 48f);
-            root.sizeDelta = new Vector2(96f, 96f);
-            root.pivot = new Vector2(0.5f, 0.5f);
-            for (int i = 0; i < 8; i++)
-            {
-                float angle = i * 45f;
-                float radians = angle * Mathf.Deg2Rad;
-                Vector2 offset = new(Mathf.Sin(radians) * 35f, Mathf.Cos(radians) * 35f);
-                Image segment = CreateSolid($"Segment{i + 1}", root, new Color(Cyan.r, Cyan.g, Cyan.b, 0.28f + i * 0.09f));
-                RectTransform rect = segment.rectTransform;
-                rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 0.5f);
-                rect.anchoredPosition = offset;
-                rect.sizeDelta = new Vector2(13f, 28f);
-                rect.localEulerAngles = new Vector3(0f, 0f, -angle);
-            }
-        }
-
-        private static RectTransform CreateBorderedPanel(string name, Transform parent, Vector2 position, Vector2 size, Color fill)
-        {
-            GameObject outer = CreateRect(name, parent);
-            RectTransform rect = outer.GetComponent<RectTransform>();
-            rect.anchoredPosition = position;
-            rect.sizeDelta = size;
-            Image border = outer.AddComponent<Image>();
-            border.color = Border;
-            border.raycastTarget = false;
-            Image inner = CreateSolid("Fill", rect, fill, new Vector2(6f, -6f), new Vector2(Mathf.Max(0f, size.x - 12f), Mathf.Max(0f, size.y - 12f)));
-            inner.transform.SetAsFirstSibling();
+            RectTransform rect = CreateRect(name, parent, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(width, height), new Vector2(x, -y));
+            rect.pivot = new Vector2(0f, 1f);
             return rect;
         }
 
-        private static Image CreateSolid(string name, Transform parent, Color color)
+        private static Image CreateImage(string name, Transform parent, Sprite sprite, Color color)
         {
-            GameObject root = CreateRect(name, parent);
-            Image image = root.AddComponent<Image>();
-            image.color = color;
-            image.raycastTarget = false;
+            return V3UiPrefabFactory.CreateImage(name, parent, sprite, color, false, false);
+        }
+
+        private static Image CreateSolid(string name, Transform parent, Color color, Vector2 size, Vector2 position)
+        {
+            Image image = CreateImage(name, parent, null, color);
+            SetRect(image.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), size, position);
             return image;
         }
 
-        private static Image CreateSolid(string name, Transform parent, Color color, Vector2 position, Vector2 size)
+        private static Image CreateSolidTopLeft(string name, Transform parent, float x, float y, float width, float height, Color color)
         {
-            Image image = CreateSolid(name, parent, color);
-            RectTransform rect = image.rectTransform;
-            rect.anchoredPosition = position;
-            rect.sizeDelta = size;
+            Image image = CreateImage(name, parent, null, color);
+            SetTopLeft(image.rectTransform, x, y, width, height);
             return image;
         }
 
-        private static Image CreateIcon(string name, Transform parent, string path, Vector2 position, Vector2 size, Color tint)
+        private static V3GradientGraphic CreateGradient(string name, Transform parent, Color top, Color bottom, Color border, float width)
         {
-            GameObject root = CreateRect(name, parent);
-            RectTransform rect = root.GetComponent<RectTransform>();
-            rect.anchoredPosition = position;
-            rect.sizeDelta = size;
-            Image image = root.AddComponent<Image>();
-            image.sprite = RequireSprite(path);
-            image.color = tint;
-            image.preserveAspect = true;
-            image.raycastTarget = false;
-            return image;
+            RectTransform rect = CreateRect(name, parent, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(100f, 100f), Vector2.zero);
+            V3GradientGraphic graphic = rect.gameObject.AddComponent<V3GradientGraphic>();
+            graphic.Configure(top, bottom, border, width);
+            return graphic;
         }
 
-        private static TMP_Text CreateText(
-            string name,
-            Transform parent,
-            string value,
-            float fontSize,
-            Color color,
-            TextAlignmentOptions alignment,
-            Vector2 position,
-            Vector2 size,
-            TMP_FontAsset font,
-            float characterSpacing = 0f)
+        private static TMP_Text CreateText(string name, Transform parent, string value, float size, TMP_FontAsset font, TextAlignmentOptions alignment, Color color)
         {
-            GameObject root = CreateRect(name, parent);
-            RectTransform rect = root.GetComponent<RectTransform>();
-            rect.anchoredPosition = position;
-            rect.sizeDelta = size;
-            TextMeshProUGUI text = root.AddComponent<TextMeshProUGUI>();
-            text.font = font;
+            RectTransform rect = CreateRect(name, parent, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(200f, 60f), Vector2.zero);
+            TextMeshProUGUI text = rect.gameObject.AddComponent<TextMeshProUGUI>();
             text.text = value;
-            text.fontSize = fontSize;
-            text.fontStyle = FontStyles.Bold;
-            text.color = color;
+            text.font = font;
+            text.fontSize = size;
             text.alignment = alignment;
-            text.textWrappingMode = TextWrappingModes.NoWrap;
-            text.overflowMode = TextOverflowModes.Ellipsis;
-            text.characterSpacing = characterSpacing;
+            text.color = color;
             text.raycastTarget = false;
+            text.enableWordWrapping = false;
+            text.overflowMode = TextOverflowModes.Overflow;
             return text;
         }
 
-        private static GameObject CreateRect(string name, Transform parent)
+        private static void SetTopLeft(RectTransform rect, float x, float y, float width, float height)
         {
-            GameObject root = new(name, typeof(RectTransform));
-            if (parent != null)
-                root.transform.SetParent(parent, false);
-            RectTransform rect = root.GetComponent<RectTransform>();
             rect.anchorMin = new Vector2(0f, 1f);
             rect.anchorMax = new Vector2(0f, 1f);
             rect.pivot = new Vector2(0f, 1f);
-            rect.anchoredPosition = Vector2.zero;
-            rect.sizeDelta = Vector2.zero;
-            return root;
+            rect.sizeDelta = new Vector2(width, height);
+            rect.anchoredPosition = new Vector2(x, -y);
+        }
+
+        private static void SetRect(RectTransform rect, Vector2 anchorMin, Vector2 anchorMax, Vector2 sizeDelta, Vector2 position)
+        {
+            rect.anchorMin = anchorMin;
+            rect.anchorMax = anchorMax;
+            rect.sizeDelta = sizeDelta;
+            rect.anchoredPosition = position;
         }
 
         private static void Stretch(RectTransform rect)
         {
-            rect.anchorMin = Vector2.zero;
-            rect.anchorMax = Vector2.one;
-            rect.pivot = new Vector2(0.5f, 0.5f);
-            rect.offsetMin = Vector2.zero;
-            rect.offsetMax = Vector2.zero;
+            SetRect(rect, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
         }
 
-        private static RectTransform RequireRect(GameObject root)
+        private static Transform FindDeepChild(Transform parent, string name)
         {
-            RectTransform rect = root.GetComponent<RectTransform>();
-            if (rect == null)
-                throw new InvalidOperationException($"Expected RectTransform on {root.name}.");
-            return rect;
+            if (parent == null)
+                return null;
+            if (parent.name == name)
+                return parent;
+            for (int i = 0; i < parent.childCount; i++)
+            {
+                Transform child = FindDeepChild(parent.GetChild(i), name);
+                if (child != null)
+                    return child;
+            }
+            return null;
         }
 
-        private static void ClearChildren(Transform root)
+        private static void SetObject(UnityEngine.Object target, string fieldName, UnityEngine.Object value)
         {
-            while (root.childCount > 0)
-                UnityEngine.Object.DestroyImmediate(root.GetChild(0).gameObject);
+            SerializedObject serialized = new SerializedObject(target);
+            serialized.FindProperty(fieldName).objectReferenceValue = value;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(target);
         }
 
-        private static void LoadStyleAssets()
+        private static void SetFloat(UnityEngine.Object target, string fieldName, float value)
         {
-            boldFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(BoldFontPath);
-            mediumFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(MediumFontPath);
-            if (boldFont == null || mediumFont == null)
-                throw new InvalidOperationException("SCN-01 V3 requires the Oxanium Bold and Medium TMP font assets.");
-        }
-
-        private static void EnsureSpriteImport(string path)
-        {
-            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceSynchronousImport);
-            TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
-            if (importer == null)
-                throw new InvalidOperationException($"Missing texture importer: {path}");
-            bool dirty = importer.textureType != TextureImporterType.Sprite ||
-                         importer.spriteImportMode != SpriteImportMode.Single ||
-                         importer.mipmapEnabled ||
-                         importer.maxTextureSize != 2048;
-            if (!dirty)
-                return;
-            importer.textureType = TextureImporterType.Sprite;
-            importer.spriteImportMode = SpriteImportMode.Single;
-            importer.mipmapEnabled = false;
-            importer.alphaIsTransparency = false;
-            importer.maxTextureSize = 2048;
-            importer.textureCompression = TextureImporterCompression.CompressedHQ;
-            importer.SaveAndReimport();
-        }
-
-        private static Sprite RequireSprite(string path)
-        {
-            Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(path);
-            if (sprite == null)
-                throw new InvalidOperationException($"Missing UI sprite: {path}");
-            return sprite;
+            SerializedObject serialized = new SerializedObject(target);
+            serialized.FindProperty(fieldName).floatValue = value;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(target);
         }
     }
 }
-#endif

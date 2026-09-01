@@ -21,6 +21,7 @@ namespace Game.UI.Runtime
         [SerializeField] private Button doItButton;
         [SerializeField] private TMP_Text showMeButtonLabel;
         [SerializeField] private TMP_Text doItButtonLabel;
+        [SerializeField] private RectTransform firstStepGuideRoot;
         [SerializeField] private TMP_FontAsset persianFont;
 
         private Action _closeRequested;
@@ -47,6 +48,7 @@ namespace Game.UI.Runtime
         public Button CloseButton => closeButton;
         public Button ShowMeButton => showMeButton;
         public Button DoItButton => doItButton;
+        public RectTransform FirstStepGuideRoot => firstStepGuideRoot;
         public string CurrentInstructionBody => _currentInstructionBody;
         public UiTutorialNarrationPhase CurrentNarrationPhase => _currentNarrationPhase;
 
@@ -55,7 +57,8 @@ namespace Game.UI.Runtime
             return briefingLayout != null && portraitImage != null && titleText != null &&
                    bodyText != null && progressText != null && closeButton != null &&
                    showMeButton != null && doItButton != null &&
-                   showMeButtonLabel != null && doItButtonLabel != null;
+                   showMeButtonLabel != null && doItButtonLabel != null &&
+                   firstStepGuideRoot != null;
         }
 
         public void BindActions(
@@ -102,7 +105,8 @@ namespace Game.UI.Runtime
             doItButton.interactable = model.CanExecute;
             SetLocalizedText(showMeButtonLabel, _rightToLeft ? "نشانم بده" : "SHOW ME");
             SetLocalizedText(doItButtonLabel, _rightToLeft ? "انجامش بده" : "DO IT");
-            closeButton.gameObject.SetActive(false);
+            closeButton.gameObject.SetActive(true);
+            firstStepGuideRoot.gameObject.SetActive(_tutorialStep == 1);
         }
 
         public void ApplyInteractionState(
@@ -180,9 +184,9 @@ namespace Game.UI.Runtime
         public void ApplyAccessibility(bool largeTextEnabled, bool highContrastEnabled)
         {
             float scale = largeTextEnabled ? 1.08f : 1f;
-            titleText.fontSize = 58f * scale;
-            bodyText.fontSize = 38f * scale;
-            progressText.fontSize = 30f * scale;
+            titleText.fontSize = 29f * scale;
+            bodyText.fontSize = 21f * scale;
+            progressText.fontSize = 17f * scale;
             Color primary = highContrastEnabled ? Color.white : new Color(0.95f, 0.92f, 0.82f, 1f);
             titleText.color = primary;
             bodyText.color = primary;
@@ -232,7 +236,7 @@ namespace Game.UI.Runtime
             int count = Mathf.Max(step, _tutorialStepCount);
             SetLocalizedText(
                 progressText,
-                _rightToLeft ? $"آموزش {step} / {count}" : $"TRAINING {step} / {count}");
+                _rightToLeft ? $"آموزش {step} / {count}" : $"TUTORIAL {step} / {count}");
         }
 
         private void ApplyLanguagePresentation()

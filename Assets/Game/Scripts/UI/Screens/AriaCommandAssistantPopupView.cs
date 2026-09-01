@@ -33,12 +33,15 @@ namespace Game.UI.Runtime
         }
 
         private RectTransform _landscapeLayout;
+        private RectTransform _commandAssistantPanel;
+        private RectTransform _assistantTakeoverSurface;
         private AriaTutorialBriefingView _tutorialBriefing;
         private Button _headerCloseButton;
         private Button _closeButton;
         private Button _showMeButton;
         private Button _doItButton;
         private Button _stopButton;
+        private Button _resumeCommandButton;
         private TMP_Text _showMeButtonLabel;
         private TMP_Text _doItButtonLabel;
         private TMP_Text _stopButtonLabel;
@@ -53,6 +56,8 @@ namespace Game.UI.Runtime
         private TMP_Text _recommendationPriorityText;
         private TMP_Text _recommendationTargetSummary;
         private GameObject _recommendationSignalLine;
+        private TMP_Text _takeoverIntentTitle;
+        private TMP_Text _takeoverIntentDetail;
         private GameObject _targetLockPanel;
         private TMP_Text _targetNameText;
         private TMP_Text _sourceNameText;
@@ -70,6 +75,8 @@ namespace Game.UI.Runtime
         private TMP_Text _narrationSubtitle;
         private TMP_Text _narrationFailureReason;
         private GameObject _narrationWaveform;
+        private Toggle _voiceEnabledToggle;
+        private RectTransform _voiceEnabledKnob;
         private TMP_Text[] _accessibilityTexts;
         private float[] _normalFontSizes;
         private float[] _normalFontSizeMin;
@@ -81,8 +88,11 @@ namespace Game.UI.Runtime
         private Action _showRecommendationRequested;
         private Action _executeRecommendationRequested;
         private Action _stopRequested;
+        private bool _takeoverVisible;
 
         public RectTransform LandscapeLayout => _landscapeLayout;
+        public RectTransform CommandAssistantPanel => _commandAssistantPanel;
+        public RectTransform AssistantTakeoverSurface => _assistantTakeoverSurface;
         public Image PreviewHighlight => _previewHighlight;
         public bool IsOpen => _hierarchyBound && gameObject.activeInHierarchy;
         public string CurrentTutorialInstructionBody =>
@@ -100,6 +110,8 @@ namespace Game.UI.Runtime
         private void OnDestroy()
         {
             UnbindActions();
+            if (_voiceEnabledToggle != null)
+                _voiceEnabledToggle.onValueChanged.RemoveListener(OnVoiceEnabledChanged);
         }
 
         public bool TryBindHierarchy()
@@ -108,12 +120,15 @@ namespace Game.UI.Runtime
                 return true;
 
             _landscapeLayout = FindComponent<RectTransform>("LandscapeLayout");
+            _commandAssistantPanel = FindComponent<RectTransform>("CommandAssistantPanel");
+            _assistantTakeoverSurface = FindComponent<RectTransform>("AssistantTakeoverSurface");
             _tutorialBriefing = GetComponentInChildren<AriaTutorialBriefingView>(true);
             _headerCloseButton = FindComponent<Button>("HeaderCloseButton");
             _closeButton = FindComponent<Button>("CloseButton");
             _showMeButton = FindComponent<Button>("ShowMeButton");
             _doItButton = FindComponent<Button>("DoItButton");
             _stopButton = FindComponent<Button>("StopButton");
+            _resumeCommandButton = FindComponent<Button>("ResumeCommandButton");
             _showMeButtonLabel = FindComponent<TMP_Text>("ShowMeButtonLabel");
             _doItButtonLabel = FindComponent<TMP_Text>("DoItButtonLabel");
             _stopButtonLabel = FindComponent<TMP_Text>("StopButtonLabel");
@@ -144,6 +159,8 @@ namespace Game.UI.Runtime
             _recommendationPriorityText = FindComponent<TMP_Text>("RecommendationPriorityText");
             _recommendationTargetSummary = FindComponent<TMP_Text>("RecommendationTargetSummary");
             _recommendationSignalLine = FindObject("RecommendationSignalLine");
+            _takeoverIntentTitle = FindComponent<TMP_Text>("TakeoverIntentTitle");
+            _takeoverIntentDetail = FindComponent<TMP_Text>("TakeoverIntentDetail");
             _targetLockPanel = FindObject("TargetLockPanel");
             _targetNameText = FindComponent<TMP_Text>("TargetNameText");
             _sourceNameText = FindComponent<TMP_Text>("SourceNameText");
@@ -161,9 +178,13 @@ namespace Game.UI.Runtime
             _narrationSubtitle = FindComponent<TMP_Text>("NarrationSubtitle");
             _narrationFailureReason = FindComponent<TMP_Text>("NarrationFailureReason");
             _narrationWaveform = FindObject("NarrationWaveform");
+            _voiceEnabledToggle = FindComponent<Toggle>("VoiceEnabledToggle");
+            _voiceEnabledKnob = FindComponent<RectTransform>("EnabledKnob");
             CacheAccessibilityDefaults();
 
             _hierarchyBound = _landscapeLayout != null &&
+                              _commandAssistantPanel != null &&
+                              _assistantTakeoverSurface != null &&
                               _tutorialBriefing != null &&
                               _tutorialBriefing.TryBindHierarchy() &&
                               _headerCloseButton != null &&
@@ -171,14 +192,21 @@ namespace Game.UI.Runtime
                               _showMeButton != null &&
                               _doItButton != null &&
                               _stopButton != null &&
+                              _resumeCommandButton != null &&
                               RowsBound(_goalRows) &&
                               RowsBound(_alertRows) &&
                               RowsBound(_reportRows) &&
                               _recommendationTitle != null &&
                               _recommendationReason != null &&
+                              _takeoverIntentTitle != null &&
+                              _takeoverIntentDetail != null &&
                               _targetLockPanel != null &&
                               _narrationStateText != null &&
-                              _narrationSubtitle != null;
+                              _narrationSubtitle != null &&
+                              _voiceEnabledToggle != null &&
+                              _voiceEnabledKnob != null;
+            if (_hierarchyBound)
+                BindVoiceEnabledToggle();
             return _hierarchyBound;
         }
 
@@ -199,6 +227,7 @@ namespace Game.UI.Runtime
             _showMeButton.onClick.AddListener(RequestShowRecommendation);
             _doItButton.onClick.AddListener(RequestExecuteRecommendation);
             _stopButton.onClick.AddListener(RequestStop);
+            _resumeCommandButton.onClick.AddListener(RequestStop);
             _tutorialBriefing.BindActions(
                 RequestClose,
                 RequestShowRecommendation,
@@ -217,6 +246,8 @@ namespace Game.UI.Runtime
                 _doItButton.onClick.RemoveListener(RequestExecuteRecommendation);
             if (_stopButton != null)
                 _stopButton.onClick.RemoveListener(RequestStop);
+            if (_resumeCommandButton != null)
+                _resumeCommandButton.onClick.RemoveListener(RequestStop);
             if (_tutorialBriefing != null)
                 _tutorialBriefing.UnbindActions();
 
@@ -246,19 +277,30 @@ namespace Game.UI.Runtime
 
             if (_tutorialBriefing != null && _tutorialBriefing.gameObject.activeSelf)
                 return _tutorialBriefing.ContainsScreenPoint(screenPosition);
-            if (_landscapeLayout == null)
+            RectTransform interactionRoot = _takeoverVisible && _assistantTakeoverSurface != null
+                ? _assistantTakeoverSurface
+                : _commandAssistantPanel != null
+                    ? _commandAssistantPanel
+                    : _landscapeLayout;
+            if (interactionRoot == null)
                 return false;
 
-            Canvas canvas = _landscapeLayout.GetComponentInParent<Canvas>();
+            Canvas canvas = interactionRoot.GetComponentInParent<Canvas>();
             Camera eventCamera = canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay
                 ? null
                 : canvas.worldCamera;
-            return RectTransformUtility.RectangleContainsScreenPoint(_landscapeLayout, screenPosition, eventCamera);
+            return RectTransformUtility.RectangleContainsScreenPoint(interactionRoot, screenPosition, eventCamera);
         }
 
         public void ApplyControlState(string stateText)
         {
-            SetText(_controlStateText, stateText);
+            _takeoverVisible = string.Equals(
+                stateText,
+                "ARIA CONTROL",
+                StringComparison.OrdinalIgnoreCase);
+            SetActive(_commandAssistantPanel != null ? _commandAssistantPanel.gameObject : null, !_takeoverVisible);
+            SetActive(_assistantTakeoverSurface != null ? _assistantTakeoverSurface.gameObject : null, _takeoverVisible);
+            SetText(_controlStateText, _takeoverVisible ? "ARIA CONTROLLING" : stateText);
         }
 
         public void ApplyAccessibility(bool largeTextEnabled, bool highContrastEnabled)
@@ -321,7 +363,11 @@ namespace Game.UI.Runtime
 
             SetText(row.Title, model.Title);
             SetText(row.Body, model.Body);
-            SetText(row.State, GoalStateText(model.State, model.IsPrimary));
+            SetText(
+                row.State,
+                _takeoverVisible
+                    ? TakeoverGoalStateText(model.State, model.IsPrimary)
+                    : GoalStateText(model.State, model.IsPrimary));
             SetActive(row.Icon, true);
             SetActive(row.StateChip, true);
             SetActive(row.PriorityRail, model.Priority > 0 || model.IsPrimary);
@@ -381,6 +427,8 @@ namespace Game.UI.Runtime
 
             SetText(_recommendationTitle, visible ? model.RecommendationTitle : string.Empty);
             SetText(_recommendationReason, visible ? model.RecommendationBody : string.Empty);
+            SetText(_takeoverIntentTitle, visible ? model.RecommendationTitle : string.Empty);
+            SetText(_takeoverIntentDetail, visible ? model.RecommendationBody : string.Empty);
             SetText(_recommendationPriorityText, visible ? model.RecommendationPriorityText : string.Empty);
             SetText(
                 _recommendationTargetSummary,
@@ -395,7 +443,7 @@ namespace Game.UI.Runtime
                 _stopButton.interactable = model.CanStop;
             SetText(_showMeButtonLabel, "SHOW ME");
             SetText(_doItButtonLabel, "DO IT");
-            SetText(_stopButtonLabel, "STOP");
+            SetText(_stopButtonLabel, _takeoverVisible ? "STOP ARIA" : "STOP");
         }
 
         public void ApplyTutorialInteractionState(
@@ -445,7 +493,39 @@ namespace Game.UI.Runtime
             SetText(
                 _narrationFailureReason,
                 hasStructuredNarration ? narration.FailureReasonText : string.Empty);
-            SetActive(_narrationWaveform, hasStructuredNarration && narration.WaveformPulse);
+            SetActive(
+                _narrationWaveform,
+                hasStructuredNarration && narration.WaveformPulse &&
+                (_voiceEnabledToggle == null || _voiceEnabledToggle.isOn));
+        }
+
+        private void BindVoiceEnabledToggle()
+        {
+            _voiceEnabledToggle.onValueChanged.RemoveListener(OnVoiceEnabledChanged);
+            bool voiceEnabled = SettingsService.Load().Audio.VoiceEnabled;
+            _voiceEnabledToggle.SetIsOnWithoutNotify(voiceEnabled);
+            RefreshVoiceEnabledToggle(voiceEnabled);
+            _voiceEnabledToggle.onValueChanged.AddListener(OnVoiceEnabledChanged);
+        }
+
+        private void OnVoiceEnabledChanged(bool enabled)
+        {
+            UISettingsModel settings = SettingsService.Load();
+            settings.Audio.VoiceEnabled = enabled;
+            SettingsService.Save(settings);
+            SettingsService.ApplyRuntime(settings);
+            RefreshVoiceEnabledToggle(enabled);
+            SetActive(_narrationWaveform, enabled);
+        }
+
+        private void RefreshVoiceEnabledToggle(bool enabled)
+        {
+            if (_voiceEnabledKnob == null)
+                return;
+
+            Vector2 position = _voiceEnabledKnob.anchoredPosition;
+            position.x = enabled ? 38f : 5f;
+            _voiceEnabledKnob.anchoredPosition = position;
         }
 
         private void ApplyMessage(MessageRowBinding[] rows, int index, UiAssistantMessageRowModel model)

@@ -50,5 +50,25 @@ namespace Game.UI.Runtime
         {
             gameObject.SetActive(false);
         }
+
+#if UNITY_EDITOR
+        public void Configure(
+            GameObject configuredScrim,
+            GameObject configuredFrame,
+            GameObject configuredHeader,
+            TMP_Text configuredTitle,
+            Button configuredClose,
+            Transform configuredBody,
+            Transform configuredButtonRow)
+        {
+            scrim = configuredScrim;
+            frame = configuredFrame;
+            header = configuredHeader;
+            titleText = configuredTitle;
+            closeButton = configuredClose;
+            bodyRoot = configuredBody;
+            buttonRow = configuredButtonRow;
+        }
+#endif
     }
 }

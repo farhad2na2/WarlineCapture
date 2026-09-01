@@ -22,13 +22,14 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
         {
             FirstLaunchNarrativeMenuIntegrationTests tests = new();
             tests.MenuScene_HasTopLevelNarrativeLayerAndExactConfigs();
+            tests.MenuScene_FirstLaunchReferenceLayoutFillsEditorCanvas();
             tests.LanguageChoice_AwakeDoesNotOverrideCompositionVisibility();
             tests.FreshProfile_LanguageChoicePrecedesNarrativeAndPersistsPersian();
             tests.FreshProfile_SkipRequiresLiveConfirmationAndPublishesOneHandoff();
             tests.CompletedAndPendingProfiles_SelectCorrectStartupDisposition();
             tests.ReviewerMode_ProvidesNavigationWithoutMutatingCompletedProfile();
             tests.CommittedIdentity_SkipRoutesDirectlyAndPreservesSelection();
-            Debug.Log("[FirstLaunchNarrativeMenuIntegrationValidation] result=Passed tests=7");
+            Debug.Log("[FirstLaunchNarrativeMenuIntegrationValidation] result=Passed tests=8");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -107,6 +108,34 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
         Assert.NotNull(bootstrap.FirstLaunchNarrativeView.SkipConfirmationView);
         Assert.NotNull(bootstrap.FirstLaunchNarrativeView.ReviewerControlsView);
         Assert.IsTrue(scene.IsValid());
+    }
+
+    [Test]
+    public void MenuScene_FirstLaunchReferenceLayoutFillsEditorCanvas()
+    {
+        Assert.IsTrue(
+            Attribute.IsDefined(typeof(MainMenuV3SectionLayoutView), typeof(ExecuteAlways), false),
+            "V3 reference layouts must execute in Edit Mode so the Editor preview matches Play Mode.");
+
+        Scene scene = EditorSceneManager.OpenScene(FirstLaunchNarrativeMenuSceneInstaller.MenuScenePath, OpenSceneMode.Single);
+        MenuBootstrapView bootstrap = UnityEngine.Object.FindAnyObjectByType<MenuBootstrapView>(FindObjectsInactive.Include);
+        Assert.NotNull(bootstrap);
+        RectTransform canvasRect = bootstrap.UiCanvas.transform as RectTransform;
+        MainMenuV3SectionLayoutView layout = bootstrap.FirstLaunchNarrativeView.transform
+            .Find("SafeArea")?.GetComponent<MainMenuV3SectionLayoutView>();
+        Assert.NotNull(canvasRect);
+        Assert.NotNull(layout);
+
+        layout.RefreshLayout();
+        float expectedScale = Mathf.Min(
+            canvasRect.rect.width / layout.ReferenceResolution.x,
+            canvasRect.rect.height / layout.ReferenceResolution.y);
+        Assert.AreEqual(expectedScale, layout.LastAppliedScale, 0.001f);
+        Assert.AreEqual(expectedScale, layout.transform.localScale.x, 0.001f);
+        Assert.Greater(expectedScale, 1f,
+            "The 4800-wide Menu authoring canvas must not leave First Launch at raw 1672-pixel scale.");
+        Assert.IsFalse(scene.isDirty,
+            "Responsive Editor preview transforms must be driven and must not create scene overrides.");
     }
 
     [Test]

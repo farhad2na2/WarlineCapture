@@ -20,6 +20,8 @@ namespace Game.UI.Runtime
         [SerializeField] private TMP_Text accessibilityText;
         [SerializeField] private GameObject advanceIndicator;
         [SerializeField] private Button inputButton;
+        [SerializeField] private bool useAuthoredHeight;
+        [SerializeField, Min(0.1f)] private float authoredFontScale = 1f;
 
         private NarrativeDialoguePhase phase;
         private Action<NarrativeDialoguePhase> inputHandler;
@@ -90,18 +92,19 @@ namespace Game.UI.Runtime
             subtitlesVisible = style.Visible;
             if (dialogueText != null)
             {
+                float resolvedFontSize = style.FontSize * Mathf.Max(0.1f, authoredFontScale);
                 dialogueText.text = resolvedText ?? string.Empty;
-                dialogueText.fontSize = style.FontSize;
+                dialogueText.fontSize = resolvedFontSize;
                 if (dialogueText.enableAutoSizing)
                 {
-                    dialogueText.fontSizeMax = style.FontSize;
-                    dialogueText.fontSizeMin = Mathf.Min(18f, style.FontSize);
+                    dialogueText.fontSizeMax = resolvedFontSize;
+                    dialogueText.fontSizeMin = Mathf.Min(18f, resolvedFontSize);
                 }
                 dialogueText.maxVisibleCharacters = style.InstantText ? int.MaxValue : 0;
                 dialogueText.overflowMode = TextOverflowModes.Overflow;
             }
 
-            if (dialogueRect != null)
+            if (dialogueRect != null && !useAuthoredHeight)
             {
                 Vector2 size = dialogueRect.sizeDelta;
                 size.y = CalculateRequiredHeight(resolvedText, style);
@@ -193,6 +196,8 @@ namespace Game.UI.Runtime
 
             if (advanceIndicator != null)
                 advanceIndicator.SetActive(nextPhase == NarrativeDialoguePhase.AdvanceReady);
+            if (pointerImage != null)
+                pointerImage.gameObject.SetActive(nextPhase == NarrativeDialoguePhase.AdvanceReady);
         }
 
         public void SetAccessibilityText(string completeLine)

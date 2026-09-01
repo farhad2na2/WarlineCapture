@@ -16,6 +16,7 @@ namespace Game.UI.Contracts
         LoadoutSquadPrep,
         Campaign,
         MissionBriefing,
-        Operations
+        Operations,
+        DistrictDetail
     }
 }

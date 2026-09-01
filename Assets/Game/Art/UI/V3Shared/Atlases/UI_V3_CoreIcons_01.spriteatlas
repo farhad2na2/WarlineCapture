@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: UI_V3_CoreIcons_01
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 0
+      compressionQuality: 0
+      maxTextureSize: 0
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 4
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 1024
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: 4
+      m_TextureCompression: 1
+      m_CompressionQuality: 100
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_IgnorePlatformSupport: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    - serializedVersion: 4
+      m_BuildTarget: Android
+      m_MaxTextureSize: 1024
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: 4
+      m_TextureCompression: 1
+      m_CompressionQuality: 100
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 1
+      m_IgnorePlatformSupport: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 8
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 0
+      enableTightPacking: 0
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 2800000, guid: 4142ddf28093143578185fe29810ebe0, type: 3}
+    - {fileID: 2800000, guid: fbefb7120a6d84e2e9efabe2c48d407b, type: 3}
+    - {fileID: 2800000, guid: 6944f53bb26ac4c5bb2dad3959c0da3b, type: 3}
+    - {fileID: 2800000, guid: b919da17fa1e94a4f8182988840b9f5d, type: 3}
+    - {fileID: 2800000, guid: cfef07fee2d2742d2b879e506646bd40, type: 3}
+    - {fileID: 2800000, guid: bc038fc42a43c4f259711e8e7330c87d, type: 3}
+    - {fileID: 2800000, guid: eb997a2b2ee604b60935dfd2ff679509, type: 3}
+    - {fileID: 2800000, guid: df99813b2fdc44d7b9e259b1e5f18c97, type: 3}
+    - {fileID: 2800000, guid: 14c986cfa88494fd69b141dab45ee020, type: 3}
+    - {fileID: 2800000, guid: 3a761b990e09b43358bcbccfefda6a2f, type: 3}
+    - {fileID: 2800000, guid: ddc22ad3231c14259aa9357db3749927, type: 3}
+    - {fileID: 2800000, guid: f940eb35890d54e7197d18fab25c2151, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+    packedSpriteRenderDataKeys: []
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites: []
+  m_PackedSpriteNamesToIndex: []
+  m_RenderDataMap: {}
+  m_Tag: UI_V3_CoreIcons_01
+  m_IsVariant: 0
+  m_Guid: 00000000000000000000000000000000

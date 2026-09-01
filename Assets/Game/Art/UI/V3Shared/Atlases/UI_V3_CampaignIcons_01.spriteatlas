@@ -1,0 +1,88 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: UI_V3_CampaignIcons_01
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 0
+      compressionQuality: 0
+      maxTextureSize: 0
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 4
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 1024
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: 4
+      m_TextureCompression: 1
+      m_CompressionQuality: 100
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_IgnorePlatformSupport: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    - serializedVersion: 4
+      m_BuildTarget: Android
+      m_MaxTextureSize: 1024
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: 4
+      m_TextureCompression: 1
+      m_CompressionQuality: 100
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 1
+      m_IgnorePlatformSupport: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 8
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 0
+      enableTightPacking: 0
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 2800000, guid: 2a756a7cf8994394893c1766a9b10bc4, type: 3}
+    - {fileID: 2800000, guid: c301b721b9674bf795c466580caecee2, type: 3}
+    - {fileID: 2800000, guid: 0ea9bdf50ba2453aa0e9c282090dd88b, type: 3}
+    - {fileID: 2800000, guid: 05fb7dbaa0b83420db6e066822e1c626, type: 3}
+    - {fileID: 2800000, guid: d59795b29958e4d00b20f26f55bc1e31, type: 3}
+    - {fileID: 2800000, guid: ede43d494412c4eccb6c91de0a63a1d1, type: 3}
+    - {fileID: 2800000, guid: e9c25ede5be974d90b97a9c4d9606cf8, type: 3}
+    - {fileID: 2800000, guid: edbdbb389c1a145b28713199d55bf5eb, type: 3}
+    - {fileID: 2800000, guid: fd66fbd4c054475fb9e41b8b5dfdefdc, type: 3}
+    - {fileID: 2800000, guid: 427d8361f47c4ddbbe5d7f64519ccd2d, type: 3}
+    - {fileID: 2800000, guid: 0c17a03433424105ac535dd9a07e231c, type: 3}
+    - {fileID: 2800000, guid: ab5e976b12f24cb59ee6bf779c667463, type: 3}
+    - {fileID: 2800000, guid: da60a18ef20a47bf987894b3446988ef, type: 3}
+    - {fileID: 2800000, guid: e753f1f60ce8f4c4d8bd9caec802c1bc, type: 3}
+    - {fileID: 2800000, guid: bccaeb49eb1d2491196981a6652f7165, type: 3}
+    - {fileID: 2800000, guid: 0fef639653407f24ab1fd6e7d252e7b5, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+    packedSpriteRenderDataKeys: []
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites: []
+  m_PackedSpriteNamesToIndex: []
+  m_RenderDataMap: {}
+  m_Tag: UI_V3_CampaignIcons_01
+  m_IsVariant: 0
+  m_Guid: 00000000000000000000000000000000

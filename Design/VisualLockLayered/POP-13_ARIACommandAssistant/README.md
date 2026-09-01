@@ -1,16 +1,21 @@
 # POP-13 ARIA Command Assistant Visual Lock
 
-Status: target-lock reference saved, audited implementation-ready functional tracker locked, and the approved single-layout production prefab authored. Runtime migration from the older code-built popup remains. A separated production layer pack is deferred and is not required for functional acceptance.
+Status: V3 Iteration 3 is review-frozen in the production prefab. The old
+2460x1510 gold modal has been removed from the runtime path. Explicit user
+acceptance remains pending.
 
-This pack defines the V01 target reference for the in-match ARIA Command Assistant popup. The reference PNG is saved under `reference/`; runtime implementation should use real Unity UI objects and live TMP bindings, not the target PNG.
+This pack defines the in-match ARIA Command Assistant popup. The current V3
+reference is `reference/POP-13_ARIACommandAssistantV3_Final_Target.png`; runtime
+implementation uses real Unity UI objects and live TMP bindings, not the target
+PNG.
 
 Current target-lock request:
 
 `prompts/POP-13_ARIACommandAssistant_TargetLock_V01.md`
 
-Accepted saved reference:
+Current V3 target lock:
 
-`reference/POP-13_ARIACommandAssistant_TargetLock_V01.png`
+`reference/POP-13_ARIACommandAssistantV3_Final_Target.png`
 
 Functional implementation tracker:
 
@@ -31,16 +36,25 @@ Approved Unity presentation prefab:
 
 ## Acceptance Gate
 
-- The popup must be readable at match-HUD scale and must not appear as a tiny side panel.
-- The only supported layout is `LandscapeLayout`, authored at `2460 x 1510`, `(0, 156)`, on the authoritative `4800 x 2160` `Menu.unity` canvas. Do not add a compact/mobile variant.
-- The popup must sit left of the right quick rail and bring itself to front when opened.
-- The visual language must read as a Build Popup / Resource Exchange sibling: dark brushed-metal panels, gold command chrome, cyan target telemetry accents, readable tactical typography.
+- The 1672x941 reference-space layout must keep the 510x690 assistant panel on
+  the true top-right edge at both 16:9 and 20:9.
+- The popup must be readable at Match HUD scale and leave the battlefield and
+  the rest of the HUD interactive outside the visible panel.
+- Header resources, Settings, and Pause must compact without touching the
+  assistant frame; the embedded compact ARIA panel must hide while POP-13 is
+  open and restore on close.
+- The visual language uses dark/cyan directional gradients, shared V3 icons,
+  and one constant 3 px frame-border system.
 - The target-lock recommendation area must be a prominent ARIA-specific surface, not a generic text block.
-- Buttons must be large enough to read and click: SHOW ME, DO IT, STOP, CLOSE.
+- The V3 ARIA portrait must use an aspect-preserving crop and must never stretch.
+- SHOW ME and Close remain live actions. The voice switch reads and writes the
+  shared persisted voice setting and updates runtime audio projection.
 - Do not ship the flattened target PNG as runtime UI.
 
 ## Next Steps
 
-1. Replace the current runtime code-built ARIA popup with the approved `LandscapeLayout` prefab binding when the functional row contracts are ready.
-2. Follow `IMPLEMENTATION_TRACKER.md` before enabling mockup-only details, so every panel row and metric is backed by real ECS data.
-3. Complete functional/visual validation with the serialized prefab and existing approved sprites. Treat any later separated green-key layer pack as optional production-art replacement, not a blocker for the functional POP-13 pass.
+1. Obtain explicit user acceptance of the review-frozen Iteration 3 evidence.
+2. Keep `IMPLEMENTATION_TRACKER.md` authoritative for live ECS data and command
+   semantics; empty production data must hide rather than synthesize facts.
+3. Re-run the focused V3, 23-test behavior, Tutorial regression, and exact-size
+   Play Mode gates after any shared POP-13 change.

@@ -30,7 +30,12 @@ namespace Game.UI.Runtime
         [SerializeField] private Button storyArchiveButton;
         [SerializeField] private Button chapterIntelButton;
         [SerializeField] private Button launchMissionButton;
+        [SerializeField] private RectTransform chapterSelectRoot;
+        [SerializeField] private RectTransform missionSelectRoot;
+        [SerializeField] private Button showMissionSelectButton;
+        [SerializeField] private Button showChapterSelectButton;
         private IGameTextResolver _gameTextResolver = FallbackGameTextResolver.Instance;
+        private bool _stateButtonsBound;
 
         public UIShellRouteButtonView BackRouteButton => backRouteButton;
         public RectTransform ChapterRail => chapterRail;
@@ -51,6 +56,49 @@ namespace Game.UI.Runtime
         public Button StoryArchiveButton => storyArchiveButton;
         public Button ChapterIntelButton => chapterIntelButton;
         public Button LaunchMissionButton => launchMissionButton;
+        public RectTransform ChapterSelectRoot => chapterSelectRoot;
+        public RectTransform MissionSelectRoot => missionSelectRoot;
+        public Button ShowMissionSelectButton => showMissionSelectButton;
+        public Button ShowChapterSelectButton => showChapterSelectButton;
+
+        private void OnEnable()
+        {
+            if (!_stateButtonsBound)
+            {
+                showMissionSelectButton?.onClick.AddListener(ShowMissionSelect);
+                showChapterSelectButton?.onClick.AddListener(ShowChapterSelect);
+                _stateButtonsBound = true;
+            }
+
+            if (chapterSelectRoot != null && missionSelectRoot != null &&
+                !chapterSelectRoot.gameObject.activeSelf && !missionSelectRoot.gameObject.activeSelf)
+                ShowMissionSelect();
+        }
+
+        private void OnDisable()
+        {
+            if (!_stateButtonsBound)
+                return;
+            showMissionSelectButton?.onClick.RemoveListener(ShowMissionSelect);
+            showChapterSelectButton?.onClick.RemoveListener(ShowChapterSelect);
+            _stateButtonsBound = false;
+        }
+
+        public void ShowChapterSelect()
+        {
+            if (chapterSelectRoot != null)
+                chapterSelectRoot.gameObject.SetActive(true);
+            if (missionSelectRoot != null)
+                missionSelectRoot.gameObject.SetActive(false);
+        }
+
+        public void ShowMissionSelect()
+        {
+            if (chapterSelectRoot != null)
+                chapterSelectRoot.gameObject.SetActive(false);
+            if (missionSelectRoot != null)
+                missionSelectRoot.gameObject.SetActive(true);
+        }
 
         public void BindGameTextResolver(IGameTextResolver gameTextResolver)
         {
@@ -60,32 +108,38 @@ namespace Game.UI.Runtime
         public void Apply(UiCampaignOperationsModel model)
         {
             UiCampaignMissionModel mission = model.SelectedMission;
-            screenTitle.enableAutoSizing = true;
-            screenTitle.fontSizeMin = 48f;
-            screenTitle.fontSizeMax = 118f;
-            missionName.enableAutoSizing = true;
-            missionName.fontSizeMin = 36f;
-            missionName.fontSizeMax = 84f;
             bool m02 = mission.MissionId == UiCampaignMissionProjectionIds.M02;
-            screenTitle.text = _gameTextResolver.Get(
-                "campaign.operations.title",
-                model.NextMissionRevealed ? "CAMPAIGN OPERATIONS  |  NEXT READY" : "CAMPAIGN OPERATIONS");
-            Set(missionNumber, m02 ? "MISSION 02" : "MISSION 01");
-            missionName.text = FormatMissionSummary(mission);
+            bool v3StateLayout = missionSelectRoot != null;
+            screenTitle.enableAutoSizing = !v3StateLayout;
+            screenTitle.fontSize = v3StateLayout ? 43f : screenTitle.fontSize;
+            screenTitle.fontSizeMin = v3StateLayout ? 43f : 48f;
+            screenTitle.fontSizeMax = v3StateLayout ? 43f : 118f;
+            missionName.enableAutoSizing = true;
+            missionName.fontSizeMin = v3StateLayout ? 22f : 36f;
+            missionName.fontSizeMax = v3StateLayout ? 34f : 84f;
+            screenTitle.text = v3StateLayout
+                ? "CAMPAIGN"
+                : _gameTextResolver.Get(
+                    "campaign.operations.title",
+                    model.NextMissionRevealed ? "CAMPAIGN OPERATIONS  |  NEXT READY" : "CAMPAIGN OPERATIONS");
+            Set(missionNumber, v3StateLayout ? (m02 ? "M02" : "M01") : (m02 ? "MISSION 02" : "MISSION 01"));
+            missionName.text = v3StateLayout ? (m02 ? "ESTABLISH THE BASE" : "FIRST CONTACT") : FormatMissionSummary(mission);
             Set(missionBriefingText, _gameTextResolver.Get(
                 m02 ? "mission.m02.summary" : "mission.m01.summary",
                 m02
                     ? "Reopen an abandoned forward post before a second hostile cell reaches it."
                     : "Secure the Old Market corridor and protect the civilian route."));
-            Set(primaryObjectiveText, _gameTextResolver.Get(
-                m02 ? "mission.m02.objective.build_forward_barracks" : "mission.m01.objective.secure_corridor",
-                m02 ? "BUILD THE FORWARD BARRACKS" : "ELIMINATE THE HOSTILE PATROL"));
+            Set(primaryObjectiveText, v3StateLayout
+                ? (m02 ? "BUILD\nBARRACK" : "SECURE\nCORRIDOR")
+                : _gameTextResolver.Get(
+                    m02 ? "mission.m02.objective.build_forward_barracks" : "mission.m01.objective.secure_corridor",
+                    m02 ? "BUILD THE FORWARD BARRACKS" : "ELIMINATE THE HOSTILE PATROL"));
             Set(rewardSummaryText, m02
                 ? _gameTextResolver.Get("mission.m02.reward.card", "320 XP  |  1,500 CREDITS  |  BARRACKS UNLOCK")
                 : _gameTextResolver.Get("mission.m01.reward.card", "260 XP  |  1,200 CREDITS"));
             if (missionPreviewImage != null)
                 missionPreviewImage.texture = m02 ? m02MissionPreview : m01MissionPreview;
-            Set(launchMissionLabel, mission.PrimaryActionLabel);
+            Set(launchMissionLabel, v3StateLayout ? "START BRIEFING" : mission.PrimaryActionLabel);
             launchMissionButton.interactable = mission.Available;
             ApplyMissionNodes(mission.MissionId, model.NextMissionRevealed);
             for (int index = 0; index < progressNodes.Length; index++)

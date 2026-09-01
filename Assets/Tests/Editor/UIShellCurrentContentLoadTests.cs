@@ -126,6 +126,34 @@ public sealed class UIShellCurrentContentLoadTests
         }
     }
 
+    public static void RunCommandWheelFocusedValidation()
+    {
+        int passed = 0;
+        try
+        {
+            RunValidationStep(
+                nameof(MenuSceneShellInstallsCurrentMenuArmoryAndMatchHudContent),
+                test => test.MenuSceneShellInstallsCurrentMenuArmoryAndMatchHudContent(),
+                ref passed);
+            RunValidationStep(
+                nameof(InstalledMatchHudCommandWheelUsesV3StructureAndStateTransitions),
+                test => test.InstalledMatchHudCommandWheelUsesV3StructureAndStateTransitions(),
+                ref passed);
+            RunValidationStep(
+                nameof(InstalledMatchHudCommandControlsUseSelectionReadModelCapabilities),
+                test => test.InstalledMatchHudCommandControlsUseSelectionReadModelCapabilities(),
+                ref passed);
+
+            Debug.Log($"[UnitCommandWheelV3Validation] result=Passed tests={passed}");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[UnitCommandWheelV3Validation] result=Failed passed={passed}\n{exception}");
+            ValidationExit.Exit(1);
+        }
+    }
+
     public static void RunBuildPlacementParentCanvasValidation()
     {
         GameObject canvasRoot = null;
@@ -791,6 +819,10 @@ public sealed class UIShellCurrentContentLoadTests
     [Test]
     public void InstalledMatchHudCommandControlsUseSelectionReadModelCapabilities()
     {
+        _previousWorld = World.DefaultGameObjectInjectionWorld;
+        _world = new World("UIShellCurrentContentLoadTests");
+        World.DefaultGameObjectInjectionWorld = _world;
+
         Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
         UIShellContentView content = FindInScene<UIShellContentView>(scene);
         Assert.NotNull(content, "Menu scene must contain the shell content binder.");
@@ -835,6 +867,97 @@ public sealed class UIShellCurrentContentLoadTests
         if (controls.CommandWheelStopButton != null)
             Assert.IsFalse(controls.CommandWheelStopButton.interactable, "Command wheel Stop should keep sharing the Stop capability model.");
         Assert.IsTrue(controls.ScanButton.interactable, "Scan should enable when the read model allows scan.");
+    }
+
+    [Test]
+    public void InstalledMatchHudCommandWheelUsesV3StructureAndStateTransitions()
+    {
+        Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+        UIShellContentView content = FindInScene<UIShellContentView>(scene);
+        Assert.NotNull(content, "Menu scene must contain the shell content binder.");
+
+        content.PrepareForCommandSequence(new[]
+        {
+            new UiShellPresentationCommandModel(UiShellCommandKind.EnterMatchHud, default, default, default, 0)
+        });
+
+        GameObject matchFooter = AssertRegionHasChild(content.ShellView, UIShellRegionId.FooterRegion);
+        MatchOverlayCommandControlsView controls = AssertMatchHudFooterView(matchFooter).CommandControls;
+        Assert.NotNull(controls, "Installed Match HUD must serialize command controls.");
+        CommandWheelPanelView wheel = controls.CommandWheelPanel;
+        Assert.NotNull(wheel, "Installed Match HUD must serialize the V3 command wheel.");
+        Assert.NotNull(controls.CommandWheelStopButton, "The radial Stop sector must use the live Stop binding.");
+
+        V3RadialWedgeGraphic[] wedges = wheel.GetComponentsInChildren<V3RadialWedgeGraphic>(true);
+        Assert.AreEqual(6, wedges.Length, "The V3 command wheel must contain six radial sectors.");
+        for (int i = 0; i < wedges.Length; i++)
+        {
+            SerializedObject wedgeSerialized = new(wedges[i]);
+            Assert.That(
+                wedgeSerialized.FindProperty("borderWidth").floatValue,
+                Is.EqualTo(3f).Within(0.001f),
+                $"Radial sector {wedges[i].name} must keep the constant V3 3 px border.");
+            Assert.AreNotEqual(
+                wedgeSerialized.FindProperty("topColor").colorValue,
+                wedgeSerialized.FindProperty("bottomColor").colorValue,
+                $"Radial sector {wedges[i].name} must render a visible directional gradient.");
+        }
+
+        SerializedObject wheelSerialized = new(wheel);
+        GameObject targetingRoot = wheelSerialized.FindProperty("targetingRoot").objectReferenceValue as GameObject;
+        GameObject rangeBanner = wheelSerialized.FindProperty("rangeBanner").objectReferenceValue as GameObject;
+        GameObject instructionRoot = wheelSerialized.FindProperty("instructionRoot").objectReferenceValue as GameObject;
+        GameObject threatRoot = wheelSerialized.FindProperty("threatRoot").objectReferenceValue as GameObject;
+        GameObject feedbackRoot = wheelSerialized.FindProperty("feedbackRoot").objectReferenceValue as GameObject;
+        Button moveSector = wheelSerialized.FindProperty("wheelMoveButton").objectReferenceValue as Button;
+        Button attackSector = wheelSerialized.FindProperty("wheelAttackButton").objectReferenceValue as Button;
+        Button openButton = wheelSerialized.FindProperty("openButton").objectReferenceValue as Button;
+        Assert.NotNull(targetingRoot);
+        Assert.NotNull(rangeBanner);
+        Assert.NotNull(instructionRoot);
+        Assert.NotNull(threatRoot);
+        Assert.NotNull(feedbackRoot);
+        Assert.NotNull(moveSector);
+        Assert.NotNull(attackSector);
+        Assert.NotNull(openButton, "The independently mounted footer wheel must be stitched to the live selected-unit portrait button.");
+        Assert.AreSame(
+            FindInScene<MatchHudSelectionPanelView>(scene).CommandWheelOpenButton,
+            openButton,
+            "The command wheel must use the active left-section portrait, not a prefab-source clone.");
+        Assert.AreSame(controls.MoveButton, wheelSerialized.FindProperty("moveCommandButton").objectReferenceValue);
+        Assert.AreSame(controls.AttackButton, wheelSerialized.FindProperty("attackCommandButton").objectReferenceValue);
+
+        bool feedbackVisibleBeforeOpen = feedbackRoot.activeSelf;
+        wheel.Open();
+        Assert.IsTrue(wheel.IsOpen, "Opening the portrait command cue must reveal the wheel.");
+        Assert.IsFalse(targetingRoot.activeSelf);
+        Assert.IsTrue(instructionRoot.activeSelf);
+        Assert.IsTrue(threatRoot.activeSelf);
+        Assert.IsFalse(feedbackRoot.activeSelf, "The standard feedback panel must not overlap the open wheel.");
+
+        wheel.SetTargetingPreview(true);
+        Assert.IsTrue(wheel.IsOpen);
+        Assert.IsTrue(targetingRoot.activeSelf);
+        Assert.IsTrue(rangeBanner.activeSelf);
+        Assert.IsFalse(instructionRoot.activeSelf, "Targeting must replace the instruction strip instead of overlapping it.");
+        Assert.IsFalse(threatRoot.activeSelf, "Targeting rail must replace the threat panel instead of overlapping it.");
+
+        wheel.Close();
+        Assert.IsFalse(wheel.IsOpen);
+        Assert.AreEqual(
+            feedbackVisibleBeforeOpen,
+            feedbackRoot.activeSelf,
+            "Closing the wheel must restore the exact prior runtime-feedback visibility.");
+
+        Transform extract = FindChildRecursive(wheel.transform, "ExtractSector");
+        Transform ropeDrop = FindChildRecursive(wheel.transform, "RopeDropSector");
+        Transform patrol = FindChildRecursive(wheel.transform, "PatrolSector");
+        Assert.NotNull(extract);
+        Assert.NotNull(ropeDrop);
+        Assert.NotNull(patrol);
+        Assert.IsFalse(extract.GetComponent<Button>().interactable, "Unimplemented Extract must not imply a gameplay action.");
+        Assert.IsFalse(ropeDrop.GetComponent<Button>().interactable, "Unimplemented Rope Drop must not imply a gameplay action.");
+        Assert.IsFalse(patrol.GetComponent<Button>().interactable, "Unimplemented Patrol must not imply a gameplay action.");
     }
 
     [Test]

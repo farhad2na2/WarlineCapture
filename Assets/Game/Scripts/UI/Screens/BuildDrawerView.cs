@@ -38,6 +38,11 @@ namespace Game.UI.Runtime
         [SerializeField] private Button orderButton;
         [SerializeField] private TMP_Text primaryActionLabelText;
 
+        [Header("Availability")]
+        [SerializeField] private GameObject unavailablePanel;
+        [SerializeField] private TMP_Text unavailableTitleText;
+        [SerializeField] private TMP_Text unavailableDescriptionText;
+
         [Header("Instruction")]
         [SerializeField] private TMP_Text instructionText;
         [SerializeField] private Image instructionIcon;
@@ -112,6 +117,65 @@ namespace Game.UI.Runtime
                     selectedTabFrameSprite,
                     normalTabFrameSprite);
             }
+
+            bool anyAvailable = false;
+            if (enabledStates != null)
+            {
+                for (int i = 0; i < enabledStates.Length; i++)
+                    anyAvailable |= enabledStates[i];
+            }
+
+            ApplyAvailability(anyAvailable);
+        }
+
+        public void ApplyAvailability(
+            bool available,
+            string title = "BUILD UNAVAILABLE",
+            string description = "Mission does not allow construction.")
+        {
+            if (unavailablePanel != null)
+                unavailablePanel.SetActive(!available);
+            SetText(unavailableTitleText, title);
+            SetText(unavailableDescriptionText, description);
+            if (previewImage != null)
+                previewImage.color = available ? Color.white : new Color(.46f, .51f, .53f, 1f);
+            if (primaryActionLabelText != null)
+                primaryActionLabelText.color = available ? Color.white : new Color(.52f, .55f, .56f, 1f);
+
+            if (itemContentRoot != null)
+            {
+                BuildDrawerItemView[] items = itemContentRoot.GetComponentsInChildren<BuildDrawerItemView>(true);
+                for (int i = 0; i < items.Length; i++)
+                    items[i].SetInteractable(available);
+
+                for (int i = 0; i < itemContentRoot.childCount; i++)
+                {
+                    Transform card = itemContentRoot.GetChild(i);
+                    Transform overlay = card.Find("DisabledOverlay");
+                    if (overlay != null)
+                        overlay.gameObject.SetActive(!available);
+
+                    Image art = card.Find("ArtClip/Thumb")?.GetComponent<Image>();
+                    if (art != null)
+                        art.color = available ? Color.white : new Color(.42f, .47f, .49f, 1f);
+
+                    if (card.GetComponent<BuildDrawerItemView>() == null)
+                    {
+                        V3GradientGraphic cardGradient = card.GetComponent<V3GradientGraphic>();
+                        if (cardGradient != null)
+                        {
+                            cardGradient.Configure(
+                                available ? new Color32(53, 65, 70, 252) : new Color32(43, 49, 52, 255),
+                                available ? new Color32(3, 8, 10, 254) : new Color32(10, 15, 17, 255),
+                                available ? new Color32(112, 127, 131, 255) : new Color32(76, 85, 88, 255),
+                                3f);
+                        }
+                    }
+                }
+            }
+
+            if (!available)
+                ApplyPrimaryActionState(false);
         }
 
         public void BindDetail(
@@ -225,6 +289,12 @@ namespace Game.UI.Runtime
 
             image.sprite = sprite;
             image.enabled = sprite != null;
+            AspectRatioFitter fitter = image.GetComponent<AspectRatioFitter>();
+            if (fitter != null && sprite != null)
+            {
+                fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+                fitter.aspectRatio = sprite.rect.width / Mathf.Max(1f, sprite.rect.height);
+            }
         }
 
         private void ApplyPrimaryActionState(bool actionEnabled)
@@ -240,6 +310,18 @@ namespace Game.UI.Runtime
             {
                 orderButton.gameObject.SetActive(orderButton == primaryButton);
                 orderButton.interactable = orderButton == primaryButton && actionEnabled;
+            }
+
+            V3GradientGraphic gradient = primaryButton != null
+                ? primaryButton.GetComponent<V3GradientGraphic>()
+                : null;
+            if (gradient != null)
+            {
+                gradient.Configure(
+                    actionEnabled ? new Color32(61, 166, 63, 255) : new Color32(64, 70, 72, 255),
+                    actionEnabled ? new Color32(9, 73, 28, 255) : new Color32(21, 25, 27, 255),
+                    actionEnabled ? new Color32(92, 224, 79, 255) : new Color32(90, 99, 102, 255),
+                    3f);
             }
         }
     }

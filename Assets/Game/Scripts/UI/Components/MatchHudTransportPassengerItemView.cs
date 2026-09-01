@@ -95,6 +95,13 @@ namespace Game.UI.Runtime
             float fillAmount = Mathf.Clamp01(health01);
             if (!Mathf.Approximately(healthFillImage.fillAmount, fillAmount))
                 healthFillImage.fillAmount = fillAmount;
+            Color healthColor = fillAmount >= 0.9f
+                ? new Color32(84, 202, 45, 255)
+                : fillAmount >= 0.8f
+                    ? new Color32(236, 191, 13, 255)
+                    : new Color32(215, 43, 30, 255);
+            if (healthFillImage.color != healthColor)
+                healthFillImage.color = healthColor;
         }
 
         private static void BindButton(Button button, ref Button boundButton, UnityEngine.Events.UnityAction action)

@@ -31,4 +31,6 @@ Current visual direction for the WarlineCapture in-match build popup.
 ## Implementation Notes
 
 - Use this as a visual target only. Do not bake live labels, costs, timers, queue values, or feedback text into runtime sprites.
+- Reuse the unit/building illustrations already authored in the runtime catalogs. Build cards bind `portraitCardSprite`, detail binds `portraitActionSprite`, and production rows resolve their thumbnail from the same catalog; do not request or create four screen-local replacement images for the example cards in the mockup.
+- Keep catalog illustration aspect ratios intact and allow the data-driven grid to show whichever units/buildings the current mission exposes.
 - Preserve the older V03 drawer image as historical reference until V3 implementation slices are produced.

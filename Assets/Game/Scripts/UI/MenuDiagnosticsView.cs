@@ -15,6 +15,7 @@ namespace Game.UI.Runtime
         [SerializeField] private TMP_Text logText;
         [SerializeField] private ScrollRect logScrollRect;
         [SerializeField] private Button closeButton;
+        [SerializeField] private bool showFpsButton;
 
         public Button FpsButton => fpsButton;
         public TMP_Text FpsText => fpsText;
@@ -22,6 +23,7 @@ namespace Game.UI.Runtime
         public TMP_Text LogText => logText;
         public ScrollRect LogScrollRect => logScrollRect;
         public Button CloseButton => closeButton;
+        public bool ShowFpsButton => showFpsButton;
 
         public void Configure(
             Button configuredFpsButton,

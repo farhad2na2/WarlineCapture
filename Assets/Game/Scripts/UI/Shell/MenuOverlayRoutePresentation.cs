@@ -25,9 +25,45 @@ namespace Game.UI.Runtime
                 return;
             }
 
+            if (route == UIRoute.LoadoutSquadPrep)
+            {
+                InstallLoadoutSquadPrepBody(contentView);
+                return;
+            }
+
             if (route == UIRoute.Operations)
             {
                 InstallOperationsBody(contentView);
+                return;
+            }
+
+            if (route == UIRoute.DistrictDetail)
+            {
+                InstallDistrictDetailBody(contentView);
+                return;
+            }
+
+            if (route == UIRoute.CommandExchange)
+            {
+                InstallStoreBody(contentView);
+                return;
+            }
+
+            if (route == UIRoute.Inbox)
+            {
+                InstallInboxBody(contentView);
+                return;
+            }
+
+            if (route == UIRoute.Events)
+            {
+                InstallEventsBody(contentView);
+                return;
+            }
+
+            if (route == UIRoute.Ranking)
+            {
+                InstallRankingBody(contentView);
                 return;
             }
 
@@ -60,9 +96,39 @@ namespace Game.UI.Runtime
             body?.GetComponentInChildren<CampaignMissionScreenBinder>(true)?.Refresh();
         }
 
+        internal static void InstallLoadoutSquadPrepBody(this UIShellContentView contentView)
+        {
+            InstallBody(contentView, contentView.LoadoutSquadPrepContentPrefab);
+        }
+
         internal static void InstallOperationsBody(this UIShellContentView contentView)
         {
             InstallBody(contentView, contentView.OperationsContentPrefab);
+        }
+
+        internal static void InstallDistrictDetailBody(this UIShellContentView contentView)
+        {
+            InstallBody(contentView, contentView.DistrictDetailContentPrefab);
+        }
+
+        internal static void InstallStoreBody(this UIShellContentView contentView)
+        {
+            InstallBody(contentView, contentView.StoreContentPrefab);
+        }
+
+        internal static void InstallInboxBody(this UIShellContentView contentView)
+        {
+            InstallBody(contentView, contentView.InboxContentPrefab);
+        }
+
+        internal static void InstallEventsBody(this UIShellContentView contentView)
+        {
+            InstallBody(contentView, contentView.EventsContentPrefab);
+        }
+
+        internal static void InstallRankingBody(this UIShellContentView contentView)
+        {
+            InstallBody(contentView, contentView.RankingContentPrefab);
         }
 
         private static GameObject InstallBody(UIShellContentView contentView, GameObject prefab)

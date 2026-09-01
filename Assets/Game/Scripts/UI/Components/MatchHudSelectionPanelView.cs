@@ -21,6 +21,7 @@ namespace Game.UI.Runtime
         [SerializeField] private TMP_Text healthText;
         [SerializeField] private GameObject badgeRoot;
         [SerializeField] private Image badgeImage;
+        [SerializeField] private Button commandWheelOpenButton;
         [SerializeField] private Button returnAction;
         [SerializeField] private Button destroyAction;
         [SerializeField] private Button boardAction;
@@ -74,6 +75,17 @@ namespace Game.UI.Runtime
         private bool _materialFabricationProductionEnabled;
         private RectTransform _passengerChipRect;
         private Vector2 _passengerChipDefaultSize;
+        private Vector2 _passengerChipDefaultPosition;
+        private RectTransform _passengerChipLabelRect;
+        private Vector2 _passengerChipLabelDefaultAnchorMin;
+        private Vector2 _passengerChipLabelDefaultAnchorMax;
+        private Vector2 _passengerChipLabelDefaultPivot;
+        private Vector2 _passengerChipLabelDefaultPosition;
+        private Vector2 _passengerChipLabelDefaultSize;
+        private RectTransform _passengerChipIconRect;
+        private bool _passengerChipIconDefaultActive;
+        private GameObject _commandButtonsRoot;
+        private bool _commandButtonsDefaultActive;
         private bool _passengerChipDefaultAutoSizing;
         private float _passengerChipDefaultFontSizeMin;
         private float _passengerChipDefaultFontSizeMax;
@@ -82,6 +94,12 @@ namespace Game.UI.Runtime
         private Vector4 _passengerChipDefaultMargin;
         private bool _passengerChipLayoutCached;
         private readonly List<MatchHudSelectionPanelPassengerItemModel> _emptyPassengers = new();
+
+        public Button CommandWheelOpenButton => commandWheelOpenButton != null
+            ? commandWheelOpenButton
+            : selectedPortraitImage != null
+                ? selectedPortraitImage.GetComponentInParent<Button>()
+                : null;
 
         private void Awake()
         {
@@ -191,6 +209,9 @@ namespace Game.UI.Runtime
                 selectedPortraitImage.enabled = enabled;
             if (!selectedPortraitImage.preserveAspect)
                 selectedPortraitImage.preserveAspect = true;
+            AspectRatioFitter fitter = selectedPortraitImage.GetComponent<AspectRatioFitter>();
+            if (fitter != null && portraitSprite != null)
+                fitter.aspectRatio = portraitSprite.rect.width / portraitSprite.rect.height;
         }
 
         public Sprite ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind kind)
@@ -602,9 +623,24 @@ namespace Game.UI.Runtime
                 ? passengerChipRoot.transform as RectTransform
                 : null;
             if (_passengerChipRect != null)
+            {
                 _passengerChipDefaultSize = _passengerChipRect.sizeDelta;
+                _passengerChipDefaultPosition = _passengerChipRect.anchoredPosition;
+                _passengerChipIconRect = _passengerChipRect.Find("Icon") as RectTransform;
+                _passengerChipIconDefaultActive = _passengerChipIconRect != null && _passengerChipIconRect.gameObject.activeSelf;
+            }
+            _commandButtonsRoot = returnAction != null && returnAction.transform.parent != null
+                ? returnAction.transform.parent.gameObject
+                : null;
+            _commandButtonsDefaultActive = _commandButtonsRoot != null && _commandButtonsRoot.activeSelf;
             if (passengerChipLabel != null)
             {
+                _passengerChipLabelRect = passengerChipLabel.rectTransform;
+                _passengerChipLabelDefaultAnchorMin = _passengerChipLabelRect.anchorMin;
+                _passengerChipLabelDefaultAnchorMax = _passengerChipLabelRect.anchorMax;
+                _passengerChipLabelDefaultPivot = _passengerChipLabelRect.pivot;
+                _passengerChipLabelDefaultPosition = _passengerChipLabelRect.anchoredPosition;
+                _passengerChipLabelDefaultSize = _passengerChipLabelRect.sizeDelta;
                 _passengerChipDefaultAutoSizing = passengerChipLabel.enableAutoSizing;
                 _passengerChipDefaultFontSizeMin = passengerChipLabel.fontSizeMin;
                 _passengerChipDefaultFontSizeMax = passengerChipLabel.fontSizeMax;
@@ -621,15 +657,57 @@ namespace Game.UI.Runtime
             CachePassengerChipLayout();
             if (_passengerChipRect != null)
             {
-                Vector2 size = materialFabrication
-                    ? MaterialFabricationChipSize
-                    : _passengerChipDefaultSize;
+                Vector2 size = _passengerChipDefaultSize;
+                if (materialFabrication)
+                {
+                    float width = MaterialFabricationChipSize.x;
+                    if (_passengerChipRect.parent is RectTransform parent)
+                    {
+                        float horizontalInset = Mathf.Max(0f, Mathf.Abs(_passengerChipRect.anchoredPosition.x));
+                        width = Mathf.Min(width, Mathf.Max(0f, parent.rect.width - horizontalInset * 2f));
+                    }
+                    size = new Vector2(width, MaterialFabricationChipSize.y);
+                }
                 if (_passengerChipRect.sizeDelta != size)
                     _passengerChipRect.sizeDelta = size;
+                Vector2 position = materialFabrication
+                    ? new Vector2(_passengerChipDefaultPosition.x, -548f)
+                    : _passengerChipDefaultPosition;
+                if (_passengerChipRect.anchoredPosition != position)
+                    _passengerChipRect.anchoredPosition = position;
+            }
+
+            if (_commandButtonsRoot != null && _commandButtonsRoot.activeSelf != (!materialFabrication && _commandButtonsDefaultActive))
+                _commandButtonsRoot.SetActive(!materialFabrication && _commandButtonsDefaultActive);
+            if (_passengerChipIconRect != null)
+            {
+                bool iconActive = !materialFabrication && _passengerChipIconDefaultActive;
+                if (_passengerChipIconRect.gameObject.activeSelf != iconActive)
+                    _passengerChipIconRect.gameObject.SetActive(iconActive);
             }
 
             if (passengerChipLabel == null)
                 return;
+
+            if (_passengerChipLabelRect != null)
+            {
+                if (materialFabrication)
+                {
+                    _passengerChipLabelRect.anchorMin = Vector2.zero;
+                    _passengerChipLabelRect.anchorMax = Vector2.one;
+                    _passengerChipLabelRect.pivot = new Vector2(.5f, .5f);
+                    _passengerChipLabelRect.anchoredPosition = Vector2.zero;
+                    _passengerChipLabelRect.sizeDelta = Vector2.zero;
+                }
+                else
+                {
+                    _passengerChipLabelRect.anchorMin = _passengerChipLabelDefaultAnchorMin;
+                    _passengerChipLabelRect.anchorMax = _passengerChipLabelDefaultAnchorMax;
+                    _passengerChipLabelRect.pivot = _passengerChipLabelDefaultPivot;
+                    _passengerChipLabelRect.anchoredPosition = _passengerChipLabelDefaultPosition;
+                    _passengerChipLabelRect.sizeDelta = _passengerChipLabelDefaultSize;
+                }
+            }
 
             passengerChipLabel.enableAutoSizing = materialFabrication || _passengerChipDefaultAutoSizing;
             passengerChipLabel.fontSizeMin = materialFabrication ? 20f : _passengerChipDefaultFontSizeMin;

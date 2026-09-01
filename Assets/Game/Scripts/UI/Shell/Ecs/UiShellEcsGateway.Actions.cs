@@ -80,6 +80,50 @@ namespace Game.UI.Shell.Ecs
             return true;
         }
 
+        public static bool TryRestartCurrentMission()
+        {
+            if (!TryGetMissionRoot(out EntityManager entityManager, out Entity root) ||
+                !entityManager.HasComponent<CampaignMissionRuntimeComponent>(root) ||
+                !entityManager.HasBuffer<CampaignMissionLaunchRequestElement>(root))
+            {
+                return false;
+            }
+
+            CampaignMissionRuntimeComponent runtime =
+                entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root);
+            if (runtime.Phase < MissionPhaseKind.Preparing ||
+                runtime.Phase > MissionPhaseKind.SecureCorridor ||
+                runtime.Outcome != MissionOutcomeKind.None ||
+                runtime.SessionToken.IsEmpty ||
+                runtime.TransitionToken == ulong.MaxValue ||
+                runtime.AttemptOrdinal == int.MaxValue)
+            {
+                return false;
+            }
+
+            DynamicBuffer<CampaignMissionLaunchRequestElement> launches =
+                entityManager.GetBuffer<CampaignMissionLaunchRequestElement>(root);
+            if (launches.Length != 0)
+                return false;
+
+            launches.Add(new CampaignMissionLaunchRequestElement
+            {
+                SchemaVersion = MissionLaunchPayloadFactory.CurrentSchemaVersion,
+                MissionId = runtime.MissionId,
+                ScenarioId = runtime.ScenarioId,
+                OperationMapId = runtime.OperationMapId,
+                LaunchOrigin = runtime.LaunchOrigin,
+                RunKind = MissionRunKind.Retry,
+                Guidance = runtime.Guidance,
+                ReplayTutorialEnabled = runtime.ReplayTutorialEnabled,
+                TransitionToken = runtime.TransitionToken + 1ul,
+                SessionToken = runtime.SessionToken,
+                AttemptOrdinal = runtime.AttemptOrdinal + 1,
+                DeterministicSeed = runtime.DeterministicSeed
+            });
+            return true;
+        }
+
         public static bool TryEnqueueCampaignMissionAction(
             UiCampaignMissionActionKind action, string missionId, bool value = false)
         {

@@ -23,6 +23,13 @@ The key rule: the target mockup is a visual reference only. Runtime UI sprites m
    - Before starting layers, verify that exactly one current target reference path is named in the screen README or implementation plan.
 
 3. **Create a layer request list**
+   - Before adding a request, consult
+     `Design/VisualLockLayered/V3_SHARED_LAYERED_ART_ATLAS_STRATEGY.md` and the
+     shared asset registry. Reuse an approved canonical V3 asset when its role,
+     silhouette, state strategy, and required resolution match.
+   - Do not create screen-local copies or request color-only variants of shared
+     chrome. The same canonical sprite and Unity GUID must be referenced by all
+     consuming screens.
    - List every reusable production layer needed for Unity:
      - background/no-UI plate
      - logo lockup
@@ -85,7 +92,10 @@ The key rule: the target mockup is a visual reference only. Runtime UI sprites m
 - Do not rely on chat-only imagegen outputs. If the imagegen tool displays a result but no file can be found, mark the reference as blocked and regenerate or ask for the image file before implementation.
 - Do not leave prompt-only references ambiguous: a prompt file without a matching reference PNG is a blocker, not a source of truth.
 - Do not use deterministic drawing, vector reconstruction, or patched screenshots as production art when the workflow calls for imagegen layers.
-- Do not reuse old screen assets just because they are close; request the needed asset in the current target style.
+- Do not reuse legacy or mismatched screen assets just because they are close.
+  Approved canonical V3 shared assets are different: they must be reused when
+  role, silhouette, state strategy, and resolution match, and they must not be
+  copied into a screen-local folder.
 - Do not use old reference mockups for a new art direction. Generate the new full target mockup first, show it, and wait for acceptance before requesting layers.
 - Do not keep stale mockups in active reference paths. Archive or delete rejected targets so future searches find only the approved current reference.
 - Do not claim target match until the implementation is compared against the accepted target and obvious differences are fixed or listed as not accepted.

@@ -284,11 +284,20 @@ namespace Game.UI.Runtime
             }
 
             RectTransform layout = _popupView.LandscapeLayout;
-            layout.anchorMin = new Vector2(0.5f, 0.5f);
-            layout.anchorMax = new Vector2(0.5f, 0.5f);
-            layout.pivot = new Vector2(0.5f, 0.5f);
-            layout.anchoredPosition = new Vector2(0f, 156f);
-            layout.sizeDelta = new Vector2(2460f, 1510f);
+            MainMenuV3SectionLayoutView responsiveLayout =
+                layout.GetComponent<MainMenuV3SectionLayoutView>();
+            if (responsiveLayout != null)
+            {
+                responsiveLayout.RefreshLayout();
+            }
+            else
+            {
+                layout.anchorMin = new Vector2(0.5f, 0.5f);
+                layout.anchorMax = new Vector2(0.5f, 0.5f);
+                layout.pivot = new Vector2(0.5f, 0.5f);
+                layout.anchoredPosition = new Vector2(0f, 156f);
+                layout.sizeDelta = new Vector2(2460f, 1510f);
+            }
             _popupView.BindActions(
                 ClosePanel,
                 ShowRecommendation,

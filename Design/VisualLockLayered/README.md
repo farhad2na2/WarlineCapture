@@ -10,6 +10,13 @@ The canonical screen-by-screen manifest is
 [`V3_SCREEN_INVENTORY.md`](V3_SCREEN_INVENTORY.md). It lists 46 final PNGs:
 17 previously approved finals and 29 finals added in the full-coverage pass.
 
+The shared production-art request, deduplication, and small-atlas plan is
+[`V3_SHARED_LAYERED_ART_ATLAS_STRATEGY.md`](V3_SHARED_LAYERED_ART_ATLAS_STRATEGY.md).
+It is the required planning baseline before requesting screen layers.
+
+The builder-first prefab implementation sequence and validation gates are in
+[`V3_PREFAB_MIGRATION_RUNBOOK.md`](V3_PREFAB_MIGRATION_RUNBOOK.md).
+
 ## V3 Coverage
 
 | Family | Final screens and states |

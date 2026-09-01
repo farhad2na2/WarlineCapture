@@ -69,6 +69,12 @@ namespace Game.UI.Runtime
             return current.TryEnqueueMissionResultAction(action);
         }
 
+        public static bool TryRestartCurrentMission()
+        {
+            return current is IUiCurrentMissionRestartGateway restartGateway &&
+                   restartGateway.TryRestartCurrentMission();
+        }
+
         public static bool TryReadCampaignOperations(out UiCampaignOperationsModel campaign)
         {
             return current.TryReadCampaignOperations(out campaign);

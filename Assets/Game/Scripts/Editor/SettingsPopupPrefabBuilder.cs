@@ -4,6 +4,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections.Generic;
 using System.IO;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
@@ -12,7 +13,6 @@ namespace Game.Editor
 {
     public static class SettingsPopupPrefabBuilder
     {
-        private const string SpriteRoot = "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/";
         private const string PopupsRoot = "Assets/Game/Prefabs/UI/Shell/Popups/";
         private const string SharedPopupPath = PopupsRoot + "SCN_SettingsPopup.prefab";
         private const string LegacyMenuPopupPath = PopupsRoot + "SCN02_MenuSettingsPopup.prefab";
@@ -22,7 +22,9 @@ namespace Game.Editor
         private const string PauseMenuPopupPath = "Assets/Game/Prefabs/UI/Popups/PauseMenuPopup.prefab";
         private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
         private const float PopupRuntimeScale = 2.1f;
+        private const float ChromeStroke = 3f;
         private static readonly Vector2 MenuReferenceResolution = new(4800f, 2160f);
+        private static readonly Color ChromeBorder = new Color(0.30f, 0.33f, 0.34f, 1f);
         private const string BoldFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold SDF.asset";
         private const string MediumFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium SDF.asset";
         private const string LightFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Light SDF.asset";
@@ -30,6 +32,8 @@ namespace Game.Editor
         private static TMP_FontAsset boldFont;
         private static TMP_FontAsset mediumFont;
         private static TMP_FontAsset lightFont;
+        private static V3UiArtCatalog art;
+        private static V3UiTheme theme;
         private static Sprite panelBacking;
         private static Sprite panelFrame;
         private static Sprite headerFrame;
@@ -47,6 +51,10 @@ namespace Game.Editor
         private static Sprite navSelected;
         private static Sprite resourceChip;
         private static Sprite settingsIcon;
+        private static Sprite settingsAudioIcon;
+        private static Sprite settingsVideoIcon;
+        private static Sprite settingsAccessibilityIcon;
+        private static Sprite resetIcon;
         private static readonly string[] GraphicsQualityLabels = { "LOW", "MEDIUM", "HIGH", "ULTRA" };
         private static readonly string[] FrameRateLabels = { "30 FPS", "60 FPS", "120 FPS" };
         private static readonly string[] AssistanceLevelLabels = { "FULL", "HINTS", "MINIMAL", "OFF" };
@@ -57,6 +65,7 @@ namespace Game.Editor
         [MenuItem("Game/UI/Rebuild Settings Popups")]
         public static void Build()
         {
+            V3UiFoundationBuilder.EnsureBuilt();
             LoadAssets();
             GameObject sharedPrefab = BuildPopup(SharedPopupPath, "SCN_SettingsPopup");
             DeleteLegacyPopup(LegacyMenuPopupPath);
@@ -64,10 +73,147 @@ namespace Game.Editor
             WireSettingsButtons(MainMenuContentPath);
             WireSettingsButtons(MatchHudContentPath);
             WireMenuScene(sharedPrefab);
-            RepairMatchLifecycleControlsInternal();
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-            Debug.Log("[SettingsPopupPrefabBuilder] Shared settings popup prefab rebuilt and shell bindings updated.");
+            ValidateV3Prefab();
+            Debug.Log("[SettingsPopupPrefabBuilder] result=Passed v3=True shared settings popup rebuilt and shell bindings updated.");
+        }
+
+        [MenuItem("Game/UI/V3/Validate Settings Popup")]
+        public static void ValidateV3Prefab()
+        {
+            V3UiFoundationBuilder.Validate();
+            V3UiArtCatalog catalog = V3UiFoundationBuilder.RequireCatalog();
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(SharedPopupPath);
+            if (prefab == null)
+                throw new FileNotFoundException($"Missing settings prefab: {SharedPopupPath}");
+
+            V3SettingsTabView tabView = prefab.GetComponentInChildren<V3SettingsTabView>(true);
+            if (tabView == null || tabView.TabButtons == null || tabView.TabButtons.Length != 4 ||
+                tabView.Pages == null || tabView.Pages.Length != 4)
+                throw new MissingComponentException("Settings V3 prefab must contain four vertical tabs and four content pages.");
+
+            Transform tabRail = FindDeepChild(prefab.transform, "SettingsTabRail");
+            Transform pageFrame = FindDeepChild(prefab.transform, "ActivePageFrame");
+            if (tabRail is not RectTransform tabRailRect || pageFrame is not RectTransform pageFrameRect ||
+                tabRailRect.rect.width < 380f || pageFrameRect.rect.width < 1000f ||
+                tabRailRect.anchoredPosition.x >= pageFrameRect.anchoredPosition.x)
+                throw new System.InvalidOperationException("Settings V3 layout must use a large left tab rail and a larger right content page.");
+
+            string[] expectedTabs = { "AUDIOTab", "GAMEPLAYTab", "VIDEOTab", "ACCESSIBILITYTab" };
+            string[] expectedPages = { "AudioPage", "GameplayPage", "VideoPage", "AccessibilityPage" };
+            int activePages = 0;
+            for (int i = 0; i < expectedTabs.Length; i++)
+            {
+                Transform tab = FindDeepChild(prefab.transform, expectedTabs[i]);
+                Transform page = FindDeepChild(prefab.transform, expectedPages[i]);
+                if (tab is not RectTransform tabRect || tabRect.rect.height < 130f || page == null)
+                    throw new MissingReferenceException($"Settings V3 is missing target-sized tab/page pair {expectedTabs[i]} / {expectedPages[i]}.");
+                if (page.gameObject.activeSelf)
+                    activePages++;
+            }
+
+            if (activePages != 1 || !FindDeepChild(prefab.transform, "AudioPage").gameObject.activeSelf)
+                throw new System.InvalidOperationException("Settings V3 prefab must author exactly one visible page with Audio selected by default.");
+
+            SettingsPopupResponsiveScaleView responsiveScale = prefab.GetComponentInChildren<SettingsPopupResponsiveScaleView>(true);
+            if (responsiveScale == null ||
+                Mathf.Abs(responsiveScale.TargetCanvasHeight - 0.84f) > 0.001f ||
+                Mathf.Abs(responsiveScale.MaximumCanvasWidth - 0.76f) > 0.001f)
+                throw new MissingComponentException("Settings V3 must use the dual-aspect responsive popup scale contract.");
+
+            if (FindDeepChild(prefab.transform, "AudioSection") != null ||
+                FindDeepChild(prefab.transform, "ControlSection") != null ||
+                FindDeepChild(prefab.transform, "DisplaySection") != null ||
+                FindDeepChild(prefab.transform, "AccessibilitySection") != null)
+                throw new System.InvalidOperationException("Legacy four-panel Settings structure is forbidden in V3.");
+
+            Image[] images = prefab.GetComponentsInChildren<Image>(true);
+            Button[] buttons = prefab.GetComponentsInChildren<Button>(true);
+            var uniqueSpritePaths = new HashSet<string>(System.StringComparer.Ordinal);
+            bool hasPanel = false;
+            bool hasButton = false;
+            bool hasFocus = false;
+            foreach (Image image in images)
+            {
+                if (image.sprite == null)
+                    continue;
+
+                string spritePath = AssetDatabase.GetAssetPath(image.sprite);
+                uniqueSpritePaths.Add(spritePath);
+                bool allowed = spritePath.StartsWith(V3UiFoundationBuilder.SharedRoot + "/", System.StringComparison.Ordinal) ||
+                               string.Equals(spritePath, V3UiFoundationBuilder.SettingsIconPath, System.StringComparison.Ordinal);
+                if (!allowed)
+                    throw new System.InvalidOperationException($"Settings V3 prefab still references legacy shared art: {spritePath}");
+
+                hasPanel |= image.sprite == catalog.Panel;
+                hasButton |= image.sprite == catalog.Button;
+                hasFocus |= image.sprite == catalog.FocusOverlay;
+            }
+
+            if (!hasButton || !hasFocus)
+                throw new MissingReferenceException("Settings V3 prefab must retain the shared button and focus sprite references.");
+
+            V3GradientGraphic[] gradients = prefab.GetComponentsInChildren<V3GradientGraphic>(true);
+            if (gradients.Length < 10)
+                throw new MissingComponentException("Settings V3 must use shared procedural gradients for tabs, toggles, and footer actions.");
+            if (FindDeepChild(prefab.transform, "Frame") != null ||
+                FindDeepChild(prefab.transform, "TabRailFrame") != null ||
+                FindDeepChild(prefab.transform, "PageFrame") != null ||
+                FindDeepChild(prefab.transform, "ActionFrame") != null)
+                throw new System.InvalidOperationException("Settings V3 contains a duplicate frame layer; each panel/control may render shared chrome only once.");
+            ValidateFixedGradientBorder(prefab.transform, "UnifiedModalFrame", ChromeStroke);
+            ValidateFixedGradientBorder(prefab.transform, "TabRailFill", ChromeStroke);
+            ValidateFixedGradientBorder(prefab.transform, "PageFill", ChromeStroke);
+            ValidateFixedDivider(prefab.transform, "HeaderDivider", ChromeStroke);
+            ValidateFixedDivider(prefab.transform, "FooterDivider", ChromeStroke);
+
+            if (FindDeepChild(prefab.transform, "MiddleFrame") != null ||
+                FindDeepChild(prefab.transform, "MiddleDivider") != null)
+                throw new System.InvalidOperationException("Settings V3 must not draw a wrapper border through the separate tab rail and content panel.");
+
+            float tabRailRight = tabRailRect.anchoredPosition.x + tabRailRect.rect.width * 0.5f;
+            float pageFrameLeft = pageFrameRect.anchoredPosition.x - pageFrameRect.rect.width * 0.5f;
+            if (pageFrameLeft - tabRailRight < 8f)
+                throw new System.InvalidOperationException("Settings V3 tab rail and content panel require a clean non-overlapping gap.");
+
+            foreach (Button button in buttons)
+            {
+                if (button.transition != Selectable.Transition.ColorTint)
+                    throw new System.InvalidOperationException($"{button.name} must use ColorTint with the single shared button sprite.");
+                if (button.GetComponent<V3UiSelectableFocusView>() == null)
+                    throw new MissingComponentException($"{button.name} is missing V3UiSelectableFocusView.");
+                if (button.image != null && !Mathf.Approximately(button.image.pixelsPerUnitMultiplier, 2f))
+                    throw new System.InvalidOperationException($"{button.name} must use the common V3 border scale.");
+            }
+
+            Debug.Log($"[SettingsPopupPrefabBuilder] validation=Passed layout=vertical-tabs activePages={activePages} gradients={gradients.Length} images={images.Length} buttons={buttons.Length} uniqueSprites={uniqueSpritePaths.Count}");
+        }
+
+        private static void ValidateFixedGradientBorder(Transform root, string name, float expectedWidth)
+        {
+            Transform transform = FindDeepChild(root, name);
+            V3GradientGraphic graphic = transform != null ? transform.GetComponent<V3GradientGraphic>() : null;
+            if (graphic == null)
+                throw new MissingComponentException($"Settings V3 is missing the fixed {name} border.");
+
+            SerializedProperty width = new SerializedObject(graphic).FindProperty("borderWidth");
+            if (width == null || !Mathf.Approximately(width.floatValue, expectedWidth))
+                throw new System.InvalidOperationException($"{name} must use the common {expectedWidth}px V3 stroke.");
+        }
+
+        private static void ValidateFixedDivider(Transform root, string name, float expectedWidth)
+        {
+            Transform transform = FindDeepChild(root, name);
+            if (transform is not RectTransform rect || !Mathf.Approximately(rect.sizeDelta.y, expectedWidth))
+                throw new System.InvalidOperationException($"{name} must use the common {expectedWidth}px V3 stroke.");
+        }
+
+        private static void ValidateFixedVerticalDivider(Transform root, string name, float expectedWidth)
+        {
+            Transform transform = FindDeepChild(root, name);
+            if (transform is not RectTransform rect || !Mathf.Approximately(rect.sizeDelta.x, expectedWidth))
+                throw new System.InvalidOperationException($"{name} must use the common {expectedWidth}px V3 stroke.");
         }
 
         [MenuItem("Game/UI/Repair Match Lifecycle Controls")]
@@ -94,23 +240,30 @@ namespace Game.Editor
             boldFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(BoldFontPath);
             mediumFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(MediumFontPath);
             lightFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(LightFontPath);
-            panelBacking = LoadSprite("scn02c_mode_card_backing_blue.png");
-            panelFrame = LoadSprite("scn02c_mode_card_frame_default_blue.png");
-            headerFrame = LoadSprite("scn02c_header_bar_frame.png");
-            squareDefault = LoadSprite("scn02c_header_square_button_frame_default.png");
-            squareHover = LoadSprite("scn02c_header_square_button_frame_hover.png");
-            squarePressed = LoadSprite("scn02c_header_square_button_frame_pressed.png");
-            squareSelected = LoadSprite("scn02c_header_square_button_frame_selected.png");
-            squareDisabled = LoadSprite("scn02c_header_square_button_frame_disabled.png");
-            deployDefault = LoadSprite("scn02c_deploy_button_frame.png");
-            deployHover = LoadSprite("scn02c_deploy_button_frame_hover.png");
-            deployPressed = LoadSprite("scn02c_deploy_button_frame_pressed.png");
-            deploySelected = LoadSprite("scn02c_deploy_button_frame_selected.png");
-            deployDisabled = LoadSprite("scn02c_deploy_button_frame_disabled.png");
-            navDefault = LoadSprite("scn02c_nav_button_frame_default.png");
-            navSelected = LoadSprite("scn02c_nav_button_frame_selected.png");
-            resourceChip = LoadSprite("scn02c_resource_chip_frame.png");
-            settingsIcon = LoadSprite("scn02c_settings_gear_icon.png");
+            art = V3UiFoundationBuilder.RequireCatalog();
+            theme = V3UiFoundationBuilder.RequireTheme();
+
+            panelBacking = art.Panel;
+            panelFrame = art.FocusOverlay;
+            headerFrame = art.Panel;
+            squareDefault = art.Button;
+            squareHover = art.Button;
+            squarePressed = art.Button;
+            squareSelected = art.Button;
+            squareDisabled = art.Button;
+            deployDefault = art.Button;
+            deployHover = art.Button;
+            deployPressed = art.Button;
+            deploySelected = art.Button;
+            deployDisabled = art.Button;
+            navDefault = art.Button;
+            navSelected = art.Button;
+            resourceChip = art.Panel;
+            settingsIcon = art.SettingsIcon;
+            settingsAudioIcon = art.SettingsAudioIcon;
+            settingsVideoIcon = art.SettingsVideoIcon;
+            settingsAccessibilityIcon = art.SettingsAccessibilityIcon;
+            resetIcon = art.ResetIcon;
         }
 
         private static GameObject BuildPopup(string path, string prefabName)
@@ -119,65 +272,149 @@ namespace Game.Editor
             root.AddComponent<CanvasGroup>();
             root.AddComponent<UIPopupMotionView>();
 
-            Image dim = CreateImage("InputBlocker", root.transform, null, new Color(0f, 0f, 0f, 0.48f), true);
+            Image dim = CreateImage("InputBlocker", root.transform, null, new Color(0f, 0f, 0f, 0.76f), true);
             Stretch(dim.rectTransform);
 
-            RectTransform panel = CreateRect("SettingsRoot", root.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(1660f, 940f), Vector2.zero);
+            RectTransform panel = CreateRect("SettingsRoot", root.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(1540f, 970f), Vector2.zero);
             panel.localScale = Vector3.one * PopupRuntimeScale;
+            SettingsPopupResponsiveScaleView responsiveScale = panel.gameObject.AddComponent<SettingsPopupResponsiveScaleView>();
+            responsiveScale.Configure(0.84f, 0.76f);
             Image panelImage = panel.gameObject.AddComponent<Image>();
-            panelImage.sprite = panelBacking;
-            ApplySliced(panelImage, 2f);
+            panelImage.sprite = null;
+            panelImage.color = Color.clear;
             panelImage.raycastTarget = true;
-
-            Image frame = CreateImage("Frame", panel, panelFrame, Color.white, false);
-            Stretch(frame.rectTransform);
-            ApplySliced(frame, 2f);
+            V3GradientGraphic panelFill = CreateGradient(
+                "PanelFill",
+                panel,
+                new Color(0.04f, 0.05f, 0.055f, 1f),
+                new Color(0.012f, 0.017f, 0.02f, 1f),
+                Color.clear,
+                0f);
+            Stretch(panelFill.rectTransform);
 
             RectTransform header = CreateRect("Header", panel, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, 112f), new Vector2(0f, -56f));
-            Image headerImage = header.gameObject.AddComponent<Image>();
-            headerImage.sprite = headerFrame;
-            ApplySliced(headerImage, 2f);
-            headerImage.raycastTarget = false;
+            V3GradientGraphic headerImage = CreateGradient(
+                "HeaderFill",
+                header,
+                new Color(0.055f, 0.066f, 0.074f, 1f),
+                new Color(0.018f, 0.024f, 0.028f, 1f),
+                Color.clear,
+                0f);
+            Stretch(headerImage.rectTransform);
+            CreateEdge("HeaderDivider", header, ChromeBorder, ChromeStroke, Edge.Bottom);
 
-            Image gear = CreateImage("SettingsIcon", header, settingsIcon, Color.white, false);
-            SetRect(gear.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(68f, 68f), new Vector2(70f, 0f));
+            Image gear = CreateImage("SettingsIcon", header, settingsIcon, theme.TextPrimary, false);
+            SetRect(gear.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(80f, 80f), new Vector2(70f, 0f));
 
-            TMP_Text title = CreateText("TitleText", header, "COMMAND SETTINGS", 42f, boldFont, TextAlignmentOptions.Left);
-            SetRect(title.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(-260f, 0f), new Vector2(166f, 0f));
+            TMP_Text title = CreateText("TitleText", header, "COMMAND SETTINGS", 71f, boldFont, TextAlignmentOptions.Left);
+            SetRect(title.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(-220f, 0f), new Vector2(12f, 0f));
 
             Button closeButton = CreateButton("CloseButton", header, squareDefault, squareHover, squarePressed, squareSelected, squareDisabled);
             SetRect(closeButton.GetComponent<RectTransform>(), new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(74f, 74f), new Vector2(-70f, 0f));
-            TMP_Text closeLabel = CreateText("CloseLabel", closeButton.transform, "X", 30f, boldFont, TextAlignmentOptions.Center);
+            V3GradientGraphic closeFill = CreateGradient(
+                "CloseFill",
+                closeButton.transform,
+                new Color(0.09f, 0.105f, 0.11f, 1f),
+                new Color(0.018f, 0.022f, 0.024f, 1f),
+                ChromeBorder,
+                ChromeStroke);
+            Stretch(closeFill.rectTransform);
+            UseGradientButtonVisual(closeButton, closeFill);
+            TMP_Text closeLabel = CreateText("CloseLabel", closeButton.transform, "X", 42f, boldFont, TextAlignmentOptions.Center);
             Stretch(closeLabel.rectTransform);
 
             SettingsPanelView panelView = panel.gameObject.AddComponent<SettingsPanelView>();
-            RectTransform content = CreateRect("Content", panel, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(1540f, 720f), new Vector2(0f, -470f));
-            RectTransform audioSection = CreateSection("AudioSection", content, "AUDIO", new Vector2(-395f, 150f), new Vector2(750f, 400f));
-            RectTransform controlSection = CreateSection("ControlSection", content, "GAMEPLAY", new Vector2(-395f, -225f), new Vector2(750f, 340f));
-            RectTransform displaySection = CreateSection("DisplaySection", content, "VIDEO", new Vector2(395f, 220f), new Vector2(750f, 250f));
-            RectTransform accessSection = CreateSection("AccessibilitySection", content, "ACCESSIBILITY", new Vector2(395f, -150f), new Vector2(750f, 420f));
+            RectTransform content = CreateRect("Content", panel, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(1450f, 700f), new Vector2(0f, -466f));
 
-            UISliderRowView master = CreateSliderRow("MasterVolumeRow", audioSection, "MASTER VOLUME", 46f, 56f);
-            UISliderRowView music = CreateSliderRow("MusicVolumeRow", audioSection, "MUSIC VOLUME", 108f, 56f);
-            UISliderRowView sfx = CreateSliderRow("SfxVolumeRow", audioSection, "SOUND VOLUME", 170f, 56f);
-            UIToggleRowView musicToggle = CreateToggleRow("MusicEnabledRow", audioSection, "MUSIC", "Enable command music playback.", 232f, 48f);
-            UIToggleRowView soundToggle = CreateToggleRow("SoundEnabledRow", audioSection, "SOUND", "Enable UI, combat, alert, and ambience sounds.", 284f, 48f);
-            UIToggleRowView voiceToggle = CreateToggleRow("VoiceEnabledRow", audioSection, "VOICE", "Enable tactical assistant voice lines.", 336f, 48f);
+            RectTransform tabRail = CreateRect("SettingsTabRail", content, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(406f, 694f), new Vector2(-553f, 0f));
+            V3GradientGraphic tabRailBacking = CreateGradient(
+                "TabRailFill",
+                tabRail,
+                new Color(0.045f, 0.06f, 0.065f, 1f),
+                new Color(0.014f, 0.025f, 0.028f, 1f),
+                ChromeBorder,
+                ChromeStroke);
+            Stretch(tabRailBacking.rectTransform);
 
-            UISliderRowView camera = CreateSliderRow("CameraSensitivityRow", controlSection, "CAMERA SENSITIVITY", 42f, 52f);
-            UIToggleRowView threat = CreateToggleRow("ThreatWarningsRow", controlSection, "THREAT WARNINGS", "Show tactical warnings during missions.", 100f, 48f);
-            UISegmentedControlView assistance = CreateSegmentRow("AssistanceLevelControl", controlSection, "ASSISTANT GUIDANCE", 160f, AssistanceLevelLabels, 68f);
-            UISegmentedControlView narration = CreateSegmentRow("NarrationModeControl", controlSection, "NARRATION", 236f, NarrationModeLabels, 68f);
-            UIToggleRowView takeover = CreateToggleRow("AssistantTakeoverRow", controlSection, "ASSISTANT TAKEOVER", "Allow assistant-guided bounded actions.", 306f, 48f);
+            RectTransform pageFrame = CreateRect("ActivePageFrame", content, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(1086f, 694f), new Vector2(203f, 0f));
+            V3GradientGraphic pageBacking = CreateGradient(
+                "PageFill",
+                pageFrame,
+                new Color(0.055f, 0.075f, 0.085f, 1f),
+                new Color(0.025f, 0.04f, 0.045f, 1f),
+                ChromeBorder,
+                ChromeStroke);
+            Stretch(pageBacking.rectTransform);
 
-            UISegmentedControlView quality = CreateSegmentRow("GraphicsQualityControl", displaySection, "GRAPHICS QUALITY", 52f, GraphicsQualityLabels, 84f);
-            UISegmentedControlView frameRate = CreateSegmentRow("FrameRateControl", displaySection, "FRAME RATE", 144f, FrameRateLabels, 84f);
+            RectTransform pagesRoot = CreateRect("SettingsPages", pageFrame, Vector2.zero, Vector2.one, new Vector2(-34f, -28f), Vector2.zero);
+            RectTransform audioPage = CreateSettingsPage("AudioPage", pagesRoot);
+            RectTransform gameplayPage = CreateSettingsPage("GameplayPage", pagesRoot);
+            RectTransform videoPage = CreateSettingsPage("VideoPage", pagesRoot);
+            RectTransform accessibilityPage = CreateSettingsPage("AccessibilityPage", pagesRoot);
+            gameplayPage.gameObject.SetActive(false);
+            videoPage.gameObject.SetActive(false);
+            accessibilityPage.gameObject.SetActive(false);
 
-            UIToggleRowView contrast = CreateToggleRow("HighContrastRow", accessSection, "HIGH CONTRAST UI", "Increase panel and text contrast.", 48f, 58f);
-            UIToggleRowView largeText = CreateToggleRow("LargeTextRow", accessSection, "LARGE TEXT", "Increase UI text scale for readability.", 110f, 58f);
-            UIToggleRowView subtitles = CreateToggleRow("AssistantSubtitlesRow", accessSection, "ASSISTANT SUBTITLES", "Show narration subtitles in the assistant panel.", 172f, 58f);
-            UISegmentedControlView colorblind = CreateSegmentRow("ColorblindModeControl", accessSection, "COLORBLIND MODE", 238f, ColorblindModeLabels, 78f);
-            UISegmentedControlView language = CreateSegmentRow("LanguageControl", accessSection, "LANGUAGE", 320f, LanguageLabels, 78f);
+            Button[] tabButtons = new Button[4];
+            V3GradientGraphic[] tabBackgrounds = new V3GradientGraphic[4];
+            Image[] tabRails = new Image[4];
+            TMP_Text[] tabLabels = new TMP_Text[4];
+            Color[] tabAccents = { theme.Blue, theme.Green, theme.Cyan, theme.Violet };
+            string[] tabNames = { "AUDIO", "GAMEPLAY", "VIDEO", "ACCESSIBILITY" };
+            for (int i = 0; i < tabButtons.Length; i++)
+            {
+                tabButtons[i] = CreateSettingsTab(
+                    tabNames[i] + "Tab",
+                    tabRail,
+                    tabNames[i],
+                    i,
+                    tabAccents[i],
+                    out tabBackgrounds[i],
+                    out tabRails[i],
+                    out tabLabels[i]);
+                if (i == 0)
+                    tabBackgrounds[i].ConfigureCorners(
+                        new Color(0f, 0.24f, 0.42f, 1f),
+                        new Color(0f, 0.23f, 0.40f, 1f),
+                        new Color(0f, 0.11f, 0.18f, 1f),
+                        new Color(0f, 0.12f, 0.20f, 1f),
+                        new Color(0f, 0.63f, 0.96f, 1f),
+                        ChromeStroke);
+            }
+
+            V3SettingsTabView tabView = content.gameObject.AddComponent<V3SettingsTabView>();
+            SetObjectArray(tabView, "tabButtons", tabButtons);
+            SetObjectArray(tabView, "pages", new GameObject[] { audioPage.gameObject, gameplayPage.gameObject, videoPage.gameObject, accessibilityPage.gameObject });
+            SetObjectArray(tabView, "tabBackgrounds", tabBackgrounds);
+            SetObjectArray(tabView, "selectionRails", tabRails);
+            SetObjectArray(tabView, "tabLabels", tabLabels);
+            SetColorArray(tabView, "accentColors", tabAccents);
+            SetColor(tabView, "inactiveBackground", new Color(0.025f, 0.045f, 0.052f, 0.98f));
+            SetColor(tabView, "inactiveText", theme.TextPrimary);
+            SetColor(tabView, "inactiveBorder", ChromeBorder);
+            SetInt(tabView, "defaultTab", 0);
+
+            UISliderRowView master = CreateSliderRow("MasterVolumeRow", audioPage, "MASTER VOLUME", 28f, 82f);
+            UISliderRowView music = CreateSliderRow("MusicVolumeRow", audioPage, "MUSIC VOLUME", 125f, 82f);
+            UISliderRowView sfx = CreateSliderRow("SfxVolumeRow", audioPage, "SOUND VOLUME", 222f, 82f);
+            UIToggleRowView musicToggle = CreateToggleRow("MusicEnabledRow", audioPage, "MUSIC", "Adjust in-game music volume.", 321f, 86f);
+            UIToggleRowView soundToggle = CreateToggleRow("SoundEnabledRow", audioPage, "SOUND", "Adjust in-game sound effects volume.", 445f, 86f);
+            UIToggleRowView voiceToggle = CreateToggleRow("VoiceEnabledRow", audioPage, "VOICE", "Adjust in-game voice volume.", 565f, 86f);
+
+            UISliderRowView camera = CreateSliderRow("CameraSensitivityRow", gameplayPage, "CAMERA SENSITIVITY", 34f, 84f);
+            UIToggleRowView threat = CreateToggleRow("ThreatWarningsRow", gameplayPage, "THREAT WARNINGS", "Show tactical warnings during missions.", 132f, 86f);
+            UISegmentedControlView assistance = CreateSegmentRow("AssistanceLevelControl", gameplayPage, "ASSISTANT GUIDANCE", 232f, AssistanceLevelLabels, 94f);
+            UISegmentedControlView narration = CreateSegmentRow("NarrationModeControl", gameplayPage, "NARRATION", 340f, NarrationModeLabels, 94f);
+            UIToggleRowView takeover = CreateToggleRow("AssistantTakeoverRow", gameplayPage, "ASSISTANT TAKEOVER", "Allow assistant-guided bounded actions.", 466f, 86f);
+
+            UISegmentedControlView quality = CreateSegmentRow("GraphicsQualityControl", videoPage, "GRAPHICS QUALITY", 86f, GraphicsQualityLabels, 118f);
+            UISegmentedControlView frameRate = CreateSegmentRow("FrameRateControl", videoPage, "FRAME RATE", 246f, FrameRateLabels, 118f);
+
+            UIToggleRowView contrast = CreateToggleRow("HighContrastRow", accessibilityPage, "HIGH CONTRAST UI", "Increase panel and text contrast.", 24f, 84f);
+            UIToggleRowView largeText = CreateToggleRow("LargeTextRow", accessibilityPage, "LARGE TEXT", "Increase UI text scale for readability.", 116f, 84f);
+            UIToggleRowView subtitles = CreateToggleRow("AssistantSubtitlesRow", accessibilityPage, "ASSISTANT SUBTITLES", "Show narration subtitles in the assistant panel.", 208f, 84f);
+            UISegmentedControlView colorblind = CreateSegmentRow("ColorblindModeControl", accessibilityPage, "COLORBLIND MODE", 316f, ColorblindModeLabels, 96f);
+            UISegmentedControlView language = CreateSegmentRow("LanguageControl", accessibilityPage, "LANGUAGE", 430f, LanguageLabels, 96f);
 
             SetObject(panelView, "masterVolumeRow", master);
             SetObject(panelView, "musicVolumeRow", music);
@@ -198,16 +435,77 @@ namespace Game.Editor
             SetObject(panelView, "colorblindModeControl", colorblind);
             SetObject(panelView, "languageControl", language);
 
-            RectTransform footer = CreateRect("Footer", panel, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0f, 100f), new Vector2(0f, 50f));
+            RectTransform footer = CreateRect("Footer", panel, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0f, 152f), new Vector2(0f, 76f));
+            V3GradientGraphic footerBacking = CreateGradient(
+                "FooterFill",
+                footer,
+                new Color(0.055f, 0.06f, 0.06f, 1f),
+                new Color(0.018f, 0.022f, 0.022f, 1f),
+                Color.clear,
+                0f);
+            Stretch(footerBacking.rectTransform);
+            CreateEdge("FooterDivider", footer, ChromeBorder, ChromeStroke, Edge.Top);
             Button reset = CreateButton("ResetButton", footer, deployDefault, deployHover, deployPressed, deploySelected, deployDisabled);
-            SetRect(reset.GetComponent<RectTransform>(), new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(260f, 66f), new Vector2(-405f, 0f));
-            TMP_Text resetText = CreateText("Label", reset.transform, "RESET", 27f, boldFont, TextAlignmentOptions.Center);
+            SetRect(reset.GetComponent<RectTransform>(), new Vector2(0f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-34f, 120f), new Vector2(10f, 0f));
+            SetButtonPalette(reset, theme.Amber, new Color(1f, 0.82f, 0.2f, 1f), new Color(0.9f, 0.58f, 0.02f, 1f));
+            V3GradientGraphic resetFill = CreateGradient(
+                "ActionFill",
+                reset.transform,
+                new Color(0.09f, 0.065f, 0.012f, 1f),
+                new Color(0.014f, 0.015f, 0.012f, 1f),
+                theme.Amber,
+                ChromeStroke);
+            Stretch(resetFill.rectTransform);
+            resetFill.ConfigureCorners(
+                new Color(0.12f, 0.085f, 0.012f, 1f),
+                new Color(0.055f, 0.04f, 0.008f, 1f),
+                new Color(0.006f, 0.008f, 0.006f, 1f),
+                new Color(0.035f, 0.022f, 0.004f, 1f),
+                theme.Amber,
+                ChromeStroke);
+            UseGradientButtonVisual(reset, resetFill);
+            TMP_Text resetText = CreateText("Label", reset.transform, "RESET", 44f, boldFont, TextAlignmentOptions.Center);
             Stretch(resetText.rectTransform);
+            resetText.rectTransform.sizeDelta = new Vector2(-110f, 0f);
+            resetText.rectTransform.anchoredPosition = new Vector2(22f, 0f);
+            resetText.color = theme.Amber;
+            Image resetGlyph = V3UiPrefabFactory.CreateImage("ResetGlyph", reset.transform, resetIcon, theme.Amber, false, false);
+            SetRect(resetGlyph.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(70f, 70f), new Vector2(-140f, 0f));
 
             Button apply = CreateButton("ApplyButton", footer, deployDefault, deployHover, deployPressed, deploySelected, deployDisabled);
-            SetRect(apply.GetComponent<RectTransform>(), new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(300f, 66f), new Vector2(-120f, 0f));
-            TMP_Text applyText = CreateText("Label", apply.transform, "APPLY", 27f, boldFont, TextAlignmentOptions.Center);
+            SetRect(apply.GetComponent<RectTransform>(), new Vector2(0.5f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-34f, 120f), new Vector2(-10f, 0f));
+            SetButtonPalette(apply, theme.Green, new Color(0.34f, 0.9f, 0.42f, 1f), new Color(0.12f, 0.56f, 0.22f, 1f));
+            V3GradientGraphic applyFill = CreateGradient(
+                "ActionFill",
+                apply.transform,
+                new Color(0.055f, 0.29f, 0.10f, 1f),
+                new Color(0.012f, 0.14f, 0.04f, 1f),
+                theme.Green,
+                ChromeStroke);
+            Stretch(applyFill.rectTransform);
+            applyFill.ConfigureCorners(
+                new Color(0.07f, 0.29f, 0.105f, 1f),
+                new Color(0.07f, 0.29f, 0.105f, 1f),
+                new Color(0.024f, 0.18f, 0.063f, 1f),
+                new Color(0.024f, 0.18f, 0.063f, 1f),
+                theme.Green,
+                ChromeStroke);
+            UseGradientButtonVisual(apply, applyFill);
+            TMP_Text applyText = CreateText("Label", apply.transform, "APPLY", 44f, boldFont, TextAlignmentOptions.Center);
             Stretch(applyText.rectTransform);
+            applyText.rectTransform.sizeDelta = new Vector2(-110f, 0f);
+            applyText.rectTransform.anchoredPosition = new Vector2(42f, 0f);
+            CreateApplyGlyph(apply.transform, theme.TextPrimary, new Vector2(-120f, 0f));
+
+            V3GradientGraphic modalFrame = CreateGradient(
+                "UnifiedModalFrame",
+                panel,
+                Color.clear,
+                Color.clear,
+                ChromeBorder,
+                ChromeStroke);
+            Stretch(modalFrame.rectTransform);
+            modalFrame.transform.SetAsLastSibling();
 
             SettingsPopupView popupView = root.AddComponent<SettingsPopupView>();
             SetEnum(popupView, "context", (int)SettingsPopupContext.Menu);
@@ -222,26 +520,182 @@ namespace Game.Editor
             return prefab;
         }
 
+        private static RectTransform CreateSettingsPage(string name, Transform parent)
+        {
+            RectTransform page = CreateRect(name, parent, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            Stretch(page);
+            return page;
+        }
+
+        private static Button CreateSettingsTab(
+            string name,
+            Transform parent,
+            string labelText,
+            int index,
+            Color accent,
+            out V3GradientGraphic background,
+            out Image selectionRail,
+            out TMP_Text label)
+        {
+            Button button = CreateButton(name, parent, navDefault, navSelected, navSelected, navSelected, squareDisabled);
+            SetRect(
+                button.GetComponent<RectTransform>(),
+                new Vector2(0.5f, 1f),
+                new Vector2(0.5f, 1f),
+                new Vector2(390f, 163f),
+                new Vector2(0f, -86f - index * 172f));
+            SetButtonPalette(button, theme.LinePrimary, theme.TextPrimary, theme.Cyan);
+
+            background = CreateGradient(
+                "TabFill",
+                button.transform,
+                Color.Lerp(theme.Surface, Color.white, 0.07f),
+                Color.Lerp(theme.Surface, Color.black, 0.2f),
+                ChromeBorder,
+                ChromeStroke);
+            Stretch(background.rectTransform);
+            UseGradientButtonVisual(button, background);
+
+            selectionRail = CreateSolid("SelectionRail", button.transform, accent, new Vector2(10f, 124f), new Vector2(-180f, 0f));
+            selectionRail.gameObject.SetActive(index == 0);
+
+            RectTransform iconRoot = CreateRect("CategoryIcon", button.transform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(78f, 78f), new Vector2(80f, 0f));
+            CreateTabIcon(iconRoot, index, accent);
+
+            label = CreateText("Label", button.transform, labelText, 36f, boldFont, TextAlignmentOptions.Left);
+            SetRect(label.rectTransform, Vector2.zero, Vector2.one, new Vector2(-150f, 0f), new Vector2(70f, 0f));
+            label.color = theme.TextPrimary;
+
+            Transform focus = button.transform.Find("FocusOverlay");
+            focus?.SetAsLastSibling();
+            return button;
+        }
+
+        private static void CreateApplyGlyph(Transform parent, Color color, Vector2 position)
+        {
+            RectTransform glyph = CreateRect("ApplyGlyph", parent, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(62f, 62f), position);
+            CreateSolid("CheckShort", glyph, color, new Vector2(32f, 9f), new Vector2(-12f, -10f), -45f);
+            CreateSolid("CheckLong", glyph, color, new Vector2(52f, 9f), new Vector2(12f, -2f), 45f);
+        }
+
+        private static void CreateTabIcon(RectTransform parent, int index, Color accent)
+        {
+            Sprite sprite = index switch
+            {
+                0 => settingsAudioIcon,
+                1 => art.AttackIcon,
+                2 => settingsVideoIcon,
+                _ => settingsAccessibilityIcon
+            };
+            Image icon = V3UiPrefabFactory.CreateImage("Icon", parent, sprite, accent, false, false);
+            SetRect(icon.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(74f, 74f), Vector2.zero);
+        }
+
+        private static Image CreateSolid(
+            string name,
+            Transform parent,
+            Color color,
+            Vector2 size,
+            Vector2 position,
+            float rotation = 0f)
+        {
+            Image image = V3UiPrefabFactory.CreateImage(name, parent, null, color, false, false);
+            SetRect(image.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), size, position);
+            image.rectTransform.localRotation = Quaternion.Euler(0f, 0f, rotation);
+            return image;
+        }
+
+        private enum Edge
+        {
+            Top,
+            Bottom
+        }
+
+        private static V3GradientGraphic CreateGradient(
+            string name,
+            Transform parent,
+            Color top,
+            Color bottom,
+            Color border,
+            float borderWidth)
+        {
+            RectTransform rect = CreateRect(name, parent, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            V3GradientGraphic graphic = rect.gameObject.AddComponent<V3GradientGraphic>();
+            graphic.raycastTarget = false;
+            graphic.Configure(top, bottom, border, borderWidth);
+            return graphic;
+        }
+
+        private static void CreateEdge(string name, Transform parent, Color color, float width, Edge edge)
+        {
+            Image line = V3UiPrefabFactory.CreateImage(name, parent, null, color, false, false);
+            line.rectTransform.anchorMin = edge == Edge.Top ? new Vector2(0f, 1f) : Vector2.zero;
+            line.rectTransform.anchorMax = edge == Edge.Top ? Vector2.one : new Vector2(1f, 0f);
+            line.rectTransform.pivot = edge == Edge.Top ? new Vector2(0.5f, 1f) : new Vector2(0.5f, 0f);
+            line.rectTransform.sizeDelta = new Vector2(0f, width);
+            line.rectTransform.anchoredPosition = Vector2.zero;
+        }
+
+        private static void StretchInset(RectTransform rect, float inset)
+        {
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.offsetMin = new Vector2(inset, inset);
+            rect.offsetMax = new Vector2(-inset, -inset);
+        }
+
+        private static void UseGradientButtonVisual(Button button, V3GradientGraphic visual)
+        {
+            if (button.image != null)
+                button.image.enabled = false;
+            button.targetGraphic = visual;
+            visual.color = Color.white;
+            ColorBlock colors = button.colors;
+            colors.normalColor = Color.white;
+            colors.highlightedColor = new Color(1.08f, 1.08f, 1.08f, 1f);
+            colors.pressedColor = new Color(0.82f, 0.9f, 0.94f, 1f);
+            colors.selectedColor = Color.white;
+            colors.disabledColor = theme.Disabled;
+            colors.colorMultiplier = 1f;
+            colors.fadeDuration = 0.08f;
+            button.colors = colors;
+        }
+
+        private static void SetButtonPalette(Button button, Color normal, Color highlighted, Color pressed)
+        {
+            ColorBlock colors = button.colors;
+            colors.normalColor = normal;
+            colors.highlightedColor = highlighted;
+            colors.pressedColor = pressed;
+            colors.selectedColor = highlighted;
+            colors.disabledColor = theme.Disabled;
+            colors.colorMultiplier = 1f;
+            colors.fadeDuration = 0.08f;
+            button.colors = colors;
+            if (button.targetGraphic != null)
+                button.targetGraphic.color = normal;
+        }
+
         private static RectTransform CreateSection(string name, Transform parent, string title, Vector2 anchoredPosition, Vector2 size)
         {
             RectTransform section = CreateRect(name, parent, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), size, anchoredPosition);
             Image backing = section.gameObject.AddComponent<Image>();
             backing.sprite = panelBacking;
             ApplySliced(backing, 2f);
-            backing.color = new Color(0.66f, 0.84f, 0.92f, 0.22f);
+            backing.color = new Color(1f, 1f, 1f, 0.82f);
             backing.raycastTarget = false;
 
-            Image frame = CreateImage("SectionFrame", section, resourceChip, new Color(1f, 1f, 1f, 0.72f), false);
+            Image frame = CreateImage("SectionFrame", section, panelFrame, new Color(theme.LinePrimary.r, theme.LinePrimary.g, theme.LinePrimary.b, 0.72f), false);
             Stretch(frame.rectTransform);
             ApplySliced(frame, 2f);
 
-            Image rail = CreateImage("TitleRail", section, resourceChip, new Color(0.84f, 0.95f, 1f, 0.62f), false);
+            Image rail = CreateImage("TitleRail", section, resourceChip, new Color(theme.Cyan.r, theme.Cyan.g, theme.Cyan.b, 0.58f), false);
             SetRect(rail.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(-40f, 30f), new Vector2(0f, -19f));
             ApplySliced(rail, 2f);
 
             TMP_Text sectionTitle = CreateText("SectionTitle", section, title, 22f, boldFont, TextAlignmentOptions.Left);
             SetRect(sectionTitle.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(-52f, 28f), new Vector2(28f, -20f));
-            sectionTitle.color = new Color(0.97f, 0.9f, 0.66f, 1f);
+            sectionTitle.color = theme.Amber;
             return section;
         }
 
@@ -249,13 +703,13 @@ namespace Game.Editor
         {
             RectTransform row = CreateRowRoot(name, parent, topOffset, rowHeight);
             UISliderRowView view = row.gameObject.AddComponent<UISliderRowView>();
-            TMP_Text label = CreateText("Label", row, labelText, 21f, mediumFont, TextAlignmentOptions.Left);
-            SetRect(label.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(-116f, 28f), new Vector2(-52f, -18f));
-            TMP_Text value = CreateText("Value", row, "0%", 21f, lightFont, TextAlignmentOptions.Right);
-            SetRect(value.rectTransform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(86f, 28f), new Vector2(-49f, -18f));
+            TMP_Text label = CreateText("Label", row, labelText, 30f, mediumFont, TextAlignmentOptions.Left);
+            SetRect(label.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(270f, 42f), new Vector2(134f, 8f));
+            TMP_Text value = CreateText("Value", row, "0%", 30f, lightFont, TextAlignmentOptions.Right);
+            SetRect(value.rectTransform, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(104f, 42f), new Vector2(-62f, 8f));
 
             Slider slider = CreateSlider("Slider", row);
-            SetRect(slider.GetComponent<RectTransform>(), new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(-52f, 28f), new Vector2(0f, 18f));
+            SetRect(slider.GetComponent<RectTransform>(), new Vector2(0f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-394f, 26f), new Vector2(90f, -12f));
             SetObject(view, "labelText", label);
             SetObject(view, "valueText", value);
             SetObject(view, "slider", slider);
@@ -266,29 +720,43 @@ namespace Game.Editor
         {
             RectTransform row = CreateRowRoot(name, parent, topOffset, rowHeight);
             UIToggleRowView view = row.gameObject.AddComponent<UIToggleRowView>();
-            TMP_Text label = CreateText("Label", row, labelText, 21f, mediumFont, TextAlignmentOptions.Left);
-            SetRect(label.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(-176f, 28f), new Vector2(-82f, -18f));
-            TMP_Text description = CreateText("Description", row, descriptionText, 15f, lightFont, TextAlignmentOptions.Left);
-            SetRect(description.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(-176f, 24f), new Vector2(-82f, 19f));
-            TMP_Text state = CreateText("State", row, "OFF", 20f, boldFont, TextAlignmentOptions.Right);
-            SetRect(state.rectTransform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(56f, 26f), new Vector2(-84f, -18f));
+            Image divider = CreateSolid("Divider", row, new Color(theme.LinePrimary.r, theme.LinePrimary.g, theme.LinePrimary.b, 0.34f), new Vector2(1000f, 2f), new Vector2(0f, -rowHeight * 0.5f + 2f));
+            divider.raycastTarget = false;
+            TMP_Text label = CreateText("Label", row, labelText, 32f, mediumFont, TextAlignmentOptions.Left);
+            SetRect(label.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(520f, 38f), new Vector2(260f, 16f));
+            TMP_Text description = CreateText("Description", row, descriptionText, 22f, lightFont, TextAlignmentOptions.Left);
+            SetRect(description.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(690f, 30f), new Vector2(345f, -20f));
 
-            RectTransform toggleRect = CreateRect("Toggle", row, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(94f, 30f), new Vector2(-48f, -6f));
-            Image track = toggleRect.gameObject.AddComponent<Image>();
-            track.sprite = resourceChip;
-            ApplySliced(track, 2f);
+            RectTransform toggleRect = CreateRect("Toggle", row, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(236f, 62f), new Vector2(-126f, 0f));
+            V3GradientGraphic track = toggleRect.gameObject.AddComponent<V3GradientGraphic>();
+            track.Configure(
+                new Color(0.035f, 0.39f, 0.63f, 1f),
+                new Color(0.012f, 0.22f, 0.42f, 1f),
+                new Color(0f, 0.62f, 0.94f, 1f),
+                4f);
             Toggle toggle = toggleRect.gameObject.AddComponent<Toggle>();
             toggle.targetGraphic = track;
-            RectTransform handle = CreateRect("Handle", toggleRect, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(30f, 30f), new Vector2(5f, 0f));
-            Image handleImage = handle.gameObject.AddComponent<Image>();
-            handleImage.sprite = squareDefault;
-            ApplySliced(handleImage, 2f);
+            TMP_Text state = CreateText("State", row, "OFF", 32f, boldFont, TextAlignmentOptions.Center);
+            SetRect(state.rectTransform, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(132f, 52f), new Vector2(-164f, 0f));
+            RectTransform handle = CreateRect("Handle", toggleRect, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(58f, 52f), new Vector2(5f, 0f));
+            V3GradientGraphic handleImage = handle.gameObject.AddComponent<V3GradientGraphic>();
+            handleImage.Configure(
+                new Color(0.3f, 0.8f, 0.22f, 1f),
+                new Color(0.08f, 0.42f, 0.08f, 1f),
+                new Color(0.18f, 0.72f, 0.12f, 1f),
+                4f);
 
             SetObject(view, "labelText", label);
             SetObject(view, "descriptionText", description);
             SetObject(view, "stateText", state);
             SetObject(view, "toggle", toggle);
             SetObject(view, "handle", handle);
+            SetObject(view, "trackGradient", track);
+            SetObject(view, "handleGradient", handleImage);
+            SetColor(view, "onTrackColor", new Color(0.02f, 0.32f, 0.56f, 1f));
+            SetColor(view, "offTrackColor", theme.SurfaceRaised);
+            SetColor(view, "onHandleColor", theme.Green);
+            SetColor(view, "offHandleColor", theme.Disabled);
             return view;
         }
 
@@ -296,19 +764,23 @@ namespace Game.Editor
         {
             RectTransform row = CreateRowRoot(name, parent, topOffset, rowHeight);
             UISegmentedControlView view = row.gameObject.AddComponent<UISegmentedControlView>();
-            TMP_Text label = CreateText("Label", row, labelText, 21f, mediumFont, TextAlignmentOptions.Left);
-            SetRect(label.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(-52f, 30f), new Vector2(0f, -18f));
+            TMP_Text label = CreateText("Label", row, labelText, 27f, mediumFont, TextAlignmentOptions.Left);
+            SetRect(label.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(-40f, 34f), new Vector2(0f, -18f));
 
-            RectTransform segmentRoot = CreateRect("Segments", row, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(-64f, 40f), new Vector2(0f, 22f));
+            RectTransform segmentRoot = CreateRect("Segments", row, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(-40f, 46f), new Vector2(0f, 25f));
             Button[] buttons = new Button[optionLabels.Length];
             TMP_Text[] labels = new TMP_Text[optionLabels.Length];
             float gap = 8f;
-            float segmentRootWidth = 640f;
+            float segmentRootWidth = 980f;
             float width = (segmentRootWidth - (optionLabels.Length - 1) * gap) / optionLabels.Length;
             for (int i = 0; i < optionLabels.Length; i++)
             {
                 Button button = CreateButton($"Segment{i}", segmentRoot, navDefault, navSelected, navSelected, navSelected, squareDisabled);
-                SetRect(button.GetComponent<RectTransform>(), new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(width, 40f), new Vector2(i * (width + gap) + width * 0.5f, 0f));
+                ColorBlock segmentColors = button.colors;
+                segmentColors.selectedColor = theme.Selected;
+                segmentColors.disabledColor = theme.Selected;
+                button.colors = segmentColors;
+                SetRect(button.GetComponent<RectTransform>(), new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(width, 46f), new Vector2(i * (width + gap) + width * 0.5f, 0f));
                 TMP_Text segmentLabel = CreateText("Label", button.transform, optionLabels[i], 14f, boldFont, TextAlignmentOptions.Center);
                 Stretch(segmentLabel.rectTransform);
                 buttons[i] = button;
@@ -321,6 +793,8 @@ namespace Game.Editor
             SetBool(view, "applyVisualSelection", true);
             SetObject(view, "normalSprite", navDefault);
             SetObject(view, "selectedSprite", navSelected);
+            SetColor(view, "normalBackgroundColor", theme.Normal);
+            SetColor(view, "selectedBackgroundColor", theme.Selected);
             return view;
         }
 
@@ -331,23 +805,24 @@ namespace Game.Editor
 
             RectTransform background = CreateRect("Background", root, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             Image backgroundImage = background.gameObject.AddComponent<Image>();
-            backgroundImage.sprite = resourceChip;
-            ApplySliced(backgroundImage, 2f);
+            backgroundImage.sprite = null;
+            backgroundImage.color = theme.SurfaceRaised;
             backgroundImage.raycastTarget = true;
+            background.sizeDelta = new Vector2(0f, -12f);
 
             RectTransform fillArea = CreateRect("Fill Area", root, Vector2.zero, Vector2.one, new Vector2(-28f, 0f), Vector2.zero);
             RectTransform fill = CreateRect("Fill", fillArea, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             Image fillImage = fill.gameObject.AddComponent<Image>();
-            fillImage.sprite = resourceChip;
-            ApplySliced(fillImage, 2f);
-            fillImage.color = new Color(0.43f, 0.91f, 0.82f, 0.92f);
+            fillImage.sprite = null;
+            fillImage.color = theme.Blue;
             fillImage.raycastTarget = false;
+            fillArea.sizeDelta = new Vector2(-28f, -12f);
 
             RectTransform handleArea = CreateRect("Handle Slide Area", root, Vector2.zero, Vector2.one, new Vector2(-28f, 0f), Vector2.zero);
             RectTransform handle = CreateRect("Handle", handleArea, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(32f, 32f), Vector2.zero);
             Image handleImage = handle.gameObject.AddComponent<Image>();
-            handleImage.sprite = squareDefault;
-            ApplySliced(handleImage, 2f);
+            handleImage.sprite = null;
+            handleImage.color = theme.TextPrimary;
 
             slider.targetGraphic = handleImage;
             slider.fillRect = fill;
@@ -360,21 +835,10 @@ namespace Game.Editor
 
         private static Button CreateButton(string name, Transform parent, Sprite normal, Sprite highlighted, Sprite pressed, Sprite selected, Sprite disabled)
         {
-            RectTransform rect = CreateRect(name, parent, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(120f, 44f), Vector2.zero);
-            Image image = rect.gameObject.AddComponent<Image>();
-            image.sprite = normal;
-            ApplySliced(image, 2f);
-            image.raycastTarget = true;
-            Button button = rect.gameObject.AddComponent<Button>();
-            button.targetGraphic = image;
-            button.transition = Selectable.Transition.SpriteSwap;
-            button.spriteState = new SpriteState
-            {
-                highlightedSprite = highlighted,
-                pressedSprite = pressed,
-                selectedSprite = selected,
-                disabledSprite = disabled
-            };
+            Sprite sharedSprite = normal != null ? normal : art.Button;
+            Button button = V3UiPrefabFactory.CreateButton(name, parent, sharedSprite, art.FocusOverlay, theme);
+            if (button.image != null)
+                button.image.pixelsPerUnitMultiplier = 2f;
             return button;
         }
 
@@ -401,7 +865,7 @@ namespace Game.Editor
             tmp.fontSizeMin = Mathf.Max(10f, size - 4f);
             tmp.fontSizeMax = size;
             tmp.alignment = alignment;
-            tmp.color = new Color(0.88f, 0.96f, 0.98f, 1f);
+            tmp.color = theme != null ? theme.TextPrimary : Color.white;
             tmp.raycastTarget = false;
             tmp.overflowMode = TextOverflowModes.Ellipsis;
             return tmp;
@@ -409,11 +873,7 @@ namespace Game.Editor
 
         private static Image CreateImage(string name, Transform parent, Sprite sprite, Color color, bool raycastTarget)
         {
-            RectTransform rect = CreateRect(name, parent, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(100f, 100f), Vector2.zero);
-            Image image = rect.gameObject.AddComponent<Image>();
-            image.sprite = sprite;
-            image.color = color;
-            image.raycastTarget = raycastTarget;
+            Image image = V3UiPrefabFactory.CreateImage(name, parent, sprite, color, raycastTarget, sprite != null);
             if (sprite != null)
                 ApplySliced(image, 2f);
             return image;
@@ -431,12 +891,7 @@ namespace Game.Editor
 
         private static RectTransform CreateRect(string name, Transform parent, Vector2 anchorMin, Vector2 anchorMax, Vector2 sizeDelta, Vector2 anchoredPosition)
         {
-            GameObject go = new(name, typeof(RectTransform));
-            if (parent != null)
-                go.transform.SetParent(parent, false);
-            RectTransform rect = go.GetComponent<RectTransform>();
-            SetRect(rect, anchorMin, anchorMax, sizeDelta, anchoredPosition);
-            return rect;
+            return V3UiPrefabFactory.CreateRect(name, parent, anchorMin, anchorMax, sizeDelta, anchoredPosition);
         }
 
         private static void SetRect(RectTransform rect, Vector2 anchorMin, Vector2 anchorMax, Vector2 sizeDelta, Vector2 anchoredPosition)
@@ -620,14 +1075,6 @@ namespace Game.Editor
             return null;
         }
 
-        private static Sprite LoadSprite(string fileName)
-        {
-            Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(SpriteRoot + fileName);
-            if (sprite == null)
-                Debug.LogError($"[SettingsPopupPrefabBuilder] Missing sprite {SpriteRoot}{fileName}");
-            return sprite;
-        }
-
         private static void CapturePopup(string prefabPath, SettingsPopupContext context, string outputPath, int width, int height)
         {
             GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
@@ -659,8 +1106,18 @@ namespace Game.Editor
             CanvasScaler scaler = canvasObject.GetComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = MenuReferenceResolution;
-            scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
-            scaler.matchWidthOrHeight = 0.5f;
+            scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.Expand;
+
+            string backdropPath = context == SettingsPopupContext.Match ? MatchHudContentPath : MainMenuContentPath;
+            GameObject backdropPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(backdropPath);
+            if (backdropPrefab != null)
+            {
+                GameObject backdrop = Object.Instantiate(backdropPrefab, canvasRect);
+                backdrop.name = backdropPrefab.name;
+                if (backdrop.transform is RectTransform backdropRect)
+                    Stretch(backdropRect);
+                backdrop.transform.SetAsFirstSibling();
+            }
 
             GameObject instance = Object.Instantiate(prefab, canvasRect);
             instance.name = prefab.name;
@@ -669,7 +1126,24 @@ namespace Game.Editor
             SettingsPopupView popupView = instance.GetComponent<SettingsPopupView>();
             popupView?.ConfigureContext(context);
             popupView?.LoadSettings();
+            foreach (UISliderRowView sliderRow in instance.GetComponentsInChildren<UISliderRowView>(true))
+            {
+                if (sliderRow.name == "MusicVolumeRow")
+                {
+                    sliderRow.Bind("MUSIC VOLUME", 60f, 0f, 100f);
+                    break;
+                }
+            }
 
+            Canvas.ForceUpdateCanvases();
+            float expandScaleFactor = Mathf.Min(
+                width / MenuReferenceResolution.x,
+                height / MenuReferenceResolution.y);
+            Vector2 simulatedCanvasSize = new(
+                width / expandScaleFactor,
+                height / expandScaleFactor);
+            instance.GetComponentInChildren<SettingsPopupResponsiveScaleView>(true)
+                ?.RefreshForCanvasSize(simulatedCanvasSize);
             Canvas.ForceUpdateCanvases();
             RenderTexture renderTexture = new(width, height, 24, RenderTextureFormat.ARGB32);
             Texture2D image = new(width, height, TextureFormat.RGBA32, false);
@@ -712,10 +1186,29 @@ namespace Game.Editor
             EditorUtility.SetDirty(target);
         }
 
+        private static void SetColorArray(Object target, string fieldName, Color[] values)
+        {
+            SerializedObject serialized = new(target);
+            SerializedProperty property = serialized.FindProperty(fieldName);
+            property.arraySize = values.Length;
+            for (int i = 0; i < values.Length; i++)
+                property.GetArrayElementAtIndex(i).colorValue = values[i];
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(target);
+        }
+
         private static void SetBool(Object target, string fieldName, bool value)
         {
             SerializedObject serialized = new(target);
             serialized.FindProperty(fieldName).boolValue = value;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(target);
+        }
+
+        private static void SetColor(Object target, string fieldName, Color value)
+        {
+            SerializedObject serialized = new(target);
+            serialized.FindProperty(fieldName).colorValue = value;
             serialized.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(target);
         }

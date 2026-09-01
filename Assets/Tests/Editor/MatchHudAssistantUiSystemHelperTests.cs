@@ -23,7 +23,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab";
     private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
     private const string AriaPortraitPath =
-        "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_aria.png";
+        "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_aria_v3.png";
     private bool _openedScene;
 
     [UnityEditor.MenuItem("Game/Validation/Run ARIA Tutorial Briefing Focused")]
@@ -189,8 +189,11 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         instance.name = "AssistantUiTestPopupPrefab";
         view = instance.GetComponent<AriaCommandAssistantPopupView>();
         Assert.IsTrue(view.TryBindHierarchy(), "The view must bind every required stable prefab child.");
-        Assert.AreEqual(new Vector2(2460f, 1510f), view.LandscapeLayout.sizeDelta);
-        Assert.AreEqual(new Vector2(0f, 156f), view.LandscapeLayout.anchoredPosition);
+        Assert.AreEqual(new Vector2(1672f, 941f), view.LandscapeLayout.sizeDelta);
+        Assert.AreEqual(Vector2.zero, view.LandscapeLayout.anchoredPosition);
+        Assert.NotNull(view.CommandAssistantPanel);
+        Assert.GreaterOrEqual(view.CommandAssistantPanel.anchoredPosition.x, 1100f);
+        Assert.NotNull(view.LandscapeLayout.GetComponent<MainMenuV3SectionLayoutView>());
         Assert.NotNull(FindNamed(view.transform, "GoalRow0"));
         Assert.NotNull(FindNamed(view.transform, "AlertRow2"));
         Assert.NotNull(FindNamed(view.transform, "ReportRow1"));
@@ -204,16 +207,15 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             AssetDatabase.GetAssetPath(tutorial.PortraitImage.sprite));
         Assert.IsNull(FindNamed(view.transform, "TutorialInputBlocker"),
             "The persistent tutorial briefing must not block battlefield or HUD input.");
-        Assert.AreEqual(Vector2.zero, tutorial.BriefingLayout.anchorMin);
-        Assert.AreEqual(Vector2.zero, tutorial.BriefingLayout.anchorMax);
-        Assert.GreaterOrEqual(
-            tutorial.BriefingLayout.anchoredPosition.y - tutorial.BriefingLayout.rect.height * 0.5f,
-            620f,
-            "The tutorial panel must stay above the lower-left squad controls.");
+        Assert.AreEqual(new Vector2(0f, 1f), tutorial.BriefingLayout.anchorMin);
+        Assert.AreEqual(new Vector2(0f, 1f), tutorial.BriefingLayout.anchorMax);
+        Assert.GreaterOrEqual(tutorial.BriefingLayout.anchoredPosition.x, 1100f,
+            "The tutorial panel must occupy the V3 top-right presentation region.");
         Assert.IsTrue(Contains(tutorial.BriefingLayout, tutorial.ShowMeButton.transform as RectTransform));
         Assert.IsTrue(Contains(tutorial.BriefingLayout, tutorial.DoItButton.transform as RectTransform));
-        Assert.GreaterOrEqual((tutorial.ShowMeButton.transform as RectTransform).rect.height, 110f);
-        Assert.GreaterOrEqual((tutorial.DoItButton.transform as RectTransform).rect.height, 110f);
+        Assert.GreaterOrEqual((tutorial.ShowMeButton.transform as RectTransform).rect.height, 72f);
+        Assert.GreaterOrEqual((tutorial.DoItButton.transform as RectTransform).rect.height, 72f);
+        Assert.GreaterOrEqual((tutorial.CloseButton.transform as RectTransform).rect.height, 72f);
 
         Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
         _openedScene = true;
@@ -254,10 +256,10 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.AreEqual("Preview the verified hostile source before dispatch.", gateway.TutorialNarrationTexts[0]);
         Assert.IsTrue(tutorial.gameObject.activeSelf);
         Assert.IsFalse(popup.LandscapeLayout.gameObject.activeSelf);
-        Assert.IsFalse(tutorial.CloseButton.gameObject.activeSelf,
-            "Active tutorial instructions must not expose a close action.");
+        Assert.IsTrue(tutorial.CloseButton.gameObject.activeSelf,
+            "The V3 tutorial target exposes a functional SKIP action.");
         Assert.AreEqual("FOCUS HOSTILE ARMOR", tutorial.TitleText.text);
-        Assert.AreEqual("TRAINING 1 / 5", tutorial.ProgressText.text);
+        Assert.AreEqual("TUTORIAL 1 / 5", tutorial.ProgressText.text);
         Assert.AreEqual(1, gateway.AssistantIntentRequestCount,
             "Opening the first tutorial instruction must automatically issue SHOW ME.");
         Assert.AreEqual(UiAssistantCommandIntentKind.ShowRecommendation, gateway.LastAssistantIntentKind);
@@ -291,7 +293,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.AreEqual(2, gateway.TutorialNarrationSteps[1]);
         Assert.AreEqual(UiTutorialNarrationPhase.PrimaryAction, gateway.TutorialNarrationPhases[1]);
         Assert.AreEqual("Tap MOVE to select the move command.", gateway.TutorialNarrationTexts[1]);
-        Assert.AreEqual("TRAINING 2 / 5", tutorial.ProgressText.text);
+        Assert.AreEqual("TUTORIAL 2 / 5", tutorial.ProgressText.text);
         Assert.AreEqual("PRESS MOVE", tutorial.TitleText.text);
         Assert.AreEqual("Tap MOVE to select the move command.", tutorial.BodyText.text);
         Assert.AreEqual(2, gateway.AssistantIntentRequestCount,
@@ -324,7 +326,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.AreEqual(
             "Tap the highlighted destination to move your squad.",
             gateway.TutorialNarrationTexts[2]);
-        Assert.AreEqual("TRAINING 3 / 5", tutorial.ProgressText.text);
+        Assert.AreEqual("TUTORIAL 3 / 5", tutorial.ProgressText.text);
         Assert.AreEqual("CHOOSE DESTINATION", tutorial.TitleText.text);
         Assert.AreEqual("Tap the highlighted destination to move your squad.", tutorial.BodyText.text);
 
@@ -348,7 +350,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.AreEqual(3, gateway.TutorialNarrationSteps[3]);
         Assert.AreEqual(UiTutorialNarrationPhase.PrimaryAction, gateway.TutorialNarrationPhases[3]);
         Assert.AreEqual("Tap ATTACK to select the attack command.", gateway.TutorialNarrationTexts[3]);
-        Assert.AreEqual("TRAINING 4 / 5", tutorial.ProgressText.text);
+        Assert.AreEqual("TUTORIAL 4 / 5", tutorial.ProgressText.text);
         Assert.AreEqual("Tap ATTACK to select the attack command.", tutorial.BodyText.text);
         Assert.AreEqual(4, gateway.AssistantIntentRequestCount,
             "Opening the ATTACK instruction must automatically reveal its command button.");
@@ -369,7 +371,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.AreEqual(
             "Tap the highlighted enemy to issue the attack.",
             gateway.TutorialNarrationTexts[4]);
-        Assert.AreEqual("TRAINING 5 / 5", tutorial.ProgressText.text);
+        Assert.AreEqual("TUTORIAL 5 / 5", tutorial.ProgressText.text);
         Assert.AreEqual("CHOOSE ENEMY", tutorial.TitleText.text);
         Assert.AreEqual("Tap the highlighted enemy to issue the attack.", tutorial.BodyText.text);
         helper.CompleteWorldTarget(TacticalCommandMode.Attack);
@@ -695,7 +697,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.IsTrue(tutorial.gameObject.activeInHierarchy);
         Assert.AreEqual("PRESS ATTACK", tutorial.TitleText.text);
         Assert.AreEqual("Tap ATTACK to select the attack command.", tutorial.BodyText.text);
-        Assert.AreEqual("TRAINING 4 / 5", tutorial.ProgressText.text);
+        Assert.AreEqual("TUTORIAL 4 / 5", tutorial.ProgressText.text);
 
         tutorial.DoItButton.onClick.Invoke();
 
@@ -707,7 +709,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.IsTrue(tutorial.gameObject.activeInHierarchy);
         Assert.AreEqual("CHOOSE ENEMY", tutorial.TitleText.text);
         Assert.AreEqual("Tap the highlighted enemy to issue the attack.", tutorial.BodyText.text);
-        Assert.AreEqual("TRAINING 5 / 5", tutorial.ProgressText.text);
+        Assert.AreEqual("TUTORIAL 5 / 5", tutorial.ProgressText.text);
         Assert.AreEqual(2, gateway.AssistantIntentRequestCount,
             "Opening the target instruction must automatically issue SHOW ME.");
         Assert.AreEqual(UiAssistantCommandIntentKind.ShowRecommendation, gateway.LastAssistantIntentKind);

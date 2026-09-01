@@ -47,6 +47,9 @@ namespace Game.UI.Shell.Ecs
         public static bool TryEnqueueMissionResultAction(UiMissionResultActionKind action) =>
             UiShellActionAdapter.TryEnqueueMissionResultAction(action);
 
+        public static bool TryRestartCurrentMission() =>
+            UiShellActionAdapter.TryRestartCurrentMission();
+
         private static bool TryGetMissionRoot(out EntityManager entityManager, out Entity root)
         {
             entityManager = default;

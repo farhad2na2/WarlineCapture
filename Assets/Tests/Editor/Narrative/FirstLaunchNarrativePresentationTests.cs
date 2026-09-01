@@ -1,6 +1,7 @@
 using System;
 using Game.Catalog.Contracts;
 using Game.Editor;
+using Game.UI.Contracts;
 using Game.UI.Runtime;
 using NUnit.Framework;
 using TMPro;
@@ -20,11 +21,12 @@ public sealed class FirstLaunchNarrativePresentationTests
             tests.SubtitleStyleResolver_MapsAllAccessibilityPresets();
             tests.DialogueAssets_UseSeparatePointerAriaPortraitAndNineSliceBorder();
             tests.PresentationPrefab_HasBoundViewsSkipAndDedicatedVoiceSource();
+            tests.InteractiveState_HidesComicChromeAndRestoresIt();
             tests.PresentationHelper_RespectsAutoAdvancePauseAndCancel();
             tests.Phase10RPresentation_UsesReadableTypeMobileTargetsAndCleanFrame();
             tests.Dialogue_LongTextExpandsFrameWithoutEllipsis();
             tests.Phase10RAudio_UsesIndependentSettingsAwareLayersAndCancelsCleanly();
-            Debug.Log("[FirstLaunchNarrativePresentationValidation] result=Passed tests=9");
+            Debug.Log("[FirstLaunchNarrativePresentationValidation] result=Passed tests=10");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -140,6 +142,35 @@ public sealed class FirstLaunchNarrativePresentationTests
         Assert.NotNull(pointer);
         Assert.AreEqual(Image.Type.Sliced, frame.type);
         Assert.AreNotSame(frame.sprite, pointer.sprite);
+    }
+
+    [Test]
+    public void InteractiveState_HidesComicChromeAndRestoresIt()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(FirstLaunchNarrativePresentationPrefabBuilder.PrefabPath);
+        Assert.NotNull(prefab);
+        GameObject instance = UnityEngine.Object.Instantiate(prefab);
+        try
+        {
+            NarrativeSequenceView view = instance.GetComponent<NarrativeSequenceView>();
+            Assert.NotNull(view);
+
+            view.SetInteractiveState(NarrativeInteractiveStateKind.CommanderIdentity);
+            Assert.IsFalse(view.LocationIntroView.gameObject.activeSelf);
+            Assert.IsFalse(view.PlaybackControlsView.gameObject.activeSelf);
+            Assert.IsTrue(view.CommanderIdentityView.gameObject.activeSelf);
+            Assert.IsFalse(view.GuidanceChoiceView.gameObject.activeSelf);
+
+            view.SetInteractiveState(NarrativeInteractiveStateKind.None);
+            Assert.IsTrue(view.LocationIntroView.gameObject.activeSelf);
+            Assert.IsTrue(view.PlaybackControlsView.gameObject.activeSelf);
+            Assert.IsFalse(view.CommanderIdentityView.gameObject.activeSelf);
+            Assert.IsFalse(view.GuidanceChoiceView.gameObject.activeSelf);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(instance);
+        }
     }
 
     [Test]

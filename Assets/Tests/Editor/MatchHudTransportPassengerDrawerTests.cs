@@ -75,13 +75,17 @@ public sealed class MatchHudTransportPassengerDrawerTests
         TMP_Text chipLabel = GetReference<TMP_Text>(serialized, "passengerChipLabel");
         MatchHudTransportPassengerDrawerView drawer = GetReference<MatchHudTransportPassengerDrawerView>(serialized, "passengerDrawer");
         GameObject drawerRoot = GetReference<GameObject>(new SerializedObject(drawer), "drawerRoot");
-        RectTransform contentRoot = GetReference<RectTransform>(new SerializedObject(drawer), "contentRoot");
+        SerializedObject drawerSerialized = new(drawer);
+        RectTransform contentRoot = GetReference<RectTransform>(drawerSerialized, "contentRoot");
+        RectTransform capacitySlotsRoot = GetReference<RectTransform>(drawerSerialized, "capacitySlotsRoot");
+        Button ropeDropButton = GetReference<Button>(drawerSerialized, "ropeDropButton");
         Sprite riflemanCardSprite = CreateTestSprite();
         UiEntityHandle exitedPassenger = UiEntityHandle.Null;
+        int exitAllRequests = 0;
         view.BindTransportPassengerActions(
             () => { },
             () => { },
-            () => { },
+            () => exitAllRequests++,
             passenger => exitedPassenger = passenger);
 
         var passengers = new List<MatchHudSelectionPanelPassengerItemModel>
@@ -116,6 +120,12 @@ public sealed class MatchHudTransportPassengerDrawerTests
         Assert.IsTrue(drawerRoot.activeSelf);
         Assert.GreaterOrEqual(CountActivePassengerRows(contentRoot), 2);
         Assert.AreSame(riflemanCardSprite, ResolveFirstActivePassengerPortrait(contentRoot));
+        Assert.NotNull(capacitySlotsRoot);
+        Assert.AreEqual(8, CountActiveChildren(capacitySlotsRoot));
+        Assert.NotNull(ropeDropButton);
+        Assert.IsTrue(ropeDropButton.gameObject.activeSelf);
+        ropeDropButton.onClick.Invoke();
+        Assert.AreEqual(1, exitAllRequests);
 
         MatchHudTransportPassengerItemView firstItem = ResolveFirstActivePassengerItem(contentRoot);
         Assert.NotNull(firstItem);
@@ -141,6 +151,7 @@ public sealed class MatchHudTransportPassengerDrawerTests
         MatchHudTransportPassengerDrawerView drawer = GetReference<MatchHudTransportPassengerDrawerView>(serialized, "passengerDrawer");
         GameObject drawerRoot = GetReference<GameObject>(new SerializedObject(drawer), "drawerRoot");
         bool? requestedProductionEnabled = null;
+        Vector2 defaultChipSize = ((RectTransform)chip.transform).sizeDelta;
         view.BindMaterialFabricationProductionAction(enabled => requestedProductionEnabled = enabled);
 
         view.ApplyTransportPassengers(new MatchHudTransportPassengersModel(
@@ -168,7 +179,10 @@ public sealed class MatchHudTransportPassengerDrawerTests
         Assert.IsFalse(drawerRoot.activeSelf);
         RectTransform chipRect = chip.transform as RectTransform;
         Assert.NotNull(chipRect);
-        Assert.AreEqual(new Vector2(610f, 156f), chipRect.sizeDelta);
+        float expectedFabricationWidth = Mathf.Min(
+            610f,
+            ((RectTransform)chipRect.parent).rect.width - Mathf.Abs(chipRect.anchoredPosition.x) * 2f);
+        Assert.AreEqual(new Vector2(expectedFabricationWidth, 156f), chipRect.sizeDelta);
         Assert.GreaterOrEqual(chipRect.rect.height, 44f, "Fabrication control must retain a mobile touch target.");
         Assert.IsTrue(chipLabel.enableAutoSizing);
         Assert.AreEqual(TextWrappingModes.Normal, chipLabel.textWrappingMode);
@@ -198,7 +212,7 @@ public sealed class MatchHudTransportPassengerDrawerTests
         Assert.IsFalse(chip.activeSelf);
         Assert.IsFalse(drawerRoot.activeSelf);
         Assert.AreEqual(string.Empty, chipLabel.text);
-        Assert.AreEqual(new Vector2(445.6f, 73.2f), chipRect.sizeDelta);
+        Assert.AreEqual(defaultChipSize, chipRect.sizeDelta);
         Assert.IsFalse(chipLabel.enableAutoSizing);
     }
 
@@ -314,6 +328,17 @@ public sealed class MatchHudTransportPassengerDrawerTests
         }
 
         return null;
+    }
+
+    private static int CountActiveChildren(RectTransform root)
+    {
+        int count = 0;
+        for (int i = 0; i < root.childCount; i++)
+        {
+            if (root.GetChild(i).gameObject.activeSelf)
+                count++;
+        }
+        return count;
     }
 
     private static Sprite CreateTestSprite()

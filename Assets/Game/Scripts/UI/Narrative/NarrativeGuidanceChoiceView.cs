@@ -13,9 +13,9 @@ namespace Game.UI.Runtime
         [SerializeField] private Button fullButton;
         [SerializeField] private Button contextualButton;
         [SerializeField] private Button minimalButton;
-        [SerializeField] private Image fullSelectionImage;
-        [SerializeField] private Image contextualSelectionImage;
-        [SerializeField] private Image minimalSelectionImage;
+        [SerializeField] private Behaviour fullSelectionImage;
+        [SerializeField] private Behaviour contextualSelectionImage;
+        [SerializeField] private Behaviour minimalSelectionImage;
 
         [Header("Actions")]
         [SerializeField] private Button continueButton;
@@ -145,14 +145,16 @@ namespace Game.UI.Runtime
 
         private void SetChoiceState(
             Button button,
-            Image selectionImage,
+            Behaviour selectionImage,
             NarrativeGuidanceMode mode,
             bool controlsInteractable)
         {
             bool selected = selectedGuidance == mode;
             if (button != null)
                 button.interactable = controlsInteractable;
-            if (selectionImage != null)
+            if (selectionImage is V3SelectionFrameView frame)
+                frame.SetVisible(selected);
+            else if (selectionImage != null)
                 selectionImage.enabled = selected;
         }
 

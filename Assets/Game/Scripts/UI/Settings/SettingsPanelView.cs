@@ -54,14 +54,14 @@ namespace Game.UI.Runtime
         {
             _model = model;
 
-            masterVolumeRow?.Bind("Master Volume", model.Audio.MasterVolume, 0f, 100f);
-            musicVolumeRow?.Bind("Music", model.Audio.MusicVolume, 0f, 100f);
-            sfxVolumeRow?.Bind("SFX", model.Audio.SfxVolume, 0f, 100f);
+            masterVolumeRow?.Bind("MASTER VOLUME", model.Audio.MasterVolume, 0f, 100f);
+            musicVolumeRow?.Bind("MUSIC VOLUME", model.Audio.MusicVolume, 0f, 100f);
+            sfxVolumeRow?.Bind("SOUND VOLUME", model.Audio.SfxVolume, 0f, 100f);
             alertsVolumeRow?.Bind("ALERTS", model.Audio.AlertsVolume, 0f, 100f);
             voiceVolumeRow?.Bind("VOICE", model.Audio.VoiceVolume, 0f, 100f);
-            musicEnabledRow?.Bind("MUSIC", "Enable command music playback.", model.Audio.MusicEnabled);
-            soundEnabledRow?.Bind("SOUND", "Enable UI, combat, alert, and ambience sounds.", model.Audio.SoundEnabled);
-            voiceEnabledRow?.Bind("VOICE", "Enable tactical assistant voice lines.", model.Audio.VoiceEnabled);
+            musicEnabledRow?.Bind("MUSIC", "Adjust in-game music volume.", model.Audio.MusicEnabled);
+            soundEnabledRow?.Bind("SOUND", "Adjust in-game sound effects volume.", model.Audio.SoundEnabled);
+            voiceEnabledRow?.Bind("VOICE", "Adjust in-game voice volume.", model.Audio.VoiceEnabled);
             graphicsQualityControl?.Bind(GraphicsQualityLabels, (int)model.Graphics.Quality);
             frameRateControl?.Bind(FrameRateLabels, (int)model.Graphics.FrameRateMode);
             cameraSensitivityRow?.Bind("CAMERA SENSITIVITY", model.Controls.CameraSensitivity, 0f, 100f);

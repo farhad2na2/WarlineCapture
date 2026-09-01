@@ -9,11 +9,15 @@ namespace Game.UI.Runtime
         [SerializeField] private GameObject popupRoot;
         [SerializeField] private MatchHudMinimapView minimap;
         [SerializeField] private Button closeAction;
+        [SerializeField] private Button centerOnHqAction;
+        [SerializeField] private Vector2 hqNormalizedPosition = new(0.5f, 0.5f);
 
         private Canvas _cachedCanvas;
 
         public GameObject PopupRoot => popupRoot != null ? popupRoot : gameObject;
         public MatchHudMinimapView Minimap => minimap;
+        public Button CloseAction => closeAction;
+        public Button CenterOnHqAction => centerOnHqAction;
         public bool IsOpen => PopupRoot != null && PopupRoot.activeInHierarchy;
 
         public event System.Action CloseRequested;
@@ -28,12 +32,16 @@ namespace Game.UI.Runtime
         {
             if (closeAction != null)
                 closeAction.onClick.AddListener(RequestClose);
+            if (centerOnHqAction != null)
+                centerOnHqAction.onClick.AddListener(RequestCenterOnHq);
         }
 
         private void OnDisable()
         {
             if (closeAction != null)
                 closeAction.onClick.RemoveListener(RequestClose);
+            if (centerOnHqAction != null)
+                centerOnHqAction.onClick.RemoveListener(RequestCenterOnHq);
         }
 
         private void OnTransformParentChanged()
@@ -65,6 +73,11 @@ namespace Game.UI.Runtime
         private void RequestClose()
         {
             CloseRequested?.Invoke();
+        }
+
+        private void RequestCenterOnHq()
+        {
+            minimap?.RequestFocus(hqNormalizedPosition);
         }
 
         private Camera ResolveEventCamera(RectTransform rect)

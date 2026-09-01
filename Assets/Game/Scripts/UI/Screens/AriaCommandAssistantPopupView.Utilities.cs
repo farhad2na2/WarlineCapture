@@ -161,6 +161,17 @@ namespace Game.UI.Runtime
             return isPrimary ? "PRIMARY / " + stateText : stateText;
         }
 
+        private static string TakeoverGoalStateText(byte state, bool isPrimary)
+        {
+            if (state == 1)
+                return "COMPLETE";
+            if (state == 2)
+                return "WARNING";
+            if (state == 3 || state == 4)
+                return "BLOCKED";
+            return isPrimary ? "IN PROGRESS" : string.Empty;
+        }
+
         private static string PriorityText(byte priority)
         {
             return priority switch

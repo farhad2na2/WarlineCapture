@@ -19,6 +19,13 @@ namespace Game.UI.Runtime
         [SerializeField] private TMP_Text costText;
         [SerializeField] private TMP_Text durationText;
         [SerializeField] private TMP_Text instructionText;
+        [SerializeField] private TMP_Text oilCostText;
+        [SerializeField] private TMP_Text fuelCostText;
+        [SerializeField] private TMP_Text footprintText;
+        [SerializeField] private Image buildingPortrait;
+        [SerializeField] private GameObject validityPanelPrefab;
+        [SerializeField] private GameObject validStatusIndicator;
+        [SerializeField] private GameObject invalidStatusIndicator;
         [SerializeField] private Button cancelButton;
         [SerializeField] private Button rotateButton;
         [SerializeField] private Button confirmButton;
@@ -45,8 +52,24 @@ namespace Game.UI.Runtime
         private UnityAction _confirmListener;
         private float _nextRefreshAt;
         private Canvas _cachedCanvas;
+        private BuildPlacementValidityPanelView _validityPanel;
+        private GameObject _suppressedThreatPanel;
+        private bool _restoreThreatPanelWhenHidden;
 
         public RectTransform Root => root != null ? root : transform as RectTransform;
+        public TMP_Text TitleText => titleText;
+        public TMP_Text StatusText => statusText;
+        public TMP_Text MaterialsCostText => costText;
+        public TMP_Text OilCostText => oilCostText;
+        public TMP_Text FuelCostText => fuelCostText;
+        public TMP_Text FootprintText => footprintText;
+        public Image BuildingPortrait => buildingPortrait;
+        public GameObject ValidityPanelPrefab => validityPanelPrefab;
+        public BuildPlacementValidityPanelView ValidityPanel => _validityPanel;
+        public Button CancelButton => cancelButton;
+        public Button RotateButton => rotateButton;
+        public Button ConfirmButton => confirmButton;
+        public Sprite MaterialsIconSprite => materialsIconSprite;
         public bool HasPendingPlacement =>
             _commandSystem != null && _commandSystem.HasPendingBuildingPlacement;
 
@@ -83,6 +106,7 @@ namespace Game.UI.Runtime
                 }
 
                 view.CacheSerializedLayout();
+                view.EnsureValidityPanel(parent);
                 view.Hide();
                 return view;
             }
@@ -109,6 +133,7 @@ namespace Game.UI.Runtime
             _commandSystem = commandSystem;
             _runtimeFeedbackView = runtimeFeedbackView;
             _gameTextResolver = gameTextResolver ?? FallbackGameTextResolver.Instance;
+            EnsureValidityPanel(transform.parent as RectTransform);
             WireButtons();
             Refresh(force: true);
         }
@@ -140,6 +165,8 @@ namespace Game.UI.Runtime
         {
             UnwireButtons();
             _nextRefreshAt = 0f;
+            _validityPanel?.Hide();
+            RestoreThreatPanel();
         }
 
         private void Update()
@@ -194,6 +221,7 @@ namespace Game.UI.Runtime
             bool hasPlacement = _commandSystem != null && _commandSystem.HasPendingBuildingPlacement;
             if (!hasPlacement)
             {
+                _validityPanel?.ApplyValidityState(false, false);
                 Hide();
                 return;
             }
@@ -202,16 +230,22 @@ namespace Game.UI.Runtime
 
             string rawStatus = _commandSystem.PlacementStatusText;
             SplitPlacementStatus(rawStatus, out string title, out string status);
-            SetText(titleText, string.IsNullOrWhiteSpace(title)
-                ? _gameTextResolver.Get("build.placement.title.default", "PLACE BUILDING")
-                : _gameTextResolver.Format("build.placement.title.named", "PLACE {0}", title.ToUpperInvariant()));
-            SetText(costText, FormatCost(
-                _commandSystem.ActivePlacementCreditsCost,
-                _commandSystem.ActivePlacementCost));
+            string buildingTitle = string.IsNullOrWhiteSpace(title)
+                ? _gameTextResolver.Get("build.placement.title.default", "BUILDING")
+                : title.ToUpperInvariant();
+            SetText(titleText, $"BUILD {buildingTitle}");
+            SetText(costText, FormatResource(_commandSystem.ActivePlacementCost));
+            SetText(oilCostText, FormatResource(_commandSystem.ActivePlacementCreditsCost));
+            if (fuelCostText != null && string.IsNullOrWhiteSpace(fuelCostText.text))
+                SetText(fuelCostText, "0");
+            if (footprintText != null && string.IsNullOrWhiteSpace(footprintText.text))
+                SetText(footprintText, "3x3");
             SetText(durationText, FormatDuration(_commandSystem.ActivePlacementDurationSeconds));
             SetText(instructionText, _gameTextResolver.Get("build.placement.instruction.confirm", "DRAG TO POSITION, CONFIRM TO BUILD"));
 
             bool canConfirm = _commandSystem.CanConfirmBuildingPlacement;
+            EnsureValidityPanel(transform.parent as RectTransform);
+            _validityPanel?.ApplyValidityState(true, canConfirm);
             SetText(statusText, string.IsNullOrWhiteSpace(status)
                 ? _gameTextResolver.Get("build.placement.status.drag_to_position", "DRAG TO POSITION")
                 : status.ToUpperInvariant());
@@ -219,9 +253,21 @@ namespace Game.UI.Runtime
                 SetTextColor(statusText, canConfirm
                     ? new Color(0.62f, 0.98f, 0.35f)
                     : new Color(1f, 0.35f, 0.22f));
+            if (validStatusIndicator != null)
+                validStatusIndicator.SetActive(canConfirm);
+            if (invalidStatusIndicator != null)
+                invalidStatusIndicator.SetActive(!canConfirm);
 
             if (confirmButton != null && confirmButton.interactable != canConfirm)
                 confirmButton.interactable = canConfirm;
+            if (confirmButton != null && confirmButton.targetGraphic is V3GradientGraphic confirmGradient)
+            {
+                confirmGradient.Configure(
+                    canConfirm ? new Color32(16, 142, 41, 255) : new Color32(94, 101, 103, 255),
+                    canConfirm ? new Color32(3, 67, 24, 255) : new Color32(43, 48, 50, 255),
+                    canConfirm ? new Color32(48, 228, 73, 255) : new Color32(112, 123, 126, 255),
+                    3f);
+            }
             if (cancelButton != null && !cancelButton.interactable)
                 cancelButton.interactable = true;
             if (rotateButton != null && !rotateButton.interactable)
@@ -256,6 +302,7 @@ namespace Game.UI.Runtime
 
         private void Show()
         {
+            SuppressThreatPanel();
             if (Root != null && !Root.gameObject.activeSelf)
                 Root.gameObject.SetActive(true);
 
@@ -269,6 +316,8 @@ namespace Game.UI.Runtime
 
         private void Hide()
         {
+            _validityPanel?.Hide();
+            RestoreThreatPanel();
             if (_canvasGroup == null)
                 _canvasGroup = GetComponent<CanvasGroup>();
             if (_canvasGroup == null)
@@ -308,13 +357,57 @@ namespace Game.UI.Runtime
                    confirmButton != null;
         }
 
+        private void EnsureValidityPanel(RectTransform parent)
+        {
+            if (_validityPanel != null || validityPanelPrefab == null || parent == null)
+                return;
+            _validityPanel = BuildPlacementValidityPanelView.Ensure(validityPanelPrefab, parent);
+        }
+
+        private void SuppressThreatPanel()
+        {
+            if (_suppressedThreatPanel == null)
+            {
+                RectTransform[] candidates = transform.root.GetComponentsInChildren<RectTransform>(true);
+                for (int i = 0; i < candidates.Length; i++)
+                {
+                    RectTransform candidate = candidates[i];
+                    if (candidate != null && candidate.name == "ThreatJumpPanel")
+                    {
+                        _suppressedThreatPanel = candidate.gameObject;
+                        break;
+                    }
+                }
+            }
+
+            if (_suppressedThreatPanel == null)
+                return;
+            if (!_restoreThreatPanelWhenHidden)
+                _restoreThreatPanelWhenHidden = _suppressedThreatPanel.activeSelf;
+            if (_suppressedThreatPanel.activeSelf)
+                _suppressedThreatPanel.SetActive(false);
+        }
+
+        private void RestoreThreatPanel()
+        {
+            if (_suppressedThreatPanel != null && _restoreThreatPanelWhenHidden &&
+                !_suppressedThreatPanel.activeSelf)
+            {
+                _suppressedThreatPanel.SetActive(true);
+            }
+            _suppressedThreatPanel = null;
+            _restoreThreatPanelWhenHidden = false;
+        }
+
         private static void ApplyDefaultPlacementAnchors(RectTransform rect)
         {
             if (rect == null)
                 return;
 
-            rect.anchorMin = new Vector2(0.255f, 0.205f);
-            rect.anchorMax = new Vector2(0.725f, 0.385f);
+            // The prefab owns a full 1672x941 responsive section. Its visible
+            // panel is the only hit target and begins after the squad tray.
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
             rect.offsetMin = Vector2.zero;
             rect.offsetMax = Vector2.zero;
             rect.pivot = new Vector2(0.5f, 0.5f);
@@ -354,6 +447,9 @@ namespace Game.UI.Runtime
 
         internal static string FormatCostForTests(int creditsCost, int materialsCost) =>
             FormatCost(creditsCost, materialsCost);
+
+        private static string FormatResource(int value) =>
+            Mathf.Max(0, value).ToString("N0", CultureInfo.InvariantCulture);
 
         private static string FormatDuration(float seconds)
         {

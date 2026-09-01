@@ -1,577 +1,1097 @@
-#if UNITY_EDITOR
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
 using TMPro;
 using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEditor.U2D;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.U2D;
 
 namespace Game.Editor
 {
     public static class MainMenuV3PrefabBuilder
     {
         private const string PrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN02_MainMenuContent.prefab";
-        private const string BackgroundPath = "Assets/Game/Art/UI/Generated/MainMenu/V3/scn02_v3_commander_background.png";
-        private const string CampaignPath = "Assets/Game/Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_campaign_thumbnail_art.png";
-        private const string OperationsPath = "Assets/Game/Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_operations_thumbnail_art.png";
-        private const string SkirmishPath = "Assets/Game/Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_skirmish_thumbnail_art.png";
-        private const string AriaPath = "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_aria.png";
-        private const string StoreIconPath = "Assets/Game/Art/UI/Generated/MainMenu/ComponentCanvas/Cleaned/ui_left_nav_icon_store.png";
-        private const string ArmoryIconPath = "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_icon_armory_crossed_weapons.png";
-        private const string SettingsIconPath = "Assets/Game/Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_icon_settings_gear.png";
-        private const string CampaignIconPath = "Assets/Game/Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_icon_campaign_crosshair.png";
-        private const string OperationsIconPath = "Assets/Game/Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_icon_operations_pin.png";
-        private const string SkirmishIconPath = "Assets/Game/Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_icon_skirmish_blades.png";
-        private const string CreditsIconPath = "Assets/Game/Art/UI/Resources/resource_credits.png";
-        private const string CommandIconPath = "Assets/Game/Art/UI/Resources/resource_command.png";
-        private const string RankIconPath = "Assets/Game/Art/UI/Icons/scn08_icon_shield_rank_badge.png";
+        private const string CommanderScenePath = "Assets/Game/Art/UI/V3Shared/CommanderScenes/SCN02_FieldCommander_01_Scene_V3.png";
+        private const string SceneAtlasPath = "Assets/Game/Art/UI/V3Shared/Atlases/UI_V3_MainMenuScenes_01.spriteatlas";
+        private const string AriaAtlasPath = "Assets/Game/Art/UI/V3Shared/Atlases/UI_V3_Assistants_01.spriteatlas";
+        private const string MainMenuIconAtlasPath = "Assets/Game/Art/UI/V3Shared/Atlases/UI_V3_MainMenuIcons_01.spriteatlas";
+        private const string DefaultCommanderId = "field_commander_01";
+        private const string CampaignArtPath = "Assets/Game/Art/UI/V3Shared/MainMenuPlates/SCN02_CampaignScene_V3.png";
+        private const string OperationsArtPath = "Assets/Game/Art/UI/V3Shared/MainMenuPlates/SCN02_OperationsScene_V3.png";
+        private const string SkirmishArtPath = "Assets/Game/Art/UI/V3Shared/MainMenuPlates/SCN02_SkirmishScene_V3.png";
+        private const string AriaPortraitPath = "Assets/Game/Art/UI/V3Shared/Portraits/ARIA_MainMenu_V3.png";
+        private const string CampaignIconPath = "Assets/Game/Art/UI/V3Shared/Sprites/MainMenuIcons/SCN02_Icon_CampaignTarget_V3.png";
+        private const string OperationsIconPath = "Assets/Game/Art/UI/V3Shared/Sprites/MainMenuIcons/SCN02_Icon_OperationsCompass_V3.png";
+        private const string SkirmishIconPath = "Assets/Game/Art/UI/V3Shared/Sprites/MainMenuIcons/SCN02_Icon_SkirmishBlades_V3.png";
+        private const string StoreIconPath = "Assets/Game/Art/UI/V3Shared/Sprites/MainMenuIcons/SCN02_Icon_StoreCart_V3.png";
+        private const string ArmoryIconPath = "Assets/Game/Art/UI/V3Shared/Sprites/MainMenuIcons/SCN02_Icon_ArmoryCrate_V3.png";
         private const string BoldFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold SDF.asset";
         private const string MediumFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium SDF.asset";
-
-        private static readonly Color Ink = new(0.012f, 0.024f, 0.028f, 0.985f);
-        private static readonly Color Panel = new(0.018f, 0.038f, 0.043f, 0.965f);
-        private static readonly Color PanelSoft = new(0.026f, 0.052f, 0.057f, 0.90f);
-        private static readonly Color Border = new(0.20f, 0.27f, 0.28f, 1f);
-        private static readonly Color White = new(0.95f, 0.96f, 0.94f, 1f);
-        private static readonly Color Muted = new(0.68f, 0.72f, 0.71f, 1f);
-        private static readonly Color Gold = new(1f, 0.65f, 0.015f, 1f);
-        private static readonly Color Orange = new(0.96f, 0.20f, 0.035f, 1f);
-        private static readonly Color Green = new(0.05f, 0.67f, 0.30f, 1f);
-        private static readonly Color Cyan = new(0.02f, 0.69f, 0.94f, 1f);
-        private static readonly Color Navy = new(0.035f, 0.15f, 0.28f, 1f);
+        private static readonly Vector2 ReferenceResolution = new(1672f, 941f);
+        private static readonly Color Border = new Color32(62, 76, 82, 255);
+        private static readonly Color TextPrimary = new Color32(244, 245, 242, 255);
+        private static readonly Color TextMuted = new Color32(196, 202, 198, 255);
+        private static readonly Color Amber = new Color32(255, 177, 0, 255);
+        private static readonly Color Green = new Color32(25, 185, 93, 255);
+        private static readonly Color Red = new Color32(241, 69, 20, 255);
+        private static readonly Color Cyan = new Color32(0, 185, 236, 255);
+        private static readonly Color GraphiteTop = new Color32(20, 31, 35, 250);
+        private static readonly Color GraphiteBottom = new Color32(4, 10, 13, 253);
 
         private static TMP_FontAsset boldFont;
         private static TMP_FontAsset mediumFont;
+        private static Sprite commanderScene;
+        private static Sprite campaignArt;
+        private static Sprite operationsArt;
+        private static Sprite skirmishArt;
+        private static Sprite ariaPortrait;
+        private static Sprite campaignIcon;
+        private static Sprite operationsIcon;
+        private static Sprite skirmishIcon;
+        private static Sprite storeIcon;
+        private static Sprite armoryIcon;
+        private static Sprite creditsIcon;
+        private static Sprite commandIcon;
+        private static Sprite settingsIcon;
 
-        [MenuItem("Game/UI/V3/Build SCN-02 Main Menu")]
+        [MenuItem("Game/UI/Rebuild Main Menu V3")]
         public static void Build()
         {
+            V3UiFoundationBuilder.EnsureBuilt();
+            ConfigureTexture(CommanderScenePath, false, 2048);
+            ConfigureTexture(CampaignArtPath, false, 2048);
+            ConfigureTexture(OperationsArtPath, false, 2048);
+            ConfigureTexture(SkirmishArtPath, false, 2048);
+            ConfigureTexture(AriaPortraitPath, true, 2048);
+            ConfigureTexture(CampaignIconPath, true, 512);
+            ConfigureTexture(OperationsIconPath, true, 512);
+            ConfigureTexture(SkirmishIconPath, true, 512);
+            ConfigureTexture(StoreIconPath, true, 512);
+            ConfigureTexture(ArmoryIconPath, true, 512);
+            BuildAtlas(SceneAtlasPath, "UI_V3_MainMenuScenes_01", CampaignArtPath, OperationsArtPath, SkirmishArtPath);
+            BuildAtlas(AriaAtlasPath, "UI_V3_Assistants_01", AriaPortraitPath);
+            BuildAtlas(MainMenuIconAtlasPath, "UI_V3_MainMenuIcons_01", CampaignIconPath, OperationsIconPath, SkirmishIconPath, StoreIconPath, ArmoryIconPath);
             LoadAssets();
-            EnsureSpriteImport(BackgroundPath, 4096, false);
-            EnsureSpriteImport(AriaPath, 1024, true);
-            EnsureSpriteImport(StoreIconPath, 1024, true);
-            EnsureSpriteImport(ArmoryIconPath, 512, true);
-            EnsureSpriteImport(SettingsIconPath, 512, true);
-            EnsureSpriteImport(CampaignIconPath, 512, true);
-            EnsureSpriteImport(OperationsIconPath, 512, true);
-            EnsureSpriteImport(SkirmishIconPath, 512, true);
-            EnsureSpriteImport(CreditsIconPath, 512, true);
-            EnsureSpriteImport(CommandIconPath, 512, true);
-            EnsureSpriteImport(RankIconPath, 512, true);
 
-            GameObject root = PrefabUtility.LoadPrefabContents(PrefabPath);
-            try
-            {
-                ClearChildren(root.transform);
-                RemoveComponent<MainMenuNavigationView>(root);
-                Stretch(RequireRect(root));
+            GameObject root = CreateRect("SCN02_MainMenuContent", null, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero).gameObject;
+            UIShellContentSectionsView sectionsView = root.AddComponent<UIShellContentSectionsView>();
+            var sections = new List<UIShellContentSectionsView.SectionReference>(6);
+            RectTransform backgroundSection = CreateSection("MenuBackgroundContent", root.transform, UIShellContentSectionId.MenuBackground, sections);
+            RectTransform headerSection = CreateSection("HeaderContent", root.transform, UIShellContentSectionId.Header, sections);
+            RectTransform leftSection = CreateSection("LeftContent", root.transform, UIShellContentSectionId.Left, sections);
+            RectTransform middleSection = CreateSection("MiddleContent", root.transform, UIShellContentSectionId.Middle, sections);
+            RectTransform rightSection = CreateSection("RightContent", root.transform, UIShellContentSectionId.Right, sections);
+            RectTransform footerSection = CreateSection("FooterContent", root.transform, UIShellContentSectionId.Footer, sections);
+            sectionsView.ConfigureSections(sections.ToArray());
 
-                RectTransform background = CreateSection("MenuBackgroundContent", root.transform);
-                RectTransform header = CreateSection("HeaderContent", root.transform);
-                RectTransform left = CreateSection("LeftContent", root.transform);
-                RectTransform middle = CreateSection("MiddleContent", root.transform);
-                RectTransform right = CreateSection("RightContent", root.transform);
-                RectTransform footer = CreateSection("FooterContent", root.transform);
+            BuildBackground(backgroundSection);
+            BuildHeader(headerSection);
+            BuildModeCards(leftSection);
+            BuildMiddleHitTargets(middleSection);
+            BuildRightRail(rightSection);
+            BuildFooter(footerSection);
+            ConfigureRuntimeLayouts(headerSection, leftSection, middleSection, rightSection, footerSection);
 
-                UIShellContentSectionsView sections = root.GetComponent<UIShellContentSectionsView>() ?? root.AddComponent<UIShellContentSectionsView>();
-                sections.ConfigureSections(new[]
-                {
-                    new UIShellContentSectionsView.SectionReference(UIShellContentSectionId.MenuBackground, background.gameObject),
-                    new UIShellContentSectionsView.SectionReference(UIShellContentSectionId.Header, header.gameObject),
-                    new UIShellContentSectionsView.SectionReference(UIShellContentSectionId.Left, left.gameObject),
-                    new UIShellContentSectionsView.SectionReference(UIShellContentSectionId.Middle, middle.gameObject),
-                    new UIShellContentSectionsView.SectionReference(UIShellContentSectionId.Right, right.gameObject),
-                    new UIShellContentSectionsView.SectionReference(UIShellContentSectionId.Footer, footer.gameObject)
-                });
-
-                BuildBackground(background);
-                BuildHeader(header);
-                BuildLeftCards(left);
-                BuildRightRail(right);
-                BuildFooter(footer);
-
-                PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
-            }
-            finally
-            {
-                PrefabUtility.UnloadPrefabContents(root);
-            }
-
+            PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
+            UnityEngine.Object.DestroyImmediate(root);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-            Debug.Log($"[MainMenuV3PrefabBuilder] result=Passed prefab={PrefabPath}");
+            Validate();
+            Debug.Log("[MainMenuV3PrefabBuilder] result=Passed v3=True cohesive baked commander scene selected by stable commander ID; live UI remains shared/procedural.");
         }
 
-        [MenuItem("Game/UI/V3/Validate SCN-02 Main Menu")]
+        [MenuItem("Game/UI/V3/Validate Main Menu")]
         public static void Validate()
         {
-            GameObject root = PrefabUtility.LoadPrefabContents(PrefabPath);
-            try
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+            if (prefab == null)
+                throw new FileNotFoundException($"Missing Main Menu V3 prefab: {PrefabPath}");
+
+            UIShellContentSectionsView sections = prefab.GetComponent<UIShellContentSectionsView>();
+            if (sections == null || sections.Sections == null || sections.Sections.Count != 6)
+                throw new MissingReferenceException("Main Menu V3 must expose all six shell sections.");
+
+            Require(prefab.transform, "HeaderContent/HeaderResourceArea/CreditsPanel/Frame");
+            Require(prefab.transform, "HeaderContent/HeaderResourceArea/CommandPanel/Frame");
+            Require(prefab.transform, "LeftContent/Card_Campaign/Hotspot");
+            Require(prefab.transform, "LeftContent/Card_Operations/Hotspot");
+            Require(prefab.transform, "LeftContent/Card_Skirmish/Hotspot");
+            Require(prefab.transform, "RightContent/CommanderPanel/CommanderPanelHotspot");
+            Require(prefab.transform, "FooterContent/StoreButton");
+            Require(prefab.transform, "FooterContent/OpenArmoryButton");
+
+            Transform commanderTransform = Require(prefab.transform, "MenuBackgroundContent/CommanderSceneVariant");
+            MainMenuCommanderVariantView commanderView = commanderTransform.GetComponent<MainMenuCommanderVariantView>();
+            Image commanderImage = commanderTransform.GetComponent<Image>();
+            AspectRatioFitter commanderFitter = commanderTransform.GetComponent<AspectRatioFitter>();
+            if (commanderView == null || commanderImage == null || commanderView.Target != commanderImage ||
+                commanderView.Variants == null || commanderView.Variants.Length < 1 ||
+                !string.Equals(commanderView.DefaultCommanderId, DefaultCommanderId, StringComparison.Ordinal))
+                throw new MissingReferenceException("Main Menu V3 must bind one cohesive baked commander scene by stable commander ID.");
+            if (commanderFitter == null || commanderFitter.aspectMode != AspectRatioFitter.AspectMode.EnvelopeParent)
+                throw new MissingComponentException("Main Menu V3 commander scene must use an aspect-fill crop instead of stretching.");
+
+            MainMenuV3SectionLayoutView[] layouts = prefab.GetComponentsInChildren<MainMenuV3SectionLayoutView>(true);
+            if (layouts.Length < 6)
+                throw new MissingComponentException("Main Menu V3 must map every authored reference section into the live shell canvas.");
+
+            ValidateAtlas(SceneAtlasPath, CampaignArtPath, OperationsArtPath, SkirmishArtPath);
+            ValidateAtlas(AriaAtlasPath, AriaPortraitPath);
+            ValidateAtlas(MainMenuIconAtlasPath, CampaignIconPath, OperationsIconPath, SkirmishIconPath, StoreIconPath, ArmoryIconPath);
+
+            if (prefab.GetComponentsInChildren<V3GradientGraphic>(true).Length < 18)
+                throw new MissingComponentException("Main Menu V3 requires procedural gradients on its live chrome.");
+            if (prefab.GetComponentsInChildren<V3RingGraphic>(true).Length < 8)
+                throw new MissingComponentException("Main Menu V3 requires procedural rings for ARIA telemetry and Operations progress.");
+
+            Transform settings = Require(prefab.transform, "HeaderContent/SettingsButton");
+            UIShellActionButtonView settingsAction = settings.GetComponent<UIShellActionButtonView>();
+            if (settingsAction == null || settingsAction.ActionKind != UiActionKind.OpenSettings || settings.GetComponent<UIShellRouteButtonView>() != null)
+                throw new InvalidOperationException("Main Menu Settings must enqueue OpenSettings, not route to the legacy Settings screen.");
+
+            ValidateRoute(prefab, "Card_Campaign", UIRoute.Campaign);
+            ValidateRoute(prefab, "Card_Operations", UIRoute.Operations);
+            ValidateRoute(prefab, "Card_Skirmish", UIRoute.QuickCustomSetup);
+            ValidateRoute(prefab, "CommanderPanelHotspot", UIRoute.CommandFeed);
+            ValidateRoute(prefab, "StoreButton", UIRoute.CommandExchange);
+            ValidateRoute(prefab, "OpenArmoryButton", UIRoute.Armory);
+
+            HashSet<string> allowedRasterPaths = new(StringComparer.Ordinal)
             {
-                UIShellContentSectionsView sections = root.GetComponent<UIShellContentSectionsView>();
-                if (sections == null || sections.Sections == null || sections.Sections.Count != 6)
-                    throw new InvalidOperationException("SCN-02 V3 must expose exactly six shell content sections.");
+                CommanderScenePath,
+                CampaignArtPath,
+                OperationsArtPath,
+                SkirmishArtPath,
+                AriaPortraitPath,
+                CampaignIconPath,
+                OperationsIconPath,
+                SkirmishIconPath,
+                StoreIconPath,
+                ArmoryIconPath,
+                CanonicalUiResourceIconPaths.Credits,
+                CanonicalUiResourceIconPaths.Command,
+                V3UiFoundationBuilder.SettingsIconPath,
+                V3UiFoundationBuilder.MainMenuLogoPath
+            };
+            foreach (Image image in prefab.GetComponentsInChildren<Image>(true))
+            {
+                if (image.sprite == null)
+                    continue;
+                string path = AssetDatabase.GetAssetPath(image.sprite);
+                if (!allowedRasterPaths.Contains(path))
+                    throw new InvalidOperationException($"Main Menu V3 references historical or duplicated raster chrome: {path}");
+            }
 
-                ValidateRoute(root, "Card_Campaign", UIRoute.Campaign, true);
-                ValidateRoute(root, "Card_Operations", UIRoute.Operations, true);
-                ValidateRoute(root, "Card_Skirmish", UIRoute.QuickCustomSetup, true);
-                ValidateRoute(root, "CommanderPanelHotspot", UIRoute.CommandFeed, true);
-                ValidateRoute(root, "StoreButton", UIRoute.MainMenu, false);
-                ValidateRoute(root, "ArmoryButton", UIRoute.Armory, true);
+            Debug.Log($"[MainMenuV3PrefabBuilder] validation=Passed gradients={prefab.GetComponentsInChildren<V3GradientGraphic>(true).Length} images={prefab.GetComponentsInChildren<Image>(true).Length}");
+        }
 
-                Transform settingsTransform = FindDescendant(root.transform, "SettingsButton");
-                UIShellActionButtonView settings = settingsTransform != null
-                    ? settingsTransform.GetComponent<UIShellActionButtonView>()
-                    : null;
-                if (settings == null || settings.ActionKind != UiActionKind.OpenSettings)
-                    throw new InvalidOperationException("SCN-02 V3 SettingsButton is not wired to OpenSettings.");
+        [MenuItem("Game/UI/Capture Main Menu V3 QA")]
+        public static void CaptureQa()
+        {
+            Capture("/private/tmp/warline-main-menu-v3-16x9.png", 1920, 1080);
+            Capture("/private/tmp/warline-main-menu-v3-20x9.png", 2400, 1080);
+            Debug.Log("[MainMenuV3PrefabBuilder] QA captures written to /private/tmp.");
+        }
 
-                MainMenuV3ResponsiveLayoutView[] responsive = root.GetComponentsInChildren<MainMenuV3ResponsiveLayoutView>(true);
-                if (responsive.Length != 4)
-                    throw new InvalidOperationException($"SCN-02 V3 requires four responsive section hosts; found {responsive.Length}.");
+        [MenuItem("Game/UI/V3/Capture Running Main Menu")]
+        private static void CaptureRunningMainMenu()
+        {
+            if (!EditorApplication.isPlaying)
+                throw new InvalidOperationException("Enter Play Mode before capturing the running Main Menu.");
 
-                Button[] buttons = root.GetComponentsInChildren<Button>(true);
-                if (buttons.Length != 7)
-                    throw new InvalidOperationException($"SCN-02 V3 expected seven interactive controls; found {buttons.Length}.");
-                for (int i = 0; i < buttons.Length; i++)
+            string outputPath = $"/private/tmp/warline-main-menu-v3-runtime-{Screen.width}x{Screen.height}.png";
+            ScreenCapture.CaptureScreenshot(outputPath);
+            Debug.Log($"[MainMenuV3PrefabBuilder] runtimeCapture={outputPath}");
+        }
+
+        [MenuItem("Game/UI/V3/Open Settings In Running Menu")]
+        private static void OpenSettingsInRunningMenu()
+        {
+            if (!EditorApplication.isPlaying)
+                throw new InvalidOperationException("Enter Play Mode before opening Settings from the running Main Menu.");
+
+            foreach (Button button in UnityEngine.Object.FindObjectsByType<Button>(
+                         FindObjectsInactive.Exclude,
+                         FindObjectsSortMode.None))
+            {
+                if (!string.Equals(button.name, "SettingsButton", StringComparison.Ordinal))
+                    continue;
+
+                button.onClick.Invoke();
+                Debug.Log("[MainMenuV3PrefabBuilder] runtimeSettingsAction=Invoked");
+                return;
+            }
+
+            throw new MissingReferenceException("The running Main Menu has no active SettingsButton.");
+        }
+
+        [MenuItem("Game/UI/V3/Set Game View 1920x1080")]
+        private static void SetGameView16By9()
+        {
+            SetGameViewResolution(1920, 1080);
+        }
+
+        [MenuItem("Game/UI/V3/Set Game View 4800x2160")]
+        private static void SetGameView20By9()
+        {
+            SetGameViewResolution(4800, 2160);
+        }
+
+        internal static void SetGameViewResolution(int width, int height)
+        {
+            Assembly editorAssembly = typeof(EditorWindow).Assembly;
+            Type gameViewType = editorAssembly.GetType("UnityEditor.GameView");
+            Type sizesType = editorAssembly.GetType("UnityEditor.GameViewSizes");
+            Type groupType = editorAssembly.GetType("UnityEditor.GameViewSizeGroupType");
+            Type singletonOpenType = editorAssembly.GetType("UnityEditor.ScriptableSingleton`1");
+            if (gameViewType == null || sizesType == null || groupType == null || singletonOpenType == null)
+                throw new MissingMemberException("Unity Game View resolution API is unavailable.");
+
+            Type singletonType = singletonOpenType.MakeGenericType(sizesType);
+            PropertyInfo instanceProperty = singletonType.GetProperty(
+                "instance",
+                BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+            object sizes = instanceProperty?.GetValue(null);
+            MethodInfo getGroup = sizesType.GetMethod(
+                "GetGroup",
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            object androidGroup = getGroup?.Invoke(sizes, new[] { Enum.Parse(groupType, "Android") });
+            if (androidGroup == null)
+                throw new MissingMemberException("Unity Android Game View size group is unavailable.");
+
+            MethodInfo getTotalCount = androidGroup.GetType().GetMethod(
+                "GetTotalCount",
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            MethodInfo getGameViewSize = androidGroup.GetType().GetMethod(
+                "GetGameViewSize",
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            int count = getTotalCount != null ? (int)getTotalCount.Invoke(androidGroup, null) : 0;
+            int matchingIndex = -1;
+            for (int i = 0; i < count; i++)
+            {
+                object size = getGameViewSize?.Invoke(androidGroup, new object[] { i });
+                if (size == null)
+                    continue;
+
+                PropertyInfo widthProperty = size.GetType().GetProperty(
+                    "width",
+                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                PropertyInfo heightProperty = size.GetType().GetProperty(
+                    "height",
+                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                if (widthProperty?.GetValue(size) is int candidateWidth &&
+                    heightProperty?.GetValue(size) is int candidateHeight &&
+                    candidateWidth == width && candidateHeight == height)
                 {
-                    ColorBlock colors = buttons[i].colors;
-                    if (!Mathf.Approximately(colors.disabledColor.a, colors.normalColor.a))
-                        throw new InvalidOperationException($"{buttons[i].name} changes alpha when disabled.");
-                }
-
-                TextureImporter importer = AssetImporter.GetAtPath(BackgroundPath) as TextureImporter;
-                if (importer == null || importer.textureType != TextureImporterType.Sprite ||
-                    importer.spriteImportMode != SpriteImportMode.Single || importer.mipmapEnabled)
-                {
-                    throw new InvalidOperationException("SCN-02 V3 background import contract failed.");
+                    // Custom fixed-resolution presets are listed after Unity's
+                    // built-in aspect entries (for example "Landscape"). Keep
+                    // the final exact match so runtime QA uses real pixels.
+                    matchingIndex = i;
                 }
             }
-            finally
-            {
-                PrefabUtility.UnloadPrefabContents(root);
-            }
 
-            Debug.Log("[MainMenuV3BindingValidation] result=Passed sections=6 routes=6 actions=1 buttons=7 responsiveHosts=4 disabledAlpha=Opaque");
+            if (matchingIndex < 0)
+                throw new InvalidOperationException($"Game View preset {width}x{height} is missing from the Android size list.");
+
+            EditorWindow gameView = EditorWindow.GetWindow(gameViewType);
+            PropertyInfo selectedSize = gameViewType.GetProperty(
+                "selectedSizeIndex",
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            if (selectedSize == null)
+                throw new MissingMemberException("Unity Game View selectedSizeIndex is unavailable.");
+
+            selectedSize.SetValue(gameView, matchingIndex);
+            FieldInfo zoomAreaField = gameViewType.GetField(
+                "m_ZoomArea",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            object zoomArea = zoomAreaField?.GetValue(gameView);
+            PropertyInfo scaleWithWindow = zoomArea?.GetType().GetProperty(
+                "scaleWithWindow",
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            scaleWithWindow?.SetValue(zoomArea, true);
+            gameView.Repaint();
+            Debug.Log($"[MainMenuV3PrefabBuilder] gameView={width}x{height} selectedIndex={matchingIndex}");
+        }
+
+        private static RectTransform CreateSection(
+            string name,
+            Transform root,
+            UIShellContentSectionId id,
+            ICollection<UIShellContentSectionsView.SectionReference> sections)
+        {
+            RectTransform section = CreateRect(name, root, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            sections.Add(new UIShellContentSectionsView.SectionReference(id, section.gameObject));
+            return section;
         }
 
         private static void BuildBackground(Transform root)
         {
-            Image background = CreateImage("V3_CommanderBackground", root, BackgroundPath, Color.white, false);
-            Stretch(background.rectTransform);
-            background.preserveAspect = true;
-            AspectRatioFitter fitter = background.gameObject.AddComponent<AspectRatioFitter>();
+            Image commanderSceneImage = CreateImage("CommanderSceneVariant", root, commanderScene, Color.white, false);
+            Stretch(commanderSceneImage.rectTransform);
+            AspectRatioFitter fitter = commanderSceneImage.gameObject.AddComponent<AspectRatioFitter>();
             fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
-            fitter.aspectRatio = background.sprite.rect.width / background.sprite.rect.height;
+            fitter.aspectRatio = commanderScene.rect.width / commanderScene.rect.height;
+            MainMenuCommanderVariantView commanderView = commanderSceneImage.gameObject.AddComponent<MainMenuCommanderVariantView>();
+            commanderView.Configure(
+                commanderSceneImage,
+                new[] { new MainMenuCommanderVariantView.CommanderVariant(DefaultCommanderId, commanderScene) },
+                DefaultCommanderId);
 
-            Image grade = CreateSolid("V3_ReadabilityGrade", root, new Color(0.005f, 0.012f, 0.014f, 0.12f));
-            Stretch(grade.rectTransform);
+            RectTransform shadeReference = CreateTopLeftRect("BackgroundChromeReference", root, 0f, 0f, ReferenceResolution.x, ReferenceResolution.y);
+            ConfigureLayout(shadeReference, MainMenuV3SectionAlignment.TopLeft);
+            V3GradientGraphic topShade = CreateGradient("HeaderReadability", shadeReference, new Color(0f, 0f, 0f, 0.55f), new Color(0f, 0f, 0f, 0f), Color.clear, 0f);
+            SetTopLeft(topShade.rectTransform, 0f, 0f, 1672f, 205f);
+        }
+
+        private static void ConfigureRuntimeLayouts(
+            RectTransform header,
+            RectTransform left,
+            RectTransform middle,
+            RectTransform right,
+            RectTransform footer)
+        {
+            ConfigureLayout(
+                header,
+                MainMenuV3SectionAlignment.TopLeft,
+                header.Find("CreditsVisualPanel") as RectTransform,
+                header.Find("CommandVisualPanel") as RectTransform,
+                header.Find("SettingsButton") as RectTransform);
+            ConfigureLayout(left, MainMenuV3SectionAlignment.TopLeft);
+            ConfigureLayout(middle, MainMenuV3SectionAlignment.Center);
+            ConfigureLayout(right, MainMenuV3SectionAlignment.TopRight);
+            ConfigureLayout(footer, MainMenuV3SectionAlignment.BottomCenter);
+        }
+
+        private static void ConfigureLayout(
+            RectTransform target,
+            MainMenuV3SectionAlignment alignment,
+            params RectTransform[] rightAnchoredTargets)
+        {
+            MainMenuV3SectionLayoutView layout = target.gameObject.AddComponent<MainMenuV3SectionLayoutView>();
+            layout.Configure(ReferenceResolution, alignment, rightAnchoredTargets);
         }
 
         private static void BuildHeader(Transform root)
         {
-            RectTransform bar = CreateAnchored("V3_HeaderBar", root, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            root.gameObject.AddComponent<MainMenuV3ResponsiveLayoutView>().Configure(MainMenuV3ResponsiveLayoutView.RegionLayoutKind.Header, bar);
-            CreateSolid("Fill", bar, new Color(0.006f, 0.018f, 0.022f, 0.97f), true);
-            SetStretchOffsets(bar.Find("Fill").GetComponent<RectTransform>(), 0f, 0f, 0f, 0f);
-            CreateSolid("BottomRail", bar, Gold, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0f, 10f), new Vector2(0f, 5f));
+            BuildLogo(root);
+            BuildVisibleResource(root, "CreditsVisualPanel", 963f, 14f, 281f, 107f, "CREDITS", "24,750", creditsIcon, Amber);
+            BuildVisibleResource(root, "CommandVisualPanel", 1251f, 14f, 278f, 107f, "COMMAND", "8,430", commandIcon, Cyan);
+            BuildSettingsButton(root);
+            BuildResourceCompatibilityScaffold(root);
+        }
 
-            RectTransform brand = CreatePanel("V3_Brand", bar, new Vector2(0.008f, 0.10f), new Vector2(0.315f, 0.94f), Ink, Border);
-            CreateSolid("GoldRail", brand, Gold, new Vector2(0f, 0.18f), new Vector2(0f, 0.82f), new Vector2(28f, 0f), new Vector2(34f, 0f));
-            CreateText("Warline", brand, "WARLINE", 152f, White, TextAlignmentOptions.MidlineLeft,
-                new Vector2(0.09f, 0.36f), new Vector2(0.80f, 0.94f), boldFont, 2f);
-            CreateText("Capture", brand, "CAPTURE", 70f, Gold, TextAlignmentOptions.Center,
-                new Vector2(0.16f, 0.08f), new Vector2(0.72f, 0.38f), boldFont, 7f);
-            CreateSolid("CaptureRailLeft", brand, Gold, new Vector2(0.07f, 0.17f), new Vector2(0.16f, 0.17f), new Vector2(0f, 8f), Vector2.zero);
-            CreateSolid("CaptureRailRight", brand, Gold, new Vector2(0.72f, 0.17f), new Vector2(0.81f, 0.17f), new Vector2(0f, 8f), Vector2.zero);
-            Image rank = CreateImage("Rank", brand, RankIconPath, Gold, false);
-            SetAnchors(rank.rectTransform, new Vector2(0.82f, 0.16f), new Vector2(0.98f, 0.84f), Vector2.zero, Vector2.zero);
-            rank.preserveAspect = true;
+        private static void BuildLogo(Transform root)
+        {
+            RectTransform plate = CreateTopLeftRect("HeaderLogoPanel", root, 14f, 13f, 513f, 137f);
+            V3GradientGraphic fill = plate.gameObject.AddComponent<V3GradientGraphic>();
+            fill.ConfigureCorners(new Color32(20, 31, 35, 252), new Color32(11, 22, 26, 252), new Color32(3, 9, 12, 253), new Color32(6, 13, 16, 253), Border, 3f);
+            V3UiFoundationBuilder.AddMainMenuLogo(plate, left: 18f, top: 10f, right: 18f, bottom: 10f);
+        }
 
-            RectTransform resourceArea = CreateAnchored("HeaderResourceArea", bar, new Vector2(0.57f, 0.17f), new Vector2(0.91f, 0.88f), Vector2.zero, Vector2.zero);
-            BuildResourcePanel(resourceArea, "CreditsPanel", new Vector2(0f, 0f), new Vector2(0.49f, 1f), CreditsIconPath, "CREDITS", "24,750", Gold);
-            BuildResourcePanel(resourceArea, "CommandPanel", new Vector2(0.51f, 0f), Vector2.one, CommandIconPath, "COMMAND", "8,430", Cyan);
+        private static void BuildVisibleResource(
+            Transform root,
+            string name,
+            float x,
+            float y,
+            float width,
+            float height,
+            string label,
+            string value,
+            Sprite icon,
+            Color accent)
+        {
+            RectTransform panel = CreateTopLeftRect(name, root, x, y, width, height);
+            V3GradientGraphic fill = panel.gameObject.AddComponent<V3GradientGraphic>();
+            fill.ConfigureCorners(new Color32(19, 30, 34, 252), new Color32(11, 21, 25, 252), new Color32(4, 10, 13, 253), new Color32(7, 14, 17, 253), Border, 3f);
+            if (string.Equals(name, "CreditsVisualPanel", StringComparison.Ordinal))
+            {
+                RectTransform iconRoot = CreateTopLeftRect("Icon", panel, 18f, 18f, 72f, 72f);
+                CreateCreditsIcon(iconRoot, accent);
+            }
+            else
+            {
+                Image iconImage = CreateImage("Icon", panel, icon, Color.white, false);
+                SetTopLeft(iconImage.rectTransform, 17f, 17f, 75f, 75f);
+                iconImage.preserveAspect = true;
+            }
+            TMP_Text labelText = CreateText("Label", panel, label, 25f, boldFont, TextAlignmentOptions.MidlineLeft, TextPrimary);
+            SetTopLeft(labelText.rectTransform, 101f, 12f, width - 108f, 38f);
+            TMP_Text valueText = CreateText("Value", panel, value, 43f, boldFont, TextAlignmentOptions.MidlineLeft, TextPrimary);
+            SetTopLeft(valueText.rectTransform, 101f, 45f, width - 108f, 55f);
+            CreateSolidTopLeft("Accent", panel, 3f, height - 5f, width - 6f, 3f, new Color(accent.r, accent.g, accent.b, 0.55f));
+        }
 
-            Button settings = CreateButton("SettingsButton", bar, new Vector2(0.925f, 0.16f), new Vector2(0.99f, 0.88f), Panel, Border);
-            Image gear = CreateImage("Icon", settings.transform, SettingsIconPath, White, false);
-            SetAnchors(gear.rectTransform, new Vector2(0.20f, 0.20f), new Vector2(0.80f, 0.80f), Vector2.zero, Vector2.zero);
-            gear.preserveAspect = true;
-            UIShellActionButtonView action = settings.gameObject.AddComponent<UIShellActionButtonView>();
+        private static void BuildSettingsButton(Transform root)
+        {
+            RectTransform rect = CreateTopLeftRect("SettingsButton", root, 1537f, 14f, 118f, 107f);
+            V3GradientGraphic fill = rect.gameObject.AddComponent<V3GradientGraphic>();
+            fill.ConfigureCorners(new Color32(23, 35, 39, 255), new Color32(14, 26, 30, 255), new Color32(5, 12, 15, 255), new Color32(8, 17, 20, 255), Border, 3f);
+            Button button = rect.gameObject.AddComponent<Button>();
+            button.targetGraphic = fill;
+            button.transition = Selectable.Transition.ColorTint;
+            button.colors = ButtonColors();
+            Image icon = CreateImage("Icon", rect, settingsIcon, TextPrimary, false);
+            SetTopLeft(icon.rectTransform, 28f, 23f, 62f, 62f);
+            icon.preserveAspect = true;
+            UIShellActionButtonView action = rect.gameObject.AddComponent<UIShellActionButtonView>();
             SerializedObject serialized = new(action);
             serialized.FindProperty("actionKind").enumValueIndex = (int)UiActionKind.OpenSettings;
             serialized.FindProperty("payloadId").intValue = 0;
-            serialized.FindProperty("button").objectReferenceValue = settings;
+            serialized.FindProperty("button").objectReferenceValue = button;
             serialized.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        private static void BuildResourcePanel(Transform parent, string name, Vector2 min, Vector2 max, string iconPath, string label, string value, Color accent)
+        private static void BuildResourceCompatibilityScaffold(Transform root)
         {
-            RectTransform panel = CreatePanel(name, parent, min, max, Ink, Border);
-            RectTransform frame = CreateAnchored("Frame", panel, Vector2.zero, Vector2.one, new Vector2(12f, 12f), new Vector2(-12f, -12f));
-            Image icon = CreateImage("Icon", frame, iconPath, Color.white, false);
-            SetAnchors(icon.rectTransform, new Vector2(0.04f, 0.16f), new Vector2(0.28f, 0.84f), Vector2.zero, Vector2.zero);
-            icon.preserveAspect = true;
-            CreateText("Label", frame, label, 43f, White, TextAlignmentOptions.BottomLeft,
-                new Vector2(0.31f, 0.50f), new Vector2(0.94f, 0.88f), boldFont, 1f);
-            CreateText("Value", frame, value, 71f, accent, TextAlignmentOptions.TopLeft,
-                new Vector2(0.31f, 0.10f), new Vector2(0.94f, 0.56f), boldFont, 1f);
+            RectTransform area = CreateRect("HeaderResourceArea", root, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(1380f, 160f), Vector2.zero);
+            area.gameObject.SetActive(false);
+            BuildResourceCompatibilityPanel(area, "CreditsPanel", -350f, "CREDITS", "24,750", creditsIcon);
+            BuildResourceCompatibilityPanel(area, "CommandPanel", 350f, "COMMAND", "8,430", commandIcon);
         }
 
-        private static void BuildLeftCards(Transform root)
+        private static void BuildResourceCompatibilityPanel(Transform area, string name, float x, string label, string value, Sprite icon)
         {
-            RectTransform zone = CreateAnchored("V3_LeftCards", root, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            root.gameObject.AddComponent<MainMenuV3ResponsiveLayoutView>().Configure(MainMenuV3ResponsiveLayoutView.RegionLayoutKind.Left, zone);
-            BuildCampaignCard(zone);
-            BuildCompactCard(zone, "Card_Operations", new Vector2(0f, 0.205f), new Vector2(1f, 0.39f), OperationsPath,
-                "OPERATIONS", "LIVE DISTRICT COMMAND", Green, OperationsIconPath, UIRoute.Operations);
-            BuildCompactCard(zone, "Card_Skirmish", new Vector2(0f, 0f), new Vector2(1f, 0.185f), SkirmishPath,
-                "SKIRMISH", "CUSTOM BATTLE", Orange, SkirmishIconPath, UIRoute.QuickCustomSetup);
+            RectTransform panel = CreateRect(name, area, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(676f, 160f), new Vector2(x, 0f));
+            RectTransform frame = CreateRect("Frame", panel, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            TMP_Text labelText = CreateText("Label", frame, label, 26f, boldFont, TextAlignmentOptions.BottomLeft, TextPrimary);
+            labelText.rectTransform.anchoredPosition = new Vector2(150f, -20f);
+            labelText.rectTransform.sizeDelta = new Vector2(330f, 34f);
+            TMP_Text valueText = CreateText("Value", frame, value, 54f, boldFont, TextAlignmentOptions.TopLeft, TextPrimary);
+            valueText.rectTransform.anchoredPosition = new Vector2(150f, -58f);
+            valueText.rectTransform.sizeDelta = new Vector2(330f, 76f);
+            Image iconImage = CreateImage("Icon", frame, icon, Color.white, false);
+            iconImage.rectTransform.anchoredPosition = new Vector2(-235f, 0f);
+            iconImage.rectTransform.sizeDelta = new Vector2(112f, 112f);
+            iconImage.preserveAspect = true;
         }
 
-        private static void BuildCampaignCard(Transform parent)
+        private static void BuildModeCards(Transform root)
         {
-            RectTransform card = CreateAnchored("Card_Campaign", parent, new Vector2(0f, 0.415f), Vector2.one, Vector2.zero, Vector2.zero);
-            Button button = CreateButton("Hotspot", card, Vector2.zero, Vector2.one, new Color(0.19f, 0.10f, 0.01f, 0.95f), Gold);
-            AddRoute(button, UIRoute.Campaign, true);
-            RawImage art = CreateCroppedImage("Art", button.transform, CampaignPath, new Color(1f, 0.76f, 0.36f, 0.84f));
-            SetAnchors(art.rectTransform, new Vector2(0.005f, 0.005f), new Vector2(0.995f, 0.995f), Vector2.zero, Vector2.zero);
-            CreateSolid("TopShade", button.transform, new Color(0.08f, 0.035f, 0f, 0.40f), new Vector2(0.005f, 0.62f), new Vector2(0.995f, 0.995f), Vector2.zero, Vector2.zero);
-            CreateSolid("BottomShade", button.transform, new Color(0.035f, 0.012f, 0f, 0.80f), new Vector2(0.005f, 0.005f), new Vector2(0.995f, 0.24f), Vector2.zero, Vector2.zero);
-            CreateSolid("IconTile", button.transform, new Color(0.04f, 0.05f, 0.04f, 0.82f), new Vector2(0.005f, 0.70f), new Vector2(0.15f, 0.995f), Vector2.zero, Vector2.zero);
-            Image icon = CreateImage("Icon", button.transform, CampaignIconPath, Gold, false);
-            SetAnchors(icon.rectTransform, new Vector2(0.02f, 0.73f), new Vector2(0.135f, 0.97f), Vector2.zero, Vector2.zero);
-            icon.preserveAspect = true;
-            CreateText("Title", button.transform, "CAMPAIGN", 128f, White, TextAlignmentOptions.MidlineLeft,
-                new Vector2(0.17f, 0.72f), new Vector2(0.89f, 0.98f), boldFont, 1f);
-            CreateText("Subtitle", button.transform, "CONTINUE CAMPAIGN  ›", 62f, White, TextAlignmentOptions.MidlineLeft,
-                new Vector2(0.17f, 0.62f), new Vector2(0.89f, 0.76f), boldFont, 1f);
-            RectTransform quote = CreatePanel("CampaignQuote", button.transform, new Vector2(0.03f, 0.29f), new Vector2(0.52f, 0.51f), new Color(0.90f, 0.88f, 0.80f, 0.98f), new Color(0.82f, 0.77f, 0.65f, 1f));
-            CreateText("Quote", quote, "PEOPLE ARE COUNTING ON US.\nKEEP THEM SAFE.", 42f, new Color(0.06f, 0.07f, 0.06f, 1f), TextAlignmentOptions.Center,
-                new Vector2(0.05f, 0.08f), new Vector2(0.95f, 0.92f), boldFont, 0f, true);
-            RectTransform emergency = CreatePanel("Emergency", button.transform, new Vector2(0.03f, 0.035f), new Vector2(0.72f, 0.20f), new Color(0.04f, 0.025f, 0.018f, 0.98f), Orange);
-            CreateText("Alert", emergency, "!", 62f, Orange, TextAlignmentOptions.Center,
-                new Vector2(0.02f, 0.08f), new Vector2(0.14f, 0.92f), boldFont);
-            CreateText("Label", emergency, "EMERGENCY: CIVILIANS AT RISK", 53f, Orange, TextAlignmentOptions.MidlineLeft,
-                new Vector2(0.15f, 0.08f), new Vector2(0.98f, 0.92f), boldFont, 1f);
+            BuildCampaignCard(root);
+            BuildCompactModeCard(root, "Card_Operations", 14f, 504f, 680f, 128f, "OPERATIONS", operationsArt, Green, UIRoute.Operations, ModeIcon.Operations);
+            BuildCompactModeCard(root, "Card_Skirmish", 14f, 644f, 680f, 139f, "SKIRMISH", skirmishArt, Red, UIRoute.QuickCustomSetup, ModeIcon.Skirmish);
         }
 
-        private static void BuildCompactCard(Transform parent, string name, Vector2 min, Vector2 max, string texturePath,
-            string title, string subtitle, Color accent, string iconPath, UIRoute route)
+        private static void BuildCampaignCard(Transform root)
         {
-            RectTransform card = CreateAnchored(name, parent, min, max, Vector2.zero, Vector2.zero);
-            Button button = CreateButton("Hotspot", card, Vector2.zero, Vector2.one, Ink, accent);
-            AddRoute(button, route, true);
-            RawImage art = CreateCroppedImage("Art", button.transform, texturePath, new Color(1f, 1f, 1f, 0.80f));
-            SetAnchors(art.rectTransform, new Vector2(0.005f, 0.02f), new Vector2(0.995f, 0.98f), Vector2.zero, Vector2.zero);
-            CreateSolid("Readability", button.transform, new Color(0.005f, 0.014f, 0.016f, 0.43f), new Vector2(0.005f, 0.02f), new Vector2(0.995f, 0.98f), Vector2.zero, Vector2.zero);
-            CreateSolid("IconTile", button.transform, new Color(0.01f, 0.03f, 0.025f, 0.86f), new Vector2(0.005f, 0.02f), new Vector2(0.15f, 0.98f), Vector2.zero, Vector2.zero);
-            Image icon = CreateImage("Icon", button.transform, iconPath, accent, false);
-            SetAnchors(icon.rectTransform, new Vector2(0.02f, 0.10f), new Vector2(0.135f, 0.90f), Vector2.zero, Vector2.zero);
-            icon.preserveAspect = true;
-            CreateText("Title", button.transform, title, 72f, White, TextAlignmentOptions.MidlineLeft,
-                new Vector2(0.17f, 0.42f), new Vector2(0.74f, 0.98f), boldFont, 1f);
-            CreateText("Subtitle", button.transform, subtitle, 27f, Muted, TextAlignmentOptions.MidlineLeft,
-                new Vector2(0.17f, 0.18f), new Vector2(0.74f, 0.44f), mediumFont, 1f);
-            CreateText("Chevron", button.transform, "›", 104f, White, TextAlignmentOptions.Center,
-                new Vector2(0.88f, 0.08f), new Vector2(0.985f, 0.92f), boldFont);
+            RectTransform card = CreateTopLeftRect("Card_Campaign", root, 14f, 156f, 680f, 337f);
+            Image art = CreateImage("CampaignArt", card, campaignArt, Color.white, false);
+            Stretch(art.rectTransform);
+            V3GradientGraphic shade = CreateGradient("CampaignReadability", card, new Color(0.02f, 0.01f, 0f, 0.2f), new Color(0.02f, 0.01f, 0f, 0.65f), Color.clear, 0f);
+            Stretch(shade.rectTransform);
+            V3GradientGraphic frame = CreateGradient("Frame", card, Color.clear, Color.clear, Amber, 3f);
+            Stretch(frame.rectTransform);
+            RectTransform iconCell = CreateTopLeftRect("IconCell", card, 3f, 3f, 102f, 117f);
+            V3GradientGraphic iconFill = iconCell.gameObject.AddComponent<V3GradientGraphic>();
+            iconFill.Configure(new Color32(194, 127, 0, 245), new Color32(107, 63, 0, 248), Amber, 3f);
+            Image campaignIconImage = CreateImage("CampaignTarget", iconCell, campaignIcon, Color.white, false);
+            SetTopLeft(campaignIconImage.rectTransform, 8f, 12f, 86f, 86f);
+            campaignIconImage.preserveAspect = true;
+            TMP_Text title = CreateText("Title", card, "CAMPAIGN", 53f, boldFont, TextAlignmentOptions.MidlineLeft, TextPrimary);
+            SetTopLeft(title.rectTransform, 120f, 7f, 535f, 66f);
+            TMP_Text subtitle = CreateText("Subtitle", card, "CONTINUE CAMPAIGN  ›", 27f, boldFont, TextAlignmentOptions.MidlineLeft, TextPrimary);
+            SetTopLeft(subtitle.rectTransform, 122f, 67f, 500f, 43f);
+            RectTransform quote = CreateTopLeftRect("StoryQuote", card, 24f, 135f, 255f, 78f);
+            V3GradientGraphic quoteFill = quote.gameObject.AddComponent<V3GradientGraphic>();
+            quoteFill.Configure(new Color32(255, 255, 252, 255), new Color32(226, 223, 211, 255), new Color32(54, 54, 49, 255), 2f);
+            Image quoteTail = CreateSolid("Tail", quote, new Color32(238, 236, 225, 255), new Vector2(16f, 16f), new Vector2(124f, 0f));
+            quoteTail.rectTransform.localRotation = Quaternion.Euler(0f, 0f, 45f);
+            TMP_Text quoteText = CreateText("Text", quote, "PEOPLE ARE COUNTING\nON US. KEEP THEM SAFE.", 19f, boldFont, TextAlignmentOptions.Center, new Color32(22, 24, 23, 255));
+            Stretch(quoteText.rectTransform);
+            quoteText.fontStyle = FontStyles.Bold | FontStyles.Italic;
+            RectTransform warning = CreateTopLeftRect("EmergencyWarning", card, 22f, 263f, 475f, 59f);
+            V3GradientGraphic warningFill = warning.gameObject.AddComponent<V3GradientGraphic>();
+            warningFill.Configure(new Color32(30, 20, 14, 248), new Color32(8, 9, 9, 252), Red, 3f);
+            CreateWarningIcon(CreateTopLeftRect("Icon", warning, 13f, 9f, 45f, 41f), Red);
+            TMP_Text warningText = CreateText("Text", warning, "EMERGENCY: CIVILIANS AT RISK", 24f, boldFont, TextAlignmentOptions.MidlineLeft, Red);
+            SetTopLeft(warningText.rectTransform, 70f, 5f, 392f, 49f);
+            AddRouteHotspot(card, UIRoute.Campaign);
+        }
+
+        private static void BuildCompactModeCard(
+            Transform root,
+            string name,
+            float x,
+            float y,
+            float width,
+            float height,
+            string title,
+            Sprite artSprite,
+            Color accent,
+            UIRoute route,
+            ModeIcon iconKind)
+        {
+            RectTransform card = CreateTopLeftRect(name, root, x, y, width, height);
+            Image art = CreateImage("ThumbnailArt", card, artSprite, Color.white, false);
+            Stretch(art.rectTransform);
+            V3GradientGraphic tint = CreateGradient("Tint", card, new Color(accent.r * 0.28f, accent.g * 0.28f, accent.b * 0.28f, 0.35f), new Color(0f, 0f, 0f, 0.48f), Color.clear, 0f);
+            Stretch(tint.rectTransform);
+            V3GradientGraphic frame = CreateGradient("Frame", card, Color.clear, Color.clear, accent, 3f);
+            Stretch(frame.rectTransform);
+            RectTransform iconCell = CreateTopLeftRect("IconCell", card, 3f, 3f, 102f, height - 6f);
+            V3GradientGraphic iconFill = iconCell.gameObject.AddComponent<V3GradientGraphic>();
+            iconFill.Configure(new Color(accent.r * 0.52f, accent.g * 0.52f, accent.b * 0.52f, 0.96f), new Color(accent.r * 0.18f, accent.g * 0.18f, accent.b * 0.18f, 0.98f), accent, 3f);
+            if (iconKind == ModeIcon.Operations)
+            {
+                Image operationsIconImage = CreateImage("OperationsCompass", iconCell, operationsIcon, Color.white, false);
+                SetTopLeft(operationsIconImage.rectTransform, 4f, 7f, 94f, 94f);
+                operationsIconImage.preserveAspect = true;
+                BuildOperationsRoute(card);
+            }
+            else
+            {
+                Image skirmishIconImage = CreateImage("SkirmishBlades", iconCell, skirmishIcon, Color.white, false);
+                SetTopLeft(skirmishIconImage.rectTransform, 8f, 14f, 86f, 90f);
+                skirmishIconImage.preserveAspect = true;
+            }
+            TMP_Text label = CreateText("Title", card, title, 48f, boldFont, TextAlignmentOptions.MidlineLeft, TextPrimary);
+            SetTopLeft(label.rectTransform, 120f, 0f, width - 195f, height);
+            TMP_Text chevron = CreateText("Chevron", card, "›", 82f, boldFont, TextAlignmentOptions.Center, TextPrimary);
+            SetTopLeft(chevron.rectTransform, width - 66f, 2f, 54f, height - 4f);
+            AddRouteHotspot(card, route);
+        }
+
+        private static void BuildMiddleHitTargets(Transform root)
+        {
+            RectTransform hidden = CreateTopLeftRect("DeployCommandButton", root, 824f, 704f, 2f, 2f);
+            hidden.gameObject.SetActive(false);
+            V3GradientGraphic graphic = hidden.gameObject.AddComponent<V3GradientGraphic>();
+            Button button = hidden.gameObject.AddComponent<Button>();
+            button.targetGraphic = graphic;
+            UIShellRouteButtonView route = hidden.gameObject.AddComponent<UIShellRouteButtonView>();
+            route.Configure(UiShellRouteIntent.EnterMatch, UIRoute.Match, false);
         }
 
         private static void BuildRightRail(Transform root)
         {
-            RectTransform zone = CreateAnchored("V3_RightRail", root, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            root.gameObject.AddComponent<MainMenuV3ResponsiveLayoutView>().Configure(MainMenuV3ResponsiveLayoutView.RegionLayoutKind.Right, zone);
-            RectTransform aria = CreatePanel("AriaPanel", zone, new Vector2(0f, 0.35f), Vector2.one, new Color(0.005f, 0.045f, 0.075f, 0.96f), Cyan);
-            CreateText("Title", aria, "ARIA", 88f, Cyan, TextAlignmentOptions.MidlineLeft,
-                new Vector2(0.05f, 0.82f), new Vector2(0.42f, 0.98f), boldFont, 2f);
-            CreateText("Status", aria, "COMMAND ASSISTANT  •  ONLINE", 28f, Cyan, TextAlignmentOptions.MidlineLeft,
-                new Vector2(0.05f, 0.75f), new Vector2(0.94f, 0.84f), mediumFont, 1f);
-            Image portrait = CreateImage("Portrait", aria, AriaPath, new Color(0.75f, 0.96f, 1f, 1f), false);
-            SetAnchors(portrait.rectTransform, new Vector2(0.11f, 0.02f), new Vector2(0.90f, 0.78f), Vector2.zero, Vector2.zero);
-            portrait.preserveAspect = true;
-            for (int i = 0; i < 6; i++)
-            {
-                float y = 0.10f + i * 0.065f;
-                CreateSolid($"Telemetry{i + 1}", aria, new Color(Cyan.r, Cyan.g, Cyan.b, 0.72f),
-                    new Vector2(0.04f, y), new Vector2(0.075f + i * 0.012f, y + 0.018f), Vector2.zero, Vector2.zero);
-            }
+            BuildAriaPanel(root);
+            BuildCommanderPanel(root);
+        }
 
-            RectTransform commander = CreatePanel("CommanderPanel", zone, new Vector2(0f, 0f), new Vector2(1f, 0.325f), new Color(0.035f, 0.075f, 0.035f, 0.97f), new Color(0.30f, 0.39f, 0.22f, 1f));
-            Image rank = CreateImage("Rank", commander, RankIconPath, Gold, false);
-            SetAnchors(rank.rectTransform, new Vector2(0.05f, 0.58f), new Vector2(0.22f, 0.91f), Vector2.zero, Vector2.zero);
-            rank.preserveAspect = true;
-            CreateText("Title", commander, "FIELD COMMANDER", 58f, White, TextAlignmentOptions.MidlineLeft,
-                new Vector2(0.25f, 0.70f), new Vector2(0.96f, 0.92f), boldFont, 1f);
-            CreateText("Status", commander, "SELECTED COMMANDER", 42f, Gold, TextAlignmentOptions.MidlineLeft,
-                new Vector2(0.25f, 0.54f), new Vector2(0.96f, 0.73f), boldFont, 1f);
-            Button change = CreateButton("CommanderPanelHotspot", commander, new Vector2(0.07f, 0.20f), new Vector2(0.93f, 0.50f), new Color(0.11f, 0.25f, 0.10f, 1f), new Color(0.38f, 0.52f, 0.28f, 1f));
-            AddRoute(change, UIRoute.CommandFeed, true);
-            CreateText("Label", change.transform, "CHANGE   ›", 56f, White, TextAlignmentOptions.Center,
-                new Vector2(0.02f, 0.05f), new Vector2(0.98f, 0.95f), boldFont, 2f);
+        private static void BuildAriaPanel(Transform root)
+        {
+            RectTransform panel = CreateTopLeftRect("AriaPanel", root, 1332f, 129f, 324f, 388f);
+            V3GradientGraphic fill = panel.gameObject.AddComponent<V3GradientGraphic>();
+            fill.ConfigureCorners(new Color32(2, 18, 28, 252), new Color32(2, 24, 36, 252), new Color32(0, 7, 12, 254), new Color32(1, 12, 18, 254), Cyan, 3f);
+            TMP_Text title = CreateText("Title", panel, "ARIA", 44f, boldFont, TextAlignmentOptions.MidlineLeft, Cyan);
+            SetTopLeft(title.rectTransform, 20f, 3f, 160f, 62f);
+            Image portrait = CreateImage("Portrait", panel, ariaPortrait, new Color32(112, 224, 255, 255), false);
+            portrait.color = Color.white;
+            SetTopLeft(portrait.rectTransform, 45f, 39f, 258f, 343f);
+            portrait.preserveAspect = true;
+            V3GradientGraphic scan = CreateGradient("PortraitScan", panel, new Color(0f, 0.65f, 1f, 0.025f), new Color(0f, 0.17f, 0.28f, 0.14f), Color.clear, 0f);
+            SetTopLeft(scan.rectTransform, 42f, 37f, 264f, 347f);
+            BuildAriaTelemetry(panel);
+        }
+
+        private static void BuildCommanderPanel(Transform root)
+        {
+            // Keep the panel's target-locked right edge while widening it to give the
+            // commander copy and CTA a consistent inset from the right frame.
+            RectTransform panel = CreateTopLeftRect("CommanderPanel", root, 1225f, 529f, 430f, 244f);
+            V3GradientGraphic fill = panel.gameObject.AddComponent<V3GradientGraphic>();
+            fill.ConfigureCorners(new Color32(30, 45, 28, 252), new Color32(18, 30, 21, 252), new Color32(7, 14, 10, 253), new Color32(10, 21, 13, 253), Border, 3f);
+            RectTransform emblem = CreateTopLeftRect("RankEmblem", panel, 20f, 22f, 64f, 92f);
+            CreateChevron("Rank1", emblem, 0f, 23f, Amber, 31f);
+            CreateChevron("Rank2", emblem, 0f, 1f, Amber, 31f);
+            CreateChevron("Rank3", emblem, 0f, -21f, Amber, 31f);
+            TMP_Text title = CreateText("Title", panel, "FIELD COMMANDER", 31f, boldFont, TextAlignmentOptions.MidlineLeft, TextPrimary);
+            SetTopLeft(title.rectTransform, 96f, 18f, 315f, 46f);
+            TMP_Text subtitle = CreateText("Subtitle", panel, "SELECTED COMMANDER", 22f, boldFont, TextAlignmentOptions.MidlineLeft, Amber);
+            SetTopLeft(subtitle.rectTransform, 96f, 61f, 313f, 38f);
+            RectTransform change = CreateTopLeftRect("ChangeButton", panel, 24f, 122f, 382f, 95f);
+            V3GradientGraphic changeFill = change.gameObject.AddComponent<V3GradientGraphic>();
+            changeFill.ConfigureCorners(new Color32(74, 116, 58, 255), new Color32(48, 90, 43, 255), new Color32(27, 62, 27, 255), new Color32(35, 73, 31, 255), new Color32(111, 148, 84, 255), 3f);
+            TMP_Text label = CreateText("Label", change, "CHANGE   ›", 44f, boldFont, TextAlignmentOptions.Center, TextPrimary);
+            SetTopLeft(label.rectTransform, 18f, 0f, 346f, 95f);
+            AddRouteHotspot(panel, UIRoute.CommandFeed, "CommanderPanelHotspot");
         }
 
         private static void BuildFooter(Transform root)
         {
-            RectTransform bar = CreateAnchored("V3_FooterBar", root, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            root.gameObject.AddComponent<MainMenuV3ResponsiveLayoutView>().Configure(MainMenuV3ResponsiveLayoutView.RegionLayoutKind.Footer, bar);
-            Button store = CreateButton("StoreButton", bar, new Vector2(0.008f, 0.06f), new Vector2(0.455f, 0.94f), new Color(0.01f, 0.23f, 0.42f, 0.98f), new Color(0.02f, 0.49f, 0.78f, 1f));
-            AddRoute(store, UIRoute.MainMenu, false);
-            Image storeIcon = CreateImage("Icon", store.transform, StoreIconPath, White, false);
-            SetAnchors(storeIcon.rectTransform, new Vector2(0.16f, 0.17f), new Vector2(0.31f, 0.83f), Vector2.zero, Vector2.zero);
-            storeIcon.preserveAspect = true;
-            CreateText("Label", store.transform, "STORE", 112f, White, TextAlignmentOptions.Center,
-                new Vector2(0.32f, 0.08f), new Vector2(0.86f, 0.92f), boldFont, 1f);
+            RectTransform store = CreateTopLeftRect("StoreButton", root, 14f, 795f, 753f, 146f);
+            V3GradientGraphic storeFill = store.gameObject.AddComponent<V3GradientGraphic>();
+            storeFill.ConfigureCorners(new Color32(4, 144, 215, 255), new Color32(3, 112, 183, 255), new Color32(1, 77, 135, 255), new Color32(2, 92, 153, 255), new Color32(0, 138, 216, 255), 3f);
+            Image cart = CreateImage("CartIcon", store, storeIcon, Color.white, false);
+            SetTopLeft(cart.rectTransform, 109f, 21f, 128f, 105f);
+            cart.preserveAspect = true;
+            TMP_Text storeText = CreateText("Label", store, "STORE", 59f, boldFont, TextAlignmentOptions.Center, TextPrimary);
+            SetTopLeft(storeText.rectTransform, 264f, 0f, 340f, 146f);
+            AddRouteHotspot(store, UIRoute.CommandExchange, "StoreButtonHotspot");
 
-            Button armory = CreateButton("ArmoryButton", bar, new Vector2(0.46f, 0.06f), new Vector2(0.992f, 0.94f), Navy, new Color(0.13f, 0.28f, 0.52f, 1f));
-            AddRoute(armory, UIRoute.Armory, true);
-            Image armoryIcon = CreateImage("Icon", armory.transform, ArmoryIconPath, White, false);
-            SetAnchors(armoryIcon.rectTransform, new Vector2(0.18f, 0.17f), new Vector2(0.31f, 0.83f), Vector2.zero, Vector2.zero);
-            armoryIcon.preserveAspect = true;
-            CreateText("Label", armory.transform, "ARMORY", 112f, White, TextAlignmentOptions.Center,
-                new Vector2(0.32f, 0.08f), new Vector2(0.84f, 0.92f), boldFont, 1f);
+            RectTransform armory = CreateTopLeftRect("OpenArmoryButton", root, 767f, 795f, 890f, 146f);
+            V3GradientGraphic armoryFill = armory.gameObject.AddComponent<V3GradientGraphic>();
+            armoryFill.ConfigureCorners(new Color32(31, 65, 119, 255), new Color32(25, 52, 96, 255), new Color32(12, 29, 58, 255), new Color32(17, 38, 72, 255), new Color32(40, 69, 111, 255), 3f);
+            Image crate = CreateImage("CrateIcon", armory, armoryIcon, Color.white, false);
+            SetTopLeft(crate.rectTransform, 158f, 11f, 154f, 124f);
+            crate.preserveAspect = true;
+            TMP_Text armoryText = CreateText("Label", armory, "ARMORY", 59f, boldFont, TextAlignmentOptions.Center, TextPrimary);
+            SetTopLeft(armoryText.rectTransform, 327f, 0f, 400f, 146f);
+            AddRouteHotspot(armory, UIRoute.Armory, "ArmoryButtonHotspot");
         }
 
-        private static Button CreateButton(string name, Transform parent, Vector2 min, Vector2 max, Color fill, Color border)
+        private static void AddRouteHotspot(RectTransform parent, UIRoute route, string name = "Hotspot")
         {
-            GameObject root = CreateRect(name, parent);
-            RectTransform rect = root.GetComponent<RectTransform>();
-            SetAnchors(rect, min, max, Vector2.zero, Vector2.zero);
-            Image image = root.AddComponent<Image>();
-            image.color = border;
-            image.raycastTarget = true;
-            Image inner = CreateSolid("Fill", root.transform, fill);
-            SetStretchOffsets(inner.rectTransform, 8f, 8f, -8f, -8f);
-            inner.transform.SetAsFirstSibling();
-
-            Button button = root.AddComponent<Button>();
-            button.targetGraphic = image;
+            RectTransform hotspot = CreateRect(name, parent, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            Image hit = hotspot.gameObject.AddComponent<Image>();
+            hit.color = Color.clear;
+            hit.raycastTarget = true;
+            Button button = hotspot.gameObject.AddComponent<Button>();
+            button.targetGraphic = hit;
             button.transition = Selectable.Transition.ColorTint;
-            ColorBlock colors = button.colors;
-            colors.normalColor = Color.white;
-            colors.highlightedColor = new Color(1.25f, 1.25f, 1.25f, 1f);
-            colors.pressedColor = new Color(0.65f, 0.65f, 0.65f, 1f);
-            colors.selectedColor = colors.highlightedColor;
-            colors.disabledColor = colors.normalColor;
-            colors.colorMultiplier = 1f;
-            colors.fadeDuration = 0.06f;
-            button.colors = colors;
-            return button;
+            button.colors = ButtonColors();
+            UIShellRouteButtonView routeButton = hotspot.gameObject.AddComponent<UIShellRouteButtonView>();
+            routeButton.Configure(UiShellRouteIntent.OpenMenuRoute, route, true);
         }
 
-        private static void AddRoute(Button button, UIRoute route, bool pushHistory)
+        private static ColorBlock ButtonColors()
         {
-            UIShellRouteButtonView view = button.gameObject.AddComponent<UIShellRouteButtonView>();
-            view.Configure(UiShellRouteIntent.OpenMenuRoute, route, pushHistory);
-        }
-
-        private static void ValidateRoute(GameObject root, string objectName, UIRoute expectedRoute, bool expectedPushHistory)
-        {
-            Transform transform = FindDescendant(root.transform, objectName);
-            UIShellRouteButtonView route = transform != null
-                ? transform.GetComponent<UIShellRouteButtonView>() ?? transform.GetComponentInChildren<UIShellRouteButtonView>(true)
-                : null;
-            if (route == null || route.Intent != UiShellRouteIntent.OpenMenuRoute ||
-                route.Route != expectedRoute || route.PushHistory != expectedPushHistory)
+            return new ColorBlock
             {
-                throw new InvalidOperationException(
-                    $"SCN-02 V3 route mismatch object={objectName} expected={expectedRoute}/{expectedPushHistory}.");
+                normalColor = Color.white,
+                highlightedColor = new Color(1.06f, 1.06f, 1.06f, 1f),
+                pressedColor = new Color(0.82f, 0.88f, 0.9f, 1f),
+                selectedColor = Color.white,
+                disabledColor = new Color(0.35f, 0.35f, 0.35f, 0.6f),
+                colorMultiplier = 1f,
+                fadeDuration = 0.08f
+            };
+        }
+
+        private static void CreateTargetIcon(Transform root, Color color)
+        {
+            RectTransform holder = CreateTopLeftRect("Target", root, 20f, 22f, 62f, 62f);
+            CreateRing("OuterRing", holder, new Vector2(56f, 56f), Vector2.zero, color, 5f);
+            CreateSolid("CrossH", holder, color, new Vector2(62f, 4f), Vector2.zero);
+            CreateSolid("CrossV", holder, color, new Vector2(4f, 62f), Vector2.zero);
+            CreateRing("CoreRing", holder, new Vector2(20f, 20f), Vector2.zero, color, 4f);
+        }
+
+        private static void CreateCreditsIcon(Transform root, Color color)
+        {
+            CreateRing("OuterRing", root, new Vector2(66f, 66f), Vector2.zero, color, 4f);
+            float[] heights = { 14f, 25f, 36f, 29f, 43f };
+            for (int i = 0; i < heights.Length; i++)
+            {
+                float x = -20f + i * 10f;
+                float y = -18f + heights[i] * 0.5f;
+                CreateSolid("Bar" + i, root, color, new Vector2(6f, heights[i]), new Vector2(x, y));
             }
         }
 
-        private static Transform FindDescendant(Transform root, string objectName)
+        private static void CreateCompassIcon(Transform root, Color color)
         {
-            if (root == null)
-                return null;
-            if (root.name == objectName)
-                return root;
-            for (int i = 0; i < root.childCount; i++)
+            RectTransform holder = CreateTopLeftRect("Compass", root, 20f, 23f, 62f, 62f);
+            CreateRing("OuterRing", holder, new Vector2(57f, 57f), Vector2.zero, color, 4f);
+            V3StarGraphic star = CreateRect("Star", holder, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(47f, 47f), Vector2.zero).gameObject.AddComponent<V3StarGraphic>();
+            star.color = color;
+            CreateRing("CoreRing", holder, new Vector2(24f, 24f), Vector2.zero, new Color32(26, 92, 55, 255), 7f);
+        }
+
+        private static void BuildOperationsRoute(Transform card)
+        {
+            Vector2[] points =
             {
-                Transform found = FindDescendant(root.GetChild(i), objectName);
-                if (found != null)
-                    return found;
+                new(225f, 94f), new(285f, 84f), new(344f, 101f),
+                new(405f, 79f), new(468f, 97f), new(525f, 79f)
+            };
+            for (int i = 0; i < points.Length - 1; i++)
+                CreateLineBetween($"RouteSegment{i}", card, points[i], points[i + 1], Green, 3f);
+            for (int i = 0; i < points.Length; i++)
+                CreateRouteNode($"RouteNode{i}", card, points[i], i > 0 && i < points.Length - 1);
+        }
+
+        private static void CreateRouteNode(string name, Transform parent, Vector2 point, bool checkedNode)
+        {
+            RectTransform node = CreateRect(name, parent, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(21f, 21f), new Vector2(point.x, -point.y));
+            CreateRing("Ring", node, new Vector2(20f, 20f), Vector2.zero, Green, 4f);
+            CreateSolid("Core", node, new Color32(11, 45, 28, 255), new Vector2(9f, 9f), Vector2.zero);
+            if (!checkedNode)
+                return;
+            Image shortStroke = CreateSolid("CheckShort", node, TextPrimary, new Vector2(8f, 3f), new Vector2(-3f, -1f));
+            shortStroke.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -44f);
+            Image longStroke = CreateSolid("CheckLong", node, TextPrimary, new Vector2(12f, 3f), new Vector2(3f, 1f));
+            longStroke.rectTransform.localRotation = Quaternion.Euler(0f, 0f, 44f);
+        }
+
+        private static void BuildAriaTelemetry(Transform panel)
+        {
+            Color telemetry = new(0f, 0.72f, 0.95f, 0.78f);
+            float[] leftY = { 73f, 80f, 91f, 106f, 114f, 122f, 143f, 151f, 166f, 181f, 189f, 209f };
+            float[] leftWidth = { 31f, 8f, 45f, 37f, 19f, 12f, 42f, 25f, 9f, 34f, 17f, 39f };
+            for (int i = 0; i < leftY.Length; i++)
+                CreateSolidTopLeft("TelemetryLeft" + i, panel, 18f, leftY[i], leftWidth[i], 2f, telemetry);
+
+            float[] rightWidth = { 9f, 30f, 23f, 31f, 19f, 28f, 30f, 17f, 27f, 12f };
+            for (int i = 0; i < rightWidth.Length; i++)
+                CreateSolidTopLeft("TelemetryRight" + i, panel, 268f, 57f + i * 9f, rightWidth[i], 2f, telemetry);
+
+            CreateSolidTopLeft("TelemetryRightStem", panel, 303f, 55f, 2f, 101f, new Color(telemetry.r, telemetry.g, telemetry.b, 0.45f));
+            for (int i = 0; i < 4; i++)
+                CreateSolidTopLeft("TelemetryLowerLine" + i, panel, 18f, 298f + i * 13f, 57f - i * 8f, 2f, telemetry);
+
+            float[] bars = { 18f, 42f, 27f, 55f, 33f, 48f };
+            for (int i = 0; i < bars.Length; i++)
+                CreateSolidTopLeft("ChartBar" + i, panel, 20f + i * 7f, 285f - bars[i], 4f, bars[i], telemetry);
+            CreateSolidTopLeft("ChartBaseline", panel, 18f, 287f, 49f, 2f, telemetry);
+
+            RectTransform reticle = CreateTopLeftRect("TelemetryReticle", panel, 251f, 220f, 58f, 58f);
+            CreateRing("OuterRing", reticle, new Vector2(52f, 52f), Vector2.zero, telemetry, 3f);
+            CreateRing("InnerRing", reticle, new Vector2(22f, 22f), Vector2.zero, telemetry, 3f);
+            CreateSolid("Horizontal", reticle, telemetry, new Vector2(58f, 3f), Vector2.zero);
+            CreateSolid("Vertical", reticle, telemetry, new Vector2(3f, 58f), Vector2.zero);
+        }
+
+        private static void CreateLineBetween(string name, Transform parent, Vector2 a, Vector2 b, Color color, float thickness)
+        {
+            Vector2 delta = new(b.x - a.x, -(b.y - a.y));
+            Vector2 center = (a + b) * 0.5f;
+            Image line = CreateImage(name, parent, null, color, false);
+            SetRect(line.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(delta.magnitude, thickness), new Vector2(center.x, -center.y));
+            line.rectTransform.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg);
+        }
+
+        private static V3RingGraphic CreateRing(string name, Transform parent, Vector2 size, Vector2 position, Color color, float thickness)
+        {
+            RectTransform rect = CreateRect(name, parent, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), size, position);
+            V3RingGraphic ring = rect.gameObject.AddComponent<V3RingGraphic>();
+            ring.Configure(color, thickness);
+            return ring;
+        }
+
+        private static void CreateCrossedBladesIcon(Transform root, Color color)
+        {
+            RectTransform holder = CreateTopLeftRect("Blades", root, 20f, 29f, 62f, 72f);
+            Image left = CreateSolid("Left", holder, color, new Vector2(8f, 70f), Vector2.zero);
+            left.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -43f);
+            Image right = CreateSolid("Right", holder, color, new Vector2(8f, 70f), Vector2.zero);
+            right.rectTransform.localRotation = Quaternion.Euler(0f, 0f, 43f);
+            CreateSolid("GuardLeft", holder, color, new Vector2(29f, 6f), new Vector2(-19f, -19f)).rectTransform.localRotation = Quaternion.Euler(0f, 0f, -43f);
+            CreateSolid("GuardRight", holder, color, new Vector2(29f, 6f), new Vector2(19f, -19f)).rectTransform.localRotation = Quaternion.Euler(0f, 0f, 43f);
+        }
+
+        private static void CreateWarningIcon(Transform root, Color color)
+        {
+            CreateSolid("Stem", root, color, new Vector2(8f, 25f), new Vector2(0f, 5f));
+            CreateSolid("Dot", root, color, new Vector2(8f, 8f), new Vector2(0f, -14f));
+            Image left = CreateSolid("Left", root, color, new Vector2(5f, 39f), new Vector2(-11f, 0f));
+            left.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -29f);
+            Image right = CreateSolid("Right", root, color, new Vector2(5f, 39f), new Vector2(11f, 0f));
+            right.rectTransform.localRotation = Quaternion.Euler(0f, 0f, 29f);
+            CreateSolid("Base", root, color, new Vector2(38f, 5f), new Vector2(0f, -20f));
+        }
+
+        private static void CreateCartIcon(Transform root, Color color)
+        {
+            Image basket = CreateSolid("Basket", root, color, new Vector2(67f, 39f), new Vector2(5f, 5f));
+            basket.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -7f);
+            Image handle = CreateSolid("Handle", root, color, new Vector2(8f, 35f), new Vector2(-37f, 29f));
+            handle.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -24f);
+            CreateSolid("WheelLeft", root, color, new Vector2(18f, 18f), new Vector2(-17f, -31f));
+            CreateSolid("WheelRight", root, color, new Vector2(18f, 18f), new Vector2(31f, -31f));
+        }
+
+        private static void CreateChevron(string name, Transform parent, float centerX, float centerY, Color color, float length)
+        {
+            Image left = CreateSolid(name + "Left", parent, color, new Vector2(length, 7f), new Vector2(centerX - 10f, centerY));
+            left.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -28f);
+            Image right = CreateSolid(name + "Right", parent, color, new Vector2(length, 7f), new Vector2(centerX + 10f, centerY));
+            right.rectTransform.localRotation = Quaternion.Euler(0f, 0f, 28f);
+        }
+
+        private static void ConfigureTexture(string path, bool alpha, int maxSize)
+        {
+            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceSynchronousImport);
+            TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
+            if (importer == null)
+                throw new FileNotFoundException($"Missing Main Menu V3 texture: {path}");
+            importer.textureType = TextureImporterType.Sprite;
+            importer.spriteImportMode = SpriteImportMode.Single;
+            importer.alphaIsTransparency = alpha;
+            importer.mipmapEnabled = false;
+            importer.wrapMode = TextureWrapMode.Clamp;
+            importer.filterMode = FilterMode.Bilinear;
+            importer.textureCompression = TextureImporterCompression.CompressedHQ;
+            importer.compressionQuality = 100;
+            importer.maxTextureSize = maxSize;
+            importer.SaveAndReimport();
+        }
+
+        private static void BuildAtlas(string atlasPath, string atlasName, params string[] texturePaths)
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(atlasPath));
+            SpriteAtlas atlas = AssetDatabase.LoadAssetAtPath<SpriteAtlas>(atlasPath);
+            if (atlas == null)
+            {
+                atlas = new SpriteAtlas();
+                AssetDatabase.CreateAsset(atlas, atlasPath);
             }
-            return null;
+
+            UnityEngine.Object[] existing = SpriteAtlasExtensions.GetPackables(atlas);
+            if (existing.Length > 0)
+                SpriteAtlasExtensions.Remove(atlas, existing);
+
+            var textures = new List<UnityEngine.Object>(texturePaths.Length);
+            for (int i = 0; i < texturePaths.Length; i++)
+            {
+                Texture2D texture = AssetDatabase.LoadAssetAtPath<Texture2D>(texturePaths[i]);
+                if (texture == null)
+                    throw new FileNotFoundException($"Missing texture for atlas: {texturePaths[i]}");
+                textures.Add(texture);
+            }
+            SpriteAtlasExtensions.Add(atlas, textures.ToArray());
+            SpriteAtlasExtensions.SetPackingSettings(atlas, new SpriteAtlasPackingSettings
+            {
+                blockOffset = 1,
+                enableRotation = false,
+                enableTightPacking = false,
+                padding = 4
+            });
+            SpriteAtlasExtensions.SetTextureSettings(atlas, new SpriteAtlasTextureSettings
+            {
+                filterMode = FilterMode.Bilinear,
+                generateMipMaps = false,
+                readable = false,
+                sRGB = true
+            });
+            SetAtlasPlatform(atlas, "DefaultTexturePlatform", false, TextureImporterFormat.Automatic);
+            SetAtlasPlatform(atlas, "Android", true, TextureImporterFormat.ASTC_6x6);
+            SpriteAtlasExtensions.SetIncludeInBuild(atlas, true);
+            atlas.name = atlasName;
+            EditorUtility.SetDirty(atlas);
         }
 
-        private static RectTransform CreatePanel(string name, Transform parent, Vector2 min, Vector2 max, Color fill, Color border)
+        private static void ValidateAtlas(string atlasPath, params string[] expectedPaths)
         {
-            RectTransform outer = CreateAnchored(name, parent, min, max, Vector2.zero, Vector2.zero);
-            Image borderImage = outer.gameObject.AddComponent<Image>();
-            borderImage.color = border;
-            borderImage.raycastTarget = false;
-            Image inner = CreateSolid("Fill", outer, fill);
-            SetStretchOffsets(inner.rectTransform, 8f, 8f, -8f, -8f);
-            inner.transform.SetAsFirstSibling();
-            return outer;
+            SpriteAtlas atlas = AssetDatabase.LoadAssetAtPath<SpriteAtlas>(atlasPath);
+            if (atlas == null)
+                throw new FileNotFoundException($"Missing V3 atlas: {atlasPath}");
+
+            UnityEngine.Object[] packables = SpriteAtlasExtensions.GetPackables(atlas);
+            var actualPaths = new HashSet<string>(StringComparer.Ordinal);
+            for (int i = 0; i < packables.Length; i++)
+                actualPaths.Add(AssetDatabase.GetAssetPath(packables[i]));
+            if (packables.Length != expectedPaths.Length || actualPaths.Count != expectedPaths.Length)
+                throw new InvalidOperationException($"V3 atlas {atlasPath} contains duplicate or unexpected packables.");
+            for (int i = 0; i < expectedPaths.Length; i++)
+            {
+                if (!actualPaths.Contains(expectedPaths[i]))
+                    throw new InvalidOperationException($"V3 atlas {atlasPath} is missing canonical texture {expectedPaths[i]}.");
+            }
         }
 
-        private static RawImage CreateCroppedImage(string name, Transform parent, string path, Color tint)
+        private static void SetAtlasPlatform(SpriteAtlas atlas, string platformName, bool overridden, TextureImporterFormat format)
         {
-            Texture2D texture = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
-            if (texture == null)
-                throw new InvalidOperationException($"Missing UI texture: {path}");
-            GameObject root = CreateRect(name, parent);
-            RawImage image = root.AddComponent<RawImage>();
-            image.texture = texture;
-            image.color = tint;
-            image.raycastTarget = false;
-            image.uvRect = new Rect(0f, 0.12f, 1f, 0.76f);
-            return image;
-        }
-
-        private static Image CreateImage(string name, Transform parent, string path, Color tint, bool raycast)
-        {
-            GameObject root = CreateRect(name, parent);
-            Image image = root.AddComponent<Image>();
-            image.sprite = RequireSprite(path);
-            image.color = tint;
-            image.raycastTarget = raycast;
-            return image;
-        }
-
-        private static Image CreateSolid(string name, Transform parent, Color color, bool raycast = false)
-        {
-            GameObject root = CreateRect(name, parent);
-            Image image = root.AddComponent<Image>();
-            image.color = color;
-            image.raycastTarget = raycast;
-            return image;
-        }
-
-        private static Image CreateSolid(string name, Transform parent, Color color, Vector2 min, Vector2 max, Vector2 offsetMin, Vector2 offsetMax)
-        {
-            Image image = CreateSolid(name, parent, color);
-            SetAnchors(image.rectTransform, min, max, offsetMin, offsetMax);
-            return image;
-        }
-
-        private static TMP_Text CreateText(string name, Transform parent, string value, float fontSize, Color color,
-            TextAlignmentOptions alignment, Vector2 min, Vector2 max, TMP_FontAsset font, float spacing = 0f, bool wrap = false)
-        {
-            GameObject root = CreateRect(name, parent);
-            RectTransform rect = root.GetComponent<RectTransform>();
-            SetAnchors(rect, min, max, Vector2.zero, Vector2.zero);
-            TextMeshProUGUI text = root.AddComponent<TextMeshProUGUI>();
-            text.font = font;
-            text.text = value;
-            text.fontSize = fontSize;
-            text.fontStyle = FontStyles.Bold;
-            text.color = color;
-            text.alignment = alignment;
-            text.textWrappingMode = wrap ? TextWrappingModes.Normal : TextWrappingModes.NoWrap;
-            text.overflowMode = TextOverflowModes.Ellipsis;
-            text.characterSpacing = spacing;
-            text.raycastTarget = false;
-            return text;
-        }
-
-        private static RectTransform CreateSection(string name, Transform parent)
-        {
-            RectTransform rect = CreateRect(name, parent).GetComponent<RectTransform>();
-            Stretch(rect);
-            return rect;
-        }
-
-        private static RectTransform CreateAnchored(string name, Transform parent, Vector2 min, Vector2 max, Vector2 offsetMin, Vector2 offsetMax)
-        {
-            RectTransform rect = CreateRect(name, parent).GetComponent<RectTransform>();
-            SetAnchors(rect, min, max, offsetMin, offsetMax);
-            return rect;
-        }
-
-        private static GameObject CreateRect(string name, Transform parent)
-        {
-            GameObject root = new(name, typeof(RectTransform));
-            if (parent != null)
-                root.transform.SetParent(parent, false);
-            RectTransform rect = root.GetComponent<RectTransform>();
-            rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 0.5f);
-            rect.anchoredPosition = Vector2.zero;
-            rect.sizeDelta = Vector2.zero;
-            return root;
-        }
-
-        private static void SetAnchors(RectTransform rect, Vector2 min, Vector2 max, Vector2 offsetMin, Vector2 offsetMax)
-        {
-            rect.anchorMin = min;
-            rect.anchorMax = max;
-            rect.pivot = new Vector2(0.5f, 0.5f);
-            rect.offsetMin = offsetMin;
-            rect.offsetMax = offsetMax;
-        }
-
-        private static void SetStretchOffsets(RectTransform rect, float left, float bottom, float right, float top)
-        {
-            rect.anchorMin = Vector2.zero;
-            rect.anchorMax = Vector2.one;
-            rect.pivot = new Vector2(0.5f, 0.5f);
-            rect.offsetMin = new Vector2(left, bottom);
-            rect.offsetMax = new Vector2(right, top);
-        }
-
-        private static void Stretch(RectTransform rect)
-        {
-            SetStretchOffsets(rect, 0f, 0f, 0f, 0f);
-        }
-
-        private static RectTransform RequireRect(GameObject root)
-        {
-            RectTransform rect = root.GetComponent<RectTransform>();
-            if (rect == null)
-                throw new InvalidOperationException($"Expected RectTransform on {root.name}.");
-            return rect;
-        }
-
-        private static void ClearChildren(Transform root)
-        {
-            while (root.childCount > 0)
-                UnityEngine.Object.DestroyImmediate(root.GetChild(0).gameObject);
-        }
-
-        private static void RemoveComponent<T>(GameObject root) where T : Component
-        {
-            T component = root.GetComponent<T>();
-            if (component != null)
-                UnityEngine.Object.DestroyImmediate(component, true);
+            SpriteAtlasExtensions.SetPlatformSettings(atlas, new TextureImporterPlatformSettings
+            {
+                name = platformName,
+                overridden = overridden,
+                maxTextureSize = 2048,
+                format = format,
+                textureCompression = TextureImporterCompression.CompressedHQ,
+                compressionQuality = 100
+            });
         }
 
         private static void LoadAssets()
         {
             boldFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(BoldFontPath);
             mediumFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(MediumFontPath);
-            if (boldFont == null || mediumFont == null)
-                throw new InvalidOperationException("SCN-02 V3 requires the Oxanium Bold and Medium TMP font assets.");
+            commanderScene = AssetDatabase.LoadAssetAtPath<Sprite>(CommanderScenePath);
+            campaignArt = AssetDatabase.LoadAssetAtPath<Sprite>(CampaignArtPath);
+            operationsArt = AssetDatabase.LoadAssetAtPath<Sprite>(OperationsArtPath);
+            skirmishArt = AssetDatabase.LoadAssetAtPath<Sprite>(SkirmishArtPath);
+            ariaPortrait = AssetDatabase.LoadAssetAtPath<Sprite>(AriaPortraitPath);
+            campaignIcon = AssetDatabase.LoadAssetAtPath<Sprite>(CampaignIconPath);
+            operationsIcon = AssetDatabase.LoadAssetAtPath<Sprite>(OperationsIconPath);
+            skirmishIcon = AssetDatabase.LoadAssetAtPath<Sprite>(SkirmishIconPath);
+            storeIcon = AssetDatabase.LoadAssetAtPath<Sprite>(StoreIconPath);
+            armoryIcon = AssetDatabase.LoadAssetAtPath<Sprite>(ArmoryIconPath);
+            creditsIcon = AssetDatabase.LoadAssetAtPath<Sprite>(CanonicalUiResourceIconPaths.Credits);
+            commandIcon = AssetDatabase.LoadAssetAtPath<Sprite>(CanonicalUiResourceIconPaths.Command);
+            settingsIcon = AssetDatabase.LoadAssetAtPath<Sprite>(V3UiFoundationBuilder.SettingsIconPath);
+            if (boldFont == null || mediumFont == null || commanderScene == null || campaignArt == null || operationsArt == null || skirmishArt == null || ariaPortrait == null || campaignIcon == null || operationsIcon == null || skirmishIcon == null || storeIcon == null || armoryIcon == null || creditsIcon == null || commandIcon == null || settingsIcon == null)
+                throw new MissingReferenceException("Main Menu V3 is missing a required font or canonical content asset.");
         }
 
-        private static void EnsureSpriteImport(string path, int maxSize, bool alpha)
+        private static void ValidateRoute(GameObject prefab, string objectName, UIRoute expectedRoute)
         {
-            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceSynchronousImport);
-            TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
-            if (importer == null)
-                throw new InvalidOperationException($"Missing texture importer: {path}");
-            bool dirty = importer.textureType != TextureImporterType.Sprite ||
-                         importer.spriteImportMode != SpriteImportMode.Single ||
-                         importer.mipmapEnabled ||
-                         importer.maxTextureSize != maxSize ||
-                         importer.alphaIsTransparency != alpha;
-            if (!dirty)
-                return;
-            importer.textureType = TextureImporterType.Sprite;
-            importer.spriteImportMode = SpriteImportMode.Single;
-            importer.mipmapEnabled = false;
-            importer.alphaIsTransparency = alpha;
-            importer.maxTextureSize = maxSize;
-            importer.textureCompression = TextureImporterCompression.CompressedHQ;
-            importer.SaveAndReimport();
+            Transform target = FindDeepChild(prefab.transform, objectName);
+            UIShellRouteButtonView route = target != null ? target.GetComponent<UIShellRouteButtonView>() : null;
+            if (route == null)
+                route = target != null ? target.GetComponentInChildren<UIShellRouteButtonView>(true) : null;
+            if (route == null || route.Intent != UiShellRouteIntent.OpenMenuRoute || route.Route != expectedRoute || !route.PushHistory)
+                throw new InvalidOperationException($"{objectName} has invalid route binding; expected {expectedRoute}.");
         }
 
-        private static Sprite RequireSprite(string path)
+        private static void Capture(string outputPath, int width, int height)
         {
-            Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(path);
-            if (sprite == null)
-                throw new InvalidOperationException($"Missing UI sprite: {path}");
-            return sprite;
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+            if (prefab == null)
+                throw new FileNotFoundException($"Missing Main Menu prefab for capture: {PrefabPath}");
+
+            Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            GameObject cameraObject = new("MainMenuV3CaptureCamera");
+            Camera camera = cameraObject.AddComponent<Camera>();
+            camera.clearFlags = CameraClearFlags.SolidColor;
+            camera.backgroundColor = Color.black;
+            camera.orthographic = true;
+            camera.orthographicSize = height * 0.5f;
+            camera.nearClipPlane = 0.1f;
+            camera.farClipPlane = 1000f;
+            camera.transform.position = new Vector3(0f, 0f, -100f);
+
+            GameObject canvasObject = new("MainMenuV3CaptureCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler));
+            RectTransform canvasRect = canvasObject.GetComponent<RectTransform>();
+            canvasRect.sizeDelta = new Vector2(width, height);
+            Canvas canvas = canvasObject.GetComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceCamera;
+            canvas.worldCamera = camera;
+            canvas.planeDistance = 10f;
+            CanvasScaler scaler = canvasObject.GetComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = ReferenceResolution;
+            scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+            scaler.matchWidthOrHeight = 0.5f;
+
+            GameObject instance = UnityEngine.Object.Instantiate(prefab, canvasRect);
+            instance.name = prefab.name;
+            Stretch(instance.transform as RectTransform);
+            Canvas.ForceUpdateCanvases();
+
+            RenderTexture renderTexture = new(width, height, 24, RenderTextureFormat.ARGB32);
+            Texture2D image = new(width, height, TextureFormat.RGBA32, false);
+            try
+            {
+                camera.targetTexture = renderTexture;
+                RenderTexture.active = renderTexture;
+                camera.Render();
+                image.ReadPixels(new Rect(0f, 0f, width, height), 0, 0);
+                image.Apply();
+                File.WriteAllBytes(outputPath, image.EncodeToPNG());
+                Debug.Log($"[MainMenuV3PrefabBuilder] captured={outputPath} size={width}x{height} scene={scene.name}");
+            }
+            finally
+            {
+                camera.targetTexture = null;
+                RenderTexture.active = null;
+                UnityEngine.Object.DestroyImmediate(image);
+                UnityEngine.Object.DestroyImmediate(renderTexture);
+                EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            }
+        }
+
+        private static RectTransform CreateRect(string name, Transform parent, Vector2 min, Vector2 max, Vector2 size, Vector2 position)
+        {
+            return V3UiPrefabFactory.CreateRect(name, parent, min, max, size, position);
+        }
+
+        private static RectTransform CreateTopLeftRect(string name, Transform parent, float x, float y, float width, float height)
+        {
+            RectTransform rect = CreateRect(name, parent, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(width, height), new Vector2(x, -y));
+            rect.pivot = new Vector2(0f, 1f);
+            return rect;
+        }
+
+        private static Image CreateImage(string name, Transform parent, Sprite sprite, Color color, bool raycast)
+        {
+            return V3UiPrefabFactory.CreateImage(name, parent, sprite, color, raycast, false);
+        }
+
+        private static V3GradientGraphic CreateGradient(string name, Transform parent, Color top, Color bottom, Color border, float width)
+        {
+            RectTransform rect = CreateRect(name, parent, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(100f, 100f), Vector2.zero);
+            V3GradientGraphic gradient = rect.gameObject.AddComponent<V3GradientGraphic>();
+            gradient.Configure(top, bottom, border, width);
+            return gradient;
+        }
+
+        private static TMP_Text CreateText(string name, Transform parent, string value, float size, TMP_FontAsset font, TextAlignmentOptions alignment, Color color)
+        {
+            RectTransform rect = CreateRect(name, parent, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(200f, 60f), Vector2.zero);
+            TextMeshProUGUI text = rect.gameObject.AddComponent<TextMeshProUGUI>();
+            text.text = value;
+            text.font = font;
+            text.fontSize = size;
+            text.alignment = alignment;
+            text.color = color;
+            text.raycastTarget = false;
+            text.enableWordWrapping = false;
+            text.overflowMode = TextOverflowModes.Overflow;
+            return text;
+        }
+
+        private static Image CreateSolid(string name, Transform parent, Color color, Vector2 size, Vector2 position)
+        {
+            Image image = CreateImage(name, parent, null, color, false);
+            SetRect(image.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), size, position);
+            return image;
+        }
+
+        private static Image CreateSolidTopLeft(string name, Transform parent, float x, float y, float width, float height, Color color)
+        {
+            Image image = CreateImage(name, parent, null, color, false);
+            SetTopLeft(image.rectTransform, x, y, width, height);
+            return image;
+        }
+
+        private static void SetTopLeft(RectTransform rect, float x, float y, float width, float height)
+        {
+            rect.anchorMin = new Vector2(0f, 1f);
+            rect.anchorMax = new Vector2(0f, 1f);
+            rect.pivot = new Vector2(0f, 1f);
+            rect.sizeDelta = new Vector2(width, height);
+            rect.anchoredPosition = new Vector2(x, -y);
+        }
+
+        private static void SetRect(RectTransform rect, Vector2 min, Vector2 max, Vector2 size, Vector2 position)
+        {
+            rect.anchorMin = min;
+            rect.anchorMax = max;
+            rect.sizeDelta = size;
+            rect.anchoredPosition = position;
+        }
+
+        private static void Stretch(RectTransform rect)
+        {
+            if (rect != null)
+                SetRect(rect, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+        }
+
+        private static Transform Require(Transform root, string path)
+        {
+            Transform result = root != null ? root.Find(path) : null;
+            if (result == null)
+                throw new MissingReferenceException($"Main Menu V3 is missing '{path}'.");
+            return result;
+        }
+
+        private static Transform FindDeepChild(Transform root, string name)
+        {
+            if (root == null)
+                return null;
+            if (root.name == name)
+                return root;
+            for (int i = 0; i < root.childCount; i++)
+            {
+                Transform found = FindDeepChild(root.GetChild(i), name);
+                if (found != null)
+                    return found;
+            }
+            return null;
+        }
+
+        private enum ModeIcon
+        {
+            Operations,
+            Skirmish
         }
     }
 }
-#endif

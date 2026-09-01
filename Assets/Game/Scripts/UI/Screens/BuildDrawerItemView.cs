@@ -21,6 +21,8 @@ namespace Game.UI.Runtime
         [SerializeField] private GameObject disabledOverlay;
 
         private Sprite _normalFrameSprite;
+        private bool _selected;
+        private bool _interactable = true;
 
         public Button SelectionButton => selectionButton;
         public Image FrameImage => frameImage;
@@ -63,10 +65,17 @@ namespace Game.UI.Runtime
 
             thumbnailImage.sprite = sprite;
             thumbnailImage.enabled = sprite != null;
+            AspectRatioFitter fitter = thumbnailImage.GetComponent<AspectRatioFitter>();
+            if (fitter != null && sprite != null)
+            {
+                fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+                fitter.aspectRatio = sprite.rect.width / Mathf.Max(1f, sprite.rect.height);
+            }
         }
 
         public void SetSelected(bool selected, Sprite selectedFrameSprite)
         {
+            _selected = selected;
             CaptureNormalFrameSprite();
             DisableTransientSelectableFrameState();
             if (frameImage == null)
@@ -75,16 +84,44 @@ namespace Game.UI.Runtime
             Sprite target = selected ? selectedFrameSprite : _normalFrameSprite;
             if (target != null)
                 frameImage.sprite = target;
+
+            ApplyV3VisualState();
         }
 
         public void SetInteractable(bool interactable)
         {
+            _interactable = interactable;
             DisableTransientSelectableFrameState();
             if (selectionButton != null)
                 selectionButton.interactable = interactable;
 
             if (disabledOverlay != null)
                 disabledOverlay.SetActive(!interactable);
+
+            ApplyV3VisualState();
+        }
+
+        private void ApplyV3VisualState()
+        {
+            V3GradientGraphic gradient = GetComponent<V3GradientGraphic>();
+            if (gradient == null)
+                return;
+
+            if (!_interactable)
+            {
+                gradient.Configure(
+                    new Color32(43, 49, 52, 255),
+                    new Color32(10, 15, 17, 255),
+                    new Color32(76, 85, 88, 255),
+                    3f);
+                return;
+            }
+
+            gradient.Configure(
+                _selected ? new Color32(70, 56, 17, 255) : new Color32(34, 45, 50, 255),
+                _selected ? new Color32(19, 16, 5, 255) : new Color32(5, 10, 12, 255),
+                _selected ? new Color32(255, 195, 21, 255) : new Color32(92, 106, 109, 255),
+                3f);
         }
 
         private static void SetText(TMP_Text text, string value)

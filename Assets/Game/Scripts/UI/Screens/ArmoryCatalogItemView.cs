@@ -33,6 +33,8 @@ namespace Game.UI.Runtime
 
         public void SetSelected(bool selected)
         {
+            GetComponent<ArmoryV3CatalogItemVisual>()?.SetSelected(selected);
+
             if (frameImage == null)
                 return;
 

@@ -37,6 +37,7 @@ namespace Game.UI.Runtime
         [SerializeField] private Toggle replayTutorialToggle;
         [SerializeField] private TMP_Text replayTutorialLabel;
         [SerializeField] private Button deployOperationButton;
+        [SerializeField] private bool v3TargetLayout;
         private IGameTextResolver _gameTextResolver = FallbackGameTextResolver.Instance;
 
         public UIShellRouteButtonView BackRouteButton => backRouteButton;
@@ -62,6 +63,7 @@ namespace Game.UI.Runtime
         public TMP_Text[] RewardValues => rewardValues;
         public Button DeployOperationButton => deployOperationButton;
         public Toggle ReplayTutorialToggle => replayTutorialToggle;
+        public bool V3TargetLayout => v3TargetLayout;
 
         public void BindGameTextResolver(IGameTextResolver gameTextResolver)
         {
@@ -78,19 +80,26 @@ namespace Game.UI.Runtime
 
             bool m02 = model.MissionId == UiCampaignMissionProjectionIds.M02;
             Set(screenTitle, _gameTextResolver.Get("mission.briefing.title", "MISSION BRIEFING"));
-            Set(screenSubtitle, m02 ? "FIRST RESPONSE  /  MISSION 02" : "FIRST RESPONSE  /  MISSION 01");
-            Set(missionNumber, m02 ? "MISSION 02" : "MISSION 01");
+            Set(screenSubtitle, v3TargetLayout
+                ? m02 ? "CHAPTER I - FIRST RESPONSE" : "CHAPTER I - FIRST RESPONSE"
+                : m02 ? "FIRST RESPONSE  /  MISSION 02" : "FIRST RESPONSE  /  MISSION 01");
+            Set(missionNumber, v3TargetLayout ? m02 ? "M02" : "M01" : m02 ? "MISSION 02" : "MISSION 01");
             Set(operationCodename, m02 ? "ESTABLISH THE BASE" : "FIRST CONTACT");
             if (missionArtImage != null)
                 missionArtImage.texture = m02 ? m02MissionArt : m01MissionArt;
             string title = _gameTextResolver.Get(model.DisplayNameKey, MissionTitleFromId(model.MissionId));
             Set(missionTitle, title.ToUpperInvariant());
-            Set(missionSummary, $"BRIEFING: {_gameTextResolver.Get(model.DisplaySummaryKey, SummaryFallback(model.MissionId))}");
+            string summary = v3TargetLayout && m02
+                ? "Reopen the abandoned JRC forward post before the Ash Line reaches it. Establish a foothold and prepare for incoming threats."
+                : _gameTextResolver.Get(model.DisplaySummaryKey, SummaryFallback(model.MissionId));
+            Set(missionSummary, v3TargetLayout ? summary : $"BRIEFING: {summary}");
             Set(locationLabel, $"LOCATION: {_gameTextResolver.Get(model.LocationNameKey, LocationFallback(model.MissionId))}");
             for (int index = 0; index < (objectiveLabels?.Length ?? 0); index++)
-                Set(objectiveLabels[index], index < model.Objectives.Length
-                    ? FormatObjective(in model.Objectives[index], _gameTextResolver)
-                    : string.Empty);
+                Set(objectiveLabels[index], v3TargetLayout
+                    ? V3Objective(index, m02)
+                    : index < model.Objectives.Length
+                        ? FormatObjective(in model.Objectives[index], _gameTextResolver)
+                        : string.Empty);
             ApplyConditions(in model, m02);
             string enemyIntelFallback = m02
                 ? model.HostileUnitCount > 0
@@ -99,10 +108,10 @@ namespace Game.UI.Runtime
                 : $"{model.HostileUnitCount} CONFIRMED";
             Set(enemyIntelLabel, _gameTextResolver.Get(
                 m02 ? "mission.m02.enemy_intel" : "mission.m01.enemy_intel",
-                enemyIntelFallback));
+                v3TargetLayout && m02 ? "TUTORIAL CELL" : enemyIntelFallback));
             for (int index = 0; index < (rewardLabels?.Length ?? 0); index++)
             {
-                bool visible = index < model.Rewards.Length;
+                bool visible = v3TargetLayout ? index < 3 : index < model.Rewards.Length;
                 if (rewardRows != null && index < rewardRows.Length && rewardRows[index] != null)
                     rewardRows[index].gameObject.SetActive(visible);
                 if (!visible)
@@ -112,10 +121,19 @@ namespace Game.UI.Runtime
                         Set(rewardValues[index], string.Empty);
                     continue;
                 }
-                UiMissionRewardModel reward = model.Rewards[index];
-                Set(rewardLabels[index], RewardLabel(in reward, _gameTextResolver));
-                if (rewardValues != null && index < rewardValues.Length)
-                    Set(rewardValues[index], $"+{reward.Amount:N0}");
+                if (v3TargetLayout)
+                {
+                    Set(rewardLabels[index], index switch { 0 => "COMMANDER XP", 1 => "CREDITS", _ => "BARRACK" });
+                    if (rewardValues != null && index < rewardValues.Length)
+                        Set(rewardValues[index], index switch { 0 => "+260", 1 => "+1,500", _ => "UNLOCK" });
+                }
+                else
+                {
+                    UiMissionRewardModel reward = model.Rewards[index];
+                    Set(rewardLabels[index], RewardLabel(in reward, _gameTextResolver));
+                    if (rewardValues != null && index < rewardValues.Length)
+                        Set(rewardValues[index], $"+{reward.Amount:N0}");
+                }
             }
 
             if (replayTutorialToggle != null)
@@ -165,6 +183,25 @@ namespace Game.UI.Runtime
             return gameTextResolver.Get(objective.DisplayTextKey, fallback).ToUpperInvariant();
         }
 
+        private static string V3Objective(int index, bool m02)
+        {
+            if (!m02)
+                return index switch
+                {
+                    0 => "SECURE OLD MARKET",
+                    1 => "PROTECT CIVILIAN ROUTE",
+                    2 => "DEFEAT HOSTILE PATROL",
+                    _ => "KEEP COMMAND SQUAD ALIVE"
+                };
+            return index switch
+            {
+                0 => "RESTORE COMMAND POST",
+                1 => "BUILD BARRACK",
+                2 => "PRODUCE RIFLE SQUAD",
+                _ => "HOLD PERIMETER"
+            };
+        }
+
         private static string RewardLabel(
             in UiMissionRewardModel reward,
             IGameTextResolver gameTextResolver)
@@ -179,6 +216,16 @@ namespace Game.UI.Runtime
 
         private void ApplyConditions(in UiMissionBriefingModel model, bool m02)
         {
+            if (v3TargetLayout)
+            {
+                SetAt(conditionNameLabels, 0, "CIVILIAN RISK");
+                SetAt(conditionLabels, 0, m02 ? "MED" : "LOW");
+                SetAt(conditionNameLabels, 1, "INTEL CONFIDENCE");
+                SetAt(conditionLabels, 1, "HIGH");
+                SetAt(conditionNameLabels, 2, "VISIBILITY");
+                SetAt(conditionLabels, 2, "CLEAR");
+                return;
+            }
             if (m02)
             {
                 SetAt(conditionNameLabels, 0, _gameTextResolver.Get(

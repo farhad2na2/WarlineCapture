@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System;
 using System.IO;
 using Game.UI.Contracts;
@@ -10,33 +11,54 @@ using Object = UnityEngine.Object;
 
 namespace Game.Editor
 {
+    /// <summary>
+    /// Rebuilds the persistent tutorial presentation inside POP-13 from the
+    /// PREFAB-06 V3 lock. Panel and button chrome is procedural so it remains
+    /// sharp at every supported aspect ratio without duplicating atlas art.
+    /// </summary>
     public static class AriaTutorialBriefingPrefabBuilder
     {
         public const string PrefabPath =
             "Assets/Game/Prefabs/UI/Shell/Popups/POP13_ARIACommandAssistantPopup.prefab";
         public const string PortraitPath =
-            "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_aria.png";
+            "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_aria_v3.png";
+
+        private static readonly Vector2 Reference = new(1672f, 941f);
 
         private const string BoldFontPath =
             "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold SDF.asset";
         private const string MediumFontPath =
             "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium SDF.asset";
-        private const string PanelPath = "Assets/Game/Art/UI/Panels/scn09_panel_detail_tall_frame.png";
-        private const string SecondaryButtonPath = "Assets/Game/Art/UI/Panels/scn09_panel_secondary_button_bg.png";
-        private const string PrimaryButtonPath = "Assets/Game/Art/UI/Panels/scn09_panel_gold_action_button_bg.png";
-        private const string CloseButtonPath = "Assets/Game/Art/UI/Panels/scn09_panel_close_button_bg.png";
-        private const string CloseIconPath = "Assets/Game/Art/UI/Icons/scn09_icon_close_x.png";
-        private const string FocusIconPath = "Assets/Game/Art/UI/Icons/scn08_minimap_focus_target_icon.png";
-        private const string ConfirmIconPath = "Assets/Game/Art/UI/Icons/scn09_icon_check_confirm.png";
+        private const string PersianFontPath =
+            "Assets/Game/Art/UI/Fonts/NotoSansArabic/NotoSansArabic-Narrative SDF.asset";
 
-        private static readonly Color Cyan = new(0.19f, 0.91f, 0.96f, 1f);
-        private static readonly Color Gold = new(0.91f, 0.72f, 0.31f, 1f);
-        private static readonly Color Pale = new(0.95f, 0.92f, 0.82f, 1f);
-        private static readonly Color Muted = new(0.64f, 0.68f, 0.66f, 1f);
+        private static readonly Color DarkTop = new Color32(8, 27, 35, 252);
+        private static readonly Color DarkBottom = new Color32(0, 7, 11, 255);
+        private static readonly Color RaisedTop = new Color32(25, 43, 49, 255);
+        private static readonly Color RaisedBottom = new Color32(5, 15, 19, 255);
+        private static readonly Color Cyan = new Color32(0, 209, 243, 255);
+        private static readonly Color CyanMuted = new Color32(0, 145, 184, 210);
+        private static readonly Color Green = new Color32(20, 229, 103, 255);
+        private static readonly Color GreenTop = new Color32(7, 132, 63, 255);
+        private static readonly Color GreenBottom = new Color32(2, 60, 31, 255);
+        private static readonly Color Blue = new Color32(18, 169, 226, 255);
+        private static readonly Color BlueTop = new Color32(12, 95, 145, 255);
+        private static readonly Color BlueBottom = new Color32(2, 38, 69, 255);
+        private static readonly Color Border = new Color32(65, 82, 87, 255);
+        private static readonly Color Text = new Color32(241, 244, 238, 255);
+
+        private static TMP_FontAsset boldFont;
+        private static TMP_FontAsset mediumFont;
 
         [MenuItem("Game/UI/Rebuild ARIA Tutorial Briefing")]
+        [MenuItem("Game/UI/V3/Build Tutorial Presentation V3")]
         public static void Build()
         {
+            boldFont = RequireAsset<TMP_FontAsset>(BoldFontPath);
+            mediumFont = RequireAsset<TMP_FontAsset>(MediumFontPath);
+            TMP_FontAsset persianFont = RequireAsset<TMP_FontAsset>(PersianFontPath);
+            Sprite portrait = RequireAsset<Sprite>(PortraitPath);
+
             GameObject root = PrefabUtility.LoadPrefabContents(PrefabPath);
             if (root == null)
                 throw new InvalidOperationException($"Missing ARIA popup prefab at {PrefabPath}.");
@@ -47,142 +69,108 @@ namespace Game.Editor
                 if (existing != null)
                     Object.DestroyImmediate(existing.gameObject);
 
-                TMP_FontAsset bold = RequireAsset<TMP_FontAsset>(BoldFontPath);
-                TMP_FontAsset medium = RequireAsset<TMP_FontAsset>(MediumFontPath);
-                Sprite portrait = RequireAsset<Sprite>(PortraitPath);
-                Sprite panel = RequireAsset<Sprite>(PanelPath);
-                Sprite secondaryButton = RequireAsset<Sprite>(SecondaryButtonPath);
-                Sprite primaryButton = RequireAsset<Sprite>(PrimaryButtonPath);
-                Sprite closeButtonFrame = RequireAsset<Sprite>(CloseButtonPath);
-                Sprite closeIcon = RequireAsset<Sprite>(CloseIconPath);
-                Sprite focusIcon = RequireAsset<Sprite>(FocusIconPath);
-                Sprite confirmIcon = RequireAsset<Sprite>(ConfirmIconPath);
-
-                RectTransform surface = CreateRect("TutorialBriefingSurface", root.transform);
-                Stretch(surface);
+                RectTransform surface = CreateTopLeft(
+                    "TutorialBriefingSurface", root.transform, 0f, 0f, Reference.x, Reference.y);
                 AriaTutorialBriefingView view = surface.gameObject.AddComponent<AriaTutorialBriefingView>();
+                surface.gameObject.AddComponent<AriaTutorialHudVariantLayoutView>();
 
-                Image portraitImage = CreateImage("AriaPortrait", surface, portrait, Color.white, false);
-                SetRect(
-                    portraitImage.rectTransform,
-                    Vector2.zero,
-                    Vector2.zero,
-                    new Vector2(960f, 960f),
-                    new Vector2(540f, 1100f));
-                portraitImage.preserveAspect = true;
+                RectTransform panel = CreatePanel(
+                    "BriefingPanel", surface, 1135f, 16f, 521f, 534f,
+                    DarkTop, DarkBottom, Cyan, 3f, true);
 
-                Image backing = CreateImage("BriefingPanel", surface, panel, Color.white, false);
-                SetRect(
-                    backing.rectTransform,
-                    Vector2.zero,
-                    Vector2.zero,
-                    new Vector2(1800f, 760f),
-                    new Vector2(1650f, 1000f));
-                backing.type = Image.Type.Sliced;
+                CreateText(
+                    "AriaIdentity", panel, 23f, 17f, 116f, 42f, "ARIA", 31f,
+                    Cyan, TextAlignmentOptions.MidlineLeft, true);
+                TMP_Text progress = CreateText(
+                    "TutorialProgress", panel, 337f, 16f, 160f, 32f, "TUTORIAL 1 / 5", 17f,
+                    Cyan, TextAlignmentOptions.MidlineRight, false);
 
-                TMP_Text identity = CreateText(
-                    "AriaIdentity",
-                    backing.transform,
-                    "ARIA",
-                    bold,
-                    40f,
-                    TextAlignmentOptions.Left,
-                    Cyan);
-                SetAnchored(identity.rectTransform, new Vector2(0.065f, 0.845f), new Vector2(0.28f, 0.94f));
+                RectTransform portraitClip = CreateTopLeft("PortraitClip", panel, 164f, 31f, 250f, 241f);
+                portraitClip.gameObject.AddComponent<RectMask2D>();
+                Image portraitImage = CreateImage("AriaPortrait", portraitClip, portrait, Color.white, false);
+                Stretch(portraitImage.rectTransform);
+                portraitImage.preserveAspect = false;
+                AspectRatioFitter portraitFitter = portraitImage.gameObject.AddComponent<AspectRatioFitter>();
+                portraitFitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+                portraitFitter.aspectRatio = portrait.rect.width / portrait.rect.height;
+                V3GradientGraphic portraitFade = CreateGradient(
+                    "PortraitFade", portraitClip,
+                    new Color(0f, 0f, 0f, 0f), new Color(0f, 0.03f, 0.05f, .88f),
+                    Color.clear, 0f);
+                Stretch(portraitFade.rectTransform);
 
-                TMP_Text role = CreateText(
-                    "AriaRole",
-                    backing.transform,
-                    "TACTICAL ADVISOR",
-                    medium,
-                    28f,
-                    TextAlignmentOptions.Left,
-                    Muted);
-                SetAnchored(role.rectTransform, new Vector2(0.245f, 0.845f), new Vector2(0.62f, 0.94f));
+                CreateTechDecoration(panel, 24f, 80f, false);
+                CreateTechDecoration(panel, 421f, 79f, true);
+                CreateReticle(panel, 459f, 214f);
+                CreateSolid("ContentDivider", panel, 22f, 275f, 477f, 2f,
+                    new Color(Cyan.r, Cyan.g, Cyan.b, .35f));
 
                 TMP_Text title = CreateText(
-                    "TutorialTitle",
-                    backing.transform,
-                    "FIND YOUR SQUAD",
-                    bold,
-                    58f,
-                    TextAlignmentOptions.Left,
-                    Pale);
-                SetAnchored(title.rectTransform, new Vector2(0.065f, 0.64f), new Vector2(0.92f, 0.84f));
+                    "TutorialTitle", panel, 23f, 289f, 476f, 47f,
+                    "SELECT THE RIFLE SQUAD", 29f, Cyan,
+                    TextAlignmentOptions.MidlineLeft, true);
                 title.enableAutoSizing = true;
-                title.fontSizeMin = 42f;
-                title.fontSizeMax = 58f;
-                title.textWrappingMode = TextWrappingModes.NoWrap;
-
-                Image divider = CreateImage("TutorialDivider", backing.transform, null, new Color(Cyan.r, Cyan.g, Cyan.b, 0.68f), false);
-                SetAnchored(divider.rectTransform, new Vector2(0.065f, 0.615f), new Vector2(0.935f, 0.621f));
+                title.fontSizeMin = 23f;
+                title.fontSizeMax = 29f;
 
                 TMP_Text body = CreateText(
-                    "TutorialBody",
-                    backing.transform,
-                    "Select the command squad to begin.",
-                    medium,
-                    38f,
-                    TextAlignmentOptions.TopLeft,
-                    Pale);
-                SetAnchored(body.rectTransform, new Vector2(0.065f, 0.285f), new Vector2(0.935f, 0.58f));
+                    "TutorialBody", panel, 23f, 337f, 476f, 93f,
+                    "Tap the <color=#00D1F3>Rifle Squad</color> unit card to select.\n" +
+                    "Then tap <color=#00D1F3>MOVE</color> to send them to the marker.",
+                    21f, Text, TextAlignmentOptions.TopLeft, false, false);
                 body.enableAutoSizing = true;
-                body.fontSizeMin = 30f;
-                body.fontSizeMax = 38f;
-                body.textWrappingMode = TextWrappingModes.Normal;
-                body.overflowMode = TextOverflowModes.Ellipsis;
+                body.fontSizeMin = 17f;
+                body.fontSizeMax = 21f;
+                body.richText = true;
 
-                TMP_Text progress = CreateText(
-                    "TutorialProgress",
-                    backing.transform,
-                    "TRAINING 1 / 5",
-                    bold,
-                    30f,
-                    TextAlignmentOptions.Left,
-                    Gold);
-                SetAnchored(progress.rectTransform, new Vector2(0.065f, 0.075f), new Vector2(0.39f, 0.24f));
+                Button doIt = CreateButton(
+                    "TutorialDoItButton", panel, 23f, 439f, 193f, 75f,
+                    GreenTop, GreenBottom, Green, out TMP_Text doItLabel, "DO IT", 27f);
+                Button showMe = CreateButton(
+                    "TutorialShowMeButton", panel, 230f, 439f, 178f, 75f,
+                    BlueTop, BlueBottom, Blue, out TMP_Text showMeLabel, "SHOW ME", 24f);
+                Button close = CreateButton(
+                    "TutorialCloseButton", panel, 422f, 439f, 78f, 75f,
+                    RaisedTop, RaisedBottom, Border, out _, "SKIP", 20f);
+                progress.rectTransform.SetAsLastSibling();
 
-                Button showMe = CreateActionButton(
-                    "TutorialShowMeButton",
-                    backing.transform,
-                    secondaryButton,
-                    focusIcon,
-                    bold,
-                    "SHOW ME",
-                    new Vector2(0.505f, 0.065f),
-                    new Vector2(0.715f, 0.245f),
-                    out TMP_Text showMeLabel);
-                Button doIt = CreateActionButton(
-                    "TutorialDoItButton",
-                    backing.transform,
-                    primaryButton,
-                    confirmIcon,
-                    bold,
-                    "DO IT",
-                    new Vector2(0.735f, 0.065f),
-                    new Vector2(0.945f, 0.245f),
-                    out TMP_Text doItLabel);
+                RectTransform guide = CreateTopLeft("FirstStepGuide", surface, 0f, 0f, Reference.x, Reference.y);
+                RectTransform panelStem = CreateGuideLine("PanelStem", guide, 1423f, 550f, 3f, 18f);
+                RectTransform panelBridge = CreateGuideLine("PanelBridge", guide, 1135f, 567f, 291f, 3f);
+                RectTransform panelDrop = CreateGuideLine("PanelDrop", guide, 1135f, 567f, 3f, 91f);
+                RectTransform commandBridge = CreateGuideLine("CommandBridge", guide, 778f, 655f, 360f, 3f);
+                CreateGuideLine("CommandDrop", guide, 778f, 655f, 3f, 115f);
+                CreateGuideLine("UnitCardDrop", guide, 27f, 699f, 3f, 37f);
+                CreateStepBadge(guide, "UnitCardStepBadge", 7f, 658f, "1");
+                CreateStepBadge(guide, "MoveStepBadge", 706f, 670f, "2");
 
-                Button close = CreateIconButton(
-                    "TutorialCloseButton",
-                    backing.transform,
-                    closeButtonFrame,
-                    closeIcon,
-                    new Vector2(0.945f, 0.84f),
-                    new Vector2(0.988f, 0.955f));
+                MainMenuV3SectionLayoutView sectionLayout =
+                    surface.gameObject.AddComponent<MainMenuV3SectionLayoutView>();
+                sectionLayout.Configure(
+                    Reference,
+                    MainMenuV3SectionAlignment.Center,
+                    new[] { panel, panelStem, panelBridge, panelDrop },
+                    true,
+                    Array.Empty<RectTransform>(),
+                    new[] { commandBridge });
 
-                SetObject(view, "briefingLayout", backing.rectTransform);
-                SetObject(view, "portraitImage", portraitImage);
-                SetObject(view, "titleText", title);
-                SetObject(view, "bodyText", body);
-                SetObject(view, "progressText", progress);
-                SetObject(view, "closeButton", close);
-                SetObject(view, "showMeButton", showMe);
-                SetObject(view, "doItButton", doIt);
-                SetObject(view, "showMeButtonLabel", showMeLabel);
-                SetObject(view, "doItButtonLabel", doItLabel);
+                SerializedObject serialized = new(view);
+                SetObject(serialized, "briefingLayout", panel);
+                SetObject(serialized, "portraitImage", portraitImage);
+                SetObject(serialized, "titleText", title);
+                SetObject(serialized, "bodyText", body);
+                SetObject(serialized, "progressText", progress);
+                SetObject(serialized, "closeButton", close);
+                SetObject(serialized, "showMeButton", showMe);
+                SetObject(serialized, "doItButton", doIt);
+                SetObject(serialized, "showMeButtonLabel", showMeLabel);
+                SetObject(serialized, "doItButtonLabel", doItLabel);
+                SetObject(serialized, "firstStepGuideRoot", guide);
+                SetObject(serialized, "persianFont", persianFont);
+                serialized.ApplyModifiedPropertiesWithoutUndo();
 
                 surface.gameObject.SetActive(false);
+                surface.SetAsLastSibling();
                 PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             }
             finally
@@ -191,100 +179,23 @@ namespace Game.Editor
             }
 
             AssetDatabase.SaveAssets();
-            Debug.Log($"[AriaTutorialBriefingPrefabBuilder] Built {PrefabPath}");
+            AssetDatabase.Refresh();
+            Validate();
+            Debug.Log("[AriaTutorialBriefingPrefabBuilder] result=Passed layout=top-right " +
+                      "portrait=aria-v3 gradients=procedural borders=3 actions=3 guide=nonblocking");
         }
 
         public static void BuildAndValidate()
         {
             Build();
             Validate();
-            Debug.Log("[AriaTutorialBriefingPrefabBuilder] result=Passed");
+            Debug.Log("[AriaTutorialBriefingV3Validation] result=Passed");
         }
 
         [MenuItem("Game/UI/Capture ARIA Tutorial Briefing")]
         public static void CapturePreview()
         {
-            const int width = 2400;
-            const int height = 1080;
-            const string outputPath = "/private/tmp/warline-aria-tutorial-briefing.png";
-            GameObject cameraObject = null;
-            GameObject canvasObject = null;
-            RenderTexture target = null;
-            Texture2D readback = null;
-            try
-            {
-                cameraObject = new GameObject("AriaTutorialCaptureCamera", typeof(Camera));
-                Camera camera = cameraObject.GetComponent<Camera>();
-                camera.clearFlags = CameraClearFlags.SolidColor;
-                camera.backgroundColor = new Color(0.19f, 0.22f, 0.21f, 1f);
-                camera.orthographic = true;
-
-                target = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
-                target.Create();
-                camera.targetTexture = target;
-
-                canvasObject = new GameObject(
-                    "AriaTutorialCaptureCanvas",
-                    typeof(RectTransform),
-                    typeof(Canvas),
-                    typeof(CanvasScaler),
-                    typeof(GraphicRaycaster));
-                Canvas canvas = canvasObject.GetComponent<Canvas>();
-                canvas.renderMode = RenderMode.ScreenSpaceCamera;
-                canvas.worldCamera = camera;
-                canvas.planeDistance = 1f;
-                CanvasScaler scaler = canvasObject.GetComponent<CanvasScaler>();
-                scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-                scaler.referenceResolution = new Vector2(4800f, 2160f);
-                scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
-                scaler.matchWidthOrHeight = 0.5f;
-
-                Image backdrop = CreateImage(
-                    "MapBackdrop",
-                    canvasObject.transform,
-                    null,
-                    new Color(0.49f, 0.45f, 0.34f, 1f),
-                    false);
-                Stretch(backdrop.rectTransform);
-
-                GameObject prefab = RequireAsset<GameObject>(PrefabPath);
-                GameObject instance = PrefabUtility.InstantiatePrefab(prefab, canvasObject.transform) as GameObject;
-                if (instance == null)
-                    throw new InvalidOperationException("Failed to instantiate ARIA tutorial preview.");
-                instance.SetActive(true);
-                AriaCommandAssistantPopupView popup = instance.GetComponent<AriaCommandAssistantPopupView>();
-                if (popup == null || !popup.TryBindHierarchy())
-                    throw new InvalidOperationException("ARIA tutorial preview hierarchy did not bind.");
-
-                popup.ApplyRecommendation(CreatePreviewModel());
-                popup.ApplyAccessibility(false, false);
-                popup.Show();
-                Canvas.ForceUpdateCanvases();
-                camera.Render();
-
-                RenderTexture previous = RenderTexture.active;
-                RenderTexture.active = target;
-                readback = new Texture2D(width, height, TextureFormat.RGBA32, false);
-                readback.ReadPixels(new Rect(0f, 0f, width, height), 0, 0);
-                readback.Apply(false, false);
-                File.WriteAllBytes(outputPath, readback.EncodeToPNG());
-                RenderTexture.active = previous;
-                Debug.Log($"[AriaTutorialBriefingPrefabBuilder] capture={outputPath}");
-            }
-            finally
-            {
-                if (readback != null)
-                    Object.DestroyImmediate(readback);
-                if (target != null)
-                {
-                    target.Release();
-                    Object.DestroyImmediate(target);
-                }
-                if (canvasObject != null)
-                    Object.DestroyImmediate(canvasObject);
-                if (cameraObject != null)
-                    Object.DestroyImmediate(cameraObject);
-            }
+            MatchHudV3PrefabBuilder.CaptureTutorialPresentationReview();
         }
 
         public static void Validate()
@@ -294,21 +205,52 @@ namespace Game.Editor
             if (view == null || !view.TryBindHierarchy())
                 throw new InvalidOperationException("ARIA tutorial briefing hierarchy is incomplete.");
             if (AssetDatabase.GetAssetPath(view.PortraitImage.sprite) != PortraitPath)
-                throw new InvalidOperationException("ARIA tutorial briefing must use the canonical ARIA portrait.");
+                throw new InvalidOperationException("ARIA tutorial briefing must use the V3 ARIA portrait.");
+            if (view.PortraitImage.GetComponent<AspectRatioFitter>() == null)
+                throw new InvalidOperationException("ARIA V3 portrait must preserve its aspect ratio inside a crop.");
             if (view.transform.Find("TutorialInputBlocker") != null)
                 throw new InvalidOperationException("ARIA tutorial briefing must not cover the battlefield with an input overlay.");
-            if (view.BriefingLayout.anchorMin != Vector2.zero || view.BriefingLayout.anchorMax != Vector2.zero ||
-                view.BriefingLayout.anchoredPosition.y - view.BriefingLayout.rect.height * 0.5f < 620f)
-                throw new InvalidOperationException("ARIA tutorial briefing must remain above the lower-left squad controls.");
+            if (view.BriefingLayout.anchorMin != new Vector2(0f, 1f) ||
+                view.BriefingLayout.anchorMax != new Vector2(0f, 1f) ||
+                view.BriefingLayout.anchoredPosition.x < 1100f ||
+                view.BriefingLayout.rect.width < 500f)
+            {
+                throw new InvalidOperationException("ARIA tutorial briefing must remain in the V3 top-right panel position.");
+            }
             if (!Contains(view.BriefingLayout, view.ShowMeButton.transform as RectTransform) ||
-                !Contains(view.BriefingLayout, view.DoItButton.transform as RectTransform))
+                !Contains(view.BriefingLayout, view.DoItButton.transform as RectTransform) ||
+                !Contains(view.BriefingLayout, view.CloseButton.transform as RectTransform))
+            {
                 throw new InvalidOperationException("ARIA tutorial actions must remain inside the briefing panel.");
-            if ((view.ShowMeButton.transform as RectTransform).rect.height < 110f ||
-                (view.DoItButton.transform as RectTransform).rect.height < 110f)
+            }
+            if ((view.ShowMeButton.transform as RectTransform).rect.height < 72f ||
+                (view.DoItButton.transform as RectTransform).rect.height < 72f ||
+                (view.CloseButton.transform as RectTransform).rect.height < 72f)
+            {
                 throw new InvalidOperationException("ARIA tutorial actions must retain mobile touch targets.");
+            }
+
+            MainMenuV3SectionLayoutView layout = view.GetComponent<MainMenuV3SectionLayoutView>();
+            if (layout == null || layout.ReferenceResolution != Reference ||
+                !layout.ExpandToCanvasWidth || layout.RightAnchoredTargets.Length != 4)
+            {
+                throw new InvalidOperationException("ARIA tutorial V3 responsive layout is incomplete.");
+            }
+            if (view.GetComponent<AriaTutorialHudVariantLayoutView>() == null)
+                throw new InvalidOperationException("ARIA tutorial V3 must apply and restore its compact Match HUD header variant.");
+            V3GradientGraphic[] gradients = view.GetComponentsInChildren<V3GradientGraphic>(true);
+            if (gradients.Length < 7)
+                throw new InvalidOperationException($"ARIA tutorial V3 requires procedural gradients; found {gradients.Length}.");
+            if (view.FirstStepGuideRoot == null ||
+                view.FirstStepGuideRoot.GetComponentsInChildren<Graphic>(true).Length < 7)
+            {
+                throw new InvalidOperationException("ARIA tutorial V3 first-step guidance overlay is incomplete.");
+            }
+
+            Debug.Log($"[AriaTutorialBriefingV3Validation] result=Passed gradients={gradients.Length} borders=3 actions=3");
         }
 
-        private static UiAssistantPanelModel CreatePreviewModel()
+        public static UiAssistantPanelModel CreateTargetLockPreviewModel()
         {
             return new UiAssistantPanelModel(
                 1,
@@ -325,8 +267,9 @@ namespace Game.Editor
                 UiAssistantTargetLockModel.Empty,
                 UiAssistantNarrationModel.Empty,
                 true,
-                "Find your squad",
-                "Select the command squad to begin. I will mark the exact unit if you need guidance.",
+                "Select the Rifle Squad",
+                "Tap the <color=#00D1F3>Rifle Squad</color> unit card to select.\n" +
+                "Then tap <color=#00D1F3>MOVE</color> to send them to the marker.",
                 "HIGH",
                 "DO IT",
                 true,
@@ -341,60 +284,158 @@ namespace Game.Editor
                 tutorialStepCount: 5);
         }
 
-        private static Button CreateActionButton(
-            string name,
-            Transform parent,
-            Sprite frame,
-            Sprite iconSprite,
-            TMP_FontAsset font,
-            string label,
-            Vector2 anchorMin,
-            Vector2 anchorMax,
-            out TMP_Text labelText)
+        public static UiAssistantPanelModel CreateCommandAssistantPreviewModel()
         {
-            Image image = CreateImage(name, parent, frame, Color.white, true);
-            SetAnchored(image.rectTransform, anchorMin, anchorMax);
-            image.type = Image.Type.Sliced;
-            Button button = image.gameObject.AddComponent<Button>();
-
-            Image icon = CreateImage("Icon", image.transform, iconSprite, Color.white, false);
-            SetAnchored(icon.rectTransform, new Vector2(0.09f, 0.2f), new Vector2(0.29f, 0.8f));
-            icon.preserveAspect = true;
-
-            labelText = CreateText("Label", image.transform, label, font, 32f, TextAlignmentOptions.Center, Pale);
-            SetAnchored(labelText.rectTransform, new Vector2(0.25f, 0.08f), new Vector2(0.96f, 0.92f));
-            return button;
+            return new UiAssistantPanelModel(
+                2,
+                false,
+                0,
+                UiAssistantGoalRowModel.Empty,
+                UiAssistantGoalRowModel.Empty,
+                UiAssistantGoalRowModel.Empty,
+                UiAssistantMessageRowModel.Empty,
+                UiAssistantMessageRowModel.Empty,
+                UiAssistantMessageRowModel.Empty,
+                new UiAssistantMessageRowModel(
+                    true, 30, "Hostile infantry squad detected near market stalls.",
+                    "They are moving between cover positions.", 3, 1, 1, true, false),
+                UiAssistantMessageRowModel.Empty,
+                new UiAssistantTargetLockModel(
+                    true, 2, 1, "ENEMY INFANTRY SQUAD", "RIFLE SQUAD", "140m", "HIGH",
+                    "HOSTILE", "READY", "Moving between cover positions."),
+                new UiAssistantNarrationModel(
+                    (byte)UiAssistantNarrationStateKind.Presented, 3, "ARIA VOICE",
+                    "MOVE ORDER CONFIRMED.", string.Empty, true),
+                true,
+                "TACTICAL REPORTS",
+                "Hostile infantry squad detected near market stalls.\nThey are moving between cover positions.",
+                "HIGH",
+                "SHOW ME",
+                true,
+                false,
+                false,
+                false,
+                "PLAYER CONTROL",
+                string.Empty,
+                recommendationKind: 1,
+                recommendationTargetKind: 1);
         }
 
-        private static Button CreateIconButton(
-            string name,
-            Transform parent,
-            Sprite frame,
-            Sprite iconSprite,
-            Vector2 anchorMin,
-            Vector2 anchorMax)
+        private static RectTransform CreatePanel(
+            string name, Transform parent, float x, float y, float width, float height,
+            Color top, Color bottom, Color border, float borderWidth, bool raycast = false)
         {
-            Image image = CreateImage(name, parent, frame, Color.white, true);
-            SetAnchored(image.rectTransform, anchorMin, anchorMax);
-            image.type = Image.Type.Sliced;
-            Button button = image.gameObject.AddComponent<Button>();
-            Image icon = CreateImage("Icon", image.transform, iconSprite, Color.white, false);
-            SetAnchored(icon.rectTransform, new Vector2(0.24f, 0.24f), new Vector2(0.76f, 0.76f));
-            icon.preserveAspect = true;
-            return button;
-        }
-
-        private static RectTransform CreateRect(string name, Transform parent)
-        {
-            GameObject value = new(name, typeof(RectTransform)) { layer = 5 };
-            RectTransform rect = value.GetComponent<RectTransform>();
-            rect.SetParent(parent, false);
+            RectTransform rect = CreateTopLeft(name, parent, x, y, width, height);
+            V3GradientGraphic graphic = rect.gameObject.AddComponent<V3GradientGraphic>();
+            graphic.Configure(top, bottom, border, borderWidth);
+            graphic.raycastTarget = raycast;
             return rect;
         }
 
-        private static Image CreateImage(string name, Transform parent, Sprite sprite, Color color, bool raycast)
+        private static V3GradientGraphic CreateGradient(
+            string name, Transform parent, Color top, Color bottom, Color border, float borderWidth)
         {
-            RectTransform rect = CreateRect(name, parent);
+            RectTransform rect = CreateTopLeft(name, parent, 0f, 0f, 100f, 100f);
+            V3GradientGraphic graphic = rect.gameObject.AddComponent<V3GradientGraphic>();
+            graphic.Configure(top, bottom, border, borderWidth);
+            graphic.raycastTarget = false;
+            return graphic;
+        }
+
+        private static Button CreateButton(
+            string name, Transform parent, float x, float y, float width, float height,
+            Color top, Color bottom, Color border, out TMP_Text label, string value, float fontSize)
+        {
+            RectTransform rect = CreatePanel(name, parent, x, y, width, height, top, bottom, border, 3f, true);
+            V3GradientGraphic graphic = rect.GetComponent<V3GradientGraphic>();
+            Button button = rect.gameObject.AddComponent<Button>();
+            button.targetGraphic = graphic;
+            button.transition = Selectable.Transition.ColorTint;
+            ColorBlock colors = button.colors;
+            colors.normalColor = Color.white;
+            colors.highlightedColor = new Color(1.12f, 1.12f, 1.12f, 1f);
+            colors.pressedColor = new Color(.78f, .78f, .78f, 1f);
+            colors.disabledColor = new Color(.42f, .42f, .42f, .72f);
+            colors.colorMultiplier = 1f;
+            button.colors = colors;
+            label = CreateText("Label", rect, 5f, 4f, width - 10f, height - 8f, value,
+                fontSize, Text, TextAlignmentOptions.Center, true);
+            return button;
+        }
+
+        private static void CreateTechDecoration(Transform parent, float x, float y, bool rightAligned)
+        {
+            float[] widths = { 58f, 73f, 46f, 68f, 38f, 64f, 51f, 72f };
+            for (int i = 0; i < widths.Length; i++)
+            {
+                float width = widths[i];
+                float lineX = rightAligned ? x + 76f - width : x;
+                CreateSolid($"TechLine{i:00}", parent, lineX, y + i * 9f, width,
+                    i % 3 == 0 ? 2f : 1f,
+                    new Color(CyanMuted.r, CyanMuted.g, CyanMuted.b, i % 2 == 0 ? .78f : .48f));
+                if (i % 2 == 0)
+                    CreateSolid($"TechTick{i:00}", parent,
+                        rightAligned ? x + 80f : x - 4f, y + i * 9f, 2f, 5f, CyanMuted);
+            }
+        }
+
+        private static void CreateReticle(Transform parent, float centerX, float centerY)
+        {
+            RectTransform ring = CreateTopLeft(
+                "TutorialReticle", parent, centerX - 24f, centerY - 24f, 48f, 48f);
+            V3RingGraphic ringGraphic = ring.gameObject.AddComponent<V3RingGraphic>();
+            ringGraphic.Configure(CyanMuted, 3f, 40);
+            ringGraphic.raycastTarget = false;
+            CreateSolid("ReticleHorizontal", parent, centerX - 31f, centerY - 1f, 62f, 2f, CyanMuted);
+            CreateSolid("ReticleVertical", parent, centerX - 1f, centerY - 31f, 2f, 62f, CyanMuted);
+            RectTransform dot = CreatePanel(
+                "ReticleDot", parent, centerX - 4f, centerY - 4f, 8f, 8f,
+                Cyan, Cyan, Color.clear, 0f);
+            dot.GetComponent<V3GradientGraphic>().raycastTarget = false;
+        }
+
+        private static RectTransform CreateGuideLine(
+            string name, Transform parent, float x, float y, float width, float height)
+        {
+            RectTransform line = CreateTopLeft(name, parent, x, y, width, height);
+            Image image = line.gameObject.AddComponent<Image>();
+            image.color = Cyan;
+            image.raycastTarget = false;
+            return line;
+        }
+
+        private static void CreateStepBadge(Transform parent, string name, float x, float y, string value)
+        {
+            RectTransform badge = CreatePanel(
+                name, parent, x, y, 40f, 43f,
+                new Color32(24, 228, 249, 255), new Color32(0, 132, 170, 255), Cyan, 3f);
+            CreateText("Label", badge, 2f, 0f, 36f, 41f, value, 28f, Text,
+                TextAlignmentOptions.Center, true);
+        }
+
+        private static TMP_Text CreateText(
+            string name, Transform parent, float x, float y, float width, float height,
+            string value, float size, Color color, TextAlignmentOptions alignment, bool bold,
+            bool noWrap = true)
+        {
+            RectTransform rect = CreateTopLeft(name, parent, x, y, width, height);
+            TextMeshProUGUI text = rect.gameObject.AddComponent<TextMeshProUGUI>();
+            text.text = value;
+            text.font = bold ? boldFont : mediumFont;
+            text.fontSize = size;
+            text.fontStyle = bold ? FontStyles.Bold : FontStyles.Normal;
+            text.alignment = alignment;
+            text.color = color;
+            text.textWrappingMode = noWrap ? TextWrappingModes.NoWrap : TextWrappingModes.Normal;
+            text.overflowMode = TextOverflowModes.Ellipsis;
+            text.raycastTarget = false;
+            return text;
+        }
+
+        private static Image CreateImage(
+            string name, Transform parent, Sprite sprite, Color color, bool raycast)
+        {
+            RectTransform rect = CreateTopLeft(name, parent, 0f, 0f, 100f, 100f);
             Image image = rect.gameObject.AddComponent<Image>();
             image.sprite = sprite;
             image.color = color;
@@ -402,72 +443,59 @@ namespace Game.Editor
             return image;
         }
 
-        private static TMP_Text CreateText(
-            string name,
-            Transform parent,
-            string value,
-            TMP_FontAsset font,
-            float size,
-            TextAlignmentOptions alignment,
-            Color color)
+        private static void CreateSolid(
+            string name, Transform parent, float x, float y, float width, float height, Color color)
         {
-            RectTransform rect = CreateRect(name, parent);
-            TextMeshProUGUI text = rect.gameObject.AddComponent<TextMeshProUGUI>();
-            text.text = value;
-            text.font = font;
-            text.fontSize = size;
-            text.alignment = alignment;
-            text.color = color;
-            text.raycastTarget = false;
-            text.characterSpacing = 0f;
-            return text;
+            Image image = CreateImage(name, parent, null, color, false);
+            SetTopLeft(image.rectTransform, x, y, width, height);
+        }
+
+        private static RectTransform CreateTopLeft(
+            string name, Transform parent, float x, float y, float width, float height)
+        {
+            GameObject value = new(name, typeof(RectTransform)) { layer = 5 };
+            RectTransform rect = value.GetComponent<RectTransform>();
+            rect.SetParent(parent, false);
+            SetTopLeft(rect, x, y, width, height);
+            return rect;
+        }
+
+        private static void SetTopLeft(
+            RectTransform rect, float x, float y, float width, float height)
+        {
+            rect.anchorMin = new Vector2(0f, 1f);
+            rect.anchorMax = new Vector2(0f, 1f);
+            rect.pivot = new Vector2(0f, 1f);
+            rect.anchoredPosition = new Vector2(x, -y);
+            rect.sizeDelta = new Vector2(width, height);
+            rect.localScale = Vector3.one;
+            rect.localRotation = Quaternion.identity;
         }
 
         private static void Stretch(RectTransform rect)
         {
             rect.anchorMin = Vector2.zero;
             rect.anchorMax = Vector2.one;
+            rect.pivot = new Vector2(.5f, .5f);
             rect.offsetMin = Vector2.zero;
             rect.offsetMax = Vector2.zero;
+            rect.localScale = Vector3.one;
+            rect.localRotation = Quaternion.identity;
         }
 
-        private static void SetRect(
-            RectTransform rect,
-            Vector2 anchorMin,
-            Vector2 anchorMax,
-            Vector2 size,
-            Vector2 position)
+        private static void SetObject(SerializedObject serialized, string propertyName, Object value)
         {
-            rect.anchorMin = anchorMin;
-            rect.anchorMax = anchorMax;
-            rect.pivot = new Vector2(0.5f, 0.5f);
-            rect.sizeDelta = size;
-            rect.anchoredPosition = position;
-        }
-
-        private static void SetAnchored(RectTransform rect, Vector2 anchorMin, Vector2 anchorMax)
-        {
-            rect.anchorMin = anchorMin;
-            rect.anchorMax = anchorMax;
-            rect.offsetMin = Vector2.zero;
-            rect.offsetMax = Vector2.zero;
-        }
-
-        private static void SetObject(Object target, string propertyName, Object value)
-        {
-            SerializedObject serialized = new(target);
             SerializedProperty property = serialized.FindProperty(propertyName);
             if (property == null)
-                throw new InvalidOperationException($"Missing serialized property {target.GetType().Name}.{propertyName}.");
+                throw new MissingFieldException(typeof(AriaTutorialBriefingView).Name, propertyName);
             property.objectReferenceValue = value;
-            serialized.ApplyModifiedPropertiesWithoutUndo();
         }
 
         private static T RequireAsset<T>(string path) where T : Object
         {
             T asset = AssetDatabase.LoadAssetAtPath<T>(path);
             if (asset == null)
-                throw new InvalidOperationException($"Missing required asset at {path}.");
+                throw new FileNotFoundException($"Missing ARIA tutorial V3 asset at {path}.");
             return asset;
         }
 
@@ -488,3 +516,4 @@ namespace Game.Editor
         }
     }
 }
+#endif

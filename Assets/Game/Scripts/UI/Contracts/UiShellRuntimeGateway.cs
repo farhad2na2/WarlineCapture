@@ -98,6 +98,11 @@ namespace Game.UI.Contracts
         bool TrySetAssistantPanelOpen(bool open);
     }
 
+    public interface IUiCurrentMissionRestartGateway
+    {
+        bool TryRestartCurrentMission();
+    }
+
     public interface IUiTutorialNarrationGateway
     {
         bool TryEnqueueTutorialNarration(

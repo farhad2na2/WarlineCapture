@@ -16,8 +16,14 @@ namespace Game.UI.Runtime
         [SerializeField] private GameObject skirmishSetupContentPrefab;
         [SerializeField] private GameObject campaignContentPrefab;
         [SerializeField] private GameObject missionBriefingContentPrefab;
+        [SerializeField] private GameObject loadoutSquadPrepContentPrefab;
         [SerializeField] private GameObject operationsContentPrefab;
+        [SerializeField] private GameObject districtDetailContentPrefab;
         [SerializeField] private GameObject armoryContentPrefab;
+        [SerializeField] private GameObject storeContentPrefab;
+        [SerializeField] private GameObject inboxContentPrefab;
+        [SerializeField] private GameObject eventsContentPrefab;
+        [SerializeField] private GameObject rankingContentPrefab;
         [SerializeField] private GameObject matchHudContentPrefab;
         [SerializeField] private GameObject buildDrawerPopupPrefab;
         [SerializeField] private GameObject fullMapPopupPrefab;
@@ -66,8 +72,14 @@ namespace Game.UI.Runtime
         public GameObject SkirmishSetupContentPrefab => skirmishSetupContentPrefab;
         public GameObject CampaignContentPrefab => campaignContentPrefab;
         public GameObject MissionBriefingContentPrefab => missionBriefingContentPrefab;
+        public GameObject LoadoutSquadPrepContentPrefab => loadoutSquadPrepContentPrefab;
         public GameObject OperationsContentPrefab => operationsContentPrefab;
+        public GameObject DistrictDetailContentPrefab => districtDetailContentPrefab;
         public GameObject ArmoryContentPrefab => armoryContentPrefab;
+        public GameObject StoreContentPrefab => storeContentPrefab;
+        public GameObject InboxContentPrefab => inboxContentPrefab;
+        public GameObject EventsContentPrefab => eventsContentPrefab;
+        public GameObject RankingContentPrefab => rankingContentPrefab;
         public GameObject MatchHudContentPrefab => matchHudContentPrefab;
         public GameObject BuildDrawerPopupPrefab => buildDrawerPopupPrefab;
         public GameObject FullMapPopupPrefab => fullMapPopupPrefab;
@@ -95,7 +107,9 @@ namespace Game.UI.Runtime
             GameObject skirmishSetupPrefab = null,
             GameObject campaignPrefab = null,
             GameObject missionBriefingPrefab = null,
-            GameObject operationsPrefab = null)
+            GameObject operationsPrefab = null,
+            GameObject loadoutSquadPrepPrefab = null,
+            GameObject districtDetailPrefab = null)
         {
             shellView = view;
             loadingContentPrefab = loadingPrefab;
@@ -113,6 +127,10 @@ namespace Game.UI.Runtime
                 missionBriefingContentPrefab = missionBriefingPrefab;
             if (operationsPrefab != null)
                 operationsContentPrefab = operationsPrefab;
+            if (loadoutSquadPrepPrefab != null)
+                loadoutSquadPrepContentPrefab = loadoutSquadPrepPrefab;
+            if (districtDetailPrefab != null)
+                districtDetailContentPrefab = districtDetailPrefab;
             if (fullMapPrefab != null)
                 fullMapPopupPrefab = fullMapPrefab;
             if (buildPlacementConfirmationPrefab != null)
@@ -357,6 +375,15 @@ namespace Game.UI.Runtime
         private void BindMatchHudFooter(MatchHudFooterContentView footer)
         {
             _matchHudCommandControlsView = footer != null ? footer.CommandControls : null;
+            CommandWheelPanelView commandWheel = _matchHudCommandControlsView != null
+                ? _matchHudCommandControlsView.CommandWheelPanel
+                : null;
+            MatchHudHeaderReferenceUiSystemHelper headerReferences = _matchHudHeaderContent != null
+                ? MatchHudHeaderReferenceUiSystemHelper.Create(_matchHudHeaderContent.transform)
+                : null;
+            commandWheel?.BindRuntimeSectionReferences(
+                _matchHudSelectionPanelView != null ? _matchHudSelectionPanelView.CommandWheelOpenButton : null,
+                headerReferences?.ThreatJumpPanel != null ? headerReferences.ThreatJumpPanel.gameObject : null);
             if (footer != null && footer.RuntimeFeedback != null)
                 footer.RuntimeFeedback.BindCurrentOrderBanner(_matchHudCurrentOrderBannerView);
             BindMatchHudCommandControls(_matchHudCommandControlsView);
@@ -421,7 +448,9 @@ namespace Game.UI.Runtime
                     CloseBuildDrawerPopup,
                     _selectionDiagnosticsSink,
                     _selectionUiReadModelSystem,
-                    _mainMenuPlayUi != null ? _mainMenuPlayUi.CaptureGameplayUiClickSequence : null,
+                    _mainMenuPlayUi != null
+                        ? new System.Action(_mainMenuPlayUi.CaptureGameplayUiClickSequence)
+                        : null,
                     _gameTextResolver);
                 _mainMenuPlayUi?.BindMatchHudCommandControls(view);
                 RefreshMatchHudCommandControlState();

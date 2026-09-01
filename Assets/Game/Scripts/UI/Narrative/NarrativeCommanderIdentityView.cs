@@ -18,7 +18,7 @@ namespace Game.UI.Runtime
         [SerializeField] private Sprite defaultPortrait;
         [SerializeField] private Button[] portraitButtons;
         [SerializeField] private Image[] portraitImages;
-        [SerializeField] private Image[] portraitSelectionImages;
+        [SerializeField] private Behaviour[] portraitSelectionImages;
 
         [Header("Actions")]
         [SerializeField] private Button continueButton;
@@ -192,8 +192,11 @@ namespace Game.UI.Runtime
             int imageCount = portraitSelectionImages?.Length ?? 0;
             for (int i = 0; i < imageCount; i++)
             {
-                if (portraitSelectionImages[i] != null)
-                    portraitSelectionImages[i].enabled = i == selectedPortraitIndex;
+                Behaviour selection = portraitSelectionImages[i];
+                if (selection is V3SelectionFrameView frame)
+                    frame.SetVisible(i == selectedPortraitIndex);
+                else if (selection != null)
+                    selection.enabled = i == selectedPortraitIndex;
             }
         }
 

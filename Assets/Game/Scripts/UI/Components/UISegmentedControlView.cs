@@ -12,6 +12,8 @@ namespace Game.UI.Runtime
         [SerializeField] private bool applyVisualSelection;
         [SerializeField] private Sprite normalSprite;
         [SerializeField] private Sprite selectedSprite;
+        [SerializeField] private Color normalBackgroundColor = Color.white;
+        [SerializeField] private Color selectedBackgroundColor = new(0f, 0.74f, 0.88f, 1f);
         [SerializeField] private Color normalLabelColor = new(0.88f, 0.94f, 0.95f, 1f);
         [SerializeField] private Color selectedLabelColor = new(0.98f, 1f, 1f, 1f);
 
@@ -50,6 +52,7 @@ namespace Game.UI.Runtime
                 Sprite stateSprite = selected ? selectedSprite : normalSprite;
                 if (stateSprite != null)
                     background.sprite = stateSprite;
+                background.color = selected ? selectedBackgroundColor : normalBackgroundColor;
             }
 
             if (segmentLabels != null && index < segmentLabels.Length && segmentLabels[index] != null)

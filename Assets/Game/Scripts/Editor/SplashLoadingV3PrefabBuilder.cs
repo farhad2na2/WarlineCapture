@@ -80,7 +80,7 @@ namespace Game.Editor
 
             if (rasterSpriteCount != 2)
                 throw new InvalidOperationException(
-                    $"Splash V3 must use one unique background plus the canonical shared brand logo; found {rasterSpriteCount} raster sprites.");
+                    $"Splash V3 must use one unique background and the one shared V3 brand sprite; found {rasterSpriteCount} raster sprites.");
             if (prefab.GetComponentsInChildren<V3GradientGraphic>(true).Length < 8)
                 throw new MissingComponentException("Splash V3 must use procedural gradients for its reusable chrome and progress treatment.");
             if (FindDeepChild(prefab.transform, "IntegratedLoadingFooter") == null ||

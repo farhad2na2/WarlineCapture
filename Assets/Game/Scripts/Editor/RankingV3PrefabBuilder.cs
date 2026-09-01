@@ -58,7 +58,6 @@ namespace Game.Editor
         private static TMP_FontAsset bold;
         private static TMP_FontAsset medium;
         private static V3UiArtCatalog catalog;
-        private static Sprite logo;
         private static Sprite rankingIcon;
         private static Sprite regionIcon;
         private static Sprite friendsIcon;
@@ -143,7 +142,7 @@ namespace Game.Editor
             bold = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(BoldFontPath);
             medium = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(MediumFontPath);
             catalog = V3UiFoundationBuilder.RequireCatalog();
-            logo = RequireSprite(V3UiFoundationBuilder.MainMenuLogoPath); rankingIcon = RequireSprite(RankingIconPath); regionIcon = RequireSprite(RegionIconPath);
+            rankingIcon = RequireSprite(RankingIconPath); regionIcon = RequireSprite(RegionIconPath);
             friendsIcon = RequireSprite(FriendsIconPath); seasonIcon = RequireSprite(SeasonIconPath); dalia = RequireSprite(DaliaPath);
             portraits = new Sprite[PortraitPaths.Length];
             for (int i = 0; i < PortraitPaths.Length; i++) portraits[i] = RequireSprite(PortraitPaths[i]);
@@ -155,7 +154,7 @@ namespace Game.Editor
         {
             RectTransform header = TopLeft("Header", root, 9, 7, 1655, 85);
             RectTransform logoPanel = TopLeft("LogoPanel", header, 0, 0, 262, 85); Gradient(logoPanel, DarkTop, DarkBottom, Border);
-            Image logoImage = Image("Logo", logoPanel, logo, Color.white); TopLeft(logoImage.rectTransform, 9, 8, 244, 68); logoImage.preserveAspect = true;
+            V3UiFoundationBuilder.AddMainMenuLogo(logoPanel, left: 9f, top: 8f, right: 9f, bottom: 9f);
             RectTransform titlePanel = TopLeft("TitlePanel", header, 270, 0, 710, 85); Gradient(titlePanel, DarkTop, DarkBottom, Border); widths.Add(titlePanel);
             TMP_Text title = Text("Title", titlePanel, "COMMANDER RANKING", 46, bold, TextAlignmentOptions.MidlineLeft, TextPrimary); Horizontal(title.rectTransform, 27, 18, 0, 85);
             RectTransform credits = Resource(header, "Credits", 988, 0, 254, catalog.CreditsIcon, "CREDITS", "24,750", Amber, out creditsValue);

@@ -28,7 +28,10 @@
         "Unity.ResourceManager",
         "Unity.TextMeshPro",
         "Unity.Transforms",
-        "UnityEngine.UI"
+        "UnityEngine.UI",
+        "Game.Runtime.Combat",
+        "Game.Runtime.Pathfinding",
+        "sniveler-code.gpu-animation"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

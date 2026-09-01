@@ -11,7 +11,11 @@
         "Unity.Mathematics",
         "Unity.Mathematics.Extensions",
         "Unity.RenderPipelines.Core.Runtime",
-        "Unity.Transforms"
+        "Unity.Transforms",
+        "Game.Catalog.Contracts",
+        "Game.Missions.Contracts",
+        "Game.Narrative.Contracts",
+        "Game.Tactical.Contracts"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

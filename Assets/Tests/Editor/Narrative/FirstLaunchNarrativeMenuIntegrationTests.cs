@@ -24,12 +24,13 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
             tests.MenuScene_HasTopLevelNarrativeLayerAndExactConfigs();
             tests.MenuScene_FirstLaunchReferenceLayoutFillsEditorCanvas();
             tests.LanguageChoice_AwakeDoesNotOverrideCompositionVisibility();
+            tests.LanguageChoice_AllControlsHaveRaycastTargets();
             tests.FreshProfile_LanguageChoicePrecedesNarrativeAndPersistsPersian();
             tests.FreshProfile_SkipRequiresLiveConfirmationAndPublishesOneHandoff();
             tests.CompletedAndPendingProfiles_SelectCorrectStartupDisposition();
             tests.ReviewerMode_ProvidesNavigationWithoutMutatingCompletedProfile();
             tests.CommittedIdentity_SkipRoutesDirectlyAndPreservesSelection();
-            Debug.Log("[FirstLaunchNarrativeMenuIntegrationValidation] result=Passed tests=8");
+            Debug.Log("[FirstLaunchNarrativeMenuIntegrationValidation] result=Passed tests=9 pointerTargets=Passed");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -37,6 +38,23 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
             Debug.LogException(exception);
             Debug.Log("[FirstLaunchNarrativeMenuIntegrationValidation] result=Failed");
             ValidationExit.Failed();
+        }
+    }
+
+    [Test]
+    public void LanguageChoice_AllControlsHaveRaycastTargets()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+            FirstLaunchNarrativePresentationPrefabBuilder.LanguageChoicePrefabPath);
+        Assert.NotNull(prefab);
+
+        Button[] buttons = prefab.GetComponentsInChildren<Button>(true);
+        Assert.AreEqual(3, buttons.Length);
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            Assert.NotNull(buttons[i].targetGraphic, $"{buttons[i].name} needs a visible pointer target.");
+            Assert.IsTrue(buttons[i].targetGraphic.raycastTarget,
+                $"{buttons[i].name} must accept real pointer raycasts, not only direct onClick invocation.");
         }
     }
 
@@ -82,7 +100,8 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
         Assert.NotNull(bootstrap.FirstLaunchPersianLocale);
         Assert.IsTrue(bootstrap.FirstLaunchPersianLocale.RightToLeft);
         Assert.AreEqual(FirstLaunchNarrativeLanguage.Persian, bootstrap.FirstLaunchPersianLocale.Language);
-        Assert.AreEqual(17, bootstrap.FirstLaunchPersianLocale.Voices.Count);
+        Assert.GreaterOrEqual(bootstrap.FirstLaunchPersianLocale.Voices.Count, 17,
+            "The shared Persian locale may include later mission voices, but it must retain all 17 First Launch lines.");
         for (int i = 0; i < bootstrap.FirstLaunchPersianLocale.Voices.Count; i++)
         {
             NarrativeLocaleVoiceRecord voice = bootstrap.FirstLaunchPersianLocale.Voices[i];
@@ -164,8 +183,19 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
         Button persian = Array.Find(
             context.LanguageInstance.GetComponentsInChildren<Button>(true),
             button => button.name == "PersianButton");
+        Button continueButton = Array.Find(
+            context.LanguageInstance.GetComponentsInChildren<Button>(true),
+            button => button.name == "ContinueButton");
         Assert.NotNull(persian);
+        Assert.NotNull(continueButton);
         persian.onClick.Invoke();
+
+        PlayerProfileSaveData beforeConfirmation = context.SaveService.LoadProfile();
+        Assert.IsFalse(context.Helper.IsPlaying);
+        Assert.AreEqual(FirstLaunchProfileState.NotStarted, beforeConfirmation.firstLaunchStatus);
+        Assert.AreEqual(FirstLaunchNarrativeLanguage.Unselected.ToString(), beforeConfirmation.firstLaunchLanguage);
+
+        continueButton.onClick.Invoke();
 
         PlayerProfileSaveData saved = context.SaveService.LoadProfile();
         Assert.IsTrue(context.Helper.IsPlaying);

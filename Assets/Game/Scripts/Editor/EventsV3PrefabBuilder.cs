@@ -40,7 +40,6 @@ namespace Game.Editor
         private static TMP_FontAsset bold;
         private static TMP_FontAsset medium;
         private static V3UiArtCatalog catalog;
-        private static Sprite logo;
         private static Sprite oldMarket;
         private static Sprite convoy;
         private static Sprite aria;
@@ -117,7 +116,7 @@ namespace Game.Editor
             bold = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(BoldFontPath);
             medium = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(MediumFontPath);
             catalog = V3UiFoundationBuilder.RequireCatalog();
-            logo = Sprite(V3UiFoundationBuilder.MainMenuLogoPath); oldMarket = Sprite(OldMarketPath); convoy = Sprite(ConvoyPath); aria = Sprite(AriaPath); operations = Sprite(OperationsPath);
+            oldMarket = Sprite(OldMarketPath); convoy = Sprite(ConvoyPath); aria = Sprite(AriaPath); operations = Sprite(OperationsPath);
             if (bold == null || medium == null) throw new MissingReferenceException("Events fonts missing.");
         }
 
@@ -130,7 +129,7 @@ namespace Game.Editor
             Button logoButton = logoPanel.gameObject.AddComponent<Button>();
             logoButton.targetGraphic = logoChrome;
             logoButton.gameObject.AddComponent<UIShellRouteButtonView>().Configure(UiShellRouteIntent.BackMenuRoute, UIRoute.MainMenu, false);
-            Image logoImage = Image("Logo", logoPanel, logo, Color.white); TopLeft(logoImage.rectTransform, 10, 6, 335, 83); logoImage.preserveAspect = true;
+            V3UiFoundationBuilder.AddMainMenuLogo(logoPanel, left: 10f, top: 6f, right: 10f, bottom: 7f);
             RectTransform titlePanel = TopLeft("TitlePanel", header, 370, 0, 647, 96); Gradient(titlePanel, DarkTop, DarkBottom, Border);
             TMP_Text title = Text("Title", titlePanel, "EVENTS", 57, bold, TextAlignmentOptions.MidlineLeft, TextPrimary); Horizontal(title.rectTransform, 26, 18, 0, 94);
             widths.Add(titlePanel);

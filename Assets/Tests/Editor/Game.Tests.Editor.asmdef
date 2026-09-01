@@ -33,7 +33,8 @@
         "Unity.Mathematics.Extensions",
         "Unity.TextMeshPro",
         "Unity.Transforms",
-        "UnityEngine.UI"
+        "UnityEngine.UI",
+        "sniveler-code.gpu-animation.Editor"
     ],
     "includePlatforms": [
         "Editor"

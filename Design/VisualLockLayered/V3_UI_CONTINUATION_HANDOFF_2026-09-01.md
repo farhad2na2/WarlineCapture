@@ -14,7 +14,10 @@ screen is user-accepted unless its own notes explicitly say so.
   full width without empty side gutters.
 - ARIA and other edge-owned controls must remain on their intended edges;
   portraits and background art must crop without stretching.
-- Use directional procedural gradients and one constant `3 px` border contract.
+- Use the shared semantic gradient set and one constant `3 px` border contract.
+  Existing `V3GradientGraphic` fills remain a single resolution-independent
+  shared renderer; Image-based gradients use the one atlas sprite for their
+  semantic color and never create a screen-local PNG.
   Adjacent frames must not overlap or cut through navigation/header/footer
   regions.
 - Replace old or placeholder icons with sharp V3 icons. Reuse shared assets and
@@ -23,23 +26,38 @@ screen is user-accepted unless its own notes explicitly say so.
 - Work through the open Unity Editor with Unity CLI/Pipeline. On macOS, follow
   `AGENTS.md`: never invoke Unity directly and never add `-batchmode`.
 
-## Shared brand logo — complete and validated
+## Shared brand logo — corrected and validated
 
 - Canonical sprite:
-  `Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/shared_brand_logo_lockup.png`
+  `Assets/Game/Art/UI/V3Shared/Sprites/Brand/ui_v3_brand_logo_mainmenu.png`
 - Dedicated one-item atlas:
   `Assets/Game/Art/UI/V3Shared/Atlases/UI_V3_Brand_01.spriteatlas`
+- Shared prefab source:
+  `Assets/Game/Art/UI/V3Shared/Prefabs/UI_V3_MainMenuLogo.prefab`
 - Migration/validation entry point:
   `Game/UI/V3/Validate Shared Brand Logo`
 - Last passing gate:
-  `[V3SharedBrandLogoMigrationBuilder] result=Passed prefabs=17 references=18 ... duplicate=0`
+  `[V3SharedBrandLogoMigrationBuilder] result=Passed prefabs=17 references=18 ... canonicalBitmap=1 duplicate=0`
 - `V3SharedBrandLogoMigrationBuilder` rejects alternative logo sprites and
   procedural standalone `WARLINE` text.
+- The former procedural approximation and older metallic Commander Profile
+  logo are not used by any migrated V3 logo root.
+
+## Shared semantic gradients — foundation complete
+
+- Canonical green, red, amber, blue, cyan, and graphite sprites live once under
+  `Assets/Game/Art/UI/V3Shared/Sprites/Core/Gradients/`.
+- All six are packed once in
+  `Assets/Game/Art/UI/V3Shared/Atlases/UI_V3_CoreChrome_01.spriteatlas`.
+- `V3UiFoundationBuilder` verifies exact atlas membership and SHA-256 uniqueness.
+- Screen-local gradient PNGs are forbidden. Procedural `V3GradientGraphic`
+  remains the shared sharp path for dynamic or four-corner gradients and does
+  not allocate any duplicate texture.
 
 ## First Launch and comic — dual-aspect runtime proof complete
 
 Current review candidate:
-`SCN-00_FirstLaunch/iterations/iteration_05/`.
+`SCN-00_FirstLaunch/iterations/iteration_06/`.
 
 - All four states were captured from the real Menu scene at both required sizes.
 - Latest markers:
@@ -51,6 +69,9 @@ Current review candidate:
   user's Editor.
 - ARIA preserves aspect ratio and the outdoor identity state no longer leaks
   comic chrome.
+- The Language Choice screen uses the corrected Main Menu V3 logo at both
+  aspect ratios. A real Play Mode click selected Persian and Continue advanced
+  to Persian dialogue.
 - User acceptance is still pending.
 
 ## Immediate next task — finish Match HUD wide header anchoring

@@ -82,6 +82,8 @@ namespace Game.Editor
                 throw new UnityException("First Launch V3 ARIA guidance portrait is missing.");
             if (narrative.GetComponentsInChildren<MainMenuV3SectionLayoutView>(true).Length != 1)
                 throw new UnityException("First Launch V3 narrative prefab needs exactly one reference-layout controller.");
+            ValidateSelectableRaycasts(language, "language choice");
+            ValidateSelectableRaycasts(narrative, "narrative sequence");
             Debug.Log("[FirstLaunchNarrativeV3PrefabBuilder] validation=Passed language=select-then-continue identity=6 comic=complete guidance=complete");
         }
 
@@ -929,6 +931,7 @@ namespace Game.Editor
             input.text = value;
             input.characterLimit = 32;
             input.targetGraphic = rect.GetComponent<V3GradientGraphic>();
+            input.targetGraphic.raycastTarget = true;
             return input;
         }
 
@@ -936,6 +939,7 @@ namespace Game.Editor
         {
             RectTransform rect = CreateTopLeft(name, parent, x, y, width, height);
             V3GradientGraphic graphic = CreateGradientOn(rect, top, bottom, border, borderWidth);
+            graphic.raycastTarget = true;
             Button button = rect.gameObject.AddComponent<Button>();
             button.targetGraphic = graphic;
             ColorBlock colors = button.colors;
@@ -946,6 +950,23 @@ namespace Game.Editor
             colors.fadeDuration = .08f;
             button.colors = colors;
             return button;
+        }
+
+        private static void ValidateSelectableRaycasts(GameObject prefab, string screenName)
+        {
+            Selectable[] selectables = prefab.GetComponentsInChildren<Selectable>(true);
+            if (selectables.Length == 0)
+                throw new MissingComponentException($"First Launch V3 {screenName} has no interactive controls.");
+
+            for (int i = 0; i < selectables.Length; i++)
+            {
+                Graphic target = selectables[i].targetGraphic;
+                if (target == null || !target.raycastTarget)
+                {
+                    throw new MissingReferenceException(
+                        $"First Launch V3 {screenName} control '{selectables[i].name}' cannot receive real pointer input.");
+                }
+            }
         }
 
         private static V3GradientGraphic CreateGradient(string name, Transform parent, Color top, Color bottom, Color border, float width)

@@ -4,7 +4,8 @@
     "references": [
         "Game.UI.Contracts",
         "Unity.Collections",
-        "Unity.Entities"
+        "Unity.Entities",
+        "Game.Tactical.Contracts"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

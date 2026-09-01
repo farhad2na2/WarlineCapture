@@ -16,7 +16,11 @@
         "Unity.Collections",
         "Unity.Entities",
         "Unity.Mathematics",
-        "Unity.Transforms"
+        "Unity.Transforms",
+        "Game.Rendering.Contracts",
+        "Game.Runtime.Combat",
+        "Game.Runtime.Pathfinding",
+        "sniveler-code.gpu-animation"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

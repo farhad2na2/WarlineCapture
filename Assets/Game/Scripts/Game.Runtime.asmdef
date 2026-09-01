@@ -21,7 +21,8 @@
         "Unity.Mathematics.Extensions",
         "Unity.RenderPipelines.Core.Runtime",
         "Unity.RenderPipelines.Universal.Runtime",
-        "Unity.Transforms"
+        "Unity.Transforms",
+        "Game.Catalog.Contracts"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -1,6 +1,6 @@
 # V3 Shared Layered Art And Small-Atlas Strategy
 
-Status: proposed implementation baseline for the V3 layered-art request pass.
+Status: active implementation baseline for the V3 layered-art request pass.
 
 This strategy converts the V3 target locks into one shared, sharp Unity UI art
 system. It is intentionally asset-centric rather than screen-centric: a visual
@@ -52,13 +52,15 @@ before migration.
    not force full-screen or large narrative art into a UI atlas.
 7. **Atlas ownership follows reuse and load lifetime, not screen number.** No
    `SCN-xx.spriteatlas` or `POP-xx.spriteatlas` for shared chrome.
-8. **All raster art sources still follow the accepted green-key layered-art
-   workflow.** Runtime tinting, masking, slicing, and composition are allowed;
-   cropping from flattened targets is not.
-9. **Gradients are shared procedural layers, not screen-local bitmaps.** Use the
-   canonical V3 vertical-gradient graphic with theme colors when the target
-   silhouette is rectangular; request raster gradient art only when the lock
-   proves a materially different texture or non-linear highlight.
+8. **All raster art sources normally follow the accepted green-key layered-art
+   workflow.** Runtime tinting, masking, slicing, and composition are allowed.
+   A target-derived crop is allowed only when the user explicitly designates
+   that exact target element as the approved canonical source; the Main Menu V3
+   logo is the recorded exception.
+9. **Gradients are shared primitives, never screen-local bitmaps.** Dynamic and
+   four-corner fills use the one resolution-independent `V3GradientGraphic`.
+   Image-based fills use one canonical semantic atlas entry (green, red, amber,
+   blue, cyan, or graphite). Never export another gradient PNG for a screen.
 10. **Render chrome exactly once.** A panel or control may have one 9-slice
     border layer and one inset fill layer. Never stack a panel frame, focus
     frame, and button frame to simulate weight; this creates inconsistent
@@ -115,7 +117,8 @@ Names are canonical IDs, not suggestions for screen-local aliases.
 | Canonical asset ID | Production form | Reuse rule |
 |---|---|---|
 | `ui_core_solid_face` | Tintable simple sprite | All flat panel/button interiors |
-| `V3GradientGraphic` | Procedural tintable fill | Selected tabs, toggles, action buttons, and rails without atlas duplication |
+| `V3GradientGraphic` | Procedural tintable fill | Dynamic selected tabs, toggles, action buttons, and rails without texture duplication |
+| `ui_v3_gradient_green/red/amber/blue/cyan/graphite` | Shared atlas sprites | Image-based semantic fills; one sprite per semantic color, never per screen |
 | `ui_core_shadow_9s` | Neutral 9-slice | Shared hard offset shadow |
 | `ui_core_panel_9s` | Neutral 9-slice | Default panel and drawer surface |
 | `ui_core_panel_inset_9s` | Neutral 9-slice | Nested data and list areas |
@@ -198,8 +201,8 @@ or load-lifetime requirements.
 
 | Atlas | Max page | Contents | Load scope |
 |---|---:|---|---|
-| `UI_Brand_01` | 512 | Logo and brand marks | Boot/common |
-| `UI_CoreChrome_01` | 1024 | Core 9-slice/3-slice chrome | Common |
+| `UI_V3_Brand_01` | 1024 | One high-resolution Main Menu V3 logo lockup | Boot/common |
+| `UI_V3_CoreChrome_01` | 1024 | Core 9-slice/3-slice chrome plus six semantic gradient strips | Common |
 | `UI_CoreIcons_01..N` | 1024 | Shell, resource, category, status icons | Common |
 | `UI_HUDChrome_01` | 1024 | Command wheel, HUD-only frames/overlays | Match |
 | `UI_HUDIcons_01` | 1024 | Tactical actions and map markers | Match |

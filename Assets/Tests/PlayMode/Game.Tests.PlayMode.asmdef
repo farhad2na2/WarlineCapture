@@ -27,7 +27,11 @@
         "Unity.Scenes",
         "Unity.TextMeshPro",
         "Unity.Transforms",
-        "UnityEngine.UI"
+        "UnityEngine.UI",
+        "Game.Narrative.Runtime",
+        "Game.Runtime.Combat",
+        "Game.Runtime.Pathfinding",
+        "sniveler-code.gpu-animation"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

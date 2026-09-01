@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using Game.UI.Runtime;
+using TMPro;
 using UnityEditor;
 using UnityEditor.U2D;
 using UnityEngine;
@@ -18,6 +19,7 @@ namespace Game.Editor
         internal const string ThemePath = SharedRoot + "/Config/V3UiTheme.asset";
         internal const string CoreAtlasPath = SharedRoot + "/Atlases/UI_V3_CoreChrome_01.spriteatlas";
         internal const string BrandAtlasPath = SharedRoot + "/Atlases/UI_V3_Brand_01.spriteatlas";
+        internal const string BrandLogoPrefabPath = SharedRoot + "/Prefabs/UI_V3_MainMenuLogo.prefab";
         internal const string IconAtlasPath = SharedRoot + "/Atlases/UI_V3_CoreIcons_01.spriteatlas";
         internal const string CommanderIconAtlasPath = SharedRoot + "/Atlases/UI_V3_CommanderIcons_01.spriteatlas";
         internal const string CampaignIconAtlasPath = SharedRoot + "/Atlases/UI_V3_CampaignIcons_01.spriteatlas";
@@ -29,7 +31,13 @@ namespace Game.Editor
         internal const string PanelPath = SharedRoot + "/Sprites/Core/ui_core_panel_9s.png";
         internal const string ButtonPath = SharedRoot + "/Sprites/Core/ui_core_button_9s.png";
         internal const string FocusOverlayPath = SharedRoot + "/Sprites/Core/ui_core_focus_overlay_9s.png";
-        internal const string MainMenuLogoPath = "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/shared_brand_logo_lockup.png";
+        internal const string MainMenuLogoPath = SharedRoot + "/Sprites/Brand/ui_v3_brand_logo_mainmenu.png";
+        internal const string GreenGradientPath = SharedRoot + "/Sprites/Core/Gradients/ui_v3_gradient_green.png";
+        internal const string RedGradientPath = SharedRoot + "/Sprites/Core/Gradients/ui_v3_gradient_red.png";
+        internal const string AmberGradientPath = SharedRoot + "/Sprites/Core/Gradients/ui_v3_gradient_amber.png";
+        internal const string BlueGradientPath = SharedRoot + "/Sprites/Core/Gradients/ui_v3_gradient_blue.png";
+        internal const string CyanGradientPath = SharedRoot + "/Sprites/Core/Gradients/ui_v3_gradient_cyan.png";
+        internal const string GraphiteGradientPath = SharedRoot + "/Sprites/Core/Gradients/ui_v3_gradient_graphite.png";
         internal const string AttackIconPath = SharedRoot + "/Sprites/Icons/ui_icon_attack.png";
         internal const string SettingsIconPath = SharedRoot + "/Sprites/Icons/Settings/ui_icon_settings_gear.png";
         internal const string SettingsAudioIconPath = SharedRoot + "/Sprites/Icons/Settings/ui_icon_settings_audio.png";
@@ -239,6 +247,16 @@ namespace Game.Editor
             MatchMedicalIconPath
         };
 
+        private static readonly string[] SharedGradientPaths =
+        {
+            GreenGradientPath,
+            RedGradientPath,
+            AmberGradientPath,
+            BlueGradientPath,
+            CyanGradientPath,
+            GraphiteGradientPath
+        };
+
         private static readonly Vector4 PanelBorder = new(24f, 24f, 24f, 24f);
         private static readonly Vector4 ButtonBorder = new(20f, 20f, 20f, 20f);
         private static readonly Vector4 FocusBorder = new(18f, 18f, 18f, 18f);
@@ -250,7 +268,7 @@ namespace Game.Editor
             SessionState.SetBool(BatchBuildActiveKey, true);
             SessionState.SetBool(
                 BatchFoundationBuiltKey,
-                AssetDatabase.LoadAssetAtPath<SpriteAtlas>(BrandAtlasPath) != null);
+                AssetDatabase.LoadAssetAtPath<GameObject>(BrandLogoPrefabPath) != null);
         }
 
         internal static void EndBatchBuild()
@@ -283,11 +301,16 @@ namespace Game.Editor
 
             Directory.CreateDirectory(SharedRoot + "/Config");
             Directory.CreateDirectory(SharedRoot + "/Atlases");
+            Directory.CreateDirectory(SharedRoot + "/Prefabs");
+            Directory.CreateDirectory(SharedRoot + "/Sprites/Brand");
+            Directory.CreateDirectory(SharedRoot + "/Sprites/Core/Gradients");
 
             ConfigureSprite(PanelPath, PanelBorder);
             ConfigureSprite(ButtonPath, ButtonBorder);
             ConfigureSprite(FocusOverlayPath, FocusBorder);
-            ConfigureSprite(MainMenuLogoPath, Vector4.zero, 2048);
+            ConfigureSprite(MainMenuLogoPath, Vector4.zero, 1024);
+            foreach (string gradientPath in SharedGradientPaths)
+                ConfigureSprite(gradientPath, Vector4.zero, 256);
             ConfigureSprite(AttackIconPath, Vector4.zero, 256);
             ConfigureSprite(SettingsIconPath, Vector4.zero, 256);
             ConfigureSprite(SettingsAudioIconPath, Vector4.zero, 256);
@@ -316,6 +339,15 @@ namespace Game.Editor
             V3UiArtCatalog catalog = LoadOrCreate<V3UiArtCatalog>(CatalogPath);
             ConfigureCatalog(catalog, panel, button, focusOverlay, attackIcon);
             LoadOrCreate<V3UiTheme>(ThemePath);
+            BuildMainMenuLogoPrefab();
+
+            BuildAtlas(
+                BrandAtlasPath,
+                "UI_V3_Brand_01",
+                new UnityEngine.Object[]
+                {
+                    RequireTexture(MainMenuLogoPath)
+                });
 
             BuildAtlas(
                 CoreAtlasPath,
@@ -324,12 +356,14 @@ namespace Game.Editor
                 {
                     RequireTexture(PanelPath),
                     RequireTexture(ButtonPath),
-                    RequireTexture(FocusOverlayPath)
+                    RequireTexture(FocusOverlayPath),
+                    RequireTexture(GreenGradientPath),
+                    RequireTexture(RedGradientPath),
+                    RequireTexture(AmberGradientPath),
+                    RequireTexture(BlueGradientPath),
+                    RequireTexture(CyanGradientPath),
+                    RequireTexture(GraphiteGradientPath)
                 });
-            BuildAtlas(
-                BrandAtlasPath,
-                "UI_V3_Brand_01",
-                new UnityEngine.Object[] { RequireTexture(MainMenuLogoPath) });
             BuildAtlas(
                 IconAtlasPath,
                 "UI_V3_CoreIcons_01",
@@ -378,7 +412,7 @@ namespace Game.Editor
             Validate();
             if (SessionState.GetBool(BatchBuildActiveKey, false))
                 SessionState.SetBool(BatchFoundationBuiltKey, true);
-            Debug.Log($"[V3UiFoundationBuilder] result=Passed atlases=9 brand=single-shared catalog={CatalogPath} theme={ThemePath}");
+            Debug.Log($"[V3UiFoundationBuilder] result=Passed atlases=9 brand=single-shared-sprite gradients=6 catalog={CatalogPath} theme={ThemePath}");
         }
 
         public static void Validate()
@@ -387,6 +421,8 @@ namespace Game.Editor
             ValidateSprite(ButtonPath, ButtonBorder);
             ValidateSprite(FocusOverlayPath, FocusBorder);
             ValidateSprite(MainMenuLogoPath, Vector4.zero);
+            foreach (string gradientPath in SharedGradientPaths)
+                ValidateSprite(gradientPath, Vector4.zero);
             ValidateSprite(AttackIconPath, Vector4.zero);
             ValidateSprite(SettingsIconPath, Vector4.zero);
             ValidateSprite(SettingsAudioIconPath, Vector4.zero);
@@ -424,6 +460,7 @@ namespace Game.Editor
             RequireReference(catalog.RushIcon, nameof(catalog.RushIcon));
 
             RequireAsset<V3UiTheme>(ThemePath);
+            ValidateMainMenuLogoPrefab();
             var noDuplicatePaths = new List<string>
             {
                 PanelPath,
@@ -449,9 +486,23 @@ namespace Game.Editor
             noDuplicatePaths.AddRange(OperationsIconPaths);
             noDuplicatePaths.AddRange(FirstLaunchIconPaths);
             noDuplicatePaths.AddRange(MatchIconPaths);
+            noDuplicatePaths.AddRange(SharedGradientPaths);
             ValidateNoDuplicateFiles(noDuplicatePaths);
-            ValidateAtlas(CoreAtlasPath, new[] { PanelPath, ButtonPath, FocusOverlayPath });
             ValidateAtlas(BrandAtlasPath, new[] { MainMenuLogoPath });
+            ValidateAtlas(
+                CoreAtlasPath,
+                new[]
+                {
+                    PanelPath,
+                    ButtonPath,
+                    FocusOverlayPath,
+                    GreenGradientPath,
+                    RedGradientPath,
+                    AmberGradientPath,
+                    BlueGradientPath,
+                    CyanGradientPath,
+                    GraphiteGradientPath
+                });
             ValidateAtlas(
                 IconAtlasPath,
                 new[]
@@ -488,11 +539,11 @@ namespace Game.Editor
         }
 
         /// <summary>
-        /// Adds the one canonical V3 WARLINE/CAPTURE lockup to a screen-owned frame.
-        /// Every screen references the same sprite GUID, which is packed only by the
-        /// dedicated brand atlas rather than copied into screen-specific atlases.
+        /// Adds the exact approved Main Menu V3 WARLINE/CAPTURE lockup as a nested
+        /// instance of one shared prefab. The lockup remains sharp at every size and
+        /// no screen owns a duplicate logo bitmap or a divergent reconstruction.
         /// </summary>
-        internal static Image AddMainMenuLogo(
+        internal static RectTransform AddMainMenuLogo(
             Transform parent,
             string name = "SharedMainMenuLogo",
             float left = 8f,
@@ -500,21 +551,56 @@ namespace Game.Editor
             float right = 8f,
             float bottom = 6f)
         {
-            GameObject logoObject = new(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+            RectTransform parentRect = parent as RectTransform ??
+                throw new InvalidOperationException("The shared V3 brand logo requires a RectTransform parent.");
+            GameObject prefab = RequireAsset<GameObject>(BrandLogoPrefabPath);
+            GameObject logoObject = PrefabUtility.InstantiatePrefab(prefab, parent) as GameObject ??
+                throw new InvalidOperationException($"Unable to instantiate shared V3 brand logo: {BrandLogoPrefabPath}");
+            logoObject.name = name;
             RectTransform rect = logoObject.GetComponent<RectTransform>();
-            rect.SetParent(parent, false);
-            rect.anchorMin = Vector2.zero;
-            rect.anchorMax = Vector2.one;
+            rect.anchorMin = new Vector2(.5f, .5f);
+            rect.anchorMax = new Vector2(.5f, .5f);
             rect.pivot = new Vector2(.5f, .5f);
-            rect.offsetMin = new Vector2(left, bottom);
-            rect.offsetMax = new Vector2(-right, -top);
+            rect.sizeDelta = new Vector2(513f, 137f);
+            float availableWidth = Mathf.Max(1f, parentRect.rect.width - left - right);
+            float availableHeight = Mathf.Max(1f, parentRect.rect.height - top - bottom);
+            float scale = Mathf.Min(availableWidth / 513f, availableHeight / 137f);
+            rect.localScale = new Vector3(scale, scale, 1f);
+            rect.anchoredPosition = new Vector2((left - right) * .5f, (bottom - top) * .5f);
+            return rect;
+        }
 
-            Image image = logoObject.GetComponent<Image>();
+        private static void BuildMainMenuLogoPrefab()
+        {
+            GameObject root = new(
+                "UI_V3_MainMenuLogo",
+                typeof(RectTransform),
+                typeof(CanvasRenderer),
+                typeof(Image));
+            RectTransform rect = root.GetComponent<RectTransform>();
+            rect.sizeDelta = new Vector2(513f, 137f);
+            Image image = root.GetComponent<Image>();
             image.sprite = RequireSprite(MainMenuLogoPath);
-            image.color = Color.white;
             image.preserveAspect = true;
             image.raycastTarget = false;
-            return image;
+            image.color = Color.white;
+
+            PrefabUtility.SaveAsPrefabAsset(root, BrandLogoPrefabPath);
+            UnityEngine.Object.DestroyImmediate(root);
+        }
+
+        private static void ValidateMainMenuLogoPrefab()
+        {
+            GameObject logo = RequireAsset<GameObject>(BrandLogoPrefabPath);
+            Image image = logo.GetComponent<Image>();
+            if (image == null || image.sprite == null ||
+                !string.Equals(AssetDatabase.GetAssetPath(image.sprite), MainMenuLogoPath, StringComparison.Ordinal))
+                throw new MissingReferenceException("Shared V3 brand prefab does not use the approved Main Menu V3 logo sprite.");
+            if (!image.preserveAspect || image.raycastTarget)
+                throw new InvalidOperationException("Shared V3 brand logo must preserve aspect and never intercept input.");
+            if (logo.GetComponentsInChildren<TMP_Text>(true).Length != 0 ||
+                logo.GetComponentsInChildren<V3PolygonGraphic>(true).Length != 0)
+                throw new InvalidOperationException("Shared V3 brand logo cannot contain procedural text or polygon reconstructions.");
         }
 
         private static void ConfigureSprite(string path, Vector4 border, int maxTextureSize = 1024)

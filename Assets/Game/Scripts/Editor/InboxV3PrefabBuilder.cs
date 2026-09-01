@@ -48,7 +48,6 @@ namespace Game.Editor
         private static TMP_FontAsset boldFont;
         private static TMP_FontAsset mediumFont;
         private static V3UiArtCatalog catalog;
-        private static Sprite logo;
         private static Sprite envelope;
         private static Sprite operations;
         private static Sprite skirmish;
@@ -147,7 +146,6 @@ namespace Game.Editor
             boldFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(BoldFontPath);
             mediumFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(MediumFontPath);
             catalog = V3UiFoundationBuilder.RequireCatalog();
-            logo = RequireSprite(V3UiFoundationBuilder.MainMenuLogoPath);
             envelope = RequireSprite(EnvelopePath);
             operations = RequireSprite(OperationsPath);
             skirmish = RequireSprite(SkirmishPath);
@@ -170,9 +168,7 @@ namespace Game.Editor
 
             RectTransform logoPanel = CreateTopLeft("LogoPanel", header, 95f, 0f, 350f, 97f);
             CreateGradient(logoPanel, DarkTop, DarkBottom, Border);
-            Image logoImage = CreateImage("Logo", logoPanel, logo, Color.white, false);
-            SetTopLeft(logoImage.rectTransform, 9f, 7f, 332f, 83f);
-            logoImage.preserveAspect = true;
+            V3UiFoundationBuilder.AddMainMenuLogo(logoPanel, left: 9f, top: 7f, right: 9f, bottom: 7f);
 
             RectTransform titlePanel = CreateTopLeft("TitlePanel", header, 455f, 0f, 492f, 97f);
             CreateGradient(titlePanel, DarkTop, DarkBottom, Border);

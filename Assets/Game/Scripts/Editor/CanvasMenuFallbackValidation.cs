@@ -728,6 +728,8 @@ namespace Game.Editor
                     routeCaptureConfigured = true;
                     routeCaptureConfiguredFrame = routeCaptureFrameCount;
                     routeCaptureConfiguredAt = EditorApplication.timeSinceStartup;
+                    if (routeCaptureRoute == UIRoute.Splash)
+                        UiShellRuntimeGateway.TrySetLoadingProgress(0.68f, "LOADING REQUIRED DATA", false);
                     DisableMenuDiagnosticsOverlay();
                     return;
                 }

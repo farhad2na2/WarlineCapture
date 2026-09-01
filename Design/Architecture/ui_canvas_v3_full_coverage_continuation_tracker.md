@@ -29,11 +29,12 @@ A row is complete only when all of the following are true:
 ## Snapshot
 
 - Canonical V3 targets present: `46 / 46`
-- V3 targets visually accepted in live Canvas: `0 / 46`
-- Current live baselines captured against V3: `2 / 46` (`SCN-02 Main Menu`, `SCN-11 Operations Dashboard`)
+- V3 targets visually accepted in live Canvas: `1 / 46`
+- Current live baselines captured against V3: `3 / 46` (`SCN-01 Splash / Loading`, `SCN-02 Main Menu`, `SCN-11 Operations Dashboard`)
 - Current implementation host present: `36 / 46`
 - Missing or incorrectly routed implementation host: `10 / 46`
-- Active slice: `shared V3 foundation and deterministic capture coverage`
+- Active slice: `SCN-02 Main Menu V3 migration`
+- SCN-01 accepted evidence: `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/V3/SCN-01/`
 - Main Menu baseline: `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/V3/baseline/scn02_mainmenu_current_1920x1080.png`
 - Operations baseline: `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/V3/baseline/scn11_operations_current_1920x1080.png`
 - Baseline finding: the current live Main Menu is the older gold Canvas family and is not a V3 visual-match candidate.
@@ -44,7 +45,7 @@ Status vocabulary: `Open` means a host exists but V3 is not accepted; `Missing h
 
 | # | Canonical screen/state | Current Canvas host | V3 status |
 |---:|---|---|---|
-| 01 | Splash / loading | `SCN01_LoadingContent.prefab` | Open |
+| 01 | Splash / loading | `SCN01_LoadingContent.prefab` | Complete; live progress binding preserved; 1280x720, 1920x1080, 2400x1080, and 4800x2160 evidence captured |
 | 02 | Main menu | `SCN02_MainMenuContent.prefab` | Open; baseline captured |
 | 03 | Commander profile | `SCN03_CommanderProfileContent.prefab` | Open |
 | 04 | Campaign chapter select | `SCN05_CampaignOperationsContent.prefab` | Open |
@@ -109,7 +110,7 @@ Status vocabulary: `Open` means a host exists but V3 is not accepted; `Missing h
 - [ ] First-launch comic playback.
 - [ ] First-launch commander identity.
 - [ ] First-launch ARIA guidance.
-- [ ] Splash/loading.
+- [x] Splash/loading.
 
 ### V3-03 - Menu Shell And Progression Routes
 

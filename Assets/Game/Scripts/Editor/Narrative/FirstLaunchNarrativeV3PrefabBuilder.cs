@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Game.Catalog.Contracts;
+using Game.Composition;
 using Game.Configs;
 using Game.Narrative.Contracts;
 using Game.UI.Contracts;
@@ -56,7 +57,7 @@ namespace Game.Editor
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             Validate();
-            Debug.Log("[FirstLaunchNarrativeV3PrefabBuilder] result=Passed screens=4 layout=1672x941 gradients=procedural borders=3 atlases=shared");
+            Debug.Log("[FirstLaunchNarrativeV3PrefabBuilder] result=Passed screens=5 layout=1672x941 gradients=procedural borders=3 atlases=shared");
         }
 
         [MenuItem("Game/UI/V3/Validate First Launch V3 Final")]
@@ -80,11 +81,23 @@ namespace Game.Editor
                 throw new UnityException("First Launch V3 identity background must use the full-canvas narrative panel, not a composition-limited duplicate.");
             if (narrative.transform.Find("SafeArea/GuidanceChoiceSurface/AriaPortrait") == null)
                 throw new UnityException("First Launch V3 ARIA guidance portrait is missing.");
+            Transform skip = narrative.transform.Find("SafeArea/SkipConfirmationSurface");
+            if (skip == null || skip.GetComponent<NarrativeSkipConfirmationView>() == null)
+                throw new UnityException("First Launch V3 skip confirmation surface is missing its runtime view.");
+            RequireV3Border(skip, "Confirmation", 3f);
+            RequireV3Border(skip, "Confirmation/CancelButton", 3f);
+            RequireV3Border(skip, "Confirmation/ConfirmButton", 3f);
+            if (skip.Find("Confirmation/Header/WarningIcon") == null ||
+                skip.Find("Confirmation/CancelButton/Icon") == null ||
+                skip.Find("Confirmation/ConfirmButton/Icon") == null)
+            {
+                throw new UnityException("First Launch V3 skip confirmation is missing its authored vector-quality action icons.");
+            }
             if (narrative.GetComponentsInChildren<MainMenuV3SectionLayoutView>(true).Length != 1)
                 throw new UnityException("First Launch V3 narrative prefab needs exactly one reference-layout controller.");
             ValidateSelectableRaycasts(language, "language choice");
             ValidateSelectableRaycasts(narrative, "narrative sequence");
-            Debug.Log("[FirstLaunchNarrativeV3PrefabBuilder] validation=Passed language=select-then-continue identity=6 comic=complete guidance=complete");
+            Debug.Log("[FirstLaunchNarrativeV3PrefabBuilder] validation=Passed language=select-then-continue identity=6 comic=complete guidance=complete skip=v3-bilingual");
         }
 
         [MenuItem("Game/UI/V3/Capture First Launch Review 1920x1080")]
@@ -199,7 +212,7 @@ namespace Game.Editor
                 RectTransform safeArea = root.transform.Find("SafeArea") as RectTransform;
                 if (safeArea == null)
                     throw new UnityException("First Launch narrative prefab is missing SafeArea.");
-                string[] replaced = { "Dialogue", "LocationIntroduction", "PlaybackControls", "CommanderIdentitySurface", "GuidanceChoiceSurface" };
+                string[] replaced = { "Dialogue", "LocationIntroduction", "PlaybackControls", "CommanderIdentitySurface", "GuidanceChoiceSurface", "SkipConfirmationSurface" };
                 foreach (string childName in replaced)
                 {
                     Transform child = safeArea.Find(childName);
@@ -215,9 +228,9 @@ namespace Game.Editor
                 NarrativeDialogueView dialogue = BuildComicDialogue(safeArea);
                 NarrativeCommanderIdentityView identity = BuildIdentitySurface(safeArea);
                 NarrativeGuidanceChoiceView guidance = BuildGuidanceSurface(safeArea);
-                Transform skip = safeArea.Find("SkipConfirmationSurface");
+                NarrativeSkipConfirmationView skip = BuildSkipConfirmationSurface(safeArea);
                 Transform reviewer = safeArea.Find("DevelopmentReviewerControls");
-                if (skip != null) skip.SetAsLastSibling();
+                skip.transform.SetAsLastSibling();
                 if (reviewer != null) reviewer.SetAsLastSibling();
 
                 SetObject(sequence, "dialogueView", dialogue);
@@ -225,6 +238,7 @@ namespace Game.Editor
                 SetObject(sequence, "playbackControls", controls);
                 SetObject(sequence, "commanderIdentityView", identity);
                 SetObject(sequence, "guidanceChoiceView", guidance);
+                SetObject(sequence, "skipConfirmationView", skip);
                 AssignLocalizedBindings(sequence, safeArea);
                 PrefabUtility.SaveAsPrefabAsset(root, FirstLaunchNarrativePresentationPrefabBuilder.PrefabPath);
             }
@@ -561,6 +575,77 @@ namespace Game.Editor
             return card;
         }
 
+        private static NarrativeSkipConfirmationView BuildSkipConfirmationSurface(Transform parent)
+        {
+            RectTransform surface = CreateTopLeft("SkipConfirmationSurface", parent, 0f, 0f, Reference.x, Reference.y);
+            CanvasGroup group = surface.gameObject.AddComponent<CanvasGroup>();
+            group.alpha = 0f;
+            group.interactable = false;
+            group.blocksRaycasts = false;
+
+            NarrativeSkipConfirmationView view = surface.gameObject.AddComponent<NarrativeSkipConfirmationView>();
+            Image dim = CreateImage("Dim", surface, null, new Color(0f, 0f, 0f, .78f), true);
+            Stretch(dim.rectTransform);
+
+            RectTransform modal = CreateTopLeft("Confirmation", surface, 276f, 196f, 1120f, 548f);
+            CreateGradientOn(modal, new Color32(19, 28, 31, 255), new Color32(2, 7, 9, 255), Border, 3f);
+
+            RectTransform header = CreateTopLeft("Header", modal, 3f, 3f, 1114f, 112f);
+            CreateGradientOn(header, new Color32(52, 25, 18, 255), new Color32(18, 13, 12, 255), Color.clear, 0f);
+            CreateSolid("AccentRail", header, 0f, 0f, 8f, 112f, Orange);
+            BuildWarningTriangle(header, 35f, 27f, 58f, Orange);
+            TMP_Text title = CreateText("Title", modal, "SKIP TO TACTICAL COMMAND?", 44f, bold, TextAlignmentOptions.MidlineLeft, Orange);
+            SetTopLeft(title.rectTransform, 122f, 17f, 945f, 84f);
+            title.enableAutoSizing = true;
+            title.fontSizeMin = 32f;
+            title.fontSizeMax = 44f;
+            CreateSolid("HeaderDivider", modal, 3f, 115f, 1114f, 3f, Border);
+
+            TMP_Text body = CreateText(
+                "Body",
+                modal,
+                "The default commander identity and Full Guidance setting will be used. You can change both later.",
+                31f,
+                medium,
+                TextAlignmentOptions.TopLeft,
+                White);
+            SetTopLeft(body.rectTransform, 76f, 160f, 968f, 136f);
+            body.enableAutoSizing = true;
+            body.fontSizeMin = 24f;
+            body.fontSizeMax = 31f;
+            body.textWrappingMode = TextWrappingModes.Normal;
+
+            RectTransform consequenceRule = CreateTopLeft("DecisionRule", modal, 76f, 321f, 968f, 3f);
+            CreateGradientOn(consequenceRule, Cyan, Orange, Color.clear, 0f);
+
+            Button cancel = CreateGradientButton(
+                "CancelButton", modal, 28f, 370f, 518f, 145f,
+                new Color32(25, 67, 91, 255), new Color32(4, 25, 38, 255), Cyan, 3f);
+            BuildPauseIcon(cancel.transform, 34f, 49f, 48f, White);
+            TMP_Text cancelLabel = CreateText("Label", cancel.transform, "KEEP WATCHING", 34f, bold, TextAlignmentOptions.Center, White);
+            SetTopLeft(cancelLabel.rectTransform, 91f, 24f, 395f, 96f);
+            cancelLabel.enableAutoSizing = true;
+            cancelLabel.fontSizeMin = 23f;
+            cancelLabel.fontSizeMax = 34f;
+
+            Button confirm = CreateGradientButton(
+                "ConfirmButton", modal, 574f, 370f, 518f, 145f,
+                new Color32(174, 55, 19, 255), new Color32(73, 13, 4, 255), Orange, 3f);
+            BuildChevronIcon(confirm.transform, 34f, 48f, 54f, 50f, White, true);
+            TMP_Text confirmLabel = CreateText("Label", confirm.transform, "SKIP INTRO", 34f, bold, TextAlignmentOptions.Center, White);
+            SetTopLeft(confirmLabel.rectTransform, 98f, 24f, 382f, 96f);
+            confirmLabel.enableAutoSizing = true;
+            confirmLabel.fontSizeMin = 23f;
+            confirmLabel.fontSizeMax = 34f;
+
+            TMP_Text accessible = HiddenText("AccessibilityLabel", modal);
+            SetObject(view, "group", group);
+            SetObject(view, "confirmButton", confirm);
+            SetObject(view, "cancelButton", cancel);
+            SetObject(view, "accessibleLabel", accessible);
+            return view;
+        }
+
         private static void AssignLocalizedBindings(NarrativeSequenceView sequence, Transform safeArea)
         {
             TMP_Text[] targets =
@@ -575,20 +660,26 @@ namespace Game.Editor
                 FindText(safeArea, "GuidanceChoiceSurface/FullGuidanceButton/Label"),
                 FindText(safeArea, "GuidanceChoiceSurface/ContextualGuidanceButton/Label"),
                 FindText(safeArea, "GuidanceChoiceSurface/MinimalGuidanceButton/Label"),
-                FindText(safeArea, "GuidanceChoiceSurface/ContinueButton/Label")
+                FindText(safeArea, "GuidanceChoiceSurface/ContinueButton/Label"),
+                FindText(safeArea, "SkipConfirmationSurface/Confirmation/Title"),
+                FindText(safeArea, "SkipConfirmationSurface/Confirmation/Body"),
+                FindText(safeArea, "SkipConfirmationSurface/Confirmation/CancelButton/Label"),
+                FindText(safeArea, "SkipConfirmationSurface/Confirmation/ConfirmButton/Label")
             };
             string[] keys =
             {
                 "narrative.first_launch.control.skip", "narrative.first_launch.identity.title", "narrative.first_launch.identity.instruction",
                 "narrative.first_launch.identity.callsign", "narrative.first_launch.control.continue", "narrative.first_launch.guidance.title",
                 "narrative.first_launch.guidance.instruction", "narrative.first_launch.guidance.full", "narrative.first_launch.guidance.contextual",
-                "narrative.first_launch.guidance.minimal", "narrative.first_launch.control.continue"
+                "narrative.first_launch.guidance.minimal", "narrative.first_launch.control.continue", "narrative.first_launch.skip.title",
+                "narrative.first_launch.skip.body", "narrative.first_launch.control.cancel_skip", "narrative.first_launch.control.confirm_skip"
             };
             string[] fallbacks =
             {
                 "SKIP", "EMERGENCY CONTINUITY AUTHENTICATION", "CHOOSE YOUR COMMANDER IDENTITY", "CALLSIGN", "CONTINUE   ›",
                 "CHOOSE ARIA'S GUIDANCE LEVEL", "Aria will support you based on the level you choose.", "FULL GUIDANCE", "TACTICAL HINTS",
-                "MINIMAL GUIDANCE", "CONTINUE       ›"
+                "MINIMAL GUIDANCE", "CONTINUE       ›", "SKIP TO TACTICAL COMMAND?",
+                "The default commander identity and Full Guidance setting will be used. You can change both later.", "KEEP WATCHING", "SKIP INTRO"
             };
             SetArray(sequence, "localizedTextTargets", targets);
             SetStringArray(sequence, "localizedTextKeys", keys);
@@ -602,6 +693,8 @@ namespace Game.Editor
             CaptureLanguage(width, height, $"/private/tmp/warline-first-launch-language-v3-{suffix}.png");
             CaptureInteractive(width, height, NarrativeInteractiveStateKind.CommanderIdentity, $"/private/tmp/warline-first-launch-identity-v3-{suffix}.png");
             CaptureComic(width, height, suffix == "20x9" ? ComicBackground20Path : ComicBackground16Path, $"/private/tmp/warline-first-launch-comic-v3-{suffix}.png");
+            CaptureSkip(width, height, suffix == "20x9" ? ComicBackground20Path : ComicBackground16Path, false, $"/private/tmp/warline-first-launch-skip-en-v3-{suffix}.png");
+            CaptureSkip(width, height, suffix == "20x9" ? ComicBackground20Path : ComicBackground16Path, true, $"/private/tmp/warline-first-launch-skip-fa-v3-{suffix}.png");
             CaptureInteractive(width, height, NarrativeInteractiveStateKind.GuidanceChoice, $"/private/tmp/warline-first-launch-guidance-v3-{suffix}.png");
             Debug.Log($"[FirstLaunchNarrativeV3PrefabBuilder] capture=Passed size={width}x{height} suffix={suffix}");
         }
@@ -665,6 +758,47 @@ namespace Game.Editor
                 UISettingsModel settings = Game.UI.Runtime.SettingsService.Defaults;
                 view.DialogueView.PrepareLine("District Dispatch, Major Dalia Rahim, JRC Field Command.\nWe found the convoy survivors. Extraction is underway.", NarrativeSubtitleStyleUtilitySystemHelper.Resolve(settings));
                 view.DialogueView.CompleteLine();
+            }, path);
+        }
+
+        private static void CaptureSkip(int width, int height, string backgroundPath, bool rightToLeft, string path)
+        {
+            CapturePrefab(width, height, FirstLaunchNarrativePresentationPrefabBuilder.PrefabPath, instance =>
+            {
+                NarrativeSequenceView view = instance.GetComponent<NarrativeSequenceView>();
+                IGameTextResolver resolver = FallbackGameTextResolver.Instance;
+                if (rightToLeft)
+                {
+                    NarrativeLocaleConfig locale = RequireAsset<NarrativeLocaleConfig>(FirstLaunchNarrativeConfigBuilder.PersianLocalePath);
+                    resolver = new FirstLaunchNarrativeLocaleTextCompositionSystemHelper(FallbackGameTextResolver.Instance, locale);
+                }
+
+                view.ApplyLanguage(rightToLeft, resolver);
+                view.SetVisible(true);
+                view.ApplyPanel(new NarrativePanelPresentationModel { StateId = "FL-P04", PanelSprite = RequireAsset<Sprite>(backgroundPath), Tint = Color.white });
+                view.ApplyLocation(new NarrativeLocationPresentationModel
+                {
+                    Visible = true,
+                    Title = resolver.Get("narrative.first_launch.location.sahrin.name", "SAHRIN"),
+                    Subtitle = resolver.Get("narrative.first_launch.location.old_market.context", "OLD MARKET / 10:00 LOCAL")
+                });
+                view.SetInteractiveState(NarrativeInteractiveStateKind.None);
+                view.SetSkipState(true, true, resolver.Get("narrative.first_launch.control.skip", "SKIP"));
+                view.DialogueView.ApplySpeaker(new NarrativeSpeakerPresentationModel
+                {
+                    SpeakerId = NarrativeSpeakerId.Dalia,
+                    DisplayName = resolver.Get("narrative.first_launch.speaker.dalia.name", "DALIA RAHIM"),
+                    Role = resolver.Get("narrative.first_launch.speaker.dalia.role", "JRC FIELD COMMAND"),
+                    AccessibleLabel = resolver.Get("narrative.first_launch.speaker.dalia.accessible_label", "Major Dalia Rahim, JRC Field Command"),
+                    IdentitySprite = RequireAsset<Sprite>(FirstLaunchNarrativeDialogueAssetImporter.DaliaPortraitPath),
+                    AccentColor = Cyan,
+                    Treatment = NarrativeSpeakerTreatment.HumanPortrait
+                });
+                view.DialogueView.PrepareLine(
+                    resolver.Get("narrative.first_launch.line.p04_dalia", "We found the convoy survivors. Extraction is underway."),
+                    NarrativeSubtitleStyleUtilitySystemHelper.Resolve(Game.UI.Runtime.SettingsService.Defaults));
+                view.DialogueView.CompleteLine();
+                view.SkipConfirmationView.SetVisible(true);
             }, path);
         }
 
@@ -967,6 +1101,18 @@ namespace Game.Editor
                         $"First Launch V3 {screenName} control '{selectables[i].name}' cannot receive real pointer input.");
                 }
             }
+        }
+
+        private static void RequireV3Border(Transform root, string path, float expectedWidth)
+        {
+            Transform target = root.Find(path);
+            V3GradientGraphic graphic = target != null ? target.GetComponent<V3GradientGraphic>() : null;
+            if (graphic == null)
+                throw new MissingComponentException($"First Launch V3 element '{path}' is missing sharp gradient chrome.");
+            SerializedObject serialized = new(graphic);
+            float actual = serialized.FindProperty("borderWidth").floatValue;
+            if (!Mathf.Approximately(actual, expectedWidth))
+                throw new UnityException($"First Launch V3 element '{path}' border is {actual}px; expected {expectedWidth}px.");
         }
 
         private static V3GradientGraphic CreateGradient(string name, Transform parent, Color top, Color bottom, Color border, float width)

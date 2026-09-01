@@ -176,3 +176,20 @@ the current computer and use a connected Editor when available.
   canceled; the user's Editor was not terminated or restarted.
 - The checkpoint commit is intended to include the entire working tree so the
   repository can transfer cleanly to the next computer.
+
+## First Launch V3 skip confirmation — completed 2026-09-01
+
+The legacy skip confirmation has been replaced in
+`FirstLaunchNarrativeSequence.prefab` with a sharp V3 modal. It uses procedural
+shared chrome only: a constant 3 px frame, cyan/blue and red/orange gradients,
+and authored warning/pause/skip symbols. No new raster or duplicate UI asset was
+added.
+
+English and Farsi bindings are present for the title, body, keep-watching, and
+skip-intro actions. Farsi uses the shared Arabic font, RTL shaping, and right
+alignment. Runtime interaction was checked in both languages; Keep Watching
+closes the modal and Skip Intro reaches Match. The focused integration suite
+passes 10 tests.
+
+Accepted dual-aspect comparisons and notes are in
+`SCN-00_FirstLaunch/iterations/iteration_07/`.

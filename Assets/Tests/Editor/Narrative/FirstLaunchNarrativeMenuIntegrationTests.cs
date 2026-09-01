@@ -8,6 +8,7 @@ using Game.Narrative.Contracts;
 using Game.Runtime;
 using Game.UI.Runtime;
 using NUnit.Framework;
+using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -26,11 +27,12 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
             tests.LanguageChoice_AwakeDoesNotOverrideCompositionVisibility();
             tests.LanguageChoice_AllControlsHaveRaycastTargets();
             tests.FreshProfile_LanguageChoicePrecedesNarrativeAndPersistsPersian();
+            tests.SkipConfirmation_UsesV3ChromeAndPersianLocalization();
             tests.FreshProfile_SkipRequiresLiveConfirmationAndPublishesOneHandoff();
             tests.CompletedAndPendingProfiles_SelectCorrectStartupDisposition();
             tests.ReviewerMode_ProvidesNavigationWithoutMutatingCompletedProfile();
             tests.CommittedIdentity_SkipRoutesDirectlyAndPreservesSelection();
-            Debug.Log("[FirstLaunchNarrativeMenuIntegrationValidation] result=Passed tests=9 pointerTargets=Passed");
+            Debug.Log("[FirstLaunchNarrativeMenuIntegrationValidation] result=Passed tests=10 pointerTargets=Passed skip=v3-bilingual");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -232,6 +234,60 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
         Assert.IsTrue(saved.firstLaunchSkipped);
         Assert.AreEqual("COMMANDER", saved.firstLaunchCommanderCallsign);
         Assert.AreEqual("Full", saved.firstLaunchGuidance);
+    }
+
+    [Test]
+    public void SkipConfirmation_UsesV3ChromeAndPersianLocalization()
+    {
+        using Context context = CreateContext(new PlayerProfileSaveData());
+        Assert.AreEqual(
+            FirstLaunchNarrativeStartupDisposition.AwaitingLanguage,
+            context.Helper.Initialize(
+                context.Sequence, context.Speakers, context.Punctuation, context.View,
+                Game.UI.Contracts.FallbackGameTextResolver.Instance, context.SaveService, false, false,
+                context.LanguageView, context.PersianLocale));
+
+        Button persian = Array.Find(context.LanguageInstance.GetComponentsInChildren<Button>(true), button => button.name == "PersianButton");
+        Button continueButton = Array.Find(context.LanguageInstance.GetComponentsInChildren<Button>(true), button => button.name == "ContinueButton");
+        Assert.NotNull(persian);
+        Assert.NotNull(continueButton);
+        persian.onClick.Invoke();
+        continueButton.onClick.Invoke();
+
+        Transform confirmation = context.Instance.transform.Find("SafeArea/SkipConfirmationSurface/Confirmation");
+        Assert.NotNull(confirmation);
+        Assert.NotNull(confirmation.GetComponent<V3GradientGraphic>(), "The skip modal must use sharp V3 chrome.");
+        Assert.NotNull(confirmation.Find("CancelButton")?.GetComponent<V3GradientGraphic>());
+        Assert.NotNull(confirmation.Find("ConfirmButton")?.GetComponent<V3GradientGraphic>());
+        Assert.IsNull(confirmation.GetComponent<Image>(), "Legacy sliced-panel artwork must not remain on the V3 modal.");
+
+        TMP_Text title = confirmation.Find("Title")?.GetComponent<TMP_Text>();
+        TMP_Text body = confirmation.Find("Body")?.GetComponent<TMP_Text>();
+        TMP_Text cancel = confirmation.Find("CancelButton/Label")?.GetComponent<TMP_Text>();
+        TMP_Text confirm = confirmation.Find("ConfirmButton/Label")?.GetComponent<TMP_Text>();
+        AssertOriginalRtlText(title, "به فرماندهی تاکتیکی برویم؟");
+        AssertOriginalRtlText(body, "هویت پیش‌فرض فرمانده و راهنمایی کامل استفاده می‌شود. بعداً می‌توانید هر دو را تغییر دهید.");
+        AssertOriginalRtlText(cancel, "ادامهٔ تماشا");
+        AssertOriginalRtlText(confirm, "رد کردن مقدمه");
+        StringAssert.Contains("NotoSansArabic", title?.font?.name);
+        Assert.AreEqual(TextAlignmentOptions.MidlineRight, title?.alignment);
+        Assert.AreEqual(TextAlignmentOptions.TopRight, body?.alignment);
+
+        Button skip = Array.Find(context.Instance.GetComponentsInChildren<Button>(true), button => button.name == "SkipButton");
+        Assert.NotNull(skip);
+        skip.onClick.Invoke();
+        CanvasGroup group = context.View.SkipConfirmationView.GetComponent<CanvasGroup>();
+        Assert.AreEqual(1f, group.alpha);
+        Assert.IsTrue(group.interactable);
+        Assert.IsTrue(group.blocksRaycasts);
+    }
+
+    private static void AssertOriginalRtlText(TMP_Text target, string expected)
+    {
+        Assert.NotNull(target);
+        SerializedProperty originalText = new SerializedObject(target).FindProperty("originalText");
+        Assert.NotNull(originalText, $"{target.name} must use the shared RTL-capable text component.");
+        Assert.AreEqual(expected, originalText.stringValue);
     }
 
     [Test]

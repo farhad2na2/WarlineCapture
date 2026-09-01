@@ -152,6 +152,7 @@ namespace Game.UI.Runtime
             return alignment switch
             {
                 TextAlignmentOptions.Left => TextAlignmentOptions.Right,
+                TextAlignmentOptions.MidlineLeft => TextAlignmentOptions.MidlineRight,
                 TextAlignmentOptions.TopLeft => TextAlignmentOptions.TopRight,
                 TextAlignmentOptions.BottomLeft => TextAlignmentOptions.BottomRight,
                 _ => alignment

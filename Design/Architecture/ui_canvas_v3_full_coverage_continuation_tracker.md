@@ -29,12 +29,13 @@ A row is complete only when all of the following are true:
 ## Snapshot
 
 - Canonical V3 targets present: `46 / 46`
-- V3 targets visually accepted in live Canvas: `1 / 46`
+- V3 targets visually accepted in live Canvas: `2 / 46`
 - Current live baselines captured against V3: `3 / 46` (`SCN-01 Splash / Loading`, `SCN-02 Main Menu`, `SCN-11 Operations Dashboard`)
 - Current implementation host present: `36 / 46`
 - Missing or incorrectly routed implementation host: `10 / 46`
-- Active slice: `SCN-02 Main Menu V3 migration`
+- Active slice: `SCN-03 Commander Profile V3 migration`
 - SCN-01 accepted evidence: `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/V3/SCN-01/`
+- SCN-02 accepted evidence: `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/V3/SCN-02/`
 - Main Menu baseline: `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/V3/baseline/scn02_mainmenu_current_1920x1080.png`
 - Operations baseline: `Design/VisualLockLayered/_CanvasTargetLockVisualMatch/V3/baseline/scn11_operations_current_1920x1080.png`
 - Baseline finding: the current live Main Menu is the older gold Canvas family and is not a V3 visual-match candidate.
@@ -46,7 +47,7 @@ Status vocabulary: `Open` means a host exists but V3 is not accepted; `Missing h
 | # | Canonical screen/state | Current Canvas host | V3 status |
 |---:|---|---|---|
 | 01 | Splash / loading | `SCN01_LoadingContent.prefab` | Complete; live progress binding preserved; 1280x720, 1920x1080, 2400x1080, and 4800x2160 evidence captured |
-| 02 | Main menu | `SCN02_MainMenuContent.prefab` | Open; baseline captured |
+| 02 | Main menu | `SCN02_MainMenuContent.prefab` | Complete; six routes and Settings action preserved; opaque disabled state; 1280x720, 1920x1080, 2400x1080, and 4800x2160 evidence captured |
 | 03 | Commander profile | `SCN03_CommanderProfileContent.prefab` | Open |
 | 04 | Campaign chapter select | `SCN05_CampaignOperationsContent.prefab` | Open |
 | 05 | Campaign mission select | `SCN05_CampaignOperationsContent.prefab` | Open |
@@ -114,7 +115,7 @@ Status vocabulary: `Open` means a host exists but V3 is not accepted; `Missing h
 
 ### V3-03 - Menu Shell And Progression Routes
 
-- [ ] Main Menu.
+- [x] Main Menu.
 - [ ] Commander Profile.
 - [ ] Campaign chapter select.
 - [ ] Campaign mission select.

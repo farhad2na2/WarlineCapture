@@ -4,7 +4,9 @@ using Game.UI.Contracts;
 using Game.UI.Runtime;
 using NUnit.Framework;
 using UnityEditor;
+using UnityEditor.U2D;
 using UnityEngine;
+using UnityEngine.U2D;
 using UnityEngine.UI;
 
 public sealed class PauseOptionsV3PrefabTests
@@ -21,7 +23,9 @@ public sealed class PauseOptionsV3PrefabTests
             passed++;
             suite.PauseOptions_PreservesRealShellActionsAndRuntimeOverlays();
             passed++;
-            suite.PauseOptions_UsesOnlySharedV3OrApprovedIconArt();
+            suite.PauseOptions_UsesOnlySharedV3AtlasArt();
+            passed++;
+            suite.PauseOptions_AllButtonsExposePointerTargets();
             passed++;
             Game.Editor.PauseOptionsV3PrefabBuilder.Validate();
             Debug.Log($"[PauseOptionsV3PrefabTests] result=Passed tests={passed} gradients=procedural borders=3 restart=queued help=interactive");
@@ -78,7 +82,7 @@ public sealed class PauseOptionsV3PrefabTests
     }
 
     [Test]
-    public void PauseOptions_UsesOnlySharedV3OrApprovedIconArt()
+    public void PauseOptions_UsesOnlySharedV3AtlasArt()
     {
         GameObject prefab = Load();
         Image[] images = prefab.GetComponentsInChildren<Image>(true);
@@ -90,11 +94,46 @@ public sealed class PauseOptionsV3PrefabTests
             string path = AssetDatabase.GetAssetPath(sprite);
             bool approved = path.StartsWith("Assets/Game/Art/UI/V3Shared/", StringComparison.Ordinal) ||
                             path.StartsWith("Assets/Game/Art/UI/Generated/V3Shared/", StringComparison.Ordinal) ||
-                            path.StartsWith("Assets/Game/Art/UI/Icons/", StringComparison.Ordinal) ||
-                            path.StartsWith("Assets/Game/Art/UI/Generated/", StringComparison.Ordinal) ||
-                            path.StartsWith("Assets/Synty/InterfaceMilitaryCombatHUD/", StringComparison.Ordinal);
-            Assert.IsTrue(approved, $"{images[index].name}: {path}");
+                            IsOwnedBySingleV3Atlas(path);
+            Assert.IsTrue(approved,
+                $"Pause menu image {images[index].name} uses a sprite outside the shared V3 atlas set: {path}.");
         }
+    }
+
+    [Test]
+    public void PauseOptions_AllButtonsExposePointerTargets()
+    {
+        GameObject prefab = Load();
+        Button[] buttons = prefab.GetComponentsInChildren<Button>(true);
+        Assert.GreaterOrEqual(buttons.Length, 9);
+        for (int index = 0; index < buttons.Length; index++)
+        {
+            Assert.NotNull(buttons[index].targetGraphic, buttons[index].name);
+            Assert.IsTrue(buttons[index].targetGraphic.raycastTarget, buttons[index].name);
+        }
+    }
+
+    private static bool IsOwnedBySingleV3Atlas(string assetPath)
+    {
+        int owners = 0;
+        string[] atlasGuids = AssetDatabase.FindAssets(
+            "t:SpriteAtlas",
+            new[] { "Assets/Game/Art/UI/V3Shared/Atlases" });
+        for (int atlasIndex = 0; atlasIndex < atlasGuids.Length; atlasIndex++)
+        {
+            SpriteAtlas atlas = AssetDatabase.LoadAssetAtPath<SpriteAtlas>(
+                AssetDatabase.GUIDToAssetPath(atlasGuids[atlasIndex]));
+            foreach (UnityEngine.Object packable in SpriteAtlasExtensions.GetPackables(atlas))
+            {
+                if (!string.Equals(AssetDatabase.GetAssetPath(packable), assetPath, StringComparison.Ordinal))
+                    continue;
+                owners++;
+                if (owners > 1)
+                    return false;
+            }
+        }
+
+        return owners == 1;
     }
 
     private static void AssertAction(Button button, UiActionKind expected)

@@ -99,6 +99,7 @@ namespace Game.Editor
                 Image focusImage = focusRect.gameObject.AddComponent<Image>();
                 focusImage.sprite = focusOverlay;
                 focusImage.type = Image.Type.Sliced;
+                focusImage.pixelsPerUnitMultiplier = 2f;
                 focusImage.color = theme.Cyan;
                 focusImage.raycastTarget = false;
                 focusImage.gameObject.SetActive(false);

@@ -192,13 +192,13 @@ namespace Game.UI.Runtime
                 combatVehiclesDisabled, airDisabled, transportDisabled, hideUnrelatedControls);
         }
 
-        internal void ApplyMissionRestrictionVisibility(
+        public void ApplyMissionRestrictionVisibility(
             bool combatVehiclesDisabled,
             bool airDisabled,
             bool transportDisabled,
             bool hideUnrelatedControls = false)
         {
-            SetCardDisabled(0, disabled: false, hidden: false);
+            SetCardDisabled(0, disabled: false, outsideMissionScope: false);
             SetCardDisabled(1, combatVehiclesDisabled, hideUnrelatedControls);
             SetCardDisabled(2, airDisabled, hideUnrelatedControls);
             SetCardDisabled(3, airDisabled, hideUnrelatedControls);
@@ -310,15 +310,18 @@ namespace Game.UI.Runtime
             return card != null;
         }
 
-        private void SetCardDisabled(int index, bool disabled, bool hidden)
+        private void SetCardDisabled(int index, bool disabled, bool outsideMissionScope)
         {
             if (!TryGetCard(index, out Card card) || card.Button == null)
                 return;
 
-            bool unavailable = disabled || hidden;
+            // Mission scope changes capability, never layout. Keeping every authored card
+            // active prevents the M02 tray from collapsing/reflowing as guidance advances and
+            // matches M01's visible grayscale treatment for unavailable categories.
+            bool unavailable = disabled || outsideMissionScope;
             _missionDisabled[index] = unavailable;
-            if (card.Button.gameObject.activeSelf == hidden)
-                card.Button.gameObject.SetActive(!hidden);
+            if (!card.Button.gameObject.activeSelf)
+                card.Button.gameObject.SetActive(true);
             UiDisabledMaterialUtility.SetSelectableDisabled(
                 card.Button,
                 UiDisabledVisualReason.MissionRestriction,

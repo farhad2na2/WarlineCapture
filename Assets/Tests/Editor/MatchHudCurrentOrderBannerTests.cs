@@ -199,6 +199,32 @@ public sealed class MatchHudCurrentOrderBannerTests
     }
 
     [Test]
+    public void Prefab_TacticalGroundMarkersUsePerspectiveV3RingsWithoutPlaceholder()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+        GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+
+        try
+        {
+            V3EllipseRingGraphic[] rings =
+                instance.GetComponentsInChildren<V3EllipseRingGraphic>(true);
+            Assert.That(rings, Has.Length.EqualTo(4));
+            Assert.That(rings, Has.Some.Matches<V3EllipseRingGraphic>(ring =>
+                ring.transform.name == "FriendlySourceRing"));
+            Assert.That(rings, Has.Some.Matches<V3EllipseRingGraphic>(ring =>
+                ring.transform.name == "HostileTargetRing"));
+            Assert.That(
+                instance.GetComponentsInChildren<Image>(true),
+                Has.None.Matches<Image>(image => image.name == "FriendlySourceMarker"),
+                "The old leaf-like friendly ground placeholder must not return.");
+        }
+        finally
+        {
+            Object.DestroyImmediate(instance);
+        }
+    }
+
+    [Test]
     public void RuntimeFeedback_AppliesAndClearsStickyCommandModeBanner()
     {
         Sprite sprite = CreateSprite();
@@ -396,6 +422,7 @@ public sealed class MatchHudCurrentOrderBannerTests
         tests.Prefab_BindsCurrentOrderBannerAndCommandIconSource();
         tests.Prefab_V3AttackModeShowsOnlyAttackSelectionFrame();
         tests.Prefab_CommandIconSourceMatchesActualButtonIcons();
+        tests.Prefab_TacticalGroundMarkersUsePerspectiveV3RingsWithoutPlaceholder();
         tests.RuntimeFeedback_AppliesAndClearsStickyCommandModeBanner();
         tests.RuntimeFeedback_DoesNotShowBannerForSelectMode();
         tests.RuntimeFeedback_AppliesBoardDirectionBanner();
@@ -407,7 +434,7 @@ public sealed class MatchHudCurrentOrderBannerTests
         tests.SelectionBoundary_BoardCommandModeFlowsThroughRuntimeFeedbackSink();
         tests.SelectionBoundary_ClearCommandModeHidesRuntimeFeedbackBanner();
 
-        Debug.Log("[MatchHudCurrentOrderBannerValidation] result=Passed tests=17");
+        Debug.Log("[MatchHudCurrentOrderBannerValidation] result=Passed tests=18");
     }
 
     private static Sprite CreateSprite()

@@ -31,6 +31,11 @@ namespace Game.UI.Runtime
             if (view == null)
                 return;
 
+            // The drawer view/catalog can be bound after OnEnable during route
+            // installation or a domain reload. Reassert the idempotent tab
+            // bindings on every refresh so visible category buttons can never
+            // be left without their runtime click listeners.
+            BuildDrawerCatalogPresentationSystemHelper.WireTabs(view, _tabBindings, SelectCategory);
             _cat.Refresh(UnitPrefabSource, BuildingPrefabSource);
             bool hasItems = BuildDrawerCatalogPresentationSystemHelper.RefreshCatalog(
                 CreatePresentationContext(),
@@ -38,7 +43,14 @@ namespace Game.UI.Runtime
             if (hasItems)
             {
                 if (RequiresExplicitMissionSelection())
+                {
                     ClearSelection();
+                    ApplyInstruction(
+                        _gameTextResolver.Get(
+                            "build.drawer.failure.invalid_selection",
+                            "Select a build drawer item first."),
+                        BuildDrawerInstructionSeverity.Neutral);
+                }
                 else
                     SelectItem(view.ItemTemplate, _items[0]);
             }

@@ -1,0 +1,1366 @@
+Unity Editor version:    6000.5.2f1 (eb73d3b415a1)
+Branch:                  6000.5/staging
+Build type:              Release
+Batch mode:              NO
+macOS version:           Version 26.5.2 (Build 25F84)
+Darwin version:          25.5.0
+Architecture:            arm64
+Running under Rosetta:   NO
+Available memory:        16384 MB
+Date:                    2026-09-02T12:02:30Z
+[Licensing::Module] Trying to connect to existing licensing client channel...
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-farhad" at "2026-09-02T12:02:30.773073Z"
+Launching external process: /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Helpers/PackageManager/Server/UnityPackageManager
+
+COMMAND LINE ARGUMENTS:
+/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/MacOS/Unity
+-projectPath
+/Users/farhad/Projects/WarlineCapture
+-logFile
+/private/tmp/warline-mission-result-regression-audit.log
+-quit
+-executeMethod
+M02EstablishBaseHudResultTests.RunRegressionValidation
+Successfully changed project path to: /Users/farhad/Projects/WarlineCapture
+/Users/farhad/Projects/WarlineCapture
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-temp-allocator-size-preload-manager=33554432"
+    "memorysetup-temp-allocator-size-gfx=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=33554432"
+    "memorysetup-bucket-allocator-block-count=8"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-main-allocator-mimalloc-enabled=0"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=33554432"
+    "memorysetup-profiler-bucket-allocator-block-count=8"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=16777216"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+Logging is directed to a specific file, skipping project log.Player connection [8335023488]  Target information:
+
+Player connection [8335023488]  * "[IP] 192.168.2.175 [Port] 55505 [Flags] 2 [Guid] 504425378 [EditorId] 504425378 [Version] 1048832 [Id] OSXEditor(0,Farhads-MacBook-Air-2.local) [Debug] 1 [PackageName] OSXEditor [ProjectName] Editor" 
+
+Player connection [8335023488]  * "[IP] 10.137.14.201 [Port] 55505 [Flags] 2 [Guid] 504425378 [EditorId] 504425378 [Version] 1048832 [Id] OSXEditor(0,Farhads-MacBook-Air-2.local) [Debug] 1 [PackageName] OSXEditor [ProjectName] Editor" 
+
+Player connection [8335023488] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [8335023488] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+[Package Manager] Connected to IPC stream "Upm-60126" after 0.1 seconds.
+[Licensing::Module] Licensing is not yet initialized.
+[Licensing::Client] Error: HandshakeResponse reported an error:
+	ResponseCode: 505
+	ResponseStatus: Unsupported protocol version '1.18.1'.
+[Licensing::Module] Error: Failed to handshake to channel: "LicenseClient-farhad"
+[Licensing::IpcConnector] LicenseClient-farhad channel disconnected successfully.
+[Licensing::IpcConnector] Channel LicenseClient-farhad-6000.5.2 doesn't exist
+Launching external process: /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Helpers/UnityLicensingClient.app/Contents/MacOS/Unity.Licensing.Client
+[Licensing::Module] Successfully launched the LicensingClient (PId: 60129)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-farhad-6000.5.2" at "2026-09-02T12:02:31.099704Z"
+[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.18.1+9fbee8e
+  Session Id:              65a9c350237b4b8eaf29e0d46d365557
+  Correlation Id:          de5cde6c7ae84ef2fca872ff2b5bdd82
+  External correlation Id: 875920932497859062
+  Machine Id:              10T5sSSYWiUOOlqtQecUz0BYTYA=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-farhad-6000.5.2" (connect: 0.11s, validation: 0.01s, handshake: 0.18s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-farhad-6000.5.2-notifications" at "2026-09-02T12:02:31.294582Z"
+[Licensing::Module] Connected to LicensingClient (PId: 60129, launch time: 0.00, total connection time: 0.31s)
+[Licensing::Module] Error: Access token is unavailable; failed to update
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: 2197950-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+[Licensing::Client] Successfully updated license, isAsync: True, time: 0.00
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] Licensing Background thread has ended after 0.53s
+[Licensing::Module] Licensing is initialized (took 0.32s).
+[Licensing::Client] Successfully resolved entitlement details
+Library Redirect Path: Library/
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+[Licensing::Client] Successfully resolved entitlement details
+Initialize engine version: 6000.5.2f1 (eb73d3b415a1)
+[Subsystems] Discovering subsystems at path /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path /Users/farhad/Projects/WarlineCapture/Assets
+GfxDevice: creating device client; kGfxThreadingModeThreaded
+ preferred device: Apple M5 (high power)
+Metal devices available: 1
+0: Apple M5 (high power)
+Using device Apple M5 (high power)
+Initializing Metal device caps: Apple M5
+Mac GPU Family: 2
+Apple GPU Family: 9
+MSL Version: 3.0
+Has Float MSAA: 1
+Has Float Filtering: 1
+ReadWrite Texture Tier: 2
+Initialize mono
+Mono path[0] = '/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/Managed'
+Mono path[1] = '/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/BCLExtensions/runtime/netstandard2.1'
+Mono path[2] = '/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/MonoBleedingEdge/lib/mono/unityjit-macos'
+Mono config path = '/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56126
+CodeReloadManager initialized
+ImportWorker Server TCP listen port: 0
+AcceleratorClientConnectionCallback - disconnected - :0
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: /Applications/Unity/Hub/Editor/6000.5.2f1/PlaybackEngines/MacStandaloneSupport/UnityEditor.OSXStandalone.Extensions.dll
+Register platform support module: /Applications/Unity/Hub/Editor/6000.5.2f1/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll
+Registered in 0.000329 seconds.
+Native extension for Android target not found
+Native extension for OSXStandalone target not found
+Package Manager log level set to [2]
+ScheduleIndexationOnStartup MainProcess:False IndexOnStartup:True
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.184 seconds
+Domain Reload Profiling: 376ms
+	BeginReloadAssembly (37ms)
+	RebuildNativeTypeToScriptingClass (7ms)
+	initialDomainReloadingComplete (21ms)
+	LoadAllAssembliesAndSetupDomain (124ms)
+		LoadAssemblies (36ms)
+		AnalyzeDomain (95ms)
+			TypeCache.Refresh (94ms)
+				TypeCache.ScanAssembly (87ms)
+	FinalizeReload (185ms)
+		SetupLoadedEditorAssemblies (0ms)
+			InitializePlatformSupportModulesInManaged (37ms)
+			BeforeProcessingInitializeOnLoad (36ms)
+			ProcessInitializeOnLoadAttributes (42ms)
+			ProcessInitializeOnLoadMethodAttributes (37ms)
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Client] Successfully resolved entitlement details
+Application.AssetDatabase Initial Refresh Start
+[Package Manager] Restoring resolved packages state from cache
+[Licensing::Client] Successfully resolved entitlement details
+[Package Manager] Registered 70 packages:
+  Packages from [https://packages.unity.com]:
+    com.unity.addressables@3.1.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.addressables@9bffe1a216ce)
+    com.unity.ai.assistant@2.13.0-pre.2 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a)
+    com.unity.collab-proxy@2.12.4 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.collab-proxy@0b1559bcd34e)
+    com.unity.ide.rider@3.0.40 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.ide.rider@e4950c6d131b)
+    com.unity.ide.visualstudio@2.0.27 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.ide.visualstudio@dc1ddd4f09b6)
+    com.unity.inputsystem@1.19.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83)
+    com.unity.probuilder@6.1.2 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.probuilder@8be9724b2335)
+    com.unity.timeline@1.8.12 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.timeline@8cd8509afae5)
+    com.unity.visualscripting@1.9.11 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.visualscripting@8bed5ad90189)
+    com.unity.pipeline@0.5.0-exp.1 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.pipeline@24975d51528a)
+    com.unity.burst@1.8.29 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.burst@6bb9aca3ef38)
+    com.unity.nuget.mono-cecil@1.11.6 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff)
+    com.unity.nuget.newtonsoft-json@3.2.2 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.nuget.newtonsoft-json@4dfd81071c64)
+    com.unity.searcher@4.9.4 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.searcher@d45a78918735)
+    com.unity.settings-manager@2.1.1 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.settings-manager@0b8638c5ce86)
+    com.unity.profiling.core@1.0.3 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.profiling.core@8a49f7027d06)
+    com.unity.test-framework.performance@3.5.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.test-framework.performance@8b56083ec0f0)
+    com.unity.scriptablebuildpipeline@3.1.1 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.scriptablebuildpipeline@ea93f1084040)
+  Built-in packages:
+    com.unity.2d.sprite@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.2d.sprite@053a968eab56)
+    com.unity.entities@6.5.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.entities@bab66ffaba49)
+    com.unity.entities.graphics@6.5.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.entities.graphics@66588da3a112)
+    com.unity.multiplayer.center@1.0.1 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.multiplayer.center@b860850997d0)
+    com.unity.render-pipelines.universal@17.5.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.render-pipelines.universal@748d7458cc62)
+    com.unity.serialization@6.5.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.serialization@b2610f80ff18)
+    com.unity.shadergraph@17.5.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.shadergraph@2df19e8719bc)
+    com.unity.test-framework@1.7.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.test-framework@1405238725ab)
+    com.unity.ugui@2.5.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.ugui@3d1ea40b73ef)
+    com.unity.modules.accessibility@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.accessibility)
+    com.unity.modules.adaptiveperformance@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.adaptiveperformance)
+    com.unity.modules.ai@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.ai)
+    com.unity.modules.androidjni@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.androidjni)
+    com.unity.modules.animation@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.animation)
+    com.unity.modules.assetbundle@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.assetbundle)
+    com.unity.modules.audio@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.audio)
+    com.unity.modules.cloth@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.cloth)
+    com.unity.modules.director@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.director)
+    com.unity.modules.imageconversion@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.imageconversion)
+    com.unity.modules.imgui@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.imgui)
+    com.unity.modules.jsonserialize@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.jsonserialize)
+    com.unity.modules.physicscore2d@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.physicscore2d)
+    com.unity.modules.screencapture@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.screencapture)
+    com.unity.modules.tilemap@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.tilemap)
+    com.unity.modules.ui@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.ui)
+    com.unity.modules.uielements@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.uielements)
+    com.unity.modules.umbra@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.umbra)
+    com.unity.modules.unityanalytics@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.unityanalytics)
+    com.unity.modules.unitywebrequest@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.unitywebrequest)
+    com.unity.modules.unitywebrequestassetbundle@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.unitywebrequestassetbundle)
+    com.unity.modules.unitywebrequestaudio@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.unitywebrequestaudio)
+    com.unity.modules.unitywebrequesttexture@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.unitywebrequesttexture)
+    com.unity.modules.unitywebrequestwww@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.unitywebrequestwww)
+    com.unity.modules.vectorgraphics@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.vectorgraphics)
+    com.unity.modules.vehicles@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.vehicles)
+    com.unity.modules.video@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.video)
+    com.unity.modules.wind@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.wind)
+    com.unity.modules.xr@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.xr)
+    com.unity.modules.physics@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.physics)
+    com.unity.modules.subsystems@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.subsystems)
+    com.unity.modules.hierarchycore@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.hierarchycore)
+    com.unity.modules.physics2d@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.physics2d)
+    com.unity.modules.particlesystem@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.particlesystem)
+    com.unity.ext.nunit@2.1.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.ext.nunit@44f7d31723bd)
+    com.unity.render-pipelines.core@17.5.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.render-pipelines.core@9fe9377312a8)
+    com.unity.collections@6.5.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.collections@a43cabe808ca)
+    com.unity.render-pipelines.universal-config@17.5.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.render-pipelines.universal-config@fdda01c80fe3)
+    com.unity.modules.hierarchy@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.hierarchy)
+    com.unity.mathematics@1.4.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.mathematics@981956d94fb6)
+    com.unity.modules.terrain@1.0.0 (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.unity.modules.terrain)
+  Embedded packages:
+    com.sniveler-code.gpu-animation@file:/Users/farhad/Projects/WarlineCapture/Packages/com.sniveler-code.gpu-animation (location: /Users/farhad/Projects/WarlineCapture/Packages/com.sniveler-code.gpu-animation)
+  Git packages:
+    com.nosuchstudio.rtltmpro@https://github.com/hk1ll3r/RTLTMPro.git?path=/UPMPackage#69c9193fc27218f17679cc57382a61ac4a717b2b (location: /Users/farhad/Projects/WarlineCapture/Library/PackageCache/com.nosuchstudio.rtltmpro@44858274f18a)
+[Subsystems] No new subsystems found in resolved package list.
+[Package Manager] Done registering packages in 0.01 seconds
+Assembly reference Packages/com.unity.entities/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref has no target assembly definition
+Assembly reference Packages/com.unity.entities/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref has no target assembly definition
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://unix:/tmp/ilpp.sock-cab634237f5413a71fd009541e827d78
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /Users/farhad/Projects/WarlineCapture
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/Ping - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/Ping'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/Ping'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/Ping - 200 - application/grpc 11.3959ms
+Starting: /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/BuildPipeline/bee_backend --ipc --defer-dag-verification --dagfile="Library/Bee/1300b0aE.dag" --continue-on-failure --profile="Library/Bee/backend1.traceevents" ScriptAssemblies
+WorkingDir: /Users/farhad/Projects/WarlineCapture
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/ConfigurePostProcessors - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/ConfigurePostProcessors'
+warn: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Assembly system.runtime.interopservices.windowsruntime has duplicate hint path. Ignoring "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/NetStandard/Extensions/2.0.0/System.Runtime.InteropServices.WindowsRuntime.dll" in favor of "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/UnityReferenceAssemblies/unity-4.8-api/Facades/System.Runtime.InteropServices.WindowsRuntime.dll"
+warn: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Assembly system.componentmodel.composition has duplicate hint path. Ignoring "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/NetStandard/compat/2.1.0/shims/netfx/System.ComponentModel.Composition.dll" in favor of "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/UnityReferenceAssemblies/unity-4.8-api/System.ComponentModel.Composition.dll"
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Mono.Cecil, Version=0.11.5.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e with Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff/Mono.Cecil.dll
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Burst.Cecil, Version=0.11.6.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e with Library/PackageCache/com.unity.burst@6bb9aca3ef38/Unity.Burst.CodeGen/Unity.Burst.Cecil.dll
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null with Library/Bee/artifacts/1300b0aE.dag/Unity.Entities.dll
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/ConfigurePostProcessors'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/ConfigurePostProcessors - 200 - application/grpc 14.3365ms
+ExitCode: 0 Duration: 0s389ms
+[1384/1904  0s] ILPP-Configuration Library/ilpp-configuration.nevergeneratedoutput
+*** Tundra build success (0.38 seconds), 1 items updated, 1904 evaluated
+AssetDatabase: script compilation time: 0.683289s
+Total cache size 268354598
+Total cache size after purge 268354598, took 00:00:00.1545969
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+Assembly reference Packages/com.unity.entities/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref has no target assembly definition
+Native extension for Android target not found
+Native extension for OSXStandalone target not found
+TypeManager.Initialize took: 145ms
+Start HTTP server: port:7801
+Editor is not in automated mode. Modal Pop up might break continuous command workflow. Start the editor with -automated
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:LogWarning (object)
+Unity.Pipeline.Editor.EditorPipelineServer:ServerStarted () (at ./Library/PackageCache/com.unity.pipeline@24975d51528a/Editor/EditorPipelineServer.cs:88)
+Unity.Pipeline.BasePipelineServer:Start (int) (at ./Library/PackageCache/com.unity.pipeline@24975d51528a/Runtime/Common/BasePipelineServer.cs:237)
+Unity.Pipeline.Editor.PipelineServerStartup:StartServer () (at ./Library/PackageCache/com.unity.pipeline@24975d51528a/Editor/EditorPipelineStartup.cs:164)
+Unity.Pipeline.Editor.PipelineServerStartup:.cctor () (at ./Library/PackageCache/com.unity.pipeline@24975d51528a/Editor/EditorPipelineStartup.cs:44)
+System.Runtime.CompilerServices.RuntimeHelpers:RunClassConstructor (System.RuntimeTypeHandle)
+UnityEditor.EditorAssemblies:ProcessInitializeOnLoadAttributes (System.ReadOnlySpan`1<intptr>) (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorAssemblies.cs:155)
+
+(Filename: ./Library/PackageCache/com.unity.pipeline@24975d51528a/Editor/EditorPipelineServer.cs Line: 88)
+
+[MODES] ModeService[none].Initialize
+[MODES] ModeService[none].LoadModes
+[MODES] Loading mode Default (0) for mode-current-id-WarlineCapture
+[Licensing::Client] Error: Code 404 while processing request (status: Found 0 entitlement groups and 0 free entitlements matching requested entitlement ids)
+[McpToolRegistry] Discovered 20 MCP tools
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog:Log (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:15)
+Unity.AI.MCP.Editor.ToolRegistry.McpToolRegistry:RefreshTools () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/ToolRegistry/McpToolRegistry.cs:201)
+Unity.AI.MCP.Editor.ToolRegistry.McpToolRegistry:Initialize () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/ToolRegistry/McpToolRegistry.cs:177)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.EditorAssemblies:ProcessInitializeOnLoadMethodAttributes () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorAssemblies.cs:184)
+
+(Filename: ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs Line: 313)
+
+[McpToolRegistry] Available tools: Unity_ApplyTextEdits, Unity_CreateScript, Unity_DeleteScript, Unity_FindInFile, Unity_GetSha, Unity_ImportExternalModel, Unity_ListResources, Unity_ManageAsset, Unity_ManageEditor, Unity_ManageGameObject, Unity_ManageMenuItem, Unity_ManageScene, Unity_ManageScript, Unity_ManageScript_capabilities, Unity_ManageShader, Unity_ReadConsole, Unity_ReadResource, Unity_RunCommand, Unity_ScriptApplyEdits, Unity_ValidateScript
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog:Log (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:15)
+Unity.AI.MCP.Editor.ToolRegistry.McpToolRegistry:RefreshTools () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/ToolRegistry/McpToolRegistry.cs:204)
+Unity.AI.MCP.Editor.ToolRegistry.McpToolRegistry:Initialize () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/ToolRegistry/McpToolRegistry.cs:177)
+System.Reflection.RuntimeMethodInfo:Invoke (object,System.Reflection.BindingFlags,System.Reflection.Binder,object[],System.Globalization.CultureInfo)
+System.Reflection.MethodBase:Invoke (object,object[])
+UnityEditor.EditorAssemblies:ProcessInitializeOnLoadMethodAttributes () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorAssemblies.cs:184)
+
+(Filename: ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs Line: 313)
+
+ScheduleIndexationOnStartup MainProcess:True IndexOnStartup:True
+Mono: successfully reloaded assembly
+[Idle]
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog:Log (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:15)
+Unity.AI.MCP.Editor.Bridge:LogBreadcrumb (string) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:2055)
+Unity.AI.MCP.Editor.Bridge:OnAfterAssemblyReload () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1899)
+UnityEditor.AssemblyReloadEvents:OnAfterAssemblyReload () (at /Users/bokken/build/output/unity/unity/Editor/Mono/AssemblyReloadEvents.cs:43)
+
+(Filename: ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs Line: 313)
+
+- Finished resetting the current domain, in  4.893 seconds
+Domain Reload Profiling: 5522ms
+	BeginReloadAssembly (141ms)
+		DisableScriptedObjects (56ms)
+		CreateAndSetChildDomain (34ms)
+	RebuildCommonClasses (3ms)
+	RebuildNativeTypeToScriptingClass (7ms)
+	initialDomainReloadingComplete (31ms)
+	LoadAllAssembliesAndSetupDomain (446ms)
+		LoadAssemblies (136ms)
+		AnalyzeDomain (273ms)
+			TypeCache.Refresh (223ms)
+				TypeCache.ScanAssembly (208ms)
+			BuildScriptInfoCaches (46ms)
+			ResolveRequiredComponents (3ms)
+	FinalizeReload (4893ms)
+		SetupLoadedEditorAssemblies (0ms)
+			InitializePlatformSupportModulesInManaged (5ms)
+			BeforeProcessingInitializeOnLoad (44ms)
+			ProcessInitializeOnLoadAttributes (2692ms)
+			ProcessInitializeOnLoadMethodAttributes (1986ms)
+		AwakeInstancesAfterBackupRestoration (6ms)
+Starting new worker id: 0 with log in /Users/farhad/Projects/WarlineCapture/Logs/AssetImportWorkerHW0.log
+
+Asset Pipeline Refresh (id=967bed0ad8a154043a576debaf1cef78): Total: 7.668 seconds - Initiated by InitialRefreshV2(ForceSynchronousImport)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=0 (actual=0, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=6255 ms
+		Asset DB Callback time: managed=16 ms, native=8 ms
+		Scripting: domain reloads=1, domain reload time=652 ms, compile time=684 ms, other=50 ms
+		Project Asset Count: scripts=3221, non-scripts=21083
+		Asset File Changes: new=0, changed=0, moved=0, deleted=0
+		Scan Filter Count: 1
+	InvokePackagesCallback: 9.514ms
+	ApplyChangesToAssetFolders: 0.191ms
+	Scan: 847.133ms
+	Collect global state as custom dependencies: 1.654ms
+	CategorizeScriptCompilationAssets: 46.921ms
+	ProcessAssetsWithTransientArtifactChanges: 65.478ms
+	CategorizeAssets: 144.071ms
+	CompileScripts: 684.346ms
+	ImportOutOfDateAssets: 5062.456ms (4913.821ms without children)
+		ReloadNativeAssets: 0.230ms
+		UnloadImportedAssets: 2.404ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 1.887ms
+		ImportSchedulerStart: 144.113ms
+	PostProcessAllAssets: 16.516ms
+		MonoPostProcessAllAssets: 16.491ms
+			UniversalRenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 4.404ms
+			SyncVS.PostprocessSyncProject 3.846ms
+			GraphRefreshPostprocessor.OnPostprocessAllAssets 0.845ms
+			WindowAssetPostprocessingWatcher.OnPostprocessAllAssets 0.728ms
+			SpeedTree9Postprocessor.OnPostprocessAllAssets 0.679ms
+			AssetChangeDetector.OnPostprocessAllAssets 0.348ms
+			RenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 0.263ms
+			ShaderReflectionAssetPostProcessor.OnPostprocessAllAssets 0.132ms
+			ReferencedClipsPostProcessor.OnPostprocessAllAssets 0.124ms
+			InputActionAssetPostprocessor.OnPostprocessAllAssets 0.102ms
+			ProjectSettingsPostprocessor.OnPostprocessAllAssets 0.086ms
+			TerrainToolbarOverlayPostProcessor.OnPostprocessAllAssets 0.079ms
+			AssetDatabaseCallbacks.OnPostprocessAllAssets 0.054ms
+	UnloadStreamsBegin: 1.320ms
+	PersistCurrentRevisions: 0.460ms
+	GenerateScriptTypeHashes: 3.124ms
+	GenerateScriptTypeSerializationHashes: 4.977ms
+	Untracked: 786.730ms
+
+Application.AssetDatabase Initial Refresh End
+Shader Hidden/ChartRasterizerHardware is not supported: GPU does not support conservative rasterization
+Launching external process: /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Helpers/UnityShaderCompiler
+Launched and connected shader compiler UnityShaderCompiler after 0.02 seconds
+Shader Hidden/ChartRasterizerHardware is not supported: GPU does not support conservative rasterization
+Scanning for USB devices : 0.076ms
+Initializing Unity extensions:
+2026-09-02 14:02:40.397 Unity[60126:20390192] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xbc17ef5c0 Capture Live Owner Feedback, ke='Command-F10'>, but is only supported for system-provided menu items; will not be used
+2026-09-02 14:02:40.397 Unity[60126:20390192] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xbc17ef700 Log Live Owner Feedback State, ke='Command-F9'>, but is only supported for system-provided menu items; will not be used
+2026-09-02 14:02:40.397 Unity[60126:20390192] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xbc17ef7a0 Validate Owner Feedback Fixes, ke='Command-F8'>, but is only supported for system-provided menu items; will not be used
+2026-09-02 14:02:40.400 Unity[60126:20390192] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xbc106eb20 SDF, ke='Command-F12'>, but is only supported for system-provided menu items; will not be used
+Worker ready: AssetImportWorkerHW0 0
+Unloading 1338 Unused Serialized files (Serialized files now loaded: 0)
+Loaded scene 'Assets/Game/Scenes/Menu.unity'
+	Deserialize:            522.808 ms
+	Integration:            529.553 ms
+	Integration of assets:  569.634 ms
+	Thread Wait Time:       0.101 ms
+	Total Operation Time:   1622.097 ms
+Unloading 13848 unused Assets / (26.5 MB). Loaded Objects now: 40710.
+Memory consumption went from 0.75 GB to 0.73 GB.
+Total: 53.154334 ms (FindLiveObjects: 2.670708 ms CreateObjectMapping: 8.648750 ms MarkObjects: 35.194500 ms  DeleteObjects: 6.640167 ms)
+
+[LAYOUT] About to load UserSettings/Layouts/default-6000.dwlt, keepMainWindow=False
+[LAYOUT] About to save layout /Users/farhad/Projects/WarlineCapture/UserSettings/Layouts/default-6000.dwlt
+[LAYOUT] About to save layout /Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/current/default-6000.dwlt
+[MODES] ModeService[default].InitializeCurrentMode
+[MODES] ModeService[default].RaiseModeChanged(default, default)
+[M02EstablishBaseHudResultValidation] result=Passed tests=7
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+M02EstablishBaseHudResultTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:35)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:51)
+
+(Filename: Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs Line: 35)
+
+
+Asset Pipeline Refresh (id=d5011a5a4d63940ee9d66d712ac56b2a): Total: 0.624 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=0 (actual=0, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=623 ms
+		Asset DB Callback time: managed=0 ms, native=0 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=3221, non-scripts=21083
+		Asset File Changes: new=0, changed=0, moved=0, deleted=0
+		Scan Filter Count: 1
+	ApplyChangesToAssetFolders: 0.085ms
+	Scan: 357.242ms
+	Collect global state as custom dependencies: 0.104ms
+	ProcessAssetsWithTransientArtifactChanges: 0.169ms
+	CategorizeAssets: 107.300ms
+	ImportOutOfDateAssets: 134.496ms (17.241ms without children)
+		ReloadNativeAssets: 0.373ms
+		UnloadImportedAssets: 0.090ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 1.795ms
+		ImportSchedulerStart: 114.995ms
+	GatherAllCurrentPrimaryImportResultRevisions: 1.130ms
+	UnloadStreamsBegin: 5.862ms
+	PersistCurrentRevisions: 0.478ms
+	Untracked: 16.220ms
+
+[M02EstablishBaseNarrativeArtImporter] result=Passed panels=3 final=1 textFree=1
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M02EstablishBaseNarrativeArtImporter:ConfigureFinalArtImports () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeArtImporter.cs:69)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:Build () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:35)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:BuildAndInstall () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:28)
+M02EstablishBaseNarrativeTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:33)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:52)
+
+(Filename: Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeArtImporter.cs Line: 69)
+
+Asset Pipeline Refresh (id=a7553513a20b8411284296f1886e8d2b): Total: 0.178 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+[M02EstablishBaseNarrativeVoiceImporter] result=Passed clips=18 locales=2
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M02EstablishBaseNarrativeVoiceImporter:ConfigureImports () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeVoiceImporter.cs:29)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:Build () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:36)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:BuildAndInstall () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:28)
+M02EstablishBaseNarrativeTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:33)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:52)
+
+(Filename: Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeVoiceImporter.cs Line: 29)
+
+Importing 'GUID: 79361ff445b354fce88aecce41740e5b - Path: Assets/Game/Configs/Narrative/Chapter01/M02_EstablishBase_Narrative.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 79361ff445b354fce88aecce41740e5b' -> (Import Result ID: '04855be25dbd899f08675ccd762cf25e') in 0.002 seconds [static dependencies only]. Details - ImportResultOutputID=472333f7c05bdf922772948494cc450e DependenciesID=3016826eb50a9f0acacb43e0d9e3dd24 StaticDependenciesID=edabe33ab3354b8126b414d734eeadf6 
+Importing 'GUID: ce5d2d1e7043e9b4a9af776495d80673 - Path: Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchPersianLocale.asset' with importer (NativeFormatImporter)
+Imported 'GUID: ce5d2d1e7043e9b4a9af776495d80673' -> (Import Result ID: 'e3a5b32608b9e0576c4670ad0df6f7fa') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=4e59dcc25bf15ac51c911c248b8fb640 DependenciesID=cf7a9b189ada857a96b2535f9d340a0f StaticDependenciesID=f19ec98f860e3de4bb966b649a8fdea7 
+
+Asset Pipeline Refresh (id=04ac4289e9c464a20b5da8126cd0a586): Total: 0.492 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=2 (actual=2, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=154 ms
+		Asset DB Callback time: managed=332 ms, native=3 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=3221, non-scripts=21083
+		Asset File Changes: new=0, changed=1, moved=0, deleted=0
+		Scan Filter Count: 8
+	ApplyChangesToAssetFolders: 0.055ms
+	Scan: 3.513ms
+	OnSourceAssetsModified: 0.299ms
+	CategorizeAssets: 22.533ms
+	ImportOutOfDateAssets: 123.159ms (12.708ms without children)
+		ImportManagerImport: 5.927ms (1.126ms without children)
+		ReloadNativeAssets: 0.323ms
+		UnloadImportedAssets: 0.090ms
+		ReloadImportedAssets: 0.055ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 1.447ms
+		ImportSchedulerStart: 102.659ms
+	PostProcessAllAssets: 333.607ms
+		XRBuildSystem.XRAssetImported 0.665ms
+		MonoPostProcessAllAssets: 332.715ms
+			AssetPostprocessor.OnPostprocessAllAssets 241.522ms
+			AssetReferenceReimportMonitor.OnPostprocessAllAssets 10.711ms
+			BuilderAssetPostprocessor.OnPostprocessAllAssets 2.883ms
+			SceneAssetPostProcessor.OnPostprocessAllAssets 2.308ms
+			AssetChangedListener.OnPostprocessAllAssets 2.110ms
+			SpriteEditorTexturePostprocessor.OnPostprocessAllAssets 2.000ms
+			AddressablesAssetPostProcessor.OnPostprocessAllAssets 1.226ms
+			SpriteSlicePostprocessor.OnPostprocessAllAssets 1.040ms
+			ShaderGraphAssetPostProcessor.OnPostprocessAllAssets 0.667ms
+			RetainedModeAssetPostprocessor.OnPostprocessAllAssets 0.538ms
+			SyncVS.PostprocessSyncProject 0.419ms
+			MaterialPostprocessor.OnPostprocessAllAssets 0.343ms
+			SkillsProjectAssetPostprocessor.OnPostprocessAllAssets 0.230ms
+			UVCSAssetPostprocessor.OnPostprocessAllAssets 0.144ms
+			SampleDependencyImporterPostProcessor.OnPostprocessAllAssets 0.136ms
+			TextAssetPostProcessor.OnPostprocessAllAssets 0.134ms
+			TMPro_TexturePostProcessor.OnPostprocessAllAssets 0.125ms
+			InputActionJsonNameModifierAssetProcessor.OnPostprocessAllAssets 0.122ms
+			PostProcessor.OnPostprocessAllAssets 0.120ms
+			ArtifactBrowserPostProcessor.OnPostprocessAllAssets 0.120ms
+			AudioMixerPostprocessor.OnPostprocessAllAssets 0.116ms
+			AssetPathToTypes.OnPostprocessAllAssets 0.113ms
+			StyleCatalogPostProcessor.OnPostprocessAllAssets 0.084ms
+			AssetEvents.OnPostprocessAllAssets 0.082ms
+			ScenarioDriftAssetsTracker.OnPostprocessAllAssets 0.062ms
+			ConfigAssetsTracker.OnPostprocessAllAssets 0.058ms
+			SpeedTreePostProcessor.OnPostprocessAllAssets 0.055ms
+			SamplePostprocessor.OnPostprocessAllAssets 0.050ms
+	PostAssetChangesProfiler: 2.450ms
+	GatherAllCurrentPrimaryImportResultRevisions: 0.406ms
+	UnloadStreamsBegin: 0.052ms
+	PersistCurrentRevisions: 0.526ms
+	Untracked: 4.964ms
+
+[M02EstablishBaseNarrativeLocaleBuilder] result=Passed locale=fa-IR text=9 voices=9
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M02EstablishBaseNarrativeLocaleBuilder:BuildPersianLocale () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeLocaleBuilder.cs:44)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:Build () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:86)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:BuildAndInstall () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:28)
+M02EstablishBaseNarrativeTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:33)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:52)
+
+(Filename: Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeLocaleBuilder.cs Line: 44)
+
+Importing 'GUID: 79361ff445b354fce88aecce41740e5b - Path: Assets/Game/Configs/Narrative/Chapter01/M02_EstablishBase_Narrative.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 79361ff445b354fce88aecce41740e5b' -> (Import Result ID: '04855be25dbd899f08675ccd762cf25e') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=472333f7c05bdf922772948494cc450e DependenciesID=3016826eb50a9f0acacb43e0d9e3dd24 StaticDependenciesID=edabe33ab3354b8126b414d734eeadf6 
+Asset Pipeline Refresh (id=3cb71a6482ac44822b1dee24a6301641): Total: 0.148 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Opening scene 'Assets/Game/Scenes/Menu.unity'
+Unloading 0 Unused Serialized files (Serialized files now loaded: 0)
+Loaded scene 'Assets/Game/Scenes/Menu.unity'
+	Deserialize:            1.689 ms
+	Integration:            264.553 ms
+	Integration of assets:  0.001 ms
+	Thread Wait Time:       0.003 ms
+	Total Operation Time:   266.246 ms
+Unloading 35 unused Assets / (18.6 MB). Loaded Objects now: 47305.
+Memory consumption went from 0.79 GB to 0.78 GB.
+Total: 41.661083 ms (FindLiveObjects: 0.820291 ms CreateObjectMapping: 7.508042 ms MarkObjects: 33.215750 ms  DeleteObjects: 0.116208 ms)
+
+Importing 'GUID: 6bd1597ba56b84eff9ecd88570df3e0e - Path: Assets/Game/Scenes/Menu.unity' with importer (DefaultImporter)
+Imported 'GUID: 6bd1597ba56b84eff9ecd88570df3e0e' -> (Import Result ID: '8a9f16c36d3cca1b25d683f6cd24bbbd') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=400b224708e4470bb8f670c7ab291fe5 DependenciesID=4742e7e164587d07a5d64b60e15cca44 StaticDependenciesID=0b7f83442dce8c6493cbecdc78aa93cb 
+Asset Pipeline Refresh (id=4e980458619934012a6f9aa7a6f714e9): Total: 0.146 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+[M02EstablishBaseNarrativeBuilder] result=Passed scope=BuildAndInstall sequences=3
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:BuildAndInstall () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:30)
+M02EstablishBaseNarrativeTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:33)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:52)
+
+(Filename: Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs Line: 30)
+
+Asset Pipeline Refresh (id=e0c651364a84e4943ae45e6eea9a7781): Total: 0.165 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+[M02EstablishBaseNarrativeVoiceImporter] result=Passed clips=18 locales=2
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M02EstablishBaseNarrativeVoiceImporter:ConfigureImports () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeVoiceImporter.cs:29)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:Build () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:36)
+M02EstablishBaseNarrativeTests:BuildIsDeterministicAndContainsThreeSequences () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:71)
+M02EstablishBaseNarrativeTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:34)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:52)
+
+(Filename: Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeVoiceImporter.cs Line: 29)
+
+Importing 'GUID: 79361ff445b354fce88aecce41740e5b - Path: Assets/Game/Configs/Narrative/Chapter01/M02_EstablishBase_Narrative.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 79361ff445b354fce88aecce41740e5b' -> (Import Result ID: '04855be25dbd899f08675ccd762cf25e') in 0.000 seconds [static dependencies only]. Details - ImportResultOutputID=472333f7c05bdf922772948494cc450e DependenciesID=3016826eb50a9f0acacb43e0d9e3dd24 StaticDependenciesID=edabe33ab3354b8126b414d734eeadf6 
+Importing 'GUID: ce5d2d1e7043e9b4a9af776495d80673 - Path: Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchPersianLocale.asset' with importer (NativeFormatImporter)
+Imported 'GUID: ce5d2d1e7043e9b4a9af776495d80673' -> (Import Result ID: 'e3a5b32608b9e0576c4670ad0df6f7fa') in 0.000 seconds [static dependencies only]. Details - ImportResultOutputID=4e59dcc25bf15ac51c911c248b8fb640 DependenciesID=cf7a9b189ada857a96b2535f9d340a0f StaticDependenciesID=f19ec98f860e3de4bb966b649a8fdea7 
+Asset Pipeline Refresh (id=06d9e352f4810472d85e7c4e3d3a8e3b): Total: 0.132 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+[M02EstablishBaseNarrativeLocaleBuilder] result=Passed locale=fa-IR text=9 voices=9
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M02EstablishBaseNarrativeLocaleBuilder:BuildPersianLocale () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeLocaleBuilder.cs:44)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:Build () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:86)
+M02EstablishBaseNarrativeTests:BuildIsDeterministicAndContainsThreeSequences () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:71)
+M02EstablishBaseNarrativeTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:34)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:52)
+
+(Filename: Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeLocaleBuilder.cs Line: 44)
+
+Asset Pipeline Refresh (id=bd3caa852a6a84a7691e8ed9f67b7988): Total: 0.171 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+[M02EstablishBaseNarrativeVoiceImporter] result=Passed clips=18 locales=2
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M02EstablishBaseNarrativeVoiceImporter:ConfigureImports () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeVoiceImporter.cs:29)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:Build () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:36)
+M02EstablishBaseNarrativeTests:BuildIsDeterministicAndContainsThreeSequences () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:73)
+M02EstablishBaseNarrativeTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:34)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:52)
+
+(Filename: Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeVoiceImporter.cs Line: 29)
+
+Importing 'GUID: 79361ff445b354fce88aecce41740e5b - Path: Assets/Game/Configs/Narrative/Chapter01/M02_EstablishBase_Narrative.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 79361ff445b354fce88aecce41740e5b' -> (Import Result ID: '04855be25dbd899f08675ccd762cf25e') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=472333f7c05bdf922772948494cc450e DependenciesID=3016826eb50a9f0acacb43e0d9e3dd24 StaticDependenciesID=edabe33ab3354b8126b414d734eeadf6 
+Importing 'GUID: ce5d2d1e7043e9b4a9af776495d80673 - Path: Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchPersianLocale.asset' with importer (NativeFormatImporter)
+Imported 'GUID: ce5d2d1e7043e9b4a9af776495d80673' -> (Import Result ID: 'e3a5b32608b9e0576c4670ad0df6f7fa') in 0.000 seconds [static dependencies only]. Details - ImportResultOutputID=4e59dcc25bf15ac51c911c248b8fb640 DependenciesID=cf7a9b189ada857a96b2535f9d340a0f StaticDependenciesID=f19ec98f860e3de4bb966b649a8fdea7 
+Asset Pipeline Refresh (id=79407035f61b243588c90c2d8f3455fe): Total: 0.129 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+[M02EstablishBaseNarrativeLocaleBuilder] result=Passed locale=fa-IR text=9 voices=9
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M02EstablishBaseNarrativeLocaleBuilder:BuildPersianLocale () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeLocaleBuilder.cs:44)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:Build () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:86)
+M02EstablishBaseNarrativeTests:BuildIsDeterministicAndContainsThreeSequences () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:73)
+M02EstablishBaseNarrativeTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:34)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:52)
+
+(Filename: Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeLocaleBuilder.cs Line: 44)
+
+Asset Pipeline Refresh (id=9e7608eca5d92475aad0b2432110b3a0): Total: 0.162 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+[M02EstablishBaseNarrativeVoiceImporter] result=Passed clips=18 locales=2
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M02EstablishBaseNarrativeVoiceImporter:ConfigureImports () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeVoiceImporter.cs:29)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:Build () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:36)
+M02EstablishBaseNarrativeTests:EnsureBuilt () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:539)
+M02EstablishBaseNarrativeTests:MissionReferencesAllThreeSequences () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:88)
+M02EstablishBaseNarrativeTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:35)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:52)
+
+(Filename: Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeVoiceImporter.cs Line: 29)
+
+Importing 'GUID: 79361ff445b354fce88aecce41740e5b - Path: Assets/Game/Configs/Narrative/Chapter01/M02_EstablishBase_Narrative.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 79361ff445b354fce88aecce41740e5b' -> (Import Result ID: '04855be25dbd899f08675ccd762cf25e') in 0.000 seconds [static dependencies only]. Details - ImportResultOutputID=472333f7c05bdf922772948494cc450e DependenciesID=3016826eb50a9f0acacb43e0d9e3dd24 StaticDependenciesID=edabe33ab3354b8126b414d734eeadf6 
+Importing 'GUID: ce5d2d1e7043e9b4a9af776495d80673 - Path: Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchPersianLocale.asset' with importer (NativeFormatImporter)
+Imported 'GUID: ce5d2d1e7043e9b4a9af776495d80673' -> (Import Result ID: 'e3a5b32608b9e0576c4670ad0df6f7fa') in 0.000 seconds [static dependencies only]. Details - ImportResultOutputID=4e59dcc25bf15ac51c911c248b8fb640 DependenciesID=cf7a9b189ada857a96b2535f9d340a0f StaticDependenciesID=f19ec98f860e3de4bb966b649a8fdea7 
+Asset Pipeline Refresh (id=39e3db41fc5d6464b9f3acb5daf36fdf): Total: 0.126 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+[M02EstablishBaseNarrativeLocaleBuilder] result=Passed locale=fa-IR text=9 voices=9
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M02EstablishBaseNarrativeLocaleBuilder:BuildPersianLocale () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeLocaleBuilder.cs:44)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:Build () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:86)
+M02EstablishBaseNarrativeTests:EnsureBuilt () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:539)
+M02EstablishBaseNarrativeTests:MissionReferencesAllThreeSequences () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:88)
+M02EstablishBaseNarrativeTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:35)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:52)
+
+(Filename: Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeLocaleBuilder.cs Line: 44)
+
+Asset Pipeline Refresh (id=80b3f044380d740ac9c0e8deb89a665f): Total: 0.167 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+[M02EstablishBaseNarrativeVoiceImporter] result=Passed clips=18 locales=2
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M02EstablishBaseNarrativeVoiceImporter:ConfigureImports () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeVoiceImporter.cs:29)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:Build () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:36)
+M02EstablishBaseNarrativeTests:EnsureBuilt () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:539)
+M02EstablishBaseNarrativeTests:BriefEstablishesPostDirectionAndCivicPurpose () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:100)
+M02EstablishBaseNarrativeTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:36)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:52)
+
+(Filename: Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeVoiceImporter.cs Line: 29)
+
+Importing 'GUID: 79361ff445b354fce88aecce41740e5b - Path: Assets/Game/Configs/Narrative/Chapter01/M02_EstablishBase_Narrative.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 79361ff445b354fce88aecce41740e5b' -> (Import Result ID: '04855be25dbd899f08675ccd762cf25e') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=472333f7c05bdf922772948494cc450e DependenciesID=3016826eb50a9f0acacb43e0d9e3dd24 StaticDependenciesID=edabe33ab3354b8126b414d734eeadf6 
+Importing 'GUID: ce5d2d1e7043e9b4a9af776495d80673 - Path: Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchPersianLocale.asset' with importer (NativeFormatImporter)
+Imported 'GUID: ce5d2d1e7043e9b4a9af776495d80673' -> (Import Result ID: 'e3a5b32608b9e0576c4670ad0df6f7fa') in 0.000 seconds [static dependencies only]. Details - ImportResultOutputID=4e59dcc25bf15ac51c911c248b8fb640 DependenciesID=cf7a9b189ada857a96b2535f9d340a0f StaticDependenciesID=f19ec98f860e3de4bb966b649a8fdea7 
+Asset Pipeline Refresh (id=699814d03b6ba4265a89c603240bb729): Total: 0.136 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+[M02EstablishBaseNarrativeLocaleBuilder] result=Passed locale=fa-IR text=9 voices=9
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M02EstablishBaseNarrativeLocaleBuilder:BuildPersianLocale () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeLocaleBuilder.cs:44)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:Build () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:86)
+M02EstablishBaseNarrativeTests:EnsureBuilt () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:539)
+M02EstablishBaseNarrativeTests:BriefEstablishesPostDirectionAndCivicPurpose () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:100)
+M02EstablishBaseNarrativeTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:36)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:52)
+
+(Filename: Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeLocaleBuilder.cs Line: 44)
+
+Asset Pipeline Refresh (id=f9f2bd3087b734ff4a6d746a3e6da86b): Total: 0.170 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+[M02EstablishBaseNarrativeVoiceImporter] result=Passed clips=18 locales=2
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M02EstablishBaseNarrativeVoiceImporter:ConfigureImports () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeVoiceImporter.cs:29)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:Build () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:36)
+M02EstablishBaseNarrativeTests:EnsureBuilt () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:539)
+M02EstablishBaseNarrativeTests:CommsRecoverPreAttackMunicipalAccessList () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:116)
+M02EstablishBaseNarrativeTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:37)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:52)
+
+(Filename: Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeVoiceImporter.cs Line: 29)
+
+Importing 'GUID: 79361ff445b354fce88aecce41740e5b - Path: Assets/Game/Configs/Narrative/Chapter01/M02_EstablishBase_Narrative.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 79361ff445b354fce88aecce41740e5b' -> (Import Result ID: '04855be25dbd899f08675ccd762cf25e') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=472333f7c05bdf922772948494cc450e DependenciesID=3016826eb50a9f0acacb43e0d9e3dd24 StaticDependenciesID=edabe33ab3354b8126b414d734eeadf6 
+Importing 'GUID: ce5d2d1e7043e9b4a9af776495d80673 - Path: Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchPersianLocale.asset' with importer (NativeFormatImporter)
+Imported 'GUID: ce5d2d1e7043e9b4a9af776495d80673' -> (Import Result ID: 'e3a5b32608b9e0576c4670ad0df6f7fa') in 0.000 seconds [static dependencies only]. Details - ImportResultOutputID=4e59dcc25bf15ac51c911c248b8fb640 DependenciesID=cf7a9b189ada857a96b2535f9d340a0f StaticDependenciesID=f19ec98f860e3de4bb966b649a8fdea7 
+Asset Pipeline Refresh (id=7e36a590eb2b74116b184bf40006b072): Total: 0.144 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+[M02EstablishBaseNarrativeLocaleBuilder] result=Passed locale=fa-IR text=9 voices=9
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M02EstablishBaseNarrativeLocaleBuilder:BuildPersianLocale () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeLocaleBuilder.cs:44)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:Build () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:86)
+M02EstablishBaseNarrativeTests:EnsureBuilt () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:539)
+M02EstablishBaseNarrativeTests:CommsRecoverPreAttackMunicipalAccessList () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:116)
+M02EstablishBaseNarrativeTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:37)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:52)
+
+(Filename: Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeLocaleBuilder.cs Line: 44)
+
+Asset Pipeline Refresh (id=73603c7dbf5424234bfefa9e2bbcfd93): Total: 0.166 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+[M02EstablishBaseNarrativeVoiceImporter] result=Passed clips=18 locales=2
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M02EstablishBaseNarrativeVoiceImporter:ConfigureImports () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeVoiceImporter.cs:29)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:Build () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:36)
+M02EstablishBaseNarrativeTests:EnsureBuilt () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:539)
+M02EstablishBaseNarrativeTests:DebriefClosesPostDaliaAndM03WarningSectorBeats () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:135)
+M02EstablishBaseNarrativeTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:38)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:52)
+
+(Filename: Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeVoiceImporter.cs Line: 29)
+
+Importing 'GUID: 79361ff445b354fce88aecce41740e5b - Path: Assets/Game/Configs/Narrative/Chapter01/M02_EstablishBase_Narrative.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 79361ff445b354fce88aecce41740e5b' -> (Import Result ID: '04855be25dbd899f08675ccd762cf25e') in 0.000 seconds [static dependencies only]. Details - ImportResultOutputID=472333f7c05bdf922772948494cc450e DependenciesID=3016826eb50a9f0acacb43e0d9e3dd24 StaticDependenciesID=edabe33ab3354b8126b414d734eeadf6 
+Importing 'GUID: ce5d2d1e7043e9b4a9af776495d80673 - Path: Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchPersianLocale.asset' with importer (NativeFormatImporter)
+Imported 'GUID: ce5d2d1e7043e9b4a9af776495d80673' -> (Import Result ID: 'e3a5b32608b9e0576c4670ad0df6f7fa') in 0.000 seconds [static dependencies only]. Details - ImportResultOutputID=4e59dcc25bf15ac51c911c248b8fb640 DependenciesID=cf7a9b189ada857a96b2535f9d340a0f StaticDependenciesID=f19ec98f860e3de4bb966b649a8fdea7 
+Asset Pipeline Refresh (id=3a27bd7f99d7e445a912a6f452aedb31): Total: 0.133 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+[M02EstablishBaseNarrativeLocaleBuilder] result=Passed locale=fa-IR text=9 voices=9
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M02EstablishBaseNarrativeLocaleBuilder:BuildPersianLocale () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeLocaleBuilder.cs:44)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:Build () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:86)
+M02EstablishBaseNarrativeTests:EnsureBuilt () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:539)
+M02EstablishBaseNarrativeTests:DebriefClosesPostDaliaAndM03WarningSectorBeats () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:135)
+M02EstablishBaseNarrativeTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:38)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:52)
+
+(Filename: Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeLocaleBuilder.cs Line: 44)
+
+Asset Pipeline Refresh (id=15f009d0019d446daac47ffe6920bd90): Total: 0.163 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+[M02EstablishBaseNarrativeVoiceImporter] result=Passed clips=18 locales=2
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M02EstablishBaseNarrativeVoiceImporter:ConfigureImports () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeVoiceImporter.cs:29)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:Build () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:36)
+M02EstablishBaseNarrativeTests:EnsureBuilt () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:539)
+M02EstablishBaseNarrativeTests:FinalSequencesBindReviewedPanelsAndEnglishVoice () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:158)
+M02EstablishBaseNarrativeTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:39)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:52)
+
+(Filename: Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeVoiceImporter.cs Line: 29)
+
+Importing 'GUID: 79361ff445b354fce88aecce41740e5b - Path: Assets/Game/Configs/Narrative/Chapter01/M02_EstablishBase_Narrative.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 79361ff445b354fce88aecce41740e5b' -> (Import Result ID: '04855be25dbd899f08675ccd762cf25e') in 0.000 seconds [static dependencies only]. Details - ImportResultOutputID=472333f7c05bdf922772948494cc450e DependenciesID=3016826eb50a9f0acacb43e0d9e3dd24 StaticDependenciesID=edabe33ab3354b8126b414d734eeadf6 
+Importing 'GUID: ce5d2d1e7043e9b4a9af776495d80673 - Path: Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchPersianLocale.asset' with importer (NativeFormatImporter)
+Imported 'GUID: ce5d2d1e7043e9b4a9af776495d80673' -> (Import Result ID: 'e3a5b32608b9e0576c4670ad0df6f7fa') in 0.000 seconds [static dependencies only]. Details - ImportResultOutputID=4e59dcc25bf15ac51c911c248b8fb640 DependenciesID=cf7a9b189ada857a96b2535f9d340a0f StaticDependenciesID=f19ec98f860e3de4bb966b649a8fdea7 
+Asset Pipeline Refresh (id=03b425265294841a483372d732a689f2): Total: 0.133 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+[M02EstablishBaseNarrativeLocaleBuilder] result=Passed locale=fa-IR text=9 voices=9
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M02EstablishBaseNarrativeLocaleBuilder:BuildPersianLocale () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeLocaleBuilder.cs:44)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:Build () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:86)
+M02EstablishBaseNarrativeTests:EnsureBuilt () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:539)
+M02EstablishBaseNarrativeTests:FinalSequencesBindReviewedPanelsAndEnglishVoice () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:158)
+M02EstablishBaseNarrativeTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:39)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:52)
+
+(Filename: Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeLocaleBuilder.cs Line: 44)
+
+Asset Pipeline Refresh (id=e71db973c97874f2da06efa56c8c9a6a): Total: 0.164 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+[M02EstablishBaseNarrativeVoiceImporter] result=Passed clips=18 locales=2
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M02EstablishBaseNarrativeVoiceImporter:ConfigureImports () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeVoiceImporter.cs:29)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:Build () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:36)
+M02EstablishBaseNarrativeTests:EnsureBuilt () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:539)
+M02EstablishBaseNarrativeTests:PersianLocaleMatchesEveryFinalNarrativeLine () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:188)
+M02EstablishBaseNarrativeTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:40)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:52)
+
+(Filename: Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeVoiceImporter.cs Line: 29)
+
+Importing 'GUID: 79361ff445b354fce88aecce41740e5b - Path: Assets/Game/Configs/Narrative/Chapter01/M02_EstablishBase_Narrative.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 79361ff445b354fce88aecce41740e5b' -> (Import Result ID: '04855be25dbd899f08675ccd762cf25e') in 0.000 seconds [static dependencies only]. Details - ImportResultOutputID=472333f7c05bdf922772948494cc450e DependenciesID=3016826eb50a9f0acacb43e0d9e3dd24 StaticDependenciesID=edabe33ab3354b8126b414d734eeadf6 
+Importing 'GUID: ce5d2d1e7043e9b4a9af776495d80673 - Path: Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchPersianLocale.asset' with importer (NativeFormatImporter)
+Imported 'GUID: ce5d2d1e7043e9b4a9af776495d80673' -> (Import Result ID: 'e3a5b32608b9e0576c4670ad0df6f7fa') in 0.000 seconds [static dependencies only]. Details - ImportResultOutputID=4e59dcc25bf15ac51c911c248b8fb640 DependenciesID=cf7a9b189ada857a96b2535f9d340a0f StaticDependenciesID=f19ec98f860e3de4bb966b649a8fdea7 
+Asset Pipeline Refresh (id=1e908d0b1f3f74dc59b8929fb9a0a054): Total: 0.140 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+[M02EstablishBaseNarrativeLocaleBuilder] result=Passed locale=fa-IR text=9 voices=9
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M02EstablishBaseNarrativeLocaleBuilder:BuildPersianLocale () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeLocaleBuilder.cs:44)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:Build () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:86)
+M02EstablishBaseNarrativeTests:EnsureBuilt () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:539)
+M02EstablishBaseNarrativeTests:PersianLocaleMatchesEveryFinalNarrativeLine () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:188)
+M02EstablishBaseNarrativeTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:40)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:52)
+
+(Filename: Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeLocaleBuilder.cs Line: 44)
+
+Asset Pipeline Refresh (id=2deeb3f8a7dc54e499767270835fad72): Total: 0.169 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+[M02EstablishBaseNarrativeVoiceImporter] result=Passed clips=18 locales=2
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M02EstablishBaseNarrativeVoiceImporter:ConfigureImports () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeVoiceImporter.cs:29)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:Build () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:36)
+M02EstablishBaseNarrativeTests:EnsureBuilt () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:539)
+M02EstablishBaseNarrativeTests:FinalComicDialogueRequiresItsPanelBinding () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:265)
+M02EstablishBaseNarrativeTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:42)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:52)
+
+(Filename: Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeVoiceImporter.cs Line: 29)
+
+Importing 'GUID: 79361ff445b354fce88aecce41740e5b - Path: Assets/Game/Configs/Narrative/Chapter01/M02_EstablishBase_Narrative.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 79361ff445b354fce88aecce41740e5b' -> (Import Result ID: '04855be25dbd899f08675ccd762cf25e') in 0.000 seconds [static dependencies only]. Details - ImportResultOutputID=472333f7c05bdf922772948494cc450e DependenciesID=3016826eb50a9f0acacb43e0d9e3dd24 StaticDependenciesID=edabe33ab3354b8126b414d734eeadf6 
+Importing 'GUID: ce5d2d1e7043e9b4a9af776495d80673 - Path: Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchPersianLocale.asset' with importer (NativeFormatImporter)
+Imported 'GUID: ce5d2d1e7043e9b4a9af776495d80673' -> (Import Result ID: 'e3a5b32608b9e0576c4670ad0df6f7fa') in 0.000 seconds [static dependencies only]. Details - ImportResultOutputID=4e59dcc25bf15ac51c911c248b8fb640 DependenciesID=cf7a9b189ada857a96b2535f9d340a0f StaticDependenciesID=f19ec98f860e3de4bb966b649a8fdea7 
+Asset Pipeline Refresh (id=8335fa2fb49ef4dc59a2d28c2ab066ae): Total: 0.128 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+[M02EstablishBaseNarrativeLocaleBuilder] result=Passed locale=fa-IR text=9 voices=9
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M02EstablishBaseNarrativeLocaleBuilder:BuildPersianLocale () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeLocaleBuilder.cs:44)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:Build () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:86)
+M02EstablishBaseNarrativeTests:EnsureBuilt () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:539)
+M02EstablishBaseNarrativeTests:FinalComicDialogueRequiresItsPanelBinding () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:265)
+M02EstablishBaseNarrativeTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:42)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:52)
+
+(Filename: Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeLocaleBuilder.cs Line: 44)
+
+Asset Pipeline Refresh (id=6ac3026e39e55417ebb65ab122e2b74b): Total: 0.163 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+[M02EstablishBaseNarrativeVoiceImporter] result=Passed clips=18 locales=2
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M02EstablishBaseNarrativeVoiceImporter:ConfigureImports () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeVoiceImporter.cs:29)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:Build () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:36)
+M02EstablishBaseNarrativeTests:EnsureBuilt () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:539)
+M02EstablishBaseNarrativeTests:FinalComicDirectPanelPresentsImmediately () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:278)
+M02EstablishBaseNarrativeTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:43)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:52)
+
+(Filename: Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeVoiceImporter.cs Line: 29)
+
+Importing 'GUID: 79361ff445b354fce88aecce41740e5b - Path: Assets/Game/Configs/Narrative/Chapter01/M02_EstablishBase_Narrative.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 79361ff445b354fce88aecce41740e5b' -> (Import Result ID: '04855be25dbd899f08675ccd762cf25e') in 0.000 seconds [static dependencies only]. Details - ImportResultOutputID=472333f7c05bdf922772948494cc450e DependenciesID=3016826eb50a9f0acacb43e0d9e3dd24 StaticDependenciesID=edabe33ab3354b8126b414d734eeadf6 
+Importing 'GUID: ce5d2d1e7043e9b4a9af776495d80673 - Path: Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchPersianLocale.asset' with importer (NativeFormatImporter)
+Imported 'GUID: ce5d2d1e7043e9b4a9af776495d80673' -> (Import Result ID: 'e3a5b32608b9e0576c4670ad0df6f7fa') in 0.000 seconds [static dependencies only]. Details - ImportResultOutputID=4e59dcc25bf15ac51c911c248b8fb640 DependenciesID=cf7a9b189ada857a96b2535f9d340a0f StaticDependenciesID=f19ec98f860e3de4bb966b649a8fdea7 
+Asset Pipeline Refresh (id=003e86ff5639d40578a8bdb3825b1159): Total: 0.126 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+[M02EstablishBaseNarrativeLocaleBuilder] result=Passed locale=fa-IR text=9 voices=9
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M02EstablishBaseNarrativeLocaleBuilder:BuildPersianLocale () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeLocaleBuilder.cs:44)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:Build () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:86)
+M02EstablishBaseNarrativeTests:EnsureBuilt () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:539)
+M02EstablishBaseNarrativeTests:FinalComicDirectPanelPresentsImmediately () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:278)
+M02EstablishBaseNarrativeTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:43)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:52)
+
+(Filename: Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeLocaleBuilder.cs Line: 44)
+
+Asset Pipeline Refresh (id=c20a0239569fc488ba186a3a0d13d13b): Total: 0.164 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+[M02EstablishBaseNarrativeVoiceImporter] result=Passed clips=18 locales=2
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M02EstablishBaseNarrativeVoiceImporter:ConfigureImports () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeVoiceImporter.cs:29)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:Build () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:36)
+M02EstablishBaseNarrativeTests:EnsureBuilt () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:539)
+M02EstablishBaseNarrativeTests:SkipReducedMotionAndCaptionsAreSupported () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:324)
+M02EstablishBaseNarrativeTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:45)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:52)
+
+(Filename: Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeVoiceImporter.cs Line: 29)
+
+Importing 'GUID: 79361ff445b354fce88aecce41740e5b - Path: Assets/Game/Configs/Narrative/Chapter01/M02_EstablishBase_Narrative.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 79361ff445b354fce88aecce41740e5b' -> (Import Result ID: '04855be25dbd899f08675ccd762cf25e') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=472333f7c05bdf922772948494cc450e DependenciesID=3016826eb50a9f0acacb43e0d9e3dd24 StaticDependenciesID=edabe33ab3354b8126b414d734eeadf6 
+Importing 'GUID: ce5d2d1e7043e9b4a9af776495d80673 - Path: Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchPersianLocale.asset' with importer (NativeFormatImporter)
+Imported 'GUID: ce5d2d1e7043e9b4a9af776495d80673' -> (Import Result ID: 'e3a5b32608b9e0576c4670ad0df6f7fa') in 0.000 seconds [static dependencies only]. Details - ImportResultOutputID=4e59dcc25bf15ac51c911c248b8fb640 DependenciesID=cf7a9b189ada857a96b2535f9d340a0f StaticDependenciesID=f19ec98f860e3de4bb966b649a8fdea7 
+Asset Pipeline Refresh (id=bd58413c9da8341c69209b1a7ace787f): Total: 0.133 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+[M02EstablishBaseNarrativeLocaleBuilder] result=Passed locale=fa-IR text=9 voices=9
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M02EstablishBaseNarrativeLocaleBuilder:BuildPersianLocale () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeLocaleBuilder.cs:44)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:Build () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:86)
+M02EstablishBaseNarrativeTests:EnsureBuilt () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:539)
+M02EstablishBaseNarrativeTests:SkipReducedMotionAndCaptionsAreSupported () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:324)
+M02EstablishBaseNarrativeTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:45)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:52)
+
+(Filename: Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeLocaleBuilder.cs Line: 44)
+
+Asset Pipeline Refresh (id=d4eb59b92e678436e96861297ef4d40f): Total: 0.166 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+[M02EstablishBaseNarrativeVoiceImporter] result=Passed clips=18 locales=2
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M02EstablishBaseNarrativeVoiceImporter:ConfigureImports () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeVoiceImporter.cs:29)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:Build () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:36)
+M02EstablishBaseNarrativeTests:EnsureBuilt () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:539)
+M02EstablishBaseNarrativeTests:M02NarrativeIdentityDoesNotBorrowM01OrFirstLaunchContent () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:337)
+M02EstablishBaseNarrativeTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:46)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:52)
+
+(Filename: Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeVoiceImporter.cs Line: 29)
+
+Importing 'GUID: 79361ff445b354fce88aecce41740e5b - Path: Assets/Game/Configs/Narrative/Chapter01/M02_EstablishBase_Narrative.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 79361ff445b354fce88aecce41740e5b' -> (Import Result ID: '04855be25dbd899f08675ccd762cf25e') in 0.000 seconds [static dependencies only]. Details - ImportResultOutputID=472333f7c05bdf922772948494cc450e DependenciesID=3016826eb50a9f0acacb43e0d9e3dd24 StaticDependenciesID=edabe33ab3354b8126b414d734eeadf6 
+Importing 'GUID: ce5d2d1e7043e9b4a9af776495d80673 - Path: Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchPersianLocale.asset' with importer (NativeFormatImporter)
+Imported 'GUID: ce5d2d1e7043e9b4a9af776495d80673' -> (Import Result ID: 'e3a5b32608b9e0576c4670ad0df6f7fa') in 0.000 seconds [static dependencies only]. Details - ImportResultOutputID=4e59dcc25bf15ac51c911c248b8fb640 DependenciesID=cf7a9b189ada857a96b2535f9d340a0f StaticDependenciesID=f19ec98f860e3de4bb966b649a8fdea7 
+Asset Pipeline Refresh (id=5ef5046a447c54650bc52369e91cd0a1): Total: 0.141 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+[M02EstablishBaseNarrativeLocaleBuilder] result=Passed locale=fa-IR text=9 voices=9
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M02EstablishBaseNarrativeLocaleBuilder:BuildPersianLocale () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeLocaleBuilder.cs:44)
+Game.Editor.M02EstablishBaseNarrativeConfigBuilder:Build () (at Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeConfigBuilder.cs:86)
+M02EstablishBaseNarrativeTests:EnsureBuilt () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:539)
+M02EstablishBaseNarrativeTests:M02NarrativeIdentityDoesNotBorrowM01OrFirstLaunchContent () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:337)
+M02EstablishBaseNarrativeTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:46)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:52)
+
+(Filename: Assets/Game/Scripts/Editor/M02EstablishBaseNarrativeLocaleBuilder.cs Line: 44)
+
+Opening scene 'Assets/Game/Scenes/Menu.unity'
+Unloading 2 Unused Serialized files (Serialized files now loaded: 0)
+Loaded scene 'Assets/Game/Scenes/Menu.unity'
+	Deserialize:            1.654 ms
+	Integration:            231.418 ms
+	Integration of assets:  0.001 ms
+	Thread Wait Time:       0.006 ms
+	Total Operation Time:   233.079 ms
+Unloading 191 unused Assets / (13.7 MB). Loaded Objects now: 47314.
+Memory consumption went from 0.78 GB to 0.76 GB.
+Total: 38.052041 ms (FindLiveObjects: 0.740250 ms CreateObjectMapping: 6.828583 ms MarkObjects: 29.920917 ms  DeleteObjects: 0.561916 ms)
+
+[M02EstablishBaseNarrativeValidation] result=Passed tests=23
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+M02EstablishBaseNarrativeTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs:57)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:52)
+
+(Filename: Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs Line: 57)
+
+[M02EstablishBaseResultSettlementValidation] result=Passed tests=15
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+M02EstablishBaseResultSettlementTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseResultSettlementTests.cs:43)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:53)
+
+(Filename: Assets/Tests/Editor/M02EstablishBaseResultSettlementTests.cs Line: 43)
+
+[M02EstablishBaseCampaignUiValidation] result=Passed tests=10
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+M02EstablishBaseCampaignUiTests:RunFocusedValidation () (at Assets/Tests/Editor/M02EstablishBaseCampaignUiTests.cs:51)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:54)
+
+(Filename: Assets/Tests/Editor/M02EstablishBaseCampaignUiTests.cs Line: 51)
+
+GPU Resident Drawer created.
+[M01DC031Capture] aspect=victory_16x9 size=1280x720 sha256=59524404a976eb1e63fd2ea14593d270ec7eb7ccd872c1ea44b31717ba734f6a path=Build/EditorEvidence/M01FirstContact/M01DC031/result_victory_16x9.png
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+M01FirstContactHudResultTests:CaptureResult (UnityEngine.GameObject,int,int,Game.UI.Contracts.UiMissionResultPopupModel,string) (at Assets/Tests/Editor/M01FirstContactHudResultTests.cs:304)
+M01FirstContactHudResultTests:ResultPopupCapturesSupportedAspects () (at Assets/Tests/Editor/M01FirstContactHudResultTests.cs:197)
+M01FirstContactHudResultTests:Run (System.Action,int&) (at Assets/Tests/Editor/M01FirstContactHudResultTests.cs:334)
+M01FirstContactHudResultTests:RunFocusedValidation () (at Assets/Tests/Editor/M01FirstContactHudResultTests.cs:38)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:55)
+
+(Filename: Assets/Tests/Editor/M01FirstContactHudResultTests.cs Line: 304)
+
+[M01DC031Capture] aspect=defeat_20x9 size=1000x450 sha256=bf9d23fb938edec4ccab84a0e985d3504858d69fd42b8b8147045039178114d4 path=Build/EditorEvidence/M01FirstContact/M01DC031/result_defeat_20x9.png
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+M01FirstContactHudResultTests:CaptureResult (UnityEngine.GameObject,int,int,Game.UI.Contracts.UiMissionResultPopupModel,string) (at Assets/Tests/Editor/M01FirstContactHudResultTests.cs:304)
+M01FirstContactHudResultTests:ResultPopupCapturesSupportedAspects () (at Assets/Tests/Editor/M01FirstContactHudResultTests.cs:198)
+M01FirstContactHudResultTests:Run (System.Action,int&) (at Assets/Tests/Editor/M01FirstContactHudResultTests.cs:334)
+M01FirstContactHudResultTests:RunFocusedValidation () (at Assets/Tests/Editor/M01FirstContactHudResultTests.cs:38)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:55)
+
+(Filename: Assets/Tests/Editor/M01FirstContactHudResultTests.cs Line: 304)
+
+[M01DC031Capture] aspect=victory_tablet4x3 size=1024x768 sha256=a4c35f93043956cd0d5937b5253530962763192febda8951b562c52f3bca56af path=Build/EditorEvidence/M01FirstContact/M01DC031/result_victory_tablet4x3.png
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+M01FirstContactHudResultTests:CaptureResult (UnityEngine.GameObject,int,int,Game.UI.Contracts.UiMissionResultPopupModel,string) (at Assets/Tests/Editor/M01FirstContactHudResultTests.cs:304)
+M01FirstContactHudResultTests:ResultPopupCapturesSupportedAspects () (at Assets/Tests/Editor/M01FirstContactHudResultTests.cs:199)
+M01FirstContactHudResultTests:Run (System.Action,int&) (at Assets/Tests/Editor/M01FirstContactHudResultTests.cs:334)
+M01FirstContactHudResultTests:RunFocusedValidation () (at Assets/Tests/Editor/M01FirstContactHudResultTests.cs:38)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:55)
+
+(Filename: Assets/Tests/Editor/M01FirstContactHudResultTests.cs Line: 304)
+
+[M01FirstContactHudResultValidation] result=Passed tests=12 captures=3 pointerTargets=Passed
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+M01FirstContactHudResultTests:RunFocusedValidation () (at Assets/Tests/Editor/M01FirstContactHudResultTests.cs:39)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:55)
+
+(Filename: Assets/Tests/Editor/M01FirstContactHudResultTests.cs Line: 39)
+
+InvalidDataException: Production files above 500 lines must be baselined at their reviewed size or covered by an exact line-bounded approved exception. Violations:
+unreviewed Assets/Game/Scripts/UI/Components/BattleHudRuntimeFeedbackView.cs (523 lines, 20716 bytes)
+grew Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.cs (lines 651 -> 830, bytes 26620 -> 36443; requires production-over-500-review)
+unreviewed Assets/Game/Scripts/UI/Components/MatchHudTransportPassengerDrawerView.cs (585 lines, 25332 bytes)
+grew Assets/Game/Scripts/UI/Screens/AriaCommandAssistantPopupView.cs (lines 470 -> 551, bytes 19802 -> 24173; requires production-over-500-review)
+unreviewed Assets/Game/Scripts/UI/Screens/BuildPlacementConfirmationBarView.cs (507 lines, 20663 bytes)
+unreviewed Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Presentation.cs (558 lines, 21246 bytes)
+grew Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs (lines 1246 -> 1308, bytes 51844 -> 53991; requires production-over-1000-growth)
+grew Assets/Game/Scripts/UI/Screens/MatchHudMinimapView.cs (lines 580 -> 603, bytes 21934 -> 23025; requires production-over-500-review)
+grew Assets/Game/Scripts/UI/Shell/UIShellContentView.cs (lines 898 -> 985, bytes 38807 -> 43208; requires production-over-500-review)
+  at ProductionSourceGrowthArchitectureTests.Require (System.Boolean condition, System.String message) [0x0000a] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs:2309 
+  at ProductionSourceGrowthArchitectureTests.ProductionFilesAboveFiveHundredLinesRequireReview () [0x001ef] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs:302 
+  at ProductionSourceGrowthArchitectureTests.RunFocusedValidation () [0x00011] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs:84 
+UnityEngine.DebugLogHandler:Internal_LogException_Injected(Exception, IntPtr)
+UnityEngine.DebugLogHandler:Internal_LogException(Exception, Object)
+UnityEngine.DebugLogHandler:LogException(Exception, Object)
+UnityEngine.Logger:LogException(Exception, Object)
+UnityEngine.Debug:LogException(Exception)
+ProductionSourceGrowthArchitectureTests:RunFocusedValidation() (at Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs:104)
+M02EstablishBaseHudResultTests:RunValidation(Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation() (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:56)
+
+(Filename: Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs Line: 104)
+
+[ProductionSourceGrowthArchitectureValidation] result=Failed
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:LogError (object)
+ProductionSourceGrowthArchitectureTests:RunFocusedValidation () (at Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs:105)
+M02EstablishBaseHudResultTests:RunValidation (System.Action) (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:305)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:56)
+
+(Filename: Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs Line: 105)
+
+InvalidOperationException: ProductionSourceGrowthArchitectureTests.RunFocusedValidation failed validation.
+  at M02EstablishBaseHudResultTests.RunValidation (System.Action validation) [0x00037] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:307 
+  at M02EstablishBaseHudResultTests.RunRegressionValidation () [0x00055] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:56 
+UnityEngine.DebugLogHandler:Internal_LogException_Injected(Exception, IntPtr)
+UnityEngine.DebugLogHandler:Internal_LogException(Exception, Object)
+UnityEngine.DebugLogHandler:LogException(Exception, Object)
+UnityEngine.Logger:LogException(Exception, Object)
+UnityEngine.Debug:LogException(Exception)
+M02EstablishBaseHudResultTests:RunRegressionValidation() (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:63)
+
+(Filename: Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs Line: 63)
+
+[M02EstablishBaseHudResultRegressionValidation] result=Failed
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:LogError (object)
+M02EstablishBaseHudResultTests:RunRegressionValidation () (at Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs:64)
+
+(Filename: Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs Line: 64)
+
+Batchmode quit successfully invoked - shutting down!
+Pipeline Server stopped
+Clearing [NotoSansArabic-Narrative SDF] dynamic font asset data.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+TMPro.EditorEventCallbacks/<>c:<InitializeFontAssetResourceChangeCallBacks>b__0_0 () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Editor/TMP/TMP_EditorResourceManager.cs:36)
+UnityEditor.EditorApplication:Internal_EditorApplicationQuit () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:128)
+
+(Filename: ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Editor/TMP/TMP_EditorResourceManager.cs Line: 36)
+
+Unloading 28 Unused Serialized files (Serialized files now loaded: 0)
+Killing ADB server in 0.086324 seconds.
+Importing 'GUID: 15a37dd92cdf54f419eb634937a005e2 - Path: Assets/Game/Art/UI/Fonts/NotoSansArabic/NotoSansArabic-Narrative SDF.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 15a37dd92cdf54f419eb634937a005e2' -> (Import Result ID: '5217b43cf63188c8e8d355a14972ad5c') in 0.002 seconds [static dependencies only]. Details - ImportResultOutputID=00279231c2e8593ff4001a35d7e2e19e DependenciesID=a1602d8d6dac5e16656562f0e961df72 StaticDependenciesID=22523538ac7065be336fa4fa9df315e4 
+Shutting down MSBuild server...
+Shutting down VB/C# compiler server...
+Asset Pipeline Refresh (id=df104e3f5dda14c3cb25e7ff907ee6ff): Total: 0.148 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+VB/C# compiler server shut down successfully.
+Unloading 62 unused Assets / (5.8 KB). Loaded Objects now: 47368.
+Memory consumption went from 0.81 GB to 0.81 GB.
+Total: 42.103208 ms (FindLiveObjects: 0.805000 ms CreateObjectMapping: 6.449166 ms MarkObjects: 34.656000 ms  DeleteObjects: 0.192042 ms)
+
+Thread 0x30b387000 may have been prematurely finalized
+MSBuild server shut down successfully.
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+Leftover web requests after shut down
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+[Licensing::IpcConnector] LicenseClient-farhad-6000.5.2-notifications channel disconnected successfully.
+[Licensing::IpcConnector] LicenseClient-farhad-6000.5.2 channel disconnected successfully.
+Thread 0x16c62f000 may have been prematurely finalized
+Thread 0x16c6bb000 may have been prematurely finalized
+Thread 0x16c747000 may have been prematurely finalized
+Thread 0x16c85f000 may have been prematurely finalized
+Thread 0x16c8eb000 may have been prematurely finalized
+Thread 0x16c977000 may have been prematurely finalized
+Thread 0x16c7d3000 may have been prematurely finalized
+Thread 0x16ca03000 may have been prematurely finalized
+Thread 0x16ca8f000 may have been prematurely finalized
+AcceleratorClientConnectionCallback - disconnected - :0
+Thread 0x308e87000 may have been prematurely finalized
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+Cleanup mono
+CodeReloadManager destroyed
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      ALC ILPP context 1 is unloading
+Leak Detected : Persistent allocates 399 individual allocations. To find out more please enable 'Settings > Jobs > Leak Detection Level > Enabled With Stack Trace' and reproduce the leak again.
+debugger-agent: Unable to listen on 44
+Exiting batchmode successfully now!
+[Package Manager] Server process was shutdown

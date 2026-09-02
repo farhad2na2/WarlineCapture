@@ -21,12 +21,13 @@ public sealed class FirstLaunchNarrativePresentationTests
             tests.SubtitleStyleResolver_MapsAllAccessibilityPresets();
             tests.DialogueAssets_UseSeparatePointerAriaPortraitAndNineSliceBorder();
             tests.PresentationPrefab_HasBoundViewsSkipAndDedicatedVoiceSource();
+            tests.V3ComicChrome_ExpandsAcrossUltrawideCanvas();
             tests.InteractiveState_HidesComicChromeAndRestoresIt();
             tests.PresentationHelper_RespectsAutoAdvancePauseAndCancel();
             tests.Phase10RPresentation_UsesReadableTypeMobileTargetsAndCleanFrame();
             tests.Dialogue_LongTextExpandsFrameWithoutEllipsis();
             tests.Phase10RAudio_UsesIndependentSettingsAwareLayersAndCancelsCleanly();
-            Debug.Log("[FirstLaunchNarrativePresentationValidation] result=Passed tests=10");
+            Debug.Log("[FirstLaunchNarrativePresentationValidation] result=Passed tests=11");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -142,6 +143,43 @@ public sealed class FirstLaunchNarrativePresentationTests
         Assert.NotNull(pointer);
         Assert.AreEqual(Image.Type.Sliced, frame.type);
         Assert.AreNotSame(frame.sprite, pointer.sprite);
+    }
+
+    [Test]
+    public void V3ComicChrome_ExpandsAcrossUltrawideCanvas()
+    {
+        FirstLaunchNarrativeV3PrefabBuilder.Build();
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(FirstLaunchNarrativePresentationPrefabBuilder.PrefabPath);
+        Assert.NotNull(prefab);
+
+        MainMenuV3SectionLayoutView layout = prefab.GetComponentInChildren<MainMenuV3SectionLayoutView>(true);
+        Assert.NotNull(layout);
+        Assert.IsTrue(layout.ExpandToCanvasWidth, "The comic safe frame must expand beyond 16:9 on wide screens.");
+
+        string[] rightTargets = Array.ConvertAll(layout.RightAnchoredTargets, target => target != null ? target.name : string.Empty);
+        CollectionAssert.Contains(rightTargets, "PlaybackControls");
+        CollectionAssert.Contains(rightTargets, "NextPanel");
+        CollectionAssert.Contains(rightTargets, "Pointer");
+        CollectionAssert.Contains(rightTargets, "NextLabel");
+
+        SerializedObject serialized = new(layout);
+        SerializedProperty expanded = serialized.FindProperty("widthExpandedTargets");
+        Assert.NotNull(expanded);
+        Assert.GreaterOrEqual(expanded.arraySize, 7);
+        bool hasTimeline = false;
+        bool hasDialogue = false;
+        bool hasDialogueBody = false;
+        for (int i = 0; i < expanded.arraySize; i++)
+        {
+            RectTransform target = expanded.GetArrayElementAtIndex(i).objectReferenceValue as RectTransform;
+            hasTimeline |= target != null && target.name == "ComicTimeline";
+            hasDialogue |= target != null && target.name == "Dialogue";
+            hasDialogueBody |= target != null && target.name == "DialogueBody";
+        }
+
+        Assert.IsTrue(hasTimeline);
+        Assert.IsTrue(hasDialogue);
+        Assert.IsTrue(hasDialogueBody);
     }
 
     [Test]

@@ -222,13 +222,13 @@ namespace Game.Editor
                 Stretch(safeArea);
                 safeArea.localScale = Vector3.one;
                 MainMenuV3SectionLayoutView layout = safeArea.gameObject.GetComponent<MainMenuV3SectionLayoutView>() ?? safeArea.gameObject.AddComponent<MainMenuV3SectionLayoutView>();
-                layout.Configure(Reference, MainMenuV3SectionAlignment.Center);
 
                 NarrativeLocationIntroView location = BuildComicHeader(safeArea, out NarrativePlaybackControlsView controls);
                 NarrativeDialogueView dialogue = BuildComicDialogue(safeArea);
                 NarrativeCommanderIdentityView identity = BuildIdentitySurface(safeArea);
                 NarrativeGuidanceChoiceView guidance = BuildGuidanceSurface(safeArea);
                 NarrativeSkipConfirmationView skip = BuildSkipConfirmationSurface(safeArea);
+                ConfigureResponsiveComicChrome(layout, safeArea, controls, dialogue);
                 Transform reviewer = safeArea.Find("DevelopmentReviewerControls");
                 skip.transform.SetAsLastSibling();
                 if (reviewer != null) reviewer.SetAsLastSibling();
@@ -246,6 +246,48 @@ namespace Game.Editor
             {
                 PrefabUtility.UnloadPrefabContents(root);
             }
+        }
+
+        private static void ConfigureResponsiveComicChrome(
+            MainMenuV3SectionLayoutView layout,
+            RectTransform safeArea,
+            NarrativePlaybackControlsView controls,
+            NarrativeDialogueView dialogue)
+        {
+            RectTransform timeline = RequireRect(safeArea, "ComicTimeline");
+            RectTransform timelineTrack = RequireRect(timeline, "Track");
+            RectTransform dialogueRect = dialogue.GetComponent<RectTransform>();
+            RectTransform dialogueFrame = RequireRect(dialogueRect, "Frame");
+            RectTransform dialogueBody = RequireRect(dialogueRect, "DialogueBody");
+            RectTransform dialogueText = RequireRect(dialogueRect, "DialogueText");
+            RectTransform voiceTrack = RequireRect(dialogueRect, "VoiceTrack");
+
+            // The comic art is a physical-canvas cover layer. At ultrawide ratios the
+            // chrome must also reach both safe edges instead of remaining a centered
+            // 16:9 island. Keep the left block fixed, move right actions with the edge,
+            // and give all middle/body surfaces the extra width.
+            layout.Configure(
+                Reference,
+                MainMenuV3SectionAlignment.Center,
+                new[]
+                {
+                    controls.GetComponent<RectTransform>(),
+                    RequireRect(dialogueRect, "NextPanel"),
+                    RequireRect(dialogueRect, "Pointer"),
+                    RequireRect(dialogueRect, "NextLabel")
+                },
+                true,
+                null,
+                new[]
+                {
+                    timeline,
+                    timelineTrack,
+                    dialogueRect,
+                    dialogueFrame,
+                    dialogueBody,
+                    dialogueText,
+                    voiceTrack
+                });
         }
 
         private static NarrativeLocationIntroView BuildComicHeader(Transform parent, out NarrativePlaybackControlsView controlsView)
@@ -280,6 +322,10 @@ namespace Game.Editor
             BuildHeaderControl(controls, "PauseButton", 0f, 166f, "PAUSE", V3UiFoundationBuilder.FirstLaunchPauseIconPath);
             BuildHeaderControl(controls, "SubtitlesButton", 171f, 230f, "SUBTITLES", null);
             Button skip = CreateGradientButton("SkipButton", controls, 406f, 0f, 174f, 102f, DarkTop, DarkBottom, Border, 3f);
+            // Header chrome is always rendered with its authored V3 gradient.
+            // CanvasGroup visibility changes must not leave these controls tinted
+            // with Unity's transient disabled color when the sequence appears.
+            skip.transition = Selectable.Transition.None;
             CanvasGroup skipGroup = skip.gameObject.AddComponent<CanvasGroup>();
             BuildChevronIcon(skip.transform, 18f, 29f, 44f, 44f, White, true);
             TMP_Text skipLabel = CreateText("Label", skip.transform, "SKIP", 23f, bold, TextAlignmentOptions.MidlineLeft, White);
@@ -293,6 +339,7 @@ namespace Game.Editor
         private static void BuildHeaderControl(Transform parent, string name, float x, float width, string label, string iconPath)
         {
             Button button = CreateGradientButton(name, parent, x, 0f, width, 102f, DarkTop, DarkBottom, Border, 3f);
+            button.transition = Selectable.Transition.None;
             if (name == "PauseButton")
                 BuildPauseIcon(button.transform, 18f, 29f, 42f, White);
             else
@@ -1213,6 +1260,14 @@ namespace Game.Editor
             if (target == null || !target.TryGetComponent(out TMP_Text text))
                 throw new UnityException($"Missing First Launch V3 localized text target: {path}");
             return text;
+        }
+
+        private static RectTransform RequireRect(Transform root, string path)
+        {
+            Transform target = root.Find(path);
+            if (target is not RectTransform rect)
+                throw new UnityException($"Missing First Launch V3 responsive rect: {path}");
+            return rect;
         }
 
         private static List<Sprite> LoadCommanderPortraits()

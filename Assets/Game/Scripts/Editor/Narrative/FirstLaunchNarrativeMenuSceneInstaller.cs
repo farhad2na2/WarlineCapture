@@ -15,7 +15,10 @@ namespace Game.Editor
         [MenuItem("Game/Narrative/First Launch/Install Into Menu Scene")]
         public static void Install()
         {
-            FirstLaunchNarrativePresentationPrefabBuilder.Build();
+            // V3 is the production first-launch presentation. Building only the legacy
+            // base prefab here reintroduced old chrome whenever the Menu scene was
+            // reinstalled and left stale instance overrides in player-facing captures.
+            FirstLaunchNarrativeV3PrefabBuilder.Build();
             FirstLaunchNarrativeConfigBuilder.Build();
             Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
             MenuBootstrapView bootstrap = Object.FindAnyObjectByType<MenuBootstrapView>(FindObjectsInactive.Include);

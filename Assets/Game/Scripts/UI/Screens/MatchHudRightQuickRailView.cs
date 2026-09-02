@@ -313,7 +313,7 @@ namespace Game.UI.Runtime
                 _lastHideUnrelatedControls == hideUnrelatedControls)
                 return;
 
-            SetButtonDisabled(buildButton, buildDisabled, hidden: false);
+            SetButtonDisabled(buildButton, buildDisabled, outsideMissionScope: false);
             SetButtonDisabled(_supportButton, supportDisabled, hideUnrelatedControls && supportDisabled);
             _lastBuildDisabled = buildDisabled;
             _lastSupportDisabled = supportDisabled;
@@ -321,28 +321,31 @@ namespace Game.UI.Runtime
             _missionRestrictionVisibilityApplied = true;
         }
 
-        private static void SetButtonDisabled(Button button, bool disabled, bool hidden)
+        private static void SetButtonDisabled(Button button, bool disabled, bool outsideMissionScope)
         {
             if (button == null)
                 return;
 
-            if (button.gameObject.activeSelf == hidden)
-                button.gameObject.SetActive(!hidden);
+            // Restricted commands keep their authored place in the rail. Mission scope is a
+            // disabled state, not a visibility state; hiding it leaves a misleading hole in M02.
+            bool unavailable = disabled || outsideMissionScope;
+            if (!button.gameObject.activeSelf)
+                button.gameObject.SetActive(true);
             UiDisabledMaterialUtility.SetSelectableDisabled(
                 button,
                 UiDisabledVisualReason.MissionRestriction,
-                disabled);
+                unavailable);
             UiDisabledMaterialUtility.SetDisabled(
                 button.gameObject,
                 UiDisabledVisualReason.MissionRestriction,
-                disabled);
-            button.interactable = !disabled && !hidden;
+                unavailable);
+            button.interactable = !unavailable;
             CanvasGroup group = button.GetComponent<CanvasGroup>();
             if (group == null)
                 group = button.gameObject.AddComponent<CanvasGroup>();
             group.alpha = 1f;
-            group.interactable = !disabled && !hidden;
-            group.blocksRaycasts = !disabled && !hidden;
+            group.interactable = !unavailable;
+            group.blocksRaycasts = !unavailable;
         }
 
         private Camera ResolveEventCamera()

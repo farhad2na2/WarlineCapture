@@ -43,7 +43,7 @@ public sealed class M02EstablishBaseResourceTests
             tests.DisabledMissionRuntimeLeavesResourcesUntouched();
             tests.AmbiguousPlayerResourceOwnerFailsClosed();
             tests.M02HudShowsCreditsAndMaterialsWhileHidingLogistics();
-            tests.M02HidesUnrelatedSquadAndSupportControls();
+            tests.M02KeepsUnavailableSquadAndSupportControlsVisibleAndGray();
             tests.AttemptInitializerDoesNotReferencePersistence();
             Debug.Log(Marker);
             ValidationExit.Passed();
@@ -271,10 +271,11 @@ public sealed class M02EstablishBaseResourceTests
     }
 
     [Test]
-    public void M02HidesUnrelatedSquadAndSupportControls()
+    public void M02KeepsUnavailableSquadAndSupportControlsVisibleAndGray()
     {
         GameObject railRoot = new("M02RightRail", typeof(RectTransform), typeof(MatchHudRightQuickRailView));
         GameObject trayRoot = new("M02SquadTray", typeof(RectTransform));
+        GameObject matchHudInstance = null;
         trayRoot.SetActive(false);
         try
         {
@@ -286,7 +287,13 @@ public sealed class M02EstablishBaseResourceTests
             MatchHudRightQuickRailView rail = railRoot.GetComponent<MatchHudRightQuickRailView>();
             rail.ApplyMissionRestrictionVisibility(false, true, hideUnrelatedControls: true);
             Assert.IsTrue(build.gameObject.activeSelf);
-            Assert.IsFalse(support.gameObject.activeSelf);
+            Assert.IsTrue(support.gameObject.activeSelf,
+                "M02 must preserve the Support command's authored position.");
+            Assert.IsFalse(support.interactable,
+                "M02 Support remains unavailable even though it is visible.");
+            Assert.AreEqual("Warline/UI/Disabled Grayscale", support.GetComponent<Image>().material.shader.name);
+            Assert.AreEqual(1f, support.GetComponent<CanvasGroup>().alpha,
+                "Disabled V3 buttons must remain fully opaque and use grayscale, not fade away.");
 
             MatchHudSquadTrayView tray = trayRoot.AddComponent<MatchHudSquadTrayView>();
             MatchHudSquadTrayView.Card[] cards = new MatchHudSquadTrayView.Card[5];
@@ -305,10 +312,64 @@ public sealed class M02EstablishBaseResourceTests
             tray.ApplyMissionRestrictionVisibility(false, true, true, hideUnrelatedControls: true);
             Assert.IsTrue(cards[0].Button.gameObject.activeSelf);
             for (int index = 1; index < cards.Length; index++)
-                Assert.IsFalse(cards[index].Button.gameObject.activeSelf, $"Card {index} must stay hidden in M02.");
+            {
+                Assert.IsTrue(cards[index].Button.gameObject.activeSelf,
+                    $"M02 squad card {index} must preserve its authored position.");
+                Assert.IsFalse(cards[index].Button.interactable,
+                    $"M02 squad card {index} must remain unavailable.");
+                Assert.AreEqual("Warline/UI/Disabled Grayscale",
+                    cards[index].FrameImage.material.shader.name,
+                    $"M02 squad card {index} must use the shared disabled V3 treatment.");
+            }
+
+            GameObject matchHudPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+                "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab");
+            Assert.NotNull(matchHudPrefab);
+            matchHudInstance = UnityEngine.Object.Instantiate(matchHudPrefab);
+            MatchOverlayCommandControlsView commands =
+                matchHudInstance.GetComponentInChildren<MatchOverlayCommandControlsView>(true);
+            Assert.NotNull(commands);
+            commands.ApplyMissionRestrictionState(buildDisabled: false, supportDisabled: true);
+            Button footerSupport = null;
+            MatchOverlayCommandTabView[] commandTabs = commands.CommandTabGroup.Tabs;
+            for (int index = 0; index < commandTabs.Length; index++)
+            {
+                if (commandTabs[index]?.Button != null && commandTabs[index].Button.name == "SupportCommand")
+                {
+                    footerSupport = commandTabs[index].Button;
+                    break;
+                }
+            }
+            Assert.NotNull(footerSupport, "The V3 footer must expose its Support button.");
+            Assert.IsTrue(footerSupport.gameObject.activeSelf,
+                "The unavailable M02 footer Support button must remain visible.");
+            Assert.IsFalse(footerSupport.interactable,
+                "The unavailable M02 footer Support button must remain disabled.");
+            Assert.AreEqual("Warline/UI/Disabled Grayscale",
+                footerSupport.GetComponentInChildren<Image>(true).material.shader.name,
+                "The unavailable M02 footer Support icon must use the shared grayscale treatment.");
+            V3GradientGraphic supportGradient =
+                footerSupport.GetComponentInChildren<V3GradientGraphic>(true);
+            Assert.NotNull(supportGradient,
+                "The V3 footer Support button must retain its sharp procedural gradient.");
+            Assert.AreEqual("Warline/UI/Disabled Grayscale",
+                supportGradient.material.shader.name,
+                "The unavailable M02 footer Support gradient must also render grayscale.");
+            Assert.IsTrue(commands.BuildButton.gameObject.activeSelf);
+            Assert.IsTrue(commands.BuildButton.interactable,
+                "M02 Build must remain visible and enabled because construction is the mission objective.");
+
+            commands.ApplyMissionRestrictionState(buildDisabled: false, supportDisabled: false);
+            Assert.IsTrue(footerSupport.gameObject.activeSelf);
+            Assert.IsTrue(footerSupport.interactable,
+                "Removing the mission restriction must restore Support interaction.");
+            Assert.AreNotEqual("Warline/UI/Disabled Grayscale",
+                supportGradient.material.shader.name,
+                "Removing the mission restriction must restore the authored V3 gradient material.");
         }
         finally
         {
+            UnityEngine.Object.DestroyImmediate(matchHudInstance);
             UnityEngine.Object.DestroyImmediate(railRoot);
             UnityEngine.Object.DestroyImmediate(trayRoot);
         }

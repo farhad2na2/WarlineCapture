@@ -59,9 +59,9 @@ namespace Game.UI.Runtime
             if (root == null || reason == UiDisabledVisualReason.None)
                 return;
 
-            Image[] images = root.GetComponentsInChildren<Image>(true);
-            for (int index = 0; index < images.Length; index++)
-                SetDisabled(images[index], reason, disabled);
+            Graphic[] graphics = root.GetComponentsInChildren<Graphic>(true);
+            for (int index = 0; index < graphics.Length; index++)
+                SetDisabled(graphics[index], reason, disabled);
         }
 
         internal static void SetDisabled(
@@ -69,25 +69,33 @@ namespace Game.UI.Runtime
             UiDisabledVisualReason reason,
             bool disabled)
         {
-            if (image == null || reason == UiDisabledVisualReason.None)
+            SetDisabled((Graphic)image, reason, disabled);
+        }
+
+        private static void SetDisabled(
+            Graphic graphic,
+            UiDisabledVisualReason reason,
+            bool disabled)
+        {
+            if (graphic == null || reason == UiDisabledVisualReason.None)
                 return;
 
-            UiDisabledMaterialState state = image.GetComponent<UiDisabledMaterialState>();
+            UiDisabledMaterialState state = graphic.GetComponent<UiDisabledMaterialState>();
             if (state == null)
             {
                 if (!disabled)
                     return;
-                state = image.gameObject.AddComponent<UiDisabledMaterialState>();
+                state = graphic.gameObject.AddComponent<UiDisabledMaterialState>();
             }
 
             if (disabled)
             {
                 if (state.Reasons == UiDisabledVisualReason.None)
-                    state.OriginalMaterial = image.material;
+                    state.OriginalMaterial = graphic.material;
                 state.Reasons |= reason;
                 Material material = DisabledMaterial;
                 if (material != null)
-                    image.material = material;
+                    graphic.material = material;
                 return;
             }
 
@@ -95,7 +103,7 @@ namespace Game.UI.Runtime
             if (state.Reasons != UiDisabledVisualReason.None)
                 return;
 
-            image.material = state.OriginalMaterial;
+            graphic.material = state.OriginalMaterial;
             state.OriginalMaterial = null;
         }
 

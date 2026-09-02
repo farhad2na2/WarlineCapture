@@ -262,7 +262,7 @@ namespace Game.UI.Runtime
             SetBadge(model.BadgeVisible, model.BadgeSprite);
             SetActionState(returnAction, model.Visible && model.ReturnEnabled);
             SetActionState(destroyAction, model.Visible && model.DestroyEnabled);
-            // BoardButton is hosted in the command rail; keep it pressable so the
+            // BoardButton is a contextual squad action; keep it pressable so the
             // command system can show no-selection/invalid-selection feedback.
             SetActionState(boardAction, true);
             SetBoardActionSelected(_boardActionSelected);
@@ -330,12 +330,21 @@ namespace Game.UI.Runtime
 
         public void SetBoardActionSelected(bool selected)
         {
-            if (boardAction == null || boardAction.targetGraphic is not Image image)
+            if (boardAction == null || boardAction.targetGraphic == null)
                 return;
 
             _boardActionSelected = selected;
             CacheBoardActionNormalSprite();
-            CacheBoardActionNormalColor(image);
+            Graphic graphic = boardAction.targetGraphic;
+            CacheBoardActionNormalColor(graphic);
+            if (graphic is not Image image || boardAction.transition != Selectable.Transition.SpriteSwap)
+            {
+                SetGraphicColor(
+                    graphic,
+                    selected ? boardAction.colors.selectedColor : _boardActionNormalColor);
+                return;
+            }
+
             Sprite selectedSprite = boardAction.spriteState.selectedSprite;
             if (selected && selectedSprite != null)
             {
@@ -365,14 +374,21 @@ namespace Game.UI.Runtime
 
         private void ApplyCameraActionSelected(bool selected, bool force)
         {
-            if (cameraAction == null || cameraAction.targetGraphic is not Image image)
-                return;
-            if (!force && _cameraActionSelected == selected)
+            if (cameraAction == null || cameraAction.targetGraphic == null)
                 return;
 
             _cameraActionSelected = selected;
             CacheCameraActionNormalSprite();
-            CacheCameraActionNormalColor(image);
+            Graphic graphic = cameraAction.targetGraphic;
+            CacheCameraActionNormalColor(graphic);
+            if (graphic is not Image image || cameraAction.transition != Selectable.Transition.SpriteSwap)
+            {
+                Color desired = selected ? cameraAction.colors.selectedColor : _cameraActionNormalColor;
+                if (force || graphic.color != desired)
+                    SetGraphicColor(graphic, desired);
+                return;
+            }
+
             Sprite selectedSprite = cameraAction.spriteState.selectedSprite;
             if (selected && selectedSprite != null)
             {
@@ -451,21 +467,21 @@ namespace Game.UI.Runtime
             _cameraActionNormalSpriteCached = true;
         }
 
-        private void CacheBoardActionNormalColor(Image image)
+        private void CacheBoardActionNormalColor(Graphic graphic)
         {
-            if (_boardActionNormalColorCached || image == null)
+            if (_boardActionNormalColorCached || graphic == null)
                 return;
 
-            _boardActionNormalColor = image.color;
+            _boardActionNormalColor = graphic.color;
             _boardActionNormalColorCached = true;
         }
 
-        private void CacheCameraActionNormalColor(Image image)
+        private void CacheCameraActionNormalColor(Graphic graphic)
         {
-            if (_cameraActionNormalColorCached || image == null)
+            if (_cameraActionNormalColorCached || graphic == null)
                 return;
 
-            _cameraActionNormalColor = image.color;
+            _cameraActionNormalColor = graphic.color;
             _cameraActionNormalColorCached = true;
         }
 
@@ -804,6 +820,12 @@ namespace Game.UI.Runtime
         {
             if (image != null && image.color != color)
                 image.color = color;
+        }
+
+        private static void SetGraphicColor(Graphic graphic, Color color)
+        {
+            if (graphic != null && graphic.color != color)
+                graphic.color = color;
         }
 
         private static bool ContainsScreenPoint(RectTransform rectTransform, Vector2 screenPosition)

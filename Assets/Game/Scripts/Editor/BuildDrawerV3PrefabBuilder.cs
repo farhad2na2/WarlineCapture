@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Game.Tactical.Contracts;
@@ -7,6 +8,7 @@ using Game.UI.Contracts;
 using Game.UI.Runtime;
 using TMPro;
 using UnityEditor;
+using UnityEditor.U2D;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -42,6 +44,9 @@ namespace Game.Editor
         private static Sprite timeIcon;
         private static Sprite lockIcon;
         private static Sprite footprintIcon;
+        private static Sprite materialsIcon;
+        private static Sprite oilIcon;
+        private static Sprite fuelIcon;
 
         [MenuItem("Game/UI/V3/Rebuild Build Drawer V3 Final")]
         public static void Build()
@@ -114,6 +119,8 @@ namespace Game.Editor
         [MenuItem("Game/UI/V3/Validate Build Drawer V3 Final")]
         public static void Validate()
         {
+            V3UiFoundationBuilder.EnsureBuilt();
+            LoadAssets();
             GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
             if (prefab == null)
                 throw new FileNotFoundException($"Missing Build Drawer prefab: {PrefabPath}");
@@ -132,6 +139,26 @@ namespace Game.Editor
             if (view.Tabs == null || view.Tabs.Length != 4 || view.ItemTemplate == null ||
                 view.ItemContentRoot == null || view.PrimaryActionButton == null)
                 throw new MissingReferenceException("Build Drawer tabs, catalog, or primary action binding is missing.");
+            var categorySet = new HashSet<BuildDrawerCategory>();
+            for (int index = 0; index < view.Tabs.Length; index++)
+            {
+                BuildDrawerTabView tab = view.Tabs[index];
+                if (tab == null || tab.Button == null || tab.Frame == null || tab.LabelText == null)
+                    throw new MissingReferenceException($"Build Drawer category tab {index} is not fully bound.");
+                if (!categorySet.Add(tab.Category))
+                    throw new InvalidOperationException($"Build Drawer category {tab.Category} is bound more than once.");
+            }
+            foreach (BuildDrawerCategory category in Enum.GetValues(typeof(BuildDrawerCategory)))
+                if (!categorySet.Contains(category))
+                    throw new MissingReferenceException($"Build Drawer is missing category {category}.");
+
+            var presenterObject = new SerializedObject(presenter);
+            if (presenterObject.FindProperty("unitPrefabRegistryConfig")?.objectReferenceValue == null ||
+                presenterObject.FindProperty("buildingPlacementConfig")?.objectReferenceValue == null)
+            {
+                throw new MissingReferenceException(
+                    "Build Drawer must serialize both the unit registry and building placement catalogs.");
+            }
             if (view.ItemTemplate.ThumbnailImage == null ||
                 view.ItemTemplate.ThumbnailImage.GetComponent<AspectRatioFitter>() == null)
                 throw new InvalidOperationException("Catalog portraits must use aspect-fill without stretching.");
@@ -140,9 +167,88 @@ namespace Game.Editor
             int gradients = prefab.GetComponentsInChildren<V3GradientGraphic>(true).Length;
             if (gradients < 18)
                 throw new InvalidOperationException($"Build Drawer requires procedural directional gradients; found {gradients}.");
+            foreach (V3GradientGraphic gradient in prefab.GetComponentsInChildren<V3GradientGraphic>(true))
+            {
+                float borderWidth = new SerializedObject(gradient).FindProperty("borderWidth").floatValue;
+                if (borderWidth > .001f && Mathf.Abs(borderWidth - 3f) > .001f)
+                {
+                    throw new InvalidOperationException(
+                        $"Build Drawer {AnimationUtility.CalculateTransformPath(gradient.transform, prefab.transform)} " +
+                        $"uses {borderWidth}px border; every visible border must be exactly 3px.");
+                }
+            }
+            foreach (Button button in prefab.GetComponentsInChildren<Button>(true))
+            {
+                if (button.targetGraphic == null || !button.targetGraphic.raycastTarget)
+                {
+                    throw new InvalidOperationException(
+                        $"Build Drawer button {AnimationUtility.CalculateTransformPath(button.transform, prefab.transform)} " +
+                        "does not expose a raycastable target graphic.");
+                }
+            }
+            ValidateSpriteOwnership(prefab);
             if (AssetDatabase.LoadAssetAtPath<SpriteAtlas>(V3UiFoundationBuilder.MatchIconAtlasPath) == null)
                 throw new FileNotFoundException("Missing shared Match V3 icon atlas.");
-            Debug.Log($"[BuildDrawerV3PrefabBuilder] validation=Passed tabs=4 gradients={gradients} borders=3 images=runtime-catalog aspect=preserved");
+            Debug.Log($"[BuildDrawerV3PrefabBuilder] validation=Passed tabs=4 gradients={gradients} borders=3 images=runtime-catalog icons=shared-v3 aspect=preserved");
+        }
+
+        private static void ValidateSpriteOwnership(GameObject prefab)
+        {
+            foreach (Image image in prefab.GetComponentsInChildren<Image>(true))
+            {
+                Sprite sprite = image.sprite;
+                if (sprite == null)
+                    continue;
+
+                string path = AssetDatabase.GetAssetPath(sprite);
+                if (path.StartsWith("Assets/Game/Art/UI/V3Shared/", StringComparison.Ordinal) ||
+                    path.StartsWith("Assets/Game/Art/UI/Generated/V3Shared/", StringComparison.Ordinal) ||
+                    IsOwnedBySingleV3Atlas(path))
+                {
+                    continue;
+                }
+
+                string hierarchyPath = AnimationUtility.CalculateTransformPath(image.transform, prefab.transform);
+                bool catalogContent = hierarchyPath.EndsWith("/ArtClip/Thumb", StringComparison.Ordinal) ||
+                                      hierarchyPath.EndsWith("/PreviewClip/Preview", StringComparison.Ordinal) ||
+                                      hierarchyPath.EndsWith("/Image", StringComparison.Ordinal);
+                if (!catalogContent)
+                {
+                    throw new InvalidOperationException(
+                        $"Build Drawer UI image {hierarchyPath} uses a sprite that is not owned by the shared V3 atlas set: {path}.");
+                }
+
+                string lower = path.ToLowerInvariant();
+                if (lower.Contains("placeholder") || lower.Contains("/legacy/") ||
+                    path.StartsWith("Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/", StringComparison.Ordinal))
+                {
+                    throw new InvalidOperationException(
+                        $"Build Drawer catalog content {hierarchyPath} uses placeholder or legacy art: {path}.");
+                }
+            }
+        }
+
+        private static bool IsOwnedBySingleV3Atlas(string assetPath)
+        {
+            int owners = 0;
+            string[] atlasGuids = AssetDatabase.FindAssets(
+                "t:SpriteAtlas",
+                new[] { "Assets/Game/Art/UI/V3Shared/Atlases" });
+            for (int atlasIndex = 0; atlasIndex < atlasGuids.Length; atlasIndex++)
+            {
+                SpriteAtlas atlas = AssetDatabase.LoadAssetAtPath<SpriteAtlas>(
+                    AssetDatabase.GUIDToAssetPath(atlasGuids[atlasIndex]));
+                foreach (UnityEngine.Object packable in SpriteAtlasExtensions.GetPackables(atlas))
+                {
+                    if (!string.Equals(AssetDatabase.GetAssetPath(packable), assetPath, StringComparison.Ordinal))
+                        continue;
+                    owners++;
+                    if (owners > 1)
+                        return false;
+                }
+            }
+
+            return owners == 1;
         }
 
         [MenuItem("Game/UI/V3/Inspect Build Drawer V3 Hierarchy")]
@@ -172,6 +278,9 @@ namespace Game.Editor
             timeIcon = Require<Sprite>(V3UiFoundationBuilder.OperationsTimeIconPath);
             lockIcon = Require<Sprite>(V3UiFoundationBuilder.CommanderLockIconPath);
             footprintIcon = Require<Sprite>(V3UiFoundationBuilder.FirstLaunchTargetIconPath);
+            materialsIcon = Require<Sprite>(V3UiFoundationBuilder.MatchMaterialsIconPath);
+            oilIcon = Require<Sprite>(V3UiFoundationBuilder.MatchOilIconPath);
+            fuelIcon = Require<Sprite>(V3UiFoundationBuilder.MatchFuelIconPath);
         }
 
         private static PresenterAssets ReadPresenterAssets()
@@ -194,9 +303,9 @@ namespace Game.Editor
             RectTransform buildIcon = CreateTopLeft("BuildIcon", header, 18f, 12f, 61f, 59f);
             BuildCraneMark(buildIcon, Amber);
             CreateText(header, "Title", 91f, 5f, 370f, 72f, "BUILD", 54f, theme.TextPrimary, TextAlignmentOptions.MidlineLeft, true);
-            BuildResource(header, "Materials", 494f, "MATERIALS", "12,450", catalog.MaterialsIcon, theme.TextPrimary);
-            BuildResource(header, "Oil", 698f, "OIL", "3,280", catalog.OilIcon, theme.Amber);
-            BuildResource(header, "Fuel", 902f, "FUEL", "6,750", catalog.FuelIcon, theme.OrangeRed);
+            BuildResource(header, "Materials", 494f, "MATERIALS", "12,450", materialsIcon, theme.TextPrimary);
+            BuildResource(header, "Oil", 698f, "OIL", "3,280", oilIcon, theme.Amber);
+            BuildResource(header, "Fuel", 902f, "FUEL", "6,750", fuelIcon, theme.OrangeRed);
 
             RectTransform closeRect = CreatePanel("CloseButton", frame, 1464f, 30f, 72f, 72f, RaisedTop, DarkBottom, Line, 3f);
             closeButton = closeRect.gameObject.AddComponent<Button>();
@@ -209,7 +318,7 @@ namespace Game.Editor
         {
             RectTransform slot = CreateTopLeft(name + "Resource", parent, x, 4f, 196f, 76f);
             CreateSolid("Divider", slot, 0f, 5f, 2f, 66f, Line);
-            Image icon = CreateImage("Icon", slot, sprite, Color.white);
+            Image icon = CreateImage("Icon", slot, sprite, accent);
             SetTopLeft(icon.rectTransform, 14f, 12f, 50f, 50f);
             CreateText(slot, "Label", 72f, 4f, 116f, 28f, label, 17f, theme.TextPrimary, TextAlignmentOptions.MidlineLeft, false);
             CreateText(slot, "Value", 72f, 31f, 116f, 38f, value, 26f, accent, TextAlignmentOptions.MidlineLeft, true);
@@ -338,9 +447,9 @@ namespace Game.Editor
 
             RectTransform cost = CreateTopLeft("CostPanel", card, 3f, 289f, 401f, 48f);
             CreateSolid("CostShade", cost, 0f, 0f, 401f, 48f, new Color(0f, .02f, .025f, .9f));
-            TMP_Text materials = BuildTinyCost(cost, "MaterialsTinyCost", 8f, catalog.MaterialsIcon, materialCost, theme.TextPrimary);
-            TMP_Text fuel = BuildTinyCost(cost, "FuelTinyCost", 139f, catalog.FuelIcon, fuelCost, theme.OrangeRed);
-            TMP_Text timeTextValue = BuildTinyCost(cost, "TimeTinyCost", 270f, timeIcon, time, theme.TextPrimary);
+            TMP_Text materials = BuildTinyCost(cost, "MaterialsTinyCost", 8f, materialsIcon, materialCost, theme.TextPrimary);
+            TMP_Text fuel = BuildTinyCost(cost, "FuelTinyCost", 139f, fuelIcon, fuelCost, theme.OrangeRed);
+            TMP_Text timeTextValue = BuildTinyCost(cost, "TimeTinyCost", 270f, timeIcon, time, Amber);
 
             TMP_Text role = CreateText(card, "Role", 12f, 45f, 160f, 24f, "MILITARY STRUCTURE", 14f, Amber, TextAlignmentOptions.MidlineLeft, true);
             role.gameObject.SetActive(false);
@@ -390,7 +499,7 @@ namespace Game.Editor
         private static TMP_Text BuildTinyCost(RectTransform parent, string name, float x, Sprite sprite, string value, Color color)
         {
             RectTransform group = CreateTopLeft(name, parent, x, 4f, 126f, 40f);
-            Image icon = CreateImage("Icon", group, sprite, Color.white);
+            Image icon = CreateImage("Icon", group, sprite, color);
             SetTopLeft(icon.rectTransform, 0f, 4f, 32f, 32f);
             return CreateText(group, "Value", 39f, 0f, 84f, 40f, value, 19f, color, TextAlignmentOptions.MidlineLeft, true);
         }
@@ -412,8 +521,8 @@ namespace Game.Editor
 
             RectTransform stats = CreateTopLeft("Stats", detail, 12f, 250f, 344f, 156f);
             TMP_Text placement = BuildDetailRow(stats, "Footprint", 0f, "FOOTPRINT", "3x3", footprintIcon, Amber);
-            TMP_Text materials = BuildDetailRow(stats, "MaterialsCost", 39f, "MATERIALS", "900", catalog.MaterialsIcon, theme.TextPrimary);
-            TMP_Text fuel = BuildDetailRow(stats, "FuelCost", 78f, "FUEL", "200", catalog.FuelIcon, theme.OrangeRed);
+            TMP_Text materials = BuildDetailRow(stats, "MaterialsCost", 39f, "MATERIALS", "900", materialsIcon, theme.TextPrimary);
+            TMP_Text fuel = BuildDetailRow(stats, "FuelCost", 78f, "FUEL", "200", fuelIcon, theme.OrangeRed);
             TMP_Text production = BuildDetailRow(stats, "BuildTime", 117f, "BUILD TIME", "00:30", timeIcon, Amber);
             TMP_Text requirements = CreateText(detail, "Requirements", 16f, 411f, 336f, 31f, "REQUIRES  •  COMMAND CENTER LEVEL 1", 13f, theme.TextMuted, TextAlignmentOptions.MidlineLeft, false);
             TMP_Text description = CreateText(detail, "Description", 14f, 76f, 334f, 40f, string.Empty, 14f, theme.TextMuted, TextAlignmentOptions.TopLeft, false);
@@ -426,7 +535,7 @@ namespace Game.Editor
             RectTransform row = CreateTopLeft(name, parent, 0f, y, 344f, 38f);
             if (y > 0f)
                 CreateSolid("Divider", row, 0f, 0f, 344f, 1f, new Color(Line.r, Line.g, Line.b, .48f));
-            Image icon = CreateImage("Icon", row, sprite, Color.white);
+            Image icon = CreateImage("Icon", row, sprite, accent);
             SetTopLeft(icon.rectTransform, 4f, 6f, 26f, 26f);
             CreateText(row, "Label", 39f, 3f, 175f, 32f, label, 15f, theme.TextMuted, TextAlignmentOptions.MidlineLeft, true);
             return CreateText(row, "Value", 220f, 3f, 115f, 32f, value, 18f, accent, TextAlignmentOptions.MidlineRight, true);

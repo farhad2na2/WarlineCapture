@@ -93,7 +93,7 @@ namespace Game.Editor
         internal const string OperationsArmoryIconPath = EquipmentAmmoIconPath;
         internal const string OperationsRaidIconPath = "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_skirmish_crossed_weapons_icon.png";
         internal const string OperationsWarningIconPath = MatchV3IconRoot + "/v3_icon_warning.png";
-        internal const string OperationsDroneIconPath = MatchV3IconRoot + "/v3_icon_support.png";
+        internal const string OperationsDroneIconPath = MatchAlignedCommandRoot + "/v3_match_command_support.png";
         internal const string OperationsMapPinIconPath = MatchV3IconRoot + "/v3_icon_locate.png";
         internal const string OperationsMapPinUnderlayPath = MatchV3IconRoot + "/v3_icon_friendly_marker.png";
         internal const string OperationsTankIconPath = MissionVehicleIconPath;

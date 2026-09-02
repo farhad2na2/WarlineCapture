@@ -5,7 +5,9 @@ using Game.UI.Contracts;
 using Game.UI.Runtime;
 using TMPro;
 using UnityEditor;
+using UnityEditor.U2D;
 using UnityEngine;
+using UnityEngine.U2D;
 using UnityEngine.UI;
 
 namespace Game.Editor
@@ -147,6 +149,14 @@ namespace Game.Editor
             AssertAction(view.ResumeButton, UiActionKind.ClosePause);
             AssertAction(view.SettingsButton, UiActionKind.OpenSettings);
             AssertAction(view.ExitButton, UiActionKind.MatchMenu);
+            Button[] buttons = prefab.GetComponentsInChildren<Button>(true);
+            for (int index = 0; index < buttons.Length; index++)
+            {
+                Button button = buttons[index];
+                if (button.targetGraphic == null || !button.targetGraphic.raycastTarget)
+                    throw new InvalidOperationException(
+                        $"POP-07 {button.name} must expose a raycastable target graphic.");
+            }
 
             if (prefab.GetComponentsInChildren<MainMenuV3SectionLayoutView>(true).Length != 1)
                 throw new InvalidOperationException("POP-07 must serialize one responsive reference composition.");
@@ -160,13 +170,35 @@ namespace Game.Editor
                 string path = AssetDatabase.GetAssetPath(sprite);
                 if (!path.StartsWith("Assets/Game/Art/UI/V3Shared/", StringComparison.Ordinal) &&
                     !path.StartsWith("Assets/Game/Art/UI/Generated/V3Shared/", StringComparison.Ordinal) &&
-                    !path.StartsWith("Assets/Game/Art/UI/Icons/", StringComparison.Ordinal) &&
-                    !path.StartsWith("Assets/Game/Art/UI/Generated/", StringComparison.Ordinal) &&
-                    !path.StartsWith("Assets/Synty/InterfaceMilitaryCombatHUD/", StringComparison.Ordinal))
+                    !IsOwnedBySingleV3Atlas(path))
                 {
-                    throw new InvalidOperationException($"POP-07 uses non-canonical sprite {path}.");
+                    throw new InvalidOperationException(
+                        $"POP-07 uses a sprite that is not owned by the shared V3 atlas set: {path} at {GetPath(images[index].transform, prefab.transform)}.");
                 }
             }
+        }
+
+        private static bool IsOwnedBySingleV3Atlas(string assetPath)
+        {
+            int owners = 0;
+            string[] atlasGuids = AssetDatabase.FindAssets(
+                "t:SpriteAtlas",
+                new[] { "Assets/Game/Art/UI/V3Shared/Atlases" });
+            for (int atlasIndex = 0; atlasIndex < atlasGuids.Length; atlasIndex++)
+            {
+                SpriteAtlas atlas = AssetDatabase.LoadAssetAtPath<SpriteAtlas>(
+                    AssetDatabase.GUIDToAssetPath(atlasGuids[atlasIndex]));
+                foreach (UnityEngine.Object packable in SpriteAtlasExtensions.GetPackables(atlas))
+                {
+                    if (!string.Equals(AssetDatabase.GetAssetPath(packable), assetPath, StringComparison.Ordinal))
+                        continue;
+                    owners++;
+                    if (owners > 1)
+                        return false;
+                }
+            }
+
+            return owners == 1;
         }
 
         private static void BuildHeader(
@@ -472,6 +504,7 @@ namespace Game.Editor
         {
             RectTransform rect = CreateTopLeft(name, parent, x, y, width, height);
             V3GradientGraphic graphic = AddGradient(rect, top, bottom, border, borderWidth);
+            graphic.raycastTarget = true;
             Button button = rect.gameObject.AddComponent<Button>();
             button.targetGraphic = graphic;
             button.transition = Selectable.Transition.None;
@@ -624,6 +657,18 @@ namespace Game.Editor
                     return found;
             }
             return null;
+        }
+
+        private static string GetPath(Transform current, Transform root)
+        {
+            string path = current.name;
+            while (current.parent != null && current != root)
+            {
+                current = current.parent;
+                path = current.name + "/" + path;
+            }
+
+            return path;
         }
 
         private static void ClearChildren(Transform root)

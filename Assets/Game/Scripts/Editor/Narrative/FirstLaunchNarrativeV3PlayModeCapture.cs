@@ -33,6 +33,7 @@ namespace Game.Editor
         private static int frameCount;
         private static string pendingPath;
         private static bool captureRequested;
+        private static bool stateConfigured;
         private static bool exitRequested;
 
         static FirstLaunchNarrativeV3PlayModeCapture()
@@ -112,11 +113,20 @@ namespace Game.Editor
             if (frameCount < 30)
                 return;
 
-            ConfigureState(stateIndex);
+            if (!stateConfigured)
+            {
+                ConfigureState(stateIndex);
+                stateConfigured = true;
+            }
             Canvas.ForceUpdateCanvases();
 
             if (!captureRequested)
             {
+                // Let controls complete their authored color transition after the
+                // hidden narrative CanvasGroup becomes interactive. Capturing on the
+                // enable frame falsely made stable opaque panels look translucent.
+                if (frameCount < 38)
+                    return;
                 pendingPath = OutputPath(stateIndex, SessionState.GetString(SuffixKey, "capture"));
                 if (File.Exists(pendingPath))
                     File.Delete(pendingPath);
@@ -132,6 +142,7 @@ namespace Game.Editor
             Debug.Log($"[FirstLaunchNarrativeV3PlayModeCapture] state={StateName(stateIndex)} capture={pendingPath} screen={Screen.width}x{Screen.height}");
             stateIndex++;
             captureRequested = false;
+            stateConfigured = false;
             pendingPath = null;
             frameCount = 0;
 
@@ -251,6 +262,7 @@ namespace Game.Editor
             frameCount = 0;
             pendingPath = null;
             captureRequested = false;
+            stateConfigured = false;
             exitRequested = false;
         }
 
@@ -266,6 +278,24 @@ namespace Game.Editor
             EditorApplication.update -= Tick;
             MainMenuV3PrefabBuilder.SetGameViewResolution(1920, 1080);
             Debug.Log($"[FirstLaunchNarrativeV3PlayModeCapture] result=Passed states=4 requested={width}x{height} suffix={suffix}");
+            if (IsCommandLineCapture())
+                EditorApplication.Exit(0);
+        }
+
+        private static bool IsCommandLineCapture()
+        {
+            string[] arguments = Environment.GetCommandLineArgs();
+            for (int i = 0; i + 1 < arguments.Length; i++)
+            {
+                if (!string.Equals(arguments[i], "-executeMethod", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                return arguments[i + 1].StartsWith(
+                    "Game.Editor.FirstLaunchNarrativeV3PlayModeCapture.Capture",
+                    StringComparison.Ordinal);
+            }
+
+            return false;
         }
     }
 }

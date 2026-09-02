@@ -19,6 +19,7 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
     private World _world;
     private GameObject _instance;
 
+    [MenuItem("Game/Validation/Run Match HUD Command Controls Focused")]
     public static void RunFocusedValidation()
     {
         try
@@ -26,18 +27,19 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
             RunValidationStep(nameof(MatchHudCommandControlsHaveSerializedButtonReferences), tests => tests.MatchHudCommandControlsHaveSerializedButtonReferences());
             RunValidationStep(nameof(MatchHudScanCommandHasOwnRaycastTarget), tests => tests.MatchHudScanCommandHasOwnRaycastTarget());
             RunValidationStep(nameof(MatchHudCommandButtonsSubmitSelectionCommandRequests), tests => tests.MatchHudCommandButtonsSubmitSelectionCommandRequests());
-            RunValidationStep(nameof(MatchHudBoardButtonIsRailCommandAndQueuesBoardTargetMode), tests => tests.MatchHudBoardButtonIsRailCommandAndQueuesBoardTargetMode());
+            RunValidationStep(nameof(MatchHudV3FooterBuildButtonInvokesDrawerCallback), tests => tests.MatchHudV3FooterBuildButtonInvokesDrawerCallback());
+            RunValidationStep(nameof(MatchHudBoardButtonIsContextualSquadCommandAndQueuesBoardTargetMode), tests => tests.MatchHudBoardButtonIsContextualSquadCommandAndQueuesBoardTargetMode());
             RunValidationStep(nameof(MatchHudFooterSectionBoardButtonQueuesBoardTargetMode), tests => tests.MatchHudFooterSectionBoardButtonQueuesBoardTargetMode());
             RunValidationStep(nameof(MatchHudSelectionPanelCameraButtonQueuesToggleFollowMode), tests => tests.MatchHudSelectionPanelCameraButtonQueuesToggleFollowMode());
-            RunValidationStep(nameof(MatchHudSelectionPanelCameraButtonUsesCommandButtonSpriteStates), tests => tests.MatchHudSelectionPanelCameraButtonUsesCommandButtonSpriteStates());
+            RunValidationStep(nameof(MatchHudSelectionPanelCameraButtonUsesV3GradientStates), tests => tests.MatchHudSelectionPanelCameraButtonUsesV3GradientStates());
             RunValidationStep(nameof(MatchHudSelectionPanelCameraButtonAppliesEnabledAndSelectedState), tests => tests.MatchHudSelectionPanelCameraButtonAppliesEnabledAndSelectedState());
-            RunValidationStep(nameof(MatchHudSelectionPanelCameraButtonHoverAndPressUseSpriteSwapStates), tests => tests.MatchHudSelectionPanelCameraButtonHoverAndPressUseSpriteSwapStates());
+            RunValidationStep(nameof(MatchHudSelectionPanelCameraButtonHoverAndPressUseV3ColorStates), tests => tests.MatchHudSelectionPanelCameraButtonHoverAndPressUseV3ColorStates());
             RunValidationStep(nameof(MatchHudRightQuickRailZoomButtonsUseSpriteSwapStates), tests => tests.MatchHudRightQuickRailZoomButtonsUseSpriteSwapStates());
             RunValidationStep(nameof(MatchHudRightQuickRailZoomButtonsApplyStepState), tests => tests.MatchHudRightQuickRailZoomButtonsApplyStepState());
             RunValidationStep(nameof(MatchHudRightQuickRailButtonsEmitPrimaryClickAudio), tests => tests.MatchHudRightQuickRailButtonsEmitPrimaryClickAudio());
             RunValidationStep(nameof(MatchHudThreatJumpPanelBindsTitleAndAutoHides), tests => tests.MatchHudThreatJumpPanelBindsTitleAndAutoHides());
             RunValidationStep(nameof(LegacySupportCommandTabRoutesToScanCommandMode), tests => tests.LegacySupportCommandTabRoutesToScanCommandMode());
-            Debug.Log("[MatchHudCommandControlsCurrentPrefabValidation] result=Passed tests=14");
+            Debug.Log("[MatchHudCommandControlsCurrentPrefabValidation] result=Passed tests=15 v3FooterBuildDrawer=Passed");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -169,13 +171,37 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
     }
 
     [Test]
-    public void MatchHudBoardButtonIsRailCommandAndQueuesBoardTargetMode()
+    public void MatchHudV3FooterBuildButtonInvokesDrawerCallback()
+    {
+        MatchOverlayCommandControlsView controls = LoadControls();
+        AssertButton(controls.BuildButton, "Build");
+        Assert.IsTrue(IsChildOfNamedTransform(controls.BuildButton.transform, "CommandRail"),
+            "M02 must use the visible V3 footer Build command, not the disabled legacy right rail.");
+
+        int openRequests = 0;
+        var inputSystem = new MatchOverlayCommandInputUiSystemHelper();
+        inputSystem.Bind(
+            controls,
+            selectionUiCommandSystem: null,
+            showBuildDrawer: () => openRequests++);
+
+        controls.BuildButton.onClick.Invoke();
+
+        Assert.AreEqual(1, openRequests,
+            "Pressing the visible V3 footer Build command must request the Build drawer exactly once.");
+        inputSystem.Unbind(controls);
+    }
+
+    [Test]
+    public void MatchHudBoardButtonIsContextualSquadCommandAndQueuesBoardTargetMode()
     {
         MatchOverlayCommandControlsView controls = LoadControls();
         Button boardButton = controls.BoardButton;
         Assert.NotNull(boardButton, "BoardButton must exist in the Match HUD prefab.");
-        Assert.IsTrue(IsChildOfNamedTransform(boardButton.transform, "CommandRail"), "BoardButton must live under the bottom CommandRail.");
-        Assert.IsFalse(IsChildOfNamedTransform(boardButton.transform, "CommandButtons"), "BoardButton must no longer live in the selected-squad CommandButtons cluster.");
+        Assert.IsFalse(IsChildOfNamedTransform(boardButton.transform, "CommandRail"),
+            "The eight-command V3 rail must not gain a duplicate contextual Board action.");
+        Assert.IsTrue(IsChildOfNamedTransform(boardButton.transform, "CommandButtons"),
+            "BoardButton must remain in the selected-squad contextual command cluster.");
 
         var inputSystem = new MatchOverlayCommandInputUiSystemHelper();
         var selectionUiCommand = new SelectionUiCommandUiSystemHelper(new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager));
@@ -243,21 +269,20 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
     }
 
     [Test]
-    public void MatchHudSelectionPanelCameraButtonUsesCommandButtonSpriteStates()
+    public void MatchHudSelectionPanelCameraButtonUsesV3GradientStates()
     {
         MatchHudSelectionPanelView selectionPanel = _instance.GetComponentInChildren<MatchHudSelectionPanelView>(true);
         Assert.NotNull(selectionPanel, "SCN08_MatchHudContent must expose MatchHudSelectionPanelView.");
         Button cameraButton = GetSerializedCameraButton(selectionPanel);
-        Image targetImage = cameraButton.targetGraphic as Image;
+        V3GradientGraphic target = cameraButton.targetGraphic as V3GradientGraphic;
 
-        Assert.AreEqual(Selectable.Transition.SpriteSwap, cameraButton.transition, "CameraButton must use SpriteSwap like the other Target Lock command buttons.");
-        Assert.NotNull(targetImage, "CameraButton must use an Image target graphic for sprite-state swaps.");
-        Assert.IsTrue(targetImage.raycastTarget, "CameraButton target graphic must receive raycasts.");
-        Assert.IsTrue(targetImage.transform.IsChildOf(cameraButton.transform), "CameraButton target graphic must belong to the CameraButton hierarchy.");
-        Assert.NotNull(cameraButton.spriteState.highlightedSprite, "CameraButton highlighted/hover sprite is required.");
-        Assert.NotNull(cameraButton.spriteState.pressedSprite, "CameraButton pressed/impact sprite is required.");
-        Assert.NotNull(cameraButton.spriteState.selectedSprite, "CameraButton selected/current sprite is required.");
-        Assert.NotNull(cameraButton.spriteState.disabledSprite, "CameraButton disabled sprite is required.");
+        Assert.AreEqual(Selectable.Transition.ColorTint, cameraButton.transition,
+            "CameraButton must preserve its procedural V3 gradient while applying pointer states.");
+        Assert.NotNull(target, "CameraButton must use the shared procedural V3 gradient target.");
+        Assert.IsTrue(target.raycastTarget, "CameraButton target graphic must receive raycasts.");
+        Assert.IsTrue(target.transform.IsChildOf(cameraButton.transform), "CameraButton target graphic must belong to the CameraButton hierarchy.");
+        Assert.AreEqual(0f, cameraButton.colors.fadeDuration, .001f,
+            "CameraButton pointer feedback must be immediate on touch.");
 
         Button[] nestedButtons = cameraButton.GetComponentsInChildren<Button>(true);
         Assert.AreEqual(1, nestedButtons.Length, "CameraButton must remain the actual clickable root, with no hidden child hotspot buttons.");
@@ -270,9 +295,9 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
         MatchHudSelectionPanelView selectionPanel = _instance.GetComponentInChildren<MatchHudSelectionPanelView>(true);
         Assert.NotNull(selectionPanel, "SCN08_MatchHudContent must expose MatchHudSelectionPanelView.");
         Button cameraButton = GetSerializedCameraButton(selectionPanel);
-        Image targetImage = cameraButton.targetGraphic as Image;
-        Assert.NotNull(targetImage, "CameraButton must use an Image target graphic for state application.");
-        Sprite normalSprite = targetImage.sprite;
+        Graphic target = cameraButton.targetGraphic;
+        Assert.IsInstanceOf<V3GradientGraphic>(target, "CameraButton must keep its procedural V3 gradient for state application.");
+        Color normalColor = target.color;
 
         selectionPanel.SetSelectionVisible(true);
         selectionPanel.SetCameraActionEnabled(false);
@@ -282,34 +307,34 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
         Assert.IsTrue(cameraButton.interactable, "CameraButton must be enabled when the tactical-follow read model has a followable target.");
 
         selectionPanel.SetCameraActionSelected(true);
-        Assert.AreSame(cameraButton.spriteState.selectedSprite, targetImage.sprite, "CameraButton selected state must persist visually while follow mode is active.");
-        Assert.AreSame(cameraButton.spriteState.selectedSprite, targetImage.overrideSprite, "CameraButton selected state must own the rendered SpriteSwap override while follow mode is active.");
+        Assert.AreEqual(cameraButton.colors.selectedColor, target.color,
+            "CameraButton selected state must persist visibly while follow mode is active.");
 
-        targetImage.overrideSprite = null;
+        target.color = Color.white;
         selectionPanel.SetCameraActionSelected(true);
-        Assert.AreSame(cameraButton.spriteState.selectedSprite, targetImage.overrideSprite, "CameraButton selected state must be reasserted after normal UI transitions clear the override.");
+        Assert.AreEqual(cameraButton.colors.selectedColor, target.color,
+            "CameraButton selected state must be reasserted after normal UI transitions clear its tint.");
 
         selectionPanel.SetCameraActionSelected(false);
-        Assert.AreSame(normalSprite, targetImage.sprite, "CameraButton must restore its configured normal sprite when follow mode exits.");
-        Assert.IsNull(GetStoredOverrideSprite(targetImage), "CameraButton must release its selected SpriteSwap override when follow mode exits.");
+        Assert.AreEqual(normalColor, target.color,
+            "CameraButton must restore its authored V3 gradient tint when follow mode exits.");
     }
 
     [Test]
-    public void MatchHudSelectionPanelCameraButtonHoverAndPressUseSpriteSwapStates()
+    public void MatchHudSelectionPanelCameraButtonHoverAndPressUseV3ColorStates()
     {
         MatchHudSelectionPanelView selectionPanel = _instance.GetComponentInChildren<MatchHudSelectionPanelView>(true);
         Assert.NotNull(selectionPanel, "SCN08_MatchHudContent must expose MatchHudSelectionPanelView.");
         Button cameraButton = GetSerializedCameraButton(selectionPanel);
-        Image targetImage = cameraButton.targetGraphic as Image;
-        Assert.NotNull(targetImage, "CameraButton must use an Image target graphic for live sprite transitions.");
-        Sprite normalSprite = targetImage.sprite;
+        Graphic target = cameraButton.targetGraphic;
+        Assert.IsInstanceOf<V3GradientGraphic>(target, "CameraButton must use its V3 gradient for live pointer transitions.");
 
         ActivateHierarchy(cameraButton.transform);
         selectionPanel.SetSelectionVisible(true);
         selectionPanel.SetCameraActionEnabled(true);
         selectionPanel.SetCameraActionSelected(false);
-        Assert.AreSame(normalSprite, targetImage.sprite, "CameraButton starts from its configured normal sprite.");
-        Assert.IsNull(GetStoredOverrideSprite(targetImage), "CameraButton starts with no live transition override sprite.");
+        Assert.AreEqual(cameraButton.colors.normalColor, target.canvasRenderer.GetColor(),
+            "CameraButton starts from its configured normal V3 tint.");
 
         var pointerEvent = new PointerEventData(EventSystem.current)
         {
@@ -317,17 +342,20 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
         };
         Assert.IsTrue(cameraButton.IsActive(), "CameraButton must be active before live pointer transition validation.");
         cameraButton.OnPointerEnter(pointerEvent);
-        Assert.AreSame(cameraButton.spriteState.highlightedSprite, targetImage.overrideSprite, "CameraButton hover must use the highlighted sprite.");
+        Assert.AreEqual(cameraButton.colors.highlightedColor, target.canvasRenderer.GetColor(),
+            "CameraButton hover must apply the highlighted V3 tint.");
 
         cameraButton.OnPointerDown(pointerEvent);
-        Assert.AreSame(cameraButton.spriteState.pressedSprite, targetImage.overrideSprite, "CameraButton press must use the pressed sprite.");
+        Assert.AreEqual(cameraButton.colors.pressedColor, target.canvasRenderer.GetColor(),
+            "CameraButton press must apply the pressed V3 tint.");
 
         cameraButton.OnPointerUp(pointerEvent);
-        Assert.AreSame(cameraButton.spriteState.highlightedSprite, targetImage.overrideSprite, "CameraButton release while hovered must return to highlighted sprite.");
+        Assert.AreEqual(cameraButton.colors.highlightedColor, target.canvasRenderer.GetColor(),
+            "CameraButton release while hovered must return to the highlighted V3 tint.");
 
         cameraButton.OnPointerExit(pointerEvent);
-        Assert.AreSame(normalSprite, targetImage.sprite, "CameraButton exit must preserve the configured normal sprite.");
-        Assert.IsNull(GetStoredOverrideSprite(targetImage), "CameraButton exit must release the live transition override sprite.");
+        Assert.AreEqual(cameraButton.colors.normalColor, target.canvasRenderer.GetColor(),
+            "CameraButton exit must restore the normal V3 tint.");
     }
 
     [Test]
@@ -690,5 +718,11 @@ public sealed class MatchHudCommandControlsCurrentPrefabTests
     {
         Assert.NotNull(button, $"{label} button reference is required.");
         Assert.IsTrue(button.interactable, $"{label} button should be interactable.");
+        Image rootHitTarget = button.GetComponent<Image>();
+        Assert.NotNull(rootHitTarget, $"{label} command needs a full-rect root Image hit target.");
+        Assert.IsTrue(rootHitTarget.enabled, $"{label} command root hit target must remain enabled.");
+        Assert.IsTrue(rootHitTarget.raycastTarget, $"{label} command root hit target must receive raycasts.");
+        Assert.NotNull(button.targetGraphic, $"{label} command target graphic is required.");
+        Assert.IsTrue(button.targetGraphic.raycastTarget, $"{label} command target graphic must receive raycasts.");
     }
 }

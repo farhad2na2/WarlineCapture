@@ -9,6 +9,7 @@ using NUnit.Framework;
 using TMPro;
 using Unity.Collections;
 using Unity.Entities;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,6 +17,7 @@ public sealed class M01FirstContactHudRestrictionTests
 {
     private const string Marker = "[M01FirstContactHudRestrictionValidation] result=Passed tests=7";
 
+    [MenuItem("Game/Validation/Run M01 First Contact HUD Restrictions Focused")]
     public static void RunFocusedValidation()
     {
         int passed = 0;
@@ -132,7 +134,10 @@ public sealed class M01FirstContactHudRestrictionTests
                 ?.SetValue(root.GetComponent<MatchHudRightQuickRailView>(), build);
 
             MatchHudRightQuickRailView view = root.GetComponent<MatchHudRightQuickRailView>();
-            view.ApplyMissionRestrictionVisibility(buildDisabled: true, supportDisabled: true);
+            view.ApplyMissionRestrictionVisibility(
+                buildDisabled: true,
+                supportDisabled: true,
+                hideUnrelatedControls: true);
             Assert.That(build.gameObject.activeSelf, Is.True);
             Assert.That(support.gameObject.activeSelf, Is.True);
             Assert.That(build.interactable, Is.False);
@@ -227,7 +232,8 @@ public sealed class M01FirstContactHudRestrictionTests
             view.ApplyMissionRestrictionVisibility(
                 combatVehiclesDisabled: true,
                 airDisabled: true,
-                transportDisabled: true);
+                transportDisabled: true,
+                hideUnrelatedControls: true);
             Assert.That(cards[0].Button.gameObject.activeSelf, Is.True, "The authored soldier command squad must remain available.");
             for (int i = 1; i < cards.Length; i++)
             {

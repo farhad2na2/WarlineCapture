@@ -13,8 +13,9 @@ using UnityEngine.UI;
 public sealed class M02EstablishBaseDoItTests
 {
     private const string Marker =
-        "[M02EstablishBaseDoItValidation] result=Passed tests=9 routes=5 lateBinding=Passed";
+        "[M02EstablishBaseDoItValidation] result=Passed tests=10 routes=5 v3FooterBuild=Passed lateBinding=Passed";
 
+    [UnityEditor.MenuItem("Game/Validation/Run M02 V3 Footer Do It Focused")]
     public static void RunFocusedValidation()
     {
         int passed = 0;
@@ -34,6 +35,7 @@ public sealed class M02EstablishBaseDoItTests
             Run(tests.OneDoItRequestRetriesUntilTheBarracksControlIsReady, ref passed);
             Run(tests.LateAssistantBindRestoresTheAlreadyOpenBuildDrawer, ref passed);
             Run(tests.RifleDoItKeepsBuildDrawerOpenWhileTheStagedActionRetries, ref passed);
+            Run(tests.V3FooterBuildButtonRemainsTheM02DoItTargetWithoutLegacyRightRail, ref passed);
             Debug.Log(Marker);
             ValidationExit.Passed();
         }
@@ -248,6 +250,53 @@ public sealed class M02EstablishBaseDoItTests
 
         Assert.That(helper.IsBuildDrawerSelectionGuidance, Is.True,
             "Reopening ARIA while rifle production is staged must not close the Build drawer and flash it.");
+    }
+
+    [Test]
+    public void V3FooterBuildButtonRemainsTheM02DoItTargetWithoutLegacyRightRail()
+    {
+        GameObject footerObject = new("V3 Footer", typeof(RectTransform));
+        GameObject buildObject = new("BuildCommand", typeof(RectTransform), typeof(Image), typeof(Button));
+        buildObject.transform.SetParent(footerObject.transform, false);
+        MatchOverlayCommandControlsView controls =
+            footerObject.AddComponent<MatchOverlayCommandControlsView>();
+        SetField(controls, "buildButton", buildObject.GetComponent<Button>());
+        MainMenuPlayUI owner = new();
+
+        try
+        {
+            int buildClicks = 0;
+            buildObject.GetComponent<Button>().onClick.AddListener(() => buildClicks++);
+
+            // The V3 prefab disables the former right quick rail. Binding the footer
+            // command controls must still give ARIA a concrete M2 Open Build target,
+            // exactly as the installed match HUD does at runtime.
+            owner.BindMatchHudRightQuickRail(null);
+            owner.BindMatchHudCommandControls(controls);
+
+            MatchHudAssistantUiSystemHelper assistant =
+                GetField<MatchHudAssistantUiSystemHelper>(owner, "_matchHudAssistantUiSystem");
+            AssistantHighlightPresentationSystemHelper highlight =
+                GetField<AssistantHighlightPresentationSystemHelper>(
+                    assistant,
+                    "_highlightPresentationSystem");
+            highlight.BeginPendingShowMe(
+                (byte)AssistantRecommendationKind.Build,
+                (byte)AssistantTargetKind.UiSurface);
+
+            Assert.That(highlight.TryExecuteUiSurface(
+                (byte)AssistantRecommendationKind.Build,
+                (byte)AssistantTargetKind.UiSurface), Is.True);
+            Assert.That(buildClicks, Is.EqualTo(1));
+            Assert.That(
+                GetField<Button>(highlight, "_buildGuidanceButton"),
+                Is.SameAs(buildObject.GetComponent<Button>()));
+        }
+        finally
+        {
+            owner.Dispose();
+            UnityEngine.Object.DestroyImmediate(footerObject);
+        }
     }
 
     private static UiAssistantPanelModel Panel(

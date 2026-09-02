@@ -43,8 +43,8 @@ public sealed class CanonicalResourceIconAlignmentTests
         AssertUses(MatchHudPrefab, MaterialsIcon, OilIcon, FuelIcon);
         AssertDoesNotUse(MatchHudPrefab, CreditsIcon, CommandIcon);
 
-        AssertUses(BuildDrawerPrefab, MaterialsIcon, FuelIcon);
-        AssertDoesNotUse(BuildDrawerPrefab, CreditsIcon, CommandIcon);
+        AssertUses(BuildDrawerPrefab, V3MaterialsIcon, V3OilIcon, V3FuelIcon);
+        AssertDoesNotUse(BuildDrawerPrefab, CreditsIcon, CommandIcon, MaterialsIcon, OilIcon, FuelIcon);
 
         AssertUses(PlacementBarPrefab, V3MaterialsIcon, V3OilIcon, V3FuelIcon);
         AssertDoesNotUse(PlacementBarPrefab, CreditsIcon, CommandIcon, MaterialsIcon, OilIcon, FuelIcon);

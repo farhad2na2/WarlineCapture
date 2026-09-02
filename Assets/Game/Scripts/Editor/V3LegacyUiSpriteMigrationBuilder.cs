@@ -15,6 +15,13 @@ namespace Game.Editor
         private const string UiPrefabRoot = "Assets/Game/Prefabs/UI";
         private const string AtlasRoot = "Assets/Game/Art/UI/V3Shared/Atlases";
         private const string SyntySpriteRoot = "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/";
+        private const string GeneratedMatchIconRoot = "Assets/Game/Art/UI/Generated/V3Shared/Icons";
+        private static readonly string[] SharedSmallSpriteRoots =
+        {
+            "Assets/Game/Art/UI/V3Shared/Sprites",
+            "Assets/Game/Art/UI/Generated/V3Shared/Icons",
+            "Assets/Game/Art/UI/Generated/V3Shared/MatchCommandsAligned"
+        };
 
         private static readonly Dictionary<string, string> Replacements = new(StringComparer.Ordinal)
         {
@@ -34,7 +41,27 @@ namespace Game.Editor
             [SyntySpriteRoot + "Icons_Resources/ICON_SM_Item_Binoculars_01_Military.png"] = V3UiFoundationBuilder.OperationsPatrolIconPath,
             [SyntySpriteRoot + "Icons_Resources/ICON_SM_Prop_MedicalBox_02_BattleRoyale.png"] = V3UiFoundationBuilder.OperationsAidIconPath,
             [SyntySpriteRoot + "Icons_Special/ICON_MilitaryCombat_Special_Drone_01_Clean.png"] = V3UiFoundationBuilder.OperationsDroneIconPath,
-            [SyntySpriteRoot + "Icons_Status/ICON_MilitaryCombat_Status_Burning_01_Clean.png"] = V3UiFoundationBuilder.OperationsHeatIconPath
+            [SyntySpriteRoot + "Icons_Status/ICON_MilitaryCombat_Status_Burning_01_Clean.png"] = V3UiFoundationBuilder.OperationsHeatIconPath,
+            [GeneratedMatchIconRoot + "/v3_icon_select.png"] = V3UiFoundationBuilder.MatchSelectIconPath,
+            [GeneratedMatchIconRoot + "/v3_icon_move.png"] = V3UiFoundationBuilder.MatchMoveIconPath,
+            [GeneratedMatchIconRoot + "/v3_icon_attack.png"] = V3UiFoundationBuilder.MatchAttackIconPath,
+            [GeneratedMatchIconRoot + "/v3_icon_stop.png"] = V3UiFoundationBuilder.MatchStopIconPath,
+            [GeneratedMatchIconRoot + "/v3_icon_support.png"] = V3UiFoundationBuilder.MatchSupportIconPath,
+            [GeneratedMatchIconRoot + "/v3_icon_hold.png"] = V3UiFoundationBuilder.MatchHoldIconPath,
+            [GeneratedMatchIconRoot + "/v3_icon_scan.png"] = V3UiFoundationBuilder.MatchScanIconPath,
+            [GeneratedMatchIconRoot + "/v3_icon_build.png"] = V3UiFoundationBuilder.MatchBuildIconPath
+        };
+
+        private static readonly string[] ObsoleteCommandDuplicatePaths =
+        {
+            GeneratedMatchIconRoot + "/v3_icon_select.png",
+            GeneratedMatchIconRoot + "/v3_icon_move.png",
+            GeneratedMatchIconRoot + "/v3_icon_attack.png",
+            GeneratedMatchIconRoot + "/v3_icon_stop.png",
+            GeneratedMatchIconRoot + "/v3_icon_support.png",
+            GeneratedMatchIconRoot + "/v3_icon_hold.png",
+            GeneratedMatchIconRoot + "/v3_icon_scan.png",
+            GeneratedMatchIconRoot + "/v3_icon_build.png"
         };
 
         private static readonly HashSet<string> RemovedDecorativeSprites = new(StringComparer.Ordinal)
@@ -50,6 +77,7 @@ namespace Game.Editor
             V3UiFoundationBuilder.Build();
             int prefabs = 0;
             int replacements = 0;
+            int removedDuplicates = 0;
             string[] guids = AssetDatabase.FindAssets("t:Prefab", new[] { UiPrefabRoot });
             for (int i = 0; i < guids.Length; i++)
             {
@@ -92,10 +120,20 @@ namespace Game.Editor
                 }
             }
 
+            for (int index = 0; index < ObsoleteCommandDuplicatePaths.Length; index++)
+            {
+                string obsoletePath = ObsoleteCommandDuplicatePaths[index];
+                if (AssetDatabase.LoadMainAssetAtPath(obsoletePath) == null)
+                    continue;
+                if (!AssetDatabase.DeleteAsset(obsoletePath))
+                    throw new IOException($"Could not remove obsolete duplicate V3 command icon: {obsoletePath}");
+                removedDuplicates++;
+            }
+
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             Validate();
-            Debug.Log($"[V3LegacyUiSpriteMigrationBuilder] result=Passed prefabs={prefabs} replacements={replacements} legacySprites=0 placeholderSprites=0 atlasPackableDuplicates=0");
+            Debug.Log($"[V3LegacyUiSpriteMigrationBuilder] result=Passed prefabs={prefabs} replacements={replacements} removedDuplicates={removedDuplicates} legacySprites=0 placeholderSprites=0 atlasPackableDuplicates=0 atlasOrphans=0");
         }
 
         [MenuItem("Game/UI/V3/Validate No Legacy Or Placeholder UI Sprites")]
@@ -103,6 +141,7 @@ namespace Game.Editor
         {
             V3UiFoundationBuilder.Validate();
             string[] guids = AssetDatabase.FindAssets("t:Prefab", new[] { UiPrefabRoot });
+            int spriteReferences = 0;
             for (int i = 0; i < guids.Length; i++)
             {
                 string prefabPath = AssetDatabase.GUIDToAssetPath(guids[i]);
@@ -113,6 +152,7 @@ namespace Game.Editor
                     {
                         if (image.sprite == null)
                             continue;
+                        spriteReferences++;
                         string path = AssetDatabase.GetAssetPath(image.sprite);
                         string lower = path.ToLowerInvariant();
                         if (path.StartsWith(SyntySpriteRoot, StringComparison.Ordinal) ||
@@ -129,10 +169,14 @@ namespace Game.Editor
                 }
             }
 
-            ValidateAtlasPackablesAreUnique();
+            int packedSharedSprites = ValidateAtlasPackablesAreUniqueAndComplete();
+            Debug.Log(
+                $"[V3LegacyUiSpriteMigrationBuilder] validation=Passed prefabs={guids.Length} " +
+                $"spriteReferences={spriteReferences} legacySprites=0 placeholderSprites=0 " +
+                $"atlasPackableDuplicates=0 atlasOrphans=0 packedSharedSprites={packedSharedSprites}");
         }
 
-        private static void ValidateAtlasPackablesAreUnique()
+        private static int ValidateAtlasPackablesAreUniqueAndComplete()
         {
             var ownerByPackable = new Dictionary<string, string>(StringComparer.Ordinal);
             string[] guids = AssetDatabase.FindAssets("t:SpriteAtlas", new[] { AtlasRoot });
@@ -148,6 +192,26 @@ namespace Game.Editor
                     ownerByPackable.Add(packablePath, atlasPath);
                 }
             }
+
+            int packedSharedSprites = 0;
+            string[] sharedSpriteGuids = AssetDatabase.FindAssets("t:Texture2D", SharedSmallSpriteRoots);
+            for (int index = 0; index < sharedSpriteGuids.Length; index++)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(sharedSpriteGuids[index]);
+                if (string.IsNullOrEmpty(path))
+                    continue;
+                if (!ownerByPackable.TryGetValue(path, out string owner))
+                {
+                    throw new InvalidOperationException(
+                        $"Shared V3 small sprite is not owned by an atlas: {path}.");
+                }
+
+                if (string.IsNullOrEmpty(owner))
+                    throw new InvalidOperationException($"Shared V3 small sprite has an invalid atlas owner: {path}.");
+                packedSharedSprites++;
+            }
+
+            return packedSharedSprites;
         }
 
         private static Sprite RequireSprite(string path)

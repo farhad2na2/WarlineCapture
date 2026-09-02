@@ -53,6 +53,14 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
                 test => test.CurrentBuildDrawerPrefabBindsTabsAndCatalogItems(),
                 ref passed);
             RunValidationStep(
+                nameof(CurrentBuildDrawerPrefab_AllCategoryButtonsSwitchCatalogs),
+                test => test.CurrentBuildDrawerPrefab_AllCategoryButtonsSwitchCatalogs(),
+                ref passed);
+            RunValidationStep(
+                nameof(CurrentBuildDrawerPrefab_UserFacingButtonsExposeTouchTargets),
+                test => test.CurrentBuildDrawerPrefab_UserFacingButtonsExposeTouchTargets(),
+                ref passed);
+            RunValidationStep(
                 nameof(CurrentBuildDrawerPrefabRefreshesCatalogAfterRuntimeMetadataBinding),
                 test => test.CurrentBuildDrawerPrefabRefreshesCatalogAfterRuntimeMetadataBinding(),
                 ref passed);
@@ -321,6 +329,104 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
             "Valid catalog cards must not show a false lock while runtime commands are still binding.");
         Assert.AreSame(view.SelectedItemFrameSprite, view.ItemTemplate.FrameImage.sprite,
             "The first valid catalog card must retain the selected V3 focus frame during runtime binding.");
+    }
+
+    [Test]
+    public void CurrentBuildDrawerPrefab_AllCategoryButtonsSwitchCatalogs()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(BuildDrawerPrefabPath);
+        Assert.NotNull(prefab);
+
+        GameObject instance = UnityEngine.Object.Instantiate(prefab);
+        _createdObjects.Add(instance);
+        BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
+        BuildDrawerCatalogRuntimeView presenter = instance.GetComponent<BuildDrawerCatalogRuntimeView>();
+        Assert.NotNull(view);
+        Assert.NotNull(presenter);
+        ConfigureCatalogMetadataResolvers(presenter);
+
+        SerializedObject presenterObject = new SerializedObject(presenter);
+        UnitPrefabRegistryAuthoringConfig unitConfig = GetSerializedReference<UnitPrefabRegistryAuthoringConfig>(
+            presenterObject,
+            "unitPrefabRegistryConfig");
+        BuildingPlacementSystemConfig buildingConfig = GetSerializedReference<BuildingPlacementSystemConfig>(
+            presenterObject,
+            "buildingPlacementConfig");
+        Sprite selectedTabFrame = GetSerializedReference<Sprite>(new SerializedObject(view), "selectedTabFrameSprite");
+        TMP_Text detailName = GetSerializedReference<TMP_Text>(new SerializedObject(view), "nameText");
+        TMP_Text actionLabel = GetSerializedReference<TMP_Text>(new SerializedObject(view), "primaryActionLabelText");
+        Assert.NotNull(unitConfig);
+        Assert.NotNull(buildingConfig);
+        Assert.NotNull(selectedTabFrame);
+        Assert.NotNull(detailName);
+        Assert.NotNull(actionLabel);
+
+        foreach (BuildDrawerCategory category in Enum.GetValues(typeof(BuildDrawerCategory)))
+        {
+            _results.Clear();
+            _query.Collect(unitConfig, buildingConfig, category, _results);
+            Assert.Greater(_results.Count, 0,
+                $"The live Build catalog must expose at least one requestable {category} entry.");
+
+            BuildDrawerTabView selectedTab = null;
+            for (int index = 0; index < view.Tabs.Length; index++)
+            {
+                if (view.Tabs[index] != null && view.Tabs[index].Category == category)
+                {
+                    selectedTab = view.Tabs[index];
+                    break;
+                }
+            }
+
+            Assert.NotNull(selectedTab, $"Missing {category} category tab.");
+            Assert.NotNull(selectedTab.Button, $"{category} category tab has no Button.");
+            Assert.IsTrue(selectedTab.Button.interactable, $"{category} category tab is unexpectedly disabled.");
+            selectedTab.Button.onClick.Invoke();
+
+            Assert.AreSame(selectedTabFrame, selectedTab.Frame.sprite,
+                $"Clicking {category} must select that category frame.");
+            Assert.AreEqual(_results.Count, CountActiveCatalogItemRows(view),
+                $"Clicking {category} must rebuild the catalog with every requestable item.");
+            Assert.AreEqual(_results[0].DisplayName, detailName.text,
+                $"Clicking {category} must bind its first item into the detail panel.");
+            Assert.AreEqual(BuildDrawerCategoryFormatter.FormatActionLabel(category), actionLabel.text,
+                $"Clicking {category} must expose the correct primary action.");
+
+            int selectedTabs = 0;
+            for (int index = 0; index < view.Tabs.Length; index++)
+                if (view.Tabs[index] != null && view.Tabs[index].Frame.sprite == selectedTabFrame)
+                    selectedTabs++;
+            Assert.AreEqual(1, selectedTabs, "Exactly one Build category may be selected after a tab click.");
+        }
+    }
+
+    [Test]
+    public void CurrentBuildDrawerPrefab_UserFacingButtonsExposeTouchTargets()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(BuildDrawerPrefabPath);
+        Assert.NotNull(prefab);
+
+        GameObject instance = UnityEngine.Object.Instantiate(prefab);
+        _createdObjects.Add(instance);
+        BuildDrawerView view = instance.GetComponent<BuildDrawerView>();
+        BuildDrawerCatalogRuntimeView presenter = instance.GetComponent<BuildDrawerCatalogRuntimeView>();
+        Assert.NotNull(view);
+        Assert.NotNull(presenter);
+        ConfigureCatalogMetadataResolvers(presenter);
+
+        var required = new List<Button> { view.CloseButton, view.PrimaryActionButton, view.ItemTemplate.SelectionButton };
+        for (int index = 0; index < view.Tabs.Length; index++)
+            required.Add(view.Tabs[index].Button);
+
+        foreach (Button button in required)
+        {
+            Assert.NotNull(button);
+            Assert.NotNull(button.targetGraphic, $"{button.name} is missing its target graphic.");
+            Assert.IsTrue(button.targetGraphic.raycastTarget, $"{button.name} target graphic must receive pointer events.");
+            Rect rect = button.targetGraphic.rectTransform.rect;
+            Assert.GreaterOrEqual(rect.width, 56f, $"{button.name} is too narrow for the V3 mobile touch target.");
+            Assert.GreaterOrEqual(rect.height, 56f, $"{button.name} is too short for the V3 mobile touch target.");
+        }
     }
 
     [Test]

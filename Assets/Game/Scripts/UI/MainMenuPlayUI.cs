@@ -230,8 +230,7 @@ namespace Game.UI.Runtime
         {
             _matchHudRightQuickRailView?.UnbindZoomControls();
             _matchHudRightQuickRailView = rightQuickRailView;
-            _matchHudAssistantUiSystem.BindBuildButton(
-                _matchHudRightQuickRailView != null ? _matchHudRightQuickRailView.BuildButton : null);
+            RebindAssistantBuildGuidanceButton();
             _nextZoomControlRefreshTime = 0f;
             _matchHudRightQuickRailView?.BindZoomControls(
                 RequestMatchHudZoomIn,

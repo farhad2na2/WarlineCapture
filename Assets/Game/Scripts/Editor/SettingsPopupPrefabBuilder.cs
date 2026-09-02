@@ -145,6 +145,12 @@ namespace Game.Editor
                                string.Equals(spritePath, V3UiFoundationBuilder.SettingsIconPath, System.StringComparison.Ordinal);
                 if (!allowed)
                     throw new System.InvalidOperationException($"Settings V3 prefab still references legacy shared art: {spritePath}");
+                if (image.type == Image.Type.Sliced &&
+                    !Mathf.Approximately(image.pixelsPerUnitMultiplier, 2f))
+                {
+                    throw new System.InvalidOperationException(
+                        $"Settings V3 sliced image {image.name} must use the common PPU multiplier 2.");
+                }
 
                 hasPanel |= image.sprite == catalog.Panel;
                 hasButton |= image.sprite == catalog.Button;

@@ -116,6 +116,19 @@ namespace Game.Editor
                 showTutorialPresentation: true);
         }
 
+        [MenuItem("Game/UI/V3/Capture M02 Restricted Controls Review")]
+        public static void CaptureM02RestrictedControlsReview()
+        {
+            // This is a presentation-state proof only; do not rebuild the prefab as a side
+            // effect. It stages the exact M02 unavailable categories against the current asset.
+            V3UiFoundationBuilder.EnsureBuilt();
+            LoadAssets();
+            Capture("/private/tmp/warline-m02-restricted-controls-v3-16x9.png", 1920, 1080,
+                showM02RestrictedControls: true);
+            Capture("/private/tmp/warline-m02-restricted-controls-v3-20x9.png", 4800, 2160,
+                showM02RestrictedControls: true);
+        }
+
         [MenuItem("Game/UI/V3/Capture Unit Command Wheel V3 Review")]
         public static void CaptureCommandWheelReview()
         {
@@ -237,6 +250,7 @@ namespace Game.Editor
             Transform railFrame = rail != null ? FindDirectChild(rail, "Frame") : null;
             if (railFrame == null || CountDirectButtons(railFrame) != 8)
                 throw new InvalidOperationException("Match HUD V3 command rail must contain eight functional command buttons.");
+            RequireCommandRailPointerTargets(railFrame);
             Transform right = FindDeepChild(prefab.transform, "RightContent");
             if (right == null || right.gameObject.activeSelf)
                 throw new InvalidOperationException("The obsolete right quick rail must be disabled after its commands are relocated.");
@@ -254,20 +268,36 @@ namespace Game.Editor
             }
             RectTransform ariaRect = aria as RectTransform;
             RectTransform resourceStrip = FindDeepChild(prefab.transform, "ResourceStrip") as RectTransform;
+            RectTransform threatStrip = FindDeepChild(prefab.transform, "ThreatJumpPanel") as RectTransform;
             MainMenuV3SectionLayoutView headerLayout =
                 FindDeepChild(prefab.transform, "HeaderContent")?.GetComponent<MainMenuV3SectionLayoutView>();
             Vector2 ariaBase = default;
             Vector2 resourceBase = default;
+            Vector2 threatBase = default;
             bool hasAriaBase = headerLayout != null &&
                                headerLayout.TryGetAuthoredBasePosition(ariaRect, out ariaBase);
             bool hasResourceBase = headerLayout != null &&
                                    headerLayout.TryGetAuthoredBasePosition(resourceStrip, out resourceBase);
+            bool hasThreatBase = headerLayout != null &&
+                                  headerLayout.TryGetAuthoredBasePosition(threatStrip, out threatBase);
             if (!hasAriaBase || Mathf.Abs(ariaBase.x - 1257f) > .1f ||
-                !hasResourceBase || Mathf.Abs(resourceBase.x - 414f) > .1f)
+                !hasResourceBase || Mathf.Abs(resourceBase.x - 414f) > .1f ||
+                !hasThreatBase || Mathf.Abs(threatBase.x - 663f) > .1f ||
+                threatStrip == null || Mathf.Abs(threatStrip.sizeDelta.x - 525f) > .1f)
             {
                 throw new InvalidOperationException(
                     "Match HUD responsive targets lost their serialized authored X positions.");
             }
+            Transform settingsButton = FindDeepChild(prefab.transform, "SettingsButton");
+            Transform pauseButton = FindDeepChild(prefab.transform, "PauseButton");
+            RectTransform settingsIcon = settingsButton != null
+                ? FindDeepChild(settingsButton, "Icon") as RectTransform
+                : null;
+            RectTransform pauseIcon = pauseButton != null
+                ? FindDeepChild(pauseButton, "Icon") as RectTransform
+                : null;
+            if (!IsCenteredIcon(settingsIcon) || !IsCenteredIcon(pauseIcon))
+                throw new InvalidOperationException("Match HUD settings and pause icons must remain centered in their buttons.");
             Image ariaPortrait = FindDirectChild(aria, "PortraitClip")?.GetComponentInChildren<Image>(true);
             if (ariaPortrait == null || ariaPortrait.GetComponent<AspectRatioFitter>() == null)
                 throw new InvalidOperationException("ARIA portrait must preserve its aspect ratio.");
@@ -286,7 +316,9 @@ namespace Game.Editor
             if (tacticalPreview == null || tacticalPreview.gameObject.activeSelf ||
                 FindDeepChild(tacticalPreview, "RangeBanner") == null ||
                 FindDeepChild(tacticalPreview, "HostileTargetMarker") == null ||
-                FindDeepChild(tacticalPreview, "AttackRoute") == null)
+                FindDeepChild(tacticalPreview, "AttackRoute") == null ||
+                FindDeepChild(tacticalPreview, "FriendlySourceRing")?.GetComponent<V3EllipseRingGraphic>() == null ||
+                FindDeepChild(tacticalPreview, "HostileTargetRing")?.GetComponent<V3EllipseRingGraphic>() == null)
             {
                 throw new MissingReferenceException("Tactical feedback V3 preview must serialize hidden with range, route, and hostile marker visuals.");
             }
@@ -301,6 +333,17 @@ namespace Game.Editor
                 throw new InvalidOperationException($"Match HUD V3 requires procedural gradients; found {gradients}.");
             int pointerTargets = RequireLiveButtonPointerTargets(prefab);
             Debug.Log($"[MatchHudV3PrefabBuilder] validation=Passed commands=8 squads=5 gradients={gradients} pointerTargets={pointerTargets} passengers=10-slots rope-drop=bound aria=minimap-attached art=aspect-preserved");
+        }
+
+        private static bool IsCenteredIcon(RectTransform icon)
+        {
+            if (icon == null)
+                return false;
+            Vector2 center = new(.5f, .5f);
+            return Vector2.Distance(icon.anchorMin, center) < .001f &&
+                   Vector2.Distance(icon.anchorMax, center) < .001f &&
+                   Vector2.Distance(icon.pivot, center) < .001f &&
+                   Vector2.Distance(icon.anchoredPosition, Vector2.zero) < .001f;
         }
 
         [MenuItem("Game/UI/V3/Inspect Match HUD V3 Hierarchy")]
@@ -480,7 +523,10 @@ namespace Game.Editor
             RectTransform threat = RequireRect(header, "ThreatJumpPanel");
             // Keep the alert and ARIA in the same right-anchored group so their
             // 15 px gap stays constant instead of overlapping on ultrawide.
-            SetTopLeft(threat, 767f, 94f, 475f, 79f);
+            // The target lock aligns the warning strip with the right edge of the
+            // header controls, leaving a clean lane before ARIA. Keeping it out of
+            // ARIA's column also prevents the warning from being occluded at 20:9.
+            SetTopLeft(threat, 663f, 94f, 525f, 79f);
             RectTransform threatFrame = RequireRect(threat, "Frame");
             Stretch(threatFrame);
             SetImageTransparent(threatFrame.GetComponent<Image>());
@@ -492,9 +538,9 @@ namespace Game.Editor
             ConfigureText(title, "HOSTILE CELL SPOTTED\nMarket quarter, 140m", 18f, boldFont, theme.TextPrimary, TextAlignmentOptions.MidlineLeft);
             title.textWrappingMode = TextWrappingModes.Normal;
             title.fontStyle = FontStyles.Normal;
-            SetTopLeft(title.rectTransform, 76f, 6f, 317f, 67f);
+            SetTopLeft(title.rectTransform, 76f, 6f, 350f, 67f);
             RectTransform jump = EnsureRect("V3ThreatJump", threatFrame);
-            SetTopLeft(jump, 400f, 10f, 63f, 59f);
+            SetTopLeft(jump, 450f, 10f, 63f, 59f);
             EnsureGradient(jump, AmberTop, RedBottom, theme.OrangeRed, 2f);
             Image jumpIcon = EnsureImage(jump, "Icon");
             SetSprite(jumpIcon, RequireSprite(V3UiFoundationBuilder.MatchJumpIconPath), theme.TextPrimary);
@@ -508,8 +554,12 @@ namespace Game.Editor
             ConfigureText(ariaLabel, "ARIA", 32f, boldFont, theme.Cyan, TextAlignmentOptions.MidlineLeft);
             SetTopLeft(ariaLabel.rectTransform, 15f, 12f, 104f, 42f);
             TMP_Text ariaState = FindDeepChild(aria, "State")?.GetComponent<TMP_Text>();
-            ConfigureText(ariaState, "TUTORIAL 1/3", 15f, boldFont, theme.Cyan, TextAlignmentOptions.MidlineRight);
-            SetTopLeft(ariaState.rectTransform, 270f, 10f, 114f, 30f);
+            ConfigureText(ariaState, "TUTORIAL 1/3", 14f, boldFont, theme.Cyan, TextAlignmentOptions.MidlineRight);
+            ariaState.enableAutoSizing = true;
+            ariaState.fontSizeMin = 12f;
+            ariaState.fontSizeMax = 14f;
+            ariaState.overflowMode = TextOverflowModes.Overflow;
+            SetTopLeft(ariaState.rectTransform, 260f, 10f, 124f, 30f);
             TMP_Text ariaCopy = FindDeepChild(aria, "AlertCue")?.GetComponent<TMP_Text>();
             ConfigureText(ariaCopy, string.Empty, 16f, mediumFont, theme.TextPrimary, TextAlignmentOptions.TopLeft);
             ariaCopy.textWrappingMode = TextWrappingModes.Normal;
@@ -520,11 +570,11 @@ namespace Game.Editor
             // the whole upper telemetry bay the same field so it blends cleanly,
             // then keep portrait art behind the ARIA/title readouts.
             RectTransform portraitStage = EnsureRect("PortraitStage", aria);
-            SetTopLeft(portraitStage, 10f, 8f, 380f, 239f);
+            SetTopLeft(portraitStage, 10f, 8f, 380f, 230f);
             EnsureGradient(
                 portraitStage,
-                new Color32(2, 10, 15, 255),
-                new Color32(3, 17, 24, 255),
+                new Color32(0, 0, 0, 255),
+                new Color32(0, 2, 4, 255),
                 new Color32(9, 87, 105, 255),
                 1f);
             RectTransform ariaGradient = FindDirectChild(aria, "V3GradientLayer") as RectTransform;
@@ -538,7 +588,7 @@ namespace Game.Editor
             // Match the lock's centered head-and-shoulders hologram instead of a
             // full-width face crop. This also leaves the ARIA and step readouts
             // their own clean columns on both sides.
-            SetTopLeft(portraitClip, 110f, 32f, 180f, 215f);
+            SetTopLeft(portraitClip, 104f, 20f, 192f, 210f);
             if (portraitClip.GetComponent<RectMask2D>() == null)
                 portraitClip.gameObject.AddComponent<RectMask2D>();
             portraitClip.SetSiblingIndex(2);
@@ -678,16 +728,22 @@ namespace Game.Editor
             RectTransform attackRoute = CreateTopLeft("AttackRoute", preview, 0f, 0f, Reference.x, Reference.y);
             BuildDashedRoute(attackRoute, new Vector2(835f, 626f), new Vector2(1119f, 322f), 13, theme.OrangeRed);
 
-            RectTransform friendlyRing = CreateTopLeft("FriendlySourceRing", preview, 790f, 581f, 90f, 90f);
-            V3RadialWedgeGraphic ringA = friendlyRing.gameObject.AddComponent<V3RadialWedgeGraphic>();
-            ringA.Configure(0f, 180f, .78f, .98f, theme.Green, theme.Green, theme.TextPrimary, 2f, false);
-            RectTransform ringBRect = CreateRect("LowerHalf", friendlyRing, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            Stretch(ringBRect);
-            V3RadialWedgeGraphic ringB = ringBRect.gameObject.AddComponent<V3RadialWedgeGraphic>();
-            ringB.Configure(180f, 180f, .78f, .98f, theme.Green, theme.Green, theme.TextPrimary, 2f, false);
-            Image friendlyMarker = EnsureImage(preview, "FriendlySourceMarker");
-            SetSprite(friendlyMarker, RequireSprite(V3UiFoundationBuilder.MatchFriendlyMarkerIconPath), theme.Green);
-            SetTopLeft(friendlyMarker.rectTransform, 811f, 602f, 48f, 48f);
+            RectTransform friendlyRing = CreateTopLeft("FriendlySourceRing", preview, 775f, 596f, 120f, 60f);
+            V3EllipseRingGraphic friendlyOuter = friendlyRing.gameObject.AddComponent<V3EllipseRingGraphic>();
+            friendlyOuter.Configure(theme.TextPrimary, 3f, 72);
+            RectTransform friendlyInner = CreateTopLeft("InnerRing", friendlyRing, 6f, 6f, 108f, 48f);
+            V3EllipseRingGraphic friendlyInnerGraphic = friendlyInner.gameObject.AddComponent<V3EllipseRingGraphic>();
+            friendlyInnerGraphic.Configure(theme.Green, 4f, 72);
+
+            RectTransform hostileRing = CreateTopLeft("HostileTargetRing", preview, 1059f, 288f, 120f, 54f);
+            V3EllipseRingGraphic hostileOuter = hostileRing.gameObject.AddComponent<V3EllipseRingGraphic>();
+            hostileOuter.Configure(theme.OrangeRed, 3f, 72);
+            RectTransform hostileInner = CreateTopLeft("InnerRing", hostileRing, 7f, 6f, 106f, 42f);
+            V3EllipseRingGraphic hostileInnerGraphic = hostileInner.gameObject.AddComponent<V3EllipseRingGraphic>();
+            hostileInnerGraphic.Configure(
+                new Color(theme.OrangeRed.r, theme.OrangeRed.g, theme.OrangeRed.b, .72f),
+                2f,
+                72);
 
             RectTransform targetHealth = CreateTopLeft("TargetHealth", preview, 1082f, 205f, 112f, 14f);
             Image targetHealthBackground = targetHealth.gameObject.AddComponent<Image>();
@@ -741,7 +797,8 @@ namespace Game.Editor
             EnsureGradient(buttonRect, RaisedTop, DarkBottom, Line, 3f, buttonRect.GetComponent<Button>());
             Image icon = FindDeepChild(buttonRect, "Icon")?.GetComponent<Image>();
             SetSprite(icon, iconSprite, theme.TextPrimary);
-            SetTopLeft(icon.rectTransform, 15f, 17f, 38f, 38f);
+            CenterRect(icon.rectTransform, 38f, 38f);
+            icon.preserveAspect = true;
         }
 
         private static void StyleMinimap(RectTransform minimap)
@@ -1602,8 +1659,10 @@ namespace Game.Editor
 
         private static void StyleActionButton(RectTransform buttonRect, Color top, Color bottom, Color border, Sprite iconSprite, Color iconColor, string labelValue)
         {
-            SetImageTransparent(buttonRect.GetComponent<Image>());
-            EnsureGradient(buttonRect, top, bottom, border, 2f, buttonRect.GetComponent<Button>());
+            EnableInvisibleRootHitTarget(buttonRect.GetComponent<Image>());
+            Button button = buttonRect.GetComponent<Button>();
+            EnsureGradient(buttonRect, top, bottom, border, 2f, button);
+            ConfigureV3ButtonColorStates(button);
             SetImageTransparent(FindDirectChild(buttonRect, "Frame")?.GetComponent<Image>());
             Image icon = FindDeepChild(buttonRect, "Icon")?.GetComponent<Image>();
             SetSprite(icon, iconSprite, iconColor);
@@ -1616,8 +1675,13 @@ namespace Game.Editor
 
         private static void StyleCommandButton(RectTransform buttonRect, Color top, Color bottom, Color border, Sprite iconSprite, string labelValue)
         {
-            SetImageTransparent(buttonRect.GetComponent<Image>());
-            EnsureGradient(buttonRect, top, bottom, border, 3f, buttonRect.GetComponent<Button>());
+            // Keep a full-rect invisible hit surface on the command root. The V3
+            // gradient remains the Button target graphic, while this root Image
+            // prevents narrow child/layout gaps from dropping pointer events.
+            EnableInvisibleRootHitTarget(buttonRect.GetComponent<Image>());
+            Button button = buttonRect.GetComponent<Button>();
+            EnsureGradient(buttonRect, top, bottom, border, 3f, button);
+            ConfigureV3ButtonColorStates(button);
             SetImageTransparent(FindDirectChild(buttonRect, "Frame")?.GetComponent<Image>());
             Image icon = FindDeepChild(buttonRect, "Icon")?.GetComponent<Image>();
             SetSprite(icon, iconSprite, theme.TextPrimary);
@@ -1675,12 +1739,14 @@ namespace Game.Editor
             bool showCommandAssistant = false,
             bool showAssistantTakeover = false,
             bool showThreatAlert = false,
-            bool showThreatRoutePreview = false)
+            bool showThreatRoutePreview = false,
+            bool showM02RestrictedControls = false)
         {
             GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
             if (prefab == null)
                 throw new FileNotFoundException($"Missing Match HUD prefab for capture: {PrefabPath}");
 
+            SceneSetup[] previousSceneSetup = EditorSceneManager.GetSceneManagerSetup();
             Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             GameObject cameraObject = new("MatchHudV3CaptureCamera", typeof(Camera));
             Camera camera = cameraObject.GetComponent<Camera>();
@@ -1718,6 +1784,8 @@ namespace Game.Editor
             instance.name = prefab.name;
             Stretch(instance.transform as RectTransform);
             ConfigureCaptureState(instance, showTransportPassengers);
+            if (showM02RestrictedControls)
+                ConfigureM02RestrictedControlsCaptureState(instance);
             if (showTacticalFeedback)
                 ConfigureTacticalFeedbackCaptureState(instance);
             if (showBuildPlacement)
@@ -1806,7 +1874,10 @@ namespace Game.Editor
                 target.Release();
                 UnityEngine.Object.DestroyImmediate(target);
                 UnityEngine.Object.DestroyImmediate(backgroundTexture);
-                EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+                if (previousSceneSetup != null && previousSceneSetup.Length > 0)
+                    EditorSceneManager.RestoreSceneManagerSetup(previousSceneSetup);
+                else
+                    EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             }
         }
 
@@ -1888,6 +1959,24 @@ namespace Game.Editor
             }
         }
 
+        private static void ConfigureM02RestrictedControlsCaptureState(GameObject instance)
+        {
+            MatchHudSquadTrayView tray = instance.GetComponentInChildren<MatchHudSquadTrayView>(true);
+            if (tray == null)
+                throw new MissingReferenceException("Missing squad tray for M02 restriction capture.");
+            tray.ApplyMissionRestrictionVisibility(
+                combatVehiclesDisabled: false,
+                airDisabled: true,
+                transportDisabled: true,
+                hideUnrelatedControls: true);
+
+            MatchOverlayCommandControlsView commands =
+                instance.GetComponentInChildren<MatchOverlayCommandControlsView>(true);
+            if (commands == null)
+                throw new MissingReferenceException("Missing V3 command rail for M02 restriction capture.");
+            commands.ApplyMissionRestrictionState(buildDisabled: false, supportDisabled: true);
+        }
+
         private static void ConfigureTacticalFeedbackCaptureState(GameObject instance)
         {
             BattleHudRuntimeFeedbackView feedback = instance.GetComponentInChildren<BattleHudRuntimeFeedbackView>(true);
@@ -1907,15 +1996,19 @@ namespace Game.Editor
             preview.gameObject.SetActive(true);
 
             Transform aria = FindDeepChild(instance.transform, "AriaAssistantButton");
-            TMP_Text ariaState = FindDirectChild(aria, "State")?.GetComponent<TMP_Text>();
-            if (ariaState != null)
-                ariaState.text = "TUTORIAL 1/5";
-            TMP_Text ariaCopy = FindDeepChild(instance.transform, "AlertCue")?.GetComponent<TMP_Text>();
-            if (ariaCopy != null)
-            {
-                ariaCopy.richText = true;
-                ariaCopy.text = "Select <color=#00C8EE>Rifle Squad</color> first.\nThen tap <color=#FF6A24>ATTACK</color> to engage the enemy.";
-            }
+            AriaTutorialBriefingView tutorial = aria?.GetComponent<AriaTutorialBriefingView>();
+            if (tutorial == null || !tutorial.TryBindHierarchy())
+                throw new MissingReferenceException("The tactical feedback capture must use the one embedded ARIA tutorial panel.");
+            tutorial.Apply(AriaTutorialBriefingPrefabBuilder.CreateTargetLockPreviewModel());
+            tutorial.ApplyAccessibility(false, false);
+            tutorial.SetPresentationVisible(true);
+            tutorial.TitleText.gameObject.SetActive(false);
+            tutorial.BodyText.richText = true;
+            tutorial.BodyText.text =
+                "Select <color=#00C8EE>Rifle Squad</color> first.\n" +
+                "Then tap <color=#FF6A24>ATTACK</color> to engage the enemy.";
+            SetTopLeft(tutorial.BodyText.rectTransform, 0f, 0f, 360f, 60f);
+            tutorial.ProgressText.text = "TUTORIAL 1/5";
         }
 
         private static void ConfigureBuildPlacementCaptureState(
@@ -2285,6 +2378,33 @@ namespace Game.Editor
             image.enabled = false;
         }
 
+        private static void EnableInvisibleRootHitTarget(Image image)
+        {
+            SetImageTransparent(image);
+            if (image == null)
+                return;
+
+            image.enabled = true;
+            image.raycastTarget = true;
+        }
+
+        private static void ConfigureV3ButtonColorStates(Button button)
+        {
+            if (button == null)
+                return;
+
+            button.transition = Selectable.Transition.ColorTint;
+            ColorBlock colors = button.colors;
+            colors.normalColor = Color.white;
+            colors.highlightedColor = new Color(0.91f, 0.98f, 1f, 1f);
+            colors.pressedColor = new Color(0.72f, 0.84f, 0.9f, 1f);
+            colors.selectedColor = new Color(0.78f, 1f, 0.86f, 1f);
+            colors.disabledColor = new Color(0.42f, 0.46f, 0.46f, 0.72f);
+            colors.colorMultiplier = 1f;
+            colors.fadeDuration = 0f;
+            button.colors = colors;
+        }
+
         private static Sprite RequireSprite(string path)
         {
             Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(path);
@@ -2347,6 +2467,24 @@ namespace Game.Editor
                 }
             }
             return buttons.Length;
+        }
+
+        private static void RequireCommandRailPointerTargets(Transform railFrame)
+        {
+            for (int i = 0; i < railFrame.childCount; i++)
+            {
+                Transform child = railFrame.GetChild(i);
+                Button button = child.GetComponent<Button>();
+                if (button == null)
+                    continue;
+
+                Image rootHitTarget = child.GetComponent<Image>();
+                if (rootHitTarget == null || !rootHitTarget.enabled || !rootHitTarget.raycastTarget)
+                {
+                    throw new InvalidOperationException(
+                        $"Match HUD command '{child.name}' must keep its full-rect root pointer target enabled.");
+                }
+            }
         }
 
         private static RectTransform CreateRect(string name, Transform parent, Vector2 min, Vector2 max, Vector2 size, Vector2 position) =>

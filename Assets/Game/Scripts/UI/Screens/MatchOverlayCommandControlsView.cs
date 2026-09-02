@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using Game.Tactical.Contracts;
+using Game.UI.Contracts;
 
 namespace Game.UI.Runtime
 {
@@ -47,6 +48,31 @@ namespace Game.UI.Runtime
         public Image StopIcon => stopIcon;
         public CommandWheelPanelView CommandWheelPanel => commandWheelPanel;
         public MatchOverlayCommandTabGroupView CommandTabGroup => commandTabGroup;
+
+        private void OnEnable()
+        {
+            RefreshMissionRestrictions();
+        }
+
+        internal void RefreshMissionRestrictions()
+        {
+            bool buildDisabled = false;
+            bool supportDisabled = false;
+            if (UiShellRuntimeGateway.TryReadMissionHudRestrictions(
+                    out UiMissionHudRestrictionsModel restrictions))
+            {
+                buildDisabled = restrictions.BuildingDisabled || restrictions.ProductionDisabled;
+                supportDisabled = restrictions.AirDisabled || restrictions.TransportDisabled;
+            }
+
+            ApplyMissionRestrictionState(buildDisabled, supportDisabled);
+        }
+
+        public void ApplyMissionRestrictionState(bool buildDisabled, bool supportDisabled)
+        {
+            SetMissionRestricted(buildButton, buildDisabled);
+            SetMissionRestricted(FindCommandTabButton("SupportCommand"), supportDisabled);
+        }
 
         public Sprite ResolveCommandIconSprite(TacticalCommandMode mode)
         {
@@ -159,6 +185,40 @@ namespace Game.UI.Runtime
             Transform selectedVisual = button.transform.Find("V3SelectedState");
             if (selectedVisual != null && selectedVisual.gameObject.activeSelf != selected)
                 selectedVisual.gameObject.SetActive(selected);
+        }
+
+        private Button FindCommandTabButton(string buttonName)
+        {
+            MatchOverlayCommandTabView[] tabs = commandTabGroup != null ? commandTabGroup.Tabs : null;
+            if (tabs == null)
+                return null;
+
+            for (int index = 0; index < tabs.Length; index++)
+            {
+                Button button = tabs[index]?.Button;
+                if (button != null && button.name == buttonName)
+                    return button;
+            }
+
+            return null;
+        }
+
+        private static void SetMissionRestricted(Button button, bool disabled)
+        {
+            if (button == null)
+                return;
+
+            if (!button.gameObject.activeSelf)
+                button.gameObject.SetActive(true);
+            UiDisabledMaterialUtility.SetSelectableDisabled(
+                button,
+                UiDisabledVisualReason.MissionRestriction,
+                disabled);
+            UiDisabledMaterialUtility.SetDisabled(
+                button.gameObject,
+                UiDisabledVisualReason.MissionRestriction,
+                disabled);
+            button.interactable = !disabled;
         }
     }
 }

@@ -56,6 +56,7 @@ namespace Game.UI.Runtime
         {
             _matchHudCommandControlsView = commandControlsView;
             _matchHudAssistantUiSystem.BindCommandControls(commandControlsView);
+            RebindAssistantBuildGuidanceButton();
         }
 
         public void ApplyMatchHudCommandMode(TacticalCommandMode mode)

@@ -400,6 +400,7 @@ namespace Game.UI.Runtime
 
             public void RefreshCommandControlState(ISelectionUiReadModel selectionUiReadModel = null)
             {
+                _view.RefreshMissionRestrictions();
                 ISelectionUiReadModel readModel = selectionUiReadModel ?? _selectionUiReadModel;
                 uint commandStateVersion = readModel != null ? readModel.CommandStateVersion : 0u;
                 if (commandStateVersion != 0u &&

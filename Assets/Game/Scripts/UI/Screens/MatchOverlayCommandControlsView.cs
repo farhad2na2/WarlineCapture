@@ -86,8 +86,7 @@ namespace Game.UI.Runtime
         public bool ContainsScreenPoint(Vector2 screenPosition)
         {
             Camera eventCamera = ResolveEventCamera();
-            RectTransform root = transform as RectTransform;
-            if (root != null && RectTransformUtility.RectangleContainsScreenPoint(root, screenPosition, eventCamera))
+            if (commandWheelPanel != null && commandWheelPanel.IsOpen)
                 return true;
 
             return ContainsButton(selectButton, screenPosition, eventCamera) ||
@@ -123,9 +122,8 @@ namespace Game.UI.Runtime
             if (ContainsButton(commandWheelStopButton, screenPosition, eventCamera))
                 return "CommandWheelStop";
 
-            RectTransform root = transform as RectTransform;
-            return root != null && RectTransformUtility.RectangleContainsScreenPoint(root, screenPosition, eventCamera)
-                ? "CommandControlsRoot"
+            return commandWheelPanel != null && commandWheelPanel.IsOpen
+                ? "CommandWheelOverlay"
                 : "None";
         }
 

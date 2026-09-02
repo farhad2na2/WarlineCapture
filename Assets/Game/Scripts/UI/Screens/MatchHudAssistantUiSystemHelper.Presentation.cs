@@ -99,6 +99,7 @@ namespace Game.UI.Runtime
 
         public void Unbind()
         {
+            _commandControlsView?.SetTutorialBuildRequested(false);
             MirrorPanelOpen(false, force: true);
             if (_button != null)
                 _button.onClick.RemoveListener(TogglePanel);
@@ -144,6 +145,7 @@ namespace Game.UI.Runtime
                 ClearPendingM02DoIt();
             }
             _lastPanelModel = model;
+            ApplyTutorialBuildAvailability(in model);
             if (previousTutorialStep != model.TutorialStep)
                 _tutorialWorldTargetCompleted = false;
             if (_buttonRoot == null)
@@ -174,6 +176,7 @@ namespace Game.UI.Runtime
 
         public void ResetForMissionAttempt()
         {
+            _commandControlsView?.SetTutorialBuildRequested(false);
             _lastHighlightModel = UiAssistantHighlightModel.Empty;
             _activeCommandMode = TacticalCommandMode.None;
             _tutorialWorldTargetCompleted = false;
@@ -197,8 +200,22 @@ namespace Game.UI.Runtime
 
         public void BindCommandControls(MatchOverlayCommandControlsView commandControlsView)
         {
+            if (_commandControlsView != commandControlsView)
+                _commandControlsView?.SetTutorialBuildRequested(false);
             _commandControlsView = commandControlsView;
+            ApplyTutorialBuildAvailability(in _lastPanelModel);
             _highlightPresentationSystem.BindCommandControls(commandControlsView);
+        }
+
+        private void ApplyTutorialBuildAvailability(in UiAssistantPanelModel model)
+        {
+            bool openBuildStep =
+                model.HasRecommendation &&
+                model.TutorialStepCount == 9 &&
+                model.TutorialStep == 2 &&
+                model.RecommendationKind == RecommendationBuild &&
+                model.RecommendationTargetKind == TargetUiSurface;
+            _commandControlsView?.SetTutorialBuildRequested(openBuildStep);
         }
 
         public void BindBuildButton(Button buildButton) =>

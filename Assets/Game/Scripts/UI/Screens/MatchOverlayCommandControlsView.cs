@@ -28,6 +28,11 @@ namespace Game.UI.Runtime
         [SerializeField] private MatchOverlayCommandTabGroupView commandTabGroup;
 
         private Canvas _cachedCanvas;
+        private bool _tutorialBuildRequested;
+        private bool _tutorialBuildAvailable;
+        private bool _tutorialBuildVisualApplied;
+        private ColorBlock _tutorialBuildOriginalColors;
+        private Color _tutorialBuildOriginalTargetColor;
 
         public Button SelectButton => selectButton;
         public Button MoveButton => moveButton;
@@ -58,20 +63,40 @@ namespace Game.UI.Runtime
         {
             bool buildDisabled = false;
             bool supportDisabled = false;
+            bool cinematicInteractionLocked = false;
             if (UiShellRuntimeGateway.TryReadMissionHudRestrictions(
                     out UiMissionHudRestrictionsModel restrictions))
             {
                 buildDisabled = restrictions.BuildingDisabled || restrictions.ProductionDisabled;
                 supportDisabled = restrictions.AirDisabled || restrictions.TransportDisabled;
+                cinematicInteractionLocked = restrictions.CinematicInteractionLocked;
             }
 
+            _tutorialBuildAvailable = _tutorialBuildRequested && !cinematicInteractionLocked;
             ApplyMissionRestrictionState(buildDisabled, supportDisabled);
         }
 
         public void ApplyMissionRestrictionState(bool buildDisabled, bool supportDisabled)
         {
-            SetMissionRestricted(buildButton, buildDisabled);
+            if (!_tutorialBuildAvailable)
+                RestoreTutorialBuildVisual();
+            SetMissionRestricted(buildButton, buildDisabled && !_tutorialBuildAvailable);
             SetMissionRestricted(FindCommandTabButton("SupportCommand"), supportDisabled);
+            if (_tutorialBuildAvailable)
+                ApplyTutorialBuildVisual();
+        }
+
+        internal void SetTutorialBuildRequested(bool requested)
+        {
+            if (_tutorialBuildRequested == requested)
+            {
+                if (requested)
+                    RefreshMissionRestrictions();
+                return;
+            }
+
+            _tutorialBuildRequested = requested;
+            RefreshMissionRestrictions();
         }
 
         public Sprite ResolveCommandIconSprite(TacticalCommandMode mode)
@@ -219,6 +244,42 @@ namespace Game.UI.Runtime
                 UiDisabledVisualReason.MissionRestriction,
                 disabled);
             button.interactable = !disabled;
+        }
+
+        private void ApplyTutorialBuildVisual()
+        {
+            if (buildButton == null)
+                return;
+
+            if (!_tutorialBuildVisualApplied)
+            {
+                _tutorialBuildOriginalColors = buildButton.colors;
+                _tutorialBuildOriginalTargetColor = buildButton.targetGraphic != null
+                    ? buildButton.targetGraphic.color
+                    : Color.white;
+                _tutorialBuildVisualApplied = true;
+            }
+
+            ColorBlock colors = _tutorialBuildOriginalColors;
+            colors.normalColor = new Color32(54, 210, 91, 255);
+            colors.highlightedColor = new Color32(92, 239, 126, 255);
+            colors.selectedColor = colors.highlightedColor;
+            colors.pressedColor = new Color32(35, 160, 68, 255);
+            colors.disabledColor = colors.normalColor;
+            buildButton.colors = colors;
+            if (buildButton.targetGraphic != null)
+                buildButton.targetGraphic.CrossFadeColor(colors.normalColor, 0f, true, true);
+        }
+
+        private void RestoreTutorialBuildVisual()
+        {
+            if (!_tutorialBuildVisualApplied || buildButton == null)
+                return;
+
+            buildButton.colors = _tutorialBuildOriginalColors;
+            if (buildButton.targetGraphic != null)
+                buildButton.targetGraphic.color = _tutorialBuildOriginalTargetColor;
+            _tutorialBuildVisualApplied = false;
         }
     }
 }

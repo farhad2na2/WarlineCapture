@@ -8,12 +8,13 @@ using Game.UI.Contracts;
 using Game.UI.Runtime;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public sealed class M02EstablishBaseDoItTests
 {
     private const string Marker =
-        "[M02EstablishBaseDoItValidation] result=Passed tests=10 routes=5 v3FooterBuild=Passed lateBinding=Passed";
+        "[M02EstablishBaseDoItValidation] result=Passed tests=11 routes=5 v3FooterBuild=Passed lateBinding=Passed";
 
     [UnityEditor.MenuItem("Game/Validation/Run M02 V3 Footer Do It Focused")]
     public static void RunFocusedValidation()
@@ -36,6 +37,7 @@ public sealed class M02EstablishBaseDoItTests
             Run(tests.LateAssistantBindRestoresTheAlreadyOpenBuildDrawer, ref passed);
             Run(tests.RifleDoItKeepsBuildDrawerOpenWhileTheStagedActionRetries, ref passed);
             Run(tests.V3FooterBuildButtonRemainsTheM02DoItTargetWithoutLegacyRightRail, ref passed);
+            Run(tests.M02OpenBuildInstructionForcesFooterBuildGreenAndClickable, ref passed);
             Debug.Log(Marker);
             ValidationExit.Passed();
         }
@@ -295,6 +297,60 @@ public sealed class M02EstablishBaseDoItTests
         finally
         {
             owner.Dispose();
+            UnityEngine.Object.DestroyImmediate(footerObject);
+        }
+    }
+
+    [Test]
+    public void M02OpenBuildInstructionForcesFooterBuildGreenAndClickable()
+    {
+        GameObject footerObject = new("V3 Footer", typeof(RectTransform));
+        GameObject buildObject = new(
+            "BuildCommand",
+            typeof(RectTransform),
+            typeof(CanvasRenderer),
+            typeof(Image),
+            typeof(Button));
+        GameObject eventSystemObject = new("EventSystem", typeof(EventSystem));
+        buildObject.transform.SetParent(footerObject.transform, false);
+        MatchOverlayCommandControlsView controls =
+            footerObject.AddComponent<MatchOverlayCommandControlsView>();
+        Button buildButton = buildObject.GetComponent<Button>();
+        buildButton.targetGraphic = buildObject.GetComponent<Image>();
+        SetField(controls, "buildButton", buildButton);
+        MatchHudAssistantUiSystemHelper assistant = new();
+
+        try
+        {
+            int clicks = 0;
+            buildButton.onClick.AddListener(() => clicks++);
+            controls.ApplyMissionRestrictionState(buildDisabled: true, supportDisabled: true);
+            Assert.That(buildButton.interactable, Is.False);
+
+            assistant.BindCommandControls(controls);
+            assistant.ApplyReadModel(
+                Panel(2, AssistantRecommendationKind.Build, AssistantTargetKind.UiSurface));
+
+            Assert.That(buildButton.interactable, Is.True,
+                "M02 step 2 must override a stale disabled presentation while ARIA asks for Build.");
+            Assert.That(buildButton.colors.normalColor.g, Is.GreaterThan(buildButton.colors.normalColor.r));
+            Assert.That(buildButton.colors.normalColor.g, Is.GreaterThan(buildButton.colors.normalColor.b));
+
+            PointerEventData click = new(eventSystemObject.GetComponent<EventSystem>());
+            ExecuteEvents.Execute(buildObject, click, ExecuteEvents.pointerClickHandler);
+            Assert.That(clicks, Is.EqualTo(1),
+                "The highlighted M02 Build button must accept a real pointer click.");
+
+            assistant.ApplyReadModel(
+                Panel(3, AssistantRecommendationKind.Select, AssistantTargetKind.UiSurface));
+            controls.ApplyMissionRestrictionState(buildDisabled: true, supportDisabled: true);
+            Assert.That(buildButton.interactable, Is.False,
+                "The tutorial override must end when ARIA advances past Open Build.");
+        }
+        finally
+        {
+            assistant.Unbind();
+            UnityEngine.Object.DestroyImmediate(eventSystemObject);
             UnityEngine.Object.DestroyImmediate(footerObject);
         }
     }

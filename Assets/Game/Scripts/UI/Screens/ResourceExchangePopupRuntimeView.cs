@@ -105,6 +105,7 @@ namespace Game.UI.Runtime
             AddBinding(view.AmountDecreaseButton, () => Enqueue(UiActionKind.ResourceExchangeAmountDecrease, 0));
             AddBinding(view.AmountIncreaseButton, () => Enqueue(UiActionKind.ResourceExchangeAmountIncrease, 0));
             AddBinding(view.ConfirmButton, () => Enqueue(UiActionKind.ResourceExchangeConfirm, 0));
+            AddBinding(view.FooterConfirmButton, () => Enqueue(UiActionKind.ResourceExchangeConfirm, 0));
             AddBinding(view.RushAllButton, () => Enqueue(UiActionKind.ResourceExchangeRushAll, 0));
             AddBinding(view.ClearCompletedButton, () => Enqueue(UiActionKind.ResourceExchangeClearCompleted, 0));
 

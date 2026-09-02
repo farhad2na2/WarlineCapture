@@ -12,7 +12,7 @@ using UnityEngine.UI;
 public sealed class ResourceExchangePopupPrefabTests
 {
     private const string PrefabPath = "Assets/Game/Prefabs/UI/Shell/Popups/POP12_ResourceExchangePopup.prefab";
-    private const string ApprovedSpriteRoot = "Assets/Game/Art/UI/Generated/ResourceExchange/LayeredOneGo/";
+    private const string ApprovedSpriteRoot = "Assets/Game/Art/UI/V3Shared/";
     private const string CanonicalResourceSpriteRoot = "Assets/Game/Art/UI/Resources/";
 
     public static void RunFocusedValidation()
@@ -134,6 +134,8 @@ public sealed class ResourceExchangePopupPrefabTests
         Assert.NotNull(runtimeView, "Resource Exchange popup must own ResourceExchangePopupRuntimeView.");
         Assert.AreSame(view, runtimeView.View, "Runtime presenter must target the serialized Resource Exchange view.");
         Assert.NotNull(view.CloseButton, "Close button must be serialized.");
+        Assert.NotNull(view.FooterCancelButton, "Footer Cancel button must be serialized.");
+        Assert.NotNull(view.FooterConfirmButton, "Footer Confirm Exchange button must be serialized.");
         Assert.NotNull(view.ExportTabButton, "Export tab must be serialized.");
         Assert.NotNull(view.ImportTabButton, "Import tab must be serialized.");
         Assert.NotNull(view.ConfirmButton, "Confirm button must be serialized.");
@@ -197,7 +199,7 @@ public sealed class ResourceExchangePopupPrefabTests
             Assert.IsTrue(
                 path.StartsWith(ApprovedSpriteRoot, System.StringComparison.Ordinal) ||
                 path.StartsWith(CanonicalResourceSpriteRoot, System.StringComparison.Ordinal),
-                $"{images[i].name} uses {path}; Resource Exchange popup must not use target screenshots or unrelated sprite folders.");
+                $"{images[i].name} uses {path}; Resource Exchange popup must use only shared V3 or canonical resource sprites.");
         }
     }
 
@@ -233,17 +235,19 @@ public sealed class ResourceExchangePopupPrefabTests
         Assert.NotNull(prefab);
 
         AssertHasButton(prefab.transform, "ResourceExchangeRoot/Header/CloseButton");
-        AssertHasButton(prefab.transform, "ResourceExchangeRoot/ExportTab");
-        AssertHasButton(prefab.transform, "ResourceExchangeRoot/ImportTab");
+        AssertHasButton(prefab.transform, "ResourceExchangeRoot/RecipeColumn/ExportTab");
+        AssertHasButton(prefab.transform, "ResourceExchangeRoot/RecipeColumn/ImportTab");
         AssertHasButton(prefab.transform, "ResourceExchangeRoot/DetailPanel/AmountStepper/AmountMinus");
         AssertHasButton(prefab.transform, "ResourceExchangeRoot/DetailPanel/AmountStepper/AmountPlus");
         AssertHasButton(prefab.transform, "ResourceExchangeRoot/DetailPanel/ConfirmButton");
         AssertHasButton(prefab.transform, "ResourceExchangeRoot/ExchangeQueuePanel/RushAllButton");
         AssertHasButton(prefab.transform, "ResourceExchangeRoot/ExchangeQueuePanel/ClearCompletedButton");
+        AssertHasButton(prefab.transform, "ResourceExchangeRoot/Footer/CancelButton");
+        AssertHasButton(prefab.transform, "ResourceExchangeRoot/Footer/ConfirmExchangeButton");
 
         for (int i = 1; i <= 6; i++)
         {
-            Transform card = AssertHasTransform(prefab.transform, $"ResourceExchangeRoot/RecipeCards/RecipeCard{i}");
+            Transform card = AssertHasTransform(prefab.transform, $"ResourceExchangeRoot/RecipeColumn/RecipeCards/RecipeCard{i}");
             Assert.NotNull(card.GetComponent<ResourceExchangeRecipeCardView>(), $"RecipeCard{i} must carry ResourceExchangeRecipeCardView.");
             Assert.NotNull(card.GetComponent<Button>(), $"RecipeCard{i} must be directly selectable.");
         }
@@ -256,7 +260,7 @@ public sealed class ResourceExchangePopupPrefabTests
             AssertHasButton(row, "CancelButton");
         }
 
-        Transform lockedCard = AssertHasTransform(prefab.transform, "ResourceExchangeRoot/RecipeCards/RecipeCard6");
+        Transform lockedCard = AssertHasTransform(prefab.transform, "ResourceExchangeRoot/RecipeColumn/RecipeCards/RecipeCard6");
         Assert.IsTrue(lockedCard.Find("DisabledOverlay").gameObject.activeSelf, "Locked route card must expose a disabled overlay.");
         Assert.IsTrue(lockedCard.Find("Lock").gameObject.activeSelf, "Locked route card must expose a lock icon.");
         Assert.IsTrue(lockedCard.Find("Warning").gameObject.activeSelf, "Locked route card must expose a warning icon.");

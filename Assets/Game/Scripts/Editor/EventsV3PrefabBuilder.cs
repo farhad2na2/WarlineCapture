@@ -19,7 +19,7 @@ namespace Game.Editor
         private const string ScenePath = "Assets/Game/Scenes/Menu.unity";
         private const string OldMarketPath = "Assets/Game/Art/UI/V3Shared/MainMenuPlates/SCN02_CampaignScene_V3.png";
         private const string ConvoyPath = "Assets/Game/Art/UI/V3Shared/MainMenuPlates/SCN02_SkirmishScene_V3.png";
-        private const string AriaPath = "Assets/Game/Art/UI/V3Shared/Portraits/ARIA_MainMenu_V3.png";
+        private const string AriaPath = "Assets/Game/Art/UI/V3Shared/Events/SCN16_ARIAFieldTrials_V3.png";
         private const string OperationsPath = "Assets/Game/Art/UI/V3Shared/Sprites/MainMenuIcons/SCN02_Icon_OperationsCompass_V3.png";
         private const string BoldFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold SDF.asset";
         private const string MediumFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium SDF.asset";
@@ -165,6 +165,9 @@ namespace Game.Editor
                 BuildTabIcon(iconRoot, i, i == 0 ? Green : TextPrimary);
                 TMP_Text label = Text("Label", tab.transform, labels[i], i == 2 ? 20 : 23, bold, TextAlignmentOptions.MidlineLeft, TextPrimary);
                 TopLeft(label.rectTransform, 78, 6, 120, 76);
+                label.enableAutoSizing = true;
+                label.fontSizeMin = 14;
+                label.fontSizeMax = i == 2 ? 20 : 23;
             }
         }
 
@@ -213,6 +216,9 @@ namespace Game.Editor
                 RectTransform icon = TopLeft($"ModifierIcon_{i}", card, 16 + i * 145, y + 34, 37, 37); Gradient(icon, DarkTop, DarkBottom, i == 0 ? accent : Border);
                 CreateModifierIcon(icon, i, i == 0 ? accent : TextMuted);
                 TMP_Text label = Text($"Modifier_{i}", card, values[i], 13, bold, TextAlignmentOptions.MidlineLeft, TextPrimary); TopLeft(label.rectTransform, 59 + i * 145, y + 32, 99, 42);
+                label.enableAutoSizing = true;
+                label.fontSizeMin = 9;
+                label.fontSizeMax = 13;
             }
         }
 
@@ -235,6 +241,9 @@ namespace Game.Editor
             RectTransform panel = TopLeft("DetailPanel", root, 1208, 126, 449, 776); Gradient(panel, DarkTop, DarkBottom, Amber); right.Add(panel);
             Image icon = Image("TargetIcon", panel, operations, Amber); TopLeft(icon.rectTransform, 17, 19, 42, 42);
             title = Text("DetailTitle", panel, "HOLD THE OLD MARKET", 31, bold, TextAlignmentOptions.MidlineLeft, TextPrimary); Horizontal(title.rectTransform, 69, 58, 8, 54);
+            title.enableAutoSizing = true;
+            title.fontSizeMin = 18;
+            title.fontSizeMax = 31;
             RectTransform live = TopLeft("Live", panel, 384, 17, 51, 37); Gradient(live, Red, Color.Lerp(Red, Color.black, .36f), Red); TMP_Text liveText = Text("Label", live, "LIVE", 16, bold, TextAlignmentOptions.Center, TextPrimary); Stretch(liveText.rectTransform);
             timer = Text("DetailTimer", panel, "02D 14H REMAINING", 21, bold, TextAlignmentOptions.MidlineLeft, Amber); TopLeft(timer.rectTransform, 23, 65, 370, 35);
             description = Text("DetailDescription", panel, "Enemy forces are pushing into the old market district. Hold key positions, protect civilians, and survive the counterattacks.", 17, medium, TextAlignmentOptions.TopLeft, TextPrimary); Horizontal(description.rectTransform, 23, 22, 112, 82); description.textWrappingMode = TextWrappingModes.Normal;
@@ -284,14 +293,43 @@ namespace Game.Editor
 
         private static void CreateModifierIcon(RectTransform root, int index, Color color)
         {
-            if (index == 0) { Image a = CreateSolid("A", root, 5, 16, 29, 5, color); Image b = CreateSolid("B", root, 5, 16, 29, 5, color); a.rectTransform.localRotation = Quaternion.Euler(0, 0, 45); b.rectTransform.localRotation = Quaternion.Euler(0, 0, -45); }
-            else { RectTransform ringRoot = TopLeft("Ring", root, 4, 6, 28, 28); V3RingGraphic ring = ringRoot.gameObject.AddComponent<V3RingGraphic>(); ring.Configure(color, 4, 32); Image slash = CreateSolid("Slash", root, 1, 17, 36, 5, color); slash.rectTransform.localRotation = Quaternion.Euler(0, 0, 45); }
+            if (index == 0)
+            {
+                CreateStroke("A", root, new Vector2(5, 5), new Vector2(32, 32), 5, color);
+                CreateStroke("B", root, new Vector2(32, 5), new Vector2(5, 32), 5, color);
+            }
+            else
+            {
+                RectTransform ringRoot = TopLeft("Ring", root, 4, 6, 28, 28);
+                V3RingGraphic ring = ringRoot.gameObject.AddComponent<V3RingGraphic>();
+                ring.Configure(color, 4, 32);
+                CreateStroke("Slash", root, new Vector2(4, 32), new Vector2(33, 4), 5, color);
+            }
         }
 
         private static void CreateCheckOrTarget(RectTransform root, bool check, Color color)
         {
-            if (check) { Image a = CreateSolid("A", root, 3, 16, 13, 5, color); Image b = CreateSolid("B", root, 11, 12, 20, 5, color); a.rectTransform.localRotation = Quaternion.Euler(0, 0, -43); b.rectTransform.localRotation = Quaternion.Euler(0, 0, 47); }
+            if (check)
+            {
+                Vector2 joint = new(12, 24);
+                CreateStroke("A", root, new Vector2(3, 16), joint, 5, color);
+                CreateStroke("B", root, joint, new Vector2(28, 5), 5, color);
+            }
             else { V3RingGraphic ring = root.gameObject.AddComponent<V3RingGraphic>(); ring.Configure(color, 4, 32); CreateSolid("H", root, 0, 13, 30, 4, color); CreateSolid("V", root, 13, 0, 4, 30, color); }
+        }
+
+        private static Image CreateStroke(string name, Transform parent, Vector2 start, Vector2 end, float thickness, Color color)
+        {
+            Vector2 screenDelta = end - start;
+            Vector2 localDelta = new(screenDelta.x, -screenDelta.y);
+            Image stroke = Image(name, parent, null, color);
+            RectTransform rect = stroke.rectTransform;
+            rect.anchorMin = rect.anchorMax = new Vector2(0, 1);
+            rect.pivot = new Vector2(.5f, .5f);
+            rect.anchoredPosition = new Vector2((start.x + end.x) * .5f, -(start.y + end.y) * .5f);
+            rect.sizeDelta = new Vector2(localDelta.magnitude, thickness);
+            rect.localRotation = Quaternion.Euler(0, 0, Mathf.Atan2(localDelta.y, localDelta.x) * Mathf.Rad2Deg);
+            return stroke;
         }
 
         private static Button Button(string name, Transform parent, float x, float y, float w, float h, Color top, Color bottom, Color border)

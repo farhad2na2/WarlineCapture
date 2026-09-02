@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System;
+using System.Reflection;
 using Game.Editor;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
@@ -117,6 +118,7 @@ public sealed class InboxV3PrefabTests
         try
         {
             InboxV3View view = instance.GetComponent<InboxV3View>();
+            InvokeAwake(view);
             TMP_Text detailTitle = Find(instance.transform, "DetailTitle").GetComponent<TMP_Text>();
             TMP_Text firstBadge = Find(instance.transform, "Category_0").Find("Badge/Count").GetComponent<TMP_Text>();
             TMP_Text attachmentState = Find(instance.transform, "Attachment_0").Find("State").GetComponent<TMP_Text>();
@@ -175,6 +177,13 @@ public sealed class InboxV3PrefabTests
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(InboxV3PrefabBuilder.PrefabPath);
         Assert.NotNull(prefab, InboxV3PrefabBuilder.PrefabPath);
         return prefab;
+    }
+
+    private static void InvokeAwake(InboxV3View view)
+    {
+        MethodInfo awake = typeof(InboxV3View).GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.NotNull(awake);
+        awake.Invoke(view, null);
     }
 
     private static GameObject RegionChild(UIShellView shell, UIShellRegionId id)

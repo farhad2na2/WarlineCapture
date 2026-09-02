@@ -75,12 +75,26 @@ namespace Game.Editor
                     root.GetComponent<BuildPlacementConfirmationResponsiveLayoutView>();
                 if (oldResponsive != null)
                     UnityEngine.Object.DestroyImmediate(oldResponsive);
+                MainMenuV3SectionLayoutView oldSectionLayout =
+                    root.GetComponent<MainMenuV3SectionLayoutView>();
+                if (oldSectionLayout != null)
+                    UnityEngine.Object.DestroyImmediate(oldSectionLayout);
                 ClearChildren(root.transform);
 
                 RectTransform barPanel = CreatePanel(
                     "PlacementBarPanel", rootRect, 4f, 617f, 1664f, 310f,
                     DarkTop, DarkBottom, Line, 3f);
+                barPanel.anchorMin = new Vector2(4f / 1672f, 14f / 941f);
+                barPanel.anchorMax = new Vector2(1668f / 1672f, 324f / 941f);
+                barPanel.pivot = new Vector2(0f, 0f);
+                barPanel.anchoredPosition = Vector2.zero;
+                barPanel.sizeDelta = Vector2.zero;
                 barPanel.GetComponent<V3GradientGraphic>().raycastTarget = true;
+
+                RectTransform designContent = CreateBottomLeft(
+                    "PlacementBarContent", barPanel, 0f, 0f, 1664f, 310f);
+                BuildPlacementConfirmationBarDesignLayoutView designLayout =
+                    barPanel.gameObject.AddComponent<BuildPlacementConfirmationBarDesignLayoutView>();
 
                 Sprite materialIcon = RequireSprite(MaterialsIconSpritePath);
                 Sprite oilIcon = RequireSprite(OilIconSpritePath);
@@ -89,7 +103,7 @@ namespace Game.Editor
                 Sprite rotateIcon = RequireSprite(V3UiFoundationBuilder.ResetIconPath);
 
                 RectTransform portraitPanel = CreatePanel(
-                    "BuildingPortraitPanel", barPanel, 20f, 21f, 332f, 264f,
+                    "BuildingPortraitPanel", designContent, 20f, 21f, 332f, 264f,
                     RaisedTop, DarkBottom, Line, 3f);
                 RectTransform portraitClip = CreateTopLeft("PortraitClip", portraitPanel, 5f, 5f, 322f, 254f);
                 portraitClip.gameObject.AddComponent<RectMask2D>();
@@ -105,7 +119,7 @@ namespace Game.Editor
                 portraitHighlight.SetAsLastSibling();
 
                 RectTransform detail = CreatePanel(
-                    "PlacementDetailPanel", barPanel, 352f, 21f, 474f, 264f,
+                    "PlacementDetailPanel", designContent, 352f, 21f, 474f, 264f,
                     DarkTop, DarkBottom, Line, 3f);
                 TMP_Text title = CreateText(
                     "Title", detail, 31f, 15f, 414f, 52f, "BUILD POWER PLANT", 31f,
@@ -144,7 +158,7 @@ namespace Game.Editor
                     Green, TextAlignmentOptions.MidlineLeft, true);
 
                 RectTransform rotateRegion = CreatePanel(
-                    "RotateRegion", barPanel, 850f, 21f, 204f, 256f,
+                    "RotateRegion", designContent, 850f, 21f, 204f, 256f,
                     DarkTop, DarkBottom, Line, 3f);
                 Button rotateButton = ConfigureButton(rotateRegion);
                 CreateText("RotateLabel", rotateRegion, 12f, 21f, 180f, 43f, "ROTATE", 23f,
@@ -152,38 +166,28 @@ namespace Game.Editor
                 CreateImageAt("Icon", rotateRegion, rotateIcon, 54f, 91f, 96f, 96f, Text);
 
                 Button cancelButton = CreateButton(
-                    "CancelButton", barPanel, 1076f, 21f, 198f, 256f,
+                    "CancelButton", designContent, 1076f, 21f, 198f, 256f,
                     new Color32(70, 80, 83, 255), new Color32(32, 41, 44, 255), Line);
                 CreateText("Label", cancelButton.transform, 8f, 12f, 182f, 232f, "CANCEL", 30f,
                     Text, TextAlignmentOptions.Center, true);
 
                 Button confirmButton = CreateButton(
-                    "ConfirmButton", barPanel, 1297f, 21f, 347f, 256f,
+                    "ConfirmButton", designContent, 1297f, 21f, 347f, 256f,
                     GreenTop, GreenBottom, new Color32(48, 228, 73, 255));
                 CreateText("Label", confirmButton.transform, 10f, 15f, 327f, 226f,
                     "PLACE\nBUILDING", 43f, Text, TextAlignmentOptions.Center, true, false);
 
                 BuildPlacementConfirmationResponsiveLayoutView responsive =
-                    barPanel.gameObject.AddComponent<BuildPlacementConfirmationResponsiveLayoutView>();
+                    designContent.gameObject.AddComponent<BuildPlacementConfirmationResponsiveLayoutView>();
                 responsive.Configure(
                     1664f,
                     new[] { rotateRegion, cancelButton.transform as RectTransform, confirmButton.transform as RectTransform },
                     new[] { detail });
+                designLayout.Configure(designContent, new Vector2(1664f, 310f));
 
-                MainMenuV3SectionLayoutView sectionLayout =
-                    root.GetComponent<MainMenuV3SectionLayoutView>() ??
-                    root.AddComponent<MainMenuV3SectionLayoutView>();
-                sectionLayout.Configure(
-                    new Vector2(1672f, 941f),
-                    MainMenuV3SectionAlignment.Center,
-                    Array.Empty<RectTransform>(),
-                    true,
-                    Array.Empty<RectTransform>(),
-                    new[] { barPanel });
-
-                TMP_Text duration = CreateHiddenText("Duration", barPanel, "00:45");
+                TMP_Text duration = CreateHiddenText("Duration", designContent, "00:45");
                 TMP_Text instruction = CreateHiddenText(
-                    "Instruction", barPanel, "DRAG TO POSITION, CONFIRM TO BUILD");
+                    "Instruction", designContent, "DRAG TO POSITION, CONFIRM TO BUILD");
 
                 var serialized = new SerializedObject(view);
                 SetObject(serialized, "root", barPanel);
@@ -259,11 +263,15 @@ namespace Game.Editor
                 prefab.GetComponentInChildren<BuildPlacementConfirmationResponsiveLayoutView>(true);
             if (responsive == null || responsive.ReferenceWidth != 1664f || responsive.RightAnchoredTargets.Length != 3)
                 throw new InvalidOperationException("Placement confirmation V3 ultrawide layout is incomplete.");
-            MainMenuV3SectionLayoutView sectionLayout = prefab.GetComponent<MainMenuV3SectionLayoutView>();
-            if (sectionLayout == null || !sectionLayout.ExpandToCanvasWidth ||
-                sectionLayout.ReferenceResolution != new Vector2(1672f, 941f))
+            RectTransform barPanel = prefab.transform.Find("PlacementBarPanel") as RectTransform;
+            BuildPlacementConfirmationBarDesignLayoutView designLayout =
+                barPanel != null ? barPanel.GetComponent<BuildPlacementConfirmationBarDesignLayoutView>() : null;
+            if (barPanel == null || designLayout == null || designLayout.DesignContent == null ||
+                Vector2.Distance(barPanel.anchorMin, new Vector2(4f / 1672f, 14f / 941f)) > 0.0001f ||
+                Vector2.Distance(barPanel.anchorMax, new Vector2(1668f / 1672f, 324f / 941f)) > 0.0001f ||
+                designLayout.ReferenceSize != new Vector2(1664f, 310f))
             {
-                throw new InvalidOperationException("Placement confirmation V3 must use the shared Match HUD responsive section frame.");
+                throw new InvalidOperationException("Placement confirmation V3 must preserve the target-lock footer footprint at every aspect ratio.");
             }
 
             Debug.Log($"[BuildPlacementConfirmationBarV3Validation] result=Passed gradients={gradients.Length} borders=3 actions=3");
@@ -304,6 +312,7 @@ namespace Game.Editor
         {
             Button button = rect.gameObject.AddComponent<Button>();
             button.targetGraphic = rect.GetComponent<V3GradientGraphic>();
+            button.targetGraphic.raycastTarget = true;
             button.transition = Selectable.Transition.ColorTint;
             ColorBlock colors = button.colors;
             colors.normalColor = Color.white;
@@ -414,6 +423,22 @@ namespace Game.Editor
             RectTransform rect = gameObject.GetComponent<RectTransform>();
             rect.SetParent(parent, false);
             SetTopLeft(rect, x, y, width, height);
+            return rect;
+        }
+
+        private static RectTransform CreateBottomLeft(
+            string name, Transform parent, float x, float y, float width, float height)
+        {
+            GameObject gameObject = new(name, typeof(RectTransform));
+            RectTransform rect = gameObject.GetComponent<RectTransform>();
+            rect.SetParent(parent, false);
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.zero;
+            rect.pivot = Vector2.zero;
+            rect.anchoredPosition = new Vector2(x, y);
+            rect.sizeDelta = new Vector2(width, height);
+            rect.localScale = Vector3.one;
+            rect.localRotation = Quaternion.identity;
             return rect;
         }
 

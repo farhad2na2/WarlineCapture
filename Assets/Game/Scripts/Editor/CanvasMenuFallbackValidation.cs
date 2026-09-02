@@ -28,6 +28,8 @@ namespace Game.Editor
         private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
         private const string RuntimeUiConfigPath = "Assets/Game/Data/UI/RuntimeUiConfig.asset";
         private const string MainMenuContentPrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN02_MainMenuContent.prefab";
+        private const string MatchCaptureBackdropPath =
+            "Assets/Game/Art/UI/V3Shared/MissionBriefing/SCN06_ForwardPost_V3.png";
         private const string TransportHelicopterPortraitPath =
             "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Helicopter_Transport_Action_512.png";
         private const string PassengerRiflePortraitPath =
@@ -122,7 +124,7 @@ namespace Game.Editor
             screenshotHeight = SessionState.GetInt(CommanderCaptureHeightSessionKey, 1080);
             routeCaptureRoute = (UIRoute)SessionState.GetInt(
                 CommanderCaptureRouteSessionKey,
-                (int)UIRoute.CommandFeed);
+                (int)UIRoute.CommanderProfile);
             routeCaptureShouldShowPopup = SessionState.GetBool(CommanderCaptureShowPopupSessionKey, false);
             routeCapturePopup = (UiShellPopupKind)SessionState.GetInt(
                 CommanderCapturePopupSessionKey,
@@ -267,23 +269,23 @@ namespace Game.Editor
         }
 
         [MenuItem("Game/UI/V3/Capture Commander Profile 1920x1080")]
-        private static void CaptureCommanderProfile1920x1080()
+        public static void CaptureCommanderProfile1920x1080()
         {
             StartV3RouteCapture(
                 "/private/tmp/warline-commander-profile-v3-16x9.png",
                 1920,
                 1080,
-                UIRoute.CommandFeed);
+                UIRoute.CommanderProfile);
         }
 
         [MenuItem("Game/UI/V3/Capture Commander Profile 4800x2160")]
-        private static void CaptureCommanderProfile4800x2160()
+        public static void CaptureCommanderProfile4800x2160()
         {
             StartV3RouteCapture(
                 "/private/tmp/warline-commander-profile-v3-20x9.png",
                 4800,
                 2160,
-                UIRoute.CommandFeed);
+                UIRoute.CommanderProfile);
         }
 
         private static void StartCommanderProfileRouteCapture(
@@ -295,11 +297,11 @@ namespace Game.Editor
                 capturePathOverride,
                 captureWidthOverride,
                 captureHeightOverride,
-                UIRoute.CommandFeed);
+                UIRoute.CommanderProfile);
         }
 
         [MenuItem("Game/UI/V3/Capture Campaign Mission Select 1920x1080")]
-        private static void CaptureCampaignMissionSelect1920x1080()
+        public static void CaptureCampaignMissionSelect1920x1080()
         {
             StartV3RouteCapture(
                 "/private/tmp/warline-campaign-mission-v3-16x9.png",
@@ -309,7 +311,7 @@ namespace Game.Editor
         }
 
         [MenuItem("Game/UI/V3/Capture Campaign Mission Select 4800x2160")]
-        private static void CaptureCampaignMissionSelect4800x2160()
+        public static void CaptureCampaignMissionSelect4800x2160()
         {
             StartV3RouteCapture(
                 "/private/tmp/warline-campaign-mission-v3-20x9.png",
@@ -319,7 +321,7 @@ namespace Game.Editor
         }
 
         [MenuItem("Game/UI/V3/Capture Campaign Chapter Select 1920x1080")]
-        private static void CaptureCampaignChapterSelect1920x1080()
+        public static void CaptureCampaignChapterSelect1920x1080()
         {
             StartV3RouteCapture(
                 "/private/tmp/warline-campaign-chapter-v3-16x9.png",
@@ -330,7 +332,7 @@ namespace Game.Editor
         }
 
         [MenuItem("Game/UI/V3/Capture Campaign Chapter Select 4800x2160")]
-        private static void CaptureCampaignChapterSelect4800x2160()
+        public static void CaptureCampaignChapterSelect4800x2160()
         {
             StartV3RouteCapture(
                 "/private/tmp/warline-campaign-chapter-v3-20x9.png",
@@ -341,7 +343,7 @@ namespace Game.Editor
         }
 
         [MenuItem("Game/UI/V3/Capture Mission Briefing 1920x1080")]
-        private static void CaptureMissionBriefing1920x1080()
+        public static void CaptureMissionBriefing1920x1080()
         {
             StartV3RouteCapture(
                 "/private/tmp/warline-mission-briefing-v3-16x9.png",
@@ -351,7 +353,7 @@ namespace Game.Editor
         }
 
         [MenuItem("Game/UI/V3/Capture Mission Briefing 4800x2160")]
-        private static void CaptureMissionBriefing4800x2160()
+        public static void CaptureMissionBriefing4800x2160()
         {
             StartV3RouteCapture(
                 "/private/tmp/warline-mission-briefing-v3-20x9.png",
@@ -730,6 +732,28 @@ namespace Game.Editor
                 captureModal: "ConfirmRaid");
         }
 
+        [MenuItem("Game/UI/V3/Capture POP-04 Reward Unlock 1920x1080")]
+        public static void CaptureRewardUnlock1920x1080()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-reward-unlock-v3-live-16x9.png",
+                1920,
+                1080,
+                UIRoute.Campaign,
+                captureModal: "RewardUnlock");
+        }
+
+        [MenuItem("Game/UI/V3/Capture POP-04 Reward Unlock 4800x2160")]
+        public static void CaptureRewardUnlock4800x2160()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-reward-unlock-v3-live-20x9.png",
+                4800,
+                2160,
+                UIRoute.Campaign,
+                captureModal: "RewardUnlock");
+        }
+
         [MenuItem("Game/UI/V3/Capture POP-08 Intel Reveal 1920x1080")]
         public static void CaptureIntelReveal1920x1080()
         {
@@ -898,6 +922,40 @@ namespace Game.Editor
         public static void CaptureRanking4800x2160()
         {
             StartV3RouteCapture("/private/tmp/warline-ranking-v3-live-20x9.png", 4800, 2160, UIRoute.Ranking);
+        }
+
+        [MenuItem("Game/UI/V3/Capture SCN-18 Command Feed 1920x1080")]
+        public static void CaptureCommandFeed1920x1080()
+        {
+            StartV3RouteCapture("/private/tmp/warline-command-feed-v3-live-16x9.png", 1920, 1080, UIRoute.CommandFeed);
+        }
+
+        [MenuItem("Game/UI/V3/Capture SCN-18 Command Feed 4800x2160")]
+        public static void CaptureCommandFeed4800x2160()
+        {
+            StartV3RouteCapture("/private/tmp/warline-command-feed-v3-live-20x9.png", 4800, 2160, UIRoute.CommandFeed);
+        }
+
+        [MenuItem("Game/UI/V3/Capture POP-12 Resource Exchange 1920x1080")]
+        public static void CaptureResourceExchange1920x1080()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-resource-exchange-v3-live-16x9.png",
+                1920,
+                1080,
+                UIRoute.Match,
+                capturePopup: UiShellPopupKind.ResourceExchange);
+        }
+
+        [MenuItem("Game/UI/V3/Capture POP-12 Resource Exchange 4800x2160")]
+        public static void CaptureResourceExchange4800x2160()
+        {
+            StartV3RouteCapture(
+                "/private/tmp/warline-resource-exchange-v3-live-20x9.png",
+                4800,
+                2160,
+                UIRoute.Match,
+                capturePopup: UiShellPopupKind.ResourceExchange);
         }
 
         private static void StartV3RouteCapture(
@@ -1599,7 +1657,7 @@ namespace Game.Editor
                     if (!TryConfigureRouteCaptureArmoryCategory(out error))
                         return false;
                     break;
-                case UIRoute.CommandFeed:
+                case UIRoute.CommanderProfile:
                     content.PrepareForCommandSequence(new[]
                     {
                         new UiShellPresentationCommandModel(
@@ -1609,7 +1667,7 @@ namespace Game.Editor
                             UiShellMode.MainMenu,
                             1)
                     });
-                    content.InstallMenuRouteBody(UIRoute.CommandFeed);
+                    content.InstallMenuRouteBody(UIRoute.CommanderProfile);
                     ResetRouteCaptureRegions(
                         bootstrap,
                         UIShellRegionId.MenuBackgroundRegion,
@@ -1706,6 +1764,23 @@ namespace Game.Editor
                             UIRoute.MainMenu, UiShellMode.MainMenu, 1)
                     });
                     content.InstallMenuRouteBody(UIRoute.Ranking);
+                    ResetRouteCaptureRegions(
+                        bootstrap,
+                        UIShellRegionId.MenuBackgroundRegion,
+                        UIShellRegionId.HeaderRegion,
+                        UIShellRegionId.LeftRegion,
+                        UIShellRegionId.MiddleRegion,
+                        UIShellRegionId.RightRegion,
+                        UIShellRegionId.FooterRegion,
+                        UIShellRegionId.PopupLayer);
+                    break;
+                case UIRoute.CommandFeed:
+                    content.PrepareForCommandSequence(new[]
+                    {
+                        new UiShellPresentationCommandModel(UiShellCommandKind.EnterMenu, UiShellRegionId.None,
+                            UIRoute.MainMenu, UiShellMode.MainMenu, 1)
+                    });
+                    content.InstallMenuRouteBody(UIRoute.CommandFeed);
                     ResetRouteCaptureRegions(
                         bootstrap,
                         UIShellRegionId.MenuBackgroundRegion,
@@ -1831,6 +1906,8 @@ namespace Game.Editor
                             UiShellMode.MatchHud,
                             1)
                     });
+                    if (!TryInstallMatchCaptureBackdrop(bootstrap, out error))
+                        return false;
                     break;
                 default:
                     error = $"Canvas route capture does not support route={routeCaptureRoute}. Supported routes: Splash, MainMenu, Armory, CommandExchange, Inbox, Events, CommandFeed, QuickCustomSetup, Campaign, MissionBriefing, LoadoutSquadPrep, Operations, DistrictDetail, Match.";
@@ -1840,17 +1917,38 @@ namespace Game.Editor
 
             if (routeCaptureShouldShowPopup)
             {
-                if (routeCapturePopup != UiShellPopupKind.BuildDrawer)
+                GameObject popup;
+                switch (routeCapturePopup)
                 {
-                    error = $"Canvas route capture does not support popup={routeCapturePopup}. Supported popup: BuildDrawer.";
+                    case UiShellPopupKind.BuildDrawer:
+                        popup = content.InstallBuildDrawerPopup();
+                        break;
+                    case UiShellPopupKind.ResourceExchange:
+                        popup = content.InstallResourceExchangePopup();
+                        break;
+                    default:
+                        error = $"Canvas route capture does not support popup={routeCapturePopup}. Supported popups: BuildDrawer, ResourceExchange.";
+                        return false;
+                }
+
+                if (popup == null)
+                {
+                    error = $"Canvas route capture could not install {routeCapturePopup} popup.";
                     return false;
                 }
 
-                GameObject popup = content.InstallBuildDrawerPopup();
-                if (popup == null)
+                if (routeCapturePopup == UiShellPopupKind.ResourceExchange)
                 {
-                    error = "Canvas route capture could not install BuildDrawer popup.";
-                    return false;
+                    ResourceExchangePopupRuntimeView runtime = popup.GetComponent<ResourceExchangePopupRuntimeView>();
+                    if (runtime != null)
+                        runtime.enabled = false;
+                    ResourceExchangePopupView resourceExchange = popup.GetComponent<ResourceExchangePopupView>();
+                    if (resourceExchange == null)
+                    {
+                        error = "Canvas route capture installed ResourceExchange without ResourceExchangePopupView.";
+                        return false;
+                    }
+                    resourceExchange.ApplyV3TargetLockPreview();
                 }
             }
 
@@ -1879,6 +1977,53 @@ namespace Game.Editor
             if (!TryConfigureRouteCaptureModal(bootstrap, out error))
                 return false;
 
+            return true;
+        }
+
+        private static bool TryInstallMatchCaptureBackdrop(MenuBootstrapView bootstrap, out string error)
+        {
+            error = null;
+            if (bootstrap == null || bootstrap.UiCanvas == null)
+            {
+                error = "Match route capture could not find the live root Canvas for its world backdrop.";
+                return false;
+            }
+
+            Sprite backdrop = AssetDatabase.LoadAssetAtPath<Sprite>(MatchCaptureBackdropPath);
+            if (backdrop == null)
+            {
+                error = $"Match route capture could not load the shared V3 environment backdrop at {MatchCaptureBackdropPath}.";
+                return false;
+            }
+
+            Transform existing = bootstrap.UiCanvas.transform.Find("V3MatchCaptureWorldBackdrop");
+            GameObject backdropObject = existing != null
+                ? existing.gameObject
+                : new GameObject(
+                    "V3MatchCaptureWorldBackdrop",
+                    typeof(RectTransform),
+                    typeof(CanvasRenderer),
+                    typeof(Image),
+                    typeof(AspectRatioFitter));
+            if (existing == null)
+                backdropObject.transform.SetParent(bootstrap.UiCanvas.transform, false);
+
+            RectTransform rect = backdropObject.GetComponent<RectTransform>();
+            rect.anchorMin = new Vector2(.5f, .5f);
+            rect.anchorMax = new Vector2(.5f, .5f);
+            rect.pivot = new Vector2(.5f, .5f);
+            rect.anchoredPosition = Vector2.zero;
+            Image image = backdropObject.GetComponent<Image>();
+            image.sprite = backdrop;
+            image.type = Image.Type.Simple;
+            image.preserveAspect = false;
+            image.raycastTarget = false;
+            image.color = Color.white;
+            AspectRatioFitter fitter = backdropObject.GetComponent<AspectRatioFitter>();
+            fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+            fitter.aspectRatio = backdrop.rect.width / backdrop.rect.height;
+            backdropObject.SetActive(true);
+            backdropObject.transform.SetAsFirstSibling();
             return true;
         }
 
@@ -2149,6 +2294,14 @@ namespace Game.Editor
             if (threatAlert || threatRoutePreview)
                 return TryConfigureThreatAlertCapture(bootstrap, threatRoutePreview, out error);
 
+            if (buildPlacement && !TryConfigurePermanentAriaTutorial(
+                    bootstrap,
+                    out error,
+                    "SELECT POWER PLANT",
+                    "Select <color=#00D1F3>Power Plant</color>.\n" +
+                    "Then tap <color=#00D1F3>Place Building</color> to confirm."))
+                return false;
+
             BuildPlacementConfirmationBarView placementBar =
                 UnityEngine.Object.FindAnyObjectByType<BuildPlacementConfirmationBarView>(FindObjectsInactive.Include);
             if (placementBar == null)
@@ -2189,37 +2342,26 @@ namespace Game.Editor
             if (selection != null)
                 ConfigureCommandWheelCaptureSelection(selection);
 
-            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(
-                AriaTutorialBriefingPrefabBuilder.PrefabPath);
-            if (prefab == null)
+            // Tutorial guidance is part of the permanent Match HUD ARIA surface.
+            // Capturing POP13 here used to manufacture a second, wider ARIA panel
+            // and hide the Pause button, which was neither the runtime contract nor
+            // the V3 target. Exercise the same embedded hierarchy the player sees.
+            AriaTutorialBriefingView tutorial =
+                UnityEngine.Object.FindAnyObjectByType<AriaTutorialBriefingView>(
+                    FindObjectsInactive.Include);
+            if (tutorial == null || !tutorial.TryBindHierarchy())
             {
-                error = "Tutorial Presentation capture could not load the POP-13 prefab.";
+                error = "Tutorial Presentation capture could not bind the embedded Match HUD ARIA surface.";
                 return false;
             }
 
-            GameObject popupObject = UnityEngine.Object.Instantiate(
-                prefab, bootstrap.UiCanvas.transform, false);
-            popupObject.name = "TutorialPresentationLivePreview";
-            Stretch(popupObject.transform as RectTransform);
-            popupObject.SetActive(true);
-
-            AriaCommandAssistantPopupView popup =
-                popupObject.GetComponent<AriaCommandAssistantPopupView>();
-            if (popup == null || !popup.TryBindHierarchy())
-            {
-                error = "Tutorial Presentation live popup hierarchy did not bind.";
-                UnityEngine.Object.Destroy(popupObject);
-                return false;
-            }
-
-            popup.ApplyRecommendation(AriaTutorialBriefingPrefabBuilder.CreateTargetLockPreviewModel());
-            popup.ApplyAccessibility(false, false);
-            popup.Show();
-            popupObject.GetComponentInChildren<AriaTutorialHudVariantLayoutView>(true)?.RefreshLayout();
-            popupObject.transform.SetAsLastSibling();
+            tutorial.Apply(AriaTutorialBriefingPrefabBuilder.CreateTargetLockPreviewModel());
+            tutorial.ApplyAccessibility(false, false);
+            tutorial.SetPresentationVisible(true);
+            tutorial.transform.SetAsLastSibling();
             Canvas.ForceUpdateCanvases();
             foreach (MainMenuV3SectionLayoutView layout in
-                     popupObject.GetComponentsInChildren<MainMenuV3SectionLayoutView>(true))
+                     tutorial.GetComponentsInChildren<MainMenuV3SectionLayoutView>(true))
             {
                 layout.RefreshLayout();
             }
@@ -2241,6 +2383,9 @@ namespace Game.Editor
                 UnityEngine.Object.FindAnyObjectByType<MatchHudSelectionPanelView>(FindObjectsInactive.Include);
             if (selection != null)
                 ConfigureCommandWheelCaptureSelection(selection);
+
+            if (!TryConfigurePermanentAriaTutorial(bootstrap, out error))
+                return false;
 
             BattleHudRuntimeFeedbackView feedback =
                 UnityEngine.Object.FindAnyObjectByType<BattleHudRuntimeFeedbackView>(FindObjectsInactive.Include);
@@ -2308,6 +2453,9 @@ namespace Game.Editor
             if (selection != null)
                 ConfigureCommandWheelCaptureSelection(selection);
 
+            if (!TryConfigurePermanentAriaTutorial(bootstrap, out error))
+                return false;
+
             BattleHudRuntimeFeedbackView feedback =
                 UnityEngine.Object.FindAnyObjectByType<BattleHudRuntimeFeedbackView>(FindObjectsInactive.Include);
             if (feedback != null && feedback.FeedbackPanel != null)
@@ -2349,6 +2497,46 @@ namespace Game.Editor
             {
                 layout.RefreshLayout();
             }
+            return true;
+        }
+
+        private static bool TryConfigurePermanentAriaTutorial(
+            MenuBootstrapView bootstrap,
+            out string error,
+            string titleOverride = null,
+            string bodyOverride = null,
+            string progressOverride = null)
+        {
+            error = null;
+            if (bootstrap == null || bootstrap.UiCanvas == null)
+            {
+                error = "The permanent Match HUD ARIA tutorial panel has no live Canvas.";
+                return false;
+            }
+
+            Transform ariaRoot = FindChild(bootstrap.UiCanvas.transform, "AriaAssistantButton");
+            AriaTutorialBriefingView tutorial =
+                ariaRoot != null ? ariaRoot.GetComponent<AriaTutorialBriefingView>() : null;
+            if (tutorial == null || !tutorial.TryBindHierarchy())
+            {
+                error = "The one permanent Match HUD ARIA tutorial panel is not bound.";
+                return false;
+            }
+
+            tutorial.Apply(AriaTutorialBriefingPrefabBuilder.CreateTargetLockPreviewModel());
+            tutorial.SetPresentationVisible(true);
+            if (titleOverride != null && tutorial.TitleText != null)
+                tutorial.TitleText.text = titleOverride;
+            if (bodyOverride != null && tutorial.BodyText != null)
+                tutorial.BodyText.text = bodyOverride;
+            if (tutorial.ProgressText != null)
+                tutorial.ProgressText.text = string.IsNullOrWhiteSpace(progressOverride)
+                    ? "TUTORIAL 1/3"
+                    : progressOverride;
+
+            Transform legacyCue = FindChild(ariaRoot, "AlertCue");
+            if (legacyCue != null)
+                legacyCue.gameObject.SetActive(false);
             return true;
         }
 
@@ -2530,6 +2718,16 @@ namespace Game.Editor
                     return false;
                 }
 
+                Transform previewMarkers = FindChild(fullMap.transform, "V3PreviewMarkers");
+                MatchHudFullMapFilterView filterView = fullMap.GetComponent<MatchHudFullMapFilterView>();
+                if (previewMarkers == null || filterView == null)
+                {
+                    error = "The mounted live V3 Full Map popup is missing its route-review marker layers or functional filter binding.";
+                    return false;
+                }
+                previewMarkers.gameObject.SetActive(true);
+                filterView.RefreshFilters();
+
                 routeCaptureButtonSelectionIndex++;
                 routeCaptureButtonSelectionApplied = routeCaptureButtonSelectionIndex >= buttonSequence.Length;
                 routeCaptureConfiguredFrame = routeCaptureFrameCount;
@@ -2562,6 +2760,17 @@ namespace Game.Editor
                         : $"The selected-unit command cue clicked, but the wheel stayed closed. listeners={wheel.HasBoundListeners} boundOpen={wheel.OpenButton?.name ?? "null"} sameButton={ReferenceEquals(wheel.OpenButton, button)}";
                     return false;
                 }
+
+                MenuBootstrapView bootstrap = UnityEngine.Object.FindAnyObjectByType<MenuBootstrapView>(FindObjectsInactive.Include);
+                if (!TryConfigurePermanentAriaTutorial(
+                        bootstrap,
+                        out error,
+                        "SELECT RIFLE SQUAD FIRST",
+                        "Then tap <color=#FF6A24>ATTACK</color> to engage the enemy.",
+                        "TUTORIAL 1/5"))
+                {
+                    return false;
+                }
             }
             else if (string.Equals(currentButtonName, "AttackSector", StringComparison.Ordinal))
             {
@@ -2581,6 +2790,16 @@ namespace Game.Editor
                 }
 
                 ConfigureTacticalFeedbackCaptureState(feedback);
+                MenuBootstrapView bootstrap = UnityEngine.Object.FindAnyObjectByType<MenuBootstrapView>(FindObjectsInactive.Include);
+                if (!TryConfigurePermanentAriaTutorial(
+                        bootstrap,
+                        out error,
+                        "SELECT RIFLE SQUAD FIRST",
+                        "Then tap <color=#FF6A24>ATTACK</color> to engage the enemy.",
+                        "TUTORIAL 1/5"))
+                {
+                    return false;
+                }
                 Transform selectedVisual = button.transform.Find("V3SelectedState");
                 if (feedback.CurrentCommandMode != TacticalCommandMode.Attack ||
                     selectedVisual == null ||
@@ -2609,6 +2828,24 @@ namespace Game.Editor
                         : "The transport passenger chip was clicked, but the live passenger drawer stayed closed.";
                     return false;
                 }
+
+                MenuBootstrapView bootstrap = UnityEngine.Object.FindAnyObjectByType<MenuBootstrapView>(FindObjectsInactive.Include);
+                if (!TryConfigurePermanentAriaTutorial(
+                        bootstrap,
+                        out error,
+                        "SELECT TRANSPORT HELICOPTER",
+                        "Then tap a <color=#00D1F3>passenger</color> to exit.",
+                        "TUTORIAL 1/3"))
+                {
+                    return false;
+                }
+                Transform ariaRoot = FindChild(bootstrap.UiCanvas.transform, "AriaAssistantButton");
+                AriaTutorialBriefingView tutorial = ariaRoot != null
+                    ? ariaRoot.GetComponent<AriaTutorialBriefingView>()
+                    : null;
+                TMP_Text doItLabel = tutorial?.DoItButton?.GetComponentInChildren<TMP_Text>(true);
+                if (doItLabel != null)
+                    doItLabel.text = "GOT IT";
             }
             routeCaptureButtonSelectionIndex++;
             routeCaptureButtonSelectionApplied = routeCaptureButtonSelectionIndex >= buttonSequence.Length;
@@ -2960,7 +3197,7 @@ namespace Game.Editor
 
         private static void ApplyCommanderResponsiveCaptureLayout()
         {
-            if (routeCaptureRoute != UIRoute.CommandFeed || screenshotWidth <= 0 || screenshotHeight <= 0)
+            if (routeCaptureRoute != UIRoute.CommanderProfile || screenshotWidth <= 0 || screenshotHeight <= 0)
                 return;
 
             const float referenceWidth = 4800f;
@@ -3651,11 +3888,11 @@ namespace Game.Editor
 
                 Stretch(hotspot.transform as RectTransform);
                 EnsureButtonInteraction(hotspot);
-                ConfigureRouteButton(hotspot, UiShellRouteIntent.OpenMenuRoute, UIRoute.CommandFeed, true);
+                ConfigureRouteButton(hotspot, UiShellRouteIntent.OpenMenuRoute, UIRoute.CommanderProfile, true);
 
                 GameObject portraitButton = FindChild(root.transform, "CommanderPortraitButton")?.gameObject;
                 if (portraitButton != null)
-                    ConfigureRouteButton(portraitButton, UiShellRouteIntent.OpenMenuRoute, UIRoute.CommandFeed, true);
+                    ConfigureRouteButton(portraitButton, UiShellRouteIntent.OpenMenuRoute, UIRoute.CommanderProfile, true);
 
                 PrefabUtility.SaveAsPrefabAsset(root, MainMenuContentPrefabPath);
                 Debug.Log($"[CanvasCommanderProfileTargetLockLayout] commanderRoute=Passed prefab={MainMenuContentPrefabPath}");

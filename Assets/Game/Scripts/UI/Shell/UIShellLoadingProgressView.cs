@@ -4,6 +4,7 @@ using Game.UI.Contracts;
 
 namespace Game.UI.Runtime
 {
+    [ExecuteAlways]
     [DisallowMultipleComponent]
     public sealed class UIShellLoadingProgressView : MonoBehaviour
     {
@@ -21,6 +22,7 @@ namespace Game.UI.Runtime
         private string lastStatus;
         private bool lastReadWasComplete;
         private float nextCompletedPollTime;
+        private bool applyingEditorPreview;
 
         public void Configure(RectTransform fill, TMP_Text percent, TMP_Text status, float maxFillWidth)
         {
@@ -34,6 +36,12 @@ namespace Game.UI.Runtime
 
         private void OnEnable()
         {
+            if (!Application.isPlaying)
+            {
+                ApplyEditorPreview();
+                return;
+            }
+
             ResetPresentationCache();
             lastReadWasComplete = false;
             nextCompletedPollTime = 0f;
@@ -42,6 +50,9 @@ namespace Game.UI.Runtime
 
         private void Update()
         {
+            if (!Application.isPlaying)
+                return;
+
             if (lastReadWasComplete && Time.unscaledTime < nextCompletedPollTime)
                 return;
 
@@ -55,14 +66,43 @@ namespace Game.UI.Runtime
                 : 0f;
         }
 
+        private void OnRectTransformDimensionsChange()
+        {
+            if (!Application.isPlaying)
+                ApplyEditorPreview();
+        }
+
+        private void ApplyEditorPreview()
+        {
+            if (applyingEditorPreview)
+                return;
+            applyingEditorPreview = true;
+            try
+            {
+                string value = percentText != null ? percentText.text : string.Empty;
+                int percent = 0;
+                if (!string.IsNullOrWhiteSpace(value))
+                    int.TryParse(value.Trim().TrimEnd('%'), out percent);
+                ApplyProgress(Mathf.Clamp(percent, 0, 100) / 100f,
+                    statusText != null ? statusText.text : DefaultStatus);
+            }
+            finally
+            {
+                applyingEditorPreview = false;
+            }
+        }
+
         private void ApplyProgress(float progress01, string status)
         {
             float clamped = Mathf.Clamp01(progress01);
             int percent = Mathf.RoundToInt(clamped * 100f);
             if (progressFill != null)
             {
+                float responsiveFillWidth = fillWidth;
+                if (progressFill.parent is RectTransform track && track.rect.width > 8f)
+                    responsiveFillWidth = track.rect.width - 8f;
                 Vector2 size = progressFill.sizeDelta;
-                size.x = fillWidth * clamped;
+                size.x = responsiveFillWidth * clamped;
                 progressFill.sizeDelta = size;
             }
 

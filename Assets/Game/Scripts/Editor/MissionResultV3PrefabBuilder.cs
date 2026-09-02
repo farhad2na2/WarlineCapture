@@ -18,7 +18,7 @@ namespace Game.Editor
             "Assets/Game/Prefabs/UI/Popups/MissionResultPopup.prefab";
 
         private const string BackgroundPath =
-            "Assets/Game/Art/UI/V3Shared/MissionBriefing/SCN06_ForwardPost_V3.png";
+            "Assets/Game/Art/UI/V3Shared/MissionResult/POP05_M01_OldMarket_ResultBackdrop_V3.png";
         private const string BoldFontPath =
             "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold SDF.asset";
         private const string MediumFontPath =
@@ -184,6 +184,8 @@ namespace Game.Editor
             if (FindDeepChild(prefab.transform, "ContinueButton")?.GetComponent<Button>() == null ||
                 FindDeepChild(prefab.transform, "ReplayButton")?.GetComponent<Button>() == null)
                 throw new MissingReferenceException("Mission Result V3 outcome actions are not bound.");
+            RequirePointerTarget(prefab.transform, "ContinueButton");
+            RequirePointerTarget(prefab.transform, "ReplayButton");
             int stars = 0;
             for (int index = 1; index <= 3; index++)
                 if (FindDeepChild(prefab.transform, $"Star_{index}") != null) stars++;
@@ -192,7 +194,7 @@ namespace Game.Editor
             int gradients = prefab.GetComponentsInChildren<V3GradientGraphic>(true).Length;
             if (gradients < 14)
                 throw new InvalidOperationException($"Mission Result V3 requires layered procedural gradients; found {gradients}.");
-            Debug.Log($"[MissionResultV3PrefabBuilder] validation=Passed stars={stars} gradients={gradients} actions=one-per-state art=aspect-preserved");
+            Debug.Log($"[MissionResultV3PrefabBuilder] validation=Passed stars={stars} gradients={gradients} actions=one-per-state pointerTargets=Passed art=aspect-preserved");
         }
 
         private static HeaderBindings BuildHeader(RectTransform parent)
@@ -345,6 +347,7 @@ namespace Game.Editor
         {
             RectTransform rect = CreatePanel(name, parent, 769f, 790f, 888f, 134f, top, bottom, border, 3f);
             gradient = rect.GetComponent<V3GradientGraphic>();
+            gradient.raycastTarget = true;
             Button button = rect.gameObject.AddComponent<Button>();
             button.targetGraphic = gradient;
             button.transition = Selectable.Transition.ColorTint;
@@ -362,6 +365,17 @@ namespace Game.Editor
             SetTopLeft(icon.rectTransform, 716f, 34f, 67f, 67f);
             labelText = CreateText(rect, "Label", 146f, 10f, 596f, 114f, label, 62f, theme.TextPrimary, TextAlignmentOptions.Center, true);
             return button;
+        }
+
+        private static void RequirePointerTarget(Transform root, string buttonName)
+        {
+            Transform buttonRoot = FindDeepChild(root, buttonName);
+            Button button = buttonRoot != null ? buttonRoot.GetComponent<Button>() : null;
+            if (button == null || button.targetGraphic == null || !button.targetGraphic.raycastTarget)
+            {
+                throw new InvalidOperationException(
+                    $"Mission Result V3 action '{buttonName}' must expose a raycastable target graphic.");
+            }
         }
 
         private static GameObject[] BuildCompatibilityRoots(Transform parent)

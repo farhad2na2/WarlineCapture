@@ -12,6 +12,39 @@ using UnityEngine.UI;
 
 public sealed class M02EstablishBaseDoItTests
 {
+    private const string Marker =
+        "[M02EstablishBaseDoItValidation] result=Passed tests=9 routes=5 lateBinding=Passed";
+
+    public static void RunFocusedValidation()
+    {
+        int passed = 0;
+        try
+        {
+            var tests = new M02EstablishBaseDoItTests();
+            Run(tests.EveryActionableM02StepHasAnExactDoItRoute, ref passed);
+            Run(() => tests.EverySuccessfulM02UiActionMapsToAuthoritativeAcknowledgement(
+                4, UiCampaignGuidanceTargetKind.BuildButton), ref passed);
+            Run(() => tests.EverySuccessfulM02UiActionMapsToAuthoritativeAcknowledgement(
+                1, UiCampaignGuidanceTargetKind.BarracksCatalogItem), ref passed);
+            Run(() => tests.EverySuccessfulM02UiActionMapsToAuthoritativeAcknowledgement(
+                9, UiCampaignGuidanceTargetKind.ResourceStrip), ref passed);
+            Run(() => tests.EverySuccessfulM02UiActionMapsToAuthoritativeAcknowledgement(
+                5, UiCampaignGuidanceTargetKind.RifleProduction), ref passed);
+            Run(tests.BarracksDoItReopensTheDrawerAndSelectsTheRenderedItem, ref passed);
+            Run(tests.OneDoItRequestRetriesUntilTheBarracksControlIsReady, ref passed);
+            Run(tests.LateAssistantBindRestoresTheAlreadyOpenBuildDrawer, ref passed);
+            Run(tests.RifleDoItKeepsBuildDrawerOpenWhileTheStagedActionRetries, ref passed);
+            Debug.Log(Marker);
+            ValidationExit.Passed();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError($"[M02EstablishBaseDoItValidation] result=Failed passed={passed}");
+            ValidationExit.Failed();
+        }
+    }
+
     [Test]
     public void EveryActionableM02StepHasAnExactDoItRoute()
     {
@@ -260,5 +293,11 @@ public sealed class M02EstablishBaseDoItTests
 
     private static void SetField(object target, string fieldName, object value) =>
         target.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic)?.SetValue(target, value);
+
+    private static void Run(Action test, ref int passed)
+    {
+        test();
+        passed++;
+    }
 }
 #endif

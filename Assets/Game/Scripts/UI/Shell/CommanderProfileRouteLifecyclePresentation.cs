@@ -25,7 +25,7 @@ namespace Game.UI.Runtime
                 return;
             }
 
-            if (route == UIRoute.CommandFeed)
+            if (route == UIRoute.CommanderProfile)
             {
                 InstallCommanderProfileBody(contentView);
                 return;

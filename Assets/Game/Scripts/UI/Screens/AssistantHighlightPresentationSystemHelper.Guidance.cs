@@ -11,10 +11,12 @@ namespace Game.UI.Runtime
     internal sealed partial class AssistantHighlightPresentationSystemHelper
     {
         private const string WorldRingName = "AriaAssistantPreviewHighlightRuntime";
-        private const int WorldRingSegments = 48;
-        private const float WorldRingRadius = 4f;
-        private const float WorldRingHeightOffset = 0.38f;
-        private const float WorldRingWidth = 0.38f;
+        private const int WorldRingSegments = 64;
+        private const int WorldAccentSegmentCount = 8;
+        private const int WorldBracketCount = 4;
+        private const float WorldRingRadius = 3.15f;
+        private const float WorldRingHeightOffset = 0.28f;
+        private const float WorldRingWidth = 0.16f;
         private const byte SelectRecommendationKind = 1;
         private const byte MoveRecommendationKind = 2;
         private const byte AttackRecommendationKind = 3;
@@ -26,12 +28,16 @@ namespace Game.UI.Runtime
         private Image _panelPulse;
         private GameObject _worldRingRoot;
         private LineRenderer _worldRingRenderer;
+        private LineRenderer[] _worldAccentRenderers;
+        private LineRenderer[] _worldBracketRenderers;
+        private LineRenderer[] _worldCrosshairRenderers;
         private Material _worldRingMaterial;
         private MatchHudSquadTrayView _squadTrayView;
         private MatchOverlayCommandControlsView _commandControlsView;
         private RectTransform _screenTargetIndicator;
         private TextMeshProUGUI _screenTargetLabel;
         private Canvas _screenTargetCanvas;
+        private CanvasGroup _screenTargetGroup;
         private Camera _worldCamera;
         private Vector3 _screenTargetWorld;
         private bool _screenTargetActive;
@@ -97,10 +103,14 @@ namespace Game.UI.Runtime
             DestroyObject(_screenTargetIndicator != null ? _screenTargetIndicator.gameObject : null);
             _worldRingRoot = null;
             _worldRingRenderer = null;
+            _worldAccentRenderers = null;
+            _worldBracketRenderers = null;
+            _worldCrosshairRenderers = null;
             _worldRingMaterial = null;
             _screenTargetIndicator = null;
             _screenTargetLabel = null;
             _screenTargetCanvas = null;
+            _screenTargetGroup = null;
             _worldCamera = null;
             _screenTargetActive = false;
             _commandCueActive = false;

@@ -75,6 +75,9 @@ public sealed class MatchHudTransportPassengerDrawerTests
         TMP_Text chipLabel = GetReference<TMP_Text>(serialized, "passengerChipLabel");
         MatchHudTransportPassengerDrawerView drawer = GetReference<MatchHudTransportPassengerDrawerView>(serialized, "passengerDrawer");
         GameObject drawerRoot = GetReference<GameObject>(new SerializedObject(drawer), "drawerRoot");
+        Transform threatJumpPanel = FindNamedChild(_instance.transform, "ThreatJumpPanel");
+        Assert.NotNull(threatJumpPanel);
+        bool threatWasActive = threatJumpPanel.gameObject.activeSelf;
         SerializedObject drawerSerialized = new(drawer);
         RectTransform contentRoot = GetReference<RectTransform>(drawerSerialized, "contentRoot");
         RectTransform capacitySlotsRoot = GetReference<RectTransform>(drawerSerialized, "capacitySlotsRoot");
@@ -118,6 +121,8 @@ public sealed class MatchHudTransportPassengerDrawerTests
             passengers));
 
         Assert.IsTrue(drawerRoot.activeSelf);
+        Assert.IsFalse(threatJumpPanel.gameObject.activeSelf,
+            "The open passenger drawer must suppress the overlapping hostile-alert header.");
         Assert.GreaterOrEqual(CountActivePassengerRows(contentRoot), 2);
         Assert.AreSame(riflemanCardSprite, ResolveFirstActivePassengerPortrait(contentRoot));
         Assert.NotNull(capacitySlotsRoot);
@@ -138,6 +143,18 @@ public sealed class MatchHudTransportPassengerDrawerTests
         Assert.IsTrue(exitButton.interactable);
         exitButton.onClick.Invoke();
         Assert.AreEqual(passengers[0].Passenger, exitedPassenger);
+
+        view.CloseTransportPassengerDrawer();
+        view.ApplyTransportPassengers(new MatchHudTransportPassengersModel(
+            true,
+            false,
+            new UiEntityHandle(99, 1),
+            2,
+            8,
+            true,
+            passengers));
+        Assert.AreEqual(threatWasActive, threatJumpPanel.gameObject.activeSelf,
+            "Closing the passenger drawer must restore the header's exact prior visibility.");
     }
 
     [Test]
@@ -255,6 +272,21 @@ public sealed class MatchHudTransportPassengerDrawerTests
         MatchHudSelectionPanelView view = _instance.GetComponentInChildren<MatchHudSelectionPanelView>(true);
         Assert.NotNull(view);
         return view;
+    }
+
+    private static Transform FindNamedChild(Transform root, string targetName)
+    {
+        if (root == null)
+            return null;
+        if (root.name == targetName)
+            return root;
+        for (int i = 0; i < root.childCount; i++)
+        {
+            Transform found = FindNamedChild(root.GetChild(i), targetName);
+            if (found != null)
+                return found;
+        }
+        return null;
     }
 
     private static int CountCharacter(string value, char character)

@@ -335,7 +335,11 @@ namespace Game.UI.Runtime
             requiredBuildingDisplayName = string.Empty;
             return _uiCommandSystem != null
                 ? _uiCommandSystem.GetCampRequestFailure(item.Prefab, item.MaterialsCost, out requiredBuildingDisplayName)
-                : BuildingUiCommandFailure.InvalidSelection;
+                // Catalog metadata can arrive one presentation update before the
+                // live command adapter. Keep valid catalog cards selectable during
+                // that short binding window; OnPrimaryActionClicked already rejects
+                // with the explicit "still connecting" result until the adapter is ready.
+                : BuildingUiCommandFailure.None;
         }
 
         private void ApplyInstruction(string text, BuildDrawerInstructionSeverity severity) => view?.ApplyInstruction(text, severity);

@@ -72,13 +72,57 @@ public sealed class MatchHudFullMapV3PrefabTests
         }
     }
 
+    [Test]
+    public void Prefab_PreviewMarkersAndQuickTogglesAreFunctionallyBound()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+        GameObject instance = Object.Instantiate(prefab);
+        try
+        {
+            MatchHudFullMapFilterView filter = instance.GetComponent<MatchHudFullMapFilterView>();
+            MatchHudFullMapPopupView popup = instance.GetComponent<MatchHudFullMapPopupView>();
+            Assert.That(filter, Is.Not.Null);
+            Assert.That(popup, Is.Not.Null);
+            typeof(MatchHudFullMapFilterView)
+                .GetMethod("OnEnable", BindingFlags.Instance | BindingFlags.NonPublic)
+                ?.Invoke(filter, null);
+
+            Transform preview = Find(instance.transform, "V3PreviewMarkers");
+            Assert.That(preview, Is.Not.Null);
+            Assert.That(preview.gameObject.activeSelf, Is.False, "Preview markers must not duplicate live mission markers.");
+
+            preview.gameObject.SetActive(true);
+            filter.RefreshFilters();
+            Assert.That(filter.PreviewFriendlies.activeSelf, Is.True);
+            Assert.That(filter.PreviewEnemies.activeSelf, Is.True);
+            Assert.That(popup.Minimap.ViewportRect.gameObject.activeSelf, Is.True);
+
+            filter.EnemiesToggle.isOn = false;
+            Assert.That(filter.PreviewEnemies.activeSelf, Is.False);
+            Assert.That(filter.PreviewFriendlies.activeSelf, Is.True);
+
+            filter.ViewportToggle.isOn = false;
+            Assert.That(popup.Minimap.ViewportRect.gameObject.activeSelf, Is.False);
+
+            filter.EnemiesToggle.isOn = true;
+            filter.ViewportToggle.isOn = true;
+            Assert.That(filter.PreviewEnemies.activeSelf, Is.True);
+            Assert.That(popup.Minimap.ViewportRect.gameObject.activeSelf, Is.True);
+        }
+        finally
+        {
+            Object.DestroyImmediate(instance);
+        }
+    }
+
     public static void RunFocusedValidation()
     {
         MatchHudFullMapV3PrefabTests tests = new();
         tests.Prefab_UsesV3CompositionAndSharedMarkerArt();
         tests.Prefab_MapArtPreservesAspectAndActionsAreBound();
         tests.Prefab_QuickTogglesUseProceduralCheckVisuals();
-        Debug.Log("[MatchHudFullMapV3Validation] result=Passed tests=3");
+        tests.Prefab_PreviewMarkersAndQuickTogglesAreFunctionallyBound();
+        Debug.Log("[MatchHudFullMapV3Validation] result=Passed tests=4");
     }
 
     private static Transform Find(Transform root, string name)

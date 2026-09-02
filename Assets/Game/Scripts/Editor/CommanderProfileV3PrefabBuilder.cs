@@ -223,6 +223,24 @@ namespace Game.Editor
                 }
                 TMP_Text label = CreateText("Label", button.transform, labels[i], 24f, boldFont, TextAlignmentOptions.MidlineLeft, theme.TextPrimary);
                 SetTopLeft(label.rectTransform, 92f, 14f, 147f, 90f);
+                if (i == 3)
+                {
+                    button.gameObject.AddComponent<UIShellRouteButtonView>().Configure(
+                        UiShellRouteIntent.OpenMenuRoute,
+                        UIRoute.CommandFeed,
+                        true);
+                }
+                else
+                {
+                    string feedback = i switch
+                    {
+                        0 => "OVERVIEW",
+                        1 => "STATS SHOWN BELOW",
+                        2 => "BADGES IN REWARD TRACK",
+                        _ => "UPGRADES IN ARMORY"
+                    };
+                    button.gameObject.AddComponent<ButtonTemporaryFeedbackView>().Configure(label, feedback);
+                }
             }
         }
 
@@ -259,6 +277,7 @@ namespace Game.Editor
             SetTopLeft(name.rectTransform, 28f, 122f, 374f, 58f);
             TMP_Text subtitle = CreateText("CommanderSubtitle", identity, "SELECTED COMMANDER", 22f, boldFont, TextAlignmentOptions.MidlineLeft, theme.Green);
             SetTopLeft(subtitle.rectTransform, 28f, 180f, 350f, 40f);
+            edit.gameObject.AddComponent<ButtonTemporaryFeedbackView>().Configure(subtitle, "PROFILE EDIT MODE LOCKED");
             TMP_Text levelLabel = CreateText("LevelLabel", identity, "LEVEL", 19f, boldFont, TextAlignmentOptions.MidlineLeft, theme.TextMuted);
             SetTopLeft(levelLabel.rectTransform, 62f, 244f, 115f, 32f);
             TMP_Text level = CreateText("Level", identity, "38", 54f, boldFont, TextAlignmentOptions.MidlineLeft, theme.Amber);
@@ -369,6 +388,10 @@ namespace Game.Editor
             Button viewAll = CreateGradientButton("ViewAll", history, 386f, 11f, 125f, 43f, BlueTop, BlueBottom, theme.Cyan, 2f);
             TMP_Text viewLabel = CreateText("Label", viewAll.transform, "VIEW ALL", 17f, boldFont, TextAlignmentOptions.Center, theme.TextPrimary);
             Stretch(viewLabel.rectTransform);
+            viewAll.gameObject.AddComponent<UIShellRouteButtonView>().Configure(
+                UiShellRouteIntent.OpenMenuRoute,
+                UIRoute.CommandFeed,
+                true);
             BuildHistoryRow(history, 67f, catalog.AttackIcon, "HOSTILE PATROL", "CAMPAIGN", "VICTORY", "1h ago", theme.Green);
             BuildHistoryRow(history, 147f, commanderBadgeIcon, "SUPPLY RUN", "OPERATIONS", "VICTORY", "3h ago", theme.Green);
             BuildHistoryRow(history, 227f, commanderBadgeIcon, "CONVOY ESCORT", "OPERATIONS", "DEFEAT", "5h ago", theme.OrangeRed);
@@ -410,7 +433,9 @@ namespace Game.Editor
             SetTopLeft(changeIcon.rectTransform, 113f, 30f, 62f, 62f);
             TMP_Text changeLabel = CreateText("Label", change.transform, "CHANGE COMMANDER", 33f, boldFont, TextAlignmentOptions.Center, theme.TextPrimary);
             SetTopLeft(changeLabel.rectTransform, 176f, 8f, 455f, 106f);
-            change.gameObject.AddComponent<UIShellRouteButtonView>().Configure(UiShellRouteIntent.BackMenuRoute, UIRoute.MainMenu, false);
+            change.gameObject.AddComponent<ButtonTemporaryFeedbackView>().Configure(
+                changeLabel,
+                "NO OTHER COMMANDER UNLOCKED");
         }
 
         private static Button CreateGradientButton(string name, Transform parent, float x, float y, float width, float height, Color top, Color bottom, Color border, float borderWidth)

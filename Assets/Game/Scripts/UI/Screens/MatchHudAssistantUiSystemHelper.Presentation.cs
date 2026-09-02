@@ -22,6 +22,7 @@ namespace Game.UI.Runtime
         private GameObject _popupPrefab;
         private GameObject _popupInstance;
         private AriaCommandAssistantPopupView _popupView;
+        private AriaTutorialBriefingView _embeddedTutorialView;
         private readonly AssistantPanelUiSystemHelper _panelUiSystem = new();
         private readonly AssistantHighlightPresentationSystemHelper _highlightPresentationSystem = new();
         private Action _captureGameplayUiClick;
@@ -35,7 +36,8 @@ namespace Game.UI.Runtime
         private bool _tutorialWorldTargetCompleted;
 
         public bool IsPanelOpen => _popupView != null && _popupView.IsOpen;
-        public bool IsBound => _buttonRoot != null && _popupView != null;
+        public bool IsBound =>
+            _buttonRoot != null && _popupView != null && _embeddedTutorialView != null;
 
         public void Bind(
             GameObject headerContent,
@@ -103,6 +105,8 @@ namespace Game.UI.Runtime
 
             if (_popupView != null)
                 _popupView.UnbindActions();
+            if (_embeddedTutorialView != null)
+                _embeddedTutorialView.UnbindActions();
             DestroyPopupInstance();
             if (_objectivePanel != null)
                 _objectivePanel.SetActive(_objectivePanelOriginalActive);
@@ -111,6 +115,7 @@ namespace Game.UI.Runtime
             _button = null;
             _accessStateText = null;
             _accessCueText = null;
+            _embeddedTutorialView = null;
             _objectivePanel = null;
             _objectivePanelOriginalActive = false;
             _popupLayer = null;
@@ -147,9 +152,12 @@ namespace Game.UI.Runtime
             if (_popupView == null && !EnsurePopupView())
                 return;
             _panelUiSystem.ApplyReadModel(model);
-            _popupView.ApplyTutorialInteractionState(
+            _embeddedTutorialView.Apply(model);
+            _embeddedTutorialView.ApplyInteractionState(
                 _activeCommandMode,
                 _tutorialWorldTargetCompleted);
+            if (model.TutorialStep == 0 || !model.HasRecommendation)
+                _embeddedTutorialView.SetPresentationVisible(false);
             QueueTutorialPresentation(model, previousTutorialStep);
         }
 
@@ -178,6 +186,7 @@ namespace Game.UI.Runtime
         {
             _tutorialCinematicSuspended = true;
             _tutorialShowAtUnscaledTime = -1f;
+            HideEmbeddedTutorial();
             ClosePanelWithoutInputCapture();
         }
 
@@ -210,6 +219,9 @@ namespace Game.UI.Runtime
             _popupView?.ApplyTutorialInteractionState(
                 mode,
                 _tutorialWorldTargetCompleted);
+            _embeddedTutorialView?.ApplyInteractionState(
+                mode,
+                _tutorialWorldTargetCompleted);
         }
 
         public void AcknowledgeCommandMode(TacticalCommandMode mode)
@@ -217,6 +229,9 @@ namespace Game.UI.Runtime
             _activeCommandMode = mode;
             _highlightPresentationSystem.AcknowledgeCommandMode(mode);
             _popupView?.ApplyTutorialInteractionState(
+                mode,
+                _tutorialWorldTargetCompleted);
+            _embeddedTutorialView?.ApplyInteractionState(
                 mode,
                 _tutorialWorldTargetCompleted);
         }
@@ -327,15 +342,29 @@ namespace Game.UI.Runtime
                     out _accessCueText))
                 return false;
 
+            _embeddedTutorialView = _buttonRoot.GetComponent<AriaTutorialBriefingView>();
+            if (_embeddedTutorialView == null || !_embeddedTutorialView.TryBindHierarchy())
+                return false;
+
             MatchHudCanvasBatchingUtility.EnsureLocalCanvas(_buttonRoot.gameObject, needsRaycaster: true);
             _button.onClick.RemoveListener(TogglePanel);
             _button.onClick.AddListener(TogglePanel);
+            _embeddedTutorialView.BindActions(
+                null,
+                ShowRecommendation,
+                ExecuteRecommendation);
+            _embeddedTutorialView.SetPresentationVisible(false);
             return true;
         }
 
         private void TogglePanel()
         {
             CaptureUiOnly();
+            if (_lastPanelModel.TutorialStep > 0)
+            {
+                ShowEmbeddedTutorial();
+                return;
+            }
             SetPanelOpen(!IsPanelOpen);
         }
 
@@ -457,10 +486,44 @@ namespace Game.UI.Runtime
             MirrorPanelOpen(open);
         }
 
+        private void ShowEmbeddedTutorial()
+        {
+            if (_embeddedTutorialView == null || _lastPanelModel.TutorialStep == 0)
+                return;
+
+            if (IsPanelOpen)
+                SetPanelOpen(false);
+            _embeddedTutorialView.Apply(_lastPanelModel);
+            _embeddedTutorialView.ApplyInteractionState(
+                _activeCommandMode,
+                _tutorialWorldTargetCompleted);
+            if (_accessCueText != null)
+                _accessCueText.gameObject.SetActive(false);
+            _embeddedTutorialView.SetPresentationVisible(true);
+        }
+
+        private void HideEmbeddedTutorial()
+        {
+            _embeddedTutorialView?.SetPresentationVisible(false);
+            if (_accessStateText != null)
+            {
+                string ownership = string.IsNullOrWhiteSpace(_lastPanelModel.OwnershipText)
+                    ? "PLAYER CONTROL"
+                    : _lastPanelModel.OwnershipText;
+                _accessStateText.text = ownership;
+                _accessStateText.gameObject.SetActive(true);
+            }
+            if (_accessCueText != null)
+                _accessCueText.gameObject.SetActive(!string.IsNullOrWhiteSpace(_accessCueText.text));
+        }
+
         private void HandleGuidedCommandModeAcknowledged(TacticalCommandMode mode)
         {
             _activeCommandMode = mode;
             _popupView?.ApplyTutorialInteractionState(
+                mode,
+                _tutorialWorldTargetCompleted);
+            _embeddedTutorialView?.ApplyInteractionState(
                 mode,
                 _tutorialWorldTargetCompleted);
             if ((_lastPanelModel.TutorialStep == 2 && mode == TacticalCommandMode.Move) ||

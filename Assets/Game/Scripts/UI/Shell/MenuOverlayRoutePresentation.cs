@@ -67,6 +67,12 @@ namespace Game.UI.Runtime
                 return;
             }
 
+            if (route == UIRoute.CommandFeed)
+            {
+                InstallCommandFeedBody(contentView);
+                return;
+            }
+
             CommanderProfileRouteLifecyclePresentation.InstallMenuRouteBody(contentView, route);
         }
 
@@ -98,7 +104,8 @@ namespace Game.UI.Runtime
 
         internal static void InstallLoadoutSquadPrepBody(this UIShellContentView contentView)
         {
-            InstallBody(contentView, contentView.LoadoutSquadPrepContentPrefab);
+            GameObject body = InstallBody(contentView, contentView.LoadoutSquadPrepContentPrefab);
+            body?.GetComponent<LoadoutSquadPrepScreenView>()?.RefreshBindings();
         }
 
         internal static void InstallOperationsBody(this UIShellContentView contentView)
@@ -129,6 +136,12 @@ namespace Game.UI.Runtime
         internal static void InstallRankingBody(this UIShellContentView contentView)
         {
             InstallBody(contentView, contentView.RankingContentPrefab);
+        }
+
+        internal static void InstallCommandFeedBody(this UIShellContentView contentView)
+        {
+            GameObject body = InstallBody(contentView, contentView.CommandFeedContentPrefab);
+            body?.GetComponent<CommandFeedScreenView>()?.Refresh();
         }
 
         private static GameObject InstallBody(UIShellContentView contentView, GameObject prefab)

@@ -53,6 +53,7 @@ namespace Game.UI.Runtime
         public TMP_Text MissionBriefingText => missionBriefingText;
         public TMP_Text PrimaryObjectiveText => primaryObjectiveText;
         public TMP_Text RewardSummaryText => rewardSummaryText;
+        public TMP_Text LaunchMissionLabel => launchMissionLabel;
         public Button StoryArchiveButton => storyArchiveButton;
         public Button ChapterIntelButton => chapterIntelButton;
         public Button LaunchMissionButton => launchMissionButton;

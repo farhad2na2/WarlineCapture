@@ -267,7 +267,7 @@ namespace Game.Editor
 
             Image pin = CreateImage(
                 "AvailabilityIcon", row,
-                RequireSprite(V3UiFoundationBuilder.OperationsMapPinIconPath), Muted);
+                RequireSprite(V3UiFoundationBuilder.AbilityAvailabilityIconPath), Muted);
             SetTopLeft(pin.rectTransform, 14f, 14f, 31f, 31f);
             CreateText(row, "AvailabilityLabel", 52f, 11f, 184f, 36f,
                 "AVAILABILITY", 20f, Muted, TextAlignmentOptions.MidlineLeft, true);
@@ -330,7 +330,7 @@ namespace Game.Editor
             Button viewSource = BuildIconButton(
                 root, "ViewSourceButton", 0f, 0f, 440f, 104f,
                 new Color32(8, 100, 175, 255), new Color32(1, 43, 86, 255), Cyan,
-                V3UiFoundationBuilder.OperationsIntelIconPath,
+                V3UiFoundationBuilder.AbilitySourceIconPath,
                 "VIEW SOURCE", string.Empty, White);
             Button unlock = BuildIconButton(
                 root, "UnlockButton", 455f, 0f, 619f, 104f,

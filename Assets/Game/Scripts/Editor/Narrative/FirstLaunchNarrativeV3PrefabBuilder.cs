@@ -493,7 +493,7 @@ namespace Game.Editor
             Button contextual = BuildGuidanceCard(surface, "ContextualGuidanceButton", 414f, Lime, "TACTICAL HINTS", "Helpful tips in key\nsituations.", "MEDIUM", 2, V3UiFoundationBuilder.FirstLaunchMapIconPath, out Behaviour contextualSelection);
             Button minimal = BuildGuidanceCard(surface, "MinimalGuidanceButton", 803f, Orange, "MINIMAL GUIDANCE", "Only essential alerts.\nMaximum challenge.", "LOW", 1, V3UiFoundationBuilder.CommanderUpgradesIconPath, out Behaviour minimalSelection);
 
-            Sprite ariaSprite = RequireAsset<Sprite>(V3UiFoundationBuilder.FirstLaunchAriaPortraitPath);
+            Sprite ariaSprite = RequireAsset<Sprite>(V3UiFoundationBuilder.SharedAriaPortraitPath);
             RectTransform ariaPanel = CreateTopLeft("AriaPortrait", surface, 1184f, 164f, 468f, 625f);
             CreateGradientOn(ariaPanel, new Color32(2, 15, 23, 255), new Color32(0, 4, 8, 255), Color.clear, 0f);
             ariaPanel.gameObject.AddComponent<RectMask2D>();
@@ -971,7 +971,7 @@ namespace Game.Editor
             CreateLine("RouteA", icon, 38f, 96f, 71f, 69f, 5f, accent);
             CreateLine("RouteB", icon, 71f, 69f, 105f, 89f, 5f, accent);
             CreateLine("RouteC", icon, 105f, 89f, 129f, 50f, 5f, accent);
-            Image marker = CreateImage("RouteMarker", icon, RequireAsset<Sprite>(V3UiFoundationBuilder.FirstLaunchGlobeRingPath), accent, false);
+            Image marker = CreateImage("RouteMarker", icon, RequireAsset<Sprite>(V3UiFoundationBuilder.FirstLaunchMapIconPath), accent, false);
             SetTopLeft(marker.rectTransform, 120f, 39f, 24f, 24f);
         }
 

@@ -53,6 +53,7 @@ namespace Game.UI.Runtime
         private float _nextRefreshAt;
         private Canvas _cachedCanvas;
         private BuildPlacementValidityPanelView _validityPanel;
+        private BuildPlacementConfirmationBarDesignLayoutView _designLayout;
         private GameObject _suppressedThreatPanel;
         private bool _restoreThreatPanelWhenHidden;
 
@@ -244,6 +245,10 @@ namespace Game.UI.Runtime
             SetText(instructionText, _gameTextResolver.Get("build.placement.instruction.confirm", "DRAG TO POSITION, CONFIRM TO BUILD"));
 
             bool canConfirm = _commandSystem.CanConfirmBuildingPlacement;
+            _designLayout ??= Root != null
+                ? Root.GetComponent<BuildPlacementConfirmationBarDesignLayoutView>()
+                : null;
+            _designLayout?.ApplyValidityState(canConfirm);
             EnsureValidityPanel(transform.parent as RectTransform);
             _validityPanel?.ApplyValidityState(true, canConfirm);
             SetText(statusText, string.IsNullOrWhiteSpace(status)

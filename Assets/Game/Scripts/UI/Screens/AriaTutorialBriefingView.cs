@@ -51,14 +51,15 @@ namespace Game.UI.Runtime
         public RectTransform FirstStepGuideRoot => firstStepGuideRoot;
         public string CurrentInstructionBody => _currentInstructionBody;
         public UiTutorialNarrationPhase CurrentNarrationPhase => _currentNarrationPhase;
+        public bool IsPresentationVisible =>
+            briefingLayout != null && briefingLayout.gameObject.activeSelf;
 
         public bool TryBindHierarchy()
         {
             return briefingLayout != null && portraitImage != null && titleText != null &&
-                   bodyText != null && progressText != null && closeButton != null &&
+                   bodyText != null && progressText != null &&
                    showMeButton != null && doItButton != null &&
-                   showMeButtonLabel != null && doItButtonLabel != null &&
-                   firstStepGuideRoot != null;
+                   showMeButtonLabel != null && doItButtonLabel != null;
         }
 
         public void BindActions(
@@ -70,7 +71,8 @@ namespace Game.UI.Runtime
             _closeRequested = closeRequested;
             _showRecommendationRequested = showRecommendationRequested;
             _executeRecommendationRequested = executeRecommendationRequested;
-            closeButton.onClick.AddListener(RequestClose);
+            if (closeButton != null)
+                closeButton.onClick.AddListener(RequestClose);
             showMeButton.onClick.AddListener(RequestShowRecommendation);
             doItButton.onClick.AddListener(RequestExecuteRecommendation);
         }
@@ -105,8 +107,16 @@ namespace Game.UI.Runtime
             doItButton.interactable = model.CanExecute;
             SetLocalizedText(showMeButtonLabel, _rightToLeft ? "نشانم بده" : "SHOW ME");
             SetLocalizedText(doItButtonLabel, _rightToLeft ? "انجامش بده" : "DO IT");
-            closeButton.gameObject.SetActive(true);
-            firstStepGuideRoot.gameObject.SetActive(_tutorialStep == 1);
+            if (closeButton != null)
+                closeButton.gameObject.SetActive(true);
+            if (firstStepGuideRoot != null)
+                firstStepGuideRoot.gameObject.SetActive(_tutorialStep == 1);
+        }
+
+        public void SetPresentationVisible(bool visible)
+        {
+            if (briefingLayout != null && briefingLayout.gameObject.activeSelf != visible)
+                briefingLayout.gameObject.SetActive(visible);
         }
 
         public void ApplyInteractionState(
@@ -236,7 +246,7 @@ namespace Game.UI.Runtime
             int count = Mathf.Max(step, _tutorialStepCount);
             SetLocalizedText(
                 progressText,
-                _rightToLeft ? $"آموزش {step} / {count}" : $"TUTORIAL {step} / {count}");
+                _rightToLeft ? $"مرحله {step}/{count}" : $"STEP {step}/{count}");
         }
 
         private void ApplyLanguagePresentation()

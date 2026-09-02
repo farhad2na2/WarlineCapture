@@ -150,9 +150,10 @@ public sealed class M01FirstContactCampaignUiTests
         GameObject instance = UnityEngine.Object.Instantiate(prefab);
         try
         {
-            CampaignOperationsScreenView view = instance.GetComponent<CampaignOperationsScreenView>();
+            CampaignOperationsScreenView view =
+                instance.GetComponentInChildren<CampaignOperationsScreenView>(true);
             Assert.NotNull(view);
-            Assert.NotNull(instance.GetComponent<CampaignMissionScreenBinder>());
+            Assert.NotNull(instance.GetComponentInChildren<CampaignMissionScreenBinder>(true));
             UiCampaignOperationsModel model = ToContract(Project(new[]
             {
                 new CampaignMissionProgressSaveData
@@ -164,7 +165,8 @@ public sealed class M01FirstContactCampaignUiTests
             }));
             view.Apply(model);
             Assert.That(view.LaunchMissionButton.interactable, Is.True);
-            Assert.That(view.MissionName.text, Does.Contain("REPLAY"));
+            Assert.That(view.MissionName.text, Is.EqualTo("FIRST CONTACT"));
+            Assert.That(view.LaunchMissionLabel.text, Is.EqualTo("START BRIEFING"));
             Capture(instance, 1280, 720, "16x9");
             Capture(instance, 1000, 450, "20x9");
             Capture(instance, 1024, 768, "tablet4x3");

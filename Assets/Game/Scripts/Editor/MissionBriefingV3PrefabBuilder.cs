@@ -47,7 +47,8 @@ namespace Game.Editor
             RectTransform root = CreateRect("SCN06_MissionBriefingContent", null, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             CreateGradientPanel(root, new Color32(24, 30, 32, 255), new Color32(2, 7, 9, 255), Color.clear, 0f);
             RectTransform composition = CreateTopLeft("MissionBriefingComposition", root, 0f, 0f, ReferenceResolution.x, ReferenceResolution.y);
-            composition.gameObject.AddComponent<MainMenuV3SectionLayoutView>().Configure(ReferenceResolution, MainMenuV3SectionAlignment.Center);
+            MainMenuV3SectionLayoutView responsiveLayout =
+                composition.gameObject.AddComponent<MainMenuV3SectionLayoutView>();
             MissionBriefingScreenView screen = composition.gameObject.AddComponent<MissionBriefingScreenView>();
 
             BuildHeader(composition);
@@ -118,12 +119,65 @@ namespace Game.Editor
             CampaignMissionScreenBinder binder = composition.gameObject.AddComponent<CampaignMissionScreenBinder>();
             binder.Configure(screen, "saga.ch01.m02.establish_base");
 
+            ConfigureResponsiveLayout(
+                responsiveLayout,
+                composition,
+                missionOverview,
+                objectivesPanel,
+                conditionsPanel,
+                enemyIntelPanel,
+                rewardsPanel,
+                deploy);
+
             PrefabUtility.SaveAsPrefabAsset(root.gameObject, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root.gameObject);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             Validate();
             Debug.Log("[MissionBriefingV3PrefabBuilder] result=Passed layout=1672x941 borders=3 gradients=procedural art=aspect-preserved");
+        }
+
+        private static void ConfigureResponsiveLayout(
+            MainMenuV3SectionLayoutView layout,
+            RectTransform composition,
+            RectTransform missionOverview,
+            RectTransform objectivesPanel,
+            RectTransform conditionsPanel,
+            RectTransform enemyIntelPanel,
+            RectTransform rewardsPanel,
+            Button deploy)
+        {
+            RectTransform deployRect = deploy.GetComponent<RectTransform>();
+            layout.Configure(
+                ReferenceResolution,
+                MainMenuV3SectionAlignment.Center,
+                new[]
+                {
+                    composition.Find("CreditsChip") as RectTransform,
+                    composition.Find("CommandChip") as RectTransform,
+                    composition.Find("SettingsButton") as RectTransform,
+                    objectivesPanel,
+                    conditionsPanel,
+                    enemyIntelPanel,
+                    composition.Find("EnemyCommander") as RectTransform,
+                    rewardsPanel,
+                    composition.Find("StarGoals") as RectTransform,
+                    deploy.transform.Find("RightChevrons") as RectTransform
+                },
+                true,
+                new[]
+                {
+                    deploy.transform.Find("Label") as RectTransform
+                },
+                new[]
+                {
+                    missionOverview,
+                    missionOverview.Find("MissionArtClip") as RectTransform,
+                    missionOverview.Find("MissionCopyOverlay") as RectTransform,
+                    missionOverview.Find("TitleBand") as RectTransform,
+                    missionOverview.Find("TitleRule") as RectTransform,
+                    deployRect
+                });
         }
 
         [MenuItem("Game/UI/V3/Validate Mission Briefing Final")]

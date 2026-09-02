@@ -34,6 +34,7 @@ namespace Game.UI.Runtime
         private Vector2 _unitCardBasePosition;
         private bool _wheelPositionCached;
         private Vector2 _wheelBasePosition;
+        private Vector3 _wheelBaseScale;
 
         public bool IsOpen => wheelRoot != null && wheelRoot.activeSelf;
         public Button OpenButton => openButton;
@@ -168,10 +169,15 @@ namespace Game.UI.Runtime
                 if (!_wheelPositionCached)
                 {
                     _wheelBasePosition = wheelTransform.anchoredPosition;
+                    _wheelBaseScale = wheelTransform.localScale;
                     _wheelPositionCached = true;
                 }
 
-                wheelTransform.anchoredPosition = _wheelBasePosition + (targeting ? new Vector2(282f, 35f) : Vector2.zero);
+                // The target-confirmation rail and the permanent ARIA panel both
+                // occupy the right side. Compact and shift the radial wheel only
+                // for targeting so its outer edge meets, but never covers, ARIA.
+                wheelTransform.anchoredPosition = _wheelBasePosition + (targeting ? new Vector2(235f, 35f) : Vector2.zero);
+                wheelTransform.localScale = targeting ? _wheelBaseScale * .80f : _wheelBaseScale;
             }
 
             if (moveWedge != null)

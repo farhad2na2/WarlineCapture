@@ -46,6 +46,12 @@ public sealed class IntelRevealV3PrefabTests
         Assert.That(frame.sizeDelta.x, Is.EqualTo(1100f).Within(.1f));
         Assert.That(frame.sizeDelta.y, Is.EqualTo(756f).Within(.1f));
 
+        Transform intelIcon = Find(prefab.transform, "IntelDocumentIcon");
+        Assert.NotNull(intelIcon);
+        Assert.NotNull(intelIcon.GetComponentInChildren<V3RingGraphic>(true));
+        foreach (Image iconPart in intelIcon.GetComponentsInChildren<Image>(true))
+            Assert.IsNull(iconPart.sprite, $"{iconPart.name} must remain procedural, not a placeholder sprite.");
+
         V3GradientGraphic[] gradients =
             prefab.GetComponentsInChildren<V3GradientGraphic>(true);
         Assert.That(gradients.Length, Is.GreaterThanOrEqualTo(18));

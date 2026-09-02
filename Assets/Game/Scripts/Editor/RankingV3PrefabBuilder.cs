@@ -18,9 +18,10 @@ namespace Game.Editor
         public const string PrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN17_RankingContent.prefab";
         private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
         private const string RankingIconPath = "Assets/Game/Art/UI/Generated/MainMenu/ComponentCanvas/Cleaned/ui_left_nav_icon_ranking.png";
-        private const string RegionIconPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Map/ICON_MilitaryCombat_Map_Pin_01_Clean.png";
+        private const string RegionIconPath = V3UiFoundationBuilder.OperationsMapPinIconPath;
         private const string FriendsIconPath = "Assets/Game/Art/UI/Icons/scn08_icon_civilian_group.png";
         private const string SeasonIconPath = "Assets/Game/Art/UI/Icons/scn09_icon_time_clock.png";
+        private const string OperationsIconPath = "Assets/Game/Art/UI/V3Shared/Sprites/MainMenuIcons/SCN02_Icon_OperationsCompass_V3.png";
         private const string DaliaPath = "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_dalia.png";
         private const string BoldFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold SDF.asset";
         private const string MediumFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium SDF.asset";
@@ -62,6 +63,8 @@ namespace Game.Editor
         private static Sprite regionIcon;
         private static Sprite friendsIcon;
         private static Sprite seasonIcon;
+        private static Sprite districtIcon;
+        private static Sprite operationsIcon;
         private static Sprite dalia;
         private static Sprite[] portraits;
 
@@ -144,6 +147,8 @@ namespace Game.Editor
             catalog = V3UiFoundationBuilder.RequireCatalog();
             rankingIcon = RequireSprite(RankingIconPath); regionIcon = RequireSprite(RegionIconPath);
             friendsIcon = RequireSprite(FriendsIconPath); seasonIcon = RequireSprite(SeasonIconPath); dalia = RequireSprite(DaliaPath);
+            districtIcon = RequireSprite(V3UiFoundationBuilder.CommanderBadgeIconPath);
+            operationsIcon = RequireSprite(OperationsIconPath);
             portraits = new Sprite[PortraitPaths.Length];
             for (int i = 0; i < PortraitPaths.Length; i++) portraits[i] = RequireSprite(PortraitPaths[i]);
             if (bold == null || medium == null) throw new MissingReferenceException("Ranking fonts are missing.");
@@ -153,7 +158,11 @@ namespace Game.Editor
             out TMP_Text creditsValue, out TMP_Text commandValue)
         {
             RectTransform header = TopLeft("Header", root, 9, 7, 1655, 85);
-            RectTransform logoPanel = TopLeft("LogoPanel", header, 0, 0, 262, 85); Gradient(logoPanel, DarkTop, DarkBottom, Border);
+            RectTransform logoPanel = TopLeft("LogoPanel", header, 0, 0, 262, 85);
+            V3GradientGraphic logoChrome = Gradient(logoPanel, DarkTop, DarkBottom, Border);
+            Button logoButton = logoPanel.gameObject.AddComponent<Button>();
+            logoButton.targetGraphic = logoChrome;
+            logoButton.gameObject.AddComponent<UIShellRouteButtonView>().Configure(UiShellRouteIntent.BackMenuRoute, UIRoute.MainMenu, false);
             V3UiFoundationBuilder.AddMainMenuLogo(logoPanel, left: 9f, top: 8f, right: 9f, bottom: 9f);
             RectTransform titlePanel = TopLeft("TitlePanel", header, 270, 0, 710, 85); Gradient(titlePanel, DarkTop, DarkBottom, Border); widths.Add(titlePanel);
             TMP_Text title = Text("Title", titlePanel, "COMMANDER RANKING", 46, bold, TextAlignmentOptions.MidlineLeft, TextPrimary); Horizontal(title.rectTransform, 27, 18, 0, 85);
@@ -186,7 +195,17 @@ namespace Game.Editor
                 Button tab = Button($"Category_{i}", rail, 0, i * 116, 260, 108,
                     i == 0 ? BlueTop : DarkTop, i == 0 ? BlueBottom : DarkBottom, i == 0 ? Cyan : Border);
                 buttons[i] = tab; chrome[i] = tab.targetGraphic as V3GradientGraphic;
-                Image icon = Image("Icon", tab.transform, icons[i], i == 0 ? TextPrimary : TextMuted); TopLeft(icon.rectTransform, 21, 22, 63, 63); icon.preserveAspect = true;
+                RectTransform iconRoot = TopLeft("Icon", tab.transform, 21, 22, 63, 63);
+                if (i == 0)
+                    CreateGlobeIcon(iconRoot, i == 0 ? TextPrimary : TextMuted);
+                else if (i == 3)
+                    CreateCalendarIcon(iconRoot, TextMuted);
+                else
+                {
+                    Image icon = Image("Sprite", iconRoot, icons[i], TextMuted);
+                    Stretch(icon.rectTransform);
+                    icon.preserveAspect = true;
+                }
                 TMP_Text label = Text("Label", tab.transform, labels[i], 29, bold, TextAlignmentOptions.MidlineLeft, i == 0 ? TextPrimary : TextMuted); TopLeft(label.rectTransform, 98, 8, 150, 90);
             }
         }
@@ -212,6 +231,7 @@ namespace Game.Editor
             TMP_Text time = Text("Time", panel, "28D 12H REMAINING", 20, bold, TextAlignmentOptions.MidlineRight, Cyan); TopRight(time.rectTransform, 314, 46, 240, 30);
             TMP_Text xp = Text("XP", panel, "18,560 / 24,000 XP", 18, bold, TextAlignmentOptions.MidlineRight, TextMuted); TopRight(xp.rectTransform, 314, 75, 240, 27);
             viewRewards = Button("ViewRewardsButton", panel, 835, 35, 179, 47, BlueTop, BlueBottom, Cyan);
+            TopRight(viewRewards.GetComponent<RectTransform>(), 15, 35, 179, 47);
             TMP_Text label = Text("Label", viewRewards.transform, "VIEW REWARDS", 20, bold, TextAlignmentOptions.Center, TextPrimary); Stretch(label.rectTransform);
         }
 
@@ -226,13 +246,19 @@ namespace Game.Editor
             int[] rank = { 2, 1, 3 }; Color[] accents = { Cyan, Amber, Bronze };
             for (int slot = 0; slot < 3; slot++)
             {
-                float w = slot == 1 ? 342 : 343; float x = slot == 0 ? 0 : slot == 1 ? 353 : 705;
-                RectTransform card = TopLeft($"Rank_{rank[slot]}", podium, x, 0, w, 190); Gradient(card, DarkTop, DarkBottom, accents[slot]);
+                float w = 336;
+                float min = slot / 3f;
+                float max = (slot + 1) / 3f;
+                float left = slot == 0 ? 0 : 5;
+                float right = slot == 2 ? 0 : 5;
+                RectTransform card = Anchored($"Rank_{rank[slot]}", podium, min, max, left, right, 0, 190); Gradient(card, DarkTop, DarkBottom, accents[slot]);
                 RectTransform clip = TopLeft("PortraitClip", card, 43, 4, 150, 182); clip.gameObject.AddComponent<RectMask2D>();
                 RawImage portrait = Raw("Portrait", clip, portraits[slot].texture); Cover(portrait, portraits[slot].texture);
                 TMP_Text rankText = Text("Rank", card, rank[slot].ToString(), 48, bold, TextAlignmentOptions.Center, TextPrimary); TopLeft(rankText.rectTransform, 8, 7, 46, 66);
                 TMP_Text name = Text("Name", card, names[slot], 28, bold, TextAlignmentOptions.MidlineLeft, TextPrimary); TopLeft(name.rectTransform, 202, 22, w - 208, 43);
                 TMP_Text role = Text("Role", card, roles[slot], 19, bold, TextAlignmentOptions.MidlineLeft, accents[slot]); TopLeft(role.rectTransform, 202, 63, w - 208, 31);
+                name.enableAutoSizing = true; name.fontSizeMin = 17; name.fontSizeMax = 28;
+                role.enableAutoSizing = true; role.fontSizeMin = 12; role.fontSizeMax = 19;
                 TMP_Text div = Text("Division", card, division[slot], 18, medium, TextAlignmentOptions.MidlineLeft, TextPrimary); TopLeft(div.rectTransform, 202, 99, w - 208, 29);
                 TMP_Text points = Text("Score", card, score[slot], 32, bold, TextAlignmentOptions.MidlineLeft, accents[slot]); TopLeft(points.rectTransform, 202, 132, w - 208, 48);
                 TMP_Text move = Text("Movement", card, movement[slot], 22, bold, TextAlignmentOptions.MidlineLeft, movement[slot][0] == '▲' ? Green : Red); TopLeft(move.rectTransform, 12, 139, 55, 40);
@@ -243,21 +269,26 @@ namespace Game.Editor
         {
             RectTransform panel = TopLeft("Leaderboard", body, 278, 414, 1029, 343); Gradient(panel, DarkTop, DarkBottom, Border); widths.Add(panel);
             string[] headers = { "RANK", "COMMANDER", "DIVISION", "SCORE", "MOVEMENT" };
-            float[] hx = { 17, 153, 466, 714, 889 }; float[] hw = { 110, 280, 220, 145, 126 };
-            for (int i = 0; i < headers.Length; i++) { TMP_Text h = Text($"Header_{i}", panel, headers[i], 17, bold, TextAlignmentOptions.MidlineLeft, TextMuted); TopLeft(h.rectTransform, hx[i], 0, hw[i], 38); }
+            float[] headerMin = { 0f, .12f, .44f, .68f, .86f };
+            float[] headerMax = { .12f, .44f, .68f, .86f, 1f };
+            for (int i = 0; i < headers.Length; i++)
+            {
+                TMP_Text h = Text($"Header_{i}", panel, headers[i], 17, bold, TextAlignmentOptions.MidlineLeft, TextMuted);
+                HorizontalRange(h.rectTransform, headerMin[i], headerMax[i], 10, 8, 0, 38);
+            }
             string[] names = { "VALKYRIE", "CRIMSON", "GHOSTRIDER", "RAZORBACK", "WOLFPACK", "TITAN-07", "PUNISHER" };
             string[] divisions = { "COMMAND I", "VANGUARD I", "VANGUARD I", "FIELD II", "FIELD II", "FIELD I", "FIELD I" };
             string[] scores = { "86,410", "78,950", "72,430", "68,210", "63,890", "59,120", "55,780" };
             string[] moves = { "▲ 3", "▲ 2", "▼ 1", "▲ 4", "▼ 2", "▲ 1", "▼ 1" };
             for (int i = 0; i < 7; i++)
             {
-                RectTransform row = TopLeft($"Row_{i}", panel, 3, 39 + i * 43, 1023, 42); Gradient(row, i % 2 == 0 ? DarkTop : RaisedTop, DarkBottom, Border);
-                TMP_Text rank = Text("Rank", row, (i + 4).ToString(), 23, bold, TextAlignmentOptions.Center, TextMuted); TopLeft(rank.rectTransform, 8, 0, 56, 42);
-                RectTransform clip = TopLeft("PortraitClip", row, 77, 2, 48, 38); clip.gameObject.AddComponent<RectMask2D>(); RawImage portrait = Raw("Portrait", clip, portraits[i + 3].texture); Cover(portrait, portraits[i + 3].texture);
-                TMP_Text name = Text("Commander", row, names[i], 23, bold, TextAlignmentOptions.MidlineLeft, TextPrimary); TopLeft(name.rectTransform, 153, 0, 275, 42);
-                TMP_Text division = Text("Division", row, divisions[i], 20, medium, TextAlignmentOptions.MidlineLeft, TextMuted); TopLeft(division.rectTransform, 466, 0, 220, 42);
-                TMP_Text score = Text("Score", row, scores[i], 23, bold, TextAlignmentOptions.MidlineLeft, i < 3 ? Cyan : i < 5 ? Amber : TextMuted); TopLeft(score.rectTransform, 714, 0, 150, 42);
-                TMP_Text movement = Text("Movement", row, moves[i], 21, bold, TextAlignmentOptions.MidlineLeft, moves[i][0] == '▲' ? Green : Red); TopLeft(movement.rectTransform, 889, 0, 126, 42);
+                RectTransform row = Horizontal($"Row_{i}", panel, 3, 3, 39 + i * 43, 42); Gradient(row, i % 2 == 0 ? DarkTop : RaisedTop, DarkBottom, Border);
+                TMP_Text rank = Text("Rank", row, (i + 4).ToString(), 23, bold, TextAlignmentOptions.Center, TextMuted); HorizontalRange(rank.rectTransform, 0f, .07f, 5, 5, 0, 42);
+                RectTransform clip = TopFraction("PortraitClip", row, .08f, 2, 48, 38); clip.gameObject.AddComponent<RectMask2D>(); RawImage portrait = Raw("Portrait", clip, portraits[i + 3].texture); Cover(portrait, portraits[i + 3].texture);
+                TMP_Text name = Text("Commander", row, names[i], 23, bold, TextAlignmentOptions.MidlineLeft, TextPrimary); HorizontalRange(name.rectTransform, .15f, .44f, 0, 8, 0, 42);
+                TMP_Text division = Text("Division", row, divisions[i], 20, medium, TextAlignmentOptions.MidlineLeft, TextMuted); HorizontalRange(division.rectTransform, .44f, .68f, 0, 8, 0, 42);
+                TMP_Text score = Text("Score", row, scores[i], 23, bold, TextAlignmentOptions.MidlineLeft, i < 3 ? Cyan : i < 5 ? Amber : TextMuted); HorizontalRange(score.rectTransform, .68f, .86f, 0, 8, 0, 42);
+                TMP_Text movement = Text("Movement", row, moves[i], 21, bold, TextAlignmentOptions.MidlineLeft, moves[i][0] == '▲' ? Green : Red); HorizontalRange(movement.rectTransform, .86f, 1f, 0, 8, 0, 42);
             }
         }
 
@@ -272,26 +303,27 @@ namespace Game.Editor
             TMP_Text division = Text("Division", panel, "FIELD II", 28, bold, TextAlignmentOptions.Center, Green); TopLeft(division.rectTransform, 477, 30, 158, 75);
             CreateSolid("Rule1", panel, 642, 28, 3, 83, new Color(1, 1, 1, .14f));
             TMP_Text score = Text("Score", panel, "36,480", 35, bold, TextAlignmentOptions.Center, Green); TopLeft(score.rectTransform, 658, 30, 160, 75);
-            CreateSolid("Rule2", panel, 826, 28, 3, 83, new Color(1, 1, 1, .14f));
-            TMP_Text progress = Text("Progress", panel, "PROMOTION PROGRESS", 15, bold, TextAlignmentOptions.MidlineLeft, TextPrimary); TopLeft(progress.rectTransform, 846, 22, 165, 28);
-            RectTransform track = TopLeft("ProgressTrack", panel, 846, 58, 177, 16); Gradient(track, new Color32(24, 66, 17, 255), new Color32(13, 43, 11, 255), Border);
+            Image rule2 = CreateSolid("Rule2", panel, 826, 28, 3, 83, new Color(1, 1, 1, .14f)); TopRight(rule2.rectTransform, 218, 28, 3, 83);
+            TMP_Text progress = Text("Progress", panel, "PROMOTION PROGRESS", 15, bold, TextAlignmentOptions.MidlineLeft, TextPrimary); TopRight(progress.rectTransform, 18, 22, 190, 28);
+            progress.enableAutoSizing = true; progress.fontSizeMin = 11; progress.fontSizeMax = 15; progress.overflowMode = TextOverflowModes.Overflow;
+            RectTransform track = TopFraction("ProgressTrack", panel, 1f, 58, 190, 16); TopRight(track, 18, 58, 190, 16); Gradient(track, new Color32(24, 66, 17, 255), new Color32(13, 43, 11, 255), Border);
             RectTransform fill = TopLeft("ProgressFill", track, 0, 0, 105, 16); Gradient(fill, new Color32(134, 204, 74, 255), new Color32(73, 148, 34, 255), Color.clear);
-            TMP_Text value = Text("ProgressValue", panel, "6,520 / 10,000", 20, bold, TextAlignmentOptions.MidlineLeft, Green); TopLeft(value.rectTransform, 846, 78, 170, 38);
+            TMP_Text value = Text("ProgressValue", panel, "6,520 / 10,000", 20, bold, TextAlignmentOptions.MidlineLeft, Green); TopRight(value.rectTransform, 18, 78, 190, 38);
         }
 
         private static RectTransform BuildStats(RectTransform body)
         {
             RectTransform panel = TopLeft("Stats", body, 1316, 100, 348, 807); Gradient(panel, DarkTop, DarkBottom, Border);
-            BuildStat(panel, 0, "DISTRICT SCORE", "12,450", "PTS", "TOP 12%", rankingIcon, Cyan);
-            BuildStat(panel, 227, "OPERATIONS WON", "128", "", "TOP 7%", regionIcon, Green);
-            BuildStat(panel, 454, "CIVILIANS PROTECTED", "8,642", "", "TOP 15%", friendsIcon, Amber);
-            BuildStat(panel, 681, "SEASON ENDS IN", "12D 08H", "", "", seasonIcon, Cyan);
+            BuildStat(panel, 0, "DISTRICT SCORE", "12,450", "PTS", "TOP 12%", districtIcon, Cyan);
+            BuildStat(panel, 201, "OPERATIONS WON", "128", "", "TOP 7%", operationsIcon, Green);
+            BuildStat(panel, 402, "CIVILIANS PROTECTED", "8,642", "", "TOP 15%", friendsIcon, Amber);
+            BuildStat(panel, 603, "SEASON ENDS IN", "12D 08H", "", "", seasonIcon, Cyan);
             return panel;
         }
 
         private static void BuildStat(RectTransform panel, float y, string heading, string value, string suffix, string rank, Sprite icon, Color accent)
         {
-            RectTransform section = TopLeft("Stat_" + heading.Replace(" ", ""), panel, 4, y + 4, 340, 219); Gradient(section, DarkTop, DarkBottom, Border);
+            RectTransform section = TopLeft("Stat_" + heading.Replace(" ", ""), panel, 4, y + 4, 340, 195); Gradient(section, DarkTop, DarkBottom, Border);
             TMP_Text headingText = Text("Heading", section, heading, 24, bold, TextAlignmentOptions.MidlineLeft, accent); TopLeft(headingText.rectTransform, 30, 18, 290, 39);
             Image image = Image("Icon", section, icon, accent); TopLeft(image.rectTransform, 28, 83, 78, 78); image.preserveAspect = true;
             TMP_Text valueText = Text("Value", section, value, 45, bold, TextAlignmentOptions.MidlineLeft, TextPrimary); TopLeft(valueText.rectTransform, 126, 75, 185, 67);
@@ -316,6 +348,25 @@ namespace Game.Editor
         { RectTransform rect = TopLeft(name, parent, x, y, w, h); V3GradientGraphic graphic = Gradient(rect, top, bottom, border); Button button = rect.gameObject.AddComponent<Button>(); button.targetGraphic = graphic; return button; }
         private static V3GradientGraphic Gradient(RectTransform rect, Color top, Color bottom, Color border)
         { V3GradientGraphic graphic = rect.gameObject.AddComponent<V3GradientGraphic>(); graphic.ConfigureCorners(Color.Lerp(top, Color.white, .055f), top, Color.Lerp(bottom, Color.black, .12f), bottom, border, border.a > .01f ? 3f : 0f); return graphic; }
+        private static void CreateGlobeIcon(RectTransform root, Color color)
+        {
+            V3RingGraphic ring = root.gameObject.AddComponent<V3RingGraphic>();
+            ring.Configure(color, 4f, 48);
+            CreateSolid("Equator", root, 5, 29, 53, 4, color);
+            CreateSolid("Axis", root, 29, 5, 4, 53, color);
+            RectTransform meridian = TopLeft("Meridian", root, 14, 5, 35, 53);
+            V3RingGraphic inner = meridian.gameObject.AddComponent<V3RingGraphic>();
+            inner.Configure(color, 3f, 40);
+        }
+        private static void CreateCalendarIcon(RectTransform root, Color color)
+        {
+            Gradient(root, DarkTop, DarkBottom, color);
+            CreateSolid("TopRule", root, 5, 15, 53, 5, color);
+            CreateSolid("BindingL", root, 14, 0, 5, 17, color);
+            CreateSolid("BindingR", root, 44, 0, 5, 17, color);
+            TMP_Text day = Text("Day", root, "31", 24, bold, TextAlignmentOptions.Center, color);
+            TopLeft(day.rectTransform, 7, 20, 49, 38);
+        }
         private static Image Image(string name, Transform parent, Sprite sprite, Color color)
         { return V3UiPrefabFactory.CreateImage(name, parent, sprite, color, false, false); }
         private static Image CreateSolid(string name, Transform parent, float x, float y, float w, float h, Color color)
@@ -328,9 +379,13 @@ namespace Game.Editor
         { RectTransform rect = Rect(name, parent, new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(200, 60), Vector2.zero); TextMeshProUGUI text = rect.gameObject.AddComponent<TextMeshProUGUI>(); text.text = value; text.font = font; text.fontSize = size; text.alignment = align; text.color = color; text.raycastTarget = false; text.textWrappingMode = TextWrappingModes.NoWrap; text.overflowMode = TextOverflowModes.Ellipsis; return text; }
         private static RectTransform Rect(string name, Transform parent, Vector2 min, Vector2 max, Vector2 size, Vector2 pos) => V3UiPrefabFactory.CreateRect(name, parent, min, max, size, pos);
         private static RectTransform TopLeft(string name, Transform parent, float x, float y, float w, float h) { RectTransform rect = Rect(name, parent, new Vector2(0, 1), new Vector2(0, 1), new Vector2(w, h), new Vector2(x, -y)); rect.pivot = new Vector2(0, 1); return rect; }
+        private static RectTransform TopFraction(string name, Transform parent, float x, float y, float w, float h) { RectTransform rect = Rect(name, parent, new Vector2(x, 1), new Vector2(x, 1), new Vector2(w, h), new Vector2(0, -y)); rect.pivot = new Vector2(0, 1); return rect; }
+        private static RectTransform Horizontal(string name, Transform parent, float left, float right, float y, float h) { RectTransform rect = Rect(name, parent, new Vector2(0, 1), new Vector2(1, 1), new Vector2(-(left + right), h), new Vector2(left, -y)); rect.pivot = new Vector2(0, 1); return rect; }
+        private static RectTransform Anchored(string name, Transform parent, float minX, float maxX, float left, float right, float y, float h) { RectTransform rect = Rect(name, parent, new Vector2(minX, 1), new Vector2(maxX, 1), new Vector2(-(left + right), h), new Vector2(left, -y)); rect.pivot = new Vector2(0, 1); return rect; }
         private static void TopLeft(RectTransform rect, float x, float y, float w, float h) { rect.anchorMin = rect.anchorMax = new Vector2(0, 1); rect.pivot = new Vector2(0, 1); rect.sizeDelta = new Vector2(w, h); rect.anchoredPosition = new Vector2(x, -y); }
         private static void TopRight(RectTransform rect, float x, float y, float w, float h) { rect.anchorMin = rect.anchorMax = new Vector2(1, 1); rect.pivot = new Vector2(1, 1); rect.sizeDelta = new Vector2(w, h); rect.anchoredPosition = new Vector2(-x, -y); }
         private static void Horizontal(RectTransform rect, float left, float right, float y, float h) { rect.anchorMin = new Vector2(0, 1); rect.anchorMax = new Vector2(1, 1); rect.pivot = new Vector2(0, 1); rect.sizeDelta = new Vector2(-(left + right), h); rect.anchoredPosition = new Vector2(left, -y); }
+        private static void HorizontalRange(RectTransform rect, float minX, float maxX, float left, float right, float y, float h) { rect.anchorMin = new Vector2(minX, 1); rect.anchorMax = new Vector2(maxX, 1); rect.pivot = new Vector2(0, 1); rect.sizeDelta = new Vector2(-(left + right), h); rect.anchoredPosition = new Vector2(left, -y); }
         private static void Center(RectTransform rect, float w, float h) { rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(.5f, .5f); rect.sizeDelta = new Vector2(w, h); rect.anchoredPosition = Vector2.zero; }
         private static void Stretch(RectTransform rect) { rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one; rect.pivot = new Vector2(.5f, .5f); rect.offsetMin = Vector2.zero; rect.offsetMax = Vector2.zero; rect.localScale = Vector3.one; }
 

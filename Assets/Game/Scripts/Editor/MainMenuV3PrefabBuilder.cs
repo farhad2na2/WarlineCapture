@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
 using TMPro;
@@ -26,7 +27,6 @@ namespace Game.Editor
         private const string CampaignArtPath = "Assets/Game/Art/UI/V3Shared/MainMenuPlates/SCN02_CampaignScene_V3.png";
         private const string OperationsArtPath = "Assets/Game/Art/UI/V3Shared/MainMenuPlates/SCN02_OperationsScene_V3.png";
         private const string SkirmishArtPath = "Assets/Game/Art/UI/V3Shared/MainMenuPlates/SCN02_SkirmishScene_V3.png";
-        private const string AriaPortraitPath = "Assets/Game/Art/UI/V3Shared/Portraits/ARIA_MainMenu_V3.png";
         private const string CampaignIconPath = "Assets/Game/Art/UI/V3Shared/Sprites/MainMenuIcons/SCN02_Icon_CampaignTarget_V3.png";
         private const string OperationsIconPath = "Assets/Game/Art/UI/V3Shared/Sprites/MainMenuIcons/SCN02_Icon_OperationsCompass_V3.png";
         private const string SkirmishIconPath = "Assets/Game/Art/UI/V3Shared/Sprites/MainMenuIcons/SCN02_Icon_SkirmishBlades_V3.png";
@@ -69,14 +69,14 @@ namespace Game.Editor
             ConfigureTexture(CampaignArtPath, false, 2048);
             ConfigureTexture(OperationsArtPath, false, 2048);
             ConfigureTexture(SkirmishArtPath, false, 2048);
-            ConfigureTexture(AriaPortraitPath, true, 2048);
+            ConfigureTexture(V3UiFoundationBuilder.SharedAriaPortraitPath, true, 2048);
             ConfigureTexture(CampaignIconPath, true, 512);
             ConfigureTexture(OperationsIconPath, true, 512);
             ConfigureTexture(SkirmishIconPath, true, 512);
             ConfigureTexture(StoreIconPath, true, 512);
             ConfigureTexture(ArmoryIconPath, true, 512);
             BuildAtlas(SceneAtlasPath, "UI_V3_MainMenuScenes_01", CampaignArtPath, OperationsArtPath, SkirmishArtPath);
-            BuildAtlas(AriaAtlasPath, "UI_V3_Assistants_01", AriaPortraitPath);
+            BuildAtlas(AriaAtlasPath, "UI_V3_Assistants_01", V3UiFoundationBuilder.SharedAriaPortraitPath);
             BuildAtlas(MainMenuIconAtlasPath, "UI_V3_MainMenuIcons_01", CampaignIconPath, OperationsIconPath, SkirmishIconPath, StoreIconPath, ArmoryIconPath);
             LoadAssets();
 
@@ -143,7 +143,7 @@ namespace Game.Editor
                 throw new MissingComponentException("Main Menu V3 must map every authored reference section into the live shell canvas.");
 
             ValidateAtlas(SceneAtlasPath, CampaignArtPath, OperationsArtPath, SkirmishArtPath);
-            ValidateAtlas(AriaAtlasPath, AriaPortraitPath);
+            ValidateAtlas(AriaAtlasPath, V3UiFoundationBuilder.SharedAriaPortraitPath);
             ValidateAtlas(MainMenuIconAtlasPath, CampaignIconPath, OperationsIconPath, SkirmishIconPath, StoreIconPath, ArmoryIconPath);
 
             if (prefab.GetComponentsInChildren<V3GradientGraphic>(true).Length < 18)
@@ -159,7 +159,7 @@ namespace Game.Editor
             ValidateRoute(prefab, "Card_Campaign", UIRoute.Campaign);
             ValidateRoute(prefab, "Card_Operations", UIRoute.Operations);
             ValidateRoute(prefab, "Card_Skirmish", UIRoute.QuickCustomSetup);
-            ValidateRoute(prefab, "CommanderPanelHotspot", UIRoute.CommandFeed);
+            ValidateRoute(prefab, "CommanderPanelHotspot", UIRoute.CommanderProfile);
             ValidateRoute(prefab, "StoreButton", UIRoute.CommandExchange);
             ValidateRoute(prefab, "OpenArmoryButton", UIRoute.Armory);
 
@@ -169,7 +169,7 @@ namespace Game.Editor
                 CampaignArtPath,
                 OperationsArtPath,
                 SkirmishArtPath,
-                AriaPortraitPath,
+                V3UiFoundationBuilder.SharedAriaPortraitPath,
                 CampaignIconPath,
                 OperationsIconPath,
                 SkirmishIconPath,
@@ -366,7 +366,11 @@ namespace Game.Editor
             ConfigureLayout(left, MainMenuV3SectionAlignment.TopLeft);
             ConfigureLayout(middle, MainMenuV3SectionAlignment.Center);
             ConfigureLayout(right, MainMenuV3SectionAlignment.TopRight);
-            ConfigureLayout(footer, MainMenuV3SectionAlignment.BottomCenter);
+            MainMenuV3SectionLayoutView footerLayout = footer.gameObject.AddComponent<MainMenuV3SectionLayoutView>();
+            footerLayout.Configure(
+                ReferenceResolution,
+                MainMenuV3SectionAlignment.BottomCenter,
+                shouldExpandToCanvasWidth: true);
         }
 
         private static void ConfigureLayout(
@@ -611,12 +615,20 @@ namespace Game.Editor
             changeFill.ConfigureCorners(new Color32(74, 116, 58, 255), new Color32(48, 90, 43, 255), new Color32(27, 62, 27, 255), new Color32(35, 73, 31, 255), new Color32(111, 148, 84, 255), 3f);
             TMP_Text label = CreateText("Label", change, "CHANGE   ›", 44f, boldFont, TextAlignmentOptions.Center, TextPrimary);
             SetTopLeft(label.rectTransform, 18f, 0f, 346f, 95f);
-            AddRouteHotspot(panel, UIRoute.CommandFeed, "CommanderPanelHotspot");
+            AddRouteHotspot(panel, UIRoute.CommanderProfile, "CommanderPanelHotspot");
         }
 
         private static void BuildFooter(Transform root)
         {
             RectTransform store = CreateTopLeftRect("StoreButton", root, 14f, 795f, 753f, 146f);
+            // The two footer actions form one uninterrupted, full-width strip. Their
+            // half-width anchors preserve the target proportions while distributing
+            // all additional ultra-wide width instead of leaving black side gutters.
+            store.anchorMin = new Vector2(0f, 1f);
+            store.anchorMax = new Vector2(0.5f, 1f);
+            store.pivot = new Vector2(0f, 1f);
+            store.anchoredPosition = new Vector2(14f, -795f);
+            store.sizeDelta = new Vector2(-83f, 146f);
             V3GradientGraphic storeFill = store.gameObject.AddComponent<V3GradientGraphic>();
             storeFill.ConfigureCorners(new Color32(4, 144, 215, 255), new Color32(3, 112, 183, 255), new Color32(1, 77, 135, 255), new Color32(2, 92, 153, 255), new Color32(0, 138, 216, 255), 3f);
             Image cart = CreateImage("CartIcon", store, storeIcon, Color.white, false);
@@ -627,6 +639,11 @@ namespace Game.Editor
             AddRouteHotspot(store, UIRoute.CommandExchange, "StoreButtonHotspot");
 
             RectTransform armory = CreateTopLeftRect("OpenArmoryButton", root, 767f, 795f, 890f, 146f);
+            armory.anchorMin = new Vector2(0.5f, 1f);
+            armory.anchorMax = new Vector2(1f, 1f);
+            armory.pivot = new Vector2(0f, 1f);
+            armory.anchoredPosition = new Vector2(-69f, -795f);
+            armory.sizeDelta = new Vector2(54f, 146f);
             V3GradientGraphic armoryFill = armory.gameObject.AddComponent<V3GradientGraphic>();
             armoryFill.ConfigureCorners(new Color32(31, 65, 119, 255), new Color32(25, 52, 96, 255), new Color32(12, 29, 58, 255), new Color32(17, 38, 72, 255), new Color32(40, 69, 111, 255), 3f);
             Image crate = CreateImage("CrateIcon", armory, armoryIcon, Color.white, false);
@@ -908,7 +925,7 @@ namespace Game.Editor
             campaignArt = AssetDatabase.LoadAssetAtPath<Sprite>(CampaignArtPath);
             operationsArt = AssetDatabase.LoadAssetAtPath<Sprite>(OperationsArtPath);
             skirmishArt = AssetDatabase.LoadAssetAtPath<Sprite>(SkirmishArtPath);
-            ariaPortrait = AssetDatabase.LoadAssetAtPath<Sprite>(AriaPortraitPath);
+            ariaPortrait = AssetDatabase.LoadAssetAtPath<Sprite>(V3UiFoundationBuilder.SharedAriaPortraitPath);
             campaignIcon = AssetDatabase.LoadAssetAtPath<Sprite>(CampaignIconPath);
             operationsIcon = AssetDatabase.LoadAssetAtPath<Sprite>(OperationsIconPath);
             skirmishIcon = AssetDatabase.LoadAssetAtPath<Sprite>(SkirmishIconPath);
@@ -948,29 +965,41 @@ namespace Game.Editor
             camera.farClipPlane = 1000f;
             camera.transform.position = new Vector3(0f, 0f, -100f);
 
-            GameObject canvasObject = new("MainMenuV3CaptureCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler));
+            RenderTexture renderTexture = new(width, height, 24, RenderTextureFormat.ARGB32);
+            Texture2D image = new(width, height, TextureFormat.RGBA32, false);
+            // Screen-space camera canvases derive their dimensions from the camera's
+            // active target. Bind the requested target before layout; otherwise QA
+            // captures inherit the open Game view size and can crop an unrelated ratio.
+            camera.targetTexture = renderTexture;
+
+            GameObject canvasObject = new("MainMenuV3CaptureCanvas", typeof(RectTransform), typeof(Canvas));
             RectTransform canvasRect = canvasObject.GetComponent<RectTransform>();
             canvasRect.sizeDelta = new Vector2(width, height);
+            canvasRect.localPosition = Vector3.zero;
+            canvasRect.localScale = Vector3.one;
             Canvas canvas = canvasObject.GetComponent<Canvas>();
-            canvas.renderMode = RenderMode.ScreenSpaceCamera;
+            // World-space capture makes the requested RenderTexture dimensions the
+            // authoritative canvas dimensions. Screen-space camera canvases inherit
+            // the open Editor Game view and can silently capture the wrong ratio.
+            canvas.renderMode = RenderMode.WorldSpace;
             canvas.worldCamera = camera;
-            canvas.planeDistance = 10f;
-            CanvasScaler scaler = canvasObject.GetComponent<CanvasScaler>();
-            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = ReferenceResolution;
-            scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
-            scaler.matchWidthOrHeight = 0.5f;
 
             GameObject instance = UnityEngine.Object.Instantiate(prefab, canvasRect);
             instance.name = prefab.name;
             Stretch(instance.transform as RectTransform);
             Canvas.ForceUpdateCanvases();
+            // The shell stretches content after component OnEnable. Mirror that runtime
+            // ordering in QA captures so every section resolves against the final canvas
+            // instead of retaining the pre-mount world position from instantiation.
+            MainMenuV3SectionLayoutView[] layouts =
+                instance.GetComponentsInChildren<MainMenuV3SectionLayoutView>(true);
+            for (int i = 0; i < layouts.Length; i++)
+                layouts[i].RefreshLayout();
+            Canvas.ForceUpdateCanvases();
+            WriteLayoutDiagnostic(outputPath + ".layout.txt", canvas, canvasRect, instance, layouts);
 
-            RenderTexture renderTexture = new(width, height, 24, RenderTextureFormat.ARGB32);
-            Texture2D image = new(width, height, TextureFormat.RGBA32, false);
             try
             {
-                camera.targetTexture = renderTexture;
                 RenderTexture.active = renderTexture;
                 camera.Render();
                 image.ReadPixels(new Rect(0f, 0f, width, height), 0, 0);
@@ -986,6 +1015,36 @@ namespace Game.Editor
                 UnityEngine.Object.DestroyImmediate(renderTexture);
                 EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             }
+        }
+
+        private static void WriteLayoutDiagnostic(
+            string path,
+            Canvas canvas,
+            RectTransform canvasRect,
+            GameObject instance,
+            MainMenuV3SectionLayoutView[] layouts)
+        {
+            var report = new StringBuilder();
+            report.AppendLine($"canvas scaleFactor={canvas.scaleFactor} rect={canvasRect.rect} size={canvasRect.rect.size}");
+            AppendRect(report, "instance", instance.transform as RectTransform);
+            for (int i = 0; i < layouts.Length; i++)
+            {
+                MainMenuV3SectionLayoutView layout = layouts[i];
+                report.AppendLine($"layout name={layout.name} alignment={layout.Alignment} appliedScale={layout.LastAppliedScale} extraWidth={layout.LastAppliedExtraWidth}");
+                AppendRect(report, "  section", layout.transform as RectTransform);
+                if (layout.transform.childCount > 0)
+                    AppendRect(report, "  firstChild", layout.transform.GetChild(0) as RectTransform);
+            }
+            File.WriteAllText(path, report.ToString());
+        }
+
+        private static void AppendRect(StringBuilder report, string label, RectTransform rect)
+        {
+            if (rect == null)
+                return;
+            var corners = new Vector3[4];
+            rect.GetWorldCorners(corners);
+            report.AppendLine($"{label} rect={rect.rect} anchor=({rect.anchorMin},{rect.anchorMax}) pivot={rect.pivot} anchored={rect.anchoredPosition} local={rect.localPosition} world={rect.position} scale={rect.localScale} corners=({corners[0]}..{corners[2]})");
         }
 
         private static RectTransform CreateRect(string name, Transform parent, Vector2 min, Vector2 max, Vector2 size, Vector2 position)

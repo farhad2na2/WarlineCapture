@@ -15,7 +15,7 @@ namespace Game.Editor
         private const string PrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN07_LoadoutSquadPrepContent.prefab";
         private const string BoldFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold SDF.asset";
         private const string MediumFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium SDF.asset";
-        private const string RifleArtPath = "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Male_02_Alt_02_Rifleman_Action_512.png";
+        private const string RifleArtPath = "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV01/scn08_portrait_rifle_squad.png";
         private const string ApcArtPath = "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_APC_Heavy_Action_512.png";
         private const string TankArtPath = "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Tank_USA_Action_512.png";
         private const string HelicopterArtPath = "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Helicopter_Attack_Action_512.png";
@@ -48,13 +48,14 @@ namespace Game.Editor
             RectTransform root = CreateRect("SCN07_LoadoutSquadPrepContent", null, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             CreateGradientPanel(root, new Color32(19, 28, 31, 255), new Color32(2, 8, 10, 255), Color.clear, 0f);
             RectTransform composition = CreateTopLeft("LoadoutSquadPrepComposition", root, 0f, 0f, ReferenceResolution.x, ReferenceResolution.y);
-            composition.gameObject.AddComponent<MainMenuV3SectionLayoutView>().Configure(ReferenceResolution, MainMenuV3SectionAlignment.Center);
+            MainMenuV3SectionLayoutView responsive = composition.gameObject.AddComponent<MainMenuV3SectionLayoutView>();
 
             BuildHeader(composition);
             BuildSelectedUnits(composition);
             BuildSupportAndGear(composition);
             BuildMissionSummary(composition);
             BuildFooter(composition);
+            ConfigureResponsiveLayout(composition, responsive);
 
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root.gameObject, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root.gameObject);
@@ -77,6 +78,15 @@ namespace Game.Editor
             for (int i = 0; i < required.Length; i++)
                 if (FindChild(prefab.transform, required[i]) == null)
                     throw new MissingReferenceException($"Loadout V3 is missing {required[i]}.");
+            LoadoutSquadPrepScreenView screen = prefab.GetComponent<LoadoutSquadPrepScreenView>();
+            if (screen == null || screen.EditLoadoutButton == null || screen.DeployButton == null)
+                throw new MissingReferenceException("Loadout V3 footer actions are not runtime-bound.");
+            UIShellRouteButtonView editRoute = screen.EditLoadoutButton.GetComponent<UIShellRouteButtonView>();
+            if (editRoute == null || editRoute.Intent != UiShellRouteIntent.OpenMenuRoute ||
+                editRoute.Route != UIRoute.Armory || !editRoute.PushHistory)
+            {
+                throw new InvalidOperationException("Loadout V3 Edit Loadout must open the functional Armory route.");
+            }
             Image[] art =
             {
                 FindImage(prefab.transform, "RifleSquadArt"),
@@ -90,7 +100,42 @@ namespace Game.Editor
             int gradients = prefab.GetComponentsInChildren<V3GradientGraphic>(true).Length;
             if (gradients < 18)
                 throw new InvalidOperationException($"Loadout V3 requires procedural gradients; found {gradients}.");
+            MainMenuV3SectionLayoutView responsive = prefab.GetComponentInChildren<MainMenuV3SectionLayoutView>(true);
+            if (responsive == null || !responsive.ExpandToCanvasWidth ||
+                responsive.ReferenceResolution != ReferenceResolution ||
+                responsive.RightAnchoredTargets.Length != 5)
+            {
+                throw new InvalidOperationException("Loadout V3 must fill 16:9 and 20:9 canvases with its right edge anchored.");
+            }
             Debug.Log($"[LoadoutSquadPrepV3PrefabBuilder] validation=Passed gradients={gradients} images={prefab.GetComponentsInChildren<Image>(true).Length}");
+        }
+
+        private static void ConfigureResponsiveLayout(
+            RectTransform composition,
+            MainMenuV3SectionLayoutView responsive)
+        {
+            responsive.Configure(
+                ReferenceResolution,
+                MainMenuV3SectionAlignment.Center,
+                new[]
+                {
+                    FindChild(composition, "Credits") as RectTransform,
+                    FindChild(composition, "Command") as RectTransform,
+                    FindChild(composition, "SettingsButton") as RectTransform,
+                    FindChild(composition, "MissionSummary") as RectTransform,
+                    FindChild(composition, "DeployButton") as RectTransform
+                },
+                shouldExpandToCanvasWidth: true,
+                targetsAnchoredToCenter: new[]
+                {
+                    FindChild(composition, "SupportAndGear") as RectTransform,
+                    FindChild(composition, "EditLoadoutButton") as RectTransform
+                },
+                targetsExpandedAcrossWidth: new[]
+                {
+                    FindChild(composition, "ScreenTitlePanel") as RectTransform,
+                    FindChild(composition, "Footer") as RectTransform
+                });
         }
 
         private static void LoadAssets()
@@ -163,7 +208,20 @@ namespace Game.Editor
             CreateGradientPanel(card, new Color32(15, 29, 34, 255), new Color32(4, 13, 17, 255), accent, 2f);
             RectTransform artClip = CreateTopLeft("ArtClip", card, 2f, 2f, 290f, height - 4f);
             artClip.gameObject.AddComponent<RectMask2D>();
-            Image image = CreateImage(artName, artClip, art, Color.white, false);
+            RectTransform artContent = CreateRect(
+                "ArtContent",
+                artClip,
+                Vector2.zero,
+                Vector2.one,
+                Vector2.zero,
+                Vector2.zero);
+            Stretch(artContent);
+            if (string.Equals(artName, "RifleSquadArt", StringComparison.Ordinal))
+            {
+                artContent.offsetMin += new Vector2(0f, -30f);
+                artContent.offsetMax += new Vector2(0f, -30f);
+            }
+            Image image = CreateImage(artName, artContent, art, Color.white, false);
             Stretch(image.rectTransform);
             AddCover(image, art);
             TMP_Text name = CreateText("Name", card, unitName, 29f, boldFont, TextAlignmentOptions.MidlineLeft, theme.TextPrimary);
@@ -298,12 +356,19 @@ namespace Game.Editor
             SetTopLeft(editText.rectTransform, 35f, 19f, 350f, 73f);
             Image editIcon = CreateImage("Icon", edit.transform, RequireSprite(V3UiFoundationBuilder.CommanderEditIconPath), Cyan, false);
             SetTopLeft(editIcon.rectTransform, 385f, 31f, 51f, 51f);
+            edit.gameObject.AddComponent<UIShellRouteButtonView>().Configure(
+                UiShellRouteIntent.OpenMenuRoute,
+                UIRoute.Armory,
+                true);
 
             Button deploy = CreateGradientButton("DeployButton", footer, 1125f, 10f, 523f, 113f, new Color32(255, 197, 24, 255), new Color32(238, 151, 0, 255), Amber, 3f);
             TMP_Text deployText = CreateText("Label", deploy.transform, "DEPLOY 10", 45f, boldFont, TextAlignmentOptions.Center, Color.black);
             SetTopLeft(deployText.rectTransform, 35f, 10f, 390f, 90f);
             TMP_Text bolt = CreateText("CostIcon", deploy.transform, "ϟ", 58f, boldFont, TextAlignmentOptions.Center, Color.black);
             SetTopLeft(bolt.rectTransform, 402f, 9f, 80f, 90f);
+
+            LoadoutSquadPrepScreenView screen = root.root.gameObject.AddComponent<LoadoutSquadPrepScreenView>();
+            screen.Configure(edit, deploy);
         }
 
         private static void BuildFooterStat(Transform parent, float x, Sprite iconSprite, string label, string value, Color accent)

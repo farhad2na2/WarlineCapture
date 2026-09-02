@@ -308,6 +308,10 @@ namespace Game.Editor
             icon.preserveAspect = true;
             TMP_Text text = CreateText(rect, "Label", 103f, 18f, 146f, 82f,
                 label, 28f, White, TextAlignmentOptions.MidlineLeft, true);
+            text.enableAutoSizing = true;
+            text.fontSizeMin = 19f;
+            text.fontSizeMax = 28f;
+            text.overflowMode = TextOverflowModes.Overflow;
             Image frameReference = CreateImage(
                 "FrameReference", rect, compatibilityFrame, Color.clear);
             SetTopLeft(frameReference.rectTransform, 0f, 0f, 1f, 1f);
@@ -336,8 +340,11 @@ namespace Game.Editor
             viewportHit.color = new Color(0f, 0f, 0f, .01f);
             viewportHit.raycastTarget = true;
             viewport.gameObject.AddComponent<RectMask2D>();
-            RectTransform content = CreateTopLeft(
-                "CatalogGrid", viewport, 0f, 0f, 920f, 614f);
+            RectTransform content = CreateRect(
+                "CatalogGrid", viewport,
+                new Vector2(0f, 1f), new Vector2(1f, 1f),
+                new Vector2(0f, 614f), Vector2.zero);
+            content.pivot = new Vector2(0f, 1f);
             GridLayoutGroup grid = content.gameObject.AddComponent<GridLayoutGroup>();
             grid.padding = new RectOffset(0, 0, 0, 0);
             grid.cellSize = new Vector2(221f, 296f);
@@ -347,6 +354,8 @@ namespace Game.Editor
             grid.childAlignment = TextAnchor.UpperLeft;
             grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
             grid.constraintCount = 4;
+            content.gameObject.AddComponent<ArmoryV3ResponsiveCatalogGrid>()
+                .Configure(4, 296f);
             ContentSizeFitter size = content.gameObject.AddComponent<ContentSizeFitter>();
             size.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
             size.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
@@ -389,25 +398,42 @@ namespace Game.Editor
 
             TMP_Text title = CreateText(card, "TitleText", 8f, 5f, 205f, 39f,
                 "RIFLE SQUAD", 19f, White, TextAlignmentOptions.Center, true);
-            CreateSolid("TitleDivider", card, 3f, 45f, 215f, 3f, Line);
+            title.enableAutoSizing = true;
+            title.fontSizeMin = 11f;
+            title.fontSizeMax = 19f;
+            title.overflowMode = TextOverflowModes.Overflow;
+            StretchHorizontal(title.rectTransform, 8f, 8f, 5f, 39f);
+            Image titleDivider = CreateSolid("TitleDivider", card, 3f, 45f, 215f, 3f, Line);
+            StretchHorizontal(titleDivider.rectTransform, 3f, 3f, 45f, 3f);
             List<CategoryVisual> categoryVisuals = BuildCategoryArtSets(
                 card, 3f, 48f, 215f, 153f, "CardArt");
-            CreatePanel("OwnedBand", card, 3f, 201f, 215f, 33f,
+            foreach (CategoryVisual categoryVisual in categoryVisuals)
+            {
+                StretchHorizontal((RectTransform)categoryVisual.Root.transform, 3f, 3f, 48f, 153f);
+            }
+            V3GradientGraphic ownedBand = CreatePanel("OwnedBand", card, 3f, 201f, 215f, 33f,
                 new Color32(18, 47, 22, 255),
                 new Color32(6, 24, 12, 255), Line, 3f);
-            CreateText(card, "OwnedText", 10f, 201f, 155f, 33f,
+            StretchHorizontal(ownedBand.rectTransform, 3f, 3f, 201f, 33f);
+            TMP_Text owned = CreateText(card, "OwnedText", 10f, 201f, 155f, 33f,
                 "OWNED", 18f, Lime, TextAlignmentOptions.Center, true);
-            CreateChevronMark(card, 184f, 207f, Lime);
+            StretchHorizontal(owned.rectTransform, 10f, 50f, 201f, 33f);
+            RectTransform[] ownedChevron = CreateChevronMark(card, 184f, 207f, Lime);
+            SetTopRight(ownedChevron[0], 23f, 207f, 18f, 4f, 38f);
+            SetTopRight(ownedChevron[1], 0f, 207f, 18f, 4f, -38f);
             TMP_Text type = CreateText(card, "TypeText", 10f, 239f, 125f, 30f,
                 "INFANTRY", 16f, White, TextAlignmentOptions.MidlineLeft, true);
-            CreateText(card, "LevelText", 138f, 239f, 73f, 30f,
+            TMP_Text level = CreateText(card, "LevelText", 138f, 239f, 73f, 30f,
                 "LVL 12", 16f, White, TextAlignmentOptions.MidlineRight, true);
-            CreatePanel("ProgressTrack", card, 10f, 273f, 201f, 13f,
+            SetTopRight(level.rectTransform, 10f, 239f, 73f, 30f, 0f);
+            V3GradientGraphic progressTrack = CreatePanel("ProgressTrack", card, 10f, 273f, 201f, 13f,
                 new Color32(24, 33, 36, 255),
                 new Color32(8, 14, 16, 255), Line, 3f);
-            CreatePanel("ProgressFill", card, 13f, 276f, 118f, 7f,
+            StretchHorizontal(progressTrack.rectTransform, 10f, 10f, 273f, 13f);
+            V3GradientGraphic progressFill = CreatePanel("ProgressFill", card, 13f, 276f, 118f, 7f,
                 new Color32(174, 224, 64, 255),
                 new Color32(103, 167, 36, 255), Color.clear, 0f);
+            StretchHorizontalFraction(progressFill.rectTransform, 13f, .59f, 276f, 7f);
 
             Image frameReference = CreateImage(
                 "FrameReference", card, compatibilityFrame, Color.clear);
@@ -437,6 +463,10 @@ namespace Game.Editor
                 panel.gameObject.AddComponent<ArmoryInspectionPanelView>();
             TMP_Text title = CreateText(panel, "TitleText", 18f, 7f, 381f, 47f,
                 "RIFLE SQUAD", 30f, White, TextAlignmentOptions.MidlineLeft, true);
+            title.enableAutoSizing = true;
+            title.fontSizeMin = 15f;
+            title.fontSizeMax = 30f;
+            title.overflowMode = TextOverflowModes.Overflow;
             TMP_Text type = CreateText(panel, "TypeText", 18f, 48f, 381f, 29f,
                 "INFANTRY", 19f, Lime, TextAlignmentOptions.MidlineLeft, true);
             List<CategoryVisual> categoryVisuals = BuildCategoryArtSets(
@@ -561,7 +591,7 @@ namespace Game.Editor
                 "COMMANDER PROFILE", V3UiFoundationBuilder.MatchPlayerIconPath,
                 BlueTop, BlueBottom, Cyan);
             AddRoute(back, UiShellRouteIntent.BackMenuRoute, UIRoute.MainMenu, false);
-            AddRoute(profile, UiShellRouteIntent.OpenMenuRoute, UIRoute.CommandFeed, true);
+            AddRoute(profile, UiShellRouteIntent.OpenMenuRoute, UIRoute.CommanderProfile, true);
             return new FooterBindings(bar, profile);
         }
 
@@ -617,10 +647,10 @@ namespace Game.Editor
             middleSection.gameObject.AddComponent<MainMenuV3SectionLayoutView>().Configure(
                 Reference,
                 MainMenuV3SectionAlignment.Center,
-                new[] { middle.Sort },
+                new[] { middle.Filter, middle.Sort },
                 true,
-                new[] { middle.Viewport },
-                new[] { middle.Panel });
+                null,
+                new[] { middle.Panel, middle.Viewport });
             rightSection.gameObject.AddComponent<MainMenuV3SectionLayoutView>().Configure(
                 Reference,
                 MainMenuV3SectionAlignment.TopRight);
@@ -647,8 +677,11 @@ namespace Game.Editor
                     new Color32(6, 13, 16, 255), Line, 3f).rectTransform;
                 root.gameObject.AddComponent<RectMask2D>();
                 Image art = CreateImage("ArtImage", root, null, Color.white);
-                SetTopLeft(art.rectTransform, 3f, 3f, width - 6f, height - 6f);
-                art.preserveAspect = true;
+                Stretch(art.rectTransform);
+                art.preserveAspect = false;
+                AspectRatioFitter fitter = art.gameObject.AddComponent<AspectRatioFitter>();
+                fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+                fitter.aspectRatio = width / height;
                 art.enabled = false;
                 root.gameObject.SetActive(category == ArmoryCatalogCategory.Characters);
                 result.Add(new CategoryVisual(category, root.gameObject, art));
@@ -750,7 +783,7 @@ namespace Game.Editor
             right.localRotation = Quaternion.Euler(0f, 0f, 36f);
         }
 
-        private static void CreateChevronMark(Transform parent, float x, float y, Color color)
+        private static RectTransform[] CreateChevronMark(Transform parent, float x, float y, Color color)
         {
             RectTransform left = CreateTopLeft("ChevronLeft", parent, x, y, 18f, 4f);
             left.gameObject.AddComponent<Image>().color = color;
@@ -758,6 +791,7 @@ namespace Game.Editor
             RectTransform right = CreateTopLeft("ChevronRight", parent, x + 13f, y, 18f, 4f);
             right.gameObject.AddComponent<Image>().color = color;
             right.localRotation = Quaternion.Euler(0f, 0f, -38f);
+            return new[] { left, right };
         }
 
         private static RectTransform CreateSection(
@@ -858,6 +892,39 @@ namespace Game.Editor
             rect.sizeDelta = new Vector2(width, height);
             rect.localScale = Vector3.one;
             rect.localRotation = Quaternion.identity;
+        }
+
+        private static void SetTopRight(
+            RectTransform rect, float right, float y, float width, float height, float rotation)
+        {
+            rect.anchorMin = rect.anchorMax = new Vector2(1f, 1f);
+            rect.pivot = new Vector2(1f, 1f);
+            rect.anchoredPosition = new Vector2(-right, -y);
+            rect.sizeDelta = new Vector2(width, height);
+            rect.localScale = Vector3.one;
+            rect.localRotation = Quaternion.Euler(0f, 0f, rotation);
+        }
+
+        private static void StretchHorizontal(
+            RectTransform rect, float left, float right, float y, float height)
+        {
+            rect.anchorMin = new Vector2(0f, 1f);
+            rect.anchorMax = new Vector2(1f, 1f);
+            rect.pivot = new Vector2(0f, 1f);
+            rect.anchoredPosition = new Vector2(left, -y);
+            rect.sizeDelta = new Vector2(-(left + right), height);
+            rect.localScale = Vector3.one;
+        }
+
+        private static void StretchHorizontalFraction(
+            RectTransform rect, float left, float maxFraction, float y, float height)
+        {
+            rect.anchorMin = new Vector2(0f, 1f);
+            rect.anchorMax = new Vector2(maxFraction, 1f);
+            rect.pivot = new Vector2(0f, 1f);
+            rect.anchoredPosition = new Vector2(left, -y);
+            rect.sizeDelta = new Vector2(-left, height);
+            rect.localScale = Vector3.one;
         }
 
         private static void Stretch(RectTransform rect)

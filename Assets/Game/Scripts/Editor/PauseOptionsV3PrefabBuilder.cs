@@ -176,6 +176,12 @@ namespace Game.Editor
             out TMP_Text currentTime)
         {
             RectTransform header = CreateTopLeft("Header", modal, 3f, 3f, 754f, 158f);
+            AddGradient(
+                header,
+                new Color32(31, 43, 47, 253),
+                new Color32(10, 18, 21, 253),
+                Color.clear,
+                0f);
             TMP_Text title = CreateText("TitleText", header, "PAUSED", 49f, boldFont,
                 TextAlignmentOptions.Center, White);
             SetTopLeft(title.rectTransform, 90f, 12f, 574f, 64f);
@@ -212,8 +218,9 @@ namespace Game.Editor
         {
             RectTransform column = CreateTopLeft("ActionColumn", modal, 16f, 174f, 447f, 482f);
             resume = BuildAction(column, "ResumeButton", 0f, "RESUME",
-                V3UiFoundationBuilder.MatchMoveIconPath,
+                V3UiFoundationBuilder.PauseResumeIconPath,
                 new Color32(10, 118, 73, 255), new Color32(1, 42, 29, 255), Green, White);
+            ResizeActionIcon(resume, 22f, -4f, 90f, 90f);
             restart = BuildAction(column, "RestartButton", 96f, "RESTART MISSION",
                 V3UiFoundationBuilder.ResetIconPath,
                 new Color32(184, 120, 7, 255), new Color32(67, 36, 1, 255), Amber, Amber);
@@ -221,11 +228,24 @@ namespace Game.Editor
                 V3UiFoundationBuilder.MatchSettingsIconPath,
                 new Color32(5, 105, 157, 255), new Color32(1, 34, 55, 255), Cyan, White);
             help = BuildAction(column, "HelpButton", 288f, "HELP",
-                V3UiFoundationBuilder.MatchInfoIconPath,
+                V3UiFoundationBuilder.PauseHelpIconPath,
                 new Color32(7, 94, 141, 255), new Color32(1, 28, 46, 255), Cyan, White);
+            ResizeActionIcon(help, 22f, -4f, 90f, 90f);
+            TMP_Text helpGlyph = CreateText("QuestionMark", help.transform, "?", 35f, boldFont,
+                TextAlignmentOptions.Center, White);
+            SetTopLeft(helpGlyph.rectTransform, 41f, 13f, 52f, 54f);
             exit = BuildAction(column, "ExitButton", 384f, "EXIT TO MAIN MENU",
-                V3UiFoundationBuilder.MatchReturnIconPath,
+                V3UiFoundationBuilder.PauseExitIconPath,
                 new Color32(179, 52, 12, 255), new Color32(61, 16, 5, 255), Orange, Orange);
+            ResizeActionIcon(exit, 22f, -4f, 90f, 90f);
+        }
+
+        private static void ResizeActionIcon(Button button, float x, float y, float width, float height)
+        {
+            Transform iconTransform = button != null ? button.transform.Find("Icon") : null;
+            if (iconTransform is not RectTransform iconRect)
+                throw new MissingReferenceException($"{button?.name ?? "Pause action"} is missing its icon.");
+            SetTopLeft(iconRect, x, y, width, height);
         }
 
         private static Button BuildAction(

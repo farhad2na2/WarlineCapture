@@ -27,7 +27,17 @@ namespace Game.UI.Runtime
             if (selected)
             {
                 artImage.sprite = portrait;
-                artImage.preserveAspect = true;
+                AspectRatioFitter fitter = artImage.GetComponent<AspectRatioFitter>();
+                if (fitter != null && portrait != null)
+                {
+                    fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+                    fitter.aspectRatio = portrait.rect.width / portrait.rect.height;
+                    artImage.preserveAspect = false;
+                }
+                else
+                {
+                    artImage.preserveAspect = true;
+                }
                 artImage.enabled = portrait != null;
                 return;
             }

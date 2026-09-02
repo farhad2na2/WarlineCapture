@@ -40,8 +40,19 @@ public sealed class BuildPlacementConfirmationBarV3PrefabTests
             Assert.AreEqual(Vector2.zero, mountedSection.anchorMin);
             Assert.AreEqual(Vector2.one, mountedSection.anchorMax);
             Assert.AreEqual("PlacementBarPanel", view.Root.name);
-            Assert.AreEqual(1664f, view.Root.sizeDelta.x);
-            Assert.AreEqual(310f, view.Root.sizeDelta.y);
+            Assert.That(Vector2.Distance(
+                new Vector2(4f / 1672f, 14f / 941f), view.Root.anchorMin), Is.LessThan(0.0001f));
+            Assert.That(Vector2.Distance(
+                new Vector2(1668f / 1672f, 324f / 941f), view.Root.anchorMax), Is.LessThan(0.0001f));
+            Assert.AreEqual(Vector2.zero, view.Root.sizeDelta);
+            Canvas.ForceUpdateCanvases();
+            Assert.AreEqual(1664f, view.Root.rect.width);
+            Assert.AreEqual(310f, view.Root.rect.height);
+            BuildPlacementConfirmationBarDesignLayoutView designLayout =
+                view.Root.GetComponent<BuildPlacementConfirmationBarDesignLayoutView>();
+            Assert.NotNull(designLayout);
+            Assert.NotNull(designLayout.DesignContent);
+            Assert.AreEqual(new Vector2(1664f, 310f), designLayout.ReferenceSize);
             Assert.NotNull(view.ValidityPanel);
         }
         finally
@@ -93,16 +104,20 @@ public sealed class BuildPlacementConfirmationBarV3PrefabTests
             Assert.NotNull(view);
 
             view.BindRuntimeCommands(new PreviewBuildingCommand(true));
+            Canvas.ForceUpdateCanvases();
             Assert.IsTrue(view.ConfirmButton.interactable);
             Assert.IsFalse(view.ValidityPanel.IsVisible);
             Assert.IsTrue(aria.activeSelf);
             Assert.IsFalse(threat.activeSelf);
+            Assert.AreEqual(231f, view.Root.rect.height, 0.01f);
 
             view.BindRuntimeCommands(new PreviewBuildingCommand(false));
+            Canvas.ForceUpdateCanvases();
             Assert.IsFalse(view.ConfirmButton.interactable);
             Assert.IsTrue(view.ValidityPanel.IsVisible);
             Assert.IsFalse(aria.activeSelf);
             StringAssert.Contains("INVALID", view.StatusText.text);
+            Assert.AreEqual(310f, view.Root.rect.height, 0.01f);
 
             view.BindRuntimeCommands(null);
             Assert.IsFalse(view.ValidityPanel.IsVisible);

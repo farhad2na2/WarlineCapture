@@ -85,6 +85,10 @@ namespace Game.Editor
         private static bool captureProgressPrepared;
         private static string captureMissionId;
         private static string captureProgressDirectory;
+        private static bool captureTutorialCueProof;
+        private static int tutorialCueResizeFrame;
+        private static int tutorialCueScreenshotFrame;
+        private static string tutorialCueScreenshotPath;
         private static double startedAt;
         private static MobileVisualQualityCaptureMatrix matrixCapture;
 
@@ -120,6 +124,27 @@ namespace Game.Editor
                 CaptureProfile.Current,
                 EstablishBaseMissionId,
                 Path.Combine(Path.GetTempPath(), "warline-m02-playable-review"));
+        }
+
+        [MenuItem("Game/Rendering/Capture Mobile Visual Quality/Mission 2 V3 Tutorial Cue Proof")]
+        public static void CaptureMissionTwoV3TutorialCueProof()
+        {
+            exitEditorAfterCapture = false;
+            Run(
+                CaptureProfile.Current,
+                EstablishBaseMissionId,
+                Path.Combine(Path.GetTempPath(), "warline-m02-v3-tutorial-cue-proof"),
+                tutorialCueProof: true);
+        }
+
+        public static void CaptureMissionTwoV3TutorialCueProofFromCommandLine()
+        {
+            exitEditorAfterCapture = true;
+            Run(
+                CaptureProfile.Current,
+                EstablishBaseMissionId,
+                Path.Combine(Path.GetTempPath(), "warline-m02-v3-tutorial-cue-proof"),
+                tutorialCueProof: true);
         }
 
         public static void CaptureFromEnvironment()
@@ -239,7 +264,8 @@ namespace Game.Editor
         private static void Run(
             CaptureProfile profile,
             string forcedMissionId = null,
-            string forcedArtifactDirectory = null)
+            string forcedArtifactDirectory = null,
+            bool tutorialCueProof = false)
         {
             try
             {
@@ -252,6 +278,7 @@ namespace Game.Editor
                 AssetDatabase.SaveAssets();
 
                 captureProfile = profile;
+                captureTutorialCueProof = tutorialCueProof;
                 selectedProfile = LoadProfile(profile);
                 captureMissionId = string.IsNullOrWhiteSpace(forcedMissionId)
                     ? ResolveCaptureMissionId()
@@ -290,6 +317,11 @@ namespace Game.Editor
                 profileApplied = false;
                 captureProgressPrepared = false;
                 captureProgressDirectory = string.Empty;
+                tutorialCueResizeFrame = 0;
+                tutorialCueScreenshotFrame = 0;
+                tutorialCueScreenshotPath = Path.Combine(
+                    artifactDirectory,
+                    "m02_v3_tutorial_ground_cue.png");
                 completed = false;
                 startedAt = EditorApplication.timeSinceStartup;
                 SetPhase(CapturePhase.WaitingForPlayMode);
@@ -387,6 +419,13 @@ namespace Game.Editor
                 switch (phase)
                 {
                     case CapturePhase.WarmupGameplay:
+                        if (frameCount - matchReadyFrame < WarmupFrames)
+                            break;
+                        if (captureTutorialCueProof)
+                        {
+                            TickTutorialCueProof(matchScene, bootstrap);
+                            break;
+                        }
                         if (frameCount - matchReadyFrame >= WarmupFrames)
                             SetPhase(CapturePhase.SetDay);
                         break;
@@ -474,6 +513,114 @@ namespace Game.Editor
             MatchSceneView matchScene = UnityEngine.Object.FindAnyObjectByType<MatchSceneView>(FindObjectsInactive.Exclude);
             if (matchScene != null)
                 ApplyProfileIfNeeded(matchScene);
+        }
+
+        private static void TickTutorialCueProof(
+            MatchSceneView matchScene,
+            MenuBootstrapView bootstrap)
+        {
+            if (tutorialCueResizeFrame == 0)
+            {
+                Screen.SetResolution(DefaultCaptureWidth, DefaultCaptureHeight, false);
+                tutorialCueResizeFrame = frameCount;
+                return;
+            }
+
+            if (tutorialCueScreenshotFrame == 0)
+            {
+                if (frameCount - tutorialCueResizeFrame < 12)
+                    return;
+
+                StageV3TutorialCue(matchScene, bootstrap);
+                Directory.CreateDirectory(artifactDirectory);
+                DeleteIfExists(tutorialCueScreenshotPath);
+                ScreenCapture.CaptureScreenshot(tutorialCueScreenshotPath, 1);
+                tutorialCueScreenshotFrame = frameCount;
+                return;
+            }
+
+            if (frameCount - tutorialCueScreenshotFrame < 12)
+                return;
+            if (!File.Exists(tutorialCueScreenshotPath))
+                throw new FileNotFoundException(
+                    "The V3 tutorial cue screenshot was not written.",
+                    tutorialCueScreenshotPath);
+
+            Complete(
+                true,
+                $"mission={captureMissionId} tutorialCue={tutorialCueScreenshotPath}");
+        }
+
+        private static void StageV3TutorialCue(
+            MatchSceneView matchScene,
+            MenuBootstrapView bootstrap)
+        {
+            if (matchScene == null || matchScene.WorldCamera == null)
+                throw new InvalidOperationException("The M02 tutorial proof requires the live Match world camera.");
+            if (bootstrap == null)
+                throw new InvalidOperationException("The M02 tutorial proof requires the live Menu bootstrap.");
+
+            FieldInfo compositionField = typeof(MenuBootstrapView).GetField(
+                "menuBootstrapSystem",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            object composition = compositionField?.GetValue(bootstrap);
+            FieldInfo mainMenuField = composition?.GetType().GetField(
+                "boundMainMenu",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            MainMenuPlayUI mainMenu = mainMenuField?.GetValue(composition) as MainMenuPlayUI;
+            if (mainMenu == null)
+                throw new InvalidOperationException("The live Match HUD MainMenuPlayUI binding is unavailable.");
+
+            FieldInfo helperField = typeof(MainMenuPlayUI).GetField(
+                "_matchHudAssistantUiSystem",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            object helper = helperField?.GetValue(mainMenu);
+            if (helper == null)
+                throw new InvalidOperationException("The live Match HUD ARIA helper is unavailable.");
+
+            Camera camera = matchScene.WorldCamera;
+            Ray ray = camera.ViewportPointToRay(new Vector3(0.56f, 0.53f, 0f));
+            Plane ground = new(Vector3.up, Vector3.zero);
+            Vector3 target;
+            if (ground.Raycast(ray, out float distance))
+                target = ray.GetPoint(distance);
+            else
+                target = camera.transform.position + camera.transform.forward * 80f;
+
+            var model = new UiAssistantHighlightModel(
+                0xF3000001u,
+                true,
+                9301,
+                9302,
+                2,
+                1,
+                target.x,
+                target.y,
+                target.z,
+                1f);
+
+            MethodInfo applyReadModel = helper.GetType().GetMethod(
+                "ApplyReadModel",
+                BindingFlags.Instance | BindingFlags.Public);
+            MethodInfo beginShowMe = helper.GetType().GetMethod(
+                "BeginPendingShowMe",
+                BindingFlags.Instance | BindingFlags.Public);
+            MethodInfo tick = helper.GetType().GetMethod(
+                "Tick",
+                BindingFlags.Instance | BindingFlags.Public);
+            if (applyReadModel == null || beginShowMe == null || tick == null)
+                throw new MissingMethodException("The live ARIA tutorial cue methods are unavailable.");
+
+            mainMenu.BindGuidanceWorldCamera(camera);
+            applyReadModel.Invoke(helper, new object[] { model });
+            mainMenu.ApplyMatchHudCommandMode(Game.Tactical.Contracts.TacticalCommandMode.Move);
+            beginShowMe.Invoke(helper, new object[] { (byte)2, (byte)1 });
+            tick.Invoke(helper, null);
+
+            // Freeze shell projection for the one proof frame so the real ECS
+            // read model cannot replace the staged target between request and capture.
+            bootstrap.enabled = false;
+            Canvas.ForceUpdateCanvases();
         }
 
         private static void ApplyProfileIfNeeded(MatchSceneView matchScene)

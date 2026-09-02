@@ -15,6 +15,7 @@ namespace Game.Editor
         private const string PrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN12_DistrictDetailActionsContent.prefab";
         private const string MapPath = "Assets/Game/Art/UI/V3Shared/CampaignScenes/SCN05_SahrinMissionMap_V3.png";
         private const string AriaPath = "Assets/Game/Art/UI/V3Shared/Portraits/ARIA_MainMenu_V3.png";
+        private const string ConfirmRaidPopupPath = "Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab";
         private const string BoldFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold SDF.asset";
         private const string MediumFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium SDF.asset";
 
@@ -44,7 +45,7 @@ namespace Game.Editor
             RectTransform root = CreateRect("SCN12_DistrictDetailActionsContent", null, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             CreateGradientPanel(root, new Color32(11, 18, 21, 255), new Color32(1, 5, 7, 255), Color.clear, 0f);
             RectTransform composition = CreateTopLeft("DistrictDetailActionsComposition", root, 0f, 0f, ReferenceResolution.x, ReferenceResolution.y);
-            composition.gameObject.AddComponent<MainMenuV3SectionLayoutView>().Configure(ReferenceResolution, MainMenuV3SectionAlignment.Center);
+            MainMenuV3SectionLayoutView responsive = composition.gameObject.AddComponent<MainMenuV3SectionLayoutView>();
             DistrictDetailActionsScreenView screen = composition.gameObject.AddComponent<DistrictDetailActionsScreenView>();
 
             UIShellRouteButtonView backRoute = BuildHeader(composition);
@@ -54,6 +55,7 @@ namespace Game.Editor
             BuildAriaStatus(composition, out Image ariaPortrait);
             BuildRecentActivity(composition);
             Button[] actions = BuildActionBar(composition);
+            ConfigureResponsiveLayout(composition, responsive);
 
             SerializedObject serialized = new(screen);
             SetReference(serialized, "backRouteButton", backRoute);
@@ -63,6 +65,7 @@ namespace Game.Editor
             SetReference(serialized, "threatLabel", threatLabel);
             SetReference(serialized, "intelConfidence", intelConfidence);
             SetArray(serialized, "actionButtons", actions);
+            SetReference(serialized, "confirmRaidPopupPrefab", AssetDatabase.LoadAssetAtPath<GameObject>(ConfirmRaidPopupPath));
             serialized.ApplyModifiedPropertiesWithoutUndo();
 
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root.gameObject, PrefabPath);
@@ -97,6 +100,12 @@ namespace Game.Editor
             Button[] actions = FindChild(prefab.transform, "ActionBar")?.GetComponentsInChildren<Button>(true) ?? Array.Empty<Button>();
             if (actions.Length != 7 || actions[5].interactable || actions[6].interactable)
                 throw new InvalidOperationException("District Detail V3 requires five active and two locked action cards.");
+            DistrictDetailActionsScreenView screen = prefab.GetComponentInChildren<DistrictDetailActionsScreenView>(true);
+            if (screen == null || screen.ConfirmRaidPopupPrefab == null)
+                throw new MissingReferenceException("District Detail V3 requires its shared functional raid confirmation.");
+            MainMenuV3SectionLayoutView responsive = prefab.GetComponentInChildren<MainMenuV3SectionLayoutView>(true);
+            if (responsive == null || !responsive.ExpandToCanvasWidth || responsive.RightAnchoredTargets.Length != 8)
+                throw new InvalidOperationException("District Detail V3 must fill 16:9 and 20:9 canvases with its right-side panels anchored.");
             Debug.Log($"[DistrictDetailActionsV3PrefabBuilder] validation=Passed gradients={prefab.GetComponentsInChildren<V3GradientGraphic>(true).Length} actions=7 images={prefab.GetComponentsInChildren<Image>(true).Length}");
         }
 
@@ -112,6 +121,39 @@ namespace Game.Editor
             ariaSprite = RequireSprite(AriaPath);
             if (boldFont == null || mediumFont == null || mapTexture == null || ariaSprite == null)
                 throw new MissingReferenceException("District Detail V3 shared art or fonts are missing.");
+        }
+
+        private static void ConfigureResponsiveLayout(
+            RectTransform composition,
+            MainMenuV3SectionLayoutView responsive)
+        {
+            responsive.Configure(
+                ReferenceResolution,
+                MainMenuV3SectionAlignment.Center,
+                new[]
+                {
+                    FindChild(composition, "Credits") as RectTransform,
+                    FindChild(composition, "Command") as RectTransform,
+                    FindChild(composition, "SettingsButton") as RectTransform,
+                    FindChild(composition, "KeyStats") as RectTransform,
+                    FindChild(composition, "IntelConfidence") as RectTransform,
+                    FindChild(composition, "KnownThreats") as RectTransform,
+                    FindChild(composition, "AriaStatus") as RectTransform,
+                    FindChild(composition, "RecentActivity") as RectTransform
+                },
+                shouldExpandToCanvasWidth: true,
+                targetsAnchoredToCenter: new[]
+                {
+                    FindChild(composition, "DistrictThreatMarker") as RectTransform
+                },
+                targetsExpandedAcrossWidth: new[]
+                {
+                    FindChild(composition, "ScreenTitlePanel") as RectTransform,
+                    FindChild(composition, "DistrictVisual") as RectTransform,
+                    FindChild(composition, "DistrictClip") as RectTransform,
+                    FindChild(composition, "MapShade") as RectTransform,
+                    FindChild(composition, "ActionBar") as RectTransform
+                });
         }
 
         private static UIShellRouteButtonView BuildHeader(RectTransform root)
@@ -344,12 +386,27 @@ namespace Game.Editor
             actions[4] = BuildActionCard(bar, "Repair", 914f, 230f, "REPAIR", "00:30:00", "1,800", V3UiFoundationBuilder.OperationsRepairIconPath, new Color32(130, 88, 4, 255), new Color32(54, 35, 1, 255), Amber, false);
             actions[5] = BuildActionCard(bar, "Evacuate", 1150f, 230f, "EVACUATE", "REQUIRES HQ LV. 16", string.Empty, V3UiFoundationBuilder.MissionCivilianIconPath, new Color32(25, 31, 33, 255), new Color32(8, 12, 13, 255), Border, true);
             actions[6] = BuildActionCard(bar, "BuildOutpost", 1386f, 274f, "BUILD OUTPOST", "REQUIRES HQ LV. 18", string.Empty, V3UiFoundationBuilder.CampaignBarracksIconPath, new Color32(25, 31, 33, 255), new Color32(8, 12, 13, 255), Border, true);
+
+            HorizontalLayoutGroup layout = bar.gameObject.AddComponent<HorizontalLayoutGroup>();
+            layout.spacing = 6f;
+            layout.padding = new RectOffset();
+            layout.childAlignment = TextAnchor.UpperLeft;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = false;
+            layout.childForceExpandHeight = false;
             return actions;
         }
 
         private static Button BuildActionCard(Transform parent, string name, float x, float width, string label, string timeOrRequirement, string cost, string iconPath, Color top, Color bottom, Color border, bool locked)
         {
             Button button = CreateGradientButton(name, parent, x, 0f, width, 181f, top, bottom, border, 3f);
+            LayoutElement layout = button.gameObject.AddComponent<LayoutElement>();
+            layout.minWidth = width;
+            layout.preferredWidth = width;
+            layout.flexibleWidth = width;
+            layout.minHeight = 181f;
+            layout.preferredHeight = 181f;
             button.interactable = !locked;
             Color iconColor = locked ? new Color32(72, 78, 79, 255) : border;
             Image icon = CreateImage("Icon", button.transform, RequireSprite(iconPath), iconColor, false);

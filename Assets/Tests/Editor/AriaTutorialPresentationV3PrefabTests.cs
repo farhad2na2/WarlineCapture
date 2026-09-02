@@ -8,104 +8,76 @@ using UnityEngine.UI;
 
 public sealed class AriaTutorialPresentationV3PrefabTests
 {
+    private const string MatchHudPath =
+        "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab";
+
     [Test]
-    public void Prefab_UsesV3PortraitProceduralGradientsAndConstantBorders()
+    public void MatchHud_OwnsTheOnlyTutorialAriaPanel()
     {
-        GameObject prefab = RequirePrefab();
-        AriaTutorialBriefingView view =
-            prefab.GetComponentInChildren<AriaTutorialBriefingView>(true);
+        GameObject matchHud = RequirePrefab(MatchHudPath);
+        Transform aria = FindDeepChild(matchHud.transform, "AriaAssistantButton");
+        Assert.NotNull(aria);
+
+        AriaTutorialBriefingView view = aria.GetComponent<AriaTutorialBriefingView>();
         Assert.NotNull(view);
         Assert.IsTrue(view.TryBindHierarchy());
+        Assert.IsFalse(view.BriefingLayout.gameObject.activeSelf);
+        Assert.IsNull(view.CloseButton, "The permanent ARIA tutorial panel must not contain Skip.");
         Assert.AreEqual(
             AriaTutorialBriefingPrefabBuilder.PortraitPath,
             AssetDatabase.GetAssetPath(view.PortraitImage.sprite));
         Assert.NotNull(view.PortraitImage.GetComponent<AspectRatioFitter>());
-
-        V3GradientGraphic[] gradients =
-            view.GetComponentsInChildren<V3GradientGraphic>(true);
-        Assert.That(gradients.Length, Is.GreaterThanOrEqualTo(7));
-        for (int i = 0; i < gradients.Length; i++)
-        {
-            SerializedObject serialized = new(gradients[i]);
-            float border = serialized.FindProperty("borderWidth").floatValue;
-            Assert.That(border == 0f || Mathf.Approximately(border, 3f), Is.True,
-                $"{gradients[i].name} uses a non-V3 border width of {border}.");
-        }
     }
 
     [Test]
-    public void Prefab_PlacesAllActionsInsideTopRightPanelInTargetOrder()
+    public void MatchHud_EmbedsOnlyDoItAndShowMeActions()
     {
-        AriaTutorialBriefingView view = RequirePrefab()
-            .GetComponentInChildren<AriaTutorialBriefingView>(true);
-        RectTransform panel = view.BriefingLayout;
-        RectTransform doIt = view.DoItButton.transform as RectTransform;
-        RectTransform showMe = view.ShowMeButton.transform as RectTransform;
-        RectTransform skip = view.CloseButton.transform as RectTransform;
+        GameObject matchHud = RequirePrefab(MatchHudPath);
+        AriaTutorialBriefingView view = FindDeepChild(
+            matchHud.transform,
+            "AriaAssistantButton").GetComponent<AriaTutorialBriefingView>();
 
-        Assert.AreEqual(new Vector2(0f, 1f), panel.anchorMin);
-        Assert.That(panel.anchoredPosition.x, Is.GreaterThanOrEqualTo(1100f));
-        Assert.That(doIt.anchoredPosition.x, Is.LessThan(showMe.anchoredPosition.x));
-        Assert.That(showMe.anchoredPosition.x, Is.LessThan(skip.anchoredPosition.x));
-        Assert.That(doIt.rect.height, Is.GreaterThanOrEqualTo(72f));
-        Assert.That(showMe.rect.height, Is.GreaterThanOrEqualTo(72f));
-        Assert.That(skip.rect.height, Is.GreaterThanOrEqualTo(72f));
+        Assert.AreEqual(view.DoItButton.transform.parent, view.ShowMeButton.transform.parent);
+        Assert.That((view.DoItButton.transform as RectTransform).rect.height, Is.GreaterThanOrEqualTo(55f));
+        Assert.That((view.ShowMeButton.transform as RectTransform).rect.height, Is.GreaterThanOrEqualTo(55f));
+        Assert.AreEqual(2, view.BriefingLayout.GetComponentsInChildren<Button>(true).Length);
     }
 
     [Test]
-    public void Prefab_HasResponsiveUltrawideGuideWithoutFullscreenRaycastBlocker()
+    public void Popup_DoesNotContainASecondTutorialSurface()
     {
-        AriaTutorialBriefingView view = RequirePrefab()
-            .GetComponentInChildren<AriaTutorialBriefingView>(true);
-        MainMenuV3SectionLayoutView layout =
-            view.GetComponent<MainMenuV3SectionLayoutView>();
-        Assert.NotNull(layout);
-        Assert.AreEqual(new Vector2(1672f, 941f), layout.ReferenceResolution);
-        Assert.IsTrue(layout.ExpandToCanvasWidth);
-        Assert.AreEqual(4, layout.RightAnchoredTargets.Length);
-        Assert.NotNull(view.GetComponent<AriaTutorialHudVariantLayoutView>());
-        Assert.NotNull(view.FirstStepGuideRoot);
-        Assert.IsNull(view.transform.Find("TutorialInputBlocker"));
-        Assert.IsNull(view.GetComponent<Graphic>(),
-            "The full-screen tutorial section must not consume battlefield input.");
+        GameObject popup = RequirePrefab(AriaTutorialBriefingPrefabBuilder.PrefabPath);
+        Assert.IsNull(popup.transform.Find("TutorialBriefingSurface"));
+        Assert.IsNull(popup.GetComponentInChildren<AriaTutorialBriefingView>(true));
+        Assert.IsNull(FindDeepChild(popup.transform, "TutorialCloseButton"));
+    }
 
-        GameObject canvasObject = new("TutorialHeaderVariantCanvas", typeof(RectTransform), typeof(Canvas));
-        GameObject popupObject = null;
+    [Test]
+    public void EnglishAndFarsi_ReuseTheSameFixedPanelFootprint()
+    {
+        GameObject instance = Object.Instantiate(RequirePrefab(MatchHudPath));
         try
         {
-            RectTransform canvas = canvasObject.GetComponent<RectTransform>();
-            canvas.sizeDelta = new Vector2(1672f, 941f);
-            RectTransform header = CreateRect("HeaderContent", canvas);
-            RectTransform resource = CreateRect("ResourceStrip", header);
-            RectTransform settings = CreateRect("SettingsButton", header);
-            RectTransform pause = CreateRect("PauseButton", header);
-            RectTransform embeddedAria = CreateRect("AriaAssistantButton", header);
-            settings.anchoredPosition = new Vector2(1042f, -10f);
-            pause.anchoredPosition = new Vector2(1122f, -10f);
+            RectTransform aria = FindDeepChild(
+                instance.transform,
+                "AriaAssistantButton") as RectTransform;
+            AriaTutorialBriefingView view = aria.GetComponent<AriaTutorialBriefingView>();
+            Vector2 panelSize = aria.sizeDelta;
+            Vector2 guidanceSize = view.BriefingLayout.sizeDelta;
 
-            popupObject = Object.Instantiate(RequirePrefab(), canvas);
-            AriaTutorialBriefingView liveView =
-                popupObject.GetComponentInChildren<AriaTutorialBriefingView>(true);
-            liveView.gameObject.SetActive(true);
-            AriaTutorialHudVariantLayoutView variant =
-                liveView.GetComponent<AriaTutorialHudVariantLayoutView>();
-            variant.RefreshLayout();
+            view.Apply(AriaTutorialBriefingPrefabBuilder.CreateTargetLockPreviewModel());
+            view.SetPresentationVisible(true);
+            view.Apply(AriaTutorialBriefingPrefabBuilder.CreateTargetLockPreviewModel(true));
 
-            Assert.AreEqual(369f, resource.anchoredPosition.x);
-            Assert.AreEqual(978f, settings.anchoredPosition.x);
-            Assert.AreEqual(1054f, pause.anchoredPosition.x);
-            Assert.IsFalse(embeddedAria.gameObject.activeSelf);
-
-            variant.RestoreLayout();
-            Assert.AreEqual(1042f, settings.anchoredPosition.x);
-            Assert.AreEqual(1122f, pause.anchoredPosition.x);
-            Assert.IsTrue(embeddedAria.gameObject.activeSelf);
+            Assert.AreEqual(panelSize, aria.sizeDelta);
+            Assert.AreEqual(guidanceSize, view.BriefingLayout.sizeDelta);
+            Assert.IsTrue(view.TitleText.isRightToLeftText);
+            Assert.IsTrue(view.BodyText.isRightToLeftText);
+            Assert.IsNull(view.CloseButton);
         }
         finally
         {
-            if (popupObject != null)
-                Object.DestroyImmediate(popupObject);
-            Object.DestroyImmediate(canvasObject);
+            Object.DestroyImmediate(instance);
         }
     }
 
@@ -115,10 +87,11 @@ public sealed class AriaTutorialPresentationV3PrefabTests
         int passed = 0;
         try
         {
-            tests.Prefab_UsesV3PortraitProceduralGradientsAndConstantBorders(); passed++;
-            tests.Prefab_PlacesAllActionsInsideTopRightPanelInTargetOrder(); passed++;
-            tests.Prefab_HasResponsiveUltrawideGuideWithoutFullscreenRaycastBlocker(); passed++;
-            Debug.Log($"[AriaTutorialPresentationV3Validation] result=Passed tests={passed}");
+            tests.MatchHud_OwnsTheOnlyTutorialAriaPanel(); passed++;
+            tests.MatchHud_EmbedsOnlyDoItAndShowMeActions(); passed++;
+            tests.Popup_DoesNotContainASecondTutorialSurface(); passed++;
+            tests.EnglishAndFarsi_ReuseTheSameFixedPanelFootprint(); passed++;
+            Debug.Log($"[AriaTutorialPresentationV3Validation] result=Passed tests={passed} panels=1 actions=2 skip=absent");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -128,24 +101,26 @@ public sealed class AriaTutorialPresentationV3PrefabTests
         }
     }
 
-    private static GameObject RequirePrefab()
+    private static GameObject RequirePrefab(string path)
     {
-        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(
-            AriaTutorialBriefingPrefabBuilder.PrefabPath);
-        Assert.NotNull(prefab);
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+        Assert.NotNull(prefab, path);
         return prefab;
     }
 
-    private static RectTransform CreateRect(string name, Transform parent)
+    private static Transform FindDeepChild(Transform root, string targetName)
     {
-        GameObject value = new(name, typeof(RectTransform));
-        RectTransform rect = value.GetComponent<RectTransform>();
-        rect.SetParent(parent, false);
-        rect.anchorMin = new Vector2(0f, 1f);
-        rect.anchorMax = new Vector2(0f, 1f);
-        rect.pivot = new Vector2(0f, 1f);
-        rect.sizeDelta = new Vector2(100f, 60f);
-        return rect;
+        if (root == null)
+            return null;
+        if (root.name == targetName)
+            return root;
+        for (int i = 0; i < root.childCount; i++)
+        {
+            Transform found = FindDeepChild(root.GetChild(i), targetName);
+            if (found != null)
+                return found;
+        }
+        return null;
     }
 }
 #endif

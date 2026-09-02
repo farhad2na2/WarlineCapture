@@ -62,9 +62,15 @@ namespace Game.UI.Runtime
             SetActive(warningImage, warningVisible);
 
             if (rushButton != null)
+            {
+                rushButton.gameObject.SetActive(rushEnabled && !completedVisible);
                 rushButton.interactable = rushEnabled;
+            }
             if (cancelButton != null)
+            {
+                cancelButton.gameObject.SetActive(cancelEnabled && !completedVisible);
                 cancelButton.interactable = cancelEnabled;
+            }
         }
 
         private static void SetText(TMP_Text target, string value)

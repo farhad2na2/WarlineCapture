@@ -24,9 +24,13 @@ namespace Game.UI.Runtime
         [SerializeField] private RectTransform[] widthExpandedTargets = Array.Empty<RectTransform>();
 
         private RectTransform _rectTransform;
-        private Vector2[] _rightTargetBasePositions = Array.Empty<Vector2>();
-        private Vector2[] _centerTargetBasePositions = Array.Empty<Vector2>();
-        private Vector2[] _widthTargetBaseSizes = Array.Empty<Vector2>();
+        // These authored reference-space values must survive prefab serialization. The
+        // DrivenRectTransformTracker can serialize a driven target at its preview position
+        // (often x=0 when the prefab is saved outside a Canvas), so recapturing from the
+        // target on the next load loses the real wide-screen anchor.
+        [SerializeField, HideInInspector] private Vector2[] rightTargetBasePositions = Array.Empty<Vector2>();
+        [SerializeField, HideInInspector] private Vector2[] centerTargetBasePositions = Array.Empty<Vector2>();
+        [SerializeField, HideInInspector] private Vector2[] widthTargetBaseSizes = Array.Empty<Vector2>();
         private Vector2 _lastCanvasSize;
         private DrivenRectTransformTracker _previewTracker;
         private bool _applying;
@@ -37,6 +41,26 @@ namespace Game.UI.Runtime
         public RectTransform[] RightAnchoredTargets => rightAnchoredTargets;
         public float LastAppliedScale { get; private set; }
         public float LastAppliedExtraWidth { get; private set; }
+
+        public bool TryGetAuthoredBasePosition(RectTransform target, out Vector2 position)
+        {
+            int index = Array.IndexOf(rightAnchoredTargets, target);
+            if (index >= 0 && index < rightTargetBasePositions.Length)
+            {
+                position = rightTargetBasePositions[index];
+                return true;
+            }
+
+            index = Array.IndexOf(centerAnchoredTargets, target);
+            if (index >= 0 && index < centerTargetBasePositions.Length)
+            {
+                position = centerTargetBasePositions[index];
+                return true;
+            }
+
+            position = default;
+            return false;
+        }
 
         public void Configure(
             Vector2 authoredReferenceResolution,
@@ -73,9 +97,9 @@ namespace Game.UI.Runtime
                 if (_rectTransform == null)
                     _rectTransform = (RectTransform)transform;
                 TrackDrivenLayoutProperties();
-                if (_rightTargetBasePositions.Length != rightAnchoredTargets.Length ||
-                    _centerTargetBasePositions.Length != centerAnchoredTargets.Length ||
-                    _widthTargetBaseSizes.Length != widthExpandedTargets.Length)
+                if (rightTargetBasePositions.Length != rightAnchoredTargets.Length ||
+                    centerTargetBasePositions.Length != centerAnchoredTargets.Length ||
+                    widthTargetBaseSizes.Length != widthExpandedTargets.Length)
                 {
                     CaptureResponsiveTargetBaseLayout();
                 }
@@ -115,9 +139,9 @@ namespace Game.UI.Runtime
 
         private void OnEnable()
         {
-            if (_rightTargetBasePositions.Length != rightAnchoredTargets.Length ||
-                _centerTargetBasePositions.Length != centerAnchoredTargets.Length ||
-                _widthTargetBaseSizes.Length != widthExpandedTargets.Length)
+            if (rightTargetBasePositions.Length != rightAnchoredTargets.Length ||
+                centerTargetBasePositions.Length != centerAnchoredTargets.Length ||
+                widthTargetBaseSizes.Length != widthExpandedTargets.Length)
             {
                 CaptureResponsiveTargetBaseLayout();
             }
@@ -175,25 +199,25 @@ namespace Game.UI.Runtime
 
         private void CaptureResponsiveTargetBaseLayout()
         {
-            _rightTargetBasePositions = new Vector2[rightAnchoredTargets.Length];
+            rightTargetBasePositions = new Vector2[rightAnchoredTargets.Length];
             for (int i = 0; i < rightAnchoredTargets.Length; i++)
             {
                 RectTransform target = rightAnchoredTargets[i];
-                _rightTargetBasePositions[i] = target != null ? target.anchoredPosition : Vector2.zero;
+                rightTargetBasePositions[i] = target != null ? target.anchoredPosition : Vector2.zero;
             }
 
-            _centerTargetBasePositions = new Vector2[centerAnchoredTargets.Length];
+            centerTargetBasePositions = new Vector2[centerAnchoredTargets.Length];
             for (int i = 0; i < centerAnchoredTargets.Length; i++)
             {
                 RectTransform target = centerAnchoredTargets[i];
-                _centerTargetBasePositions[i] = target != null ? target.anchoredPosition : Vector2.zero;
+                centerTargetBasePositions[i] = target != null ? target.anchoredPosition : Vector2.zero;
             }
 
-            _widthTargetBaseSizes = new Vector2[widthExpandedTargets.Length];
+            widthTargetBaseSizes = new Vector2[widthExpandedTargets.Length];
             for (int i = 0; i < widthExpandedTargets.Length; i++)
             {
                 RectTransform target = widthExpandedTargets[i];
-                _widthTargetBaseSizes[i] = target != null ? target.sizeDelta : Vector2.zero;
+                widthTargetBaseSizes[i] = target != null ? target.sizeDelta : Vector2.zero;
             }
         }
 
@@ -226,14 +250,14 @@ namespace Game.UI.Runtime
 
         private void ApplyRightAnchoredTargetOffset(float extraWidth)
         {
-            int count = Mathf.Min(rightAnchoredTargets.Length, _rightTargetBasePositions.Length);
+            int count = Mathf.Min(rightAnchoredTargets.Length, rightTargetBasePositions.Length);
             for (int i = 0; i < count; i++)
             {
                 RectTransform target = rightAnchoredTargets[i];
                 if (target == null)
                     continue;
 
-                Vector2 position = _rightTargetBasePositions[i];
+                Vector2 position = rightTargetBasePositions[i];
                 position.x += extraWidth;
                 target.anchoredPosition = position;
             }
@@ -241,14 +265,14 @@ namespace Game.UI.Runtime
 
         private void ApplyCenterAnchoredTargetOffset(float extraWidth)
         {
-            int count = Mathf.Min(centerAnchoredTargets.Length, _centerTargetBasePositions.Length);
+            int count = Mathf.Min(centerAnchoredTargets.Length, centerTargetBasePositions.Length);
             for (int i = 0; i < count; i++)
             {
                 RectTransform target = centerAnchoredTargets[i];
                 if (target == null)
                     continue;
 
-                Vector2 position = _centerTargetBasePositions[i];
+                Vector2 position = centerTargetBasePositions[i];
                 position.x += extraWidth * .5f;
                 target.anchoredPosition = position;
             }
@@ -256,14 +280,14 @@ namespace Game.UI.Runtime
 
         private void ApplyWidthExpandedTargets(float extraWidth)
         {
-            int count = Mathf.Min(widthExpandedTargets.Length, _widthTargetBaseSizes.Length);
+            int count = Mathf.Min(widthExpandedTargets.Length, widthTargetBaseSizes.Length);
             for (int i = 0; i < count; i++)
             {
                 RectTransform target = widthExpandedTargets[i];
                 if (target == null)
                     continue;
 
-                Vector2 size = _widthTargetBaseSizes[i];
+                Vector2 size = widthTargetBaseSizes[i];
                 size.x += extraWidth;
                 target.sizeDelta = size;
             }

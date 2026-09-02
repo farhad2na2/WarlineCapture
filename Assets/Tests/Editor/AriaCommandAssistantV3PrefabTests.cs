@@ -65,6 +65,29 @@ public sealed class AriaCommandAssistantV3PrefabTests
     }
 
     [Test]
+    public void MatchHud_HostileAlertKeepsClearOfAssistantPanelAtReferenceRatio()
+    {
+        AriaCommandAssistantPopupView view = RequireView();
+        GameObject matchHud = AssetDatabase.LoadAssetAtPath<GameObject>(
+            MatchHudV3PrefabBuilder.PrefabPath);
+        Assert.NotNull(matchHud);
+
+        RectTransform threat = FindNamed(matchHud.transform, "ThreatJumpPanel") as RectTransform;
+        Assert.NotNull(threat);
+        Transform header = FindNamed(matchHud.transform, "HeaderContent");
+        Assert.NotNull(header);
+        MainMenuV3SectionLayoutView headerLayout =
+            header.GetComponent<MainMenuV3SectionLayoutView>();
+        Assert.NotNull(headerLayout);
+        Assert.IsTrue(headerLayout.TryGetAuthoredBasePosition(threat, out Vector2 threatBase));
+
+        float clearGap = view.CommandAssistantPanel.anchoredPosition.x -
+                         (threatBase.x + threat.rect.width);
+        Assert.That(clearGap, Is.GreaterThanOrEqualTo(20f),
+            "The hostile alert and its jump target must not run under POP-13.");
+    }
+
+    [Test]
     public void Prefab_KeepsRuntimeBindingsAndV3TouchActions()
     {
         AriaCommandAssistantPopupView view = RequireView();
@@ -91,6 +114,7 @@ public sealed class AriaCommandAssistantV3PrefabTests
         {
             tests.Prefab_UsesV3PortraitSharedIconsGradientsAndConstantBorders(); passed++;
             tests.Prefab_IsReadableTopRightResponsiveAndOnlyPanelConsumesInput(); passed++;
+            tests.MatchHud_HostileAlertKeepsClearOfAssistantPanelAtReferenceRatio(); passed++;
             tests.Prefab_KeepsRuntimeBindingsAndV3TouchActions(); passed++;
             Debug.Log($"[AriaCommandAssistantV3FocusedValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);

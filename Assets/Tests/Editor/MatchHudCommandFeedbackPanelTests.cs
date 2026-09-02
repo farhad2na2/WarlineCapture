@@ -159,17 +159,17 @@ public sealed class MatchHudCommandFeedbackPanelTests
         Image icon = view.FeedbackIcon;
         Assert.NotNull(icon, "SCN08 command feedback must serialize the actual FeedbackPanel Icon image.");
         Assert.AreSame(
-            FindRequiredImage(prefab.transform, "FooterContent/FeedbackPanel/Frame/Icon"),
+            FindRequiredImage(prefab.transform, "V3Composition/FooterContent/FeedbackPanel/Frame/Icon"),
             icon,
-            "SCN08 command feedback icon must point at FooterContent/FeedbackPanel/Frame/Icon.");
+            "SCN08 command feedback icon must point at V3Composition/FooterContent/FeedbackPanel/Frame/Icon.");
         Assert.IsTrue(icon.enabled, "SCN08 command feedback icon Image must be enabled like the Build Drawer instruction icon.");
         Assert.AreSame(serializedView.FindProperty("neutralIcon").objectReferenceValue, icon.sprite);
 
         Assert.AreSame(
-            FindRequiredButton(prefab.transform, "FooterContent/FeedbackPanel/Frame/Actions/BoardAllButton"),
+            FindRequiredButton(prefab.transform, "V3Composition/FooterContent/FeedbackPanel/Frame/Actions/BoardAllButton"),
             serializedView.FindProperty("boardAllButton").objectReferenceValue);
         Assert.AreSame(
-            FindRequiredButton(prefab.transform, "FooterContent/FeedbackPanel/Frame/Actions/CancelButton"),
+            FindRequiredButton(prefab.transform, "V3Composition/FooterContent/FeedbackPanel/Frame/Actions/CancelButton"),
             serializedView.FindProperty("cancelButton").objectReferenceValue);
     }
 
@@ -624,9 +624,9 @@ public sealed class MatchHudCommandFeedbackPanelTests
         Image icon = view.FeedbackIcon;
         Assert.NotNull(icon, "SCN08 command feedback must serialize the actual FeedbackPanel Icon image.");
         Assert.AreSame(
-            FindRequiredImage(_root.transform, "FooterContent/FeedbackPanel/Frame/Icon"),
+            FindRequiredImage(_root.transform, "V3Composition/FooterContent/FeedbackPanel/Frame/Icon"),
             icon,
-            "Runtime command feedback must update the FooterContent feedback icon.");
+            "Runtime command feedback must update the V3Composition/FooterContent feedback icon.");
 
         var serializedView = new SerializedObject(view);
         Sprite ready = (Sprite)serializedView.FindProperty("readyIcon").objectReferenceValue;

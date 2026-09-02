@@ -1,3 +1,6 @@
+#if UNITY_EDITOR
+using System;
+using System.Collections.Generic;
 using System.IO;
 using Game.UI.Runtime;
 using TMPro;
@@ -7,845 +10,544 @@ using UnityEngine.UI;
 
 namespace Game.Editor
 {
+    /// <summary>
+    /// Builds POP-12 from the shared V3 visual language. All chrome and button fills are
+    /// procedural, so the popup does not own duplicate raster gradients or borders.
+    /// </summary>
     public static class ResourceExchangePopupPrefabBuilder
     {
-        private const string PrefabPath = "Assets/Game/Prefabs/UI/Shell/Popups/POP12_ResourceExchangePopup.prefab";
-        private const string SpriteRoot = "Assets/Game/Art/UI/Generated/ResourceExchange/LayeredOneGo/";
-        private const string ResourceIconRoot = CanonicalUiResourceIconPaths.Root;
+        public const string PrefabPath = "Assets/Game/Prefabs/UI/Shell/Popups/POP12_ResourceExchangePopup.prefab";
+        private const string BackgroundPath = "Assets/Game/Art/UI/V3Shared/Backgrounds/SCN01_LoadingEnvironment_V3.png";
         private const string BoldFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold SDF.asset";
         private const string MediumFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium SDF.asset";
-        private const string LightFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Light SDF.asset";
 
-        private static TMP_FontAsset boldFont;
-        private static TMP_FontAsset mediumFont;
-        private static TMP_FontAsset lightFont;
+        private static readonly Vector2 ReferenceResolution = new(1672f, 941f);
+        private static readonly Color Border = new Color32(64, 79, 84, 255);
+        private static readonly Color DarkTop = new Color32(26, 38, 42, 255);
+        private static readonly Color DarkBottom = new Color32(3, 11, 14, 255);
+        private static readonly Color RaisedTop = new Color32(43, 54, 58, 255);
+        private static readonly Color RaisedBottom = new Color32(10, 20, 23, 255);
+        private static readonly Color TextPrimary = new Color32(244, 246, 242, 255);
+        private static readonly Color TextMuted = new Color32(168, 180, 181, 255);
+        private static readonly Color Cyan = new Color32(0, 190, 230, 255);
+        private static readonly Color Amber = new Color32(247, 173, 0, 255);
+        private static readonly Color Green = new Color32(61, 190, 67, 255);
+        private static readonly Color Red = new Color32(232, 65, 35, 255);
+        private static readonly Color Purple = new Color32(137, 79, 206, 255);
+        private static readonly Color BlueTop = new Color32(27, 132, 207, 255);
+        private static readonly Color BlueBottom = new Color32(3, 61, 112, 255);
+        private static readonly Color GreenTop = new Color32(69, 173, 59, 255);
+        private static readonly Color GreenBottom = new Color32(8, 78, 28, 255);
 
+        private static TMP_FontAsset bold;
+        private static TMP_FontAsset medium;
+        private static V3UiArtCatalog catalog;
+        private static Texture2D background;
+
+        [MenuItem("Game/UI/V3/Rebuild POP-12 Resource Logistics Exchange")]
         [MenuItem("Game/UI/Rebuild Resource Exchange Popup")]
         public static void Build()
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(PrefabPath));
-            EnsureSpritesImported();
-            AssetDatabase.Refresh();
-            LoadFonts();
-            GameObject prefab = BuildPrefab();
-            if (prefab == null)
-                throw new System.InvalidOperationException($"Failed to build {PrefabPath}.");
+            V3UiFoundationBuilder.EnsureBuilt();
+            LoadAssets();
+            Directory.CreateDirectory(Path.GetDirectoryName(PrefabPath) ?? "Assets/Game/Prefabs/UI/Shell/Popups");
 
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-            Debug.Log("[ResourceExchangePopupPrefabBuilder] Resource Exchange popup prefab rebuilt.");
-        }
-
-        public static void Validate()
-        {
-            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
-            if (prefab == null)
-                throw new System.InvalidOperationException($"Missing Resource Exchange popup prefab at {PrefabPath}.");
-
-            ResourceExchangePopupView view = prefab.GetComponent<ResourceExchangePopupView>();
-            if (view == null)
-                throw new System.InvalidOperationException("Resource Exchange popup is missing ResourceExchangePopupView.");
-            ResourceExchangePopupRuntimeView runtimeView = prefab.GetComponent<ResourceExchangePopupRuntimeView>();
-            if (runtimeView == null || runtimeView.View == null)
-                throw new System.InvalidOperationException("Resource Exchange popup is missing ResourceExchangePopupRuntimeView.");
-            if (view.CloseButton == null || view.ExportTabButton == null || view.ImportTabButton == null)
-                throw new System.InvalidOperationException("Resource Exchange popup is missing required header/tab buttons.");
-            if (view.ConfirmButton == null || view.AmountDecreaseButton == null || view.AmountIncreaseButton == null)
-                throw new System.InvalidOperationException("Resource Exchange popup is missing amount or confirm controls.");
-            if (view.RushAllButton == null || view.ClearCompletedButton == null)
-                throw new System.InvalidOperationException("Resource Exchange popup is missing queue action controls.");
-            if (view.RecipeCardTemplate == null || view.StaticRecipeCards == null || view.StaticRecipeCards.Length < 6)
-                throw new System.InvalidOperationException("Resource Exchange popup must expose at least six recipe card views.");
-            if (view.QueueRowTemplate == null || view.StaticQueueRows == null || view.StaticQueueRows.Length < 4)
-                throw new System.InvalidOperationException("Resource Exchange popup must expose at least four queue rows.");
-
-            Image[] images = prefab.GetComponentsInChildren<Image>(true);
-            for (int i = 0; i < images.Length; i++)
-            {
-                Sprite sprite = images[i].sprite;
-                if (sprite == null)
-                    continue;
-
-                string path = AssetDatabase.GetAssetPath(sprite);
-                if (!path.StartsWith(SpriteRoot, System.StringComparison.Ordinal) &&
-                    !path.StartsWith(ResourceIconRoot, System.StringComparison.Ordinal))
-                    throw new System.InvalidOperationException($"Resource Exchange image {images[i].name} uses non-POP12 sprite {path}.");
-            }
-
-            Debug.Log("[ResourceExchangePopupPrefabBuilder] Validation passed.");
-        }
-
-        private static GameObject BuildPrefab()
-        {
-            Sprites sprites = LoadSprites();
-            GameObject root = CreateRect("POP12_ResourceExchangePopup", null, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero).gameObject;
+            RectTransform root = Rect("POP12_ResourceExchangePopup", null, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             try
             {
-                root.AddComponent<CanvasGroup>();
-                UIPopupMotionView.Ensure(root);
-                ResourceExchangePopupView popupView = root.AddComponent<ResourceExchangePopupView>();
-                ResourceExchangePopupRuntimeView runtimeView = root.AddComponent<ResourceExchangePopupRuntimeView>();
+                root.gameObject.AddComponent<CanvasGroup>();
+                UIPopupMotionView.Ensure(root.gameObject);
+                ResourceExchangePopupView popupView = root.gameObject.AddComponent<ResourceExchangePopupView>();
+                ResourceExchangePopupRuntimeView runtimeView = root.gameObject.AddComponent<ResourceExchangePopupRuntimeView>();
 
-                Image blocker = root.AddComponent<Image>();
-                blocker.color = new Color(0f, 0f, 0f, 0.50f);
+                UnityEngine.UI.Image blocker = root.gameObject.AddComponent<UnityEngine.UI.Image>();
+                blocker.color = Color.black;
                 blocker.raycastTarget = true;
 
-                RectTransform panel = CreateRect("ResourceExchangeRoot", root.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(1640f, 916f), Vector2.zero);
-                Image backplate = CreateImage("ModalBackplate", panel, sprites.ModalBackplate, Color.white, true, Image.Type.Sliced);
-                Stretch(backplate.rectTransform);
-                Image frame = CreateImage("PopupOuterFrame", panel, sprites.PopupOuterFrame, Color.white, false, Image.Type.Sliced);
-                Stretch(frame.rectTransform);
+                RectTransform composition = TopLeft("ResourceExchangeRoot", root, 0, 0, ReferenceResolution.x, ReferenceResolution.y);
+                composition.gameObject.AddComponent<RectMask2D>();
+                BuildBackground(composition);
 
-                HeaderRefs header = CreateHeader(panel, sprites);
-                TabRefs tabs = CreateTabs(panel, sprites);
-                ResourceExchangeRecipeCardView[] cards = CreateRecipeCards(panel, sprites);
-                DetailRefs detail = CreateDetailPanel(panel, sprites);
-                QueueRefs queue = CreateQueuePanel(panel, sprites);
-                TMP_Text instruction = CreateInstruction(panel, sprites);
+                var rightTargets = new List<RectTransform>();
+                var widthTargets = new List<RectTransform>();
+                HeaderRefs header = BuildHeader(composition, rightTargets, widthTargets);
+                TabRefs tabs = BuildRecipeHeader(composition);
+                ResourceExchangeRecipeCardView[] cards = BuildRecipeCards(composition);
+                DetailRefs detail = BuildDetailPanel(composition, widthTargets);
+                QueueRefs queue = BuildQueuePanel(composition, rightTargets);
+                FooterRefs footer = BuildFooter(composition, widthTargets);
 
-                var serialized = new SerializedObject(popupView);
-                SetObject(serialized, "popupRoot", root);
+                MainMenuV3SectionLayoutView layout = composition.gameObject.AddComponent<MainMenuV3SectionLayoutView>();
+                layout.Configure(ReferenceResolution, MainMenuV3SectionAlignment.Center, rightTargets.ToArray(), true, null, widthTargets.ToArray());
+
+                SerializedObject serialized = new(popupView);
+                SetObject(serialized, "popupRoot", root.gameObject);
                 SetObject(serialized, "closeButton", header.CloseButton);
+                SetObject(serialized, "footerCancelButton", footer.CancelButton);
+                SetObject(serialized, "footerConfirmButton", footer.ConfirmButton);
                 SetObject(serialized, "titleText", header.TitleText);
-                SetObject(serialized, "queueCapacityText", header.QueueCapacityText);
+                SetObject(serialized, "queueCapacityText", queue.CapacityText);
                 SetObject(serialized, "materialsText", header.MaterialsText);
                 SetObject(serialized, "oilText", header.OilText);
                 SetObject(serialized, "fuelText", header.FuelText);
-                SetObject(serialized, "rushTicketsText", header.RushTicketsText);
+                SetObject(serialized, "rushTicketsText", header.RushText);
                 SetObject(serialized, "exportTabButton", tabs.ExportButton);
                 SetObject(serialized, "importTabButton", tabs.ImportButton);
                 SetObject(serialized, "exportTabFrameImage", tabs.ExportFrame);
                 SetObject(serialized, "importTabFrameImage", tabs.ImportFrame);
-                SetObject(serialized, "exportCountText", tabs.ExportCountText);
-                SetObject(serialized, "importCountText", tabs.ImportCountText);
-                SetObject(serialized, "selectedTabFrameSprite", sprites.TabSelected);
-                SetObject(serialized, "defaultTabFrameSprite", sprites.TabDefault);
+                SetObject(serialized, "exportCountText", tabs.ExportCount);
+                SetObject(serialized, "importCountText", tabs.ImportCount);
+                SetObject(serialized, "selectedTabFrameSprite", null);
+                SetObject(serialized, "defaultTabFrameSprite", null);
                 SetObject(serialized, "recipeContentRoot", cards[0].transform.parent as RectTransform);
                 SetObject(serialized, "recipeCardTemplate", cards[0]);
                 SetObjectArray(serialized, "staticRecipeCards", cards);
-                SetObject(serialized, "defaultRecipeCardFrameSprite", sprites.CardDefault);
-                SetObject(serialized, "selectedRecipeCardFrameSprite", sprites.CardSelected);
-                SetObject(serialized, "lockedRecipeCardFrameSprite", sprites.CardLocked);
-                SetObjectArray(serialized, "recipeThumbnailSprites", sprites.Thumbnails);
-                SetObject(serialized, "detailThumbnailImage", detail.ThumbnailImage);
-                SetObject(serialized, "detailNameText", detail.NameText);
-                SetObject(serialized, "detailRouteText", detail.RouteText);
-                SetObject(serialized, "detailRateText", detail.RateText);
-                SetObject(serialized, "detailAmountText", detail.AmountText);
-                SetObject(serialized, "detailInputText", detail.InputText);
-                SetObject(serialized, "detailOutputText", detail.OutputText);
-                SetObject(serialized, "detailDurationText", detail.DurationText);
-                SetObject(serialized, "detailRequirementsText", detail.RequirementsText);
-                SetObject(serialized, "detailInstructionText", detail.InstructionText);
-                SetObject(serialized, "detailWarningImage", detail.WarningImage);
-                SetObject(serialized, "amountDecreaseButton", detail.AmountDecreaseButton);
-                SetObject(serialized, "amountIncreaseButton", detail.AmountIncreaseButton);
-                SetObject(serialized, "confirmButton", detail.ConfirmButton);
-                SetObject(serialized, "confirmButtonText", detail.ConfirmButtonText);
-                SetObject(serialized, "queueContentRoot", queue.ContentRoot);
+                SetObject(serialized, "defaultRecipeCardFrameSprite", null);
+                SetObject(serialized, "selectedRecipeCardFrameSprite", null);
+                SetObject(serialized, "lockedRecipeCardFrameSprite", null);
+                SetObjectArray(serialized, "recipeThumbnailSprites", RecipeIcons());
+                SetObject(serialized, "detailThumbnailImage", detail.Thumbnail);
+                SetObject(serialized, "detailNameText", detail.Name);
+                SetObject(serialized, "detailRouteText", detail.Route);
+                SetObject(serialized, "detailRateText", detail.Rate);
+                SetObject(serialized, "detailAmountText", detail.Amount);
+                SetObject(serialized, "detailInputText", detail.Input);
+                SetObject(serialized, "detailOutputText", detail.Output);
+                SetObject(serialized, "detailDurationText", detail.Duration);
+                SetObject(serialized, "detailRequirementsText", detail.Requirements);
+                SetObject(serialized, "detailInstructionText", detail.Instruction);
+                SetObject(serialized, "detailWarningImage", detail.Warning);
+                SetObject(serialized, "amountDecreaseButton", detail.Minus);
+                SetObject(serialized, "amountIncreaseButton", detail.Plus);
+                SetObject(serialized, "confirmButton", detail.Confirm);
+                SetObject(serialized, "confirmButtonText", detail.ConfirmLabel);
+                SetObject(serialized, "queueContentRoot", queue.Content);
                 SetObject(serialized, "queueRowTemplate", queue.Rows[0]);
                 SetObjectArray(serialized, "staticQueueRows", queue.Rows);
-                SetObject(serialized, "rushAllButton", queue.RushAllButton);
-                SetObject(serialized, "clearCompletedButton", queue.ClearCompletedButton);
-                SetObject(serialized, "instructionText", instruction);
+                SetObject(serialized, "rushAllButton", queue.RushAll);
+                SetObject(serialized, "clearCompletedButton", queue.ClearDone);
+                SetObject(serialized, "instructionText", detail.Instruction);
                 serialized.ApplyModifiedPropertiesWithoutUndo();
 
-                var runtimeSerialized = new SerializedObject(runtimeView);
+                SerializedObject runtimeSerialized = new(runtimeView);
                 SetObject(runtimeSerialized, "view", popupView);
                 runtimeSerialized.ApplyModifiedPropertiesWithoutUndo();
 
-                cards[0].Bind("OIL TO MATERIALS", "100 OIL", "300 MATERIALS", "00:45", string.Empty, sprites.Thumbnails[0], true, true, false, false, sprites.CardDefault, sprites.CardSelected, sprites.CardLocked);
-                cards[1].Bind("MATERIALS TO OIL", "100 MATERIALS", "15 OIL", "00:45", string.Empty, sprites.Thumbnails[1], false, true, false, false, sprites.CardDefault, sprites.CardSelected, sprites.CardLocked);
-                cards[2].Bind("OIL TO FUEL", "100 OIL", "33 FUEL", "00:45", string.Empty, sprites.Thumbnails[2], false, true, false, false, sprites.CardDefault, sprites.CardSelected, sprites.CardLocked);
-                cards[3].Bind("FUEL TO OIL", "100 FUEL", "120 OIL", "01:30", string.Empty, sprites.Thumbnails[3], false, true, false, false, sprites.CardDefault, sprites.CardSelected, sprites.CardLocked);
-                cards[4].Bind("FUEL TO MATERIALS", "100 FUEL", "180 MATERIALS", "01:30", string.Empty, sprites.Thumbnails[4], false, true, false, false, sprites.CardDefault, sprites.CardSelected, sprites.CardLocked);
-                cards[5].Bind("SCENARIO ROUTE", "LOCKED", "SCENARIO GATED", "--:--", "LOCKED", sprites.Thumbnails[5], false, false, true, true, sprites.CardDefault, sprites.CardSelected, sprites.CardLocked);
-                queue.Rows[0].Bind("1", "Oil to Materials", "100 OIL", "300 MATERIALS", "00:11", "65%", "IN PROGRESS", 0.65f, sprites.Thumbnails[0], true, true, false, false);
-                queue.Rows[1].Bind("2", "Fuel to Oil", "100 FUEL", "120 OIL", "01:30", "0%", "QUEUED", 0f, sprites.Thumbnails[3], false, true, false, false);
-                queue.Rows[2].Bind("3", "Materials to Oil", "100 MATERIALS", "15 OIL", "00:45", "0%", "QUEUED", 0f, sprites.Thumbnails[1], false, true, false, false);
-                queue.Rows[3].Bind("4", "Fuel to Materials", "100 FUEL", "180 MATERIALS", "DONE", "100%", "COMPLETE", 1f, sprites.Thumbnails[4], false, false, true, false);
-                popupView.ApplyHeader("4/6", "180", "620", "310", "7");
-                popupView.ApplyTabs(true, 3, 3);
-                popupView.ApplyDetail("Oil to Materials", "CONVERT", "1 OIL -> 3 MATERIALS", "100", "100 OIL", "300 MATERIALS", "00:45", "Requires Oil storage", "Confirm to start a timed logistics exchange.", true, false, sprites.Thumbnails[0]);
-                popupView.ApplyQueueControls(true, true);
-
-                return PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
+                SeedPreview(popupView, cards, queue.Rows);
+                GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root.gameObject, PrefabPath);
+                if (prefab == null)
+                    throw new InvalidOperationException($"Failed to save POP-12 V3 prefab: {PrefabPath}");
             }
             finally
             {
-                Object.DestroyImmediate(root);
+                UnityEngine.Object.DestroyImmediate(root.gameObject);
             }
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Validate();
+            Debug.Log("[ResourceExchangePopupPrefabBuilder] result=Passed v3=True fullSafeWidth=True sharedLogo=True gradients=procedural");
         }
 
-        private static HeaderRefs CreateHeader(RectTransform panel, Sprites sprites)
+        [MenuItem("Game/UI/V3/Validate POP-12 Resource Logistics Exchange")]
+        public static void Validate()
         {
-            RectTransform header = CreateRect("Header", panel, new Vector2(0.018f, 0.895f), new Vector2(0.982f, 0.985f), Vector2.zero, Vector2.zero);
-            Image strip = header.gameObject.AddComponent<Image>();
-            strip.sprite = sprites.HeaderStrip;
-            ApplySliced(strip);
-            strip.raycastTarget = false;
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+            if (prefab == null)
+                throw new FileNotFoundException($"Missing POP-12 V3 prefab: {PrefabPath}");
 
-            Image icon = CreateImage("LogisticsIcon", header, sprites.LogisticsTruckIcon, Color.white, false, Image.Type.Simple);
-            SetRect(icon.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(58f, 58f), new Vector2(60f, 0f));
-            icon.preserveAspect = true;
-            TMP_Text title = CreateText("Title", header, "RESOURCE EXCHANGE", 42f, boldFont, TextAlignmentOptions.Left, GoldText);
-            SetRect(title.rectTransform, new Vector2(0f, 0f), new Vector2(0.45f, 1f), Vector2.zero, new Vector2(112f, 0f), new Vector2(0f, 0f));
+            ResourceExchangePopupView view = prefab.GetComponent<ResourceExchangePopupView>();
+            ResourceExchangePopupRuntimeView runtimeView = prefab.GetComponent<ResourceExchangePopupRuntimeView>();
+            if (view == null || runtimeView == null || runtimeView.View != view)
+                throw new MissingReferenceException("POP-12 runtime presenter binding is incomplete.");
+            if (view.CloseButton == null || view.FooterCancelButton == null || view.FooterConfirmButton == null ||
+                view.ExportTabButton == null || view.ImportTabButton == null || view.ConfirmButton == null ||
+                view.AmountDecreaseButton == null || view.AmountIncreaseButton == null ||
+                view.RushAllButton == null || view.ClearCompletedButton == null)
+                throw new MissingReferenceException("POP-12 V3 buttons are not fully bound.");
+            if (view.StaticRecipeCards == null || view.StaticRecipeCards.Length != 7 ||
+                view.StaticQueueRows == null || view.StaticQueueRows.Length != 4)
+                throw new MissingReferenceException("POP-12 must retain seven recipe and four queue runtime slots.");
 
-            TMP_Text queue = CreateChip(header, "QueueCapacity", "4/6", sprites.CounterChip, new Vector2(0.46f, 0.18f), new Vector2(0.535f, 0.82f));
-            TMP_Text materials = CreateResourceChip(header, "Materials", sprites.MaterialsIcon, "180", new Vector2(0.55f, 0.18f), new Vector2(0.66f, 0.82f));
-            TMP_Text oil = CreateResourceChip(header, "Oil", sprites.OilIcon, "620", new Vector2(0.665f, 0.18f), new Vector2(0.755f, 0.82f));
-            TMP_Text fuel = CreateResourceChip(header, "Fuel", sprites.FuelIcon, "310", new Vector2(0.76f, 0.18f), new Vector2(0.845f, 0.82f));
-            TMP_Text rush = CreateResourceChip(header, "RushTickets", sprites.RushTicketIcon, "7", new Vector2(0.89f, 0.18f), new Vector2(0.945f, 0.82f));
-            Button close = CreateIconButton("CloseButton", header, sprites.CloseButtonFrame, sprites.CloseIcon, new Vector2(0.955f, 0.06f), new Vector2(0.995f, 0.94f));
-            return new HeaderRefs(title, queue, materials, oil, fuel, rush, close);
+            MainMenuV3SectionLayoutView layout = prefab.GetComponentInChildren<MainMenuV3SectionLayoutView>(true);
+            if (layout == null || !layout.ExpandToCanvasWidth || layout.ReferenceResolution != ReferenceResolution)
+                throw new InvalidOperationException("POP-12 V3 must fill both reference and wide canvases.");
+            if (prefab.transform.Find("ResourceExchangeRoot/Header/LogoPanel/SharedMainMenuLogo") == null)
+                throw new MissingReferenceException("POP-12 does not use the shared V3 Main Menu logo prefab.");
+
+            V3GradientGraphic[] gradients = prefab.GetComponentsInChildren<V3GradientGraphic>(true);
+            if (gradients.Length < 35)
+                throw new InvalidOperationException($"POP-12 requires layered procedural V3 chrome; found {gradients.Length} gradients.");
+            foreach (V3GradientGraphic gradient in gradients)
+            {
+                SerializedObject serialized = new(gradient);
+                Color border = serialized.FindProperty("borderColor").colorValue;
+                float width = serialized.FindProperty("borderWidth").floatValue;
+                if (border.a > .01f && Mathf.Abs(width - 3f) > .001f)
+                    throw new InvalidOperationException($"POP-12 border must be exactly 3 px: {GetPath(gradient.transform)} width={width}");
+            }
+
+            foreach (UnityEngine.UI.Image image in prefab.GetComponentsInChildren<UnityEngine.UI.Image>(true))
+            {
+                if (image.sprite == null)
+                    continue;
+                string path = AssetDatabase.GetAssetPath(image.sprite);
+                if (!path.StartsWith("Assets/Game/Art/UI/V3Shared/", StringComparison.Ordinal) &&
+                    !path.StartsWith(CanonicalUiResourceIconPaths.Root, StringComparison.Ordinal))
+                    throw new InvalidOperationException($"POP-12 owns an unshared raster asset: {GetPath(image.transform)} -> {path}");
+            }
+
+            Debug.Log($"[ResourceExchangePopupV3Validation] result=Passed gradients={gradients.Length} borders=3 sharedLogo=True wide=True");
         }
 
-        private static TabRefs CreateTabs(RectTransform panel, Sprites sprites)
+        private static void LoadAssets()
         {
-            Button export = CreateTextButton("ExportTab", panel, "CONVERT", sprites.TabSelected, null, new Vector2(0.025f, 0.825f), new Vector2(0.235f, 0.885f), 26f, out TMP_Text exportLabel);
-            Button import = CreateTextButton("ImportTab", panel, "RECOVERY", sprites.TabDefault, null, new Vector2(0.25f, 0.825f), new Vector2(0.46f, 0.885f), 26f, out TMP_Text importLabel);
-            TMP_Text exportCount = CreateText("Count", export.transform, "3", 16f, mediumFont, TextAlignmentOptions.Center, PaleText);
-            SetRect(exportCount.rectTransform, new Vector2(0.82f, 0.15f), new Vector2(0.96f, 0.85f), Vector2.zero, Vector2.zero);
-            TMP_Text importCount = CreateText("Count", import.transform, "3", 16f, mediumFont, TextAlignmentOptions.Center, PaleText);
-            SetRect(importCount.rectTransform, new Vector2(0.82f, 0.15f), new Vector2(0.96f, 0.85f), Vector2.zero, Vector2.zero);
-            return new TabRefs(export, import, export.GetComponent<Image>(), import.GetComponent<Image>(), exportCount, importCount);
+            bold = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(BoldFontPath);
+            medium = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(MediumFontPath);
+            catalog = V3UiFoundationBuilder.RequireCatalog();
+            background = AssetDatabase.LoadAssetAtPath<Texture2D>(BackgroundPath);
+            if (bold == null || medium == null || catalog == null || background == null)
+                throw new MissingReferenceException("POP-12 V3 shared fonts, catalog, or background are missing.");
         }
 
-        private static ResourceExchangeRecipeCardView[] CreateRecipeCards(RectTransform panel, Sprites sprites)
+        private static void BuildBackground(RectTransform root)
         {
-            RectTransform content = CreateRect("RecipeCards", panel, new Vector2(0.025f, 0.135f), new Vector2(0.60f, 0.805f), Vector2.zero, Vector2.zero);
-            GridLayoutGroup grid = content.gameObject.AddComponent<GridLayoutGroup>();
-            grid.cellSize = new Vector2(290f, 205f);
-            grid.spacing = new Vector2(18f, 18f);
-            grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-            grid.constraintCount = 3;
-            grid.childAlignment = TextAnchor.UpperLeft;
-            grid.padding = new RectOffset(0, 0, 0, 0);
+            RectTransform artRoot = Rect("SharedEnvironment", root, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            RawImage art = artRoot.gameObject.AddComponent<RawImage>();
+            art.texture = background;
+            art.color = new Color(.55f, .58f, .58f, 1f);
+            art.raycastTarget = false;
+            AspectRatioFitter fitter = artRoot.gameObject.AddComponent<AspectRatioFitter>();
+            fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+            fitter.aspectRatio = background.width / (float)background.height;
+            UnityEngine.UI.Image shade = Img("BackdropShade", root, null, new Color(0f, .025f, .035f, .79f), false);
+            Stretch(shade.rectTransform);
+        }
 
-            ResourceExchangeRecipeCardView[] cards = new ResourceExchangeRecipeCardView[6];
+        private static HeaderRefs BuildHeader(RectTransform root, ICollection<RectTransform> right, ICollection<RectTransform> widths)
+        {
+            RectTransform header = TopLeft("Header", root, 15, 12, 1642, 94);
+            RectTransform logo = TopLeft("LogoPanel", header, 0, 0, 345, 94);
+            Gradient(logo, DarkTop, DarkBottom, Border);
+            V3UiFoundationBuilder.AddMainMenuLogo(logo, left: 13, top: 12, right: 13, bottom: 12);
+
+            RectTransform titlePanel = TopLeft("TitlePanel", header, 355, 0, 670, 94);
+            Gradient(titlePanel, DarkTop, DarkBottom, Border);
+            widths.Add(titlePanel);
+            TMP_Text title = Text("Title", titlePanel, "RESOURCE LOGISTICS EXCHANGE", 35, bold, TextAlignmentOptions.MidlineLeft, TextPrimary);
+            Horizontal(title.rectTransform, 25, 20, 5, 48);
+            TMP_Text subtitle = Text("Subtitle", titlePanel, "CONVERT SURPLUS STOCK INTO OPERATIONAL SUPPLY", 16, medium, TextAlignmentOptions.MidlineLeft, Cyan);
+            Horizontal(subtitle.rectTransform, 26, 20, 52, 30);
+
+            RectTransform materials = ResourceChip(header, "Materials", 1035, catalog.MaterialsIcon, "MATERIALS", "180", Cyan, out TMP_Text materialsText);
+            RectTransform oil = ResourceChip(header, "Oil", 1210, catalog.OilIcon, "OIL", "620", Amber, out TMP_Text oilText);
+            RectTransform fuel = ResourceChip(header, "Fuel", 1385, catalog.FuelIcon, "FUEL", "310", Red, out TMP_Text fuelText);
+            Button close = GradientButton("CloseButton", header, 1560, 0, 82, 94, RaisedTop, DarkBottom, Border);
+            TMP_Text closeText = Text("Icon", close.transform, "X", 35, bold, TextAlignmentOptions.Center, TextPrimary);
+            Stretch(closeText.rectTransform);
+            right.Add(materials); right.Add(oil); right.Add(fuel); right.Add(close.GetComponent<RectTransform>());
+            return new HeaderRefs(title, materialsText, oilText, fuelText, null, close);
+        }
+
+        private static TabRefs BuildRecipeHeader(RectTransform root)
+        {
+            RectTransform left = TopLeft("RecipeColumn", root, 15, 116, 550, 735);
+            Gradient(left, DarkTop, DarkBottom, Border);
+            TMP_Text heading = Text("Heading", left, "SELECT EXCHANGE TYPE", 27, bold, TextAlignmentOptions.MidlineLeft, TextPrimary);
+            TopLeft(heading.rectTransform, 20, 12, 510, 44);
+            TMP_Text hint = Text("Hint", left, "Choose a logistics conversion route", 15, medium, TextAlignmentOptions.MidlineLeft, TextMuted);
+            TopLeft(hint.rectTransform, 20, 52, 510, 28);
+
+            Button export = GradientButton("ExportTab", left, 18, 656, 245, 58, RaisedTop, DarkBottom, Cyan);
+            TMP_Text exportLabel = Text("Label", export.transform, "VIEW RATES", 19, bold, TextAlignmentOptions.Center, TextPrimary); Stretch(exportLabel.rectTransform);
+            Button import = GradientButton("ImportTab", left, 272, 656, 260, 58, RaisedTop, DarkBottom, Border);
+            TMP_Text importLabel = Text("Label", import.transform, "EXCHANGE INFO", 19, bold, TextAlignmentOptions.Center, TextPrimary); Stretch(importLabel.rectTransform);
+            UnityEngine.UI.Image exportFrame = LegacyBindingImage("LegacyFrame", export.transform);
+            UnityEngine.UI.Image importFrame = LegacyBindingImage("LegacyFrame", import.transform);
+            TMP_Text exportCount = Text("Count", export.transform, "3", 12, medium, TextAlignmentOptions.BottomRight, Cyan); TopLeft(exportCount.rectTransform, 216, 31, 20, 20);
+            TMP_Text importCount = Text("Count", import.transform, "3", 12, medium, TextAlignmentOptions.BottomRight, TextMuted); TopLeft(importCount.rectTransform, 231, 31, 20, 20);
+            return new TabRefs(export, import, exportFrame, importFrame, exportCount, importCount);
+        }
+
+        private static ResourceExchangeRecipeCardView[] BuildRecipeCards(RectTransform root)
+        {
+            RectTransform content = root.Find("RecipeColumn") as RectTransform;
+            RectTransform recipes = TopLeft("RecipeCards", content, 18, 90, 514, 550);
+            Color[] accents = { Cyan, Amber, Green, Purple, Red, Cyan, Amber };
+            Color[] tops =
+            {
+                new Color32(25, 109, 157, 255), new Color32(129, 88, 11, 255),
+                new Color32(34, 116, 46, 255), new Color32(83, 47, 131, 255),
+                new Color32(119, 39, 25, 255), new Color32(22, 91, 118, 255),
+                new Color32(110, 74, 12, 255)
+            };
+            Sprite[] icons = RecipeIcons();
+            ResourceExchangeRecipeCardView[] cards = new ResourceExchangeRecipeCardView[7];
             for (int i = 0; i < cards.Length; i++)
-                cards[i] = CreateRecipeCard($"RecipeCard{i + 1}", content, sprites, i);
+            {
+                float y = i * 132f;
+                cards[i] = BuildRecipeCard($"RecipeCard{i + 1}", recipes, y, tops[i], Color.Lerp(tops[i], Color.black, .68f), accents[i], icons[i], i);
+                if (i >= 4) cards[i].gameObject.SetActive(false);
+            }
             return cards;
         }
 
-        private static ResourceExchangeRecipeCardView CreateRecipeCard(string name, Transform parent, Sprites sprites, int thumbnailIndex)
+        private static ResourceExchangeRecipeCardView BuildRecipeCard(string name, Transform parent, float y, Color top, Color bottom, Color accent, Sprite iconSprite, int index)
         {
-            GameObject root = CreateUiObject(name, parent);
-            Image frame = root.AddComponent<Image>();
-            frame.sprite = thumbnailIndex == 0 ? sprites.CardSelected : thumbnailIndex == 5 ? sprites.CardLocked : sprites.CardDefault;
-            ApplySliced(frame);
-            frame.raycastTarget = true;
-            Button button = root.AddComponent<Button>();
-            button.targetGraphic = frame;
-            button.transition = Selectable.Transition.None;
+            RectTransform rect = TopLeft(name, parent, 0, y, 514, 120);
+            V3GradientGraphic chrome = Gradient(rect, top, bottom, accent);
+            Button button = rect.gameObject.AddComponent<Button>(); button.targetGraphic = chrome; button.transition = Selectable.Transition.None;
+            UnityEngine.UI.Image frameBinding = LegacyBindingImage("FrameBinding", rect);
+            RectTransform iconPanel = TopLeft("IconPanel", rect, 8, 8, 104, 104); Gradient(iconPanel, DarkTop, DarkBottom, accent);
+            UnityEngine.UI.Image icon = Img("Thumbnail", iconPanel, iconSprite, Color.white, false); TopLeft(icon.rectTransform, 20, 20, 64, 64); icon.preserveAspect = true;
+            TMP_Text title = Text("Title", rect, "FUEL TO MATERIALS", 23, bold, TextAlignmentOptions.MidlineLeft, TextPrimary); TopLeft(title.rectTransform, 127, 12, 310, 36);
+            TMP_Text input = Text("Input", rect, "SPEND 100 FUEL", 15, medium, TextAlignmentOptions.MidlineLeft, TextMuted); TopLeft(input.rectTransform, 127, 50, 178, 27);
+            TMP_Text output = Text("Output", rect, "RECEIVE 180 MATERIALS", 15, bold, TextAlignmentOptions.MidlineLeft, accent); TopLeft(output.rectTransform, 127, 78, 270, 27);
+            TMP_Text duration = Text("Duration", rect, "01:30", 15, bold, TextAlignmentOptions.Center, TextPrimary); TopLeft(duration.rectTransform, 426, 67, 75, 31);
+            TMP_Text reason = Text("Reason", rect, string.Empty, 12, bold, TextAlignmentOptions.BottomRight, Red); TopLeft(reason.rectTransform, 309, 94, 190, 18);
+            UnityEngine.UI.Image selected = StatusSquare("SelectedCheck", rect, 462, 9, Green, "V");
+            UnityEngine.UI.Image locked = StatusSquare("Lock", rect, 462, 9, TextMuted, "L");
+            UnityEngine.UI.Image warning = StatusSquare("Warning", rect, 427, 9, Red, "!");
+            selected.gameObject.SetActive(index == 0); locked.gameObject.SetActive(index >= 4); warning.gameObject.SetActive(index >= 4);
+            GameObject disabled = Img("DisabledOverlay", rect, null, new Color(0, 0, 0, .55f), false).gameObject;
+            Stretch(disabled.GetComponent<RectTransform>()); disabled.transform.SetSiblingIndex(1); disabled.SetActive(index >= 4);
 
-            Image thumbnail = CreateImage("Thumbnail", root.transform, sprites.Thumbnails[Mathf.Clamp(thumbnailIndex, 0, sprites.Thumbnails.Length - 1)], Color.white, false, Image.Type.Simple);
-            SetRect(thumbnail.rectTransform, new Vector2(0.06f, 0.37f), new Vector2(0.94f, 0.78f), Vector2.zero, Vector2.zero);
-            thumbnail.preserveAspect = false;
-
-            TMP_Text title = CreateText("Title", root.transform, "EXPORT OIL", 22f, boldFont, TextAlignmentOptions.Center, PaleText);
-            SetRect(title.rectTransform, new Vector2(0.05f, 0.79f), new Vector2(0.95f, 0.98f), Vector2.zero, Vector2.zero);
-            TMP_Text input = CreateText("Input", root.transform, "100 OIL", 16f, mediumFont, TextAlignmentOptions.Left, PaleText);
-            SetRect(input.rectTransform, new Vector2(0.08f, 0.19f), new Vector2(0.48f, 0.35f), Vector2.zero, Vector2.zero);
-            TMP_Text output = CreateText("Output", root.transform, "300 MATERIALS", 16f, mediumFont, TextAlignmentOptions.Left, GoldText);
-            SetRect(output.rectTransform, new Vector2(0.50f, 0.19f), new Vector2(0.92f, 0.35f), Vector2.zero, Vector2.zero);
-            TMP_Text duration = CreateText("Duration", root.transform, "00:30", 15f, mediumFont, TextAlignmentOptions.Left, PaleText);
-            SetRect(duration.rectTransform, new Vector2(0.08f, 0.05f), new Vector2(0.44f, 0.18f), Vector2.zero, Vector2.zero);
-            TMP_Text reason = CreateText("Reason", root.transform, string.Empty, 13f, boldFont, TextAlignmentOptions.Right, WarningText);
-            SetRect(reason.rectTransform, new Vector2(0.39f, 0.05f), new Vector2(0.90f, 0.18f), Vector2.zero, Vector2.zero);
-
-            Image selected = CreateImage("SelectedCheck", root.transform, sprites.CheckBadgeIcon, Color.white, false, Image.Type.Simple);
-            SetRect(selected.rectTransform, new Vector2(0.82f, 0.78f), new Vector2(0.99f, 1.02f), Vector2.zero, Vector2.zero);
-            selected.preserveAspect = true;
-            selected.gameObject.SetActive(thumbnailIndex == 0);
-            Image locked = CreateImage("Lock", root.transform, sprites.LockBadgeIcon, Color.white, false, Image.Type.Simple);
-            SetRect(locked.rectTransform, new Vector2(0.82f, 0.76f), new Vector2(0.99f, 1.00f), Vector2.zero, Vector2.zero);
-            locked.preserveAspect = true;
-            locked.gameObject.SetActive(thumbnailIndex == 5);
-            Image warning = CreateImage("Warning", root.transform, sprites.WarningIcon, Color.white, false, Image.Type.Simple);
-            SetRect(warning.rectTransform, new Vector2(0.04f, 0.04f), new Vector2(0.18f, 0.20f), Vector2.zero, Vector2.zero);
-            warning.preserveAspect = true;
-            warning.gameObject.SetActive(thumbnailIndex == 5);
-
-            GameObject disabled = CreateImage("DisabledOverlay", root.transform, null, new Color(0f, 0f, 0f, 0.48f), false, Image.Type.Simple).gameObject;
-            Stretch(disabled.GetComponent<RectTransform>());
-            disabled.transform.SetSiblingIndex(1);
-            disabled.SetActive(thumbnailIndex == 5);
-
-            ResourceExchangeRecipeCardView view = root.AddComponent<ResourceExchangeRecipeCardView>();
-            var serialized = new SerializedObject(view);
-            SetObject(serialized, "selectionButton", button);
-            SetObject(serialized, "frameImage", frame);
-            SetObject(serialized, "thumbnailImage", thumbnail);
-            SetObject(serialized, "selectedCheckImage", selected);
-            SetObject(serialized, "lockImage", locked);
-            SetObject(serialized, "warningImage", warning);
-            SetObject(serialized, "disabledOverlay", disabled);
-            SetObject(serialized, "titleText", title);
-            SetObject(serialized, "inputText", input);
-            SetObject(serialized, "outputText", output);
-            SetObject(serialized, "durationText", duration);
-            SetObject(serialized, "reasonText", reason);
+            ResourceExchangeRecipeCardView view = rect.gameObject.AddComponent<ResourceExchangeRecipeCardView>();
+            SerializedObject serialized = new(view);
+            SetObject(serialized, "selectionButton", button); SetObject(serialized, "frameImage", frameBinding); SetObject(serialized, "thumbnailImage", icon);
+            SetObject(serialized, "selectedCheckImage", selected); SetObject(serialized, "lockImage", locked); SetObject(serialized, "warningImage", warning);
+            SetObject(serialized, "disabledOverlay", disabled); SetObject(serialized, "titleText", title); SetObject(serialized, "inputText", input);
+            SetObject(serialized, "outputText", output); SetObject(serialized, "durationText", duration); SetObject(serialized, "reasonText", reason);
             serialized.ApplyModifiedPropertiesWithoutUndo();
             return view;
         }
 
-        private static DetailRefs CreateDetailPanel(RectTransform panel, Sprites sprites)
+        private static DetailRefs BuildDetailPanel(RectTransform root, ICollection<RectTransform> widths)
         {
-            RectTransform detail = CreateRect("DetailPanel", panel, new Vector2(0.625f, 0.40f), new Vector2(0.975f, 0.875f), Vector2.zero, Vector2.zero);
-            Image frame = detail.gameObject.AddComponent<Image>();
-            frame.sprite = sprites.DetailPanelFrame;
-            ApplySliced(frame);
-            frame.raycastTarget = true;
-
-            Image thumbnail = CreateImage("Thumbnail", detail, sprites.Thumbnails[0], Color.white, false, Image.Type.Simple);
-            SetRect(thumbnail.rectTransform, new Vector2(0.035f, 0.50f), new Vector2(0.47f, 0.87f), Vector2.zero, Vector2.zero);
-            TMP_Text name = CreateText("Name", detail, "EXPORT OIL", 28f, boldFont, TextAlignmentOptions.Left, GoldText);
-            SetRect(name.rectTransform, new Vector2(0.50f, 0.82f), new Vector2(0.96f, 0.93f), Vector2.zero, Vector2.zero);
-            TMP_Text route = DetailLine("Route", detail, "ROUTE", "EXPORT", 0.74f);
-            TMP_Text rate = DetailLine("Rate", detail, "RATE", "1 OIL -> 3 MATERIALS", 0.65f);
-            TMP_Text input = DetailLine("Input", detail, "INPUT", "100 OIL", 0.56f);
-            TMP_Text output = DetailLine("Output", detail, "OUTPUT", "300 MATERIALS", 0.47f);
-            TMP_Text duration = DetailLine("Duration", detail, "TIME", "00:30", 0.38f);
-            TMP_Text requirements = DetailLine("Requirements", detail, "REQUIRES", "Oil Pump", 0.29f);
-
-            RectTransform amountFrame = CreateRect("AmountStepper", detail, new Vector2(0.05f, 0.145f), new Vector2(0.50f, 0.255f), Vector2.zero, Vector2.zero);
-            Image amountImage = amountFrame.gameObject.AddComponent<Image>();
-            amountImage.sprite = sprites.AmountValueFrame;
-            ApplySliced(amountImage);
-            Button minus = CreateIconButton("AmountMinus", amountFrame, sprites.SmallMinusFrame, sprites.MinusIcon, new Vector2(0.02f, 0.10f), new Vector2(0.20f, 0.90f));
-            Button plus = CreateIconButton("AmountPlus", amountFrame, sprites.SmallPlusFrame, sprites.PlusIcon, new Vector2(0.80f, 0.10f), new Vector2(0.98f, 0.90f));
-            TMP_Text amount = CreateText("Amount", amountFrame, "100", 24f, boldFont, TextAlignmentOptions.Center, PaleText);
-            SetRect(amount.rectTransform, new Vector2(0.22f, 0f), new Vector2(0.78f, 1f), Vector2.zero, Vector2.zero);
-
-            Button confirm = CreateTextButton("ConfirmButton", detail, "CONFIRM", sprites.PrimaryButtonFrame, sprites.CheckBadgeIcon, new Vector2(0.52f, 0.135f), new Vector2(0.96f, 0.275f), 25f, out TMP_Text confirmLabel);
-            TMP_Text instruction = CreateText("Instruction", detail, "Confirm to start a timed logistics exchange.", 16f, mediumFont, TextAlignmentOptions.Left, PaleText);
-            SetRect(instruction.rectTransform, new Vector2(0.05f, 0.015f), new Vector2(0.94f, 0.105f), Vector2.zero, Vector2.zero);
-            Image warning = CreateImage("Warning", detail, sprites.WarningIcon, Color.white, false, Image.Type.Simple);
-            SetRect(warning.rectTransform, new Vector2(0.90f, 0.015f), new Vector2(0.97f, 0.105f), Vector2.zero, Vector2.zero);
-            warning.preserveAspect = true;
-            warning.gameObject.SetActive(false);
-
+            RectTransform detail = TopLeft("DetailPanel", root, 576, 116, 565, 735); Gradient(detail, DarkTop, DarkBottom, Border); widths.Add(detail);
+            TMP_Text section = Text("SectionTitle", detail, "SELECTED EXCHANGE", 20, bold, TextAlignmentOptions.MidlineLeft, Cyan); Horizontal(section.rectTransform, 23, 20, 13, 31);
+            TMP_Text name = Text("Name", detail, "FUEL TO MATERIALS", 36, bold, TextAlignmentOptions.MidlineLeft, TextPrimary); Horizontal(name.rectTransform, 23, 20, 44, 54);
+            TMP_Text route = Text("RouteValue", detail, "CONVERSION ROUTE", 16, medium, TextAlignmentOptions.MidlineLeft, TextMuted); Horizontal(route.rectTransform, 24, 20, 96, 28);
+            RectTransform wallet = Horizontal("YourResources", detail, 20, 20, 137, 103); Gradient(wallet, RaisedTop, DarkBottom, Border);
+            TMP_Text walletTitle = Text("Title", wallet, "YOUR RESOURCES", 17, bold, TextAlignmentOptions.MidlineLeft, TextMuted); TopLeft(walletTitle.rectTransform, 17, 5, 170, 28);
+            ResourceMini(wallet, "Materials", 15, catalog.MaterialsIcon, "180", Cyan); ResourceMini(wallet, "Oil", 185, catalog.OilIcon, "620", Amber); ResourceMini(wallet, "Fuel", 355, catalog.FuelIcon, "310", Red);
+            TMP_Text detailsTitle = Text("DetailsTitle", detail, "EXCHANGE DETAILS", 19, bold, TextAlignmentOptions.MidlineLeft, TextPrimary); Horizontal(detailsTitle.rectTransform, 23, 20, 255, 34);
+            RectTransform spend = Horizontal("Spend", detail, 20, 285, 292, 94); Gradient(spend, RaisedTop, DarkBottom, Border);
+            TMP_Text spendLabel = Text("Label", spend, "SPEND", 14, bold, TextAlignmentOptions.MidlineLeft, TextMuted); TopLeft(spendLabel.rectTransform, 17, 8, 100, 25);
+            TMP_Text input = Text("Value", spend, "100 FUEL", 27, bold, TextAlignmentOptions.MidlineLeft, Red); TopLeft(input.rectTransform, 17, 34, 230, 45);
+            RectTransform receive = Rect("Receive", detail, new Vector2(.5f, 1), new Vector2(1, 1), new Vector2(-30, 94), new Vector2(5, -292)); receive.pivot = new Vector2(.5f, 1); Gradient(receive, RaisedTop, DarkBottom, Border);
+            TMP_Text receiveLabel = Text("Label", receive, "RECEIVE", 14, bold, TextAlignmentOptions.MidlineLeft, TextMuted); TopLeft(receiveLabel.rectTransform, 17, 8, 100, 25);
+            TMP_Text output = Text("Value", receive, "180 MATERIALS", 27, bold, TextAlignmentOptions.MidlineLeft, Cyan); Horizontal(output.rectTransform, 17, 12, 34, 45);
+            TMP_Text amountTitle = Text("AmountTitle", detail, "AMOUNT", 18, bold, TextAlignmentOptions.MidlineLeft, TextPrimary); TopLeft(amountTitle.rectTransform, 23, 402, 180, 31);
+            RectTransform stepper = Horizontal("AmountStepper", detail, 20, 20, 438, 72); Gradient(stepper, RaisedTop, DarkBottom, Border);
+            Button minus = GradientButton("AmountMinus", stepper, 3, 3, 72, 66, RaisedTop, DarkBottom, Border); ButtonGlyph(minus, "-", 31);
+            Button plus = GradientButtonRight("AmountPlus", stepper, 3, 3, 72, 66, RaisedTop, DarkBottom, Border); ButtonGlyph(plus, "+", 31);
+            TMP_Text amount = Text("Amount", stepper, "100", 30, bold, TextAlignmentOptions.Center, TextPrimary); Horizontal(amount.rectTransform, 80, 80, 4, 61);
+            RectTransform track = Horizontal("AmountTrack", detail, 20, 20, 523, 18); Gradient(track, new Color32(14, 31, 36, 255), new Color32(5, 15, 18, 255), Border);
+            RectTransform fill = Rect("Fill", track, Vector2.zero, new Vector2(.52f, 1), Vector2.zero, Vector2.zero); Gradient(fill, new Color32(39, 195, 229, 255), new Color32(0, 119, 170, 255), Color.clear);
+            RectTransform knob = Rect("Knob", track, new Vector2(.52f, .5f), new Vector2(.52f, .5f), new Vector2(18, 31), Vector2.zero); Gradient(knob, TextPrimary, TextMuted, Cyan);
+            TMP_Text rate = DetailMetric(detail, "Rate", "RATE", "1 FUEL = 1.8 MATERIALS", 570, Cyan);
+            TMP_Text duration = DetailMetric(detail, "Duration", "DURATION", "01:30", 614, Amber);
+            TMP_Text requirements = DetailMetric(detail, "Requirements", "QUEUE", "1 SLOT REQUIRED", 658, TextPrimary);
+            TMP_Text instruction = Text("Instruction", detail, "Adjust the amount, then convert to add this exchange to the logistics queue.", 14, medium, TextAlignmentOptions.MidlineLeft, TextMuted); Horizontal(instruction.rectTransform, 23, 205, 688, 38); instruction.textWrappingMode = TextWrappingModes.Normal;
+            UnityEngine.UI.Image warning = StatusSquare("Warning", detail, 532, 690, Red, "!"); warning.gameObject.SetActive(false);
+            UnityEngine.UI.Image thumbnail = Img("Thumbnail", detail, catalog.FuelIcon, Color.white, false); TopLeft(thumbnail.rectTransform, 485, 48, 58, 58); thumbnail.preserveAspect = true;
+            Button confirm = GradientButtonRight("ConfirmButton", detail, 18, 681, 180, 43, GreenTop, GreenBottom, Green);
+            TMP_Text confirmLabel = Text("Label", confirm.transform, "CONVERT", 20, bold, TextAlignmentOptions.Center, TextPrimary); Stretch(confirmLabel.rectTransform);
             return new DetailRefs(thumbnail, name, route, rate, amount, input, output, duration, requirements, instruction, warning, minus, plus, confirm, confirmLabel);
         }
 
-        private static TMP_Text DetailLine(string name, Transform parent, string label, string value, float top)
+        private static QueueRefs BuildQueuePanel(RectTransform root, ICollection<RectTransform> right)
         {
-            TMP_Text labelText = CreateText($"{name}Label", parent, label, 14f, mediumFont, TextAlignmentOptions.Left, MutedText);
-            SetRect(labelText.rectTransform, new Vector2(0.50f, top), new Vector2(0.70f, top + 0.08f), Vector2.zero, Vector2.zero);
-            TMP_Text valueText = CreateText($"{name}Value", parent, value, 18f, mediumFont, TextAlignmentOptions.Left, PaleText);
-            SetRect(valueText.rectTransform, new Vector2(0.70f, top), new Vector2(0.96f, top + 0.08f), Vector2.zero, Vector2.zero);
-            return valueText;
-        }
-
-        private static QueueRefs CreateQueuePanel(RectTransform panel, Sprites sprites)
-        {
-            RectTransform queue = CreateRect("ExchangeQueuePanel", panel, new Vector2(0.625f, 0.105f), new Vector2(0.975f, 0.38f), Vector2.zero, Vector2.zero);
-            Image frame = queue.gameObject.AddComponent<Image>();
-            frame.sprite = sprites.QueuePanelFrame;
-            ApplySliced(frame);
-            frame.raycastTarget = true;
-            TMP_Text title = CreateText("Title", queue, "EXCHANGE QUEUE", 24f, boldFont, TextAlignmentOptions.Left, PaleText);
-            SetRect(title.rectTransform, new Vector2(0.04f, 0.82f), new Vector2(0.54f, 0.97f), Vector2.zero, Vector2.zero);
-            Image info = CreateImage("InfoIcon", queue, sprites.InfoIcon, Color.white, false, Image.Type.Simple);
-            SetRect(info.rectTransform, new Vector2(0.91f, 0.83f), new Vector2(0.97f, 0.97f), Vector2.zero, Vector2.zero);
-            info.preserveAspect = true;
-
-            RectTransform content = CreateRect("Rows", queue, new Vector2(0.04f, 0.25f), new Vector2(0.96f, 0.80f), Vector2.zero, Vector2.zero);
-            VerticalLayoutGroup layout = content.gameObject.AddComponent<VerticalLayoutGroup>();
-            layout.childControlWidth = true;
-            layout.childControlHeight = true;
-            layout.childForceExpandWidth = true;
-            layout.childForceExpandHeight = true;
-            layout.spacing = 4f;
+            RectTransform queue = TopLeft("ExchangeQueuePanel", root, 1152, 116, 505, 735); Gradient(queue, DarkTop, DarkBottom, Border); right.Add(queue);
+            TMP_Text title = Text("Title", queue, "EXCHANGE QUEUE", 28, bold, TextAlignmentOptions.MidlineLeft, TextPrimary); TopLeft(title.rectTransform, 20, 14, 330, 42);
+            TMP_Text capacity = Text("Capacity", queue, "3/3", 24, bold, TextAlignmentOptions.Center, Amber); TopLeft(capacity.rectTransform, 409, 14, 74, 42);
+            TMP_Text sub = Text("Subtitle", queue, "ACTIVE LOGISTICS ORDERS", 14, medium, TextAlignmentOptions.MidlineLeft, TextMuted); TopLeft(sub.rectTransform, 21, 54, 330, 25);
+            RectTransform rowsRoot = TopLeft("Rows", queue, 16, 92, 473, 472);
             ResourceExchangeQueueItemView[] rows = new ResourceExchangeQueueItemView[4];
-            for (int i = 0; i < rows.Length; i++)
-                rows[i] = CreateQueueRow($"QueueRow{i + 1}", content, sprites, i);
-
-            Button rush = CreateTextButton("RushAllButton", queue, "RUSH ALL", sprites.SecondaryButtonFrame, sprites.RushLightningIcon, new Vector2(0.04f, 0.04f), new Vector2(0.47f, 0.20f), 18f, out _);
-            Button clear = CreateTextButton("ClearCompletedButton", queue, "CLEAR DONE", sprites.SecondaryButtonFrame, sprites.CancelIcon, new Vector2(0.53f, 0.04f), new Vector2(0.96f, 0.20f), 18f, out _);
-            return new QueueRefs(content, rows, rush, clear);
+            for (int i = 0; i < rows.Length; i++) { rows[i] = BuildQueueRow($"QueueRow{i + 1}", rowsRoot, i * 153f, i); if (i == 3) rows[i].gameObject.SetActive(false); }
+            RectTransform capacityPanel = TopLeft("CapacityPanel", queue, 16, 581, 473, 62); Gradient(capacityPanel, RaisedTop, DarkBottom, Border);
+            TMP_Text capacityLabel = Text("Label", capacityPanel, "QUEUE CAPACITY", 16, bold, TextAlignmentOptions.MidlineLeft, TextMuted); TopLeft(capacityLabel.rectTransform, 17, 6, 240, 24);
+            TMP_Text capacityValue = Text("Value", capacityPanel, "3 / 3 SLOTS USED", 20, bold, TextAlignmentOptions.MidlineLeft, Amber); TopLeft(capacityValue.rectTransform, 17, 28, 300, 28);
+            Button clear = GradientButton("ClearCompletedButton", queue, 16, 657, 224, 58, RaisedTop, DarkBottom, Border); ButtonLabel(clear, "CLEAR DONE", 17);
+            Button rush = GradientButton("RushAllButton", queue, 249, 657, 240, 58, BlueTop, BlueBottom, Cyan); ButtonLabel(rush, "RUSH ALL", 17);
+            return new QueueRefs(rowsRoot, rows, rush, clear, capacity);
         }
 
-        private static ResourceExchangeQueueItemView CreateQueueRow(string name, Transform parent, Sprites sprites, int rowIndex)
+        private static ResourceExchangeQueueItemView BuildQueueRow(string name, Transform parent, float y, int index)
         {
-            GameObject root = CreateImage(name, parent, sprites.QueueRowFrame, Color.white, true, Image.Type.Sliced).gameObject;
-            LayoutElement layout = root.AddComponent<LayoutElement>();
-            layout.preferredHeight = 40f;
-            Image thumbnail = CreateImage("Thumb", root.transform, sprites.Thumbnails[Mathf.Clamp(rowIndex, 0, sprites.Thumbnails.Length - 1)], Color.white, false, Image.Type.Simple);
-            SetRect(thumbnail.rectTransform, new Vector2(0.06f, 0.12f), new Vector2(0.14f, 0.88f), Vector2.zero, Vector2.zero);
-            TMP_Text number = CreateText("Number", root.transform, (rowIndex + 1).ToString(System.Globalization.CultureInfo.InvariantCulture), 16f, boldFont, TextAlignmentOptions.Center, GoldText);
-            SetRect(number.rectTransform, new Vector2(0.005f, 0.05f), new Vector2(0.055f, 0.95f), Vector2.zero, Vector2.zero);
-            TMP_Text displayName = CreateText("Name", root.transform, "Export Oil", 16f, mediumFont, TextAlignmentOptions.Left, PaleText);
-            SetRect(displayName.rectTransform, new Vector2(0.15f, 0.42f), new Vector2(0.42f, 0.95f), Vector2.zero, Vector2.zero);
-            TMP_Text input = CreateText("Input", root.transform, "100 OIL", 12f, lightFont, TextAlignmentOptions.Left, MutedText);
-            SetRect(input.rectTransform, new Vector2(0.15f, 0.05f), new Vector2(0.31f, 0.45f), Vector2.zero, Vector2.zero);
-            TMP_Text output = CreateText("Output", root.transform, "300 MATERIALS", 12f, lightFont, TextAlignmentOptions.Left, GoldText);
-            SetRect(output.rectTransform, new Vector2(0.31f, 0.05f), new Vector2(0.50f, 0.45f), Vector2.zero, Vector2.zero);
-            Image track = CreateImage("ProgressTrack", root.transform, sprites.ProgressTrackFrame, Color.white, false, Image.Type.Sliced);
-            SetRect(track.rectTransform, new Vector2(0.45f, 0.20f), new Vector2(0.70f, 0.52f), Vector2.zero, Vector2.zero);
-            Image fill = CreateImage("ProgressFill", track.transform, sprites.ProgressFill, Color.white, false, Image.Type.Filled);
-            Stretch(fill.rectTransform);
-            fill.type = Image.Type.Filled;
-            fill.fillMethod = Image.FillMethod.Horizontal;
-            fill.fillAmount = rowIndex == 0 ? 0.65f : rowIndex == 3 ? 1f : 0f;
-            TMP_Text percent = CreateText("Percent", root.transform, rowIndex == 0 ? "65%" : rowIndex == 3 ? "100%" : "0%", 12f, mediumFont, TextAlignmentOptions.Left, PaleText);
-            SetRect(percent.rectTransform, new Vector2(0.71f, 0.18f), new Vector2(0.78f, 0.55f), Vector2.zero, Vector2.zero);
-            TMP_Text time = CreateText("Time", root.transform, "00:11", 15f, mediumFont, TextAlignmentOptions.Right, PaleText);
-            SetRect(time.rectTransform, new Vector2(0.76f, 0.44f), new Vector2(0.88f, 0.92f), Vector2.zero, Vector2.zero);
-            TMP_Text state = CreateText("State", root.transform, "IN PROGRESS", 11f, mediumFont, TextAlignmentOptions.Right, MutedText);
-            SetRect(state.rectTransform, new Vector2(0.70f, 0.04f), new Vector2(0.88f, 0.42f), Vector2.zero, Vector2.zero);
-            Button rush = CreateIconButton("RushButton", root.transform, sprites.SmallCounterChip, sprites.RushLightningIcon, new Vector2(0.89f, 0.11f), new Vector2(0.94f, 0.89f));
-            Button cancel = CreateIconButton("CancelButton", root.transform, sprites.SmallCounterChip, sprites.CancelIcon, new Vector2(0.945f, 0.11f), new Vector2(0.995f, 0.89f));
-            Image completed = CreateImage("Completed", root.transform, sprites.CompletedIcon, Color.white, false, Image.Type.Simple);
-            SetRect(completed.rectTransform, new Vector2(0.89f, 0.11f), new Vector2(0.94f, 0.89f), Vector2.zero, Vector2.zero);
-            completed.preserveAspect = true;
-            completed.gameObject.SetActive(rowIndex == 3);
-            Image warning = CreateImage("Warning", root.transform, sprites.WarningIcon, Color.white, false, Image.Type.Simple);
-            SetRect(warning.rectTransform, new Vector2(0.89f, 0.11f), new Vector2(0.94f, 0.89f), Vector2.zero, Vector2.zero);
-            warning.preserveAspect = true;
-            warning.gameObject.SetActive(false);
-
-            ResourceExchangeQueueItemView view = root.AddComponent<ResourceExchangeQueueItemView>();
-            var serialized = new SerializedObject(view);
-            SetObject(serialized, "rushButton", rush);
-            SetObject(serialized, "cancelButton", cancel);
-            SetObject(serialized, "thumbnailImage", thumbnail);
-            SetObject(serialized, "progressFillImage", fill);
-            SetObject(serialized, "completedImage", completed);
-            SetObject(serialized, "warningImage", warning);
-            SetObject(serialized, "numberText", number);
-            SetObject(serialized, "nameText", displayName);
-            SetObject(serialized, "inputText", input);
-            SetObject(serialized, "outputText", output);
-            SetObject(serialized, "timeText", time);
-            SetObject(serialized, "percentText", percent);
-            SetObject(serialized, "stateText", state);
+            RectTransform row = TopLeft(name, parent, 0, y, 473, 140); Gradient(row, RaisedTop, DarkBottom, index == 2 ? Green : Border);
+            UnityEngine.UI.Image thumb = Img("Thumb", row, RecipeIcons()[Mathf.Min(index, 3)], Color.white, false); TopLeft(thumb.rectTransform, 17, 20, 58, 58); thumb.preserveAspect = true;
+            TMP_Text number = Text("Number", row, (index + 1).ToString(), 17, bold, TextAlignmentOptions.Center, TextPrimary); TopLeft(number.rectTransform, 8, 5, 28, 28);
+            TMP_Text displayName = Text("Name", row, index == 0 ? "FUEL TO MATERIALS" : index == 1 ? "OIL TO MATERIALS" : "MATERIALS TO OIL", 18, bold, TextAlignmentOptions.MidlineLeft, TextPrimary); TopLeft(displayName.rectTransform, 86, 12, 265, 30);
+            TMP_Text input = Text("Input", row, "100 FUEL", 13, medium, TextAlignmentOptions.MidlineLeft, TextMuted); TopLeft(input.rectTransform, 86, 44, 120, 24);
+            TMP_Text output = Text("Output", row, "180 MATERIALS", 13, bold, TextAlignmentOptions.MidlineLeft, Cyan); TopLeft(output.rectTransform, 205, 44, 170, 24);
+            RectTransform track = TopLeft("ProgressTrack", row, 86, 81, 252, 13); Gradient(track, new Color32(11, 29, 33, 255), new Color32(4, 14, 17, 255), Border);
+            UnityEngine.UI.Image fill = Img("ProgressFill", track, null, index == 2 ? Green : Cyan, false); Stretch(fill.rectTransform); fill.type = UnityEngine.UI.Image.Type.Filled; fill.fillMethod = UnityEngine.UI.Image.FillMethod.Horizontal; fill.fillAmount = index == 0 ? .65f : index == 2 ? 1f : 0f;
+            TMP_Text percent = Text("Percent", row, index == 0 ? "65%" : index == 2 ? "100%" : "0%", 13, bold, TextAlignmentOptions.MidlineLeft, TextPrimary); TopLeft(percent.rectTransform, 348, 73, 58, 28);
+            TMP_Text time = Text("Time", row, index == 2 ? "DONE" : index == 0 ? "00:11" : "01:30", 16, bold, TextAlignmentOptions.Right, index == 2 ? Green : Amber); TopLeft(time.rectTransform, 354, 13, 98, 28);
+            TMP_Text state = Text("State", row, index == 2 ? "COMPLETE" : index == 0 ? "IN PROGRESS" : "QUEUED", 12, bold, TextAlignmentOptions.MidlineLeft, index == 2 ? Green : TextMuted); TopLeft(state.rectTransform, 86, 103, 178, 24);
+            Button rush = GradientButton("RushButton", row, 350, 101, 48, 31, BlueTop, BlueBottom, Cyan); ButtonGlyph(rush, ">", 18);
+            Button cancel = GradientButton("CancelButton", row, 405, 101, 48, 31, new Color32(125, 38, 28, 255), new Color32(55, 12, 10, 255), Red); ButtonGlyph(cancel, "X", 15);
+            UnityEngine.UI.Image completed = StatusSquare("Completed", row, 419, 99, Green, "V"); completed.gameObject.SetActive(index == 2);
+            UnityEngine.UI.Image warning = StatusSquare("Warning", row, 365, 99, Red, "!"); warning.gameObject.SetActive(false);
+            ResourceExchangeQueueItemView view = row.gameObject.AddComponent<ResourceExchangeQueueItemView>();
+            SerializedObject serialized = new(view);
+            SetObject(serialized, "rushButton", rush); SetObject(serialized, "cancelButton", cancel); SetObject(serialized, "thumbnailImage", thumb); SetObject(serialized, "progressFillImage", fill);
+            SetObject(serialized, "completedImage", completed); SetObject(serialized, "warningImage", warning); SetObject(serialized, "numberText", number); SetObject(serialized, "nameText", displayName);
+            SetObject(serialized, "inputText", input); SetObject(serialized, "outputText", output); SetObject(serialized, "timeText", time); SetObject(serialized, "percentText", percent); SetObject(serialized, "stateText", state);
             serialized.ApplyModifiedPropertiesWithoutUndo();
             return view;
         }
 
-        private static TMP_Text CreateInstruction(RectTransform panel, Sprites sprites)
+        private static FooterRefs BuildFooter(RectTransform root, ICollection<RectTransform> widths)
         {
-            Image rail = CreateImage("InstructionRail", panel, sprites.InstructionRailFrame, Color.white, false, Image.Type.Sliced);
-            SetRect(rail.rectTransform, new Vector2(0.025f, 0.035f), new Vector2(0.60f, 0.105f), Vector2.zero, Vector2.zero);
-            Image info = CreateImage("InfoIcon", rail.transform, sprites.InfoIcon, Color.white, false, Image.Type.Simple);
-            SetRect(info.rectTransform, new Vector2(0.025f, 0.18f), new Vector2(0.08f, 0.82f), Vector2.zero, Vector2.zero);
-            TMP_Text instruction = CreateText("Instruction", rail.transform, "Select route, adjust amount, then confirm exchange.", 19f, mediumFont, TextAlignmentOptions.Left, PaleText);
-            SetRect(instruction.rectTransform, new Vector2(0.09f, 0.10f), new Vector2(0.96f, 0.90f), Vector2.zero, Vector2.zero);
-            return instruction;
+            RectTransform rail = TopLeft("Footer", root, 15, 863, 1642, 66);
+            Button cancel = GradientButton("CancelButton", rail, 0, 0, 340, 66, RaisedTop, DarkBottom, Border); ButtonLabel(cancel, "CANCEL", 24);
+            Button confirm = GradientButton("ConfirmExchangeButton", rail, 350, 0, 1292, 66, GreenTop, GreenBottom, Green); ButtonLabel(confirm, "CONFIRM EXCHANGE", 26);
+            widths.Add(confirm.GetComponent<RectTransform>());
+            return new FooterRefs(cancel, confirm);
         }
 
-        private static TMP_Text CreateChip(Transform parent, string name, string value, Sprite frameSprite, Vector2 anchorMin, Vector2 anchorMax)
+        private static void SeedPreview(ResourceExchangePopupView popup, ResourceExchangeRecipeCardView[] cards, ResourceExchangeQueueItemView[] rows)
         {
-            Image chip = CreateImage(name, parent, frameSprite, Color.white, false, Image.Type.Sliced);
-            SetRect(chip.rectTransform, anchorMin, anchorMax, Vector2.zero, Vector2.zero);
-            TMP_Text text = CreateText("Value", chip.transform, value, 16f, mediumFont, TextAlignmentOptions.Center, PaleText);
-            Stretch(text.rectTransform);
-            return text;
+            Sprite[] icons = RecipeIcons();
+            string[] names = { "FUEL TO MATERIALS", "OIL TO MATERIALS", "FUEL TO OIL", "MATERIALS TO OIL", "OIL TO FUEL", "RECOVERY ROUTE", "SCENARIO ROUTE" };
+            string[] inputs = { "100 FUEL", "100 OIL", "100 FUEL", "100 MATERIALS", "100 OIL", "LOCKED", "LOCKED" };
+            string[] outputs = { "180 MATERIALS", "300 MATERIALS", "120 OIL", "15 OIL", "33 FUEL", "SCENARIO GATED", "SCENARIO GATED" };
+            for (int i = 0; i < cards.Length; i++) cards[i].Bind(names[i], inputs[i], outputs[i], i < 2 ? "00:45" : "01:30", i >= 4 ? "LOCKED" : string.Empty, icons[i], i == 0, i < 4, i >= 4, i >= 4, null, null, null);
+            rows[0].Bind("1", "Fuel to Materials", "100 FUEL", "180 MATERIALS", "00:11", "65%", "IN PROGRESS", .65f, icons[0], true, true, false, false);
+            rows[1].Bind("2", "Oil to Materials", "100 OIL", "300 MATERIALS", "00:45", "0%", "QUEUED", 0f, icons[1], false, true, false, false);
+            rows[2].Bind("3", "Materials to Oil", "100 MATERIALS", "15 OIL", "DONE", "100%", "COMPLETE", 1f, icons[3], false, false, true, false);
+            rows[3].Bind("4", "Fuel to Oil", "100 FUEL", "120 OIL", "01:30", "0%", "QUEUED", 0f, icons[2], false, true, false, false);
+            popup.ApplyHeader("3/3", "180", "620", "310", "7"); popup.ApplyTabs(true, 3, 3);
+            popup.ApplyDetail("Fuel to Materials", "CONVERSION ROUTE", "1 FUEL = 1.8 MATERIALS", "100", "100 FUEL", "180 MATERIALS", "01:30", "1 SLOT REQUIRED", "Adjust the amount, then convert to add this exchange to the logistics queue.", true, false, icons[0]); popup.ApplyQueueControls(true, true);
         }
 
-        private static TMP_Text CreateResourceChip(Transform parent, string name, Sprite iconSprite, string value, Vector2 anchorMin, Vector2 anchorMax)
+        private static RectTransform ResourceChip(Transform parent, string name, float x, Sprite icon, string label, string value, Color accent, out TMP_Text valueText)
         {
-            Image chip = CreateImage(name, parent, null, new Color(0f, 0f, 0f, 0f), false, Image.Type.Simple);
-            SetRect(chip.rectTransform, anchorMin, anchorMax, Vector2.zero, Vector2.zero);
-            Image icon = CreateImage("Icon", chip.transform, iconSprite, Color.white, false, Image.Type.Simple);
-            SetRect(icon.rectTransform, new Vector2(0f, 0.16f), new Vector2(0.34f, 0.84f), Vector2.zero, Vector2.zero);
-            icon.preserveAspect = true;
-            TMP_Text text = CreateText("Value", chip.transform, value, 16f, mediumFont, TextAlignmentOptions.Left, PaleText);
-            SetRect(text.rectTransform, new Vector2(0.36f, 0f), new Vector2(1f, 1f), Vector2.zero, Vector2.zero);
-            return text;
+            RectTransform panel = TopLeft(name, parent, x, 0, 165, 94); Gradient(panel, DarkTop, DarkBottom, Border);
+            UnityEngine.UI.Image image = Img("Icon", panel, icon, accent, false); TopLeft(image.rectTransform, 10, 19, 48, 48); image.preserveAspect = true;
+            TMP_Text labelText = Text("Label", panel, label, 13, bold, TextAlignmentOptions.MidlineLeft, TextMuted); TopLeft(labelText.rectTransform, 65, 12, 94, 23);
+            valueText = Text("Value", panel, value, 26, bold, TextAlignmentOptions.MidlineLeft, accent); TopLeft(valueText.rectTransform, 65, 34, 94, 39);
+            return panel;
         }
 
-        private static Button CreateTextButton(string name, Transform parent, string label, Sprite frameSprite, Sprite iconSprite, Vector2 anchorMin, Vector2 anchorMax, float fontSize, out TMP_Text labelText)
+        private static void ResourceMini(Transform parent, string name, float x, Sprite sprite, string value, Color accent)
         {
-            Image image = CreateImage(name, parent, frameSprite, Color.white, true, Image.Type.Sliced);
-            SetRect(image.rectTransform, anchorMin, anchorMax, Vector2.zero, Vector2.zero);
-            Button button = image.gameObject.AddComponent<Button>();
-            button.targetGraphic = image;
-            button.transition = Selectable.Transition.None;
-            if (iconSprite != null)
+            UnityEngine.UI.Image icon = Img(name + "Icon", parent, sprite, accent, false); TopLeft(icon.rectTransform, x, 40, 40, 40); icon.preserveAspect = true;
+            TMP_Text text = Text(name + "Value", parent, value, 22, bold, TextAlignmentOptions.MidlineLeft, TextPrimary); TopLeft(text.rectTransform, x + 48, 39, 105, 42);
+        }
+
+        private static TMP_Text DetailMetric(Transform parent, string name, string label, string value, float y, Color accent)
+        {
+            TMP_Text labelText = Text(name + "Label", parent, label, 13, bold, TextAlignmentOptions.MidlineLeft, TextMuted); TopLeft(labelText.rectTransform, 23, y, 105, 31);
+            TMP_Text valueText = Text(name + "Value", parent, value, 16, bold, TextAlignmentOptions.MidlineLeft, accent); Horizontal(valueText.rectTransform, 135, 20, y, 31); return valueText;
+        }
+
+        private static Sprite[] RecipeIcons() => new[] { catalog.FuelIcon, catalog.OilIcon, catalog.FuelIcon, catalog.MaterialsIcon, catalog.OilIcon, catalog.MaterialsIcon, catalog.RushIcon };
+
+        private static UnityEngine.UI.Image StatusSquare(string name, Transform parent, float x, float y, Color color, string glyph)
+        {
+            UnityEngine.UI.Image image = Img(name, parent, null, color, false); TopLeft(image.rectTransform, x, y, 30, 30);
+            if (glyph == "V")
             {
-                Image icon = CreateImage("Icon", image.transform, iconSprite, Color.white, false, Image.Type.Simple);
-                SetRect(icon.rectTransform, new Vector2(0.06f, 0.20f), new Vector2(0.22f, 0.80f), Vector2.zero, Vector2.zero);
-                icon.preserveAspect = true;
+                UnityEngine.UI.Image shortStroke = Img("CheckShort", image.transform, null, TextPrimary, false);
+                shortStroke.rectTransform.anchorMin = shortStroke.rectTransform.anchorMax = new Vector2(.5f, .5f);
+                shortStroke.rectTransform.sizeDelta = new Vector2(5f, 13f);
+                shortStroke.rectTransform.anchoredPosition = new Vector2(-5f, 2f);
+                shortStroke.rectTransform.localRotation = Quaternion.Euler(0f, 0f, 43f);
+                UnityEngine.UI.Image longStroke = Img("CheckLong", image.transform, null, TextPrimary, false);
+                longStroke.rectTransform.anchorMin = longStroke.rectTransform.anchorMax = new Vector2(.5f, .5f);
+                longStroke.rectTransform.sizeDelta = new Vector2(5f, 21f);
+                longStroke.rectTransform.anchoredPosition = new Vector2(4f, 0f);
+                longStroke.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -42f);
             }
-
-            labelText = CreateText("Label", image.transform, label, fontSize, boldFont, TextAlignmentOptions.Center, PaleText);
-            SetRect(labelText.rectTransform, iconSprite != null ? new Vector2(0.22f, 0f) : Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            return button;
-        }
-
-        private static Button CreateIconButton(string name, Transform parent, Sprite frameSprite, Sprite iconSprite, Vector2 anchorMin, Vector2 anchorMax)
-        {
-            Button button = CreateTextButton(name, parent, string.Empty, frameSprite, null, anchorMin, anchorMax, 1f, out TMP_Text label);
-            Object.DestroyImmediate(label.gameObject);
-            if (iconSprite != null)
+            else
             {
-                Image icon = CreateImage("Icon", button.transform, iconSprite, Color.white, false, Image.Type.Simple);
-                SetRect(icon.rectTransform, new Vector2(0.18f, 0.18f), new Vector2(0.82f, 0.82f), Vector2.zero, Vector2.zero);
-                icon.preserveAspect = true;
+                TMP_Text text = Text("Glyph", image.transform, glyph, 16, bold, TextAlignmentOptions.Center, TextPrimary);
+                Stretch(text.rectTransform);
             }
-
-            return button;
-        }
-
-        private static TMP_Text CreateText(string name, Transform parent, string text, float size, TMP_FontAsset font, TextAlignmentOptions alignment, Color color)
-        {
-            RectTransform rect = CreateRect(name, parent, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(120f, 32f), Vector2.zero);
-            TextMeshProUGUI tmp = rect.gameObject.AddComponent<TextMeshProUGUI>();
-            tmp.text = text;
-            tmp.font = font != null ? font : TMP_Settings.defaultFontAsset;
-            tmp.fontSize = size;
-            tmp.enableAutoSizing = true;
-            tmp.fontSizeMin = Mathf.Max(9f, size * 0.60f);
-            tmp.fontSizeMax = size;
-            tmp.alignment = alignment;
-            tmp.color = color;
-            tmp.raycastTarget = false;
-            tmp.overflowMode = TextOverflowModes.Ellipsis;
-            tmp.textWrappingMode = TextWrappingModes.NoWrap;
-            return tmp;
-        }
-
-        private static Image CreateImage(string name, Transform parent, Sprite sprite, Color color, bool raycastTarget, Image.Type type)
-        {
-            GameObject obj = CreateUiObject(name, parent);
-            Image image = obj.AddComponent<Image>();
-            image.sprite = sprite;
-            image.color = color;
-            image.raycastTarget = raycastTarget;
-            image.type = sprite != null ? type : Image.Type.Simple;
-            image.preserveAspect = false;
-            if (sprite != null && type == Image.Type.Sliced)
-                ApplySliced(image);
             return image;
         }
 
-        private static RectTransform CreateRect(string name, Transform parent, Vector2 anchorMin, Vector2 anchorMax, Vector2 sizeDelta, Vector2 anchoredPosition)
+        private static UnityEngine.UI.Image LegacyBindingImage(string name, Transform parent)
+        { UnityEngine.UI.Image image = Img(name, parent, null, Color.clear, false); Stretch(image.rectTransform); return image; }
+
+        private static Button GradientButton(string name, Transform parent, float x, float y, float w, float h, Color top, Color bottom, Color border)
         {
-            GameObject obj = CreateUiObject(name, parent);
-            RectTransform rect = obj.GetComponent<RectTransform>();
-            SetRect(rect, anchorMin, anchorMax, sizeDelta, anchoredPosition);
-            return rect;
+            RectTransform rect = TopLeft(name, parent, x, y, w, h); V3GradientGraphic chrome = Gradient(rect, top, bottom, border);
+            Button button = rect.gameObject.AddComponent<Button>(); button.targetGraphic = chrome; button.transition = Selectable.Transition.None; return button;
         }
 
-        private static GameObject CreateUiObject(string name, Transform parent)
+        private static Button GradientButtonRight(string name, Transform parent, float right, float y, float w, float h, Color top, Color bottom, Color border)
         {
-            GameObject obj = new(name, typeof(RectTransform));
-            if (parent != null)
-                obj.transform.SetParent(parent, false);
-            RectTransform rect = obj.GetComponent<RectTransform>();
-            rect.localScale = Vector3.one;
-            rect.localRotation = Quaternion.identity;
-            return obj;
+            RectTransform rect = Rect(name, parent, new Vector2(1, 1), new Vector2(1, 1), new Vector2(w, h), new Vector2(-right, -y)); rect.pivot = new Vector2(1, 1);
+            V3GradientGraphic chrome = Gradient(rect, top, bottom, border); Button button = rect.gameObject.AddComponent<Button>(); button.targetGraphic = chrome; button.transition = Selectable.Transition.None; return button;
         }
 
-        private static void SetRect(RectTransform rect, Vector2 anchorMin, Vector2 anchorMax, Vector2 sizeDelta, Vector2 anchoredPosition)
+        private static void ButtonLabel(Button button, string value, float size) { TMP_Text text = Text("Label", button.transform, value, size, bold, TextAlignmentOptions.Center, TextPrimary); Stretch(text.rectTransform); }
+        private static void ButtonGlyph(Button button, string glyph, float size) { TMP_Text text = Text("Glyph", button.transform, glyph, size, bold, TextAlignmentOptions.Center, TextPrimary); Stretch(text.rectTransform); }
+
+        private static V3GradientGraphic Gradient(RectTransform rect, Color top, Color bottom, Color border)
         {
-            rect.anchorMin = anchorMin;
-            rect.anchorMax = anchorMax;
-            rect.sizeDelta = sizeDelta;
-            rect.anchoredPosition = anchoredPosition;
-            rect.offsetMin = sizeDelta == Vector2.zero && anchoredPosition == Vector2.zero ? Vector2.zero : rect.offsetMin;
-            rect.offsetMax = sizeDelta == Vector2.zero && anchoredPosition == Vector2.zero ? Vector2.zero : rect.offsetMax;
-            rect.localScale = Vector3.one;
-            rect.localRotation = Quaternion.identity;
+            V3GradientGraphic graphic = rect.gameObject.AddComponent<V3GradientGraphic>();
+            graphic.ConfigureCorners(Color.Lerp(top, Color.white, .055f), top, Color.Lerp(bottom, Color.black, .12f), bottom, border, border.a > .01f ? 3f : 0f); return graphic;
         }
 
-        private static void SetRect(RectTransform rect, Vector2 anchorMin, Vector2 anchorMax, Vector2 sizeDelta, Vector2 anchoredPosition, Vector2 pivot)
+        private static UnityEngine.UI.Image Img(string name, Transform parent, Sprite sprite, Color color, bool raycast)
+            => V3UiPrefabFactory.CreateImage(name, parent, sprite, color, raycast, false);
+
+        private static TMP_Text Text(string name, Transform parent, string value, float size, TMP_FontAsset font, TextAlignmentOptions alignment, Color color)
         {
-            SetRect(rect, anchorMin, anchorMax, sizeDelta, anchoredPosition);
-            rect.pivot = pivot;
+            RectTransform rect = Rect(name, parent, new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(200, 40), Vector2.zero);
+            TextMeshProUGUI text = rect.gameObject.AddComponent<TextMeshProUGUI>(); text.text = value; text.font = font; text.fontSize = size; text.alignment = alignment; text.color = color;
+            text.raycastTarget = false; text.textWrappingMode = TextWrappingModes.NoWrap; text.overflowMode = TextOverflowModes.Ellipsis; return text;
         }
 
-        private static void Stretch(RectTransform rect)
+        private static RectTransform Rect(string name, Transform parent, Vector2 min, Vector2 max, Vector2 size, Vector2 position) => V3UiPrefabFactory.CreateRect(name, parent, min, max, size, position);
+        private static RectTransform TopLeft(string name, Transform parent, float x, float y, float w, float h) { RectTransform rect = Rect(name, parent, new Vector2(0, 1), new Vector2(0, 1), new Vector2(w, h), new Vector2(x, -y)); rect.pivot = new Vector2(0, 1); return rect; }
+        private static RectTransform Horizontal(string name, Transform parent, float left, float right, float y, float h) { RectTransform rect = Rect(name, parent, new Vector2(0, 1), new Vector2(1, 1), new Vector2(-(left + right), h), new Vector2(left, -y)); rect.pivot = new Vector2(0, 1); return rect; }
+        private static void TopLeft(RectTransform rect, float x, float y, float w, float h) { rect.anchorMin = rect.anchorMax = new Vector2(0, 1); rect.pivot = new Vector2(0, 1); rect.sizeDelta = new Vector2(w, h); rect.anchoredPosition = new Vector2(x, -y); }
+        private static void Horizontal(RectTransform rect, float left, float right, float y, float h) { rect.anchorMin = new Vector2(0, 1); rect.anchorMax = new Vector2(1, 1); rect.pivot = new Vector2(0, 1); rect.sizeDelta = new Vector2(-(left + right), h); rect.anchoredPosition = new Vector2(left, -y); }
+        private static void Stretch(RectTransform rect) { rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one; rect.pivot = new Vector2(.5f, .5f); rect.offsetMin = Vector2.zero; rect.offsetMax = Vector2.zero; rect.localScale = Vector3.one; }
+
+        private static void SetObject(SerializedObject serialized, string propertyName, UnityEngine.Object value)
+        { SerializedProperty property = serialized.FindProperty(propertyName) ?? throw new MissingFieldException(serialized.targetObject.GetType().Name, propertyName); property.objectReferenceValue = value; }
+
+        private static void SetObjectArray(SerializedObject serialized, string propertyName, UnityEngine.Object[] values)
         {
-            rect.anchorMin = Vector2.zero;
-            rect.anchorMax = Vector2.one;
-            rect.offsetMin = Vector2.zero;
-            rect.offsetMax = Vector2.zero;
-            rect.localScale = Vector3.one;
-            rect.localRotation = Quaternion.identity;
+            SerializedProperty property = serialized.FindProperty(propertyName) ?? throw new MissingFieldException(serialized.targetObject.GetType().Name, propertyName); property.arraySize = values?.Length ?? 0;
+            for (int i = 0; i < property.arraySize; i++) property.GetArrayElementAtIndex(i).objectReferenceValue = values[i];
         }
 
-        private static void ApplySliced(Image image)
-        {
-            if (image == null || image.sprite == null)
-                return;
-
-            image.type = Image.Type.Sliced;
-            image.fillCenter = true;
-            image.pixelsPerUnitMultiplier = 2f;
-        }
-
-        private static void LoadFonts()
-        {
-            boldFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(BoldFontPath);
-            mediumFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(MediumFontPath);
-            lightFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(LightFontPath);
-        }
-
-        private static Sprite LoadSprite(string fileName)
-        {
-            string path = SpriteRoot + fileName;
-            Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(path);
-            if (sprite == null)
-                Debug.LogError($"[ResourceExchangePopupPrefabBuilder] Missing sprite {path}");
-            return sprite;
-        }
-
-        private static Sprite LoadResourceSprite(string fileName)
-        {
-            string path = ResourceIconRoot + fileName;
-            Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(path);
-            if (sprite == null)
-                Debug.LogError($"[ResourceExchangePopupPrefabBuilder] Missing canonical resource sprite {path}");
-            return sprite;
-        }
-
-        private static Sprites LoadSprites()
-        {
-            return new Sprites
-            {
-                PopupOuterFrame = LoadSprite("pop12_chrome_01_popup_outer_frame.png"),
-                ModalBackplate = LoadSprite("pop12_chrome_02_modal_backplate_fill.png"),
-                DetailPanelFrame = LoadSprite("pop12_chrome_03_detail_panel_frame.png"),
-                HeaderStrip = LoadSprite("pop12_chrome_04_header_title_strip_frame.png"),
-                CloseButtonFrame = LoadSprite("pop12_chrome_05_close_square_button_frame.png"),
-                TabSelected = LoadSprite("pop12_chrome_06_tab_selected_gold_frame.png"),
-                TabDefault = LoadSprite("pop12_chrome_07_tab_default_dark_frame.png"),
-                CardSelected = LoadSprite("pop12_chrome_08_recipe_card_selected_frame.png"),
-                CardDefault = LoadSprite("pop12_chrome_09_recipe_card_default_frame.png"),
-                CardLocked = LoadSprite("pop12_chrome_10_recipe_card_locked_frame.png"),
-                QueuePanelFrame = LoadSprite("pop12_chrome_11_queue_panel_frame.png"),
-                InstructionRailFrame = LoadSprite("pop12_chrome_12_bottom_instruction_rail_frame.png"),
-                PrimaryButtonFrame = LoadSprite("pop12_chrome_13_primary_gold_button_frame.png"),
-                SecondaryButtonFrame = LoadSprite("pop12_chrome_14_secondary_dark_button_frame.png"),
-                SmallPlusFrame = LoadSprite("pop12_chrome_15_small_plus_button_frame.png"),
-                SmallMinusFrame = LoadSprite("pop12_chrome_16_small_minus_button_frame.png"),
-                QueueRowFrame = LoadSprite("pop12_chrome_17_queue_row_frame.png"),
-                ProgressTrackFrame = LoadSprite("pop12_chrome_18_progress_track_frame.png"),
-                AmountValueFrame = LoadSprite("pop12_chrome_19_amount_value_frame.png"),
-                ProgressFill = LoadSprite("pop12_chrome_20_progress_fill_blue_segment.png"),
-                SmallCounterChip = LoadSprite("pop12_chrome_22_small_counter_chip_frame.png"),
-                LogisticsTruckIcon = LoadSprite("pop12_icon_01_logistics_exchange_truck.png"),
-                CloseIcon = LoadSprite("pop12_icon_02_close_x.png"),
-                MaterialsIcon = LoadResourceSprite("resource_materials.png"),
-                OilIcon = LoadResourceSprite("resource_oil.png"),
-                FuelIcon = LoadResourceSprite("resource_fuel.png"),
-                RushTicketIcon = LoadResourceSprite("resource_rush.png"),
-                RushLightningIcon = LoadSprite("pop12_icon_08_rush_lightning.png"),
-                TimerIcon = LoadSprite("pop12_icon_09_timer_clock.png"),
-                InfoIcon = LoadSprite("pop12_icon_10_info_circle.png"),
-                CheckBadgeIcon = LoadSprite("pop12_icon_11_checkmark_badge.png"),
-                LockBadgeIcon = LoadSprite("pop12_icon_12_lock_badge.png"),
-                WarningIcon = LoadSprite("pop12_icon_13_warning_triangle.png"),
-                CancelIcon = LoadSprite("pop12_icon_14_cancel_x_small.png"),
-                PlusIcon = LoadSprite("pop12_icon_16_plus.png"),
-                MinusIcon = LoadSprite("pop12_icon_17_minus.png"),
-                CompletedIcon = LoadSprite("pop12_icon_23_completed_check_square.png"),
-                CounterChip = LoadSprite("pop12_icon_24_queued_number_chip_outline.png"),
-                Thumbnails = new[]
-                {
-                    LoadSprite("pop12_content_01_export_oil_thumbnail.png"),
-                    LoadSprite("pop12_content_02_export_materials_thumbnail.png"),
-                    LoadSprite("pop12_content_03_export_fuel_thumbnail.png"),
-                    LoadSprite("pop12_content_04_import_materials_thumbnail.png"),
-                    LoadSprite("pop12_content_05_import_fuel_thumbnail.png"),
-                    LoadSprite("pop12_content_06_import_oil_locked_thumbnail.png")
-                }
-            };
-        }
-
-        private static void EnsureSpritesImported()
-        {
-            string[] guids = AssetDatabase.FindAssets("t:Texture2D", new[] { SpriteRoot.TrimEnd('/') });
-            for (int i = 0; i < guids.Length; i++)
-            {
-                string path = AssetDatabase.GUIDToAssetPath(guids[i]);
-                TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
-                if (importer == null)
-                    continue;
-
-                bool changed = importer.textureType != TextureImporterType.Sprite ||
-                               importer.spriteImportMode != SpriteImportMode.Single ||
-                               importer.mipmapEnabled ||
-                               !importer.alphaIsTransparency;
-                importer.textureType = TextureImporterType.Sprite;
-                importer.spriteImportMode = SpriteImportMode.Single;
-                importer.alphaIsTransparency = true;
-                importer.mipmapEnabled = false;
-                importer.maxTextureSize = 2048;
-                importer.wrapMode = TextureWrapMode.Clamp;
-                importer.filterMode = FilterMode.Bilinear;
-                if (changed)
-                    importer.SaveAndReimport();
-            }
-        }
-
-        private static void SetObject(SerializedObject serializedObject, string propertyName, Object value)
-        {
-            SerializedProperty property = serializedObject.FindProperty(propertyName);
-            if (property == null)
-                throw new System.InvalidOperationException($"Missing serialized property {propertyName} on {serializedObject.targetObject}.");
-
-            property.objectReferenceValue = value;
-        }
-
-        private static void SetObjectArray(SerializedObject serializedObject, string propertyName, Object[] values)
-        {
-            SerializedProperty property = serializedObject.FindProperty(propertyName);
-            if (property == null)
-                throw new System.InvalidOperationException($"Missing serialized property {propertyName} on {serializedObject.targetObject}.");
-
-            property.arraySize = values != null ? values.Length : 0;
-            for (int i = 0; i < property.arraySize; i++)
-                property.GetArrayElementAtIndex(i).objectReferenceValue = values[i];
-        }
-
-        private static Color GoldText => new(0.96f, 0.76f, 0.30f, 1f);
-        private static Color PaleText => new(0.88f, 0.84f, 0.76f, 1f);
-        private static Color MutedText => new(0.62f, 0.58f, 0.50f, 1f);
-        private static Color WarningText => new(1f, 0.28f, 0.18f, 1f);
+        private static string GetPath(Transform transform) { string path = transform.name; while (transform.parent != null) { transform = transform.parent; path = transform.name + "/" + path; } return path; }
 
         private readonly struct HeaderRefs
         {
-            public readonly TMP_Text TitleText;
-            public readonly TMP_Text QueueCapacityText;
-            public readonly TMP_Text MaterialsText;
-            public readonly TMP_Text OilText;
-            public readonly TMP_Text FuelText;
-            public readonly TMP_Text RushTicketsText;
-            public readonly Button CloseButton;
-
-            public HeaderRefs(TMP_Text titleText, TMP_Text queueCapacityText, TMP_Text materialsText, TMP_Text oilText, TMP_Text fuelText, TMP_Text rushTicketsText, Button closeButton)
-            {
-                TitleText = titleText;
-                QueueCapacityText = queueCapacityText;
-                MaterialsText = materialsText;
-                OilText = oilText;
-                FuelText = fuelText;
-                RushTicketsText = rushTicketsText;
-                CloseButton = closeButton;
-            }
+            public readonly TMP_Text TitleText, MaterialsText, OilText, FuelText, RushText; public readonly Button CloseButton;
+            public HeaderRefs(TMP_Text title, TMP_Text materials, TMP_Text oil, TMP_Text fuel, TMP_Text rush, Button close) { TitleText = title; MaterialsText = materials; OilText = oil; FuelText = fuel; RushText = rush; CloseButton = close; }
         }
 
         private readonly struct TabRefs
         {
-            public readonly Button ExportButton;
-            public readonly Button ImportButton;
-            public readonly Image ExportFrame;
-            public readonly Image ImportFrame;
-            public readonly TMP_Text ExportCountText;
-            public readonly TMP_Text ImportCountText;
-
-            public TabRefs(Button exportButton, Button importButton, Image exportFrame, Image importFrame, TMP_Text exportCountText, TMP_Text importCountText)
-            {
-                ExportButton = exportButton;
-                ImportButton = importButton;
-                ExportFrame = exportFrame;
-                ImportFrame = importFrame;
-                ExportCountText = exportCountText;
-                ImportCountText = importCountText;
-            }
+            public readonly Button ExportButton, ImportButton; public readonly UnityEngine.UI.Image ExportFrame, ImportFrame; public readonly TMP_Text ExportCount, ImportCount;
+            public TabRefs(Button export, Button import, UnityEngine.UI.Image exportFrame, UnityEngine.UI.Image importFrame, TMP_Text exportCount, TMP_Text importCount) { ExportButton = export; ImportButton = import; ExportFrame = exportFrame; ImportFrame = importFrame; ExportCount = exportCount; ImportCount = importCount; }
         }
 
         private readonly struct DetailRefs
         {
-            public readonly Image ThumbnailImage;
-            public readonly TMP_Text NameText;
-            public readonly TMP_Text RouteText;
-            public readonly TMP_Text RateText;
-            public readonly TMP_Text AmountText;
-            public readonly TMP_Text InputText;
-            public readonly TMP_Text OutputText;
-            public readonly TMP_Text DurationText;
-            public readonly TMP_Text RequirementsText;
-            public readonly TMP_Text InstructionText;
-            public readonly Image WarningImage;
-            public readonly Button AmountDecreaseButton;
-            public readonly Button AmountIncreaseButton;
-            public readonly Button ConfirmButton;
-            public readonly TMP_Text ConfirmButtonText;
-
-            public DetailRefs(Image thumbnailImage, TMP_Text nameText, TMP_Text routeText, TMP_Text rateText, TMP_Text amountText, TMP_Text inputText, TMP_Text outputText, TMP_Text durationText, TMP_Text requirementsText, TMP_Text instructionText, Image warningImage, Button amountDecreaseButton, Button amountIncreaseButton, Button confirmButton, TMP_Text confirmButtonText)
-            {
-                ThumbnailImage = thumbnailImage;
-                NameText = nameText;
-                RouteText = routeText;
-                RateText = rateText;
-                AmountText = amountText;
-                InputText = inputText;
-                OutputText = outputText;
-                DurationText = durationText;
-                RequirementsText = requirementsText;
-                InstructionText = instructionText;
-                WarningImage = warningImage;
-                AmountDecreaseButton = amountDecreaseButton;
-                AmountIncreaseButton = amountIncreaseButton;
-                ConfirmButton = confirmButton;
-                ConfirmButtonText = confirmButtonText;
-            }
+            public readonly UnityEngine.UI.Image Thumbnail, Warning; public readonly TMP_Text Name, Route, Rate, Amount, Input, Output, Duration, Requirements, Instruction, ConfirmLabel; public readonly Button Minus, Plus, Confirm;
+            public DetailRefs(UnityEngine.UI.Image thumbnail, TMP_Text name, TMP_Text route, TMP_Text rate, TMP_Text amount, TMP_Text input, TMP_Text output, TMP_Text duration, TMP_Text requirements, TMP_Text instruction, UnityEngine.UI.Image warning, Button minus, Button plus, Button confirm, TMP_Text confirmLabel) { Thumbnail = thumbnail; Name = name; Route = route; Rate = rate; Amount = amount; Input = input; Output = output; Duration = duration; Requirements = requirements; Instruction = instruction; Warning = warning; Minus = minus; Plus = plus; Confirm = confirm; ConfirmLabel = confirmLabel; }
         }
 
         private readonly struct QueueRefs
         {
-            public readonly RectTransform ContentRoot;
-            public readonly ResourceExchangeQueueItemView[] Rows;
-            public readonly Button RushAllButton;
-            public readonly Button ClearCompletedButton;
-
-            public QueueRefs(RectTransform contentRoot, ResourceExchangeQueueItemView[] rows, Button rushAllButton, Button clearCompletedButton)
-            {
-                ContentRoot = contentRoot;
-                Rows = rows;
-                RushAllButton = rushAllButton;
-                ClearCompletedButton = clearCompletedButton;
-            }
+            public readonly RectTransform Content; public readonly ResourceExchangeQueueItemView[] Rows; public readonly Button RushAll, ClearDone; public readonly TMP_Text CapacityText;
+            public QueueRefs(RectTransform content, ResourceExchangeQueueItemView[] rows, Button rushAll, Button clearDone, TMP_Text capacity) { Content = content; Rows = rows; RushAll = rushAll; ClearDone = clearDone; CapacityText = capacity; }
         }
 
-        private sealed class Sprites
-        {
-            public Sprite PopupOuterFrame;
-            public Sprite ModalBackplate;
-            public Sprite DetailPanelFrame;
-            public Sprite HeaderStrip;
-            public Sprite CloseButtonFrame;
-            public Sprite TabSelected;
-            public Sprite TabDefault;
-            public Sprite CardSelected;
-            public Sprite CardDefault;
-            public Sprite CardLocked;
-            public Sprite QueuePanelFrame;
-            public Sprite InstructionRailFrame;
-            public Sprite PrimaryButtonFrame;
-            public Sprite SecondaryButtonFrame;
-            public Sprite SmallPlusFrame;
-            public Sprite SmallMinusFrame;
-            public Sprite QueueRowFrame;
-            public Sprite ProgressTrackFrame;
-            public Sprite AmountValueFrame;
-            public Sprite ProgressFill;
-            public Sprite SmallCounterChip;
-            public Sprite LogisticsTruckIcon;
-            public Sprite CloseIcon;
-            public Sprite MaterialsIcon;
-            public Sprite OilIcon;
-            public Sprite FuelIcon;
-            public Sprite RushTicketIcon;
-            public Sprite RushLightningIcon;
-            public Sprite TimerIcon;
-            public Sprite InfoIcon;
-            public Sprite CheckBadgeIcon;
-            public Sprite LockBadgeIcon;
-            public Sprite WarningIcon;
-            public Sprite CancelIcon;
-            public Sprite PlusIcon;
-            public Sprite MinusIcon;
-            public Sprite CompletedIcon;
-            public Sprite CounterChip;
-            public Sprite[] Thumbnails;
-        }
+        private readonly struct FooterRefs { public readonly Button CancelButton, ConfirmButton; public FooterRefs(Button cancel, Button confirm) { CancelButton = cancel; ConfirmButton = confirm; } }
     }
 }
+#endif

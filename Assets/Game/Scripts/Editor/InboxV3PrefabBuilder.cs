@@ -22,7 +22,7 @@ namespace Game.Editor
         private const string SkirmishPath = "Assets/Game/Art/UI/V3Shared/Sprites/MainMenuIcons/SCN02_Icon_SkirmishBlades_V3.png";
         private const string AriaPath = "Assets/Game/Art/UI/V3Shared/Portraits/ARIA_MainMenu_V3.png";
         private const string RangerPath = "Assets/Game/Art/UI/V3Shared/RewardUnlock/POP04_RangerSquad_V3.png";
-        private const string NorthBridgePath = "Assets/Game/Art/UI/V3Shared/MissionBriefing/SCN06_ForwardPost_V3.png";
+        private const string NorthBridgePath = "Assets/Game/Art/UI/V3Shared/Inbox/SCN15_NorthBridgeIntel_V3.png";
         private const string DistrictMapPath = "Assets/Game/Art/UI/V3Shared/CampaignScenes/SCN05_SahrinMissionMap_V3.png";
         private const string NetworkPath = "Assets/Game/Art/UI/V3Shared/Backgrounds/SCN01_LoadingEnvironment_V3.png";
         private const string BoldFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold SDF.asset";
@@ -164,7 +164,8 @@ namespace Game.Editor
             RectTransform header = CreateTopLeft("Header", root, 11f, 11f, 1650f, 97f);
             Button back = CreateButton("BackButton", header, 0f, 0f, 87f, 97f, DarkTop, DarkBottom, Border);
             back.gameObject.AddComponent<UIShellRouteButtonView>().Configure(UiShellRouteIntent.BackMenuRoute, UIRoute.MainMenu, false);
-            CreateBackIcon(back.transform, TextPrimary);
+            Image backIcon = CreateImage("BackIcon", back.transform, RequireSprite(V3UiFoundationBuilder.CommanderBackIconPath), TextPrimary, false);
+            SetCentered(backIcon.rectTransform, 58f, 58f);
 
             RectTransform logoPanel = CreateTopLeft("LogoPanel", header, 95f, 0f, 350f, 97f);
             CreateGradient(logoPanel, DarkTop, DarkBottom, Border);
@@ -220,6 +221,9 @@ namespace Game.Editor
                 BuildCategoryIcon(iconRoot, i, accents[i]);
                 TMP_Text label = CreateText("Label", button.transform, labels[i], i == 1 ? 23f : 26f, boldFont, TextAlignmentOptions.MidlineLeft, TextPrimary);
                 SetTopLeft(label.rectTransform, 88f, 6f, 126f, 75f);
+                label.enableAutoSizing = true;
+                label.fontSizeMin = 15f;
+                label.fontSizeMax = i == 1 ? 23f : 26f;
                 RectTransform badge = CreateTopLeft("Badge", button.transform, 207f, 23f, 39f, 39f);
                 CreateGradient(badge, Color.Lerp(accents[i], Color.white, .12f), Color.Lerp(accents[i], Color.black, .38f), accents[i]);
                 badges[i] = CreateText("Count", badge, i == 0 ? "5" : i == 1 ? "2" : "1", 21f, boldFont, TextAlignmentOptions.Center, TextPrimary);
@@ -275,7 +279,7 @@ namespace Game.Editor
             SetTopRight(sort.GetComponent<RectTransform>(), 19f, 16f, 199f, 54f);
             sortLabel = CreateText("Label", sort.transform, "NEWEST", 23f, boldFont, TextAlignmentOptions.MidlineLeft, TextPrimary);
             SetTopLeft(sortLabel.rectTransform, 24f, 4f, 123f, 46f);
-            CreateChevron(CreateTopLeft("Chevron", sort.transform, 158f, 18f, 23f, 17f), TextMuted, false);
+            CreateDownChevron(CreateTopLeft("Chevron", sort.transform, 158f, 18f, 23f, 17f), TextMuted);
 
             string[] initialTitles = { "NORTH BRIDGE INTEL UPDATE", "DAILY OPERATION REPORT", "RANGER SQUAD UNLOCKED", "ARIA TACTICAL REVIEW", "COMMAND NETWORK NOTICE" };
             string[] initialSenders = { "From: Recon Command", "From: Operations Command", "From: Field Command", "From: ARIA", "From: System" };
@@ -480,11 +484,9 @@ namespace Game.Editor
 
         private static void CreateFilterIcon(RectTransform root, Color color)
         {
-            Image top = CreateSolid("Top", root, 1f, 2f, 35f, 5f, color);
-            Image left = CreateSolid("Left", root, 4f, 9f, 24f, 5f, color);
-            Image right = CreateSolid("Right", root, 18f, 9f, 24f, 5f, color);
-            left.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -42f);
-            right.rectTransform.localRotation = Quaternion.Euler(0f, 0f, 42f);
+            CreateSolid("Top", root, 1f, 2f, 35f, 5f, color);
+            CreateStroke("Left", root, new Vector2(4f, 8f), new Vector2(18f, 20f), 5f, color);
+            CreateStroke("Right", root, new Vector2(34f, 8f), new Vector2(18f, 20f), 5f, color);
             CreateSolid("Stem", root, 16f, 19f, 6f, 14f, color);
         }
 
@@ -493,8 +495,7 @@ namespace Game.Editor
             RectTransform ringRoot = CreateTopLeft("Ring", root, 0f, 0f, 22f, 22f);
             V3RingGraphic ring = ringRoot.gameObject.AddComponent<V3RingGraphic>();
             ring.Configure(color, 4f, 32);
-            Image handle = CreateSolid("Handle", root, 18f, 19f, 14f, 4f, color);
-            handle.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -45f);
+            CreateStroke("Handle", root, new Vector2(18f, 18f), new Vector2(30f, 30f), 4f, color);
         }
 
         private static void CreateGiftIcon(RectTransform root, Color color)
@@ -517,10 +518,8 @@ namespace Game.Editor
             CreateSolid("PierL", root, 17f, 30f, 6f, 24f, color);
             CreateSolid("PierR", root, 45f, 30f, 6f, 24f, color);
             CreateSolid("Top", root, 14f, 28f, 39f, 5f, color);
-            Image roofA = CreateSolid("RoofA", root, 15f, 18f, 27f, 5f, color);
-            Image roofB = CreateSolid("RoofB", root, 32f, 18f, 27f, 5f, color);
-            roofA.rectTransform.localRotation = Quaternion.Euler(0f, 0f, 22f);
-            roofB.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -22f);
+            CreateStroke("RoofA", root, new Vector2(15f, 27f), new Vector2(34f, 18f), 5f, color);
+            CreateStroke("RoofB", root, new Vector2(34f, 18f), new Vector2(54f, 27f), 5f, color);
         }
 
         private static void CreateBarsIcon(RectTransform root, Color color)
@@ -551,20 +550,38 @@ namespace Game.Editor
         private static void CreateDownloadIcon(RectTransform root, Color color)
         {
             CreateSolid("Stem", root, 14f, 0f, 6f, 26f, color);
-            Image left = CreateSolid("Left", root, 6f, 19f, 17f, 5f, color);
-            Image right = CreateSolid("Right", root, 15f, 19f, 17f, 5f, color);
-            left.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -43f);
-            right.rectTransform.localRotation = Quaternion.Euler(0f, 0f, 43f);
+            CreateStroke("Left", root, new Vector2(4f, 18f), new Vector2(17f, 31f), 5f, color);
+            CreateStroke("Right", root, new Vector2(30f, 18f), new Vector2(17f, 31f), 5f, color);
             CreateSolid("Base", root, 3f, 35f, 28f, 5f, color);
         }
 
         private static void CreateChevron(RectTransform root, Color color, bool pointRight)
         {
-            Image a = CreateSolid("A", root, 1f, 2f, 22f, 5f, color);
-            Image b = CreateSolid("B", root, 1f, 13f, 22f, 5f, color);
-            float direction = pointRight ? 1f : -1f;
-            a.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -42f * direction);
-            b.rectTransform.localRotation = Quaternion.Euler(0f, 0f, 42f * direction);
+            Vector2 tip = new(pointRight ? 22f : 1f, 9f);
+            float tailX = pointRight ? 2f : 21f;
+            CreateStroke("A", root, new Vector2(tailX, 1f), tip, 5f, color);
+            CreateStroke("B", root, tip, new Vector2(tailX, 17f), 5f, color);
+        }
+
+        private static void CreateDownChevron(RectTransform root, Color color)
+        {
+            Vector2 tip = new(11.5f, 15f);
+            CreateStroke("A", root, new Vector2(2f, 4f), tip, 5f, color);
+            CreateStroke("B", root, tip, new Vector2(21f, 4f), 5f, color);
+        }
+
+        private static Image CreateStroke(string name, Transform parent, Vector2 start, Vector2 end, float thickness, Color color)
+        {
+            Vector2 screenDelta = end - start;
+            Vector2 localDelta = new(screenDelta.x, -screenDelta.y);
+            Image stroke = CreateImage(name, parent, null, color, false);
+            RectTransform rect = stroke.rectTransform;
+            rect.anchorMin = rect.anchorMax = new Vector2(0f, 1f);
+            rect.pivot = new Vector2(.5f, .5f);
+            rect.anchoredPosition = new Vector2((start.x + end.x) * .5f, -(start.y + end.y) * .5f);
+            rect.sizeDelta = new Vector2(localDelta.magnitude, thickness);
+            rect.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(localDelta.y, localDelta.x) * Mathf.Rad2Deg);
+            return stroke;
         }
 
         private static Image CreateSolid(string name, Transform parent, float x, float y, float width, float height, Color color)

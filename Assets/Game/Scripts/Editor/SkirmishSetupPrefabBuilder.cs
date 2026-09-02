@@ -615,8 +615,8 @@ namespace Game.Editor
             rightTargets.Add(launch.GetComponent<RectTransform>());
             TMP_Text launchLabel = CreateText("Label", launch.transform, "LAUNCH MISSION", 45f, boldFont, TextAlignmentOptions.Center, TextPrimary);
             SetTopLeft(launchLabel.rectTransform, 118f, 10f, 443f, 92f);
-            CreateChevronPair(launch.transform, 46f, 57f, TextPrimary, false);
-            CreateChevronPair(launch.transform, 632f, 57f, TextPrimary, true);
+            CreateChevronGroup(launch.transform, 46f, 57f, TextPrimary, true);
+            CreateChevronGroup(launch.transform, 632f, 57f, TextPrimary, true);
         }
 
         private static Button CreateGradientButton(
@@ -703,10 +703,10 @@ namespace Game.Editor
 
         private static void CreateCheckMark(RectTransform root, Color color)
         {
-            Image left = CreateSolid("CheckLeft", root, 13f, root.rect.height * .54f, 20f, 6f, color);
-            left.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -42f);
-            Image right = CreateSolid("CheckRight", root, 27f, root.rect.height * .43f, 30f, 6f, color);
-            right.rectTransform.localRotation = Quaternion.Euler(0f, 0f, 48f);
+            float centerY = root.rect.height * .52f;
+            Vector2 joint = new(25f, centerY + 12f);
+            CreateStroke("CheckLeft", root, new Vector2(12f, centerY), joint, 6f, color);
+            CreateStroke("CheckRight", root, joint, new Vector2(49f, centerY - 20f), 6f, color);
         }
 
         private static void CreateDiceIcon(RectTransform root, Color color)
@@ -726,18 +726,53 @@ namespace Game.Editor
             }
         }
 
-        private static void CreateChevronPair(Transform parent, float centerX, float centerY, Color color, bool pointRight)
+        private static void CreateChevronGroup(Transform parent, float centerX, float centerY, Color color, bool pointRight)
         {
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < 3; i++)
             {
-                float offset = (i - .5f) * 17f;
+                float offset = (i - 1f) * 14f;
                 float x = centerX + offset;
-                Image upper = CreateSolid($"Chevron_{(pointRight ? "R" : "L")}_{i}_A", parent, x - 13f, centerY - 17f, 28f, 5f, color);
-                Image lower = CreateSolid($"Chevron_{(pointRight ? "R" : "L")}_{i}_B", parent, x - 13f, centerY + 4f, 28f, 5f, color);
                 float direction = pointRight ? 1f : -1f;
-                upper.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -42f * direction);
-                lower.rectTransform.localRotation = Quaternion.Euler(0f, 0f, 42f * direction);
+                Vector2 tip = new(x + 8f * direction, centerY);
+                CreateStroke(
+                    $"Chevron_{(pointRight ? "R" : "L")}_{i}_A",
+                    parent,
+                    new Vector2(x - 9f * direction, centerY - 16f),
+                    tip,
+                    5f,
+                    color);
+                CreateStroke(
+                    $"Chevron_{(pointRight ? "R" : "L")}_{i}_B",
+                    parent,
+                    tip,
+                    new Vector2(x - 9f * direction, centerY + 16f),
+                    5f,
+                    color);
             }
+        }
+
+        private static Image CreateStroke(
+            string name,
+            Transform parent,
+            Vector2 start,
+            Vector2 end,
+            float thickness,
+            Color color)
+        {
+            Vector2 screenDelta = end - start;
+            Vector2 localDelta = new(screenDelta.x, -screenDelta.y);
+            float length = localDelta.magnitude;
+            Image stroke = CreateImage(name, parent, null, color, false);
+            RectTransform rect = stroke.rectTransform;
+            rect.anchorMin = rect.anchorMax = new Vector2(0f, 1f);
+            rect.pivot = new Vector2(.5f, .5f);
+            rect.anchoredPosition = new Vector2((start.x + end.x) * .5f, -(start.y + end.y) * .5f);
+            rect.sizeDelta = new Vector2(length, thickness);
+            rect.localRotation = Quaternion.Euler(
+                0f,
+                0f,
+                Mathf.Atan2(localDelta.y, localDelta.x) * Mathf.Rad2Deg);
+            return stroke;
         }
 
         private static V3GradientGraphic CreateGradientPanel(RectTransform rect, Color top, Color bottom, Color border, float borderWidth)

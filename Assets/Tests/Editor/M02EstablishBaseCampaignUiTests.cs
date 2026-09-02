@@ -198,12 +198,13 @@ public sealed class M02EstablishBaseCampaignUiTests
     {
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(CampaignPrefab);
         Assert.NotNull(prefab);
-        CampaignOperationsScreenView view = prefab.GetComponent<CampaignOperationsScreenView>();
+        CampaignOperationsScreenView view =
+            prefab.GetComponentInChildren<CampaignOperationsScreenView>(true);
         Assert.NotNull(view);
         Assert.That(view.MissionNodeButtons, Has.Length.EqualTo(5));
         Assert.NotNull(view.MissionNodeButtons[0]);
         Assert.NotNull(view.MissionNodeButtons[1]);
-        Assert.NotNull(prefab.GetComponent<CampaignMissionScreenBinder>());
+        Assert.NotNull(prefab.GetComponentInChildren<CampaignMissionScreenBinder>(true));
     }
 
     [Test]
@@ -213,18 +214,26 @@ public sealed class M02EstablishBaseCampaignUiTests
             AssetDatabase.LoadAssetAtPath<GameObject>(CampaignPrefab));
         try
         {
-            CampaignOperationsScreenView view = instance.GetComponent<CampaignOperationsScreenView>();
+            CampaignOperationsScreenView view =
+                instance.GetComponentInChildren<CampaignOperationsScreenView>(true);
             view.Apply(M02CampaignModel());
             string text = AllText(instance);
-            Assert.That(text, Does.Contain("MISSION 02"));
+            Assert.That(text, Does.Contain("MISSION SELECT"));
+            Assert.That(text, Does.Contain("M02"));
             Assert.That(text, Does.Contain("ESTABLISH THE BASE"));
-            Assert.That(text, Does.Contain("BUILD THE FORWARD BARRACKS"));
+            Assert.That(text, Does.Contain("BUILD"));
+            Assert.That(text, Does.Contain("BARRACK"));
+            Assert.That(text, Does.Contain("PRODUCE"));
+            Assert.That(text, Does.Contain("SQUAD"));
+            Assert.That(text, Does.Contain("HOLD"));
+            Assert.That(text, Does.Contain("PERIMETER"));
             Assert.That(text, Does.Contain("1,500 CREDITS"));
             Assert.That(text, Does.Contain("BARRACKS UNLOCK"));
             Assert.That(text, Does.Not.Contain("BLACKOUT AT SAHRIN"));
             Assert.That(text, Does.Not.Contain("RESTORE THE RELAY"));
             Assert.That(text, Does.Not.Contain("mission.m02"));
-            Assert.That(view.MissionPreviewImage.texture.name, Does.Contain("Barrack"));
+            Assert.That(view.MissionPreviewImage.texture.name,
+                Does.Contain("scn13_operation_preview_sahrin_v02"));
         }
         finally
         {
@@ -239,28 +248,33 @@ public sealed class M02EstablishBaseCampaignUiTests
             AssetDatabase.LoadAssetAtPath<GameObject>(BriefingPrefab));
         try
         {
-            MissionBriefingScreenView view = instance.GetComponent<MissionBriefingScreenView>();
+            MissionBriefingScreenView view =
+                instance.GetComponentInChildren<MissionBriefingScreenView>(true);
             view.Apply(M02BriefingModel());
             string text = AllText(instance);
-            Assert.That(text, Does.Contain("MISSION 02"));
+            Assert.That(text, Does.Contain("MISSION BRIEFING"));
+            Assert.That(text, Does.Contain("M02"));
             Assert.That(text, Does.Contain("ESTABLISH THE BASE"));
-            Assert.That(text, Does.Contain("BUILD THE FORWARD BARRACKS"));
-            Assert.That(text, Does.Contain("PRODUCE ONE RIFLE SQUAD"));
-            Assert.That(text, Does.Contain("DEFEND THE FORWARD POST"));
-            Assert.That(text, Does.Contain("55,000 CR / 120 MAT"));
-            Assert.That(text, Does.Contain("BARRACKS x1"));
-            Assert.That(text, Does.Contain("TRANSPORT / AIR OFF"));
-            Assert.That(text, Does.Contain("MAP: FORWARD POST 01"));
-            Assert.That(text, Does.Contain("3 HOSTILES"));
+            Assert.That(text, Does.Contain("RESTORE COMMAND POST"));
+            Assert.That(text, Does.Contain("BUILD BARRACK"));
+            Assert.That(text, Does.Contain("PRODUCE RIFLE SQUAD"));
+            Assert.That(text, Does.Contain("HOLD PERIMETER"));
+            Assert.That(text, Does.Contain("CIVILIAN RISK"));
+            Assert.That(text, Does.Contain("INTEL CONFIDENCE"));
+            Assert.That(text, Does.Contain("TUTORIAL CELL"));
+            Assert.That(text, Does.Contain("LIGHT VEHICLES"));
+            Assert.That(text, Does.Contain("AIR THREAT"));
             Assert.That(text, Does.Contain("+320"));
             Assert.That(text, Does.Contain("+1,500"));
-            Assert.That(text, Does.Contain("BARRACKS UNLOCK"));
-            Assert.That(text, Does.Contain("+1"));
+            Assert.That(text, Does.Contain("BARRACK"));
+            Assert.That(text, Does.Contain("UNLOCK"));
+            Assert.That(text, Does.Contain("BUILD UNDER 5:00"));
+            Assert.That(text, Does.Contain("NO BASE BREACH"));
             Assert.That(text, Does.Not.Contain("MISSION 01"));
             Assert.That(text, Does.Not.Contain("FIRST CONTACT"));
             Assert.That(text, Does.Not.Contain("OLD MARKET"));
             Assert.That(text, Does.Not.Contain("mission.m02"));
-            Assert.That(view.MissionArtImage.texture.name, Does.Contain("Barrack"));
+            Assert.That(view.MissionArtImage.texture.name, Does.Contain("SCN06_ForwardPost_V3"));
         }
         finally
         {
@@ -275,12 +289,14 @@ public sealed class M02EstablishBaseCampaignUiTests
             AssetDatabase.LoadAssetAtPath<GameObject>(BriefingPrefab));
         try
         {
-            MissionBriefingScreenView view = instance.GetComponent<MissionBriefingScreenView>();
+            MissionBriefingScreenView view =
+                instance.GetComponentInChildren<MissionBriefingScreenView>(true);
             view.BindGameTextResolver(new DictionaryResolver(new Dictionary<string, string>
             {
                 ["mission.m02.name"] = "LOCALIZED BASE",
                 ["mission.m02.summary"] = "LOCALIZED SITUATION",
                 ["mission.m02.location"] = "LOCALIZED FORWARD POST",
+                ["mission.m02.objective.restore_command_post"] = "LOCALIZED RESTORE",
                 ["mission.m02.objective.build_forward_barracks"] = "LOCALIZED BUILD",
                 ["mission.m02.objective.produce_rifle_squad"] = "LOCALIZED PRODUCE",
                 ["mission.m02.objective.defend_forward_post"] = "LOCALIZED DEFEND",
@@ -294,8 +310,14 @@ public sealed class M02EstablishBaseCampaignUiTests
             view.Apply(M02BriefingModel());
             string text = AllText(instance);
             Assert.That(text, Does.Contain("LOCALIZED BASE"));
+            Assert.That(text, Does.Contain("LOCALIZED SITUATION"));
+            Assert.That(text, Does.Contain("LOCALIZED RESTORE"));
             Assert.That(text, Does.Contain("LOCALIZED BUILD"));
-            Assert.That(text, Does.Contain("LOCALIZED RESOURCES"));
+            Assert.That(text, Does.Contain("LOCALIZED PRODUCE"));
+            Assert.That(text, Does.Contain("LOCALIZED DEFEND"));
+            Assert.That(text, Does.Contain("LOCALIZED INTEL"));
+            Assert.That(text, Does.Contain("LOCALIZED XP"));
+            Assert.That(text, Does.Contain("LOCALIZED CREDITS"));
             Assert.That(text, Does.Contain("LOCALIZED UNLOCK"));
             Assert.That(text, Does.Not.Contain("mission.m02"));
         }

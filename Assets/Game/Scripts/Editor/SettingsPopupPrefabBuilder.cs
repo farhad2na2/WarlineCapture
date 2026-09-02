@@ -650,6 +650,7 @@ namespace Game.Editor
                 button.image.enabled = false;
             button.targetGraphic = visual;
             visual.color = Color.white;
+            visual.raycastTarget = true;
             ColorBlock colors = button.colors;
             colors.normalColor = Color.white;
             colors.highlightedColor = new Color(1.08f, 1.08f, 1.08f, 1f);

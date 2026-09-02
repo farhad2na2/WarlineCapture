@@ -259,14 +259,15 @@ public static class M01FirstContactMissionBriefingTests
     {
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
         Assert.NotNull(prefab);
-        Assert.NotNull(prefab.GetComponent<MissionBriefingScreenView>());
-        Assert.NotNull(prefab.GetComponent<CampaignMissionScreenBinder>());
+        Assert.NotNull(prefab.GetComponentInChildren<MissionBriefingScreenView>(true));
+        Assert.NotNull(prefab.GetComponentInChildren<CampaignMissionScreenBinder>(true));
         string allText = string.Join("\n", prefab.GetComponentsInChildren<TMP_Text>(true).Select(text => text.text));
         Assert.That(allText, Does.Not.Contain("BLACKOUT AT SAHRIN"));
         Assert.That(allText, Does.Not.Contain("RESTORE THE RELAY"));
         Assert.That(allText, Does.Not.Contain("2,500"));
         Assert.That(allText, Does.Not.Contain("+1,200"));
-        Assert.That(prefab.GetComponent<MissionBriefingScreenView>().DeployOperationButton.interactable, Is.True);
+        Assert.That(prefab.GetComponentInChildren<MissionBriefingScreenView>(true)
+            .DeployOperationButton.interactable, Is.True);
     }
 
     [Test] public static void BinderHasNoFramePollingOrDefinitionLoading()
@@ -287,7 +288,8 @@ public static class M01FirstContactMissionBriefingTests
         GameObject instance = UnityEngine.Object.Instantiate(prefab);
         try
         {
-            MissionBriefingScreenView view = instance.GetComponent<MissionBriefingScreenView>();
+            MissionBriefingScreenView view =
+                instance.GetComponentInChildren<MissionBriefingScreenView>(true);
             Assert.NotNull(view);
             UiMissionObjectiveModel[] objectives =
             {
@@ -311,7 +313,7 @@ public static class M01FirstContactMissionBriefingTests
             string firstClearText = AllText(instance);
             Assert.That(firstClearText, Does.Contain("DESTROY THE HOSTILE PATROL (3)"));
             Assert.That(firstClearText, Does.Contain("KEEP THE COMMAND SQUAD ALIVE"));
-            Assert.That(firstClearText, Does.Contain("Old Market, Sahrin"));
+            Assert.That(firstClearText, Does.Contain("Old Market"));
             Assert.That(firstClearText, Does.Contain("COMMANDER XP"));
             Assert.That(firstClearText, Does.Contain("+1,200"));
             Assert.That(firstClearText, Does.Not.Contain("mission.m01"));

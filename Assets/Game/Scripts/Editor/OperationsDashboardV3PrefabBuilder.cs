@@ -16,6 +16,8 @@ namespace Game.Editor
         private const string PrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN11_OperationsDashboardContent.prefab";
         private const string MapPath = "Assets/Game/Art/UI/V3Shared/CampaignScenes/SCN05_SahrinMissionMap_V3.png";
         private const string AriaPath = "Assets/Game/Art/UI/V3Shared/Portraits/ARIA_MainMenu_V3.png";
+        private const string ConfirmRaidPopupPath = "Assets/Game/Prefabs/UI/Popups/ConfirmRaidPopup.prefab";
+        private const string EndOfDayReportPopupPath = "Assets/Game/Prefabs/UI/Popups/EndOfDayReportPopup.prefab";
         private const string BoldFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold SDF.asset";
         private const string MediumFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium SDF.asset";
 
@@ -46,17 +48,19 @@ namespace Game.Editor
             RectTransform root = CreateRect("SCN11_OperationsDashboardContent", null, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             CreateGradientPanel(root, new Color32(11, 18, 21, 255), new Color32(1, 5, 7, 255), Color.clear, 0f);
             RectTransform composition = CreateTopLeft("OperationsDashboardComposition", root, 0f, 0f, ReferenceResolution.x, ReferenceResolution.y);
-            composition.gameObject.AddComponent<MainMenuV3SectionLayoutView>().Configure(ReferenceResolution, MainMenuV3SectionAlignment.Center);
+            MainMenuV3SectionLayoutView responsive = composition.gameObject.AddComponent<MainMenuV3SectionLayoutView>();
             OperationsDashboardScreenView screen = composition.gameObject.AddComponent<OperationsDashboardScreenView>();
 
-            BuildHeader(composition);
+            UIShellRouteButtonView backRoute = BuildHeader(composition);
             RectTransform readinessRail = BuildReadinessRail(composition, out RectTransform[] readinessCards);
             RectTransform districtMap = BuildDistrictMap(composition, out RawImage districtMapImage, out Button[] districtButtons);
             RectTransform dailyBriefing = BuildAriaBriefing(composition);
             RectTransform activeWarnings = BuildWarnings(composition, out Button[] warningButtons);
             RectTransform commandBar = BuildFooter(composition, out Button intel, out Button patrol, out Button raid, out Button repair, out Button armory, out Button endDay);
+            ConfigureResponsiveLayout(composition, responsive);
 
             SerializedObject serialized = new(screen);
+            SetReference(serialized, "backRouteButton", backRoute);
             SetReference(serialized, "readinessRail", readinessRail);
             SetReference(serialized, "districtMap", districtMap);
             SetReference(serialized, "dailyBriefing", dailyBriefing);
@@ -69,7 +73,10 @@ namespace Game.Editor
             SetReference(serialized, "blackMarketButton", patrol);
             SetReference(serialized, "armoryButton", armory);
             SetReference(serialized, "commandLogButton", raid);
+            SetReference(serialized, "repairButton", repair);
             SetReference(serialized, "endDayButton", endDay);
+            SetReference(serialized, "confirmRaidPopupPrefab", AssetDatabase.LoadAssetAtPath<GameObject>(ConfirmRaidPopupPath));
+            SetReference(serialized, "endOfDayReportPopupPrefab", AssetDatabase.LoadAssetAtPath<GameObject>(EndOfDayReportPopupPath));
             SetReference(serialized, "districtMapImage", districtMapImage);
             SetReference(serialized, "screenTitle", FindText(composition, "ScreenTitle"));
             SetReference(serialized, "dayLabel", FindText(composition, "DayLabel"));
@@ -100,8 +107,21 @@ namespace Game.Editor
                 throw new InvalidOperationException("Operations V3 does not contain enough procedural gradient surfaces.");
             if (prefab.GetComponentsInChildren<V3PolygonGraphic>(true).Length != 5)
                 throw new InvalidOperationException("Operations V3 requires exactly five district overlays.");
-            if (prefab.GetComponentsInChildren<UIShellRouteButtonView>(true).Count(route => route.Route == UIRoute.DistrictDetail) != 5)
-                throw new InvalidOperationException("Operations V3 requires five district-detail route hotspots.");
+            Transform districtMap = FindChild(prefab.transform, "DistrictMap");
+            if (districtMap == null || districtMap.GetComponentsInChildren<UIShellRouteButtonView>(true).Count(route => route.Route == UIRoute.DistrictDetail) != 5)
+                throw new InvalidOperationException("Operations V3 requires five district-detail map hotspots.");
+            OperationsDashboardScreenView screen = prefab.GetComponentInChildren<OperationsDashboardScreenView>(true);
+            if (screen == null || screen.BackRouteButton == null || screen.RepairButton == null ||
+                screen.ConfirmRaidPopupPrefab == null || screen.EndOfDayReportPopupPrefab == null)
+            {
+                throw new MissingReferenceException("Operations V3 requires functional navigation, repair, raid, and end-day actions.");
+            }
+            MainMenuV3SectionLayoutView responsive = prefab.GetComponentInChildren<MainMenuV3SectionLayoutView>(true);
+            if (responsive == null || !responsive.ExpandToCanvasWidth || responsive.RightAnchoredTargets.Length != 6)
+                throw new InvalidOperationException("Operations V3 must fill 16:9 and 20:9 canvases with its right edge anchored.");
+            OperationsDashboardMapResponsiveView mapResponsive = prefab.GetComponentInChildren<OperationsDashboardMapResponsiveView>(true);
+            if (mapResponsive == null || mapResponsive.DistrictZones.Length != 5 || mapResponsive.DistrictMarkers.Length != 5)
+                throw new InvalidOperationException("Operations V3 must scale all five district overlays with its live map width.");
             Image aria = FindChild(prefab.transform, "AriaPortrait")?.GetComponent<Image>();
             RawImage map = FindChild(prefab.transform, "DistrictMapImage")?.GetComponent<RawImage>();
             if (aria == null || aria.GetComponent<AspectRatioFitter>() == null || map == null || map.GetComponent<AspectRatioFitter>() == null)
@@ -123,11 +143,41 @@ namespace Game.Editor
                 throw new MissingReferenceException("Operations V3 shared art or fonts are missing.");
         }
 
-        private static void BuildHeader(RectTransform root)
+        private static void ConfigureResponsiveLayout(RectTransform composition, MainMenuV3SectionLayoutView responsive)
+        {
+            responsive.Configure(
+                ReferenceResolution,
+                MainMenuV3SectionAlignment.Center,
+                new[]
+                {
+                    FindChild(composition, "Credits") as RectTransform,
+                    FindChild(composition, "Command") as RectTransform,
+                    FindChild(composition, "SettingsButton") as RectTransform,
+                    FindChild(composition, "DailyBriefing") as RectTransform,
+                    FindChild(composition, "ActiveWarnings") as RectTransform,
+                    FindChild(composition, "EndDayButton") as RectTransform
+                },
+                shouldExpandToCanvasWidth: true,
+                targetsExpandedAcrossWidth: new[]
+                {
+                    FindChild(composition, "ScreenTitlePanel") as RectTransform,
+                    FindChild(composition, "DistrictMap") as RectTransform,
+                    FindChild(composition, "MapClip") as RectTransform,
+                    FindChild(composition, "MapShade") as RectTransform,
+                    FindChild(composition, "CommandBar") as RectTransform
+                });
+        }
+
+        private static UIShellRouteButtonView BuildHeader(RectTransform root)
         {
             RectTransform logo = CreateTopLeft("WarlineLogo", root, 5f, 6f, 391f, 102f);
-            CreateGradientPanel(logo, DarkTop, DarkBottom, Border, 3f);
+            V3GradientGraphic logoSurface = CreateGradientPanel(logo, DarkTop, DarkBottom, Border, 3f);
             V3UiFoundationBuilder.AddMainMenuLogo(logo);
+            logoSurface.raycastTarget = true;
+            Button logoButton = logo.gameObject.AddComponent<Button>();
+            logoButton.targetGraphic = logoSurface;
+            UIShellRouteButtonView backRoute = logo.gameObject.AddComponent<UIShellRouteButtonView>();
+            backRoute.Configure(UiShellRouteIntent.BackMenuRoute, UIRoute.MainMenu, false);
 
             RectTransform titlePanel = CreateTopLeft("ScreenTitlePanel", root, 401f, 6f, 560f, 102f);
             CreateGradientPanel(titlePanel, DarkTop, DarkBottom, Border, 3f);
@@ -140,6 +190,7 @@ namespace Game.Editor
             Image gear = CreateImage("Icon", settings.transform, catalog.SettingsIcon, Color.white, false);
             SetCentered(gear.rectTransform, 66f, 66f);
             settings.gameObject.AddComponent<UIShellRouteButtonView>().Configure(UiShellRouteIntent.OpenSettings, UIRoute.Settings, false);
+            return backRoute;
         }
 
         private static void BuildResourceChip(Transform root, string name, float x, float y, float width, float height, Sprite icon, string label, string value)
@@ -207,6 +258,15 @@ namespace Game.Editor
             BuildDistrictZone(clip, "ForwardPost", Lime, new[] { new Vector2(5, 360), new Vector2(180, 290), new Vector2(280, 390), new Vector2(350, 480), new Vector2(470, 530), new Vector2(400, 630), new Vector2(250, 670), new Vector2(5, 610) }, "FORWARD POST", 60f, 480f, V3UiFoundationBuilder.CampaignBarracksIconPath);
             BuildDistrictZone(clip, "SouthQuarter", Red, new[] { new Vector2(710, 250), new Vector2(870, 225), new Vector2(870, 670), new Vector2(515, 670), new Vector2(470, 530), new Vector2(610, 470), new Vector2(705, 400) }, "SOUTH QUARTER", 575f, 480f, V3UiFoundationBuilder.MissionEnemyIconPath);
 
+            string[] districtNames = { "Northgate", "Eastridge", "OldMarket", "ForwardPost", "SouthQuarter" };
+            RectTransform[] zones = districtNames
+                .Select(name => FindChild(clip, name + "Zone") as RectTransform)
+                .ToArray();
+            RectTransform[] markers = districtNames
+                .Select(name => FindChild(clip, name + "Marker") as RectTransform)
+                .ToArray();
+            panel.gameObject.AddComponent<OperationsDashboardMapResponsiveView>().Configure(clip, zones, markers, 873f);
+
             districtButtons = panel.GetComponentsInChildren<Button>(true);
             return panel;
         }
@@ -217,9 +277,12 @@ namespace Game.Editor
             if (zone.GetComponent<CanvasRenderer>() == null)
                 zone.gameObject.AddComponent<CanvasRenderer>();
             V3PolygonGraphic fill = zone.gameObject.AddComponent<V3PolygonGraphic>();
-            fill.Configure(points, new Color(color.r, color.g, color.b, 0.20f));
-            for (int i = 0; i < points.Length; i++)
-                CreateLine(name + "Edge" + i, parent, points[i], points[(i + 1) % points.Length], 3f, new Color(color.r, color.g, color.b, 0.95f));
+            fill.ConfigureResponsive(
+                points,
+                new Color(color.r, color.g, color.b, 0.20f),
+                new Color(color.r, color.g, color.b, 0.95f),
+                3f,
+                new Vector2(873f, 674f));
             RectTransform marker = CreateTopLeft(name + "Marker", parent, x, y, 280f, 78f);
             Image hitTarget = marker.gameObject.AddComponent<Image>();
             hitTarget.color = Color.clear;
@@ -273,7 +336,10 @@ namespace Game.Editor
             for (int i = 0; i < 3; i++)
             {
                 warningButtons[i] = CreateGradientButton("WarningRow" + i, panel, 12f, 54f + i * 72f, 391f, 63f, DarkTop, DarkBottom, colors[i], 2f);
-                warningButtons[i].interactable = false;
+                warningButtons[i].gameObject.AddComponent<UIShellRouteButtonView>().Configure(
+                    UiShellRouteIntent.OpenMenuRoute,
+                    UIRoute.DistrictDetail,
+                    true);
                 Image icon = CreateImage("Icon", warningButtons[i].transform, RequireSprite(icons[i]), colors[i], false);
                 SetTopLeft(icon.rectTransform, 14f, 10f, 44f, 44f);
                 CreateSolidTopLeft("Divider", warningButtons[i].transform, 72f, 2f, 2f, 59f, colors[i]);
@@ -292,12 +358,31 @@ namespace Game.Editor
             repair = BuildFooterButton(bar, "Repair", 758f, 226f, "REPAIR", V3UiFoundationBuilder.OperationsRepairIconPath, new Color32(123, 84, 4, 255), new Color32(54, 36, 1, 255), Amber, Color.white, Amber);
             armory = BuildFooterButton(bar, "Armory", 990f, 245f, "ARMORY", V3UiFoundationBuilder.OperationsArmoryIconPath, new Color32(62, 45, 101, 255), new Color32(27, 20, 48, 255), Purple, Color.white, new Color32(235, 230, 255, 255));
             endDay = BuildFooterButton(bar, "EndDayButton", 1241f, 419f, "END DAY", V3UiFoundationBuilder.CampaignLaunchIconPath, new Color32(167, 112, 5, 255), new Color32(92, 57, 1, 255), Amber, new Color32(255, 238, 174, 255), Amber);
+            intel.gameObject.AddComponent<UIShellRouteButtonView>().Configure(UiShellRouteIntent.OpenMenuRoute, UIRoute.CommandFeed, true);
+            patrol.gameObject.AddComponent<UIShellRouteButtonView>().Configure(UiShellRouteIntent.OpenMenuRoute, UIRoute.DistrictDetail, true);
+            repair.gameObject.AddComponent<UIShellRouteButtonView>().Configure(UiShellRouteIntent.OpenMenuRoute, UIRoute.DistrictDetail, true);
+            armory.gameObject.AddComponent<UIShellRouteButtonView>().Configure(UiShellRouteIntent.OpenMenuRoute, UIRoute.Armory, true);
+
+            HorizontalLayoutGroup layout = bar.gameObject.AddComponent<HorizontalLayoutGroup>();
+            layout.spacing = 6f;
+            layout.padding = new RectOffset();
+            layout.childAlignment = TextAnchor.UpperLeft;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = false;
+            layout.childForceExpandHeight = false;
             return bar;
         }
 
         private static Button BuildFooterButton(Transform parent, string name, float x, float width, string label, string iconPath, Color top, Color bottom, Color border, Color textColor, Color iconColor)
         {
             Button button = CreateGradientButton(name, parent, x, 0f, width, 118f, top, bottom, border, 3f);
+            LayoutElement layout = button.gameObject.AddComponent<LayoutElement>();
+            layout.minWidth = width;
+            layout.preferredWidth = width;
+            layout.flexibleWidth = width;
+            layout.minHeight = 118f;
+            layout.preferredHeight = 118f;
             Image icon = CreateImage("Icon", button.transform, RequireSprite(iconPath), iconColor, false);
             SetTopLeft(icon.rectTransform, 20f, 25f, 62f, 62f);
             icon.preserveAspect = true;

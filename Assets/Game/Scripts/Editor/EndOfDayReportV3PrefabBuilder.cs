@@ -48,6 +48,7 @@ namespace Game.Editor
             {
                 Stretch(root.GetComponent<RectTransform>());
                 UIPopupFrameView popup = root.AddComponent<UIPopupFrameView>();
+                EndOfDayReportPopupView reportView = root.AddComponent<EndOfDayReportPopupView>();
                 RectTransform wideBackdropRect = CreateRect("WideMapBackdrop", root.transform);
                 Stretch(wideBackdropRect);
                 RawImage wideBackdrop = wideBackdropRect.gameObject.AddComponent<RawImage>();
@@ -75,6 +76,7 @@ namespace Game.Editor
                     null,
                     body,
                     footer.ButtonRow);
+                reportView.Configure(popup, footer.ViewOperations, footer.SaveContinue);
 
                 PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             }
@@ -101,7 +103,10 @@ namespace Game.Editor
         public static void Validate()
         {
             GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
-            if (prefab == null || prefab.GetComponent<UIPopupFrameView>() == null)
+            EndOfDayReportPopupView reportView = prefab != null
+                ? prefab.GetComponent<EndOfDayReportPopupView>()
+                : null;
+            if (prefab == null || prefab.GetComponent<UIPopupFrameView>() == null || reportView == null)
                 throw new MissingReferenceException("End Of Day V3 popup or runtime frame binding is missing.");
             MainMenuV3SectionLayoutView layout = prefab.GetComponentInChildren<MainMenuV3SectionLayoutView>(true);
             if (layout == null || layout.ReferenceResolution != Reference ||
@@ -112,13 +117,37 @@ namespace Game.Editor
             if (map == null || map.texture == null || fitter == null ||
                 fitter.aspectMode != AspectRatioFitter.AspectMode.EnvelopeParent)
                 throw new InvalidOperationException("End Of Day V3 map must fill without stretching.");
-            if (Find(prefab.transform, "ViewOperationsButton")?.GetComponent<Button>() == null ||
-                Find(prefab.transform, "SaveContinueButton")?.GetComponent<Button>() == null)
+            if (reportView.ViewOperationsButton == null || reportView.SaveContinueButton == null)
                 throw new MissingReferenceException("End Of Day V3 requires both footer actions.");
+            RequirePointerTarget(reportView.ViewOperationsButton, "View Operations");
+            RequirePointerTarget(reportView.SaveContinueButton, "Save & Continue");
+            GameObject instance = UnityEngine.Object.Instantiate(prefab);
+            try
+            {
+                EndOfDayReportPopupView instanceView = instance.GetComponent<EndOfDayReportPopupView>();
+                int viewOperationsCount = 0;
+                int saveContinueCount = 0;
+                instanceView.BindActions(() => viewOperationsCount++, () => saveContinueCount++);
+                instanceView.ViewOperationsButton.onClick.Invoke();
+                instanceView.SaveContinueButton.onClick.Invoke();
+                if (viewOperationsCount != 1 || saveContinueCount != 1)
+                    throw new InvalidOperationException("End Of Day footer actions must dispatch exactly once.");
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(instance);
+            }
             int gradients = prefab.GetComponentsInChildren<V3GradientGraphic>(true).Length;
             if (gradients < 15)
                 throw new InvalidOperationException($"End Of Day V3 requires layered procedural gradients; found {gradients}.");
-            Debug.Log($"[EndOfDayReportV3PrefabBuilder] validation=Passed gradients={gradients} map=aspect-preserved actions=2 runtime=popup-frame");
+            Debug.Log($"[EndOfDayReportV3PrefabBuilder] validation=Passed gradients={gradients} map=aspect-preserved actions=2 pointerTargets=Passed dispatch=one-each runtime=popup-frame");
+        }
+
+        private static void RequirePointerTarget(Button button, string label)
+        {
+            Graphic graphic = button != null ? button.targetGraphic : null;
+            if (graphic == null || !graphic.raycastTarget || !button.interactable || !button.gameObject.activeSelf)
+                throw new InvalidOperationException($"End Of Day {label} action is not a live pointer target.");
         }
 
         private static HeaderBindings BuildHeader(RectTransform parent)
@@ -351,6 +380,7 @@ namespace Game.Editor
         {
             RectTransform rect = CreatePanel(name, parent, x, y, width, height, top, bottom, border, 3f);
             V3GradientGraphic graphic = rect.GetComponent<V3GradientGraphic>();
+            graphic.raycastTarget = true;
             Button button = rect.gameObject.AddComponent<Button>();
             button.targetGraphic = graphic;
             Image icon = CreateImage("Icon", rect, iconSprite, theme.TextPrimary);

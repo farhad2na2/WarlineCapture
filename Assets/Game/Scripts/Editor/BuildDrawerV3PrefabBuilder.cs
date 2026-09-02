@@ -61,6 +61,7 @@ namespace Game.Editor
 
                 BuildDrawerView view = root.AddComponent<BuildDrawerView>();
                 BuildDrawerCatalogRuntimeView presenter = root.AddComponent<BuildDrawerCatalogRuntimeView>();
+                root.AddComponent<BuildDrawerHudOcclusionView>();
                 UIPopupCloseView closeView = root.AddComponent<UIPopupCloseView>();
                 UIPopupCloseButtonView closeButtonView = root.AddComponent<UIPopupCloseButtonView>();
                 UIPopupMotionView.Ensure(root);
@@ -119,9 +120,10 @@ namespace Game.Editor
 
             BuildDrawerView view = prefab.GetComponent<BuildDrawerView>();
             BuildDrawerCatalogRuntimeView presenter = prefab.GetComponent<BuildDrawerCatalogRuntimeView>();
+            BuildDrawerHudOcclusionView occlusion = prefab.GetComponent<BuildDrawerHudOcclusionView>();
             UIPopupCloseView close = prefab.GetComponent<UIPopupCloseView>();
             MainMenuV3SectionLayoutView layout = prefab.GetComponentInChildren<MainMenuV3SectionLayoutView>(true);
-            if (view == null || presenter == null || close == null)
+            if (view == null || presenter == null || occlusion == null || close == null)
                 throw new MissingReferenceException("Build Drawer runtime bindings are incomplete.");
             if (layout == null || layout.ReferenceResolution != Reference)
                 throw new InvalidOperationException("Build Drawer must use the centered 1672x941 composition.");
@@ -535,10 +537,10 @@ namespace Game.Editor
             place.targetGraphic.raycastTarget = true;
             TMP_Text label = CreateText(placeRect, "Label", 30f, 6f, 412f, 82f, "PLACE", 48f, theme.TextPrimary, TextAlignmentOptions.Center, true);
 
-            RectTransform orderRect = CreateTopLeft("OrderButton", frame, 1078f, 820f, 472f, 95f);
-            Button order = orderRect.gameObject.AddComponent<Button>();
-            orderRect.gameObject.SetActive(false);
-            return new FooterBindings(instructionText, icon, place, order, label, unavailable.gameObject, unavailableTitle, unavailableDescription);
+            // BuildButton is the one authored CTA for both placement and production. The
+            // legacy duplicate OrderButton was permanently hidden, had no raycast graphic,
+            // and made the serialized screen fail functional pointer auditing.
+            return new FooterBindings(instructionText, icon, place, null, label, unavailable.gameObject, unavailableTitle, unavailableDescription);
         }
 
         private static void BindView(

@@ -421,7 +421,7 @@ public sealed class UIShellCurrentContentLoadTests
 
         GameObject headerBefore = AssertRegionHasChild(content.ShellView, UIShellRegionId.HeaderRegion);
 
-        content.InstallMenuRouteBody(UIRoute.CommandFeed);
+        content.InstallMenuRouteBody(UIRoute.CommanderProfile);
 
         GameObject headerAfter = AssertRegionHasChild(content.ShellView, UIShellRegionId.HeaderRegion);
         Assert.AreSame(headerBefore, headerAfter, "Commander route body install must preserve the shared menu header.");
@@ -474,7 +474,7 @@ public sealed class UIShellCurrentContentLoadTests
         UIShellRouteButtonView commanderRoute = commanderHotspot.GetComponent<UIShellRouteButtonView>();
         Assert.NotNull(commanderRoute, "Commander panel hotspot must submit a shell route request.");
         Assert.AreEqual(UiShellRouteIntent.OpenMenuRoute, commanderRoute.Intent);
-        Assert.AreEqual(UIRoute.CommandFeed, commanderRoute.Route);
+        Assert.AreEqual(UIRoute.CommanderProfile, commanderRoute.Route);
         Assert.IsTrue(commanderRoute.PushHistory, "Opening Commander profile must push MainMenu so Back returns there.");
         Button commanderButton = commanderHotspot.GetComponent<Button>();
         Assert.NotNull(commanderButton, "Commander panel hotspot must have an actual Button component.");
@@ -516,11 +516,11 @@ public sealed class UIShellCurrentContentLoadTests
         });
 
         SystemHandle flowSystem = _world.CreateSystem<UiShellFlowSystem>();
-        Assert.IsTrue(UiShellRuntimeGateway.TryEnqueueRouteRequest(UiShellRouteIntent.OpenMenuRoute, UIRoute.CommandFeed, pushHistory: true));
+        Assert.IsTrue(UiShellRuntimeGateway.TryEnqueueRouteRequest(UiShellRouteIntent.OpenMenuRoute, UIRoute.CommanderProfile, pushHistory: true));
         flowSystem.Update(_world.Unmanaged);
         UiShellStateComponent shellState = em.GetComponentData<UiShellStateComponent>(boundary);
         DynamicBuffer<UiShellRouteHistoryComponent> history = em.GetBuffer<UiShellRouteHistoryComponent>(boundary);
-        Assert.AreEqual(UIRoute.CommandFeed, shellState.ActiveRoute);
+        Assert.AreEqual(UIRoute.CommanderProfile, shellState.ActiveRoute);
         Assert.AreEqual(1, history.Length);
         Assert.AreEqual(UIRoute.MainMenu, history[0].Route);
 
@@ -912,6 +912,7 @@ public sealed class UIShellCurrentContentLoadTests
         Button moveSector = wheelSerialized.FindProperty("wheelMoveButton").objectReferenceValue as Button;
         Button attackSector = wheelSerialized.FindProperty("wheelAttackButton").objectReferenceValue as Button;
         Button openButton = wheelSerialized.FindProperty("openButton").objectReferenceValue as Button;
+        RectTransform wheelTransform = wheelSerialized.FindProperty("wheelTransform").objectReferenceValue as RectTransform;
         Assert.NotNull(targetingRoot);
         Assert.NotNull(rangeBanner);
         Assert.NotNull(instructionRoot);
@@ -920,6 +921,7 @@ public sealed class UIShellCurrentContentLoadTests
         Assert.NotNull(moveSector);
         Assert.NotNull(attackSector);
         Assert.NotNull(openButton, "The independently mounted footer wheel must be stitched to the live selected-unit portrait button.");
+        Assert.NotNull(wheelTransform);
         Assert.AreSame(
             FindInScene<MatchHudSelectionPanelView>(scene).CommandWheelOpenButton,
             openButton,
@@ -941,6 +943,8 @@ public sealed class UIShellCurrentContentLoadTests
         Assert.IsTrue(rangeBanner.activeSelf);
         Assert.IsFalse(instructionRoot.activeSelf, "Targeting must replace the instruction strip instead of overlapping it.");
         Assert.IsFalse(threatRoot.activeSelf, "Targeting rail must replace the threat panel instead of overlapping it.");
+        Assert.That(wheelTransform.localScale.x, Is.EqualTo(.8f).Within(.001f),
+            "Targeting must compact the radial wheel so it does not cover the permanent ARIA panel.");
 
         wheel.Close();
         Assert.IsFalse(wheel.IsOpen);

@@ -17,6 +17,7 @@ namespace Game.UI.Contracts
         Campaign,
         MissionBriefing,
         Operations,
-        DistrictDetail
+        DistrictDetail,
+        CommanderProfile
     }
 }

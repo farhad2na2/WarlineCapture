@@ -159,14 +159,7 @@ namespace Game.Editor
             CreatePanel("HeaderFill", header, 0f, 0f, 1094f, 106f,
                 new Color32(34, 43, 48, 255), new Color32(7, 13, 16, 255), Color.clear, 0f);
 
-            Image document = CreateImage(
-                "IntelDocumentIcon", header,
-                RequireSprite(V3UiFoundationBuilder.OperationsIntelIconPath), Cyan);
-            SetTopLeft(document.rectTransform, 191f, 23f, 58f, 58f);
-            Image inspect = CreateImage(
-                "IntelInspectIcon", header,
-                RequireSprite(V3UiFoundationBuilder.MatchJumpIconPath), Cyan);
-            SetTopLeft(inspect.rectTransform, 222f, 52f, 37f, 37f);
+            BuildIntelDocumentIcon(header);
 
             TMP_Text title = CreateText(
                 header, "TitleText", 279f, 8f, 620f, 89f,
@@ -213,6 +206,27 @@ namespace Game.Editor
             return new FrameBindings(
                 frame, header, body, buttonRow, title,
                 headerClose, footerClose, viewIntel, evidenceButtons);
+        }
+
+        private static void BuildIntelDocumentIcon(Transform header)
+        {
+            RectTransform icon = CreateTopLeft("IntelDocumentIcon", header, 190f, 18f, 72f, 72f);
+            const float stroke = 3f;
+            CreateSolid("DocumentLeft", icon, 5f, 5f, stroke, 49f, Cyan);
+            CreateSolid("DocumentTop", icon, 5f, 5f, 36f, stroke, Cyan);
+            CreateSolid("DocumentBottom", icon, 5f, 51f, 37f, stroke, Cyan);
+            CreateSolid("DocumentRight", icon, 49f, 17f, stroke, 25f, Cyan);
+            CreateLine("DocumentFoldA", icon, 41f, 6f, 50f, 17f, stroke, Cyan);
+            CreateLine("DocumentFoldB", icon, 41f, 6f, 41f, 17f, stroke, Cyan);
+            CreateLine("DocumentFoldC", icon, 41f, 17f, 50f, 17f, stroke, Cyan);
+            CreateSolid("DocumentRuleA", icon, 14f, 19f, 24f, stroke, Cyan);
+            CreateSolid("DocumentRuleB", icon, 14f, 28f, 20f, stroke, Cyan);
+            CreateSolid("DocumentRuleC", icon, 14f, 37f, 15f, stroke, Cyan);
+
+            RectTransform lens = CreateTopLeft("InspectLens", icon, 31f, 34f, 29f, 29f);
+            V3RingGraphic ring = lens.gameObject.AddComponent<V3RingGraphic>();
+            ring.Configure(Cyan, 3f, 40);
+            CreateLine("InspectHandle", icon, 54f, 58f, 68f, 70f, 4f, Cyan);
         }
 
         private static Button BuildEvidenceCard(
@@ -425,6 +439,29 @@ namespace Game.Editor
             image.color = color;
             image.raycastTarget = raycast;
             return image;
+        }
+
+        private static void CreateLine(
+            string name,
+            Transform parent,
+            float x1,
+            float y1,
+            float x2,
+            float y2,
+            float thickness,
+            Color color)
+        {
+            Vector2 start = new(x1, y1);
+            Vector2 end = new(x2, y2);
+            Vector2 delta = end - start;
+            Image line = CreateSolid(name, parent, color, false);
+            RectTransform rect = line.rectTransform;
+            rect.anchorMin = rect.anchorMax = new Vector2(0f, 1f);
+            rect.pivot = new Vector2(.5f, .5f);
+            Vector2 center = (start + end) * .5f;
+            rect.anchoredPosition = new Vector2(center.x, -center.y);
+            rect.sizeDelta = new Vector2(delta.magnitude, thickness);
+            rect.localEulerAngles = new Vector3(0f, 0f, -Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg);
         }
 
         private static Image CreateSolid(

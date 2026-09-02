@@ -13,6 +13,7 @@ namespace Game.UI.Runtime
         [SerializeField] private GameObject loadingContentPrefab;
         [SerializeField] private GameObject mainMenuContentPrefab;
         [SerializeField] private GameObject commanderProfileContentPrefab;
+        [SerializeField] private GameObject commandFeedContentPrefab;
         [SerializeField] private GameObject skirmishSetupContentPrefab;
         [SerializeField] private GameObject campaignContentPrefab;
         [SerializeField] private GameObject missionBriefingContentPrefab;
@@ -69,6 +70,7 @@ namespace Game.UI.Runtime
         public GameObject LoadingContentPrefab => loadingContentPrefab;
         public GameObject MainMenuContentPrefab => mainMenuContentPrefab;
         public GameObject CommanderProfileContentPrefab => commanderProfileContentPrefab;
+        public GameObject CommandFeedContentPrefab => commandFeedContentPrefab;
         public GameObject SkirmishSetupContentPrefab => skirmishSetupContentPrefab;
         public GameObject CampaignContentPrefab => campaignContentPrefab;
         public GameObject MissionBriefingContentPrefab => missionBriefingContentPrefab;
@@ -109,7 +111,8 @@ namespace Game.UI.Runtime
             GameObject missionBriefingPrefab = null,
             GameObject operationsPrefab = null,
             GameObject loadoutSquadPrepPrefab = null,
-            GameObject districtDetailPrefab = null)
+            GameObject districtDetailPrefab = null,
+            GameObject commandFeedPrefab = null)
         {
             shellView = view;
             loadingContentPrefab = loadingPrefab;
@@ -119,6 +122,8 @@ namespace Game.UI.Runtime
             buildDrawerPopupPrefab = buildDrawerPrefab;
             if (commanderProfilePrefab != null)
                 commanderProfileContentPrefab = commanderProfilePrefab;
+            if (commandFeedPrefab != null)
+                commandFeedContentPrefab = commandFeedPrefab;
             if (skirmishSetupPrefab != null)
                 skirmishSetupContentPrefab = skirmishSetupPrefab;
             if (campaignPrefab != null)

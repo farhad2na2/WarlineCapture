@@ -423,6 +423,7 @@ namespace Game.Editor
         {
             RectTransform rect = CreateTopLeft(name, parent, x, y, width, height);
             V3GradientGraphic graphic = AddGradient(rect, top, bottom, border, borderWidth);
+            graphic.raycastTarget = true;
             Button button = rect.gameObject.AddComponent<Button>();
             button.targetGraphic = graphic;
             button.transition = Selectable.Transition.None;

@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System;
+using System.Reflection;
 using Game.Editor;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
@@ -13,6 +14,27 @@ using UnityEngine.UI;
 public sealed class RankingV3PrefabTests
 {
     private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
+
+    public static void RunFocusedValidation()
+    {
+        int passed = 0;
+        try
+        {
+            RankingV3PrefabBuilder.Build();
+            RankingV3PrefabTests suite = new();
+            suite.Prefab_MatchesResponsiveGradientAndArtContracts(); passed++;
+            suite.TabsAndRewardsButton_SwitchVisibleBodies(); passed++;
+            suite.MenuScene_AssignsAndMountsRankingRoute(); passed++;
+            suite.Navigation_UsesLogoAndSettingsRoutes(); passed++;
+            Debug.Log($"[RankingV3PrefabTests] result=Passed tests={passed}");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"[RankingV3PrefabTests] result=Failed passed={passed}\n{exception}");
+            ValidationExit.Exit(1);
+        }
+    }
 
     [Test]
     public void Prefab_MatchesResponsiveGradientAndArtContracts()
@@ -59,6 +81,7 @@ public sealed class RankingV3PrefabTests
         try
         {
             RankingV3View view = instance.GetComponent<RankingV3View>();
+            InvokeAwake(view);
             Assert.IsTrue(view.CategoryBodies[0].activeSelf);
             view.CategoryButtons[2].onClick.Invoke();
             Assert.IsTrue(view.CategoryBodies[2].activeSelf);
@@ -89,12 +112,47 @@ public sealed class RankingV3PrefabTests
         Assert.NotNull(popup.ContentRoot.GetComponentInChildren<RankingV3View>(true));
     }
 
+    [Test]
+    public void Navigation_UsesLogoAndSettingsRoutes()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(RankingV3PrefabBuilder.PrefabPath);
+        AssertRoute(prefab, "LogoPanel", UiShellRouteIntent.BackMenuRoute, UIRoute.MainMenu);
+        AssertRoute(prefab, "SettingsButton", UiShellRouteIntent.OpenSettings, UIRoute.Settings);
+    }
+
+    private static void AssertRoute(GameObject prefab, string name, UiShellRouteIntent intent, UIRoute route)
+    {
+        UIShellRouteButtonView view = Find(prefab.transform, name)?.GetComponent<UIShellRouteButtonView>();
+        Assert.NotNull(view, name);
+        Assert.AreEqual(intent, view.Intent, name);
+        Assert.AreEqual(route, view.Route, name);
+    }
+
+    private static void InvokeAwake(RankingV3View view)
+    {
+        MethodInfo awake = typeof(RankingV3View).GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.NotNull(awake);
+        awake.Invoke(view, null);
+    }
+
     private static T FindInScene<T>(Scene scene) where T : Component
     {
         foreach (GameObject root in scene.GetRootGameObjects())
         {
             T result = root.GetComponentInChildren<T>(true);
             if (result != null) return result;
+        }
+        return null;
+    }
+
+    private static Transform Find(Transform root, string name)
+    {
+        if (root == null) return null;
+        if (root.name == name) return root;
+        for (int i = 0; i < root.childCount; i++)
+        {
+            Transform found = Find(root.GetChild(i), name);
+            if (found != null) return found;
         }
         return null;
     }

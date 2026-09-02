@@ -121,8 +121,24 @@ namespace Game.Editor
             Transform legend = FindChild(prefab.transform, "LegendPanel");
             Transform info = FindChild(prefab.transform, "MapInfoPanel");
             Transform toggles = FindChild(prefab.transform, "QuickTogglePanel");
-            if (legend == null || info == null || toggles == null)
+            Transform preview = FindChild(prefab.transform, "V3PreviewMarkers");
+            MatchHudFullMapFilterView filterView = prefab.GetComponent<MatchHudFullMapFilterView>();
+            if (legend == null || info == null || toggles == null || preview == null || filterView == null)
                 throw new System.InvalidOperationException("Full Map V3 is missing the legend, map info, or quick-toggle panel.");
+            if (preview.gameObject.activeSelf)
+                throw new System.InvalidOperationException("Full Map V3 preview markers must remain disabled during real matches to avoid duplicating live markers.");
+            if (filterView.FriendliesToggle == null ||
+                filterView.EnemiesToggle == null ||
+                filterView.ObjectivesToggle == null ||
+                filterView.RoutesToggle == null ||
+                filterView.ViewportToggle == null ||
+                filterView.PreviewFriendlies == null ||
+                filterView.PreviewEnemies == null ||
+                filterView.PreviewObjectives == null ||
+                filterView.PreviewRoutes == null)
+            {
+                throw new System.InvalidOperationException("Full Map V3 quick toggles are not functionally bound to map layers.");
+            }
 
             EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
             UIShellContentView shellContent = FindSceneObject<UIShellContentView>();
@@ -131,7 +147,7 @@ namespace Game.Editor
             if (shellContent.FullMapPopupPrefab != prefab)
                 throw new System.InvalidOperationException("Menu scene UIShellContentView does not reference SCN08_FullMapPopup.");
 
-            Debug.Log($"[MatchHudFullMapPopupPrefabSetup] validation=Passed gradients={gradients} borders=3 interactions=close,drag,tap,zoom,center");
+            Debug.Log($"[MatchHudFullMapPopupPrefabSetup] validation=Passed gradients={gradients} borders=3 interactions=close,drag,tap,zoom,center,filters");
         }
 
         public static void RunRuntimeSmokeValidation()
@@ -481,6 +497,7 @@ namespace Game.Editor
                 RectTransform closeRect = CreatePanel("CloseAction", header, 1224f, 7f, 57f, 58f, RaisedTop, DarkBottom, Line, 3f);
                 Button closeAction = closeRect.gameObject.AddComponent<Button>();
                 closeAction.targetGraphic = closeRect.GetComponent<V3GradientGraphic>();
+                closeAction.targetGraphic.raycastTarget = true;
                 CreateLine("CloseSlashA", closeRect, 15f, 14f, 42f, 43f, 4f, theme.TextPrimary);
                 CreateLine("CloseSlashB", closeRect, 42f, 14f, 15f, 43f, 4f, theme.TextPrimary);
 
@@ -501,7 +518,12 @@ namespace Game.Editor
                 RectTransform markerRoot = CreateTopLeft("Markers", mapImage.transform, 0f, 0f, 842f, 640f);
                 Stretch(markerRoot);
                 RectTransform previewMarkers = CreateTopLeft("V3PreviewMarkers", mapClip, 0f, 0f, 842f, 640f);
-                BuildPreviewMapMarkers(previewMarkers);
+                BuildPreviewMapMarkers(
+                    previewMarkers,
+                    out RectTransform previewFriendlies,
+                    out RectTransform previewEnemies,
+                    out RectTransform previewObjectives,
+                    out RectTransform previewRoutes);
                 previewMarkers.gameObject.SetActive(false);
 
                 RectTransform viewportRect = CreateTopLeft("Viewport", mapImage.transform, 165f, 202f, 470f, 350f);
@@ -518,7 +540,30 @@ namespace Game.Editor
                     RequireSprite(V3UiFoundationBuilder.MatchInfoIconPath));
                 RemoveGeneratedInteractionRelays(minimapView, zoomIn, zoomOut);
 
-                BuildMapInformationPanels(panel);
+                BuildMapInformationPanels(
+                    panel,
+                    out Toggle friendliesToggle,
+                    out Toggle enemiesToggle,
+                    out Toggle objectivesToggle,
+                    out Toggle routesToggle,
+                    out Toggle viewportToggle);
+
+                MatchHudFullMapFilterView filterView = root.AddComponent<MatchHudFullMapFilterView>();
+                filterView.Configure(
+                    friendliesToggle,
+                    enemiesToggle,
+                    objectivesToggle,
+                    routesToggle,
+                    viewportToggle,
+                    previewFriendlies.gameObject,
+                    previewEnemies.gameObject,
+                    previewObjectives.gameObject,
+                    previewRoutes.gameObject,
+                    markerRoot,
+                    viewportRect,
+                    minimapView.PlayerMarkerSprite,
+                    minimapView.EnemyMarkerSprite,
+                    minimapView.NeutralMarkerSprite);
 
                 RectTransform footer = CreatePanel("FooterPanel", panel, 8f, 735f, 1272f, 64f, DarkTop, DarkBottom, Line, 3f);
                 CreateText("Instruction", footer, 210f, 8f, 760f, 48f,
@@ -527,6 +572,7 @@ namespace Game.Editor
                     new Color32(20, 103, 147, 255), new Color32(4, 43, 67, 255), Cyan, 3f);
                 Button centerAction = centerRect.gameObject.AddComponent<Button>();
                 centerAction.targetGraphic = centerRect.GetComponent<V3GradientGraphic>();
+                centerAction.targetGraphic.raycastTarget = true;
                 Image centerIcon = CreateImage("Icon", centerRect, RequireSprite(V3UiFoundationBuilder.MatchJumpIconPath), theme.TextPrimary);
                 SetTopLeft(centerIcon.rectTransform, 14f, 8f, 34f, 34f);
                 CreateText("Label", centerRect, 56f, 3f, 216f, 42f, "CENTER ON HQ", 21f, theme.TextPrimary, TextAlignmentOptions.Center, true);
@@ -591,7 +637,13 @@ namespace Game.Editor
             CreateText("ViewportLabel", legend, 61f, y - 2f, 120f, 30f, "Camera Viewport", 15f, Muted, TextAlignmentOptions.MidlineLeft, false);
         }
 
-        private static void BuildMapInformationPanels(RectTransform panel)
+        private static void BuildMapInformationPanels(
+            RectTransform panel,
+            out Toggle friendliesToggle,
+            out Toggle enemiesToggle,
+            out Toggle objectivesToggle,
+            out Toggle routesToggle,
+            out Toggle viewportToggle)
         {
             RectTransform info = CreatePanel("MapInfoPanel", panel, 1069f, 80f, 211f, 311f, DarkTop, DarkBottom, Line, 3f);
             CreateText("Title", info, 13f, 9f, 185f, 29f, "MAP INFO", 20f, Cyan, TextAlignmentOptions.MidlineLeft, true);
@@ -603,31 +655,45 @@ namespace Game.Editor
 
             RectTransform toggles = CreatePanel("QuickTogglePanel", panel, 1069f, 399f, 211f, 329f, DarkTop, DarkBottom, Line, 3f);
             CreateText("Title", toggles, 13f, 9f, 185f, 29f, "QUICK TOGGLE", 20f, Cyan, TextAlignmentOptions.MidlineLeft, true);
-            CreateQuickToggle(toggles, "FriendliesToggle", 46f, "FRIENDLIES", Green);
-            CreateQuickToggle(toggles, "EnemiesToggle", 101f, "ENEMIES", Orange);
-            CreateQuickToggle(toggles, "ObjectivesToggle", 156f, "OBJECTIVES", Amber);
-            CreateQuickToggle(toggles, "RoutesToggle", 211f, "ROUTES", Green);
-            CreateQuickToggle(toggles, "ViewportToggle", 266f, "VIEWPORT", Cyan);
+            friendliesToggle = CreateQuickToggle(toggles, "FriendliesToggle", 46f, "FRIENDLIES", Green);
+            enemiesToggle = CreateQuickToggle(toggles, "EnemiesToggle", 101f, "ENEMIES", Orange);
+            objectivesToggle = CreateQuickToggle(toggles, "ObjectivesToggle", 156f, "OBJECTIVES", Amber);
+            routesToggle = CreateQuickToggle(toggles, "RoutesToggle", 211f, "ROUTES", Green);
+            viewportToggle = CreateQuickToggle(toggles, "ViewportToggle", 266f, "VIEWPORT", Cyan);
         }
 
-        private static void BuildPreviewMapMarkers(RectTransform parent)
+        private static void BuildPreviewMapMarkers(
+            RectTransform parent,
+            out RectTransform friendlies,
+            out RectTransform enemies,
+            out RectTransform objectives,
+            out RectTransform routes)
         {
-            CreateRouteSegment(parent, 376f, 594f, 330f, 524f, Green, 7f);
-            CreateRouteSegment(parent, 330f, 524f, 302f, 430f, Green, 7f);
-            CreateRouteSegment(parent, 302f, 430f, 352f, 361f, Green, 7f);
-            CreateRouteSegment(parent, 352f, 361f, 458f, 288f, Green, 7f);
-            CreateRouteSegment(parent, 458f, 288f, 493f, 180f, Green, 7f);
+            routes = CreateTopLeft("PreviewRoutes", parent, 0f, 0f, 842f, 640f);
+            friendlies = CreateTopLeft("PreviewFriendlies", parent, 0f, 0f, 842f, 640f);
+            enemies = CreateTopLeft("PreviewEnemies", parent, 0f, 0f, 842f, 640f);
+            objectives = CreateTopLeft("PreviewObjectives", parent, 0f, 0f, 842f, 640f);
+            Stretch(routes);
+            Stretch(friendlies);
+            Stretch(enemies);
+            Stretch(objectives);
 
-            CreateMapMarker(parent, "SquadAlpha", 274f, 327f, 54f, V3UiFoundationBuilder.MatchFriendlyMarkerIconPath, Green, true);
-            CreateMapMarker(parent, "SquadBravo", 393f, 406f, 54f, V3UiFoundationBuilder.MatchFriendlyMarkerIconPath, Green, true);
-            CreateMapMarker(parent, "SquadCharlie", 304f, 524f, 54f, V3UiFoundationBuilder.MatchFriendlyMarkerIconPath, Green, true);
-            CreateMapMarker(parent, "SupportNorth", 535f, 256f, 45f, V3UiFoundationBuilder.MatchMedicalIconPath, Green, false);
-            CreateMapMarker(parent, "SupportWest", 92f, 350f, 45f, V3UiFoundationBuilder.MatchMedicalIconPath, Green, false);
-            CreateMapMarker(parent, "EnemyNorth", 612f, 95f, 47f, V3UiFoundationBuilder.MatchHostileMarkerIconPath, Orange, false);
-            CreateMapMarker(parent, "EnemyEast", 681f, 430f, 47f, V3UiFoundationBuilder.MatchAttackIconPath, Orange, false);
-            CreateMapMarker(parent, "EnemyWest", 66f, 440f, 47f, V3UiFoundationBuilder.MatchHostileMarkerIconPath, Orange, false);
-            CreateMapMarker(parent, "PrimaryObjective", 494f, 92f, 47f, V3UiFoundationBuilder.MatchArmorIconPath, Amber, false);
-            CreateMapMarker(parent, "SecondaryObjective", 688f, 320f, 42f, V3UiFoundationBuilder.MatchJumpIconPath, Amber, false);
+            CreateRouteSegment(routes, 376f, 594f, 330f, 524f, Green, 7f);
+            CreateRouteSegment(routes, 330f, 524f, 302f, 430f, Green, 7f);
+            CreateRouteSegment(routes, 302f, 430f, 352f, 361f, Green, 7f);
+            CreateRouteSegment(routes, 352f, 361f, 458f, 288f, Green, 7f);
+            CreateRouteSegment(routes, 458f, 288f, 493f, 180f, Green, 7f);
+
+            CreateMapMarker(friendlies, "SquadAlpha", 274f, 327f, 54f, V3UiFoundationBuilder.MatchFriendlyMarkerIconPath, Green, true);
+            CreateMapMarker(friendlies, "SquadBravo", 393f, 406f, 54f, V3UiFoundationBuilder.MatchFriendlyMarkerIconPath, Green, true);
+            CreateMapMarker(friendlies, "SquadCharlie", 304f, 524f, 54f, V3UiFoundationBuilder.MatchFriendlyMarkerIconPath, Green, true);
+            CreateMapMarker(friendlies, "SupportNorth", 535f, 256f, 45f, V3UiFoundationBuilder.MatchMedicalIconPath, Green, false);
+            CreateMapMarker(friendlies, "SupportWest", 92f, 350f, 45f, V3UiFoundationBuilder.MatchMedicalIconPath, Green, false);
+            CreateMapMarker(enemies, "EnemyNorth", 612f, 95f, 47f, V3UiFoundationBuilder.MatchHostileMarkerIconPath, Orange, false);
+            CreateMapMarker(enemies, "EnemyEast", 681f, 430f, 47f, V3UiFoundationBuilder.MatchAttackIconPath, Orange, false);
+            CreateMapMarker(enemies, "EnemyWest", 66f, 440f, 47f, V3UiFoundationBuilder.MatchHostileMarkerIconPath, Orange, false);
+            CreateMapMarker(objectives, "PrimaryObjective", 494f, 92f, 47f, V3UiFoundationBuilder.MatchArmorIconPath, Amber, false);
+            CreateMapMarker(objectives, "SecondaryObjective", 688f, 320f, 42f, V3UiFoundationBuilder.MatchJumpIconPath, Amber, false);
         }
 
         private static void CreateLegendRow(Transform parent, string name, float y, string iconPath, string label, Color color)
@@ -671,6 +737,7 @@ namespace Game.Editor
                 new Color(accent.r * .20f, accent.g * .20f, accent.b * .20f, 1f), DarkBottom, accent, 2f);
             Toggle toggle = row.gameObject.AddComponent<Toggle>();
             toggle.targetGraphic = row.GetComponent<V3GradientGraphic>();
+            toggle.targetGraphic.raycastTarget = true;
             toggle.transition = Selectable.Transition.None;
             toggle.isOn = true;
             CreateText("Label", row, 12f, 4f, 132f, 38f, label, 16f, accent, TextAlignmentOptions.MidlineLeft, true);
@@ -689,6 +756,7 @@ namespace Game.Editor
             RectTransform rect = CreatePanel(name, parent, x, y, 48f, 48f, RaisedTop, DarkBottom, Cyan, 2f);
             Button button = rect.gameObject.AddComponent<Button>();
             button.targetGraphic = rect.GetComponent<V3GradientGraphic>();
+            button.targetGraphic.raycastTarget = true;
             CreateSolid("Horizontal", rect, 12f, 22f, 24f, 4f, theme.TextPrimary);
             if (plus)
                 CreateSolid("Vertical", rect, 22f, 12f, 4f, 24f, theme.TextPrimary);

@@ -3,9 +3,9 @@ using UnityEngine;
 namespace Game.UI.Runtime
 {
     /// <summary>
-    /// Temporarily applies the compact header spacing from the tutorial target.
-    /// The normal Match HUD ARIA panel is hidden while the larger tutorial panel
-    /// is visible, then every authored header transform is restored on close.
+    /// Compatibility shim for older POP13 prefabs. Tutorial guidance now stays in
+    /// the permanent Match HUD ARIA panel, so opening a command-assistant surface
+    /// must never move the header or hide that panel.
     /// </summary>
     [DefaultExecutionOrder(2000)]
     [DisallowMultipleComponent]
@@ -25,24 +25,7 @@ namespace Game.UI.Runtime
 
         public void RefreshLayout()
         {
-            if (_takeoverSurface == null)
-                _takeoverSurface = FindNamedRect(transform, "AssistantTakeoverSurface");
-            if (_takeoverSurface != null && _takeoverSurface.gameObject.activeSelf)
-            {
-                RestoreHeader();
-                return;
-            }
-
-            if (!_captured && !TryCaptureHeader())
-                return;
-
-            float extra = _tutorialLayout != null ? _tutorialLayout.LastAppliedExtraWidth : 0f;
-            float centerOffset = extra * .5f;
-            ApplyTopLeft(_resourceStrip, 369f + centerOffset, 10f, 600f, 71f);
-            ApplyTopLeft(_settingsButton, 978f + centerOffset, 10f, 66f, 63f);
-            ApplyTopLeft(_pauseButton, 1054f + centerOffset, 10f, 65f, 63f);
-            if (_embeddedAria != null && _embeddedAria.gameObject.activeSelf)
-                _embeddedAria.gameObject.SetActive(false);
+            RestoreHeader();
         }
 
         public void RestoreLayout()

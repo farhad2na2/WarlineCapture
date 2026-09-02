@@ -50,7 +50,14 @@ namespace Game.Editor
                     .Configure(Reference, MainMenuV3SectionAlignment.Center);
                 BuildAppHeader(composition);
                 FrameBindings frame = BuildUnlockFrame(composition);
-                popup.Configure(null, frame.Frame.gameObject, frame.Header.gameObject, frame.Title, null, frame.Body, frame.ButtonRow);
+                popup.Configure(
+                    null,
+                    frame.Frame.gameObject,
+                    frame.Header.gameObject,
+                    frame.Title,
+                    frame.ContinueButton,
+                    frame.Body,
+                    frame.ButtonRow);
                 PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             }
             finally
@@ -86,6 +93,9 @@ namespace Game.Editor
                 throw new InvalidOperationException("Reward Unlock V3 ranger plate must preserve aspect ratio.");
             if (Find(prefab.transform, "ContinueButton")?.GetComponent<Button>() == null)
                 throw new MissingReferenceException("Reward Unlock V3 Continue action is missing.");
+            Button continueButton = Find(prefab.transform, "ContinueButton").GetComponent<Button>();
+            if (prefab.GetComponent<UIPopupFrameView>().CloseButton != continueButton)
+                throw new MissingReferenceException("Reward Unlock V3 Continue action must dismiss the popup.");
             int gradients = prefab.GetComponentsInChildren<V3GradientGraphic>(true).Length;
             if (gradients < 10)
                 throw new InvalidOperationException($"Reward Unlock V3 requires procedural gradients; found {gradients}.");
@@ -117,6 +127,7 @@ namespace Game.Editor
             RectTransform settings = CreatePanel("SettingsButton", parent, 1555f, 18f, 95f, 80f, DarkTop, DarkBottom, Line, 3f);
             Button button = settings.gameObject.AddComponent<Button>();
             button.targetGraphic = settings.GetComponent<V3GradientGraphic>();
+            button.targetGraphic.raycastTarget = true;
             Image settingsIcon = CreateImage("Icon", settings, catalog.SettingsIcon, theme.TextPrimary);
             SetTopLeft(settingsIcon.rectTransform, 23f, 16f, 49f, 49f);
         }
@@ -166,10 +177,11 @@ namespace Game.Editor
                 new Color32(73, 146, 38, 255), new Color32(18, 65, 20, 255), Green, 3f);
             Button continueButton = continueRect.gameObject.AddComponent<Button>();
             continueButton.targetGraphic = continueRect.GetComponent<V3GradientGraphic>();
+            continueButton.targetGraphic.raycastTarget = true;
             CreateText(continueRect, "LabelText", 255f, 8f, 570f, 90f, "CONTINUE", 57f, theme.TextPrimary, TextAlignmentOptions.Center, true);
             Image chevrons = CreateImage("Icon", continueRect, RequireSprite(V3UiFoundationBuilder.CampaignLaunchIconPath), Amber);
             SetTopLeft(chevrons.rectTransform, 947f, 26f, 70f, 60f);
-            return new FrameBindings(frame, header, title, body, buttonRow);
+            return new FrameBindings(frame, header, title, body, buttonRow, continueButton);
         }
 
         private static void BuildRewardCard(Transform parent, string name, float x, float y, float width, string label, string value, Sprite sprite, Color accent)
@@ -355,13 +367,21 @@ namespace Game.Editor
             public readonly TMP_Text Title;
             public readonly RectTransform Body;
             public readonly RectTransform ButtonRow;
-            public FrameBindings(RectTransform frame, RectTransform header, TMP_Text title, RectTransform body, RectTransform buttonRow)
+            public readonly Button ContinueButton;
+            public FrameBindings(
+                RectTransform frame,
+                RectTransform header,
+                TMP_Text title,
+                RectTransform body,
+                RectTransform buttonRow,
+                Button continueButton)
             {
                 Frame = frame;
                 Header = header;
                 Title = title;
                 Body = body;
                 ButtonRow = buttonRow;
+                ContinueButton = continueButton;
             }
         }
     }

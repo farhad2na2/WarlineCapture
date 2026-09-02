@@ -4,6 +4,7 @@ using Game.Editor;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
 using NUnit.Framework;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,6 +20,7 @@ public sealed class ArmoryV3PrefabTests
             ArmoryV3PrefabTests tests = new();
             tests.Prefab_UsesSixResponsiveSectionsAndConstantBorders(); passed++;
             tests.Catalog_ReusesRuntimePortraitsAndKeepsFiveWorkingCategories(); passed++;
+            tests.Catalog_ExpandsAcrossWideScreensWithoutClippedLabels(); passed++;
             tests.Navigation_UsesOnlyExpectedV3Routes(); passed++;
             Debug.Log($"[ArmoryV3Validation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -27,6 +29,41 @@ public sealed class ArmoryV3PrefabTests
         {
             Debug.LogError($"[ArmoryV3Validation] result=Failed passed={passed}\n{exception}");
             ValidationExit.Exit(1);
+        }
+    }
+
+    [Test]
+    public void Catalog_ExpandsAcrossWideScreensWithoutClippedLabels()
+    {
+        GameObject prefab = RequirePrefab();
+        ArmoryV3ResponsiveCatalogGrid responsive =
+            prefab.GetComponentInChildren<ArmoryV3ResponsiveCatalogGrid>(true);
+        Assert.NotNull(responsive);
+        Assert.AreEqual(4, responsive.ColumnCount);
+
+        Transform viewport = Find(prefab.transform, "CatalogViewport");
+        Transform grid = Find(prefab.transform, "CatalogGrid");
+        Assert.NotNull(viewport);
+        Assert.NotNull(grid);
+        RectTransform gridRect = (RectTransform)grid;
+        Assert.AreEqual(0f, gridRect.anchorMin.x);
+        Assert.AreEqual(1f, gridRect.anchorMax.x);
+
+        Transform item = Find(prefab.transform, "ItemView");
+        TMP_Text cardTitle = Find(item, "TitleText").GetComponent<TMP_Text>();
+        Assert.IsTrue(cardTitle.enableAutoSizing);
+        Assert.AreEqual(TextOverflowModes.Overflow, cardTitle.overflowMode);
+
+        Transform inspection = Find(prefab.transform, "InspectionPanel");
+        TMP_Text detailTitle = Find(inspection, "TitleText").GetComponent<TMP_Text>();
+        Assert.IsTrue(detailTitle.enableAutoSizing);
+        Assert.AreEqual(TextOverflowModes.Overflow, detailTitle.overflowMode);
+
+        foreach (string tabName in new[] { "UnitsTab", "VehiclesTab", "AircraftTab", "BuildingsTab", "UpgradesTab" })
+        {
+            TMP_Text label = Find(Find(prefab.transform, tabName), "Label").GetComponent<TMP_Text>();
+            Assert.IsTrue(label.enableAutoSizing, tabName);
+            Assert.AreEqual(TextOverflowModes.Overflow, label.overflowMode, tabName);
         }
     }
 
@@ -111,7 +148,10 @@ public sealed class ArmoryV3PrefabTests
             Assert.NotNull(art);
             Assert.IsNull(art.sprite,
                 "Card art must come from the existing runtime catalog, not duplicated prefab textures.");
-            Assert.IsTrue(art.preserveAspect);
+            Assert.IsFalse(art.preserveAspect);
+            AspectRatioFitter fitter = art.GetComponent<AspectRatioFitter>();
+            Assert.NotNull(fitter);
+            Assert.AreEqual(AspectRatioFitter.AspectMode.EnvelopeParent, fitter.aspectMode);
         }
     }
 
@@ -120,7 +160,7 @@ public sealed class ArmoryV3PrefabTests
     {
         GameObject prefab = RequirePrefab();
         AssertRoute(prefab, "BackButton", UiShellRouteIntent.BackMenuRoute, UIRoute.MainMenu);
-        AssertRoute(prefab, "CommanderProfileButton", UiShellRouteIntent.OpenMenuRoute, UIRoute.CommandFeed);
+        AssertRoute(prefab, "CommanderProfileButton", UiShellRouteIntent.OpenMenuRoute, UIRoute.CommanderProfile);
         AssertRoute(prefab, "UpgradeButton", UiShellRouteIntent.OpenMenuRoute, UIRoute.Armory);
         AssertRoute(prefab, "EquipButton", UiShellRouteIntent.OpenMenuRoute, UIRoute.Armory);
 

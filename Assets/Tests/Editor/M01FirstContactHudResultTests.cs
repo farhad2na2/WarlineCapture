@@ -17,7 +17,7 @@ using UnityEngine.UI;
 
 public sealed class M01FirstContactHudResultTests
 {
-    private const string Marker = "[M01FirstContactHudResultValidation] result=Passed tests=11 captures=3";
+    private const string Marker = "[M01FirstContactHudResultValidation] result=Passed tests=12 captures=3 pointerTargets=Passed";
 
     public static void RunFocusedValidation()
     {
@@ -34,6 +34,7 @@ public sealed class M01FirstContactHudResultTests
             Run(ContinueQueuesReturnToMainMenu, ref passed);
             Run(ResultGatewayFormatsOnlyAuthoritativeOutcomeRewards, ref passed);
             Run(PrefabsCarryProductionBindings, ref passed);
+            Run(ResultActionsExposeLivePointerTargets, ref passed);
             Run(ResultPopupCapturesSupportedAspects, ref passed);
             Debug.Log(Marker);
             ValidationExit.Passed();
@@ -174,6 +175,20 @@ public sealed class M01FirstContactHudResultTests
         StringAssert.Contains("settlementAccepted != 0 && settlementFirstClear != 0", source);
     }
 
+    [Test] public static void ResultActionsExposeLivePointerTargets()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+            "Assets/Game/Prefabs/UI/Popups/MissionResultPopup.prefab");
+        Assert.NotNull(prefab);
+
+        Button continueButton = prefab.GetComponentsInChildren<Button>(true)
+            .Single(button => button.name == "ContinueButton");
+        Button retryButton = prefab.GetComponentsInChildren<Button>(true)
+            .Single(button => button.name == "ReplayButton");
+        AssertActionPointerTarget(continueButton);
+        AssertActionPointerTarget(retryButton);
+    }
+
     [Test] public static void ResultPopupCapturesSupportedAspects()
     {
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(
@@ -302,6 +317,18 @@ public sealed class M01FirstContactHudResultTests
     {
         using SHA256 algorithm = SHA256.Create();
         return string.Concat(algorithm.ComputeHash(bytes).Select(value => value.ToString("x2")));
+    }
+
+    private static void AssertActionPointerTarget(Button button)
+    {
+        Assert.NotNull(button.targetGraphic, $"{button.name} must have a target graphic.");
+        Assert.IsTrue(
+            button.targetGraphic.raycastTarget,
+            $"{button.name} target graphic must receive pointer raycasts.");
+        Assert.IsTrue(
+            button.targetGraphic.transform == button.transform ||
+            button.targetGraphic.transform.IsChildOf(button.transform),
+            $"{button.name} target graphic must belong to its button hierarchy.");
     }
 
     private static void Run(Action test, ref int passed) { test(); passed++; }

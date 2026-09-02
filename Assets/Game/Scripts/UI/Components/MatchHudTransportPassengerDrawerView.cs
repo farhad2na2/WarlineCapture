@@ -71,6 +71,9 @@ namespace Game.UI.Runtime
         private RectTransform _boardButton;
         private RectTransform _cameraButton;
         private bool _selectionLayoutCached;
+        private GameObject _threatJumpPanel;
+        private bool _threatJumpPanelWasActive;
+        private bool _threatVisibilityCached;
 
         private void Awake()
         {
@@ -80,6 +83,7 @@ namespace Game.UI.Runtime
 
         private void OnDestroy()
         {
+            RestoreThreatPanel();
             ClearActions();
             UnbindButton(ref _boundExitAllButton, HandleExitAll);
             UnbindButton(ref _boundCloseButton, HandleClose);
@@ -160,6 +164,7 @@ namespace Game.UI.Runtime
                 ApplySelectionLayout(true);
             else if (_selectionLayoutCached)
                 ApplySelectionLayout(false);
+            ApplyThreatOcclusion(visible);
             if (drawerRoot != null)
             {
                 if (drawerRoot.activeSelf != visible)
@@ -169,6 +174,74 @@ namespace Game.UI.Runtime
             {
                 gameObject.SetActive(visible);
             }
+        }
+
+        private void LateUpdate()
+        {
+            bool visible = drawerRoot != null
+                ? drawerRoot.activeInHierarchy
+                : gameObject.activeInHierarchy;
+            if (!visible)
+                return;
+
+            ApplyThreatOcclusion(true);
+            if (_threatJumpPanel != null && _threatJumpPanel.activeSelf)
+                _threatJumpPanel.SetActive(false);
+        }
+
+        private void ApplyThreatOcclusion(bool occluded)
+        {
+            if (!occluded)
+            {
+                RestoreThreatPanel();
+                return;
+            }
+
+            if (_threatJumpPanel == null)
+                _threatJumpPanel = FindThreatJumpPanel();
+            if (_threatJumpPanel == null)
+                return;
+
+            if (!_threatVisibilityCached)
+            {
+                _threatJumpPanelWasActive = _threatJumpPanel.activeSelf;
+                _threatVisibilityCached = true;
+            }
+            if (_threatJumpPanel.activeSelf)
+                _threatJumpPanel.SetActive(false);
+        }
+
+        private void RestoreThreatPanel()
+        {
+            if (_threatVisibilityCached && _threatJumpPanel != null)
+                _threatJumpPanel.SetActive(_threatJumpPanelWasActive);
+            _threatJumpPanel = null;
+            _threatVisibilityCached = false;
+        }
+
+        private GameObject FindThreatJumpPanel()
+        {
+            Canvas canvas = GetComponentInParent<Canvas>();
+            Transform searchRoot = canvas != null && canvas.rootCanvas != null
+                ? canvas.rootCanvas.transform
+                : transform.root;
+            Transform found = FindNamedChild(searchRoot, "ThreatJumpPanel");
+            return found != null ? found.gameObject : null;
+        }
+
+        private static Transform FindNamedChild(Transform root, string targetName)
+        {
+            if (root == null)
+                return null;
+            if (root.name == targetName)
+                return root;
+            for (int i = 0; i < root.childCount; i++)
+            {
+                Transform found = FindNamedChild(root.GetChild(i), targetName);
+                if (found != null)
+                    return found;
+            }
+            return null;
         }
 
         private void EnsureItemPool(int count)

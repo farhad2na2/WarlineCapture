@@ -108,7 +108,7 @@ namespace Game.Editor
         public static void CaptureQa()
         {
             Capture("/private/tmp/warline-splash-v3-16x9.png", 1920, 1080);
-            Capture("/private/tmp/warline-splash-v3-20x9.png", 2400, 1080);
+            Capture("/private/tmp/warline-splash-v3-20x9.png", 4800, 2160);
             Debug.Log("[SplashLoadingV3PrefabBuilder] QA captures written to /private/tmp.");
         }
 
@@ -145,6 +145,26 @@ namespace Game.Editor
             BuildStatusChip("SecureLinkChip", chromeReference, 1254f, 21f, 282f, 70f, "SECURE LINK", new Color32(132, 202, 38, 255), CreateLockIcon);
             BuildSignalOnlyChip(chromeReference);
             BuildFooter(chromeReference, progressView);
+
+            Transform footer = FindDeepChild(chromeReference, "IntegratedLoadingFooter");
+            chromeLayout.Configure(
+                ReferenceResolution,
+                MainMenuV3SectionAlignment.Center,
+                new[]
+                {
+                    FindDeepChild(chromeReference, "AndroidBuildChip") as RectTransform,
+                    FindDeepChild(chromeReference, "SecureLinkChip") as RectTransform,
+                    FindDeepChild(chromeReference, "SignalStrengthChip") as RectTransform,
+                    FindDeepChild(footer, "LoadingPercent") as RectTransform,
+                    FindDeepChild(footer, "TipLabel") as RectTransform,
+                    FindDeepChild(footer, "TipText") as RectTransform
+                },
+                true,
+                null,
+                new[]
+                {
+                    FindDeepChild(footer, "ProgressTrack") as RectTransform
+                });
         }
 
         private static void BuildLogoPlate(Transform root)
@@ -236,8 +256,18 @@ namespace Game.Editor
 
             for (int i = 1; i < 6; i++)
             {
-                float segmentX = 1597f * i / 6f;
-                CreateSolidTopLeft("SegmentDivider" + i, track, segmentX, 2f, 3f, 31f, new Color32(4, 16, 20, 220));
+                float normalizedX = i / 6f;
+                Image divider = CreateImage(
+                    "SegmentDivider" + i,
+                    track,
+                    null,
+                    new Color32(4, 16, 20, 220));
+                SetRect(
+                    divider.rectTransform,
+                    new Vector2(normalizedX, 0.5f),
+                    new Vector2(normalizedX, 0.5f),
+                    new Vector2(3f, 31f),
+                    Vector2.zero);
             }
 
             RectTransform spinner = CreateTopLeftRect("LoadingSpinner", footer, 38f, 155f, 39f, 39f);

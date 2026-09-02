@@ -61,8 +61,10 @@ namespace Game.Editor
             RectTransform rootRect = CreateRect("SCN14_StoreCommandExchangeContent", null, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             GameObject root = rootRect.gameObject;
             StoreCommandExchangeV3View view = root.AddComponent<StoreCommandExchangeV3View>();
-            Image black = CreateImage("CanvasBlack", root.transform, null, Color.black, false);
-            Stretch(black.rectTransform);
+            RawImage backdrop = CreateRaw("CanvasBackdrop", root.transform, depotArt.texture, new Color(.72f, .69f, .62f, 1f));
+            Stretch(backdrop.rectTransform);
+            AddCover(backdrop, depotArt.texture);
+            CreateOverlay("CanvasShade", root.transform, new Color(0f, 0f, 0f, .28f), new Color(0f, 0f, 0f, .58f));
             RectTransform composition = CreateTopLeft("StoreComposition", root.transform, 0f, 0f, ReferenceResolution.x, ReferenceResolution.y);
 
             var rightTargets = new List<RectTransform>();
@@ -134,7 +136,7 @@ namespace Game.Editor
                 throw new InvalidOperationException("Store purchase must remain disabled until the receipt/reward service chain exists.");
             Require(prefab.transform, "StoreComposition/Header/StoreBrand");
             Require(prefab.transform, "StoreComposition/CategoryRail/Category_0");
-            Require(prefab.transform, "StoreComposition/OffersPanel/Offer_0");
+            Require(prefab.transform, "StoreComposition/OffersPanel/OfferSlot_0");
             RawImage detailArtImage = Require(prefab.transform, "StoreComposition/DetailPanel/DetailArtClip/DetailArt").GetComponent<RawImage>();
             if (detailArtImage == null || detailArtImage.GetComponent<AspectRatioFitter>()?.aspectMode != AspectRatioFitter.AspectMode.EnvelopeParent)
                 throw new InvalidOperationException("Store detail art must crop without stretching.");
@@ -271,6 +273,9 @@ namespace Game.Editor
                 }
                 TMP_Text label = CreateText("Label", button.transform, labels[i], i == 1 ? 22f : 24f, boldFont, TextAlignmentOptions.MidlineLeft, TextPrimary);
                 SetTopLeft(label.rectTransform, 102f, 7f, 150f, 86f);
+                label.enableAutoSizing = true;
+                label.fontSizeMin = 15f;
+                label.fontSizeMax = i == 1 ? 22f : 24f;
             }
         }
 
@@ -383,15 +388,16 @@ namespace Game.Editor
         {
             Button back = CreateButton("BackButton", root, 9f, 802f, 331f, 115f, RaisedTop, RaisedBottom, Border, 3f);
             back.gameObject.AddComponent<UIShellRouteButtonView>().Configure(UiShellRouteIntent.BackMenuRoute, UIRoute.MainMenu, false);
-            CreateBackIcon(back.transform, TextPrimary);
+            Image backIcon = CreateImage("BackIcon", back.transform, RequireSprite(V3UiFoundationBuilder.CommanderBackIconPath), TextPrimary, false);
+            SetTopLeft(backIcon.rectTransform, 38f, 28f, 72f, 60f);
             TMP_Text backText = CreateText("Label", back.transform, "BACK", 39f, boldFont, TextAlignmentOptions.Center, TextPrimary);
             SetTopLeft(backText.rectTransform, 115f, 10f, 192f, 92f);
 
             RectTransform eligibility = CreateTopLeft("EligibilityPanel", root, 350f, 802f, 600f, 115f);
             CreateGradient(eligibility, DarkTop, DarkBottom, Border, 3f);
             widthTargets.Add(eligibility);
-            RectTransform shield = CreateTopLeft("Shield", eligibility, 26f, 20f, 62f, 73f);
-            CreateShieldIcon(shield, TextPrimary);
+            Image shield = CreateImage("Shield", eligibility, RequireSprite(V3UiFoundationBuilder.CommanderBadgeIconPath), TextPrimary, false);
+            SetTopLeft(shield.rectTransform, 26f, 20f, 62f, 73f);
             TMP_Text level = CreateText("Eligibility", eligibility, "AVAILABLE FOR LEVELS 1 - 8", 27f, boldFont, TextAlignmentOptions.MidlineLeft, TextPrimary);
             SetHorizontalStretch(level.rectTransform, 111f, 15f, 9f, 45f);
             TMP_Text reason = CreateText("UnavailableReason", eligibility, "Purchases unavailable until secure receipt services are connected.", 15f, mediumFont, TextAlignmentOptions.MidlineLeft, TextMuted);
@@ -434,10 +440,22 @@ namespace Game.Editor
 
         private static void CreateCloseIcon(Transform parent, Color color)
         {
-            Image first = CreateSolid("CloseA", parent, 29f, 42f, 36f, 6f, color);
-            Image second = CreateSolid("CloseB", parent, 29f, 42f, 36f, 6f, color);
-            first.rectTransform.localRotation = Quaternion.Euler(0f, 0f, 45f);
-            second.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -45f);
+            CreateStroke("CloseA", parent, new Vector2(28f, 27f), new Vector2(64f, 62f), 7f, color);
+            CreateStroke("CloseB", parent, new Vector2(64f, 27f), new Vector2(28f, 62f), 7f, color);
+        }
+
+        private static Image CreateStroke(string name, Transform parent, Vector2 start, Vector2 end, float thickness, Color color)
+        {
+            Vector2 screenDelta = end - start;
+            Vector2 localDelta = new(screenDelta.x, -screenDelta.y);
+            Image stroke = CreateImage(name, parent, null, color, false);
+            RectTransform rect = stroke.rectTransform;
+            rect.anchorMin = rect.anchorMax = new Vector2(0f, 1f);
+            rect.pivot = new Vector2(.5f, .5f);
+            rect.anchoredPosition = new Vector2((start.x + end.x) * .5f, -(start.y + end.y) * .5f);
+            rect.sizeDelta = new Vector2(localDelta.magnitude, thickness);
+            rect.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(localDelta.y, localDelta.x) * Mathf.Rad2Deg);
+            return stroke;
         }
 
         private static void CreateBackIcon(Transform parent, Color color)

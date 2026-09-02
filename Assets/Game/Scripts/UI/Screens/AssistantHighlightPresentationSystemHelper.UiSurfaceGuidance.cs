@@ -156,23 +156,23 @@ namespace Game.UI.Runtime
         {
             if (model.TargetKind == UiSurfaceTargetKind &&
                 model.RecommendationKind == BuildRecommendationKind)
-                return "OPEN BUILD\n\u25bc";
+                return "OPEN BUILD";
             if (model.TargetKind == UiSurfaceTargetKind &&
                 model.RecommendationKind == SelectRecommendationKind)
-                return "SELECT BARRACKS\n\u25bc";
+                return "SELECT BARRACKS";
             if (model.TargetKind == UiSurfaceTargetKind &&
                 model.RecommendationKind == ExplainRecommendationKind)
-                return "RESOURCE SPEND\n\u25bc";
+                return "RESOURCE SPEND";
             if (model.TargetKind == UiSurfaceTargetKind &&
                 model.RecommendationKind == ProduceRecommendationKind)
-                return "QUEUE RIFLE\n\u25bc";
+                return "QUEUE RIFLE";
             if (model.RecommendationKind == SelectRecommendationKind)
-                return "SELECT SQUAD\n\u25bc";
+                return "SELECT SQUAD";
             if (model.RecommendationKind == MoveRecommendationKind)
-                return commandCue ? "PRESS MOVE\n\u25bc" : "CLICK DESTINATION\n\u25bc";
+                return commandCue ? "PRESS MOVE" : "CLICK DESTINATION";
             if (model.RecommendationKind == AttackRecommendationKind)
-                return commandCue ? "PRESS ATTACK\n\u25bc" : "CLICK ENEMY\n\u25bc";
-            return "ARIA TARGET\n\u25bc";
+                return commandCue ? "PRESS ATTACK" : "CLICK ENEMY";
+            return "ARIA TARGET";
         }
 
         private void AcknowledgeBuildButton()

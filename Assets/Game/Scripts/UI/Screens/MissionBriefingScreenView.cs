@@ -89,14 +89,15 @@ namespace Game.UI.Runtime
                 missionArtImage.texture = m02 ? m02MissionArt : m01MissionArt;
             string title = _gameTextResolver.Get(model.DisplayNameKey, MissionTitleFromId(model.MissionId));
             Set(missionTitle, title.ToUpperInvariant());
-            string summary = v3TargetLayout && m02
+            string summaryFallback = v3TargetLayout && m02
                 ? "Reopen the abandoned JRC forward post before the Ash Line reaches it. Establish a foothold and prepare for incoming threats."
-                : _gameTextResolver.Get(model.DisplaySummaryKey, SummaryFallback(model.MissionId));
+                : SummaryFallback(model.MissionId);
+            string summary = _gameTextResolver.Get(model.DisplaySummaryKey, summaryFallback);
             Set(missionSummary, v3TargetLayout ? summary : $"BRIEFING: {summary}");
             Set(locationLabel, $"LOCATION: {_gameTextResolver.Get(model.LocationNameKey, LocationFallback(model.MissionId))}");
             for (int index = 0; index < (objectiveLabels?.Length ?? 0); index++)
-                Set(objectiveLabels[index], v3TargetLayout
-                    ? V3Objective(index, m02)
+                Set(objectiveLabels[index], v3TargetLayout && m02
+                    ? V3Objective(index, true, _gameTextResolver)
                     : index < model.Objectives.Length
                         ? FormatObjective(in model.Objectives[index], _gameTextResolver)
                         : string.Empty);
@@ -111,7 +112,7 @@ namespace Game.UI.Runtime
                 v3TargetLayout && m02 ? "TUTORIAL CELL" : enemyIntelFallback));
             for (int index = 0; index < (rewardLabels?.Length ?? 0); index++)
             {
-                bool visible = v3TargetLayout ? index < 3 : index < model.Rewards.Length;
+                bool visible = index < model.Rewards.Length;
                 if (rewardRows != null && index < rewardRows.Length && rewardRows[index] != null)
                     rewardRows[index].gameObject.SetActive(visible);
                 if (!visible)
@@ -123,9 +124,24 @@ namespace Game.UI.Runtime
                 }
                 if (v3TargetLayout)
                 {
-                    Set(rewardLabels[index], index switch { 0 => "COMMANDER XP", 1 => "CREDITS", _ => "BARRACK" });
+                    UiMissionRewardModel reward = model.Rewards[index];
+                    string rewardKey = m02 ? index switch
+                    {
+                        0 => "mission.reward.commander_xp",
+                        1 => "mission.reward.credits",
+                        _ => "mission.m02.reward.barracks_unlock"
+                    } : reward.DisplayTextKey;
+                    string rewardFallback = m02 ? index switch
+                    {
+                        0 => "COMMANDER XP",
+                        1 => "CREDITS",
+                        _ => "BARRACK"
+                    } : RewardLabel(in reward, _gameTextResolver);
+                    Set(rewardLabels[index], _gameTextResolver.Get(rewardKey, rewardFallback).ToUpperInvariant());
                     if (rewardValues != null && index < rewardValues.Length)
-                        Set(rewardValues[index], index switch { 0 => "+260", 1 => "+1,500", _ => "UNLOCK" });
+                        Set(rewardValues[index], m02 && index == 2
+                            ? _gameTextResolver.Get("mission.reward.unlock", "UNLOCK").ToUpperInvariant()
+                            : $"+{reward.Amount:N0}");
                 }
                 else
                 {
@@ -183,23 +199,31 @@ namespace Game.UI.Runtime
             return gameTextResolver.Get(objective.DisplayTextKey, fallback).ToUpperInvariant();
         }
 
-        private static string V3Objective(int index, bool m02)
+        private static string V3Objective(
+            int index,
+            bool m02,
+            IGameTextResolver gameTextResolver)
         {
             if (!m02)
-                return index switch
-                {
-                    0 => "SECURE OLD MARKET",
-                    1 => "PROTECT CIVILIAN ROUTE",
-                    2 => "DEFEAT HOSTILE PATROL",
-                    _ => "KEEP COMMAND SQUAD ALIVE"
-                };
-            return index switch
             {
-                0 => "RESTORE COMMAND POST",
-                1 => "BUILD BARRACK",
-                2 => "PRODUCE RIFLE SQUAD",
-                _ => "HOLD PERIMETER"
+                (string key, string fallback) = index switch
+                {
+                    0 => ("mission.m01.objective.secure_old_market", "SECURE OLD MARKET"),
+                    1 => ("mission.m01.objective.protect_civilian_route", "PROTECT CIVILIAN ROUTE"),
+                    2 => ("mission.m01.objective.defeat_hostile_patrol", "DEFEAT HOSTILE PATROL"),
+                    _ => ("mission.m01.objective.keep_command_squad_alive", "KEEP COMMAND SQUAD ALIVE")
+                };
+                return gameTextResolver.Get(key, fallback).ToUpperInvariant();
+            }
+
+            (string m02Key, string m02Fallback) = index switch
+            {
+                0 => ("mission.m02.objective.restore_command_post", "RESTORE COMMAND POST"),
+                1 => ("mission.m02.objective.build_forward_barracks", "BUILD BARRACK"),
+                2 => ("mission.m02.objective.produce_rifle_squad", "PRODUCE RIFLE SQUAD"),
+                _ => ("mission.m02.objective.defend_forward_post", "HOLD PERIMETER")
             };
+            return gameTextResolver.Get(m02Key, m02Fallback).ToUpperInvariant();
         }
 
         private static string RewardLabel(
@@ -218,12 +242,19 @@ namespace Game.UI.Runtime
         {
             if (v3TargetLayout)
             {
-                SetAt(conditionNameLabels, 0, "CIVILIAN RISK");
-                SetAt(conditionLabels, 0, m02 ? "MED" : "LOW");
-                SetAt(conditionNameLabels, 1, "INTEL CONFIDENCE");
-                SetAt(conditionLabels, 1, "HIGH");
-                SetAt(conditionNameLabels, 2, "VISIBILITY");
-                SetAt(conditionLabels, 2, "CLEAR");
+                SetAt(conditionNameLabels, 0, _gameTextResolver.Get(
+                    "mission.condition.civilian_risk", "CIVILIAN RISK").ToUpperInvariant());
+                SetAt(conditionLabels, 0, _gameTextResolver.Get(
+                    m02 ? "mission.condition.risk.medium" : "mission.condition.risk.low",
+                    m02 ? "MED" : "LOW").ToUpperInvariant());
+                SetAt(conditionNameLabels, 1, _gameTextResolver.Get(
+                    "mission.condition.intel_confidence", "INTEL CONFIDENCE").ToUpperInvariant());
+                SetAt(conditionLabels, 1, _gameTextResolver.Get(
+                    "mission.condition.confidence.high", "HIGH").ToUpperInvariant());
+                SetAt(conditionNameLabels, 2, _gameTextResolver.Get(
+                    "mission.condition.visibility", "VISIBILITY").ToUpperInvariant());
+                SetAt(conditionLabels, 2, _gameTextResolver.Get(
+                    "mission.condition.visibility.clear", "CLEAR").ToUpperInvariant());
                 return;
             }
             if (m02)

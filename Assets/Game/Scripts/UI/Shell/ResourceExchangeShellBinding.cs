@@ -9,6 +9,7 @@ namespace Game.UI.Runtime
         private GameObject _instance;
         private ResourceExchangePopupView _view;
         private Button _closeButton;
+        private Button _footerCloseButton;
         private UnityAction _closeListener;
 
         public GameObject Install(
@@ -80,14 +81,23 @@ namespace Game.UI.Runtime
             _closeListener = closeRequested;
             _closeButton.onClick.RemoveListener(_closeListener);
             _closeButton.onClick.AddListener(_closeListener);
+            _footerCloseButton = view.FooterCancelButton;
+            if (_footerCloseButton != null)
+            {
+                _footerCloseButton.onClick.RemoveListener(_closeListener);
+                _footerCloseButton.onClick.AddListener(_closeListener);
+            }
         }
 
         private void UnbindCloseButton()
         {
             if (_closeButton != null && _closeListener != null)
                 _closeButton.onClick.RemoveListener(_closeListener);
+            if (_footerCloseButton != null && _closeListener != null)
+                _footerCloseButton.onClick.RemoveListener(_closeListener);
 
             _closeButton = null;
+            _footerCloseButton = null;
             _closeListener = null;
         }
     }

@@ -29,6 +29,7 @@ public sealed class OperationsDashboardScreenTests
             Run(nameof(MenuSceneRoutesOperationsWithoutReplacingSharedHeader), test => test.MenuSceneRoutesOperationsWithoutReplacingSharedHeader(), ref passed);
             Run(nameof(MainMenuOperationsCardAndBackUseShellHistory), test => test.MainMenuOperationsCardAndBackUseShellHistory(), ref passed);
             Run(nameof(OperationsPrefabUsesProductionArtAndHonestActionStates), test => test.OperationsPrefabUsesProductionArtAndHonestActionStates(), ref passed);
+            Run(nameof(RaidAndEndDayButtonsMountSharedV3Popups), test => test.RaidAndEndDayButtonsMountSharedV3Popups(), ref passed);
             Run(nameof(TargetLocksAreStoredUnderVisualLockLayered), test => test.TargetLocksAreStoredUnderVisualLockLayered(), ref passed);
             Debug.Log($"[OperationsDashboardScreenValidation] result=Passed tests={passed}");
             EditorApplication.Exit(0);
@@ -59,7 +60,7 @@ public sealed class OperationsDashboardScreenTests
         Assert.NotNull(content);
         Assert.NotNull(content.OperationsContentPrefab, "Menu scene must assign the SCN-11 Operations Dashboard prefab.");
         Assert.AreEqual("SCN11_OperationsDashboardContent", content.OperationsContentPrefab.name);
-        Assert.NotNull(content.OperationsContentPrefab.GetComponent<OperationsDashboardScreenView>());
+        Assert.NotNull(content.OperationsContentPrefab.GetComponentInChildren<OperationsDashboardScreenView>(true));
 
         content.PrepareForCommandSequence(new[]
         {
@@ -76,7 +77,7 @@ public sealed class OperationsDashboardScreenTests
         AssertRegionIsEmpty(content.ShellView, UIShellRegionId.RightRegion);
         AssertRegionIsEmpty(content.ShellView, UIShellRegionId.FooterRegion);
         GameObject dashboard = AssertRegionHasChild(content.ShellView, UIShellRegionId.PopupLayer);
-        Assert.NotNull(dashboard.GetComponent<OperationsDashboardScreenView>());
+        Assert.NotNull(dashboard.GetComponentInChildren<OperationsDashboardScreenView>(true));
     }
 
     [Test]
@@ -134,7 +135,7 @@ public sealed class OperationsDashboardScreenTests
             });
             flowSystem.Update(_world.Unmanaged);
 
-            OperationsDashboardScreenView operations = operationsInstance.GetComponent<OperationsDashboardScreenView>();
+            OperationsDashboardScreenView operations = operationsInstance.GetComponentInChildren<OperationsDashboardScreenView>(true);
             Assert.NotNull(operations);
             RebindRouteButton(operations.BackRouteButton);
             operations.BackRouteButton.GetComponent<Button>().onClick.Invoke();
@@ -156,7 +157,7 @@ public sealed class OperationsDashboardScreenTests
     {
         Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
         UIShellContentView content = ResolveComponentInScene<UIShellContentView>(scene);
-        OperationsDashboardScreenView view = content.OperationsContentPrefab.GetComponent<OperationsDashboardScreenView>();
+        OperationsDashboardScreenView view = content.OperationsContentPrefab.GetComponentInChildren<OperationsDashboardScreenView>(true);
         Assert.NotNull(view);
         Assert.IsNull(
             content.OperationsContentPrefab.transform.Find("BodyScrim"),
@@ -168,30 +169,47 @@ public sealed class OperationsDashboardScreenTests
         Assert.NotNull(view.CommandBar);
         Assert.AreEqual(5, view.ReadinessCards.Length);
         Assert.AreEqual(5, view.DistrictButtons.Length);
-        Assert.AreEqual(4, view.WarningButtons.Length);
+        Assert.AreEqual(3, view.WarningButtons.Length);
         AssertAllAssigned(view.ReadinessCards, "readiness row");
         AssertAllAssigned(view.DistrictButtons, "district button");
         AssertAllAssigned(view.WarningButtons, "warning button");
 
         Assert.AreEqual(
-            "Assets/Game/Art/UI/Generated/CampaignOperations/TargetLockV01/scn05_sahrin_district_map_v01.png",
+            "Assets/Game/Art/UI/V3Shared/CampaignScenes/SCN05_SahrinMissionMap_V3.png",
             AssetDatabase.GetAssetPath(view.DistrictMapImage.texture));
         Assert.AreEqual(
             "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold SDF.asset",
             AssetDatabase.GetAssetPath(view.ScreenTitle.font));
-        Assert.GreaterOrEqual(view.ScreenTitle.fontSize, 110f);
-        Assert.GreaterOrEqual(view.DayLabel.fontSize, 44f);
+        Assert.GreaterOrEqual(view.ScreenTitle.fontSize, 50f);
+        Assert.GreaterOrEqual(view.DayLabel.fontSize, 24f);
 
-        Assert.IsFalse(view.IntelReportButton.interactable);
-        Assert.IsTrue(view.BlackMarketButton.interactable);
+        Assert.IsTrue(view.IntelReportButton.interactable);
+        Assert.IsTrue(view.PatrolButton.interactable);
         Assert.IsTrue(view.ArmoryButton.interactable);
-        Assert.IsFalse(view.CommandLogButton.interactable);
-        Assert.IsFalse(view.EndDayButton.interactable);
-        AssertAllNonInteractable(view.DistrictButtons, "district detail must stay unavailable until SCN-12 exists");
-        AssertAllNonInteractable(view.WarningButtons, "warning detail must stay unavailable until its route exists");
+        Assert.IsTrue(view.RaidButton.interactable);
+        Assert.IsTrue(view.RepairButton.interactable);
+        Assert.IsTrue(view.EndDayButton.interactable);
+        AssertAllInteractable(view.DistrictButtons, "district detail hotspot");
+        AssertAllInteractable(view.WarningButtons, "warning detail hotspot");
 
-        AssertRoute(view.BlackMarketButton, UIRoute.CommandExchange);
+        AssertRoute(view.IntelReportButton, UIRoute.CommandFeed);
+        AssertRoute(view.PatrolButton, UIRoute.DistrictDetail);
+        AssertRoute(view.RepairButton, UIRoute.DistrictDetail);
         AssertRoute(view.ArmoryButton, UIRoute.Armory);
+        Assert.NotNull(view.ConfirmRaidPopupPrefab);
+        Assert.NotNull(view.ConfirmRaidPopupPrefab.GetComponent<ConfirmRaidV3PopupView>());
+        Assert.NotNull(view.EndOfDayReportPopupPrefab);
+        Assert.NotNull(view.EndOfDayReportPopupPrefab.GetComponent<EndOfDayReportPopupView>());
+
+        MainMenuV3SectionLayoutView responsive = content.OperationsContentPrefab.GetComponentInChildren<MainMenuV3SectionLayoutView>(true);
+        Assert.NotNull(responsive);
+        Assert.IsTrue(responsive.ExpandToCanvasWidth);
+        Assert.AreEqual(new Vector2(1672f, 941f), responsive.ReferenceResolution);
+        Assert.AreEqual(6, responsive.RightAnchoredTargets.Length);
+        OperationsDashboardMapResponsiveView mapResponsive = content.OperationsContentPrefab.GetComponentInChildren<OperationsDashboardMapResponsiveView>(true);
+        Assert.NotNull(mapResponsive);
+        Assert.AreEqual(5, mapResponsive.DistrictZones.Length);
+        Assert.AreEqual(5, mapResponsive.DistrictMarkers.Length);
     }
 
     [Test]
@@ -199,7 +217,48 @@ public sealed class OperationsDashboardScreenTests
     {
         AssertTargetLockExists("Design/VisualLockLayered/SCN-05_CampaignOperations/reference/SCN-05_CampaignOperations_CommandBase_TargetLock_V01.png");
         AssertTargetLockExists("Design/VisualLockLayered/SCN-06_MissionBriefing/reference/SCN-06_MissionBriefing_CommandBase_TargetLock_V01.png");
-        AssertTargetLockExists("Design/VisualLockLayered/SCN-11_OperationsDashboard/reference/SCN-11_OperationsDashboard_CommandBase_TargetLock_V01.png");
+        AssertTargetLockExists("Design/VisualLockLayered/SCN-11_OperationsDashboard/reference/SCN-11_OperationsDashboardV3_Final_Target.png");
+    }
+
+    [Test]
+    public void RaidAndEndDayButtonsMountSharedV3Popups()
+    {
+        Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
+        UIShellContentView content = ResolveComponentInScene<UIShellContentView>(scene);
+        Assert.NotNull(content);
+
+        AssertModalMounts<ConfirmRaidV3PopupView>(content.OperationsContentPrefab, view => view.RaidButton);
+        AssertModalMounts<EndOfDayReportPopupView>(content.OperationsContentPrefab, view => view.EndDayButton);
+    }
+
+    private static void AssertModalMounts<T>(
+        GameObject operationsPrefab,
+        Func<OperationsDashboardScreenView, Button> resolveButton)
+        where T : Component
+    {
+        GameObject canvasObject = new GameObject("OperationsActionTestCanvas", typeof(RectTransform), typeof(Canvas));
+        GameObject instance = null;
+        try
+        {
+            canvasObject.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
+            instance = UnityEngine.Object.Instantiate(operationsPrefab, canvasObject.transform, false);
+            OperationsDashboardScreenView view = instance.GetComponentInChildren<OperationsDashboardScreenView>(true);
+            Assert.NotNull(view);
+            view.RefreshBindings();
+            Button button = resolveButton(view);
+            Assert.NotNull(button);
+            button.onClick.Invoke();
+
+            T modal = canvasObject.GetComponentInChildren<T>(true);
+            Assert.NotNull(modal, $"{button.name} must mount the shared {typeof(T).Name} prefab.");
+            Assert.IsTrue(modal.gameObject.activeSelf);
+        }
+        finally
+        {
+            if (instance != null)
+                UnityEngine.Object.DestroyImmediate(instance);
+            UnityEngine.Object.DestroyImmediate(canvasObject);
+        }
     }
 
     private static void AssertRoute(Button button, UIRoute route)
@@ -264,10 +323,10 @@ public sealed class OperationsDashboardScreenTests
             Assert.NotNull(values[i], $"Missing {label} at index {i}.");
     }
 
-    private static void AssertAllNonInteractable(Button[] buttons, string message)
+    private static void AssertAllInteractable(Button[] buttons, string message)
     {
         for (int i = 0; i < buttons.Length; i++)
-            Assert.IsFalse(buttons[i].interactable, $"{message}; index={i}");
+            Assert.IsTrue(buttons[i].interactable, $"{message}; index={i}");
     }
 
     private static UIShellRouteButtonView ResolveRoute(

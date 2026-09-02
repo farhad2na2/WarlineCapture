@@ -185,8 +185,6 @@ namespace Game.UI.Runtime
             _hierarchyBound = _landscapeLayout != null &&
                               _commandAssistantPanel != null &&
                               _assistantTakeoverSurface != null &&
-                              _tutorialBriefing != null &&
-                              _tutorialBriefing.TryBindHierarchy() &&
                               _headerCloseButton != null &&
                               _closeButton != null &&
                               _showMeButton != null &&
@@ -228,10 +226,13 @@ namespace Game.UI.Runtime
             _doItButton.onClick.AddListener(RequestExecuteRecommendation);
             _stopButton.onClick.AddListener(RequestStop);
             _resumeCommandButton.onClick.AddListener(RequestStop);
-            _tutorialBriefing.BindActions(
-                RequestClose,
-                RequestShowRecommendation,
-                RequestExecuteRecommendation);
+            if (_tutorialBriefing != null && _tutorialBriefing.TryBindHierarchy())
+            {
+                _tutorialBriefing.BindActions(
+                    RequestClose,
+                    RequestShowRecommendation,
+                    RequestExecuteRecommendation);
+            }
         }
 
         public void UnbindActions()
@@ -419,11 +420,11 @@ namespace Game.UI.Runtime
         public void ApplyRecommendation(UiAssistantPanelModel model)
         {
             bool visible = model.HasRecommendation;
-            bool tutorialVisible = visible && model.TutorialStep > 0;
-            SetActive(_landscapeLayout != null ? _landscapeLayout.gameObject : null, !tutorialVisible);
-            SetActive(_tutorialBriefing != null ? _tutorialBriefing.gameObject : null, tutorialVisible);
-            if (tutorialVisible)
-                _tutorialBriefing.Apply(model);
+            // Tutorial guidance is rendered by the one permanent Match HUD ARIA panel.
+            // POP13 remains the optional full command-assistant surface and must never
+            // replace that panel with a second tutorial layout.
+            SetActive(_landscapeLayout != null ? _landscapeLayout.gameObject : null, true);
+            SetActive(_tutorialBriefing != null ? _tutorialBriefing.gameObject : null, false);
 
             SetText(_recommendationTitle, visible ? model.RecommendationTitle : string.Empty);
             SetText(_recommendationReason, visible ? model.RecommendationBody : string.Empty);

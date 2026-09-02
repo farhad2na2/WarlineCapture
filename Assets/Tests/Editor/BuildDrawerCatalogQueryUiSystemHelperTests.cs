@@ -125,6 +125,10 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
                 test => test.BuildDrawerPopup_BlocksGameplayAndPlacementPointerInput(),
                 ref passed);
             RunValidationStep(
+                nameof(BuildDrawerPopup_HidesDuplicateMatchHudChromeAndRestoresItOnClose),
+                test => test.BuildDrawerPopup_HidesDuplicateMatchHudChromeAndRestoresItOnClose(),
+                ref passed);
+            RunValidationStep(
                 nameof(BuildDrawerPopup_ReportsOpenStateForProductionCameraFocusGate),
                 test => test.BuildDrawerPopup_ReportsOpenStateForProductionCameraFocusGate(),
                 ref passed);
@@ -313,6 +317,10 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
 
         int activeItemRows = CountActiveCatalogItemRows(view);
         Assert.AreEqual(_results.Count, activeItemRows, "Visible drawer item rows must match the requestable catalog count for the selected category.");
+        Assert.IsTrue(view.ItemTemplate.SelectionButton.interactable,
+            "Valid catalog cards must not show a false lock while runtime commands are still binding.");
+        Assert.AreSame(view.SelectedItemFrameSprite, view.ItemTemplate.FrameImage.sprite,
+            "The first valid catalog card must retain the selected V3 focus frame during runtime binding.");
     }
 
     [Test]
@@ -1171,6 +1179,46 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
 
         mainMenu.BindBuildDrawer(null);
         Assert.IsFalse(mainMenu.IsPointerOverAnyGameplayUi(drawerCenter, out _));
+    }
+
+    [Test]
+    public void BuildDrawerPopup_HidesDuplicateMatchHudChromeAndRestoresItOnClose()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(BuildDrawerPrefabPath);
+        Assert.NotNull(prefab);
+
+        GameObject canvasObject = new("Test Canvas", typeof(RectTransform), typeof(Canvas));
+        _createdObjects.Add(canvasObject);
+        Canvas canvas = canvasObject.GetComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+
+        string[] sectionNames = { "HeaderContent", "LeftContent", "RightContent", "FooterContent" };
+        var sections = new List<GameObject>();
+        for (int i = 0; i < sectionNames.Length; i++)
+        {
+            GameObject section = new(sectionNames[i], typeof(RectTransform));
+            section.transform.SetParent(canvasObject.transform, false);
+            section.SetActive(true);
+            sections.Add(section);
+        }
+
+        GameObject instance = UnityEngine.Object.Instantiate(prefab, canvasObject.transform, false);
+        _createdObjects.Add(instance);
+        BuildDrawerHudOcclusionView occlusion =
+            instance.GetComponent<BuildDrawerHudOcclusionView>();
+        Assert.NotNull(occlusion);
+        occlusion.RefreshOcclusion();
+
+        for (int i = 0; i < sections.Count; i++)
+            Assert.IsFalse(sections[i].activeSelf, $"{sections[i].name} must be hidden behind the V3 drawer.");
+
+        instance.SetActive(false);
+        // Edit-mode executeMethod validation does not dispatch ordinary runtime
+        // MonoBehaviour OnDisable callbacks, so invoke the same restore method
+        // that OnDisable uses in Play Mode.
+        occlusion.RestoreOcclusion();
+        for (int i = 0; i < sections.Count; i++)
+            Assert.IsTrue(sections[i].activeSelf, $"{sections[i].name} must be restored when the drawer closes.");
     }
 
     [Test]

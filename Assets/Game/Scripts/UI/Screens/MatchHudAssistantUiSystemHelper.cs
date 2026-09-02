@@ -23,7 +23,7 @@ namespace Game.UI.Runtime
             if (!model.HasRecommendation || model.TutorialStep == 0)
             {
                 if (previousTutorialStep != 0 || _displayedTutorialStep != 0)
-                    ClosePanelWithoutInputCapture();
+                    HideEmbeddedTutorial();
                 _pendingTutorialStep = 0;
                 _displayedTutorialStep = 0;
                 _pendingTutorialPhase = UiTutorialNarrationPhase.PrimaryAction;
@@ -33,7 +33,7 @@ namespace Game.UI.Runtime
             }
             if (_finalTutorialSuppressed || model.TutorialStep <= _completedTutorialStep)
             {
-                ClosePanelWithoutInputCapture();
+                HideEmbeddedTutorial();
                 return;
             }
 
@@ -42,7 +42,8 @@ namespace Game.UI.Runtime
 
             if (previousTutorialStep != 0 && model.TutorialStep > previousTutorialStep)
                 _completedTutorialStep = Math.Max(_completedTutorialStep, previousTutorialStep);
-            ClosePanelWithoutInputCapture();
+            SetPanelOpen(false);
+            HideEmbeddedTutorial();
             _displayedTutorialStep = 0;
             _pendingTutorialStep = model.TutorialStep;
             _pendingTutorialPhase = UiTutorialNarrationPhase.PrimaryAction;
@@ -82,8 +83,7 @@ namespace Game.UI.Runtime
 
             _displayedTutorialStep = _pendingTutorialStep;
             _displayedTutorialPhase = _pendingTutorialPhase;
-            if (!IsPanelOpen)
-                SetPanelOpen(true);
+            ShowEmbeddedTutorial();
             if (!WasTutorialCueAutoShown(_displayedTutorialStep, _displayedTutorialPhase) &&
                 TryShowRecommendation(
                     preferPanelRecommendation:
@@ -98,7 +98,7 @@ namespace Game.UI.Runtime
                     _displayedTutorialStep,
                     _displayedTutorialPhase))
             {
-                string narrationText = _popupView?.CurrentTutorialInstructionBody;
+                string narrationText = _embeddedTutorialView?.CurrentInstructionBody;
                 if (string.IsNullOrWhiteSpace(narrationText))
                     narrationText = _lastPanelModel.RecommendationBody;
                 if (UiShellRuntimeGateway.TryEnqueueTutorialNarration(
@@ -131,7 +131,7 @@ namespace Game.UI.Runtime
             _displayedTutorialPhase = UiTutorialNarrationPhase.PrimaryAction;
             _tutorialShowAtUnscaledTime = -1f;
             _finalTutorialSuppressed |= finalStep;
-            ClosePanelWithoutInputCapture();
+            HideEmbeddedTutorial();
         }
 
         private void ScheduleTutorialSubstep(byte step, float unscaledTime)
@@ -143,7 +143,7 @@ namespace Game.UI.Runtime
             _displayedTutorialStep = 0;
             _displayedTutorialPhase = UiTutorialNarrationPhase.PrimaryAction;
             _tutorialShowAtUnscaledTime = unscaledTime + TutorialStepDelaySeconds;
-            ClosePanelWithoutInputCapture();
+            HideEmbeddedTutorial();
         }
 
         private void ClearTutorialPresentationState()
@@ -159,6 +159,7 @@ namespace Game.UI.Runtime
             _tutorialShowAtUnscaledTime = -1f;
             _tutorialCinematicSuspended = false;
             _finalTutorialSuppressed = false;
+            HideEmbeddedTutorial();
         }
 
         private bool WasTutorialCueNarrated(byte step, UiTutorialNarrationPhase phase)

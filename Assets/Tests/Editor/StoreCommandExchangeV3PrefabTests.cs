@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System;
+using System.Reflection;
 using Game.Editor;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
@@ -80,7 +81,7 @@ public sealed class StoreCommandExchangeV3PrefabTests
         Assert.NotNull(layout);
         Assert.AreEqual(new Vector2(1672f, 941f), layout.ReferenceResolution);
         Assert.IsTrue(layout.ExpandToCanvasWidth);
-        Assert.GreaterOrEqual(layout.RightAnchoredTargets.Length, 7);
+        Assert.GreaterOrEqual(layout.RightAnchoredTargets.Length, 6);
         SerializedProperty widthTargets = new SerializedObject(layout).FindProperty("widthExpandedTargets");
         Assert.NotNull(widthTargets);
         Assert.GreaterOrEqual(widthTargets.arraySize, 3);
@@ -134,6 +135,7 @@ public sealed class StoreCommandExchangeV3PrefabTests
         {
             StoreCommandExchangeV3View view = instance.GetComponent<StoreCommandExchangeV3View>();
             Assert.NotNull(view);
+            InvokeAwake(view);
             TMP_Text heading = Find(instance.transform, "OffersHeading").GetComponent<TMP_Text>();
             TMP_Text detailTitle = Find(instance.transform, "DetailTitle").GetComponent<TMP_Text>();
             TMP_Text purchaseLabel = Find(instance.transform, "PurchaseButton").Find("Label").GetComponent<TMP_Text>();
@@ -190,6 +192,15 @@ public sealed class StoreCommandExchangeV3PrefabTests
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
         Assert.NotNull(prefab, PrefabPath);
         return prefab;
+    }
+
+    private static void InvokeAwake(StoreCommandExchangeV3View view)
+    {
+        MethodInfo awake = typeof(StoreCommandExchangeV3View).GetMethod(
+            "Awake",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.NotNull(awake);
+        awake.Invoke(view, null);
     }
 
     private static GameObject RegionChild(UIShellView shell, UIShellRegionId id)

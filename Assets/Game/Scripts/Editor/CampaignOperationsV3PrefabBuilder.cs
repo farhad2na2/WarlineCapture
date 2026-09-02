@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
@@ -18,7 +19,6 @@ namespace Game.Editor
         private const string SkirmishPlatePath = "Assets/Game/Art/UI/V3Shared/MainMenuPlates/SCN02_SkirmishScene_V3.png";
         private const string MissionMapPath = "Assets/Game/Art/UI/V3Shared/CampaignScenes/SCN05_SahrinMissionMap_V3.png";
         private const string MissionPreviewPath = "Assets/Game/Art/UI/Generated/SkirmishSetup/TargetLockV02/scn13_operation_preview_sahrin_v02.png";
-        private const string AriaPortraitPath = "Assets/Game/Art/UI/V3Shared/Portraits/ARIA_MainMenu_V3.png";
         private const string DaliaPortraitPath = "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Insurgent_Female_01_Rifle_Card_512.png";
         private const string SamiraPortraitPath = "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Pilot_Female_01_CompactPistol_Card_512.png";
         private const string BoldFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold SDF.asset";
@@ -64,7 +64,8 @@ namespace Game.Editor
             Stretch(scrim.rectTransform);
 
             RectTransform composition = CreateTopLeft("CampaignComposition", root.transform, 0f, 0f, ReferenceResolution.x, ReferenceResolution.y);
-            composition.gameObject.AddComponent<MainMenuV3SectionLayoutView>().Configure(ReferenceResolution, MainMenuV3SectionAlignment.Center);
+            MainMenuV3SectionLayoutView responsiveLayout =
+                composition.gameObject.AddComponent<MainMenuV3SectionLayoutView>();
             CampaignOperationsScreenView screen = composition.gameObject.AddComponent<CampaignOperationsScreenView>();
 
             BuildHeader(composition);
@@ -133,12 +134,80 @@ namespace Game.Editor
             CampaignMissionScreenBinder binder = composition.gameObject.AddComponent<CampaignMissionScreenBinder>();
             binder.Configure(screen, "saga.ch01.m02.establish_base");
 
+            ConfigureResponsiveLayout(
+                responsiveLayout,
+                composition,
+                chapterState,
+                missionState,
+                strategicMap,
+                briefingPanel,
+                screenTitle,
+                launch);
+
             PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             Validate();
             Debug.Log("[CampaignOperationsV3PrefabBuilder] result=Passed states=2 map=SCN05_SahrinMissionMap_V3 chrome=procedural-shared");
+        }
+
+        private static void ConfigureResponsiveLayout(
+            MainMenuV3SectionLayoutView layout,
+            RectTransform composition,
+            RectTransform chapterState,
+            RectTransform missionState,
+            RectTransform strategicMap,
+            RectTransform briefingPanel,
+            TMP_Text screenTitle,
+            Button launch)
+        {
+            RectTransform mapClip = strategicMap.Find("MapClip") as RectTransform;
+            RectTransform mapShade = mapClip != null ? mapClip.Find("MapShade") as RectTransform : null;
+            var centerTargets = new List<RectTransform>
+            {
+                screenTitle.rectTransform,
+                missionState.Find("TitleDivider") as RectTransform,
+                missionState.Find("TitleSection") as RectTransform,
+                launch.transform.Find("Label") as RectTransform,
+                launch.transform.Find("Icon") as RectTransform
+            };
+            if (mapClip != null)
+            {
+                for (int index = 0; index < mapClip.childCount; index++)
+                {
+                    RectTransform child = mapClip.GetChild(index) as RectTransform;
+                    if (child == null || child == mapShade || child.name == "DistrictMap")
+                        continue;
+                    centerTargets.Add(child);
+                }
+            }
+
+            layout.Configure(
+                ReferenceResolution,
+                MainMenuV3SectionAlignment.Center,
+                new[]
+                {
+                    composition.Find("CreditsChip") as RectTransform,
+                    composition.Find("CommandChip") as RectTransform,
+                    composition.Find("SettingsButton") as RectTransform,
+                    briefingPanel,
+                    chapterState.Find("AriaProtocol") as RectTransform,
+                    chapterState.Find("CurrentMission") as RectTransform,
+                    chapterState.Find("FooterStoryArchiveButton") as RectTransform
+                },
+                true,
+                centerTargets.ToArray(),
+                new[]
+                {
+                    strategicMap,
+                    mapClip,
+                    mapShade,
+                    launch.GetComponent<RectTransform>(),
+                    chapterState.Find("ChapterBackdropClip") as RectTransform,
+                    chapterState.Find("ChapterScrim") as RectTransform,
+                    chapterState.Find("OpenMissionSelectButton") as RectTransform
+                });
         }
 
         [MenuItem("Game/UI/V3/Validate Campaign Operations Final")]
@@ -160,7 +229,7 @@ namespace Game.Editor
             for (int i = 0; i < images.Length; i++)
             {
                 Image image = images[i];
-                if (image == null || image.sprite == null || AssetDatabase.GetAssetPath(image.sprite) != AriaPortraitPath)
+                if (image == null || image.sprite == null || AssetDatabase.GetAssetPath(image.sprite) != V3UiFoundationBuilder.SharedAriaPortraitPath)
                     continue;
                 if (!image.preserveAspect && image.GetComponent<AspectRatioFitter>() == null)
                     throw new InvalidOperationException($"ARIA portrait must preserve its source aspect ratio: {image.transform.name}.");
@@ -179,7 +248,7 @@ namespace Game.Editor
             ConfigureSprite(OperationsPlatePath, 2048);
             ConfigureSprite(SkirmishPlatePath, 2048);
             ConfigureSprite(MissionPreviewPath, 2048);
-            ConfigureSprite(AriaPortraitPath, 1024);
+            ConfigureSprite(V3UiFoundationBuilder.SharedAriaPortraitPath, 1024);
             ConfigureSprite(DaliaPortraitPath, 1024);
             ConfigureSprite(SamiraPortraitPath, 1024);
             boldFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(BoldFontPath);
@@ -192,7 +261,7 @@ namespace Game.Editor
             skirmishPlate = RequireSprite(SkirmishPlatePath);
             missionMap = RequireSprite(MissionMapPath);
             missionPreview = RequireSprite(MissionPreviewPath);
-            ariaPortrait = RequireSprite(AriaPortraitPath);
+            ariaPortrait = RequireSprite(V3UiFoundationBuilder.SharedAriaPortraitPath);
             daliaPortrait = RequireSprite(DaliaPortraitPath);
             samiraPortrait = RequireSprite(SamiraPortraitPath);
             if (boldFont == null || mediumFont == null)

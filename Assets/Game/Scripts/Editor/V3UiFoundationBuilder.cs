@@ -27,6 +27,9 @@ namespace Game.Editor
         internal const string OperationsIconAtlasPath = SharedRoot + "/Atlases/UI_V3_OperationsIcons_01.spriteatlas";
         internal const string FirstLaunchIconAtlasPath = SharedRoot + "/Atlases/UI_V3_FirstLaunchIcons_01.spriteatlas";
         internal const string MatchIconAtlasPath = SharedRoot + "/Atlases/UI_V3_MatchIcons_01.spriteatlas";
+        private const string MatchV3IconRoot = "Assets/Game/Art/UI/Generated/V3Shared/Icons";
+        private const string MatchAlignedCommandRoot =
+            "Assets/Game/Art/UI/Generated/V3Shared/MatchCommandsAligned";
 
         internal const string PanelPath = SharedRoot + "/Sprites/Core/ui_core_panel_9s.png";
         internal const string ButtonPath = SharedRoot + "/Sprites/Core/ui_core_button_9s.png";
@@ -72,9 +75,9 @@ namespace Game.Editor
         internal const string MissionVisibilityIconPath = "Assets/Game/Art/UI/Icons/scn08_icon_shield_rank_badge.png";
         internal const string MissionVehicleIconPath = "Assets/Game/Art/UI/Icons/scn08_command_board_vehicle.png";
         internal const string MissionStarIconPath = "Assets/Game/Art/UI/Icons/scn08_icon_objective_star.png";
-        internal const string MissionEnemyIconPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Map/ICON_MilitaryCombat_Map_Skull_01_Clean.png";
+        internal const string MissionEnemyIconPath = MatchV3IconRoot + "/v3_icon_hostile_marker.png";
         internal const string MissionAirIconPath = "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_icon_aircraft_helicopter.png";
-        internal const string MissionRadioIconPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Resources/ICON_SM_Chr_Attach_Radio_01_Military.png";
+        internal const string MissionRadioIconPath = "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_icon_comms_signal.png";
         internal const string EquipmentAircraftIconPath = SharedRoot + "/Sprites/Equipment/ui_equipment_airstrike.png";
         internal const string EquipmentHealthIconPath = SharedRoot + "/Sprites/Equipment/ui_equipment_medic_drop.png";
         internal const string EquipmentEmpIconPath = SharedRoot + "/Sprites/Equipment/ui_equipment_emp_blast.png";
@@ -83,34 +86,36 @@ namespace Game.Editor
         internal const string EquipmentTargetingIconPath = SharedRoot + "/Sprites/Equipment/ui_equipment_targeting_module.png";
         internal const string EquipmentAmmoIconPath = SharedRoot + "/Sprites/Equipment/ui_equipment_ammo_crate.png";
         internal const string EquipmentRepairIconPath = SharedRoot + "/Sprites/Equipment/ui_equipment_repair_kit.png";
-        internal const string OperationsHeatIconPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Status/ICON_MilitaryCombat_Status_Burning_01_Clean.png";
-        internal const string OperationsIntelIconPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Inventory/ICON_MilitaryCombat_Inventory_Notes_01_Clean.png";
-        internal const string OperationsPatrolIconPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Resources/ICON_SM_Item_Binoculars_01_Military.png";
-        internal const string OperationsRepairIconPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Inventory/ICON_MilitaryCombat_Inventory_Repair_01_Clean.png";
-        internal const string OperationsArmoryIconPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Inventory/ICON_MilitaryCombat_Inventory_Ammo_Bullets_01_Clean.png";
+        internal const string OperationsHeatIconPath = "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_icon_damage_burst.png";
+        internal const string OperationsIntelIconPath = MissionIntelIconPath;
+        internal const string OperationsPatrolIconPath = "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_icon_patrol_chevrons.png";
+        internal const string OperationsRepairIconPath = EquipmentRepairIconPath;
+        internal const string OperationsArmoryIconPath = EquipmentAmmoIconPath;
         internal const string OperationsRaidIconPath = "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_skirmish_crossed_weapons_icon.png";
-        internal const string OperationsWarningIconPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Map/ICON_MilitaryCombat_Map_Danger_01_Clean.png";
-        internal const string OperationsDroneIconPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Special/ICON_MilitaryCombat_Special_Drone_01_Clean.png";
-        internal const string OperationsMapPinIconPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Map/ICON_MilitaryCombat_Map_Pin_01_Clean.png";
-        internal const string OperationsMapPinUnderlayPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Map/ICON_MilitaryCombat_Map_Pin_01_Underlay.png";
-        internal const string OperationsTankIconPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Map/ICON_MilitaryCombat_Map_Tank_01_Clean.png";
-        internal const string OperationsAidIconPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Resources/ICON_SM_Prop_MedicalBox_02_BattleRoyale.png";
+        internal const string OperationsWarningIconPath = MatchV3IconRoot + "/v3_icon_warning.png";
+        internal const string OperationsDroneIconPath = MatchV3IconRoot + "/v3_icon_support.png";
+        internal const string OperationsMapPinIconPath = MatchV3IconRoot + "/v3_icon_locate.png";
+        internal const string OperationsMapPinUnderlayPath = MatchV3IconRoot + "/v3_icon_friendly_marker.png";
+        internal const string OperationsTankIconPath = MissionVehicleIconPath;
+        internal const string OperationsAidIconPath = MatchV3IconRoot + "/v3_icon_medical.png";
         internal const string OperationsTimeIconPath = "Assets/Game/Art/UI/Icons/scn09_icon_time_clock.png";
-        internal const string FirstLaunchGlobeRingPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/HUD/SPR_HUD_MilitaryCombat_Map_Ring_Small_01_Clean.png";
-        internal const string FirstLaunchMapIconPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Map/ICON_MilitaryCombat_Map_Objective_01_Clean.png";
+        internal const string FirstLaunchGlobeRingPath = MatchV3IconRoot + "/v3_icon_info.png";
+        internal const string FirstLaunchMapIconPath = MatchV3IconRoot + "/v3_icon_locate.png";
         internal const string FirstLaunchPauseIconPath = "Assets/Game/Art/UI/Icons/scn08_icon_pause.png";
         internal const string FirstLaunchTargetIconPath = "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_campaign_target_icon.png";
         internal const string FirstLaunchMotionIconPath = "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_icon_move_runner.png";
         internal const string FirstLaunchAriaPortraitPath = "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_aria_v3.png";
-        private const string MatchV3IconRoot = "Assets/Game/Art/UI/Generated/V3Shared/Icons";
-        internal const string MatchSelectIconPath = MatchV3IconRoot + "/v3_icon_select.png";
-        internal const string MatchMoveIconPath = MatchV3IconRoot + "/v3_icon_move.png";
-        internal const string MatchAttackIconPath = MatchV3IconRoot + "/v3_icon_attack.png";
-        internal const string MatchHoldIconPath = MatchV3IconRoot + "/v3_icon_hold.png";
-        internal const string MatchStopIconPath = MatchV3IconRoot + "/v3_icon_stop.png";
-        internal const string MatchScanIconPath = MatchV3IconRoot + "/v3_icon_scan.png";
-        internal const string MatchSupportIconPath = MatchV3IconRoot + "/v3_icon_support.png";
-        internal const string MatchBuildIconPath = MatchV3IconRoot + "/v3_icon_build.png";
+        internal const string SharedAriaPortraitPath = FirstLaunchAriaPortraitPath;
+        // SCN-08 owns one new canonical command set. These target-aligned V3
+        // sources are packed once into the dedicated Match atlas for every use.
+        internal const string MatchSelectIconPath = MatchAlignedCommandRoot + "/v3_match_command_select.png";
+        internal const string MatchMoveIconPath = MatchAlignedCommandRoot + "/v3_match_command_move.png";
+        internal const string MatchAttackIconPath = MatchAlignedCommandRoot + "/v3_match_command_attack.png";
+        internal const string MatchHoldIconPath = MatchAlignedCommandRoot + "/v3_match_command_hold.png";
+        internal const string MatchStopIconPath = MatchAlignedCommandRoot + "/v3_match_command_stop.png";
+        internal const string MatchScanIconPath = MatchAlignedCommandRoot + "/v3_match_command_scan.png";
+        internal const string MatchSupportIconPath = MatchAlignedCommandRoot + "/v3_match_command_support.png";
+        internal const string MatchBuildIconPath = MatchAlignedCommandRoot + "/v3_match_command_build.png";
         internal const string MatchExtractIconPath = MatchV3IconRoot + "/v3_icon_extract.png";
         internal const string MatchRopeDropIconPath = MatchV3IconRoot + "/v3_icon_rope_drop.png";
         internal const string MatchPatrolIconPath = MatchV3IconRoot + "/v3_icon_patrol.png";
@@ -135,6 +140,13 @@ namespace Game.Editor
         internal const string MatchFriendlyMarkerIconPath = MatchV3IconRoot + "/v3_icon_friendly_marker.png";
         internal const string MatchHostileMarkerIconPath = MatchV3IconRoot + "/v3_icon_hostile_marker.png";
         internal const string MatchMedicalIconPath = MatchV3IconRoot + "/v3_icon_medical.png";
+        internal const string PauseResumeIconPath = MatchV3IconRoot + "/v3_icon_resume.png";
+        internal const string PauseHelpIconPath = MatchV3IconRoot + "/v3_icon_help.png";
+        internal const string PauseExitIconPath = MatchV3IconRoot + "/v3_icon_exit.png";
+        internal const string AbilitySourceIconPath =
+            "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Inventory/ICON_MilitaryCombat_Inventory_Notes_01_Clean.png";
+        internal const string AbilityAvailabilityIconPath =
+            "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Map/ICON_MilitaryCombat_Map_Pin_01_Clean.png";
 
         private static readonly string[] CommanderIconPaths =
         {
@@ -170,7 +182,6 @@ namespace Game.Editor
             MissionVisibilityIconPath,
             MissionVehicleIconPath,
             MissionStarIconPath,
-            MissionEnemyIconPath,
             MissionAirIconPath,
             MissionRadioIconPath
         };
@@ -190,23 +201,13 @@ namespace Game.Editor
         private static readonly string[] OperationsIconPaths =
         {
             OperationsHeatIconPath,
-            OperationsIntelIconPath,
             OperationsPatrolIconPath,
-            OperationsRepairIconPath,
-            OperationsArmoryIconPath,
             OperationsRaidIconPath,
-            OperationsWarningIconPath,
-            OperationsDroneIconPath,
-            OperationsMapPinIconPath,
-            OperationsMapPinUnderlayPath,
-            OperationsTankIconPath,
-            OperationsAidIconPath,
             OperationsTimeIconPath
         };
 
         private static readonly string[] FirstLaunchIconPaths =
         {
-            FirstLaunchGlobeRingPath,
             FirstLaunchTargetIconPath,
             FirstLaunchMotionIconPath
         };
@@ -244,7 +245,12 @@ namespace Game.Editor
             MatchAirTransportIconPath,
             MatchFriendlyMarkerIconPath,
             MatchHostileMarkerIconPath,
-            MatchMedicalIconPath
+            MatchMedicalIconPath,
+            PauseResumeIconPath,
+            PauseHelpIconPath,
+            PauseExitIconPath,
+            AbilitySourceIconPath,
+            AbilityAvailabilityIconPath
         };
 
         private static readonly string[] SharedGradientPaths =
@@ -328,7 +334,12 @@ namespace Game.Editor
             foreach (string firstLaunchIconPath in FirstLaunchIconPaths)
                 ConfigureSprite(firstLaunchIconPath, Vector4.zero, 256);
             foreach (string matchIconPath in MatchIconPaths)
-                ConfigureSprite(matchIconPath, Vector4.zero, 256);
+                ConfigureSprite(
+                    matchIconPath,
+                    Vector4.zero,
+                    matchIconPath.StartsWith(MatchAlignedCommandRoot, StringComparison.Ordinal)
+                        ? 512
+                        : 256);
             ConfigureSprite(FirstLaunchAriaPortraitPath, Vector4.zero, 2048);
 
             Sprite panel = RequireSprite(PanelPath);

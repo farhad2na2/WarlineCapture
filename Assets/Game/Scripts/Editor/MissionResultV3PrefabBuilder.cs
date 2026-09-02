@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
@@ -76,6 +77,7 @@ namespace Game.Editor
                 PerformanceBindings performance = BuildPerformance(composition);
                 RewardBindings rewards = BuildRewards(composition);
                 FooterBindings footer = BuildFooter(composition);
+                ConfigureResponsiveLayout(layout, composition);
                 GameObject[] legacyRoots = BuildCompatibilityRoots(root.transform);
 
                 TMP_Text hiddenStats = CreateText(
@@ -174,8 +176,12 @@ namespace Game.Editor
                 throw new MissingReferenceException("Mission Result V3 runtime view is missing.");
             MainMenuV3SectionLayoutView layout = prefab.GetComponentInChildren<MainMenuV3SectionLayoutView>(true);
             if (layout == null || layout.ReferenceResolution != Reference ||
-                layout.Alignment != MainMenuV3SectionAlignment.Center)
-                throw new InvalidOperationException("Mission Result V3 must use the centered 1672x941 composition.");
+                layout.Alignment != MainMenuV3SectionAlignment.Center || !layout.ExpandToCanvasWidth ||
+                layout.HorizontalResponsiveTargets.Length < 25)
+            {
+                throw new InvalidOperationException(
+                    "Mission Result V3 must spread its header, side panels, and footer across the full wide safe area.");
+            }
             RawImage background = FindDeepChild(prefab.transform, "BattlefieldBackdrop")?.GetComponent<RawImage>();
             AspectRatioFitter fitter = background != null ? background.GetComponent<AspectRatioFitter>() : null;
             if (background == null || background.texture == null || fitter == null ||
@@ -194,7 +200,114 @@ namespace Game.Editor
             int gradients = prefab.GetComponentsInChildren<V3GradientGraphic>(true).Length;
             if (gradients < 14)
                 throw new InvalidOperationException($"Mission Result V3 requires layered procedural gradients; found {gradients}.");
+            ValidateWideScreenGeometry(prefab);
             Debug.Log($"[MissionResultV3PrefabBuilder] validation=Passed stars={stars} gradients={gradients} actions=one-per-state pointerTargets=Passed art=aspect-preserved");
+        }
+
+        private static void ValidateWideScreenGeometry(GameObject prefab)
+        {
+            GameObject canvasObject = new("MissionResultWideGeometryCanvas", typeof(RectTransform), typeof(Canvas));
+            GameObject instance = null;
+            try
+            {
+                Canvas canvas = canvasObject.GetComponent<Canvas>();
+                canvas.renderMode = RenderMode.WorldSpace;
+                RectTransform canvasRect = canvasObject.GetComponent<RectTransform>();
+                canvasRect.sizeDelta = new Vector2(4800f, 2160f);
+                instance = UnityEngine.Object.Instantiate(prefab, canvasRect, false);
+                Stretch(instance.GetComponent<RectTransform>());
+                Canvas.ForceUpdateCanvases();
+                MainMenuV3SectionLayoutView layout =
+                    instance.GetComponentInChildren<MainMenuV3SectionLayoutView>(true);
+                layout.RefreshLayout();
+                Canvas.ForceUpdateCanvases();
+                if (layout.LastAppliedExtraWidth < 400f)
+                    throw new InvalidOperationException("Mission Result V3 did not expose the expected 20:9 safe-width expansion.");
+
+                RectTransform composition = FindDeepChild(instance.transform, "V3Composition") as RectTransform;
+                RequireWideRight(composition, "MissionTimerPanel", 2070f);
+                RequireWideRight(composition, "PerformancePanel", 2040f);
+                RequireWideRight(composition, "RewardsPanel", 2040f);
+                RequireWideRight(composition, "ContinueButton", 2070f);
+                RequireWideRight(composition, "ReplayButton", 2070f);
+            }
+            finally
+            {
+                if (instance != null) UnityEngine.Object.DestroyImmediate(instance);
+                UnityEngine.Object.DestroyImmediate(canvasObject);
+            }
+        }
+
+        private static void RequireWideRight(Transform root, string path, float expectedRight)
+        {
+            RectTransform rect = root != null ? root.Find(path) as RectTransform : null;
+            if (rect == null)
+                throw new MissingReferenceException($"Mission Result V3 wide geometry target is missing: {path}");
+            float right = rect.anchoredPosition.x + rect.sizeDelta.x;
+            if (right < expectedRight)
+            {
+                throw new InvalidOperationException(
+                    $"Mission Result V3 20:9 target '{path}' ends at {right:0.0}; expected >= {expectedRight:0.0}.");
+            }
+        }
+
+        private static void ConfigureResponsiveLayout(
+            MainMenuV3SectionLayoutView layout,
+            RectTransform composition)
+        {
+            var rules = new List<MainMenuV3HorizontalResponsiveTarget>
+            {
+                Responsive(composition, "OutcomeTitlePanel", 0f, .25f),
+                Responsive(composition, "OutcomeTitlePanel/TitleText", 0f, .25f),
+                Responsive(composition, "StarPanel", .25f, .25f),
+                Responsive(composition, "StarPanel/Star_2", .125f),
+                Responsive(composition, "StarPanel/Star_3", .25f),
+                Responsive(composition, "StarPanel/StarCountText", 0f, .25f),
+                Responsive(composition, "MissionIdentityPanel", .5f, .5f),
+                Responsive(composition, "MissionIdentityPanel/V3MissionIdentityText", 0f, .5f),
+                Responsive(composition, "MissionIdentityPanel/MissionStatusText", 0f, .5f),
+                Responsive(composition, "MissionTimerPanel", 1f),
+
+                Responsive(composition, "ObjectivesPanel", 0f, .25f),
+                Responsive(composition, "ObjectivesPanel/Objective_DestroyHostilePatrol", 0f, .25f),
+                Responsive(composition, "ObjectivesPanel/Objective_KeepCommandSquadAlive", 0f, .25f),
+                Responsive(composition, "ObjectivesPanel/Objective_CityConsequenceNeutral", 0f, .25f),
+                Responsive(composition, "ObjectivesPanel/Objective_DestroyHostilePatrol/Label", 0f, .25f),
+                Responsive(composition, "ObjectivesPanel/Objective_KeepCommandSquadAlive/Label", 0f, .25f),
+                Responsive(composition, "ObjectivesPanel/Objective_CityConsequenceNeutral/Label", 0f, .25f),
+                Responsive(composition, "ObjectivesPanel/Objective_DestroyHostilePatrol/Status", .25f),
+                Responsive(composition, "ObjectivesPanel/Objective_KeepCommandSquadAlive/Status", .25f),
+                Responsive(composition, "ObjectivesPanel/Objective_CityConsequenceNeutral/Status", .25f),
+                Responsive(composition, "PerformancePanel", 1f),
+                Responsive(composition, "RewardsPanel", 1f),
+
+                Responsive(composition, "ConsequenceRow", 0f, .5f),
+                Responsive(composition, "ConsequenceRow/ConsequenceText", 0f, .5f),
+                Responsive(composition, "ContinueButton", .5f, .5f),
+                Responsive(composition, "ContinueButton/Icon", .5f),
+                Responsive(composition, "ContinueButton/Label", 0f, .5f),
+                Responsive(composition, "ReplayButton", .5f, .5f),
+                Responsive(composition, "ReplayButton/Icon", .5f),
+                Responsive(composition, "ReplayButton/Label", 0f, .5f)
+            };
+
+            layout.Configure(
+                Reference,
+                MainMenuV3SectionAlignment.Center,
+                shouldExpandToCanvasWidth: true,
+                horizontalTargets: rules.ToArray());
+        }
+
+        private static MainMenuV3HorizontalResponsiveTarget Responsive(
+            Transform root,
+            string path,
+            float positionFactor,
+            float widthFactor = 0f)
+        {
+            Transform target = root.Find(path);
+            if (target is not RectTransform rect)
+                throw new MissingReferenceException($"Mission Result V3 responsive target is missing: {path}");
+            return new MainMenuV3HorizontalResponsiveTarget(rect, positionFactor, widthFactor);
         }
 
         private static HeaderBindings BuildHeader(RectTransform parent)

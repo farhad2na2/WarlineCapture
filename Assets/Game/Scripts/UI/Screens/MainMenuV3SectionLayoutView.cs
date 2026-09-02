@@ -3,6 +3,28 @@ using UnityEngine;
 
 namespace Game.UI.Runtime
 {
+    [Serializable]
+    public struct MainMenuV3HorizontalResponsiveTarget
+    {
+        [SerializeField] private RectTransform target;
+        [SerializeField, Range(0f, 1f)] private float positionFactor;
+        [SerializeField, Range(0f, 1f)] private float widthFactor;
+
+        public MainMenuV3HorizontalResponsiveTarget(
+            RectTransform targetRect,
+            float horizontalPositionFactor,
+            float horizontalWidthFactor = 0f)
+        {
+            target = targetRect;
+            positionFactor = Mathf.Clamp01(horizontalPositionFactor);
+            widthFactor = Mathf.Clamp01(horizontalWidthFactor);
+        }
+
+        public RectTransform Target => target;
+        public float PositionFactor => positionFactor;
+        public float WidthFactor => widthFactor;
+    }
+
     public enum MainMenuV3SectionAlignment : byte
     {
         TopLeft,
@@ -22,6 +44,8 @@ namespace Game.UI.Runtime
         [SerializeField] private RectTransform[] rightAnchoredTargets = Array.Empty<RectTransform>();
         [SerializeField] private RectTransform[] centerAnchoredTargets = Array.Empty<RectTransform>();
         [SerializeField] private RectTransform[] widthExpandedTargets = Array.Empty<RectTransform>();
+        [SerializeField] private MainMenuV3HorizontalResponsiveTarget[] horizontalResponsiveTargets =
+            Array.Empty<MainMenuV3HorizontalResponsiveTarget>();
 
         private RectTransform _rectTransform;
         // These authored reference-space values must survive prefab serialization. The
@@ -31,6 +55,8 @@ namespace Game.UI.Runtime
         [SerializeField, HideInInspector] private Vector2[] rightTargetBasePositions = Array.Empty<Vector2>();
         [SerializeField, HideInInspector] private Vector2[] centerTargetBasePositions = Array.Empty<Vector2>();
         [SerializeField, HideInInspector] private Vector2[] widthTargetBaseSizes = Array.Empty<Vector2>();
+        [SerializeField, HideInInspector] private Vector2[] horizontalTargetBasePositions = Array.Empty<Vector2>();
+        [SerializeField, HideInInspector] private Vector2[] horizontalTargetBaseSizes = Array.Empty<Vector2>();
         private Vector2 _lastCanvasSize;
         private DrivenRectTransformTracker _previewTracker;
         private bool _applying;
@@ -39,6 +65,7 @@ namespace Game.UI.Runtime
         public MainMenuV3SectionAlignment Alignment => alignment;
         public bool ExpandToCanvasWidth => expandToCanvasWidth;
         public RectTransform[] RightAnchoredTargets => rightAnchoredTargets;
+        public MainMenuV3HorizontalResponsiveTarget[] HorizontalResponsiveTargets => horizontalResponsiveTargets;
         public float LastAppliedScale { get; private set; }
         public float LastAppliedExtraWidth { get; private set; }
 
@@ -58,6 +85,15 @@ namespace Game.UI.Runtime
                 return true;
             }
 
+            for (int i = 0; i < horizontalResponsiveTargets.Length; i++)
+            {
+                if (horizontalResponsiveTargets[i].Target != target || i >= horizontalTargetBasePositions.Length)
+                    continue;
+
+                position = horizontalTargetBasePositions[i];
+                return true;
+            }
+
             position = default;
             return false;
         }
@@ -68,7 +104,8 @@ namespace Game.UI.Runtime
             RectTransform[] targetsAnchoredToRight = null,
             bool shouldExpandToCanvasWidth = false,
             RectTransform[] targetsAnchoredToCenter = null,
-            RectTransform[] targetsExpandedAcrossWidth = null)
+            RectTransform[] targetsExpandedAcrossWidth = null,
+            MainMenuV3HorizontalResponsiveTarget[] horizontalTargets = null)
         {
             referenceResolution = authoredReferenceResolution;
             alignment = sectionAlignment;
@@ -76,6 +113,7 @@ namespace Game.UI.Runtime
             rightAnchoredTargets = targetsAnchoredToRight ?? Array.Empty<RectTransform>();
             centerAnchoredTargets = targetsAnchoredToCenter ?? Array.Empty<RectTransform>();
             widthExpandedTargets = targetsExpandedAcrossWidth ?? Array.Empty<RectTransform>();
+            horizontalResponsiveTargets = horizontalTargets ?? Array.Empty<MainMenuV3HorizontalResponsiveTarget>();
             CaptureResponsiveTargetBaseLayout();
             RefreshLayout();
         }
@@ -99,7 +137,9 @@ namespace Game.UI.Runtime
                 TrackDrivenLayoutProperties();
                 if (rightTargetBasePositions.Length != rightAnchoredTargets.Length ||
                     centerTargetBasePositions.Length != centerAnchoredTargets.Length ||
-                    widthTargetBaseSizes.Length != widthExpandedTargets.Length)
+                    widthTargetBaseSizes.Length != widthExpandedTargets.Length ||
+                    horizontalTargetBasePositions.Length != horizontalResponsiveTargets.Length ||
+                    horizontalTargetBaseSizes.Length != horizontalResponsiveTargets.Length)
                 {
                     CaptureResponsiveTargetBaseLayout();
                 }
@@ -127,6 +167,7 @@ namespace Game.UI.Runtime
                 ApplyRightAnchoredTargetOffset(extraWidth);
                 ApplyCenterAnchoredTargetOffset(extraWidth);
                 ApplyWidthExpandedTargets(extraWidth);
+                ApplyHorizontalResponsiveTargets(extraWidth);
                 LastAppliedScale = scale;
                 LastAppliedExtraWidth = extraWidth;
                 _lastCanvasSize = canvasSize;
@@ -141,7 +182,9 @@ namespace Game.UI.Runtime
         {
             if (rightTargetBasePositions.Length != rightAnchoredTargets.Length ||
                 centerTargetBasePositions.Length != centerAnchoredTargets.Length ||
-                widthTargetBaseSizes.Length != widthExpandedTargets.Length)
+                widthTargetBaseSizes.Length != widthExpandedTargets.Length ||
+                horizontalTargetBasePositions.Length != horizontalResponsiveTargets.Length ||
+                horizontalTargetBaseSizes.Length != horizontalResponsiveTargets.Length)
             {
                 CaptureResponsiveTargetBaseLayout();
             }
@@ -219,6 +262,16 @@ namespace Game.UI.Runtime
                 RectTransform target = widthExpandedTargets[i];
                 widthTargetBaseSizes[i] = target != null ? target.sizeDelta : Vector2.zero;
             }
+
+
+            horizontalTargetBasePositions = new Vector2[horizontalResponsiveTargets.Length];
+            horizontalTargetBaseSizes = new Vector2[horizontalResponsiveTargets.Length];
+            for (int i = 0; i < horizontalResponsiveTargets.Length; i++)
+            {
+                RectTransform target = horizontalResponsiveTargets[i].Target;
+                horizontalTargetBasePositions[i] = target != null ? target.anchoredPosition : Vector2.zero;
+                horizontalTargetBaseSizes[i] = target != null ? target.sizeDelta : Vector2.zero;
+            }
         }
 
         private void TrackDrivenLayoutProperties()
@@ -245,6 +298,19 @@ namespace Game.UI.Runtime
             {
                 if (widthExpandedTargets[i] != null)
                     _previewTracker.Add(this, widthExpandedTargets[i], DrivenTransformProperties.SizeDeltaX);
+            }
+
+
+            for (int i = 0; i < horizontalResponsiveTargets.Length; i++)
+            {
+                RectTransform target = horizontalResponsiveTargets[i].Target;
+                if (target != null)
+                {
+                    _previewTracker.Add(
+                        this,
+                        target,
+                        DrivenTransformProperties.AnchoredPositionX | DrivenTransformProperties.SizeDeltaX);
+                }
             }
         }
 
@@ -289,6 +355,28 @@ namespace Game.UI.Runtime
 
                 Vector2 size = widthTargetBaseSizes[i];
                 size.x += extraWidth;
+                target.sizeDelta = size;
+            }
+        }
+
+        private void ApplyHorizontalResponsiveTargets(float extraWidth)
+        {
+            int count = Mathf.Min(
+                horizontalResponsiveTargets.Length,
+                Mathf.Min(horizontalTargetBasePositions.Length, horizontalTargetBaseSizes.Length));
+            for (int i = 0; i < count; i++)
+            {
+                MainMenuV3HorizontalResponsiveTarget rule = horizontalResponsiveTargets[i];
+                RectTransform target = rule.Target;
+                if (target == null)
+                    continue;
+
+                Vector2 position = horizontalTargetBasePositions[i];
+                position.x += extraWidth * rule.PositionFactor;
+                target.anchoredPosition = position;
+
+                Vector2 size = horizontalTargetBaseSizes[i];
+                size.x += extraWidth * rule.WidthFactor;
                 target.sizeDelta = size;
             }
         }

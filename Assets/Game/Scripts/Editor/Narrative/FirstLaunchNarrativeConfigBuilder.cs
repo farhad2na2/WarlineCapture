@@ -73,6 +73,38 @@ namespace Game.Editor
             }
         }
 
+        internal static void EnsureV3AriaPortrait()
+        {
+            NarrativeSpeakerCatalog catalog = AssetDatabase.LoadAssetAtPath<NarrativeSpeakerCatalog>(SpeakerPath);
+            if (catalog == null)
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(SpeakerPath));
+                BuildSpeakers();
+                return;
+            }
+
+            Sprite v3Aria = Load<Sprite>(V3UiFoundationBuilder.SharedAriaPortraitPath);
+            SerializedObject serialized = new(catalog);
+            SerializedProperty speakers = serialized.FindProperty("speakers");
+            bool found = false;
+            for (int i = 0; speakers != null && i < speakers.arraySize; i++)
+            {
+                SerializedProperty speaker = speakers.GetArrayElementAtIndex(i);
+                if (speaker.FindPropertyRelative("speakerId").enumValueIndex != (int)NarrativeSpeakerId.Aria)
+                    continue;
+
+                speaker.FindPropertyRelative("identitySprite").objectReferenceValue = v3Aria;
+                found = true;
+                break;
+            }
+
+            if (!found)
+                throw new MissingReferenceException("First Launch speaker catalog is missing ARIA.");
+
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(catalog);
+        }
+
         private static void BuildPersianLocale()
         {
             TextAsset source = Load<TextAsset>(PersianCatalogPath);
@@ -290,7 +322,7 @@ namespace Game.Editor
                 Speaker(NarrativeSpeakerId.Radio, "DISTRICT DISPATCH", "EMERGENCY OPERATIONS", NarrativeSpeakerTreatment.Radio, FirstLaunchNarrativeDialogueAssetImporter.RadioPortraitPath, new Color(0.76f, 0.72f, 0.6f), "District emergency dispatcher"),
                 Speaker(NarrativeSpeakerId.Dalia, "DALIA RAHIM", "JRC FIELD COMMAND", NarrativeSpeakerTreatment.HumanPortrait, FirstLaunchNarrativeDialogueAssetImporter.DaliaPortraitPath, new Color(0.82f, 0.68f, 0.42f)),
                 Speaker(NarrativeSpeakerId.Samira, "SAMIRA HADDAD", "CIVIL INFRASTRUCTURE", NarrativeSpeakerTreatment.HumanPortrait, FirstLaunchNarrativeDialogueAssetImporter.SamiraPortraitPath, new Color(0.72f, 0.62f, 0.42f)),
-                Speaker(NarrativeSpeakerId.Aria, "ARIA", "CIVIC RELAY ASSISTANT", NarrativeSpeakerTreatment.AriaIcon, FirstLaunchNarrativeDialogueAssetImporter.AriaPortraitPath, new Color(0.2f, 0.92f, 1f)),
+                Speaker(NarrativeSpeakerId.Aria, "ARIA", "CIVIC RELAY ASSISTANT", NarrativeSpeakerTreatment.AriaIcon, V3UiFoundationBuilder.SharedAriaPortraitPath, new Color(0.2f, 0.92f, 1f)),
                 Speaker(NarrativeSpeakerId.Commander, "COMMANDER", "JOINT RESPONSE AUTHORITY", NarrativeSpeakerTreatment.Commander, CommanderFallbackPortrait(), new Color(0.86f, 0.82f, 0.7f))
             };
             Set(catalog, "speakers", records);

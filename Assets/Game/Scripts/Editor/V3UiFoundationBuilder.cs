@@ -67,6 +67,7 @@ namespace Game.Editor
         internal const string CampaignHoldIconPath = "Assets/Game/Art/UI/Icons/scn08_command_hold_shield.png";
         internal const string CampaignChaptersIconPath = SharedRoot + "/Sprites/Icons/ui_icon_chapters_book.png";
         internal const string CampaignLaunchIconPath = "Assets/Game/Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_deploy_chevrons.png";
+        internal const string NavigationChevronIconPath = "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_chevron_icon.png";
         internal const string CampaignNodeClaimedPath = "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_17_reward_node_claimed.png";
         internal const string CampaignNodeActivePath = "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_18_reward_node_active.png";
         internal const string CampaignNodeLockedPath = "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_19_reward_node_locked.png";
@@ -104,8 +105,8 @@ namespace Game.Editor
         internal const string FirstLaunchPauseIconPath = "Assets/Game/Art/UI/Icons/scn08_icon_pause.png";
         internal const string FirstLaunchTargetIconPath = "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_campaign_target_icon.png";
         internal const string FirstLaunchMotionIconPath = "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_icon_move_runner.png";
-        internal const string FirstLaunchAriaPortraitPath = "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_aria_v3.png";
-        internal const string SharedAriaPortraitPath = FirstLaunchAriaPortraitPath;
+        internal const string SharedAriaPortraitPath = "Assets/Game/Art/UI/V3Shared/Portraits/ARIA_MainMenu_V3.png";
+        internal const string FirstLaunchAriaPortraitPath = SharedAriaPortraitPath;
         // SCN-08 owns one new canonical command set. These target-aligned V3
         // sources are packed once into the dedicated Match atlas for every use.
         internal const string MatchSelectIconPath = MatchAlignedCommandRoot + "/v3_match_command_select.png";
@@ -174,6 +175,7 @@ namespace Game.Editor
             CampaignHoldIconPath,
             CampaignChaptersIconPath,
             CampaignLaunchIconPath,
+            NavigationChevronIconPath,
             CampaignNodeClaimedPath,
             CampaignNodeActivePath,
             CampaignNodeLockedPath,
@@ -326,7 +328,10 @@ namespace Game.Editor
             foreach (string commanderIconPath in CommanderIconPaths)
                 ConfigureSprite(commanderIconPath, Vector4.zero, 256);
             foreach (string campaignIconPath in CampaignIconPaths)
-                ConfigureSprite(campaignIconPath, Vector4.zero, 256);
+                ConfigureSprite(
+                    campaignIconPath,
+                    Vector4.zero,
+                    campaignIconPath == NavigationChevronIconPath ? 512 : 256);
             foreach (string equipmentIconPath in EquipmentIconPaths)
                 ConfigureSprite(equipmentIconPath, Vector4.zero, 256);
             foreach (string operationsIconPath in OperationsIconPaths)

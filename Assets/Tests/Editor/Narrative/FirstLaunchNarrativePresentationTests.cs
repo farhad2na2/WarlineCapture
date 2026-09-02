@@ -180,6 +180,29 @@ public sealed class FirstLaunchNarrativePresentationTests
         Assert.IsTrue(hasTimeline);
         Assert.IsTrue(hasDialogue);
         Assert.IsTrue(hasDialogueBody);
+
+        RectTransform dialogue = prefab.transform.Find("SafeArea/Dialogue") as RectTransform;
+        Assert.NotNull(dialogue);
+        Assert.GreaterOrEqual(dialogue.sizeDelta.y, 285f, "The dialogue tile must grow upward without opening a bottom gap.");
+        TMP_Text speaker = dialogue.Find("SpeakerName")?.GetComponent<TMP_Text>();
+        TMP_Text role = dialogue.Find("SpeakerRole")?.GetComponent<TMP_Text>();
+        TMP_Text body = dialogue.Find("DialogueText")?.GetComponent<TMP_Text>();
+        Assert.NotNull(speaker);
+        Assert.NotNull(role);
+        Assert.NotNull(body);
+        Assert.GreaterOrEqual(speaker.rectTransform.sizeDelta.x, 455f);
+        Assert.AreEqual(TextWrappingModes.NoWrap, speaker.textWrappingMode);
+        float speakerBottom = -speaker.rectTransform.anchoredPosition.y + speaker.rectTransform.sizeDelta.y;
+        float roleBottom = -role.rectTransform.anchoredPosition.y + role.rectTransform.sizeDelta.y;
+        float bodyTop = -body.rectTransform.anchoredPosition.y;
+        Assert.GreaterOrEqual(bodyTop - Mathf.Max(speakerBottom, roleBottom), 16f);
+
+        Image sharedChevron = dialogue.Find("Pointer/SharedAdvanceIcon")?.GetComponent<Image>();
+        Assert.NotNull(sharedChevron);
+        Assert.NotNull(sharedChevron.sprite);
+        Assert.AreEqual(
+            V3UiFoundationBuilder.NavigationChevronIconPath,
+            AssetDatabase.GetAssetPath(sharedChevron.sprite));
     }
 
     [Test]

@@ -198,9 +198,9 @@ namespace Game.Editor
                 narrative.DialogueView.ApplySpeaker(new NarrativeSpeakerPresentationModel
                 {
                     SpeakerId = NarrativeSpeakerId.Dalia,
-                    DisplayName = "DALIA RAHIM",
-                    Role = "JRC FIELD COMMAND",
-                    AccessibleLabel = "Major Dalia Rahim, JRC Field Command",
+                    DisplayName = "DISTRICT DISPATCH",
+                    Role = "EMERGENCY OPERATIONS",
+                    AccessibleLabel = "District Dispatch, Emergency Operations",
                     IdentitySprite = RequireSprite(FirstLaunchNarrativeDialogueAssetImporter.DaliaPortraitPath),
                     AccentColor = new Color32(18, 184, 231, 255),
                     Treatment = NarrativeSpeakerTreatment.HumanPortrait

@@ -10,7 +10,7 @@ namespace Game.Editor
         public const string DaliaPortraitPath = "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_dalia.png";
         public const string SamiraPortraitPath = "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_samira.png";
         public const string RadioPortraitPath = "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_radio_dispatch.png";
-        public const string AriaPortraitPath = "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_aria.png";
+        public const string AriaPortraitPath = V3UiFoundationBuilder.SharedAriaPortraitPath;
         public const string CommanderPortraitSheetPath = "Assets/Game/Art/Narrative/FirstLaunch/Commander/commander_portrait_choices.png";
 
         private static readonly string[] Paths =
@@ -107,7 +107,7 @@ namespace Game.Editor
             importer.textureCompression = isPortrait
                 ? TextureImporterCompression.CompressedHQ
                 : TextureImporterCompression.Uncompressed;
-            importer.maxTextureSize = path == FramePath ? 2048 : 512;
+            importer.maxTextureSize = path == FramePath || path == AriaPortraitPath ? 2048 : 512;
 
             TextureImporterSettings settings = new();
             importer.ReadTextureSettings(settings);

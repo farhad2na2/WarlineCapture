@@ -51,6 +51,7 @@ namespace Game.Editor
         {
             V3UiFoundationBuilder.EnsureBuilt();
             FirstLaunchNarrativePresentationPrefabBuilder.Build();
+            FirstLaunchNarrativeConfigBuilder.EnsureV3AriaPortrait();
             LoadDependencies();
             RestyleLanguageChoice();
             RestyleNarrativeSequence();
@@ -69,10 +70,60 @@ namespace Game.Editor
                 throw new UnityException("First Launch V3 language prefab is missing its runtime view.");
             if (narrative.GetComponent<NarrativeSequenceView>() == null)
                 throw new UnityException("First Launch V3 narrative prefab is missing its runtime view.");
+            NarrativeSpeakerCatalog speakers =
+                RequireAsset<NarrativeSpeakerCatalog>(FirstLaunchNarrativeConfigBuilder.SpeakerPath);
+            NarrativeSpeakerRecord ariaSpeaker = null;
+            foreach (NarrativeSpeakerRecord speaker in speakers.Speakers)
+            {
+                if (speaker.SpeakerId == NarrativeSpeakerId.Aria)
+                {
+                    ariaSpeaker = speaker;
+                    break;
+                }
+            }
+            if (ariaSpeaker?.IdentitySprite == null ||
+                !string.Equals(
+                    AssetDatabase.GetAssetPath(ariaSpeaker.IdentitySprite),
+                    V3UiFoundationBuilder.SharedAriaPortraitPath,
+                    StringComparison.Ordinal))
+            {
+                throw new UnityException("First Launch dialogue must resolve ARIA from the shared V3 portrait asset.");
+            }
             if (language.GetComponentsInChildren<V3GradientGraphic>(true).Length < 5)
                 throw new UnityException("First Launch V3 language screen is missing procedural gradients.");
+            MainMenuV3SectionLayoutView languageLayout =
+                language.GetComponentInChildren<MainMenuV3SectionLayoutView>(true);
+            if (languageLayout == null || !languageLayout.ExpandToCanvasWidth ||
+                languageLayout.HorizontalResponsiveTargets.Length < 12)
+            {
+                throw new UnityException(
+                    "First Launch V3 language screen must distribute its cards and actions across the wide safe area.");
+            }
+            RequireV3Border(language.transform, "Composition/BrandLogoPlate", 3f);
+            Image languageLogo = language.transform
+                .Find("Composition/BrandLogoPlate/SharedMainMenuLogo")?
+                .GetComponent<Image>();
+            if (languageLogo == null || languageLogo.sprite == null || !languageLogo.preserveAspect ||
+                !string.Equals(
+                    AssetDatabase.GetAssetPath(languageLogo.sprite),
+                    V3UiFoundationBuilder.MainMenuLogoPath,
+                    StringComparison.Ordinal))
+            {
+                throw new UnityException(
+                    "First Launch V3 language screen must use the one shared, aspect-preserved V3 logo inside its top-left plate.");
+            }
             if (narrative.GetComponentsInChildren<V3GradientGraphic>(true).Length < 24)
                 throw new UnityException("First Launch V3 narrative screens are missing procedural gradients.");
+            Transform comicAria = narrative.transform.Find("SafeArea/Dialogue/AriaPortraitViewport/AriaIcon");
+            Image comicAriaImage = comicAria != null ? comicAria.GetComponent<Image>() : null;
+            AspectRatioFitter comicAriaFitter = comicAria != null ? comicAria.GetComponent<AspectRatioFitter>() : null;
+            if (comicAriaImage == null || comicAriaImage.sprite == null ||
+                AssetDatabase.GetAssetPath(comicAriaImage.sprite) != V3UiFoundationBuilder.SharedAriaPortraitPath ||
+                comicAriaFitter == null || comicAriaFitter.aspectMode != AspectRatioFitter.AspectMode.EnvelopeParent)
+            {
+                throw new UnityException(
+                    "First Launch comic ARIA tile must use the cropped, shared V3 portrait instead of the legacy square portrait.");
+            }
             Transform identity = narrative.transform.Find("SafeArea/CommanderIdentitySurface");
             if (identity == null || identity.GetComponentsInChildren<Button>(true).Length < 8)
                 throw new UnityException("First Launch V3 commander identity surface is incomplete.");
@@ -95,9 +146,87 @@ namespace Game.Editor
             }
             if (narrative.GetComponentsInChildren<MainMenuV3SectionLayoutView>(true).Length != 1)
                 throw new UnityException("First Launch V3 narrative prefab needs exactly one reference-layout controller.");
+            MainMenuV3SectionLayoutView narrativeLayout =
+                narrative.GetComponentInChildren<MainMenuV3SectionLayoutView>(true);
+            if (narrativeLayout == null || !narrativeLayout.ExpandToCanvasWidth ||
+                narrativeLayout.HorizontalResponsiveTargets.Length < 40)
+            {
+                throw new UnityException(
+                    "First Launch V3 identity and guidance screens must distribute their live panels across the wide safe area.");
+            }
+            ValidateComicDialogueChrome(narrative);
+            ValidateWideScreenGeometry(language, narrative);
             ValidateSelectableRaycasts(language, "language choice");
             ValidateSelectableRaycasts(narrative, "narrative sequence");
             Debug.Log("[FirstLaunchNarrativeV3PrefabBuilder] validation=Passed language=select-then-continue identity=6 comic=complete guidance=complete skip=v3-bilingual");
+        }
+
+        private static void ValidateWideScreenGeometry(GameObject languagePrefab, GameObject narrativePrefab)
+        {
+            ValidateAtWideCanvas(languagePrefab, instance =>
+            {
+                RectTransform composition = RequireRect(instance.transform, "Composition");
+                RequireWideEdge(composition, "BrandLogoPlate", minimumRight: 400f, maximumLeft: 20f);
+                RequireWideEdge(composition, "ContinueButton", minimumRight: 2050f);
+                RequireWideEdge(composition, "PersianButton", minimumRight: 2000f);
+            });
+
+            ValidateAtWideCanvas(narrativePrefab, instance =>
+            {
+                RectTransform safeArea = RequireRect(instance.transform, "SafeArea");
+                RequireWideEdge(safeArea, "CommanderIdentitySurface/AuthenticationHeader", minimumRight: 2070f);
+                RequireWideEdge(safeArea, "CommanderIdentitySurface/PortraitButton_06", minimumRight: 2020f);
+                RequireWideEdge(safeArea, "CommanderIdentitySurface/ContinueButton", minimumRight: 2070f);
+                RequireWideEdge(safeArea, "GuidanceChoiceSurface/AriaPortrait", minimumRight: 2070f);
+                RequireWideEdge(safeArea, "GuidanceChoiceSurface/ContinueButton", minimumRight: 2070f);
+            });
+        }
+
+        private static void ValidateAtWideCanvas(GameObject prefab, Action<GameObject> assertion)
+        {
+            GameObject canvasObject = new("FirstLaunchWideGeometryCanvas", typeof(RectTransform), typeof(Canvas));
+            GameObject instance = null;
+            try
+            {
+                Canvas canvas = canvasObject.GetComponent<Canvas>();
+                canvas.renderMode = RenderMode.WorldSpace;
+                RectTransform canvasRect = canvasObject.GetComponent<RectTransform>();
+                canvasRect.sizeDelta = new Vector2(4800f, 2160f);
+                instance = Object.Instantiate(prefab, canvasRect, false);
+                Stretch(instance.GetComponent<RectTransform>());
+                Canvas.ForceUpdateCanvases();
+                foreach (MainMenuV3SectionLayoutView layout in
+                         instance.GetComponentsInChildren<MainMenuV3SectionLayoutView>(true))
+                {
+                    layout.RefreshLayout();
+                    if (layout.LastAppliedExtraWidth < 400f)
+                        throw new UnityException("First Launch V3 did not expose the expected 20:9 safe-width expansion.");
+                }
+                Canvas.ForceUpdateCanvases();
+                assertion(instance);
+            }
+            finally
+            {
+                if (instance != null) Object.DestroyImmediate(instance);
+                Object.DestroyImmediate(canvasObject);
+            }
+        }
+
+        private static void RequireWideEdge(
+            Transform root,
+            string path,
+            float minimumRight,
+            float maximumLeft = float.PositiveInfinity)
+        {
+            RectTransform rect = RequireRect(root, path);
+            float left = rect.anchoredPosition.x;
+            float right = left + rect.sizeDelta.x;
+            if (right < minimumRight || left > maximumLeft)
+            {
+                throw new UnityException(
+                    $"First Launch V3 20:9 target '{path}' has [{left:0.0}, {right:0.0}]; " +
+                    $"expected right >= {minimumRight:0.0} and left <= {maximumLeft:0.0}.");
+            }
         }
 
         [MenuItem("Game/UI/V3/Capture First Launch Review 1920x1080")]
@@ -129,9 +258,8 @@ namespace Game.Editor
                 group.interactable = false;
                 group.blocksRaycasts = false;
 
-                // Keep the authored UI inside the centered 1672x941 composition, but let
-                // the non-stretched background cover the physical canvas at ultrawide ratios.
-                // Otherwise the composition leaves black gutters at 20:9.
+                // The art covers the physical canvas without stretching. The live UI below
+                // also expands to the safe width so 20:9 does not become a narrow 16:9 island.
                 Image background = CreateImage("Background", root.transform, RequireAsset<Sprite>(LanguageBackgroundPath), Color.white, false);
                 Stretch(background.rectTransform);
                 AddCover(background, 16f / 9f);
@@ -139,7 +267,7 @@ namespace Game.Editor
                 Stretch(shade.rectTransform);
 
                 RectTransform composition = CreateComposition(root.transform);
-                BuildBrandLogo(composition, 20f, 18f, 395f, 116f);
+                BuildBrandLogoPlate(composition, 18f, 18f, 430f, 132f);
 
                 TMP_Text title = CreateText("Title", composition, "SELECT STORY LANGUAGE", 58f, bold, TextAlignmentOptions.Center, White);
                 SetTopLeft(title.rectTransform, 390f, 142f, 900f, 86f);
@@ -165,6 +293,9 @@ namespace Game.Editor
                 SetObject(view, "continueButton", continueButton);
                 SetObject(view, "englishSelectionImage", englishSelection);
                 SetObject(view, "persianSelectionImage", persianSelection);
+                ConfigureResponsiveLanguageChoice(
+                    composition.GetComponent<MainMenuV3SectionLayoutView>(),
+                    composition);
                 PrefabUtility.SaveAsPrefabAsset(root, FirstLaunchNarrativePresentationPrefabBuilder.LanguageChoicePrefabPath);
             }
             finally
@@ -228,7 +359,7 @@ namespace Game.Editor
                 NarrativeCommanderIdentityView identity = BuildIdentitySurface(safeArea);
                 NarrativeGuidanceChoiceView guidance = BuildGuidanceSurface(safeArea);
                 NarrativeSkipConfirmationView skip = BuildSkipConfirmationSurface(safeArea);
-                ConfigureResponsiveComicChrome(layout, safeArea, controls, dialogue);
+                ConfigureResponsiveFirstLaunchLayout(layout, safeArea, controls, dialogue);
                 Transform reviewer = safeArea.Find("DevelopmentReviewerControls");
                 skip.transform.SetAsLastSibling();
                 if (reviewer != null) reviewer.SetAsLastSibling();
@@ -248,7 +379,33 @@ namespace Game.Editor
             }
         }
 
-        private static void ConfigureResponsiveComicChrome(
+        private static void ConfigureResponsiveLanguageChoice(
+            MainMenuV3SectionLayoutView layout,
+            RectTransform composition)
+        {
+            var rules = new List<MainMenuV3HorizontalResponsiveTarget>
+            {
+                Responsive(composition, "Title", .5f),
+                Responsive(composition, "EnglishButton", 0f, .5f),
+                Responsive(composition, "PersianButton", .5f, .5f),
+                Responsive(composition, "EnglishButton/Globe", .25f),
+                Responsive(composition, "EnglishButton/Language", .25f),
+                Responsive(composition, "EnglishButton/Rule", 0f, .5f),
+                Responsive(composition, "EnglishButton/Sample", 0f, .5f),
+                Responsive(composition, "PersianButton/Globe", .25f),
+                Responsive(composition, "PersianButton/Language", .25f),
+                Responsive(composition, "PersianButton/Rule", 0f, .5f),
+                Responsive(composition, "PersianButton/Sample", 0f, .5f),
+                Responsive(composition, "ContinueButton", 0f, 1f)
+            };
+            layout.Configure(
+                Reference,
+                MainMenuV3SectionAlignment.Center,
+                shouldExpandToCanvasWidth: true,
+                horizontalTargets: rules.ToArray());
+        }
+
+        private static void ConfigureResponsiveFirstLaunchLayout(
             MainMenuV3SectionLayoutView layout,
             RectTransform safeArea,
             NarrativePlaybackControlsView controls,
@@ -261,6 +418,60 @@ namespace Game.Editor
             RectTransform dialogueBody = RequireRect(dialogueRect, "DialogueBody");
             RectTransform dialogueText = RequireRect(dialogueRect, "DialogueText");
             RectTransform voiceTrack = RequireRect(dialogueRect, "VoiceTrack");
+            var horizontalRules = new List<MainMenuV3HorizontalResponsiveTarget>
+            {
+                Responsive(safeArea, "CommanderIdentitySurface", 0f, 1f),
+                Responsive(safeArea, "CommanderIdentitySurface/AuthenticationHeader", 0f, 1f),
+                Responsive(safeArea, "CommanderIdentitySurface/AuthenticationHeader/Step", 1f),
+                Responsive(safeArea, "CommanderIdentitySurface/Title", 0f, 1f),
+                Responsive(safeArea, "CommanderIdentitySurface/Instruction", 0f, 1f),
+                Responsive(safeArea, "CommanderIdentitySurface/SelectedProfile", 0f, 1f),
+                Responsive(safeArea, "CommanderIdentitySurface/PreviousButton", 0f, .5f),
+                Responsive(safeArea, "CommanderIdentitySurface/ContinueButton", .5f, .5f),
+
+                Responsive(safeArea, "GuidanceChoiceSurface", 0f, 1f),
+                Responsive(safeArea, "GuidanceChoiceSurface/Eyebrow", 0f, .5f),
+                Responsive(safeArea, "GuidanceChoiceSurface/Title", 0f, .5f),
+                Responsive(safeArea, "GuidanceChoiceSurface/Instruction", 0f, .5f),
+                Responsive(safeArea, "GuidanceChoiceSurface/Step", 1f),
+                Responsive(safeArea, "GuidanceChoiceSurface/StepSegment0", 1f),
+                Responsive(safeArea, "GuidanceChoiceSurface/StepSegment1", 1f),
+                Responsive(safeArea, "GuidanceChoiceSurface/StepSegment2", 1f),
+                Responsive(safeArea, "GuidanceChoiceSurface/FullGuidanceButton", 0f, 1f / 3f),
+                Responsive(safeArea, "GuidanceChoiceSurface/ContextualGuidanceButton", 1f / 3f, 1f / 3f),
+                Responsive(safeArea, "GuidanceChoiceSurface/MinimalGuidanceButton", 2f / 3f, 1f / 3f),
+                Responsive(safeArea, "GuidanceChoiceSurface/AriaPortrait", 1f),
+                Responsive(safeArea, "GuidanceChoiceSurface/AccessibilityStrip", 0f, 1f),
+                Responsive(safeArea, "GuidanceChoiceSurface/PreviousButton", 0f, .5f),
+                Responsive(safeArea, "GuidanceChoiceSurface/ContinueButton", .5f, .5f),
+
+                Responsive(safeArea, "SkipConfirmationSurface", 0f, 1f),
+                Responsive(safeArea, "SkipConfirmationSurface/Confirmation", .5f)
+            };
+
+            for (int index = 0; index < 6; index++)
+            {
+                horizontalRules.Add(Responsive(
+                    safeArea,
+                    $"CommanderIdentitySurface/PortraitButton_{index + 1:00}",
+                    index / 5f));
+            }
+
+            string[] guidanceCards =
+            {
+                "FullGuidanceButton",
+                "ContextualGuidanceButton",
+                "MinimalGuidanceButton"
+            };
+            for (int index = 0; index < guidanceCards.Length; index++)
+            {
+                string card = $"GuidanceChoiceSurface/{guidanceCards[index]}";
+                horizontalRules.Add(Responsive(safeArea, card + "/Icon", 1f / 6f));
+                horizontalRules.Add(Responsive(safeArea, card + "/Label", 0f, 1f / 3f));
+                horizontalRules.Add(Responsive(safeArea, card + "/Rule", 0f, 1f / 3f));
+                horizontalRules.Add(Responsive(safeArea, card + "/Description", 0f, 1f / 3f));
+                horizontalRules.Add(Responsive(safeArea, card + "/LevelPanel", 1f / 6f));
+            }
 
             // The comic art is a physical-canvas cover layer. At ultrawide ratios the
             // chrome must also reach both safe edges instead of remaining a centered
@@ -287,8 +498,16 @@ namespace Game.Editor
                     dialogueBody,
                     dialogueText,
                     voiceTrack
-                });
+                },
+                horizontalRules.ToArray());
         }
+
+        private static MainMenuV3HorizontalResponsiveTarget Responsive(
+            Transform root,
+            string path,
+            float positionFactor,
+            float widthFactor = 0f) =>
+            new(RequireRect(root, path), positionFactor, widthFactor);
 
         private static NarrativeLocationIntroView BuildComicHeader(Transform parent, out NarrativePlaybackControlsView controlsView)
         {
@@ -350,47 +569,70 @@ namespace Game.Editor
 
         private static NarrativeDialogueView BuildComicDialogue(Transform parent)
         {
-            RectTransform root = CreateTopLeft("Dialogue", parent, 10f, 682f, 1652f, 249f);
+            // Keep the panel's bottom edge aligned to the 941px reference canvas,
+            // but grow it upward so long speaker identities never collide with the
+            // subtitle row. This is intentionally an authored fixed height at runtime.
+            RectTransform root = CreateTopLeft("Dialogue", parent, 10f, 646f, 1652f, 285f);
             CanvasGroup group = root.gameObject.AddComponent<CanvasGroup>();
             NarrativeDialogueView view = root.gameObject.AddComponent<NarrativeDialogueView>();
 
             Image frame = CreateImage("Frame", root, null, Color.clear, false);
-            SetTopLeft(frame.rectTransform, 0f, 0f, 1438f, 249f);
-            RectTransform body = CreateTopLeft("DialogueBody", root, 0f, 0f, 1438f, 249f);
+            SetTopLeft(frame.rectTransform, 0f, 0f, 1438f, 285f);
+            RectTransform body = CreateTopLeft("DialogueBody", root, 0f, 0f, 1438f, 285f);
             CreateGradientOn(body, new Color32(20, 30, 33, 250), new Color32(2, 8, 10, 252), Border, 3f);
-            RectTransform next = CreateTopLeft("NextPanel", root, 1445f, 0f, 207f, 249f);
+            RectTransform next = CreateTopLeft("NextPanel", root, 1445f, 0f, 207f, 285f);
             CreateGradientOn(next, new Color32(37, 113, 45, 255), new Color32(8, 50, 20, 255), Green, 3f);
 
             Image portrait = CreateImage("Portrait", root, null, Color.white, false);
-            SetTopLeft(portrait.rectTransform, 11f, 11f, 228f, 228f);
+            SetTopLeft(portrait.rectTransform, 11f, 11f, 264f, 264f);
             portrait.preserveAspect = true;
-            RectTransform portraitBorder = CreateTopLeft("PortraitBorder", root, 11f, 11f, 228f, 228f);
-            CreateGradientOn(portraitBorder, Color.clear, Color.clear, Cyan, 3f);
-            Image aria = CreateImage("AriaIcon", root, null, Color.white, false);
-            SetTopLeft(aria.rectTransform, 11f, 11f, 228f, 228f);
+            RectTransform ariaViewport = CreateTopLeft("AriaPortraitViewport", root, 11f, 11f, 264f, 264f);
+            ariaViewport.gameObject.AddComponent<RectMask2D>();
+            Sprite v3Aria = RequireAsset<Sprite>(V3UiFoundationBuilder.SharedAriaPortraitPath);
+            Image aria = CreateImage("AriaIcon", ariaViewport, v3Aria, Color.white, false);
+            Stretch(aria.rectTransform);
             aria.preserveAspect = true;
+            AspectRatioFitter ariaFitter = aria.gameObject.AddComponent<AspectRatioFitter>();
+            ariaFitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+            ariaFitter.aspectRatio = v3Aria.rect.width / v3Aria.rect.height;
             aria.gameObject.SetActive(false);
+            RectTransform portraitBorder = CreateTopLeft("PortraitBorder", root, 11f, 11f, 264f, 264f);
+            CreateGradientOn(portraitBorder, Color.clear, Color.clear, Cyan, 3f);
             TMP_Text name = CreateText("SpeakerName", root, "DALIA RAHIM", 42f, bold, TextAlignmentOptions.MidlineLeft, Cyan);
-            SetTopLeft(name.rectTransform, 270f, 12f, 330f, 58f);
+            SetTopLeft(name.rectTransform, 298f, 12f, 455f, 64f);
+            name.textWrappingMode = TextWrappingModes.NoWrap;
+            name.enableAutoSizing = true;
+            name.fontSizeMin = 28f;
+            name.fontSizeMax = 42f;
             TMP_Text role = CreateText("SpeakerRole", root, "JRC FIELD COMMAND", 22f, medium, TextAlignmentOptions.MidlineLeft, Cyan);
-            SetTopLeft(role.rectTransform, 550f, 25f, 390f, 39f);
+            SetTopLeft(role.rectTransform, 774f, 22f, 420f, 44f);
+            role.textWrappingMode = TextWrappingModes.NoWrap;
+            role.enableAutoSizing = true;
+            role.fontSizeMin = 17f;
+            role.fontSizeMax = 22f;
             TMP_Text line = CreateText("DialogueText", root, string.Empty, 30f, medium, TextAlignmentOptions.TopLeft, White);
-            SetTopLeft(line.rectTransform, 270f, 78f, 1130f, 106f);
+            SetTopLeft(line.rectTransform, 298f, 96f, 1102f, 112f);
             line.textWrappingMode = TextWrappingModes.Normal;
-            BuildChevronIcon(root, 270f, 193f, 32f, 30f, Cyan, false);
-            CreateSolid("VoiceTrack", root, 318f, 207f, 1050f, 8f, new Color32(45, 53, 56, 255));
-            CreateSolid("VoiceFill", root, 318f, 207f, 745f, 8f, Cyan);
+            BuildChevronIcon(root, 298f, 235f, 32f, 30f, Cyan, false);
+            CreateSolid("VoiceTrack", root, 346f, 249f, 1022f, 8f, new Color32(45, 53, 56, 255));
+            CreateSolid("VoiceFill", root, 346f, 249f, 725f, 8f, Cyan);
             TMP_Text accessibility = CreateText("AccessibilityText", root, string.Empty, 1f, medium, TextAlignmentOptions.Left, Color.clear);
             Stretch(accessibility.rectTransform);
             TMP_Text advance = CreateText("AdvanceIndicator", root, string.Empty, 1f, bold, TextAlignmentOptions.Center, Color.clear);
             SetTopLeft(advance.rectTransform, 0f, 0f, 1f, 1f);
 
             Image pointer = CreateImage("Pointer", root, null, Color.clear, false);
-            SetTopLeft(pointer.rectTransform, 1479f, 38f, 138f, 108f);
-            CreateLine("Upper", pointer.transform, 31f, 16f, 76f, 54f, 14f, White);
-            CreateLine("Lower", pointer.transform, 76f, 54f, 31f, 92f, 14f, White);
+            SetTopLeft(pointer.rectTransform, 1478f, 42f, 140f, 135f);
+            Image advanceIcon = CreateImage(
+                "SharedAdvanceIcon",
+                pointer.transform,
+                RequireAsset<Sprite>(V3UiFoundationBuilder.NavigationChevronIconPath),
+                Color.white,
+                false);
+            SetTopLeft(advanceIcon.rectTransform, 29f, 8f, 82f, 119f);
+            advanceIcon.preserveAspect = true;
             TMP_Text nextLabel = CreateText("NextLabel", root, "NEXT", 29f, bold, TextAlignmentOptions.Center, White);
-            SetTopLeft(nextLabel.rectTransform, 1465f, 163f, 165f, 52f);
+            SetTopLeft(nextLabel.rectTransform, 1465f, 208f, 165f, 52f);
             Image input = CreateImage("InputSurface", root, null, Color.clear, true);
             Stretch(input.rectTransform);
             Button inputButton = input.gameObject.AddComponent<Button>();
@@ -413,6 +655,34 @@ namespace Game.Editor
             serializedView.FindProperty("authoredFontScale").floatValue = 0.6f;
             serializedView.ApplyModifiedPropertiesWithoutUndo();
             return view;
+        }
+
+        private static void ValidateComicDialogueChrome(GameObject narrative)
+        {
+            RectTransform dialogue = narrative.transform.Find("SafeArea/Dialogue") as RectTransform;
+            if (dialogue == null || dialogue.sizeDelta.y < 285f)
+                throw new UnityException("First Launch V3 dialogue tile must retain the expanded 285px authored height.");
+
+            TMP_Text speaker = dialogue.Find("SpeakerName")?.GetComponent<TMP_Text>();
+            TMP_Text role = dialogue.Find("SpeakerRole")?.GetComponent<TMP_Text>();
+            TMP_Text line = dialogue.Find("DialogueText")?.GetComponent<TMP_Text>();
+            if (speaker == null || role == null || line == null)
+                throw new UnityException("First Launch V3 dialogue identity and subtitle rows are incomplete.");
+            if (speaker.rectTransform.sizeDelta.x < 455f || speaker.textWrappingMode != TextWrappingModes.NoWrap)
+                throw new UnityException("First Launch V3 speaker tile must fit long names on one line.");
+
+            float speakerBottom = -speaker.rectTransform.anchoredPosition.y + speaker.rectTransform.sizeDelta.y;
+            float roleBottom = -role.rectTransform.anchoredPosition.y + role.rectTransform.sizeDelta.y;
+            float dialogueTop = -line.rectTransform.anchoredPosition.y;
+            if (dialogueTop - Mathf.Max(speakerBottom, roleBottom) < 16f)
+                throw new UnityException("First Launch V3 speaker identity row overlaps the dialogue text row.");
+
+            Image advanceIcon = dialogue.Find("Pointer/SharedAdvanceIcon")?.GetComponent<Image>();
+            if (advanceIcon == null || advanceIcon.sprite == null ||
+                AssetDatabase.GetAssetPath(advanceIcon.sprite) != V3UiFoundationBuilder.NavigationChevronIconPath)
+            {
+                throw new UnityException("First Launch V3 NEXT control must use the shared atlas-quality navigation chevron.");
+            }
         }
 
         private static NarrativeCommanderIdentityView BuildIdentitySurface(Transform parent)
@@ -795,9 +1065,9 @@ namespace Game.Editor
                 view.DialogueView.ApplySpeaker(new NarrativeSpeakerPresentationModel
                 {
                     SpeakerId = NarrativeSpeakerId.Dalia,
-                    DisplayName = "DALIA RAHIM",
-                    Role = "JRC FIELD COMMAND",
-                    AccessibleLabel = "Major Dalia Rahim, JRC Field Command",
+                    DisplayName = "DISTRICT DISPATCH",
+                    Role = "EMERGENCY OPERATIONS",
+                    AccessibleLabel = "District Dispatch, Emergency Operations",
                     IdentitySprite = RequireAsset<Sprite>(FirstLaunchNarrativeDialogueAssetImporter.DaliaPortraitPath),
                     AccentColor = Cyan,
                     Treatment = NarrativeSpeakerTreatment.HumanPortrait
@@ -1043,6 +1313,21 @@ namespace Game.Editor
         {
             RectTransform logo = CreateTopLeft("BrandLogo", parent, x, y, width, height);
             V3UiFoundationBuilder.AddMainMenuLogo(logo, left: 0f, top: 0f, right: 0f, bottom: 0f);
+        }
+
+        private static void BuildBrandLogoPlate(Transform parent, float x, float y, float width, float height)
+        {
+            RectTransform plate = CreateTopLeft("BrandLogoPlate", parent, x, y, width, height);
+            V3GradientGraphic fill = plate.gameObject.AddComponent<V3GradientGraphic>();
+            fill.ConfigureCorners(
+                new Color32(22, 34, 38, 252),
+                new Color32(13, 25, 29, 252),
+                new Color32(5, 12, 15, 252),
+                new Color32(8, 16, 19, 252),
+                Border,
+                3f);
+            fill.raycastTarget = false;
+            V3UiFoundationBuilder.AddMainMenuLogo(plate, left: 16f, top: 10f, right: 16f, bottom: 10f);
         }
 
         private static void BuildGlobe(Transform parent, float x, float y, float size, Color color)

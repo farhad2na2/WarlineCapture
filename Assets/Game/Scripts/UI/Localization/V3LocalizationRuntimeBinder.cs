@@ -58,7 +58,8 @@ namespace Game.UI.Runtime
             {
                 TMP_Text text = texts[i];
                 if (text == null || !text.gameObject.scene.IsValid() ||
-                    text.GetComponent<V3LocalizedTextBinding>() != null)
+                    text.GetComponent<V3LocalizedTextBinding>() != null ||
+                    IsSpecializedNarrativeText(text))
                 {
                     continue;
                 }
@@ -73,6 +74,18 @@ namespace Game.UI.Runtime
                     text.gameObject.AddComponent<V3LocalizedTextBinding>();
                 binding.Configure(key, source, observeRuntimeChanges: true);
             }
+        }
+
+        internal static bool IsSpecializedNarrativeText(TMP_Text text)
+        {
+            if (text == null)
+                return false;
+
+            // These views already apply the selected narrative locale, Persian font, RTL
+            // alignment, and dynamically changing dialogue. A second generic binding races that
+            // presenter and can replace final copy with an unrelated format template.
+            return text.GetComponentInParent<FirstLaunchLanguageChoiceView>(true) != null ||
+                   text.GetComponentInParent<NarrativeSequenceView>(true) != null;
         }
     }
 }

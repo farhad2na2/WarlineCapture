@@ -314,7 +314,7 @@ namespace Game.Configs
             {
                 if (!string.IsNullOrEmpty(entry.Value) && !SourceKeysByValue.ContainsKey(entry.Value))
                     SourceKeysByValue.Add(entry.Value, entry.Key);
-                if (!string.IsNullOrEmpty(entry.Value) && FormatToken.IsMatch(entry.Value))
+                if (!string.IsNullOrEmpty(entry.Value) && IsSafeRuntimeTemplate(entry.Value))
                 {
                     SourceTemplates.Add(new SourceTemplate(
                         entry.Key,
@@ -336,7 +336,7 @@ namespace Game.Configs
             {
                 if (!string.IsNullOrEmpty(entry.Value) && !CurrentKeysByValue.ContainsKey(entry.Value))
                     CurrentKeysByValue.Add(entry.Value, entry.Key);
-                if (!string.IsNullOrEmpty(entry.Value) && FormatToken.IsMatch(entry.Value))
+                if (!string.IsNullOrEmpty(entry.Value) && IsSafeRuntimeTemplate(entry.Value))
                 {
                     CurrentTemplates.Add(new SourceTemplate(
                         entry.Key,
@@ -379,6 +379,24 @@ namespace Game.Configs
             pattern.Append(Regex.Escape(source.Substring(position)));
             pattern.Append('$');
             return new Regex(pattern.ToString(), RegexOptions.CultureInvariant);
+        }
+
+        private static bool IsSafeRuntimeTemplate(string template)
+        {
+            if (!FormatToken.IsMatch(template))
+                return false;
+
+            // A placeholder-only format such as "{0} {1}" matches almost every multi-word
+            // UI label. It must remain available by its explicit key, but it is not distinctive
+            // enough for the runtime binders' reverse lookup.
+            string literal = FormatToken.Replace(template, string.Empty);
+            for (int i = 0; i < literal.Length; i++)
+            {
+                if (char.IsLetterOrDigit(literal[i]))
+                    return true;
+            }
+
+            return false;
         }
 
         private static string ApplyCapturedTemplate(string localizedTemplate, Match match)

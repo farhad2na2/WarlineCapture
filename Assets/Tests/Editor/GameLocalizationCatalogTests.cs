@@ -3,6 +3,7 @@ using Game.Configs;
 using Game.Editor;
 using Game.UI.Runtime;
 using NUnit.Framework;
+using TMPro;
 using UnityEngine;
 
 public sealed class GameLocalizationCatalogTests
@@ -27,6 +28,7 @@ public sealed class GameLocalizationCatalogTests
                     {
                         new GameLocalizedStringRecord("ui.continue", "CONTINUE"),
                         new GameLocalizedStringRecord("ui.dynamic", "Dynamic panel"),
+                        new GameLocalizedStringRecord("ui.generic_count", "{0} {1}"),
                         new GameLocalizedStringRecord(
                             "ui.passengers",
                             "PASSENGERS {0}/{1} | SOLDIERS {2}/{3}")
@@ -41,6 +43,7 @@ public sealed class GameLocalizationCatalogTests
                     {
                         new GameLocalizedStringRecord("ui.continue", "ادامه"),
                         new GameLocalizedStringRecord("ui.dynamic", "پنل پویا"),
+                        new GameLocalizedStringRecord("ui.generic_count", "{0} {1}"),
                         new GameLocalizedStringRecord(
                             "ui.passengers",
                             "مسافران {0}/{1} | سربازان {2}/{3}")
@@ -104,6 +107,52 @@ public sealed class GameLocalizationCatalogTests
             out string value));
         Assert.AreEqual("ui.passengers", key);
         Assert.AreEqual("مسافران 2/4 | سربازان 2/3", value);
+    }
+
+    [Test]
+    public void RuntimeSourceLookup_DoesNotTreatPlaceholderOnlyTemplateAsArbitraryCopy()
+    {
+        GameLocalization.Initialize(catalog, GameLocalization.PersianLocaleCode, persist: false);
+
+        Assert.IsFalse(GameLocalization.TryGetBySource(
+            "SELECT STORY LANGUAGE",
+            out _,
+            out string sourceResult));
+        Assert.AreEqual("SELECT STORY LANGUAGE", sourceResult);
+
+        Assert.IsFalse(GameLocalization.TryGetSourceByLocalized(
+            "متن داستان فارسی",
+            out _,
+            out string localizedResult));
+        Assert.AreEqual("متن داستان فارسی", localizedResult);
+    }
+
+    [Test]
+    public void RuntimeBinder_SkipsViewsWithDedicatedNarrativeLocalization()
+    {
+        GameObject languageRoot = new("LanguageRoot", typeof(FirstLaunchLanguageChoiceView));
+        GameObject languageTextObject = new("Title", typeof(RectTransform), typeof(TextMeshProUGUI));
+        languageTextObject.transform.SetParent(languageRoot.transform, false);
+        GameObject comicRoot = new("ComicRoot", typeof(NarrativeSequenceView));
+        GameObject comicTextObject = new("Dialogue", typeof(RectTransform), typeof(TextMeshProUGUI));
+        comicTextObject.transform.SetParent(comicRoot.transform, false);
+        GameObject ordinaryTextObject = new("Ordinary", typeof(RectTransform), typeof(TextMeshProUGUI));
+
+        try
+        {
+            Assert.IsTrue(V3LocalizationRuntimeBinder.IsSpecializedNarrativeText(
+                languageTextObject.GetComponent<TMP_Text>()));
+            Assert.IsTrue(V3LocalizationRuntimeBinder.IsSpecializedNarrativeText(
+                comicTextObject.GetComponent<TMP_Text>()));
+            Assert.IsFalse(V3LocalizationRuntimeBinder.IsSpecializedNarrativeText(
+                ordinaryTextObject.GetComponent<TMP_Text>()));
+        }
+        finally
+        {
+            Object.DestroyImmediate(languageRoot);
+            Object.DestroyImmediate(comicRoot);
+            Object.DestroyImmediate(ordinaryTextObject);
+        }
     }
 
     [Test]

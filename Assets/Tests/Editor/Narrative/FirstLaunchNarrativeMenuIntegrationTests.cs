@@ -28,12 +28,13 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
             tests.LanguageChoice_AllControlsHaveRaycastTargets();
             tests.LanguageChoice_SelectionImmediatelyLocalizesOnlyShellCopy();
             tests.FreshProfile_LanguageChoicePrecedesNarrativeAndPersistsPersian();
+            tests.ActivePersianLocale_UsesPersianVoiceWhenProfileLanguageIsStale();
             tests.SkipConfirmation_UsesV3ChromeAndPersianLocalization();
             tests.FreshProfile_SkipRequiresLiveConfirmationAndPublishesOneHandoff();
             tests.CompletedAndPendingProfiles_SelectCorrectStartupDisposition();
             tests.ReviewerMode_ProvidesNavigationWithoutMutatingCompletedProfile();
             tests.CommittedIdentity_SkipRoutesDirectlyAndPreservesSelection();
-            Debug.Log("[FirstLaunchNarrativeMenuIntegrationValidation] result=Passed tests=11 pointerTargets=Passed languagePreview=Passed skip=v3-bilingual");
+            Debug.Log("[FirstLaunchNarrativeMenuIntegrationValidation] result=Passed tests=12 pointerTargets=Passed languagePreview=Passed voiceLocale=active skip=v3-bilingual");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -264,6 +265,88 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
         Assert.AreEqual(FirstLaunchNarrativeLanguage.Persian.ToString(), saved.firstLaunchLanguage);
         Assert.AreEqual("فرمانده", saved.firstLaunchCommanderCallsign);
         Assert.AreEqual(0f, context.LanguageView.GetComponent<CanvasGroup>().alpha);
+    }
+
+    [Test]
+    public void ActivePersianLocale_UsesPersianVoiceWhenProfileLanguageIsStale()
+    {
+        GameLocalizationCatalog catalog = AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(
+            V3UiLocalizationCatalogBuilder.CatalogPath);
+        Assert.NotNull(catalog);
+
+        bool hadLocalePreference = PlayerPrefs.HasKey(GameLocalization.LocalePreferenceKey);
+        string previousLocalePreference = PlayerPrefs.GetString(
+            GameLocalization.LocalePreferenceKey,
+            GameLocalization.EnglishLocaleCode);
+        try
+        {
+            PlayerPrefs.SetString(
+                GameLocalization.LocalePreferenceKey,
+                GameLocalization.PersianLocaleCode);
+            GameLocalization.Initialize(
+                catalog,
+                GameLocalization.PersianLocaleCode,
+                persist: false);
+
+            PlayerProfileSaveData staleProfile = new()
+            {
+                firstLaunchStatus = FirstLaunchProfileState.InProgress,
+                firstLaunchLanguage = FirstLaunchNarrativeLanguage.English.ToString()
+            };
+            using Context context = CreateContext(staleProfile);
+            Assert.AreEqual(
+                FirstLaunchNarrativeStartupDisposition.Playing,
+                context.Helper.Initialize(
+                    context.Sequence,
+                    context.Speakers,
+                    context.Punctuation,
+                    context.View,
+                    Game.UI.Contracts.FallbackGameTextResolver.Instance,
+                    context.SaveService,
+                    false,
+                    false,
+                    context.LanguageView,
+                    context.PersianLocale));
+            Assert.AreEqual(
+                FirstLaunchNarrativeLanguage.Persian.ToString(),
+                context.SaveService.LoadProfile().firstLaunchLanguage,
+                "Starting the narrative must repair the stale profile language as well as selecting the Persian voice locale.");
+
+            FieldInfo sequenceField = typeof(FirstLaunchNarrativeCompositionSystemHelper).GetField(
+                "sequencePresentation",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.NotNull(sequenceField);
+            FirstLaunchNarrativeSequencePresentationSystemHelper sequence =
+                sequenceField.GetValue(context.Helper) as
+                    FirstLaunchNarrativeSequencePresentationSystemHelper;
+            Assert.NotNull(sequence);
+            Assert.IsTrue(sequence.NextState());
+            context.Helper.Tick(0.6f);
+            AudioClip playingClip = context.View.VoiceSource.clip;
+            Assert.NotNull(playingClip);
+            StringAssert.Contains(
+                "/FirstLaunch/Voice/fa/",
+                AssetDatabase.GetAssetPath(playingClip),
+                "Persian subtitles and first-launch speech must resolve from the same active locale.");
+        }
+        finally
+        {
+            if (hadLocalePreference)
+            {
+                PlayerPrefs.SetString(
+                    GameLocalization.LocalePreferenceKey,
+                    previousLocalePreference);
+            }
+            else
+            {
+                PlayerPrefs.DeleteKey(GameLocalization.LocalePreferenceKey);
+            }
+
+            GameLocalization.Initialize(
+                catalog,
+                previousLocalePreference,
+                persist: false);
+        }
     }
 
     [Test]

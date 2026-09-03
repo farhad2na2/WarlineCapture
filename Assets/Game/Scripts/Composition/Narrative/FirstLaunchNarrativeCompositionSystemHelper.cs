@@ -117,12 +117,20 @@ namespace Game.Composition
                 return FirstLaunchNarrativeStartupDisposition.AwaitingLanguage;
             }
 
+            FirstLaunchNarrativeLanguage profileLanguage = profileComposition.Language;
             FirstLaunchNarrativeLanguage language = startInReviewerMode
                 ? FirstLaunchNarrativeLanguage.English
-                : profileComposition.Language;
+                : ResolveNarrativeLanguage(profileLanguage);
             if (language == FirstLaunchNarrativeLanguage.Unselected)
             {
                 language = FirstLaunchNarrativeLanguage.English;
+                profileComposition.CommitLanguage(language, true);
+            }
+            else if (!startInReviewerMode && language != profileLanguage)
+            {
+                // Repair profiles created while the old settings enum and the shared locale
+                // preference disagreed. From this point on subtitles, voices, and persisted
+                // first-launch state all describe the same selected language.
                 profileComposition.CommitLanguage(language, true);
             }
 
@@ -318,6 +326,9 @@ namespace Game.Composition
 
         private bool StartNarrative(FirstLaunchNarrativeLanguage language)
         {
+            if (!reviewerMode)
+                language = ResolveNarrativeLanguage(language);
+
             if (language == FirstLaunchNarrativeLanguage.Persian && persianLocale == null)
             {
                 UnityEngine.Debug.LogError(
@@ -352,6 +363,32 @@ namespace Game.Composition
             sequencePresentation.Start();
             reviewPresentation.Refresh(true);
             return true;
+        }
+
+        internal static FirstLaunchNarrativeLanguage ResolveNarrativeLanguage(
+            FirstLaunchNarrativeLanguage profileLanguage)
+        {
+            // The shared localization locale is the live player choice used by subtitles and
+            // every V3 screen. Voice selection must use that same source of truth, even when an
+            // older first-launch profile still contains a different language value.
+            string localeCode = GameLocalization.CurrentLocaleCode;
+            if (string.Equals(
+                    localeCode,
+                    GameLocalization.PersianLocaleCode,
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                return FirstLaunchNarrativeLanguage.Persian;
+            }
+
+            if (string.Equals(
+                    localeCode,
+                    GameLocalization.EnglishLocaleCode,
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                return FirstLaunchNarrativeLanguage.English;
+            }
+
+            return profileLanguage;
         }
 
         private void LogStartupDisposition(FirstLaunchNarrativeStartupDisposition disposition)

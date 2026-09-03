@@ -9,7 +9,33 @@ using UnityEngine.UI;
 
 public sealed class GameLocalizationCatalogTests
 {
+    private const string DisabledUiMarker =
+        "[DisabledUiSubMeshValidation] result=Passed generatedSubMesh=Ignored restore=Passed";
+
     private GameLocalizationCatalog catalog;
+
+    [UnityEditor.MenuItem("Game/Validation/Run Disabled UI SubMesh Focused")]
+    public static void RunDisabledUiFocusedValidation()
+    {
+        GameLocalizationCatalogTests tests = new();
+        try
+        {
+            tests.SetUp();
+            tests.DisabledUi_KeepsTextMeshProFontMaterialAndReadableGlyphColor();
+            Debug.Log(DisabledUiMarker);
+            ValidationExit.Passed();
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[DisabledUiSubMeshValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+        finally
+        {
+            tests.TearDown();
+        }
+    }
 
     [SetUp]
     public void SetUp()
@@ -287,6 +313,12 @@ public sealed class GameLocalizationCatalogTests
     {
         GameObject root = new("DisabledTextTest", typeof(RectTransform), typeof(CanvasRenderer));
         TextMeshProUGUI text = root.AddComponent<TextMeshProUGUI>();
+        GameObject subMeshObject = new(
+            "GeneratedFallbackSubmesh",
+            typeof(RectTransform),
+            typeof(CanvasRenderer),
+            typeof(TMP_SubMeshUI));
+        subMeshObject.transform.SetParent(root.transform, false);
         Material originalMaterial = text.material;
         Color originalColor = new(0.9f, 0.8f, 0.7f, 1f);
         text.color = originalColor;
@@ -305,10 +337,11 @@ public sealed class GameLocalizationCatalogTests
             Assert.AreEqual(text.color.g, text.color.b, 0.001f);
             Assert.AreEqual(1f, text.color.a);
 
-            UiDisabledMaterialUtility.SetDisabled(
-                root,
-                UiDisabledVisualReason.MissionRestriction,
-                false);
+            Assert.DoesNotThrow(() => UiDisabledMaterialUtility.SetDisabled(
+                    root,
+                    UiDisabledVisualReason.MissionRestriction,
+                    false),
+                "Restoring a disabled command must ignore TMP's generated fallback submesh.");
             Assert.AreSame(originalMaterial, text.material);
             Assert.AreEqual(originalColor, text.color);
         }

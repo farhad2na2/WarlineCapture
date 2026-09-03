@@ -82,6 +82,14 @@ namespace Game.UI.Runtime
             if (graphic == null || reason == UiDisabledVisualReason.None)
                 return;
 
+            // TMP creates child submesh graphics for fallback-font glyphs. Their material is
+            // owned by the parent TMP_Text and TMP_SubMeshUI's setter dereferences that owner;
+            // restoring a cached null material here throws every frame and prevents the M02 HUD
+            // command state from completing. The parent text already receives the readable
+            // disabled tint, so generated submeshes must never be material-swapped independently.
+            if (graphic is TMP_SubMeshUI)
+                return;
+
             UiDisabledMaterialState state = graphic.GetComponent<UiDisabledMaterialState>();
             if (state == null)
             {

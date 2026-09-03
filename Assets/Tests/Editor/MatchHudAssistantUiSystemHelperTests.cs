@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Game.Configs;
 using Game.Tactical.Contracts;
 using Game.Narrative.Contracts;
 using Game.UI.Contracts;
@@ -23,8 +24,16 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab";
     private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
     private const string AriaPortraitPath =
-        "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_aria_v3.png";
+        "Assets/Game/Art/UI/V3Shared/Portraits/ARIA_MainMenu_V3.png";
     private bool _openedScene;
+    private string _previousLocaleForTest;
+
+    [SetUp]
+    public void SetUp()
+    {
+        _previousLocaleForTest = GameLocalization.CurrentLocaleCode;
+        GameLocalization.SetLocale(GameLocalization.EnglishLocaleCode, persist: false);
+    }
 
     [UnityEditor.MenuItem("Game/Validation/Run ARIA Tutorial Briefing Focused")]
     public static void RunFocusedValidation()
@@ -127,13 +136,16 @@ public sealed class MatchHudAssistantUiSystemHelperTests
     private static void RunCase(Action<MatchHudAssistantUiSystemHelperTests> testCase)
     {
         var tests = new MatchHudAssistantUiSystemHelperTests();
+        string previousLocale = GameLocalization.CurrentLocaleCode;
         try
         {
+            GameLocalization.SetLocale(GameLocalization.EnglishLocaleCode, persist: false);
             testCase(tests);
         }
         finally
         {
             tests.TearDown();
+            GameLocalization.SetLocale(previousLocale, persist: false);
         }
     }
 
@@ -158,6 +170,12 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         if (_openedScene)
             EditorSceneManager.NewScene(NewSceneSetup.EmptyScene);
         _openedScene = false;
+
+        if (!string.IsNullOrEmpty(_previousLocaleForTest))
+        {
+            GameLocalization.SetLocale(_previousLocaleForTest, persist: false);
+            _previousLocaleForTest = null;
+        }
     }
 
     [Test]
@@ -444,7 +462,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         gateway.AssistantHighlight = CreateHighlightModel(824u, recommendationKind: 2);
         helper.ApplyHighlightReadModel(gateway.AssistantHighlight);
         helper.TickHighlight(moveTargetDeadline + 0.01f);
-        AssertVisibleIndicator(indicator, "CLICK DESTINATION");
+        Assert.IsFalse(indicator.activeInHierarchy,
+            "World-space destination guidance must remain behind the HUD instead of projecting over it.");
         AssertWorldRingCenteredAt(new Vector3(12f, 3.28f, 9f));
         Assert.AreEqual(3, gateway.AssistantIntentRequestCount);
 
@@ -467,7 +486,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         gateway.AssistantHighlight = CreateHighlightModel(827u, recommendationKind: 3, targetKind: 6);
         helper.ApplyHighlightReadModel(gateway.AssistantHighlight);
         helper.TickHighlight(attackTargetDeadline + 0.01f);
-        AssertVisibleIndicator(indicator, "CLICK ENEMY");
+        Assert.IsFalse(indicator.activeInHierarchy,
+            "World-space enemy guidance must remain behind the HUD instead of projecting over it.");
         AssertWorldRingCenteredAt(new Vector3(12f, 3.28f, 9f));
         Assert.AreEqual(5, gateway.AssistantIntentRequestCount);
         ui.Dispose();
@@ -612,6 +632,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
     [Test]
     public void TutorialBriefing_PersianUsesRtlFontAndLocalizedSubsteps()
     {
+        GameLocalization.SetLocale(GameLocalization.PersianLocaleCode, persist: false);
         GameObject matchHudPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(MatchHudPrefabPath);
         Assert.NotNull(matchHudPrefab, MatchHudPrefabPath);
         GameObject instance = UnityEngine.Object.Instantiate(matchHudPrefab);
@@ -878,8 +899,9 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.NotNull(worldRing);
         Assert.AreEqual(64, worldRing.GetComponent<LineRenderer>().positionCount);
         GameObject targetIndicator = FindLoadedObject("AriaAssistantTargetIndicatorRuntime");
-        Assert.NotNull(targetIndicator, "World-target Show Me must create an explicit screen indicator.");
-        Assert.AreEqual("ARIA TARGET", targetIndicator.GetComponentInChildren<TMP_Text>(true).text);
+        Assert.NotNull(targetIndicator);
+        Assert.IsFalse(targetIndicator.activeInHierarchy,
+            "World-target Show Me must use only the ground marker so it cannot cover HUD or drawer UI.");
         Assert.IsFalse(targetIndicator.GetComponent<CanvasGroup>().blocksRaycasts);
         Assert.IsFalse(popup.PreviewHighlight.raycastTarget, "ARIA preview visuals must never block gameplay input.");
         ui.Dispose();
@@ -1025,6 +1047,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         var ui = new MainMenuPlayUI();
         ui.Init(null, new FakeMatchRuntimeState());
         ui.BindMatchHudAssistant(header.gameObject, overlay, LoadPopupPrefab());
+        ui.BindMatchHudSquadTray(CreateSquadTray(overlay));
         ui.Update();
 
         objectives.parent.Find("AriaAssistantButton").GetComponent<Button>().onClick.Invoke();
@@ -1296,7 +1319,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.IsTrue(indicator.activeInHierarchy,
             "The guided command-button indicator must be visible in the active HUD hierarchy.");
         Assert.IsTrue(indicator.GetComponent<Canvas>().overrideSorting,
-            "The animated ARIA indicator must have an isolated canvas to avoid rebuilding the full HUD.");
+            "The static V3 focus frame must have an isolated canvas to avoid rebuilding the full HUD.");
         Assert.AreEqual(Vector3.one, indicator.transform.localScale);
         Assert.AreEqual(initialLabel, indicator.GetComponentInChildren<TMP_Text>(true).text);
         Assert.IsTrue(worldRing == null || !worldRing.activeSelf,
@@ -1329,13 +1352,14 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         FindNamed(popup.transform, "ShowMeButton").GetComponent<Button>().onClick.Invoke();
         Assert.IsFalse(popup.IsOpen);
         worldRing = GameObject.Find("AriaAssistantPreviewHighlightRuntime");
-        Assert.AreEqual(armedLabel, indicator.GetComponentInChildren<TMP_Text>(true).text);
+        Assert.IsFalse(indicator.activeInHierarchy,
+            $"The world target '{armedLabel}' must not project a screen-space panel over the HUD.");
         Assert.NotNull(worldRing);
         Assert.IsTrue(worldRing.activeSelf,
             "The next explicit Show Me after arming the command must reveal its world target.");
         ui.CompleteMatchHudGuidedWorldTarget(commandMode);
         Assert.IsFalse(indicator.activeSelf,
-            "Completing the highlighted world action must remove its screen arrow immediately.");
+            "Completing the highlighted world action must keep the screen-space focus frame hidden.");
         Assert.IsFalse(worldRing.activeSelf,
             "Completing the highlighted world action must remove its ground ring immediately.");
         commandInput.Unbind(commandControls);
@@ -1566,6 +1590,12 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.IsTrue(indicator.activeInHierarchy,
             $"The automatic tutorial indicator '{expectedText}' must be visible.");
         Assert.AreEqual(expectedText, indicator.GetComponentInChildren<TMP_Text>(true).text);
+        Assert.NotNull(indicator.transform.Find("TopBorderCaption"),
+            "V3 UI guidance must embed its label in the thick top border.");
+        Assert.IsNull(indicator.transform.Find("Pointer"),
+            "V3 UI guidance must use a stable border with no placeholder arrow.");
+        Assert.IsNull(indicator.GetComponent<Animator>(),
+            "V3 UI guidance must remain static and must not flash.");
     }
 
     private static void AssertWorldRingCenteredAt(Vector3 expectedCenter)

@@ -861,6 +861,20 @@ MonoBehaviour:
       value: Logistics transport required.
     - key: ui.exchange.unavailable
       value: Exchange unavailable
+    - key: ui.guidance.click_destination
+      value: CLICK DESTINATION
+    - key: ui.guidance.click_enemy
+      value: CLICK ENEMY
+    - key: ui.guidance.open_build
+      value: OPEN BUILD
+    - key: ui.guidance.queue_rifle
+      value: QUEUE RIFLE
+    - key: ui.guidance.resource_spend
+      value: RESOURCE SPEND
+    - key: ui.guidance.select_barracks
+      value: SELECT BARRACKS
+    - key: ui.guidance.select_squad
+      value: SELECT SQUAD
     - key: ui.hud.aria_target
       value: ARIA TARGET
     - key: ui.hud.cargo_capacity
@@ -905,7 +919,7 @@ MonoBehaviour:
     - key: ui.hud.passengers_soldiers_vehicles_capacity
       value: PASSENGERS {0}/{1} | SOLDIERS {2}/{3} | VEHICLES {4}/{5}
     - key: ui.hud.tap_rifle_squad
-      value: "TAP RIFLE SQUAD\n\u25BC"
+      value: SELECT SQUAD
     - key: ui.inbox.from
       value: 'From: {0}'
     - key: ui.inbox.from_highlight
@@ -4319,6 +4333,25 @@ MonoBehaviour:
     - key: ui.exchange.unavailable
       value: "\u0645\u0628\u0627\u062F\u0644\u0647 \u062F\u0631 \u062F\u0633\u062A\u0631\u0633
         \u0646\u06CC\u0633\u062A"
+    - key: ui.guidance.click_destination
+      value: "\u0645\u0642\u0635\u062F \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u06CC\u062F"
+    - key: ui.guidance.click_enemy
+      value: "\u062F\u0634\u0645\u0646 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u06CC\u062F"
+    - key: ui.guidance.open_build
+      value: "\u0633\u0627\u062E\u062A \u0631\u0627 \u0628\u0627\u0632 \u06A9\u0646\u06CC\u062F"
+    - key: ui.guidance.queue_rifle
+      value: "\u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \u0631\u0627 \u062F\u0631
+        \u0635\u0641 \u0628\u06AF\u0630\u0627\u0631\u06CC\u062F"
+    - key: ui.guidance.resource_spend
+      value: "\u0647\u0632\u06CC\u0646\u0647 \u0645\u0646\u0627\u0628\u0639"
+    - key: ui.guidance.select_barracks
+      value: "\u0633\u0631\u0628\u0627\u0632\u062E\u0627\u0646\u0647 \u0631\u0627
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u062F"
+    - key: ui.guidance.select_squad
+      value: "\u06AF\u0631\u0648\u0647 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u06CC\u062F"
     - key: ui.hud.aria_target
       value: "\u0647\u062F\u0641 \u0622\u0631\u06CC\u0627"
     - key: ui.hud.cargo_capacity
@@ -4363,8 +4396,8 @@ MonoBehaviour:
       value: "\u0645\u0633\u0627\u0641\u0631\u0627\u0646 {0}/{1} | \u0633\u0631\u0628\u0627\u0632\u0627\u0646
         {2}/{3} | \u062E\u0648\u062F\u0631\u0648\u0647\u0627 {4}/{5}"
     - key: ui.hud.tap_rifle_squad
-      value: "\u0631\u0648\u06CC \u06AF\u0631\u0648\u0647 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631
-        \u0628\u0632\u0646\u06CC\u062F\n\u25BC"
+      value: "\u06AF\u0631\u0648\u0647 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u06CC\u062F"
     - key: ui.inbox.from
       value: "\u0627\u0632: {0}"
     - key: ui.inbox.from_highlight

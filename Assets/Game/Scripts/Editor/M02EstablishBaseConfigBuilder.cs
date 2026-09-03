@@ -85,7 +85,8 @@ namespace Game.Editor
             {
                 "friendly_spawn", "camera_start", "forward_post", "build_lot",
                 "hostile_spawn", "lane_a", "lane_b", "lane_c", "defense_boundary",
-                "civilian_edge", "civilian_evacuation", "minimap_start", "resource_focus"
+                "civilian_edge", "civilian_evacuation", "minimap_start", "resource_focus",
+                "airfield_personnel_a", "airfield_personnel_b"
             };
             OperationMapAnchorKind[] anchorKinds =
             {
@@ -95,7 +96,8 @@ namespace Game.Editor
                 OperationMapAnchorKind.Lane, OperationMapAnchorKind.Lane,
                 OperationMapAnchorKind.Hostile, OperationMapAnchorKind.Civilian,
                 OperationMapAnchorKind.Civilian, OperationMapAnchorKind.Minimap,
-                OperationMapAnchorKind.Resource
+                OperationMapAnchorKind.Resource, OperationMapAnchorKind.Helipad,
+                OperationMapAnchorKind.Helipad
             };
             SetArray(serialized, "requiredAnchors", anchorNames.Length, (anchor, index) =>
             {
@@ -125,19 +127,10 @@ namespace Game.Editor
             Set(restrictions, "economyDisabled", false);
             Set(restrictions, "transportDisabled", true);
             Set(restrictions, "airDisabled", true);
-            SetArray(serialized, "ambientPresentations", 2, (ambient, index) =>
+            SetArray(serialized, "ambientPresentations", 1, (ambient, _) =>
             {
-                if (index == 0)
-                {
-                    Set(ambient, "presentationId", "ambient.ch01.m02.civilians");
-                    Set(ambient, "anchorId", "anchor.ch01.m02.civilian_edge");
-                    Set(ambient, "routeId", "route.ch01.m02.civilian_patrol");
-                    Set(ambient, "instanceCount", 4);
-                    return;
-                }
-
                 Set(ambient, "presentationId", "ambient.ch01.m02.base_personnel");
-                Set(ambient, "anchorId", "anchor.ch01.m02.resource_focus");
+                Set(ambient, "anchorId", "anchor.ch01.m02.airfield_personnel_a");
                 Set(ambient, "routeId", "route.ch01.m02.base_patrol");
                 Set(ambient, "instanceCount", 8);
             });

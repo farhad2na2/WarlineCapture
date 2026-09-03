@@ -26,13 +26,13 @@ MonoBehaviour:
   minZoomHeight: 15
   maxZoomHeight: 100
   normalModeZoomHeight: 44
-  buildModeZoomHeight: 90
+  buildModeZoomHeight: 48
   normalModePitch: 40
-  buildModePitch: 64
+  buildModePitch: 48
   normalModeYaw: 10
   buildModeYaw: 10
   normalModeFieldOfView: 36
-  buildModeFieldOfView: 52
+  buildModeFieldOfView: 38
   fullscreenIsoZoomHeight: 40
   fullscreenIsoPitch: 82
   fullscreenIsoYaw: 10

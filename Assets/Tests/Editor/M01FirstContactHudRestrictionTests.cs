@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using Game.Components;
+using Game.Configs;
 using Game.Missions.Contracts;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
@@ -328,7 +329,13 @@ public sealed class M01FirstContactHudRestrictionTests
             Assert.That(cue, Is.Not.Null);
             Assert.That(cue.gameObject.activeSelf, Is.True);
             Assert.That(cue.GetComponent<CanvasGroup>().blocksRaycasts, Is.False);
-            Assert.That(cue.GetComponentInChildren<TMP_Text>().text, Does.Contain("TAP RIFLE SQUAD"));
+            Assert.That(
+                cue.GetComponentInChildren<TMP_Text>().text,
+                Is.EqualTo(GameLocalization.Get("ui.hud.tap_rifle_squad", "SELECT SQUAD")));
+            Assert.That(cue.GetComponent<V3GradientGraphic>(), Is.Not.Null,
+                "The local fallback must use the same V3 bordered focus treatment.");
+            Assert.That(cue.Find("Pointer"), Is.Null,
+                "The V3 focus treatment must not use a placeholder arrow.");
         }
         finally
         {

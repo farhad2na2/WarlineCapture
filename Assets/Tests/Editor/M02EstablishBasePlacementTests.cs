@@ -143,7 +143,7 @@ public sealed class M02EstablishBasePlacementTests
             CanonicalBarracksFootprint,
             out Vector2Int origin));
         Assert.AreEqual(CanonicalPlacement.position, origin);
-        Assert.AreEqual(new Vector2Int(1012, 370), origin);
+        Assert.AreEqual(new Vector2Int(1016, 330), origin);
     }
 
     [Test]

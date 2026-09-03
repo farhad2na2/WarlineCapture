@@ -1,3 +1,4 @@
+using Game.Configs;
 using Game.UI.Contracts;
 using UnityEngine;
 using UnityEngine.UI;
@@ -156,23 +157,27 @@ namespace Game.UI.Runtime
         {
             if (model.TargetKind == UiSurfaceTargetKind &&
                 model.RecommendationKind == BuildRecommendationKind)
-                return "OPEN BUILD";
+                return GameLocalization.Get("ui.guidance.open_build", "OPEN BUILD");
             if (model.TargetKind == UiSurfaceTargetKind &&
                 model.RecommendationKind == SelectRecommendationKind)
-                return "SELECT BARRACKS";
+                return GameLocalization.Get("ui.guidance.select_barracks", "SELECT BARRACKS");
             if (model.TargetKind == UiSurfaceTargetKind &&
                 model.RecommendationKind == ExplainRecommendationKind)
-                return "RESOURCE SPEND";
+                return GameLocalization.Get("ui.guidance.resource_spend", "RESOURCE SPEND");
             if (model.TargetKind == UiSurfaceTargetKind &&
                 model.RecommendationKind == ProduceRecommendationKind)
-                return "QUEUE RIFLE";
+                return GameLocalization.Get("ui.guidance.queue_rifle", "QUEUE RIFLE");
             if (model.RecommendationKind == SelectRecommendationKind)
-                return "SELECT SQUAD";
+                return GameLocalization.Get("ui.guidance.select_squad", "SELECT SQUAD");
             if (model.RecommendationKind == MoveRecommendationKind)
-                return commandCue ? "PRESS MOVE" : "CLICK DESTINATION";
+                return commandCue
+                    ? GameLocalization.Get("ui.aria.press_move", "PRESS MOVE")
+                    : GameLocalization.Get("ui.guidance.click_destination", "CLICK DESTINATION");
             if (model.RecommendationKind == AttackRecommendationKind)
-                return commandCue ? "PRESS ATTACK" : "CLICK ENEMY";
-            return "ARIA TARGET";
+                return commandCue
+                    ? GameLocalization.Get("ui.aria.press_attack", "PRESS ATTACK")
+                    : GameLocalization.Get("ui.guidance.click_enemy", "CLICK ENEMY");
+            return GameLocalization.Get("ui.hud.aria_target", "ARIA TARGET");
         }
 
         private void AcknowledgeBuildButton()

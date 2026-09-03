@@ -58,8 +58,8 @@ namespace Game.Runtime
                 presentationKind = BasePersonnelPresentationKind;
                 return TryResolveAnchors(
                     ref map,
-                    "anchor.ch01.m02.resource_focus",
-                    "anchor.ch01.m02.forward_post",
+                    "anchor.ch01.m02.airfield_personnel_a",
+                    "anchor.ch01.m02.airfield_personnel_b",
                     "anchor.ch01.m02.friendly_spawn",
                     out anchors);
             }
@@ -167,7 +167,10 @@ namespace Game.Runtime
             bool basePersonnel)
         {
             uint hash = math.hash(new int3(seed ^ (basePersonnel ? 0x63B1 : 0x37D9), ordinal + 1, 0x45));
-            int centerIndex = ordinal % 3;
+            // M02 airfield personnel patrol the two clear apron anchors. The third anchor is
+            // orientation-only; using it as another loop center sent actors through the
+            // forward-post buildings and across the Barracks placement zone.
+            int centerIndex = basePersonnel ? ordinal % 2 : ordinal % 3;
             float3 center = centerIndex switch
             {
                 0 => anchors.First.Position,

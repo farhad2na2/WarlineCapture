@@ -89,6 +89,17 @@ namespace Game.Editor
         private static int tutorialCueResizeFrame;
         private static int tutorialCueScreenshotFrame;
         private static string tutorialCueScreenshotPath;
+        private static int tutorialUiCueScreenshotFrame;
+        private static string tutorialUiCueScreenshotPath;
+        private static int tutorialBuildDrawerOpenFrame;
+        private static int tutorialBuildDrawerScreenshotFrame;
+        private static string tutorialBuildDrawerScreenshotPath;
+        private static int tutorialBarracksSelectedFrame;
+        private static int tutorialPlacementStartFrame;
+        private static int tutorialPlacementScreenshotFrame;
+        private static string tutorialPlacementScreenshotPath;
+        private static bool tutorialNarrativeSkipSubmitted;
+        private static bool tutorialNarrativeSkipConfirmed;
         private static double startedAt;
         private static MobileVisualQualityCaptureMatrix matrixCapture;
 
@@ -297,11 +308,16 @@ namespace Game.Editor
                         : DefaultArtifactDirectory;
                 }
                 manifestPath = Path.Combine(artifactDirectory, $"{GetProfileLabel()}_manifest.md");
-                matrixCapture = MobileVisualQualityCaptureMatrix.TryCreateFromEnvironment(
-                    GetProfileLabel(),
-                    artifactDirectory,
-                    ApplyTimeProofState,
-                    TryRenderCamera);
+                // A focused tutorial proof must never be diverted into a stale visual-matrix
+                // session inherited by a long-running Editor. It owns a single deterministic
+                // M02 frame and its explicit output directory.
+                matrixCapture = tutorialCueProof
+                    ? null
+                    : MobileVisualQualityCaptureMatrix.TryCreateFromEnvironment(
+                        GetProfileLabel(),
+                        artifactDirectory,
+                        ApplyTimeProofState,
+                        TryRenderCamera);
                 if (matrixCapture == null)
                 {
                     Directory.CreateDirectory(artifactDirectory);
@@ -319,9 +335,26 @@ namespace Game.Editor
                 captureProgressDirectory = string.Empty;
                 tutorialCueResizeFrame = 0;
                 tutorialCueScreenshotFrame = 0;
+                tutorialUiCueScreenshotFrame = 0;
+                tutorialBuildDrawerOpenFrame = 0;
+                tutorialBuildDrawerScreenshotFrame = 0;
+                tutorialBarracksSelectedFrame = 0;
+                tutorialPlacementStartFrame = 0;
+                tutorialPlacementScreenshotFrame = 0;
+                tutorialNarrativeSkipSubmitted = false;
+                tutorialNarrativeSkipConfirmed = false;
                 tutorialCueScreenshotPath = Path.Combine(
                     artifactDirectory,
                     "m02_v3_tutorial_ground_cue.png");
+                tutorialUiCueScreenshotPath = Path.Combine(
+                    artifactDirectory,
+                    "m02_v3_tutorial_build_button_cue.png");
+                tutorialBuildDrawerScreenshotPath = Path.Combine(
+                    artifactDirectory,
+                    "m02_v3_tutorial_barracks_cue.png");
+                tutorialPlacementScreenshotPath = Path.Combine(
+                    artifactDirectory,
+                    "m02_v3_barracks_placement_centered.png");
                 completed = false;
                 startedAt = EditorApplication.timeSinceStartup;
                 SetPhase(CapturePhase.WaitingForPlayMode);
@@ -397,6 +430,8 @@ namespace Game.Editor
 
                 ApplyProfileIfNeeded(matchScene);
                 if (!matchScene.GameplayStartComplete && frameCount - deployFrame < 420)
+                    return;
+                if (captureTutorialCueProof && matchReadyFrame == 0 && !TryEnterLiveTutorialHud())
                     return;
 
                 if (matchReadyFrame == 0)
@@ -546,9 +581,169 @@ namespace Game.Editor
                     "The V3 tutorial cue screenshot was not written.",
                     tutorialCueScreenshotPath);
 
+            if (tutorialUiCueScreenshotFrame == 0)
+            {
+                StageV3TutorialUiCue(matchScene, bootstrap, 4);
+                DeleteIfExists(tutorialUiCueScreenshotPath);
+                ScreenCapture.CaptureScreenshot(tutorialUiCueScreenshotPath, 1);
+                tutorialUiCueScreenshotFrame = frameCount;
+                return;
+            }
+
+            if (frameCount - tutorialUiCueScreenshotFrame < 12)
+                return;
+            if (!File.Exists(tutorialUiCueScreenshotPath))
+                throw new FileNotFoundException(
+                    "The V3 build-button cue screenshot was not written.",
+                    tutorialUiCueScreenshotPath);
+
+            if (tutorialBuildDrawerOpenFrame == 0)
+            {
+                if (!TryExecuteTutorialUiSurface(matchScene, bootstrap, 4))
+                    throw new InvalidOperationException("The live M02 Build button did not open the build drawer.");
+                tutorialBuildDrawerOpenFrame = frameCount;
+                return;
+            }
+
+            if (frameCount - tutorialBuildDrawerOpenFrame < 24)
+                return;
+
+            if (tutorialBuildDrawerScreenshotFrame == 0)
+            {
+                StageV3TutorialUiCue(matchScene, bootstrap, 1);
+                DeleteIfExists(tutorialBuildDrawerScreenshotPath);
+                ScreenCapture.CaptureScreenshot(tutorialBuildDrawerScreenshotPath, 1);
+                tutorialBuildDrawerScreenshotFrame = frameCount;
+                return;
+            }
+
+            if (frameCount - tutorialBuildDrawerScreenshotFrame < 12)
+                return;
+            if (!File.Exists(tutorialBuildDrawerScreenshotPath))
+                throw new FileNotFoundException(
+                    "The V3 Barracks cue screenshot was not written.",
+                    tutorialBuildDrawerScreenshotPath);
+
+            if (tutorialBarracksSelectedFrame == 0)
+            {
+                if (!TryExecuteTutorialUiSurface(matchScene, bootstrap, 1))
+                    throw new InvalidOperationException("The live M02 Barracks card did not become selected.");
+                tutorialBarracksSelectedFrame = frameCount;
+                return;
+            }
+
+            if (frameCount - tutorialBarracksSelectedFrame < 24)
+                return;
+
+            if (tutorialPlacementStartFrame == 0)
+            {
+                BuildDrawerView buildDrawer = UnityEngine.Object.FindAnyObjectByType<BuildDrawerView>(
+                    FindObjectsInactive.Exclude);
+                Button placeButton = buildDrawer != null ? buildDrawer.BuildButton : null;
+                if (placeButton == null || !placeButton.IsActive() || !placeButton.IsInteractable())
+                    throw new InvalidOperationException("The selected M02 Barracks did not enable the green Place button.");
+                placeButton.onClick.Invoke();
+                tutorialPlacementStartFrame = frameCount;
+                return;
+            }
+
+            if (frameCount - tutorialPlacementStartFrame < ZoomSettleFrames)
+                return;
+
+            if (tutorialPlacementScreenshotFrame == 0)
+            {
+                BuildDrawerView buildDrawer = UnityEngine.Object.FindAnyObjectByType<BuildDrawerView>(
+                    FindObjectsInactive.Include);
+                if (buildDrawer != null && buildDrawer.IsOpen)
+                    throw new InvalidOperationException("The M02 build drawer remained open after pressing Place.");
+                DeleteIfExists(tutorialPlacementScreenshotPath);
+                ScreenCapture.CaptureScreenshot(tutorialPlacementScreenshotPath, 1);
+                tutorialPlacementScreenshotFrame = frameCount;
+                return;
+            }
+
+            if (frameCount - tutorialPlacementScreenshotFrame < 12)
+                return;
+            if (!File.Exists(tutorialPlacementScreenshotPath))
+                throw new FileNotFoundException(
+                    "The centered M02 Barracks placement screenshot was not written.",
+                    tutorialPlacementScreenshotPath);
+
             Complete(
                 true,
-                $"mission={captureMissionId} tutorialCue={tutorialCueScreenshotPath}");
+                $"mission={captureMissionId} tutorialCue={tutorialCueScreenshotPath} " +
+                $"buttonCue={tutorialUiCueScreenshotPath} barracksCue={tutorialBuildDrawerScreenshotPath} " +
+                $"placement={tutorialPlacementScreenshotPath}");
+        }
+
+        private static bool TryEnterLiveTutorialHud()
+        {
+            NarrativeSequenceView narrative = UnityEngine.Object.FindAnyObjectByType<NarrativeSequenceView>(
+                FindObjectsInactive.Include);
+            if (narrative != null && IsCanvasGroupVisible(narrative, "rootGroup"))
+            {
+                NarrativeSkipConfirmationView confirmation = narrative.SkipConfirmationView;
+                if (confirmation != null && IsCanvasGroupVisible(confirmation, "group"))
+                {
+                    if (!tutorialNarrativeSkipConfirmed && TryInvokeButton(confirmation.transform, "ConfirmButton"))
+                        tutorialNarrativeSkipConfirmed = true;
+                    return false;
+                }
+
+                if (!tutorialNarrativeSkipSubmitted &&
+                    TryInvokeButton(narrative.PlaybackControlsView?.transform, "SkipButton"))
+                {
+                    tutorialNarrativeSkipSubmitted = true;
+                }
+                return false;
+            }
+
+            if (UiShellRuntimeGateway.TryReadMissionHudRestrictions(
+                    out UiMissionHudRestrictionsModel restrictions) &&
+                restrictions.CinematicInteractionLocked)
+            {
+                return false;
+            }
+
+            MatchOverlayCommandControlsView controls =
+                UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>(FindObjectsInactive.Exclude);
+            return controls != null && controls.gameObject.activeInHierarchy;
+        }
+
+        private static bool IsCanvasGroupVisible(object owner, string fieldName)
+        {
+            if (owner == null)
+                return false;
+
+            FieldInfo field = owner.GetType().GetField(
+                fieldName,
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            CanvasGroup group = field?.GetValue(owner) as CanvasGroup;
+            return group != null && group.gameObject.activeInHierarchy &&
+                   group.alpha > 0.5f && group.interactable;
+        }
+
+        private static bool TryInvokeButton(Transform root, string buttonName)
+        {
+            if (root == null)
+                return false;
+
+            Button[] buttons = root.GetComponentsInChildren<Button>(true);
+            for (int i = 0; i < buttons.Length; i++)
+            {
+                Button button = buttons[i];
+                if (button == null ||
+                    !string.Equals(button.name, buttonName, StringComparison.Ordinal) ||
+                    !button.gameObject.activeInHierarchy || !button.interactable)
+                {
+                    continue;
+                }
+
+                button.onClick.Invoke();
+                return true;
+            }
+
+            return false;
         }
 
         private static void StageV3TutorialCue(
@@ -560,23 +755,11 @@ namespace Game.Editor
             if (bootstrap == null)
                 throw new InvalidOperationException("The M02 tutorial proof requires the live Menu bootstrap.");
 
-            FieldInfo compositionField = typeof(MenuBootstrapView).GetField(
-                "menuBootstrapSystem",
-                BindingFlags.Instance | BindingFlags.NonPublic);
-            object composition = compositionField?.GetValue(bootstrap);
-            FieldInfo mainMenuField = composition?.GetType().GetField(
-                "boundMainMenu",
-                BindingFlags.Instance | BindingFlags.NonPublic);
-            MainMenuPlayUI mainMenu = mainMenuField?.GetValue(composition) as MainMenuPlayUI;
-            if (mainMenu == null)
-                throw new InvalidOperationException("The live Match HUD MainMenuPlayUI binding is unavailable.");
-
-            FieldInfo helperField = typeof(MainMenuPlayUI).GetField(
-                "_matchHudAssistantUiSystem",
-                BindingFlags.Instance | BindingFlags.NonPublic);
-            object helper = helperField?.GetValue(mainMenu);
-            if (helper == null)
-                throw new InvalidOperationException("The live Match HUD ARIA helper is unavailable.");
+            ResolveTutorialProofBindings(
+                bootstrap,
+                out MainMenuPlayUI mainMenu,
+                out object helper,
+                out object highlightPresentation);
 
             Camera camera = matchScene.WorldCamera;
             Ray ray = camera.ViewportPointToRay(new Vector3(0.56f, 0.53f, 0f));
@@ -600,27 +783,132 @@ namespace Game.Editor
                 1f);
 
             MethodInfo applyReadModel = helper.GetType().GetMethod(
-                "ApplyReadModel",
+                "ApplyHighlightReadModel",
                 BindingFlags.Instance | BindingFlags.Public);
-            MethodInfo beginShowMe = helper.GetType().GetMethod(
+            MethodInfo beginShowMe = highlightPresentation?.GetType().GetMethod(
                 "BeginPendingShowMe",
                 BindingFlags.Instance | BindingFlags.Public);
-            MethodInfo tick = helper.GetType().GetMethod(
+            MethodInfo tick = highlightPresentation?.GetType().GetMethod(
                 "Tick",
                 BindingFlags.Instance | BindingFlags.Public);
-            if (applyReadModel == null || beginShowMe == null || tick == null)
+            if (applyReadModel == null || highlightPresentation == null ||
+                beginShowMe == null || tick == null)
                 throw new MissingMethodException("The live ARIA tutorial cue methods are unavailable.");
 
             mainMenu.BindGuidanceWorldCamera(camera);
+            HoldTutorialProofHighlight(mainMenu);
             applyReadModel.Invoke(helper, new object[] { model });
-            mainMenu.ApplyMatchHudCommandMode(Game.Tactical.Contracts.TacticalCommandMode.Move);
-            beginShowMe.Invoke(helper, new object[] { (byte)2, (byte)1 });
-            tick.Invoke(helper, null);
+            mainMenu.AcknowledgeMatchHudGuidedCommandMode(
+                Game.Tactical.Contracts.TacticalCommandMode.Move);
+            beginShowMe.Invoke(highlightPresentation, new object[] { (byte)2, (byte)1 });
+            tick.Invoke(highlightPresentation, null);
 
-            // Freeze shell projection for the one proof frame so the real ECS
-            // read model cannot replace the staged target between request and capture.
-            bootstrap.enabled = false;
+            // Keep the live shell enabled through the captured frame. Disabling its owner
+            // here stopped Match presentation maintenance, producing a black battlefield
+            // behind an otherwise valid HUD and preventing the proof from completing.
             Canvas.ForceUpdateCanvases();
+        }
+
+        private static void StageV3TutorialUiCue(
+            MatchSceneView matchScene,
+            MenuBootstrapView bootstrap,
+            byte recommendationKind)
+        {
+            if (matchScene == null || matchScene.WorldCamera == null)
+                throw new InvalidOperationException("The M02 UI cue proof requires the live Match world camera.");
+
+            ResolveTutorialProofBindings(
+                bootstrap,
+                out MainMenuPlayUI mainMenu,
+                out object helper,
+                out object highlightPresentation);
+            MethodInfo applyReadModel = helper.GetType().GetMethod(
+                "ApplyHighlightReadModel",
+                BindingFlags.Instance | BindingFlags.Public);
+            MethodInfo tick = highlightPresentation.GetType().GetMethod(
+                "Tick",
+                BindingFlags.Instance | BindingFlags.Public);
+            if (applyReadModel == null || tick == null)
+                throw new MissingMethodException("The live ARIA UI cue methods are unavailable.");
+
+            var model = new UiAssistantHighlightModel(
+                0xF3000010u + recommendationKind,
+                true,
+                9310 + recommendationKind,
+                9320 + recommendationKind,
+                recommendationKind,
+                4,
+                0f,
+                0f,
+                0f,
+                1f);
+            mainMenu.BindGuidanceWorldCamera(matchScene.WorldCamera);
+            HoldTutorialProofHighlight(mainMenu);
+            applyReadModel.Invoke(helper, new object[] { model });
+            tick.Invoke(highlightPresentation, null);
+            Canvas.ForceUpdateCanvases();
+        }
+
+        private static bool TryExecuteTutorialUiSurface(
+            MatchSceneView matchScene,
+            MenuBootstrapView bootstrap,
+            byte recommendationKind)
+        {
+            ResolveTutorialProofBindings(
+                bootstrap,
+                out MainMenuPlayUI mainMenu,
+                out _,
+                out object highlightPresentation);
+            MethodInfo execute = highlightPresentation.GetType().GetMethod(
+                "TryExecuteUiSurface",
+                BindingFlags.Instance | BindingFlags.Public);
+            if (execute == null)
+                throw new MissingMethodException("The live ARIA UI-surface executor is unavailable.");
+
+            HoldTutorialProofHighlight(mainMenu);
+            object result = execute.Invoke(highlightPresentation, new object[] { recommendationKind, (byte)4 });
+            Canvas.ForceUpdateCanvases();
+            return result is true;
+        }
+
+        private static void ResolveTutorialProofBindings(
+            MenuBootstrapView bootstrap,
+            out MainMenuPlayUI mainMenu,
+            out object helper,
+            out object highlightPresentation)
+        {
+            if (bootstrap == null)
+                throw new InvalidOperationException("The M02 tutorial proof requires the live Menu bootstrap.");
+
+            FieldInfo compositionField = typeof(MenuBootstrapView).GetField(
+                "menuBootstrapSystem",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            object composition = compositionField?.GetValue(bootstrap);
+            FieldInfo mainMenuField = composition?.GetType().GetField(
+                "boundMainMenu",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            mainMenu = mainMenuField?.GetValue(composition) as MainMenuPlayUI;
+            if (mainMenu == null)
+                throw new InvalidOperationException("The live Match HUD MainMenuPlayUI binding is unavailable.");
+
+            FieldInfo helperField = typeof(MainMenuPlayUI).GetField(
+                "_matchHudAssistantUiSystem",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            helper = helperField?.GetValue(mainMenu);
+            FieldInfo highlightPresentationField = helper?.GetType().GetField(
+                "_highlightPresentationSystem",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            highlightPresentation = highlightPresentationField?.GetValue(helper);
+            if (helper == null || highlightPresentation == null)
+                throw new InvalidOperationException("The live Match HUD ARIA helper is unavailable.");
+        }
+
+        private static void HoldTutorialProofHighlight(MainMenuPlayUI mainMenu)
+        {
+            FieldInfo nextAssistantRefreshField = typeof(MainMenuPlayUI).GetField(
+                "_nextAssistantPanelRefreshTime",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            nextAssistantRefreshField?.SetValue(mainMenu, Time.unscaledTime + 8f);
         }
 
         private static void ApplyProfileIfNeeded(MatchSceneView matchScene)

@@ -16,8 +16,8 @@ MonoBehaviour:
   schemaVersion: 1
   contentVersion: 1
   sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
-  contentHash: b40d9ff3d0ca3781701d06109b3004223fc21a4c1734cc584dad4246511b2c3a
-  generatedMetadataHash: 1f53a71389736b2b6910a630deb3a1c1163d494bec09bf26ffde8d7a47dbfcca
+  contentHash: 89e2bd9e2d78487b65e15597844c1f86344c1799540198185c6cdd5f5e0d1ca9
+  generatedMetadataHash: 25be5a9df92bf3ab8d80d294310e85ad568c1e15582781323fbd8bb02dfba878
   sourceBinding:
     sourceOperationMapId: opmap.skirmish.desert_base_01
     sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
@@ -55,7 +55,7 @@ MonoBehaviour:
   cameras:
   - cameraId: camera.ch01.m02.forward_post_planning
     position: {x: 995, y: 95, z: 468}
-    eulerAngles: {x: 42.784386, y: 186.68048, z: 0.00000029082847}
+    eulerAngles: {x: 37.29458, y: 184.46072, z: 0.00000013415156}
     orthographic: 0
     fieldOfView: 58
     orthographicSize: 5
@@ -98,7 +98,7 @@ MonoBehaviour:
     laneIndex: -1
   - anchorId: anchor.ch01.m02.build_lot
     kind: 4
-    position: {x: 1016.5, y: 0.009179778, z: 377.5}
+    position: {x: 1020.5, y: 0.009179778, z: 337.5}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 12
     factionId: 1
@@ -172,6 +172,20 @@ MonoBehaviour:
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 6
     factionId: -1
+    laneIndex: -1
+  - anchorId: anchor.ch01.m02.airfield_personnel_a
+    kind: 10
+    position: {x: 986.5, y: 0.009179778, z: 369.5}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 4
+    factionId: 1
+    laneIndex: -1
+  - anchorId: anchor.ch01.m02.airfield_personnel_b
+    kind: 10
+    position: {x: 992.5, y: 0.009179778, z: 412.5}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 4
+    factionId: 1
     laneIndex: -1
   presentationKind: 1
   renderResidencyMode: 1

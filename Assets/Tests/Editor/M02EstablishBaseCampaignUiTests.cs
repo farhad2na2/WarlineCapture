@@ -210,6 +210,15 @@ public sealed class M02EstablishBaseCampaignUiTests
     [Test]
     public void CampaignCardShowsM02WithoutM01CopyOrRawKeys()
     {
+        GameLocalizationCatalog localizationCatalog =
+            AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(
+                V3UiLocalizationCatalogBuilder.CatalogPath);
+        Assert.NotNull(localizationCatalog);
+        string previousLocale = GameLocalization.CurrentLocaleCode;
+        GameLocalization.Initialize(
+            localizationCatalog,
+            GameLocalization.EnglishLocaleCode,
+            persist: false);
         GameObject instance = UnityEngine.Object.Instantiate(
             AssetDatabase.LoadAssetAtPath<GameObject>(CampaignPrefab));
         try
@@ -238,6 +247,7 @@ public sealed class M02EstablishBaseCampaignUiTests
         finally
         {
             UnityEngine.Object.DestroyImmediate(instance);
+            GameLocalization.Initialize(localizationCatalog, previousLocale, persist: false);
         }
     }
 

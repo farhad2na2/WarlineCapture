@@ -32,10 +32,13 @@ namespace Game.Editor
         public const string PlanningCameraId = "camera.ch01.m02.forward_post_planning";
         public const string BattleCameraId = "camera.ch01.m02.forward_post_battle";
         public const string MinimapId = "minimap.ch01.m02.forward_post";
-        public const int ExpectedAnchorCount = 14;
+        public const int ExpectedAnchorCount = 16;
 
         public static readonly RectInt PlayableWindow = new(780, 270, 320, 200);
-        public static readonly RectInt BuildLotSearch = new(1004, 370, 24, 14);
+        // The former lot (1004,370) sat immediately beside the transport helipad at
+        // (1006.93,393.26). The authored, validator-approved apron at (1008,330) moves the
+        // Barracks farther right/south in the battle view and clears the helicopter cluster.
+        public static readonly RectInt BuildLotSearch = new(1008, 330, 24, 14);
         public static readonly Vector2Int BuildLotSize = new(24, 14);
 
         private static readonly RectInt MilitaryBaseOperationalCore = new(820, 340, 200, 105);
@@ -237,7 +240,11 @@ namespace Game.Editor
                 new("anchor.ch01.m02.civilian_evacuation", OperationMapAnchorKind.Civilian, 1080, 450, 8f),
                 new("anchor.ch01.m02.minimap_start", OperationMapAnchorKind.Minimap, 935, 380, 3f),
                 new("anchor.ch01.m02.resource_focus", OperationMapAnchorKind.Resource, 830, 375, 8f, 1),
-                new("anchor.ch01.m02.comms_focus", OperationMapAnchorKind.Objective, 925, 360, 6f)
+                new("anchor.ch01.m02.comms_focus", OperationMapAnchorKind.Objective, 925, 360, 6f),
+                new("anchor.ch01.m02.airfield_personnel_a", OperationMapAnchorKind.Helipad,
+                    986, 369, 4f, 1),
+                new("anchor.ch01.m02.airfield_personnel_b", OperationMapAnchorKind.Helipad,
+                    992, 412, 4f, 1)
             };
 
             Vector3[] positions = new Vector3[seeds.Length];
@@ -262,7 +269,7 @@ namespace Game.Editor
             Set(target, "contentVersion", 1);
             Set(target, "sourceIdentityHash", source.SourceIdentityHash);
             Set(target, "contentHash", HashText(BuildCanonicalPayload(source, buildLot, positions)));
-            Set(target, "generatedMetadataHash", HashText("m02eb-009|authored-military-base-v3|surface-v3"));
+            Set(target, "generatedMetadataHash", HashText("m02eb-010|authored-military-base-v3|surface-v3"));
 
             SerializedProperty binding = target.FindProperty("sourceBinding");
             Set(binding, "sourceOperationMapId", source.OperationMapId);
@@ -358,7 +365,7 @@ namespace Game.Editor
                     logical.Minimap.ProjectionSize == new Vector2(PlayableWindow.width, PlayableWindow.height),
                 "M02 minimap projection does not match the playable window.");
             Require(logical.Anchors.Length == ExpectedAnchorCount,
-                "M02 logical map must own exactly 14 mission anchors.");
+                $"M02 logical map must own exactly {ExpectedAnchorCount} mission anchors.");
             Require(buildLot.size == BuildLotSize && IsBuildLotSurfaceValid(ref surface, buildLot) &&
                     !OverlapsAuthoredPlacement(buildLot, placements) &&
                     !OverlapsDenseCityPresentation(buildLot, renderDatabase),
@@ -401,7 +408,7 @@ namespace Game.Editor
                 forwardPost,
                 buildLotFocus,
                 0.56f);
-            Require(HorizontalDistance(cameraStart, cinematicFocus) <= 65f,
+            Require(HorizontalDistance(cameraStart, cinematicFocus) <= 75f,
                 "M02 opening focus must remain a local zoom over the authored military-base area.");
             Vector2Int focusCell = new(
                 Mathf.FloorToInt(cinematicFocus.x),

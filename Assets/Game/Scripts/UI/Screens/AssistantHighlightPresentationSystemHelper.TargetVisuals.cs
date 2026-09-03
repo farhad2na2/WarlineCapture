@@ -12,17 +12,18 @@ namespace Game.UI.Runtime
         private static readonly Color V3Cyan = new(0.00f, 0.79f, 0.95f, 1f);
         private static readonly Color V3CyanSoft = new(0.18f, 0.92f, 1f, 0.78f);
         private static readonly Color V3Lime = new(0.43f, 0.94f, 0.20f, 1f);
-        private static readonly Color V3PanelTop = new(0.025f, 0.15f, 0.18f, 0.985f);
-        private static readonly Color V3PanelBottom = new(0.005f, 0.035f, 0.045f, 0.985f);
+        private static readonly Color V3GuidanceYellow = new(1f, 0.72f, 0.02f, 1f);
+        private static readonly Color V3GuidancePanelTop = new(0.11f, 0.095f, 0.025f, 0.98f);
+        private static readonly Color V3GuidancePanelBottom = new(0.025f, 0.035f, 0.038f, 0.98f);
 
         private bool _localUiCueActive;
         private void ApplyScreenTargetIndicator(UiAssistantHighlightModel model)
         {
             _commandCueActive = ShouldShowCommandCue(model);
-            _screenTargetActive = model.Active &&
-                                  model.TargetKind != UiSurfaceTargetKind &&
-                                  !_commandCueActive &&
-                                  !_pendingFirstShowMe;
+            // World guidance owns a real world-space ring. Projecting a second cue onto the
+            // overlay made ground markers render over the build drawer and ARIA panel. Only
+            // UI targets get a screen-space focus frame; world targets remain behind the HUD.
+            _screenTargetActive = false;
             _screenTargetWorld = new Vector3(model.WorldX, model.WorldY, model.WorldZ);
             EnsureScreenTargetIndicator();
             if (_screenTargetIndicator != null)
@@ -58,8 +59,8 @@ namespace Game.UI.Runtime
             _screenTargetIndicator = indicator.GetComponent<RectTransform>();
             _screenTargetIndicator.anchorMin = new Vector2(0.5f, 0.5f);
             _screenTargetIndicator.anchorMax = new Vector2(0.5f, 0.5f);
-            _screenTargetIndicator.pivot = new Vector2(0.5f, 0f);
-            _screenTargetIndicator.sizeDelta = new Vector2(392f, 112f);
+            _screenTargetIndicator.pivot = new Vector2(0.5f, 0.5f);
+            _screenTargetIndicator.sizeDelta = new Vector2(260f, 120f);
 
             Canvas isolatedCanvas = indicator.GetComponent<Canvas>();
             isolatedCanvas.overrideSorting = true;
@@ -71,87 +72,57 @@ namespace Game.UI.Runtime
             _screenTargetGroup.blocksRaycasts = false;
             V3GradientGraphic background = indicator.GetComponent<V3GradientGraphic>();
             background.ConfigureCorners(
-                Color.Lerp(V3PanelTop, Color.white, 0.06f),
-                V3PanelTop,
-                Color.Lerp(V3PanelBottom, V3Cyan, 0.05f),
-                V3PanelBottom,
-                V3Cyan,
-                3f);
+                Color.clear,
+                Color.clear,
+                Color.clear,
+                Color.clear,
+                V3GuidanceYellow,
+                7f);
             background.raycastTarget = false;
 
+            GameObject caption = new(
+                "TopBorderCaption",
+                typeof(RectTransform),
+                typeof(V3GradientGraphic));
+            caption.transform.SetParent(indicator.transform, false);
+            caption.layer = indicator.layer;
+            RectTransform captionRect = caption.GetComponent<RectTransform>();
+            captionRect.anchorMin = new Vector2(0.5f, 1f);
+            captionRect.anchorMax = new Vector2(0.5f, 1f);
+            captionRect.pivot = new Vector2(0.5f, 0.5f);
+            captionRect.anchoredPosition = Vector2.zero;
+            captionRect.sizeDelta = new Vector2(288f, 64f);
+            V3GradientGraphic captionBackground = caption.GetComponent<V3GradientGraphic>();
+            captionBackground.ConfigureCorners(
+                V3GuidancePanelTop,
+                Color.Lerp(V3GuidancePanelTop, V3GuidanceYellow, 0.08f),
+                V3GuidancePanelBottom,
+                V3GuidancePanelBottom,
+                V3GuidanceYellow,
+                4f);
+            captionBackground.raycastTarget = false;
+
             GameObject labelObject = new("Label", typeof(RectTransform), typeof(TextMeshProUGUI));
-            labelObject.transform.SetParent(indicator.transform, false);
+            labelObject.transform.SetParent(caption.transform, false);
             labelObject.layer = indicator.layer;
             RectTransform labelRect = labelObject.GetComponent<RectTransform>();
-            labelRect.anchorMin = new Vector2(0f, 0f);
-            labelRect.anchorMax = new Vector2(1f, 1f);
-            labelRect.offsetMin = new Vector2(82f, 12f);
-            labelRect.offsetMax = new Vector2(-18f, -32f);
+            labelRect.anchorMin = Vector2.zero;
+            labelRect.anchorMax = Vector2.one;
+            labelRect.offsetMin = new Vector2(12f, 4f);
+            labelRect.offsetMax = new Vector2(-12f, -4f);
             _screenTargetLabel = labelObject.GetComponent<TextMeshProUGUI>();
             _screenTargetLabel.text = GameLocalization.Get("ui.hud.aria_target", "ARIA TARGET");
             _screenTargetLabel.fontStyle = FontStyles.Bold;
-            _screenTargetLabel.fontSize = 31f;
+            _screenTargetLabel.fontSize = 36f;
             _screenTargetLabel.enableAutoSizing = true;
-            _screenTargetLabel.fontSizeMin = 22f;
-            _screenTargetLabel.fontSizeMax = 34f;
-            _screenTargetLabel.color = Color.white;
-            _screenTargetLabel.alignment = TextAlignmentOptions.MidlineLeft;
+            _screenTargetLabel.fontSizeMin = 24f;
+            _screenTargetLabel.fontSizeMax = 36f;
+            _screenTargetLabel.color = V3GuidanceYellow;
+            _screenTargetLabel.alignment = TextAlignmentOptions.Center;
             _screenTargetLabel.textWrappingMode = TextWrappingModes.NoWrap;
             _screenTargetLabel.raycastTarget = false;
-
-            RectTransform header = CreateScreenCueText(
-                indicator.transform,
-                "Header",
-                "ARIA GUIDANCE  /  TARGET LOCK",
-                new Vector2(84f, 76f),
-                new Vector2(-18f, -8f),
-                15f,
-                V3CyanSoft,
-                TextAlignmentOptions.TopLeft);
-            header.SetAsLastSibling();
-
-            RectTransform rail = CreateScreenCueRect(
-                indicator.transform,
-                "AccentRail",
-                new Vector2(0f, 0f),
-                new Vector2(8f, 112f));
-            V3GradientGraphic railGraphic = rail.gameObject.AddComponent<V3GradientGraphic>();
-            railGraphic.Configure(V3Cyan, V3Lime, Color.clear, 0f);
-            railGraphic.raycastTarget = false;
-
-            RectTransform reticle = CreateScreenCueRect(
-                indicator.transform,
-                "Reticle",
-                new Vector2(20f, 27f),
-                new Vector2(60f, 67f));
-            V3RingGraphic ring = reticle.gameObject.AddComponent<V3RingGraphic>();
-            ring.Configure(V3Cyan, 3f, 40);
-            CreateScreenCueSolid(reticle, "Horizontal", new Vector2(-7f, 18.5f), new Vector2(47f, 21.5f), V3CyanSoft);
-            CreateScreenCueSolid(reticle, "Vertical", new Vector2(18.5f, -7f), new Vector2(21.5f, 47f), V3CyanSoft);
-            RectTransform core = CreateScreenCueRect(reticle, "Core", new Vector2(15f, 15f), new Vector2(25f, 25f));
-            Image coreImage = core.gameObject.AddComponent<Image>();
-            coreImage.color = V3Lime;
-            coreImage.raycastTarget = false;
-
-            CreateScreenCueSolid(
-                indicator.transform,
-                "BottomRule",
-                new Vector2(8f, 5f),
-                new Vector2(384f, 8f),
-                V3Lime);
-
-            RectTransform pointer = CreateScreenCueRect(
-                indicator.transform,
-                "Pointer",
-                new Vector2(178f, 0f),
-                new Vector2(214f, 20f));
-            V3PolygonGraphic pointerGraphic = pointer.gameObject.AddComponent<V3PolygonGraphic>();
-            pointerGraphic.ConfigureResponsive(
-                new[] { new Vector2(0f, 0f), new Vector2(36f, 0f), new Vector2(18f, 20f) },
-                V3PanelBottom,
-                V3Cyan,
-                3f,
-                new Vector2(36f, 20f));
+            V3LocalizedTextBinding localizedLabel = labelObject.AddComponent<V3LocalizedTextBinding>();
+            localizedLabel.Configure("ui.hud.aria_target", "ARIA TARGET");
             indicator.SetActive(false);
         }
 

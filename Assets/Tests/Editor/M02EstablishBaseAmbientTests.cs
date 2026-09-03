@@ -26,10 +26,10 @@ public sealed class M02EstablishBaseAmbientTests
         try
         {
             M02EstablishBaseAmbientTests tests = new();
-            tests.ScenarioSeparatesCalmCiviliansAndBasePersonnel();
+            tests.ScenarioUsesOnlyAirfieldBasePersonnel();
             tests.M02BasePersonnelUseCalmLoopingRoutesAcrossTheBase();
             tests.M02BasePersonnelUseFourCanonicalSoldierVariants();
-            tests.M02CivilianStaffRemainCivilianButDoNotEvacuate();
+            tests.M02AirfieldPersonnelStayNearHelipadsAndAwayFromBarracks();
             tests.M01PanicPresentationRemainsFastAndNonLooping();
             tests.M02RuntimeCreatesGameplayInertCalmPopulation();
             UnityEngine.Debug.Log(FocusedMarker);
@@ -44,16 +44,15 @@ public sealed class M02EstablishBaseAmbientTests
     }
 
     [Test]
-    public void ScenarioSeparatesCalmCiviliansAndBasePersonnel()
+    public void ScenarioUsesOnlyAirfieldBasePersonnel()
     {
         ScenarioSetupConfig scenario = AssetDatabase.LoadAssetAtPath<ScenarioSetupConfig>(
             M02EstablishBaseConfigBuilder.ScenarioPath);
         Assert.NotNull(scenario);
-        Assert.AreEqual(2, scenario.AmbientPresentations.Length);
-        Assert.AreEqual("ambient.ch01.m02.civilians", scenario.AmbientPresentations[0].PresentationId);
-        Assert.AreEqual(4, scenario.AmbientPresentations[0].InstanceCount);
-        Assert.AreEqual("ambient.ch01.m02.base_personnel", scenario.AmbientPresentations[1].PresentationId);
-        Assert.AreEqual(8, scenario.AmbientPresentations[1].InstanceCount);
+        Assert.AreEqual(1, scenario.AmbientPresentations.Length);
+        Assert.AreEqual("ambient.ch01.m02.base_personnel", scenario.AmbientPresentations[0].PresentationId);
+        Assert.AreEqual("anchor.ch01.m02.airfield_personnel_a", scenario.AmbientPresentations[0].AnchorId);
+        Assert.AreEqual(8, scenario.AmbientPresentations[0].InstanceCount);
     }
 
     [Test]
@@ -61,14 +60,14 @@ public sealed class M02EstablishBaseAmbientTests
     {
         CampaignMissionAmbientPresentationSystem.AmbientRouteAnchors anchors = new()
         {
-            First = Anchor(826.5f, 379.5f),
-            Second = Anchor(940.5f, 351.5f),
+            First = Anchor(986.5f, 369.5f),
+            Second = Anchor(992.5f, 412.5f),
             Third = Anchor(920.5f, 425.5f)
         };
-        float3 buildLot = new(1016.5f, 0f, 377.5f);
+        float3 buildLot = new(1020.5f, 0f, 337.5f);
         float minX = float.MaxValue;
         float maxX = float.MinValue;
-        int[] centerCounts = new int[3];
+        int[] centerCounts = new int[2];
         for (int ordinal = 0; ordinal < 8; ordinal++)
         {
             CampaignMissionAmbientPresentationSystem.AmbientRoute route =
@@ -82,15 +81,15 @@ public sealed class M02EstablishBaseAmbientTests
             Assert.Greater(math.distance(route.Start, route.AlleyMerge), 2f);
             Assert.Greater(math.distance(route.AlleyMerge, route.SquadPass), 2f);
             Assert.AreEqual(route.Start, route.Exit);
-            Assert.Greater(math.distance(route.Start.xz, buildLot.xz), 60f);
-            Assert.Greater(math.distance(route.AlleyMerge.xz, buildLot.xz), 60f);
-            Assert.Greater(math.distance(route.SquadPass.xz, buildLot.xz), 60f);
+            Assert.Greater(math.distance(route.Start.xz, buildLot.xz), 35f);
+            Assert.Greater(math.distance(route.AlleyMerge.xz, buildLot.xz), 35f);
+            Assert.Greater(math.distance(route.SquadPass.xz, buildLot.xz), 35f);
             minX = math.min(minX, route.Start.x);
             maxX = math.max(maxX, route.Start.x);
-            centerCounts[ordinal % 3]++;
+            centerCounts[ordinal % 2]++;
         }
-        Assert.Greater(maxX - minX, 100f);
-        CollectionAssert.AreEqual(new[] { 3, 3, 2 }, centerCounts);
+        Assert.Less(maxX - minX, 24f);
+        CollectionAssert.AreEqual(new[] { 4, 4 }, centerCounts);
     }
 
     [Test]
@@ -114,26 +113,28 @@ public sealed class M02EstablishBaseAmbientTests
     }
 
     [Test]
-    public void M02CivilianStaffRemainCivilianButDoNotEvacuate()
+    public void M02AirfieldPersonnelStayNearHelipadsAndAwayFromBarracks()
     {
         CampaignMissionAmbientPresentationSystem.AmbientRouteAnchors anchors = new()
         {
-            First = Anchor(1060.5f, 430.5f),
-            Second = Anchor(1080.5f, 450.5f),
-            Third = Anchor(1016.5f, 377.5f)
+            First = Anchor(986.5f, 369.5f),
+            Second = Anchor(992.5f, 412.5f),
+            Third = Anchor(920.5f, 425.5f)
         };
         CampaignMissionAmbientPresentationSystem.AmbientRoute route =
             CampaignMissionAmbientPresentationSystem.CreateAmbientRoute(
-                CampaignMissionAmbientPresentationSystem.CalmCivilianPresentationKind,
+                CampaignMissionAmbientPresentationSystem.BasePersonnelPresentationKind,
                 in anchors,
                 0,
                 2002001);
         Assert.AreEqual(1, route.Loop);
-        Assert.That(route.Speed, Is.InRange(1.5f, 2.2f));
+        Assert.That(route.Speed, Is.InRange(1.8f, 2.5f));
+        Assert.Less(math.distance(route.Start.xz, new float2(999.9f, 359.99f)), 30f);
+        Assert.Greater(math.distance(route.Start.xz, new float2(1020.5f, 337.5f)), 35f);
         Assert.AreEqual(
-            "Unit_Chr_Civilian_Male_01",
+            "Unit_Chr_Soldier_Male_02_Alt_02",
             CampaignMissionAmbientPresentationSystem.PresentationPrefabKey(
-                CampaignMissionAmbientPresentationSystem.CalmCivilianPresentationKind,
+                CampaignMissionAmbientPresentationSystem.BasePersonnelPresentationKind,
                 0).ToString());
     }
 
@@ -204,7 +205,7 @@ public sealed class M02EstablishBaseAmbientTests
                 ComponentType.ReadOnly<CampaignMissionAmbientCivilianComponent>(),
                 ComponentType.ReadOnly<CampaignMissionAmbientCivilianMotionComponent>());
             using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-            Assert.AreEqual(12, entities.Length);
+            Assert.AreEqual(8, entities.Length);
             int civilianCount = 0;
             int personnelCount = 0;
             for (int index = 0; index < entities.Length; index++)
@@ -233,7 +234,7 @@ public sealed class M02EstablishBaseAmbientTests
                 Assert.IsFalse(entityManager.HasComponent<UnitMidLodPrefabReference>(entity));
                 Assert.IsFalse(entityManager.HasComponent<UnitLowLodPrefabReference>(entity));
             }
-            Assert.AreEqual(4, civilianCount);
+            Assert.AreEqual(0, civilianCount);
             Assert.AreEqual(8, personnelCount);
         }
         finally
@@ -255,18 +256,11 @@ public sealed class M02EstablishBaseAmbientTests
         missions[0].ScenarioId = ScenarioId;
         missions[0].OperationMapId = MapId;
         BlobBuilderArray<CampaignMissionAmbientPresentationBlob> presentations =
-            builder.Allocate(ref missions[0].AmbientPresentations, 2);
+            builder.Allocate(ref missions[0].AmbientPresentations, 1);
         presentations[0] = new CampaignMissionAmbientPresentationBlob
         {
-            PresentationId = "ambient.ch01.m02.civilians",
-            AnchorId = "anchor.ch01.m02.civilian_edge",
-            RouteId = "route.ch01.m02.civilian_patrol",
-            InstanceCount = 4
-        };
-        presentations[1] = new CampaignMissionAmbientPresentationBlob
-        {
             PresentationId = "ambient.ch01.m02.base_personnel",
-            AnchorId = "anchor.ch01.m02.resource_focus",
+            AnchorId = "anchor.ch01.m02.airfield_personnel_a",
             RouteId = "route.ch01.m02.base_patrol",
             InstanceCount = 8
         };
@@ -278,13 +272,11 @@ public sealed class M02EstablishBaseAmbientTests
         using BlobBuilder builder = new(Allocator.Temp);
         ref OperationMapBlob root = ref builder.ConstructRoot<OperationMapBlob>();
         root.OperationMapId = MapId;
-        BlobBuilderArray<OperationMapAnchorBlob> anchors = builder.Allocate(ref root.Anchors, 6);
-        anchors[0] = NamedAnchor("anchor.ch01.m02.civilian_edge", 1060.5f, 430.5f);
-        anchors[1] = NamedAnchor("anchor.ch01.m02.civilian_evacuation", 1080.5f, 450.5f);
-        anchors[2] = NamedAnchor("anchor.ch01.m02.build_lot", 1016.5f, 377.5f);
-        anchors[3] = NamedAnchor("anchor.ch01.m02.resource_focus", 826.5f, 379.5f);
-        anchors[4] = NamedAnchor("anchor.ch01.m02.forward_post", 940.5f, 351.5f);
-        anchors[5] = NamedAnchor("anchor.ch01.m02.friendly_spawn", 920.5f, 425.5f);
+        BlobBuilderArray<OperationMapAnchorBlob> anchors = builder.Allocate(ref root.Anchors, 4);
+        anchors[0] = NamedAnchor("anchor.ch01.m02.airfield_personnel_a", 986.5f, 369.5f);
+        anchors[1] = NamedAnchor("anchor.ch01.m02.airfield_personnel_b", 992.5f, 412.5f);
+        anchors[2] = NamedAnchor("anchor.ch01.m02.friendly_spawn", 920.5f, 425.5f);
+        anchors[3] = NamedAnchor("anchor.ch01.m02.build_lot", 1020.5f, 337.5f);
         return builder.CreateBlobAssetReference<OperationMapBlob>(Allocator.Persistent);
     }
 

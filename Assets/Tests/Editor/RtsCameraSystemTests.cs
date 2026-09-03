@@ -1134,7 +1134,12 @@ public sealed class RtsCameraSystemTests
                 Assert.IsTrue(
                     cameraSystem.TryGetCameraGroundBounds(camera, out Rect footprint),
                     $"Frame {frame} must retain a finite ground footprint during the distant transition.");
-                Assert.Less(footprint.width, 600f, $"Frame {frame} ground footprint width exceeded the bounded transition envelope.");
+                // A 20:9 validation Game view is intentionally wider than the 16:9 reference.
+                // Scale only the horizontal envelope so this safety test remains deterministic
+                // at both supported aspect ratios without weakening its vertical bound.
+                float maxFootprintWidth = 600f * Mathf.Max(1f, camera.aspect / (16f / 9f));
+                Assert.Less(footprint.width, maxFootprintWidth,
+                    $"Frame {frame} ground footprint width exceeded the bounded transition envelope.");
                 Assert.Less(footprint.height, 600f, $"Frame {frame} ground footprint height exceeded the bounded transition envelope.");
             }
 

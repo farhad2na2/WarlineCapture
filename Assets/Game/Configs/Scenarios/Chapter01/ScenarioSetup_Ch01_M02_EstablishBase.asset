@@ -41,6 +41,10 @@ MonoBehaviour:
     kind: 13
   - anchorId: anchor.ch01.m02.resource_focus
     kind: 8
+  - anchorId: anchor.ch01.m02.airfield_personnel_a
+    kind: 10
+  - anchorId: anchor.ch01.m02.airfield_personnel_b
+    kind: 10
   deterministicSeed: 2002001
   encounterStartMilliseconds: 120000
   unitGroups:
@@ -107,12 +111,8 @@ MonoBehaviour:
     transportDisabled: 1
     airDisabled: 1
   ambientPresentations:
-  - presentationId: ambient.ch01.m02.civilians
-    anchorId: anchor.ch01.m02.civilian_edge
-    routeId: route.ch01.m02.civilian_patrol
-    instanceCount: 4
   - presentationId: ambient.ch01.m02.base_personnel
-    anchorId: anchor.ch01.m02.resource_focus
+    anchorId: anchor.ch01.m02.airfield_personnel_a
     routeId: route.ch01.m02.base_patrol
     instanceCount: 8
   missionRuntime:

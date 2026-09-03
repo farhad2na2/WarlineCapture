@@ -43,7 +43,7 @@ public sealed class M02EstablishBaseResourceTests
             tests.DisabledMissionRuntimeLeavesResourcesUntouched();
             tests.AmbiguousPlayerResourceOwnerFailsClosed();
             tests.M02HudShowsCreditsAndMaterialsWhileHidingLogistics();
-            tests.M02KeepsUnavailableSquadAndSupportControlsVisibleAndGray();
+            tests.M02KeepsUnavailableSquadControlsVisibleAndStaticBlue();
             tests.AttemptInitializerDoesNotReferencePersistence();
             Debug.Log(Marker);
             ValidationExit.Passed();
@@ -231,6 +231,15 @@ public sealed class M02EstablishBaseResourceTests
     public void M02HudShowsCreditsAndMaterialsWhileHidingLogistics()
     {
         World previous = World.DefaultGameObjectInjectionWorld;
+        GameLocalizationCatalog localizationCatalog =
+            AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(
+                V3UiLocalizationCatalogBuilder.CatalogPath);
+        Assert.NotNull(localizationCatalog);
+        string previousLocale = GameLocalization.CurrentLocaleCode;
+        GameLocalization.Initialize(
+            localizationCatalog,
+            GameLocalization.EnglishLocaleCode,
+            persist: false);
         using World world = CreateRuntimeWorld(enabled: true, out BlobAssetReference<CampaignMissionCatalogBlob> blob);
         GameObject headerRoot = new("M02ResourceHeader");
         try
@@ -267,11 +276,12 @@ public sealed class M02EstablishBaseResourceTests
             UiShellEcsGateway.RegisterAsRuntimeGateway();
             blob.Dispose();
             UnityEngine.Object.DestroyImmediate(headerRoot);
+            GameLocalization.Initialize(localizationCatalog, previousLocale, persist: false);
         }
     }
 
     [Test]
-    public void M02KeepsUnavailableSquadAndSupportControlsVisibleAndGray()
+    public void M02KeepsUnavailableSquadControlsVisibleAndStaticBlue()
     {
         GameObject railRoot = new("M02RightRail", typeof(RectTransform), typeof(MatchHudRightQuickRailView));
         GameObject trayRoot = new("M02SquadTray", typeof(RectTransform));
@@ -311,6 +321,7 @@ public sealed class M02EstablishBaseResourceTests
             trayRoot.SetActive(true);
             tray.ApplyMissionRestrictionVisibility(false, true, true, hideUnrelatedControls: true);
             Assert.IsTrue(cards[0].Button.gameObject.activeSelf);
+            Color? sharedBlueWash = null;
             for (int index = 1; index < cards.Length; index++)
             {
                 Assert.IsTrue(cards[index].Button.gameObject.activeSelf,
@@ -320,6 +331,17 @@ public sealed class M02EstablishBaseResourceTests
                 Assert.AreEqual("Warline/UI/Disabled Grayscale",
                     cards[index].FrameImage.material.shader.name,
                     $"M02 squad card {index} must use the shared disabled V3 treatment.");
+                Transform washTransform = cards[index].Button.transform.Find("MissionDisabledBlueWash");
+                Assert.NotNull(washTransform, $"M02 squad card {index} must own the static blue wash.");
+                Assert.IsTrue(washTransform.gameObject.activeSelf,
+                    $"M02 squad card {index} must show the static blue wash.");
+                Color washColor = washTransform.GetComponent<Image>().color;
+                Assert.Greater(washColor.b, washColor.r,
+                    $"M02 squad card {index} must be blue rather than neutral gray.");
+                if (sharedBlueWash.HasValue)
+                    Assert.AreEqual(sharedBlueWash.Value, washColor,
+                        $"M02 squad card {index} must match every other unavailable card.");
+                sharedBlueWash = washColor;
             }
 
             GameObject matchHudPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(

@@ -323,40 +323,10 @@ namespace Game.UI.Runtime
 
         public void Tick()
         {
-            if ((!_screenTargetActive && !_commandCueActive) ||
-                _screenTargetIndicator == null ||
-                _screenTargetCanvas == null)
+            if (!_commandCueActive || _screenTargetIndicator == null || _screenTargetCanvas == null)
                 return;
 
-            if (_commandCueActive)
-            {
-                TickCommandCue();
-                return;
-            }
-
-            Camera worldCamera = _worldCamera;
-            if (worldCamera == null || !worldCamera.isActiveAndEnabled)
-            {
-                ShowScreenTargetFallback();
-                return;
-            }
-
-            Vector3 viewport = worldCamera.WorldToViewportPoint(
-                _screenTargetWorld + Vector3.up * 2.8f);
-            if (viewport.z <= 0f)
-            {
-                ShowScreenTargetFallback();
-                return;
-            }
-
-            Vector2 viewportAnchor = new(
-                Mathf.Clamp(viewport.x, 0.08f, 0.92f),
-                Mathf.Clamp(viewport.y, 0.26f, 0.88f));
-            SetAnchorsIfChanged(_screenTargetIndicator, viewportAnchor);
-            SetAnchoredPositionIfChanged(_screenTargetIndicator, Vector2.zero);
-            _screenTargetIndicator.localScale = Vector3.one;
-            if (!_screenTargetIndicator.gameObject.activeSelf)
-                _screenTargetIndicator.gameObject.SetActive(true);
+            TickCommandCue();
         }
 
         private void ApplyVisual(UiAssistantHighlightModel model)
@@ -366,9 +336,9 @@ namespace Game.UI.Runtime
 
             if (_panelPulse != null)
             {
-                _panelPulse.gameObject.SetActive(model.Active);
-                float strength = Mathf.Clamp01(model.Strength);
-                _panelPulse.color = new Color(0.45f, 0.95f, 1f, 0.18f + strength * 0.32f);
+                // Guidance is communicated by stable focus geometry. Flashing the ARIA panel
+                // competed with the target and made disabled cards appear inconsistently live.
+                _panelPulse.gameObject.SetActive(false);
             }
 
             // Keep guidance on the isolated top-level HUD canvas. A cue parented to
@@ -392,27 +362,45 @@ namespace Game.UI.Runtime
             }
 
             buttonRect.GetWorldCorners(_commandButtonCorners);
-            Vector3 buttonTopCenter = (_commandButtonCorners[1] + _commandButtonCorners[2]) * 0.5f;
             Canvas buttonCanvas = buttonRect.GetComponentInParent<Canvas>();
             Camera buttonCamera = buttonCanvas == null || buttonCanvas.renderMode == RenderMode.ScreenSpaceOverlay
                 ? null
                 : buttonCanvas.worldCamera;
-            Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(buttonCamera, buttonTopCenter);
-            screenPoint.y += 12f;
+            Vector2 bottomLeftScreen = RectTransformUtility.WorldToScreenPoint(
+                buttonCamera, _commandButtonCorners[0]);
+            Vector2 topRightScreen = RectTransformUtility.WorldToScreenPoint(
+                buttonCamera, _commandButtonCorners[2]);
             Camera eventCamera = _screenTargetCanvas.renderMode == RenderMode.ScreenSpaceOverlay
                 ? null
                 : _screenTargetCanvas.worldCamera;
             if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                    canvasRect, screenPoint, eventCamera, out Vector2 localPoint))
+                    canvasRect, bottomLeftScreen, eventCamera, out Vector2 bottomLeft) ||
+                !RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                    canvasRect, topRightScreen, eventCamera, out Vector2 topRight))
             {
                 _screenTargetIndicator.gameObject.SetActive(false);
                 return;
             }
 
-            Vector2 half = _screenTargetIndicator.sizeDelta * 0.5f;
+            const float borderPadding = 10f;
+            Vector2 size = new(
+                Mathf.Max(96f, Mathf.Abs(topRight.x - bottomLeft.x) + borderPadding * 2f),
+                Mathf.Max(76f, Mathf.Abs(topRight.y - bottomLeft.y) + borderPadding * 2f));
+            _screenTargetIndicator.sizeDelta = size;
+            RectTransform caption = _screenTargetLabel != null
+                ? _screenTargetLabel.transform.parent as RectTransform
+                : null;
+            if (caption != null)
+                caption.sizeDelta = new Vector2(Mathf.Clamp(size.x - 20f, 240f, 440f), 64f);
+
+            Vector2 localPoint = (bottomLeft + topRight) * 0.5f;
+            Vector2 half = size * 0.5f;
             Rect bounds = canvasRect.rect;
             localPoint.x = Mathf.Clamp(localPoint.x, bounds.xMin + half.x, bounds.xMax - half.x);
-            localPoint.y = Mathf.Clamp(localPoint.y, bounds.yMin, bounds.yMax - _screenTargetIndicator.sizeDelta.y);
+            localPoint.y = Mathf.Clamp(
+                localPoint.y,
+                bounds.yMin + half.y,
+                bounds.yMax - half.y - 24f);
             SetAnchorsIfChanged(_screenTargetIndicator, new Vector2(0.5f, 0.5f));
             SetAnchoredPositionIfChanged(_screenTargetIndicator, localPoint);
             _screenTargetIndicator.localScale = Vector3.one;

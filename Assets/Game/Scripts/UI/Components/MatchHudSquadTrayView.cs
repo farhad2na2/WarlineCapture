@@ -25,7 +25,6 @@ namespace Game.UI.Runtime
         [SerializeField] private Sprite normalFrameSprite;
         [SerializeField] private Sprite selectedFrameSprite;
         [SerializeField] private Card[] cards = new Card[5];
-        [SerializeField, Min(0.5f)] private float disabledFlashSeconds = 0.12f;
         [SerializeField] private TMP_FontAsset cardLabelFont;
 
         private static readonly string[] CardLabels =
@@ -40,17 +39,24 @@ namespace Game.UI.Runtime
         private static readonly Color CardLabelStripColor = new(0f, 0f, 0f, 0.45f);
         private static readonly Color V3SelectedBorderColor = new Color32(0, 188, 224, 255);
         private static readonly Color V3NormalBorderColor = new Color32(48, 166, 69, 255);
+        private static readonly Color V3MissionDisabledBorderColor = new Color32(28, 166, 232, 255);
+        private static readonly Color V3MissionDisabledWashColor = new(0.015f, 0.30f, 0.68f, 0.48f);
+        private static readonly Color V3GuidanceYellow = new(1f, 0.72f, 0.02f, 1f);
         private readonly Color[] _frameBaseColors = new Color[5];
         private readonly Color[] _portraitBaseColors = new Color[5];
         private readonly bool[] _missionDisabled = new bool[5];
+        private readonly Image[] _missionDisabledWashes = new Image[5];
         private Action<MatchHudSquadTraySlot> _cardClicked;
-        private float _disabledFlashUntil;
-        private int _disabledFlashIndex = -1;
         private Canvas _cachedCanvas;
         private RectTransform _assistantGuidanceCue;
         private CanvasGroup _assistantGuidanceGroup;
         private bool _assistantGuidanceActive;
         private MatchHudSquadTraySlot _selectedSlot = MatchHudSquadTraySlot.None;
+        private bool _restrictionStateInitialized;
+        private bool _lastCombatVehiclesDisabled;
+        private bool _lastAirDisabled;
+        private bool _lastTransportDisabled;
+        private bool _lastHideUnrelatedControls;
 
         internal RectTransform AssistantGuidanceTarget
         {
@@ -144,19 +150,12 @@ namespace Game.UI.Runtime
 
         private void Update()
         {
-            if (_disabledFlashIndex >= 0 && Time.unscaledTime >= _disabledFlashUntil)
-            {
-                if (TryGetCard(_disabledFlashIndex, out Card card) && card.FrameImage != null)
-                    SetImageColor(card.FrameImage, _frameBaseColors[_disabledFlashIndex]);
-                _disabledFlashIndex = -1;
-            }
+            // Mission data becomes available after the HUD prefab is enabled. Poll the cheap
+            // read model and only rebuild visuals when its restriction flags actually change.
+            RefreshMissionRestrictions();
 
             if (_assistantGuidanceActive && _assistantGuidanceCue != null && _assistantGuidanceGroup != null)
-            {
-                float pulse = (Mathf.Sin(Time.unscaledTime * 5.5f) + 1f) * 0.5f;
-                _assistantGuidanceGroup.alpha = Mathf.Lerp(0.72f, 1f, pulse);
-                _assistantGuidanceCue.anchoredPosition = new Vector2(0f, 80f + pulse * 7f);
-            }
+                _assistantGuidanceGroup.alpha = 1f;
         }
 
         public void Bind(Action<MatchHudSquadTraySlot> cardClicked)
@@ -188,6 +187,19 @@ namespace Game.UI.Runtime
                 transportDisabled = restrictions.TransportDisabled;
                 hideUnrelatedControls = restrictions.HideUnrelatedControls;
             }
+
+            if (_restrictionStateInitialized &&
+                _lastCombatVehiclesDisabled == combatVehiclesDisabled &&
+                _lastAirDisabled == airDisabled &&
+                _lastTransportDisabled == transportDisabled &&
+                _lastHideUnrelatedControls == hideUnrelatedControls)
+                return;
+
+            _restrictionStateInitialized = true;
+            _lastCombatVehiclesDisabled = combatVehiclesDisabled;
+            _lastAirDisabled = airDisabled;
+            _lastTransportDisabled = transportDisabled;
+            _lastHideUnrelatedControls = hideUnrelatedControls;
 
             ApplyMissionRestrictionVisibility(
                 combatVehiclesDisabled, airDisabled, transportDisabled, hideUnrelatedControls);
@@ -230,7 +242,12 @@ namespace Game.UI.Runtime
                 SetImageColor(card.FrameImage, _frameBaseColors[i]);
                 V3GradientGraphic v3Frame = card.Button.GetComponentInChildren<V3GradientGraphic>(true);
                 if (v3Frame != null)
-                    v3Frame.SetBorder(selected ? V3SelectedBorderColor : V3NormalBorderColor, 3f);
+                {
+                    Color border = _missionDisabled[i]
+                        ? V3MissionDisabledBorderColor
+                        : selected ? V3SelectedBorderColor : V3NormalBorderColor;
+                    v3Frame.SetBorder(border, _missionDisabled[i] ? 5f : 3f);
+                }
             }
         }
 
@@ -242,13 +259,12 @@ namespace Game.UI.Runtime
         public void FlashDisabled(MatchHudSquadTraySlot slot)
         {
             int index = ToIndex(slot);
-            if (!TryGetCard(index, out Card card) || card.FrameImage == null)
+            if (!TryGetCard(index, out _))
                 return;
 
-            Color baseColor = _frameBaseColors[index];
-            SetImageColor(card.FrameImage, new Color(1f, 0.82f, 0.35f, baseColor.a));
-            _disabledFlashIndex = index;
-            _disabledFlashUntil = Time.unscaledTime + disabledFlashSeconds;
+            // Unavailable mission cards use one persistent blue treatment. A click must not
+            // flash a single card and imply that another unavailable card is interactive.
+            ApplyMissionDisabledTreatment(index, _missionDisabled[index]);
         }
 
         public bool TryGetPortraitSprite(MatchHudSquadTraySlot slot, out Sprite sprite)
@@ -332,6 +348,87 @@ namespace Game.UI.Runtime
                 UiDisabledVisualReason.MissionRestriction,
                 unavailable);
             card.Button.interactable = !unavailable;
+            ApplyMissionDisabledTreatment(index, unavailable);
+        }
+
+        private void ApplyMissionDisabledTreatment(int index, bool unavailable)
+        {
+            if (!TryGetCard(index, out Card card) || card.Button == null)
+                return;
+
+            TintMissionDisabledGraphics(card, unavailable);
+
+            Image wash = EnsureMissionDisabledWash(index, card);
+            if (wash != null)
+            {
+                // Reassert the shared V3 overlay after the grayscale material pass so every
+                // unavailable card has the same static blue tint instead of a one-off flash.
+                wash.material = null;
+                wash.color = V3MissionDisabledWashColor;
+                wash.transform.SetAsLastSibling();
+                if (wash.gameObject.activeSelf != unavailable)
+                    wash.gameObject.SetActive(unavailable);
+            }
+
+            V3GradientGraphic v3Frame = card.Button.GetComponentInChildren<V3GradientGraphic>(true);
+            if (v3Frame != null)
+            {
+                bool selected = ToSlot(index) == _selectedSlot;
+                Color border = unavailable
+                    ? V3MissionDisabledBorderColor
+                    : selected ? V3SelectedBorderColor : V3NormalBorderColor;
+                v3Frame.SetBorder(border, unavailable ? 5f : 3f);
+            }
+        }
+
+        private static void TintMissionDisabledGraphics(Card card, bool unavailable)
+        {
+            if (!unavailable || card?.Button == null)
+                return;
+
+            Graphic[] graphics = card.Button.GetComponentsInChildren<Graphic>(true);
+            for (int graphicIndex = 0; graphicIndex < graphics.Length; graphicIndex++)
+            {
+                Graphic graphic = graphics[graphicIndex];
+                if (graphic == null || graphic is TMP_Text ||
+                    graphic.gameObject.name == "MissionDisabledBlueWash")
+                    continue;
+
+                UiDisabledMaterialState disabledState = graphic.GetComponent<UiDisabledMaterialState>();
+                Color source = disabledState != null ? disabledState.OriginalColor : graphic.color;
+                float neutral = Mathf.Clamp(source.grayscale, 0.42f, 0.82f);
+                Color disabledBlue = new(0.12f, 0.50f, 0.82f, source.a);
+                graphic.color = Color.Lerp(
+                    new Color(neutral, neutral, neutral, source.a),
+                    disabledBlue,
+                    0.46f);
+            }
+        }
+
+        private Image EnsureMissionDisabledWash(int index, Card card)
+        {
+            if (_missionDisabledWashes[index] != null)
+                return _missionDisabledWashes[index];
+
+            Transform existing = card.Button.transform.Find("MissionDisabledBlueWash");
+            GameObject washObject = existing != null
+                ? existing.gameObject
+                : new GameObject("MissionDisabledBlueWash", typeof(RectTransform), typeof(Image));
+            if (existing == null)
+                washObject.transform.SetParent(card.Button.transform, false);
+            washObject.layer = card.Button.gameObject.layer;
+            washObject.transform.SetAsLastSibling();
+            RectTransform rect = washObject.GetComponent<RectTransform>();
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+            Image wash = washObject.GetComponent<Image>();
+            wash.material = null;
+            wash.color = V3MissionDisabledWashColor;
+            wash.raycastTarget = false;
+            _missionDisabledWashes[index] = wash;
+            return wash;
         }
 
         private void OnCardClicked(int index)
@@ -363,41 +460,73 @@ namespace Game.UI.Runtime
             if (_assistantGuidanceCue != null || !TryGetCard(0, out Card soldierCard) || soldierCard.Button == null)
                 return;
 
-            GameObject cue = new("AriaButtonGuidance", typeof(RectTransform), typeof(CanvasGroup), typeof(Image));
+            GameObject cue = new(
+                "AriaButtonGuidance",
+                typeof(RectTransform),
+                typeof(CanvasGroup),
+                typeof(V3GradientGraphic));
             cue.transform.SetParent(soldierCard.Button.transform, false);
             cue.transform.SetAsLastSibling();
             cue.layer = soldierCard.Button.gameObject.layer;
             _assistantGuidanceCue = cue.GetComponent<RectTransform>();
-            _assistantGuidanceCue.anchorMin = new Vector2(0.5f, 1f);
-            _assistantGuidanceCue.anchorMax = new Vector2(0.5f, 1f);
-            _assistantGuidanceCue.pivot = new Vector2(0.5f, 0f);
-            _assistantGuidanceCue.anchoredPosition = new Vector2(0f, 80f);
-            _assistantGuidanceCue.sizeDelta = new Vector2(280f, 86f);
+            _assistantGuidanceCue.anchorMin = Vector2.zero;
+            _assistantGuidanceCue.anchorMax = Vector2.one;
+            _assistantGuidanceCue.pivot = new Vector2(0.5f, 0.5f);
+            _assistantGuidanceCue.offsetMin = new Vector2(-8f, -8f);
+            _assistantGuidanceCue.offsetMax = new Vector2(8f, 8f);
             _assistantGuidanceGroup = cue.GetComponent<CanvasGroup>();
             _assistantGuidanceGroup.interactable = false;
             _assistantGuidanceGroup.blocksRaycasts = false;
-            Image background = cue.GetComponent<Image>();
-            background.color = new Color(0.035f, 0.15f, 0.18f, 0.94f);
+            V3GradientGraphic background = cue.GetComponent<V3GradientGraphic>();
+            background.ConfigureCorners(
+                Color.clear,
+                Color.clear,
+                Color.clear,
+                Color.clear,
+                V3GuidanceYellow,
+                7f);
             background.raycastTarget = false;
 
+            GameObject captionObject = new(
+                "TopBorderCaption",
+                typeof(RectTransform),
+                typeof(V3GradientGraphic));
+            captionObject.transform.SetParent(cue.transform, false);
+            captionObject.layer = cue.layer;
+            RectTransform captionRect = captionObject.GetComponent<RectTransform>();
+            captionRect.anchorMin = new Vector2(0.5f, 1f);
+            captionRect.anchorMax = new Vector2(0.5f, 1f);
+            captionRect.pivot = new Vector2(0.5f, 0.5f);
+            captionRect.anchoredPosition = Vector2.zero;
+            captionRect.sizeDelta = new Vector2(210f, 42f);
+            V3GradientGraphic caption = captionObject.GetComponent<V3GradientGraphic>();
+            caption.ConfigureCorners(
+                new Color(0.11f, 0.095f, 0.025f, 0.98f),
+                new Color(0.16f, 0.13f, 0.025f, 0.98f),
+                new Color(0.025f, 0.035f, 0.038f, 0.98f),
+                new Color(0.025f, 0.035f, 0.038f, 0.98f),
+                V3GuidanceYellow,
+                4f);
+            caption.raycastTarget = false;
+
             GameObject labelObject = new("Instruction", typeof(RectTransform), typeof(TextMeshProUGUI));
-            labelObject.transform.SetParent(cue.transform, false);
+            labelObject.transform.SetParent(captionObject.transform, false);
             labelObject.layer = cue.layer;
             RectTransform labelRect = labelObject.GetComponent<RectTransform>();
             labelRect.anchorMin = Vector2.zero;
             labelRect.anchorMax = Vector2.one;
-            labelRect.offsetMin = Vector2.zero;
-            labelRect.offsetMax = Vector2.zero;
+            labelRect.offsetMin = new Vector2(10f, 3f);
+            labelRect.offsetMax = new Vector2(-10f, -3f);
             TextMeshProUGUI label = labelObject.GetComponent<TextMeshProUGUI>();
             if (cardLabelFont != null)
                 label.font = cardLabelFont;
-            label.text = GameLocalization.Get("ui.hud.tap_rifle_squad", "TAP RIFLE SQUAD\n\u25bc");
+            label.text = GameLocalization.Get("ui.hud.tap_rifle_squad", "SELECT SQUAD");
             label.fontStyle = FontStyles.Bold;
             label.fontSize = 27f;
             label.enableAutoSizing = true;
             label.fontSizeMin = 18f;
             label.fontSizeMax = 30f;
-            label.color = new Color(0.43f, 1f, 0.95f, 1f);
+            label.color = V3GuidanceYellow;
             label.alignment = TextAlignmentOptions.Center;
             label.textWrappingMode = TextWrappingModes.NoWrap;
             label.raycastTarget = false;

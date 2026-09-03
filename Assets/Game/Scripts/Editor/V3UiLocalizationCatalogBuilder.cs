@@ -773,8 +773,15 @@ namespace Game.Editor
             AddRuntimeText("ui.settings.enable_music_description", "Enable command music playback.", "پخش موسیقی فرماندهی را فعال کنید.");
             AddRuntimeText("ui.settings.enable_sound_description", "Enable UI, combat, alert, and ambience sounds.", "صدای رابط کاربری، نبرد، هشدار و محیط را فعال کنید.");
             AddRuntimeText("ui.settings.enable_voice_description", "Enable tactical assistant voice lines.", "گفتار دستیار تاکتیکی را فعال کنید.");
-            AddRuntimeText("ui.hud.tap_rifle_squad", "TAP RIFLE SQUAD\n▼", "روی گروه تفنگدار بزنید\n▼");
+            AddRuntimeText("ui.hud.tap_rifle_squad", "SELECT SQUAD", "گروه را انتخاب کنید");
             AddRuntimeText("ui.hud.aria_target", "ARIA TARGET", "هدف آریا");
+            AddRuntimeText("ui.guidance.open_build", "OPEN BUILD", "ساخت را باز کنید");
+            AddRuntimeText("ui.guidance.select_barracks", "SELECT BARRACKS", "سربازخانه را انتخاب کنید");
+            AddRuntimeText("ui.guidance.resource_spend", "RESOURCE SPEND", "هزینه منابع");
+            AddRuntimeText("ui.guidance.queue_rifle", "QUEUE RIFLE", "تفنگدار را در صف بگذارید");
+            AddRuntimeText("ui.guidance.select_squad", "SELECT SQUAD", "گروه را انتخاب کنید");
+            AddRuntimeText("ui.guidance.click_destination", "CLICK DESTINATION", "مقصد را انتخاب کنید");
+            AddRuntimeText("ui.guidance.click_enemy", "CLICK ENEMY", "دشمن را انتخاب کنید");
             AddRuntimeText("ui.common.queued", "QUEUED", "در صف");
             AddRuntimeText("ui.aria.elapsed_hms", "ELAPSED: {0}:{1:00}:{2:00}", "سپری‌شده: {0}:{1:00}:{2:00}");
             AddRuntimeText("ui.aria.elapsed_ms", "ELAPSED: {0:00}:{1:00}", "سپری‌شده: {0:00}:{1:00}");

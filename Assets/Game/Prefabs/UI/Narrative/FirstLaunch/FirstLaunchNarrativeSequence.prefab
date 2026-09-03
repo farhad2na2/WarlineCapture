@@ -29577,7 +29577,10 @@ MonoBehaviour:
   sequenceAudioView: {fileID: 4395970381558429347}
   persianFont: {fileID: 11400000, guid: 15a37dd92cdf54f419eb634937a005e2, type: 2}
   localizedTextTargets:
+  - {fileID: 1217450588771542330}
+  - {fileID: 3446766257026033926}
   - {fileID: 708964000809812628}
+  - {fileID: 4519992302209058479}
   - {fileID: 1057044582460276124}
   - {fileID: 6384450909154543881}
   - {fileID: 4021152486705726115}
@@ -29593,7 +29596,10 @@ MonoBehaviour:
   - {fileID: 8043679959593815923}
   - {fileID: 7432003698613247336}
   localizedTextKeys:
+  - ui.common.pause
+  - ui.common.subtitles
   - narrative.first_launch.control.skip
+  - ui.common.next
   - narrative.first_launch.identity.title
   - narrative.first_launch.identity.instruction
   - narrative.first_launch.identity.callsign
@@ -29609,7 +29615,10 @@ MonoBehaviour:
   - narrative.first_launch.control.cancel_skip
   - narrative.first_launch.control.confirm_skip
   localizedTextEnglishFallbacks:
+  - PAUSE
+  - SUBTITLES
   - SKIP
+  - NEXT
   - EMERGENCY CONTINUITY AUTHENTICATION
   - CHOOSE YOUR COMMANDER IDENTITY
   - CALLSIGN

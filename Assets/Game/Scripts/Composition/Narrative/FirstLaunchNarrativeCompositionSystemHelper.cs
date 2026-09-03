@@ -98,7 +98,10 @@ namespace Game.Composition
 
             if (profileComposition.ShouldResumeHandoff(startInReviewerMode))
             {
-                view?.SetVisible(true);
+                // A resumed handoff has no current narrative panel to render. Keep the
+                // cleared narrative layer hidden and let the shell loading curtain own
+                // this transition; otherwise the panel Image falls back to solid white.
+                view?.SetVisible(false);
                 languageChoiceView?.SetVisible(false);
                 BeginMissionHandoff(0);
                 LogStartupDisposition(FirstLaunchNarrativeStartupDisposition.ResumeHandoff);
@@ -455,7 +458,9 @@ namespace Game.Composition
             missionHandoff = profileComposition.PrepareMissionHandoff(transitionToken);
             missionHandoffActive = true; missionHandoffPublished = false; missionHandoffRejections = 0;
             shellComposition.RequestHandoff();
-            view?.SetVisible(true);
+            // Do not re-show NarrativeSequenceView here. A production skip clears its
+            // panel before requesting this handoff, so making it visible produces a
+            // full-screen white Image above the real loading presentation.
         }
 
         private FirstLaunchNarrativeStartupDisposition ResolveCurrentDisposition()

@@ -261,19 +261,27 @@ namespace Game.UI.Runtime
 
         private void ApplyLabels()
         {
-            if (_materialsSlotLabel != null && _materialsSlotLabel.text != "Materials")
-                _materialsSlotLabel.text = GameLocalization.Get("ui.hud.materials", "Materials");
-            if (_oilSlotLabel != null && _oilSlotLabel.text != "Oil")
-                _oilSlotLabel.text = GameLocalization.Get("ui.hud.oil", "Oil");
+            SetLabelIfChanged(
+                _materialsSlotLabel,
+                GameLocalization.Get("ui.hud.materials", "Materials"));
+            SetLabelIfChanged(
+                _oilSlotLabel,
+                GameLocalization.Get("ui.hud.oil", "Oil"));
             string fuelLabel = UiShellRuntimeGateway.TryReadMissionHudRestrictions(
                 out UiMissionHudRestrictionsModel restrictions) && restrictions.ShowMissionCredits
                 ? GameLocalization.Get("ui.hud.credits", "Credits")
                 : GameLocalization.Get("ui.hud.fuel", "Fuel");
-            if (_fuelSlotLabel != null && _fuelSlotLabel.text != fuelLabel)
-                _fuelSlotLabel.text = fuelLabel;
-            if (_civilianRiskSlotLabel != null && _civilianRiskSlotLabel.text != "Civilian Risk")
-                _civilianRiskSlotLabel.text = GameLocalization.Get("ui.hud.civilian_risk", "Civilian Risk");
+            SetLabelIfChanged(_fuelSlotLabel, fuelLabel);
+            SetLabelIfChanged(
+                _civilianRiskSlotLabel,
+                GameLocalization.Get("ui.hud.civilian_risk", "Civilian Risk"));
             _labelsApplied = true;
+        }
+
+        private static void SetLabelIfChanged(TMP_Text target, string value)
+        {
+            if (target != null && target.text != value)
+                target.text = value;
         }
 
         private static void SetTextIfChanged(TMP_Text target, string value, ref string previousValue)

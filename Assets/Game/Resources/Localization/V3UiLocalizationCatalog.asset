@@ -172,6 +172,30 @@ MonoBehaviour:
       value: 'Blocked: civilian zone'
     - key: match.feedback.tactical_map_not_ready
       value: Tactical map is not ready.
+    - key: narrative.first_launch.control.cancel_skip
+      value: KEEP WATCHING
+    - key: narrative.first_launch.control.confirm_skip
+      value: SKIP INTRO
+    - key: narrative.first_launch.control.continue
+      value: "CONTINUE   \u203A"
+    - key: narrative.first_launch.control.skip
+      value: SKIP
+    - key: narrative.first_launch.guidance.contextual
+      value: TACTICAL HINTS
+    - key: narrative.first_launch.guidance.full
+      value: FULL GUIDANCE
+    - key: narrative.first_launch.guidance.instruction
+      value: Aria will support you based on the level you choose.
+    - key: narrative.first_launch.guidance.minimal
+      value: MINIMAL GUIDANCE
+    - key: narrative.first_launch.guidance.title
+      value: CHOOSE ARIA'S GUIDANCE LEVEL
+    - key: narrative.first_launch.identity.callsign
+      value: CALLSIGN
+    - key: narrative.first_launch.identity.instruction
+      value: CHOOSE YOUR COMMANDER IDENTITY
+    - key: narrative.first_launch.identity.title
+      value: EMERGENCY CONTINUITY AUTHENTICATION
     - key: narrative.first_launch.language.continue
       value: "CONTINUE   \u203A"
     - key: narrative.first_launch.language.info
@@ -230,6 +254,11 @@ MonoBehaviour:
       value: OLD MARKET / 10:00 LOCAL
     - key: narrative.first_launch.location.sahrin.name
       value: SAHRIN
+    - key: narrative.first_launch.skip.body
+      value: The default commander identity and Full Guidance setting will be used.
+        You can change both later.
+    - key: narrative.first_launch.skip.title
+      value: SKIP TO TACTICAL COMMAND?
     - key: narrative.first_launch.speaker.aria.accessible_label
       value: ARIA, CIVIC RELAY ASSISTANT
     - key: narrative.first_launch.speaker.aria.name
@@ -738,6 +767,8 @@ MonoBehaviour:
       value: MARKED READ
     - key: ui.common.music
       value: MUSIC
+    - key: ui.common.next
+      value: NEXT
     - key: ui.common.off
       value: OFF
     - key: ui.common.oldest
@@ -756,6 +787,8 @@ MonoBehaviour:
       value: SKIP
     - key: ui.common.sound
       value: SOUND
+    - key: ui.common.subtitles
+      value: SUBTITLES
     - key: ui.common.unread
       value: UNREAD
     - key: ui.common.voice
@@ -4181,6 +4214,8 @@ MonoBehaviour:
       value: "\u062E\u0648\u0627\u0646\u062F\u0647\u200C\u0634\u062F\u0647"
     - key: ui.common.music
       value: "\u0645\u0648\u0633\u06CC\u0642\u06CC"
+    - key: ui.common.next
+      value: "\u0628\u0639\u062F\u06CC"
     - key: ui.common.off
       value: "\u062E\u0627\u0645\u0648\u0634"
     - key: ui.common.oldest
@@ -4196,9 +4231,11 @@ MonoBehaviour:
     - key: ui.common.sfx
       value: "\u062C\u0644\u0648\u0647 \u0635\u0648\u062A\u06CC"
     - key: ui.common.skip
-      value: "\u0631\u062F\u06A9\u0631\u062F\u0646"
+      value: "\u0631\u062F \u06A9\u0631\u062F\u0646"
     - key: ui.common.sound
       value: "\u0635\u062F\u0627"
+    - key: ui.common.subtitles
+      value: "\u0632\u06CC\u0631\u0646\u0648\u06CC\u0633"
     - key: ui.common.unread
       value: "\u062E\u0648\u0627\u0646\u062F\u0647\u200C\u0646\u0634\u062F\u0647"
     - key: ui.common.voice

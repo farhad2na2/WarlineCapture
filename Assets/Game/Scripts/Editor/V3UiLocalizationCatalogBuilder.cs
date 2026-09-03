@@ -203,7 +203,15 @@ namespace Game.Editor
                 }
 
                 if (UsesSpecializedNarrativeLocalization(path))
+                {
+                    bindings += ValidateSpecializedNarrativeLocalization(
+                        prefab,
+                        path,
+                        englishEntries,
+                        persianEntries,
+                        errors);
                     continue;
+                }
 
                 TMP_Text[] text = prefab.GetComponentsInChildren<TMP_Text>(true);
                 for (int i = 0; i < text.Length; i++)
@@ -243,6 +251,120 @@ namespace Game.Editor
             Debug.Log(
                 $"[V3UiLocalizationCatalogBuilder] validation=Passed prefabs={prefabs} " +
                 $"bindings={bindings} en={englishEntries.Count} fa={persianEntries.Count}");
+        }
+
+        private static int ValidateSpecializedNarrativeLocalization(
+            GameObject prefab,
+            string path,
+            IReadOnlyDictionary<string, string> englishEntries,
+            IReadOnlyDictionary<string, string> persianEntries,
+            List<string> errors)
+        {
+            FirstLaunchLanguageChoiceView language =
+                prefab.GetComponent<FirstLaunchLanguageChoiceView>();
+            if (language != null)
+            {
+                return ValidateSerializedLocalizationArrays(
+                    language,
+                    path,
+                    "localizedShellTextTargets",
+                    "localizedShellTextKeys",
+                    "localizedShellEnglishFallbacks",
+                    englishEntries,
+                    persianEntries,
+                    errors);
+            }
+
+            NarrativeSequenceView narrative = prefab.GetComponent<NarrativeSequenceView>();
+            if (narrative == null)
+            {
+                errors.Add($"{path}: specialized narrative prefab is missing its localization owner");
+                return 0;
+            }
+
+            int count = ValidateSerializedLocalizationArrays(
+                narrative,
+                path,
+                "localizedTextTargets",
+                "localizedTextKeys",
+                "localizedTextEnglishFallbacks",
+                englishEntries,
+                persianEntries,
+                errors);
+
+            string[] requiredControls =
+            {
+                "SafeArea/PlaybackControls/PauseButton/Label",
+                "SafeArea/PlaybackControls/SubtitlesButton/Label",
+                "SafeArea/PlaybackControls/SkipButton/Label",
+                "SafeArea/Dialogue/NextLabel"
+            };
+            SerializedProperty targets = new SerializedObject(narrative)
+                .FindProperty("localizedTextTargets");
+            HashSet<TMP_Text> localizedTargets = new();
+            if (targets != null)
+            {
+                for (int i = 0; i < targets.arraySize; i++)
+                {
+                    if (targets.GetArrayElementAtIndex(i).objectReferenceValue is TMP_Text target)
+                        localizedTargets.Add(target);
+                }
+            }
+
+            for (int i = 0; i < requiredControls.Length; i++)
+            {
+                TMP_Text target = prefab.transform.Find(requiredControls[i])?.GetComponent<TMP_Text>();
+                if (target == null || !localizedTargets.Contains(target))
+                    errors.Add($"{path}:{requiredControls[i]} missing specialized FA localization binding");
+            }
+
+            return count;
+        }
+
+        private static int ValidateSerializedLocalizationArrays(
+            Component owner,
+            string path,
+            string targetsPropertyName,
+            string keysPropertyName,
+            string fallbacksPropertyName,
+            IReadOnlyDictionary<string, string> englishEntries,
+            IReadOnlyDictionary<string, string> persianEntries,
+            List<string> errors)
+        {
+            SerializedObject serialized = new(owner);
+            SerializedProperty targets = serialized.FindProperty(targetsPropertyName);
+            SerializedProperty keys = serialized.FindProperty(keysPropertyName);
+            SerializedProperty fallbacks = serialized.FindProperty(fallbacksPropertyName);
+            if (targets == null || keys == null || fallbacks == null)
+            {
+                errors.Add($"{path}: specialized localization arrays are missing");
+                return 0;
+            }
+
+            if (targets.arraySize != keys.arraySize || targets.arraySize != fallbacks.arraySize)
+            {
+                errors.Add(
+                    $"{path}: specialized localization arrays have mismatched lengths " +
+                    $"({targets.arraySize}/{keys.arraySize}/{fallbacks.arraySize})");
+            }
+
+            int count = Mathf.Min(targets.arraySize, Mathf.Min(keys.arraySize, fallbacks.arraySize));
+            for (int i = 0; i < count; i++)
+            {
+                TMP_Text target = targets.GetArrayElementAtIndex(i).objectReferenceValue as TMP_Text;
+                string key = keys.GetArrayElementAtIndex(i).stringValue;
+                string fallback = fallbacks.GetArrayElementAtIndex(i).stringValue;
+                if (target == null)
+                    errors.Add($"{path}:{targetsPropertyName}[{i}] has no TMP target");
+                if (string.IsNullOrWhiteSpace(fallback))
+                    errors.Add($"{path}:{fallbacksPropertyName}[{i}] has no English fallback");
+                if (string.IsNullOrWhiteSpace(key) || !englishEntries.ContainsKey(key))
+                    errors.Add($"{path}:{keysPropertyName}[{i}] missing EN key '{key}'");
+                else if (!persianEntries.TryGetValue(key, out string value) || string.IsNullOrWhiteSpace(value))
+                    errors.Add($"{path}:{keysPropertyName}[{i}] missing FA value for '{key}'");
+            }
+
+            return count;
         }
 
         private static int BindPrefab(
@@ -460,13 +582,33 @@ namespace Game.Editor
             AddRuntimeText("narrative.first_launch.language.title", "SELECT STORY LANGUAGE", "زبان داستان را انتخاب کنید");
             AddRuntimeText("narrative.first_launch.language.info", "This can be changed later\nin Command Settings.", "بعداً می‌توانید این مورد را\nدر تنظیمات فرماندهی تغییر دهید.");
             AddRuntimeText("narrative.first_launch.language.continue", "CONTINUE   ›", "ادامه   ‹");
+            AddEnglish("narrative.first_launch.control.skip", "SKIP", english, keysByEnglish);
+            AddEnglish("narrative.first_launch.identity.title", "EMERGENCY CONTINUITY AUTHENTICATION", english, keysByEnglish);
+            AddEnglish("narrative.first_launch.identity.instruction", "CHOOSE YOUR COMMANDER IDENTITY", english, keysByEnglish);
+            AddEnglish("narrative.first_launch.identity.callsign", "CALLSIGN", english, keysByEnglish);
+            AddEnglish("narrative.first_launch.control.continue", "CONTINUE   ›", english, keysByEnglish);
+            AddEnglish("narrative.first_launch.guidance.title", "CHOOSE ARIA'S GUIDANCE LEVEL", english, keysByEnglish);
+            AddEnglish("narrative.first_launch.guidance.instruction", "Aria will support you based on the level you choose.", english, keysByEnglish);
+            AddEnglish("narrative.first_launch.guidance.full", "FULL GUIDANCE", english, keysByEnglish);
+            AddEnglish("narrative.first_launch.guidance.contextual", "TACTICAL HINTS", english, keysByEnglish);
+            AddEnglish("narrative.first_launch.guidance.minimal", "MINIMAL GUIDANCE", english, keysByEnglish);
+            AddEnglish("narrative.first_launch.skip.title", "SKIP TO TACTICAL COMMAND?", english, keysByEnglish);
+            AddEnglish(
+                "narrative.first_launch.skip.body",
+                "The default commander identity and Full Guidance setting will be used. You can change both later.",
+                english,
+                keysByEnglish);
+            AddEnglish("narrative.first_launch.control.cancel_skip", "KEEP WATCHING", english, keysByEnglish);
+            AddEnglish("narrative.first_launch.control.confirm_skip", "SKIP INTRO", english, keysByEnglish);
             AddRuntimeText("ui.common.alerts", "ALERTS", "هشدارها");
             AddRuntimeText("ui.common.music", "MUSIC", "موسیقی");
             AddRuntimeText("ui.common.sound", "SOUND", "صدا");
             AddRuntimeText("ui.common.voice", "VOICE", "گفتار");
             AddRuntimeText("ui.common.sfx", "SFX", "جلوه صوتی");
-            AddRuntimeText("ui.common.skip", "SKIP", "ردکردن");
+            AddRuntimeText("ui.common.skip", "SKIP", "رد کردن");
             AddRuntimeText("ui.common.pause", "PAUSE", "مکث");
+            AddRuntimeText("ui.common.subtitles", "SUBTITLES", "زیرنویس");
+            AddRuntimeText("ui.common.next", "NEXT", "بعدی");
             AddRuntimeText("ui.settings.command_title", "COMMAND SETTINGS", "تنظیمات فرماندهی");
             AddRuntimeText("ui.settings.master_volume", "MASTER VOLUME", "صدای اصلی");
             AddRuntimeText("ui.settings.music_volume", "MUSIC VOLUME", "صدای موسیقی");

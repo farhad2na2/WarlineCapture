@@ -293,6 +293,8 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
         Assert.IsTrue(saved.firstLaunchSkipped);
         Assert.AreEqual("COMMANDER", saved.firstLaunchCommanderCallsign);
         Assert.AreEqual("Full", saved.firstLaunchGuidance);
+        Assert.AreEqual(0f, context.View.GetComponent<CanvasGroup>().alpha,
+            "Skipping must leave the cleared narrative layer hidden while the loading handoff owns the screen.");
     }
 
     [Test]
@@ -366,6 +368,8 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
             pending.Helper.Tick(0f);
             pending.Helper.Tick(0f);
             Assert.AreEqual(FirstLaunchProfileState.HandoffPending, pending.SaveService.LoadProfile().firstLaunchStatus);
+            Assert.AreEqual(0f, pending.View.GetComponent<CanvasGroup>().alpha,
+                "A resumed handoff must not expose the cleared narrative panel as a white screen.");
         }
     }
 

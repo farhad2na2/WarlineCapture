@@ -293,7 +293,10 @@ namespace Game.Editor
         {
             TMP_Text[] targets =
             {
+                FindText(root, "SafeArea/PlaybackControls/PauseButton/Label"),
+                FindText(root, "SafeArea/PlaybackControls/SubtitlesButton/Label"),
                 FindText(root, "SafeArea/PlaybackControls/SkipButton/Label"),
+                FindText(root, "SafeArea/Dialogue/NextLabel"),
                 FindText(root, "SafeArea/CommanderIdentitySurface/Title"),
                 FindText(root, "SafeArea/CommanderIdentitySurface/Instruction"),
                 FindText(root, "SafeArea/CommanderIdentitySurface/CallsignLabel"),
@@ -311,7 +314,10 @@ namespace Game.Editor
             };
             string[] keys =
             {
+                "ui.common.pause",
+                "ui.common.subtitles",
                 "narrative.first_launch.control.skip",
+                "ui.common.next",
                 "narrative.first_launch.identity.title",
                 "narrative.first_launch.identity.instruction",
                 "narrative.first_launch.identity.callsign",
@@ -329,7 +335,7 @@ namespace Game.Editor
             };
             string[] fallbacks =
             {
-                "SKIP", "EMERGENCY CONTINUITY AUTHENTICATION", "CHOOSE YOUR COMMANDER IDENTITY", "COMMANDER", "CONTINUE  >",
+                "PAUSE", "SUBTITLES", "SKIP", "NEXT", "EMERGENCY CONTINUITY AUTHENTICATION", "CHOOSE YOUR COMMANDER IDENTITY", "COMMANDER", "CONTINUE  >",
                 "CHOOSE ARIA'S GUIDANCE LEVEL", "This can be changed later in Command Settings.", "FULL GUIDANCE", "TACTICAL HINTS",
                 "MINIMAL GUIDANCE", "CONTINUE", "SKIP TO TACTICAL COMMAND?",
                 "The default commander identity and Full Guidance setting will be used. You can change both later.", "KEEP WATCHING", "SKIP INTRO"

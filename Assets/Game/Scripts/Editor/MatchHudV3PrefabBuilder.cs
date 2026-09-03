@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Text;
+using Game.Configs;
 using Game.Tactical.Contracts;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
@@ -127,6 +128,32 @@ namespace Game.Editor
                 showM02RestrictedControls: true);
             Capture("/private/tmp/warline-m02-restricted-controls-v3-20x9.png", 4800, 2160,
                 showM02RestrictedControls: true);
+        }
+
+        [MenuItem("Game/UI/V3/Capture M02 Restricted Controls Persian Review")]
+        public static void CaptureM02RestrictedControlsPersianReview()
+        {
+            V3UiFoundationBuilder.EnsureBuilt();
+            LoadAssets();
+            GameLocalizationCatalog localization =
+                AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(V3UiLocalizationCatalogBuilder.CatalogPath);
+            if (localization == null)
+                throw new FileNotFoundException($"Missing localization catalog: {V3UiLocalizationCatalogBuilder.CatalogPath}");
+
+            GameLocalization.Initialize(localization, GameLocalization.PersianLocaleCode, persist: false);
+            try
+            {
+                Capture("/private/tmp/warline-m02-restricted-controls-fa-v3-16x9.png", 1920, 1080,
+                    showM02RestrictedControls: true,
+                    applyLocalization: true);
+                Capture("/private/tmp/warline-m02-restricted-controls-fa-v3-20x9.png", 4800, 2160,
+                    showM02RestrictedControls: true,
+                    applyLocalization: true);
+            }
+            finally
+            {
+                GameLocalization.Initialize(localization, GameLocalization.EnglishLocaleCode, persist: false);
+            }
         }
 
         [MenuItem("Game/UI/V3/Capture Unit Command Wheel V3 Review")]
@@ -512,9 +539,18 @@ namespace Game.Editor
                 TMP_Text label = FindDeepChild(slot, "Label")?.GetComponent<TMP_Text>();
                 ConfigureText(label, labels[i], 12f, boldFont, theme.TextMuted, TextAlignmentOptions.MidlineLeft);
                 SetTopLeft(label.rectTransform, 49f, 6f, 98f, 25f);
+                // The shared Persian font has taller line metrics than Oxanium. Auto-size keeps
+                // the translated resource captions inside the compact header instead of letting
+                // TMP ellipsis cull the whole line when the locale changes at runtime.
+                label.enableAutoSizing = true;
+                label.fontSizeMin = 9f;
+                label.fontSizeMax = 12f;
                 TMP_Text value = FindDeepChild(slot, "Value")?.GetComponent<TMP_Text>();
                 ConfigureText(value, values[i], 20f, boldFont, accents[i], TextAlignmentOptions.MidlineLeft);
                 SetTopLeft(value.rectTransform, 49f, 29f, 98f, 32f);
+                value.enableAutoSizing = true;
+                value.fontSizeMin = 12f;
+                value.fontSizeMax = 20f;
             }
 
             StyleHeaderButton(RequireRect(header, "SettingsButton"), 1042f, RequireSprite(V3UiFoundationBuilder.MatchSettingsIconPath));
@@ -1670,6 +1706,9 @@ namespace Game.Editor
             TMP_Text label = FindDeepChild(buttonRect, "Label")?.GetComponent<TMP_Text>();
             ConfigureText(label, labelValue, 17f, boldFont, theme.TextPrimary, TextAlignmentOptions.Center);
             SetTopLeft(label.rectTransform, 9f, 76f, 154f, 27f);
+            label.enableAutoSizing = true;
+            label.fontSizeMin = 10f;
+            label.fontSizeMax = 17f;
             SetActive(FindDeepChild(buttonRect, "Status"), false);
         }
 
@@ -1699,6 +1738,11 @@ namespace Game.Editor
             label.rectTransform.anchoredPosition = new Vector2(0f, -101f);
             label.rectTransform.sizeDelta = new Vector2(-10f, 35f);
             label.rectTransform.localScale = Vector3.one;
+            // Persian glyphs use a taller line box. Without auto-sizing, TMP's ellipsis mode
+            // rejects the complete line even though the caption text and font are both valid.
+            label.enableAutoSizing = true;
+            label.fontSizeMin = 12f;
+            label.fontSizeMax = 19f;
 
             RectTransform selected = EnsureRect("V3SelectedState", buttonRect);
             selected.anchorMin = Vector2.zero;
@@ -1740,7 +1784,8 @@ namespace Game.Editor
             bool showAssistantTakeover = false,
             bool showThreatAlert = false,
             bool showThreatRoutePreview = false,
-            bool showM02RestrictedControls = false)
+            bool showM02RestrictedControls = false,
+            bool applyLocalization = false)
         {
             GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
             if (prefab == null)
@@ -1798,6 +1843,14 @@ namespace Game.Editor
                 ConfigureAssistantTakeoverCaptureState(instance, canvasRect);
             if (showThreatAlert || showThreatRoutePreview)
                 ConfigureThreatAlertCaptureState(instance, canvasRect, showThreatRoutePreview);
+            if (applyLocalization)
+            {
+                foreach (V3LocalizedTextBinding binding in
+                         instance.GetComponentsInChildren<V3LocalizedTextBinding>(true))
+                {
+                    binding.ApplyLocalization();
+                }
+            }
             if (showCommandWheel)
             {
                 CommandWheelPanelView wheel = instance.GetComponentInChildren<CommandWheelPanelView>(true);

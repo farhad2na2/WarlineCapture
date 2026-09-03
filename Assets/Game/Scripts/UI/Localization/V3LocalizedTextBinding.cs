@@ -20,6 +20,11 @@ namespace Game.UI.Runtime
         private TMP_Text target;
         private TMP_FontAsset sourceFont;
         private TextAlignmentOptions sourceAlignment;
+        private bool sourceAutoSizing;
+        private float sourceFontSize;
+        private float sourceFontSizeMin;
+        private float sourceFontSizeMax;
+        private bool hasPresentationDefaults;
         private string runtimeSource;
         private string lastApplied;
         private bool hasRuntimeSource;
@@ -101,35 +106,70 @@ namespace Game.UI.Runtime
             }
 
             bool rightToLeft = GameLocalization.IsRightToLeft;
+            bool containsRightToLeftText = rightToLeft && TextUtils.IsRTLInput(localized);
             TMP_FontAsset localeFont = GameLocalization.CurrentFontAsset as TMP_FontAsset;
-            target.font = rightToLeft && localeFont != null ? localeFont : sourceFont;
+            target.font = containsRightToLeftText && localeFont != null ? localeFont : sourceFont;
             target.alignment = rightToLeft ? Mirror(sourceAlignment) : sourceAlignment;
+            ApplyLocaleSizing(containsRightToLeftText);
 
             if (target is RTLTextMeshPro rtlText)
             {
-                rtlText.Farsi = rightToLeft;
+                rtlText.Farsi = containsRightToLeftText;
                 rtlText.PreserveNumbers = true;
-                rtlText.ForceFix = rightToLeft;
+                rtlText.ForceFix = containsRightToLeftText;
                 rtlText.text = localized;
                 lastApplied = rtlText.OriginalText;
                 return;
             }
 
-            target.isRightToLeftText = rightToLeft;
-            target.text = rightToLeft ? ShapePersian(localized) : localized;
+            // Codes, filenames, acronyms, and callsigns can intentionally remain Latin in an RTL
+            // locale. Do not reverse those strings (for example APC must not become CPA).
+            target.isRightToLeftText = containsRightToLeftText;
+            target.text = containsRightToLeftText ? ShapePersian(localized) : localized;
             lastApplied = target.text;
         }
 
         private void CapturePresentationDefaults()
         {
             target ??= GetComponent<TMP_Text>();
-            if (target == null || sourceFont != null)
+            if (target == null || hasPresentationDefaults)
                 return;
 
             sourceFont = target.font;
             sourceAlignment = target.alignment;
+            sourceAutoSizing = target.enableAutoSizing;
+            sourceFontSize = target.fontSize;
+            sourceFontSizeMin = target.fontSizeMin;
+            sourceFontSizeMax = target.fontSizeMax;
+            hasPresentationDefaults = true;
             if (string.IsNullOrEmpty(englishFallback))
                 englishFallback = ReadAuthoredText();
+        }
+
+        private void ApplyLocaleSizing(bool containsRightToLeftText)
+        {
+            if (!containsRightToLeftText)
+            {
+                target.enableAutoSizing = sourceAutoSizing;
+                target.fontSize = sourceFontSize;
+                target.fontSizeMin = sourceFontSizeMin;
+                target.fontSizeMax = sourceFontSizeMax;
+                return;
+            }
+
+            // Noto Arabic's ascender/descender line box is taller than the V3 Latin authoring font.
+            // Let translated labels shrink within their authored bounds so TMP's Ellipsis mode does
+            // not reject the entire line. Existing authored auto-size ranges remain authoritative.
+            target.enableAutoSizing = true;
+            if (sourceAutoSizing)
+            {
+                target.fontSizeMin = sourceFontSizeMin;
+                target.fontSizeMax = sourceFontSizeMax;
+                return;
+            }
+
+            target.fontSizeMax = sourceFontSize;
+            target.fontSizeMin = Mathf.Min(sourceFontSize, Mathf.Max(8f, sourceFontSize * 0.55f));
         }
 
         private string ReadAuthoredText()

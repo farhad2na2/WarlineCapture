@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,6 +17,7 @@ namespace Game.UI.Runtime
     internal sealed class UiDisabledMaterialState : MonoBehaviour
     {
         [NonSerialized] public Material OriginalMaterial;
+        [NonSerialized] public Color OriginalColor;
         [NonSerialized] public UiDisabledVisualReason Reasons;
     }
 
@@ -91,8 +93,26 @@ namespace Game.UI.Runtime
             if (disabled)
             {
                 if (state.Reasons == UiDisabledVisualReason.None)
+                {
                     state.OriginalMaterial = graphic.material;
+                    state.OriginalColor = graphic.color;
+                }
                 state.Reasons |= reason;
+
+                // TMP text uses an SDF font material. Replacing it with the regular UI
+                // grayscale material makes every glyph disappear, which is especially
+                // visible while M01/M02 mission restrictions disable HUD controls.
+                // Keep the font material and express the disabled state through a
+                // readable neutral tint instead.
+                if (graphic is TMP_Text)
+                {
+                    Color original = state.OriginalColor;
+                    float luminance = Mathf.Clamp(original.grayscale * 0.82f, 0.58f, 0.78f);
+                    graphic.material = state.OriginalMaterial;
+                    graphic.color = new Color(luminance, luminance, luminance, original.a);
+                    return;
+                }
+
                 Material material = DisabledMaterial;
                 if (material != null)
                     graphic.material = material;
@@ -104,6 +124,7 @@ namespace Game.UI.Runtime
                 return;
 
             graphic.material = state.OriginalMaterial;
+            graphic.color = state.OriginalColor;
             state.OriginalMaterial = null;
         }
 

@@ -5,6 +5,7 @@ using Game.UI.Runtime;
 using NUnit.Framework;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public sealed class GameLocalizationCatalogTests
 {
@@ -27,6 +28,7 @@ public sealed class GameLocalizationCatalogTests
                     new[]
                     {
                         new GameLocalizedStringRecord("ui.continue", "CONTINUE"),
+                        new GameLocalizedStringRecord("ui.acronym", "APC"),
                         new GameLocalizedStringRecord("ui.dynamic", "Dynamic panel"),
                         new GameLocalizedStringRecord("ui.generic_count", "{0} {1}"),
                         new GameLocalizedStringRecord(
@@ -42,6 +44,7 @@ public sealed class GameLocalizationCatalogTests
                     new[]
                     {
                         new GameLocalizedStringRecord("ui.continue", "ادامه"),
+                        new GameLocalizedStringRecord("ui.acronym", "APC"),
                         new GameLocalizedStringRecord("ui.dynamic", "پنل پویا"),
                         new GameLocalizedStringRecord("ui.generic_count", "{0} {1}"),
                         new GameLocalizedStringRecord(
@@ -169,6 +172,61 @@ public sealed class GameLocalizationCatalogTests
     }
 
     [Test]
+    public void PersianLocale_PreservesIntentionalLatinAcronymsInLeftToRightOrder()
+    {
+        GameLocalization.Initialize(catalog, GameLocalization.PersianLocaleCode, persist: false);
+        GameObject root = new("LocalizedAcronym", typeof(RectTransform), typeof(TextMeshProUGUI));
+        TMP_Text text = root.GetComponent<TMP_Text>();
+        V3LocalizedTextBinding binding = root.AddComponent<V3LocalizedTextBinding>();
+        binding.Configure("ui.acronym", "APC", observeRuntimeChanges: false);
+
+        try
+        {
+            binding.ApplyLocalization();
+
+            Assert.AreEqual("APC", text.text);
+            Assert.IsFalse(text.isRightToLeftText);
+        }
+        finally
+        {
+            Object.DestroyImmediate(root);
+        }
+    }
+
+    [Test]
+    public void PersianLocale_EnablesSafeAutoSizingAndRestoresEnglishTypography()
+    {
+        GameLocalization.Initialize(catalog, GameLocalization.PersianLocaleCode, persist: false);
+        GameObject root = new("LocalizedSizing", typeof(RectTransform), typeof(TextMeshProUGUI));
+        TMP_Text text = root.GetComponent<TMP_Text>();
+        text.fontSize = 20f;
+        text.enableAutoSizing = false;
+        text.fontSizeMin = 18f;
+        text.fontSizeMax = 72f;
+        V3LocalizedTextBinding binding = root.AddComponent<V3LocalizedTextBinding>();
+        binding.Configure("ui.continue", "CONTINUE", observeRuntimeChanges: false);
+
+        try
+        {
+            binding.ApplyLocalization();
+            Assert.IsTrue(text.enableAutoSizing);
+            Assert.AreEqual(20f, text.fontSizeMax);
+            Assert.Less(text.fontSizeMin, text.fontSizeMax);
+
+            GameLocalization.Initialize(catalog, GameLocalization.EnglishLocaleCode, persist: false);
+            binding.ApplyLocalization();
+            Assert.IsFalse(text.enableAutoSizing);
+            Assert.AreEqual(20f, text.fontSize);
+            Assert.AreEqual(18f, text.fontSizeMin);
+            Assert.AreEqual(72f, text.fontSizeMax);
+        }
+        finally
+        {
+            Object.DestroyImmediate(root);
+        }
+    }
+
+    [Test]
     public void LocaleMetadata_DrivesSettingsWithoutScreenSpecificLanguageLists()
     {
         GameLocalization.Initialize(catalog, "de", persist: false);
@@ -222,5 +280,41 @@ public sealed class GameLocalizationCatalogTests
     public void EveryV3UiPrefab_HasSharedEnglishAndPersianCoverage()
     {
         V3UiLocalizationCatalogBuilder.ValidateBindingsAndCoverage();
+    }
+
+    [Test]
+    public void DisabledUi_KeepsTextMeshProFontMaterialAndReadableGlyphColor()
+    {
+        GameObject root = new("DisabledTextTest", typeof(RectTransform), typeof(CanvasRenderer));
+        TextMeshProUGUI text = root.AddComponent<TextMeshProUGUI>();
+        Material originalMaterial = text.material;
+        Color originalColor = new(0.9f, 0.8f, 0.7f, 1f);
+        text.color = originalColor;
+
+        try
+        {
+            UiDisabledMaterialUtility.SetDisabled(
+                root,
+                UiDisabledVisualReason.MissionRestriction,
+                true);
+
+            Assert.AreSame(originalMaterial, text.material,
+                "Disabled TMP labels must retain their SDF font material so glyphs remain visible.");
+            Assert.GreaterOrEqual(text.color.r, 0.58f);
+            Assert.AreEqual(text.color.r, text.color.g, 0.001f);
+            Assert.AreEqual(text.color.g, text.color.b, 0.001f);
+            Assert.AreEqual(1f, text.color.a);
+
+            UiDisabledMaterialUtility.SetDisabled(
+                root,
+                UiDisabledVisualReason.MissionRestriction,
+                false);
+            Assert.AreSame(originalMaterial, text.material);
+            Assert.AreEqual(originalColor, text.color);
+        }
+        finally
+        {
+            Object.DestroyImmediate(root);
+        }
     }
 }

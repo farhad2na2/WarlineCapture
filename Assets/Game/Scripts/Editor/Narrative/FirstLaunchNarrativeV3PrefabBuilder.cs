@@ -178,8 +178,32 @@ namespace Game.Editor
                 PrefabUtility.UnloadPrefabContents(root);
             }
 
-            AssetDatabase.SaveAssets();
             Debug.Log("[FirstLaunchNarrativeV3PrefabBuilder] languageLocalization=Passed shell=localized cards=native");
+        }
+
+        [MenuItem("Game/UI/V3/Refresh First Launch Narrative Localization")]
+        public static void RefreshNarrativeLocalization()
+        {
+            GameObject root = PrefabUtility.LoadPrefabContents(
+                FirstLaunchNarrativePresentationPrefabBuilder.PrefabPath);
+            try
+            {
+                NarrativeSequenceView sequence = root.GetComponent<NarrativeSequenceView>();
+                Transform safeArea = root.transform.Find("SafeArea");
+                if (sequence == null || safeArea == null)
+                    throw new UnityException("First Launch narrative prefab is missing its view or SafeArea.");
+
+                AssignLocalizedBindings(sequence, safeArea);
+                PrefabUtility.SaveAsPrefabAsset(
+                    root,
+                    FirstLaunchNarrativePresentationPrefabBuilder.PrefabPath);
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(root);
+            }
+
+            Debug.Log("[FirstLaunchNarrativeV3PrefabBuilder] narrativeLocalization=Passed controls=pause,subtitles,skip,next");
         }
 
         private static void ValidateWideScreenGeometry(GameObject languagePrefab, GameObject narrativePrefab)
@@ -255,6 +279,34 @@ namespace Game.Editor
 
         [MenuItem("Game/UI/V3/Capture First Launch Review 4800x2160")]
         public static void CaptureReview4800() => CaptureReview(4800, 2160, "20x9");
+
+        [MenuItem("Game/UI/V3/Capture First Launch Persian Comic Review")]
+        public static void CapturePersianComicReview()
+        {
+            LoadDependencies();
+            GameLocalizationCatalog localization =
+                RequireAsset<GameLocalizationCatalog>(V3UiLocalizationCatalogBuilder.CatalogPath);
+            GameLocalization.Initialize(localization, GameLocalization.PersianLocaleCode, persist: false);
+            try
+            {
+                CaptureComic(
+                    1920,
+                    1080,
+                    ComicBackground16Path,
+                    "/private/tmp/warline-first-launch-comic-fa-v3-16x9.png",
+                    rightToLeft: true);
+                CaptureComic(
+                    4800,
+                    2160,
+                    ComicBackground20Path,
+                    "/private/tmp/warline-first-launch-comic-fa-v3-20x9.png",
+                    rightToLeft: true);
+            }
+            finally
+            {
+                GameLocalization.Initialize(localization, GameLocalization.EnglishLocaleCode, persist: false);
+            }
+        }
 
         private static void LoadDependencies()
         {
@@ -1016,7 +1068,10 @@ namespace Game.Editor
         {
             TMP_Text[] targets =
             {
+                FindText(safeArea, "PlaybackControls/PauseButton/Label"),
+                FindText(safeArea, "PlaybackControls/SubtitlesButton/Label"),
                 FindText(safeArea, "PlaybackControls/SkipButton/Label"),
+                FindText(safeArea, "Dialogue/NextLabel"),
                 FindText(safeArea, "CommanderIdentitySurface/AuthenticationHeader/AuthText"),
                 FindText(safeArea, "CommanderIdentitySurface/Title"),
                 FindText(safeArea, "CommanderIdentitySurface/CallsignPanel/CallsignLabel"),
@@ -1034,7 +1089,8 @@ namespace Game.Editor
             };
             string[] keys =
             {
-                "narrative.first_launch.control.skip", "narrative.first_launch.identity.title", "narrative.first_launch.identity.instruction",
+                "ui.common.pause", "ui.common.subtitles", "narrative.first_launch.control.skip", "ui.common.next",
+                "narrative.first_launch.identity.title", "narrative.first_launch.identity.instruction",
                 "narrative.first_launch.identity.callsign", "narrative.first_launch.control.continue", "narrative.first_launch.guidance.title",
                 "narrative.first_launch.guidance.instruction", "narrative.first_launch.guidance.full", "narrative.first_launch.guidance.contextual",
                 "narrative.first_launch.guidance.minimal", "narrative.first_launch.control.continue", "narrative.first_launch.skip.title",
@@ -1042,7 +1098,7 @@ namespace Game.Editor
             };
             string[] fallbacks =
             {
-                "SKIP", "EMERGENCY CONTINUITY AUTHENTICATION", "CHOOSE YOUR COMMANDER IDENTITY", "CALLSIGN", "CONTINUE   ›",
+                "PAUSE", "SUBTITLES", "SKIP", "NEXT", "EMERGENCY CONTINUITY AUTHENTICATION", "CHOOSE YOUR COMMANDER IDENTITY", "CALLSIGN", "CONTINUE   ›",
                 "CHOOSE ARIA'S GUIDANCE LEVEL", "Aria will support you based on the level you choose.", "FULL GUIDANCE", "TACTICAL HINTS",
                 "MINIMAL GUIDANCE", "CONTINUE       ›", "SKIP TO TACTICAL COMMAND?",
                 "The default commander identity and Full Guidance setting will be used. You can change both later.", "KEEP WATCHING", "SKIP INTRO"
@@ -1101,28 +1157,60 @@ namespace Game.Editor
             }, path);
         }
 
-        private static void CaptureComic(int width, int height, string backgroundPath, string path)
+        private static void CaptureComic(
+            int width,
+            int height,
+            string backgroundPath,
+            string path,
+            bool rightToLeft = false)
         {
             CapturePrefab(width, height, FirstLaunchNarrativePresentationPrefabBuilder.PrefabPath, instance =>
             {
                 NarrativeSequenceView view = instance.GetComponent<NarrativeSequenceView>();
+                IGameTextResolver resolver = FallbackGameTextResolver.Instance;
+                if (rightToLeft)
+                {
+                    NarrativeLocaleConfig locale =
+                        RequireAsset<NarrativeLocaleConfig>(FirstLaunchNarrativeConfigBuilder.PersianLocalePath);
+                    IGameTextResolver legacy =
+                        new FirstLaunchNarrativeLocaleTextCompositionSystemHelper(
+                            FallbackGameTextResolver.Instance,
+                            locale);
+                    resolver = new SharedLocalizationTextCompositionSystemHelper(legacy);
+                }
+
+                view.ApplyLanguage(rightToLeft, resolver);
                 view.SetVisible(true);
                 view.ApplyPanel(new NarrativePanelPresentationModel { StateId = "FL-P04", PanelSprite = RequireAsset<Sprite>(backgroundPath), Tint = Color.white });
-                view.ApplyLocation(new NarrativeLocationPresentationModel { Visible = true, Title = "SAHRIN", Subtitle = "OLD MARKET / 10:00 LOCAL" });
+                view.ApplyLocation(new NarrativeLocationPresentationModel
+                {
+                    Visible = true,
+                    Title = resolver.Get("narrative.first_launch.location.sahrin.name", "SAHRIN"),
+                    Subtitle = resolver.Get("narrative.first_launch.location.old_market.context", "OLD MARKET / 10:00 LOCAL")
+                });
                 view.SetInteractiveState(NarrativeInteractiveStateKind.None);
-                view.SetSkipState(true, true, "SKIP");
+                view.SetSkipState(
+                    true,
+                    true,
+                    resolver.Get("narrative.first_launch.control.skip", "SKIP"));
                 view.DialogueView.ApplySpeaker(new NarrativeSpeakerPresentationModel
                 {
                     SpeakerId = NarrativeSpeakerId.Dalia,
-                    DisplayName = "DISTRICT DISPATCH",
-                    Role = "EMERGENCY OPERATIONS",
-                    AccessibleLabel = "District Dispatch, Emergency Operations",
+                    DisplayName = resolver.Get("narrative.first_launch.speaker.dalia.name", "DALIA RAHIM"),
+                    Role = resolver.Get("narrative.first_launch.speaker.dalia.role", "JRC FIELD COMMAND"),
+                    AccessibleLabel = resolver.Get(
+                        "narrative.first_launch.speaker.dalia.accessible_label",
+                        "Major Dalia Rahim, JRC Field Command"),
                     IdentitySprite = RequireAsset<Sprite>(FirstLaunchNarrativeDialogueAssetImporter.DaliaPortraitPath),
                     AccentColor = Cyan,
                     Treatment = NarrativeSpeakerTreatment.HumanPortrait
                 });
                 UISettingsModel settings = Game.UI.Runtime.SettingsService.Defaults;
-                view.DialogueView.PrepareLine("District Dispatch, Major Dalia Rahim, JRC Field Command.\nWe found the convoy survivors. Extraction is underway.", NarrativeSubtitleStyleUtilitySystemHelper.Resolve(settings));
+                view.DialogueView.PrepareLine(
+                    resolver.Get(
+                        "narrative.first_launch.line.p04_dalia",
+                        "We found the convoy survivors. Extraction is underway."),
+                    NarrativeSubtitleStyleUtilitySystemHelper.Resolve(settings));
                 view.DialogueView.CompleteLine();
             }, path);
         }

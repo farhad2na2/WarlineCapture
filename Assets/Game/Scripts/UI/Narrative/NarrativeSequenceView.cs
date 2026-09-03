@@ -1,4 +1,5 @@
 using Game.UI.Contracts;
+using RTLTMPro;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -125,8 +126,25 @@ namespace Game.UI.Runtime
             IGameTextResolver resolver = textResolver ?? FallbackGameTextResolver.Instance;
             for (int i = 0; i < localizedCount; i++)
             {
-                if (localizedTextTargets[i] != null)
-                    localizedTextTargets[i].text = resolver.Get(localizedTextKeys[i], localizedTextEnglishFallbacks[i]);
+                TMP_Text target = localizedTextTargets[i];
+                if (target == null)
+                    continue;
+
+                string value = resolver.Get(
+                    localizedTextKeys[i],
+                    localizedTextEnglishFallbacks[i]);
+                if (target is RTLTextMeshPro rtl)
+                {
+                    rtl.Farsi = rightToLeft;
+                    rtl.PreserveNumbers = true;
+                    rtl.ForceFix = rightToLeft;
+                    rtl.text = value;
+                }
+                else
+                {
+                    target.isRightToLeftText = rightToLeft;
+                    target.text = value;
+                }
             }
         }
 

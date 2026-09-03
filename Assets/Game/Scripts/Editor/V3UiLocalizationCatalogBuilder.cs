@@ -143,6 +143,9 @@ namespace Game.Editor
             ImportCommonPersian(persian, keysByEnglish);
             int seededPersian = V3PersianUiTranslationSeeder.FillMissing(english, persian);
             GameLocalizationCatalog catalog = BuildCatalog(english, persian);
+            RebuildAndPersistPersianFontCoverage(
+                catalog.FindLocale(GameLocalization.PersianLocaleCode)?.FontAsset as TMP_FontAsset,
+                persian.Values);
             List<string> missing = FindMissingPersian(english, persian);
             WriteMissingReport(prefabPaths.Count, bindingCount, english.Count, persian.Count, missing);
 
@@ -182,6 +185,11 @@ namespace Game.Editor
             int prefabs = 0;
             int bindings = 0;
             List<string> errors = new();
+
+            ValidatePersianFontCoverage(
+                persian.FontAsset as TMP_FontAsset,
+                persianEntries.Values,
+                errors);
 
             foreach (KeyValuePair<string, string> entry in englishEntries)
             {
@@ -471,6 +479,141 @@ namespace Game.Editor
             catalog.Configure(GameLocalization.EnglishLocaleCode, localeTables);
             return catalog;
         }
+
+        [MenuItem("Game/UI/V3/Localization/Rebuild Shared Persian Font Coverage")]
+        public static void RebuildSharedPersianFontCoverage()
+        {
+            GameLocalizationCatalog catalog =
+                AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(CatalogPath);
+            GameLocaleTable persian = catalog?.FindLocale(GameLocalization.PersianLocaleCode);
+            TMP_FontAsset font = persian?.FontAsset as TMP_FontAsset;
+            if (persian == null || font == null)
+                throw new InvalidOperationException("The shared V3 catalog has no configured Persian font.");
+
+            Dictionary<string, string> entries = ToDictionary(persian);
+            RebuildAndPersistPersianFontCoverage(font, entries.Values);
+            AssetDatabase.SaveAssets();
+
+            var errors = new List<string>();
+            ValidatePersianFontCoverage(font, entries.Values, errors);
+            if (errors.Count > 0)
+                throw new InvalidOperationException(string.Join("\n", errors));
+
+            Debug.Log(
+                $"[V3UiLocalizationCatalogBuilder] persianFontCoverage=Passed " +
+                $"characters={CollectPersianRenderCharacters(entries.Values).Length} " +
+                $"atlases={font.atlasTextureCount} font={PersianFontPath}");
+        }
+
+        private static void RebuildAndPersistPersianFontCoverage(
+            TMP_FontAsset font,
+            IEnumerable<string> localizedValues)
+        {
+            if (font == null)
+                throw new InvalidOperationException($"Missing Persian font: {PersianFontPath}");
+
+            string requiredCharacters = CollectPersianRenderCharacters(localizedValues);
+            if (requiredCharacters.Length == 0)
+                throw new InvalidOperationException("The Persian catalog produced no renderable glyphs.");
+
+            font.atlasPopulationMode = AtlasPopulationMode.Dynamic;
+            font.isMultiAtlasTexturesEnabled = true;
+            SerializedObject serializedFont = new(font);
+            SerializedProperty clearOnBuild = serializedFont.FindProperty("m_ClearDynamicDataOnBuild");
+            if (clearOnBuild == null)
+                throw new MissingFieldException("TMP Persian font is missing m_ClearDynamicDataOnBuild.");
+            clearOnBuild.boolValue = false;
+            serializedFont.ApplyModifiedPropertiesWithoutUndo();
+
+            // A deterministic, complete atlas is safer than whichever small glyph subset happened
+            // to be visited by the most recent Editor play session. This fixes missing letters on
+            // menu, match, popup, and narrative screens and also survives player builds.
+            font.ClearFontAssetData();
+            bool addedAll = font.TryAddCharacters(
+                requiredCharacters,
+                out string missingCharacters,
+                includeFontFeatures: true);
+            if (!addedAll || !string.IsNullOrEmpty(missingCharacters))
+            {
+                throw new InvalidOperationException(
+                    "The shared Persian font cannot render catalog characters: " +
+                    FormatMissingCharacters(missingCharacters));
+            }
+
+            EditorUtility.SetDirty(font);
+            if (font.material != null)
+                EditorUtility.SetDirty(font.material);
+            Texture2D[] atlases = font.atlasTextures;
+            for (int i = 0; i < atlases.Length; i++)
+            {
+                if (atlases[i] != null)
+                    EditorUtility.SetDirty(atlases[i]);
+            }
+        }
+
+        private static void ValidatePersianFontCoverage(
+            TMP_FontAsset font,
+            IEnumerable<string> localizedValues,
+            List<string> errors)
+        {
+            if (font == null)
+            {
+                errors.Add("catalog: shared Persian font is missing");
+                return;
+            }
+
+            SerializedObject serializedFont = new(font);
+            SerializedProperty clearOnBuild = serializedFont.FindProperty("m_ClearDynamicDataOnBuild");
+            if (clearOnBuild == null || clearOnBuild.boolValue)
+                errors.Add("catalog: shared Persian font coverage must be preserved in player builds");
+
+            string requiredCharacters = CollectPersianRenderCharacters(localizedValues);
+            if (!font.HasCharacters(
+                    requiredCharacters,
+                    out uint[] missingCharacters,
+                    searchFallbacks: false,
+                    tryAddCharacter: false))
+            {
+                errors.Add(
+                    "catalog: shared Persian font is missing render glyphs " +
+                    FormatMissingCharacters(missingCharacters));
+            }
+        }
+
+        private static string CollectPersianRenderCharacters(IEnumerable<string> localizedValues)
+        {
+            var characters = new SortedSet<char>();
+            foreach (string value in localizedValues ?? Array.Empty<string>())
+            {
+                string shaped = V3LocalizedTextBinding.ShapeForRendering(value);
+                for (int i = 0; i < shaped.Length; i++)
+                {
+                    char character = shaped[i];
+                    if (IsArabicScriptGlyph(character))
+                        characters.Add(character);
+                }
+            }
+            return new string(characters.ToArray());
+        }
+
+        private static bool IsArabicScriptGlyph(char character) =>
+            character is >= '\u0600' and <= '\u06ff' or
+                >= '\u0750' and <= '\u077f' or
+                >= '\u08a0' and <= '\u08ff' or
+                >= '\ufb50' and <= '\ufdff' or
+                >= '\ufe70' and <= '\ufeff';
+
+        private static string FormatMissingCharacters(string characters) =>
+            string.IsNullOrEmpty(characters)
+                ? "<none>"
+                : string.Join(", ", characters.Take(24).Select(character =>
+                    $"U+{(int)character:X4} '{character}'"));
+
+        private static string FormatMissingCharacters(IEnumerable<uint> characters) =>
+            characters == null
+                ? "<none>"
+                : string.Join(", ", characters.Take(24).Select(character =>
+                    $"U+{character:X4} '{char.ConvertFromUtf32((int)character)}'"));
 
         private static IEnumerable<GameLocalizedStringRecord> ToRecords(
             Dictionary<string, string> entries) =>

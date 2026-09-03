@@ -125,7 +125,7 @@ namespace Game.UI.Runtime
             // Codes, filenames, acronyms, and callsigns can intentionally remain Latin in an RTL
             // locale. Do not reverse those strings (for example APC must not become CPA).
             target.isRightToLeftText = containsRightToLeftText;
-            target.text = containsRightToLeftText ? ShapePersian(localized) : localized;
+            target.text = containsRightToLeftText ? ShapeForRendering(localized) : localized;
             lastApplied = target.text;
         }
 
@@ -179,7 +179,12 @@ namespace Game.UI.Runtime
             return target?.text ?? string.Empty;
         }
 
-        private static string ShapePersian(string value)
+        /// <summary>
+        /// Converts Arabic-script source text into the presentation forms consumed by the
+        /// project's TMP/RTL renderer. The Editor catalog builder uses the same conversion to
+        /// bake every required glyph into the shared Persian font asset.
+        /// </summary>
+        public static string ShapeForRendering(string value)
         {
             if (string.IsNullOrEmpty(value) || !TextUtils.IsRTLInput(value))
                 return value ?? string.Empty;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using Game.Configs;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
 using TMPro;
@@ -198,6 +199,36 @@ namespace Game.Editor
             Capture("/private/tmp/warline-main-menu-v3-16x9.png", 1920, 1080);
             Capture("/private/tmp/warline-main-menu-v3-20x9.png", 2400, 1080);
             Debug.Log("[MainMenuV3PrefabBuilder] QA captures written to /private/tmp.");
+        }
+
+        [MenuItem("Game/UI/V3/Capture Main Menu Persian QA")]
+        public static void CapturePersianQa()
+        {
+            GameLocalizationCatalog catalog = AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(
+                V3UiLocalizationCatalogBuilder.CatalogPath);
+            if (catalog == null)
+                throw new FileNotFoundException(
+                    $"Missing localization catalog: {V3UiLocalizationCatalogBuilder.CatalogPath}");
+
+            string previousLocale = GameLocalization.CurrentLocaleCode;
+            try
+            {
+                GameLocalization.Initialize(
+                    catalog,
+                    GameLocalization.PersianLocaleCode,
+                    persist: false);
+                Capture("/private/tmp/warline-main-menu-v3-fa-16x9.png", 1920, 1080);
+                Capture("/private/tmp/warline-main-menu-v3-fa-4800x2160.png", 4800, 2160);
+            }
+            finally
+            {
+                GameLocalization.Initialize(catalog, previousLocale, persist: false);
+            }
+
+            Debug.Log(
+                "[MainMenuV3PrefabBuilder] persianQa=Passed " +
+                "captures=/private/tmp/warline-main-menu-v3-fa-16x9.png," +
+                "/private/tmp/warline-main-menu-v3-fa-4800x2160.png");
         }
 
         [MenuItem("Game/UI/V3/Capture Running Main Menu")]
@@ -987,6 +1018,13 @@ namespace Game.Editor
             GameObject instance = UnityEngine.Object.Instantiate(prefab, canvasRect);
             instance.name = prefab.name;
             Stretch(instance.transform as RectTransform);
+            // Editor capture instances do not consistently receive MonoBehaviour
+            // OnEnable callbacks. Apply the active locale explicitly so the QA image
+            // verifies the same localized text and font path used at runtime.
+            V3LocalizedTextBinding[] localizedTextBindings =
+                instance.GetComponentsInChildren<V3LocalizedTextBinding>(true);
+            for (int i = 0; i < localizedTextBindings.Length; i++)
+                localizedTextBindings[i].ApplyLocalization();
             Canvas.ForceUpdateCanvases();
             // The shell stretches content after component OnEnable. Mirror that runtime
             // ordering in QA captures so every section resolves against the final canvas

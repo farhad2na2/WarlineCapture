@@ -3,6 +3,7 @@ using System.IO;
 using Game.Catalog.Contracts;
 using Game.Composition;
 using Game.Configs;
+using Game.Narrative.Contracts;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
 using RTLTMPro;
@@ -22,12 +23,19 @@ namespace Game.Editor
         public static void Capture()
         {
             Directory.CreateDirectory(EvidenceRoot);
-            CaptureLanguageChoice(Path.Combine(EvidenceRoot, "language-choice-1920x1080.png"));
+            CaptureLanguageChoice(
+                Path.Combine(EvidenceRoot, "language-choice-english-1920x1080.png"),
+                FirstLaunchNarrativeLanguage.English);
+            CaptureLanguageChoice(
+                Path.Combine(EvidenceRoot, "language-choice-persian-1920x1080.png"),
+                FirstLaunchNarrativeLanguage.Persian);
             CapturePersianDialogue(Path.Combine(EvidenceRoot, "persian-dialogue-1920x1080.png"));
             Debug.Log($"[FirstLaunchLanguageVisualValidation] result=Passed evidence={EvidenceRoot}");
         }
 
-        private static void CaptureLanguageChoice(string outputPath)
+        private static void CaptureLanguageChoice(
+            string outputPath,
+            FirstLaunchNarrativeLanguage language)
         {
             CapturePrefab(
                 FirstLaunchNarrativePresentationPrefabBuilder.LanguageChoicePrefabPath,
@@ -37,9 +45,68 @@ namespace Game.Editor
                     FirstLaunchLanguageChoiceView view = instance.GetComponent<FirstLaunchLanguageChoiceView>();
                     if (view == null)
                         throw new InvalidOperationException("Language choice prefab is missing its passive view.");
+                    // Edit-mode prefab instantiation does not invoke MonoBehaviour.Awake. Bind through the
+                    // same public path used by the runtime composition so the real card listeners are active.
+                    view.Bind(_ => { });
                     view.SetVisible(true);
+                    string buttonName = language == FirstLaunchNarrativeLanguage.Persian
+                        ? "PersianButton"
+                        : "EnglishButton";
+                    Button selection = instance.transform.Find($"Composition/{buttonName}")?.GetComponent<Button>();
+                    if (selection == null)
+                        throw new InvalidOperationException($"Language choice prefab is missing {buttonName}.");
+                    selection.onClick.Invoke();
+                    AssertLanguageChoiceState(instance, language);
                     AssertRtlComponents(instance);
                 });
+        }
+
+        private static void AssertLanguageChoiceState(
+            GameObject instance,
+            FirstLaunchNarrativeLanguage language)
+        {
+            bool persian = language == FirstLaunchNarrativeLanguage.Persian;
+            string expectedLocale = persian
+                ? GameLocalization.PersianLocaleCode
+                : GameLocalization.EnglishLocaleCode;
+            if (!string.Equals(GameLocalization.CurrentLocaleCode, expectedLocale, StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException(
+                    $"Language card did not preview {expectedLocale}; active locale is {GameLocalization.CurrentLocaleCode}.");
+            }
+
+            AssertOriginalText(
+                instance,
+                "Composition/Title",
+                persian ? "زبان داستان را انتخاب کنید" : "SELECT STORY LANGUAGE");
+            AssertOriginalText(
+                instance,
+                "Composition/InfoPanel/InfoText",
+                persian
+                    ? "بعداً می‌توانید این مورد را\nدر تنظیمات فرماندهی تغییر دهید."
+                    : "This can be changed later\nin Command Settings.");
+            AssertOriginalText(
+                instance,
+                "Composition/ContinueButton/Label",
+                persian ? "ادامه   ‹" : "CONTINUE   ›");
+
+            // The cards are language samples. They deliberately stay in their own language.
+            AssertOriginalText(instance, "Composition/EnglishButton/Language", "ENGLISH");
+            AssertOriginalText(instance, "Composition/PersianButton/Language", "فارسی");
+        }
+
+        private static void AssertOriginalText(GameObject instance, string path, string expected)
+        {
+            TMP_Text target = instance.transform.Find(path)?.GetComponent<TMP_Text>();
+            if (target == null)
+                throw new InvalidOperationException($"Language choice prefab is missing text at {path}.");
+
+            string actual = target is RTLTextMeshPro rtl ? rtl.OriginalText : target.text;
+            if (!string.Equals(actual, expected, StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException(
+                    $"Language choice text mismatch at {path}. Expected '{expected}', got '{actual}'.");
+            }
         }
 
         private static void CapturePersianDialogue(string outputPath)

@@ -172,6 +172,14 @@ MonoBehaviour:
       value: 'Blocked: civilian zone'
     - key: match.feedback.tactical_map_not_ready
       value: Tactical map is not ready.
+    - key: narrative.first_launch.language.continue
+      value: "CONTINUE   \u203A"
+    - key: narrative.first_launch.language.info
+      value: 'This can be changed later
+
+        in Command Settings.'
+    - key: narrative.first_launch.language.title
+      value: SELECT STORY LANGUAGE
     - key: narrative.first_launch.line.p02_radio
       value: Multiple explosions reported across Old Market. Power is failing. The
         main road to the clinic is blocked.
@@ -3370,6 +3378,16 @@ MonoBehaviour:
     - key: narrative.first_launch.identity.title
       value: "\u0627\u062D\u0631\u0627\u0632 \u0647\u0648\u06CC\u062A \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC
         \u0627\u0636\u0637\u0631\u0627\u0631\u06CC"
+    - key: narrative.first_launch.language.continue
+      value: "\u0627\u062F\u0627\u0645\u0647   \u2039"
+    - key: narrative.first_launch.language.info
+      value: "\u0628\u0639\u062F\u0627\u064B \u0645\u06CC\u200C\u062A\u0648\u0627\u0646\u06CC\u062F
+        \u0627\u06CC\u0646 \u0645\u0648\u0631\u062F \u0631\u0627\n\u062F\u0631 \u062A\u0646\u0638\u06CC\u0645\u0627\u062A
+        \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC \u062A\u063A\u06CC\u06CC\u0631
+        \u062F\u0647\u06CC\u062F."
+    - key: narrative.first_launch.language.title
+      value: "\u0632\u0628\u0627\u0646 \u062F\u0627\u0633\u062A\u0627\u0646 \u0631\u0627
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u062F"
     - key: narrative.first_launch.line.p02_radio
       value: "\u0686\u0646\u062F \u0627\u0646\u0641\u062C\u0627\u0631 \u062F\u0631
         \u0628\u0627\u0632\u0627\u0631 \u0642\u062F\u06CC\u0645 \u06AF\u0632\u0627\u0631\u0634
@@ -3678,7 +3696,7 @@ MonoBehaviour:
     - key: selection.shell.title.soldier
       value: "\u0633\u0631\u0628\u0627\u0632"
     - key: selection.shell.title.vehicle
-      value: "خودرو"
+      value: "\u062E\u0648\u062F\u0631\u0648"
     - key: selection.subtitle.air_wing
       value: "\u0628\u0627\u0644 \u0647\u0648\u0627\u06CC\u06CC"
     - key: selection.subtitle.building_group
@@ -3864,24 +3882,24 @@ MonoBehaviour:
         \u0631\u0627 \u0645\u062A\u0648\u0642\u0641 \u0648 \u0641\u0631\u0645\u0627\u0646\u200C\u0647\u0627
         \u0631\u0627 \u0644\u063A\u0648 \u06A9\u0646\u06CC\u062F."
     - key: tactical.command.mode.attack
-      value: "دستور حمله"
+      value: "\u062F\u0633\u062A\u0648\u0631 \u062D\u0645\u0644\u0647"
     - key: tactical.command.mode.board
-      value: "دستور سوارشدن"
+      value: "\u062F\u0633\u062A\u0648\u0631 \u0633\u0648\u0627\u0631\u0634\u062F\u0646"
     - key: tactical.command.mode.build
       value: "\u062D\u0627\u0644\u062A \u0633\u0627\u062E\u062A"
     - key: tactical.command.mode.hold
       value: "\u0645\u0648\u0642\u0639\u06CC\u062A \u0631\u0627 \u062D\u0641\u0638
         \u06A9\u0646\u06CC\u062F"
     - key: tactical.command.mode.move
-      value: "دستور حرکت"
+      value: "\u062F\u0633\u062A\u0648\u0631 \u062D\u0631\u06A9\u062A"
     - key: tactical.command.mode.scan
-      value: "دستور اسکن"
+      value: "\u062F\u0633\u062A\u0648\u0631 \u0627\u0633\u06A9\u0646"
     - key: tactical.command.mode.select
       value: "\u0627\u0646\u062A\u062E\u0627\u0628 \u06AF\u0631\u0648\u0647"
     - key: tactical.command.mode.special
       value: "\u062F\u0633\u062A\u0648\u0631 \u0648\u06CC\u0698\u0647"
     - key: tactical.command.mode.stop
-      value: "دستور توقف"
+      value: "\u062F\u0633\u062A\u0648\u0631 \u062A\u0648\u0642\u0641"
     - key: tactical.command.reason.build_unavailable
       value: "\u0633\u0627\u062E\u062A\u200C\u0648\u0633\u0627\u0632 \u062F\u0631
         \u062F\u0633\u062A\u0631\u0633 \u0646\u06CC\u0633\u062A."
@@ -6030,7 +6048,11 @@ MonoBehaviour:
     - key: ui.v3.other.1c55d9b826
       value: "\u062F\u06CC\u06AF\u0631"
     - key: ui.v3.our_first_contact_has_been_succe.9a79466dbd
-      value: "نخستین تماس ما موفق بود. گشت دشمن خنثی شد و غیرنظامیان به محل امن منتقل شدند."
+      value: "\u0646\u062E\u0633\u062A\u06CC\u0646 \u062A\u0645\u0627\u0633 \u0645\u0627
+        \u0645\u0648\u0641\u0642 \u0628\u0648\u062F. \u06AF\u0634\u062A \u062F\u0634\u0645\u0646
+        \u062E\u0646\u062B\u06CC \u0634\u062F \u0648 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC\u0627\u0646
+        \u0628\u0647 \u0645\u062D\u0644 \u0627\u0645\u0646 \u0645\u0646\u062A\u0642\u0644
+        \u0634\u062F\u0646\u062F."
     - key: ui.v3.our_forces_have_captured_and_sec.93bcfd0fbc
       value: "\u0646\u06CC\u0631\u0648\u0647\u0627\u06CC \u0645\u0627 \u0628\u0627\u0632\u0627\u0631
         \u0642\u062F\u06CC\u0645\u06CC \u0631\u0627 \u062A\u0635\u0631\u0641 \u0648
@@ -6665,7 +6687,11 @@ MonoBehaviour:
         \u0631\u0648\u06CC\u062F\u0627\u062F \u062F\u0631 \u062F\u0633\u062A\u0631\u0633
         \u0645\u06CC\u200C\u0634\u0648\u062F."
     - key: ui.v3.this_operation_may_cause_signifi.8744262348
-      value: "این عملیات ممکن است تلفات قابل‌توجه غیرنظامی و آسیب به زیرساخت‌ها ایجاد کند."
+      value: "\u0627\u06CC\u0646 \u0639\u0645\u0644\u06CC\u0627\u062A \u0645\u0645\u06A9\u0646
+        \u0627\u0633\u062A \u062A\u0644\u0641\u0627\u062A \u0642\u0627\u0628\u0644\u200C\u062A\u0648\u062C\u0647
+        \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC \u0648 \u0622\u0633\u06CC\u0628
+        \u0628\u0647 \u0632\u06CC\u0631\u0633\u0627\u062E\u062A\u200C\u0647\u0627
+        \u0627\u06CC\u062C\u0627\u062F \u06A9\u0646\u062F."
     - key: ui.v3.threat_level.2121c87cc4
       value: "\u0633\u0637\u062D \u062A\u0647\u062F\u06CC\u062F"
     - key: ui.v3.threat_level_color_ff4a2a_high_c.d43f09d111

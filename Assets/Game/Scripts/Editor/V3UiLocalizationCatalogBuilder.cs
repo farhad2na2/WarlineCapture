@@ -457,6 +457,9 @@ namespace Game.Editor
             Dictionary<string, string> persian,
             Dictionary<string, string> keysByEnglish)
         {
+            AddRuntimeText("narrative.first_launch.language.title", "SELECT STORY LANGUAGE", "زبان داستان را انتخاب کنید");
+            AddRuntimeText("narrative.first_launch.language.info", "This can be changed later\nin Command Settings.", "بعداً می‌توانید این مورد را\nدر تنظیمات فرماندهی تغییر دهید.");
+            AddRuntimeText("narrative.first_launch.language.continue", "CONTINUE   ›", "ادامه   ‹");
             AddRuntimeText("ui.common.alerts", "ALERTS", "هشدارها");
             AddRuntimeText("ui.common.music", "MUSIC", "موسیقی");
             AddRuntimeText("ui.common.sound", "SOUND", "صدا");

@@ -3297,6 +3297,20 @@ MonoBehaviour:
   continueButton: {fileID: 6149153569341659204}
   englishSelectionImage: {fileID: 2509780938318161116}
   persianSelectionImage: {fileID: 1724812625825849902}
+  localizedShellTextTargets:
+  - {fileID: 8943109807438575570}
+  - {fileID: 7432345658005166007}
+  - {fileID: 4118994936181895791}
+  localizedShellTextKeys:
+  - narrative.first_launch.language.title
+  - narrative.first_launch.language.info
+  - narrative.first_launch.language.continue
+  localizedShellEnglishFallbacks:
+  - SELECT STORY LANGUAGE
+  - 'This can be changed later
+
+    in Command Settings.'
+  - "CONTINUE   \u203A"
 --- !u!1 &8468323779761159604
 GameObject:
   m_ObjectHideFlags: 0

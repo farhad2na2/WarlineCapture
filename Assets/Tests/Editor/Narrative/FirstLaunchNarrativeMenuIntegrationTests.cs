@@ -26,13 +26,14 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
             tests.MenuScene_FirstLaunchReferenceLayoutFillsEditorCanvas();
             tests.LanguageChoice_AwakeDoesNotOverrideCompositionVisibility();
             tests.LanguageChoice_AllControlsHaveRaycastTargets();
+            tests.LanguageChoice_SelectionImmediatelyLocalizesOnlyShellCopy();
             tests.FreshProfile_LanguageChoicePrecedesNarrativeAndPersistsPersian();
             tests.SkipConfirmation_UsesV3ChromeAndPersianLocalization();
             tests.FreshProfile_SkipRequiresLiveConfirmationAndPublishesOneHandoff();
             tests.CompletedAndPendingProfiles_SelectCorrectStartupDisposition();
             tests.ReviewerMode_ProvidesNavigationWithoutMutatingCompletedProfile();
             tests.CommittedIdentity_SkipRoutesDirectlyAndPreservesSelection();
-            Debug.Log("[FirstLaunchNarrativeMenuIntegrationValidation] result=Passed tests=10 pointerTargets=Passed skip=v3-bilingual");
+            Debug.Log("[FirstLaunchNarrativeMenuIntegrationValidation] result=Passed tests=11 pointerTargets=Passed languagePreview=Passed skip=v3-bilingual");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -84,6 +85,64 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
         }
         finally
         {
+            UnityEngine.Object.DestroyImmediate(instance);
+        }
+    }
+
+    [Test]
+    public void LanguageChoice_SelectionImmediatelyLocalizesOnlyShellCopy()
+    {
+        GameLocalizationCatalog catalog = AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(
+            V3UiLocalizationCatalogBuilder.CatalogPath);
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+            FirstLaunchNarrativePresentationPrefabBuilder.LanguageChoicePrefabPath);
+        GameObject instance = UnityEngine.Object.Instantiate(prefab);
+        try
+        {
+            Assert.NotNull(catalog);
+            Assert.NotNull(instance);
+            GameLocalization.Initialize(catalog, GameLocalization.EnglishLocaleCode, persist: false);
+
+            FirstLaunchLanguageChoiceView view = instance.GetComponent<FirstLaunchLanguageChoiceView>();
+            view.Bind(_ => { });
+            view.SetVisible(true);
+            Button english = instance.transform.Find("Composition/EnglishButton")?.GetComponent<Button>();
+            Button persian = instance.transform.Find("Composition/PersianButton")?.GetComponent<Button>();
+            Assert.NotNull(english);
+            Assert.NotNull(persian);
+
+            persian.onClick.Invoke();
+            Assert.AreEqual(GameLocalization.PersianLocaleCode, GameLocalization.CurrentLocaleCode);
+            AssertOriginalRtlText(
+                instance.transform.Find("Composition/Title")?.GetComponent<TMP_Text>(),
+                "زبان داستان را انتخاب کنید");
+            AssertOriginalRtlText(
+                instance.transform.Find("Composition/InfoPanel/InfoText")?.GetComponent<TMP_Text>(),
+                "بعداً می‌توانید این مورد را\nدر تنظیمات فرماندهی تغییر دهید.");
+            AssertOriginalRtlText(
+                instance.transform.Find("Composition/ContinueButton/Label")?.GetComponent<TMP_Text>(),
+                "ادامه   ‹");
+
+            // Language cards are language samples, not shell copy: each remains native.
+            AssertOriginalRtlText(
+                instance.transform.Find("Composition/EnglishButton/Language")?.GetComponent<TMP_Text>(),
+                "ENGLISH");
+            AssertOriginalRtlText(
+                instance.transform.Find("Composition/PersianButton/Language")?.GetComponent<TMP_Text>(),
+                "فارسی");
+
+            english.onClick.Invoke();
+            Assert.AreEqual(GameLocalization.EnglishLocaleCode, GameLocalization.CurrentLocaleCode);
+            AssertOriginalRtlText(
+                instance.transform.Find("Composition/Title")?.GetComponent<TMP_Text>(),
+                "SELECT STORY LANGUAGE");
+            AssertOriginalRtlText(
+                instance.transform.Find("Composition/ContinueButton/Label")?.GetComponent<TMP_Text>(),
+                "CONTINUE   ›");
+        }
+        finally
+        {
+            GameLocalization.SetLocale(GameLocalization.EnglishLocaleCode, persist: false);
             UnityEngine.Object.DestroyImmediate(instance);
         }
     }

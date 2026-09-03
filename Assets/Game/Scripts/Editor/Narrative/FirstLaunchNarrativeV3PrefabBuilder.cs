@@ -161,6 +161,27 @@ namespace Game.Editor
             Debug.Log("[FirstLaunchNarrativeV3PrefabBuilder] validation=Passed language=select-then-continue identity=6 comic=complete guidance=complete skip=v3-bilingual");
         }
 
+        [MenuItem("Game/UI/V3/Refresh First Launch Language Localization")]
+        public static void RefreshLanguageChoiceLocalization()
+        {
+            GameObject root = PrefabUtility.LoadPrefabContents(
+                FirstLaunchNarrativePresentationPrefabBuilder.LanguageChoicePrefabPath);
+            try
+            {
+                ConfigureLanguageChoiceLocalization(root);
+                PrefabUtility.SaveAsPrefabAsset(
+                    root,
+                    FirstLaunchNarrativePresentationPrefabBuilder.LanguageChoicePrefabPath);
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(root);
+            }
+
+            AssetDatabase.SaveAssets();
+            Debug.Log("[FirstLaunchNarrativeV3PrefabBuilder] languageLocalization=Passed shell=localized cards=native");
+        }
+
         private static void ValidateWideScreenGeometry(GameObject languagePrefab, GameObject narrativePrefab)
         {
             ValidateAtWideCanvas(languagePrefab, instance =>
@@ -293,6 +314,7 @@ namespace Game.Editor
                 SetObject(view, "continueButton", continueButton);
                 SetObject(view, "englishSelectionImage", englishSelection);
                 SetObject(view, "persianSelectionImage", persianSelection);
+                ConfigureLanguageChoiceLocalization(root);
                 ConfigureResponsiveLanguageChoice(
                     composition.GetComponent<MainMenuV3SectionLayoutView>(),
                     composition);
@@ -302,6 +324,33 @@ namespace Game.Editor
             {
                 PrefabUtility.UnloadPrefabContents(root);
             }
+        }
+
+        private static void ConfigureLanguageChoiceLocalization(GameObject root)
+        {
+            FirstLaunchLanguageChoiceView view = root.GetComponent<FirstLaunchLanguageChoiceView>();
+            Transform composition = root.transform.Find("Composition");
+            if (view == null || composition == null)
+                throw new UnityException("First Launch language choice is missing its V3 composition.");
+
+            SetArray(view, "localizedShellTextTargets", new[]
+            {
+                FindText(composition, "Title"),
+                FindText(composition, "InfoPanel/InfoText"),
+                FindText(composition, "ContinueButton/Label")
+            });
+            SetStringArray(view, "localizedShellTextKeys", new[]
+            {
+                "narrative.first_launch.language.title",
+                "narrative.first_launch.language.info",
+                "narrative.first_launch.language.continue"
+            });
+            SetStringArray(view, "localizedShellEnglishFallbacks", new[]
+            {
+                "SELECT STORY LANGUAGE",
+                "This can be changed later\nin Command Settings.",
+                "CONTINUE   ›"
+            });
         }
 
         private static Button BuildLanguageCard(

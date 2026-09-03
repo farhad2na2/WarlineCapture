@@ -1221,7 +1221,10 @@ namespace Game.Editor
             }
 
             RectTransform feedback = RequireRect(footer, "FeedbackPanel");
-            SetTopLeft(feedback, 591f, 710f, 660f, 48f);
+            // Leave enough width for the longer Persian command rejection copy at 16:9.
+            // The rail still ends before ARIA's right-side column, while the ultrawide
+            // responsive layout can continue expanding it with the available safe width.
+            SetTopLeft(feedback, 591f, 710f, 780f, 48f);
             RectTransform feedbackFrame = RequireRect(feedback, "Frame");
             Stretch(feedbackFrame);
             SetImageTransparent(feedbackFrame.GetComponent<Image>());
@@ -1246,7 +1249,13 @@ namespace Game.Editor
             }
             TMP_Text feedbackText = FindDeepChild(feedbackFrame, "Feedback")?.GetComponent<TMP_Text>();
             ConfigureText(feedbackText, "ATTACK UNAVAILABLE — SELECT A UNIT OR VALID TARGET", 18f, boldFont, theme.OrangeRed, TextAlignmentOptions.MidlineLeft);
-            SetTopLeft(feedbackText.rectTransform, 53f, 4f, 590f, 40f);
+            // Keep an explicit right inset as well: shaped RTL glyph geometry can extend a few
+            // pixels beyond TMP's measured advance even when autosizing reports a fit.
+            SetTopLeft(feedbackText.rectTransform, 53f, 4f, 680f, 40f);
+            feedbackText.enableAutoSizing = true;
+            feedbackText.fontSizeMin = 8f;
+            feedbackText.fontSizeMax = 18f;
+            feedbackText.margin = new Vector4(0f, 0f, 80f, 0f);
             SetActive(FindDeepChild(feedbackFrame, "Actions"), false);
 
             RectTransform commandRail = RequireRect(footer, "CommandRail");
@@ -2004,6 +2013,10 @@ namespace Game.Editor
                     boldFont,
                     showTransportPassengers ? theme.Cyan : theme.OrangeRed,
                     TextAlignmentOptions.MidlineLeft);
+                feedback.FeedbackText.enableAutoSizing = true;
+                feedback.FeedbackText.fontSizeMin = 8f;
+                feedback.FeedbackText.fontSizeMax = 18f;
+                feedback.FeedbackText.margin = new Vector4(0f, 0f, 80f, 0f);
                 RectTransform feedbackFrame = feedback.FeedbackPanel.transform.Find("Frame") as RectTransform;
                 if (showTransportPassengers && feedbackFrame != null)
                     EnsureGradient(feedbackFrame, DarkTop, DarkBottom, theme.Cyan, 3f);

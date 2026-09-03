@@ -4804,10 +4804,9 @@ MonoBehaviour:
     - key: ui.v3.attack.301de93e8a
       value: "\u062D\u0645\u0644\u0647"
     - key: ui.v3.attack_unavailable_select_a_unit.d7e116ad49
-      value: "\u062D\u0645\u0644\u0647 \u062F\u0631 \u062F\u0633\u062A\u0631\u0633
-        \u0646\u06CC\u0633\u062A \u2014 \u06CC\u06A9 \u0646\u06CC\u0631\u0648 \u06CC\u0627
-        \u0647\u062F\u0641 \u0645\u0639\u062A\u0628\u0631 \u0627\u0646\u062A\u062E\u0627\u0628
-        \u06A9\u0646\u06CC\u062F"
+      value: "\u062D\u0645\u0644\u0647 \u0646\u0627\u0645\u0639\u062A\u0628\u0631
+        \u2014 \u06CC\u06A9 \u0646\u06CC\u0631\u0648 \u06CC\u0627 \u0647\u062F\u0641
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u062F"
     - key: ui.v3.audio.859e89a729
       value: "\u0635\u062F\u0627"
     - key: ui.v3.autosave.d5565d2bf0

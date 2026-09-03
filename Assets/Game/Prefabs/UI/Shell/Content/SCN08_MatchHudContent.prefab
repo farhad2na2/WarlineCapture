@@ -29796,7 +29796,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 591, y: -710}
-  m_SizeDelta: {x: 660, y: 48}
+  m_SizeDelta: {x: 780, y: 48}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &6610251846936513179
 GameObject:
@@ -42149,7 +42149,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 53, y: -4}
-  m_SizeDelta: {x: 590, y: 40}
+  m_SizeDelta: {x: 680, y: 40}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &1241117759840839869
 CanvasRenderer:
@@ -42209,9 +42209,9 @@ MonoBehaviour:
   m_fontSize: 18
   m_fontSizeBase: 18
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 8
+  m_fontSizeMax: 18
   m_fontStyle: 1
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 4096
@@ -42245,7 +42245,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: 80, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0

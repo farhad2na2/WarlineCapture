@@ -1,3 +1,4 @@
+using Game.Configs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -261,17 +262,17 @@ namespace Game.UI.Runtime
         private void ApplyLabels()
         {
             if (_materialsSlotLabel != null && _materialsSlotLabel.text != "Materials")
-                _materialsSlotLabel.text = "Materials";
+                _materialsSlotLabel.text = GameLocalization.Get("ui.hud.materials", "Materials");
             if (_oilSlotLabel != null && _oilSlotLabel.text != "Oil")
-                _oilSlotLabel.text = "Oil";
+                _oilSlotLabel.text = GameLocalization.Get("ui.hud.oil", "Oil");
             string fuelLabel = UiShellRuntimeGateway.TryReadMissionHudRestrictions(
                 out UiMissionHudRestrictionsModel restrictions) && restrictions.ShowMissionCredits
-                ? "Credits"
-                : "Fuel";
+                ? GameLocalization.Get("ui.hud.credits", "Credits")
+                : GameLocalization.Get("ui.hud.fuel", "Fuel");
             if (_fuelSlotLabel != null && _fuelSlotLabel.text != fuelLabel)
                 _fuelSlotLabel.text = fuelLabel;
             if (_civilianRiskSlotLabel != null && _civilianRiskSlotLabel.text != "Civilian Risk")
-                _civilianRiskSlotLabel.text = "Civilian Risk";
+                _civilianRiskSlotLabel.text = GameLocalization.Get("ui.hud.civilian_risk", "Civilian Risk");
             _labelsApplied = true;
         }
 

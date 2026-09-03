@@ -15,6 +15,8 @@ public sealed class NarrativeSettingsPersistenceTests
     private const string NarrativeBackgroundOpacityKey = Prefix + "Narrative.BackgroundOpacity";
     private const string NarrativeInstantTextKey = Prefix + "Narrative.InstantText";
     private const string NarrativeAutoAdvanceKey = Prefix + "Narrative.AutoAdvance";
+    private const string LocaleCodeKey = Prefix + "Localization.LocaleCode";
+    private const string GlobalLocaleCodeKey = "Game.Localization.LocaleCode";
 
     private static readonly string[] IntKeys =
     {
@@ -54,6 +56,8 @@ public sealed class NarrativeSettingsPersistenceTests
 
     private IntPreferenceSnapshot[] _intSnapshots;
     private FloatPreferenceSnapshot[] _floatSnapshots;
+    private StringPreferenceSnapshot _localeCodeSnapshot;
+    private StringPreferenceSnapshot _globalLocaleCodeSnapshot;
 
     [SetUp]
     public void SetUp()
@@ -65,6 +69,8 @@ public sealed class NarrativeSettingsPersistenceTests
         _floatSnapshots = new FloatPreferenceSnapshot[FloatKeys.Length];
         for (int i = 0; i < FloatKeys.Length; i++)
             _floatSnapshots[i] = new FloatPreferenceSnapshot(FloatKeys[i]);
+        _localeCodeSnapshot = new StringPreferenceSnapshot(LocaleCodeKey);
+        _globalLocaleCodeSnapshot = new StringPreferenceSnapshot(GlobalLocaleCodeKey);
 
         DeleteFocusedKeys();
     }
@@ -77,6 +83,8 @@ public sealed class NarrativeSettingsPersistenceTests
 
         foreach (FloatPreferenceSnapshot snapshot in _floatSnapshots)
             snapshot.Restore();
+        _localeCodeSnapshot.Restore();
+        _globalLocaleCodeSnapshot.Restore();
 
         PlayerPrefs.Save();
     }
@@ -192,6 +200,41 @@ public sealed class NarrativeSettingsPersistenceTests
         Assert.AreEqual(0, PlayerPrefs.GetInt(LegacyReducedMotionKey));
     }
 
+    [Test]
+    public void Load_UsesSharedLocaleWhenSettingsLocaleHasNotBeenSavedYet()
+    {
+        PlayerPrefs.SetString(GlobalLocaleCodeKey, "de");
+
+        UISettingsModel loaded = SettingsService.Load();
+
+        Assert.AreEqual("de", loaded.Localization.LocaleCode);
+    }
+
+    [Test]
+    public void Load_SharedLocaleWinsOverStaleSettingsLocale()
+    {
+        PlayerPrefs.SetString(LocaleCodeKey, "en");
+        PlayerPrefs.SetString(GlobalLocaleCodeKey, "fa-IR");
+
+        UISettingsModel loaded = SettingsService.Load();
+
+        Assert.AreEqual("fa-IR", loaded.Localization.LocaleCode);
+        Assert.AreEqual(UILanguage.Persian, loaded.Localization.Language);
+    }
+
+    [Test]
+    public void Save_PreservesFutureLocaleCodeAndSynchronizesSharedPreference()
+    {
+        UISettingsModel model = SettingsService.Load();
+        model.Localization = SettingsService.SetLocaleCode(model.Localization, "de");
+
+        SettingsService.Save(model);
+
+        Assert.AreEqual("de", PlayerPrefs.GetString(LocaleCodeKey));
+        Assert.AreEqual("de", PlayerPrefs.GetString(GlobalLocaleCodeKey));
+        Assert.AreEqual("de", SettingsService.Load().Localization.LocaleCode);
+    }
+
     private static void DeleteFocusedKeys()
     {
         PlayerPrefs.DeleteKey(ReducedMotionKey);
@@ -201,6 +244,8 @@ public sealed class NarrativeSettingsPersistenceTests
         PlayerPrefs.DeleteKey(NarrativeBackgroundOpacityKey);
         PlayerPrefs.DeleteKey(NarrativeInstantTextKey);
         PlayerPrefs.DeleteKey(NarrativeAutoAdvanceKey);
+        PlayerPrefs.DeleteKey(LocaleCodeKey);
+        PlayerPrefs.DeleteKey(GlobalLocaleCodeKey);
         PlayerPrefs.Save();
     }
 
@@ -243,6 +288,28 @@ public sealed class NarrativeSettingsPersistenceTests
         {
             if (_exists)
                 PlayerPrefs.SetFloat(_key, _value);
+            else
+                PlayerPrefs.DeleteKey(_key);
+        }
+    }
+
+    private readonly struct StringPreferenceSnapshot
+    {
+        private readonly string _key;
+        private readonly bool _exists;
+        private readonly string _value;
+
+        public StringPreferenceSnapshot(string key)
+        {
+            _key = key;
+            _exists = PlayerPrefs.HasKey(key);
+            _value = PlayerPrefs.GetString(key);
+        }
+
+        public void Restore()
+        {
+            if (_exists)
+                PlayerPrefs.SetString(_key, _value);
             else
                 PlayerPrefs.DeleteKey(_key);
         }

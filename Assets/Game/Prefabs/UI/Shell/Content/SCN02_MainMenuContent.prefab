@@ -298,6 +298,7 @@ GameObject:
   - component: {fileID: 8813905643968988546}
   - component: {fileID: 8789062364725217177}
   - component: {fileID: 1067690159630225350}
+  - component: {fileID: 1755700933566753097}
   m_Layer: 0
   m_Name: Text
   m_TagString: Untagged
@@ -424,6 +425,21 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &1755700933566753097
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 124134402636339409}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBinding
+  localizationKey: ui.v3.emergency_civilians_at_risk.e36de80e9f
+  englishFallback: 'EMERGENCY: CIVILIANS AT RISK'
+  observeRuntimeSourceChanges: 1
 --- !u!1 &127900381516053342
 GameObject:
   m_ObjectHideFlags: 0
@@ -1168,6 +1184,7 @@ GameObject:
   - component: {fileID: 6078802968875001841}
   - component: {fileID: 7509797137531589884}
   - component: {fileID: 595021431879517120}
+  - component: {fileID: 8221295184765863398}
   m_Layer: 0
   m_Name: Label
   m_TagString: Untagged
@@ -1294,6 +1311,21 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &8221295184765863398
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 702651882737847442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBinding
+  localizationKey: ui.v3.change.978a656ce4
+  englishFallback: "CHANGE   \u203A"
+  observeRuntimeSourceChanges: 1
 --- !u!1 &822374636616731366
 GameObject:
   m_ObjectHideFlags: 0
@@ -2435,9 +2467,12 @@ MonoBehaviour:
   rightAnchoredTargets: []
   centerAnchoredTargets: []
   widthExpandedTargets: []
+  horizontalResponsiveTargets: []
   rightTargetBasePositions: []
   centerTargetBasePositions: []
   widthTargetBaseSizes: []
+  horizontalTargetBasePositions: []
+  horizontalTargetBaseSizes: []
 --- !u!1 &1713076853033296126
 GameObject:
   m_ObjectHideFlags: 0
@@ -3319,6 +3354,7 @@ GameObject:
   - component: {fileID: 1232467843914874421}
   - component: {fileID: 8856533461051578127}
   - component: {fileID: 170996387561165990}
+  - component: {fileID: 4764639295926640285}
   m_Layer: 0
   m_Name: Label
   m_TagString: Untagged
@@ -3445,6 +3481,21 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &4764639295926640285
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2292473065940431008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBinding
+  localizationKey: ui.v3.command.395c9840d9
+  englishFallback: COMMAND
+  observeRuntimeSourceChanges: 1
 --- !u!1 &2309385327356488634
 GameObject:
   m_ObjectHideFlags: 0
@@ -4625,6 +4676,7 @@ GameObject:
   - component: {fileID: 525985942595195187}
   - component: {fileID: 2121812659880164588}
   - component: {fileID: 3625560729502281462}
+  - component: {fileID: 5158664649878854579}
   m_Layer: 0
   m_Name: Subtitle
   m_TagString: Untagged
@@ -4751,6 +4803,21 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &5158664649878854579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2847797766632615033}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBinding
+  localizationKey: ui.v3.continue_campaign.40c7949517
+  englishFallback: "CONTINUE CAMPAIGN  \u203A"
+  observeRuntimeSourceChanges: 1
 --- !u!1 &2852366519518556875
 GameObject:
   m_ObjectHideFlags: 0
@@ -5113,12 +5180,15 @@ MonoBehaviour:
   - {fileID: 275775152674166780}
   centerAnchoredTargets: []
   widthExpandedTargets: []
+  horizontalResponsiveTargets: []
   rightTargetBasePositions:
   - {x: 963, y: -14}
   - {x: 1251, y: -14}
   - {x: 1537, y: -14}
   centerTargetBasePositions: []
   widthTargetBaseSizes: []
+  horizontalTargetBasePositions: []
+  horizontalTargetBaseSizes: []
 --- !u!1 &2976311888839074455
 GameObject:
   m_ObjectHideFlags: 0
@@ -5841,6 +5911,7 @@ GameObject:
   - component: {fileID: 1353495545928656619}
   - component: {fileID: 2507699009192948636}
   - component: {fileID: 3476131195312229365}
+  - component: {fileID: 2266814312379455534}
   m_Layer: 0
   m_Name: Text
   m_TagString: Untagged
@@ -5969,6 +6040,23 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &2266814312379455534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3748768901245003764}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBinding
+  localizationKey: ui.v3.people_are_counting_on_us_keep_t.8771d09b8c
+  englishFallback: 'PEOPLE ARE COUNTING
+
+    ON US. KEEP THEM SAFE.'
+  observeRuntimeSourceChanges: 1
 --- !u!1 &3761682120130518308
 GameObject:
   m_ObjectHideFlags: 0
@@ -6122,6 +6210,7 @@ GameObject:
   - component: {fileID: 7174507373401410211}
   - component: {fileID: 5781973228709679120}
   - component: {fileID: 736407605182757670}
+  - component: {fileID: 6074874162801260153}
   m_Layer: 0
   m_Name: Subtitle
   m_TagString: Untagged
@@ -6248,6 +6337,21 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &6074874162801260153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3830447837400341687}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBinding
+  localizationKey: ui.v3.selected_commander.38375cfa02
+  englishFallback: SELECTED COMMANDER
+  observeRuntimeSourceChanges: 1
 --- !u!1 &3840342775122559075
 GameObject:
   m_ObjectHideFlags: 0
@@ -6997,9 +7101,12 @@ MonoBehaviour:
   rightAnchoredTargets: []
   centerAnchoredTargets: []
   widthExpandedTargets: []
+  horizontalResponsiveTargets: []
   rightTargetBasePositions: []
   centerTargetBasePositions: []
   widthTargetBaseSizes: []
+  horizontalTargetBasePositions: []
+  horizontalTargetBaseSizes: []
 --- !u!1 &4373522630166923773
 GameObject:
   m_ObjectHideFlags: 0
@@ -7078,6 +7185,7 @@ GameObject:
   - component: {fileID: 8699229561187377539}
   - component: {fileID: 5669362412351715232}
   - component: {fileID: 2691721805823175977}
+  - component: {fileID: 3352130817582121029}
   m_Layer: 0
   m_Name: Title
   m_TagString: Untagged
@@ -7204,6 +7312,21 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &3352130817582121029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4426675222992053595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBinding
+  localizationKey: narrative.first_launch.speaker.aria.name
+  englishFallback: ARIA
+  observeRuntimeSourceChanges: 1
 --- !u!1 &4444432951991509326
 GameObject:
   m_ObjectHideFlags: 0
@@ -7215,6 +7338,7 @@ GameObject:
   - component: {fileID: 5134271741192885403}
   - component: {fileID: 7043369144768379715}
   - component: {fileID: 3790124618701448262}
+  - component: {fileID: 8787630824763591419}
   m_Layer: 0
   m_Name: Title
   m_TagString: Untagged
@@ -7341,6 +7465,21 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &8787630824763591419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4444432951991509326}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBinding
+  localizationKey: ui.v3.skirmish.a860c790aa
+  englishFallback: SKIRMISH
+  observeRuntimeSourceChanges: 1
 --- !u!1 &4473401127267284349
 GameObject:
   m_ObjectHideFlags: 0
@@ -7605,9 +7744,12 @@ MonoBehaviour:
   rightAnchoredTargets: []
   centerAnchoredTargets: []
   widthExpandedTargets: []
+  horizontalResponsiveTargets: []
   rightTargetBasePositions: []
   centerTargetBasePositions: []
   widthTargetBaseSizes: []
+  horizontalTargetBasePositions: []
+  horizontalTargetBaseSizes: []
 --- !u!1 &4827588540304336202
 GameObject:
   m_ObjectHideFlags: 0
@@ -7810,6 +7952,7 @@ GameObject:
   - component: {fileID: 4301750286196815485}
   - component: {fileID: 1300049722027187569}
   - component: {fileID: 2576197273178940958}
+  - component: {fileID: 6371787528791373492}
   m_Layer: 0
   m_Name: Title
   m_TagString: Untagged
@@ -7936,6 +8079,21 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &6371787528791373492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4982615887611007631}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBinding
+  localizationKey: ui.v3.operations.8de6e8d6c6
+  englishFallback: OPERATIONS
+  observeRuntimeSourceChanges: 1
 --- !u!1 &5025362196121494022
 GameObject:
   m_ObjectHideFlags: 0
@@ -9038,6 +9196,7 @@ GameObject:
   - component: {fileID: 7905069483484303098}
   - component: {fileID: 7169596501487152688}
   - component: {fileID: 6983468071152315084}
+  - component: {fileID: 3440738748180388441}
   m_Layer: 0
   m_Name: Label
   m_TagString: Untagged
@@ -9164,6 +9323,21 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &3440738748180388441
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5888634532377458711}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBinding
+  localizationKey: ui.v3.store.59f795c13b
+  englishFallback: STORE
+  observeRuntimeSourceChanges: 1
 --- !u!1 &5921822960666147939
 GameObject:
   m_ObjectHideFlags: 0
@@ -9175,6 +9349,7 @@ GameObject:
   - component: {fileID: 4823114585732626144}
   - component: {fileID: 5748021505185373285}
   - component: {fileID: 8258737628536567960}
+  - component: {fileID: 4068811759300185627}
   m_Layer: 0
   m_Name: Title
   m_TagString: Untagged
@@ -9301,6 +9476,21 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &4068811759300185627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5921822960666147939}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBinding
+  localizationKey: ui.v3.field_commander.d8a7096430
+  englishFallback: FIELD COMMANDER
+  observeRuntimeSourceChanges: 1
 --- !u!1 &6070053825428972349
 GameObject:
   m_ObjectHideFlags: 0
@@ -10591,9 +10781,12 @@ MonoBehaviour:
   rightAnchoredTargets: []
   centerAnchoredTargets: []
   widthExpandedTargets: []
+  horizontalResponsiveTargets: []
   rightTargetBasePositions: []
   centerTargetBasePositions: []
   widthTargetBaseSizes: []
+  horizontalTargetBasePositions: []
+  horizontalTargetBaseSizes: []
 --- !u!1 &7187495019497797546
 GameObject:
   m_ObjectHideFlags: 0
@@ -11047,6 +11240,7 @@ GameObject:
   - component: {fileID: 4816239019608952029}
   - component: {fileID: 526527980549906093}
   - component: {fileID: 7774376975926515502}
+  - component: {fileID: 6154040331479092349}
   m_Layer: 0
   m_Name: Label
   m_TagString: Untagged
@@ -11173,6 +11367,21 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &6154040331479092349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7629218531702905478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBinding
+  localizationKey: ui.v3.credits.4325a27b45
+  englishFallback: CREDITS
+  observeRuntimeSourceChanges: 1
 --- !u!1 &7650515938907168508
 GameObject:
   m_ObjectHideFlags: 0
@@ -11669,6 +11878,7 @@ GameObject:
   - component: {fileID: 4696127984088349670}
   - component: {fileID: 6512109508865054764}
   - component: {fileID: 6958439336529990666}
+  - component: {fileID: 3436003347190707376}
   m_Layer: 0
   m_Name: Label
   m_TagString: Untagged
@@ -11795,6 +12005,21 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &3436003347190707376
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7926472959008110902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBinding
+  localizationKey: ui.v3.armory.3b225f99a8
+  englishFallback: ARMORY
+  observeRuntimeSourceChanges: 1
 --- !u!1 &7937075160236274555
 GameObject:
   m_ObjectHideFlags: 0
@@ -11806,6 +12031,7 @@ GameObject:
   - component: {fileID: 256906981452452673}
   - component: {fileID: 472253306778374688}
   - component: {fileID: 7254609635589507657}
+  - component: {fileID: 5313709457487788451}
   m_Layer: 0
   m_Name: Label
   m_TagString: Untagged
@@ -11932,6 +12158,21 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &5313709457487788451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7937075160236274555}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBinding
+  localizationKey: ui.v3.credits.4325a27b45
+  englishFallback: CREDITS
+  observeRuntimeSourceChanges: 1
 --- !u!1 &8020394377606837540
 GameObject:
   m_ObjectHideFlags: 0
@@ -12460,9 +12701,12 @@ MonoBehaviour:
   rightAnchoredTargets: []
   centerAnchoredTargets: []
   widthExpandedTargets: []
+  horizontalResponsiveTargets: []
   rightTargetBasePositions: []
   centerTargetBasePositions: []
   widthTargetBaseSizes: []
+  horizontalTargetBasePositions: []
+  horizontalTargetBaseSizes: []
 --- !u!1 &8300477624141298430
 GameObject:
   m_ObjectHideFlags: 0
@@ -12474,6 +12718,7 @@ GameObject:
   - component: {fileID: 6111325720206654762}
   - component: {fileID: 8766449454511204436}
   - component: {fileID: 2826315092460713530}
+  - component: {fileID: 6479852891133989582}
   m_Layer: 0
   m_Name: Label
   m_TagString: Untagged
@@ -12600,6 +12845,21 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &6479852891133989582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8300477624141298430}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBinding
+  localizationKey: ui.v3.command.395c9840d9
+  englishFallback: COMMAND
+  observeRuntimeSourceChanges: 1
 --- !u!1 &8335639520482145983
 GameObject:
   m_ObjectHideFlags: 0
@@ -12935,6 +13195,7 @@ GameObject:
   - component: {fileID: 290185898790426556}
   - component: {fileID: 5167042111845447360}
   - component: {fileID: 263751891931851212}
+  - component: {fileID: 7297294912863638846}
   m_Layer: 0
   m_Name: Title
   m_TagString: Untagged
@@ -13061,6 +13322,21 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &7297294912863638846
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8364706815933622571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBinding
+  localizationKey: ui.campaign.title
+  englishFallback: CAMPAIGN
+  observeRuntimeSourceChanges: 1
 --- !u!1 &8364938049016684434
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,3 +1,4 @@
+using Game.Configs;
 using UnityEngine;
 
 namespace Game.UI.Runtime
@@ -25,6 +26,7 @@ namespace Game.UI.Runtime
         private const string ReducedMotionKey = Prefix + "Accessibility.ReducedMotion";
         private const string LegacyReducedMotionKey = "Game.ReducedMotion";
         private const string LanguageKey = Prefix + "Localization.Language";
+        private const string LocaleCodeKey = Prefix + "Localization.LocaleCode";
         private const string AssistanceLevelKey = Prefix + "Assistant.AssistanceLevel";
         private const string AssistantNarrationModeKey = Prefix + "Assistant.NarrationMode";
         private const string AssistantAllowTakeoverKey = Prefix + "Assistant.AllowTakeover";
@@ -86,7 +88,8 @@ namespace Game.UI.Runtime
                 },
                 Localization = new LocalizationSettingsModel
                 {
-                    Language = UILanguage.English
+                    Language = UILanguage.English,
+                    LocaleCode = GameLocalization.EnglishLocaleCode
                 },
                 Assistant = new AssistantSettingsModel
                 {
@@ -149,10 +152,7 @@ namespace Game.UI.Runtime
                     ColorblindMode = GetEnum(ColorblindModeKey, defaults.Accessibility.ColorblindMode),
                     ReducedMotion = LoadReducedMotionPreference(defaults.Accessibility.ReducedMotion)
                 },
-                Localization = new LocalizationSettingsModel
-                {
-                    Language = GetEnum(LanguageKey, defaults.Localization.Language)
-                },
+                Localization = LoadLocalizationSettings(defaults.Localization),
                 Assistant = new AssistantSettingsModel
                 {
                     AssistanceLevel = GetEnum(AssistanceLevelKey, defaults.Assistant.AssistanceLevel),
@@ -200,6 +200,9 @@ namespace Game.UI.Runtime
             PlayerPrefs.SetInt(ReducedMotionKey, reducedMotion);
             PlayerPrefs.SetInt(LegacyReducedMotionKey, reducedMotion);
             PlayerPrefs.SetInt(LanguageKey, (int)model.Localization.Language);
+            string localeCode = ResolveLocaleCode(model.Localization);
+            PlayerPrefs.SetString(LocaleCodeKey, localeCode);
+            PlayerPrefs.SetString(GameLocalization.LocalePreferenceKey, localeCode);
             PlayerPrefs.SetInt(AssistanceLevelKey, (int)model.Assistant.AssistanceLevel);
             PlayerPrefs.SetInt(AssistantNarrationModeKey, (int)model.Assistant.NarrationMode);
             PlayerPrefs.SetInt(AssistantAllowTakeoverKey, model.Assistant.AllowTakeover ? 1 : 0);
@@ -249,7 +252,51 @@ namespace Game.UI.Runtime
 
         internal static void PublishRuntimeSettings(UISettingsModel model)
         {
+            GameLocalization.SetLocale(
+                ResolveLocaleCode(model.Localization),
+                persist: true);
             RuntimeApplied?.Invoke(model);
+        }
+
+        internal static string ResolveLocaleCode(LocalizationSettingsModel localization)
+        {
+            if (!string.IsNullOrWhiteSpace(localization.LocaleCode))
+                return localization.LocaleCode;
+            return localization.Language == UILanguage.Persian
+                ? GameLocalization.PersianLocaleCode
+                : GameLocalization.EnglishLocaleCode;
+        }
+
+        internal static LocalizationSettingsModel SetLocaleCode(
+            LocalizationSettingsModel localization,
+            string localeCode)
+        {
+            localization.LocaleCode = string.IsNullOrWhiteSpace(localeCode)
+                ? GameLocalization.EnglishLocaleCode
+                : localeCode;
+            localization.Language = string.Equals(
+                localization.LocaleCode,
+                GameLocalization.PersianLocaleCode,
+                System.StringComparison.OrdinalIgnoreCase)
+                ? UILanguage.Persian
+                : UILanguage.English;
+            return localization;
+        }
+
+        private static LocalizationSettingsModel LoadLocalizationSettings(
+            LocalizationSettingsModel defaults)
+        {
+            UILanguage legacy = GetEnum(LanguageKey, defaults.Language);
+            string legacyCode = legacy == UILanguage.Persian
+                ? GameLocalization.PersianLocaleCode
+                : GameLocalization.EnglishLocaleCode;
+            // First-launch and the Settings screen both write the shared preference. Keep the
+            // Settings-only key as a migration bridge, but let the central locale win so a newly
+            // added language remains selected without adding another UILanguage enum value.
+            string localeCode = PlayerPrefs.HasKey(GameLocalization.LocalePreferenceKey)
+                ? PlayerPrefs.GetString(GameLocalization.LocalePreferenceKey, legacyCode)
+                : PlayerPrefs.GetString(LocaleCodeKey, legacyCode);
+            return SetLocaleCode(defaults, localeCode);
         }
 
         internal static UIFrameRateMode NormalizeFrameRateMode(UIFrameRateMode mode, bool isAndroid)

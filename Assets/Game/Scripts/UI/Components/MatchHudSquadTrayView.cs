@@ -1,4 +1,5 @@
 using System;
+using Game.Configs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -390,7 +391,7 @@ namespace Game.UI.Runtime
             TextMeshProUGUI label = labelObject.GetComponent<TextMeshProUGUI>();
             if (cardLabelFont != null)
                 label.font = cardLabelFont;
-            label.text = "TAP RIFLE SQUAD\n\u25bc";
+            label.text = GameLocalization.Get("ui.hud.tap_rifle_squad", "TAP RIFLE SQUAD\n\u25bc");
             label.fontStyle = FontStyles.Bold;
             label.fontSize = 27f;
             label.enableAutoSizing = true;

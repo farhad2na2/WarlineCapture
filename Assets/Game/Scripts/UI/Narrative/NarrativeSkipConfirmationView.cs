@@ -1,4 +1,5 @@
 using System;
+using Game.Configs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -53,7 +54,11 @@ namespace Game.UI.Runtime
         public void SetAccessibleLabel(string value)
         {
             if (accessibleLabel != null)
-                accessibleLabel.text = string.IsNullOrWhiteSpace(value) ? "Confirm skip to gameplay" : value;
+                accessibleLabel.text = string.IsNullOrWhiteSpace(value)
+                    ? GameLocalization.Get(
+                        "ui.narrative.confirm_skip_accessible",
+                        "Confirm skip to gameplay")
+                    : value;
         }
 
         private void EnsureBindings()

@@ -1,3 +1,4 @@
+using Game.Configs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -79,7 +80,7 @@ namespace Game.UI.Runtime
             BindSegment(difficultySegmented, DifficultyLabels, (int)config.Difficulty);
             BindSegment(startingMoneySegmented, StartingMoneyLabels, (int)config.StartingMoney);
             BindStartingMoneySlider(config.StartingMoney);
-            incomeMultiplierSlider?.Bind("Income Multiplier", Mathf.Clamp(config.IncomeMultiplier, 0.5f, 3f), 0.5f, 3f, "0.0");
+            incomeMultiplierSlider?.Bind(GameLocalization.Get("ui.skirmish.income_multiplier", "Income Multiplier"), Mathf.Clamp(config.IncomeMultiplier, 0.5f, 3f), 0.5f, 3f, "0.0");
             BindSegment(buildSpeedSegmented, SpeedLabels, (int)config.BuildSpeed);
             BindSpeedSlider(buildSpeedSlider, "Build Speed", config.BuildSpeed);
             BindSegment(unitProductionSpeedSegmented, SpeedLabels, (int)config.UnitProductionSpeed);
@@ -89,13 +90,16 @@ namespace Game.UI.Runtime
             BindAggressionSlider(config.Aggression);
             BindSegment(expansionSegmented, ExpansionLabels, (int)config.Expansion);
             SetDropdownValue(targetPriorityDropdown, (int)config.TargetPriority);
-            playerAutoToggle?.Bind("Player Auto AI", "Let the AI control your faction for simulation tests.", config.PlayerAutoAIEnabled);
+            playerAutoToggle?.Bind(
+                GameLocalization.Get("ui.skirmish.player_auto_ai", "Player Auto AI"),
+                GameLocalization.Get("ui.skirmish.player_auto_ai_description", "Let the AI control your faction for simulation tests."),
+                config.PlayerAutoAIEnabled);
             if (winConditionSegmented != null)
                 BindSegment(winConditionSegmented, WinConditionLabels, (int)config.WinCondition);
             else
                 SetDropdownValue(winConditionDropdown, (int)config.WinCondition);
-            fogOfWarToggle?.Bind("FOG OF WAR", "Hide unexplored areas.", config.FogOfWar);
-            intelRevealToggle?.Bind("INTEL REVEAL", "Reveal enemy tech on scout.", config.IntelReveal);
+            fogOfWarToggle?.Bind(GameLocalization.Get("ui.skirmish.fog_of_war", "FOG OF WAR"), GameLocalization.Get("ui.skirmish.fog_description", "Hide unexplored areas."), config.FogOfWar);
+            intelRevealToggle?.Bind(GameLocalization.Get("ui.skirmish.intel_reveal", "INTEL REVEAL"), GameLocalization.Get("ui.skirmish.intel_description", "Reveal enemy tech on scout."), config.IntelReveal);
             if (startingResourcesSegmented != null)
                 BindSegment(startingResourcesSegmented, StartingResourcesLabels, (int)config.StartingResources);
             else
@@ -299,7 +303,7 @@ namespace Game.UI.Runtime
                 _ => 50f
             };
 
-            startingMoneySlider.Bind("Starting Money", value, 0f, 100f);
+            startingMoneySlider.Bind(GameLocalization.Get("ui.skirmish.starting_money", "Starting Money"), value, 0f, 100f);
             if (startingMoneySlider.ValueText != null)
             {
                 startingMoneySlider.ValueText.text = setting switch
@@ -365,7 +369,7 @@ namespace Game.UI.Runtime
                 _ => 50f
             };
 
-            aggressionSlider.Bind("Aggression", value, 0f, 100f);
+            aggressionSlider.Bind(GameLocalization.Get("ui.skirmish.aggression", "Aggression"), value, 0f, 100f);
             if (aggressionSlider.ValueText != null)
                 aggressionSlider.ValueText.text = $"{Mathf.RoundToInt(value)}%";
         }

@@ -1,3 +1,4 @@
+using Game.Configs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,7 +13,6 @@ namespace Game.UI.Runtime
         private static readonly string[] AssistanceLevelLabels = { "FULL", "HINTS", "MINIMAL", "OFF" };
         private static readonly string[] NarrationModeLabels = { "OFF", "CRITICAL", "IMPORTANT", "ALL" };
         private static readonly string[] ColorblindModeLabels = { "OFF", "PRO", "DEU", "TRI" };
-        private static readonly string[] LanguageLabels = { "EN", "DE", "FR", "ES" };
 
         [SerializeField] private UISliderRowView masterVolumeRow;
         [SerializeField] private UISliderRowView musicVolumeRow;
@@ -42,6 +42,7 @@ namespace Game.UI.Runtime
 
         private void Awake()
         {
+            languageControl?.EnsureCapacity(GameLocalization.AvailableLocales.Count);
             WireEvents();
         }
 
@@ -54,28 +55,31 @@ namespace Game.UI.Runtime
         {
             _model = model;
 
-            masterVolumeRow?.Bind("MASTER VOLUME", model.Audio.MasterVolume, 0f, 100f);
-            musicVolumeRow?.Bind("MUSIC VOLUME", model.Audio.MusicVolume, 0f, 100f);
-            sfxVolumeRow?.Bind("SOUND VOLUME", model.Audio.SfxVolume, 0f, 100f);
-            alertsVolumeRow?.Bind("ALERTS", model.Audio.AlertsVolume, 0f, 100f);
-            voiceVolumeRow?.Bind("VOICE", model.Audio.VoiceVolume, 0f, 100f);
-            musicEnabledRow?.Bind("MUSIC", "Adjust in-game music volume.", model.Audio.MusicEnabled);
-            soundEnabledRow?.Bind("SOUND", "Adjust in-game sound effects volume.", model.Audio.SoundEnabled);
-            voiceEnabledRow?.Bind("VOICE", "Adjust in-game voice volume.", model.Audio.VoiceEnabled);
+            masterVolumeRow?.Bind(GameLocalization.Get("ui.settings.master_volume", "MASTER VOLUME"), model.Audio.MasterVolume, 0f, 100f);
+            musicVolumeRow?.Bind(GameLocalization.Get("ui.settings.music_volume", "MUSIC VOLUME"), model.Audio.MusicVolume, 0f, 100f);
+            sfxVolumeRow?.Bind(GameLocalization.Get("ui.settings.sound_volume", "SOUND VOLUME"), model.Audio.SfxVolume, 0f, 100f);
+            alertsVolumeRow?.Bind(GameLocalization.Get("ui.common.alerts", "ALERTS"), model.Audio.AlertsVolume, 0f, 100f);
+            voiceVolumeRow?.Bind(GameLocalization.Get("ui.common.voice", "VOICE"), model.Audio.VoiceVolume, 0f, 100f);
+            musicEnabledRow?.Bind(GameLocalization.Get("ui.common.music", "MUSIC"), GameLocalization.Get("ui.settings.music_description", "Adjust in-game music volume."), model.Audio.MusicEnabled);
+            soundEnabledRow?.Bind(GameLocalization.Get("ui.common.sound", "SOUND"), GameLocalization.Get("ui.settings.sound_description", "Adjust in-game sound effects volume."), model.Audio.SoundEnabled);
+            voiceEnabledRow?.Bind(GameLocalization.Get("ui.common.voice", "VOICE"), GameLocalization.Get("ui.settings.voice_description", "Adjust in-game voice volume."), model.Audio.VoiceEnabled);
             graphicsQualityControl?.Bind(GraphicsQualityLabels, (int)model.Graphics.Quality);
             frameRateControl?.Bind(FrameRateLabels, (int)model.Graphics.FrameRateMode);
-            cameraSensitivityRow?.Bind("CAMERA SENSITIVITY", model.Controls.CameraSensitivity, 0f, 100f);
-            threatWarningsRow?.Bind("THREAT WARNINGS", "Show tactical warnings during missions.", model.Notifications.ThreatWarnings);
-            highContrastRow?.Bind("High Contrast UI", "Increase panel and text contrast.", model.Accessibility.HighContrastUi);
-            largeTextRow?.Bind("Large Text", "Increase UI text scale for readability.", model.Accessibility.LargeText);
+            cameraSensitivityRow?.Bind(GameLocalization.Get("ui.settings.camera_sensitivity", "CAMERA SENSITIVITY"), model.Controls.CameraSensitivity, 0f, 100f);
+            threatWarningsRow?.Bind(GameLocalization.Get("ui.settings.threat_warnings", "THREAT WARNINGS"), GameLocalization.Get("ui.settings.threat_description", "Show tactical warnings during missions."), model.Notifications.ThreatWarnings);
+            highContrastRow?.Bind(GameLocalization.Get("ui.settings.high_contrast", "High Contrast UI"), GameLocalization.Get("ui.settings.contrast_description", "Increase panel and text contrast."), model.Accessibility.HighContrastUi);
+            largeTextRow?.Bind(GameLocalization.Get("ui.settings.large_text", "Large Text"), GameLocalization.Get("ui.settings.large_text_description", "Increase UI text scale for readability."), model.Accessibility.LargeText);
             assistanceLevelControl?.Bind(AssistanceLevelLabels, (int)model.Assistant.AssistanceLevel);
             narrationModeControl?.Bind(NarrationModeLabels, (int)model.Assistant.NarrationMode);
-            assistantTakeoverRow?.Bind("Assistant Takeover", "Allow assistant-guided bounded actions.", model.Assistant.AllowTakeover);
-            assistantSubtitlesRow?.Bind("Assistant Subtitles", "Show narration subtitles in the assistant panel.", model.Assistant.SubtitlesEnabled);
+            assistantTakeoverRow?.Bind(GameLocalization.Get("ui.settings.assistant_takeover", "Assistant Takeover"), GameLocalization.Get("ui.settings.takeover_description", "Allow assistant-guided bounded actions."), model.Assistant.AllowTakeover);
+            assistantSubtitlesRow?.Bind(GameLocalization.Get("ui.settings.assistant_subtitles", "Assistant Subtitles"), GameLocalization.Get("ui.settings.subtitles_description", "Show narration subtitles in the assistant panel."), model.Assistant.SubtitlesEnabled);
             colorblindModeControl?.Bind(ColorblindModeLabels, (int)model.Accessibility.ColorblindMode);
-            languageControl?.Bind(LanguageLabels, (int)model.Localization.Language);
+            string[] languageLabels = GameLocalization.GetLocaleShortLabels();
+            int languageIndex = GameLocalization.GetLocaleIndex(
+                SettingsService.ResolveLocaleCode(model.Localization));
+            languageControl?.Bind(languageLabels, languageIndex);
             SetDropdownValue(colorblindModeDropdown, (int)model.Accessibility.ColorblindMode);
-            SetDropdownValue(languageDropdown, (int)model.Localization.Language);
+            BindLanguageDropdown(languageDropdown, languageLabels, languageIndex);
         }
 
         public UISettingsModel ReadModelFromControls(UISettingsModel model)
@@ -97,9 +101,14 @@ namespace Game.UI.Runtime
             model.Accessibility.ColorblindMode = colorblindModeDropdown != null
                 ? (UIColorblindMode)GetDropdownValue(colorblindModeDropdown, (int)_model.Accessibility.ColorblindMode)
                 : _model.Accessibility.ColorblindMode;
-            model.Localization.Language = languageDropdown != null
-                ? (UILanguage)GetDropdownValue(languageDropdown, (int)_model.Localization.Language)
-                : _model.Localization.Language;
+            int languageIndex = languageDropdown != null
+                ? GetDropdownValue(
+                    languageDropdown,
+                    GameLocalization.GetLocaleIndex(SettingsService.ResolveLocaleCode(_model.Localization)))
+                : GameLocalization.GetLocaleIndex(SettingsService.ResolveLocaleCode(_model.Localization));
+            model.Localization = SettingsService.SetLocaleCode(
+                _model.Localization,
+                GameLocalization.GetLocaleCode(languageIndex));
             model.Assistant.AssistanceLevel = _model.Assistant.AssistanceLevel;
             model.Assistant.NarrationMode = _model.Assistant.NarrationMode;
             model.Assistant.AllowTakeover = GetToggleValue(assistantTakeoverRow, _model.Assistant.AllowTakeover);
@@ -222,8 +231,23 @@ namespace Game.UI.Runtime
 
         private void OnLanguageChanged(int value)
         {
-            _model.Localization.Language = (UILanguage)value;
-            languageControl?.Bind(LanguageLabels, (int)_model.Localization.Language);
+            _model.Localization = SettingsService.SetLocaleCode(
+                _model.Localization,
+                GameLocalization.GetLocaleCode(value));
+            languageControl?.Bind(GameLocalization.GetLocaleShortLabels(), value);
+        }
+
+        private static void BindLanguageDropdown(
+            TMP_Dropdown dropdown,
+            string[] labels,
+            int selectedIndex)
+        {
+            if (dropdown == null)
+                return;
+            dropdown.ClearOptions();
+            dropdown.AddOptions(new System.Collections.Generic.List<string>(labels));
+            dropdown.SetValueWithoutNotify(Mathf.Clamp(selectedIndex, 0, labels.Length - 1));
+            dropdown.RefreshShownValue();
         }
 
         private static void AddSliderListener(UISliderRowView row, UnityEngine.Events.UnityAction<float> action)

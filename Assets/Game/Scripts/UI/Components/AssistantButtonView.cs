@@ -1,3 +1,4 @@
+using Game.Configs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -55,10 +56,10 @@ namespace Game.UI.Runtime
 
             AssistantButtonStatePresentation presentation = GetPresentation(state);
             if (labelText != null)
-                labelText.text = "ARIA";
+                labelText.text = GameLocalization.Get("ui.aria.name", "ARIA");
 
             if (stateText != null)
-                stateText.text = presentation.StateLabel;
+                stateText.text = GameLocalization.GetBySource(presentation.StateLabel);
 
             if (cueText != null)
             {

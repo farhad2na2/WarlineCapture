@@ -1,4 +1,5 @@
 using TMPro;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,22 +22,58 @@ namespace Game.UI.Runtime
         public Button[] SegmentButtons => segmentButtons;
         public TMP_Text[] SegmentLabels => segmentLabels;
 
+        public void EnsureCapacity(int requiredCount)
+        {
+            requiredCount = Mathf.Max(0, requiredCount);
+            if (requiredCount == 0 || segmentButtons == null || segmentButtons.Length == 0 ||
+                segmentLabels == null || segmentLabels.Length == 0)
+            {
+                return;
+            }
+
+            List<Button> buttons = new(segmentButtons);
+            List<TMP_Text> labels = new(segmentLabels);
+            Transform parent = segmentRoot != null ? segmentRoot : segmentButtons[0].transform.parent;
+            while (buttons.Count < requiredCount)
+            {
+                Button template = buttons[buttons.Count - 1];
+                Button clone = Instantiate(template, parent);
+                clone.name = $"Segment{buttons.Count}";
+                clone.onClick.RemoveAllListeners();
+                TMP_Text label = clone.GetComponentInChildren<TMP_Text>(includeInactive: true);
+                if (label == null)
+                {
+                    Destroy(clone.gameObject);
+                    break;
+                }
+
+                buttons.Add(clone);
+                labels.Add(label);
+            }
+
+            segmentButtons = buttons.ToArray();
+            segmentLabels = labels.ToArray();
+        }
+
         public void Bind(string[] labels, int selectedIndex)
         {
             if (segmentButtons == null || segmentLabels == null)
                 return;
 
+            EnsureCapacity(labels?.Length ?? 0);
             int count = Mathf.Min(labels?.Length ?? 0, segmentLabels.Length);
             for (int i = 0; i < segmentLabels.Length; i++)
             {
+                bool active = i < count;
                 if (segmentLabels[i] != null)
-                    segmentLabels[i].text = i < count ? labels[i] : string.Empty;
+                    segmentLabels[i].text = active ? labels[i] : string.Empty;
 
                 if (segmentButtons.Length > i && segmentButtons[i] != null)
                 {
+                    segmentButtons[i].gameObject.SetActive(active);
                     bool selected = i == selectedIndex;
                     ApplyVisualState(i, selected);
-                    segmentButtons[i].interactable = i != selectedIndex;
+                    segmentButtons[i].interactable = active && !selected;
                 }
             }
         }

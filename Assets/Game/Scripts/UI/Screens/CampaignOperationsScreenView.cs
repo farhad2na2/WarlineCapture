@@ -1,3 +1,4 @@
+using Game.Configs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -119,19 +120,25 @@ namespace Game.UI.Runtime
             missionName.fontSizeMin = v3StateLayout ? 22f : 36f;
             missionName.fontSizeMax = v3StateLayout ? 34f : 84f;
             screenTitle.text = v3StateLayout
-                ? "CAMPAIGN"
+                ? GameLocalization.Get("ui.campaign.title", "CAMPAIGN")
                 : _gameTextResolver.Get(
                     "campaign.operations.title",
                     model.NextMissionRevealed ? "CAMPAIGN OPERATIONS  |  NEXT READY" : "CAMPAIGN OPERATIONS");
             Set(missionNumber, v3StateLayout ? (m02 ? "M02" : "M01") : (m02 ? "MISSION 02" : "MISSION 01"));
-            missionName.text = v3StateLayout ? (m02 ? "ESTABLISH THE BASE" : "FIRST CONTACT") : FormatMissionSummary(mission);
+            missionName.text = v3StateLayout
+                ? m02
+                    ? GameLocalization.Get("ui.campaign.m02_name", "ESTABLISH THE BASE")
+                    : GameLocalization.Get("ui.campaign.m01_name", "FIRST CONTACT")
+                : FormatMissionSummary(mission);
             Set(missionBriefingText, _gameTextResolver.Get(
                 m02 ? "mission.m02.summary" : "mission.m01.summary",
                 m02
                     ? "Reopen an abandoned forward post before a second hostile cell reaches it."
                     : "Secure the Old Market corridor and protect the civilian route."));
             Set(primaryObjectiveText, v3StateLayout
-                ? (m02 ? "BUILD\nBARRACK" : "SECURE\nCORRIDOR")
+                ? m02
+                    ? GameLocalization.Get("ui.campaign.build_barrack", "BUILD\nBARRACK")
+                    : GameLocalization.Get("ui.campaign.secure_corridor", "SECURE\nCORRIDOR")
                 : _gameTextResolver.Get(
                     m02 ? "mission.m02.objective.build_forward_barracks" : "mission.m01.objective.secure_corridor",
                     m02 ? "BUILD THE FORWARD BARRACKS" : "ELIMINATE THE HOSTILE PATROL"));
@@ -140,7 +147,11 @@ namespace Game.UI.Runtime
                 : _gameTextResolver.Get("mission.m01.reward.card", "260 XP  |  1,200 CREDITS"));
             if (missionPreviewImage != null)
                 missionPreviewImage.texture = m02 ? m02MissionPreview : m01MissionPreview;
-            Set(launchMissionLabel, v3StateLayout ? "START BRIEFING" : mission.PrimaryActionLabel);
+            Set(
+                launchMissionLabel,
+                v3StateLayout
+                    ? GameLocalization.Get("ui.campaign.start_briefing", "START BRIEFING")
+                    : GameLocalization.GetBySource(mission.PrimaryActionLabel));
             launchMissionButton.interactable = mission.Available;
             ApplyMissionNodes(mission.MissionId, model.NextMissionRevealed);
             for (int index = 0; index < progressNodes.Length; index++)
@@ -149,7 +160,9 @@ namespace Game.UI.Runtime
 
         public void ApplyUnavailable()
         {
-            missionName.text = "MISSION DATA UNAVAILABLE";
+            missionName.text = GameLocalization.Get(
+                "ui.campaign.mission_unavailable",
+                "MISSION DATA UNAVAILABLE");
             launchMissionButton.interactable = false;
             for (int index = 0; index < progressNodes.Length; index++)
                 progressNodes[index].gameObject.SetActive(false);

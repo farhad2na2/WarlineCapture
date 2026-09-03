@@ -1,4 +1,5 @@
 using System;
+using Game.Configs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -348,9 +349,16 @@ namespace Game.UI.Runtime
             int minutes = totalSeconds / 60 % 60;
             int seconds = totalSeconds % 60;
             if (hours > 0)
-                _elapsedText.SetText("ELAPSED: {0}:{1:00}:{2:00}", hours, minutes, seconds);
+                _elapsedText.SetText(
+                    GameLocalization.Get("ui.aria.elapsed_hms", "ELAPSED: {0}:{1:00}:{2:00}"),
+                    hours,
+                    minutes,
+                    seconds);
             else
-                _elapsedText.SetText("ELAPSED: {0:00}:{1:00}", minutes, seconds);
+                _elapsedText.SetText(
+                    GameLocalization.Get("ui.aria.elapsed_ms", "ELAPSED: {0:00}:{1:00}"),
+                    minutes,
+                    seconds);
         }
 
         public void ApplyGoal(int index, UiAssistantGoalRowModel model)

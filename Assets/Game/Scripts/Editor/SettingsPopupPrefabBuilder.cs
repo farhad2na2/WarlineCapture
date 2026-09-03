@@ -60,7 +60,7 @@ namespace Game.Editor
         private static readonly string[] AssistanceLevelLabels = { "FULL", "HINTS", "MINIMAL", "OFF" };
         private static readonly string[] NarrationModeLabels = { "OFF", "CRITICAL", "IMPORTANT", "ALL" };
         private static readonly string[] ColorblindModeLabels = { "OFF", "PRO", "DEU", "TRI" };
-        private static readonly string[] LanguageLabels = { "EN", "DE", "FR", "ES" };
+        private static readonly string[] LanguageLabels = { "EN", "FA" };
 
         [MenuItem("Game/UI/Rebuild Settings Popups")]
         public static void Build()

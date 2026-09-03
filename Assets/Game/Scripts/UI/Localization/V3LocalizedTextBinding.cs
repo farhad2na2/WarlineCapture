@@ -1,0 +1,173 @@
+using Game.Configs;
+using RTLTMPro;
+using TMPro;
+using UnityEngine;
+
+namespace Game.UI.Runtime
+{
+    /// <summary>
+    /// Generic text binding used by every V3 screen. The prefab stores one stable key and its
+    /// English authoring fallback; locale values, direction, and fonts come from the shared catalog.
+    /// </summary>
+    [DisallowMultipleComponent]
+    [RequireComponent(typeof(TMP_Text))]
+    public sealed class V3LocalizedTextBinding : MonoBehaviour
+    {
+        [SerializeField] private string localizationKey;
+        [SerializeField, TextArea] private string englishFallback;
+        [SerializeField] private bool observeRuntimeSourceChanges = true;
+
+        private TMP_Text target;
+        private TMP_FontAsset sourceFont;
+        private TextAlignmentOptions sourceAlignment;
+        private string runtimeSource;
+        private string lastApplied;
+        private bool hasRuntimeSource;
+
+        public string LocalizationKey => localizationKey;
+        public string EnglishFallback => englishFallback;
+
+        public void Configure(string key, string fallback, bool observeRuntimeChanges = true)
+        {
+            localizationKey = key ?? string.Empty;
+            englishFallback = fallback ?? string.Empty;
+            observeRuntimeSourceChanges = observeRuntimeChanges;
+            // Prefab builders configure bindings in edit mode. Never rewrite authored TMP text from
+            // the Editor's current PlayerPrefs locale while saving a prefab.
+            if (Application.isPlaying && isActiveAndEnabled)
+                ApplyLocalization();
+        }
+
+        private void Awake()
+        {
+            CapturePresentationDefaults();
+        }
+
+        private void OnEnable()
+        {
+            CapturePresentationDefaults();
+            GameLocalization.LocaleChanged += ApplyLocalization;
+            ApplyLocalization();
+        }
+
+        private void OnDisable()
+        {
+            GameLocalization.LocaleChanged -= ApplyLocalization;
+        }
+
+        private void LateUpdate()
+        {
+            if (!observeRuntimeSourceChanges || target == null)
+                return;
+
+            string current = ReadAuthoredText();
+            if (string.Equals(current, lastApplied, System.StringComparison.Ordinal))
+                return;
+
+            if (GameLocalization.TryGetSourceByLocalized(
+                    current,
+                    out string resolvedKey,
+                    out string resolvedSource))
+            {
+                localizationKey = resolvedKey;
+                runtimeSource = resolvedSource;
+            }
+            else
+            {
+                runtimeSource = current ?? string.Empty;
+            }
+            hasRuntimeSource = true;
+            ApplyLocalization();
+        }
+
+        public void ApplyLocalization()
+        {
+            CapturePresentationDefaults();
+            if (target == null)
+                return;
+
+            string source = hasRuntimeSource
+                ? runtimeSource
+                : string.IsNullOrEmpty(englishFallback) ? ReadAuthoredText() : englishFallback;
+            string localized;
+            if (hasRuntimeSource)
+            {
+                if (!GameLocalization.TryGetBySource(source, out _, out localized))
+                    localized = source;
+            }
+            else
+            {
+                localized = GameLocalization.Get(localizationKey, source);
+            }
+
+            bool rightToLeft = GameLocalization.IsRightToLeft;
+            TMP_FontAsset localeFont = GameLocalization.CurrentFontAsset as TMP_FontAsset;
+            target.font = rightToLeft && localeFont != null ? localeFont : sourceFont;
+            target.alignment = rightToLeft ? Mirror(sourceAlignment) : sourceAlignment;
+
+            if (target is RTLTextMeshPro rtlText)
+            {
+                rtlText.Farsi = rightToLeft;
+                rtlText.PreserveNumbers = true;
+                rtlText.ForceFix = rightToLeft;
+                rtlText.text = localized;
+                lastApplied = rtlText.OriginalText;
+                return;
+            }
+
+            target.isRightToLeftText = rightToLeft;
+            target.text = rightToLeft ? ShapePersian(localized) : localized;
+            lastApplied = target.text;
+        }
+
+        private void CapturePresentationDefaults()
+        {
+            target ??= GetComponent<TMP_Text>();
+            if (target == null || sourceFont != null)
+                return;
+
+            sourceFont = target.font;
+            sourceAlignment = target.alignment;
+            if (string.IsNullOrEmpty(englishFallback))
+                englishFallback = ReadAuthoredText();
+        }
+
+        private string ReadAuthoredText()
+        {
+            if (target is RTLTextMeshPro rtlText)
+                return rtlText.OriginalText;
+            return target?.text ?? string.Empty;
+        }
+
+        private static string ShapePersian(string value)
+        {
+            if (string.IsNullOrEmpty(value) || !TextUtils.IsRTLInput(value))
+                return value ?? string.Empty;
+
+            FastStringBuilder output = new(Mathf.Max(RTLSupport.DefaultBufferSize, value.Length * 4));
+            RTLSupport.FixRTL(value, output, farsi: true, fixTextTags: true, preserveNumbers: true);
+            output.Reverse();
+            return output.ToString();
+        }
+
+        private static TextAlignmentOptions Mirror(TextAlignmentOptions alignment)
+        {
+            return alignment switch
+            {
+                TextAlignmentOptions.TopLeft => TextAlignmentOptions.TopRight,
+                TextAlignmentOptions.TopRight => TextAlignmentOptions.TopLeft,
+                TextAlignmentOptions.Left => TextAlignmentOptions.Right,
+                TextAlignmentOptions.Right => TextAlignmentOptions.Left,
+                TextAlignmentOptions.BottomLeft => TextAlignmentOptions.BottomRight,
+                TextAlignmentOptions.BottomRight => TextAlignmentOptions.BottomLeft,
+                TextAlignmentOptions.BaselineLeft => TextAlignmentOptions.BaselineRight,
+                TextAlignmentOptions.BaselineRight => TextAlignmentOptions.BaselineLeft,
+                TextAlignmentOptions.MidlineLeft => TextAlignmentOptions.MidlineRight,
+                TextAlignmentOptions.MidlineRight => TextAlignmentOptions.MidlineLeft,
+                TextAlignmentOptions.CaplineLeft => TextAlignmentOptions.CaplineRight,
+                TextAlignmentOptions.CaplineRight => TextAlignmentOptions.CaplineLeft,
+                _ => alignment
+            };
+        }
+    }
+}

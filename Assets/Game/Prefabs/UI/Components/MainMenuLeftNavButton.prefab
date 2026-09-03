@@ -301,6 +301,7 @@ GameObject:
   - component: {fileID: 5397936441557157705}
   - component: {fileID: 6503479806793255582}
   - component: {fileID: 3862868304667477674}
+  - component: {fileID: 8418219385961162103}
   m_Layer: 0
   m_Name: Text
   m_TagString: Untagged
@@ -427,6 +428,21 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &8418219385961162103
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7457687075507993582}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBinding
+  localizationKey: ui.v3.operations.358cc201f8
+  englishFallback: Operations
+  observeRuntimeSourceChanges: 1
 --- !u!1 &7585649278568099823
 GameObject:
   m_ObjectHideFlags: 0

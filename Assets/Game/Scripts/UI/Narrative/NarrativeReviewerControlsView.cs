@@ -1,4 +1,5 @@
 using System;
+using Game.Configs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -85,7 +86,9 @@ namespace Game.UI.Runtime
         public void SetPlayingState(bool isPlaying)
         {
             if (playPauseLabel != null)
-                playPauseLabel.text = isPlaying ? "PAUSE" : "PLAY";
+                playPauseLabel.text = isPlaying
+                    ? GameLocalization.Get("ui.common.pause", "PAUSE")
+                    : GameLocalization.Get("ui.common.play", "PLAY");
         }
 
         public void SetPosition(float position)

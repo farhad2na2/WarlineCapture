@@ -32,9 +32,12 @@ namespace Game.UI.Runtime
     public enum UILanguage
     {
         English = 0,
+        // Legacy numeric values stay reserved so existing PlayerPrefs never migrate to Farsi by
+        // accident. New language selection is locale-code driven by the shared catalog.
         German = 1,
         French = 2,
-        Spanish = 3
+        Spanish = 3,
+        Persian = 4
     }
 
     [Serializable]
@@ -117,7 +120,9 @@ namespace Game.UI.Runtime
     [Serializable]
     public struct LocalizationSettingsModel
     {
+        // Retained for migration from existing PlayerPrefs and serialized data.
         public UILanguage Language;
+        public string LocaleCode;
     }
 
     [Serializable]

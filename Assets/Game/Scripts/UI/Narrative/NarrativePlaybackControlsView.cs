@@ -1,4 +1,5 @@
 using System;
+using Game.Configs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -50,7 +51,9 @@ namespace Game.UI.Runtime
             if (skipButton != null)
                 skipButton.interactable = interactable;
             if (skipLabel != null)
-                skipLabel.text = string.IsNullOrWhiteSpace(accessibleLabel) ? "SKIP" : accessibleLabel;
+                skipLabel.text = string.IsNullOrWhiteSpace(accessibleLabel)
+                    ? GameLocalization.Get("ui.common.skip", "SKIP")
+                    : accessibleLabel;
         }
 
         private void HandleSkip()

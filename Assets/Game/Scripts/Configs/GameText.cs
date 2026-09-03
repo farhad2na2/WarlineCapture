@@ -43,9 +43,9 @@ namespace Game.Configs
 
             GameTextCatalogSnapshot snapshot = currentSnapshot;
             if (snapshot.TryGet(key, out string value))
-                return value;
+                return GameLocalization.Get(key, value);
 
-            return fallback ?? key;
+            return GameLocalization.Get(key, fallback ?? key);
         }
 
         public static bool TryGet(string key, out string value)
@@ -56,7 +56,13 @@ namespace Game.Configs
                 return false;
             }
 
-            return currentSnapshot.TryGet(key, out value);
+            if (currentSnapshot.TryGet(key, out string source))
+            {
+                value = GameLocalization.Get(key, source);
+                return true;
+            }
+
+            return GameLocalization.TryGet(key, out value);
         }
 
         public static string GetAudioEventId(string key, string fallback = "")
@@ -82,19 +88,7 @@ namespace Game.Configs
 
         public static string Format(string key, string fallback, params object[] args)
         {
-            string format = Get(key, fallback);
-            if (string.IsNullOrEmpty(format) || args == null || args.Length == 0)
-                return format;
-
-            try
-            {
-                return string.Format(format, args);
-            }
-            catch (FormatException)
-            {
-                Debug.LogWarning($"[GameText] Invalid format for key '{key}': {format}");
-                return fallback ?? format;
-            }
+            return GameLocalization.Format(key, Get(key, fallback), args);
         }
 
         public static bool IsInitialized => currentSnapshot.IsInitialized;

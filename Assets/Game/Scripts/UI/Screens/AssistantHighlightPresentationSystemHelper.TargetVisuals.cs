@@ -1,3 +1,4 @@
+using Game.Configs;
 using Game.UI.Contracts;
 using TMPro;
 using UnityEngine;
@@ -87,7 +88,7 @@ namespace Game.UI.Runtime
             labelRect.offsetMin = new Vector2(82f, 12f);
             labelRect.offsetMax = new Vector2(-18f, -32f);
             _screenTargetLabel = labelObject.GetComponent<TextMeshProUGUI>();
-            _screenTargetLabel.text = "ARIA TARGET";
+            _screenTargetLabel.text = GameLocalization.Get("ui.hud.aria_target", "ARIA TARGET");
             _screenTargetLabel.fontStyle = FontStyles.Bold;
             _screenTargetLabel.fontSize = 31f;
             _screenTargetLabel.enableAutoSizing = true;

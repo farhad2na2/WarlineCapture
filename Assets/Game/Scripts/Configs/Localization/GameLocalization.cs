@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using Game.Narrative.Contracts;
 using UnityEngine;
 
 namespace Game.Configs
@@ -44,6 +45,22 @@ namespace Game.Configs
                 EnsureInitialized();
                 return currentLocale?.LocaleCode ?? EnglishLocaleCode;
             }
+        }
+
+        /// <summary>
+        /// Maps the active UI locale to the legacy narrative language enum used by
+        /// localized voice and comic presentation. The active locale is authoritative;
+        /// the fallback only applies to a locale that has no authored narrative voice.
+        /// </summary>
+        public static FirstLaunchNarrativeLanguage ResolveNarrativeLanguage(
+            FirstLaunchNarrativeLanguage fallback = FirstLaunchNarrativeLanguage.English)
+        {
+            string localeCode = CurrentLocaleCode;
+            if (string.Equals(localeCode, PersianLocaleCode, StringComparison.OrdinalIgnoreCase))
+                return FirstLaunchNarrativeLanguage.Persian;
+            if (string.Equals(localeCode, EnglishLocaleCode, StringComparison.OrdinalIgnoreCase))
+                return FirstLaunchNarrativeLanguage.English;
+            return fallback;
         }
 
         public static bool IsRightToLeft

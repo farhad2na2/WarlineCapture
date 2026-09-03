@@ -2,7 +2,6 @@ using System;
 using Game.Components;
 using Game.Configs;
 using Game.Narrative.Contracts;
-using Game.Runtime;
 using Game.UI.Contracts;
 using Unity.Collections;
 using Unity.Entities;
@@ -16,8 +15,6 @@ namespace Game.UI.Shell.Ecs
         private const int TutorialMessageLimitExclusive = 2000000;
         private const float TutorialMessageLifetimeSeconds = 12f;
 
-        private static FirstLaunchNarrativeLanguage cachedTutorialNarrationLanguage;
-        private static bool hasCachedTutorialNarrationLanguage;
         private static int tutorialNarrationSequence;
 
         bool IUiTutorialNarrationGateway.TryEnqueueTutorialNarration(
@@ -205,33 +202,8 @@ namespace Game.UI.Shell.Ecs
                 out body);
         }
 
-        private static FirstLaunchNarrativeLanguage ResolveTutorialNarrationLanguage()
-        {
-            if (hasCachedTutorialNarrationLanguage)
-                return cachedTutorialNarrationLanguage;
-
-            cachedTutorialNarrationLanguage = FirstLaunchNarrativeLanguage.English;
-            try
-            {
-                PlayerProfileSaveData profile = SaveService.CreateDefault().LoadProfile();
-                if (Enum.TryParse(
-                        profile.firstLaunchLanguage,
-                        true,
-                        out FirstLaunchNarrativeLanguage language) &&
-                    language == FirstLaunchNarrativeLanguage.Persian)
-                {
-                    cachedTutorialNarrationLanguage = FirstLaunchNarrativeLanguage.Persian;
-                }
-            }
-            catch (Exception exception)
-            {
-                Debug.LogWarning(
-                    $"[ARIA Tutorial] Could not read the saved first-launch language; using English. {exception.Message}");
-            }
-
-            hasCachedTutorialNarrationLanguage = true;
-            return cachedTutorialNarrationLanguage;
-        }
+        public static FirstLaunchNarrativeLanguage ResolveTutorialNarrationLanguage() =>
+            GameLocalization.ResolveNarrativeLanguage();
 
         private static int NextTutorialNarrationSequence()
         {
@@ -243,8 +215,6 @@ namespace Game.UI.Shell.Ecs
 
         private static void ResetTutorialNarrationSession()
         {
-            cachedTutorialNarrationLanguage = FirstLaunchNarrativeLanguage.English;
-            hasCachedTutorialNarrationLanguage = false;
             tutorialNarrationSequence = 0;
         }
     }

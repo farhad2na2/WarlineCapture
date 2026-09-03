@@ -112,16 +112,35 @@ namespace Game.Editor
             if (catalog == null || catalog.text == null || catalog.lines == null)
                 throw new InvalidOperationException($"Invalid Persian narrative catalog: {PersianCatalogPath}");
 
+            NarrativeLocaleConfig locale = GetOrCreateAsset<NarrativeLocaleConfig>(PersianLocalePath);
+            HashSet<string> firstLaunchTextKeys = new(StringComparer.Ordinal);
+            HashSet<string> firstLaunchLineIds = new(StringComparer.Ordinal);
+
             List<NarrativeLocaleTextRecord> localizedText = new(catalog.text.Length + catalog.lines.Length);
             for (int i = 0; i < catalog.text.Length; i++)
             {
                 PersianTextDto entry = catalog.text[i];
                 localizedText.Add(new NarrativeLocaleTextRecord(entry.key, entry.value));
+                firstLaunchTextKeys.Add(entry.key);
             }
             for (int i = 0; i < catalog.lines.Length; i++)
             {
                 PersianLineDto line = catalog.lines[i];
                 localizedText.Add(new NarrativeLocaleTextRecord(line.key, line.text));
+                firstLaunchTextKeys.Add(line.key);
+                firstLaunchLineIds.Add(line.lineId);
+            }
+
+            // This asset is the shared narrative locale. Preserve mission-specific
+            // extensions (M2 and future missions) when rebuilding first-launch data.
+            HashSet<string> extensionTextKeys = new(StringComparer.Ordinal);
+            foreach (NarrativeLocaleTextRecord existing in locale.Text)
+            {
+                if (existing != null && !string.IsNullOrWhiteSpace(existing.Key) &&
+                    !firstLaunchTextKeys.Contains(existing.Key) && extensionTextKeys.Add(existing.Key))
+                {
+                    localizedText.Add(existing);
+                }
             }
 
             List<NarrativeLocaleVoiceRecord> localizedVoices = new(catalog.lines.Length);
@@ -139,7 +158,16 @@ namespace Game.Editor
                         : null));
             }
 
-            NarrativeLocaleConfig locale = GetOrCreateAsset<NarrativeLocaleConfig>(PersianLocalePath);
+            HashSet<string> extensionVoiceIds = new(StringComparer.Ordinal);
+            foreach (NarrativeLocaleVoiceRecord existing in locale.Voices)
+            {
+                if (existing != null && !string.IsNullOrWhiteSpace(existing.LineId) &&
+                    !firstLaunchLineIds.Contains(existing.LineId) && extensionVoiceIds.Add(existing.LineId))
+                {
+                    localizedVoices.Add(existing);
+                }
+            }
+
             Set(locale, "localeId", catalog.locale);
             Set(locale, "language", FirstLaunchNarrativeLanguage.Persian);
             Set(locale, "rightToLeft", true);

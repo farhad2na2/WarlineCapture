@@ -366,30 +366,8 @@ namespace Game.Composition
         }
 
         internal static FirstLaunchNarrativeLanguage ResolveNarrativeLanguage(
-            FirstLaunchNarrativeLanguage profileLanguage)
-        {
-            // The shared localization locale is the live player choice used by subtitles and
-            // every V3 screen. Voice selection must use that same source of truth, even when an
-            // older first-launch profile still contains a different language value.
-            string localeCode = GameLocalization.CurrentLocaleCode;
-            if (string.Equals(
-                    localeCode,
-                    GameLocalization.PersianLocaleCode,
-                    StringComparison.OrdinalIgnoreCase))
-            {
-                return FirstLaunchNarrativeLanguage.Persian;
-            }
-
-            if (string.Equals(
-                    localeCode,
-                    GameLocalization.EnglishLocaleCode,
-                    StringComparison.OrdinalIgnoreCase))
-            {
-                return FirstLaunchNarrativeLanguage.English;
-            }
-
-            return profileLanguage;
-        }
+            FirstLaunchNarrativeLanguage profileLanguage) =>
+            GameLocalization.ResolveNarrativeLanguage(profileLanguage);
 
         private void LogStartupDisposition(FirstLaunchNarrativeStartupDisposition disposition)
         {

@@ -13,6 +13,7 @@ using Game.Narrative.Contracts;
 using Game.Runtime;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
+using Game.UI.Shell.Ecs;
 using Game.UI.Shell.Contracts.Ecs;
 using NUnit.Framework;
 using Unity.Collections;
@@ -23,7 +24,7 @@ using UnityEngine;
 public static class M02EstablishBaseNarrativeTests
 {
     private const string PassMarker =
-        "[M02EstablishBaseNarrativeValidation] result=Passed tests=23";
+        "[M02EstablishBaseNarrativeValidation] result=Passed tests=25";
 
     [MenuItem("Game/Validation/Run M02 Establish Base Narrative Focused")]
     public static void RunFocusedValidation()
@@ -38,7 +39,9 @@ public static class M02EstablishBaseNarrativeTests
             DebriefClosesPostDaliaAndM03WarningSectorBeats();
             FinalSequencesBindReviewedPanelsAndEnglishVoice();
             PersianLocaleMatchesEveryFinalNarrativeLine();
+            FirstLaunchRebuildPreservesM02PersianLocaleExtensions();
             TutorialVoiceAssetsMatchEveryDisplayedInstruction();
+            ActivePersianUiLocaleSelectsPersianM02Speech();
             FinalComicDialogueRequiresItsPanelBinding();
             FinalComicDirectPanelPresentsImmediately();
             AuthoredComicDialogueStillRequiresItsPanel();
@@ -228,6 +231,22 @@ public static class M02EstablishBaseNarrativeTests
     }
 
     [Test]
+    public static void FirstLaunchRebuildPreservesM02PersianLocaleExtensions()
+    {
+        EnsureBuilt();
+        FirstLaunchNarrativeConfigBuilder.Build();
+        NarrativeLocaleConfig locale = AssetDatabase.LoadAssetAtPath<NarrativeLocaleConfig>(
+            M02EstablishBaseNarrativeLocaleBuilder.PersianLocalePath);
+        Assert.IsNotNull(locale);
+        Assert.AreEqual(9, locale.Text.Count(
+            entry => entry.Key.StartsWith("narrative.m02.", StringComparison.Ordinal)),
+            "Rebuilding first-launch data must not remove M2 Persian text.");
+        Assert.AreEqual(9, locale.Voices.Count(
+            entry => entry.LineId.StartsWith("m02-", StringComparison.Ordinal)),
+            "Rebuilding first-launch data must not remove M2 Persian voice bindings.");
+    }
+
+    [Test]
     public static void TutorialVoiceAssetsMatchEveryDisplayedInstruction()
     {
         M02TutorialNarrationAudioImporter.ValidateImports();
@@ -257,6 +276,74 @@ public static class M02EstablishBaseNarrativeTests
                 persian);
         }
         Assert.AreEqual(14, Count(catalog, "VO.ARIA.Tutorial.M02."));
+    }
+
+    [Test]
+    public static void ActivePersianUiLocaleSelectsPersianM02Speech()
+    {
+        EnsureBuilt();
+        GameLocalizationCatalog localizationCatalog =
+            AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(
+                V3UiLocalizationCatalogBuilder.CatalogPath);
+        NarrativeLocaleConfig persianLocale =
+            AssetDatabase.LoadAssetAtPath<NarrativeLocaleConfig>(
+                M02EstablishBaseNarrativeLocaleBuilder.PersianLocalePath);
+        AudioEventCatalogConfig audioCatalog =
+            AssetDatabase.LoadAssetAtPath<AudioEventCatalogConfig>(
+                AudioRuntimeConfigAssetBuilder.EventCatalogAssetPath);
+        Assert.IsNotNull(localizationCatalog);
+        Assert.IsNotNull(persianLocale);
+        Assert.IsNotNull(audioCatalog);
+
+        string previousLocale = GameLocalization.CurrentLocaleCode;
+        try
+        {
+            GameLocalization.Initialize(
+                localizationCatalog,
+                GameLocalization.PersianLocaleCode,
+                persist: false);
+
+            FirstLaunchNarrativeLanguage comicLanguage =
+                CampaignMissionNarrativeCompositionUtility.ReadLanguage();
+            Assert.AreEqual(FirstLaunchNarrativeLanguage.Persian, comicLanguage,
+                "M2 comic speech must follow the active Farsi UI locale.");
+
+            FirstLaunchNarrativePortraitVoiceSelectionPresentationSystemHelper voiceSelection = new();
+            voiceSelection.Reset(
+                null,
+                comicLanguage == FirstLaunchNarrativeLanguage.Persian ? persianLocale : null);
+            NarrativeDialogueLineRecord openingLine =
+                Sequence(M02EstablishBaseNarrativeConfigBuilder.BriefSequenceId).States[0].Lines[0];
+            AudioClip openingClip = voiceSelection.ResolveVoiceClip(openingLine);
+            Assert.IsNotNull(openingClip);
+            Assert.That(
+                AssetDatabase.GetAssetPath(openingClip),
+                Does.StartWith(M02EstablishBaseNarrativeVoiceImporter.PersianRoot + "/"),
+                "The first M2 comic line must resolve to its authored Farsi recording.");
+
+            FirstLaunchNarrativeLanguage tutorialLanguage =
+                UiShellEcsGateway.ResolveTutorialNarrationLanguage();
+            Assert.AreEqual(FirstLaunchNarrativeLanguage.Persian, tutorialLanguage,
+                "M2 tutorial speech must follow the same active Farsi UI locale.");
+            string tutorialEventId = UiShellEcsGateway.ResolveTutorialAudioEventId(
+                2,
+                9,
+                UiTutorialNarrationPhase.PrimaryAction,
+                tutorialLanguage).ToString();
+            Assert.AreEqual(AudioEventIds.VOARIATutorialM02OpenBuildFa, tutorialEventId);
+            AudioEventCatalogEntry tutorialEvent = audioCatalog.Events.Single(
+                entry => entry.EventId == tutorialEventId);
+            AudioClip tutorialClip = tutorialEvent.Clips.Single().Clip;
+            Assert.IsNotNull(tutorialClip);
+            Assert.AreEqual(
+                M02TutorialNarrationAudioImporter.StableClipPaths[7],
+                AssetDatabase.GetAssetPath(tutorialClip),
+                "The first M2 tutorial cue must resolve to its authored Farsi recording.");
+        }
+        finally
+        {
+            GameLocalization.Initialize(localizationCatalog, previousLocale, persist: false);
+        }
     }
 
     [Test]

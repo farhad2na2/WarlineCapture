@@ -248,16 +248,7 @@ namespace Game.Composition
              shellState.IsTransitionRunning == 0);
 
         internal static FirstLaunchNarrativeLanguage ReadLanguage()
-        {
-            PlayerProfileSaveData profile = SaveService.CreateDefault().LoadProfile();
-            return Enum.TryParse(
-                    profile?.firstLaunchLanguage,
-                    true,
-                    out FirstLaunchNarrativeLanguage language) &&
-                language == FirstLaunchNarrativeLanguage.Persian
-                    ? FirstLaunchNarrativeLanguage.Persian
-                    : FirstLaunchNarrativeLanguage.English;
-        }
+            => GameLocalization.ResolveNarrativeLanguage();
 
         internal static void LogStage(
             string status,

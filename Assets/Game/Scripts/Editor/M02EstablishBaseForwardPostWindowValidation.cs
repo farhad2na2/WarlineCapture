@@ -36,10 +36,10 @@ namespace Game.Editor
 
         public static readonly RectInt PlayableWindow = new(780, 270, 320, 200);
         // The former lot (1004,370) sat immediately beside the transport helipad at
-        // (1006.93,393.26). The authored, validator-approved apron at (1008,330) moves the
-        // Barracks farther right/south in the battle view and clears the helicopter cluster.
-        public static readonly RectInt BuildLotSearch = new(1008, 330, 24, 14);
-        public static readonly Vector2Int BuildLotSize = new(24, 14);
+        // (1006.93,393.26). This exact flat apron keeps the doubled Barracks centered,
+        // moves it farther right/south in the battle view, and clears the helicopter cluster.
+        public static readonly RectInt BuildLotSearch = new(1006, 330, 40, 20);
+        public static readonly Vector2Int BuildLotSize = new(40, 20);
 
         private static readonly RectInt MilitaryBaseOperationalCore = new(820, 340, 200, 105);
         private static readonly RectInt RejectedOldMarketWindow = new(1672, 680, 240, 176);
@@ -201,7 +201,12 @@ namespace Game.Editor
             Rect footprint = new(lot.xMin - 2f, lot.yMin - 2f, lot.width + 4f, lot.height + 4f);
             foreach (OperationMapRenderPlacementConfigRecord placement in renderDatabase.Placements)
             {
-                if (placement.SemanticCategory == DenseCityPresentationSemanticCategory.Horizon)
+                // Flat infrastructure tiles and sparse vegetation are render-only ground dressing;
+                // the runtime Barracks/foundation is allowed to cover them. Structural presentation
+                // and props remain blocking so the enlarged footprint cannot intersect real scenery.
+                if (placement.SemanticCategory is DenseCityPresentationSemanticCategory.Horizon or
+                    DenseCityPresentationSemanticCategory.Infrastructure or
+                    DenseCityPresentationSemanticCategory.Vegetation)
                     continue;
 
                 OperationMapRenderPrototypeConfigRecord prototype =

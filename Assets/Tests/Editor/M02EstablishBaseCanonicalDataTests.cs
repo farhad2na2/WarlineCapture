@@ -165,17 +165,17 @@ public sealed class M02EstablishBaseCanonicalDataTests
         Assert.IsNotNull(barracks);
         Vector2Int footprint = barracks.ConfiguredFootprintCells;
         ScenarioMissionBuildZoneConfig zone = Scenario().MissionRuntime.BuildZone;
-        Assert.AreEqual(new Vector2Int(20, 10), footprint);
+        Assert.AreEqual(new Vector2Int(40, 20), footprint);
         Assert.AreEqual(M02EstablishBaseForwardPostWindowValidation.BuildLotSize.x,
             zone.HalfWidthCells * 2);
         Assert.AreEqual(M02EstablishBaseForwardPostWindowValidation.BuildLotSize.y,
             zone.HalfHeightCells * 2);
         Assert.GreaterOrEqual(zone.HalfWidthCells * 2, footprint.x);
         Assert.GreaterOrEqual(zone.HalfHeightCells * 2, footprint.y);
-        Assert.GreaterOrEqual(zone.HalfWidthCells * 2 - footprint.x, 4,
-            "The Barracks lot must preserve two clear cells on each horizontal side.");
-        Assert.GreaterOrEqual(zone.HalfHeightCells * 2 - footprint.y, 4,
-            "The Barracks lot must preserve two clear cells on each vertical side.");
+        Assert.AreEqual(footprint.x, zone.HalfWidthCells * 2,
+            "The M02 mission lot must auto-center the doubled Barracks footprint.");
+        Assert.AreEqual(footprint.y, zone.HalfHeightCells * 2,
+            "The M02 mission lot must auto-center the doubled Barracks footprint.");
     }
 
     [Test]

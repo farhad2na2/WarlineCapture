@@ -20,7 +20,7 @@ public sealed class M02EstablishBasePlacementTests
     private const string MapId = "opmap.ch01.forward_post_01";
     private const string BarracksId = "Building_Barrack";
     private const string BuildAnchorId = "anchor.ch01.m02.build_lot";
-    private static readonly Vector2Int CanonicalBarracksFootprint = new(8, 14);
+    private static readonly Vector2Int CanonicalBarracksFootprint = new(40, 20);
     private static RectInt CanonicalLot =>
         M02EstablishBaseForwardPostWindowValidation.ValidateCurrentDefinition();
 
@@ -126,13 +126,7 @@ public sealed class M02EstablishBasePlacementTests
     public void BarracksInsideCanonicalLotIsAccepted()
     {
         using Fixture fixture = new();
-        RectInt lot = CanonicalLot;
         Assert.IsTrue(fixture.IsAllowed(CanonicalPlacement));
-        Assert.IsTrue(fixture.IsAllowed(new RectInt(
-            lot.xMin + 1,
-            lot.yMin,
-            CanonicalBarracksFootprint.x,
-            CanonicalBarracksFootprint.y)));
     }
 
     [Test]
@@ -143,7 +137,7 @@ public sealed class M02EstablishBasePlacementTests
             CanonicalBarracksFootprint,
             out Vector2Int origin));
         Assert.AreEqual(CanonicalPlacement.position, origin);
-        Assert.AreEqual(new Vector2Int(1016, 330), origin);
+        Assert.AreEqual(new Vector2Int(1006, 330), origin);
     }
 
     [Test]
@@ -265,8 +259,8 @@ public sealed class M02EstablishBasePlacementTests
                 mission.BuildZone = new CampaignMissionBuildZoneBlob
                 {
                     AnchorId = BuildAnchorId,
-                    HalfWidthCells = 12,
-                    HalfHeightCells = 7
+                    HalfWidthCells = M02EstablishBaseForwardPostWindowValidation.BuildLotSize.x / 2,
+                    HalfHeightCells = M02EstablishBaseForwardPostWindowValidation.BuildLotSize.y / 2
                 };
                 BlobBuilderArray<CampaignMissionBuildEntryBlob> entries =
                     builder.Allocate(ref mission.BuildCatalog, 1);
@@ -317,7 +311,7 @@ public sealed class M02EstablishBasePlacementTests
                             0f,
                             canonicalLot.center.y + 0.5f),
                         Rotation = quaternion.identity,
-                        Radius = 12f,
+                        Radius = Mathf.Max(canonicalLot.width, canonicalLot.height) * 0.5f,
                         FactionId = 1,
                         LaneIndex = -1
                     };

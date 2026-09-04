@@ -128,8 +128,8 @@ MonoBehaviour:
     baseAnchorId: anchor.ch01.m02.forward_post
     buildZone:
       anchorId: anchor.ch01.m02.build_lot
-      halfWidthCells: 12
-      halfHeightCells: 7
+      halfWidthCells: 20
+      halfHeightCells: 10
     delayedWave:
       unitGroupId: group.ch01.m02.hostile_patrol
       routeId: route.ch01.m02.hostile_patrol

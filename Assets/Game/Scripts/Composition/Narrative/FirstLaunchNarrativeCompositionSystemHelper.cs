@@ -25,6 +25,7 @@ namespace Game.Composition
         private readonly FirstLaunchNarrativeShellCompositionSystemHelper shellComposition = new();
         private readonly FirstLaunchNarrativeReviewPresentationSystemHelper reviewPresentation = new();
         private NarrativeSequenceView view;
+        private UIShellView shellView;
         private FirstLaunchLanguageChoiceView languageChoiceView;
         private NarrativeSequenceConfig sequenceConfig;
         private NarrativeSpeakerCatalog speakerCatalog;
@@ -57,7 +58,8 @@ namespace Game.Composition
             bool bypassForDiagnostics,
             bool startInReviewerMode = false,
             FirstLaunchLanguageChoiceView configuredLanguageChoiceView = null,
-            NarrativeLocaleConfig configuredPersianLocale = null)
+            NarrativeLocaleConfig configuredPersianLocale = null,
+            UIShellView configuredShellView = null)
         {
             if (initialized)
                 return ResolveCurrentDisposition();
@@ -73,6 +75,7 @@ namespace Game.Composition
                     NarrativeRouteRole.GuidanceChoice));
             SynchronizeUiLocale(profileComposition.Language);
             view = sequenceView;
+            shellView = configuredShellView;
             languageChoiceView = configuredLanguageChoiceView;
             sequenceConfig = config;
             speakerCatalog = speakers;
@@ -98,9 +101,7 @@ namespace Game.Composition
 
             if (profileComposition.ShouldResumeHandoff(startInReviewerMode))
             {
-                // A resumed handoff has no current narrative panel to render. Keep the
-                // cleared narrative layer hidden and let the shell loading curtain own
-                // this transition; otherwise the panel Image falls back to solid white.
+                // Resumed handoffs show loading without exposing an empty comic panel.
                 view?.SetVisible(false);
                 languageChoiceView?.SetVisible(false);
                 BeginMissionHandoff(0);
@@ -157,7 +158,8 @@ namespace Game.Composition
                 bypassForDiagnostics,
                 startInReviewerMode,
                 menuView.FirstLaunchLanguageChoiceView,
-                menuView.FirstLaunchPersianLocale);
+                menuView.FirstLaunchPersianLocale,
+                menuView.ShellView);
             shellComposition.SetStartupDisposition(disposition);
         }
 
@@ -215,8 +217,8 @@ namespace Game.Composition
             skipConfirmationReviewerStateId = string.Empty;
             view?.SkipConfirmationView?.SetVisible(false);
             SkipConfirmationVisibilityChanged?.Invoke(false);
-            sequencePresentation.Cancel();
             BeginMissionHandoff(0);
+            sequencePresentation.Cancel();
         }
 
         public void CancelSkip()
@@ -251,6 +253,7 @@ namespace Game.Composition
             skipConfirmationReviewerStateId = string.Empty;
             shellComposition.Reset();
             view = null;
+            shellView = null;
             languageChoiceView = null;
             sequenceConfig = null;
             speakerCatalog = null;
@@ -470,12 +473,11 @@ namespace Game.Composition
 
         private void BeginMissionHandoff(ulong transitionToken)
         {
+            shellView?.PrepareLoadingHandoff(UIRoute.Match);
+            view?.SetVisible(false);
             missionHandoff = profileComposition.PrepareMissionHandoff(transitionToken);
             missionHandoffActive = true; missionHandoffPublished = false; missionHandoffRejections = 0;
             shellComposition.RequestHandoff();
-            // Do not re-show NarrativeSequenceView here. A production skip clears its
-            // panel before requesting this handoff, so making it visible produces a
-            // full-screen white Image above the real loading presentation.
         }
 
         private FirstLaunchNarrativeStartupDisposition ResolveCurrentDisposition()

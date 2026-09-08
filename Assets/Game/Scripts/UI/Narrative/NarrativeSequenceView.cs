@@ -54,6 +54,7 @@ namespace Game.UI.Runtime
             if (panelImage != null)
             {
                 panelImage.sprite = model.PanelSprite;
+                panelImage.enabled = model.PanelSprite != null;
                 panelImage.color = model.Tint.a <= 0f ? Color.white : model.Tint;
                 if (panelAspectFitter != null && model.PanelSprite != null && model.PanelSprite.rect.height > 0f)
                     panelAspectFitter.aspectRatio = model.PanelSprite.rect.width / model.PanelSprite.rect.height;
@@ -63,7 +64,10 @@ namespace Game.UI.Runtime
         public void ClearPanel()
         {
             if (panelImage != null)
+            {
+                panelImage.enabled = false;
                 panelImage.sprite = null;
+            }
         }
 
         public void ApplyLocation(in NarrativeLocationPresentationModel model)

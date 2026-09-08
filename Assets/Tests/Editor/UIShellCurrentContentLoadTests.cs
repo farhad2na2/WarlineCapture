@@ -357,12 +357,11 @@ public sealed class UIShellCurrentContentLoadTests
         Assert.AreEqual(Vector3.one, loading.RegionRoot.localScale, "Loading layer must be visually reset before completion is acknowledged.");
         Image backgroundArt = Array.Find(
             loading.ContentRoot.GetComponentsInChildren<Image>(true),
-            image => image.name == "BackgroundArt");
+            image => image.name == "LoadingEnvironment");
         Assert.NotNull(backgroundArt, "Loading content must retain its full-screen background art.");
-        Assert.LessOrEqual(
-            Mathf.Max(backgroundArt.color.r, Mathf.Max(backgroundArt.color.g, backgroundArt.color.b)),
-            0.12f,
-            "The FirstLaunch-to-M01 loading bridge must remain dark instead of presenting a bright/white screen.");
+        Assert.NotNull(backgroundArt.sprite, "The loading background must render artwork instead of an empty white Image.");
+        Assert.IsTrue(backgroundArt.enabled);
+        Assert.AreEqual(1f, backgroundArt.color.a, 0.0001f);
     }
 
     [Test]

@@ -17,6 +17,186 @@ using UnityEngine.UI;
 
 public sealed class FirstLaunchNarrativeMenuIntegrationTests
 {
+    public static void RunLoadingHandoffValidation()
+    {
+        try
+        {
+            FirstLaunchNarrativeMenuIntegrationTests tests = new();
+            for (int profileKind = 0; profileKind < 3; profileKind++)
+            {
+                tests.SkipAndResume_ShowLoadingBeforeAnyShellTick(profileKind, false);
+                tests.SkipAndResume_ShowLoadingBeforeAnyShellTick(profileKind, true);
+            }
+            tests.ClearedPanel_CannotRenderWhiteAndCanDisplayNextComic();
+            new UIShellCurrentContentLoadTests().ShowLoadingCommandCompletesImmediatelyWithoutCoroutineScheduling();
+            Debug.Log("[FirstLaunchLoadingHandoffValidation] result=Passed tests=8");
+            tests.SkipConfirmation_UsesV3ChromeAndPersianLocalization();
+            using (new LoadingLocaleScope(false))
+            {
+                tests.FreshProfile_SkipRequiresLiveConfirmationAndPublishesOneHandoff();
+                tests.CompletedAndPendingProfiles_SelectCorrectStartupDisposition();
+                tests.CommittedIdentity_SkipRoutesDirectlyAndPreservesSelection();
+            }
+            Debug.Log("[FirstLaunchLoadingHandoffRegressionValidation] result=Passed tests=12");
+            ValidationExit.Passed();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.Log("[FirstLaunchLoadingHandoffValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
+    [TestCase(0, false), TestCase(0, true)]
+    [TestCase(1, false), TestCase(1, true)]
+    [TestCase(2, false), TestCase(2, true)]
+    public void SkipAndResume_ShowLoadingBeforeAnyShellTick(int profileKind, bool persian)
+    {
+        using LoadingLocaleScope locale = new(persian);
+        EditorSceneManager.OpenScene(FirstLaunchNarrativeMenuSceneInstaller.MenuScenePath, OpenSceneMode.Single);
+        MenuBootstrapView bootstrap = UnityEngine.Object.FindAnyObjectByType<MenuBootstrapView>(FindObjectsInactive.Include);
+        Assert.NotNull(bootstrap);
+        UIShellView shell = bootstrap.ShellView;
+        Assert.IsTrue(shell.TryGetRegion(UIShellRegionId.LoadingLayer, out UIShellRegionView loading));
+        loading.CanvasGroup.alpha = 0f;
+        loading.RegionRoot.localScale = Vector3.zero;
+        PlayerProfileSaveData profile = new()
+        {
+            firstLaunchLanguage = persian ? "Persian" : "English",
+            firstLaunchStatus = profileKind == 2 ? FirstLaunchProfileState.HandoffPending : FirstLaunchProfileState.InProgress,
+            firstLaunchCommanderCallsign = profileKind == 1 ? "NIGHTFALL" : string.Empty,
+            firstLaunchLastCompletedStateId = profileKind == 1 ? "first_launch.commander_identity" : string.Empty
+        };
+        using Context context = CreateContext(profile);
+        bootstrap.FirstLaunchNarrativeView.SetVisible(false);
+        context.Instance.transform.SetParent(bootstrap.UiCanvas.transform, false);
+        context.Helper.Initialize(context.Sequence, context.Speakers, context.Punctuation, context.View,
+            Game.UI.Contracts.FallbackGameTextResolver.Instance, context.SaveService, false,
+            configuredPersianLocale: context.PersianLocale, configuredShellView: shell);
+        if (profileKind != 2)
+        {
+            Button skip = Array.Find(context.Instance.GetComponentsInChildren<Button>(true), button => button.name == "SkipButton");
+            Assert.NotNull(skip);
+            skip.onClick.Invoke();
+            if (context.Helper.IsSkipConfirmationPending)
+            {
+                Assert.AreEqual(0f, loading.CanvasGroup.alpha, "Opening confirmation must not begin loading.");
+                context.Helper.CancelSkip();
+                Assert.AreEqual(0f, loading.CanvasGroup.alpha, "Cancel must keep the comic active.");
+                skip.onClick.Invoke();
+                context.Helper.ConfirmSkip();
+            }
+        }
+        // Deliberately do not Tick the composition, ECS flow or shell presenter:
+        // the user's skip callback must already have an opaque, populated loading view.
+        Assert.AreEqual(1f, loading.CanvasGroup.alpha);
+        Assert.AreEqual(Vector3.one, loading.RegionRoot.localScale);
+        Assert.IsTrue(loading.CanvasGroup.blocksRaycasts);
+        Assert.Greater(loading.ContentRoot.childCount, 0, "A curtain alone is not a loading screen.");
+        Assert.NotNull(loading.ContentRoot.GetComponentInChildren<UIShellLoadingProgressView>(true));
+        Assert.AreEqual(0f, context.View.GetComponent<CanvasGroup>().alpha);
+        Assert.IsFalse(context.View.GetComponent<CanvasGroup>().blocksRaycasts);
+        Assert.AreEqual(FirstLaunchProfileState.HandoffPending, context.SaveService.LoadProfile().firstLaunchStatus);
+        if (profileKind == 0)
+            CaptureImmediateLoadingFrame(bootstrap, persian);
+    }
+
+    private static void CaptureImmediateLoadingFrame(MenuBootstrapView bootstrap, bool persian)
+    {
+        Canvas canvas = bootstrap.UiCanvas;
+        RenderMode previousMode = canvas.renderMode;
+        Camera previousCamera = canvas.worldCamera;
+        float previousDistance = canvas.planeDistance;
+        RenderTexture previousTarget = RenderTexture.active;
+        GameObject cameraObject = new("ImmediateLoadingCaptureCamera", typeof(Camera));
+        RenderTexture target = new(1920, 1080, 24, RenderTextureFormat.ARGB32);
+        Texture2D frame = new(1920, 1080, TextureFormat.RGBA32, false);
+        try
+        {
+            Camera camera = cameraObject.GetComponent<Camera>();
+            camera.clearFlags = CameraClearFlags.SolidColor;
+            camera.backgroundColor = Color.magenta;
+            camera.orthographic = true;
+            camera.transform.position = new Vector3(0f, 0f, -10f);
+            camera.targetTexture = target;
+            canvas.renderMode = RenderMode.ScreenSpaceCamera;
+            canvas.worldCamera = camera;
+            canvas.planeDistance = 1f;
+            Canvas.ForceUpdateCanvases();
+            camera.Render();
+            RenderTexture.active = target;
+            frame.ReadPixels(new Rect(0, 0, 1920, 1080), 0, 0);
+            frame.Apply(false);
+            Color32[] pixels = frame.GetPixels32();
+            int white = 0, uncovered = 0;
+            foreach (Color32 pixel in pixels)
+            {
+                if (pixel.r > 240 && pixel.g > 240 && pixel.b > 240) white++;
+                if (pixel.r > 240 && pixel.g < 20 && pixel.b > 240) uncovered++;
+            }
+            string path = Path.Combine(Path.GetTempPath(), $"warline-immediate-loading-{(persian ? "fa" : "en")}.png");
+            File.WriteAllBytes(path, frame.EncodeToPNG());
+            Assert.Less(white, pixels.Length / 20, "Loading must not render a white screen.");
+            Assert.Less(uncovered, pixels.Length / 20, "Loading must cover the camera background.");
+            Debug.Log($"[FirstLaunchLoadingFrame] locale={(persian ? "fa" : "en")} whitePixels={white} uncoveredPixels={uncovered} path={path}");
+        }
+        finally
+        {
+            canvas.renderMode = previousMode;
+            canvas.worldCamera = previousCamera;
+            canvas.planeDistance = previousDistance;
+            RenderTexture.active = previousTarget;
+            UnityEngine.Object.DestroyImmediate(cameraObject);
+            UnityEngine.Object.DestroyImmediate(frame);
+            target.Release();
+            UnityEngine.Object.DestroyImmediate(target);
+        }
+    }
+
+    private sealed class LoadingLocaleScope : IDisposable
+    {
+        private readonly bool hadPreference = PlayerPrefs.HasKey(GameLocalization.LocalePreferenceKey);
+        private readonly string previousPreference = PlayerPrefs.GetString(GameLocalization.LocalePreferenceKey);
+        private readonly string previousLocale = GameLocalization.CurrentLocaleCode;
+
+        public LoadingLocaleScope(bool persian)
+        {
+            string locale = persian ? GameLocalization.PersianLocaleCode : GameLocalization.EnglishLocaleCode;
+            PlayerPrefs.SetString(GameLocalization.LocalePreferenceKey, locale);
+            GameLocalization.Initialize(AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(
+                V3UiLocalizationCatalogBuilder.CatalogPath), locale, persist: false);
+        }
+
+        public void Dispose()
+        {
+            if (hadPreference) PlayerPrefs.SetString(GameLocalization.LocalePreferenceKey, previousPreference);
+            else PlayerPrefs.DeleteKey(GameLocalization.LocalePreferenceKey);
+            GameLocalization.SetLocale(previousLocale, persist: false);
+        }
+    }
+
+    [Test]
+    public void ClearedPanel_CannotRenderWhiteAndCanDisplayNextComic()
+    {
+        using Context context = CreateContext(new PlayerProfileSaveData());
+        Image image = new SerializedObject(context.View).FindProperty("panelImage").objectReferenceValue as Image;
+        Assert.NotNull(image);
+        Sprite panel = Sprite.Create(Texture2D.blackTexture, new Rect(0, 0, 1, 1), Vector2.zero);
+        try
+        {
+            context.View.ApplyPanel(new NarrativePanelPresentationModel { PanelSprite = panel, Tint = Color.white });
+            Assert.IsTrue(image.enabled);
+            context.View.ClearPanel();
+            context.View.SetVisible(true);
+            Assert.IsNull(image.sprite);
+            Assert.IsFalse(image.enabled, "Even a re-shown narrative root must not draw an empty white Image.");
+            context.View.ApplyPanel(new NarrativePanelPresentationModel { PanelSprite = panel, Tint = Color.white });
+            Assert.IsTrue(image.enabled, "A later briefing/debrief must restore its actual panel.");
+        }
+        finally { UnityEngine.Object.DestroyImmediate(panel); }
+    }
+
     public static void RunFocusedValidation()
     {
         try

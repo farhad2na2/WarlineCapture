@@ -129,6 +129,16 @@ namespace Game.UI.Runtime
             }
         }
 
+        public void PrepareLoadingHandoff(UIRoute route)
+        {
+            contentSystem?.PrepareForCommandSequence(new[]
+            {
+                new UiShellPresentationCommandModel(UiShellCommandKind.ShowLoading,
+                    UiShellRegionId.LoadingLayer, route, UiShellMode.Loading, 0)
+            });
+            ShowLoadingImmediately(route);
+        }
+
         private void AddShowLoadingSteps(UIRoute route, int transitionId, List<UIMotionStep> steps)
         {
             ShowLoadingImmediately(route);

@@ -177,6 +177,7 @@ public sealed class M02EstablishBaseResourceTests
                 entityManager.GetComponentData<CampaignMissionAttemptResourceInitializationComponent>(root);
             Assert.AreEqual(0, pending.Applied);
             Assert.AreEqual(1, pending.AttemptOrdinal);
+            entityManager.SetComponentData(root, new CampaignMissionAttemptFactsComponent { CommandSquadSpawned = 1 });
             UpdateResources(world);
             Assert.AreEqual(StartingCredits, entityManager.GetComponentData<FactionEconomy>(resources).Money);
             Assert.AreEqual(StartingMaterials, entityManager.GetComponentData<
@@ -266,7 +267,7 @@ public sealed class M02EstablishBaseResourceTests
             Assert.AreEqual("Materials", materialsLabel.text);
             Assert.AreEqual("120/120", materialsValue.text);
             Assert.AreEqual("Credits", creditsLabel.text);
-            Assert.AreEqual("#55K", creditsValue.text);
+            Assert.AreEqual("55K", creditsValue.text);
             Assert.AreEqual("120/120", world.EntityManager.GetComponentData<
                 UiMatchHudHeaderComponent>(boundary).MaterialsText.ToString());
         }
@@ -456,6 +457,9 @@ public sealed class M02EstablishBaseResourceTests
             SessionToken = "m02-resource-attempt",
             AttemptOrdinal = 0
         });
+        entityManager.SetComponentData(root, new CampaignMissionAttemptFactsComponent { CommandSquadSpawned = 1 });
+        entityManager.SetComponentData(entityManager.CreateEntity(typeof(RuntimeGameplayStateComponent)),
+            new RuntimeGameplayStateComponent { PlayRequested = 1 });
         return world;
     }
 

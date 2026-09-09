@@ -39,27 +39,45 @@ namespace Game.Runtime
             _smoothFocusTimeSeconds = 0f;
         }
 
-        public Vector3 UpdateSmoothFocus(Vector3 currentGroundCenter, float smoothTime)
+        public Vector3 UpdateSmoothFocus(Vector3 currentGroundCenter, float smoothTime, Camera worldCamera = null)
         {
             if (!HasSmoothFocusTarget)
                 return currentGroundCenter;
 
+            // A point can be inside the map while its camera viewport extends outside it.
+            // Settle against the reachable center, otherwise boundary clamping fights smoothing forever.
+            Vector3 reachableTarget = ClampFocusToCameraFootprint(worldCamera, SmoothFocusTarget);
             Vector3 smoothedCenter = Vector3.SmoothDamp(
                 currentGroundCenter,
-                SmoothFocusTarget,
+                reachableTarget,
                 ref _smoothFocusVelocity,
                 Mathf.Max(0.01f,
                     _smoothFocusTimeSeconds > 0f ? _smoothFocusTimeSeconds : smoothTime));
 
             Vector2 remaining = new(
-                SmoothFocusTarget.x - smoothedCenter.x,
-                SmoothFocusTarget.z - smoothedCenter.z);
-            if (remaining.sqrMagnitude > SmoothFocusCompletionDistanceSq)
+                reachableTarget.x - smoothedCenter.x,
+                reachableTarget.z - smoothedCenter.z);
+            if (remaining.sqrMagnitude > SmoothFocusCompletionDistanceSq ||
+                (worldCamera != null && HasSmoothPerspectiveTarget))
                 return smoothedCenter;
 
-            smoothedCenter = SmoothFocusTarget;
+            smoothedCenter = reachableTarget;
             ClearSmoothFocusTarget();
             return smoothedCenter;
+        }
+
+        internal Vector3 ClampFocusToCameraFootprint(Camera worldCamera, Vector3 target)
+        {
+            if (!_hasGroundBoundary || worldCamera == null || !TryGetCameraGroundBounds(worldCamera, out Rect footprint))
+                return target;
+            Vector3 center = GetCameraGroundCenterWorld(worldCamera);
+            float minX = _groundBoundary.xMin + center.x - footprint.xMin;
+            float maxX = _groundBoundary.xMax + center.x - footprint.xMax;
+            float minZ = _groundBoundary.yMin + center.z - footprint.yMin;
+            float maxZ = _groundBoundary.yMax + center.z - footprint.yMax;
+            target.x = minX <= maxX ? Mathf.Clamp(target.x, minX, maxX) : (minX + maxX) * .5f;
+            target.z = minZ <= maxZ ? Mathf.Clamp(target.z, minZ, maxZ) : (minZ + maxZ) * .5f;
+            return target;
         }
 
         public void SetSmoothPerspectiveTarget(

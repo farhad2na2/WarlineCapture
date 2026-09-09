@@ -1085,7 +1085,8 @@ public sealed class TransportBoardingScenarioLabTests
             Assert.AreEqual(1, results.Length);
             Assert.AreEqual(0, results[0].Accepted);
             Assert.AreEqual((int)TacticalCommandReasonCode.CommandUnavailable, results[0].ReasonCode);
-            Assert.AreEqual("Parachute visual missing.", results[0].Message.ToString());
+            Assert.AreEqual(Game.Configs.GameLocalization.CurrentLocaleCode=="fa-IR"
+                ? "نمایش بصری چتر نجات موجود نیست." : "Parachute visual missing.", results[0].Message.ToString());
             Assert.IsFalse(em.HasComponent<UnitTransportAirdropRequest>(transport));
             Assert.AreEqual(1, em.GetBuffer<UnitTransportPassengerElement>(transport).Length);
         }

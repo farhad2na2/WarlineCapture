@@ -17,6 +17,8 @@ namespace Game.Runtime
                 createBuildingRuntimeContextSource(source, interactionContext, markerPropertyBlock);
             source.BuildingRuntimeProcessingCompositionSystemHelper.ConfigureDeleteBuildingById(
                 runtimeSource.DeleteBuildingById);
+            source.BuildingRuntimeProcessingCompositionSystemHelper.ConfigureAttemptCleanup(
+                id=>runtimeSource.RuntimeEntitySystem.FinalizeBuildingRemoval(runtimeSource.RuntimeEntityContext,id));
             return new BuildingRuntimePublishCompositionSystemHelper.Context(
                 source.BuildingEntityManagerAccessSystem.TryGetEntityManager,
                 source.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries,

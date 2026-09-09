@@ -116,6 +116,7 @@ namespace Game.Runtime
 
             foreach (var (weaponRef, healthRef, factionRef, transformRef, traceRef, slots, entity) in
                      SystemAPI.Query<RefRO<BuildingDefenseWeapon>, RefRO<UnitHealth>, RefRO<Faction>, RefRO<LocalTransform>, RefRW<UnitAttackTraceComponent>, DynamicBuffer<BuildingDefenseAttackSlot>>()
+                         .WithNone<CampaignMissionDormantMapDefenseTag>()
                          .WithAll<RuntimeBuildingCombatTag>()
                          .WithEntityAccess())
             {
@@ -512,18 +513,13 @@ namespace Game.Runtime
             }
         }
 
-        private static Entity ResolveTargetForSlot(int slotIndex, Entity target0, Entity target1, Entity target2, Entity target3)
+        private static Entity ResolveTargetForSlot(int slotIndex, Entity target0, Entity target1, Entity target2, Entity target3) => slotIndex switch
         {
-            Entity selected = slotIndex switch
-            {
-                0 => target0,
-                1 => target1,
-                2 => target2,
-                3 => target3,
-                _ => Entity.Null
-            };
+            1 when target1 != Entity.Null => target1,
+            2 when target2 != Entity.Null => target2,
+            3 when target3 != Entity.Null => target3,
+            _ => target0
+        };
 
-            return selected != Entity.Null ? selected : target0;
-        }
     }
 }

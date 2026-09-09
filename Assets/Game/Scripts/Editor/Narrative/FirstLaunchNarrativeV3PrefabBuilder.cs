@@ -61,6 +61,15 @@ namespace Game.Editor
             Debug.Log("[FirstLaunchNarrativeV3PrefabBuilder] result=Passed screens=5 layout=1672x941 gradients=procedural borders=3 atlases=shared");
         }
 
+        public static void RefreshComicSubtitleLayout()
+        {
+            LoadDependencies();
+            RestyleNarrativeSequence();
+            AssetDatabase.SaveAssets();
+            Validate();
+            Debug.Log("[FirstLaunchNarrativeV3PrefabBuilder] result=Passed responsive subtitle layout");
+        }
+
         [MenuItem("Game/UI/V3/Validate First Launch V3 Final")]
         public static void Validate()
         {
@@ -444,11 +453,11 @@ namespace Game.Editor
                 RectTransform safeArea = root.transform.Find("SafeArea") as RectTransform;
                 if (safeArea == null)
                     throw new UnityException("First Launch narrative prefab is missing SafeArea.");
-                string[] replaced = { "Dialogue", "LocationIntroduction", "PlaybackControls", "CommanderIdentitySurface", "GuidanceChoiceSurface", "SkipConfirmationSurface" };
+                string[] replaced = { "Dialogue", "LocationIntroduction", "ComicTimeline", "PlaybackControls", "CommanderIdentitySurface", "GuidanceChoiceSurface", "SkipConfirmationSurface" };
                 foreach (string childName in replaced)
                 {
-                    Transform child = safeArea.Find(childName);
-                    if (child != null)
+                    Transform child;
+                    while ((child = safeArea.Find(childName)) != null)
                         Object.DestroyImmediate(child.gameObject);
                 }
                 Stretch(safeArea);
@@ -672,7 +681,7 @@ namespace Game.Editor
         {
             // Keep the panel's bottom edge aligned to the 941px reference canvas,
             // but grow it upward so long speaker identities never collide with the
-            // subtitle row. This is intentionally an authored fixed height at runtime.
+            // subtitle row. Large subtitle preferences expand this authored card upward.
             RectTransform root = CreateTopLeft("Dialogue", parent, 10f, 646f, 1652f, 285f);
             CanvasGroup group = root.gameObject.AddComponent<CanvasGroup>();
             NarrativeDialogueView view = root.gameObject.AddComponent<NarrativeDialogueView>();
@@ -755,11 +764,19 @@ namespace Game.Editor
             serializedView.FindProperty("useAuthoredHeight").boolValue = true;
             serializedView.FindProperty("authoredFontScale").floatValue = 0.6f;
             serializedView.ApplyModifiedPropertiesWithoutUndo();
+            view.ConfigureAuthoredCaptionLayout(
+                new[] { root, frame.rectTransform, body, next, line.rectTransform },
+                new[] { RequireRect(root, "VoiceTrack"), RequireRect(root, "VoiceFill"), RequireRect(root, "Icon"), nextLabel.rectTransform });
             return view;
         }
 
         private static void ValidateComicDialogueChrome(GameObject narrative)
         {
+            int timelines = 0;
+            foreach (Transform child in narrative.transform.Find("SafeArea"))
+                if (child.name == "ComicTimeline") timelines++;
+            if (timelines != 1)
+                throw new UnityException("First Launch V3 must contain exactly one comic progress header.");
             RectTransform dialogue = narrative.transform.Find("SafeArea/Dialogue") as RectTransform;
             if (dialogue == null || dialogue.sizeDelta.y < 285f)
                 throw new UnityException("First Launch V3 dialogue tile must retain the expanded 285px authored height.");

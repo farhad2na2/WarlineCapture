@@ -1,0 +1,400 @@
+{
+    "scope": "Actual live main-thread Unity raw Profiler samples in four combat phases, 210 frames per window; no double system updates. Includes EditorOnly allocations. This is allocation attribution, not a timing benchmark. A real 8192-byte allocation inside a player-loop marker validates each window.",
+    "valid": true,
+    "phases": [
+        {
+            "elapsedMilliseconds": 21910,
+            "frames": 211,
+            "positiveControlBytes": 8224,
+            "totalMainThreadBytes": 4318070,
+            "owners": [
+                {
+                    "name": "ThreatDetectionWarningSystem",
+                    "samples": 235,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "ThreatWarningResolveSystem",
+                    "samples": 210,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "CampaignMissionGuidanceProjectionSystem",
+                    "samples": 210,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "CampaignMissionPatrolOrderSystem",
+                    "samples": 210,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "RadarPingRequestSystem",
+                    "samples": 210,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "MissionDefenseInteractionSystem",
+                    "samples": 210,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "M03RadioReportProjectionSystem",
+                    "samples": 210,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "UiCampaignMissionProjectionSystem",
+                    "samples": 210,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "CampaignMissionObjectiveProjectionSystem",
+                    "samples": 210,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "CampaignMissionAttemptFactProjectionSystem",
+                    "samples": 210,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "MissionDefenseHudView.Update",
+                    "samples": 420,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                }
+            ]
+        },
+        {
+            "elapsedMilliseconds": 66840,
+            "frames": 210,
+            "positiveControlBytes": 8224,
+            "totalMainThreadBytes": 6228648,
+            "owners": [
+                {
+                    "name": "ThreatDetectionWarningSystem",
+                    "samples": 233,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "ThreatWarningResolveSystem",
+                    "samples": 209,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "CampaignMissionGuidanceProjectionSystem",
+                    "samples": 209,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "CampaignMissionPatrolOrderSystem",
+                    "samples": 209,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "RadarPingRequestSystem",
+                    "samples": 209,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "MissionDefenseInteractionSystem",
+                    "samples": 209,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "M03RadioReportProjectionSystem",
+                    "samples": 209,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "UiCampaignMissionProjectionSystem",
+                    "samples": 209,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "CampaignMissionObjectiveProjectionSystem",
+                    "samples": 209,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "CampaignMissionAttemptFactProjectionSystem",
+                    "samples": 209,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "MissionDefenseHudView.Update",
+                    "samples": 418,
+                    "allocatedSamples": 7,
+                    "bytes": 5908,
+                    "maxBytes": 844,
+                    "allocationContexts": [
+                        "48 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 64 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 48 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 64 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 68 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]",
+                        "48 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 64 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 48 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 64 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 68 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]",
+                        "48 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 64 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 48 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 64 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 68 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]",
+                        "48 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 64 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 48 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 64 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 68 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]"
+                    ]
+                }
+            ]
+        },
+        {
+            "elapsedMilliseconds": 116606,
+            "frames": 210,
+            "positiveControlBytes": 8224,
+            "totalMainThreadBytes": 5451764,
+            "owners": [
+                {
+                    "name": "ThreatDetectionWarningSystem",
+                    "samples": 227,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "ThreatWarningResolveSystem",
+                    "samples": 209,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "CampaignMissionGuidanceProjectionSystem",
+                    "samples": 209,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "CampaignMissionPatrolOrderSystem",
+                    "samples": 209,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "RadarPingRequestSystem",
+                    "samples": 209,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "MissionDefenseInteractionSystem",
+                    "samples": 209,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "M03RadioReportProjectionSystem",
+                    "samples": 209,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "UiCampaignMissionProjectionSystem",
+                    "samples": 209,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "CampaignMissionObjectiveProjectionSystem",
+                    "samples": 209,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "CampaignMissionAttemptFactProjectionSystem",
+                    "samples": 209,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "MissionDefenseHudView.Update",
+                    "samples": 418,
+                    "allocatedSamples": 6,
+                    "bytes": 4830,
+                    "maxBytes": 818,
+                    "allocationContexts": [
+                        "48 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 64 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 48 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 64 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 66 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]",
+                        "48 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 64 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 48 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 64 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 66 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]",
+                        "48 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 64 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 48 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 64 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 66 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]",
+                        "48 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 64 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 48 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 64 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 24 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]; 66 B: Game.UI.Runtime.dll!Game.UI.Runtime::MissionDefenseHudView.Update() [Invoke]"
+                    ]
+                }
+            ]
+        },
+        {
+            "elapsedMilliseconds": 157415,
+            "frames": 210,
+            "positiveControlBytes": 8224,
+            "totalMainThreadBytes": 5644084,
+            "owners": [
+                {
+                    "name": "ThreatDetectionWarningSystem",
+                    "samples": 237,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "ThreatWarningResolveSystem",
+                    "samples": 209,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "CampaignMissionGuidanceProjectionSystem",
+                    "samples": 209,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "CampaignMissionPatrolOrderSystem",
+                    "samples": 209,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "RadarPingRequestSystem",
+                    "samples": 209,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "MissionDefenseInteractionSystem",
+                    "samples": 209,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "M03RadioReportProjectionSystem",
+                    "samples": 209,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "UiCampaignMissionProjectionSystem",
+                    "samples": 209,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "CampaignMissionObjectiveProjectionSystem",
+                    "samples": 209,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "CampaignMissionAttemptFactProjectionSystem",
+                    "samples": 209,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                },
+                {
+                    "name": "MissionDefenseHudView.Update",
+                    "samples": 418,
+                    "allocatedSamples": 0,
+                    "bytes": 0,
+                    "maxBytes": 0,
+                    "allocationContexts": []
+                }
+            ]
+        }
+    ]
+}

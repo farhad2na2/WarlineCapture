@@ -174,6 +174,8 @@ namespace Game.Configs
         [SerializeField] private ScenarioAmbientPresentationConfig[] ambientPresentations =
             Array.Empty<ScenarioAmbientPresentationConfig>();
         [SerializeField] private ScenarioMissionRuntimeConfig missionRuntime;
+        [SerializeField] private MissionDefenseDefinitionConfig defense;
+        [SerializeField] private MissionExtractionDefinitionConfig extraction;
 
         public string ScenarioId => scenarioId;
         public string OperationMapId => operationMapId;
@@ -185,6 +187,8 @@ namespace Game.Configs
         public ScenarioRestrictionConfig Restrictions => restrictions;
         public ReadOnlySpan<ScenarioAmbientPresentationConfig> AmbientPresentations => ambientPresentations;
         public ScenarioMissionRuntimeConfig MissionRuntime => missionRuntime;
+        public MissionDefenseDefinitionConfig Defense => defense;
+        public MissionExtractionDefinitionConfig Extraction => extraction;
 
         public bool TryValidateIdentity(out string error)
         {
@@ -250,7 +254,8 @@ namespace Game.Configs
 
             if (!TryValidateUnitGroups(out error) || !TryValidatePatrolRoutes(out error) ||
                 !TryValidateAmbientPresentations(out error) ||
-                !ScenarioMissionRuntimeContractValidation.TryValidate(this, out error))
+                !ScenarioMissionRuntimeContractValidation.TryValidate(this, out error) ||
+                !MissionExtractionDefinitionValidation.TryValidate(this, out error))
                 return false;
 
             error = null;
@@ -265,7 +270,8 @@ namespace Game.Configs
             for (int groupIndex = 0; groupIndex < unitGroups.Length; groupIndex++)
             {
                 ScenarioUnitGroupConfig group = unitGroups[groupIndex];
-                if (!IsScopedId(group.GroupId, "group") || group.FactionIndex == 0 || group.Units.Length == 0)
+                if (!IsScopedId(group.GroupId, "group") ||
+                    (group.FactionIndex == 0 && !defense.Enabled) || group.Units.Length == 0)
                 {
                     error = $"Campaign scenario '{scenarioId}' has invalid unit group at index {groupIndex}.";
                     return false;
@@ -280,7 +286,8 @@ namespace Game.Configs
                 }
                 foreach (ScenarioUnitEntryConfig unit in group.Units)
                 {
-                    if (!IsScopedId(unit.UnitConfigKey, "unit") || string.IsNullOrWhiteSpace(unit.RuntimePrefabSourceKey) ||
+                    if ((group.FactionIndex == 0 && unit.MissionRoleId != "role.civilian.protected") ||
+                        !IsScopedId(unit.UnitConfigKey, "unit") || string.IsNullOrWhiteSpace(unit.RuntimePrefabSourceKey) ||
                         unit.RuntimePrefabSourceKey.Length > 63 || !IsLowerHexGuid(unit.ExpectedAssetGuid) ||
                         !OperationMapIdentityRules.IsValidAnchorId(unit.SpawnAnchorId) ||
                         !IsScopedId(unit.MissionRoleId, "role") || unit.Count < 1)

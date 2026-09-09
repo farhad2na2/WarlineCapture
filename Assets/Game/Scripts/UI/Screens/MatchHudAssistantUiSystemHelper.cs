@@ -12,8 +12,8 @@ namespace Game.UI.Runtime
         private byte _displayedTutorialStep;
         private UiTutorialNarrationPhase _pendingTutorialPhase;
         private UiTutorialNarrationPhase _displayedTutorialPhase;
-        private ushort _narratedTutorialCues;
-        private ushort _autoShownTutorialCues;
+        private uint _narratedTutorialCues;
+        private uint _autoShownTutorialCues;
         private float _tutorialShowAtUnscaledTime = -1f;
         private bool _tutorialCinematicSuspended;
         private bool _finalTutorialSuppressed;
@@ -84,7 +84,7 @@ namespace Game.UI.Runtime
             _displayedTutorialStep = _pendingTutorialStep;
             _displayedTutorialPhase = _pendingTutorialPhase;
             ShowEmbeddedTutorial();
-            if (!WasTutorialCueAutoShown(_displayedTutorialStep, _displayedTutorialPhase) &&
+            if (_lastPanelModel.TutorialStepCount!=12 && !WasTutorialCueAutoShown(_displayedTutorialStep, _displayedTutorialPhase) &&
                 TryShowRecommendation(
                     preferPanelRecommendation:
                     _displayedTutorialPhase == UiTutorialNarrationPhase.PrimaryAction))
@@ -92,7 +92,7 @@ namespace Game.UI.Runtime
                 MarkTutorialCueAutoShown(_displayedTutorialStep, _displayedTutorialPhase);
             }
             if (CanUseTutorialNarration(_lastPanelModel.TutorialStepCount) &&
-                (_lastPanelModel.TutorialStepCount == 9 ||
+                (_lastPanelModel.TutorialStepCount is 9 or 12 ||
                  _lastPanelModel.RecommendationTargetKind != 4) &&
                 !WasTutorialCueNarrated(
                     _displayedTutorialStep,
@@ -116,7 +116,7 @@ namespace Game.UI.Runtime
 
         private void HandleSquadSelectionAcknowledged()
         {
-            if (_lastPanelModel.TutorialStep == 1)
+            if (_lastPanelModel.TutorialStep == 1 && _lastPanelModel.TutorialStepCount!=12)
                 CompleteTutorialStep(1, finalStep: false);
         }
 
@@ -165,37 +165,37 @@ namespace Game.UI.Runtime
         private bool WasTutorialCueNarrated(byte step, UiTutorialNarrationPhase phase)
         {
             int bit = TutorialCueBit(step, phase);
-            return bit >= 0 && (_narratedTutorialCues & (1 << bit)) != 0;
+            return bit >= 0 && (_narratedTutorialCues & (1u << bit)) != 0;
         }
 
         private void MarkTutorialCueNarrated(byte step, UiTutorialNarrationPhase phase)
         {
             int bit = TutorialCueBit(step, phase);
             if (bit >= 0)
-                _narratedTutorialCues |= (ushort)(1 << bit);
+                _narratedTutorialCues |= (1u << bit);
         }
 
         private bool WasTutorialCueAutoShown(byte step, UiTutorialNarrationPhase phase)
         {
             int bit = TutorialCueBit(step, phase);
-            return bit >= 0 && (_autoShownTutorialCues & (1 << bit)) != 0;
+            return bit >= 0 && (_autoShownTutorialCues & (1u << bit)) != 0;
         }
 
         private void MarkTutorialCueAutoShown(byte step, UiTutorialNarrationPhase phase)
         {
             int bit = TutorialCueBit(step, phase);
             if (bit >= 0)
-                _autoShownTutorialCues |= (ushort)(1 << bit);
+                _autoShownTutorialCues |= (1u << bit);
         }
 
         private static int TutorialCueBit(byte step, UiTutorialNarrationPhase phase)
         {
-            if (step is < 1 or > 8 || phase > UiTutorialNarrationPhase.WorldTarget)
+            if (step is < 1 or > 12 || phase > UiTutorialNarrationPhase.WorldTarget)
                 return -1;
             return ((step - 1) * 2) + (int)phase;
         }
 
         internal static bool CanUseTutorialNarration(byte tutorialStepCount) =>
-            tutorialStepCount is 5 or 9;
+            tutorialStepCount is 5 or 9 or 12;
     }
 }

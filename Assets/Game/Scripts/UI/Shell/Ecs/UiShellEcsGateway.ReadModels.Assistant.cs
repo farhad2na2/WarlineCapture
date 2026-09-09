@@ -15,6 +15,8 @@ namespace Game.UI.Shell.Ecs
 {
     public sealed partial class UiShellEcsGateway
     {
+        private static string cachedAssistantTextLocale;
+        private static string cachedObjectiveTextLocale;
         private static partial class UiShellReadModelAdapter
         {
         public static bool TryReadMatchHudStatusSurfaces(out UiMatchHudStatusSurfacesModel statusSurfaces)
@@ -27,6 +29,7 @@ namespace Game.UI.Shell.Ecs
             UiMatchHudStatusSurfacesComponent component =
                 entityManager.GetComponentData<UiMatchHudStatusSurfacesComponent>(boundary);
             if (hasCachedMatchHudStatus && cachedMatchHudStatusWorld == entityManager.World &&
+                cachedObjectiveTextLocale==GameLocalization.CurrentLocaleCode &&
                 cachedMatchHudStatusBoundary == boundary &&
                 SameMatchHudStatus(in component, in cachedMatchHudStatusComponent))
             {
@@ -35,9 +38,9 @@ namespace Game.UI.Shell.Ecs
             }
             statusSurfaces = new UiMatchHudStatusSurfacesModel(
                 component.ObjectivesTitle.ToString(),
-                new UiMatchHudObjectiveRowModel(component.Objective0Text.ToString(), component.Objective0IconKind),
-                new UiMatchHudObjectiveRowModel(component.Objective1Text.ToString(), component.Objective1IconKind),
-                new UiMatchHudObjectiveRowModel(component.Objective2Text.ToString(), component.Objective2IconKind),
+                new UiMatchHudObjectiveRowModel(GameText.Get(component.Objective0Text.ToString(),component.Objective0Text.ToString()), component.Objective0IconKind),
+                new UiMatchHudObjectiveRowModel(GameText.Get(component.Objective1Text.ToString(),component.Objective1Text.ToString()), component.Objective1IconKind),
+                new UiMatchHudObjectiveRowModel(GameText.Get(component.Objective2Text.ToString(),component.Objective2Text.ToString()), component.Objective2IconKind),
                 component.ElapsedText.ToString(),
                 component.ThreatVisible != 0,
                 component.ThreatTitle.ToString(),
@@ -54,6 +57,7 @@ namespace Game.UI.Shell.Ecs
             cachedMatchHudStatusBoundary = boundary;
             cachedMatchHudStatusComponent = component;
             cachedMatchHudStatus = statusSurfaces;
+            cachedObjectiveTextLocale=GameLocalization.CurrentLocaleCode;
             return true;
         }
 
@@ -136,7 +140,7 @@ namespace Game.UI.Shell.Ecs
             bool narrationPulse = narrationState.LastPresentedAt > 0f &&
                                   Time.time - narrationState.LastPresentedAt <= 0.8f;
 
-            if (hasCachedAssistantPanel &&
+            if (hasCachedAssistantPanel && cachedAssistantTextLocale==GameLocalization.CurrentLocaleCode &&
                 cachedAssistantPanelWorld == entityManager.World &&
                 cachedAssistantPanelBoundary == boundary &&
                 cachedAssistantPanelSourceVersion == assistantState.SourceVersion &&
@@ -166,6 +170,12 @@ namespace Game.UI.Shell.Ecs
                 ? topRecommendation.Reason.ToString()
                 : string.Empty;
             bool tutorialRightToLeft = false;
+            if (topRecommendation.TutorialStepCount==12)
+            {
+                recommendationTitle=GameText.Get(recommendationTitle,recommendationTitle);
+                recommendationBody=GameText.Get(recommendationBody,recommendationBody);
+                tutorialRightToLeft=GameLocalization.CurrentLocaleCode=="fa-IR";
+            }
             if (topRecommendation.RecommendationId != 0 &&
                 topRecommendation.TutorialStepCount == 9)
             {
@@ -183,7 +193,7 @@ namespace Game.UI.Shell.Ecs
             }
             if (topRecommendation.RecommendationId != 0 &&
                 topRecommendation.TutorialStep > 0 &&
-                topRecommendation.TutorialStepCount != 9 &&
+                topRecommendation.TutorialStepCount == 5 &&
                 topRecommendation.TargetKind != AssistantTargetKind.UiSurface)
             {
                 TryResolveTutorialPresentationText(
@@ -212,6 +222,7 @@ namespace Game.UI.Shell.Ecs
                 narrationState,
                 hasNarrationRequests ? narrationRequests : default,
                 narrationPulse);
+            cachedAssistantTextLocale=GameLocalization.CurrentLocaleCode;
             cachedAssistantPanelVersion = NextManagedAssistantPanelVersion(cachedAssistantPanelVersion);
             assistantPanel = new UiAssistantPanelModel(
                 cachedAssistantPanelVersion,
@@ -231,7 +242,7 @@ namespace Game.UI.Shell.Ecs
                 recommendationTitle,
                 recommendationBody,
                 topRecommendation.RecommendationId != 0 ? PriorityText(topRecommendation.Priority) : string.Empty,
-                topRecommendation.RecommendationId != 0 ? topRecommendation.ActionLabel.ToString() : string.Empty,
+                topRecommendation.RecommendationId != 0 ? GameText.Get(topRecommendation.ActionLabel.ToString(),topRecommendation.ActionLabel.ToString()) : string.Empty,
                 topRecommendation.CanShow != 0,
                 topRecommendation.CanExecute != 0,
                 CanStopAssistantControl(assistantState.ControlState),

@@ -9,7 +9,7 @@ using Game.UI.Runtime;
 using UnityEngine;
 namespace Game.Composition
 {
-    internal sealed class FirstLaunchNarrativeSequencePresentationSystemHelper
+    internal sealed partial class FirstLaunchNarrativeSequencePresentationSystemHelper
     {
         private readonly Dictionary<string, NarrativeStateRecord> states = new(StringComparer.Ordinal);
         private readonly Dictionary<NarrativeSpeakerId, NarrativeSpeakerRecord> speakers = new();
@@ -216,18 +216,6 @@ namespace Game.Composition
             return sequenceRuntime.Apply(new FirstLaunchNarrativeSequenceIntent(
                 FirstLaunchNarrativeSequenceIntentKind.Seek,
                 value: normalizedPosition));
-        }
-
-        public void SetReducedMotion(bool enabled)
-        {
-            settings.Accessibility.ReducedMotion = enabled;
-            panelMotion?.SetReducedMotion(enabled);
-        }
-
-        public void SetSubtitlesEnabled(bool enabled)
-        {
-            settings.Narrative.SubtitlesEnabled = enabled;
-            view?.DialogueView?.SetSubtitlesVisible(enabled);
         }
 
         public void CommitInteractiveState(string expectedStateId)

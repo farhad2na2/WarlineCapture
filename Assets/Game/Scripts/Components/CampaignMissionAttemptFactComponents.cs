@@ -14,9 +14,14 @@ namespace Game.Components
         public int RequiredUnitProducedCount;
         public int CivilianTotalCount;
         public int CivilianLossCount;
+        public int ExtractionPassengerTotal, ExtractionPassengersAboard, ExtractionPassengersDelivered;
+        public int ExtractionCarrierLegCount, ExtractionSecureMilliseconds;
+        public byte ExtractionCarrierLost, ExtractionAircraftLost, ExtractionContested, ExtractionDeparted, ExtractionTimedOut;
         public byte ForwardPostBound;
         public byte ForwardPostDamaged;
         public byte ForwardPostDestroyed;
+        public byte CoreBreached;
+        public byte HostileRosterIntegrityFault;
         public byte DefenseWaveWarningIssued;
         public byte DefenseWaveActivated;
         public byte InteractiveBriefCompleted;

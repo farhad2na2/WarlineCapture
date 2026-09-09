@@ -55,6 +55,11 @@ namespace Game.Configs
             }
 
             ScenarioDelayedWaveConfig wave = runtime.DelayedWave;
+            if (scenario.Defense.Enabled)
+            {
+                if (!producerFound) { error = "Defense producer is absent from the mission build catalog."; return false; }
+                return MissionDefenseDefinitionValidation.TryValidate(scenario, out error);
+            }
             if (!producerFound || !ContainsGroup(scenario, wave.UnitGroupId) ||
                 !ContainsRoute(scenario, wave.RouteId, wave.UnitGroupId) ||
                 wave.TargetMissionRoleId != runtime.BaseMissionRoleId ||

@@ -1,0 +1,258 @@
+{
+    "scope": "Actual live main-thread Unity raw Profiler samples in four combat phases, 210 frames per window; no double system updates. Includes EditorOnly allocations. This is allocation attribution, not a timing benchmark. A real 8192-byte allocation inside a player-loop marker validates each window.",
+    "valid": true,
+    "phases": [
+        {
+            "elapsedMilliseconds": 21298,
+            "frames": 211,
+            "positiveControlBytes": 8224,
+            "totalMainThreadBytes": 11135862,
+            "owners": [
+                {
+                    "name": "ThreatDetectionWarningSystem",
+                    "samples": 234,
+                    "bytes": 0
+                },
+                {
+                    "name": "ThreatWarningResolveSystem",
+                    "samples": 210,
+                    "bytes": 0
+                },
+                {
+                    "name": "CampaignMissionGuidanceProjectionSystem",
+                    "samples": 210,
+                    "bytes": 0
+                },
+                {
+                    "name": "CampaignMissionPatrolOrderSystem",
+                    "samples": 210,
+                    "bytes": 0
+                },
+                {
+                    "name": "RadarPingRequestSystem",
+                    "samples": 210,
+                    "bytes": 0
+                },
+                {
+                    "name": "MissionDefenseInteractionSystem",
+                    "samples": 210,
+                    "bytes": 0
+                },
+                {
+                    "name": "M03RadioReportProjectionSystem",
+                    "samples": 210,
+                    "bytes": 0
+                },
+                {
+                    "name": "UiCampaignMissionProjectionSystem",
+                    "samples": 210,
+                    "bytes": 6945750
+                },
+                {
+                    "name": "CampaignMissionObjectiveProjectionSystem",
+                    "samples": 210,
+                    "bytes": 0
+                },
+                {
+                    "name": "CampaignMissionAttemptFactProjectionSystem",
+                    "samples": 210,
+                    "bytes": 0
+                },
+                {
+                    "name": "MissionDefenseHudView.Update",
+                    "samples": 420,
+                    "bytes": 768
+                }
+            ]
+        },
+        {
+            "elapsedMilliseconds": 66233,
+            "frames": 210,
+            "positiveControlBytes": 8224,
+            "totalMainThreadBytes": 12662005,
+            "owners": [
+                {
+                    "name": "ThreatDetectionWarningSystem",
+                    "samples": 231,
+                    "bytes": 0
+                },
+                {
+                    "name": "ThreatWarningResolveSystem",
+                    "samples": 209,
+                    "bytes": 0
+                },
+                {
+                    "name": "CampaignMissionGuidanceProjectionSystem",
+                    "samples": 209,
+                    "bytes": 0
+                },
+                {
+                    "name": "CampaignMissionPatrolOrderSystem",
+                    "samples": 209,
+                    "bytes": 120
+                },
+                {
+                    "name": "RadarPingRequestSystem",
+                    "samples": 209,
+                    "bytes": 0
+                },
+                {
+                    "name": "MissionDefenseInteractionSystem",
+                    "samples": 209,
+                    "bytes": 0
+                },
+                {
+                    "name": "M03RadioReportProjectionSystem",
+                    "samples": 209,
+                    "bytes": 0
+                },
+                {
+                    "name": "UiCampaignMissionProjectionSystem",
+                    "samples": 209,
+                    "bytes": 6912675
+                },
+                {
+                    "name": "CampaignMissionObjectiveProjectionSystem",
+                    "samples": 209,
+                    "bytes": 0
+                },
+                {
+                    "name": "CampaignMissionAttemptFactProjectionSystem",
+                    "samples": 209,
+                    "bytes": 0
+                },
+                {
+                    "name": "MissionDefenseHudView.Update",
+                    "samples": 418,
+                    "bytes": 5832
+                }
+            ]
+        },
+        {
+            "elapsedMilliseconds": 116193,
+            "frames": 210,
+            "positiveControlBytes": 8224,
+            "totalMainThreadBytes": 12340267,
+            "owners": [
+                {
+                    "name": "ThreatDetectionWarningSystem",
+                    "samples": 222,
+                    "bytes": 0
+                },
+                {
+                    "name": "ThreatWarningResolveSystem",
+                    "samples": 209,
+                    "bytes": 0
+                },
+                {
+                    "name": "CampaignMissionGuidanceProjectionSystem",
+                    "samples": 209,
+                    "bytes": 0
+                },
+                {
+                    "name": "CampaignMissionPatrolOrderSystem",
+                    "samples": 209,
+                    "bytes": 0
+                },
+                {
+                    "name": "RadarPingRequestSystem",
+                    "samples": 209,
+                    "bytes": 0
+                },
+                {
+                    "name": "MissionDefenseInteractionSystem",
+                    "samples": 209,
+                    "bytes": 0
+                },
+                {
+                    "name": "M03RadioReportProjectionSystem",
+                    "samples": 209,
+                    "bytes": 0
+                },
+                {
+                    "name": "UiCampaignMissionProjectionSystem",
+                    "samples": 209,
+                    "bytes": 6912675
+                },
+                {
+                    "name": "CampaignMissionObjectiveProjectionSystem",
+                    "samples": 209,
+                    "bytes": 0
+                },
+                {
+                    "name": "CampaignMissionAttemptFactProjectionSystem",
+                    "samples": 209,
+                    "bytes": 0
+                },
+                {
+                    "name": "MissionDefenseHudView.Update",
+                    "samples": 418,
+                    "bytes": 5694
+                }
+            ]
+        },
+        {
+            "elapsedMilliseconds": 157453,
+            "frames": 210,
+            "positiveControlBytes": 8224,
+            "totalMainThreadBytes": 12570495,
+            "owners": [
+                {
+                    "name": "ThreatDetectionWarningSystem",
+                    "samples": 233,
+                    "bytes": 0
+                },
+                {
+                    "name": "ThreatWarningResolveSystem",
+                    "samples": 209,
+                    "bytes": 0
+                },
+                {
+                    "name": "CampaignMissionGuidanceProjectionSystem",
+                    "samples": 209,
+                    "bytes": 0
+                },
+                {
+                    "name": "CampaignMissionPatrolOrderSystem",
+                    "samples": 209,
+                    "bytes": 320
+                },
+                {
+                    "name": "RadarPingRequestSystem",
+                    "samples": 209,
+                    "bytes": 0
+                },
+                {
+                    "name": "MissionDefenseInteractionSystem",
+                    "samples": 209,
+                    "bytes": 0
+                },
+                {
+                    "name": "M03RadioReportProjectionSystem",
+                    "samples": 209,
+                    "bytes": 0
+                },
+                {
+                    "name": "UiCampaignMissionProjectionSystem",
+                    "samples": 209,
+                    "bytes": 6912675
+                },
+                {
+                    "name": "CampaignMissionObjectiveProjectionSystem",
+                    "samples": 209,
+                    "bytes": 0
+                },
+                {
+                    "name": "CampaignMissionAttemptFactProjectionSystem",
+                    "samples": 209,
+                    "bytes": 0
+                },
+                {
+                    "name": "MissionDefenseHudView.Update",
+                    "samples": 418,
+                    "bytes": 864
+                }
+            ]
+        }
+    ]
+}

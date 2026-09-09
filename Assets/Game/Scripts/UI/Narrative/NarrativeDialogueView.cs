@@ -5,7 +5,8 @@ using UnityEngine.UI;
 
 namespace Game.UI.Runtime
 {
-    public sealed class NarrativeDialogueView : MonoBehaviour
+    [DefaultExecutionOrder(50)]
+    public sealed partial class NarrativeDialogueView : MonoBehaviour
     {
         [Header("Structure")]
         [SerializeField] private CanvasGroup dialogueGroup;
@@ -43,6 +44,7 @@ namespace Game.UI.Runtime
         private void Awake()
         {
             EnsureInputBinding();
+            CacheAuthoredCaptionLayout();
         }
 
         private void OnDestroy()
@@ -95,14 +97,20 @@ namespace Game.UI.Runtime
                 float resolvedFontSize = style.FontSize * Mathf.Max(0.1f, authoredFontScale);
                 dialogueText.text = resolvedText ?? string.Empty;
                 dialogueText.fontSize = resolvedFontSize;
+                // Large authored captions expand their card and keep the requested font size.
+                // Standard cards still fit unusually tall localized glyph metrics.
+                dialogueText.enableAutoSizing |= useAuthoredHeight;
                 if (dialogueText.enableAutoSizing)
                 {
                     dialogueText.fontSizeMax = resolvedFontSize;
-                    dialogueText.fontSizeMin = Mathf.Min(18f, resolvedFontSize);
+                    dialogueText.fontSizeMin = useAuthoredHeight && style.FontSize >= 60f
+                        ? resolvedFontSize : Mathf.Min(18f, resolvedFontSize);
                 }
                 dialogueText.maxVisibleCharacters = style.InstantText ? int.MaxValue : 0;
                 dialogueText.overflowMode = TextOverflowModes.Overflow;
             }
+
+            PrepareAuthoredCaptionLayout(style.FontSize);
 
             if (dialogueRect != null && !useAuthoredHeight)
             {

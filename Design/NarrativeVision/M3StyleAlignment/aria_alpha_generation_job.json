@@ -1,0 +1,9 @@
+{
+  "tool": "Built-in imagegen",
+  "prompt": "Remove the entire gray checkerboard background from this ARIA portrait. Keep the cyan woman and her face, hair, geometry, body and pose exactly unchanged. Return a transparent PNG cutout with an actual alpha channel: every background pixel must be alpha=0, with clean antialiased edge transparency. No checkerboard, no gray or white or black backing, no newly painted backdrop. Transparent background.",
+  "refs": [
+    "/Users/farhad/Projects/WarlineCapture/Design/NarrativeVision/M3StyleAlignment/Candidates/ARIA_MainMenu_V3.png"
+  ],
+  "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-5257f89d-284c-43dc-9350-c9f914bcf61e.png",
+  "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/ARIA_MainMenu_V3-alpha.png"
+}

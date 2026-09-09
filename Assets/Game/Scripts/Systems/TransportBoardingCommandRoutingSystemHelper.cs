@@ -107,7 +107,7 @@ namespace Game.Runtime
                 Accepted = accepted ? (byte)1 : (byte)0,
                 ReasonCode = accepted ? 0 : (int)reasonCode,
                 FeedbackLifetime = RtsSelectionCommandFeedbackLifetime.Transient,
-                Message = new FixedString64Bytes(message ?? string.Empty)
+                Message = message ?? string.Empty
             };
         }
     }

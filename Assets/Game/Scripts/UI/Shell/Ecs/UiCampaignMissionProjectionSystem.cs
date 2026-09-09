@@ -19,6 +19,8 @@ namespace Game.UI.Shell.Ecs
         private EntityQuery _briefingQuery;
         private EntityQuery _campaignRootQuery;
         private byte _progressionCompatibilityChecked;
+        private long _observedStoreId;
+        private long _observedProfileVersion;
 
         public void OnCreate(ref SystemState state)
         {
@@ -57,11 +59,12 @@ namespace Game.UI.Shell.Ecs
             if (store == null)
                 return;
 
+            if (_observedStoreId != store.InstanceId)
+                _progressionCompatibilityChecked = 0;
             bool progressionCompatibilityApplied = false;
             if (_progressionCompatibilityChecked == 0)
             {
-                progressionCompatibilityApplied =
-                    store.EnsureAvailableAfterFirstClear(M01MissionId, M02MissionId);
+                progressionCompatibilityApplied = EnsureChapterProgressionCompatibility(store);
                 _progressionCompatibilityChecked = 1;
             }
 
@@ -79,8 +82,20 @@ namespace Game.UI.Shell.Ecs
             }
             DynamicBuffer<UiCampaignMissionActionRequestElement> requests =
                 entityManager.GetBuffer<UiCampaignMissionActionRequestElement>(uiRoot);
-            CampaignMissionProgressSaveData[] progress = store.ReadAll();
             uint settlementSourceVersion = ReadLatestSettlementSourceVersion(entityManager, campaignRoot);
+            if (_observedStoreId == store.InstanceId && _observedProfileVersion == store.SourceVersion &&
+                current.Version != 0 && currentBriefing.Version != 0 && requests.Length == 0 &&
+                current.CatalogSourceVersion == catalog.SourceVersion &&
+                current.ObservedSettlementSourceVersion == settlementSourceVersion &&
+                currentBriefing.Version == storedBriefing.Version)
+                return;
+
+            // Capture before I/O: a concurrent successful save must trigger another
+            // refresh even if it commits while this snapshot is being read.
+            long profileVersion = store.SourceVersion;
+            CampaignMissionProgressSaveData[] progress = store.ReadAll();
+            _observedStoreId = store.InstanceId;
+            _observedProfileVersion = profileVersion;
             ref CampaignMissionCatalogBlob catalogBlob = ref catalog.Blob.Value;
             int definitionIndex = FindDefinitionIndex(ref catalogBlob, current.SelectedMissionId);
             if (definitionIndex < 0 || progressionCompatibilityApplied)
@@ -102,7 +117,8 @@ namespace Game.UI.Shell.Ecs
 
             ref CampaignMissionDefinitionBlob definition = ref catalogBlob.Missions[definitionIndex];
             UiCampaignOperationsComponent next = ProjectDefinition(
-                catalog.SourceVersion, settlementSourceVersion, ref definition, progress, in current);
+                catalog.SourceVersion, settlementSourceVersion, ref definition, progress, in current,
+                AvailableMissionMask(ref catalogBlob, progress));
             bool replayTutorial = currentBriefing.Version != 0 &&
                                   currentBriefing.MissionId.Equals(definition.MissionId)
                 ? currentBriefing.ReplayTutorialEnabled != 0
@@ -315,7 +331,7 @@ namespace Game.UI.Shell.Ecs
             NarrativeGuidanceMode guidance = requiresTutorialGuidance
                 ? NarrativeGuidanceMode.Full
                 : ResolveGuidance(entityManager);
-            string sessionPrefix = definition.MissionId.Equals(new FixedString64Bytes(M02MissionId))
+            string sessionPrefix = definition.Defense.Enabled != 0 ? "campaign-m03-" : definition.MissionId.Equals(new FixedString64Bytes(M02MissionId))
                 ? "campaign-m02-"
                 : "campaign-m01-";
             MissionLaunchPayload payload = MissionLaunchPayloadFactory.Create(
@@ -386,53 +402,6 @@ namespace Game.UI.Shell.Ecs
             return null;
         }
 
-        private static uint ReadLatestSettlementSourceVersion(EntityManager entityManager, Entity campaignRoot)
-        {
-            if (!entityManager.HasBuffer<CampaignMissionSettlementResultElement>(campaignRoot)) return 0;
-            DynamicBuffer<CampaignMissionSettlementResultElement> results =
-                entityManager.GetBuffer<CampaignMissionSettlementResultElement>(campaignRoot, true);
-            uint version = 0;
-            for (int index = 0; index < results.Length; index++)
-                if (results[index].SourceVersion > version) version = results[index].SourceVersion;
-            return version;
-        }
-
-        private static uint HashProgress(CampaignMissionProgressSaveData[] progress)
-        {
-            uint hash = 2166136261u;
-            if (progress == null) return hash;
-            for (int index = 0; index < progress.Length; index++)
-            {
-                CampaignMissionProgressSaveData entry = progress[index];
-                if (entry == null) continue;
-                Hash(ref hash, entry.missionId);
-                Hash(ref hash, entry.available ? 1 : 0);
-                Hash(ref hash, entry.firstClearCompleted ? 1 : 0);
-                Hash(ref hash, entry.pendingResume ? 1 : 0);
-                Hash(ref hash, entry.bestStars);
-                Hash(ref hash, entry.bestCompletionMilliseconds);
-                Hash(ref hash, entry.successfulReplayCount);
-                Hash(ref hash, entry.lastAttemptOrdinal);
-            }
-            return hash;
-        }
-
-        private static void Hash(ref uint hash, string value)
-        {
-            if (value == null) return;
-            for (int index = 0; index < value.Length; index++)
-            {
-                hash ^= value[index];
-                hash *= 16777619u;
-            }
-        }
-
-        private static void Hash(ref uint hash, int value)
-        {
-            hash ^= unchecked((uint)value);
-            hash *= 16777619u;
-        }
-
         private static uint NextVersion(uint current) => current == uint.MaxValue ? 1u : current + 1u;
 
         private static bool SameOperations(
@@ -448,7 +417,7 @@ namespace Game.UI.Shell.Ecs
             left.SuccessfulReplayCount == right.SuccessfulReplayCount &&
             left.LastAttemptOrdinal == right.LastAttemptOrdinal && left.Available == right.Available &&
             left.FirstClearCompleted == right.FirstClearCompleted && left.PendingResume == right.PendingResume &&
-            left.NextMissionRevealed == right.NextMissionRevealed;
+            left.NextMissionRevealed == right.NextMissionRevealed && left.AvailableMissionMask == right.AvailableMissionMask;
 
         private static bool SameBriefing(
             in UiMissionBriefingComponent left, in UiMissionBriefingComponent right)

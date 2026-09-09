@@ -1,0 +1,5 @@
+Run 03 — final installed art
+Wrapper exit: 0
+[M3StyleAlignmentVisualValidation] result=Passed captures=200 captionChecks=180 selectableChoices=6 atlasSprites=7 locales=2 aspects=2
+Main-menu captures: 4 additional
+Total capture files: 204

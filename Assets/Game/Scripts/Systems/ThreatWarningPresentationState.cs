@@ -5,7 +5,7 @@ using Game.UI.Contracts;
 
 namespace Game.Runtime
 {
-    internal sealed class ThreatWarningPresentationState
+    internal sealed partial class ThreatWarningPresentationState
     {
         private const float VisibleSeconds = 5f;
         private WorldScopedComponentQueryCache<ThreatWarningRuntimeStateComponent> _queryCache = new(readOnly: false);
@@ -16,6 +16,7 @@ namespace Game.Runtime
                 return;
 
             EntityManager entityManager = world.EntityManager;
+            if (TryPresentDefense(entityManager, matchUi, now)) return;
             EntityQuery query = _queryCache.Get(entityManager);
             if (matchUi == null ||
                 !ThreatWarningRuntimeState.TryRead(
@@ -38,6 +39,9 @@ namespace Game.Runtime
         public void Dispose()
         {
             _queryCache.Dispose();
+            _defenseQuery.Dispose();
+            _defenseQuery = new WorldScopedComponentQueryCache<CampaignMissionRootComponent>(readOnly: true);
+            _defenseVisible = false;
             _queryCache = new WorldScopedComponentQueryCache<ThreatWarningRuntimeStateComponent>(readOnly: false);
         }
 

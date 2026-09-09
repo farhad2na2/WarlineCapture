@@ -141,6 +141,8 @@ namespace Game.Runtime
                 return M02MissionId;
             if (missionId.Equals(new FixedString64Bytes(M02MissionId)))
                 return M03MissionId;
+            if (missionId.Equals(new FixedString64Bytes(M03MissionId)))
+                return "saga.ch01.m04.airlift";
             return string.Empty;
         }
 

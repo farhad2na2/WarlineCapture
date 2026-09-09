@@ -9,10 +9,14 @@ namespace Game.Runtime
     {
         internal static bool ShouldSuppressAtSpawn(
             ref CampaignMissionDefinitionBlob definition,
-            in FixedString64Bytes unitGroupId) =>
-            definition.MissionRuntimeEnabled != 0 &&
-            !definition.DelayedWaveUnitGroupId.IsEmpty &&
-            definition.DelayedWaveUnitGroupId.Equals(unitGroupId);
+            in FixedString64Bytes unitGroupId)
+        {
+            if (definition.Defense.Enabled != 0)
+                for (int i = 0; i < definition.Defense.Elements.Length; i++)
+                    if (definition.Defense.Elements[i].UnitGroupId.Equals(unitGroupId)) return true;
+            return definition.MissionRuntimeEnabled != 0 && !definition.DelayedWaveUnitGroupId.IsEmpty &&
+                definition.DelayedWaveUnitGroupId.Equals(unitGroupId);
+        }
 
         internal static void ApplyCombatHoldAtSpawn(
             EntityManager entityManager,

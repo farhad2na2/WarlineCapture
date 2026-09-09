@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Game.Missions.Contracts;
 
 namespace Game.Runtime
 {
-    public sealed class CampaignMissionProgressStore
+    public sealed partial class CampaignMissionProgressStore
     {
         public const int CurrentEntrySchemaVersion = 2;
         private const string M02MissionId = "saga.ch01.m02.establish_base";
@@ -13,6 +14,9 @@ namespace Game.Runtime
         private const string BarracksBuildingId = "Building_Barrack";
         private const string TrainingFacilitiesUpgradeId = "upgrade.building.training_facilities";
         private readonly SaveService _saveService;
+        private static long _nextInstanceId;
+        public long InstanceId { get; } = Interlocked.Increment(ref _nextInstanceId);
+        public long SourceVersion => JsonSaveRepository.ChangeVersion;
 
         public CampaignMissionProgressStore(SaveService saveService)
         {
@@ -130,6 +134,10 @@ namespace Game.Runtime
                     if (reward.RewardConfigId == CommanderXpRewardId)
                     {
                         commanderXp = checked(commanderXp + reward.Amount);
+                    }
+                    else if (TryApplyRadarWarningUnlock(profile, reward) || TryApplyAirliftUnlock(profile, reward))
+                    {
+                        // Named grants settle in the same profile transaction as the mission receipt.
                     }
                     else if (Contains(profile.ownedBuildingUnlocks, BarracksBuildingId))
                     {
@@ -268,7 +276,8 @@ namespace Game.Runtime
             for (int index = 0; index < rewards.Length; index++)
             {
                 CampaignMissionRewardGrant reward = rewards[index];
-                if (reward.Amount <= 0 || reward.Kind == MissionRewardKind.Intel)
+                if (reward.Amount <= 0 || reward.Kind == MissionRewardKind.Intel ||
+                    !Enum.IsDefined(typeof(MissionRewardKind), reward.Kind))
                     throw new ArgumentException(
                         "Settlement rewards must be positive and Campaign tutorial missions cannot grant Intel.",
                         nameof(rewards));
@@ -277,7 +286,8 @@ namespace Game.Runtime
                     : reward.Kind.ToString();
                 if (reward.Kind == MissionRewardKind.None && identity != CommanderXpRewardId &&
                     !(identity == M02ProductionUnlockRewardId && missionId == M02MissionId &&
-                      firstClear && reward.Amount == 1))
+                      firstClear && reward.Amount == 1) && !IsRadarWarningUnlock(missionId, firstClear, reward) &&
+                    !IsAirliftUnlock(missionId, firstClear, reward))
                     throw new ArgumentException("Unsupported custom Campaign settlement reward.", nameof(rewards));
                 if (!identities.Add(identity))
                     throw new ArgumentException("Duplicate settlement reward identity.", nameof(rewards));
@@ -338,7 +348,7 @@ namespace Game.Runtime
         public CampaignMissionRewardGrant(MissionRewardKind kind, string rewardConfigId, int amount)
         {
             Kind = kind;
-            RewardConfigId = rewardConfigId ?? string.Empty;
+            RewardConfigId = rewardConfigId?.Trim() ?? string.Empty;
             Amount = amount;
         }
 

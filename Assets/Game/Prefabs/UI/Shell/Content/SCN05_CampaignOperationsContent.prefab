@@ -11094,6 +11094,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1dc7265dff37b4264bd3a3a62e2ea3e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.CampaignOperationsScreenView
+  m04MissionPreview: {fileID: 2800000, guid: 2a3df06fb843e4b19a65c408ea7aecf6, type: 3}
+  footerStoryArchiveButton: {fileID: 4407469545285371175}
+  m03MissionPreview: {fileID: 2800000, guid: 0f000af5086ec458f9fa30b1191960d6, type: 3}
   backRouteButton: {fileID: 4108783249832880391}
   chapterRail: {fileID: 5630939182759370302}
   strategicMap: {fileID: 8136456764853749182}

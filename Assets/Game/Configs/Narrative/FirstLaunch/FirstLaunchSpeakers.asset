@@ -63,3 +63,13 @@ MonoBehaviour:
     treatment: 3
     identitySprite: {fileID: 4710768086762683539, guid: e63d567176bd64921a7ee78ea94c72fb, type: 3}
     accentColor: {r: 0.86, g: 0.82, b: 0.7, a: 1}
+  - speakerId: 5
+    nameKey: narrative.speaker.laila.name
+    nameFallback: Captain Laila Nasser
+    roleKey: narrative.speaker.laila.role
+    roleFallback: Airlift pilot
+    accessibleLabelKey: narrative.speaker.laila.name
+    accessibleLabelFallback: Captain Laila Nasser, airlift pilot
+    treatment: 1
+    identitySprite: {fileID: -2164157679620122319, guid: 2a3df06fb843e4b19a65c408ea7aecf6, type: 3}
+    accentColor: {r: 0.91, g: 0.66, b: 0.27, a: 1}

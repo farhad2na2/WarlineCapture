@@ -29,6 +29,8 @@ namespace Game.UI.Runtime
         [SerializeField] private string[] localizedTextEnglishFallbacks;
 
         private TMP_Text[] languageTextTargets;
+        private float[] defaultFontSizes;
+        private bool[] defaultAutoSizing;
         private TMP_FontAsset[] defaultFonts;
         private TextAlignmentOptions[] defaultAlignments;
 
@@ -119,6 +121,13 @@ namespace Game.UI.Runtime
                     continue;
 
                 target.font = rightToLeft && persianFont != null ? persianFont : defaultFonts[i];
+                if (!defaultAutoSizing[i])
+                {
+                    target.enableAutoSizing = rightToLeft;
+                    target.fontSizeMin = defaultFontSizes[i] * 0.7f;
+                    target.fontSizeMax = defaultFontSizes[i];
+                    target.fontSize = defaultFontSizes[i];
+                }
                 target.alignment = rightToLeft
                     ? ToRightAligned(defaultAlignments[i])
                     : defaultAlignments[i];
@@ -158,10 +167,14 @@ namespace Game.UI.Runtime
                 return;
 
             languageTextTargets = GetComponentsInChildren<TMP_Text>(true);
+            defaultFontSizes = new float[languageTextTargets.Length];
+            defaultAutoSizing = new bool[languageTextTargets.Length];
             defaultFonts = new TMP_FontAsset[languageTextTargets.Length];
             defaultAlignments = new TextAlignmentOptions[languageTextTargets.Length];
             for (int i = 0; i < languageTextTargets.Length; i++)
             {
+                defaultFontSizes[i] = languageTextTargets[i] != null ? languageTextTargets[i].fontSize : 30f;
+                defaultAutoSizing[i] = languageTextTargets[i] != null && languageTextTargets[i].enableAutoSizing;
                 defaultFonts[i] = languageTextTargets[i] != null ? languageTextTargets[i].font : null;
                 defaultAlignments[i] = languageTextTargets[i] != null
                     ? languageTextTargets[i].alignment

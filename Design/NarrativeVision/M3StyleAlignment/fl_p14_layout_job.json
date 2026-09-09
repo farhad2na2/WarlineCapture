@@ -1,0 +1,8 @@
+{
+  "prompt": "Targeted layout edit to this finished game comic; preserve all identities and art style exactly. The UI overlays the TOP QUARTER of the image toward the right. Keep the entire scene, commander, table, cyan ring and left Samira screen unchanged. Move the RIGHT physical video monitor DOWN by about 150 pixels on this 1672x941 canvas, retaining its same dimensions and exact Dalia contents. Its top edge should now be around y=190, so Dalia's full face including sunglasses is BELOW y=260 and above y=490. Maintain her exact face, bun, gray headset, uniform and expression, her background and the screen frame. Show the newly exposed dark command-room wall above the repositioned right monitor. Do not crop or alter Dalia's face. No text, UI, labels or added people. Output same 1672x941 landscape.",
+  "refs": [
+    "/Users/farhad/Projects/WarlineCapture/Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P14-16x9.png"
+  ],
+  "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-77e3fd7d-0299-442b-8239-e4b0a744828a.png",
+  "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P14-safe-16x9.png"
+}

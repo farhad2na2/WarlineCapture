@@ -135,6 +135,15 @@ namespace Game.Runtime
                             !objective.MissionRoleId.Equals(definition.BaseMissionRoleId))
                             return false;
                         break;
+                    case MissionObjectiveRuleKind.ExtractPassengers:
+                    case MissionObjectiveRuleKind.ProtectExtractionTransport:
+                    case MissionObjectiveRuleKind.SecureLandingZone:
+                        if (definition.Extraction.Enabled == 0 || objective.MissionRoleId.IsEmpty || !objective.TargetConfigId.IsEmpty) return false;
+                        break;
+                    case MissionObjectiveRuleKind.PreventCoreBreach:
+                        if (definition.Defense.Enabled == 0 || definition.Defense.InnerCoreAnchorId.IsEmpty ||
+                            !objective.MissionRoleId.Equals(definition.BaseMissionRoleId)) return false;
+                        break;
                     default:
                         return false;
                 }
@@ -210,7 +219,7 @@ namespace Game.Runtime
                 State = objectiveState,
                 Priority = (byte)math.min(byte.MaxValue, index + 2),
                 IsPrimary = index == 0 ? (byte)1 : (byte)0,
-                Title = ResolveTitle(objective.Rule),
+                Title = definition.Defense.Enabled!=0 || definition.Extraction.Enabled!=0 ? objective.DisplayTextKey : ResolveTitle(objective.Rule),
                 Body = ResolveBody(in objective, objectiveState, in facts),
                 ProtectsTarget = objective.Rule is MissionObjectiveRuleKind.ProtectMissionRole or
                     MissionObjectiveRuleKind.DefendMissionRole ? (byte)1 : (byte)0
@@ -246,6 +255,13 @@ namespace Game.Runtime
                     : facts.ForwardPostDestroyed != 0
                     ? MatchObjectiveState.Failed
                     : facts.ForwardPostDamaged != 0 ? MatchObjectiveState.Warning : MatchObjectiveState.Active,
+                MissionObjectiveRuleKind.ExtractPassengers => facts.CivilianLossCount > 0 ? MatchObjectiveState.Failed :
+                    facts.ExtractionPassengersDelivered >= objective.RequiredCount ? MatchObjectiveState.Complete : MatchObjectiveState.Active,
+                MissionObjectiveRuleKind.ProtectExtractionTransport => facts.ExtractionCarrierLost != 0 || facts.ExtractionAircraftLost != 0 ? MatchObjectiveState.Failed : MatchObjectiveState.Active,
+                MissionObjectiveRuleKind.SecureLandingZone => facts.ExtractionContested != 0 ? MatchObjectiveState.Warning :
+                    facts.ExtractionSecureMilliseconds >= objective.RequiredCount ? MatchObjectiveState.Complete : MatchObjectiveState.Active,
+                MissionObjectiveRuleKind.PreventCoreBreach =>
+                    facts.CoreBreached != 0 ? MatchObjectiveState.Failed : MatchObjectiveState.Active,
                 _ => MatchObjectiveState.Blocked
             };
         }
@@ -256,8 +272,12 @@ namespace Game.Runtime
         {
             return objective.Rule switch
             {
+                MissionObjectiveRuleKind.ExtractPassengers => definition.Extraction.RescueAnchorId,
+                MissionObjectiveRuleKind.ProtectExtractionTransport or MissionObjectiveRuleKind.SecureLandingZone => definition.Extraction.LandingAnchorId,
+                MissionObjectiveRuleKind.PreventCoreBreach => definition.Defense.InnerCoreAnchorId,
                 MissionObjectiveRuleKind.DestroyMissionRole =>
-                    new FixedString64Bytes("anchor.ch01.m01.patrol_objective"),
+                    definition.Defense.Enabled != 0 ? definition.Defense.Elements[0].ContactAnchorId
+                        : new FixedString64Bytes("anchor.ch01.m01.patrol_objective"),
                 MissionObjectiveRuleKind.ProtectMissionRole =>
                     new FixedString64Bytes("anchor.ch01.m01.player_spawn"),
                 MissionObjectiveRuleKind.BuildStructure => definition.BuildZone.AnchorId,
@@ -274,6 +294,7 @@ namespace Game.Runtime
             MissionObjectiveRuleKind.BuildStructure => new FixedString64Bytes("Build the forward Barracks"),
             MissionObjectiveRuleKind.ProduceUnit => new FixedString64Bytes("Produce a rifle squad"),
             MissionObjectiveRuleKind.DefendMissionRole => new FixedString64Bytes("Defend the forward post"),
+            MissionObjectiveRuleKind.PreventCoreBreach => new FixedString64Bytes("Prevent a core breach"),
             _ => default
         };
 
@@ -284,6 +305,15 @@ namespace Game.Runtime
         {
             switch (objective.Rule)
             {
+                case MissionObjectiveRuleKind.PreventCoreBreach:
+                    return facts.CoreBreached != 0 ? new FixedString128Bytes("Inner defense line breached")
+                        : new FixedString128Bytes("Keep the convoy outside the inner defense line");
+                case MissionObjectiveRuleKind.ExtractPassengers:
+                    return new FixedString128Bytes("mission.m04.objective.extract.body");
+                case MissionObjectiveRuleKind.ProtectExtractionTransport:
+                    return new FixedString128Bytes("mission.m04.objective.transport.body");
+                case MissionObjectiveRuleKind.SecureLandingZone:
+                    return new FixedString128Bytes("mission.m04.objective.landing.body");
                 case MissionObjectiveRuleKind.DestroyMissionRole:
                     return BuildProgressBody(
                         new FixedString128Bytes("Patrol neutralized "),

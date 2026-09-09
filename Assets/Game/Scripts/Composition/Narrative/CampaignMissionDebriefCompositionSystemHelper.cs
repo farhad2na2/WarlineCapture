@@ -13,7 +13,7 @@ using UnityEngine;
 
 namespace Game.Composition
 {
-    internal sealed class CampaignMissionDebriefCompositionSystemHelper
+    internal sealed partial class CampaignMissionDebriefCompositionSystemHelper
     {
         internal enum SequenceStage : byte
         {
@@ -46,6 +46,7 @@ namespace Game.Composition
         private FixedString64Bytes completedCommsSession;
         private int completedCommsAttemptOrdinal = -1;
         private bool running, handoffPending, pauseOwned, configurationFailureLogged;
+        private readonly CampaignMissionNarrativePlaybackRuntime playback = new();
 
         public void Initialize(MenuBootstrapView menuView, IGameTextResolver textResolver)
         {
@@ -66,12 +67,14 @@ namespace Game.Composition
         {
             if (queryWorld != entityManager.World)
                 BindWorld(entityManager);
+            RefreshActivePresentation();
             if (running)
                 presentation.Tick(unscaledDeltaTime);
+            playback.Tick();
             if (handoffPending)
                 CompleteActiveSequence(entityManager);
             if (!running && CampaignMissionResultDebriefTransitionUtility.TryQueueDebrief(
-                    entityManager, missionRootQuery, EstablishBaseMissionId))
+                    entityManager, missionRootQuery))
                 return;
 
             if (running || !TryReadSequence(
@@ -130,6 +133,9 @@ namespace Game.Composition
             activeAttemptOrdinal = runtime.AttemptOrdinal;
             activeStage = stage;
             running = true;
+            renderedLanguage = language;
+            renderedWide = UnityEngine.Screen.height > 0 && (float)UnityEngine.Screen.width / UnityEngine.Screen.height >= 2f;
+            playback.Bind(presentation, view);
             configurationFailureLogged = false;
             CampaignMissionNarrativeCompositionUtility.LogStage(
                 "started", stage, in sequenceId, in activeSession, activeAttemptOrdinal);
@@ -137,6 +143,7 @@ namespace Game.Composition
 
         public void Shutdown()
         {
+            playback.Unbind();
             ReleasePause();
             presentation.HandoffRequested -= HandleHandoff;
             presentation.Cancel();
@@ -174,7 +181,7 @@ namespace Game.Composition
 
             Entity root = missionRootQuery.GetSingletonEntity();
             runtime = entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root);
-            if (!runtime.MissionId.Equals(EstablishBaseMissionId))
+            if (!CampaignMissionNarrativePolicy.UsesMissionSequences(runtime.MissionId))
                 return false;
             CampaignMissionAttemptFactsComponent facts =
                 entityManager.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
@@ -193,7 +200,7 @@ namespace Game.Composition
             {
                 SequenceStage.Brief => definition.BriefingSequenceId,
                 SequenceStage.Comms => definition.CommsSequenceId,
-                SequenceStage.Debrief => definition.DebriefSequenceId,
+                SequenceStage.Debrief => CampaignMissionNarrativePolicy.ResolveDebrief(runtime.MissionId, facts, definition.DebriefSequenceId),
                 _ => default
             };
             return !sequenceId.IsEmpty;
@@ -205,14 +212,14 @@ namespace Game.Composition
             bool briefConsumed,
             bool commsConsumed)
         {
-            if (!runtime.MissionId.Equals(EstablishBaseMissionId))
+            if (!CampaignMissionNarrativePolicy.UsesMissionSequences(runtime.MissionId))
                 return SequenceStage.None;
             if (runtime.Phase == MissionPhaseKind.DebriefFirstClear)
                 return SequenceStage.Debrief;
             if (runtime.Phase == MissionPhaseKind.InteractiveBrief && !briefConsumed)
                 return SequenceStage.Brief;
             if (runtime.Phase is >= MissionPhaseKind.FindSquad and <= MissionPhaseKind.SecureCorridor &&
-                facts.DefenseWaveWarningIssued != 0 && facts.DefenseWaveActivated == 0 &&
+                CampaignMissionNarrativePolicy.UsesBlockingComms(runtime.MissionId, facts) &&
                 !commsConsumed)
                 return SequenceStage.Comms;
             return SequenceStage.None;
@@ -226,6 +233,7 @@ namespace Game.Composition
 
         private void BindWorld(EntityManager entityManager)
         {
+            playback.Unbind();
             ReleasePause();
             presentation.Cancel();
             view?.SetVisible(false);
@@ -269,6 +277,7 @@ namespace Game.Composition
 
         private void CompleteActiveSequence(EntityManager entityManager)
         {
+            playback.Unbind();
             handoffPending = false;
             if (RequiresFinalResult(activeStage))
             {

@@ -1695,6 +1695,7 @@ public sealed class RtsSelectionInputSystemTests
             typeof(UnitPathRequest),
             typeof(UnitPathFollow),
             typeof(UnitPathRange));
+        em.AddComponentData(unit, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(unit, new UnitGrid { Cell = new int2(1, 2) });
         em.SetComponentData(unit, new UnitMove { Speed = 5f, WalkSpeed = 5f, ArriveDistance = 0.1f });
         em.SetComponentData(unit, new UnitCombat { CanAttack = 1, AutoEngage = 0 });
@@ -1757,6 +1758,7 @@ public sealed class RtsSelectionInputSystemTests
             typeof(EngageTarget),
             typeof(UnitTarget),
             typeof(UnitPathRequest));
+        em.AddComponentData(airUnit, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(airUnit, new UnitGrid { Cell = new int2(12, 13) });
         em.SetComponentData(airUnit, new UnitMove { Speed = 16f, WalkSpeed = 16f, ArriveDistance = 0.1f });
         em.SetComponentData(airUnit, new UnitAirMovement { CruiseHeight = 12f, RunwayTaxiSpeed = 4f });
@@ -1883,6 +1885,7 @@ public sealed class RtsSelectionInputSystemTests
             typeof(EngageTarget),
             typeof(UnitTarget),
             typeof(UnitPathRequest));
+        em.AddComponentData(unit, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(unit, new UnitGrid { Cell = new int2(1, 2) });
         em.SetComponentData(unit, new UnitMove { Speed = 5f, WalkSpeed = 5f, ArriveDistance = 0.1f });
         em.SetComponentData(unit, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
@@ -1954,6 +1957,7 @@ public sealed class RtsSelectionInputSystemTests
             typeof(UnitTransportBoardingTarget),
             typeof(UnitTransportRopeDisembarkRequest),
             typeof(UnitResourceHaulOrder));
+        em.AddComponentData(vehicle, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(vehicle, new UnitGrid { Cell = new int2(1, 2) });
         em.SetComponentData(vehicle, new UnitMove { Speed = 7f, WalkSpeed = 5f, ArriveDistance = 0.1f });
         em.SetComponentData(vehicle, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
@@ -1984,6 +1988,7 @@ public sealed class RtsSelectionInputSystemTests
             typeof(EngageTarget),
             typeof(UnitTarget),
             typeof(UnitPathRequest));
+        em.AddComponentData(airUnit, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(airUnit, new UnitGrid { Cell = new int2(21, 22) });
         em.SetComponentData(airUnit, new UnitMove { Speed = 12f, WalkSpeed = 12f, ArriveDistance = 0.1f });
         em.SetComponentData(airUnit, new UnitAirMovement { CruiseHeight = 14f, RunwayTaxiSpeed = 5f });

@@ -72,6 +72,8 @@ public sealed class AISquadValidationTests
         });
 
         Entity playerUnit = CreateUnit(em, FactionIdentity.PlayerFactionId, new int2(20, 20), false);
+        Entity missionUnit = CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(3, 4), true);
+        em.AddComponent<CampaignMissionUnitRoleComponent>(missionUnit);
         Entity unitA = CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(4, 4), true);
         Entity unitB = CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(5, 4), true);
         Entity unitC = CreateUnit(em, FactionIdentity.EnemyFactionId, new int2(6, 4), true);
@@ -106,6 +108,7 @@ public sealed class AISquadValidationTests
         AssertMember(em, unitC, squads[0], 1);
         AssertMember(em, unitD, squads[0], 1);
         Assert.IsFalse(em.HasComponent<AISquadMember>(playerUnit));
+        Assert.IsFalse(em.HasComponent<AISquadMember>(missionUnit), "Mission units must retain authored route ownership.");
     }
 
     private static Entity CreateUnit(EntityManager em, byte factionId, int2 cell, bool aiControlled)

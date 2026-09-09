@@ -1053,6 +1053,11 @@ public sealed class VehicleVisualAdornmentsSystemTests
         em.AddComponentData(vehicle, new UnitSelectionMarkerInstanceReference { Instance = marker });
         em.AddComponentData(vehicle, new UnitHealthBarInstanceReference { Instance = healthBar });
         em.AddComponentData(vehicle, new UnitDetailedVisualReference { Root = aliveVisual });
+        Entity secondAliveVisual = CreateVisualInstance(em);
+        DynamicBuffer<LinkedEntityGroup> linked = em.AddBuffer<LinkedEntityGroup>(vehicle);
+        linked.Add(new LinkedEntityGroup { Value = vehicle });
+        linked.Add(new LinkedEntityGroup { Value = aliveVisual });
+        linked.Add(new LinkedEntityGroup { Value = secondAliveVisual });
 
         SystemHandle system = world.CreateSystem<VehicleDestroyedVisualSystem>();
         system.Update(world.Unmanaged);
@@ -1063,6 +1068,9 @@ public sealed class VehicleVisualAdornmentsSystemTests
         Assert.IsFalse(em.Exists(marker));
         Assert.IsFalse(em.Exists(healthBar));
         Assert.AreEqual(0f, em.GetComponentData<LocalTransform>(aliveVisual).Scale);
+        Assert.AreEqual(0f, em.GetComponentData<LocalTransform>(secondAliveVisual).Scale);
+        Assert.IsTrue(em.HasComponent<Disabled>(secondAliveVisual));
+        Assert.IsFalse(em.HasComponent<Disabled>(vehicle), "The wreck's owning vehicle must remain valid.");
         Assert.IsTrue(em.HasComponent<VehicleDestroyedVisualInstanceReference>(vehicle));
         Entity destroyedVisual = em.GetComponentData<VehicleDestroyedVisualInstanceReference>(vehicle).Instance;
         Assert.AreEqual(vehicle, em.GetComponentData<Parent>(destroyedVisual).Value);

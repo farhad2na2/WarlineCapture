@@ -92,7 +92,9 @@ namespace Game.Runtime
             if (!em.HasBuffer<LinkedEntityGroup>(vehicle))
                 return;
 
-            DynamicBuffer<LinkedEntityGroup> linkedEntities = em.GetBuffer<LinkedEntityGroup>(vehicle);
+            // Hiding a child adds components and invalidates every live buffer handle.
+            using NativeArray<LinkedEntityGroup> linkedEntities =
+                em.GetBuffer<LinkedEntityGroup>(vehicle, true).ToNativeArray(Allocator.Temp);
             for (int i = 0; i < linkedEntities.Length; i++)
             {
                 Entity linkedEntity = linkedEntities[i].Value;

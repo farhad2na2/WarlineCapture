@@ -1,0 +1,22 @@
+[
+  {
+    "path": "Assets/Game/Art/Narrative/FirstLaunch/Commander/commander_portrait_choices.png",
+    "sha256": "046c4d65781b8068b0c4dcbd591d1f57bf2887dd85e42956c6f66f74d088d029",
+    "metaSha256": "06f69698dad77d707fd40865307883929227b01825d3a9bd69fcb7e6932d6885"
+  },
+  {
+    "path": "Assets/Game/Art/UI/V3Shared/CommanderScenes/SCN02_FieldCommander_01_Scene_V3.png",
+    "sha256": "d0a258bdd0813cb4c91e177cc33baf6d8267716095426a1df4707aad8304e8b4",
+    "metaSha256": "e90ca7d4b746f835096890f0c75018bb7201e2c3bfe52c6404fc9cea40f490e4"
+  },
+  {
+    "path": "Assets/Game/Art/UI/V3Shared/Portraits/ARIA_MainMenu_V3.png",
+    "sha256": "30cb45e4291f57d65222e37ee84ce6b303c16b94fcfc8aea179c606e0089c115",
+    "metaSha256": "b9f90ac20b48eadab51fe089ca262ee4cb8d1d736ff55d92e98b5d83230b5479"
+  },
+  {
+    "path": "Assets/Game/Art/UI/V3Shared/Events/SCN16_ARIAFieldTrials_V3.png",
+    "sha256": "d034d990cd5179428ac1a2c93bda29b7d37fc5059fdc96959e636c795f543709",
+    "metaSha256": "06fd4318c7139e9bb007f56d73372a415e55c821d6f11a35612fb7b0a749726c"
+  }
+]

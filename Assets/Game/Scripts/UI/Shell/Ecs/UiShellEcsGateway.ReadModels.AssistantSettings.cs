@@ -51,8 +51,8 @@ namespace Game.UI.Shell.Ecs
             return new UiAssistantGoalRowModel(
                 goal.Title.Length > 0,
                 goal.GoalId,
-                goal.Title.ToString(),
-                goal.Body.ToString(),
+                GameText.Get(goal.Title.ToString(),goal.Title.ToString()),
+                GameText.Get(goal.Body.ToString(),goal.Body.ToString()),
                 (byte)goal.State,
                 (byte)goal.Priority,
                 goal.IsPrimary != 0);

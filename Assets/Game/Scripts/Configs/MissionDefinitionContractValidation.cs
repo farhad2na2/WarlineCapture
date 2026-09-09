@@ -159,9 +159,9 @@ namespace Game.Configs
         private static bool TryValidateObjectives(MissionDefinitionConfig definition, out string error)
         {
             ReadOnlySpan<MissionObjectiveDefinitionConfig> objectives = definition.Objectives;
-            if (objectives.Length == 0)
+            if (objectives.Length is < 1 or > 8)
             {
-                error = $"Mission '{definition.MissionId}' requires at least one objective.";
+                error = $"Mission '{definition.MissionId}' requires one to eight objectives.";
                 return false;
             }
 
@@ -199,6 +199,10 @@ namespace Game.Configs
                 case MissionObjectiveRuleKind.DestroyMissionRole:
                 case MissionObjectiveRuleKind.ProtectMissionRole:
                 case MissionObjectiveRuleKind.DefendMissionRole:
+                case MissionObjectiveRuleKind.PreventCoreBreach:
+                case MissionObjectiveRuleKind.ExtractPassengers:
+                case MissionObjectiveRuleKind.ProtectExtractionTransport:
+                case MissionObjectiveRuleKind.SecureLandingZone:
                     return hasRole && !hasConfig &&
                         IsValidScopedId(objective.MissionRoleId, "role", 2, 7);
                 case MissionObjectiveRuleKind.BuildStructure:
@@ -244,7 +248,8 @@ namespace Game.Configs
                 bool thresholdValid = star.Rule == MissionStarRuleKind.CompleteUnderMilliseconds
                     ? star.Threshold > 0
                     : star.Threshold == 0;
-                if (star.StarIndex is < 1 or > 3 || star.Rule == MissionStarRuleKind.None || !thresholdValid ||
+                if (star.StarIndex is < 1 or > 3 || star.Rule == MissionStarRuleKind.None ||
+                    !Enum.IsDefined(typeof(MissionStarRuleKind), star.Rule) || !thresholdValid ||
                     !IsValidScopedId(star.DisplayTextKey, "mission", 3, 8))
                 {
                     error = $"Mission '{definition.MissionId}' has invalid star rule at index {index}.";
@@ -284,9 +289,9 @@ namespace Game.Configs
             bool required,
             out string error)
         {
-            if (required && rewards.Length == 0)
+            if ((required && rewards.Length == 0) || rewards.Length > 8)
             {
-                error = $"Mission '{definition.MissionId}' requires an explicit {label} reward.";
+                error = $"Mission '{definition.MissionId}' requires an explicit {label} reward set of at most eight entries.";
                 return false;
             }
 

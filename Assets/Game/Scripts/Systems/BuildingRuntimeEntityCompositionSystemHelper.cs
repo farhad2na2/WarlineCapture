@@ -7,7 +7,7 @@ using Game.Components;
 
 namespace Game.Runtime
 {
-    internal sealed class BuildingRuntimeEntityCompositionSystemHelper
+    internal sealed partial class BuildingRuntimeEntityCompositionSystemHelper
     {
         public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
         public delegate bool TryGetGridDataDelegate(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData);
@@ -52,30 +52,6 @@ namespace Game.Runtime
             em.AddComponentData(entity, new GridBlockerSize { Size = new int2(footprintCells.x, footprintCells.y) });
             em.AddComponent<StaticGridBlocker>(entity);
             return entity;
-        }
-
-        public bool DeleteBuildingById(Context context, int buildingId)
-        {
-            return context.CombatSystem != null &&
-                context.CombatSystem.DeleteBuilding(
-                    context.CombatContext,
-                    buildingId,
-                    destroyVisual: true,
-                    context.GetTime?.Invoke() ?? 0f,
-                    context.DestroyedBuildingLifetimeSeconds);
-        }
-
-        public void HandleRuntimeBuildingEntityDestroyed(
-            Context context,
-            int buildingId,
-            Entity blockerEntity,
-            GameObject buildingObject)
-        {
-            context.CombatSystem?.HandleRuntimeBuildingEntityDestroyed(
-                context.CombatContext,
-                buildingId,
-                blockerEntity,
-                buildingObject);
         }
 
         public bool ShouldRuntimeBuildingBlockPathing(BuildingDefinition definition)

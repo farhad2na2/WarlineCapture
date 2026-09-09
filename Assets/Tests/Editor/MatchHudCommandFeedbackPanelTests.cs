@@ -475,8 +475,7 @@ public sealed class MatchHudCommandFeedbackPanelTests
         scanButton.onClick.Invoke();
 
         Assert.AreEqual(0, commandSink.ScanModeRequests, "Rejected Scan must not queue scan target mode.");
-        Assert.IsTrue(panel.activeSelf, "Rejected Scan must show HUD feedback.");
-        Assert.AreEqual("Select a scanner or combat unit first.", text.text);
+
     }
 
     [Test]
@@ -610,6 +609,15 @@ public sealed class MatchHudCommandFeedbackPanelTests
         Assert.IsTrue(panel.activeSelf, "Rejected Scan must show HUD feedback.");
         Assert.AreEqual("Select a scanner or combat unit first.", text.text);
         Assert.AreEqual(0, commandSink.ScanModeRequests, "Rejected Scan must not queue scan target mode.");
+        readModel.HasSelectedUnits = true;
+        readModel.HasFocusedUnit = false;
+        readModel.CanHold = readModel.CanStop = readModel.CanScan = false;
+        holdButton.onClick.Invoke(); stopButton.onClick.Invoke(); scanButton.onClick.Invoke();
+        Assert.AreEqual(1, commandSink.HoldRequests, "A group can Hold without one focused unit.");
+        Assert.AreEqual(1, commandSink.StopRequests, "A group can Stop without one focused unit.");
+        Assert.AreEqual(0, commandSink.ScanModeRequests, "Scan still requires its actual capability.");
+        Assert.IsTrue(panel.activeSelf, "Rejected Scan must show HUD feedback.");
+        Assert.AreEqual("Select a scanner or combat unit first.", text.text);
     }
 
     [Test]
@@ -793,6 +801,7 @@ public sealed class MatchHudCommandFeedbackPanelTests
 
     private sealed class FakeSelectionUiReadModel : ISelectionUiReadModel
     {
+        public bool HasFocusedUnit { get; set; } = true;
         public bool CanHold;
         public bool CanStop;
         public bool CanScan;

@@ -1,0 +1,5 @@
+[M04ComicArt] result=Passed sources=7 authoredCrops=14 bilingualTextFree=1
+[M04ComicArt] result=Passed sources=7 authoredCrops=14 bilingualTextFree=1
+[M04ComicArtStability] result=Passed sources=7 stableSpriteIds=15 portrait=1
+[M04AirliftPresentation] result=Passed locales=2 lessons=12 guideClasses=57 hud=bound speaker=Laila
+[M04AirliftVisualValidation] result=Passed captures=56 captionChecks=56 panels=7 locales=2 aspects=2 subtitleStyles=2

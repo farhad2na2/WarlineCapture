@@ -1,0 +1,520 @@
+{
+  "date": "2026-09-09",
+  "scope": "M4 implementation, bilingual HUD repair, Editor-only acceptance, bounded APC movement investigation",
+  "coreEditorAcceptance": "Passed",
+  "architectureAudit": "Failed with 6 pre-existing failures; no new paths",
+  "android": "Excluded by user",
+  "recordedM4Voices": false,
+  "apcFragmentation": "Not reproduced in M4 Fast APC; no vehicle fix claimed",
+  "runs": [
+    {
+      "name": "warline-m04-final-05",
+      "outcome": "Passed",
+      "wrapperExitCode": 0,
+      "logPath": "/private/tmp/warline-m04-final-05.log",
+      "logSha256": "9e7087f1162735834dda8b6890e39c6b67e95f4a260513b8e804273dc9b6d5fb",
+      "markers": [
+        "[M04EditorProbe] result=Passed 14 regression suites; HUD en/fa 16:9 and 20:9; 12 guide topics and 57 classes in both languages; real APC/helicopter rescue; debrief; saved unlocks; visible bilingual result; campaign return; real Replay carrier-loss defeat and clean Retry; idle failure under normal combat at 4x simulation; no duplicate rewards"
+      ]
+    },
+    {
+      "name": "warline-m04-vehicles-02",
+      "outcome": "Passed",
+      "wrapperExitCode": 0,
+      "logPath": "/private/tmp/warline-m04-vehicles-02.log",
+      "logSha256": "18432ff124730bde065c89378b3e523f7cf2af015619f5b7537cae828d02c152",
+      "markers": [
+        "[M04EditorProbe] result=Passed real APC board -> drive -> unload -> helicopter board -> clear 20s -> airborne departure -> debrief -> bilingual result -> saved three unit unlocks -> campaign return; no rescue/health/position/outcome edits"
+      ]
+    },
+    {
+      "name": "warline-m04-result-04",
+      "outcome": "Passed",
+      "wrapperExitCode": 0,
+      "logPath": "/private/tmp/warline-m04-result-04.log",
+      "logSha256": "60ab27bdafdd8746f191fd4bb1239f4f972f0cb6a627843288ecab5ca0bb1d49",
+      "markers": [
+        "[M04ResultVisualValidation] result=Passed captures=8 locales=2 aspects=2 outcomes=2"
+      ]
+    },
+    {
+      "name": "warline-m04-comics-02",
+      "outcome": "Passed",
+      "wrapperExitCode": 0,
+      "logPath": "/private/tmp/warline-m04-comics-02.log",
+      "logSha256": "32b21b9d54e56a51b35adf48cc12ba61e905cd1d886a4c86e6ff212be6f4b0df",
+      "markers": [
+        "[M04ComicArt] result=Passed sources=7 authoredCrops=14 bilingualTextFree=1",
+        "[M04ComicArt] result=Passed sources=7 authoredCrops=14 bilingualTextFree=1",
+        "[M04ComicArtStability] result=Passed sources=7 stableSpriteIds=15 portrait=1",
+        "[M04AirliftPresentation] result=Passed locales=2 lessons=12 guideClasses=57 hud=bound speaker=Laila",
+        "[M04AirliftVisualValidation] result=Passed captures=56 captionChecks=56 panels=7 locales=2 aspects=2 subtitleStyles=2"
+      ]
+    },
+    {
+      "name": "warline-m04-architecture-03",
+      "outcome": "Failed",
+      "wrapperExitCode": 0,
+      "logPath": "/private/tmp/warline-m04-architecture-03.log",
+      "logSha256": "df80101b1861f1195cb3a99e8c2ac12ab03da0d428dd244185479664eb5c759f",
+      "markers": [
+        "[M03ArchitectureAudit] result=Failed passed=11 failed=6"
+      ]
+    }
+  ],
+  "sourceSnapshot": "Design/AgentReports/M04Airlift/source_snapshot.json",
+  "preservedEarlierPngs": 61,
+  "artifacts": [
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/apc-loaded.png",
+      "sha256": "305b1a56774b7b2c6ff05c7de090a88b9e9ce7cb2d7df62207657aea04718215"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/cleared.png",
+      "sha256": "5d4bf85dc62f69323b8717ba7936aabe9a1d643eeb23a9660ab6305f17a7c030"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/defeat-en-16x9.png",
+      "sha256": "abf735bd35f9a2b8cd06943ff0057b6cc5e98bdd24745e312d840ea570941f71"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/defeat-fa-16x9.png",
+      "sha256": "039afe03f44b62bd01798613ec10e00ff723cfec543a317f5bf8114ced629d64"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/guide-Unit_Veh_APC_Fast-en.png",
+      "sha256": "44795793c3ca85644fcda40d0db02c84763a963b149204f9ba55cafab5c13371"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/guide-Unit_Veh_APC_Fast-fa.png",
+      "sha256": "0dd0d78bdc8fc2faa8d898daaa25ba026f283796b34a8505e9ee1f8176093e00"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/guide-Unit_Veh_Helicopter_Transport-en.png",
+      "sha256": "ae98e5adfd1d263aec3da446dc39a45c489f328fb30f2e724b11e86646dfee62"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/guide-Unit_Veh_Helicopter_Transport-fa.png",
+      "sha256": "66630c3b198bd34018ae79a1aa64dcb754caac4035d1019120074829c72abfc6"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/guide-topic-0-en.png",
+      "sha256": "f056cc2764fd873881acaf55263a163c477332235c6099901d1380bae1f325a3"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/guide-topic-0-fa.png",
+      "sha256": "334154c5282073db4bf2add6fd60f4bad234538861d9ec05f0b924d2d419e1b9"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/guide-topic-11-en.png",
+      "sha256": "86c3c98b8db3d8c0cc4866082075ff738777da194c6457b1d57d2a6c43cab0f1"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/guide-topic-11-fa.png",
+      "sha256": "c6d16b43c60cee45cef35a9797c24840506aa1e73215336b6007ec9120e4f018"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/hud-en-16x9.png",
+      "sha256": "32b7a1ab5521915ca3f797f50fcc5c9e744920ee93f29bb16d0332ed294c3cd3"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/hud-en-20x9.png",
+      "sha256": "16d29fa04410013a2cd65f3010a0fa7b167b12c26ea8d41aeb840b04dcf6b166"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/hud-fa-16x9.png",
+      "sha256": "6eae1406932d59d154e79e60c27bfb02dcdc759e708f454577b481c19477ffae"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/hud-fa-20x9.png",
+      "sha256": "99c1f597fb8fe18bd5f60228ffa17cbbf8c5b1c1563e24839b2f5962277eff5c"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/result-await.png",
+      "sha256": "b77162edbc58a817bce4f902e277b5ad0c8d0c4abedf7ca9318dd8f24fdf957c"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/result-en-16x9.png",
+      "sha256": "be0f636702251ec46688e631be494288f289e5bcdf93c09047beafff3966a961"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/result-fa-16x9.png",
+      "sha256": "b77162edbc58a817bce4f902e277b5ad0c8d0c4abedf7ca9318dd8f24fdf957c"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/transfer.png",
+      "sha256": "418602be824c9a20072d08576acdb4b934ca5cad00d836d464b5e25b80733180"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/vehicle-stage-1-1.png",
+      "sha256": "4c8ac111ee56f87c09c0edfaa3f2f2838c4a744cc39ba85b306c283936551311"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/vehicle-stage-1-1.txt",
+      "sha256": "0bb7bb14811a78aa31c3e7ecc96c3a15a878584c0adeca33f546e5fb3e48d37b"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/vehicle-stage-1-2.png",
+      "sha256": "1675d72099075b76f448d56e65b6e779cffa6c9f49e5ed13bfe1bdebff187c19"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/vehicle-stage-1-2.txt",
+      "sha256": "4fd045827d4341dcce39654fc81ea85175062a51c47b5729a2685de6340d7dac"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/vehicle-stage-1-3.png",
+      "sha256": "d0dc9e9238393b39b37b38f3f13aca8e3a6c139e6339addd06164204a88eba25"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/vehicle-stage-1-3.txt",
+      "sha256": "c3c7d2da635c52bdee8bb15c95e5ae8a82943a16bdaf8e57763c6665a42aa721"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/vehicle-stage-3-1.png",
+      "sha256": "45aca75bd8568dcd2e84510d7ea96178925db98b72c38a5becda884ac53542a3"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/vehicle-stage-3-1.txt",
+      "sha256": "6c42af6f1b0795475a769b74a4d91160aa81aa9e317605aad7dd039079dbca5f"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/vehicle-stage-3-2.png",
+      "sha256": "2a9175e3f61664c394fa4c67ee87c23da5984bae14294953a37c2f8130bc9441"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/vehicle-stage-3-2.txt",
+      "sha256": "2664646c595ca7cdf3bbb6e3b56a2dcb5b6f27ee3d52218cc399df183c5c5fd4"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/vehicle-stage-3-3.png",
+      "sha256": "2a2dbdf150e54098216f1392d08d608a2f83d1990c10588d3a373609d7a91931"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/vehicle-stage-3-3.txt",
+      "sha256": "d6419f472fbcac7f9d4a88e227420c1fa30d0da21a9869381a2ac5950747574d"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/vehicle-stage-6-1.png",
+      "sha256": "6c6b5e6ede1fe90427503d2074a126b1c3427933c3f71d2b309f52165e4025cc"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/vehicle-stage-6-1.txt",
+      "sha256": "1ed8bf93c6a832195dece1506b7febdc673d34799f682873805986fa8c076cda"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/vehicle-stage-6-2.png",
+      "sha256": "2649922b49df81d4d9c303dd9659b1477b8a38cc069b9eb3481101bdcd3dc135"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/vehicle-stage-6-2.txt",
+      "sha256": "2cade136423c56d859d2c594cacd7fd917236ace081a1f784cf80638b2f2441d"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/vehicle-stage-6-3.png",
+      "sha256": "7d57ba27810b5e43c4063e5cc43072a0739369673c4d7cd98740939b7533aa01"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/EditorProbe/vehicle-stage-6-3.txt",
+      "sha256": "c1d795425a9ac43569daf35df56359f2c5cdaff7db702d61ae25f98b15a004ff"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ResultQA/defeat-en-1920.png",
+      "sha256": "2e650a2995483850367b73480adb469bd964d26611e572733f74a55af8396c6e"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ResultQA/defeat-en-2400.png",
+      "sha256": "ab2244991ccdb495e2dd40dbeedf0ee6bc441a06a14023c8105dcd56b313b2b3"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ResultQA/defeat-fa-1920.png",
+      "sha256": "3c7e12774b3e432ed8cd543b30dcdefa96223f8acab6be26c59d45ba3c628287"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ResultQA/defeat-fa-2400.png",
+      "sha256": "1865e0f2c36b77443e7a370c9e67ebf9270422bac003d741c95f3bea97a1cd5e"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ResultQA/layout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ResultQA/victory-en-1920.png",
+      "sha256": "051eb381d7da66b9106a807a23b26579f88e29e1cebadc37ebbe8954f2426fdf"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ResultQA/victory-en-2400.png",
+      "sha256": "826edb019e1e73bb67efa736a4b5e725c92ac7218faa1ee47dedfa990a9627e6"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ResultQA/victory-fa-1920.png",
+      "sha256": "c2617ad98f9efbc1888d6bedd8307e121ca75d55b49aaf39427290cce4b3f814"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ResultQA/victory-fa-2400.png",
+      "sha256": "7f301af40ac2dde25f5c91e61799d18a371a33f813cd0a30ae93883881cd26ca"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_brief-M04-brief-0-large-contrast-en-1920.png",
+      "sha256": "76dd6a4ae8170a9d82e1fda922d3e3973ab1f06e301bd86df1de73160fac51b1"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_brief-M04-brief-0-large-contrast-en-2400.png",
+      "sha256": "f79b0157c1e5b3df4b1628a5e5245d437b236d012761524251e6df7ea7ec46d3"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_brief-M04-brief-0-large-contrast-fa-1920.png",
+      "sha256": "1e277621fb2bc4ef766c608921f34ba9c559cf0ab5c8d5675bd63494b8e60101"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_brief-M04-brief-0-large-contrast-fa-2400.png",
+      "sha256": "33e562a69fb5e62cba9996cb4c05f43fe54678a9fbb4bc71d3330ce22db5de1e"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_brief-M04-brief-0-standard-en-1920.png",
+      "sha256": "10ee1bc268c31ac5b6ac797466d01e6cd0353ec4e4b5d0739cfc25e6bbb1cd1a"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_brief-M04-brief-0-standard-en-2400.png",
+      "sha256": "c9179f89afe6a267b172aa3ea1022769e1809301cd7414e7484377e1d4102a2c"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_brief-M04-brief-0-standard-fa-1920.png",
+      "sha256": "50f28d26c2e76aeb342daafb01d8364ea51b3013c2fe898072b61b7a96d97ab4"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_brief-M04-brief-0-standard-fa-2400.png",
+      "sha256": "4f52a7f4a6d6937b0201e8c62e2b8c133047f4fb7a6496a829540961153db646"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_brief-M04-brief-1-large-contrast-en-1920.png",
+      "sha256": "73ecc65abf5e8e246414f75cdb8b6f1531c9c80e036a670d8fd6eec5c388eb42"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_brief-M04-brief-1-large-contrast-en-2400.png",
+      "sha256": "95dd2e1c9d68aa3c59fd6e4d2246067016383c72ed49eef66199a9b68266399f"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_brief-M04-brief-1-large-contrast-fa-1920.png",
+      "sha256": "f22061b52ec74b7a931b5641b1f3c052ef6015bf947f130a7e2c45dcb6968dfe"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_brief-M04-brief-1-large-contrast-fa-2400.png",
+      "sha256": "775aae97172d5e2be7fa441c2b44facc7b6c23f981b485fa901746277c51f0c6"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_brief-M04-brief-1-standard-en-1920.png",
+      "sha256": "cc70fbdf1e80c4bb70f5bbf7535c9818430eecd9e40cef6d23c1bbc5fa4f3e26"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_brief-M04-brief-1-standard-en-2400.png",
+      "sha256": "7063cee50c12c3ed5b956d8007145b4e5f7d027c48bff83aa229065dbf2c1150"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_brief-M04-brief-1-standard-fa-1920.png",
+      "sha256": "ba8f0684f3ff60b706e991b07a18080441404ea4a69bad1ce8efe54ea5d08a00"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_brief-M04-brief-1-standard-fa-2400.png",
+      "sha256": "33530d49e8d0ec48c27577e5a061acfeb1b2131cdc70b3aece9def81f546a587"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_brief-M04-brief-2-large-contrast-en-1920.png",
+      "sha256": "4d950a5d27ce77f5ff98b54671b2afa356f64e4222a54916a7f1488bf66b48ea"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_brief-M04-brief-2-large-contrast-en-2400.png",
+      "sha256": "14117fee09f60861e9bb984180f8118cbad29b405d4c9f84b50c0634cadbf101"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_brief-M04-brief-2-large-contrast-fa-1920.png",
+      "sha256": "f96fab9175f5f01021946a1b865159a2097c7d12d1aef260f2215f13b8fc5259"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_brief-M04-brief-2-large-contrast-fa-2400.png",
+      "sha256": "4fabf3083001bd0a8a3b7f4fa03a995693abde3676db53ff9f5a4c505e0e2380"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_brief-M04-brief-2-standard-en-1920.png",
+      "sha256": "c1e72db0383fc865ac32993269e48b575cea586cdfd9d364442927b133fd74f3"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_brief-M04-brief-2-standard-en-2400.png",
+      "sha256": "42b4e84fd6043f48fd327d72602c02e040f708f0a5245101e2bc453f13ef4d84"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_brief-M04-brief-2-standard-fa-1920.png",
+      "sha256": "b611136bd3a6945281a1ffacfe6e03729f3917e39d384173b528001d67255524"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_brief-M04-brief-2-standard-fa-2400.png",
+      "sha256": "036c54a6093ae423f376a35bf9cde6b06625e67860e61c3f99d9548fb212ed9d"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_comms-M04-comms-0-large-contrast-en-1920.png",
+      "sha256": "61c1a43700639a86de78b6411135d70fc0e3d9317d174df174bc8a31c43e7016"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_comms-M04-comms-0-large-contrast-en-2400.png",
+      "sha256": "e2526b86f4baceb7a3e111e1413a12ee6996a607597218db79837b5e554603df"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_comms-M04-comms-0-large-contrast-fa-1920.png",
+      "sha256": "adbda2f3f3c1dfb9045a67484f610f2c4007807c614b8f9cc092ea2496693178"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_comms-M04-comms-0-large-contrast-fa-2400.png",
+      "sha256": "c3a48d700ab643165567cd0cb7fc177cad2504f62b5dd698e0024f67754be1b8"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_comms-M04-comms-0-standard-en-1920.png",
+      "sha256": "51cddde4e4bfe29919ac4b86dff43cfb2b5eed3b73aeb9188ecd060a2bad8397"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_comms-M04-comms-0-standard-en-2400.png",
+      "sha256": "ba88ddcf344f018d184a2848f525892a1d399f2eafd3ebd40392179f915200ce"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_comms-M04-comms-0-standard-fa-1920.png",
+      "sha256": "9a613a10b8e6fe81d2cf7d959b81fd12e0b08b8f66c014d3258c7add5b2f657f"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_comms-M04-comms-0-standard-fa-2400.png",
+      "sha256": "75350d521a58cce00aeb85bd2bd753bd224f4b25b876e0feaf355b12b0fbd464"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_debrief-M04-debrief-0-large-contrast-en-1920.png",
+      "sha256": "720baf95d13ac57519f6b88c95fc6ac8e92bcdf7559b8a1beab83c94e4275505"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_debrief-M04-debrief-0-large-contrast-en-2400.png",
+      "sha256": "8a58f9da7219df589fa646ee095d320ddb6801f1b5a8e3c33b0cb6e3cd47ef83"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_debrief-M04-debrief-0-large-contrast-fa-1920.png",
+      "sha256": "1e20cc26d2a649a1b144822af5bb7696552300823d9eca13e4841e528b1f890f"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_debrief-M04-debrief-0-large-contrast-fa-2400.png",
+      "sha256": "951bed65efefe03d55b9344063488cab613ef90d80fe4531133431c96364706d"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_debrief-M04-debrief-0-standard-en-1920.png",
+      "sha256": "f92fe50ac2f33df0816800f1e45fcd59c4535d835cc8ff2f15456da0cc962c60"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_debrief-M04-debrief-0-standard-en-2400.png",
+      "sha256": "4dfe7376114d82a287aad4d338a8b4f1e490226fcd06f03d41dd674c0d2f7b68"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_debrief-M04-debrief-0-standard-fa-1920.png",
+      "sha256": "3a122296e14c081227741113de4b61e44c6595335da4aebf3eced6a49226f7e0"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_debrief-M04-debrief-0-standard-fa-2400.png",
+      "sha256": "39109a5cc6dddb99fb49050fe2248fdf983831a22f5ef56298801d5862faba2d"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_debrief-M04-debrief-1-large-contrast-en-1920.png",
+      "sha256": "3fb975e62a0ef3a85901026c5a16d5534a20c2cf08cf627e0b42e8f636a8c932"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_debrief-M04-debrief-1-large-contrast-en-2400.png",
+      "sha256": "c56fdbda76c83b87adf713ddda631c8cb59f0543c9707610283851ff59c3e117"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_debrief-M04-debrief-1-large-contrast-fa-1920.png",
+      "sha256": "3f9e44d0d9cc8c3ca0427fb3d13c7fde1732b0c8764ac4c12b3b5ff6cbcd3f2f"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_debrief-M04-debrief-1-large-contrast-fa-2400.png",
+      "sha256": "d9b6e22aa08304b6a7612f29ffe330e212521298b8c788d0474f78bdaa65f3b3"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_debrief-M04-debrief-1-standard-en-1920.png",
+      "sha256": "be951f0469d539d9e3fd9ee2bf92595f6b786af27f5b11b3dc1cbed84b195b28"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_debrief-M04-debrief-1-standard-en-2400.png",
+      "sha256": "6995caa571b1ed983619826dc32004ab87577ee1c445102bd9893a53777f6189"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_debrief-M04-debrief-1-standard-fa-1920.png",
+      "sha256": "542d69f89f3562f870661214f5f1fa54ca56e817cacf14d9648f4f2a5dcc6580"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_debrief-M04-debrief-1-standard-fa-2400.png",
+      "sha256": "eb9f1b26d21e9b1e1d789893f6b577c82f2477bade263d89d4327b4296ff1c23"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_debrief-M04-debrief-2-large-contrast-en-1920.png",
+      "sha256": "95c3e908c9d7486841b5ec37c7121018787753fed91efb0a7d1889dd0121a199"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_debrief-M04-debrief-2-large-contrast-en-2400.png",
+      "sha256": "6ddfde2fad303175d14a08ad0ad01d519ce164cb5685b9178338bd72c913b3fe"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_debrief-M04-debrief-2-large-contrast-fa-1920.png",
+      "sha256": "b275265d7ad52ea3ef67dbbfa5a537e1b24399132a4fe87bddd8ed89b7173694"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_debrief-M04-debrief-2-large-contrast-fa-2400.png",
+      "sha256": "9621057085da1e7c5724da1fe6c075addbd4013eb4f5c2ab5624231896bd6334"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_debrief-M04-debrief-2-standard-en-1920.png",
+      "sha256": "bf121597349b326dbc930b8de73bcbeb7a0b359a0aa7d2780ce2aba6047f486c"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_debrief-M04-debrief-2-standard-en-2400.png",
+      "sha256": "7c2bb3ee6f731d7f0986d95fa0ba3bace2692b5e171f4477f83f269b2301f943"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_debrief-M04-debrief-2-standard-fa-1920.png",
+      "sha256": "2285862626e575142507897d93f062dfc0be7f9107baa9353f647b2ce0eaa06f"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/ComicQA/seq_ch01_m04_debrief-M04-debrief-2-standard-fa-2400.png",
+      "sha256": "e2de1dd709b503305e9c1e28052b3fd6965d9379043f28424d0c15e4a0548d51"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/Validation/warline-m04-architecture-02-markers.txt",
+      "sha256": "5142832bd96cb06f088869f1d9fe7288eb6416bb40756887eefed959a27da6a9"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/Validation/warline-m04-architecture-03-markers.txt",
+      "sha256": "bf72377cdd23087097750cb97f6943dbe01cfdc05bf289eec4673d435c2eff60"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/Validation/warline-m04-comics-02-markers.txt",
+      "sha256": "3139d18375cd74600707c565f595970c9b4e0383d92cff7a74a70bd46aed7b5e"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/Validation/warline-m04-final-05-markers.txt",
+      "sha256": "4a0f921e846b6e6e6d314df1abed43c5a436d62ab56c72a1240b82098775f033"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/Validation/warline-m04-result-03-markers.txt",
+      "sha256": "cd06b29457ca4dd09152f32084cbfecd41c5ab91ab716486f3f548108a742e3e"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/Validation/warline-m04-result-04-markers.txt",
+      "sha256": "cd06b29457ca4dd09152f32084cbfecd41c5ab91ab716486f3f548108a742e3e"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/Validation/warline-m04-vehicles-01-markers.txt",
+      "sha256": "016042f30f49e26b8ff3244315873d7d5f447ad13b87b67060875d1bc7bae831"
+    },
+    {
+      "path": "Design/AgentReports/M04Airlift/Validation/warline-m04-vehicles-02-markers.txt",
+      "sha256": "25564ede6958c68b59c44b24e590f2865d131aff3836e3cfd63afd164b40f2cb"
+    }
+  ],
+  "gitDelivery": {
+    "atQaSignoff": "Uncommitted working-tree snapshot",
+    "subsequentUserRequest": "Commit and push all pending M3/M4 source, artwork, plans and QA evidence",
+    "branch": "codex/m03-radar-warning",
+    "verification": "Final commit and remote identity are reported in the task delivery.",
+    "imageEvidence": "Design-folder images are retained locally and excluded from Git at user request. Game artwork under Assets remains included."
+  }
+}

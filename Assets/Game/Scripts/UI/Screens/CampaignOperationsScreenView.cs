@@ -7,7 +7,7 @@ using Game.UI.Contracts;
 namespace Game.UI.Runtime
 {
     [DisallowMultipleComponent]
-    public sealed class CampaignOperationsScreenView : MonoBehaviour
+    public sealed partial class CampaignOperationsScreenView : MonoBehaviour
     {
         [SerializeField] private UIShellRouteButtonView backRouteButton;
         [SerializeField] private RectTransform chapterRail;
@@ -65,6 +65,8 @@ namespace Game.UI.Runtime
 
         private void OnEnable()
         {
+            storyArchiveButton?.onClick.AddListener(OpenRadarGuideArchive);
+            footerStoryArchiveButton?.onClick.AddListener(OpenRadarGuideArchive);
             if (!_stateButtonsBound)
             {
                 showMissionSelectButton?.onClick.AddListener(ShowMissionSelect);
@@ -79,6 +81,8 @@ namespace Game.UI.Runtime
 
         private void OnDisable()
         {
+            storyArchiveButton?.onClick.RemoveListener(OpenRadarGuideArchive);
+            footerStoryArchiveButton?.onClick.RemoveListener(OpenRadarGuideArchive);
             if (!_stateButtonsBound)
                 return;
             showMissionSelectButton?.onClick.RemoveListener(ShowMissionSelect);
@@ -153,7 +157,9 @@ namespace Game.UI.Runtime
                     ? GameLocalization.Get("ui.campaign.start_briefing", "START BRIEFING")
                     : GameLocalization.GetBySource(mission.PrimaryActionLabel));
             launchMissionButton.interactable = mission.Available;
-            ApplyMissionNodes(mission.MissionId, model.NextMissionRevealed);
+            ApplyMissionNodes(mission.MissionId, model.NextMissionRevealed, model.AvailableMissionMask);
+            ApplyRadarWarning(mission);
+            ApplyAirlift(mission);
             for (int index = 0; index < progressNodes.Length; index++)
                 progressNodes[index].gameObject.SetActive(index < mission.BestStars);
         }
@@ -176,12 +182,13 @@ namespace Game.UI.Runtime
             return $"{mission.DisplayName}  |  {mission.PrimaryActionLabel}  |  {mission.BestStars}/3{time}";
         }
 
-        private void ApplyMissionNodes(string selectedMissionId, bool m02Revealed)
+        private void ApplyMissionNodes(string selectedMissionId, bool m02Revealed, byte availableMask)
         {
             for (int index = 0; index < (missionNodes?.Length ?? 0); index++)
             {
                 bool available = index == 0 || index == 1 && m02Revealed ||
                                  index == 1 && selectedMissionId == UiCampaignMissionProjectionIds.M02;
+                if (availableMask != 0) available = (availableMask & (1 << index)) != 0;
                 if (missionNodeButtons != null && index < missionNodeButtons.Length &&
                     missionNodeButtons[index] != null)
                     missionNodeButtons[index].interactable = available;
@@ -202,5 +209,6 @@ namespace Game.UI.Runtime
     {
         internal const string M01 = "saga.ch01.m01.first_contact";
         internal const string M02 = "saga.ch01.m02.establish_base";
+        internal const string M03 = "saga.ch01.m03.radar_warning";
     }
 }

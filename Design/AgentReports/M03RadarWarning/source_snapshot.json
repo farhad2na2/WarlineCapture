@@ -1,0 +1,1952 @@
+{
+  "status": "Final working-source checkpoint for this Editor QA handoff; full acceptance remains open",
+  "baseCommit": "b6b8153d241786b8e368a3910f07fb435396805e",
+  "branch": "codex/m03-radar-warning",
+  "unityVersion": "m_EditorVersion: 6000.5.2f1\nm_EditorVersionWithRevision: 6000.5.2f1 (eb73d3b415a1)",
+  "packages": {
+    "com.unity.entities": "6.5.0",
+    "com.unity.addressables": "3.1.0",
+    "com.unity.pipeline": "0.6.0-exp.1",
+    "com.unity.inputsystem": "1.19.0"
+  },
+  "userScope": "Editor only; no Android QA",
+  "preExistingUnrelatedDirtyFiles": [
+    "Assets/Game/Art/UI/Fonts/NotoSansArabic/NotoSansArabic-Narrative SDF.asset",
+    "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium SDF.asset"
+  ],
+  "files": [
+    {
+      "path": "Assets/AddressableAssetsData/AddressableAssetSettings.asset",
+      "bytes": 15425,
+      "sha256": "24f081cafddda951ffe80527f1b0a7ee6968156e99b7fbd0e0d18dd238b1897d"
+    },
+    {
+      "path": "Assets/AddressableAssetsData/AssetGroups/M03 Field Guide.asset",
+      "bytes": 10372,
+      "sha256": "193f8f693ad74417c91a4206987ff1d9f1161ffe2dac2408c22851c6e1b232d2"
+    },
+    {
+      "path": "Assets/AddressableAssetsData/AssetGroups/M03 Field Guide.asset.meta",
+      "bytes": 189,
+      "sha256": "d9902951ebe84516593992f8e349db9d68ab729a4582fc8097707c3406ed9002"
+    },
+    {
+      "path": "Assets/AddressableAssetsData/AssetGroups/M03 Narrative.asset",
+      "bytes": 2035,
+      "sha256": "40f652859578ca6de9288a9f0a99a5be0b48946b67dec1c41ccb49e56024a3db"
+    },
+    {
+      "path": "Assets/AddressableAssetsData/AssetGroups/M03 Narrative.asset.meta",
+      "bytes": 189,
+      "sha256": "a1d2dff635ea97cd6ae1e6862c226dae0fa91479187949751fa825dc1357a85d"
+    },
+    {
+      "path": "Assets/AddressableAssetsData/AssetGroups/Schemas/M03 Field Guide_BundledAssetGroupSchema.asset",
+      "bytes": 1760,
+      "sha256": "bbd8fa7425e966967eac32a99deec335d79ab86be962490835f3c6d95d3bd88f"
+    },
+    {
+      "path": "Assets/AddressableAssetsData/AssetGroups/Schemas/M03 Field Guide_BundledAssetGroupSchema.asset.meta",
+      "bytes": 189,
+      "sha256": "4de53a9ac8a769cc00309835e3ee0d5e2755818a6355896f6beec9e8b3d5a553"
+    },
+    {
+      "path": "Assets/AddressableAssetsData/AssetGroups/Schemas/M03 Field Guide_ContentUpdateGroupSchema.asset",
+      "bytes": 655,
+      "sha256": "7baf4fc4fb5d28ab0e2eed9c1ae9bae585cb652045d914942cc7496b6d012d82"
+    },
+    {
+      "path": "Assets/AddressableAssetsData/AssetGroups/Schemas/M03 Field Guide_ContentUpdateGroupSchema.asset.meta",
+      "bytes": 189,
+      "sha256": "84ba7548e6aab788d67a797722f71f624b79379438848cb98d86fd270957da65"
+    },
+    {
+      "path": "Assets/AddressableAssetsData/AssetGroups/Schemas/M03 Narrative_BundledAssetGroupSchema.asset",
+      "bytes": 1758,
+      "sha256": "c7873ee0c1d4bfa92bbd36a6669c68e3a2499cf39d5cf410cd0e2c00fe9abeb5"
+    },
+    {
+      "path": "Assets/AddressableAssetsData/AssetGroups/Schemas/M03 Narrative_BundledAssetGroupSchema.asset.meta",
+      "bytes": 189,
+      "sha256": "c431fd223002211d7db595af6f75fc057292f87b5629c3f9d5106eb7f2c126da"
+    },
+    {
+      "path": "Assets/AddressableAssetsData/AssetGroups/Schemas/M03 Narrative_ContentUpdateGroupSchema.asset",
+      "bytes": 653,
+      "sha256": "fc073145308bd247a05a2f07b4ed7dcc723e780a9b6c0a403f7e7f7341a9b16f"
+    },
+    {
+      "path": "Assets/AddressableAssetsData/AssetGroups/Schemas/M03 Narrative_ContentUpdateGroupSchema.asset.meta",
+      "bytes": 189,
+      "sha256": "e96ea739b6368feff02334963c5c3a68c22442ccc328fd59513abd155e767b4b"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/M03RadarWarning.meta",
+      "bytes": 172,
+      "sha256": "ec53c59a6067494697056752f17bd933f1f972bbd32d5bc3d4c76c6ab15e72e1"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/M03RadarWarning/Final.meta",
+      "bytes": 172,
+      "sha256": "7f86549c78eb524e1dd1810b0d9f1c03a6acdeb75c267d002d9b0fc5a2c30a2f"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B01.png",
+      "bytes": 1716374,
+      "sha256": "392269f2199dde8ff7088357549f9a68729655e6abd1092a96fa3eabe0d156b6"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B01.png.meta",
+      "bytes": 4111,
+      "sha256": "9a9cb85cc8417df32282566a90c8157864d6409b117c003a0c83e71f1a283768"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B02.png",
+      "bytes": 2162025,
+      "sha256": "b1798cbd1a6dd63aed05404195c2dca4d25164a28758ca5f01acf2f5c42250eb"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B02.png.meta",
+      "bytes": 4111,
+      "sha256": "7749bce49484a92c9e1a34ea31bac78429f47316389c29e100010af76d5a3142"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B03.png",
+      "bytes": 1903555,
+      "sha256": "1fa6244f75883e24c08bc27629cccb3dca131c5ecd472b8be702837160621339"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B03.png.meta",
+      "bytes": 4115,
+      "sha256": "ebbfcdb3d61b3267fb154830acc59ae15431026f3d93ba08a78d80e510636d8f"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-C01.png",
+      "bytes": 1675333,
+      "sha256": "c3f33e04b2f83bbb2d0452e855dcffdb4555333573aec6d63bcf3c8ccb7d111f"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-C01.png.meta",
+      "bytes": 4113,
+      "sha256": "132f2c12e92437901aaaa315fc0c07cc1849f6132f7cea2c2244fcc592476175"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-D01.png",
+      "bytes": 1972321,
+      "sha256": "0b7d78b06d8550afbb9d6397f3a6f8b4af4c3ec3e01a76a0aea0b1f059bc11fd"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-D01.png.meta",
+      "bytes": 4113,
+      "sha256": "eb5ce20e4b4046cbe62a76446c443b1f83015fab9bfc9c9ebcc28e23c3e040eb"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-D02.png",
+      "bytes": 1627815,
+      "sha256": "577eba37e5a2ad4c114bea1f411ea599647953e7b72bd456eaa4a1918ee8a85d"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-D02.png.meta",
+      "bytes": 4113,
+      "sha256": "686085fe7f959e9db05193baf2c61d9e497ca5cc15dd247690e7010b76c78f29"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-D03.png",
+      "bytes": 1973571,
+      "sha256": "1677929e563f1b6a546075c4082f07353a136130a5e9d49823b7026b8f3bf307"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-D03.png.meta",
+      "bytes": 4115,
+      "sha256": "e56c780e1d57b74ac312b4d4cfeef733e8ea37d950167896c14dc5da1b131ef3"
+    },
+    {
+      "path": "Assets/Game/Configs/Campaign/CampaignMissionCatalog.asset",
+      "bytes": 1107,
+      "sha256": "3b9f1589f694b44a26a20a6f24f21d5d90e8ac9319ba58206323d2980265e187"
+    },
+    {
+      "path": "Assets/Game/Configs/Missions/Chapter01/M03_FieldGuide.asset",
+      "bytes": 22193,
+      "sha256": "e560eff8cca6a1a802b1a5869e25b64d2a296b7ec6cd40d62c2bf0e017e0acf3"
+    },
+    {
+      "path": "Assets/Game/Configs/Missions/Chapter01/M03_FieldGuide.asset.meta",
+      "bytes": 189,
+      "sha256": "e76da1a52852ea5affb994e50c0247de1a159c0899b6d91aec8474235a1d028b"
+    },
+    {
+      "path": "Assets/Game/Configs/Missions/Chapter01/MissionDefinition_Ch01_M03_RadarWarning.asset",
+      "bytes": 2773,
+      "sha256": "0a42080d251d3e8dd2c2431bc233d703b7ff24370173b8b190fe630a4fd97845"
+    },
+    {
+      "path": "Assets/Game/Configs/Missions/Chapter01/MissionDefinition_Ch01_M03_RadarWarning.asset.meta",
+      "bytes": 189,
+      "sha256": "2e5e7891dbd0ebf3c94c5321f2346d96b77bbaa1012f26e478dbc35ed35fd679"
+    },
+    {
+      "path": "Assets/Game/Configs/Narrative/Chapter01/M03_RadarWarning_Narrative.asset",
+      "bytes": 35504,
+      "sha256": "9a6e8f3210e6c1d521cff5001ae27cc6d34add6cab9f4e2f2b92af449a7e32ce"
+    },
+    {
+      "path": "Assets/Game/Configs/Narrative/Chapter01/M03_RadarWarning_Narrative.asset.meta",
+      "bytes": 189,
+      "sha256": "b040d3220c90d68ca27cd5680d9bf0bffa9e254d9c3f08f0de3a5aadf91a7d82"
+    },
+    {
+      "path": "Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchPersianLocale.asset",
+      "bytes": 33866,
+      "sha256": "2bac0ab35d4a582282786d289cf4e1f47b6965492544cfc586da58d9fd47e688"
+    },
+    {
+      "path": "Assets/Game/Configs/OperationMaps/Chapter01/OperationMapCatalog_Chapter01.asset",
+      "bytes": 1568,
+      "sha256": "870e877ce3f3271946055151f015b574dbcfba32a276a5f127413c650fba85fb"
+    },
+    {
+      "path": "Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_ConvoyApproach01.asset",
+      "bytes": 10968,
+      "sha256": "62eee30f074e730521adeadf5dbd3cb0d111c9926f7c4408d419554e40dd552c"
+    },
+    {
+      "path": "Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_ConvoyApproach01.asset.meta",
+      "bytes": 189,
+      "sha256": "a492bf24c531fb39c8440667acac97bab3e06f537518c0812c100019e4c81a79"
+    },
+    {
+      "path": "Assets/Game/Configs/Scenarios/Chapter01/ScenarioSetup_Ch01_M03_RadarWarning.asset",
+      "bytes": 15114,
+      "sha256": "2c797b1c02b183d6d3fb8c0eaef9611466c85e123f92480c412ff8d9423c03fb"
+    },
+    {
+      "path": "Assets/Game/Configs/Scenarios/Chapter01/ScenarioSetup_Ch01_M03_RadarWarning.asset.meta",
+      "bytes": 189,
+      "sha256": "1a82374fccb226e2703e79f3f02ff8c5fd3707a9d230bd20cf5b64a6a3181449"
+    },
+    {
+      "path": "Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab",
+      "bytes": 1020491,
+      "sha256": "1cb8d802a4bc2bafc0f3efd1294fc50cde8d1ddc2ec8e87cf2a0799e1ee2a944"
+    },
+    {
+      "path": "Assets/Game/Prefabs/UI/Popups/M03_FieldGuide.prefab",
+      "bytes": 134134,
+      "sha256": "1a98374cec4cc0a24b216a253a684124362767313d891967f78e53276d3b114a"
+    },
+    {
+      "path": "Assets/Game/Prefabs/UI/Popups/M03_FieldGuide.prefab.meta",
+      "bytes": 154,
+      "sha256": "c747a85ca04814b7b327926caa11380116cbb63868398e108fc3bcf7f8fcd6f7"
+    },
+    {
+      "path": "Assets/Game/Prefabs/UI/Popups/MissionResultPopup.prefab",
+      "bytes": 258127,
+      "sha256": "31363aaf94cfc100e14571149a370993475171cc1bf1c7c3643410634d8a50aa"
+    },
+    {
+      "path": "Assets/Game/Prefabs/UI/Popups/ThreatAlertPopup.prefab",
+      "bytes": 324037,
+      "sha256": "ebafdb31875eeba335a0e36f7a5a79490a443efc9440ca33b4ce44f0e175664d"
+    },
+    {
+      "path": "Assets/Game/Prefabs/UI/Shell/Content/SCN05_CampaignOperationsContent.prefab",
+      "bytes": 709684,
+      "sha256": "dea2ee7ba0ead7d2c3326b19a292700f53d9b8beee0ae68e96f19a2dcc48c2fd"
+    },
+    {
+      "path": "Assets/Game/Prefabs/UI/Shell/Content/SCN06_MissionBriefingContent.prefab",
+      "bytes": 365441,
+      "sha256": "319b2006a2c78f436608b9a85c005f936775a7b26d2e76cc0516ba8587704934"
+    },
+    {
+      "path": "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab",
+      "bytes": 1396060,
+      "sha256": "1db699385f473274f8892994f67aa961907082d7b007db9226dacfd036c7552a"
+    },
+    {
+      "path": "Assets/Game/Resources/Localization/V3UiLocalizationCatalog.asset",
+      "bytes": 457989,
+      "sha256": "8d5d945858cdd7b06b72856030ca7d3ed0e2fa4906bcdfdbc1de9416150da5f4"
+    },
+    {
+      "path": "Assets/Game/Scenes/Menu.unity",
+      "bytes": 130461,
+      "sha256": "47c892fad6899a1513032f99e53a6c9de185d39961963a6c411af61bbcdf03d2"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/BuildingRuntimeDeleteRequest.cs",
+      "bytes": 379,
+      "sha256": "89281781daa8b646d6e85d69a78f7dce3c641489433329f4fb7e2b5057698509"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/BuildingRuntimeDeleteRequest.cs.meta",
+      "bytes": 59,
+      "sha256": "2d0757c713846c217af542a2e0cc50d0c5e887ef65dce80db9f73ffcc1e616db"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/BuildingRuntimeEcsComponents.cs",
+      "bytes": 15415,
+      "sha256": "9cc0a6cdf5f69a506189194f3da01aa9a8aa0fc96ac393d50ee654ec33338d61"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/CampaignMissionAttemptFactComponents.cs",
+      "bytes": 1570,
+      "sha256": "64b0d28d554b9765f03ce243823131e1b029800ae608084d8fc86284e9af4991"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/CampaignMissionCameraTourComponents.cs",
+      "bytes": 782,
+      "sha256": "173a85ab7cad4ba117c94a486dae822f2ba19ce20915176990eb2ff58de1b3f2"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/CampaignMissionCameraTourComponents.cs.meta",
+      "bytes": 59,
+      "sha256": "c3e29803bfedda455dd31564d24c734003926bcad71f677bee25df9aa98487ef"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/CampaignMissionComponents.cs",
+      "bytes": 13183,
+      "sha256": "6dc66fa7910472b21cd9db1c5ea8b8d6dc0aed4c90584b7530cf706af76da9b6"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/CampaignMissionDefenseComponents.cs",
+      "bytes": 3406,
+      "sha256": "9192fce07d25f9a23935c8d793966e781d7a96726bc5fc9181711be1acf391d1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/CampaignMissionDefenseComponents.cs.meta",
+      "bytes": 59,
+      "sha256": "96a7855c738a733595f90273451c140c33aabe6eb3f43920761748c227f2dc62"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/MissionDefenseInteractionComponents.cs",
+      "bytes": 588,
+      "sha256": "658487dd987a0a316491df4a79e7d99fff75c9fa41e5eec1a7e7e478d8b7542b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/MissionDefenseInteractionComponents.cs.meta",
+      "bytes": 59,
+      "sha256": "83b2fa71b9050827703cdae3d984a567028ffde1ab91b681833c7b47aa6c8f91"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/RadarPingComponents.cs",
+      "bytes": 1036,
+      "sha256": "056e51bcda804eb0fd2703c43660d6b0603e06f9a42694227235ea64ec943ba3"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/RadarPingComponents.cs.meta",
+      "bytes": 59,
+      "sha256": "f9753db787184ac5eb179f01727ce2deb775d477bb733b98944a8ccbed6d2daa"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/RuntimeGameplayStateComponents.cs",
+      "bytes": 1018,
+      "sha256": "e2806c6db4b5efd9873311109e4bcece2b1bd8efba4de4798eab3a358c8be3ea"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/ThreatWarningComponents.cs",
+      "bytes": 1985,
+      "sha256": "75005a8f4553334258344231722d4d9b87734548391f46191cf5bc27ad0298fa"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/ThreatWarningComponents.cs.meta",
+      "bytes": 59,
+      "sha256": "e9211d0aa14f7e1f1363be8d6984ef70e1dad05d296fe08941caac66b9c28223"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/CampaignMissionCatalogProjection.Defense.cs",
+      "bytes": 7047,
+      "sha256": "c7fb599a23659067ef190cf677f75001b4bb3d273a01502cf7334fc52ac3f6e8"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/CampaignMissionCatalogProjection.Defense.cs.meta",
+      "bytes": 59,
+      "sha256": "3be2c32f9c11b8e44119c60bded3d7c07d26a21c1d43aebb948e773ffaf48390"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/CampaignMissionCatalogProjection.Matching.cs",
+      "bytes": 11149,
+      "sha256": "a46cba150e0e833fdcc06106e3b42d972f8612df4f16a88d901e74b207070f86"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/CampaignMissionCatalogProjection.cs",
+      "bytes": 20515,
+      "sha256": "5a6f0d3fbebc1994f86b9ffe54c1e4404ba36597e607dd47d919c6cf5734e499"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Narrative/CampaignMissionDebriefCompositionSystemHelper.Refresh.cs",
+      "bytes": 1253,
+      "sha256": "d65ca484d53039611f1bcb2c04be4f1beea52b34756d2986bd8afa3d3dcda7f0"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Narrative/CampaignMissionDebriefCompositionSystemHelper.Refresh.cs.meta",
+      "bytes": 59,
+      "sha256": "39805e8743cddd42271cab6cd3dfe81e72214d5f9afc8d66c903a807178d8500"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Narrative/CampaignMissionDebriefCompositionSystemHelper.cs",
+      "bytes": 16586,
+      "sha256": "53c48379754dc6c534d2c39537d0a5aedfc14f6c13da153051373e8a79536cc4"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Narrative/CampaignMissionNarrativePlaybackRuntime.cs",
+      "bytes": 3858,
+      "sha256": "41d4c18bf564376f4cbe7066c8b20c51b84ffc2833278978b03dacbca36ff2cf"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Narrative/CampaignMissionNarrativePlaybackRuntime.cs.meta",
+      "bytes": 59,
+      "sha256": "393e9c4eda6d0d7040145a3cd45384d043960f2e27cdb7c5fae22f9e9f09e75a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativePortraitVoiceSelectionPresentationSystemHelper.LocalizedVoice.cs",
+      "bytes": 1525,
+      "sha256": "95bc45d5ea32b3411e5887113ada76dbfe6643fc05fb2fd868fcb1813c7e7592"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativePortraitVoiceSelectionPresentationSystemHelper.LocalizedVoice.cs.meta",
+      "bytes": 60,
+      "sha256": "1e68413a4315cf7269507ee549faaba6ebaecf4b9c66e8320aed792459ca375a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativePortraitVoiceSelectionPresentationSystemHelper.cs",
+      "bytes": 2450,
+      "sha256": "5eb2fb7d33d62c461eb5189f65ead4b13a6249dc641c25e4c15b0dd9e436fdb1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeSequencePresentationSystemHelper.Refresh.cs",
+      "bytes": 1947,
+      "sha256": "15929671a0fa3cc939c0b9c2ab693df82ea7b0231f7f7be73ccddf838753ce57"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeSequencePresentationSystemHelper.Refresh.cs.meta",
+      "bytes": 59,
+      "sha256": "0bea3b36878c463ebaaa4c41b6d941f1faf4d333fa9a35d7663466b8f2351819"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeSequencePresentationSystemHelper.cs",
+      "bytes": 20959,
+      "sha256": "7e9f0a668530480e70e51f754bab43236ee7fd97c452f4377ebe85af6ff838d7"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Localization/M03RadarWarningGuideCopyCatalog.cs",
+      "bytes": 26874,
+      "sha256": "710812bf26176240c6199ddd36c8e060ac15a26fae0432a8e6e48166c4ff8cfc"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Localization/M03RadarWarningGuideCopyCatalog.cs.meta",
+      "bytes": 59,
+      "sha256": "a31df03b0161b319407ed8de58e94043f3fcd7bd3b270fa60a947a847aa71048"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Localization/M03RadarWarningTutorialCopyCatalog.cs",
+      "bytes": 5224,
+      "sha256": "083df8a0903d804b0204790a88c31e7200c149ce6bbd66d89f7dfb483c8c2261"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Localization/M03RadarWarningTutorialCopyCatalog.cs.meta",
+      "bytes": 59,
+      "sha256": "262359aa589de53a700d538ecd2bc39f94d6ab193c099a297d598deb6427142f"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Localization/M03RadarWarningUiCopyCatalog.cs",
+      "bytes": 9743,
+      "sha256": "ac9a2d0d830b66817a6dd4c0c4188af5f89c2fab9a811bc2999a2b5ab2f0e0b6"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Localization/M03RadarWarningUiCopyCatalog.cs.meta",
+      "bytes": 59,
+      "sha256": "1189c2974b578590c5a192a413b26950cc6850acd5677a76c3f89d53024b100b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/MissionCameraTourConfig.cs",
+      "bytes": 911,
+      "sha256": "ab454709f84980cd3a8f663e0b8f78feef47efc32ae536df6f46c4b613b32ed4"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/MissionCameraTourConfig.cs.meta",
+      "bytes": 59,
+      "sha256": "e061ce2c3f68bca2462d6e846058597b6b9be7c9f251722affebced7f0674ee8"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/MissionDefenseDefinitionConfig.cs",
+      "bytes": 2724,
+      "sha256": "1ec186b1fcf644a28787ff7254ba60cd0422cf3d4c7283a42bc7fb55b76d7cbb"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/MissionDefenseDefinitionConfig.cs.meta",
+      "bytes": 59,
+      "sha256": "4934c06c61c83e25899c038015da4a5f6920a9b0747f934358cf31205b6dcea1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/MissionDefenseDefinitionValidation.cs",
+      "bytes": 4837,
+      "sha256": "31c660384c10aa843ae26447d9346840623cfa2d0e98367b6aee8665ca36d36b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/MissionDefenseDefinitionValidation.cs.meta",
+      "bytes": 59,
+      "sha256": "ca197ec931ba23ab7de4a877ccf5b40d322d3d805017690275f5ba162179da35"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/MissionDefinitionContractValidation.cs",
+      "bytes": 18531,
+      "sha256": "84004d453c1581b6ee6ba307183839b7ae560aea642c82007a1ed114f85d89dc"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/MissionFieldGuideConfig.cs",
+      "bytes": 1661,
+      "sha256": "b0896113e56304d0275ca16e6ee6227b94ec06aa6a65ed73a1758770ac4df8d6"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/MissionFieldGuideConfig.cs.meta",
+      "bytes": 59,
+      "sha256": "d6211e1cd9437d1288dbf6d540773e204643b3fe961a63db26cd199c38c217bb"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/MissionGuidanceStepConfig.cs",
+      "bytes": 710,
+      "sha256": "812021675360e68c8347621eacf9491836ce61c83d2ccb9230488be4886044b1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/MissionGuidanceStepConfig.cs.meta",
+      "bytes": 59,
+      "sha256": "1412bef97b4905b5c75e4036b806f14bf2bbf1d84354c4c5400b67e472fb0069"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Narrative/M03RadarWarningCopyCatalog.cs",
+      "bytes": 5849,
+      "sha256": "b1080c0e9f5ac879adf0586ba213afac37a2418d7494607500ef300d132e01e7"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Narrative/M03RadarWarningCopyCatalog.cs.meta",
+      "bytes": 59,
+      "sha256": "4c323e5b581a67c6a5e24d69b677271ff18c557b702904750a8a6ec55b8c00d4"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/ScenarioMissionRuntimeContractValidation.cs",
+      "bytes": 5233,
+      "sha256": "d50119c168b06866adc5f199346e941bb9b4c0a270b46b64306ee091b2bddb34"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/ScenarioSetupConfig.cs",
+      "bytes": 14842,
+      "sha256": "8a93d4366af398001a5dd091dd6ff5ceec5bd2205733cd99055982d5323e4a7b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Game.Editor.asmdef",
+      "bytes": 1584,
+      "sha256": "a332d58d7a96b6dcd521d347f1cf9603eece48a2db25a3f8f859152a161b33f4"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M02EstablishBaseConfigBuilder.cs",
+      "bytes": 21673,
+      "sha256": "f269ad2917383a97387eebf2aa2658b7f81192c5523ccd2b431de5f440f745f1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningConfigBuilder.Guidance.cs",
+      "bytes": 2141,
+      "sha256": "a42fc147f3b61577c6fb134071df85c7cf9218757d75fd713a3e01f5df1fdf43"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningConfigBuilder.Guidance.cs.meta",
+      "bytes": 59,
+      "sha256": "c96bab3318072368379b1129af6d26ff27f070a5f60146019b002a7820f53f8f"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningConfigBuilder.Roster.cs",
+      "bytes": 2222,
+      "sha256": "b936935a80b2f1a2cf3de390b28d31a346d24881fb2861d4daef93c086b291f3"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningConfigBuilder.Roster.cs.meta",
+      "bytes": 59,
+      "sha256": "f0fa8d515b6fb784373fe56f1d3e11962fa52f5f6edbe3648b4e46f7a3284f8e"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningConfigBuilder.cs",
+      "bytes": 11194,
+      "sha256": "8535197b62f145282085f29a46fc62063a8b422db85c8d97c6fd31e21a7f1ca9"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningConfigBuilder.cs.meta",
+      "bytes": 59,
+      "sha256": "2733b53366e764c659594ac37c8903b601030098c5fbcadcc96fd1a1d9253c2a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Allocation.cs",
+      "bytes": 9935,
+      "sha256": "fc9a5f7cb0ef4273c8af9cbc082f016673d3423c57aa50d3fdf4331de8a9bbf8"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Allocation.cs.meta",
+      "bytes": 60,
+      "sha256": "6f2fa9dafe91dc2307b49d6c305911d378fd5dcfee44d1fec2409332447009d8"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Camera.cs",
+      "bytes": 6170,
+      "sha256": "c3be1000604563a1076a2cc64db972cf6aecb673e8dc1cbe54ec60277e97bd22"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Camera.cs.meta",
+      "bytes": 59,
+      "sha256": "4ec9cfbdb0ef9997b645112c626249c717c225da9a7173e210b17d60f30b7ea3"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Comics.cs",
+      "bytes": 8648,
+      "sha256": "48dd8e714133eea4a7d5c1aa70bbb8ddeb3d8c29e6e409cd16b5d60a98b6d7b7"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Comics.cs.meta",
+      "bytes": 59,
+      "sha256": "c41030b3e62694048b886901b37306ce2cc41ec37ee9f258a9a2cd660ed97eb4"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Commands.cs",
+      "bytes": 10268,
+      "sha256": "89b811abe9349a8e94ac59a6a317b752bcf6df61c8384badee0dcdd3c9519657"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Commands.cs.meta",
+      "bytes": 59,
+      "sha256": "1b1148e005f3fc1eaddae89632f60eb821e15986af51b012d54600a3644698af"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Construction.cs",
+      "bytes": 9935,
+      "sha256": "10c2ef4856f6c17baf8de978e9dab60199a409133053a48c12d7028ac0bac73d"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Construction.cs.meta",
+      "bytes": 59,
+      "sha256": "a6ed611d845a8d5292bcfea643f1674f1d4dc4822421429db522a7062312422d"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Convoy.cs",
+      "bytes": 5908,
+      "sha256": "6591c74ae643ce4003e05d617a0eb481d6affbddedc56f63477ff2f46ab4666a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Convoy.cs.meta",
+      "bytes": 59,
+      "sha256": "4a8a8cf739241c3f812c8e8a01aa4a3615be38a10bd51d67cf4d203ef8836fd4"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.CrossMission.cs",
+      "bytes": 9084,
+      "sha256": "257a5b10d7793bdb07b5e87bd5ac37f179985abe14187c6cc8cc0d520bb1f690"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.CrossMission.cs.meta",
+      "bytes": 60,
+      "sha256": "59084c48f110de8ac6c49705c65e73685d34ba0faf422d6c2e6af574bb43d89b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Diagnostics.cs",
+      "bytes": 3074,
+      "sha256": "9942e14e1ced134a09f66523f257abee03501563736bdd2c3c0ad01d0afb1710"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Diagnostics.cs.meta",
+      "bytes": 59,
+      "sha256": "2097e0dda727dec485325bd664c810d75be4dfc4d73d332fb089d78d8ea6c4ca"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Guidance.cs",
+      "bytes": 11911,
+      "sha256": "deb4589fa4ed2acbc1f11f96dfa53a5e6e775bf7aae9fe2745bba5d3ad26cfaf"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Guidance.cs.meta",
+      "bytes": 60,
+      "sha256": "d47d7c415659c3f0239d7999baa356d6b5002a1a982bccfbb310b75fd798e51b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Lifecycle.cs",
+      "bytes": 12137,
+      "sha256": "2e4c64ec7a82042074e1282ad463c8a6d2a22a23da7e8859b35e62f395c81abf"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Lifecycle.cs.meta",
+      "bytes": 59,
+      "sha256": "c4eee199ca5a7125e35df26f539f3205c39e6ca0270f9a94d228b9aea0165cb5"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Performance.cs",
+      "bytes": 11960,
+      "sha256": "4d83a2d7129698ba92813d8ca0a26684b386fc3928e34588ac7b894362256ea5"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Performance.cs.meta",
+      "bytes": 59,
+      "sha256": "2360d11fe2fef9ac261387b5627c74340a4fc3506ec0724510cd2ca71d5d4689"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Recovery.cs",
+      "bytes": 2649,
+      "sha256": "3cd379ce9dab3bc62859931e7a434bd733a5b85c0f24dc73b545f4a06bddde82"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Recovery.cs.meta",
+      "bytes": 59,
+      "sha256": "21ac445e1d98c1d45d6f97aaf408381ce03372e70e958c00233d4c54846a60d9"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Results.cs",
+      "bytes": 14394,
+      "sha256": "e9f442beb1eb364737e60528b9419ecf63c4bec9fa3daa6ff245ec0d86991e50"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Results.cs.meta",
+      "bytes": 59,
+      "sha256": "084853953b903125117f0383e622721edce1ffa99a6e59c3e91ba1f82d638818"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.RifleDefense.cs",
+      "bytes": 5936,
+      "sha256": "c30fbef3059fc9401d6c30a10c1ca758ef50a4535ee17e9115531a2519889240"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.RifleDefense.cs.meta",
+      "bytes": 59,
+      "sha256": "30150a82b1bbb94760596b127f45b387b17ac6d17f700280c5cf46b84940dcff"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.RoadBarrier.cs",
+      "bytes": 8920,
+      "sha256": "65e2afab9280ea9911f73f8a00e11da3463343c38f156626e5e731fe6e824c70"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.RoadBarrier.cs.meta",
+      "bytes": 60,
+      "sha256": "4813e9f5f58fdb29c3615348cc541e8407b8296b801d084a9c384c9d336b410c"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.SaveRecovery.cs",
+      "bytes": 5596,
+      "sha256": "fdcf004e117841fe018ab2c93a53410e0274832863969e051ccf046a4d1ca30f"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.SaveRecovery.cs.meta",
+      "bytes": 60,
+      "sha256": "3df81672dbd5ddde3da1e0dd1a584486ccc61cb6229e4ee8ec71f44c3d6a2900"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Ui.cs",
+      "bytes": 16827,
+      "sha256": "7f3667c72ac5037115ba7999b5a10816b4a4f223f8a9b8f10737a3b3c81e862b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Ui.cs.meta",
+      "bytes": 59,
+      "sha256": "987e6d181ffb94c484cc003d79eeced4e917fba437fd8fccf502138dd97108d6"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.cs",
+      "bytes": 13373,
+      "sha256": "b40c16f870bbe916fd2b561e372d83bb9b7fb54235c035ce986aa5a1f007d379"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.cs.meta",
+      "bytes": 59,
+      "sha256": "681dc35414136aed321d099b95bca0aad0291d89d4c74a668b3cce86311886fc"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningGuideBuilder.cs",
+      "bytes": 4423,
+      "sha256": "3c8a15ba4e2931bfb89f59debcb6e1f6f8f8e1ac3dd9f927686221ae1e4e921a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningGuideBuilder.cs.meta",
+      "bytes": 59,
+      "sha256": "dc39b6e8f748180e294f2b76f5927774e51176e59b7bd363aba36e1913219ce9"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningLocalizationBuilder.cs",
+      "bytes": 2556,
+      "sha256": "b199ce1eafe33e24dedae692531f16320523f5ee7f2c92c892d65572b031ae12"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningLocalizationBuilder.cs.meta",
+      "bytes": 59,
+      "sha256": "756bfb560a51660bfc4dd234cefbf50c8848e529720ed0922e1f8361739484f3"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningMapBuilder.Routes.cs",
+      "bytes": 5658,
+      "sha256": "5fae8d2926a645b7e32d4fce9b17529d401edd4bce3fb250592ad378cf43cbe2"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningMapBuilder.Routes.cs.meta",
+      "bytes": 59,
+      "sha256": "0ed4e585084dfb2a7550a4c533583ab53969019bf6bed584cefbb0061b628b3f"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningMapBuilder.cs",
+      "bytes": 9809,
+      "sha256": "566385c75a14c9d372b6bc348e7101766ea2235e7a7ff52b8d5ca69337d23af6"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningMapBuilder.cs.meta",
+      "bytes": 59,
+      "sha256": "d2504569be3acff6a5a958a164ee0661bbb26f52085b05028f8940fbdc0feda6"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningMediaImporter.cs",
+      "bytes": 5918,
+      "sha256": "4e0fafbcc28eee25c0e7aeabcb8e0664bba8ebd07a94cffae2a53a94dc3b4757"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningMediaImporter.cs.meta",
+      "bytes": 59,
+      "sha256": "90ccf7e5ead1ba64c94314106ae0576667acdeb0996010f72e06e770de924820"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningNarrativeBuilder.cs",
+      "bytes": 11643,
+      "sha256": "0ff3f6126bc3fdb59577c87b6c92ea0d7e671608e8506a1df6b2e0391443f689"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningNarrativeBuilder.cs.meta",
+      "bytes": 59,
+      "sha256": "becfc584c0fc01e838eea220c0a6a6327976f480bfc9615dcbe38116bc52fec4"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningRuntimeGridProbe.cs",
+      "bytes": 7010,
+      "sha256": "bfe33a28128a9e1fc1e9a5b19a4ac844fa82ab9178cc123ab59259f804226dbd"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningRuntimeGridProbe.cs.meta",
+      "bytes": 59,
+      "sha256": "540348808752ea38e2d1e33f5966656d5d84cc3cfa59d45e0e42d16e85b471b2"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningUiBuilder.Results.cs",
+      "bytes": 2721,
+      "sha256": "2b2018cb6dab92d6505345f45c94b2cae3f71f9eeb8af22797e41f5496ff2f8c"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningUiBuilder.Results.cs.meta",
+      "bytes": 59,
+      "sha256": "3484736a6eac0b97bf89bf1fc9baedabb84d8a1d2351b3acde3ecd6d10a67daa"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningUiBuilder.cs",
+      "bytes": 15894,
+      "sha256": "7b393fef12259cf4a76943b3b4e2c7896867e32b064d2c9b730d3e87cf7a9edf"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/M03RadarWarningUiBuilder.cs.meta",
+      "bytes": 59,
+      "sha256": "04ec01f5d7a5783d32b276b0fc048b2930c25a3c4a3a3e9b2644c579dbabbc6f"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Narrative/FirstLaunchNarrativeV3PrefabBuilder.cs",
+      "bytes": 106174,
+      "sha256": "3c5ed08562f65e85dcd160f8343c189b3ccc3a5601f13943849dac8bafdf4def"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/ThreatAlertV3PrefabBuilder.cs",
+      "bytes": 29158,
+      "sha256": "ac34218d8abbf952a0fbdc2a015cf33680e1898b06070a85b535cf9bb35c9616"
+    },
+    {
+      "path": "Assets/Game/Scripts/Missions/Contracts/MissionContracts.cs",
+      "bytes": 11167,
+      "sha256": "201a048481a9b1503866626b20fcca84ea2ab871076bc0043f49f4ffe43ff906"
+    },
+    {
+      "path": "Assets/Game/Scripts/Missions/Contracts/MissionGuidanceContracts.cs",
+      "bytes": 513,
+      "sha256": "6205b9ebb94236ca95c06b95ee380a6f96715b345d9a1b63b8601a3a57eb0c79"
+    },
+    {
+      "path": "Assets/Game/Scripts/Missions/Contracts/MissionGuidanceContracts.cs.meta",
+      "bytes": 59,
+      "sha256": "286cd882d86c44aca1108b3f9e553e4bac3e460b08d73c72a554e8e2a2fa6cef"
+    },
+    {
+      "path": "Assets/Game/Scripts/Persistence/JsonSaveRepository.cs",
+      "bytes": 3671,
+      "sha256": "dde8f76a0b5c301302ffac3aa47c6b95a2ebaed36e6a1f403fcebc179b37cdd3"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Campaign/CampaignMissionProgressStore.RadarWarning.cs",
+      "bytes": 1756,
+      "sha256": "a9c43ae6d8563d9590ebaa99c38ae9ab1198130605f05f5cbdac642801dc51c1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Campaign/CampaignMissionProgressStore.RadarWarning.cs.meta",
+      "bytes": 59,
+      "sha256": "9c20cf956e4143040e7dd3698bfefd80c1396509b69cb9feb1383cc7587c1769"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Campaign/CampaignMissionProgressStore.cs",
+      "bytes": 19130,
+      "sha256": "08660cc8201c79d865acd94de7807405a766da9f4ab1a79d5d3b828bbff7726a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionAttemptFactProjectionSystem.ForwardPost.cs",
+      "bytes": 6795,
+      "sha256": "193ecec50c197c5f0b01a688240bff28e3b0eb39035ee34a971fe4cd9ced5342"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionAttemptFactProjectionSystem.cs",
+      "bytes": 21472,
+      "sha256": "25201aedf0bd8cf7a6437ddcaaa5dea63958285adb78daceafefe6d2622da0c2"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionAttemptResourceInitializationSystem.cs",
+      "bytes": 6374,
+      "sha256": "dbbb1678a0f16b053a51f01ece380a69ec83d2104ddfbbe438f3aafd8eb23dc2"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionDefenseRuleUtility.cs",
+      "bytes": 2800,
+      "sha256": "9cb59f6d656f97de7c50b67084cc7fb70892f29409b107624acb1946e4a6a8ac"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionDefenseRuleUtility.cs.meta",
+      "bytes": 59,
+      "sha256": "362e5126163da988c8d5e0db49292ff916562a2a409a1e4a5edd8b3bd35bfde4"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionDelayedWaveSystem.Defense.cs",
+      "bytes": 4221,
+      "sha256": "6559fd51da194ecd908b9925ca8fa2bc11696d71b83b8aa739b759ad9c09f710"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionDelayedWaveSystem.Defense.cs.meta",
+      "bytes": 59,
+      "sha256": "739f33727cc2dd039f0b45db43e169fab0d3a12f426474fe154fab9b54192877"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionDelayedWaveSystem.cs",
+      "bytes": 8962,
+      "sha256": "af0e21c044976e523de241abb7abdcac480100827622599e3b7dfc30696f2bfb"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionDelayedWaveUtility.cs",
+      "bytes": 4699,
+      "sha256": "23e3f9d6f048bd8387de533237a6283c9f6d13557b0a62c7fdab836f5a71dadc"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionGuidanceProjectionSystem.Defense.cs",
+      "bytes": 12197,
+      "sha256": "338d6131120f5b12cd666c67908bc6bbc0888480be508ed8ba2508de1ed48362"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionGuidanceProjectionSystem.Defense.cs.meta",
+      "bytes": 59,
+      "sha256": "d52905258a59c604e17d46f2b877011b652a59d3d9448d8afefd6d5de97a761f"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionGuidanceProjectionSystem.cs",
+      "bytes": 25177,
+      "sha256": "32481f8168980d475eca83ce6921e706572ba23c39ec675e760146f40aa4719b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionLaunchSystem.DefenseCleanup.cs",
+      "bytes": 3960,
+      "sha256": "2106e2335f4f3d880c80eecc9a400af783fa984731349bbf66fb753cfcd1a0d7"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionLaunchSystem.DefenseCleanup.cs.meta",
+      "bytes": 59,
+      "sha256": "8079f844ee3714b02852b8fb6b5607ad2d32a7228f417ed705c564d977056eb1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionLaunchSystem.cs",
+      "bytes": 18039,
+      "sha256": "e6e260f2327988b96a2430cb6393bd9087896e501a929a89e2150e2fe2cf7bea"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionNarrativePolicy.cs",
+      "bytes": 1349,
+      "sha256": "0d79345d1da2a21f913b541dad730830308c3fa4eb330758c9a9a5fd0597b1f3"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionNarrativePolicy.cs.meta",
+      "bytes": 59,
+      "sha256": "e70f56e7afdc73b4d03c8c52b4c081763e313dcebd08e6830e90621e16a8a479"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionObjectiveProjectionSystem.cs",
+      "bytes": 21847,
+      "sha256": "0ed60fceb9752f8fbe47a71935c67d1abbc3568e402def21bfe9cdc504a76c5d"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionPatrolOrderSystem.Convoy.cs",
+      "bytes": 4327,
+      "sha256": "a2f7c3ce1ae660e541d2ac9bd724adae413858be91b6fd7ac45cc911a6be6f0c"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionPatrolOrderSystem.Convoy.cs.meta",
+      "bytes": 59,
+      "sha256": "f4bb2e8c7f4bf23da172e2d4fa78278feb6979f4ccceb918ee9adb554d41c6fd"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionPatrolOrderSystem.DefenseCamera.cs",
+      "bytes": 9272,
+      "sha256": "daa015158bab6ce0760b18298a64f6f1801269cc2a4b4cdcac390dc8dab35fcd"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionPatrolOrderSystem.DefenseCamera.cs.meta",
+      "bytes": 59,
+      "sha256": "a8ea8e9026b64e8787e6e438972fad3c3091be8d9c83f9ddf6a31d69d08ca221"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionPatrolOrderSystem.cs",
+      "bytes": 27279,
+      "sha256": "62c441228acac633d502bb2695fa173e35c52c66558850c660212823cde32489"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionProgressSettlementSystem.cs",
+      "bytes": 7668,
+      "sha256": "32c831d424fd2ae832719945127e3c788e8cd9f5857f67eef905d077c933ffc9"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionResultProjectionSystem.cs",
+      "bytes": 18952,
+      "sha256": "d483e2962f930b28dd314d2da17edbabecc3830ba4dab934741c9a72fd931273"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.Defense.cs",
+      "bytes": 7499,
+      "sha256": "53c705ace7e05261e2398fa44cae380c88441c5b0b67332aab645f17a613126d"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.Defense.cs.meta",
+      "bytes": 59,
+      "sha256": "af7fb2bdfed0d2ffc241d546fa157e3a9eeb244cdec6c1650f59793be2cf4421"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.cs",
+      "bytes": 24924,
+      "sha256": "5eb98892244799bd69785281b5f0b968408ad77cbc7002b8cd48431cadbd3554"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionSpawnSystem.Defense.cs",
+      "bytes": 5227,
+      "sha256": "7f936372bd22b29744b31b1dadfa7f0fa9b4817fd4c31a7fa3a0692e6ad3b22c"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionSpawnSystem.Defense.cs.meta",
+      "bytes": 59,
+      "sha256": "62415effd856a4665ed51fad489d5e563dc40995fb39d90af1a690fb78530c53"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionSpawnSystem.MapDefenses.cs",
+      "bytes": 2701,
+      "sha256": "85ded02cc922a10b3d31988d852092c03709f4205dc0f666702d8b953d9108ca"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionSpawnSystem.MapDefenses.cs.meta",
+      "bytes": 59,
+      "sha256": "8eb05cdaaf7b8fa93dcdf00f7e4d251d8acd080b9d9c3a84ba316cddf946f2a6"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionSpawnSystem.OpeningPresentation.cs",
+      "bytes": 2884,
+      "sha256": "412acf2a281ca953d757fc6b08ceb0be7ceed87abfd1d4620999512c74dbe995"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionSpawnSystem.cs",
+      "bytes": 22035,
+      "sha256": "edba73804a9bd52ab6ef1bef036a2426ffdc9d7019ad4d4ce51ab747bf50ecb6"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/AICombatOrderSystem.Membership.cs",
+      "bytes": 2056,
+      "sha256": "4db2ad7aecb4a6ac4aaf46f51e1eafe06ec338799e1a076405e825330cb3fcae"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/AICombatOrderSystem.Membership.cs.meta",
+      "bytes": 59,
+      "sha256": "7cad3d457984484aba2f6b05ae021a81096984fe9ef1bba4ff1b613c6282b082"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/AICombatOrderSystem.cs",
+      "bytes": 35662,
+      "sha256": "cf7ec5d82b308369a54e78a2ed54bc8c73349b5cad58edeed4c225245547ff41"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/AISquadSystem.cs",
+      "bytes": 20961,
+      "sha256": "fbe6862c43482916ed5c7111a9f245368152605c0c1e15b7a8ee5584f4dd0053"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingDefenseAttackSystem.cs",
+      "bytes": 21439,
+      "sha256": "e87e47ec49a576feda67e524e7a7b3cf5944e750315165cd3ca98b5856f90eb1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeBoundaryCommands.cs",
+      "bytes": 2313,
+      "sha256": "73faa600826734bed4edc747c2a6fb435da009cd297e24eb2ec0b4a68a73534a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeComposition.PublishContext.cs",
+      "bytes": 2777,
+      "sha256": "abed8320d528dc389c091ce0ce82bca2f8acf2338d5f43fa1320e35003459eaa"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeEntityCompositionSystemHelper.Removal.cs",
+      "bytes": 1274,
+      "sha256": "0c9f04a9aa20f9b1800fcaa581d57c0bcfa12bfda587c6da6907521cf441d1e2"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeEntityCompositionSystemHelper.Removal.cs.meta",
+      "bytes": 60,
+      "sha256": "d8ef7b59ce9eb7ba03a88b6159ddd51251d96ed00714fd1930f56bccc8565657"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeEntityCompositionSystemHelper.cs",
+      "bytes": 15803,
+      "sha256": "aa672464854248aae195c00c432b44819d64e6a09e1f9930ca4a218e2bfede50"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.Cleanup.cs",
+      "bytes": 531,
+      "sha256": "4a851b894c5b10ed8cfed6fd61fe57a209d3ee00debd62cab8fa53f40945a588"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.Cleanup.cs.meta",
+      "bytes": 59,
+      "sha256": "811932ad9002eab424018a2401146c053c763b56d83e30c1d072f99e3bc69ff9"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
+      "bytes": 74281,
+      "sha256": "97b795f1d084c822ce848b5ed737e681cef22b82d62580d0f355184d9754a554"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/MatchHudMinimapMarkerSystem.cs",
+      "bytes": 9459,
+      "sha256": "468bc190fed9d6566e9ce862b6856842687cc9cf2de61cb459162aa3a412e188"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/MissionDefenseInteractionSystem.cs",
+      "bytes": 5783,
+      "sha256": "9fbd0c69ab6076c005cf0bbc3e7b359aecca26b3f5042ebf3c2e0d41b4fc27f6"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/MissionDefenseInteractionSystem.cs.meta",
+      "bytes": 59,
+      "sha256": "807f66d43ff25abccf043f1957e5c2297fd79e9afa2f22028da6cd7f1114f421"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RadarPingRequestSystem.cs",
+      "bytes": 4662,
+      "sha256": "7acd5091be76931bdf7295b48c76de65eca05d5593e2da8f5c98e57ad5a5afb7"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RadarPingRequestSystem.cs.meta",
+      "bytes": 59,
+      "sha256": "f9a60e05abaff433af265b4874aa5c18e4409461007ae4d5e12c4259d796c278"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RtsSelectionImmediateSelectedUnitCommandSystem.ImmediateOrders.cs",
+      "bytes": 4912,
+      "sha256": "17010e28380228f9832408a7702ad8304b0c8482c1ec3246c3f7c64787330cee"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RtsSelectionImmediateSelectedUnitCommandSystem.ImmediateOrders.cs.meta",
+      "bytes": 60,
+      "sha256": "425c5c951fe75323c79c2ffe2e602119b9c8f09994206fa25616c4d2323a33f1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RtsSelectionImmediateSelectedUnitCommandSystem.cs",
+      "bytes": 24838,
+      "sha256": "fc50d91ac6c9aab520ed5892fc437cb5f63daa965a7e7302532be2cc1dd0f068"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RuntimeCameraFocusRequestUtility.cs",
+      "bytes": 5835,
+      "sha256": "44814f8c3275e80260d62ab4c5fbb2855edecefe6e069fef1f76d039afdcb862"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ScanIntelCommandSystem.cs",
+      "bytes": 46101,
+      "sha256": "66cb59bc46cdb3e27b70cd2b7a20b43a73cdaf1b05b9dad939e19e3698f3d051"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SelectionUiReadModelLookup.CommandCapabilities.cs",
+      "bytes": 5530,
+      "sha256": "d0c88104345eb046ed97826f55d7742a1f4ad3ec43ca8872fc25bd6c7076b647"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SelectionUiReadModelLookup.CommandCapabilities.cs.meta",
+      "bytes": 60,
+      "sha256": "0441ff5ae3310c2f0216c01d6b9321f5af4287ff4fe5c11c1880e3223daf4b0c"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SelectionUiReadModelLookup.cs",
+      "bytes": 28761,
+      "sha256": "fdf28b93a196986eb7cdbb13c3905b9cf19b886ab14f871a33099e3db51fa0b3"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.Defense.cs",
+      "bytes": 5495,
+      "sha256": "08f2a92fbd93f6ad623337cd7691ee7e0d51ebd7884a30fbf4354e47cb62d270"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.Defense.cs.meta",
+      "bytes": 59,
+      "sha256": "e4ea7ae7d58ac4f88e5c850e6771e27786a0759d20db6eb526c26e84b95f9cb2"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.RadarPing.cs",
+      "bytes": 2360,
+      "sha256": "173edb3d3d4e9c84a7042e9c35b9766662634f81cb50cd5833951171a433bb1f"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.RadarPing.cs.meta",
+      "bytes": 59,
+      "sha256": "c5683d55ae74ab810432b9bef4884aaec2beaca57ebc89f8768d01b279ef7639"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.cs",
+      "bytes": 28270,
+      "sha256": "026b3e112c80714e442aa1b5c369ea5ee4149a82f2cce8ec8cd31c07f3ef907b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ThreatWarningDisplayText.cs",
+      "bytes": 1495,
+      "sha256": "50124d4c8a7b10b1edfd587a564837a0a8b39af97fccd5e0d738638c015e2b26"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ThreatWarningDisplayText.cs.meta",
+      "bytes": 59,
+      "sha256": "9ffd9658024e271df785c05d4b7c5a7d78e8190cf72a3cf1726cfa5f7428641a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ThreatWarningPresentationState.Defense.cs",
+      "bytes": 3045,
+      "sha256": "b3f32768936c08c528ad64fabbff72012a6357c2ea06071c4a6cd8c63c33624f"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ThreatWarningPresentationState.Defense.cs.meta",
+      "bytes": 59,
+      "sha256": "68de4d64008f1c3d48b75bdf1d3ca80602a6dc6c4d9c8bdd254db197238ef731"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ThreatWarningPresentationState.cs",
+      "bytes": 2708,
+      "sha256": "0b5d8dad238f6e8e3f7cf8c31ae4cea7e4e862566fa4c7c8fe4f4969042d43dc"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ThreatWarningResolveSystem.cs",
+      "bytes": 8635,
+      "sha256": "0f9e33c659f2199dca30ab2c29a4d1d45e421a007d45fba16fefadc69936f503"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ThreatWarningResolveSystem.cs.meta",
+      "bytes": 59,
+      "sha256": "457ac032d26d87b317ebc89bb5ce8b6f6b0f2600b7a66d514622514e48008e70"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitEngagementSystem.cs",
+      "bytes": 20044,
+      "sha256": "a9e7329e9dc042d548b39c873226564e7da4935de5c000694c62d1f7fd576442"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/VehicleDestroyedVisualSystem.cs",
+      "bytes": 7861,
+      "sha256": "0fd058ffee370b9bab80c30c8dddd827b8576ed2c877d99be88e05d8fa9ca718"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Contracts/ISelectionUiReadModel.cs",
+      "bytes": 582,
+      "sha256": "56ce815d9562d0f8fc4224e02a6652b1f24fd5634f2ed4114ab3a77af1a3c610"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Contracts/UiCampaignMissionModels.cs",
+      "bytes": 11145,
+      "sha256": "e6f092073688d6872754b59bd4beb79650042b24bc89eae144d1164bcaf9a2eb"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Contracts/UiMissionDefenseModels.cs",
+      "bytes": 1649,
+      "sha256": "969d9868f9ea9debfe8cf34cb9c7ca9f10a4ddd0af2772c108ef94c06fe1def5"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Contracts/UiMissionDefenseModels.cs.meta",
+      "bytes": 59,
+      "sha256": "d8d30d3d9f788f6f53bbaed945b1ef079735d463b337b8f636b6f018ab76fd69"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Contracts/UiMissionResultModels.cs",
+      "bytes": 4936,
+      "sha256": "4364806a5b138acd39c1672d3a0afc6bdb703fc741e26a99f9db495e09ae1259"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Contracts/UiShellComponents.cs",
+      "bytes": 60388,
+      "sha256": "d715d2280e2c361ae1f27474e56dab0bc35a43254ff20eca3bc6e407193bd698"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Contracts/UiShellPopupContracts.cs",
+      "bytes": 302,
+      "sha256": "1181e78280ef3340a53ce7f01e3a816e45223e082fea2769f173bca58354509b"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Contracts/UiShellPopupContracts.cs.meta",
+      "bytes": 59,
+      "sha256": "d38405fd8a1a735456eb78a42a28d211a2b8f350eed13f74759e1b19aad3e75f"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Localization/V3LocalizationRuntimeBinder.cs",
+      "bytes": 3463,
+      "sha256": "74ed9c5061ee679b324fc21730114b4990d29792d9205ab467af187c28211cd3"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Localization/V3LocalizedTextBinding.cs",
+      "bytes": 10958,
+      "sha256": "1c4663932c3cf18b7e9f72ab3c001d13d4f1522d37761acb0030f052df0289d3"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/MainMenuPlayUI.GuidedHudRuntime.cs",
+      "bytes": 8602,
+      "sha256": "fed4bc92672a6c73faebc96088696768a4bfe6f19b6497d0d92a8143757a565c"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Narrative/NarrativeDialogueView.AuthoredLayout.cs",
+      "bytes": 3257,
+      "sha256": "bd357239b3deff96af5cc6850d5a562c09eafc1211ea8a0445fe32f412c29402"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Narrative/NarrativeDialogueView.AuthoredLayout.cs.meta",
+      "bytes": 60,
+      "sha256": "5262a8273a60e852f44dcbd8523585b42df7f352794fac7d86b04a2a89d71d57"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Narrative/NarrativeDialogueView.cs",
+      "bytes": 9912,
+      "sha256": "41b9567a77eea4fa846990bd6144b519193a9814c3e6c66caf503816f827cc6f"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Narrative/NarrativePlaybackControlsView.cs",
+      "bytes": 5148,
+      "sha256": "5bfda91373b2d4c1e41dc0ab237ade7b96c6fd2b5d157b1bc8c6705b4fa90c87"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Narrative/NarrativeSequenceView.cs",
+      "bytes": 8723,
+      "sha256": "e439d0274fb48ef5f7ee07b53083eebb663001cf0ff8b6198bc55dbf890e0667"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/AriaTutorialBriefingView.cs",
+      "bytes": 17689,
+      "sha256": "6aac2944dfef4a956b52f6a92568ac0197f8fa3510bccf0b085f62a27fb6b1aa"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/AssistantHighlightPresentationSystemHelper.UiSurfaceGuidance.cs",
+      "bytes": 10735,
+      "sha256": "053b5d1a062848c003ac069aa089f9d4757beeadd9941b1faba06ee3fdca0821"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/CampaignMissionHudResultBinder.cs",
+      "bytes": 4414,
+      "sha256": "7b38d43d0b7dc2567770b4a19219d2952ad4b240f48e164e6098473c7148a885"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/CampaignMissionScreenBinder.cs",
+      "bytes": 6758,
+      "sha256": "48e1cee455b711ec81b84b70572093af9ff71f4bdcae491793e8d36f81ec67ba"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/CampaignOperationsScreenView.RadarWarning.cs",
+      "bytes": 1426,
+      "sha256": "5ee04a2c77ab24e10c1ce514131811b96e30a1b4d33ecb749d30b64641ce91e9"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/CampaignOperationsScreenView.RadarWarning.cs.meta",
+      "bytes": 59,
+      "sha256": "bc1874d733b2b516657a6897c30c57d27ea360f0cd089f060125d98b6d6f245a"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/CampaignOperationsScreenView.cs",
+      "bytes": 10952,
+      "sha256": "ccf7ed85c272b4fd1cc7f88690c62f4e97acc831f61cb2e7f3b5de40452bf6fc"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Commands.cs",
+      "bytes": 4237,
+      "sha256": "e4a985e67277854b58248bc327fa9662df17bb67a77ceda6a4ba0b095cb8214e"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Commands.cs.meta",
+      "bytes": 59,
+      "sha256": "e0c79352505a94c586169a37bcf0d9ae6bdcded32c539bcf91d56cb2f6456396"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Defense.cs",
+      "bytes": 2490,
+      "sha256": "b6df4ce52dec08db7216ab41b5b61d609ecee408b8d7ed1a57d20b89da844533"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Defense.cs.meta",
+      "bytes": 59,
+      "sha256": "1ab0b250a7103b3514438e52afc5e381f73ca324618f93f205320281d78e9b06"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.M02PlacementGuidance.cs",
+      "bytes": 8476,
+      "sha256": "95a1ae707732951f409c7323dbf3e9f0383a282f2eb7be8b99f149a6e1c8e28a"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Presentation.cs",
+      "bytes": 18262,
+      "sha256": "8bd00910d68889646e450809d5f6f8593424a2b963a81549fab1e27bbf631127"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.cs",
+      "bytes": 8396,
+      "sha256": "ebff898f38f568bed4768f04423adbc01b67ee3384e4546fe1e90bdef25dcf9f"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapView.cs",
+      "bytes": 21169,
+      "sha256": "3255b7033887d0e474ea4cdf9068bb1a4f52a37d28f20dc01a150ed49965133b"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapViewportDragRelay.cs",
+      "bytes": 1157,
+      "sha256": "e93fb9b8e2398737567f44054f17e40c92272adb8cfcdabcc7a72916e0ea27e2"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapViewportDragRelay.cs.meta",
+      "bytes": 59,
+      "sha256": "517b182a0c66fc1cedd52d069fc7eac2a1e5c887fb38e5f6157e8cfd3422df46"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapZoomPressRelay.cs",
+      "bytes": 862,
+      "sha256": "8a76f3e53afa21724dfad3b0d1e417d79427a658992eb421ba45743fddf537b1"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapZoomPressRelay.cs.meta",
+      "bytes": 59,
+      "sha256": "69ff7d1af623dae65bd0462fa865baeadb62fc3b191c5918f8a1b644c2275b50"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchOverlayCommandControlsView.cs",
+      "bytes": 12111,
+      "sha256": "280f2f2416d6d7fb1f6936e1f002a667d515841ac225419ec6e00ab1d3941aed"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchOverlayCommandInputUiSystemHelper.Capabilities.cs",
+      "bytes": 5940,
+      "sha256": "d0263257b68caa253233b74c5034d9bb74e9fbcf0b3832447dd72bf87563588f"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchOverlayCommandInputUiSystemHelper.Capabilities.cs.meta",
+      "bytes": 60,
+      "sha256": "69cfb9c359dcbf33501fb07ec1973dba09ea608004bed67d7f9c88070357696c"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchOverlayCommandInputUiSystemHelper.cs",
+      "bytes": 18704,
+      "sha256": "808576ee5eb00516a4d7dccedb1199d34607c925e4f3685598733e34310bf7b3"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MissionBriefingScreenView.RadarWarning.cs",
+      "bytes": 2711,
+      "sha256": "e847eb3c89684731d1a1a527c697ba9e8eb609dc62a484e76e2ef57835fc3c7a"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MissionBriefingScreenView.RadarWarning.cs.meta",
+      "bytes": 59,
+      "sha256": "1af616bdfcef0bcc36cce9dbf7381aaaf8ef4c72cf6db01c3436ec828fc3197c"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MissionBriefingScreenView.cs",
+      "bytes": 16500,
+      "sha256": "e8017d644441f8fa2f058dda433481da71e387699d1b6e9cedf7041f7f1dcc57"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MissionDefenseHudView.cs",
+      "bytes": 5558,
+      "sha256": "a465d17a1e66c2e0fef962feb154f7cdf64e45a4a01c9e918ac444ae26c97b48"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MissionDefenseHudView.cs.meta",
+      "bytes": 59,
+      "sha256": "54ac4073b0b6fb598172f74a3a13a28eea575ad139d1bb09c03bb2ab90f73781"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MissionFieldGuideView.cs",
+      "bytes": 10548,
+      "sha256": "1e46c0cbcdd7913a393eed75d06a3d3b8f00bb4ca076cd1e44550d9aa651c59e"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MissionFieldGuideView.cs.meta",
+      "bytes": 59,
+      "sha256": "772c18cb9c1639faefe9ecda8c60cd11d3ba5fe29ce7f5648fb13561708f416d"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MissionResultPopupView.Defense.cs",
+      "bytes": 5808,
+      "sha256": "662239b82425629494a581f6aca7e027d2c716780b83eb92bc7dc3872732862c"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MissionResultPopupView.Defense.cs.meta",
+      "bytes": 59,
+      "sha256": "bf4779557463f8b2e1af9313a72b4b6d9b283068950234578cf634419a8d826e"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MissionResultPopupView.cs",
+      "bytes": 16429,
+      "sha256": "74514e1fd3a519012cfad1d0eefc059a87462b52d61eb36dee34c49080af3eed"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/PauseOptionsV3PopupView.cs",
+      "bytes": 8638,
+      "sha256": "36e53e20fd4c3733e138fc16a969bd6c5b4e2351c52e4e5c7202043b2a0cbc60"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/ThreatAlertV3PopupView.MissionDefense.cs",
+      "bytes": 2956,
+      "sha256": "89f23d437558872d9381a8f5bcb8d54e09afe2be2cfc22602656b5b923ca9d15"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/ThreatAlertV3PopupView.MissionDefense.cs.meta",
+      "bytes": 59,
+      "sha256": "ab8c68a4179226dd1863087fedde4186138a7f040044afe4a1d95d699e11c42b"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/ThreatAlertV3PopupView.cs",
+      "bytes": 5773,
+      "sha256": "aa75514d8d0b70af29dd305dbe80e6bd1f40ce4c8bfde7510935ec15fae32977"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/AssistantObjectiveProjectionUtility.cs",
+      "bytes": 10209,
+      "sha256": "4377d492f0adcac620b7610c65476d8c938ca7cbbe62c829c0b24fb6cd05f69c"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/Contracts/UiCampaignMissionComponents.cs",
+      "bytes": 3111,
+      "sha256": "1cd95de09afb7b1d36930f8c7700ba4d6e455346b200018999ae40c57ea6dc0b"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/Contracts/UiMissionFieldGuideContextComponent.cs",
+      "bytes": 397,
+      "sha256": "b050a77f2bd255773b36cb3dcce3e92efde1bb04aa3290120da60e5723ebd0b1"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/Contracts/UiMissionFieldGuideContextComponent.cs.meta",
+      "bytes": 59,
+      "sha256": "87d3278a71b650096978a402763513724699836896366543ed50818ab0ef1102"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/M03RadioReportProjectionSystem.cs",
+      "bytes": 3906,
+      "sha256": "5c4614c3daa940c621e3223553efaf0efe8bc0cac7d0d45ad09e77036b1bfa18"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/M03RadioReportProjectionSystem.cs.meta",
+      "bytes": 59,
+      "sha256": "ffc831dded2153b1820a25d4157c8adcb74e3ba774fdf33c39ef0d0e467bd6f9"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/MissionDefensePauseSystem.cs",
+      "bytes": 2707,
+      "sha256": "68d3ede5d221a77872bc43b1448d23fe4b5855daa4bd8aef4690c6371151a5bb"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/MissionDefensePauseSystem.cs.meta",
+      "bytes": 59,
+      "sha256": "6cc86d28417af539058a980451723f1a1a5a19f6cc2a25f32d9071d7d366c73b"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiCampaignMissionProjectionSystem.Catalog.cs",
+      "bytes": 9401,
+      "sha256": "ca9389796f69d166706fa22bca011832eb5ce831c3e1b52a9b2b3451ca89d4ca"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiCampaignMissionProjectionSystem.cs",
+      "bytes": 25181,
+      "sha256": "0f5a27ba7805685485d67f084a9010f04732151a06704f072da6d350c3be5d8b"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Actions.cs",
+      "bytes": 19392,
+      "sha256": "b94cf7fb4c1dd627ab4c09e8a01990e44fdb59c4d8ddcb74b590b44b133e12cb"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.CameraTour.cs",
+      "bytes": 2032,
+      "sha256": "7bba69fb6e90e8dfd8526d54542473f91cdac46e63936b569fa16415ee75eece"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.CameraTour.cs.meta",
+      "bytes": 59,
+      "sha256": "1ba9f1e5b033e53fa366f500829ce77a0b7babfe6ade9fff5fcf28bfaa8688a0"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Contracts.cs",
+      "bytes": 6382,
+      "sha256": "82dc7f8469b9502cdf914f320c33587fb6efa91600133ce6dfccaa4621713133"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.DefenseResult.cs",
+      "bytes": 1884,
+      "sha256": "3833bbfa17e15f3570b4e3d88914428c8193ab9860dfbf9966317e7fd9255e43"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.DefenseResult.cs.meta",
+      "bytes": 59,
+      "sha256": "4437ce1f8d67c796dbb3e4659099749de3dd5f48c82ccd3d786dd8ef3c97526b"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.DefenseSettlement.cs",
+      "bytes": 3964,
+      "sha256": "33e6aa4a01387cda84c3e2e725e54c85936f70ca5b6dabe7557388f7392e0287"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.DefenseSettlement.cs.meta",
+      "bytes": 60,
+      "sha256": "be28a258694b20c94c333b542f08ffa43ac2b13083854803979d489c2342f037"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.FieldGuide.cs",
+      "bytes": 2352,
+      "sha256": "013c6ddde60755eca9d3762ac555dad8ed61b9e3b0385bb63e8cf598ff13dd08"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.FieldGuide.cs.meta",
+      "bytes": 59,
+      "sha256": "842e032639037793a6f45608b4b4e4ada36f96c4f7355fb1634a8a704a670b3e"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.MissionDefense.cs",
+      "bytes": 11030,
+      "sha256": "0c9568af0897570cdbc19c8028f9915073ee0b5b7011c2f24af478724a57d70d"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.MissionDefense.cs.meta",
+      "bytes": 59,
+      "sha256": "d9f37530d20e7ab966911428784fc6ea88054c639ba7fdd596fe1edc0424a4c0"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.MissionHudRestrictions.cs",
+      "bytes": 4420,
+      "sha256": "b2853e63bfaa92b7c7de05ae94021ce54cb7293225695518da14e11bc4739f33"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Assistant.cs",
+      "bytes": 17667,
+      "sha256": "5bfaba848e5396e618f16efa69af0a63cc820ce0fa8b390283c295082dbab3fb"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.AssistantSettings.cs",
+      "bytes": 12439,
+      "sha256": "30fe8ae49c43a3425087e428103d96a708319d85622c3375875bd2d43c249d61"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Core.cs",
+      "bytes": 17817,
+      "sha256": "c8a25898a4d61a3e5918f3a84dee6f58db0f738d47d7fd8eadd6aa5bd7829622"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.TutorialNarration.cs",
+      "bytes": 10695,
+      "sha256": "d9d9d4ec9182722b6653640d18bfaa210339427d154ef1a9dc28fc84062acd93"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellFlowSystem.Requests.cs",
+      "bytes": 1679,
+      "sha256": "c6e106512acba20e71b25a97f3e22a4a4ed2bb4dae889e4b18dc37955ee59436"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellFlowSystem.Requests.cs.meta",
+      "bytes": 59,
+      "sha256": "d41d40408069ba904ed2ceb09444e5c4dfacba1ec4e04e383dd4908b92758a4b"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellFlowSystem.cs",
+      "bytes": 22036,
+      "sha256": "7d57cd11a6c137e4dfe132d27fee245fa5275104d17a266f60a9487982be5dad"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/UIShellContentView.MatchHudBindings.cs",
+      "bytes": 6154,
+      "sha256": "c56ad76c96a40367804de649ed9b522f5eb99f9eb6207a25017cb7e047f730f5"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/UIShellContentView.MatchHudBindings.cs.meta",
+      "bytes": 59,
+      "sha256": "53c411925fa0093bbcfd5382e7aeab76a8c41fd27a462bd1f7a628e042a8c4d1"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/UIShellContentView.Minimap.cs",
+      "bytes": 784,
+      "sha256": "d033b5fb5e2631ef2a1c300fbe78c2b10611ab4a926a09fec7d9f56a92a1470e"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/UIShellContentView.Minimap.cs.meta",
+      "bytes": 59,
+      "sha256": "cb6aa267199742a9d47cf9f0f51f8230a9a1ddaef17a5571c860b849e3aa90db"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/UIShellContentView.MissionDefense.cs",
+      "bytes": 384,
+      "sha256": "8882df5fb6b8d097370e1e291934b9c8163947eb04b4f4f4ff72b44fb49af0cb"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/UIShellContentView.MissionDefense.cs.meta",
+      "bytes": 59,
+      "sha256": "4b22291331e704fd2c3557a433fd3d98ddc67a1241504058a422c740a8c3b5f0"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/UIShellContentView.PauseSettings.cs",
+      "bytes": 427,
+      "sha256": "14e4f32b03635796156b688dc7c2bffcfabab472e33f8acc581724a119a8d773"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/UIShellContentView.PauseSettings.cs.meta",
+      "bytes": 59,
+      "sha256": "e6646752133b8a34723065d1b3af01f902ba1fcde09de6204a3deb21644cabf3"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs",
+      "bytes": 38638,
+      "sha256": "f4eeeeb190036a59dcb2e2a8036ba16b95ed19c85f6d60a38303b0f268ef60b4"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/UiShellRuntimeGateway.MissionDefense.cs",
+      "bytes": 1063,
+      "sha256": "b7c7d178945ff23bec9a094cab173a9e3293e0c087286e890f49800085a8c4a7"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/UiShellRuntimeGateway.MissionDefense.cs.meta",
+      "bytes": 59,
+      "sha256": "1a10a27c7baaa02cfe3ec7d9ef4df31900a6cd3bfbc68fa0f2c6d16796c61e1d"
+    },
+    {
+      "path": "Assets/Tests/Editor/AICombatOrderValidationTests.cs",
+      "bytes": 11148,
+      "sha256": "c4aaf771f9da058518f18437b4de095116e9089f13ea736a096d774090f71d14"
+    },
+    {
+      "path": "Assets/Tests/Editor/AISquadValidationTests.cs",
+      "bytes": 5585,
+      "sha256": "3e0e88d53525a41bc22c5a8ff3d4aa27ed66cd7081abd72375720e8c931ce4b2"
+    },
+    {
+      "path": "Assets/Tests/Editor/AutomaticCombatFactionTargetingTests.cs",
+      "bytes": 8342,
+      "sha256": "2bf46f73a4e315f9bd39577ec02a0e4e63b7e2dcb93dc0f9d9399c1b7d41d032"
+    },
+    {
+      "path": "Assets/Tests/Editor/M01FirstContactHudRestrictionTests.cs",
+      "bytes": 21096,
+      "sha256": "33918eb5172c94f73e52507bdf8903703fc7e8e3b77b5961678f638d1ea0d694"
+    },
+    {
+      "path": "Assets/Tests/Editor/M02EstablishBaseLaunchTests.cs",
+      "bytes": 46477,
+      "sha256": "76b82867422ad8ea9b35e5512e5e86b5274f9708e5f16d9f279be4f9d8db15e6"
+    },
+    {
+      "path": "Assets/Tests/Editor/M02EstablishBaseNarrativeTests.cs",
+      "bytes": 34088,
+      "sha256": "5b884718405ff49c09bcbcefc638033dd8a4e1cecb6cad34eaab8aa5080ba2d0"
+    },
+    {
+      "path": "Assets/Tests/Editor/M02EstablishBaseResourceTests.cs",
+      "bytes": 27010,
+      "sha256": "bd21250985055395082c4b475853e9e46a25c8a7a4f626f154227b1f48e24ff7"
+    },
+    {
+      "path": "Assets/Tests/Editor/M03ActiveClassCommandTests.cs",
+      "bytes": 3162,
+      "sha256": "577ea8931dd787619249a38edfe4e7f39e598e21dbbdc44a3ea17860a2728d8d"
+    },
+    {
+      "path": "Assets/Tests/Editor/M03ActiveClassCommandTests.cs.meta",
+      "bytes": 59,
+      "sha256": "becea5795b27dbea39022b629cd3abe408316592cd740d408cdd1609b148bfaa"
+    },
+    {
+      "path": "Assets/Tests/Editor/M03AttemptCleanupTests.cs",
+      "bytes": 9319,
+      "sha256": "dafb3adaab5574193aa61beeaa3993fc4797443865742bf24528601c7f1ee406"
+    },
+    {
+      "path": "Assets/Tests/Editor/M03AttemptCleanupTests.cs.meta",
+      "bytes": 59,
+      "sha256": "659232f2d3ef04875b5ab4fc5ba9a8d6f5932b32d912654ee2452882cf938564"
+    },
+    {
+      "path": "Assets/Tests/Editor/M03CameraFallbackTests.cs",
+      "bytes": 5745,
+      "sha256": "d771d712c321afef3b4a0f410a267ee916e83831b0664391de8f30fb3a164f91"
+    },
+    {
+      "path": "Assets/Tests/Editor/M03CameraFallbackTests.cs.meta",
+      "bytes": 59,
+      "sha256": "f5085d7d03201e4888ee6fdefa156d3f8616d896863b17eea4f2ddabc3648cff"
+    },
+    {
+      "path": "Assets/Tests/Editor/M03CampaignEntryTests.cs",
+      "bytes": 9989,
+      "sha256": "2fe8aee0be9668cec8e2845d6885a7c6a32573321922220e0d415784d45b75ab"
+    },
+    {
+      "path": "Assets/Tests/Editor/M03CampaignEntryTests.cs.meta",
+      "bytes": 59,
+      "sha256": "d69606481e7e6028f342736147fbfa88e2fba74420e597fd8dd9743015384f00"
+    },
+    {
+      "path": "Assets/Tests/Editor/M03EditorRegressionValidation.cs",
+      "bytes": 9114,
+      "sha256": "36c5fc93388ee8cf8f51940025193109a24844c259b4c694ee15ba0bde7af307"
+    },
+    {
+      "path": "Assets/Tests/Editor/M03EditorRegressionValidation.cs.meta",
+      "bytes": 59,
+      "sha256": "9c123083b2efc5ccb49f266b00d7eefed62058e44ae802d1b004eb31190d8bc2"
+    },
+    {
+      "path": "Assets/Tests/Editor/M03MapIsolationTests.cs",
+      "bytes": 3522,
+      "sha256": "26e79cd7556db090e76d08e7dc19febeea8b50b2308182bc3f034af8664af199"
+    },
+    {
+      "path": "Assets/Tests/Editor/M03MapIsolationTests.cs.meta",
+      "bytes": 59,
+      "sha256": "787bca2a1c26da9ef32e892b42e6792d7b5cf78f2bd67b8fe2dd7df42c76cf84"
+    },
+    {
+      "path": "Assets/Tests/Editor/M03NarrativeFlowTests.cs",
+      "bytes": 5851,
+      "sha256": "782b7a84d78e5f5a39cca5615a9606aa5243da38725a317d1c60a6e398820621"
+    },
+    {
+      "path": "Assets/Tests/Editor/M03NarrativeFlowTests.cs.meta",
+      "bytes": 59,
+      "sha256": "7a290b982b6578bb2b1657a2c245556c62d6020dd42ac4d70de327173cc53a7d"
+    },
+    {
+      "path": "Assets/Tests/Editor/M03PresentationTests.cs",
+      "bytes": 4663,
+      "sha256": "4a199f9f1bfff437a8fbd82456b8f7ad4c09e2b87538acf0320e773010415d30"
+    },
+    {
+      "path": "Assets/Tests/Editor/M03PresentationTests.cs.meta",
+      "bytes": 59,
+      "sha256": "171a0a171bc9f6327381e66184fca79cfae35bc4a1990ca45f0353d3fadef6e0"
+    },
+    {
+      "path": "Assets/Tests/Editor/M03RadarPingTests.cs",
+      "bytes": 8488,
+      "sha256": "b6640d7624fead46021ca262161d9b45fe856c1ee1211daaba011fffd18c7e0e"
+    },
+    {
+      "path": "Assets/Tests/Editor/M03RadarPingTests.cs.meta",
+      "bytes": 59,
+      "sha256": "344ab60bdb97453ad357505d01247a73ef4d999b3b20e6d6d383978b158e1014"
+    },
+    {
+      "path": "Assets/Tests/Editor/M03RadarWarningFeasibilityValidation.cs",
+      "bytes": 6318,
+      "sha256": "8f2c1581cea9fa0c4e15167c60becbc5f8546f5b26b9499a6a0865838fb1e0e2"
+    },
+    {
+      "path": "Assets/Tests/Editor/M03RadarWarningFeasibilityValidation.cs.meta",
+      "bytes": 59,
+      "sha256": "d24d90eafe1809b0c9b0f8142f6b6e3085c4d9b43715a0137491af935871e511"
+    },
+    {
+      "path": "Assets/Tests/Editor/M03RadarWarningRuleTests.cs",
+      "bytes": 7631,
+      "sha256": "111b69ba7f28e68675ab309639773d548f4694dd29c4fd457c92c3c62b7591ea"
+    },
+    {
+      "path": "Assets/Tests/Editor/M03RadarWarningRuleTests.cs.meta",
+      "bytes": 59,
+      "sha256": "93d039638424a1cc4fc11a1d6aa700e13d49f901c2e650fcbcf727da04f8d4d4"
+    },
+    {
+      "path": "Assets/Tests/Editor/M03SettlementTests.cs",
+      "bytes": 4522,
+      "sha256": "0a446dc347efa618d0ceb0db8a40431b2c1a785c8f190c24c80c09efbf909892"
+    },
+    {
+      "path": "Assets/Tests/Editor/M03SettlementTests.cs.meta",
+      "bytes": 59,
+      "sha256": "8d2e6a158374b2542a4439eb9697adb5f4fea97a20b501f486a6e9e8e75e4f72"
+    },
+    {
+      "path": "Assets/Tests/Editor/M03WarningInteractionTests.cs",
+      "bytes": 17048,
+      "sha256": "0a3ecac9f512ac42af2f4156be761d07602457f9325dd460739693913c25b791"
+    },
+    {
+      "path": "Assets/Tests/Editor/M03WarningInteractionTests.cs.meta",
+      "bytes": 59,
+      "sha256": "2c7c6f321562aaf12273193b2a6de0c6551be38d679e847e7c7be16edeecfcf7"
+    },
+    {
+      "path": "Assets/Tests/Editor/MatchHudCommandFeedbackPanelTests.cs",
+      "bytes": 39374,
+      "sha256": "9d7be4fd7af485f5555c3d01a85e3748546e942967e2c03177eed1e633c2d987"
+    },
+    {
+      "path": "Assets/Tests/Editor/RtsSelectionInputSystemTests.cs",
+      "bytes": 199015,
+      "sha256": "e9b99f8db9cc77394c5a638712b6472e279e35eba14d3ad308a3cc838103d876"
+    },
+    {
+      "path": "Assets/Tests/Editor/UIShellCurrentContentLoadTests.cs",
+      "bytes": 79109,
+      "sha256": "5ce5bc786f431c82499745d893693ea704b71c60d301ff36715ddee86dc5d3fa"
+    },
+    {
+      "path": "Assets/Tests/Editor/UiShellAudioRoutePopupTests.cs",
+      "bytes": 17461,
+      "sha256": "173ac74f8f6edbd941d0cb0f1388e8108ddada1d50d52903251cb14833bb0256"
+    },
+    {
+      "path": "Assets/Tests/Editor/VehicleVisualAdornmentsSystemTests.cs",
+      "bytes": 71652,
+      "sha256": "88779197c1874aa111a2dbaacecd3fab70b85c906fc2dc3e5590e385fefe4c4c"
+    },
+    {
+      "path": "ProjectSettings/TimeManager.asset",
+      "bytes": 305,
+      "sha256": "3396f52fdc16d445024e01d7a2d99db6f0a37569d1d73c0302e9ffb857d90287"
+    },
+    {
+      "path": "Tools/Audio/generate_m03_bilingual_voice.py",
+      "bytes": 5263,
+      "sha256": "ce5b0742c52416bbeb17d4b841257cbab3008131502be54d5672f05b4fcf2e60"
+    }
+  ],
+  "generatedAtUtc": "2026-09-09T06:30:24.396473+00:00",
+  "contentDigestSha256": "9f859abfe343d3ca46840d5254c5f1b9edeab1d1daffa724e0470eef3c9c65df",
+  "preservedUserFontDependencies": [
+    {
+      "path": "Assets/Game/Art/UI/Fonts/NotoSansArabic/NotoSansArabic-Narrative SDF.asset",
+      "currentSha256": "cb4190e246fd0515d05b54e7550d7f839f689dede69d0e60dacb8026a32bba3d"
+    },
+    {
+      "path": "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium SDF.asset",
+      "currentSha256": "7768d28d5a24a17c53256b0b02fe8c8e1f1a77ae1cfcdcd2384177015d33d2b7"
+    }
+  ],
+  "reproducibilityNotes": [
+    "Source is uncommitted; no claim that historical runs used byte-identical files.",
+    "The final change after behavior-audit-07 and architecture-audit-04 is an Editor-only defeat-probe correction: retreat through normal movement rather than assume idle always loses. No production source changed after those two audits.",
+    "TimeManager.asset has Unity-generated serialization-format migration; TimeScale remains 1 and fixed timestep approximately 0.02.",
+    "Existing user font edits are preserved, excluded from the task source digest, and identified separately because presentation depends on them."
+  ]
+}

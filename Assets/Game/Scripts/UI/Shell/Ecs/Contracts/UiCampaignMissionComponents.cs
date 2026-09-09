@@ -25,6 +25,7 @@ namespace Game.UI.Shell.Contracts.Ecs
         public byte FirstClearCompleted;
         public byte PendingResume;
         public byte NextMissionRevealed;
+        public byte AvailableMissionMask;
     }
 
     public struct UiMissionObjectiveProjectionData
@@ -56,7 +57,7 @@ namespace Game.UI.Shell.Contracts.Ecs
         public FixedString64Bytes DisplaySummaryKey;
         public FixedString64Bytes LocationNameKey;
         public FixedList4096Bytes<UiMissionObjectiveProjectionData> Objectives;
-        public FixedList512Bytes<UiMissionRewardProjectionData> Rewards;
+        public FixedList4096Bytes<UiMissionRewardProjectionData> Rewards;
         public ulong DeployTransitionToken;
         public int HostileUnitCount;
         public int StartingCredits;

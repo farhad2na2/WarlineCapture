@@ -152,8 +152,7 @@ namespace Game.UI.Runtime
 
         private void ApplyNumericValues(in UiMatchHudResourceValuesModel values)
         {
-            if (values.ShowOil &&
-                _oilSlotValue != null &&
+            if (_oilSlotValue != null &&
                 (!_lastOilWasNumeric || _lastOilValue != values.Oil))
             {
                 SetCompactText(_oilSlotValue, values.Oil);
@@ -180,12 +179,12 @@ namespace Game.UI.Runtime
             SetTextIfChanged(_materialsSlotValue, header.MaterialsText, ref _lastMaterialsText);
             SetTextIfChanged(_civilianRiskSlotValue, header.CivilianRiskText, ref _lastCivilianRiskText);
 
-            if (!resourceValuesApplied && header.ShowOil)
+            if (!resourceValuesApplied)
             {
-                string oilText = string.IsNullOrWhiteSpace(header.OilText) ? "0" : header.OilText;
+                string oilText = !header.ShowOil || string.IsNullOrWhiteSpace(header.OilText) ? "0" : header.OilText;
                 if (_oilSlotValue != null && (_lastOilWasNumeric || _lastOilText != oilText))
                 {
-                    _oilSlotValue.text = oilText;
+                    SetLabelIfChanged(_oilSlotValue, oilText);
                     _lastOilText = oilText;
                     _lastOilWasNumeric = false;
                 }
@@ -196,7 +195,7 @@ namespace Game.UI.Runtime
                 string fuelText = string.IsNullOrWhiteSpace(header.FuelText) ? "0" : header.FuelText;
                 if (_fuelSlotValue != null && (_lastFuelWasNumeric || _lastFuelText != fuelText))
                 {
-                    _fuelSlotValue.text = fuelText;
+                    SetLabelIfChanged(_fuelSlotValue, fuelText);
                     _lastFuelText = fuelText;
                     _lastFuelWasNumeric = false;
                 }
@@ -220,6 +219,8 @@ namespace Game.UI.Runtime
             SetVisible(_materialsSlotRoot, true);
             SetVisible(_oilSlotRoot, !hideLogisticsResources && (showOil || hideEconomyResources));
             SetVisible(_fuelSlotRoot, !hideLogisticsResources || showMissionCredits);
+            if (_fuelSlotRoot != null && _fuelSlotRoot.TryGetComponent(out MatchHudResourceIconView resourceIcon))
+                resourceIcon.ShowMissionCredits(showMissionCredits);
             if (_resourceStripButton != null)
             {
                 UiDisabledMaterialUtility.SetSelectableDisabled(
@@ -280,7 +281,13 @@ namespace Game.UI.Runtime
 
         private static void SetLabelIfChanged(TMP_Text target, string value)
         {
-            if (target != null && target.text != value)
+            if (target == null)
+                return;
+            // Give the binding the source text. Writing directly to TMP races its locale
+            // refresh and can leave raw Persian glyphs or stale authoring values on screen.
+            if (target.TryGetComponent(out V3LocalizedTextBinding binding))
+                binding.SetLocalizedValue(value);
+            else if (target.text != value)
                 target.text = value;
         }
 
@@ -293,19 +300,22 @@ namespace Game.UI.Runtime
             if (previousValue == safeValue)
                 return;
 
-            target.text = safeValue;
+            SetLabelIfChanged(target, safeValue);
             previousValue = safeValue;
         }
 
         private static void SetCompactText(TMP_Text target, int value)
         {
             int safeValue = Mathf.Max(0, value);
+            string display;
             if (safeValue >= 1000000)
-                target.SetText("{0:0.#}M", safeValue / 1000000f);
+                display = (safeValue / 1000000f).ToString("0.#", System.Globalization.CultureInfo.InvariantCulture) + "M";
             else if (safeValue >= 10000)
-                target.SetText("{0:0.#}K", safeValue / 1000f);
+                display = (safeValue / 1000f).ToString("0.#", System.Globalization.CultureInfo.InvariantCulture) + "K";
             else
-                target.SetText("{0}", safeValue);
+                display = safeValue.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            // TMP's numeric SetText formatter does not support .NET's optional '#' digit.
+            SetLabelIfChanged(target, display);
         }
     }
 }

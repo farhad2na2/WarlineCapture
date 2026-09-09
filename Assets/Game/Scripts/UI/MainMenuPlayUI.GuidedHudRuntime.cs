@@ -137,6 +137,9 @@ namespace Game.UI.Runtime
             {
                 if (selectable == null || _selectableStates.ContainsKey(selectable))
                     continue;
+                var defenseHud = selectable.GetComponentInParent<MissionDefenseHudView>();
+                if (defenseHud != null && defenseHud.IsCameraTourControl(selectable))
+                    continue;
 
                 CanvasGroup group = selectable.GetComponent<CanvasGroup>();
                 if (group == null)

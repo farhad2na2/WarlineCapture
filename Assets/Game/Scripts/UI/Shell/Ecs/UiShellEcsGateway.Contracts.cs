@@ -23,6 +23,8 @@ namespace Game.UI.Shell.Ecs
 
         bool IUiShellRuntimeGateway.TryEnqueueUiAction(UiActionKind kind, int payloadId)
         {
+            if (kind is UiActionKind.Support or UiActionKind.RightSupport or UiActionKind.JumpToThreat && TryReadMissionDefense(out _))
+                return TryRequestMissionDefenseAction(kind==UiActionKind.JumpToThreat ? UiMissionDefenseAction.FocusWarning : UiMissionDefenseAction.RadarPing,-1,0);
             return TryEnqueueUiAction(kind, payloadId);
         }
 

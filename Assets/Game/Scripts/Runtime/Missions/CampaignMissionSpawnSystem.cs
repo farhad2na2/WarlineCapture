@@ -26,6 +26,7 @@ namespace Game.Runtime
 
         public void OnUpdate(ref SystemState state)
         {
+            UpdateAuthoredDefensePolicy(ref state);
             if (SystemAPI.TryGetSingleton(out RuntimeGameplayStateComponent gameplayState) &&
                 gameplayState.PlayRequested == 0)
                 return;
@@ -71,6 +72,7 @@ namespace Game.Runtime
             }
             SpawnAll(
                 em,
+                root,
                 prefabs,
                 ref definition,
                 ref metadata.Blob.Value,
@@ -86,6 +88,12 @@ namespace Game.Runtime
                 out float3 openingStartFocus,
                 out float3 openingEndFocus,
                 out float3 establishingFocus);
+            if (definition.Extraction.Enabled != 0)
+            {
+                if (TryFindAnchor(ref metadata.Blob.Value, definition.Extraction.RescueAnchorId, out var rescue)) establishingFocus = rescue.Position;
+                if (TryFindAnchor(ref metadata.Blob.Value, definition.Extraction.LandingAnchorId, out var landing)) openingEndFocus = landing.Position;
+                if (TryFindAnchor(ref metadata.Blob.Value, definition.BaseAnchorId, out var start)) openingStartFocus = start.Position;
+            }
             CampaignMissionOpeningPresentationComponent opening = new()
             {
                 SessionToken = rootRuntime.SessionToken,
@@ -107,7 +115,7 @@ namespace Game.Runtime
                 opening.InitialRtsOverviewRequested = 1;
             }
             SetOrAdd(em, root, opening);
-            bool finaleRequired = rootRuntime.MissionId.Equals(FirstContactMissionId) &&
+            bool finaleRequired = definition.Extraction.Enabled != 0 || definition.Defense.Enabled != 0 || rootRuntime.MissionId.Equals(FirstContactMissionId) &&
                                   (rootRuntime.RunKind == Game.Missions.Contracts.MissionRunKind.FirstClear ||
                                    rootRuntime.ReplayTutorialEnabled != 0);
             SetOrAdd(em, root, new CampaignMissionFinalePresentationComponent
@@ -151,16 +159,20 @@ namespace Game.Runtime
                 }
             }
             int hostileCount = CountHostiles(ref definition);
-            return total == (hostileCount == 0 ? 4 : 7) && hostileCount is 0 or 3;
+            return definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0
+                ? total <= 64 && total > hostileCount && hostileCount > 0
+                : total == (hostileCount == 0 ? 4 : 7) && hostileCount is 0 or 3;
         }
 
         private static void SpawnAll(
-            EntityManager em, NativeArray<Entity> prefabs,
+            EntityManager em, Entity root, NativeArray<Entity> prefabs,
             ref CampaignMissionDefinitionBlob definition, ref OperationMapBlob map,
             in CampaignMissionRuntimeComponent runtime,
             out float3 playerFocus,
             out float3 hostileFocus)
         {
+            InitializeDefenseAttempt(em, root, ref definition, ref map, in runtime);
+            InitializeExtractionAttempt(em, root, ref definition, ref map, in runtime);
             int ordinal = 0;
             float3 playerPositionSum = float3.zero;
             float3 hostilePositionSum = float3.zero;
@@ -194,6 +206,8 @@ namespace Game.Runtime
                         SetOrAdd(em, instance, new UnitPrevWorldPos { Value = position });
                         SetOrAdd(em, instance, new UnitMoveVisualComponent());
                         SetOrAdd(em, instance, new Faction { Id = group.FactionId });
+                        RegisterDefenseMember(em, root, instance, ref definition, ref group, in unit);
+                        RegisterExtractionMember(em, root, instance, ref definition, ref group, in unit);
                         if (runtime.MissionId.Equals(FirstContactMissionId))
                             ApplyFirstContactHostileCombatPolicy(em, instance, group.FactionId);
                         SetOrAdd(em, instance,
@@ -222,7 +236,7 @@ namespace Game.Runtime
                             playerPositionSum += position;
                             playerCount++;
                         }
-                        else
+                        else if (group.FactionId > FactionIdentity.PlayerFactionId)
                         {
                             hostilePositionSum += position;
                             hostileCount++;
@@ -336,6 +350,9 @@ namespace Game.Runtime
 
         internal static bool HasRequiredRestrictions(ref CampaignMissionDefinitionBlob definition)
         {
+            if (definition.Extraction.Enabled != 0)
+                return definition.MissionRuntimeEnabled == 0 && definition.BuildingDisabled != 0 && definition.ProductionDisabled != 0 &&
+                    definition.EconomyDisabled != 0 && definition.TransportDisabled == 0 && definition.AirDisabled == 0;
             if (definition.MissionRuntimeEnabled != 0)
             {
                 return definition.StartingCredits > 0 && definition.StartingMaterials > 0 &&
@@ -379,6 +396,11 @@ namespace Game.Runtime
         private static int CountAmbientInstances(ref CampaignMissionDefinitionBlob definition)
         {
             int count = 0;
+            if (definition.Defense.Enabled != 0)
+                for (int i = 0; i < definition.ForceGroups.Length; i++)
+                    if (definition.ForceGroups[i].FactionId == FactionIdentity.NeutralFactionId)
+                        for (int j = 0; j < definition.ForceGroups[i].Units.Length; j++)
+                            count += definition.ForceGroups[i].Units[j].Count;
             for (int index = 0; index < definition.AmbientPresentations.Length; index++)
                 count += math.max(0, definition.AmbientPresentations[index].InstanceCount);
             return count;

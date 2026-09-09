@@ -84,7 +84,8 @@ namespace Game.UI.Runtime
             // These views already apply the selected narrative locale, Persian font, RTL
             // alignment, and dynamically changing dialogue. A second generic binding races that
             // presenter and can replace final copy with an unrelated format template.
-            return text.GetComponentInParent<FirstLaunchLanguageChoiceView>(true) != null ||
+            return text.GetComponentInParent<AriaTutorialBriefingView>(true)?.OwnsLocalizedText(text)==true ||
+                   text.GetComponentInParent<FirstLaunchLanguageChoiceView>(true) != null ||
                    text.GetComponentInParent<NarrativeSequenceView>(true) != null;
         }
     }

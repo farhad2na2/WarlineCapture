@@ -1,0 +1,12 @@
+{
+  "id": "SCN02_FieldCommander_01_Scene_V3",
+  "target": "Assets/Game/Art/UI/V3Shared/CommanderScenes/SCN02_FieldCommander_01_Scene_V3.png",
+  "refs": [
+    "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/UI/V3Shared/CommanderScenes/SCN02_FieldCommander_01_Scene_V3.png",
+    "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B02.png",
+    "/Users/farhad/Projects/WarlineCapture/Design/NarrativeVision/M3StyleAlignment/Candidates/commander_choices.png"
+  ],
+  "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/SCN02_FieldCommander_01_Scene_V3.png",
+  "prompt": "Edit IMAGE 1 main-menu commander scene to match the preferred M3 refined cinematic polygonal illustration of IMAGE 2. Keep exact scene composition and wide dark vignette for overlay UI readability. Keep older gray-haired and gray-bearded male commander center-right leaning with both hands on cyan tactical network table, tan jacket over olive shirt. Use the SAME commander identity as the FOURTH portrait (top-right older gray-haired bearded man) in IMAGE 3, matching facial proportions and hair/beard, rendered at cinematic detail. Maintain his mature age and serious calm expression; no sunglasses or headset added. Preserve original accompanying soldiers, transport vehicles, desert watchtowers/buildings, distant non-graphic smoke, helicopter and original red compass-emblem flag; no new story elements or characters. Refined faces, rich restrained faceted materials and warm desert illumination, no coarse triangulated face, no photorealism, no comic outlines. Preserve substantial DARK margins and visual focus placement at original sizes; do not turn entire canvas bright. No text, caption, labels, UI controls or borders. Single full landscape 16:9 scene, 1672x941.",
+  "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-e0ea469b-a84c-471b-a6ef-730d78211f21.png"
+}

@@ -68,6 +68,7 @@ namespace Game.UI.Runtime
         public MainMenuV3HorizontalResponsiveTarget[] HorizontalResponsiveTargets => horizontalResponsiveTargets;
         public float LastAppliedScale { get; private set; }
         public float LastAppliedExtraWidth { get; private set; }
+        public event Action LayoutApplied;
 
         public bool TryGetAuthoredBasePosition(RectTransform target, out Vector2 position)
         {
@@ -171,6 +172,7 @@ namespace Game.UI.Runtime
                 LastAppliedScale = scale;
                 LastAppliedExtraWidth = extraWidth;
                 _lastCanvasSize = canvasSize;
+                LayoutApplied?.Invoke();
             }
             finally
             {

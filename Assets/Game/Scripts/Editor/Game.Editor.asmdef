@@ -38,7 +38,8 @@
         "UnityEngine.UI",
         "Game.Missions.Contracts",
         "Game.Narrative.Runtime",
-        "Game.Runtime.Combat"
+        "Game.Runtime.Combat",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [
         "Editor"

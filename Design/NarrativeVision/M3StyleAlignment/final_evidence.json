@@ -1,0 +1,1142 @@
+{
+  "scope": "Art import, selection and passive Editor UI rendering; not full gameplay QA",
+  "run": 3,
+  "wrapperExitCode": 0,
+  "logPath": "/private/tmp/warline-m3-style-alignment-03.log",
+  "logSha256": "3edafecf9cc0daddafd1708f1f08c507d4702fd5c13fc1155a71eadb1f84bc40",
+  "passMarker": "[M3StyleAlignmentVisualValidation] result=Passed captures=200 captionChecks=180 selectableChoices=6 atlasSprites=7 locales=2 aspects=2",
+  "installed": [
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Commander/commander_portrait_choices.png",
+      "sha256": "b7108eb97043a577eba6787fcf1089604fb060e175b059ebea216ed7d7c2537f",
+      "metaSha256": "06f69698dad77d707fd40865307883929227b01825d3a9bd69fcb7e6932d6885"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_aria_v3.png",
+      "sha256": "aee7e9e63f03451754d8a1b5c0c56ff2324998f51ca1ca6f5dae3c32b5d45dbb",
+      "metaSha256": "d686e51128244ceb14fe3856f7ef4e3026a302b2a9f99af6d0fa9e7a06a6d8ee"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_dalia.png",
+      "sha256": "6de0ed27125f9e3fa138a8fba9b1ff1fc80277d2f41a9847ee0a2cfe22e3a612",
+      "metaSha256": "d088fd7198319778e0149f58dcf244cb34852d4e721e3c46b2688f0c577ae1e4"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_samira.png",
+      "sha256": "079573b84499ab70f35eae61ed46a1e2cf7f2c6ca2fd4232f8cec8a07e40483b",
+      "metaSha256": "acaaebfd0345f0d6a57c6d81ebe652d2fea41c1443cb8fd6e2475263c2f25a15"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P01.png",
+      "sha256": "fef3272753df688c3db7b4b088b899b5ed707e7b6ea4f0cbcf89712c3dc95a42",
+      "metaSha256": "8a6e73fc0961bfef49b3a17f33781caac6f523fd6520240e0737b8c7846e5a98"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P02.png",
+      "sha256": "df400ee2c560d149633dac7e35c389e0010965c732ab8e4ce7aa9b482d1d2d8f",
+      "metaSha256": "c2c48ec685f1e354e4029c7956360da688c6a12d1f98b73c127327567e971eff"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P03.png",
+      "sha256": "f3a4a60747fa84b080c7be299079e08f38a4087e933fef81b3bc2c9c5ad0ba37",
+      "metaSha256": "3da5941ddc6f8e6d8c86fcf0d9087f448bc1b5b22c69382bbb88ba3dd93e37cf"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P04.png",
+      "sha256": "208b036f54414a7428c3fc9f322659c82a78e3dded763506de3586d9c1cc7190",
+      "metaSha256": "a62932704369ad20cc75606224a62f4b73861053c3859cbc7a1683c9a9160714"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P05.png",
+      "sha256": "484f251481ca72eeda6dbf76dc4596f1eee2b2167bc2a287c733d468579268c3",
+      "metaSha256": "a8d3e4eb0820539efdc073086913376a42a1e023d46b16f2a28354c0050d3055"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P06.png",
+      "sha256": "3d67c1f5ab46cbbe94fcbe322cd15d78f8bcce4a9f02e57b474e17b2d64ef79f",
+      "metaSha256": "b77506904369fac20bba2baf02aff86ce20f1aab8ed1d367591cb68149f20523"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P07.png",
+      "sha256": "4622b73b26d204df186b7099f727b5c21136101c2cb13d38c8a016f3dfb85561",
+      "metaSha256": "e1339d322723798e2d460b0115bb7235dbf3514cd439a0d46bdd18b7ab9ede85"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P08.png",
+      "sha256": "a6154cccd74a5ad240e81e884309614d457165ffff7db396b612612b8769d8bf",
+      "metaSha256": "53232c9bd05ef9290b6e99a1b66128701db305fefbe34765199d95aca0e86e10"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P09.png",
+      "sha256": "ffa35823c548059a4044ad3ba757cdf14786692c9b38b77c1f852bd34142e6df",
+      "metaSha256": "3769c751c1668b813d58dd2f7bf8730fdefafb1eb9abbd0b5ada7fe5da6c620d"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P10.png",
+      "sha256": "a98559e44bdf17d20d10f28464195152031854b694a41d41353bc0b6b567f5dc",
+      "metaSha256": "114bfd0417197664d7d8f25bb5e9181779e0c0b0669e9492cba6afed4ef96c40"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P11.png",
+      "sha256": "12ed7d1c1c4b1a0e86a11e0cc5a017774899eaa7b23c41044d7f489002de6a8a",
+      "metaSha256": "1f964f642eff3acd747bebe73bd7a585b78f452e5729cd722b9097149b3d5021"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P12.png",
+      "sha256": "ac3d8f69d75364d0af89aec9da064324ea170789207ed0cefc25c2e84a9e1394",
+      "metaSha256": "f0bd9271b4b578c6cc9b1979840256c7b0f4e47be9fa312f06396be20b2c1c7e"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P13.png",
+      "sha256": "d932ceb34c8261b60fac3507da328d823fc2e7a3f0a2cf42b92677fbc80d0324",
+      "metaSha256": "68956778eea9ad33d72fb594fdb27940060358ce90196f18ffe2b134cb40972f"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P14.png",
+      "sha256": "10e0dfeb59ae02aaf46c50c261c274998a3fd4a4616b191056b88be67babef04",
+      "metaSha256": "647d3ecdcc03c93508211e662dc0aa8239f5d419555e6025abc046a5a477ea0f"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P15.png",
+      "sha256": "c7e0082877bda07931bbf31fc690602af7d8b62cd5b90db3570ebb2ff7552358",
+      "metaSha256": "581556bea616e16b7080809766222e7656a5fdb74988800f4a57dd4b9eaa3bd5"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P16.png",
+      "sha256": "9adbb9d61e719bb393e6c2767c3a0f4848ccf1dc6216dcac270c9d4f1c5b5304",
+      "metaSha256": "b7b80032ce805fe6908e652e5670913f5cfcc7792a307890470c54ac4dddd526"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P17.png",
+      "sha256": "b79d5e32073b52c58ee88c349b3f13b2e58ac3a5d39a29449e2ed30f165aff51",
+      "metaSha256": "3bbbfcfbd0d35b2a7aec0b56eb2d345b782924cf2b8879f061362f3169b6f9a4"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P18.png",
+      "sha256": "535c8dc307cbfcbd820b56cf5d1fb951aa67d0bc7dd2adeed6d566b3324376e2",
+      "metaSha256": "71c1442a456f42f83d36859ae2cb8256780431fa9fe1656caea050750d7f24a8"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P19.png",
+      "sha256": "4d09bf757134414dab77ac5410c371237b0d383014c0deb2225ac3962f1035eb",
+      "metaSha256": "8fe3be7c62147fe79726d007f1833a5f5454225fbc18ef3c4d3bd0ac4caf4093"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P20.png",
+      "sha256": "ab9dd4578b494698abc95e2166f363d83863f459f1061dbd3be909bb85f2b83d",
+      "metaSha256": "7c22abccf3c29da91829f01d2649627bdcdc5a70a5859d895380de8b8355fd31"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P21.png",
+      "sha256": "e5033e4efe17f7b364c496fa8bbb6c9fb6d786fcdf026105a156c8f31ae06f62",
+      "metaSha256": "9003b6c49ce58b476e43cfc9b32664ed28cb17a018985afac210813a04f74475"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P22.png",
+      "sha256": "8ea4832bff5ea998cdd2449fd6d04ea11f4a29a33ccf7de1f14b43417f9b0041",
+      "metaSha256": "252f24db9229a00d27805fe06841b7acc8a045d5d2b49216b31c05c4c0160fbc"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P01.png",
+      "sha256": "fef3272753df688c3db7b4b088b899b5ed707e7b6ea4f0cbcf89712c3dc95a42",
+      "metaSha256": "fbf9acd44fe65f0102bc3aab16609fbc08570ff5b11db2a10e305f911e122350"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P02.png",
+      "sha256": "df400ee2c560d149633dac7e35c389e0010965c732ab8e4ce7aa9b482d1d2d8f",
+      "metaSha256": "87ac41d1550beee19a4d78644ab48ba46cb8e8752f4f067eb76334f63de24d9e"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P03.png",
+      "sha256": "f3a4a60747fa84b080c7be299079e08f38a4087e933fef81b3bc2c9c5ad0ba37",
+      "metaSha256": "6106d2785127d94d89c80a7c3067e043c9cb93c7fd503b71647de2378e3245ba"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P04.png",
+      "sha256": "208b036f54414a7428c3fc9f322659c82a78e3dded763506de3586d9c1cc7190",
+      "metaSha256": "35d073162d2261276ec98a9c7a71d64a4d72d04f6ff7467f2f65836008c6ab07"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P05.png",
+      "sha256": "484f251481ca72eeda6dbf76dc4596f1eee2b2167bc2a287c733d468579268c3",
+      "metaSha256": "3a60e4bc86d6b43a718661d5ce265fb418e45088266379b933912e8d893de378"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P06.png",
+      "sha256": "3d67c1f5ab46cbbe94fcbe322cd15d78f8bcce4a9f02e57b474e17b2d64ef79f",
+      "metaSha256": "851e9d8b2078b04dce7b65528b121f1662090d1b2b788b280ae4c695dd893182"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P07.png",
+      "sha256": "4622b73b26d204df186b7099f727b5c21136101c2cb13d38c8a016f3dfb85561",
+      "metaSha256": "d42e5bfd3b757ae45fc5b9e9cc333229e972b02c8e112456457b37aff30c0246"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P08.png",
+      "sha256": "a6154cccd74a5ad240e81e884309614d457165ffff7db396b612612b8769d8bf",
+      "metaSha256": "796dc885f3403ce0a0d05b3f03b844101e01f0b0512b84fc2c1fcc9e6242fb35"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P09.png",
+      "sha256": "ffa35823c548059a4044ad3ba757cdf14786692c9b38b77c1f852bd34142e6df",
+      "metaSha256": "f10fed86ce29305f05b8956d3a7f981363bbd0f04578f51baa2e5f6bb0d01c33"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P10.png",
+      "sha256": "a98559e44bdf17d20d10f28464195152031854b694a41d41353bc0b6b567f5dc",
+      "metaSha256": "339dfe5845648f28341ef69269b932c254ceb342fce23b33d1613afb0482598e"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P11.png",
+      "sha256": "12ed7d1c1c4b1a0e86a11e0cc5a017774899eaa7b23c41044d7f489002de6a8a",
+      "metaSha256": "5278b3a2c45334fcce6a333493a82fd39d3cb9562c105be36295b3617f28e36d"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P12.png",
+      "sha256": "ac3d8f69d75364d0af89aec9da064324ea170789207ed0cefc25c2e84a9e1394",
+      "metaSha256": "72ecdaec8ffa96ab65eaf1782748471d4d299cce59b6a1b7319285900a00a2ac"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P13.png",
+      "sha256": "d932ceb34c8261b60fac3507da328d823fc2e7a3f0a2cf42b92677fbc80d0324",
+      "metaSha256": "dffb4e6f006c070f2bb26dc6b1524eae2e650a194df25fc7977ffe2427e20b02"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P14.png",
+      "sha256": "10e0dfeb59ae02aaf46c50c261c274998a3fd4a4616b191056b88be67babef04",
+      "metaSha256": "5b4db10ee2c720c17cb3b5856226c6e5a6d4c3a178c8e93a175e6ff5694e8cff"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P15.png",
+      "sha256": "c7e0082877bda07931bbf31fc690602af7d8b62cd5b90db3570ebb2ff7552358",
+      "metaSha256": "cbbf31ae413c746cef0394ad756df6da84724cc3dda94b4a16912732ccfa5b9b"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P16.png",
+      "sha256": "9adbb9d61e719bb393e6c2767c3a0f4848ccf1dc6216dcac270c9d4f1c5b5304",
+      "metaSha256": "998e4799e700a5e0555d4defd53e23cee1250c54003fbede601f4331a8fb2fec"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P17.png",
+      "sha256": "b79d5e32073b52c58ee88c349b3f13b2e58ac3a5d39a29449e2ed30f165aff51",
+      "metaSha256": "197ff3c43bfe5d57a8b3705f63e6bc6d13f5489911483f80f30d85eb543f1a36"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P18.png",
+      "sha256": "535c8dc307cbfcbd820b56cf5d1fb951aa67d0bc7dd2adeed6d566b3324376e2",
+      "metaSha256": "826d86da1bb8aca95d6b369add80b082af817c9d5412d048964235ea31878cc3"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P19.png",
+      "sha256": "4d09bf757134414dab77ac5410c371237b0d383014c0deb2225ac3962f1035eb",
+      "metaSha256": "f164d61b7513dd757f5830346658a936cc4c3b7d1928ea9e0f6f0a26a4ab9084"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P20.png",
+      "sha256": "ab9dd4578b494698abc95e2166f363d83863f459f1061dbd3be909bb85f2b83d",
+      "metaSha256": "affc10826424579c5216d5f5fbdb6a151eb1276ce8e7e07b2bdab8e8ae588f16"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P21.png",
+      "sha256": "e5033e4efe17f7b364c496fa8bbb6c9fb6d786fcdf026105a156c8f31ae06f62",
+      "metaSha256": "1fa2e3bac3537313413c0ccd201e54f6a3a18f0e1dbe6911334ea090978f2624"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P22.png",
+      "sha256": "8ea4832bff5ea998cdd2449fd6d04ea11f4a29a33ccf7de1f14b43417f9b0041",
+      "metaSha256": "02997b99db19f9412d07b10167ac42d89e9a1f5f4932c7b427e3dbcbb99ce89b"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/M02EstablishBase/Final/M02-P01-Brief.png",
+      "sha256": "43019336fc343f71db9f82899d253c0aab1a3ddbf33e16834b5cd4f4c074d7e7",
+      "metaSha256": "e8d84dab5e2d53c847c41f06a14f5a396a5bd0445686716cb850d004580e3f0b"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/M02EstablishBase/Final/M02-P02-Comms.png",
+      "sha256": "89bbe26fdf9081eecd525db3e8ebbebc6b92ec64f4f587c2d2ecb1de9d042dc3",
+      "metaSha256": "43e509cbe1269336ff9243aac06633d463305f0c5ed0ef186062c887558b8730"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/M02EstablishBase/Final/M02-P03-Debrief.png",
+      "sha256": "55cc50e800b5115689bed3a56163f7f79b3d01a9393425e3ff84fa497c536cd4",
+      "metaSha256": "3d0a5072ff9f548a307131428bcd5b19a47ba88a0fcea0ec947e7093d9197b66"
+    },
+    {
+      "path": "Assets/Game/Art/UI/V3Shared/CommanderScenes/SCN02_FieldCommander_01_Scene_V3.png",
+      "sha256": "bd56cdfeef575af27f6a67dab262228d1922a63af83658d434c8b836c32409ba",
+      "metaSha256": "e90ca7d4b746f835096890f0c75018bb7201e2c3bfe52c6404fc9cea40f490e4"
+    },
+    {
+      "path": "Assets/Game/Art/UI/V3Shared/Events/SCN16_ARIAFieldTrials_V3.png",
+      "sha256": "8ffaf37eb1672329666fb1e4d28df7294a0456afabfeb94164fa9a4b30efe3d2",
+      "metaSha256": "06fd4318c7139e9bb007f56d73372a415e55c821d6f11a35612fb7b0a749726c"
+    },
+    {
+      "path": "Assets/Game/Art/UI/V3Shared/Portraits/ARIA_MainMenu_V3.png",
+      "sha256": "2f7e43bddae72cd09bff3eef1037191c6d8c357108199ff9d26f72c0ec934a1f",
+      "metaSha256": "b9f90ac20b48eadab51fe089ca262ee4cb8d1d736ff55d92e98b5d83230b5479"
+    }
+  ],
+  "retainedM3": [
+    {
+      "path": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B01.png",
+      "bytes": 1716374,
+      "sha256": "392269f2199dde8ff7088357549f9a68729655e6abd1092a96fa3eabe0d156b6",
+      "metaSha256": "9a9cb85cc8417df32282566a90c8157864d6409b117c003a0c83e71f1a283768"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B02.png",
+      "bytes": 2162025,
+      "sha256": "b1798cbd1a6dd63aed05404195c2dca4d25164a28758ca5f01acf2f5c42250eb",
+      "metaSha256": "7749bce49484a92c9e1a34ea31bac78429f47316389c29e100010af76d5a3142"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B03.png",
+      "bytes": 1903555,
+      "sha256": "1fa6244f75883e24c08bc27629cccb3dca131c5ecd472b8be702837160621339",
+      "metaSha256": "ebbfcdb3d61b3267fb154830acc59ae15431026f3d93ba08a78d80e510636d8f"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-C01.png",
+      "bytes": 1675333,
+      "sha256": "c3f33e04b2f83bbb2d0452e855dcffdb4555333573aec6d63bcf3c8ccb7d111f",
+      "metaSha256": "132f2c12e92437901aaaa315fc0c07cc1849f6132f7cea2c2244fcc592476175"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-D01.png",
+      "bytes": 1972321,
+      "sha256": "0b7d78b06d8550afbb9d6397f3a6f8b4af4c3ec3e01a76a0aea0b1f059bc11fd",
+      "metaSha256": "eb5ce20e4b4046cbe62a76446c443b1f83015fab9bfc9c9ebcc28e23c3e040eb"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-D02.png",
+      "bytes": 1627815,
+      "sha256": "577eba37e5a2ad4c114bea1f411ea599647953e7b72bd456eaa4a1918ee8a85d",
+      "metaSha256": "686085fe7f959e9db05193baf2c61d9e497ca5cc15dd247690e7010b76c78f29"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-D03.png",
+      "bytes": 1973571,
+      "sha256": "1677929e563f1b6a546075c4082f07353a136130a5e9d49823b7026b8f3bf307",
+      "metaSha256": "e56c780e1d57b74ac312b4d4cfeef733e8ea37d950167896c14dc5da1b131ef3"
+    }
+  ],
+  "captures": [
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/commander-choice-0-en-1920.png",
+      "sha256": "4ad4061167fcc8afdd013c6e63e2c4e08691d2078016c5cbbb89ed9a9eaabf41"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/commander-choice-0-en-2400.png",
+      "sha256": "afb666f9abc5e629339787e1c3b9157257ead156fafc492770be47f1abaa1fd1"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/commander-choice-0-fa-1920.png",
+      "sha256": "ff50568ed05b979241d83d908f1cfea228347ecea7cbdde704f562bd8f45d629"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/commander-choice-0-fa-2400.png",
+      "sha256": "e8a86e14b29eda5a46ab4e0d1cfa034587b9adebc6c3f82305c0218cde9f9c89"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/commander-choice-1-en-1920.png",
+      "sha256": "b3511a85ad58c3a50cc7d93bea5bf1a906abf2b3d5932f6a66ff8b0dfeb0132a"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/commander-choice-1-en-2400.png",
+      "sha256": "88b5c428a9cdb6839f09a66b0ddd3387453af9b6205820888601149b05f33437"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/commander-choice-1-fa-1920.png",
+      "sha256": "e5d5c6e7d75a0bdbc5c947ad41f5139ae1f362d7eb369c6a02105a46d7844307"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/commander-choice-1-fa-2400.png",
+      "sha256": "7f3abf4129cf7c27e2ac92b0d41375e103078a565c25e1dc743a8c107925ea46"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/commander-choice-2-en-1920.png",
+      "sha256": "1838d3c96c37d613f0273d1b91c72169731d2aa5e693f52c442a5915fa324f27"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/commander-choice-2-en-2400.png",
+      "sha256": "4db0fc81d898cb5985cf681310af179af4615e077c83d5da6cb4138d69e76c1c"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/commander-choice-2-fa-1920.png",
+      "sha256": "91361c224070e40b921ee14c66d83cc64abc3c555f7aa20294c47a9cb70c58cd"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/commander-choice-2-fa-2400.png",
+      "sha256": "1d6a548cabbb49581a5e8b29799becf0b82aa1288e8f1011ef61e32aa97467e1"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/commander-choice-3-en-1920.png",
+      "sha256": "8aab6193db7802157d8d19c87d84f56cc3ff59177afe302def0cf042b3affd14"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/commander-choice-3-en-2400.png",
+      "sha256": "bd3fcb883e3d8965c64cffbeaae4441e31df5089912baa63b1ae4a3cd5c7593e"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/commander-choice-3-fa-1920.png",
+      "sha256": "812cb536eedae93726cc20411893026102a4ed62f9b1c87e4b244e975c7142c0"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/commander-choice-3-fa-2400.png",
+      "sha256": "3a252ffbfd7b0e41340cb357f5bc15817a600e50f9546158dbb8568e02125c35"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/commander-choice-4-en-1920.png",
+      "sha256": "3750f0e7bb542b9d9c80244d7a1a3559ee07ef02332d2028197651121352883c"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/commander-choice-4-en-2400.png",
+      "sha256": "c04b6ba4fa8bc7491013dd4aa3a52149a02d63f6bd1efe4d9b5d9dbba7331684"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/commander-choice-4-fa-1920.png",
+      "sha256": "424d4a4573c1449207559c815d65460514e340d7f34729c6eb883c273b594186"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/commander-choice-4-fa-2400.png",
+      "sha256": "db46f540ef171a3fd3bb11e80d4595cf4c23f42ecfa4c8196e490b53fb303232"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/commander-choice-5-en-1920.png",
+      "sha256": "d36ce209e30ea0e107394003b9dac96fc0b66f6c7bbde031203c5f8e5ae65ed6"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/commander-choice-5-en-2400.png",
+      "sha256": "0346081993bc5428dac1d56b5915de5614447b296d5863e1bbc5a7f3014a6e01"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/commander-choice-5-fa-1920.png",
+      "sha256": "5e4e9ff80179108b4de1acab5917aa8c3405fd3b1f678833331b383c973da321"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/commander-choice-5-fa-2400.png",
+      "sha256": "39c21560a0f69afce40af39878d2f416f2321961dbb3a0907f45b62fdcda4918"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m02_brief-M02-BRIEF-DIALOGUE-en-1920.png",
+      "sha256": "6da805586216a926dbc04a8bb06733c25544c9b674f5aaaa5aca281d2efd9f5f"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m02_brief-M02-BRIEF-DIALOGUE-en-2400.png",
+      "sha256": "a67823d550df6abd4bfdec3be0a88b52dc7e13fc8d407887ce353a37fd98ceb9"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m02_brief-M02-BRIEF-DIALOGUE-fa-1920.png",
+      "sha256": "4c3e70f47099ee064008a09948d603241a0816aad107f4157c0622d17a1a2272"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m02_brief-M02-BRIEF-DIALOGUE-fa-2400.png",
+      "sha256": "28b8838330784b75a73b640c93037269da133fbc162e7ae193dacfd3a836c0b9"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m02_comms-M02-COMMS-DIALOGUE-en-1920.png",
+      "sha256": "f3bd15171c8e6712523c28fd6d48069e83ab46f0dd952437832848877299273a"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m02_comms-M02-COMMS-DIALOGUE-en-2400.png",
+      "sha256": "d3e84fa7cf02e30014aefd3164288b0fdcfff0e76e7eef44aa7ea25e536610aa"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m02_comms-M02-COMMS-DIALOGUE-fa-1920.png",
+      "sha256": "f55f607620a56d87eec85170dec80b93f4b83e8bc2a6afb0a8ff4ca82543fb10"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m02_comms-M02-COMMS-DIALOGUE-fa-2400.png",
+      "sha256": "e8ae89918b98200354e4f62a2819fb2e4485f1de3df64253b6c531a95ab5ff2a"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m02_debrief-M02-DEBRIEF-DIALOGUE-en-1920.png",
+      "sha256": "da8a67d8f45f6ba4297c691f079e86009309840871902469f52312f5967ad547"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m02_debrief-M02-DEBRIEF-DIALOGUE-en-2400.png",
+      "sha256": "1ae4262e27c5ce36b08a401c52e7133ed8cda2662ee1cf74adf31496078a4e33"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m02_debrief-M02-DEBRIEF-DIALOGUE-fa-1920.png",
+      "sha256": "7121a2db7e25102984b30d0467eac4f79aa4568e3db3a4fb7db2d2d7131fbb10"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m02_debrief-M02-DEBRIEF-DIALOGUE-fa-2400.png",
+      "sha256": "b4c62cc15873387918e8e452f5c1d480db72b8864145f366309aa08f93a15cd2"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_brief-M03-brief-0-en-1920.png",
+      "sha256": "9ec30ba8bdd2ed930cecbc73c5ba8172739564739647cd513d1adb7b0891f1b2"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_brief-M03-brief-0-en-2400.png",
+      "sha256": "47c9ac6bedcb2b614be9ae3169bc4e8786a8b2ce557114a5d469438ac68766f0"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_brief-M03-brief-0-fa-1920.png",
+      "sha256": "f80393c52e7bf42f3179351122d32e1f435d988109737b1cf302ba29d879d9a7"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_brief-M03-brief-0-fa-2400.png",
+      "sha256": "2062daf9d6d424b86cd2ea526beaf59f9483454802477617ee2c2065927b5a0d"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_brief-M03-brief-1-en-1920.png",
+      "sha256": "41f004d7bc6bd8df9610cff81493a55e07a5141812bc850ceffd6bd4dd9fb677"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_brief-M03-brief-1-en-2400.png",
+      "sha256": "ece9756d78997a74e586fc7a398cedfc4471ec3846b6ebac07bebe42a9990906"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_brief-M03-brief-1-fa-1920.png",
+      "sha256": "2bfabb1b6381b18bae519cb86dcf9a10ef62b5775eab1bcec5d377891222a7e6"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_brief-M03-brief-1-fa-2400.png",
+      "sha256": "899301dad83adc868ec301e0ef4b5849684a18a385e4f34d49fa4f7e46618b18"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_brief-M03-brief-2-en-1920.png",
+      "sha256": "1040d9ca68203ffb79c26b44739b126dd200e8f1996ab83d51f9079e71360511"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_brief-M03-brief-2-en-2400.png",
+      "sha256": "6072a285ce6279d8a95ee2cd7a47c712c332647c11f22319cea03a058e96adbc"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_brief-M03-brief-2-fa-1920.png",
+      "sha256": "005029fcb083ec35ec07e69049d1a302d411a02c1168ae3d432b04e8df4e8a19"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_brief-M03-brief-2-fa-2400.png",
+      "sha256": "20c446d496a187f32e82210436e72ca2a550c244b8701d3004045f15b1596980"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_comms-M03-comms-0-en-1920.png",
+      "sha256": "7fff9a93003da7ef591bdfc0f6768466902574befb1e1d0056de90fbf9c92b14"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_comms-M03-comms-0-en-2400.png",
+      "sha256": "0288f21ef36ed4d01631b89884566343faa63d0ed7ac516083eaeeae4c9af30b"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_comms-M03-comms-0-fa-1920.png",
+      "sha256": "4196d5f33d29fca474eec4da80d0ff57cdb6a7b9fd2a01138edf6d07e8d535fd"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_comms-M03-comms-0-fa-2400.png",
+      "sha256": "69d78efdca9ae60500911174335a1b62fde9599e76cb491528e704bd2d4fa2a8"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief-M03-debrief-0-en-1920.png",
+      "sha256": "957702d66af456aeacebed773b2be4bf3837f186265e3f584a84798aeeb96e3b"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief-M03-debrief-0-en-2400.png",
+      "sha256": "7c5d0dbbbad500a646c6eae2eaef115cf37128f74c303a1b51c556e3fe4e2a45"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief-M03-debrief-0-fa-1920.png",
+      "sha256": "d8aeb88b02f8fcbd6771af7b2bc190ba24892646c444bc5c2a3ee1a6344991bb"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief-M03-debrief-0-fa-2400.png",
+      "sha256": "0e462905c6ceadfde35f443b60a520547adbd61d56e8e1d15d13e4e58afc7e7c"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief-M03-debrief-1-en-1920.png",
+      "sha256": "1e98a7fab5eef9cadbbed543a3d8e413e3587429432b1a3de0a3bd1be7957cf4"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief-M03-debrief-1-en-2400.png",
+      "sha256": "18b4bf0789e7e8b47d2c348e88a49e0e2c08c501ea518c06155a9bfe5ee0ef13"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief-M03-debrief-1-fa-1920.png",
+      "sha256": "5f1d8ea8f03bba3ac35dac50820aa37b36920e7c424a70192b57033f516f93e4"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief-M03-debrief-1-fa-2400.png",
+      "sha256": "fba7c3697d84ca9f2cbdb705f9bcb7a6445b2975ef9b6d9092af94b0f9c5b5ac"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief-M03-debrief-2-en-1920.png",
+      "sha256": "f16e1c5e5966733d6651c9df56f38b6de180d9e8f1fe50723929306dc3a3a24b"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief-M03-debrief-2-en-2400.png",
+      "sha256": "f94fb7a4daf5e1ffa7f3a3fdeff4b47bfc5d66fe88baa710f30769bdb583d899"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief-M03-debrief-2-fa-1920.png",
+      "sha256": "ceb4e4d1d7c398176f327a5523df56b9959d003288fb87c60d3c12e6f4ec0546"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief-M03-debrief-2-fa-2400.png",
+      "sha256": "3d8a4a44aeb69a8df6086de1a150c28e22ee57e7bfcdf5be6136449ba682c15e"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_civilian-loss-M03-debrief.civilian-loss-0-en-1920.png",
+      "sha256": "510209d5f1868a74acc6a33ff96e9e04815e966ac88fc9541af4dadda0b77a3a"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_civilian-loss-M03-debrief.civilian-loss-0-en-2400.png",
+      "sha256": "64f700d06a4ba77fb250a9210810efcafd56138fee08c4d055e686a7ac71432b"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_civilian-loss-M03-debrief.civilian-loss-0-fa-1920.png",
+      "sha256": "1aa06282854c12ff16b8e630786ea4df7657d0b1d00dec755426791c5573f8d9"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_civilian-loss-M03-debrief.civilian-loss-0-fa-2400.png",
+      "sha256": "3f348ad301cdfe635a0d871d034bc7c738132593b3ea4c898e92141448908f74"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_civilian-loss-M03-debrief.civilian-loss-1-en-1920.png",
+      "sha256": "1e98a7fab5eef9cadbbed543a3d8e413e3587429432b1a3de0a3bd1be7957cf4"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_civilian-loss-M03-debrief.civilian-loss-1-en-2400.png",
+      "sha256": "18b4bf0789e7e8b47d2c348e88a49e0e2c08c501ea518c06155a9bfe5ee0ef13"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_civilian-loss-M03-debrief.civilian-loss-1-fa-1920.png",
+      "sha256": "5f1d8ea8f03bba3ac35dac50820aa37b36920e7c424a70192b57033f516f93e4"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_civilian-loss-M03-debrief.civilian-loss-1-fa-2400.png",
+      "sha256": "fba7c3697d84ca9f2cbdb705f9bcb7a6445b2975ef9b6d9092af94b0f9c5b5ac"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_civilian-loss-M03-debrief.civilian-loss-2-en-1920.png",
+      "sha256": "f16e1c5e5966733d6651c9df56f38b6de180d9e8f1fe50723929306dc3a3a24b"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_civilian-loss-M03-debrief.civilian-loss-2-en-2400.png",
+      "sha256": "f94fb7a4daf5e1ffa7f3a3fdeff4b47bfc5d66fe88baa710f30769bdb583d899"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_civilian-loss-M03-debrief.civilian-loss-2-fa-1920.png",
+      "sha256": "ceb4e4d1d7c398176f327a5523df56b9959d003288fb87c60d3c12e6f4ec0546"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_civilian-loss-M03-debrief.civilian-loss-2-fa-2400.png",
+      "sha256": "3d8a4a44aeb69a8df6086de1a150c28e22ee57e7bfcdf5be6136449ba682c15e"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_clean-M03-debrief.clean-0-en-1920.png",
+      "sha256": "b81b34b9d65de9951949a5c783c83dbe74061e7b56f77ab796b547d4ce55550b"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_clean-M03-debrief.clean-0-en-2400.png",
+      "sha256": "d9b704a703c85adb756ebe45d6cdef3662fde6dae8d5ee0f2de22ec9de7d6a55"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_clean-M03-debrief.clean-0-fa-1920.png",
+      "sha256": "589ae5737ab2892ed76686903e7477ba9719d28feadf47091a6ed66c776ffe7c"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_clean-M03-debrief.clean-0-fa-2400.png",
+      "sha256": "4a34bc4cd29e85a0b87e44b82321e2829146ab17e6ce32479ca2c6e91c37fcf1"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_clean-M03-debrief.clean-1-en-1920.png",
+      "sha256": "1e98a7fab5eef9cadbbed543a3d8e413e3587429432b1a3de0a3bd1be7957cf4"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_clean-M03-debrief.clean-1-en-2400.png",
+      "sha256": "18b4bf0789e7e8b47d2c348e88a49e0e2c08c501ea518c06155a9bfe5ee0ef13"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_clean-M03-debrief.clean-1-fa-1920.png",
+      "sha256": "5f1d8ea8f03bba3ac35dac50820aa37b36920e7c424a70192b57033f516f93e4"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_clean-M03-debrief.clean-1-fa-2400.png",
+      "sha256": "fba7c3697d84ca9f2cbdb705f9bcb7a6445b2975ef9b6d9092af94b0f9c5b5ac"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_clean-M03-debrief.clean-2-en-1920.png",
+      "sha256": "f16e1c5e5966733d6651c9df56f38b6de180d9e8f1fe50723929306dc3a3a24b"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_clean-M03-debrief.clean-2-en-2400.png",
+      "sha256": "f94fb7a4daf5e1ffa7f3a3fdeff4b47bfc5d66fe88baa710f30769bdb583d899"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_clean-M03-debrief.clean-2-fa-1920.png",
+      "sha256": "ceb4e4d1d7c398176f327a5523df56b9959d003288fb87c60d3c12e6f4ec0546"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_clean-M03-debrief.clean-2-fa-2400.png",
+      "sha256": "3d8a4a44aeb69a8df6086de1a150c28e22ee57e7bfcdf5be6136449ba682c15e"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_damaged-M03-debrief.damaged-0-en-1920.png",
+      "sha256": "8d0514be1a068c84d71ff07ac20bd05950836acfb88c799491729239df9b816c"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_damaged-M03-debrief.damaged-0-en-2400.png",
+      "sha256": "edd9d2c7c5ed84a65f51c7acb97897a576850261a7f993ee08dbf09f390204f5"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_damaged-M03-debrief.damaged-0-fa-1920.png",
+      "sha256": "f564c6ae93be68addd226e42f6680cedac50d61e9bae9475ba978184d371b2aa"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_damaged-M03-debrief.damaged-0-fa-2400.png",
+      "sha256": "a7e0bb41f627a446c5708d1adf068282c4b6d0470e1d393da494a89d177def47"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_damaged-M03-debrief.damaged-1-en-1920.png",
+      "sha256": "1e98a7fab5eef9cadbbed543a3d8e413e3587429432b1a3de0a3bd1be7957cf4"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_damaged-M03-debrief.damaged-1-en-2400.png",
+      "sha256": "18b4bf0789e7e8b47d2c348e88a49e0e2c08c501ea518c06155a9bfe5ee0ef13"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_damaged-M03-debrief.damaged-1-fa-1920.png",
+      "sha256": "5f1d8ea8f03bba3ac35dac50820aa37b36920e7c424a70192b57033f516f93e4"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_damaged-M03-debrief.damaged-1-fa-2400.png",
+      "sha256": "fba7c3697d84ca9f2cbdb705f9bcb7a6445b2975ef9b6d9092af94b0f9c5b5ac"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_damaged-M03-debrief.damaged-2-en-1920.png",
+      "sha256": "f16e1c5e5966733d6651c9df56f38b6de180d9e8f1fe50723929306dc3a3a24b"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_damaged-M03-debrief.damaged-2-en-2400.png",
+      "sha256": "f94fb7a4daf5e1ffa7f3a3fdeff4b47bfc5d66fe88baa710f30769bdb583d899"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_damaged-M03-debrief.damaged-2-fa-1920.png",
+      "sha256": "ceb4e4d1d7c398176f327a5523df56b9959d003288fb87c60d3c12e6f4ec0546"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_damaged-M03-debrief.damaged-2-fa-2400.png",
+      "sha256": "3d8a4a44aeb69a8df6086de1a150c28e22ee57e7bfcdf5be6136449ba682c15e"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_mixed-M03-debrief.mixed-0-en-1920.png",
+      "sha256": "8e0110319bdb012a4670256e07fd05997bc305cf89158469da4fc34019a41eb9"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_mixed-M03-debrief.mixed-0-en-2400.png",
+      "sha256": "33000d12eef68c84d60083ef19bfc9495c706c9887261ccec660355b75bfb979"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_mixed-M03-debrief.mixed-0-fa-1920.png",
+      "sha256": "ecb6816f4d190c1f6be756375eda2cc104fbe5eaa38c71c5d55f7eab8e30ff43"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_mixed-M03-debrief.mixed-0-fa-2400.png",
+      "sha256": "98ff50a7955084be0313e75f5d79ad1c49ec661d1793064130bb84a37994dfd5"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_mixed-M03-debrief.mixed-1-en-1920.png",
+      "sha256": "1e98a7fab5eef9cadbbed543a3d8e413e3587429432b1a3de0a3bd1be7957cf4"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_mixed-M03-debrief.mixed-1-en-2400.png",
+      "sha256": "18b4bf0789e7e8b47d2c348e88a49e0e2c08c501ea518c06155a9bfe5ee0ef13"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_mixed-M03-debrief.mixed-1-fa-1920.png",
+      "sha256": "5f1d8ea8f03bba3ac35dac50820aa37b36920e7c424a70192b57033f516f93e4"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_mixed-M03-debrief.mixed-1-fa-2400.png",
+      "sha256": "fba7c3697d84ca9f2cbdb705f9bcb7a6445b2975ef9b6d9092af94b0f9c5b5ac"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_mixed-M03-debrief.mixed-2-en-1920.png",
+      "sha256": "f16e1c5e5966733d6651c9df56f38b6de180d9e8f1fe50723929306dc3a3a24b"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_mixed-M03-debrief.mixed-2-en-2400.png",
+      "sha256": "f94fb7a4daf5e1ffa7f3a3fdeff4b47bfc5d66fe88baa710f30769bdb583d899"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_mixed-M03-debrief.mixed-2-fa-1920.png",
+      "sha256": "ceb4e4d1d7c398176f327a5523df56b9959d003288fb87c60d3c12e6f4ec0546"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_ch01_m03_debrief_mixed-M03-debrief.mixed-2-fa-2400.png",
+      "sha256": "3d8a4a44aeb69a8df6086de1a150c28e22ee57e7bfcdf5be6136449ba682c15e"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P01-en-1920.png",
+      "sha256": "3f8e910a8f084bf952223753621179dd6e0a2487968da8ccdd0413e61aab6186"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P01-en-2400.png",
+      "sha256": "3f726bca1672b75df78fb8552eff92f5d46a62e625ca8949da8441dadbf02e1f"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P01-fa-1920.png",
+      "sha256": "5e976ec3b34dccaf1b567041eb86fc04e9c9f348216bc4f72a699ef7090bf0e3"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P01-fa-2400.png",
+      "sha256": "6f359b0e09e6d3effb1d1e7525715be4fe61d83fdd8428794699a102ce7d83ff"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P02-en-1920.png",
+      "sha256": "bdc7553b3f5455dab1fd41275667ed6821b967185aa3a3cacd2c057736601c69"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P02-en-2400.png",
+      "sha256": "0bb089c52a765f3149de9a3a9afd756f9fff2c07b959a384b522f3ea0cfa0813"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P02-fa-1920.png",
+      "sha256": "e30e96a87536337fcead7b16e6e8a106335699d0ad388300063e74856a85fb11"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P02-fa-2400.png",
+      "sha256": "4960ec9158f9610f180f84bb09f1004cc15c9d119ff2faadfa55edef8b619f0e"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P03-en-1920.png",
+      "sha256": "910a2d9bbc2dde7adacaeedcc46c3d25a81628926aef0e36e044ee60c0d8d86c"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P03-en-2400.png",
+      "sha256": "0effabf5cd818d340a197928aa63e57803bb3af91527a1aabe30c1edd39368a4"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P03-fa-1920.png",
+      "sha256": "dd2f0fa70b5c35cf863d586cf43f946e532eb8bd9b6dc6b4b41bd84a079bc894"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P03-fa-2400.png",
+      "sha256": "4cfc4b91d668d26b4e794aab2a8c6e1384caedd16b33ea9731c957287107313c"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P04-en-1920.png",
+      "sha256": "00c7de894ef52e44f3b21a749b06b75c3d26e1b748a1cfaabb3f6857ce3b524e"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P04-en-2400.png",
+      "sha256": "e6514bd9cded3b00c0d2f04bfd092f173037b56c4fe79d6d3f9ff3c4d0bc03a4"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P04-fa-1920.png",
+      "sha256": "7d709d3b2a97fbd5ecded31041b83bb72992c0a0d1e5105d975a8be5a37a463f"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P04-fa-2400.png",
+      "sha256": "fd404f260d2a968039b83892b4bb985c038adc05b6ffb9a663a30dbb4ae01251"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P05-en-1920.png",
+      "sha256": "56b5e597617dd49bfc6c0959e4b6bba2afb0c0ba4c8586502da4bcd35c7dfa68"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P05-en-2400.png",
+      "sha256": "0ebae2f1a5da4bb5ad008ba0ffe2bc44de818faeab843a3cd8f5ca47a8214504"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P05-fa-1920.png",
+      "sha256": "c892c0871e3d9de356c77d7ce40ac1ac8959600e0bc7b7da33f078db047429f5"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P05-fa-2400.png",
+      "sha256": "da50291079e0e3b5075639bd0a33b85a012a421d92230909fe153014ba5a3d4a"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P06-en-1920.png",
+      "sha256": "f7d9c2e8bcfc64e6d38eca2ec3ece1894c63bf2ce281dd5a6535a85540457494"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P06-en-2400.png",
+      "sha256": "537320af4b928ca78a35c4fda4d8d27e16eed9bf728fd89940de13a133f5305e"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P06-fa-1920.png",
+      "sha256": "61fee047a584d9eb87e48fe149f3457ab9fa90e3c8c49a9b32bf6d383ab9da68"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P06-fa-2400.png",
+      "sha256": "d699f0cbca8d16ab6347286260fe47e07438f810bc67cafde6eb12cbc197ee82"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P07-en-1920.png",
+      "sha256": "17fff1eeef2f44837791b34b484496c462ceaca1bfcd856f0d4dbf9eef69eef2"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P07-en-2400.png",
+      "sha256": "bc0c27c3d6b1059787ff97d65702ba67423d42403c373d5d03cb9bd98bb0b752"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P07-fa-1920.png",
+      "sha256": "4cf32f84d2885669dbf53a726e397d6eef4b688c00fa9183809ec0247161e0c6"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P07-fa-2400.png",
+      "sha256": "12ddf69b17676ad06a114facfbc8e575cd552c9009ade28116ecbffb8c982163"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P09-en-1920.png",
+      "sha256": "5b1ef046f5392512f876befccb054ab48960a1c07a76314061d8ad848b7c8314"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P09-en-2400.png",
+      "sha256": "5f114c10097d5f9535ffc766e9d62a043cea2317cd7755ccc2080d56531eae2e"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P09-fa-1920.png",
+      "sha256": "dc0907dc8884915acf29ea1623b638b0928a8c2d539f15e90909541874b164f6"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P09-fa-2400.png",
+      "sha256": "bbff5007c1c2d1eb4e6e1061444d028b860c47759d09b75e5c1ad5d762c64fa2"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P10-en-1920.png",
+      "sha256": "932de445256d821a834e84532de9d9f0715d6b8967cf9220242db3bbed70576f"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P10-en-2400.png",
+      "sha256": "aabb30ff153bfdaeea2f8bf8cb5aa781aedf17be43c533b1373cb3611ba65b47"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P10-fa-1920.png",
+      "sha256": "0bdcdec345cf93971e17a4867712091ff74c6ce415ab76b8d0aa0e57436af168"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P10-fa-2400.png",
+      "sha256": "431a4272be02901e1cfa873e17cee0f3b4e9c3d487bbebfc9d54c721f550228e"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P11-en-1920.png",
+      "sha256": "837c07e60667a3ed8b3f69ac1675b946adc1f5d3f013ba9dc9ac6b1deed8ee11"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P11-en-2400.png",
+      "sha256": "66372e94590e4e9c74939f0376218149ad06f7ee914fc359e292275459ca02b6"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P11-fa-1920.png",
+      "sha256": "9e9de115568807453a3c41592b7f6d47b0919402847fed8ef1a2b853497253e3"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P11-fa-2400.png",
+      "sha256": "21153a331dd0d0da8eeff620d552fd6d9c8ec78ad3ef1df0ee15b50de46220a7"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P12-en-1920.png",
+      "sha256": "561552b20000917b991bb98722b13f0aee0bdd108fbedbdbbb606a435a490026"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P12-en-2400.png",
+      "sha256": "18e408dac0466f2fca0dfc2b3e2fce7a8dcfbc5066d2ef93f68eec7f6dd1e46f"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P12-fa-1920.png",
+      "sha256": "548060bfaa224c20965b19ad208729d6b8e55ef25ff69300e3fd5c660a7f24b1"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P12-fa-2400.png",
+      "sha256": "038f4955b55f6d484d33d1048676024dc25b1b9ed6b594c3f2b7ce5ce9d55d38"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P13-en-1920.png",
+      "sha256": "450fa32d8e808ec89f641b71d31f15006e92ec350772f2b1d5c29738bfd9a2fb"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P13-en-2400.png",
+      "sha256": "ce7d99be0680898fc652511c06d95ede679f7d088673ce304f80900403b56b8c"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P13-fa-1920.png",
+      "sha256": "dce959c20b2143362e775b7f69fa630e5d3640a8ea977b84a5cd6e74a4ad34d6"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P13-fa-2400.png",
+      "sha256": "08ebeded83dbbdec5169d1675a1f8ff1d6c6f81b3420584278e39aeaf0fb4936"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P14-en-1920.png",
+      "sha256": "5fda326d6d000839050772a2db048e114bce390ffb9a019953eea551cb441fa9"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P14-en-2400.png",
+      "sha256": "ce8f6707e7898ddb80d7384ddb3c1fd2c82627a32eb5ee23c66da846f282d66a"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P14-fa-1920.png",
+      "sha256": "e931314fe707e27c92267b9354e1b6ece25bc938497bf4dd061e1615988148c2"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P14-fa-2400.png",
+      "sha256": "2a1bb1b65bc074fc0fae619bdfe9b24cc5d189c5d960d4a50593b237e06e5bd5"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P15-en-1920.png",
+      "sha256": "6c98ae5d016452eb2e7a38cc924e9f52ea4c12910682c8987d593772cd0597fc"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P15-en-2400.png",
+      "sha256": "1f0bf9d178fcf13090ae83f538c3fc9d30deda454f517db02cb6f9067a456bc3"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P15-fa-1920.png",
+      "sha256": "870856d6837dc62c8b10fd40445ef62cc2d79fe584d582916bc7593116c16c2f"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P15-fa-2400.png",
+      "sha256": "11b65008224dcbe0528a013215e1d16e1d8e7979aa8b8ac202ce901127c8d090"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P16-en-1920.png",
+      "sha256": "afc08f4668774b56c2825af74da273b8e11d90e3a543c75a497a4ab8020b66f7"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P16-en-2400.png",
+      "sha256": "11d12b24deec305b1489fb6ae48d00bc8bcc6b6f65e4794bf0a7c7029aabe02b"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P16-fa-1920.png",
+      "sha256": "861f4c5709411ba469b1dde8128959b7c24c2eecce27a18430f3a26f9fefb12b"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P16-fa-2400.png",
+      "sha256": "563f94f19aeeb10fbd5576d317682cc202862b09e20934e562f37dc7ccbdf2af"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P17-en-1920.png",
+      "sha256": "1d92bf5451218a3e35576fda087ab095946a6125e6c77d6b7b83ff9b7bd9e24e"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P17-en-2400.png",
+      "sha256": "dc3d8b01c9858da5d48bdf5adc2ae2797f3f2cc384f547b02180cd4d4d852a1a"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P17-fa-1920.png",
+      "sha256": "2022d0f324143f3778580c2b6d8aeaa10e242760c722f0e13f770893ea81262f"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P17-fa-2400.png",
+      "sha256": "ed4a9737bc5dd858d681cec4b4556c1ef63c761dd3fca80d3a3d6ea0b752e881"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P18-en-1920.png",
+      "sha256": "00eb2f3d713da4f1ccba24337538c3b99fb9b804945b915988e4acbb094f5352"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P18-en-2400.png",
+      "sha256": "cac2cef7915e247f5231c076e9c9ef65907b012cf2c38bec2fc3f9e73bd956ef"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P18-fa-1920.png",
+      "sha256": "dba70116497d1ec09723d8e8bdb912e85bb3a6d1e0f12e75dc638694006f2ac4"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P18-fa-2400.png",
+      "sha256": "b2e5d5cdf4f1796f8fa440d88dcae49356a8ccfd7387e4f35095d61917773317"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P19-en-1920.png",
+      "sha256": "a8632bec7dc245e34c1937abfe5ba0769c5a2fd013c4a3f3cf401a7d5b195126"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P19-en-2400.png",
+      "sha256": "3fc1e532dda871d8f0e8addb1c9fc0b4ff8795593a558e068e2079bfa41c396a"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P19-fa-1920.png",
+      "sha256": "29b655a0ebb0eaa7f9ec3c5e115af660313c85fdcafd6949aa15943d56303deb"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P19-fa-2400.png",
+      "sha256": "cf7237fb9e5b7b7ed8e6394eaba0ab0e3348fd759ee901ce6062da6281884b68"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P20-en-1920.png",
+      "sha256": "a18d31a4c9898465d28f677800d58195b8540645868016a2a4726de50fa5c61d"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P20-en-2400.png",
+      "sha256": "3675526cddaec79dd3da6073a08aa4dc0850c18f344ce81a84628effd1d12dfc"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P20-fa-1920.png",
+      "sha256": "c50f4eea007d34059049d27c7c0c7254cfb1f57b40563887de90787d415ac1c8"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P20-fa-2400.png",
+      "sha256": "5f3d85ce19114a1c31f13f0c4b6ae9bd5563d4e1c41fd1d4d7fcc8cbdfc812f1"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P21-en-1920.png",
+      "sha256": "ce802239341538f782665b01182af9c725ccb2f85f328413ce54ec8660899a61"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P21-en-2400.png",
+      "sha256": "e9b5556185ca87cab16fe7daf47aae5832bff8fa29fa850f8ecc085329732889"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P21-fa-1920.png",
+      "sha256": "4d16541617aedc11cfc9c8170250415990b2e541d029c5f33f6c7ad3cf9152d4"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P21-fa-2400.png",
+      "sha256": "9e0aed76d720c4ec150cf9394a12e08691f60cc5065132494a1130be04c84f15"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P22-en-1920.png",
+      "sha256": "787b4c492f9387e43eb9b880b7a804743f1297ae8e298b6eb210739adb01506a"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P22-en-2400.png",
+      "sha256": "5f60aef691c7f82ccfdb4be3b1046a005e381c0d2be4aa1b50f58ad418c13cc4"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P22-fa-1920.png",
+      "sha256": "193617acd96977335a53a38d4ffac777ef50b9c351377b3da17cb0a75335d1da"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-FL-P22-fa-2400.png",
+      "sha256": "2bbcb1a3dbd5b905b9d32244fc2cb8aa40536a31fb4d9103b0a7eec0f9282f42"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-first_launch.commander_identity-en-1920.png",
+      "sha256": "cd4cccf7993be4998b8d89bd31d28d0997751e20903377302bfabce5ca04e679"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-first_launch.commander_identity-en-2400.png",
+      "sha256": "f72961cdd6ee46b9491e005099efa0bcfa06f48b3d85987ae1052ffe9da2d5f6"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-first_launch.commander_identity-fa-1920.png",
+      "sha256": "9c9c5cb806255d02f5394c4e0ce85951ec353d0f921dd9970bb28dc88acebc1d"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/seq_first_launch_complete_vision_slice-first_launch.commander_identity-fa-2400.png",
+      "sha256": "cf728c48082113d263a89ac04eef52cd4407812937802be6834c2330578288fb"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/warline-main-menu-v3-16x9.png",
+      "sha256": "9820cbc6aa79e81042171ab8049d518b778a7d01b6a49c4dd44daf03bbdccde9"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/warline-main-menu-v3-20x9.png",
+      "sha256": "e4b2178addd3db0889d53bd82081c3a8a4e02d95b47055ed1e0ddff37b71d31e"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/warline-main-menu-v3-fa-16x9.png",
+      "sha256": "f42c1533024435d9d000a269796b6188d75f30d60f24172954bf9fd4480bdd65"
+    },
+    {
+      "path": "Design/NarrativeVision/M3StyleAlignment/EditorQA/warline-main-menu-v3-fa-4800x2160.png",
+      "sha256": "365e3cb649abbd92d28c9c8f18b536a83f27d63195824b9137145638a1d73beb"
+    }
+  ]
+}

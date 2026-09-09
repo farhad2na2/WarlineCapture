@@ -37,6 +37,8 @@ namespace Game.UI.Runtime
                 campaignOperationsView.LaunchMissionButton.onClick.AddListener(OpenBriefing);
                 BindMissionNode(0, SelectM01);
                 BindMissionNode(1, SelectM02);
+                BindMissionNode(2, SelectM03);
+                BindMissionNode(3, SelectM04);
             }
             if (missionBriefingView != null)
             {
@@ -56,6 +58,8 @@ namespace Game.UI.Runtime
                 campaignOperationsView.LaunchMissionButton.onClick.RemoveListener(OpenBriefing);
                 UnbindMissionNode(0, SelectM01);
                 UnbindMissionNode(1, SelectM02);
+                UnbindMissionNode(2, SelectM03);
+                UnbindMissionNode(3, SelectM04);
             }
             if (missionBriefingView != null)
             {
@@ -107,6 +111,8 @@ namespace Game.UI.Runtime
 
         private void SelectM01() => SelectMission(UiCampaignMissionProjectionIds.M01);
         private void SelectM02() => SelectMission(UiCampaignMissionProjectionIds.M02);
+        private void SelectM03() => SelectMission(UiCampaignMissionProjectionIds.M03);
+        private void SelectM04() => SelectMission("saga.ch01.m04.airlift");
 
         private void SelectMission(string selectedMissionId)
         {

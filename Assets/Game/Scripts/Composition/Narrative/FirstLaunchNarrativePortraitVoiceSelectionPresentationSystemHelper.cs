@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Game.Composition
 {
-    internal sealed class FirstLaunchNarrativePortraitVoiceSelectionPresentationSystemHelper
+    internal sealed partial class FirstLaunchNarrativePortraitVoiceSelectionPresentationSystemHelper
     {
         private const int NeutralCommanderPortraitIndex = 6;
         private readonly Dictionary<string, NarrativeLocaleVoiceRecord> localizedVoices = new(StringComparer.Ordinal);
@@ -23,18 +23,7 @@ namespace Game.Composition
             commanderView = nextCommanderView;
             portraitIndex = NeutralCommanderPortraitIndex;
             portrait = null;
-            localizedVoices.Clear();
-            if (localeConfig == null)
-                return;
-
-            IReadOnlyList<NarrativeLocaleVoiceRecord> localeVoices = localeConfig.Voices;
-            for (int i = 0; i < localeVoices.Count; i++)
-            {
-                NarrativeLocaleVoiceRecord voice = localeVoices[i];
-                if (voice == null || string.IsNullOrWhiteSpace(voice.LineId))
-                    continue;
-                localizedVoices[voice.LineId] = voice;
-            }
+            SetLocale(localeConfig);
         }
 
         public void Apply(
@@ -59,24 +48,6 @@ namespace Game.Composition
             return line.Speaker == NarrativeSpeakerId.Commander && portrait != null
                 ? portrait
                 : speaker.IdentitySprite;
-        }
-
-        public AudioClip ResolveVoiceClip(NarrativeDialogueLineRecord line)
-        {
-            if (localizedVoices.TryGetValue(line.LineId, out NarrativeLocaleVoiceRecord localized))
-            {
-                return ResolveVoiceClip(
-                    line.Speaker,
-                    localized.VoiceClip,
-                    localized.FemaleVoiceClip,
-                    localized.NeutralVoiceClip);
-            }
-
-            return ResolveVoiceClip(
-                line.Speaker,
-                line.VoiceClip,
-                line.FemaleVoiceClip,
-                line.NeutralVoiceClip);
         }
 
         private AudioClip ResolveVoiceClip(

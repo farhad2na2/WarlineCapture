@@ -1,5 +1,18 @@
 namespace Game.UI.Contracts
 {
+    public readonly struct UiMissionDefenseResultDetails
+    {
+        public readonly bool Applicable,PostDamaged,PostDestroyed,CoreBreached,IntegrityFault,ReviewTutorial;
+        public readonly int CivilianLosses;
+        public UiMissionDefenseResultDetails(int civilianLosses,bool postDamaged,bool postDestroyed,bool coreBreached,bool integrityFault,bool reviewTutorial=false)
+        {Applicable=true; CivilianLosses=civilianLosses; PostDamaged=postDamaged; PostDestroyed=postDestroyed; CoreBreached=coreBreached; IntegrityFault=integrityFault; ReviewTutorial=reviewTutorial;}
+    }
+    public readonly struct UiMissionExtractionResultDetails
+    {
+        public readonly bool Applicable,CarrierLost,AircraftLost,TimedOut;public readonly int Delivered,Losses,CarrierLeg;
+        public UiMissionExtractionResultDetails(int delivered,int losses,int carrierLeg,bool carrierLost,bool aircraftLost,bool timedOut)
+        {Applicable=true;Delivered=delivered;Losses=losses;CarrierLeg=carrierLeg;CarrierLost=carrierLost;AircraftLost=aircraftLost;TimedOut=timedOut;}
+    }
     public enum UiMissionResultOutcome : byte
     {
         Victory,
@@ -10,7 +23,8 @@ namespace Game.UI.Contracts
     {
         None = 0,
         Retry = 1,
-        Continue = 2
+        Continue = 2,
+        RetrySave = 3
     }
 
     public readonly struct UiMissionResultPopupModel
@@ -32,6 +46,9 @@ namespace Game.UI.Contracts
         public readonly bool RetryVisible;
         public readonly bool FirstClear;
         public readonly bool DebriefRequired;
+        public readonly bool SettlementFailed;
+        public readonly UiMissionDefenseResultDetails Defense;
+        public readonly UiMissionExtractionResultDetails Extraction;
 
         public UiMissionResultPopupModel(
             UiMissionResultOutcome outcome,
@@ -57,6 +74,9 @@ namespace Game.UI.Contracts
             RetryVisible = replayEnabled;
             FirstClear = false;
             DebriefRequired = false;
+            SettlementFailed = false;
+            Defense = default;
+            Extraction = default;
         }
 
         public UiMissionResultPopupModel(
@@ -64,7 +84,7 @@ namespace Game.UI.Contracts
             string subtitle, string summaryBody, byte stars, string elapsedText,
             string squadLossText, string enemiesDefeatedText, string rewardsText,
             string primaryActionLabel, bool primaryActionEnabled, bool retryVisible,
-            bool firstClear = false, bool debriefRequired = false)
+            bool firstClear = false, bool debriefRequired = false, UiMissionDefenseResultDetails defense = default, bool settlementFailed = false, UiMissionExtractionResultDetails extraction = default)
         {
             Version = version;
             MissionId = missionId ?? string.Empty;
@@ -83,6 +103,9 @@ namespace Game.UI.Contracts
             RetryVisible = retryVisible;
             FirstClear = firstClear;
             DebriefRequired = debriefRequired;
+            SettlementFailed = settlementFailed;
+            Defense = defense;
+            Extraction = extraction;
         }
 
         public static UiMissionResultPopupModel VictoryDefault =>

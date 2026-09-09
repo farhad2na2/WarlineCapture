@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -23,6 +24,13 @@ namespace Game.UI.Runtime
         [SerializeField] private TMP_Text doItButtonLabel;
         [SerializeField] private RectTransform firstStepGuideRoot;
         [SerializeField] private TMP_FontAsset persianFont;
+        [SerializeField] private RectTransform missionPortraitClip;
+        [SerializeField] private RectTransform missionPortraitStage;
+        [SerializeField] private GameObject missionTelemetry;
+        private bool _missionLayoutCaptured, _missionLayoutActive, _missionLayoutLarge;
+        private Vector2 _guidePosition, _guideSize, _titleSize, _bodyPosition, _bodySize, _actionsPosition, _clipSize, _stageSize;
+        private AspectRatioFitter _missionPortraitFitter;
+        private AspectRatioFitter.AspectMode _portraitAspectMode;
 
         private Action _closeRequested;
         private Action _showRecommendationRequested;
@@ -38,7 +46,6 @@ namespace Game.UI.Runtime
         private TMP_Text[] _localizedTextTargets;
         private TMP_FontAsset[] _defaultFonts;
         private TextAlignmentOptions[] _defaultAlignments;
-        private readonly FastStringBuilder _rtlBuffer = new(RTLSupport.DefaultBufferSize);
 
         public RectTransform BriefingLayout => briefingLayout;
         public Image PortraitImage => portraitImage;
@@ -49,6 +56,8 @@ namespace Game.UI.Runtime
         public Button ShowMeButton => showMeButton;
         public Button DoItButton => doItButton;
         public RectTransform FirstStepGuideRoot => firstStepGuideRoot;
+        public bool OwnsLocalizedText(TMP_Text text) => text!=null &&
+            (text==titleText || text==bodyText || text==progressText || text==showMeButtonLabel || text==doItButtonLabel);
         public string CurrentInstructionBody => _currentInstructionBody;
         public UiTutorialNarrationPhase CurrentNarrationPhase => _currentNarrationPhase;
         public bool IsPresentationVisible =>
@@ -95,6 +104,7 @@ namespace Game.UI.Runtime
         {
             _tutorialStep = model.TutorialStep;
             _tutorialStepCount = model.TutorialStepCount;
+            ApplyMissionLayout(_tutorialStepCount==12,model.LargeTextEnabled);
             _recommendationKind = model.RecommendationKind;
             _rightToLeft = model.TutorialRightToLeft;
             ApplyLanguagePresentation();
@@ -106,11 +116,11 @@ namespace Game.UI.Runtime
             showMeButton.interactable = model.CanShow;
             doItButton.interactable = model.CanExecute;
             SetLocalizedText(showMeButtonLabel, _rightToLeft ? "نشانم بده" : "SHOW ME");
-            SetLocalizedText(doItButtonLabel, _rightToLeft ? "انجامش بده" : "DO IT");
+            SetLocalizedText(doItButtonLabel, _tutorialStepCount==12 ? model.RecommendationActionLabel : _rightToLeft ? "انجامش بده" : "DO IT");
             if (closeButton != null)
                 closeButton.gameObject.SetActive(true);
             if (firstStepGuideRoot != null)
-                firstStepGuideRoot.gameObject.SetActive(_tutorialStep == 1);
+                firstStepGuideRoot.gameObject.SetActive(_tutorialStep == 1 && _tutorialStepCount!=12);
         }
 
         public void SetPresentationVisible(bool visible)
@@ -123,7 +133,7 @@ namespace Game.UI.Runtime
             TacticalCommandMode mode,
             bool worldTargetCompleted)
         {
-            if (_tutorialStep == 2 && _recommendationKind == 2)
+            if (_tutorialStepCount!=12 && _tutorialStep == 2 && _recommendationKind == 2)
             {
                 if (worldTargetCompleted)
                 {
@@ -154,7 +164,7 @@ namespace Game.UI.Runtime
                 return;
             }
 
-            if (_tutorialStep is 3 or 4 && _recommendationKind == 3)
+            if (_tutorialStepCount!=12 && _tutorialStep is 3 or 4 && _recommendationKind == 3)
             {
                 if (worldTargetCompleted)
                 {
@@ -193,10 +203,16 @@ namespace Game.UI.Runtime
 
         public void ApplyAccessibility(bool largeTextEnabled, bool highContrastEnabled)
         {
+            ApplyMissionLayout(_tutorialStepCount==12,largeTextEnabled);
             float scale = largeTextEnabled ? 1.08f : 1f;
             titleText.fontSize = 29f * scale;
             bodyText.fontSize = 21f * scale;
             progressText.fontSize = 17f * scale;
+            if(_tutorialStepCount==12)
+            {
+                titleText.fontSizeMin=largeTextEnabled ? 19 : 17; titleText.fontSizeMax=largeTextEnabled ? 22 : 20;
+                bodyText.fontSizeMin=largeTextEnabled ? 17 : 15; bodyText.fontSizeMax=largeTextEnabled ? 19 : 17;
+            }
             Color primary = highContrastEnabled ? Color.white : new Color(0.95f, 0.92f, 0.82f, 1f);
             titleText.color = primary;
             bodyText.color = primary;
@@ -238,9 +254,9 @@ namespace Game.UI.Runtime
         private void ApplyProgress(UiTutorialNarrationPhase narrationPhase)
         {
             int step = Mathf.Max(1, _tutorialStep);
-            if (_tutorialStep == 2 && narrationPhase == UiTutorialNarrationPhase.WorldTarget)
+            if (_tutorialStepCount!=12 && _tutorialStep == 2 && narrationPhase == UiTutorialNarrationPhase.WorldTarget)
                 step = 3;
-            else if (_tutorialStep is 3 or 4)
+            else if (_tutorialStepCount!=12 && _tutorialStep is 3 or 4)
                 step = narrationPhase == UiTutorialNarrationPhase.WorldTarget ? 5 : 4;
 
             int count = Mathf.Max(step, _tutorialStepCount);
@@ -278,23 +294,56 @@ namespace Game.UI.Runtime
             }
         }
 
+        private void ApplyMissionLayout(bool active,bool large=false)
+        {
+            if(missionPortraitClip==null || missionPortraitStage==null || briefingLayout==null) return;
+            var actions=(RectTransform)showMeButton.transform.parent;
+            if(!_missionLayoutCaptured)
+            {
+                _guidePosition=briefingLayout.anchoredPosition; _guideSize=briefingLayout.sizeDelta;
+                _titleSize=titleText.rectTransform.sizeDelta; _bodyPosition=bodyText.rectTransform.anchoredPosition;
+                _bodySize=bodyText.rectTransform.sizeDelta; _actionsPosition=actions.anchoredPosition;
+                _clipSize=missionPortraitClip.sizeDelta; _stageSize=missionPortraitStage.sizeDelta;
+                _missionPortraitFitter=portraitImage.GetComponent<AspectRatioFitter>();
+                if(_missionPortraitFitter!=null) _portraitAspectMode=_missionPortraitFitter.aspectMode;
+                _missionLayoutCaptured=true;
+            }
+            if(_missionLayoutActive==active && _missionLayoutLarge==large) return;
+            _missionLayoutActive=active; _missionLayoutLarge=large;
+            briefingLayout.anchoredPosition=active ? new Vector2(_guidePosition.x,large ? -90 : -130) : _guidePosition;
+            briefingLayout.sizeDelta=active ? new Vector2(_guideSize.x,large ? 278 : 238) : _guideSize;
+            titleText.rectTransform.sizeDelta=active ? new Vector2(_titleSize.x,44) : _titleSize;
+            bodyText.rectTransform.anchoredPosition=active ? new Vector2(_bodyPosition.x,-48) : _bodyPosition;
+            bodyText.rectTransform.sizeDelta=active ? new Vector2(_bodySize.x,large ? 168 : 128) : _bodySize;
+            actions.anchoredPosition=active ? new Vector2(_actionsPosition.x,large ? -221 : -181) : _actionsPosition;
+            missionPortraitClip.sizeDelta=active ? new Vector2(_clipSize.x,large ? 62 : 102) : _clipSize;
+            missionPortraitStage.sizeDelta=active ? new Vector2(_stageSize.x,large ? 78 : 114) : _stageSize;
+            if(_missionPortraitFitter!=null) _missionPortraitFitter.aspectMode=active ? AspectRatioFitter.AspectMode.FitInParent : _portraitAspectMode;
+            if(missionTelemetry!=null) missionTelemetry.SetActive(!active);
+            if(!active)
+            {
+                titleText.fontSizeMin=14; titleText.fontSizeMax=18;
+                bodyText.fontSizeMin=12; bodyText.fontSizeMax=15;
+            }
+        }
+
         private void SetLocalizedText(TMP_Text target, string value)
         {
             string display = value ?? string.Empty;
-            if (_rightToLeft && display.Length > 0)
+            bool hasArabic = false;
+            foreach (char c in display)
+                if (c is >= '\u0600' and <= '\u06ff') { hasArabic = true; break; }
+            bool rtl = _rightToLeft && hasArabic;
+            if (target is RTLTextMeshPro rtlTarget)
             {
-                _rtlBuffer.Clear();
-                RTLSupport.FixRTL(
-                    display,
-                    _rtlBuffer,
-                    farsi: true,
-                    fixTextTags: true,
-                    preserveNumbers: true);
-                _rtlBuffer.Reverse();
-                display = _rtlBuffer.ToString();
+                rtlTarget.Farsi = rtl;
+                rtlTarget.ForceFix = rtl;
+                rtlTarget.PreserveNumbers = !display.Any(c => c is >= '\u06f0' and <= '\u06f9');
+                rtlTarget.text = display;
+                return;
             }
-
-            target.isRightToLeftText = _rightToLeft;
+            if (rtl) display = V3LocalizedTextBinding.ShapeForRendering(display);
+            target.isRightToLeftText = rtl;
             if (target.text != display)
                 target.text = display;
         }

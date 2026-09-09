@@ -1,0 +1,101 @@
+{
+  "audit": "warline-m04-architecture-03.log",
+  "result": "Failed",
+  "passed": 11,
+  "failed": 6,
+  "guardsModified": false,
+  "newReportedPaths": [],
+  "files": [
+    {
+      "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs",
+      "sha256": "5b8f6064bb9bb772edb7d9e5a356f398ebaa5bd099d3e0b8bf4b9825c2df0fed",
+      "reportedBeforeM4": true,
+      "sameAsM3Audit": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Narrative/SharedLocalizationTextCompositionSystemHelper.cs",
+      "sha256": "d4771778c621c3e03ba1827534be57bcccb2e033c49c1564b9a227c473ff4fb4",
+      "reportedBeforeM4": true,
+      "sameAsM3Audit": true
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Components/BattleHudRuntimeFeedbackView.cs",
+      "sha256": "b4e60ed0db647bb6bf315f9ae96befaf2749c7af1a31f0b97b215fde65d74c80",
+      "reportedBeforeM4": true,
+      "sameAsM3Audit": true
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.cs",
+      "sha256": "a8040f1ee31ec45e39c0e2f085b2990b5a90889b476a3e4e5fe8475b22b99f82",
+      "reportedBeforeM4": true,
+      "sameAsM3Audit": true
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Components/MatchHudSquadTrayView.cs",
+      "sha256": "ba805ee9a756d1c2d611eb49efcc9908f3e5a643900867730106ea7dbb29164d",
+      "reportedBeforeM4": true,
+      "sameAsM3Audit": true
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Components/MatchHudTransportPassengerDrawerView.cs",
+      "sha256": "4b6f6a2c1fc81133fb37dc9ee0b587dc2507a3cbffbc0ca07d554b9afd36666d",
+      "reportedBeforeM4": true,
+      "sameAsM3Audit": true
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/MenuDiagnosticsUiSystemHelper.cs",
+      "sha256": "df05c9d030c235acc181947aa0cf11d8ea5bc6f05460261084f86accf9f4fa2e",
+      "reportedBeforeM4": true,
+      "sameAsM3Audit": true
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/AriaCommandAssistantPopupView.cs",
+      "sha256": "a8989d2a0a55501b4ca2587e791e0359ec25fbb7ef80e635e2d6cd7fc4728e28",
+      "reportedBeforeM4": true,
+      "sameAsM3Audit": true
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.cs",
+      "sha256": "6537ae26ef864404ff8cc5af71ab89cc7b67fc69856c089124b0d83687e2d068",
+      "reportedBeforeM4": true,
+      "sameAsM3Audit": true
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/BuildPlacementConfirmationBarView.cs",
+      "sha256": "4f9a66d1150195a505fba21015f09a942882a1e71f858d00477690cd75952e5c",
+      "reportedBeforeM4": true,
+      "sameAsM3Audit": true
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs",
+      "sha256": "83e2115f0b0d4807ba933a2438ab48b6d20b4aa204b61374dbda167d822f36c0",
+      "reportedBeforeM4": true,
+      "sameAsM3Audit": true
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/ResourceExchangePopupRuntimeView.cs",
+      "sha256": "95560b9ed8a8dc7dd4407d2b891fd4e122f9a8b36f301939a82764bb23ba0878",
+      "reportedBeforeM4": true,
+      "sameAsM3Audit": true
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/ResourceExchangePopupView.cs",
+      "sha256": "8ca0b8f4203b72f9537889acc0238473ecf8dd6f21f56b37c4ffda207968cbc5",
+      "reportedBeforeM4": true,
+      "sameAsM3Audit": true
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/ResourceExchangeShellBinding.cs",
+      "sha256": "63399e3caee4ce5ba7f582043639915507b0debc573e218519d5ee30aa276e2b",
+      "reportedBeforeM4": true,
+      "sameAsM3Audit": true
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs",
+      "sha256": "f4eeeeb190036a59dcb2e2a8036ba16b95ed19c85f6d60a38303b0f268ef60b4",
+      "reportedBeforeM4": true,
+      "sameAsM3Audit": true
+    }
+  ],
+  "wrapperExitCode": 0
+}

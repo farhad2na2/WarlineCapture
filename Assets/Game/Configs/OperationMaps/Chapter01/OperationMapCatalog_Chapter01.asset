@@ -13,9 +13,23 @@ MonoBehaviour:
   m_Name: OperationMapCatalog_Chapter01
   m_EditorClassIdentifier: Game.Configs::Game.Configs.OperationMapCatalogConfig
   definitions:
+  - {fileID: 11400000, guid: 1a2923aa685514516b10e057261fd960, type: 2}
+  - {fileID: 11400000, guid: cdac096ca74d84e84b2e0e1f93a29014, type: 2}
   - {fileID: 11400000, guid: 8c19d5328fd5b7c43b9d5ecb0065df04, type: 2}
   - {fileID: 11400000, guid: 30ded13be441a44b588827ac6aee0e2d, type: 2}
   entries:
+  - definition: {fileID: 11400000, guid: 1a2923aa685514516b10e057261fd960, type: 2}
+    contentPack:
+      contentPackId: opmap-pack.ch01.airlift_01
+      deliveryKind: 0
+      contentVersion: 1
+      contentHash: 38474d592b6cd91aace2f7b99cc08f13a727ece3a81d0d8e6e1341feaa5a42ee
+  - definition: {fileID: 11400000, guid: cdac096ca74d84e84b2e0e1f93a29014, type: 2}
+    contentPack:
+      contentPackId: opmap-pack.ch01.convoy_approach_01
+      deliveryKind: 0
+      contentVersion: 1
+      contentHash: 5f42dea696ff43c9f73ea64c39bf188bd66a605bf329efafaac02ae0bb384942
   - definition: {fileID: 11400000, guid: 8c19d5328fd5b7c43b9d5ecb0065df04, type: 2}
     contentPack:
       contentPackId: opmap-pack.ch01.district_edge_01

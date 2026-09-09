@@ -63,7 +63,7 @@ namespace Game.Editor
             ["EVENTS"] = "رویدادها",
             ["EXIT"] = "خروج",
             ["FRIENDLIES"] = "نیروهای خودی",
-            ["FUEL"] = "سوخت",
+            ["FUEL"] = "بنزین",
             ["GAMEPLAY"] = "گیم‌پلی",
             ["HIGH"] = "زیاد",
             ["IN PROGRESS"] = "در حال انجام",
@@ -788,7 +788,7 @@ namespace Game.Editor
             AddRuntimeText("ui.hud.materials", "Materials", "مصالح");
             AddRuntimeText("ui.hud.oil", "Oil", "نفت");
             AddRuntimeText("ui.hud.civilian_risk", "Civilian Risk", "خطر برای غیرنظامیان");
-            AddRuntimeText("ui.hud.fuel", "Fuel", "سوخت");
+            AddRuntimeText("ui.hud.fuel", "Fuel", "بنزین");
             AddRuntimeText("ui.hud.credits", "Credits", "اعتبار");
             AddRuntimeText("ui.aria.name", "ARIA", "آریا");
             AddRuntimeText("ui.skirmish.income_multiplier", "Income Multiplier", "ضریب درآمد");
@@ -838,9 +838,9 @@ namespace Game.Editor
             AddRuntimeText("ui.hud.no_passengers", "NO PASSENGERS ONBOARD", "هیچ مسافری سوار نیست");
             AddRuntimeText("ui.hud.exit_all", "EXIT ALL", "خروج همه");
             AddRuntimeText("ui.hud.oil_barrels_capacity", "OIL BARRELS {0}/{1}", "بشکه‌های نفت {0}/{1}");
-            AddRuntimeText("ui.hud.fuel_capacity", "FUEL {0}/{1}", "سوخت {0}/{1}");
+            AddRuntimeText("ui.hud.fuel_capacity", "FUEL {0}/{1}", "بنزین {0}/{1}");
             AddRuntimeText("ui.hud.oil_capacity", "OIL {0}/{1}", "نفت {0}/{1}");
-            AddRuntimeText("ui.hud.oil_fuel_capacity", "OIL {0}/{1} | FUEL {2}/{3}", "نفت {0}/{1} | سوخت {2}/{3}");
+            AddRuntimeText("ui.hud.oil_fuel_capacity", "OIL {0}/{1} | FUEL {2}/{3}", "نفت {0}/{1} | بنزین {2}/{3}");
             AddRuntimeText("ui.hud.cargo_capacity", "CARGO 0/{0}", "محموله ۰/{0}");
             AddRuntimeText("ui.hud.material_fabrication_status", "OIL {0}/{1} | MATERIALS {2}/{3}\n{4} OIL > {5} MATERIALS / {6}s\n{7}%", "نفت {0}/{1} | مصالح {2}/{3}\n{4} نفت > {5} مصالح / {6} ثانیه\n{7}٪");
             AddRuntimeText("ui.hud.health_empty", "HEALTH -", "سلامت -");

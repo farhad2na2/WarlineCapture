@@ -16,7 +16,7 @@ using UnityEngine.UI;
 
 public sealed class M01FirstContactHudRestrictionTests
 {
-    private const string Marker = "[M01FirstContactHudRestrictionValidation] result=Passed tests=7";
+    private const string Marker = "[M01FirstContactHudRestrictionValidation] result=Passed tests=8";
 
     [MenuItem("Game/Validation/Run M01 First Contact HUD Restrictions Focused")]
     public static void RunFocusedValidation()
@@ -26,6 +26,7 @@ public sealed class M01FirstContactHudRestrictionTests
         {
             Run(CanonicalMissionRestrictionsProjectReadOnly, ref passed);
             Run(CinematicInteractionLockTracksOpeningReturn, ref passed);
+            Run(ClearedCampaignStateDoesNotLockSkirmish, ref passed);
             Run(RightRailDisablesAndGraysBuildAndSupport, ref passed);
             Run(ResourceHeaderDisablesAndGraysEconomyButPreservesCivilianRisk, ref passed);
             Run(SquadTrayDisablesAndGraysNonAuthoredCategoriesButPreservesDefaults, ref passed);
@@ -115,6 +116,37 @@ public sealed class M01FirstContactHudRestrictionTests
         finally
         {
             World.DefaultGameObjectInjectionWorld = previous;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+            blob.Dispose();
+        }
+    }
+
+    [Test]
+    public static void ClearedCampaignStateDoesNotLockSkirmish()
+    {
+        World previous=World.DefaultGameObjectInjectionWorld;
+        using World world=CreateMissionWorld(out BlobAssetReference<CampaignMissionCatalogBlob> blob);
+        try
+        {
+            World.DefaultGameObjectInjectionWorld=world;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+            using var query=world.EntityManager.CreateEntityQuery(typeof(CampaignMissionRootComponent));
+            Entity root=query.GetSingletonEntity();
+            world.EntityManager.SetComponentData(root,default(CampaignMissionRuntimeComponent));
+            world.EntityManager.AddComponentData(root,default(CampaignMissionOpeningPresentationComponent));
+            world.EntityManager.AddComponentData(root,default(CampaignMissionFinalePresentationComponent));
+            Assert.IsFalse(UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var cleared));
+            Assert.IsFalse(cleared.CinematicInteractionLocked);
+            var inactive=new CampaignMissionRuntimeComponent {SessionToken=new FixedString64Bytes("retired-session")};
+            world.EntityManager.SetComponentData(root,inactive);
+            world.EntityManager.SetComponentData(root,new CampaignMissionOpeningPresentationComponent {SessionToken=inactive.SessionToken,Stage=1});
+            world.EntityManager.SetComponentData(root,new CampaignMissionFinalePresentationComponent {SessionToken=inactive.SessionToken,Stage=1,Required=1});
+            Assert.IsFalse(UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var retired));
+            Assert.IsFalse(retired.CinematicInteractionLocked);
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld=previous;
             UiShellEcsGateway.RegisterAsRuntimeGateway();
             blob.Dispose();
         }

@@ -25,6 +25,8 @@ public sealed class UiShellAudioRoutePopupTests
             passed++;
             RunCase(test => test.SettingsPopupRequests_EnqueuePopupOpenAndCloseAudio());
             passed++;
+            RunCase(test => test.CloseThenGuideDuringTransition_PreservesBothRequests());
+            passed++;
             RunCase(test => test.BuildDrawerPopupRequest_EnqueuesDrawerOpenAudio());
             passed++;
             RunCase(test => test.PassengerDrawerToggle_EnqueuesDrawerOpenAudio());
@@ -133,6 +135,30 @@ public sealed class UiShellAudioRoutePopupTests
 
         system.Update(_world.Unmanaged);
         AssertLatestAudioRequest(AudioEventIds.UIPopupClose, AudioEventIds.UIPopupCloseHash);
+    }
+
+    [Test]
+    public void CloseThenGuideDuringTransition_PreservesBothRequests()
+    {
+        Entity boundary = CreateShellFlowBoundary(UiShellMode.MatchHud, UIRoute.Match);
+        var em = _world.EntityManager;
+        em.SetComponentData(boundary, new UiShellActivePopupComponent { PopupKind=UiShellPopupKind.ThreatAlert, Visible=1 });
+        var pending = em.GetBuffer<UiShellPopupRequestComponent>(boundary);
+        pending.Add(new UiShellPopupRequestComponent { PopupKind=UiShellPopupKind.ThreatAlert, Intent=UiShellPopupIntent.Hide });
+        pending.Add(new UiShellPopupRequestComponent { PopupKind=UiShellPopupKind.MissionFieldGuide, Intent=UiShellPopupIntent.Show });
+        var system = _world.CreateSystem<UiShellFlowSystem>();
+        system.Update(_world.Unmanaged);
+        Assert.AreEqual(1, em.GetBuffer<UiShellPopupRequestComponent>(boundary).Length);
+        Assert.AreEqual(0, em.GetComponentData<UiShellActivePopupComponent>(boundary).Visible);
+        system.Update(_world.Unmanaged);
+        Assert.AreEqual(1, em.GetBuffer<UiShellPopupRequestComponent>(boundary).Length, "Keep the guide pending during close animation.");
+        var state = em.GetComponentData<UiShellStateComponent>(boundary);
+        state.IsTransitionRunning=0;
+        em.SetComponentData(boundary,state);
+        system.Update(_world.Unmanaged);
+        Assert.AreEqual(UiShellPopupKind.MissionFieldGuide,em.GetComponentData<UiShellActivePopupComponent>(boundary).PopupKind);
+        Assert.AreEqual(1,em.GetComponentData<UiShellActivePopupComponent>(boundary).Visible);
+        Assert.AreEqual(0,em.GetBuffer<UiShellPopupRequestComponent>(boundary).Length);
     }
 
     [Test]

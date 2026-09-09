@@ -37,6 +37,17 @@ namespace Game.UI.Runtime
             ApplyVisual(LastAppliedModel);
         }
 
+        public bool ShowMissionRifleProduction()
+        {
+            if(!EnsureBuildDrawerOpen() || _buildDrawerCatalogRuntimeView==null) return false;
+            var target=_buildDrawerCatalogRuntimeView.ResolveRifleProductionGuidanceTarget();
+            // Navigate the tab/item only. The player confirms the displayed transaction separately.
+            if(target!=null && target.GetComponent<Button>()!=_buildDrawerView.PrimaryActionButton)
+                target.GetComponent<Button>()?.onClick.Invoke();
+            BeginPendingShowMe(ProduceRecommendationKind,UiSurfaceTargetKind);
+            return true;
+        }
+
         public bool TryExecuteUiSurface(byte recommendationKind, byte targetKind)
         {
             if (targetKind != UiSurfaceTargetKind)
@@ -113,6 +124,10 @@ namespace Game.UI.Runtime
             {
                 Button uiButton = model.RecommendationKind switch
                 {
+                    MoveRecommendationKind => _commandControlsView?.MoveButton,
+                    8 => _commandControlsView?.HoldButton,
+                    10 => _commandControlsView?.StopButton,
+                    6 => _commandControlsView?.SupportButton,
                     BuildRecommendationKind => _buildGuidanceButton,
                     SelectRecommendationKind => ResolveBarracksGuidanceButton(),
                     _ => null
@@ -177,6 +192,8 @@ namespace Game.UI.Runtime
                 return commandCue
                     ? GameLocalization.Get("ui.aria.press_attack", "PRESS ATTACK")
                     : GameLocalization.Get("ui.guidance.click_enemy", "CLICK ENEMY");
+            if(model.TargetKind==UiSurfaceTargetKind && model.RecommendationKind is 6 or 8 or 10)
+                return GameLocalization.Get("mission.m03.guide.control."+model.RecommendationKind);
             return GameLocalization.Get("ui.hud.aria_target", "ARIA TARGET");
         }
 

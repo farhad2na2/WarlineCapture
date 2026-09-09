@@ -50,10 +50,11 @@ namespace Game.Runtime
                 ComponentType.ReadOnly<Faction>(),
                 ComponentType.ReadOnly<UnitGrid>(),
                 ComponentType.ReadOnly<UnitHealth>());
-            _targetQuery = state.GetEntityQuery(
-                ComponentType.ReadOnly<Faction>(),
-                ComponentType.ReadOnly<UnitGrid>(),
-                ComponentType.ReadOnly<UnitHealth>());
+            _targetQuery = state.GetEntityQuery(new EntityQueryDesc
+            {
+                All = new[] { ComponentType.ReadOnly<Faction>(), ComponentType.ReadOnly<UnitGrid>(), ComponentType.ReadOnly<UnitHealth>() },
+                None = new[] { ComponentType.ReadOnly<CampaignMissionCombatSuppressedTag>() }
+            });
             _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
             _warningStateQuery = state.GetEntityQuery(ComponentType.ReadWrite<ThreatWarningRuntimeStateComponent>());
             ThreatWarningRuntimeState.EnsureSingleton(state.EntityManager, _warningStateQuery);
@@ -85,16 +86,18 @@ namespace Game.Runtime
         {
             state.EntityManager.CompleteDependencyBeforeRO<RuntimeGameplayStateComponent>();
             RuntimeGameplayStateComponent gameplayState = SystemAPI.GetSingleton<RuntimeGameplayStateComponent>();
-            if (gameplayState.PlayRequested == 0 || gameplayState.SimulationActive == 0)
+            if (gameplayState.PlayRequested == 0)
             {
                 _nextScanTime = 0d;
                 ClearPreviousThreats();
                 ThreatWarningRuntimeState.Reset(state.EntityManager, _warningStateQuery);
                 return;
             }
+            if (gameplayState.SimulationActive == 0) return;
 
             int targetCount = _targetQuery.CalculateEntityCount();
-            if (ShouldSkipScan(targetCount, SystemAPI.Time.ElapsedTime))
+            Entity pingSensor = PendingPingSensor(ref state);
+            if (pingSensor == Entity.Null && ShouldSkipScan(targetCount, SystemAPI.Time.ElapsedTime))
                 return;
 
             CompleteMainThreadReadDependencies(ref state);
@@ -106,6 +109,7 @@ namespace Game.Runtime
             using NativeParallelHashSet<Entity> currentAirThreats = new(targetCapacity, Allocator.TempJob);
             using NativeList<Entity> currentGroundThreatList = new(Allocator.TempJob);
             using NativeList<Entity> currentAirThreatList = new(Allocator.TempJob);
+            using NativeList<Entity> pingGroundContacts = new(Allocator.TempJob);
             using NativeList<ThreatCandidate> threatCandidates = new(math.max(1, targetCount), Allocator.TempJob);
             using NativeList<ThreatSensor> closeContactSensors = new(math.max(1, targetCount), Allocator.TempJob);
             using NativeParallelHashSet<int2> closeContactSensorCells = new(math.max(1, targetCount), Allocator.TempJob);
@@ -142,6 +146,7 @@ namespace Game.Runtime
                 CurrentAirThreats = currentAirThreats,
                 CurrentGroundThreatList = currentGroundThreatList,
                 CurrentAirThreatList = currentAirThreatList,
+                PingSensor = pingSensor, PingGroundContacts = pingGroundContacts,
                 ThreatCandidates = threatCandidates,
                 CloseContactSensors = closeContactSensors,
                 CloseContactSensorCells = closeContactSensorCells,
@@ -153,41 +158,9 @@ namespace Game.Runtime
             ReplacePreviousThreats(_previousGroundThreats, currentGroundThreatList);
             ReplacePreviousThreats(_previousAirThreats, currentAirThreatList);
 
-            ThreatScanResult scan = result[0];
-            if (scan.HasNewGroundThreat != 0 && (scan.HasNewAirThreat == 0 || scan.BestGroundEtaSeconds <= scan.BestAirEtaSeconds))
-            {
-                float etaSeconds = scan.BestGroundEtaSeconds == float.MaxValue ? 0f : scan.BestGroundEtaSeconds;
-                int threatCount = currentGroundThreatList.Length;
-                ThreatWarningRuntimeState.RequestWarning(
-                    state.EntityManager,
-                    _warningStateQuery,
-                    ThreatWarningType.Ground,
-                    etaSeconds,
-                    threatCount);
-                ThreatWarningAudioEventUtility.TryEmit(
-                    state.EntityManager,
-                    ThreatWarningType.Ground,
-                    etaSeconds,
-                    threatCount,
-                    (float)SystemAPI.Time.ElapsedTime);
-            }
-            else if (scan.HasNewAirThreat != 0)
-            {
-                float etaSeconds = scan.BestAirEtaSeconds == float.MaxValue ? 0f : scan.BestAirEtaSeconds;
-                int threatCount = currentAirThreatList.Length;
-                ThreatWarningRuntimeState.RequestWarning(
-                    state.EntityManager,
-                    _warningStateQuery,
-                    ThreatWarningType.Air,
-                    etaSeconds,
-                    threatCount);
-                ThreatWarningAudioEventUtility.TryEmit(
-                    state.EntityManager,
-                    ThreatWarningType.Air,
-                    etaSeconds,
-                    threatCount,
-                    (float)SystemAPI.Time.ElapsedTime);
-            }
+            if (!PublishDefenseObservations(ref state, currentGroundThreatList))
+                PublishLegacyWarning(ref state, result[0], currentGroundThreatList.Length, currentAirThreatList.Length);
+            FinishPing(ref state, pingSensor, pingGroundContacts);
         }
 
         private bool ShouldSkipScan(int targetCount, double now)
@@ -323,6 +296,8 @@ namespace Game.Runtime
             public NativeParallelHashSet<Entity> CurrentAirThreats;
             public NativeList<Entity> CurrentGroundThreatList;
             public NativeList<Entity> CurrentAirThreatList;
+            public Entity PingSensor;
+            public NativeList<Entity> PingGroundContacts;
             public NativeList<ThreatCandidate> ThreatCandidates;
             public NativeList<ThreatSensor> CloseContactSensors;
             public NativeParallelHashSet<int2> CloseContactSensorCells;
@@ -371,6 +346,13 @@ namespace Game.Runtime
                         int2 sensorCell = sensorGrids[i].Cell;
                         bool detectsAir = detector.Kind == (byte)ThreatDetectionKind.Air;
                         bool detectsGround = detector.Kind == (byte)ThreatDetectionKind.Ground;
+                        if (sensor == PingSensor && detectsGround)
+                            for (int c = 0; c < ThreatCandidates.Length; c++)
+                            {
+                                ThreatCandidate candidate = ThreatCandidates[c];
+                                if (candidate.IsAir == 0 && ChebyshevDistance(sensorCell, candidate.Cell) <= detector.RadiusCells)
+                                    PingGroundContacts.Add(candidate.Entity);
+                            }
 
                         ScanTargetsForSensor(
                             sensor,

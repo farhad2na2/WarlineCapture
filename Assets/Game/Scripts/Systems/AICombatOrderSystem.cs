@@ -26,6 +26,7 @@ namespace Game.Runtime
         private BufferLookup<AISquadUnit> _squadUnitLookup;
         private ComponentLookup<Faction> _factionLookup;
         private ComponentLookup<AIControlledTag> _aiControlledLookup;
+        private ComponentLookup<CampaignMissionUnitRoleComponent> _missionRoleLookup;
         private ComponentLookup<UnitHealth> _unitHealthLookup;
         private ComponentLookup<UnitCombat> _unitCombatLookup;
         private ComponentLookup<UnitAttack> _unitAttackLookup;
@@ -116,6 +117,7 @@ namespace Game.Runtime
             _squadUnitLookup = state.GetBufferLookup<AISquadUnit>(true);
             _factionLookup = state.GetComponentLookup<Faction>(true);
             _aiControlledLookup = state.GetComponentLookup<AIControlledTag>(true);
+            _missionRoleLookup = state.GetComponentLookup<CampaignMissionUnitRoleComponent>(true);
             _unitHealthLookup = state.GetComponentLookup<UnitHealth>(true);
             _unitCombatLookup = state.GetComponentLookup<UnitCombat>(true);
             _unitAttackLookup = state.GetComponentLookup<UnitAttack>(true);
@@ -318,6 +320,7 @@ namespace Game.Runtime
             _squadUnitLookup.Update(ref state);
             _factionLookup.Update(ref state);
             _aiControlledLookup.Update(ref state);
+            _missionRoleLookup.Update(ref state);
             _unitHealthLookup.Update(ref state);
             _unitCombatLookup.Update(ref state);
             _unitAttackLookup.Update(ref state);
@@ -360,48 +363,6 @@ namespace Game.Runtime
             }
 
             return count;
-        }
-
-        private bool CanReceiveCombatOrderFromLookups(Entity unit, byte factionId)
-        {
-            if (unit == Entity.Null ||
-                !_entityStorageInfoLookup.Exists(unit) ||
-                !_factionLookup.HasComponent(unit) ||
-                _factionLookup[unit].Id != factionId ||
-                !_aiControlledLookup.HasComponent(unit) ||
-                !_unitHealthLookup.HasComponent(unit) ||
-                _unitHealthLookup[unit].Current <= 0 ||
-                !_unitCombatLookup.HasComponent(unit) ||
-                !_unitAttackLookup.HasComponent(unit) ||
-                !_unitTransformLookup.HasComponent(unit) ||
-                _staticGridBlockerLookup.HasComponent(unit))
-            {
-                return false;
-            }
-
-            UnitCombat combat = _unitCombatLookup[unit];
-            return combat.CanAttack != 0;
-        }
-
-        private static bool CanReceiveCombatOrder(EntityManager em, Entity unit, byte factionId)
-        {
-            if (unit == Entity.Null ||
-                !em.Exists(unit) ||
-                !em.HasComponent<Faction>(unit) ||
-                em.GetComponentData<Faction>(unit).Id != factionId ||
-                !em.HasComponent<AIControlledTag>(unit) ||
-                !em.HasComponent<UnitHealth>(unit) ||
-                em.GetComponentData<UnitHealth>(unit).Current <= 0 ||
-                !em.HasComponent<UnitCombat>(unit) ||
-                !em.HasComponent<UnitAttack>(unit) ||
-                !em.HasComponent<LocalTransform>(unit) ||
-                em.HasComponent<StaticGridBlocker>(unit))
-            {
-                return false;
-            }
-
-            UnitCombat combat = em.GetComponentData<UnitCombat>(unit);
-            return combat.CanAttack != 0;
         }
 
         private static float3 ResolveTargetPosition(EntityManager em, Entity target, int2 targetCell)

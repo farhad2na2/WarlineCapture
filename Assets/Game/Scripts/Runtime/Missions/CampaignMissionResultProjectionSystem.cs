@@ -76,7 +76,7 @@ namespace Game.Runtime
                 facts.CivilianLossCount > facts.CivilianTotalCount ||
                 !FactsMatchOutcome(runtime.Outcome, in facts, ref definition) || !TryEvaluateStars(
                     runtime.Outcome, facts.ElapsedMilliseconds, facts.SquadLossCount, facts.CivilianLossCount,
-                    ref definition.StarRules, out byte stars))
+                    facts.ForwardPostDamaged, ref definition.StarRules, out byte stars))
                 return false;
 
             result = new CampaignMissionResultComponent
@@ -104,6 +104,11 @@ namespace Game.Runtime
         internal static bool TryEvaluateStars(
             MissionOutcomeKind outcome, int elapsedMilliseconds, int squadLossCount, int civilianLossCount,
             ref BlobArray<CampaignMissionStarRuleBlob> rules, out byte stars)
+            => TryEvaluateStars(outcome, elapsedMilliseconds, squadLossCount, civilianLossCount, 0, ref rules, out stars);
+
+        internal static bool TryEvaluateStars(
+            MissionOutcomeKind outcome, int elapsedMilliseconds, int squadLossCount, int civilianLossCount,
+            byte postDamaged, ref BlobArray<CampaignMissionStarRuleBlob> rules, out byte stars)
         {
             stars = 0;
             if (rules.Length is < 1 or > 3 || elapsedMilliseconds < 0 || squadLossCount < 0 ||
@@ -125,6 +130,7 @@ namespace Game.Runtime
                     MissionStarRuleKind.NoSquadLoss => outcome == MissionOutcomeKind.Victory && squadLossCount == 0,
                     MissionStarRuleKind.NoCivilianLoss =>
                         outcome == MissionOutcomeKind.Victory && civilianLossCount == 0,
+                    MissionStarRuleKind.NoPostDamage => outcome == MissionOutcomeKind.Victory && postDamaged == 0,
                     MissionStarRuleKind.CompleteUnderMilliseconds =>
                         outcome == MissionOutcomeKind.Victory && elapsedMilliseconds < rule.Threshold,
                     _ => false
@@ -139,6 +145,14 @@ namespace Game.Runtime
             in CampaignMissionAttemptFactsComponent facts,
             ref CampaignMissionDefinitionBlob definition)
         {
+            if (definition.Extraction.Enabled != 0)
+                return outcome == MissionOutcomeKind.Victory
+                    ? CampaignMissionExtractionRuleUtility.IsVictory(in facts, definition.Extraction.RequiredPassengers)
+                    : CampaignMissionExtractionRuleUtility.IsFailure(in facts);
+            if (definition.Defense.Enabled != 0)
+                return outcome == MissionOutcomeKind.Victory
+                    ? CampaignMissionDefenseRuleUtility.IsVictory(in facts)
+                    : CampaignMissionDefenseRuleUtility.IsFailure(in facts);
             if (definition.Objectives.Length == 0)
                 return false;
 
@@ -249,7 +263,7 @@ namespace Game.Runtime
                     continue;
                 }
                 MissionPhaseKind phase = candidate.FirstClear != 0 ||
-                                         runtime.MissionId.Equals(EstablishBaseMissionId)
+                                         CampaignMissionNarrativePolicy.UsesMissionSequences(runtime.MissionId)
                     ? MissionPhaseKind.DebriefFirstClear
                     : MissionPhaseKind.ReturnReplay;
                 return TryTransition(phase, ref runtime, out reason);
@@ -257,6 +271,14 @@ namespace Game.Runtime
 
             reason = ResultNotSettledReason;
             return false;
+        }
+
+        internal static bool TryQueueDebrief(EntityManager entityManager, EntityQuery rootQuery)
+        {
+            if (rootQuery.CalculateEntityCount() != 1) return false;
+            var runtime = entityManager.GetComponentData<CampaignMissionRuntimeComponent>(rootQuery.GetSingletonEntity());
+            return CampaignMissionNarrativePolicy.UsesMissionSequences(runtime.MissionId) &&
+                TryQueueDebrief(entityManager, rootQuery, runtime.MissionId);
         }
 
         internal static bool TryQueueDebrief(

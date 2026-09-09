@@ -103,7 +103,14 @@ namespace Game.Runtime
             float rtsYaw,
             float rtsFieldOfView)
         {
-            if (request.UseTacticalRevealZoom != 0)
+            if (request.UseExplicitPerspective!=0)
+            {
+                var p=request.Perspective;
+                camera.QueueCompleteZoomTransition(entityManager);
+                if(request.Smooth!=0) camera.QueueSetSmoothPerspectiveTarget(entityManager,p.x,p.y,p.z,p.w,request.SmoothTimeSeconds,true);
+                else camera.QueueApplyPerspectiveModeInstant(entityManager,p.x,p.y,p.z,p.w);
+            }
+            else if (request.UseTacticalRevealZoom != 0)
                 QueueTacticalRevealZoom(
                     camera,
                     entityManager,

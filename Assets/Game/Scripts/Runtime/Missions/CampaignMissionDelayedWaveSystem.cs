@@ -60,6 +60,11 @@ namespace Game.Runtime
                 return;
 
             ref CampaignMissionDefinitionBlob definition = ref catalog.Blob.Value.Missions[definitionIndex];
+            if (definition.Defense.Enabled != 0)
+            {
+                AdvanceDefenseElements(ref state, root, in runtime, ref facts, ref definition);
+                return;
+            }
             if (!CampaignMissionDelayedWaveUtility.TryResolveDefinition(
                     ref definition, out int expectedUnitCount, out byte expectedFactionId))
                 return;

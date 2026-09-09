@@ -7,7 +7,7 @@ using UnityEngine.UI;
 namespace Game.UI.Runtime
 {
     [DisallowMultipleComponent]
-    public sealed class MissionBriefingScreenView : MonoBehaviour
+    public sealed partial class MissionBriefingScreenView : MonoBehaviour
     {
         [SerializeField] private UIShellRouteButtonView backRouteButton;
         [SerializeField] private RectTransform missionOverview;
@@ -162,6 +162,8 @@ namespace Game.UI.Runtime
                 replayTutorialLabel.gameObject.SetActive(model.ReplayTutorialToggleVisible);
             if (deployOperationButton != null)
                 deployOperationButton.interactable = !model.DeployQueued;
+            if (model.MissionId == UiCampaignMissionProjectionIds.M03) ApplyRadarWarning(in model);
+            if (model.MissionId == "saga.ch01.m04.airlift") ApplyAirlift(in model);
         }
 
         public void ApplyUnavailable()

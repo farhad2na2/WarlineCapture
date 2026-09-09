@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 976d0e40bd07865479ff5de27cefdbb8, type: 3}
+  m_Name: MissionDefinition_Ch01_M02_EstablishBase
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.MissionDefinitionConfig
+  missionId: saga.ch01.m04.airlift
+  schemaVersion: 1
+  displayNameKey: mission.m04.name
+  displaySummaryKey: mission.m04.summary
+  locationNameKey: mission.m04.location
+  scenarioId: scenario.ch01.m04.airlift
+  operationMapId: opmap.ch01.airlift_01
+  briefingSequenceId: seq.ch01.m04.brief
+  commsSequenceId: seq.ch01.m04.comms
+  debriefSequenceId: seq.ch01.m04.debrief
+  objectives:
+  - objectiveId: obj.ch01.m04.extract
+    displayTextKey: mission.m04.objective.extract
+    rule: 7
+    missionRoleId: role.friendly.specialist
+    targetConfigId: 
+    requiredCount: 4
+    failureOnRuleBreak: 1
+  - objectiveId: obj.ch01.m04.transport
+    displayTextKey: mission.m04.objective.transport
+    rule: 8
+    missionRoleId: role.friendly.rescue_apc
+    targetConfigId: 
+    requiredCount: 1
+    failureOnRuleBreak: 1
+  - objectiveId: obj.ch01.m04.landing
+    displayTextKey: mission.m04.objective.landing
+    rule: 9
+    missionRoleId: role.friendly.airlift
+    targetConfigId: 
+    requiredCount: 1
+    failureOnRuleBreak: 0
+  stars:
+  - starIndex: 1
+    rule: 1
+    displayTextKey: mission.m04.star.1
+    threshold: 0
+  - starIndex: 2
+    rule: 2
+    displayTextKey: mission.m04.star.2
+    threshold: 0
+  - starIndex: 3
+    rule: 3
+    displayTextKey: mission.m04.star.3
+    threshold: 420000
+  firstClearRewards:
+  - kind: 0
+    rewardConfigId: reward.commander_xp
+    displayTextKey: mission.reward.commander_xp
+    amount: 500
+  - kind: 1
+    rewardConfigId: 
+    displayTextKey: mission.reward.credits
+    amount: 2500
+  - kind: 0
+    rewardConfigId: reward.ch01.m04.laila_unlock
+    displayTextKey: mission.m04.reward.laila
+    amount: 1
+  - kind: 0
+    rewardConfigId: reward.ch01.m04.transport_unlock
+    displayTextKey: mission.m04.reward.transport
+    amount: 1
+  replayRewards:
+  - kind: 1
+    rewardConfigId: 
+    displayTextKey: mission.reward.credits
+    amount: 300
+  commandPolicy:
+    allowedCommands: 010000000200000003000000040000000500000006000000
+  replayAllowed: 1
+  replayTutorialDefaultEnabled: 0
+  requireOperationMapReady: 1
+  requireGridReady: 1
+  requireUnitCatalogReady: 1
+  requiredFeatureIds:
+  - feature.operation_map
+  - feature.unit_catalog
+  - feature.tactical_commands

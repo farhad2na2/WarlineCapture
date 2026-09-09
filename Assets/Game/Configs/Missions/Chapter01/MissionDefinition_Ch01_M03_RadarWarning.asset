@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 976d0e40bd07865479ff5de27cefdbb8, type: 3}
+  m_Name: MissionDefinition_Ch01_M02_EstablishBase
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.MissionDefinitionConfig
+  missionId: saga.ch01.m03.radar_warning
+  schemaVersion: 1
+  displayNameKey: mission.m03.name
+  displaySummaryKey: mission.m03.summary
+  locationNameKey: mission.m03.location
+  scenarioId: scenario.ch01.m03.radar_warning
+  operationMapId: opmap.ch01.convoy_approach_01
+  briefingSequenceId: seq.ch01.m03.brief
+  commsSequenceId: seq.ch01.m03.comms
+  debriefSequenceId: seq.ch01.m03.debrief
+  objectives:
+  - objectiveId: obj.ch01.m03.stop_convoy
+    displayTextKey: mission.m03.objective.stop_convoy
+    rule: 1
+    missionRoleId: role.hostile.convoy
+    targetConfigId: 
+    requiredCount: 7
+    failureOnRuleBreak: 0
+  - objectiveId: obj.ch01.m03.protect_post
+    displayTextKey: mission.m03.objective.protect_post
+    rule: 5
+    missionRoleId: role.friendly.forward_post
+    targetConfigId: 
+    requiredCount: 1
+    failureOnRuleBreak: 1
+  - objectiveId: obj.ch01.m03.prevent_breach
+    displayTextKey: mission.m03.objective.prevent_breach
+    rule: 6
+    missionRoleId: role.friendly.forward_post
+    targetConfigId: 
+    requiredCount: 1
+    failureOnRuleBreak: 1
+  stars:
+  - starIndex: 1
+    rule: 1
+    displayTextKey: mission.m03.star.complete
+    threshold: 0
+  - starIndex: 2
+    rule: 4
+    displayTextKey: mission.m03.star.civilians_safe
+    threshold: 0
+  - starIndex: 3
+    rule: 5
+    displayTextKey: mission.m03.star.post_undamaged
+    threshold: 0
+  firstClearRewards:
+  - kind: 0
+    rewardConfigId: reward.commander_xp
+    displayTextKey: mission.reward.commander_xp
+    amount: 400
+  - kind: 1
+    rewardConfigId: 
+    displayTextKey: mission.reward.credits
+    amount: 2000
+  - kind: 0
+    rewardConfigId: reward.ch01.m03.guard_tower_unlock
+    displayTextKey: mission.m03.reward.guard_tower
+    amount: 1
+  - kind: 0
+    rewardConfigId: reward.ch01.m03.radar_ping_unlock
+    displayTextKey: mission.m03.reward.radar_ping
+    amount: 1
+  replayRewards:
+  - kind: 1
+    rewardConfigId: 
+    displayTextKey: mission.reward.credits
+    amount: 300
+  commandPolicy:
+    allowedCommands: 010000000200000003000000040000000500000006000000
+  replayAllowed: 1
+  replayTutorialDefaultEnabled: 0
+  requireOperationMapReady: 1
+  requireGridReady: 1
+  requireUnitCatalogReady: 1
+  requiredFeatureIds:
+  - feature.operation_map
+  - feature.unit_catalog
+  - feature.tactical_commands

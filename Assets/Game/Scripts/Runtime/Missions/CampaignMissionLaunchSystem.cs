@@ -108,6 +108,7 @@ namespace Game.Runtime
             using EntityQuery transientMissionUnits = new EntityQueryBuilder(Allocator.Temp)
                 .WithAll<CampaignMissionUnitRoleComponent>()
                 .WithNone<OperationMapBuildingComponent>()
+                .WithOptions(EntityQueryOptions.IncludeDisabledEntities)
                 .Build(entityManager);
             using EntityQuery ambientCivilians = new EntityQueryBuilder(Allocator.Temp)
                 .WithAll<CampaignMissionAmbientCivilianComponent>()
@@ -120,6 +121,7 @@ namespace Game.Runtime
 #pragma warning restore 0618
 
             QueueAttemptOwnedRuntimeCleanup(entityManager, ref cleanup, root);
+            ResetDefenseAttemptState(entityManager, root);
             ThreatWarningRuntimeState.Reset(entityManager);
             ResetRuntimeCameraFocus(entityManager);
             ClearBufferIfPresent<CampaignMissionActionRequestElement>(entityManager, root);
@@ -151,6 +153,7 @@ namespace Game.Runtime
                 entityManager.GetComponentData<CampaignMissionCatalogComponent>(root);
             CampaignMissionRuntimeComponent runtime =
                 entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root);
+            if(TryQueueDefenseAttemptCleanup(entityManager,ref cleanup,root,in catalog,in runtime)) return;
             CampaignMissionAttemptFactProjectionStateComponent projection =
                 entityManager.GetComponentData<CampaignMissionAttemptFactProjectionStateComponent>(root);
             if (projection.Initialized == 0 || projection.SourceVersion != catalog.SourceVersion ||

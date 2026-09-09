@@ -46,22 +46,6 @@ namespace Game.UI.Contracts
         BackMenuRoute
     }
 
-    public enum UiShellPopupKind
-    {
-        ThreatAlert,
-        Pause,
-        BuildDrawer,
-        RewardUnlock,
-        Settings,
-        ResourceExchange
-    }
-
-    public enum UiShellPopupIntent
-    {
-        Show,
-        Hide
-    }
-
     public enum UiActionKind
     {
         None,

@@ -102,6 +102,7 @@ namespace Game.Editor
                     alertClose,
                     routeClose);
 
+                M03RadarWarningUiBuilder.ConfigureThreat(root);
                 PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             }
             finally

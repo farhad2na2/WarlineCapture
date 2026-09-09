@@ -1,0 +1,167 @@
+{
+  "destination": "https://api.elevenlabs.io/v1/text-to-speech/{existing-project-voice-id}",
+  "purpose": "Generate 46 local M3 voice clips using the existing Dalia, Samira and ARIA voices; no runtime network TTS",
+  "scripts": [
+    {
+      "kind": "narrative",
+      "id": "m03-brief-01",
+      "speaker": "ARIA",
+      "english": "The warning sector is offline. Scouts report an armored convoy on the western road. Our Ground Radar Tank can confirm vehicles once they enter coverage.",
+      "persian": "شبکهٔ هشدار این بخش قطع است. دیده‌بان‌ها از یک کاروان زرهی در جادهٔ غربی خبر می‌دهند. خودروی رادار زمینی ما پس از ورود خودروها به محدودهٔ پوشش، تماس را تأیید می‌کند."
+    },
+    {
+      "kind": "narrative",
+      "id": "m03-brief-02",
+      "speaker": "DALIA",
+      "english": "Hold them at the junction or defend closer to the post. Keep the clinic corridor open. Even an unarmed carrier must not reach the inner core.",
+      "persian": "در تقاطع جلوی آن‌ها را بگیرید یا نزدیک‌تر به پاسگاه دفاع کنید. مسیر درمانگاه را باز نگه دارید. حتی نفربر بی‌سلاح هم نباید به محدودهٔ مرکزی برسد."
+    },
+    {
+      "kind": "narrative",
+      "id": "m03-brief-03",
+      "speaker": "ARIA",
+      "english": "We have roughly a minute to prepare. Two rifle squads and a working Barracks are ready. Choose a Tower, a Barrier, or reinforcements. The first warning is an estimate.",
+      "persian": "حدود یک دقیقه برای آماده‌شدن فرصت داریم. دو گروه تفنگدار و یک پادگان آماده در اختیار شماست. برج، مانع یا نیروی کمکی را انتخاب کنید. هشدار نخست یک برآورد است."
+    },
+    {
+      "kind": "narrative",
+      "id": "m03-comms-01",
+      "speaker": "ARIA",
+      "english": "The convoy's departure report matches the warning outage. The timing suggests advance knowledge. Keep defending; we will compare the records afterward.",
+      "persian": "زمان حرکت کاروان در گزارش با زمان قطع شبکهٔ هشدار یکی است. این هم‌زمانی نشان از اطلاع قبلی دارد. به دفاع ادامه دهید؛ پس از نبرد سوابق را مقایسه می‌کنیم."
+    },
+    {
+      "kind": "narrative",
+      "id": "m03-debrief-01",
+      "speaker": "DALIA",
+      "english": "The convoy is stopped and the post still stands. Check the damage and account for everyone. We need an accurate report.",
+      "persian": "کاروان متوقف شد و پاسگاه پابرجاست. خسارت و وضعیت همه را بررسی کنید. به گزارشی دقیق نیاز داریم."
+    },
+    {
+      "kind": "narrative",
+      "id": "m03-debrief-02",
+      "speaker": "ARIA",
+      "english": "The recovered orders name the warning outage before it happened. That is evidence of advance knowledge. It does not yet tell us who supplied it.",
+      "persian": "در دستورهای بازیابی‌شده، قطع شبکهٔ هشدار پیش از وقوعش ثبت شده است. این مدرکِ اطلاع قبلی است، اما هنوز نمی‌دانیم چه کسی آن را داده است."
+    },
+    {
+      "kind": "narrative",
+      "id": "m03-debrief-03",
+      "speaker": "SAMIRA",
+      "english": "A medical and engineering team is cut off beyond the road. They need an airlift. Prepare a safe route for them.",
+      "persian": "یک تیم پزشکی و مهندسی آن سوی جاده گرفتار شده است. به تخلیهٔ هوایی نیاز دارند. مسیر امنی برای آن‌ها آماده کنید."
+    },
+    {
+      "kind": "narrative",
+      "id": "m03-debrief-clean",
+      "speaker": "DALIA",
+      "english": "The convoy is stopped. The post is undamaged, and every civilian is accounted for. Keep the clinic corridor open.",
+      "persian": "کاروان متوقف شد. پاسگاه آسیب ندیده و همهٔ غیرنظامیان سالم هستند. مسیر درمانگاه را باز نگه دارید."
+    },
+    {
+      "kind": "narrative",
+      "id": "m03-debrief-damaged",
+      "speaker": "DALIA",
+      "english": "The convoy is stopped and every civilian is safe. The post took damage. Repair it before the next response.",
+      "persian": "کاروان متوقف شد و همهٔ غیرنظامیان سالم هستند. پاسگاه آسیب دیده است. پیش از عملیات بعدی آن را تعمیر کنید."
+    },
+    {
+      "kind": "narrative",
+      "id": "m03-debrief-civilian-loss",
+      "speaker": "DALIA",
+      "english": "The convoy is stopped and the post is undamaged. We lost civilians. Record the losses and secure the clinic corridor.",
+      "persian": "کاروان متوقف شد و پاسگاه آسیب ندیده است. غیرنظامیانی را از دست دادیم. تلفات را ثبت و مسیر درمانگاه را امن کنید."
+    },
+    {
+      "kind": "narrative",
+      "id": "m03-debrief-mixed",
+      "speaker": "DALIA",
+      "english": "The convoy is stopped, but the post took damage and civilians were lost. Record both. The corridor still needs protection.",
+      "persian": "کاروان متوقف شد، اما پاسگاه آسیب دید و غیرنظامیانی را از دست دادیم. هر دو را ثبت کنید. مسیر همچنان به حفاظت نیاز دارد."
+    },
+    {
+      "kind": "tutorial",
+      "id": "tutorial-m03-01",
+      "speaker": "ARIA",
+      "english": "Check the source, route and contact estimate. A scout report does not confirm the convoy's size.",
+      "persian": "منبع، مسیر و زمان تقریبی تماس را بررسی کنید. گزارش دیده‌بان تعداد خودروها را تأیید نمی‌کند."
+    },
+    {
+      "kind": "tutorial",
+      "id": "tutorial-m03-02",
+      "speaker": "ARIA",
+      "english": "Jump to the reported road. This moves the camera and keeps your squads and orders unchanged.",
+      "persian": "به جادهٔ گزارش‌شده نگاه کنید. این کار فقط دوربین را جابه‌جا می‌کند و دستور گروه‌ها را تغییر نمی‌دهد."
+    },
+    {
+      "kind": "tutorial",
+      "id": "tutorial-m03-03",
+      "speaker": "ARIA",
+      "english": "Defend forward for more interception time, or stay near the post. Keep the inner approach covered.",
+      "persian": "دفاع جلوتر فرصت بیشتری برای توقف کاروان می‌دهد. نزدیک پاسگاه هم می‌توانید دفاع کنید؛ مسیر مرکزی را پوشش دهید."
+    },
+    {
+      "kind": "tutorial",
+      "id": "tutorial-m03-04",
+      "speaker": "ARIA",
+      "english": "Open Build and choose a Tower or Barrier. Check the actual cost and valid footprint before confirming. You can skip this lesson.",
+      "persian": "در بخش ساخت، برج یا مانع را انتخاب کنید. پیش از تأیید، هزینه و محل مجاز را بررسی کنید. می‌توانید از این آموزش بگذرید."
+    },
+    {
+      "kind": "tutorial",
+      "id": "tutorial-m03-05",
+      "speaker": "ARIA",
+      "english": "Select a friendly squad, press Move, then choose a reachable position beside the convoy road. Wait for arrival.",
+      "persian": "گروه خودی را انتخاب کنید، حرکت را بزنید و کنار جادهٔ کاروان مقصدی قابل‌دسترسی تعیین کنید. منتظر رسیدن گروه بمانید."
+    },
+    {
+      "kind": "tutorial",
+      "id": "tutorial-m03-06",
+      "speaker": "ARIA",
+      "english": "Select the squad and press Hold. It defends its position and fires at enemies in range without chasing them.",
+      "persian": "گروه را انتخاب کنید و حفظ را بزنید. گروه از موضع خود دفاع می‌کند و بدون تعقیب، به دشمن در برد شلیک می‌کند."
+    },
+    {
+      "kind": "tutorial",
+      "id": "tutorial-m03-07",
+      "speaker": "ARIA",
+      "english": "Stop cancels the selected units' current orders. It does not pause the battle. Skip if you want to keep your current defense.",
+      "persian": "توقف، دستور فعلی واحدهای انتخاب‌شده را لغو می‌کند؛ نبرد متوقف نمی‌شود. برای حفظ آرایش فعلی می‌توانید از این مرحله بگذرید."
+    },
+    {
+      "kind": "tutorial",
+      "id": "tutorial-m03-08",
+      "speaker": "ARIA",
+      "english": "Radar Ping scans the living Ground Radar Tank's coverage. Two uses, with a cooldown between them. An empty scan still uses a charge.",
+      "persian": "پالس رادار محدودهٔ خودروی رادار زمینیِ سالم را بررسی می‌کند. دو بار قابل‌استفاده است و زمان بازیابی دارد. اسکن بدون تماس هم یک نوبت مصرف می‌کند."
+    },
+    {
+      "kind": "tutorial",
+      "id": "tutorial-m03-09",
+      "speaker": "ARIA",
+      "english": "Open the completed Barracks' rifle production. Confirm the displayed cost for a four-person squad. Construction and production remain your choice.",
+      "persian": "تولید تفنگدار در پادگان آماده را باز کنید. هزینهٔ نمایش‌داده‌شده برای گروه چهارنفری را بررسی کنید. ساخت و تولید به انتخاب شماست."
+    },
+    {
+      "kind": "tutorial",
+      "id": "tutorial-m03-10",
+      "speaker": "ARIA",
+      "english": "The armed cars can damage your defense. The unarmed carrier can still breach the core. Choose targets you have confirmed.",
+      "persian": "خودروهای مسلح به مدافعان آسیب می‌زنند. نفربر بی‌سلاح هم می‌تواند وارد محدودهٔ مرکزی شود. هدف تأییدشده را انتخاب کنید."
+    },
+    {
+      "kind": "tutorial",
+      "id": "tutorial-m03-11",
+      "speaker": "ARIA",
+      "english": "Read the second warning and check your surviving squads. Reposition if needed while keeping the approach to the post covered.",
+      "persian": "هشدار دوم و وضعیت نیروهای باقی‌مانده را بررسی کنید. در صورت نیاز جابه‌جا شوید و مسیر پاسگاه را پوشش دهید."
+    },
+    {
+      "kind": "tutorial",
+      "id": "tutorial-m03-12",
+      "speaker": "ARIA",
+      "english": "Victory requires stopping both elements and keeping the post and core safe. Civilian losses and post damage affect separate bonus stars.",
+      "persian": "برای پیروزی هر دو بخش کاروان را متوقف و پاسگاه و مرکز را حفظ کنید. تلفات غیرنظامی و آسیب پاسگاه، ستاره‌های امتیازی جداگانه را کم می‌کنند."
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+[M04VehicleReview] captured=vehicle-stage-1-1 entities=11
+[M04VehicleReview] captured=vehicle-stage-1-2 entities=11
+[M04VehicleReview] captured=vehicle-stage-1-3 entities=11
+[M04VehicleReview] captured=vehicle-stage-3-1 entities=19
+[M04VehicleReview] captured=vehicle-stage-3-2 entities=19
+[M04VehicleReview] captured=vehicle-stage-3-3 entities=19
+[M04VehicleReview] captured=vehicle-stage-6-1 entities=51
+[M04VehicleReview] captured=vehicle-stage-6-2 entities=51
+[M04VehicleReview] captured=vehicle-stage-6-3 entities=51
+[M04EditorProbe] result=Passed real APC board -> drive -> unload -> helicopter board -> clear 20s -> airborne departure -> debrief -> bilingual result -> saved three unit unlocks -> campaign return; no rescue/health/position/outcome edits

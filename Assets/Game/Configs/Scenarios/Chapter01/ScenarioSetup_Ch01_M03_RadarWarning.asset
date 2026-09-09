@@ -1,0 +1,422 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19ea19a05fcb4fa5b6afe32e88bedc11, type: 3}
+  m_Name: ScenarioSetup_Ch01_M02_EstablishBase
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.ScenarioSetupConfig
+  scenarioId: scenario.ch01.m03.radar_warning
+  operationMapId: opmap.ch01.convoy_approach_01
+  requiredAnchors:
+  - anchorId: anchor.ch01.m03.forward_post
+    kind: 7
+  - anchorId: anchor.ch01.m03.initial_barracks
+    kind: 4
+  - anchorId: anchor.ch01.m03.build_zone
+    kind: 4
+  - anchorId: anchor.ch01.m03.squad_a
+    kind: 3
+  - anchorId: anchor.ch01.m03.squad_b
+    kind: 3
+  - anchorId: anchor.ch01.m03.ground_sensor
+    kind: 3
+  - anchorId: anchor.ch01.m03.civilians
+    kind: 5
+  - anchorId: anchor.ch01.m03.evacuation
+    kind: 5
+  - anchorId: anchor.ch01.m03.vanguard_spawn
+    kind: 1
+  - anchorId: anchor.ch01.m03.main_spawn
+    kind: 1
+  - anchorId: anchor.ch01.m03.contact
+    kind: 6
+  - anchorId: anchor.ch01.m03.fork
+    kind: 11
+  - anchorId: anchor.ch01.m03.inner_core
+    kind: 7
+  - anchorId: anchor.ch01.m03.return_rts
+    kind: 12
+  - anchorId: anchor.ch01.m03.defense_tower
+    kind: 4
+  - anchorId: anchor.ch01.m03.defense_barrier
+    kind: 4
+  - anchorId: anchor.ch01.m03.convoy_path_000
+    kind: 11
+  - anchorId: anchor.ch01.m03.convoy_path_001
+    kind: 11
+  - anchorId: anchor.ch01.m03.convoy_path_002
+    kind: 11
+  - anchorId: anchor.ch01.m03.convoy_path_003
+    kind: 11
+  - anchorId: anchor.ch01.m03.convoy_path_004
+    kind: 11
+  - anchorId: anchor.ch01.m03.convoy_path_005
+    kind: 11
+  - anchorId: anchor.ch01.m03.convoy_path_006
+    kind: 11
+  - anchorId: anchor.ch01.m03.convoy_path_007
+    kind: 11
+  - anchorId: anchor.ch01.m03.convoy_path_008
+    kind: 11
+  - anchorId: anchor.ch01.m03.convoy_path_009
+    kind: 11
+  - anchorId: anchor.ch01.m03.convoy_path_010
+    kind: 11
+  - anchorId: anchor.ch01.m03.convoy_path_011
+    kind: 11
+  - anchorId: anchor.ch01.m03.convoy_path_012
+    kind: 11
+  - anchorId: anchor.ch01.m03.convoy_path_013
+    kind: 11
+  - anchorId: anchor.ch01.m03.convoy_path_014
+    kind: 11
+  - anchorId: anchor.ch01.m03.convoy_path_015
+    kind: 11
+  - anchorId: anchor.ch01.m03.convoy_path_016
+    kind: 11
+  - anchorId: anchor.ch01.m03.convoy_path_017
+    kind: 11
+  - anchorId: anchor.ch01.m03.convoy_path_018
+    kind: 11
+  - anchorId: anchor.ch01.m03.convoy_path_019
+    kind: 11
+  - anchorId: anchor.ch01.m03.convoy_path_020
+    kind: 11
+  deterministicSeed: 3003001
+  encounterStartMilliseconds: 45000
+  unitGroups:
+  - groupId: group.ch01.m03.squad_a
+    factionIndex: 1
+    units:
+    - unitConfigKey: unit.m03.chr_soldier_male_02_alt_02
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Male_02_Alt_02
+      expectedAssetGuid: 44832a7f379be4c30b818e55ed7a45ce
+      spawnAnchorId: anchor.ch01.m03.squad_a
+      missionRoleId: role.friendly.command_squad
+      count: 1
+    - unitConfigKey: unit.m03.chr_soldier_male_02_alt_04
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Male_02_Alt_04
+      expectedAssetGuid: ff73c8b7cbf844778916da330e9cd3e3
+      spawnAnchorId: anchor.ch01.m03.squad_a
+      missionRoleId: role.friendly.command_squad
+      count: 1
+    - unitConfigKey: unit.m03.chr_soldier_female_01_alt_01
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Female_01_Alt_01
+      expectedAssetGuid: 8ec7389d67b7543d0ac6050c06d26187
+      spawnAnchorId: anchor.ch01.m03.squad_a
+      missionRoleId: role.friendly.command_squad
+      count: 1
+    - unitConfigKey: unit.m03.chr_soldier_female_02_alt_01
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Female_02_Alt_01
+      expectedAssetGuid: 7ab678d235e72407b912caa746540808
+      spawnAnchorId: anchor.ch01.m03.squad_a
+      missionRoleId: role.friendly.command_squad
+      count: 1
+  - groupId: group.ch01.m03.squad_b
+    factionIndex: 1
+    units:
+    - unitConfigKey: unit.m03.chr_soldier_male_02_alt_04
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Male_02_Alt_04
+      expectedAssetGuid: ff73c8b7cbf844778916da330e9cd3e3
+      spawnAnchorId: anchor.ch01.m03.squad_b
+      missionRoleId: role.friendly.command_squad
+      count: 1
+    - unitConfigKey: unit.m03.chr_soldier_male_02_alt_02
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Male_02_Alt_02
+      expectedAssetGuid: 44832a7f379be4c30b818e55ed7a45ce
+      spawnAnchorId: anchor.ch01.m03.squad_b
+      missionRoleId: role.friendly.command_squad
+      count: 1
+    - unitConfigKey: unit.m03.chr_soldier_female_02_alt_01
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Female_02_Alt_01
+      expectedAssetGuid: 7ab678d235e72407b912caa746540808
+      spawnAnchorId: anchor.ch01.m03.squad_b
+      missionRoleId: role.friendly.command_squad
+      count: 1
+    - unitConfigKey: unit.m03.chr_soldier_female_01_alt_01
+      runtimePrefabSourceKey: Unit_Chr_Soldier_Female_01_Alt_01
+      expectedAssetGuid: 8ec7389d67b7543d0ac6050c06d26187
+      spawnAnchorId: anchor.ch01.m03.squad_b
+      missionRoleId: role.friendly.command_squad
+      count: 1
+  - groupId: group.ch01.m03.ground_sensor
+    factionIndex: 1
+    units:
+    - unitConfigKey: unit.m03.veh_radar_tank
+      runtimePrefabSourceKey: Unit_Veh_Radar_Tank
+      expectedAssetGuid: b7087e56a58614db08d7c66c8845747b
+      spawnAnchorId: anchor.ch01.m03.ground_sensor
+      missionRoleId: role.friendly.ground_sensor
+      count: 1
+  - groupId: group.ch01.m03.civilians
+    factionIndex: 0
+    units:
+    - unitConfigKey: unit.m03.chr_civilian_female_01
+      runtimePrefabSourceKey: Unit_Chr_Civilian_Female_01
+      expectedAssetGuid: a3873f0cb8f24494eb79c31a4c12ec31
+      spawnAnchorId: anchor.ch01.m03.civilians
+      missionRoleId: role.civilian.protected
+      count: 1
+    - unitConfigKey: unit.m03.chr_civilian_female_02
+      runtimePrefabSourceKey: Unit_Chr_Civilian_Female_02
+      expectedAssetGuid: e9380ca06e23346a48a8d1d09416e955
+      spawnAnchorId: anchor.ch01.m03.civilians
+      missionRoleId: role.civilian.protected
+      count: 1
+    - unitConfigKey: unit.m03.chr_civilian_male_01
+      runtimePrefabSourceKey: Unit_Chr_Civilian_Male_01
+      expectedAssetGuid: 7c722f33fbe75427289f93b6f35e7e04
+      spawnAnchorId: anchor.ch01.m03.civilians
+      missionRoleId: role.civilian.protected
+      count: 1
+    - unitConfigKey: unit.m03.chr_civilian_male_02
+      runtimePrefabSourceKey: Unit_Chr_Civilian_Male_02
+      expectedAssetGuid: de10bdd428c9d4ff2b2f2507809dea42
+      spawnAnchorId: anchor.ch01.m03.civilians
+      missionRoleId: role.civilian.protected
+      count: 1
+  - groupId: group.ch01.m03.vanguard
+    factionIndex: 2
+    units:
+    - unitConfigKey: unit.m03.veh_light_armored_car
+      runtimePrefabSourceKey: Unit_Veh_Light_Armored_Car
+      expectedAssetGuid: 4d17399a465c144abb394cfee95e63d8
+      spawnAnchorId: anchor.ch01.m03.vanguard_spawn
+      missionRoleId: role.hostile.convoy
+      count: 1
+    - unitConfigKey: unit.m03.chr_insurgent_male_03
+      runtimePrefabSourceKey: Unit_Chr_Insurgent_Male_03
+      expectedAssetGuid: 9d3494e0921d647798634354c12f2bf2
+      spawnAnchorId: anchor.ch01.m03.vanguard_spawn
+      missionRoleId: role.hostile.convoy
+      count: 1
+    - unitConfigKey: unit.m03.chr_insurgent_female_01
+      runtimePrefabSourceKey: Unit_Chr_Insurgent_Female_01
+      expectedAssetGuid: 71e48079674fc47b79eb9b4c5fc12b89
+      spawnAnchorId: anchor.ch01.m03.vanguard_spawn
+      missionRoleId: role.hostile.convoy
+      count: 1
+  - groupId: group.ch01.m03.main_body
+    factionIndex: 2
+    units:
+    - unitConfigKey: unit.m03.veh_light_armored_car
+      runtimePrefabSourceKey: Unit_Veh_Light_Armored_Car
+      expectedAssetGuid: 4d17399a465c144abb394cfee95e63d8
+      spawnAnchorId: anchor.ch01.m03.main_spawn
+      missionRoleId: role.hostile.convoy
+      count: 1
+    - unitConfigKey: unit.m03.veh_apc_fast
+      runtimePrefabSourceKey: Unit_Veh_APC_Fast
+      expectedAssetGuid: 2cf8e4b8426144120a8e7033e5bee021
+      spawnAnchorId: anchor.ch01.m03.main_spawn
+      missionRoleId: role.hostile.convoy
+      count: 1
+    - unitConfigKey: unit.m03.chr_insurgent_male_03
+      runtimePrefabSourceKey: Unit_Chr_Insurgent_Male_03
+      expectedAssetGuid: 9d3494e0921d647798634354c12f2bf2
+      spawnAnchorId: anchor.ch01.m03.main_spawn
+      missionRoleId: role.hostile.convoy
+      count: 1
+    - unitConfigKey: unit.m03.chr_insurgent_female_02
+      runtimePrefabSourceKey: Unit_Chr_Insurgent_Female_02
+      expectedAssetGuid: 655c350601d8a48e0b0efcbc75872502
+      spawnAnchorId: anchor.ch01.m03.main_spawn
+      missionRoleId: role.hostile.convoy
+      count: 1
+  patrolRoutes:
+  - routeId: route.ch01.m03.vanguard
+    unitGroupId: group.ch01.m03.vanguard
+    anchorIds:
+    - anchor.ch01.m03.convoy_path_000
+    - anchor.ch01.m03.convoy_path_001
+    - anchor.ch01.m03.convoy_path_002
+    - anchor.ch01.m03.convoy_path_003
+    - anchor.ch01.m03.convoy_path_004
+    - anchor.ch01.m03.convoy_path_005
+    - anchor.ch01.m03.convoy_path_006
+    - anchor.ch01.m03.convoy_path_007
+    - anchor.ch01.m03.convoy_path_008
+    - anchor.ch01.m03.convoy_path_009
+    - anchor.ch01.m03.convoy_path_010
+    - anchor.ch01.m03.convoy_path_011
+    - anchor.ch01.m03.convoy_path_012
+    - anchor.ch01.m03.convoy_path_013
+    - anchor.ch01.m03.convoy_path_014
+    - anchor.ch01.m03.convoy_path_015
+    - anchor.ch01.m03.convoy_path_016
+    - anchor.ch01.m03.convoy_path_017
+    - anchor.ch01.m03.convoy_path_018
+    - anchor.ch01.m03.convoy_path_019
+    - anchor.ch01.m03.convoy_path_020
+    startDelayMilliseconds: 45000
+  - routeId: route.ch01.m03.main_body
+    unitGroupId: group.ch01.m03.main_body
+    anchorIds:
+    - anchor.ch01.m03.convoy_path_000
+    - anchor.ch01.m03.convoy_path_001
+    - anchor.ch01.m03.convoy_path_002
+    - anchor.ch01.m03.convoy_path_003
+    - anchor.ch01.m03.convoy_path_004
+    - anchor.ch01.m03.convoy_path_005
+    - anchor.ch01.m03.convoy_path_006
+    - anchor.ch01.m03.convoy_path_007
+    - anchor.ch01.m03.convoy_path_008
+    - anchor.ch01.m03.convoy_path_009
+    - anchor.ch01.m03.convoy_path_010
+    - anchor.ch01.m03.convoy_path_011
+    - anchor.ch01.m03.convoy_path_012
+    - anchor.ch01.m03.convoy_path_013
+    - anchor.ch01.m03.convoy_path_014
+    - anchor.ch01.m03.convoy_path_015
+    - anchor.ch01.m03.convoy_path_016
+    - anchor.ch01.m03.convoy_path_017
+    - anchor.ch01.m03.convoy_path_018
+    - anchor.ch01.m03.convoy_path_019
+    - anchor.ch01.m03.convoy_path_020
+    startDelayMilliseconds: 140000
+  restrictions:
+    buildingDisabled: 0
+    productionDisabled: 0
+    economyDisabled: 0
+    transportDisabled: 1
+    airDisabled: 1
+  ambientPresentations: []
+  missionRuntime:
+    enabled: 1
+    startingCredits: 50000
+    startingMaterials: 100
+    buildCatalog:
+    - buildingConfigId: Building_Barrack
+      maxCount: 1
+    - buildingConfigId: Building_GuardTower
+      maxCount: 2
+    - buildingConfigId: Building_Road_Barrier
+      maxCount: 3
+    requiredProducerConfigId: Building_Barrack
+    requiredUnitConfigId: Unit_Chr_Soldier_Male_02_Alt_04
+    baseMissionRoleId: role.friendly.forward_post
+    baseAnchorId: anchor.ch01.m03.forward_post
+    buildZone:
+      anchorId: anchor.ch01.m03.build_zone
+      halfWidthCells: 105
+      halfHeightCells: 65
+    delayedWave:
+      unitGroupId: 
+      routeId: 
+      targetMissionRoleId: 
+      warningAtMilliseconds: 0
+      activationAtMilliseconds: 0
+  defense:
+    enabled: 1
+    vehiclesSelfSupplied: 1
+    authoredMapDefensesDormant: 1
+    forwardPostStableId: GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1990580264897520-8699699288898649154
+    innerCoreAnchorId: anchor.ch01.m03.inner_core
+    innerCoreRadius: 6
+    sensorMissionRoleId: role.friendly.ground_sensor
+    initialProducerAnchorId: anchor.ch01.m03.initial_barracks
+    radarPingCharges: 2
+    radarPingCooldownMilliseconds: 60000
+    convoyElements:
+    - elementId: convoy.ch01.m03.vanguard
+      unitGroupId: group.ch01.m03.vanguard
+      routeId: route.ch01.m03.vanguard
+      contactAnchorId: anchor.ch01.m03.contact
+      warningAtMilliseconds: 0
+      activationAtMilliseconds: 45000
+      contactAtMilliseconds: 65000
+    - elementId: convoy.ch01.m03.main_body
+      unitGroupId: group.ch01.m03.main_body
+      routeId: route.ch01.m03.main_body
+      contactAnchorId: anchor.ch01.m03.contact
+      warningAtMilliseconds: 100000
+      activationAtMilliseconds: 140000
+      contactAtMilliseconds: 165000
+    guidanceSteps:
+    - stepId: tutorial.ch01.m03.01.read_warning
+      titleKey: mission.m03.tutorial.1.title
+      bodyKey: mission.m03.tutorial.1.body
+      action: 1
+      completion: 1
+      optional: 0
+    - stepId: tutorial.ch01.m03.02.inspect_route
+      titleKey: mission.m03.tutorial.2.title
+      bodyKey: mission.m03.tutorial.2.body
+      action: 2
+      completion: 2
+      optional: 0
+    - stepId: tutorial.ch01.m03.03.choose_defense
+      titleKey: mission.m03.tutorial.3.title
+      bodyKey: mission.m03.tutorial.3.body
+      action: 0
+      completion: 0
+      optional: 0
+    - stepId: tutorial.ch01.m03.04.build_option
+      titleKey: mission.m03.tutorial.4.title
+      bodyKey: mission.m03.tutorial.4.body
+      action: 3
+      completion: 3
+      optional: 1
+    - stepId: tutorial.ch01.m03.05.position_squads
+      titleKey: mission.m03.tutorial.5.title
+      bodyKey: mission.m03.tutorial.5.body
+      action: 4
+      completion: 4
+      optional: 0
+    - stepId: tutorial.ch01.m03.06.hold
+      titleKey: mission.m03.tutorial.6.title
+      bodyKey: mission.m03.tutorial.6.body
+      action: 5
+      completion: 5
+      optional: 0
+    - stepId: tutorial.ch01.m03.07.stop
+      titleKey: mission.m03.tutorial.7.title
+      bodyKey: mission.m03.tutorial.7.body
+      action: 6
+      completion: 6
+      optional: 1
+    - stepId: tutorial.ch01.m03.08.refresh
+      titleKey: mission.m03.tutorial.8.title
+      bodyKey: mission.m03.tutorial.8.body
+      action: 7
+      completion: 7
+      optional: 1
+    - stepId: tutorial.ch01.m03.09.reinforce
+      titleKey: mission.m03.tutorial.9.title
+      bodyKey: mission.m03.tutorial.9.body
+      action: 8
+      completion: 8
+      optional: 1
+    - stepId: tutorial.ch01.m03.10.priority
+      titleKey: mission.m03.tutorial.10.title
+      bodyKey: mission.m03.tutorial.10.body
+      action: 9
+      completion: 9
+      optional: 0
+    - stepId: tutorial.ch01.m03.11.adapt
+      titleKey: mission.m03.tutorial.11.title
+      bodyKey: mission.m03.tutorial.11.body
+      action: 2
+      completion: 10
+      optional: 0
+    - stepId: tutorial.ch01.m03.12.result
+      titleKey: mission.m03.tutorial.12.title
+      bodyKey: mission.m03.tutorial.12.body
+      action: 10
+      completion: 11
+      optional: 0
+    cameraTour:
+      StartHoldMilliseconds: 750
+      PostHoldMilliseconds: 1000
+      ApproachHoldMilliseconds: 1500
+      ReturnHoldMilliseconds: 500
+      SmoothTimeSeconds: 0.65
+      PostPerspective: {x: 55, y: 65, z: 0, w: 55}
+      ApproachPerspective: {x: 50, y: 67, z: 0, w: 55}

@@ -444,8 +444,9 @@ public static class M02EstablishBaseNarrativeTests
         MenuBootstrapView bootstrap = UnityEngine.Object.FindAnyObjectByType<MenuBootstrapView>(
             FindObjectsInactive.Include);
         Assert.IsNotNull(bootstrap, scene.path);
-        Assert.AreEqual(3, bootstrap.CampaignMissionNarrativeConfigs.Length);
         Assert.IsFalse(bootstrap.CampaignMissionNarrativeConfigs.Any(sequence => sequence == null));
+        Assert.AreEqual(3, bootstrap.CampaignMissionNarrativeConfigs.Count(sequence => sequence.SequenceId.StartsWith("seq.ch01.m02.",StringComparison.Ordinal)));
+        Assert.AreEqual(bootstrap.CampaignMissionNarrativeConfigs.Length,bootstrap.CampaignMissionNarrativeConfigs.Select(sequence=>sequence.SequenceId).Distinct().Count());
         CollectionAssert.IsSubsetOf(
             new[]
             {

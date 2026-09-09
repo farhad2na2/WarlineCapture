@@ -58,8 +58,8 @@ namespace Game.Editor
 
             Require(MissionDefinitionContractValidation.TryValidateCatalog(missions, out string error), error);
             Require(maps.TryValidate(out error), error);
-            Require(missions.Entries.Length == 2 && maps.Definitions.Length == 2,
-                "Chapter 1 catalogs must contain exactly M01 and M02.");
+            Require(missions.Entries.Length >= 2 && maps.Definitions.Length >= 2,
+                "Chapter 1 catalogs must preserve M01 and M02 alongside later missions.");
             Require(missions.TryResolve(MissionId, out MissionDefinitionConfig resolvedMission) &&
                     ReferenceEquals(resolvedMission, mission),
                 "Campaign catalog did not resolve the canonical M02 mission.");
@@ -71,7 +71,7 @@ namespace Game.Editor
                     scenario.OperationMapId == map.OperationMapId,
                 error ?? "M02 mission, scenario, and operation-map identities do not close.");
             Debug.Log(
-                "[M02EstablishBaseConfigBuilder] result=Passed scope=Catalogs missions=2 maps=2");
+                $"[M02EstablishBaseConfigBuilder] result=Passed scope=Catalogs missions={missions.Entries.Length} maps={maps.Definitions.Length}");
         }
 
         public static void BuildScenario()

@@ -19,9 +19,12 @@ namespace Game.UI.Shell.Ecs
                 entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root);
             CampaignMissionCatalogComponent catalog =
                 entityManager.GetComponentData<CampaignMissionCatalogComponent>(root);
-            bool cinematicInteractionLocked =
-                IsOpeningCinematicActive(entityManager, root, in runtime) ||
-                IsFinaleCinematicActive(entityManager, root, in runtime);
+            // Cleared campaign components remain on the root between modes. Two
+            // empty session tokens must never turn Skirmish into a cinematic.
+            bool cinematicInteractionLocked = runtime.Phase != MissionPhaseKind.None &&
+                !runtime.SessionToken.IsEmpty &&
+                (IsOpeningCinematicActive(entityManager, root, in runtime) ||
+                 IsFinaleCinematicActive(entityManager, root, in runtime));
             if (runtime.Version == 0 || runtime.SourceVersion == 0 ||
                 runtime.Phase == MissionPhaseKind.None || runtime.MissionId.Length == 0 ||
                 !catalog.Blob.IsCreated)

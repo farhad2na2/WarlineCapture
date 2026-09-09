@@ -30,6 +30,30 @@ public sealed class AutomaticCombatFactionTargetingTests
     }
 
     [Test]
+    public void UnitEngagementSystem_HoldAcquiresHostileAndHonorsSuppressionWithRealEcbSingleton()
+    {
+        using World world = new("AutomaticCombatFactionTargetingTests_HoldAcquisition");
+        EntityManager em = world.EntityManager; CreateGrid(em);
+        Entity attacker = CreateCombatUnit(em, FactionIdentity.PlayerFactionId, new int2(10,10), 8f);
+        em.AddComponent<HoldPositionOrderTag>(attacker); em.AddComponent<ManualMoveOrderTag>(attacker);
+        Entity hostile = CreateCombatUnit(em, FactionIdentity.EnemyFactionId, new int2(12,10), 8f);
+        Entity suppressed = CreateCombatUnit(em, FactionIdentity.EnemyFactionId, new int2(11,10), 8f);
+        em.AddComponent<CampaignMissionCombatSuppressedTag>(suppressed);
+        EndSimulationEntityCommandBufferSystem endSimulation = world.CreateSystemManaged<EndSimulationEntityCommandBufferSystem>();
+        SystemHandle engagement = world.CreateSystem<UnitEngagementSystem>();
+        world.SetTime(new TimeData(1d,0.2f)); engagement.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs(); endSimulation.Update();
+        Assert.IsTrue(em.HasComponent<EngageTarget>(attacker), "Hold must actually acquire a target; enabled flags alone are insufficient.");
+        Assert.AreEqual(hostile,em.GetComponentData<EngageTarget>(attacker).Target);
+        Assert.IsFalse(em.HasComponent<EngageTarget>(suppressed), "A scheduled hidden convoy member cannot acquire targets early.");
+        em.RemoveComponent<EngageTarget>(attacker);
+        em.SetComponentData(hostile,LocalTransform.FromPosition(new float3(30.5f,0,10.5f)));
+        world.SetTime(new TimeData(1.3d,0.2f)); engagement.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs(); endSimulation.Update();
+        Assert.IsFalse(em.HasComponent<EngageTarget>(attacker), "Hold cannot acquire a target outside its weapon range.");
+    }
+
+    [Test]
     public void BuildingDefenseAttackSystem_IgnoresNeutralCitizenTargetsAndAttacksHostileTargets()
     {
         using World world = new("AutomaticCombatFactionTargetingTests_BuildingDefense");

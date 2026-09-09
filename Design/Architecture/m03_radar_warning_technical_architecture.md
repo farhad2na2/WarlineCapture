@@ -8,6 +8,8 @@ Product plan: [M03 Radar Warning](../M03_Radar_Warning_Production_Plan.md)
 
 Execution: [M03 implementation tracker](m03_radar_warning_implementation_tracker.md)
 
+Implementation mapping: [Current M3 owners and data flow](../AgentReports/M03RadarWarning/implemented_architecture.md). That record identifies the implemented seams and current validation limits; proposed names below remain the original design rationale.
+
 ## 1. Architectural decision
 
 M03 extends the existing Campaign runtime. Authored mission/scenario/map/media data becomes immutable catalog projections and unmanaged attempt state. Simulation writes facts; objective/result/guidance/UI code projects them. Player and ARIA actions enter the same typed command boundaries. Narrative and camera completion affect presentation readiness only; they do not manufacture combat success.

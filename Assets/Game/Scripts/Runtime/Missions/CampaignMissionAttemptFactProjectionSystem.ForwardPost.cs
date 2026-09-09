@@ -25,7 +25,8 @@ namespace Game.Runtime
             ref CampaignMissionDefinitionBlob definition = ref catalog.Blob.Value.Missions[definitionIndex];
             if (definition.MissionRuntimeEnabled == 0 || definition.BaseMissionRoleId.IsEmpty ||
                 definition.BaseAnchorId.IsEmpty ||
-                !definition.BaseMissionRoleId.Equals(definition.DelayedWaveTargetMissionRoleId))
+                (definition.Defense.Enabled == 0 &&
+                 !definition.BaseMissionRoleId.Equals(definition.DelayedWaveTargetMissionRoleId)))
                 return false;
 
             int matchCount = 0;
@@ -50,7 +51,7 @@ namespace Game.Runtime
             in CampaignMissionRuntimeComponent runtime,
             in FixedString64Bytes anchorId,
             in FixedString64Bytes missionRoleId,
-            out Entity forwardPost)
+            out Entity forwardPost, FixedString128Bytes expectedStableId = default)
         {
             forwardPost = Entity.Null;
             if (anchorId.IsEmpty || missionRoleId.IsEmpty || metadataQuery.CalculateEntityCount() != 1)
@@ -78,6 +79,7 @@ namespace Game.Runtime
                     entityManager.GetComponentData<RuntimeBuildingCombatInfo>(candidate);
                 OperationMapBuildingComponent building =
                     entityManager.GetComponentData<OperationMapBuildingComponent>(candidate);
+                if (!expectedStableId.IsEmpty && !building.StableId.Equals(expectedStableId)) continue;
                 Faction faction = entityManager.GetComponentData<Faction>(candidate);
                 UnitHealth health = entityManager.GetComponentData<UnitHealth>(candidate);
                 if (faction.Id != FactionIdentity.PlayerFactionId ||

@@ -1456,6 +1456,7 @@ public sealed class UIShellCurrentContentLoadTests
 
     private sealed class FakeSelectionUiReadModel : ISelectionUiReadModel
     {
+        public bool HasFocusedUnit { get; set; } = true;
         public bool CanHold;
         public bool CanStop;
         public bool CanScan;

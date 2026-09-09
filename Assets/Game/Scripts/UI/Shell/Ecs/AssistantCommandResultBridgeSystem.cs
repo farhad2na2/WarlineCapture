@@ -117,7 +117,7 @@ namespace Game.UI.Shell.Ecs
                             continue;
                         accepted = result.Accepted != 0;
                         reasonCode = result.ReasonCode;
-                        message = result.Message;
+                        message.CopyFromTruncated(result.Message.ToString());
                         if (message.Length == 0)
                             message = accepted ? new FixedString64Bytes("Selection ready.") : new FixedString64Bytes("Selection rejected.");
                         return true;
@@ -153,7 +153,7 @@ namespace Game.UI.Shell.Ecs
                             continue;
                         accepted = result.Accepted != 0 || result.Issued != 0;
                         reasonCode = result.ReasonCode;
-                        message = result.Message;
+                        message.CopyFromTruncated(result.Message.ToString());
                         if (message.Length == 0)
                             message = accepted ? new FixedString64Bytes("Attack order accepted.") : new FixedString64Bytes("Attack order rejected.");
                         return true;

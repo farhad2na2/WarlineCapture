@@ -1,0 +1,278 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: M03 Field Guide
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: M03 Field Guide
+  m_GUID: f34f9010c21c44417a0594965bbcfce0
+  m_SerializeEntries:
+  - m_GUID: 01045d2a58ec4359b395696309684ffa
+    m_Address: guide.m03.Unit_Chr_Insurgent_Female_01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 03812ba0a848444990f2ce84a428efe1
+    m_Address: guide.m03.Unit_Chr_Soldier_Male_02_Alt_01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 04463ee8eacb4e66bac33c265ad10ef5
+    m_Address: guide.m03.Unit_Chr_Soldier_Female_01_Alt_02
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 07dfa4493490a46c8897eb8ca6909849
+    m_Address: guide.m03.Unit_Veh_Helicopter_Transport
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0c84edcb251114cbfaba8f9ed23b2132
+    m_Address: guide.m03.Unit_Veh_Truck_Tanker
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 115ef343e6e24195ad439f47e7e3d76c
+    m_Address: guide.m03.Unit_Chr_Civilian_Female_02
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 123b0ec0b947441db199b138371b6f1e
+    m_Address: guide.m03.Unit_Chr_Contractor_Male_01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1a9b9d82830054e60bb0318f90cbfa91
+    m_Address: guide.m03.Unit_Veh_Truck_Canopy
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 28e0d9ad2f21642bb9d0d446b1d886f1
+    m_Address: guide.m03.Unit_Veh_Jet_02
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2e082903601c47338377a0585e53fefc
+    m_Address: guide.m03.Unit_Chr_Soldier_Male_01_Alt_01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 304c23d3034aa4c0f8ec5246d7ec4c0a
+    m_Address: guide.m03.Unit_Veh_Plane_Transport
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 425e40067ce2649d8a6330c0893e8f8e
+    m_Address: guide.m03.Unit_Veh_Helicopter_Attack_Small
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 42b40c329d3c48f7a30e358c50c99695
+    m_Address: guide.m03.Unit_Chr_Pilot_Female_01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 544d1c2383d64be4ac83439d821a2466
+    m_Address: guide.m03.Unit_Chr_Soldier_Female_01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 58c0a59a35f5e40dcbe52d5fc14df4d0
+    m_Address: guide.m03.Unit_Veh_Jet_01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 58c9c87bc1274f8dbd7170fede334901
+    m_Address: guide.m03.Unit_Chr_Soldier_Female_02_Alt_02
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5de2cf82138c14bc3baf954f2e53c679
+    m_Address: guide.m03.Unit_Veh_Drone
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5e83cd16726343b3b2ffd9fbb49cfa29
+    m_Address: guide.m03.Unit_Chr_Insurgent_Male_05
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6095a30179ca49bb9e2759a1ace9da39
+    m_Address: guide.m03.Unit_Chr_Insurgent_Male_02
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 70d525bdf4894529869cd1402ff5d62e
+    m_Address: guide.m03.Unit_Chr_Soldier_Male_02_Alt_02
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 759d578e4776424bb5b349d6813b8608
+    m_Address: guide.m03.Unit_Chr_Soldier_Female_02
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7e52f0bebbacc477d90d1aa3eb9cf6a1
+    m_Address: guide.m03.Unit_Veh_Missle_Launcher_Air
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7eef6c21a75e941d1a1a959e36538baf
+    m_Address: guide.m03.Unit_Veh_Missle_Launcher_Ground
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 802a8e3adb14431cb7743154b73696f7
+    m_Address: guide.m03.Unit_Chr_Soldier_Male_01_Alt_02
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8093159068194fc187efe5c356116e9b
+    m_Address: guide.m03.Unit_Chr_Insurgent_Female_02
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 83e8923bd53f4e6682c6fc84bd751ddd
+    m_Address: guide.m03.Unit_Chr_Insurgent_Male_01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 865ed7d34b7c4443ba7c2c54a5b9484f
+    m_Address: guide.m03.Unit_Chr_Bombsuit_Male_01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8b5d1d3f1c504543907a45c4d4c1a101
+    m_Address: guide.m03.Unit_Veh_APC_Slow
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8c8bae22405ba4a398cf147fad178815
+    m_Address: guide.m03.Unit_Veh_Radar_Tank
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 96b6f5e350d2b485db1437bbfb66cad8
+    m_Address: guide.m03.Unit_Veh_Tank_USA
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 970069fef3e4437195c3225a1615e384
+    m_Address: guide.m03.Unit_Chr_Soldier_Female_01_Alt_01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9f0eefc5eada4de6b669210ff9b30ecd
+    m_Address: guide.m03.Unit_Chr_Civilian_Male_02
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a11f690c538a433ebee5c0823333744f
+    m_Address: guide.m03.Unit_Chr_Civilian_Female_01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a3d36fd8847164cc596e0b5ba7bd9bb9
+    m_Address: guide.m03.Unit_Chr_Soldier_Male_02_Alt_04
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a85c74cb3f1e48f1994e7050061ed6d2
+    m_Address: guide.m03.Unit_Chr_Soldier_Male_02_Alt_03
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a8e89ef50ddf4c1ba4d761a22c4f4102
+    m_Address: guide.m03.Unit_Veh_APC_Fast
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ab85826a311542288749ea38050f1876
+    m_Address: guide.m03.Unit_Chr_Insurgent_Male_04
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: afb2c6a5e87f44549b284c3e948d071a
+    m_Address: guide.m03.Unit_Chr_Contractor_Female_01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b0ffc9714da994462a1e48679b4863de
+    m_Address: guide.m03.Unit_Veh_Light_Armored_Car
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b3010000000000000000000000000003
+    m_Address: guide.m03.Unit_Chr_Soldier_Male_02
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b9481cc1ec42499c96846b5d161ac7b2
+    m_Address: guide.m03.Unit_Chr_Soldier_Female_02_Alt_01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c7fa4a41c2b24fd9b3e8f07ad2a08303
+    m_Address: guide.m03.Unit_Veh_APC_Heavy
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cb36b84638d84fe2b8af7a8dfcc48333
+    m_Address: guide.m03.Unit_Chr_Pilot_Male_01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d0f8da6ed5d948f2a04a26ff3438cb8f
+    m_Address: guide.m03.Unit_Chr_Ghillie_Male_01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d18bfee8a685475f925212742b379079
+    m_Address: guide.m03.Unit_Chr_Leader_Male_01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d75d55636ae6a4ca6a8eb0b5c0075131
+    m_Address: guide.m03.Unit_Veh_Helicopter_Attack
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: de04c4e00b56400b966ca5ef60038b35
+    m_Address: guide.m03.Unit_Chr_Soldier_Male_01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: eb6918590ad5141f29fd1afb977a1da6
+    m_Address: guide.m03.Unit_Veh_Truck_Tray
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f3b791c74ffa471d8a3200bf7bf95815
+    m_Address: guide.m03.Unit_Chr_Contractor_Male_02
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fa5b06f971ad438c9d0461906c1a9d2e
+    m_Address: guide.m03.Unit_Chr_Civilian_Male_01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fe23cbf9678344f4b182169b49fe68b6
+    m_Address: guide.m03.Unit_Chr_Insurgent_Male_03
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: d6786f5b1e1b3491ab7f1f020f1abc0a, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 33bce360bd5c845b19f9903031ca6af3, type: 2}
+    - {fileID: 11400000, guid: 57a17798c167949a3aa404df03778949, type: 2}

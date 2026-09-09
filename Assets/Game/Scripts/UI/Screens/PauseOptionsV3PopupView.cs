@@ -129,6 +129,7 @@ namespace Game.UI.Runtime
 
         private void ShowHelp()
         {
+            if(UiShellRuntimeGateway.TryReadMissionDefense(out _) && UiShellRuntimeGateway.TryRequestMissionDefenseAction(UiMissionDefenseAction.OpenGuide)) return;
             SetActive(restartConfirmation, false);
             SetActive(helpPanel, true);
         }

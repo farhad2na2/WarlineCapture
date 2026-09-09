@@ -1,0 +1,8 @@
+{
+  "prompt": "Use case: identity-preserve. Targeted composition edit of the supplied finished M3-style game comic. Keep Dalia's exact face, sunglasses, dark bun, gray headset, outfit, expression, pose and proportions. Scale the ENTIRE foreground woman down uniformly to roughly 76 percent of her current size, anchoring her bottom to the bottom edge. Her head should start around y=230 and sunglasses around y=320 on the 1672x941 canvas; full face must be below the top quarter. She stays in the left foreground with hand at her holster. Preserve the two center soldiers, camp, watchtowers, aircraft, sunlight and faceted painted style. Fill newly revealed background naturally. No vertical stretching, no added people, no text or UI. Same landscape canvas.",
+  "refs": [
+    "/Users/farhad/Projects/WarlineCapture/Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P11-16x9.png"
+  ],
+  "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-3e399d56-8253-494f-b69c-68f4376eaf70.png",
+  "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P11-safe-16x9.png"
+}

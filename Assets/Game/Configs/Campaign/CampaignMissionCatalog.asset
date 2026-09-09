@@ -19,3 +19,9 @@ MonoBehaviour:
   - missionId: saga.ch01.m02.establish_base
     definition: {fileID: 11400000, guid: ed9029770e1c94ce4ada381a46f801e7, type: 2}
     scenario: {fileID: 11400000, guid: 12bf75ca1e981467f8e2ac83063a18be, type: 2}
+  - missionId: saga.ch01.m03.radar_warning
+    definition: {fileID: 11400000, guid: 9ca8ab238d88a417e885e1a92e261d87, type: 2}
+    scenario: {fileID: 11400000, guid: ab946acad4ef448488c625811c3d77de, type: 2}
+  - missionId: saga.ch01.m04.airlift
+    definition: {fileID: 11400000, guid: c6c2702feade047f2b6e34780c4fa602, type: 2}
+    scenario: {fileID: 11400000, guid: edb66fda0082f4bfc863b2287814f053, type: 2}

@@ -123,9 +123,8 @@ namespace Game.Runtime
                 ComponentType.ReadWrite<RtsSelectionCommandIntentRequestElement>(),
                 ComponentType.ReadWrite<RtsSelectionCommandResultElement>());
             _gridConfigQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
-            _unitScanTargetQuery = state.GetEntityQuery(
-                ComponentType.ReadOnly<Faction>(),
-                ComponentType.ReadOnly<UnitGrid>());
+            _unitScanTargetQuery = SystemAPI.QueryBuilder().WithAll<Faction,UnitGrid>()
+                .WithNone<CampaignMissionCombatSuppressedTag>().Build();
             _buildingScanTargetQuery = state.GetEntityQuery(
                 ComponentType.ReadOnly<Faction>(),
                 ComponentType.ReadOnly<RuntimeBuildingCombatInfo>());

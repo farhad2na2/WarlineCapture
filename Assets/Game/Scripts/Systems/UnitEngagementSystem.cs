@@ -23,7 +23,11 @@ namespace Game.Runtime
         public void OnCreate(ref SystemState state)
         {
             _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
-            _ecbSingletonQuery = state.GetEntityQuery(ComponentType.ReadOnly<EndSimulationEntityCommandBufferSystem.Singleton>());
+            // ECB singletons live on system entities in the installed Entities package.
+            // Excluding those entities prevents acquisition from updating at all.
+            _ecbSingletonQuery = new EntityQueryBuilder(Allocator.Temp)
+                .WithAll<EndSimulationEntityCommandBufferSystem.Singleton>()
+                .WithOptions(EntityQueryOptions.IncludeSystems).Build(ref state);
             state.RequireForUpdate(_gridQuery);
             state.RequireForUpdate<UnitGrid>();
             state.RequireForUpdate<Faction>();

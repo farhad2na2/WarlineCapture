@@ -88,7 +88,7 @@ namespace Game.Runtime
                     if (cameraSystem.HasSmoothFocusTarget && worldCamera != null)
                     {
                         Vector3 currentGroundCenter = cameraSystem.GetCameraGroundCenterWorld(worldCamera);
-                        Vector3 smoothedCenter = cameraSystem.UpdateSmoothFocus(currentGroundCenter, request.Value);
+                        Vector3 smoothedCenter = cameraSystem.UpdateSmoothFocus(currentGroundCenter, request.Value, worldCamera);
                         cameraSystem.MoveCameraGroundCenterTo(worldCamera, smoothedCenter);
                     }
                     return true;

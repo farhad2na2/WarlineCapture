@@ -493,8 +493,4 @@ namespace Game.Components
         public int SpawnedCount;
     }
 
-    public struct BuildingRuntimeDeleteRequest : IBufferElementData
-    {
-        public int BuildingRuntimeId;
-    }
 }

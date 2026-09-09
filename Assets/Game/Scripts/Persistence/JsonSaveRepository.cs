@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Threading;
 using UnityEngine;
 
 namespace Game.Runtime
@@ -8,6 +9,10 @@ namespace Game.Runtime
     public sealed class JsonSaveRepository
     {
         private readonly string _rootPath;
+        private static long _changeVersion;
+        // Shared across repository instances: a settings/profile reset or another
+        // SaveService must invalidate readers of the same on-disk data.
+        public static long ChangeVersion => Interlocked.Read(ref _changeVersion);
 
         public string RootPath => _rootPath;
 
@@ -74,11 +79,13 @@ namespace Game.Runtime
                 if (File.Exists(destination))
                 {
                     File.Replace(temporary, destination, backup);
+                    Interlocked.Increment(ref _changeVersion);
                     if (File.Exists(backup)) File.Delete(backup);
                 }
                 else
                 {
                     File.Move(temporary, destination);
+                    Interlocked.Increment(ref _changeVersion);
                 }
             }
             catch
@@ -92,7 +99,10 @@ namespace Game.Runtime
         {
             string path = GetPath(fileName);
             if (File.Exists(path))
+            {
                 File.Delete(path);
+                Interlocked.Increment(ref _changeVersion);
+            }
         }
 
         public string GetPath(string fileName)

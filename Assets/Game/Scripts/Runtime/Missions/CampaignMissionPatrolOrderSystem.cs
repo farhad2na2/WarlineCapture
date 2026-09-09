@@ -44,6 +44,8 @@ namespace Game.Runtime
             _renderVirtualizationStateQuery = state.GetEntityQuery(
                 ComponentType.ReadOnly<OperationMapRenderVirtualizationStateComponent>());
             CreateGuidedMoveCameraQuery(ref state);
+            CreateDefenseCameraQueries(ref state);
+            CreateConvoyOrderQuery(ref state);
             state.RequireForUpdate<CampaignMissionCatalogComponent>();
             state.RequireForUpdate<CampaignMissionRuntimeComponent>();
             state.RequireForUpdate<CampaignMissionAttemptFactsComponent>();
@@ -65,6 +67,7 @@ namespace Game.Runtime
                 return;
             ref CampaignMissionDefinitionBlob definition = ref catalog.Blob.Value.Missions[definitionIndex];
             int routeElapsedMilliseconds = facts.ElapsedMilliseconds;
+            if (definition.Defense.Enabled == 0 && definition.Extraction.Enabled == 0)
             foreach (RefRO<CampaignMissionOpeningPresentationComponent> opening in
                      SystemAPI.Query<RefRO<CampaignMissionOpeningPresentationComponent>>())
             {
@@ -137,6 +140,8 @@ namespace Game.Runtime
                             runtime.SessionToken);
                 }
             }
+            if (definition.Defense.Enabled != 0) AdvanceDefenseCameraFallbacks(ref state,in runtime,ref definition.Defense.CameraTour);
+            if (definition.Extraction.Enabled != 0) AdvanceDefenseCameraFallbacks(ref state,in runtime,ref definition.Extraction.CameraTour);
             if (_cameraFocusQuery.CalculateEntityCount() == 1)
             {
                 Entity focusEntity = _cameraFocusQuery.GetSingletonEntity();
@@ -168,12 +173,22 @@ namespace Game.Runtime
                     }
 
                     bool useEstablishBaseOpening = ShouldUseEstablishBaseOpening(runtime.MissionId);
-                    bool openingCanAdvance = !useEstablishBaseOpening ||
-                                             CanAdvanceEstablishBaseOpening(runtime.Phase);
+                    bool openingCanAdvance = (!useEstablishBaseOpening || CanAdvanceEstablishBaseOpening(runtime.Phase)) &&
+                        ((definition.Defense.Enabled == 0 && definition.Extraction.Enabled == 0) || runtime.Phase >= MissionPhaseKind.FindSquad);
                     if (current.Stage <= 5 && focus.Requested == 0 && openingCanAdvance &&
                         IsOpeningVisible(state.EntityManager))
                         current.ElapsedMilliseconds = SaturatingAddMilliseconds(
                             current.ElapsedMilliseconds, SystemAPI.Time.DeltaTime);
+                    if(definition.Extraction.Enabled!=0 && openingCanAdvance)
+                    {
+                        AdvanceDefenseCamera(ref state,focusEntity,in focus,ref current,ref definition.Extraction.CameraTour,metadata);
+                        opening.ValueRW=current; break;
+                    }
+                    if(definition.Defense.Enabled!=0 && openingCanAdvance)
+                    {
+                        AdvanceDefenseCamera(ref state,focusEntity,in focus,ref current,ref definition.Defense.CameraTour,metadata);
+                        opening.ValueRW=current; break;
+                    }
                     if (useEstablishBaseOpening)
                     {
                         if (openingCanAdvance)
@@ -246,6 +261,16 @@ namespace Game.Runtime
                     if (current.Required == 0 || !current.SessionToken.Equals(runtime.SessionToken) ||
                         current.Stage >= 4)
                         continue;
+                    if (definition.Extraction.Enabled != 0)
+                    {
+                        AdvanceDefenseFinale(ref state, focusEntity, in runtime, ref current, ref definition.Extraction.CameraTour);
+                        finale.ValueRW = current; continue;
+                    }
+                    if (definition.Defense.Enabled != 0)
+                    {
+                        AdvanceDefenseFinale(ref state, focusEntity, in runtime, ref current, ref definition.Defense.CameraTour);
+                        finale.ValueRW = current; continue;
+                    }
 
                     if (current.Stage == 0 && runtime.Phase == MissionPhaseKind.Engage &&
                         facts.AttackIssued != 0 && focus.Requested == 0)
@@ -362,6 +387,11 @@ namespace Game.Runtime
                     (float)SystemAPI.Time.ElapsedTime,
                     cooldownSeconds: 20f);
             }
+            if (definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0)
+            {
+                AdvanceConvoyRoutes(ref state, in runtime, in facts, ref definition, ref metadata.Blob.Value);
+                return;
+            }
             NativeList<Entity> targets = new(Allocator.Temp);
             NativeList<int2> goals = new(Allocator.Temp);
             foreach ((RefRW<CampaignMissionUnitRoleComponent> role, Entity entity) in
@@ -433,25 +463,6 @@ namespace Game.Runtime
                 if (definition.PatrolRoutes[i].RouteId.Equals(id)) { index = i; return true; }
             index = -1;
             return false;
-        }
-
-        private bool IsOpeningVisible(EntityManager entityManager)
-        {
-            int renderStateCount = _renderVirtualizationStateQuery.CalculateEntityCount();
-            if (renderStateCount > 1)
-                return false;
-            if (renderStateCount == 1)
-            {
-                OperationMapRenderVirtualizationStateComponent renderState =
-                    entityManager.GetComponentData<OperationMapRenderVirtualizationStateComponent>(
-                        _renderVirtualizationStateQuery.GetSingletonEntity());
-                if (renderState.Initialized == 0 || renderState.InitialViewApplied == 0)
-                    return false;
-            }
-
-            // SimulationActive and the applied render state are the neutral runtime readiness
-            // boundaries. UI-shell transition state remains owned by composition and UI assemblies.
-            return true;
         }
 
         private static int SaturatingAddMilliseconds(int current, float deltaSeconds)

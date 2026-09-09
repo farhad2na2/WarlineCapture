@@ -11222,6 +11222,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d223326c705c456ebd27ebb0b0c309b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.MissionBriefingScreenView
+  m04MissionArt: {fileID: 2800000, guid: 2a3df06fb843e4b19a65c408ea7aecf6, type: 3}
+  m03MissionArt: {fileID: 2800000, guid: 0f000af5086ec458f9fa30b1191960d6, type: 3}
   backRouteButton: {fileID: 4579297816043088970}
   missionOverview: {fileID: 4284717024942189541}
   primaryObjectives: {fileID: 8233866179177459740}

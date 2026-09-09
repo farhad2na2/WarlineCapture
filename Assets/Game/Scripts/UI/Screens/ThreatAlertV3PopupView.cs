@@ -1,4 +1,7 @@
 using UnityEngine;
+using Game.UI.Contracts;
+using Game.Configs;
+using TMPro;
 using UnityEngine.UI;
 
 namespace Game.UI.Runtime
@@ -8,7 +11,7 @@ namespace Game.UI.Runtime
     /// prefab: the blocking threat alert and the non-blocking route preview.
     /// </summary>
     [DisallowMultipleComponent]
-    public sealed class ThreatAlertV3PopupView : MonoBehaviour
+    public sealed partial class ThreatAlertV3PopupView : MonoBehaviour
     {
         [SerializeField] private GameObject scrim;
         [SerializeField] private GameObject alertSurface;
@@ -69,6 +72,7 @@ namespace Game.UI.Runtime
 
         public void Close()
         {
+            UiShellRuntimeGateway.TryRequestMissionDefenseAction(UiMissionDefenseAction.CloseWarning);
             gameObject.SetActive(false);
         }
 
@@ -88,8 +92,9 @@ namespace Game.UI.Runtime
 
         private void BindButtons()
         {
+            missionGuideButton?.onClick.AddListener(OpenWarningGuide);
             if (jumpToThreatButton != null)
-                jumpToThreatButton.onClick.AddListener(ShowRoutePreview);
+                jumpToThreatButton.onClick.AddListener(JumpToReport);
             if (alertCloseButton != null)
                 alertCloseButton.onClick.AddListener(Close);
             if (routeCloseButton != null)
@@ -98,8 +103,9 @@ namespace Game.UI.Runtime
 
         private void UnbindButtons()
         {
+            missionGuideButton?.onClick.RemoveListener(OpenWarningGuide);
             if (jumpToThreatButton != null)
-                jumpToThreatButton.onClick.RemoveListener(ShowRoutePreview);
+                jumpToThreatButton.onClick.RemoveListener(JumpToReport);
             if (alertCloseButton != null)
                 alertCloseButton.onClick.RemoveListener(Close);
             if (routeCloseButton != null)
@@ -111,11 +117,8 @@ namespace Game.UI.Runtime
             if (_suppressedThreatPanel != null)
                 return;
 
-            Transform found = FindDeepChild(transform.root, "ThreatJumpPanel");
-            if (found == null || found.IsChildOf(transform))
-                return;
-
-            _suppressedThreatPanel = found.gameObject;
+            if (_boundLegacyThreatPanel==null) return;
+            _suppressedThreatPanel = _boundLegacyThreatPanel;
             _restoreSuppressedThreatPanel = _suppressedThreatPanel.activeSelf;
             if (_restoreSuppressedThreatPanel)
                 _suppressedThreatPanel.SetActive(false);
@@ -127,21 +130,6 @@ namespace Game.UI.Runtime
                 _suppressedThreatPanel.SetActive(true);
             _suppressedThreatPanel = null;
             _restoreSuppressedThreatPanel = false;
-        }
-
-        private static Transform FindDeepChild(Transform root, string childName)
-        {
-            if (root == null)
-                return null;
-            if (root.name == childName)
-                return root;
-            for (int i = 0; i < root.childCount; i++)
-            {
-                Transform found = FindDeepChild(root.GetChild(i), childName);
-                if (found != null)
-                    return found;
-            }
-            return null;
         }
 
 #if UNITY_EDITOR

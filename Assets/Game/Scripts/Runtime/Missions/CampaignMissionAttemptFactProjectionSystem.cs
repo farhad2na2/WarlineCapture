@@ -169,6 +169,9 @@ namespace Game.Runtime
                 facts.RequiredUnitProducedCount = nextProducedCount;
             }
 
+            FixedString128Bytes postStableId = default;
+            if (hasForwardPost && CampaignMissionSpawnSystem.TryFindDefinition(in catalog, in runtime, out int postDefinition))
+                postStableId = catalog.Blob.Value.Missions[postDefinition].Defense.ForwardPostStableId;
             if (hasForwardPost && TryFindAuthoritativeForwardPost(
                     entityManager,
                     _operationMapMetadataQuery,
@@ -176,7 +179,7 @@ namespace Game.Runtime
                     in runtime,
                     in forwardPostAnchorId,
                     in forwardPostRoleId,
-                    out Entity forwardPost))
+                    out Entity forwardPost, postStableId))
             {
                 BindForwardPostRole(
                     entityManager,

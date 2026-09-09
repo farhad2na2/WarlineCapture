@@ -1,0 +1,646 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f07522635d4aa4edc93a654f0447197b, type: 3}
+  m_Name: M04_Airlift_FieldGuide
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.MissionFieldGuideConfig
+  topics:
+  - TitleKey: mission.m04.tutorial.1.title
+    BodyKey: mission.m04.tutorial.1.body
+    ExampleKey: mission.m04.tutorial.1.example
+    MistakeKey: mission.m04.tutorial.1.mistake
+    DiagramKey: mission.m04.tutorial.1.diagram
+  - TitleKey: mission.m04.tutorial.2.title
+    BodyKey: mission.m04.tutorial.2.body
+    ExampleKey: mission.m04.tutorial.2.example
+    MistakeKey: mission.m04.tutorial.2.mistake
+    DiagramKey: mission.m04.tutorial.2.diagram
+  - TitleKey: mission.m04.tutorial.3.title
+    BodyKey: mission.m04.tutorial.3.body
+    ExampleKey: mission.m04.tutorial.3.example
+    MistakeKey: mission.m04.tutorial.3.mistake
+    DiagramKey: mission.m04.tutorial.3.diagram
+  - TitleKey: mission.m04.tutorial.4.title
+    BodyKey: mission.m04.tutorial.4.body
+    ExampleKey: mission.m04.tutorial.4.example
+    MistakeKey: mission.m04.tutorial.4.mistake
+    DiagramKey: mission.m04.tutorial.4.diagram
+  - TitleKey: mission.m04.tutorial.5.title
+    BodyKey: mission.m04.tutorial.5.body
+    ExampleKey: mission.m04.tutorial.5.example
+    MistakeKey: mission.m04.tutorial.5.mistake
+    DiagramKey: mission.m04.tutorial.5.diagram
+  - TitleKey: mission.m04.tutorial.6.title
+    BodyKey: mission.m04.tutorial.6.body
+    ExampleKey: mission.m04.tutorial.6.example
+    MistakeKey: mission.m04.tutorial.6.mistake
+    DiagramKey: mission.m04.tutorial.6.diagram
+  - TitleKey: mission.m04.tutorial.7.title
+    BodyKey: mission.m04.tutorial.7.body
+    ExampleKey: mission.m04.tutorial.7.example
+    MistakeKey: mission.m04.tutorial.7.mistake
+    DiagramKey: mission.m04.tutorial.7.diagram
+  - TitleKey: mission.m04.tutorial.8.title
+    BodyKey: mission.m04.tutorial.8.body
+    ExampleKey: mission.m04.tutorial.8.example
+    MistakeKey: mission.m04.tutorial.8.mistake
+    DiagramKey: mission.m04.tutorial.8.diagram
+  - TitleKey: mission.m04.tutorial.9.title
+    BodyKey: mission.m04.tutorial.9.body
+    ExampleKey: mission.m04.tutorial.9.example
+    MistakeKey: mission.m04.tutorial.9.mistake
+    DiagramKey: mission.m04.tutorial.9.diagram
+  - TitleKey: mission.m04.tutorial.10.title
+    BodyKey: mission.m04.tutorial.10.body
+    ExampleKey: mission.m04.tutorial.10.example
+    MistakeKey: mission.m04.tutorial.10.mistake
+    DiagramKey: mission.m04.tutorial.10.diagram
+  - TitleKey: mission.m04.tutorial.11.title
+    BodyKey: mission.m04.tutorial.11.body
+    ExampleKey: mission.m04.tutorial.11.example
+    MistakeKey: mission.m04.tutorial.11.mistake
+    DiagramKey: mission.m04.tutorial.11.diagram
+  - TitleKey: mission.m04.tutorial.12.title
+    BodyKey: mission.m04.tutorial.12.body
+    ExampleKey: mission.m04.tutorial.12.example
+    MistakeKey: mission.m04.tutorial.12.mistake
+    DiagramKey: mission.m04.tutorial.12.diagram
+  classes:
+  - Id: Unit_Chr_Bombsuit_Male_01
+    NameKey: mission.m03.class.Unit_Chr_Bombsuit_Male_01
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: 865ed7d34b7c4443ba7c2c54a5b9484f
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Chr_Civilian_Female_01
+    NameKey: mission.m03.class.Unit_Chr_Civilian_Female_01
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: a11f690c538a433ebee5c0823333744f
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 2
+  - Id: Unit_Chr_Civilian_Female_02
+    NameKey: mission.m03.class.Unit_Chr_Civilian_Female_02
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: 115ef343e6e24195ad439f47e7e3d76c
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 2
+  - Id: Unit_Chr_Civilian_Male_01
+    NameKey: mission.m03.class.Unit_Chr_Civilian_Male_01
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: fa5b06f971ad438c9d0461906c1a9d2e
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 2
+  - Id: Unit_Chr_Civilian_Male_02
+    NameKey: mission.m03.class.Unit_Chr_Civilian_Male_02
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: 9f0eefc5eada4de6b669210ff9b30ecd
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 2
+  - Id: Unit_Chr_Contractor_Female_01
+    NameKey: mission.m03.class.Unit_Chr_Contractor_Female_01
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: afb2c6a5e87f44549b284c3e948d071a
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Chr_Contractor_Male_01
+    NameKey: mission.m03.class.Unit_Chr_Contractor_Male_01
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: 123b0ec0b947441db199b138371b6f1e
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Chr_Contractor_Male_02
+    NameKey: mission.m03.class.Unit_Chr_Contractor_Male_02
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: f3b791c74ffa471d8a3200bf7bf95815
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Chr_Ghillie_Male_01
+    NameKey: mission.m03.class.Unit_Chr_Ghillie_Male_01
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: d0f8da6ed5d948f2a04a26ff3438cb8f
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Chr_Insurgent_Female_01
+    NameKey: mission.m03.class.Unit_Chr_Insurgent_Female_01
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: 01045d2a58ec4359b395696309684ffa
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 1
+  - Id: Unit_Chr_Insurgent_Female_02
+    NameKey: mission.m03.class.Unit_Chr_Insurgent_Female_02
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: 8093159068194fc187efe5c356116e9b
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 1
+  - Id: Unit_Chr_Insurgent_Male_01
+    NameKey: mission.m03.class.Unit_Chr_Insurgent_Male_01
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: 83e8923bd53f4e6682c6fc84bd751ddd
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Chr_Insurgent_Male_02
+    NameKey: mission.m03.class.Unit_Chr_Insurgent_Male_02
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: 6095a30179ca49bb9e2759a1ace9da39
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Chr_Insurgent_Male_03
+    NameKey: mission.m03.class.Unit_Chr_Insurgent_Male_03
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: fe23cbf9678344f4b182169b49fe68b6
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 1
+  - Id: Unit_Chr_Insurgent_Male_04
+    NameKey: mission.m03.class.Unit_Chr_Insurgent_Male_04
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: ab85826a311542288749ea38050f1876
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Chr_Insurgent_Male_05
+    NameKey: mission.m03.class.Unit_Chr_Insurgent_Male_05
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: 5e83cd16726343b3b2ffd9fbb49cfa29
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Chr_Leader_Male_01
+    NameKey: mission.m03.class.Unit_Chr_Leader_Male_01
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: d18bfee8a685475f925212742b379079
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Chr_Pilot_Female_01
+    NameKey: mission.m03.class.Unit_Chr_Pilot_Female_01
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: 42b40c329d3c48f7a30e358c50c99695
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Chr_Pilot_Male_01
+    NameKey: mission.m03.class.Unit_Chr_Pilot_Male_01
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: cb36b84638d84fe2b8af7a8dfcc48333
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Chr_Soldier_Female_01
+    NameKey: mission.m03.class.Unit_Chr_Soldier_Female_01
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: 544d1c2383d64be4ac83439d821a2466
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Chr_Soldier_Female_01_Alt_01
+    NameKey: mission.m03.class.Unit_Chr_Soldier_Female_01_Alt_01
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: 970069fef3e4437195c3225a1615e384
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 0
+  - Id: Unit_Chr_Soldier_Female_01_Alt_02
+    NameKey: mission.m03.class.Unit_Chr_Soldier_Female_01_Alt_02
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: 04463ee8eacb4e66bac33c265ad10ef5
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Chr_Soldier_Female_02
+    NameKey: mission.m03.class.Unit_Chr_Soldier_Female_02
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: 759d578e4776424bb5b349d6813b8608
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Chr_Soldier_Female_02_Alt_01
+    NameKey: mission.m03.class.Unit_Chr_Soldier_Female_02_Alt_01
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: b9481cc1ec42499c96846b5d161ac7b2
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 0
+  - Id: Unit_Chr_Soldier_Female_02_Alt_02
+    NameKey: mission.m03.class.Unit_Chr_Soldier_Female_02_Alt_02
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: 58c9c87bc1274f8dbd7170fede334901
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Chr_Soldier_Male_01
+    NameKey: mission.m03.class.Unit_Chr_Soldier_Male_01
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: de04c4e00b56400b966ca5ef60038b35
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Chr_Soldier_Male_01_Alt_01
+    NameKey: mission.m03.class.Unit_Chr_Soldier_Male_01_Alt_01
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: 2e082903601c47338377a0585e53fefc
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Chr_Soldier_Male_01_Alt_02
+    NameKey: mission.m03.class.Unit_Chr_Soldier_Male_01_Alt_02
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: 802a8e3adb14431cb7743154b73696f7
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Chr_Soldier_Male_02
+    NameKey: mission.m03.class.Unit_Chr_Soldier_Male_02
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: b3010000000000000000000000000003
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Chr_Soldier_Male_02_Alt_01
+    NameKey: mission.m03.class.Unit_Chr_Soldier_Male_02_Alt_01
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: 03812ba0a848444990f2ce84a428efe1
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Chr_Soldier_Male_02_Alt_02
+    NameKey: mission.m03.class.Unit_Chr_Soldier_Male_02_Alt_02
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: 70d525bdf4894529869cd1402ff5d62e
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 0
+  - Id: Unit_Chr_Soldier_Male_02_Alt_03
+    NameKey: mission.m03.class.Unit_Chr_Soldier_Male_02_Alt_03
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: a85c74cb3f1e48f1994e7050061ed6d2
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Chr_Soldier_Male_02_Alt_04
+    NameKey: mission.m03.class.Unit_Chr_Soldier_Male_02_Alt_04
+    CategoryKey: mission.m03.guide.category.character
+    UnitAsset:
+      m_AssetGUID: a3d36fd8847164cc596e0b5ba7bd9bb9
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 0
+  - Id: Unit_Sea_Coastal_Cutter
+    NameKey: mission.m03.class.Unit_Sea_Coastal_Cutter
+    CategoryKey: mission.m03.guide.category.seaVehicle
+    UnitAsset:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 4
+  - Id: Unit_Sea_Drone_Boat
+    NameKey: mission.m03.class.Unit_Sea_Drone_Boat
+    CategoryKey: mission.m03.guide.category.seaVehicle
+    UnitAsset:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 4
+  - Id: Unit_Sea_Interceptor_Boat
+    NameKey: mission.m03.class.Unit_Sea_Interceptor_Boat
+    CategoryKey: mission.m03.guide.category.seaVehicle
+    UnitAsset:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 4
+  - Id: Unit_Sea_Landing_Craft
+    NameKey: mission.m03.class.Unit_Sea_Landing_Craft
+    CategoryKey: mission.m03.guide.category.seaVehicle
+    UnitAsset:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 4
+  - Id: Unit_Sea_Missile_Craft
+    NameKey: mission.m03.class.Unit_Sea_Missile_Craft
+    CategoryKey: mission.m03.guide.category.seaVehicle
+    UnitAsset:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 4
+  - Id: Unit_Sea_Patrol_Boat
+    NameKey: mission.m03.class.Unit_Sea_Patrol_Boat
+    CategoryKey: mission.m03.guide.category.seaVehicle
+    UnitAsset:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 4
+  - Id: Unit_Veh_APC_Fast
+    NameKey: mission.m03.class.Unit_Veh_APC_Fast
+    CategoryKey: mission.m03.guide.category.vehicle
+    UnitAsset:
+      m_AssetGUID: a8e89ef50ddf4c1ba4d761a22c4f4102
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 0
+  - Id: Unit_Veh_APC_Heavy
+    NameKey: mission.m03.class.Unit_Veh_APC_Heavy
+    CategoryKey: mission.m03.guide.category.vehicle
+    UnitAsset:
+      m_AssetGUID: c7fa4a41c2b24fd9b3e8f07ad2a08303
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Veh_APC_Slow
+    NameKey: mission.m03.class.Unit_Veh_APC_Slow
+    CategoryKey: mission.m03.guide.category.vehicle
+    UnitAsset:
+      m_AssetGUID: 8b5d1d3f1c504543907a45c4d4c1a101
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Veh_Drone
+    NameKey: mission.m03.class.Unit_Veh_Drone
+    CategoryKey: mission.m03.guide.category.vehicle
+    UnitAsset:
+      m_AssetGUID: 5de2cf82138c14bc3baf954f2e53c679
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Veh_Helicopter_Attack
+    NameKey: mission.m03.class.Unit_Veh_Helicopter_Attack
+    CategoryKey: mission.m03.guide.category.vehicle
+    UnitAsset:
+      m_AssetGUID: d75d55636ae6a4ca6a8eb0b5c0075131
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Veh_Helicopter_Attack_Small
+    NameKey: mission.m03.class.Unit_Veh_Helicopter_Attack_Small
+    CategoryKey: mission.m03.guide.category.vehicle
+    UnitAsset:
+      m_AssetGUID: 425e40067ce2649d8a6330c0893e8f8e
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Veh_Helicopter_Transport
+    NameKey: mission.m03.class.Unit_Veh_Helicopter_Transport
+    CategoryKey: mission.m03.guide.category.vehicle
+    UnitAsset:
+      m_AssetGUID: 07dfa4493490a46c8897eb8ca6909849
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 0
+  - Id: Unit_Veh_Jet_01
+    NameKey: mission.m03.class.Unit_Veh_Jet_01
+    CategoryKey: mission.m03.guide.category.vehicle
+    UnitAsset:
+      m_AssetGUID: 58c0a59a35f5e40dcbe52d5fc14df4d0
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Veh_Jet_02
+    NameKey: mission.m03.class.Unit_Veh_Jet_02
+    CategoryKey: mission.m03.guide.category.vehicle
+    UnitAsset:
+      m_AssetGUID: 28e0d9ad2f21642bb9d0d446b1d886f1
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Veh_Light_Armored_Car
+    NameKey: mission.m03.class.Unit_Veh_Light_Armored_Car
+    CategoryKey: mission.m03.guide.category.vehicle
+    UnitAsset:
+      m_AssetGUID: b0ffc9714da994462a1e48679b4863de
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Veh_Missle_Launcher_Air
+    NameKey: mission.m03.class.Unit_Veh_Missle_Launcher_Air
+    CategoryKey: mission.m03.guide.category.vehicle
+    UnitAsset:
+      m_AssetGUID: 7e52f0bebbacc477d90d1aa3eb9cf6a1
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Veh_Missle_Launcher_Ground
+    NameKey: mission.m03.class.Unit_Veh_Missle_Launcher_Ground
+    CategoryKey: mission.m03.guide.category.vehicle
+    UnitAsset:
+      m_AssetGUID: 7eef6c21a75e941d1a1a959e36538baf
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Veh_Plane_Transport
+    NameKey: mission.m03.class.Unit_Veh_Plane_Transport
+    CategoryKey: mission.m03.guide.category.vehicle
+    UnitAsset:
+      m_AssetGUID: 304c23d3034aa4c0f8ec5246d7ec4c0a
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Veh_Radar_Tank
+    NameKey: mission.m03.class.Unit_Veh_Radar_Tank
+    CategoryKey: mission.m03.guide.category.vehicle
+    UnitAsset:
+      m_AssetGUID: 8c8bae22405ba4a398cf147fad178815
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Veh_Tank_USA
+    NameKey: mission.m03.class.Unit_Veh_Tank_USA
+    CategoryKey: mission.m03.guide.category.vehicle
+    UnitAsset:
+      m_AssetGUID: 96b6f5e350d2b485db1437bbfb66cad8
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Veh_Truck_Canopy
+    NameKey: mission.m03.class.Unit_Veh_Truck_Canopy
+    CategoryKey: mission.m03.guide.category.vehicle
+    UnitAsset:
+      m_AssetGUID: 1a9b9d82830054e60bb0318f90cbfa91
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Veh_Truck_Tanker
+    NameKey: mission.m03.class.Unit_Veh_Truck_Tanker
+    CategoryKey: mission.m03.guide.category.vehicle
+    UnitAsset:
+      m_AssetGUID: 0c84edcb251114cbfaba8f9ed23b2132
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3
+  - Id: Unit_Veh_Truck_Tray
+    NameKey: mission.m03.class.Unit_Veh_Truck_Tray
+    CategoryKey: mission.m03.guide.category.vehicle
+    UnitAsset:
+      m_AssetGUID: eb6918590ad5141f29fd1afb977a1da6
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    Availability: 3

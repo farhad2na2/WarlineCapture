@@ -64,7 +64,8 @@ namespace Game.Composition
                 projected.ReplayTutorialDefaultEnabled != Flag(mission.ReplayTutorialDefaultEnabled))
                 return false;
 
-            return MatchesBuildCatalog(ref projected.BuildZone, ref projected.BuildCatalog, scenario.MissionRuntime) &&
+            return MatchesExtraction(projected.Extraction, scenario.Extraction) && MatchesDefense(ref projected.Defense, scenario) &&
+                   MatchesBuildCatalog(ref projected.BuildZone, ref projected.BuildCatalog, scenario.MissionRuntime) &&
                    MatchesObjectives(ref projected.Objectives, mission.Objectives) &&
                    MatchesForces(ref projected.ForceGroups, scenario.UnitGroups) &&
                    MatchesRoutes(ref projected.PatrolRoutes, scenario.PatrolRoutes) &&

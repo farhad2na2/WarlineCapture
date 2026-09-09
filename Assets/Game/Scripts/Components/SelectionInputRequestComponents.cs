@@ -174,7 +174,7 @@ namespace Game.Components
         public byte ShowWorldMarkers;
         public int RevealedCount;
         public int RadiusCells;
-        public FixedString64Bytes Message;
+        public FixedString512Bytes Message;
     }
 
     public struct BuildingTargetMoveOrderQueueComponent : IComponentData

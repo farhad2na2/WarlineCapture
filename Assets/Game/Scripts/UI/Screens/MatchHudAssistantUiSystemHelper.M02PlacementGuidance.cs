@@ -35,8 +35,8 @@ namespace Game.UI.Runtime
             public readonly byte DisplayedTutorialStep;
             public readonly UiTutorialNarrationPhase PendingTutorialPhase;
             public readonly UiTutorialNarrationPhase DisplayedTutorialPhase;
-            public readonly ushort NarratedTutorialCues;
-            public readonly ushort AutoShownTutorialCues;
+            public readonly uint NarratedTutorialCues;
+            public readonly uint AutoShownTutorialCues;
             public readonly float TutorialShowAt;
             public readonly bool TutorialCinematicSuspended;
             public readonly bool FinalTutorialSuppressed;

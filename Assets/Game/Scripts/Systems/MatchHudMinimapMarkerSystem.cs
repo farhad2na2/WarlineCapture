@@ -32,10 +32,24 @@ namespace Game.Runtime
             var markerScratch = new NativeList<MatchHudMinimapMarkerElement>(MaxMarkers, Allocator.TempJob);
             ComponentLookup<CampaignMissionCombatSuppressedTag> combatSuppressionLookup =
                 SystemAPI.GetComponentLookup<CampaignMissionCombatSuppressedTag>(true);
+            bool defenseIntel = SystemAPI.TryGetSingleton(out ThreatWarningLedgerState ledger) &&
+                                SystemAPI.TryGetSingleton(out CampaignMissionRuntimeComponent mission) &&
+                                ThreatWarningResolveSystem.Matches(in ledger, in mission);
+            var produced=new NativeParallelHashSet<Entity>(MaxMarkers,Allocator.TempJob);
+            if(defenseIntel)
+                foreach(var units in SystemAPI.Query<DynamicBuffer<BuildingProducedUnitReadModel>>())
+                    for(int i=0;i<units.Length && produced.Count()<MaxMarkers;i++)
+                        if(units[i].HasOwnerFaction!=0 && units[i].OwnerFactionId==FactionIdentity.PlayerFactionId) produced.Add(units[i].Unit);
             state.Dependency = new CollectMarkersJob
             {
                 MaxMarkers = MaxMarkers,
                 CollectMode = CollectPlayerMarkers,
+                DefenseRoster = defenseIntel,
+                ProducedUnits = produced,
+                RuntimeBuildingLookup = SystemAPI.GetComponentLookup<RuntimeBuildingCombatInfo>(true),
+                MapBuildingLookup = SystemAPI.GetComponentLookup<OperationMapBuildingComponent>(true),
+                MissionRoleLookup = SystemAPI.GetComponentLookup<CampaignMissionUnitRoleComponent>(true),
+                LastSeenLookup = SystemAPI.GetComponentLookup<ScanIntelLastSeen>(true),
                 CombatSuppressionLookup = combatSuppressionLookup,
                 Markers = markerScratch
             }.Schedule(state.Dependency);
@@ -43,6 +57,13 @@ namespace Game.Runtime
             {
                 MaxMarkers = MaxMarkers,
                 CollectMode = CollectEnemyMarkers,
+                DefenseRoster = defenseIntel,
+                ProducedUnits = produced,
+                RuntimeBuildingLookup = SystemAPI.GetComponentLookup<RuntimeBuildingCombatInfo>(true),
+                MapBuildingLookup = SystemAPI.GetComponentLookup<OperationMapBuildingComponent>(true),
+                MissionRoleLookup = SystemAPI.GetComponentLookup<CampaignMissionUnitRoleComponent>(true),
+                RequireObservedIntel = defenseIntel,
+                LastSeenLookup = SystemAPI.GetComponentLookup<ScanIntelLastSeen>(true),
                 CombatSuppressionLookup = combatSuppressionLookup,
                 Markers = markerScratch
             }.Schedule(state.Dependency);
@@ -62,6 +83,7 @@ namespace Game.Runtime
                 Destination = markers
             }.Schedule(state.Dependency);
             state.Dependency = markerScratch.Dispose(state.Dependency);
+            state.Dependency = produced.Dispose(state.Dependency);
         }
 
         [BurstCompile]
@@ -101,6 +123,13 @@ namespace Game.Runtime
         {
             public int MaxMarkers;
             public byte CollectMode;
+            public bool RequireObservedIntel;
+            public bool DefenseRoster;
+            [ReadOnly] public NativeParallelHashSet<Entity> ProducedUnits;
+            [ReadOnly] public ComponentLookup<RuntimeBuildingCombatInfo> RuntimeBuildingLookup;
+            [ReadOnly] public ComponentLookup<OperationMapBuildingComponent> MapBuildingLookup;
+            [ReadOnly] public ComponentLookup<CampaignMissionUnitRoleComponent> MissionRoleLookup;
+            [ReadOnly] public ComponentLookup<ScanIntelLastSeen> LastSeenLookup;
             [ReadOnly] public ComponentLookup<CampaignMissionCombatSuppressedTag> CombatSuppressionLookup;
             public NativeList<MatchHudMinimapMarkerElement> Markers;
 
@@ -115,10 +144,15 @@ namespace Game.Runtime
                     (CollectMode == CollectEnemyMarkers && CombatSuppressionLookup.HasComponent(entity)) ||
                     !ShouldCollectFaction(faction.Id))
                     return;
+                if (RequireObservedIntel && !LastSeenLookup.HasComponent(entity)) return;
+                if (faction.Id==FactionIdentity.NeutralFactionId && !MissionRoleLookup.HasComponent(entity)) return;
+                if (DefenseRoster && MapBuildingLookup.HasComponent(entity) && !MissionRoleLookup.HasComponent(entity)) return;
+                if (DefenseRoster && CollectMode==CollectPlayerMarkers && !MissionRoleLookup.HasComponent(entity) &&
+                    !RuntimeBuildingLookup.HasComponent(entity) && !ProducedUnits.Contains(entity)) return;
 
                 Markers.Add(new MatchHudMinimapMarkerElement
                 {
-                    Position = transform.Position,
+                    Position = RequireObservedIntel ? LastSeenLookup[entity].Position : transform.Position,
                     FactionId = faction.Id
                 });
             }
@@ -127,7 +161,7 @@ namespace Game.Runtime
             {
                 return CollectMode switch
                 {
-                    CollectPlayerMarkers => factionId == FactionIdentity.PlayerFactionId,
+                    CollectPlayerMarkers => factionId == FactionIdentity.PlayerFactionId || DefenseRoster && factionId == FactionIdentity.NeutralFactionId,
                     CollectEnemyMarkers => factionId != FactionIdentity.NeutralFactionId &&
                                            factionId != FactionIdentity.PlayerFactionId,
                     _ => false

@@ -27,7 +27,8 @@ namespace Game.UI.Contracts
         ProtectMissionRole = 2,
         BuildStructure = 3,
         ProduceUnit = 4,
-        DefendMissionRole = 5
+        DefendMissionRole = 5,
+        PreventCoreBreach = 6
     }
 
     public enum UiMissionRewardKind : byte
@@ -94,7 +95,7 @@ namespace Game.UI.Contracts
     {
         public UiCampaignOperationsModel(
             uint version, uint catalogSourceVersion, uint progressSourceVersion,
-            UiCampaignMissionModel selectedMission, string nextMissionId, bool nextMissionRevealed)
+            UiCampaignMissionModel selectedMission, string nextMissionId, bool nextMissionRevealed, byte availableMissionMask = 0)
         {
             Version = version;
             CatalogSourceVersion = catalogSourceVersion;
@@ -102,6 +103,7 @@ namespace Game.UI.Contracts
             SelectedMission = selectedMission;
             NextMissionId = nextMissionId ?? string.Empty;
             NextMissionRevealed = nextMissionRevealed;
+            AvailableMissionMask = availableMissionMask;
         }
 
         public uint Version { get; }
@@ -110,6 +112,7 @@ namespace Game.UI.Contracts
         public UiCampaignMissionModel SelectedMission { get; }
         public string NextMissionId { get; }
         public bool NextMissionRevealed { get; }
+        public byte AvailableMissionMask { get; }
         public bool IsValid => Version != 0 && !string.IsNullOrWhiteSpace(SelectedMission.MissionId);
     }
 

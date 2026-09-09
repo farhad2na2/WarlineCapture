@@ -25,7 +25,9 @@ namespace Game.UI.Shell.Ecs
         {
             bool m01Step = tutorialStepCount == 5 && tutorialStep is >= 1 and <= 5;
             bool m02Step = tutorialStepCount == 9 && tutorialStep is >= 2 and <= 8;
-            if ((!m01Step && !m02Step) || string.IsNullOrWhiteSpace(text) ||
+            if (IsExtractionGuideContext()) return false; // M04 captions stay visible; no unrelated M03 voice is played.
+            bool m03Step = tutorialStepCount == 12 && tutorialStep is >= 1 and <= 12;
+            if ((!m01Step && !m02Step && !m03Step) || string.IsNullOrWhiteSpace(text) ||
                 !TryGetBoundary(out EntityManager entityManager, out Entity boundary) ||
                 !UiShellActionAdapter.IsAssistantRuntimeActive(entityManager, boundary) ||
                 !entityManager.HasBuffer<AssistantMessageElement>(boundary))
@@ -43,7 +45,7 @@ namespace Game.UI.Shell.Ecs
 
             int sequence = NextTutorialNarrationSequence();
             int messageId = TutorialMessageBaseId + sequence;
-            FixedString64Bytes suppressionKey = tutorialStepCount == 9
+            FixedString64Bytes suppressionKey = m03Step ? new FixedString64Bytes("assistant.tutorial.m03.") : tutorialStepCount == 9
                 ? new FixedString64Bytes("assistant.tutorial.m02.")
                 : new FixedString64Bytes("assistant.tutorial.m01.");
             suppressionKey.Append(sequence);
@@ -98,6 +100,8 @@ namespace Game.UI.Shell.Ecs
             FirstLaunchNarrativeLanguage language)
         {
             bool persian = language == FirstLaunchNarrativeLanguage.Persian;
+            if(tutorialStepCount==12 && tutorialStep is >=1 and <=12)
+                return new FixedString64Bytes("vo.aria.tutorial.m03."+tutorialStep.ToString("00")+(persian ? ".fa" : ".en"));
             if (tutorialStepCount == 9)
             {
                 string m02EventId = tutorialStep switch

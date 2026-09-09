@@ -1,0 +1,584 @@
+{
+  "tool": "Built-in imagegen",
+  "direction": "Earlier comic scenes -> current M3 style and character references",
+  "jobs": [
+    {
+      "id": "FL-P12",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P12.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-D03.png"
+      ],
+      "prompt": "Use case: style-transfer and identity-preserve. Restyle IMAGE 1 (the earlier FL-P12 game comic) to match IMAGE 2 (the preferred new M3 art). IMAGE 1 supplies the exact scene, camera, story and cast arrangement. IMAGE 2 supplies the finished visual style and the CANONICAL NEW SAMIRA HADDAD identity. Redraw Samira at left in IMAGE 1 as the exact same adult woman seen at center of IMAGE 2: same warm tan face, dark almond eyes and eyebrows, nose/lips/jaw proportions, mustard scarf, charcoal jacket, muted teal shirt. She must look like M3 Samira, not a new interpretation. Preserve her tablet and calm concerned briefing pose from IMAGE 1. Preserve the entire original civilian/municipal scene: women and children in center, three adult municipal engineers in reflective vests to right, repair shelter, desert town/watchtowers. Do not transplant M3's radio, broken road, medic or toolbox trio into this scene. Apply M3's more refined polygonal illustration, natural facial modelling with faceted highlights, carefully detailed military/desert materials and warm cinematic desert light consistently to every person and building. Keep geometric styling; no photograph or comic ink outlines. Maintain original 16:9 full-frame composition and positions; no important content cropped. No text, captions, added logos, interface frames or speech balloons. Continuous full illustration, not a comparison/collage. Output landscape 16:9, preferably 1920x1080.",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-a342ca15-905e-42ce-9de6-9b1ed15da1e8.png",
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P12-16x9.png",
+      "sha256": "ac3d8f69d75364d0af89aec9da064324ea170789207ed0cefc25c2e84a9e1394",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "visualReview": "Scene, text-free art, style and named-character identity inspected.",
+      "installedPaths": [
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P12.png",
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P12.png"
+      ]
+    },
+    {
+      "id": "M02-P01-Brief",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M02EstablishBase/Final/M02-P01-Brief.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B02.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-D03.png"
+      ],
+      "prompt": "Use case: style-transfer and identity-preserve. Edit IMAGE 1, an earlier M2 game comic. Keep its original story scene, camera composition, cast positions, action and architecture. IMAGE 2 is the canonical NEW Dalia Rahim identity and rendering reference (M3-B02); IMAGE 3 is the canonical NEW Samira Haddad identity and rendering reference (M3-D03). Use those exact women and their face proportions throughout, not generic replacements. Dalia: dark tied-back hair, black wraparound sunglasses, compact headset, tan military uniform and tactical vest. Samira: mustard headscarf, warm tan face, dark almond eyes and strong brows, defined nose/lips/jaw, charcoal jacket over muted teal clothing. Restyle the entire original image with M3's refined faceted polygonal illustration, richer but restrained material detail, natural illustrated faces, warm cinematic desert lighting and clear depth. Maintain original daytime story timing; do not mechanically add a setting sun. Do not transplant any M3 composition/props into the original. No captions, lettering, numbers, new logos, borders or speech balloons. Single continuous 16:9 landscape illustration, approximately 1672x941. Preserve the scene's main faces and evidence, no cropping away required content. Original scene: balcony over the reconstructed desert airbase, Dalia at left points down toward the physical terrain table, Samira at right listens with hand near chin. Keep the arched hangar, distant control tower, parked helicopters, roads, walled base, crates and map table. Calm planning, no fighting.",
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/M02-P01-Brief.png",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-69f821ef-3be6-4e70-a9ce-321329906e94.png",
+      "sha256": "43019336fc343f71db9f82899d253c0aab1a3ddbf33e16834b5cd4f4c074d7e7",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "visualReview": "Scene, text-free art, style and named-character identity inspected.",
+      "installedPaths": [
+        "Assets/Game/Art/Narrative/M02EstablishBase/Final/M02-P01-Brief.png"
+      ]
+    },
+    {
+      "id": "M02-P02-Comms",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M02EstablishBase/Final/M02-P02-Comms.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B02.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-D03.png"
+      ],
+      "prompt": "Use case: style-transfer and identity-preserve. Edit IMAGE 1, an earlier M2 game comic. Keep its original story scene, camera composition, cast positions, action and architecture. IMAGE 2 is the canonical NEW Dalia Rahim identity and rendering reference (M3-B02); IMAGE 3 is the canonical NEW Samira Haddad identity and rendering reference (M3-D03). Use those exact women and their face proportions throughout, not generic replacements. Dalia: dark tied-back hair, black wraparound sunglasses, compact headset, tan military uniform and tactical vest. Samira: mustard headscarf, warm tan face, dark almond eyes and strong brows, defined nose/lips/jaw, charcoal jacket over muted teal clothing. Restyle the entire original image with M3's refined faceted polygonal illustration, richer but restrained material detail, natural illustrated faces, warm cinematic desert lighting and clear depth. Maintain original daytime story timing; do not mechanically add a setting sun. Do not transplant any M3 composition/props into the original. No captions, lettering, numbers, new logos, borders or speech balloons. Single continuous 16:9 landscape illustration, approximately 1672x941. Preserve the scene's main faces and evidence, no cropping away required content. Original scene: shelter overlooking base street; Samira left studies maps on table, Dalia center points right while holding her slung rifle. Preserve the cyan command laptop left, street, clinic, defensive troops and arriving personnel. No new explosions or shooting; active coordination.",
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/M02-P02-Comms.png",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-352f7180-6431-4281-a06f-48af47c4957f.png",
+      "sha256": "89bbe26fdf9081eecd525db3e8ebbebc6b92ec64f4f587c2d2ecb1de9d042dc3",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "visualReview": "Scene, text-free art, style and named-character identity inspected.",
+      "installedPaths": [
+        "Assets/Game/Art/Narrative/M02EstablishBase/Final/M02-P02-Comms.png"
+      ]
+    },
+    {
+      "id": "M02-P03-Debrief",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M02EstablishBase/Final/M02-P03-Debrief.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B02.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-D03.png"
+      ],
+      "prompt": "Use case: style-transfer and identity-preserve. Edit IMAGE 1, an earlier M2 game comic. Keep its original story scene, camera composition, cast positions, action and architecture. IMAGE 2 is the canonical NEW Dalia Rahim identity and rendering reference (M3-B02); IMAGE 3 is the canonical NEW Samira Haddad identity and rendering reference (M3-D03). Use those exact women and their face proportions throughout, not generic replacements. Dalia: dark tied-back hair, black wraparound sunglasses, compact headset, tan military uniform and tactical vest. Samira: mustard headscarf, warm tan face, dark almond eyes and strong brows, defined nose/lips/jaw, charcoal jacket over muted teal clothing. Restyle the entire original image with M3's refined faceted polygonal illustration, richer but restrained material detail, natural illustrated faces, warm cinematic desert lighting and clear depth. Maintain original daytime story timing; do not mechanically add a setting sun. Do not transplant any M3 composition/props into the original. No captions, lettering, numbers, new logos, borders or speech balloons. Single continuous 16:9 landscape illustration, approximately 1672x941. Preserve the scene's main faces and evidence, no cropping away required content. Original scene: Samira left and Dalia center lean over cyan tactical map table; seated anonymous operator at right, restored clinic and busy base behind, logistics truck and watchtowers. Keep map cyan/orange areas unlabelled. Thoughtful coordination, no celebratory gestures.",
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/M02-P03-Debrief.png",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-2c6e2b5a-a7da-4ba9-a9c4-a681a5cdf610.png",
+      "sha256": "55cc50e800b5115689bed3a56163f7f79b3d01a9393425e3ff84fa497c536cd4",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "visualReview": "Scene, text-free art, style and named-character identity inspected.",
+      "installedPaths": [
+        "Assets/Game/Art/Narrative/M02EstablishBase/Final/M02-P03-Debrief.png"
+      ]
+    },
+    {
+      "id": "FL-P01",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P01.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B02.png"
+      ],
+      "prompt": "Use case: style-transfer. Redraw IMAGE 1 in the preferred newer M3 game comic style shown by the remaining reference images. Image 1 owns scene, composition, cast, props, architecture and story; other images supply rendering and only the named character identities explicitly requested. Refined faceted polygonal illustration, natural illustrated faces, rich but stylized desert material detail, warm light and charcoal shadow, no photorealism, no coarse triangular low-detail faces, no comic outlines. Maintain the original time of day, weather and story mood; do not add a sunset merely because a reference is warm. Preserve camera, placements and scene continuity. No written text, logos, captions, numbers, speech balloons, borders or collage. Single full 16:9 landscape, around 1920x1080. Keep essential faces and props clear. Bustling intact Old Market BEFORE the attack. Preserve original elevated street camera, market stalls/fruit carts, families, delivery vehicles, domed civic buildings and minarets, desert mountains. No smoke, fire, weapons or named-character closeups. Reference M3 rendering only, do not add Dalia or the M3 clinic.",
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P01-16x9.png",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-db290bc8-53f9-41b7-9771-ba8c57f3d972.png",
+      "sha256": "fef3272753df688c3db7b4b088b899b5ed707e7b6ea4f0cbcf89712c3dc95a42",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "visualReview": "Scene, text-free art, style and named-character identity inspected.",
+      "installedPaths": [
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P01.png",
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P01.png"
+      ]
+    },
+    {
+      "id": "FL-P02",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P02.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B02.png"
+      ],
+      "prompt": "Use case: style-transfer. Redraw IMAGE 1 in the preferred newer M3 game comic style shown by the remaining reference images. Image 1 owns scene, composition, cast, props, architecture and story; other images supply rendering and only the named character identities explicitly requested. Refined faceted polygonal illustration, natural illustrated faces, rich but stylized desert material detail, warm light and charcoal shadow, no photorealism, no coarse triangular low-detail faces, no comic outlines. Maintain the original time of day, weather and story mood; do not add a sunset merely because a reference is warm. Preserve camera, placements and scene continuity. No written text, logos, captions, numbers, speech balloons, borders or collage. Single full 16:9 landscape, around 1920x1080. Keep essential faces and props clear. The SAME Old Market viewpoint during coordinated non-graphic attack: smoke columns, damaged power lines, scattered market produce, fleeing families, distant burning vehicle. Preserve street/building/vehicle composition and civilian escape, no gore or graphic casualties. This is early crisis, not a battle victory. Do not add any named M3 character.",
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P02-16x9.png",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-bbc3c919-0c5f-429a-8086-d31732dd0795.png",
+      "sha256": "df400ee2c560d149633dac7e35c389e0010965c732ab8e4ce7aa9b482d1d2d8f",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "visualReview": "Scene, text-free art, style and named-character identity inspected.",
+      "installedPaths": [
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P02.png",
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P02.png"
+      ]
+    },
+    {
+      "id": "FL-P03",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P03.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B02.png"
+      ],
+      "prompt": "Use case: style-transfer. Redraw IMAGE 1 in the preferred newer M3 game comic style shown by the remaining reference images. Image 1 owns scene, composition, cast, props, architecture and story; other images supply rendering and only the named character identities explicitly requested. Refined faceted polygonal illustration, natural illustrated faces, rich but stylized desert material detail, warm light and charcoal shadow, no photorealism, no coarse triangular low-detail faces, no comic outlines. Maintain the original time of day, weather and story mood; do not add a sunset merely because a reference is warm. Preserve camera, placements and scene continuity. No written text, logos, captions, numbers, speech balloons, borders or collage. Single full 16:9 landscape, around 1920x1080. Keep essential faces and props clear. Empty damaged command room, central physical terrain/map table, cracked/offline monitors, small cyan surviving display, rugged radios, hanging cables and broken left window over desert outpost. Preserve composition and darkness; no characters, no hologram, no new attack/aftermath claims.",
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P03-16x9.png",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-11a6bd91-b0f8-44c7-8ae8-a8a0acf72ff2.png",
+      "sha256": "f3a4a60747fa84b080c7be299079e08f38a4087e933fef81b3bc2c9c5ad0ba37",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "visualReview": "Scene, text-free art, style and named-character identity inspected.",
+      "installedPaths": [
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P03.png",
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P03.png"
+      ]
+    },
+    {
+      "id": "FL-P04",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P04.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B02.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-D03.png"
+      ],
+      "prompt": "Use case: style-transfer. Redraw IMAGE 1 in the preferred newer M3 game comic style shown by the remaining reference images. Image 1 owns scene, composition, cast, props, architecture and story; other images supply rendering and only the named character identities explicitly requested. Refined faceted polygonal illustration, natural illustrated faces, rich but stylized desert material detail, warm light and charcoal shadow, no photorealism, no coarse triangular low-detail faces, no comic outlines. Maintain the original time of day, weather and story mood; do not add a sunset merely because a reference is warm. Preserve camera, placements and scene continuity. No written text, logos, captions, numbers, speech balloons, borders or collage. Single full 16:9 landscape, around 1920x1080. Keep essential faces and props clear. Dalia foreground left coordinates rescue, pointing toward the open rear of an armored personnel carrier; soldiers assist shaken convoy survivors out of it at center; mother and child wait by small building right; Samira at right edge reports on handheld radio. Retain full scene and existing non-graphic distant smoke. Use the exact NEW M3 Dalia from image 2 and NEW M3 Samira from image 3 (face proportions, hairstyle/headscarf, outfits).",
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P04-16x9.png",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-88463622-269c-4376-bbc6-17390a9bdae5.png",
+      "sha256": "208b036f54414a7428c3fc9f322659c82a78e3dded763506de3586d9c1cc7190",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "visualReview": "Scene, text-free art, style and named-character identity inspected.",
+      "installedPaths": [
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P04.png",
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P04.png"
+      ]
+    },
+    {
+      "id": "FL-P05",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P05.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B01.png"
+      ],
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P05-16x9.png",
+      "prompt": "Restyle IMAGE 1 to the refined faceted cinematic illustration of IMAGE 2 (new M3). Preserve IMAGE 1's exact story, camera, arrangement, objects, original daytime/darkness and color functions. Image 2 supplies rendering only, do not transplant its characters or props. Rich stylized desert materials, warm light, charcoal shadow, angular geometry with refined modelling; no photorealism or coarse low-detail triangles. No text, numbers, captions, logos, borders or speech balloons. Full single landscape 16:9 scene, preferably 1920x1080. Close command console with two cracked offline monitors, gloved hands at bottom and a floating cyan segmented ring over the lower display. No human hologram or face: the ring is the early ARIA interface.",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-68515de3-2659-4cc0-9598-c300613d3fcd.png",
+      "sha256": "484f251481ca72eeda6dbf76dc4596f1eee2b2167bc2a287c733d468579268c3",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "visualReview": "Scene, text-free art, style and named-character identity inspected.",
+      "installedPaths": [
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P05.png",
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P05.png"
+      ]
+    },
+    {
+      "id": "FL-P06",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P06.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B01.png"
+      ],
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P06-16x9.png",
+      "prompt": "Restyle IMAGE 1 to the refined faceted cinematic illustration of IMAGE 2 (new M3). Preserve IMAGE 1's exact story, camera, arrangement, objects, original daytime/darkness and color functions. Image 2 supplies rendering only, do not transplant its characters or props. Rich stylized desert materials, warm light, charcoal shadow, angular geometry with refined modelling; no photorealism or coarse low-detail triangles. No text, numbers, captions, logos, borders or speech balloons. Full single landscape 16:9 scene, preferably 1920x1080. Anonymous faceless commander seen from behind left wearing headset, studying cyan network/ring display on rugged command console. Keep head turned away, broken monitor and window. No visible commander face and no human ARIA hologram.",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-2089e35d-3425-4d78-bc21-87bc480f9188.png",
+      "sha256": "3d67c1f5ab46cbbe94fcbe322cd15d78f8bcce4a9f02e57b474e17b2d64ef79f",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "visualReview": "Scene, text-free art, style and named-character identity inspected.",
+      "installedPaths": [
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P06.png",
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P06.png"
+      ]
+    },
+    {
+      "id": "FL-P07",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P07.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B01.png"
+      ],
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P07-16x9.png",
+      "prompt": "Restyle IMAGE 1 to the refined faceted cinematic illustration of IMAGE 2 (new M3). Preserve IMAGE 1's exact story, camera, arrangement, objects, original daytime/darkness and color functions. Image 2 supplies rendering only, do not transplant its characters or props. Rich stylized desert materials, warm light, charcoal shadow, angular geometry with refined modelling; no photorealism or coarse low-detail triangles. No text, numbers, captions, logos, borders or speech balloons. Full single landscape 16:9 scene, preferably 1920x1080. Overhead physical desert district terrain model; cyan route crosses from lower-left outpost through the small city grid. Preserve exact spatial arrangement and terrain, no people and no written map labels.",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-d28420fa-2325-409f-a96a-ce205df5c29d.png",
+      "sha256": "4622b73b26d204df186b7099f727b5c21136101c2cb13d38c8a016f3dfb85561",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "visualReview": "Scene, text-free art, style and named-character identity inspected.",
+      "installedPaths": [
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P07.png",
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P07.png"
+      ]
+    },
+    {
+      "id": "FL-P08",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P08.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B01.png"
+      ],
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P08-16x9.png",
+      "prompt": "Restyle IMAGE 1 to the refined faceted cinematic illustration of IMAGE 2 (new M3). Preserve IMAGE 1's exact story, camera, arrangement, objects, original daytime/darkness and color functions. Image 2 supplies rendering only, do not transplant its characters or props. Rich stylized desert materials, warm light, charcoal shadow, angular geometry with refined modelling; no photorealism or coarse low-detail triangles. No text, numbers, captions, logos, borders or speech balloons. Full single landscape 16:9 scene, preferably 1920x1080. Empty damaged command room, central physical terrain map table, cracked/offline monitors, surviving cyan screen, rugged radios, hanging cables and broken window at left. Preserve empty foreground UI-safe staging and dark mood. No people or hologram.",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-86835c85-e70e-4e27-a2ef-00aa56ad9156.png",
+      "sha256": "a6154cccd74a5ad240e81e884309614d457165ffff7db396b612612b8769d8bf",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "visualReview": "Scene, text-free art, style and named-character identity inspected.",
+      "installedPaths": [
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P08.png",
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P08.png"
+      ]
+    },
+    {
+      "id": "FL-P09",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P09.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B01.png"
+      ],
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P09-16x9.png",
+      "prompt": "Restyle IMAGE 1 to the refined faceted cinematic illustration of IMAGE 2 (new M3). Preserve IMAGE 1's exact story, camera, arrangement, objects, original daytime/darkness and color functions. Image 2 supplies rendering only, do not transplant its characters or props. Rich stylized desert materials, warm light, charcoal shadow, angular geometry with refined modelling; no photorealism or coarse low-detail triangles. No text, numbers, captions, logos, borders or speech balloons. Full single landscape 16:9 scene, preferably 1920x1080. Command console with cyan segmented ring in foreground, broad window looking toward road and desert outpost. Keep original visual staging, no people and no human ARIA hologram.",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-09978976-4627-4e69-9a4d-195d85740fe2.png",
+      "sha256": "ffa35823c548059a4044ad3ba757cdf14786692c9b38b77c1f852bd34142e6df",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "visualReview": "Scene, text-free art, style and named-character identity inspected.",
+      "installedPaths": [
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P09.png",
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P09.png"
+      ]
+    },
+    {
+      "id": "FL-P10",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P10.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B02.png"
+      ],
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P10-16x9.png",
+      "prompt": "Restyle IMAGE 1 in the new M3 refined faceted cinematic illustration of remaining references. Image 1 controls exact original scene, camera, story, cast placements, objects and geometry. Remaining references control rendering and explicitly named character identity only. Refined natural illustrated faces and richer stylized material detail, warm desert light and charcoal shadows, elegant polygonal geometry; no photorealism or comic ink outlines. Maintain original time of day and mood. No text, labels, numbers, logos, captions, border or speech balloons. Single continuous full 16:9 landscape, around 1920x1080, keep important content visible. Overhead strategic network of desert towns. Keep cyan surviving connected route across lower/right areas, orange damaged links and fires/smoke at distant towns. Preserve network geography, not a new map; no labels or people.",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-1daa9a39-d73b-4544-add5-6b299bce00f4.png",
+      "sha256": "a98559e44bdf17d20d10f28464195152031854b694a41d41353bc0b6b567f5dc",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "visualReview": "Scene, text-free art, style and named-character identity inspected.",
+      "installedPaths": [
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P10.png",
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P10.png"
+      ]
+    },
+    {
+      "id": "FL-P11",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P11.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B02.png"
+      ],
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P11-safe-16x9.png",
+      "prompt": "Restyle IMAGE 1 in the new M3 refined faceted cinematic illustration of remaining references. Image 1 controls exact original scene, camera, story, cast placements, objects and geometry. Remaining references control rendering and explicitly named character identity only. Refined natural illustrated faces and richer stylized material detail, warm desert light and charcoal shadows, elegant polygonal geometry; no photorealism or comic ink outlines. Maintain original time of day and mood. No text, labels, numbers, logos, captions, border or speech balloons. Single continuous full 16:9 landscape, around 1920x1080, keep important content visible. Dalia at left foreground in three-quarter view, two rifle soldiers behind center, supply camp and watchtowers right, small transport plane distant sky. Dalia must be the exact same woman from IMAGE 2: same face proportions, black tied hair, sunglasses and compact gray headset, tan uniform/tactical vest. Keep her original stance, hand near holstered pistol, calm firm expression.",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-499735b5-7442-453e-a4f0-8f03892f57f0.png",
+      "sha256": "12ed7d1c1c4b1a0e86a11e0cc5a017774899eaa7b23c41044d7f489002de6a8a",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "visualReview": "Identity and scene preserved; foreground Dalia reframed below the 20:9 story transport overlay.",
+      "installedPaths": [
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P11.png",
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P11.png"
+      ],
+      "supersededCandidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P11-16x9.png",
+      "layoutCorrection": {
+        "prompt": "Use case: identity-preserve. Targeted composition edit of the supplied finished M3-style game comic. Keep Dalia's exact face, sunglasses, dark bun, gray headset, outfit, expression, pose and proportions. Scale the ENTIRE foreground woman down uniformly to roughly 76 percent of her current size, anchoring her bottom to the bottom edge. Her head should start around y=230 and sunglasses around y=320 on the 1672x941 canvas; full face must be below the top quarter. She stays in the left foreground with hand at her holster. Preserve the two center soldiers, camp, watchtowers, aircraft, sunlight and faceted painted style. Fill newly revealed background naturally. No vertical stretching, no added people, no text or UI. Same landscape canvas.",
+        "refs": [
+          "/Users/farhad/Projects/WarlineCapture/Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P11-16x9.png"
+        ],
+        "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-3e399d56-8253-494f-b69c-68f4376eaf70.png",
+        "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P11-safe-16x9.png"
+      }
+    },
+    {
+      "id": "FL-P13",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P13.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B02.png"
+      ],
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P13-16x9.png",
+      "prompt": "Restyle IMAGE 1 in the new M3 refined faceted cinematic illustration of remaining references. Image 1 controls exact original scene, camera, story, cast placements, objects and geometry. Remaining references control rendering and explicitly named character identity only. Refined natural illustrated faces and richer stylized material detail, warm desert light and charcoal shadows, elegant polygonal geometry; no photorealism or comic ink outlines. Maintain original time of day and mood. No text, labels, numbers, logos, captions, border or speech balloons. Single continuous full 16:9 landscape, around 1920x1080, keep important content visible. Close overhead tactical terrain map with large cyan segmented ring around central outpost, solid cyan node routes left and dashed amber alternative network right. Preserve all routes, road and original node positions. No characters and no ARIA human hologram.",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-b96ba379-88af-4db9-b5ba-a2e4e45d7c85.png",
+      "sha256": "d932ceb34c8261b60fac3507da328d823fc2e7a3f0a2cf42b92677fbc80d0324",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "visualReview": "Scene, text-free art, style and named-character identity inspected.",
+      "installedPaths": [
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P13.png",
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P13.png"
+      ]
+    },
+    {
+      "id": "FL-P14",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P14.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B02.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-D03.png"
+      ],
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P14-safe-16x9.png",
+      "prompt": "Restyle IMAGE 1 in the new M3 refined faceted cinematic illustration of remaining references. Image 1 controls exact original scene, camera, story, cast placements, objects and geometry. Remaining references control rendering and explicitly named character identity only. Refined natural illustrated faces and richer stylized material detail, warm desert light and charcoal shadows, elegant polygonal geometry; no photorealism or comic ink outlines. Maintain original time of day and mood. No text, labels, numbers, logos, captions, border or speech balloons. Single continuous full 16:9 landscape, around 1920x1080, keep important content visible. Commander from behind at center leans over terrain table in command room. Large physical communications screen on left shows Samira with tablet and civilians; right screen shows Dalia holding rifle. Cyan segmented ring centered above table. Match Samira exactly to IMAGE 3 and Dalia exactly to IMAGE 2. Keep original two physical screen composition and faceless commander; no ARIA human face.",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-fa3b8785-e5f9-4f43-ba93-2675eaaa4253.png",
+      "sha256": "10e0dfeb59ae02aaf46c50c261c274998a3fd4a4616b191056b88be67babef04",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "visualReview": "Scene, text-free art, style and named-character identity inspected.",
+      "installedPaths": [
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P14.png",
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P14.png"
+      ],
+      "supersededCandidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P14-16x9.png",
+      "layoutCorrection": {
+        "prompt": "Targeted layout edit to this finished game comic; preserve all identities and art style exactly. The UI overlays the TOP QUARTER of the image toward the right. Keep the entire scene, commander, table, cyan ring and left Samira screen unchanged. Move the RIGHT physical video monitor DOWN by about 150 pixels on this 1672x941 canvas, retaining its same dimensions and exact Dalia contents. Its top edge should now be around y=190, so Dalia's full face including sunglasses is BELOW y=260 and above y=490. Maintain her exact face, bun, gray headset, uniform and expression, her background and the screen frame. Show the newly exposed dark command-room wall above the repositioned right monitor. Do not crop or alter Dalia's face. No text, UI, labels or added people. Output same 1672x941 landscape.",
+        "refs": [
+          "/Users/farhad/Projects/WarlineCapture/Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P14-16x9.png"
+        ],
+        "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-77e3fd7d-0299-442b-8239-e4b0a744828a.png",
+        "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P14-safe-16x9.png"
+      }
+    },
+    {
+      "id": "FL-P15",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P15.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B02.png"
+      ],
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P15-16x9.png",
+      "prompt": "Restyle IMAGE 1 in the new M3 refined faceted cinematic illustration of remaining references. Image 1 controls exact original scene, camera, story, cast placements, objects and geometry. Remaining references control rendering and explicitly named character identity only. Refined natural illustrated faces and richer stylized material detail, warm desert light and charcoal shadows, elegant polygonal geometry; no photorealism or comic ink outlines. Maintain original time of day and mood. No text, labels, numbers, logos, captions, border or speech balloons. Single continuous full 16:9 landscape, around 1920x1080, keep important content visible. Preserve the three Ash Line fighters walking down original road: center woman in red jacket with ponytail carrying rifle, left man green jacket and face scarf carrying rifle, right short black-haired woman olive coat holding pistol. These are distinct characters, NOT Dalia or Samira. Refine their original faces and material detail consistently with M3. No fighting or gore.",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-48ef389e-0561-407a-8ecd-aaaca56d131f.png",
+      "sha256": "c7e0082877bda07931bbf31fc690602af7d8b62cd5b90db3570ebb2ff7552358",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "visualReview": "Scene, text-free art, style and named-character identity inspected.",
+      "installedPaths": [
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P15.png",
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P15.png"
+      ]
+    },
+    {
+      "id": "FL-P16",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P16.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B02.png"
+      ],
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P16-16x9.png",
+      "prompt": "Restyle IMAGE 1 in the new M3 refined faceted cinematic illustration of remaining references. Image 1 controls exact original scene, camera, story, cast placements, objects and geometry. Remaining references control rendering and explicitly named character identity only. Refined natural illustrated faces and richer stylized material detail, warm desert light and charcoal shadows, elegant polygonal geometry; no photorealism or comic ink outlines. Maintain original time of day and mood. No text, labels, numbers, logos, captions, border or speech balloons. Single continuous full 16:9 landscape, around 1920x1080, keep important content visible. Elevated view of three Ash Line fighters entering from lower left toward civilian families beside market shelter center right, municipal engineers and pickup behind low barrier lower right. Preserve tension and original distance, road, supply tents, people; no new shooting or harm. Do not add M3 named characters.",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-520572b2-b303-4cad-b6de-0b885aa67e34.png",
+      "sha256": "9adbb9d61e719bb393e6c2767c3a0f4848ccf1dc6216dcac270c9d4f1c5b5304",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "visualReview": "Scene, text-free art, style and named-character identity inspected.",
+      "installedPaths": [
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P16.png",
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P16.png"
+      ]
+    },
+    {
+      "id": "FL-P17",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P17.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B02.png"
+      ],
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P17-16x9.png",
+      "prompt": "Restyle IMAGE 1 in the new M3 refined faceted cinematic illustration of remaining references. Image 1 controls exact original scene, camera, story, cast placements, objects and geometry. Remaining references control rendering and explicitly named character identity only. Refined natural illustrated faces and richer stylized material detail, warm desert light and charcoal shadows, elegant polygonal geometry; no photorealism or comic ink outlines. Maintain original time of day and mood. No text, labels, numbers, logos, captions, border or speech balloons. Single continuous full 16:9 landscape, around 1920x1080, keep important content visible. Dalia foreground left at concrete barrier, holding rifle across torso with rightward open-hand briefing gesture. Base logistics personnel, utility vehicle, supply tent and watchtowers behind. Exact M3 Dalia from IMAGE 2, same face, tied hair, black sunglasses, compact gray headset and tan tactical uniform.",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-ff52a8e3-323a-4c07-9562-c60db9695a39.png",
+      "sha256": "b79d5e32073b52c58ee88c349b3f13b2e58ac3a5d39a29449e2ed30f165aff51",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "visualReview": "Scene, text-free art, style and named-character identity inspected.",
+      "installedPaths": [
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P17.png",
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P17.png"
+      ]
+    },
+    {
+      "id": "FL-P18",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P18.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B02.png"
+      ],
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P18-16x9.png",
+      "prompt": "Restyle IMAGE 1 in the new M3 refined faceted cinematic illustration of remaining references. Image 1 controls exact original scene, camera, story, cast placements, objects and geometry. Remaining references control rendering and explicitly named character identity only. Refined natural illustrated faces and richer stylized material detail, warm desert light and charcoal shadows, elegant polygonal geometry; no photorealism or comic ink outlines. Maintain original time of day and mood. No text, labels, numbers, logos, captions, border or speech balloons. Single continuous full 16:9 landscape, around 1920x1080, keep important content visible. Over-the-shoulder view of Dalia lower left and faceless commander lower right behind concrete barrier, watching three distant Ash Line fighters approaching along empty road. Keep road and market stalls, no battle or shooting. Dalia's tied dark hair and compact gray headset match IMAGE 2; do not reveal commander's face.",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-e4bc80cc-d720-4b5a-b9e2-fbd869071ff9.png",
+      "sha256": "535c8dc307cbfcbd820b56cf5d1fb951aa67d0bc7dd2adeed6d566b3324376e2",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "visualReview": "Scene, text-free art, style and named-character identity inspected.",
+      "installedPaths": [
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P18.png",
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P18.png"
+      ]
+    },
+    {
+      "id": "FL-P19",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P19.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B02.png"
+      ],
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P19-16x9.png",
+      "prompt": "Restyle IMAGE 1 in the new M3 refined faceted cinematic illustration of remaining references. Image 1 controls exact original scene, camera, story, cast placements, objects and geometry. Remaining references control rendering and explicitly named character identity only. Refined natural illustrated faces and richer stylized material detail, warm desert light and charcoal shadows, elegant polygonal geometry; no photorealism or comic ink outlines. Maintain original time of day and mood. No text, labels, numbers, logos, captions, border or speech balloons. Single continuous full 16:9 landscape, around 1920x1080, keep important content visible. Secured corridor aftermath with civilians walking safely, municipal workers resuming repairs and soldiers patrolling, supplies and desert settlement. Keep original activity and composition, calm responsible recovery with no celebration, no new major characters or damage.",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-2657f830-9900-470c-81a6-c695bab42650.png",
+      "sha256": "4d09bf757134414dab77ac5410c371237b0d383014c0deb2225ac3962f1035eb",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "visualReview": "Scene, text-free art, style and named-character identity inspected.",
+      "installedPaths": [
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P19.png",
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P19.png"
+      ]
+    },
+    {
+      "id": "FL-P20",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P20.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B02.png"
+      ],
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P20-16x9.png",
+      "prompt": "Restyle IMAGE 1 in the new M3 refined faceted cinematic illustration of remaining references. Image 1 controls exact original scene, camera, story, cast placements, objects and geometry. Remaining references control rendering and explicitly named character identity only. Refined natural illustrated faces and richer stylized material detail, warm desert light and charcoal shadows, elegant polygonal geometry; no photorealism or comic ink outlines. Maintain original time of day and mood. No text, labels, numbers, logos, captions, border or speech balloons. Single continuous full 16:9 landscape, around 1920x1080, keep important content visible. Close physical folded terrain paper map upper left with single amber segmented target ring and branching road strokes, rugged handheld radio on right, dark empty desk across lower area. Preserve evidence layout and dark quiet mood, no text or human figures.",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-262f9df6-4687-4b65-888e-d40aaff452d2.png",
+      "sha256": "ab9dd4578b494698abc95e2166f363d83863f459f1061dbd3be909bb85f2b83d",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "visualReview": "Scene, text-free art, style and named-character identity inspected.",
+      "installedPaths": [
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P20.png",
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P20.png"
+      ]
+    },
+    {
+      "id": "FL-P21",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P21.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B02.png"
+      ],
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P21-16x9.png",
+      "prompt": "Restyle IMAGE 1 in the new M3 refined faceted cinematic illustration of remaining references. Image 1 controls exact original scene, camera, story, cast placements, objects and geometry. Remaining references control rendering and explicitly named character identity only. Refined natural illustrated faces and richer stylized material detail, warm desert light and charcoal shadows, elegant polygonal geometry; no photorealism or comic ink outlines. Maintain original time of day and mood. No text, labels, numbers, logos, captions, border or speech balloons. Single continuous full 16:9 landscape, around 1920x1080, keep important content visible. Dalia at left seen in profile/from behind in command room, pointing over physical terrain table toward large window. Outside three soldiers walk away along curving road toward isolated command building and towers. Exact M3 Dalia IMAGE 2 face/profile, tied dark hair, sunglasses and compact gray headset. Preserve scene/action and daylight.",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-3b98f26f-bc76-4743-9963-354646900ded.png",
+      "sha256": "e5033e4efe17f7b364c496fa8bbb6c9fb6d786fcdf026105a156c8f31ae06f62",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "visualReview": "Scene, text-free art, style and named-character identity inspected.",
+      "installedPaths": [
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P21.png",
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P21.png"
+      ]
+    },
+    {
+      "id": "FL-P22",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P22.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B02.png"
+      ],
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/FL-P22-16x9.png",
+      "prompt": "Restyle IMAGE 1 in the new M3 refined faceted cinematic illustration of remaining references. Image 1 controls exact original scene, camera, story, cast placements, objects and geometry. Remaining references control rendering and explicitly named character identity only. Refined natural illustrated faces and richer stylized material detail, warm desert light and charcoal shadows, elegant polygonal geometry; no photorealism or comic ink outlines. Maintain original time of day and mood. No text, labels, numbers, logos, captions, border or speech balloons. Single continuous full 16:9 landscape, around 1920x1080, keep important content visible. Restored command room, unbroken active twin console displays with cyan segmented rings and small floating cyan ring, terrain table foreground, sunset at left window, radios and supply shelves. Keep original calm restored-state scene; no people or human hologram.",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-7e40b1b1-2588-4b09-b90e-d00c76aed7e8.png",
+      "sha256": "8ea4832bff5ea998cdd2449fd6d04ea11f4a29a33ccf7de1f14b43417f9b0041",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "visualReview": "Scene, text-free art, style and named-character identity inspected.",
+      "installedPaths": [
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P22.png",
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/20x9/FL-P22.png"
+      ]
+    },
+    {
+      "id": "portrait_samira",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_samira.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-D03.png"
+      ],
+      "prompt": "Edit IMAGE 1 portrait to depict the exact canonical new M3 character from IMAGE 2. Preserve portrait framing, head direction and scale, dark background and border if present in image 1. Match image 2 refined polygonal illustrated rendering and character identity rather than retaining old face. No scenery transplanted from image 2. Samira Haddad, the exact adult woman at center of image 2: warm tan skin, same almond eyes, eyebrows, nose, lips and jaw, mustard scarf, charcoal jacket over muted teal clothing. Calm thoughtful confidence. No text, logo, numbers or extra figures. Square 1:1 portrait, preserve existing thin decorative gold edge and bust composition, head fully inside frame.",
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/portrait_samira.png",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-92252a40-c6cd-43b2-a2b1-7073fa6bffa9.png",
+      "sha256": "079573b84499ab70f35eae61ed46a1e2cf7f2c6ca2fd4232f8cec8a07e40483b",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "visualReview": "Scene, text-free art, style and named-character identity inspected.",
+      "installedPaths": [
+        "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_samira.png"
+      ]
+    },
+    {
+      "id": "portrait_dalia",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_dalia.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B02.png"
+      ],
+      "prompt": "Edit IMAGE 1 portrait to depict the exact canonical new M3 character from IMAGE 2. Preserve portrait framing, head direction and scale, dark background and border if present in image 1. Match image 2 refined polygonal illustrated rendering and character identity rather than retaining old face. No scenery transplanted from image 2. Dalia Rahim, the exact adult woman in image 2: same facial proportions, dark tied-back bun with loose wisps, black sunglasses, compact gray headset with microphone, tan tactical uniform and vest. Calm firm expression. No text, logo, numbers or extra figures. Square 1:1 portrait, preserve existing thin decorative gold edge and bust composition, head fully inside frame.",
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/portrait_dalia.png",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-673e9808-0459-4186-b7ce-3db1ea41cfe9.png",
+      "sha256": "6de0ed27125f9e3fa138a8fba9b1ff1fc80277d2f41a9847ee0a2cfe22e3a612",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "visualReview": "Scene, text-free art, style and named-character identity inspected.",
+      "installedPaths": [
+        "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_dalia.png"
+      ]
+    },
+    {
+      "id": "portrait_aria_v3",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_aria_v3.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B01.png"
+      ],
+      "prompt": "Edit IMAGE 1 portrait to depict the exact canonical new M3 character from IMAGE 2. Preserve portrait framing, head direction and scale, dark background and border if present in image 1. Match image 2 refined polygonal illustrated rendering and character identity rather than retaining old face. No scenery transplanted from image 2. ARIA, the exact cyan holographic woman in image 2: same refined faceted face, luminous eyes, short side-swept angular hair and translucent cyan geometry. Restrained glow, clean readable face. No human skin tones. No text, logo, numbers or extra figures. Portrait 2:3 composition, full head and upper torso, black background, preserve original framing.",
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/portrait_aria_v3.png",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-ea4aa13a-a807-4d80-8958-3915eb5577e7.png",
+      "sha256": "aee7e9e63f03451754d8a1b5c0c56ff2324998f51ca1ca6f5dae3c32b5d45dbb",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "visualReview": "Scene, text-free art, style and named-character identity inspected.",
+      "installedPaths": [
+        "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_aria_v3.png"
+      ]
+    }
+  ],
+  "widePresentation": "Both FirstLaunch aspect paths retain their existing GUIDs and use identical source pixels. Existing NarrativeSequenceView AspectRatioFitter.EnvelopeParent performs viewport cropping at runtime, as already used by M2. No image resizing or raster cropping was performed."
+}

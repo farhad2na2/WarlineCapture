@@ -28,6 +28,9 @@ namespace Game.UI.Runtime
         private string runtimeSource;
         private string lastApplied;
         private bool hasRuntimeSource;
+        private bool specializedOwner;
+        private float presentationScale=1f;
+        private float minimumPresentationSize,maximumPresentationSize;
 
         public string LocalizationKey => localizationKey;
         public string EnglishFallback => englishFallback;
@@ -62,7 +65,7 @@ namespace Game.UI.Runtime
 
         private void LateUpdate()
         {
-            if (!observeRuntimeSourceChanges || target == null)
+            if (!observeRuntimeSourceChanges || target == null || specializedOwner)
                 return;
 
             string current = ReadAuthoredText();
@@ -88,7 +91,7 @@ namespace Game.UI.Runtime
         public void ApplyLocalization()
         {
             CapturePresentationDefaults();
-            if (target == null)
+            if (target == null || specializedOwner)
                 return;
 
             string source = hasRuntimeSource
@@ -106,7 +109,7 @@ namespace Game.UI.Runtime
             }
 
             bool rightToLeft = GameLocalization.IsRightToLeft;
-            bool containsRightToLeftText = rightToLeft && TextUtils.IsRTLInput(localized);
+            bool containsRightToLeftText = rightToLeft && ContainsArabicScript(localized);
             TMP_FontAsset localeFont = GameLocalization.CurrentFontAsset as TMP_FontAsset;
             target.font = containsRightToLeftText && localeFont != null ? localeFont : sourceFont;
             target.alignment = rightToLeft ? Mirror(sourceAlignment) : sourceAlignment;
@@ -115,7 +118,7 @@ namespace Game.UI.Runtime
             if (target is RTLTextMeshPro rtlText)
             {
                 rtlText.Farsi = containsRightToLeftText;
-                rtlText.PreserveNumbers = true;
+                rtlText.PreserveNumbers = !ContainsEasternDigits(localized);
                 rtlText.ForceFix = containsRightToLeftText;
                 rtlText.text = localized;
                 lastApplied = rtlText.OriginalText;
@@ -134,6 +137,7 @@ namespace Game.UI.Runtime
             target ??= GetComponent<TMP_Text>();
             if (target == null || hasPresentationDefaults)
                 return;
+            specializedOwner=target.GetComponentInParent<AriaTutorialBriefingView>(true)?.OwnsLocalizedText(target)==true;
 
             sourceFont = target.font;
             sourceAlignment = target.alignment;
@@ -146,14 +150,37 @@ namespace Game.UI.Runtime
                 englishFallback = ReadAuthoredText();
         }
 
+        public void SetLocalizedValue(string value)
+        {
+            string source = value ?? string.Empty;
+            if (hasRuntimeSource && runtimeSource == source &&
+                string.Equals(ReadAuthoredText(), lastApplied, System.StringComparison.Ordinal))
+                return; // LocaleChanged owns reapplication when the language changes.
+            runtimeSource=source;
+            hasRuntimeSource=true;
+            ApplyLocalization();
+        }
+        public void SetPresentationScale(float scale)
+        {
+            presentationScale=Mathf.Clamp(scale,1f,1.5f);
+            ApplyLocalization();
+        }
+
         private void ApplyLocaleSizing(bool containsRightToLeftText)
         {
+            if(maximumPresentationSize>0)
+            {
+                target.enableAutoSizing=true;
+                target.fontSizeMin=minimumPresentationSize*presentationScale;
+                target.fontSizeMax=maximumPresentationSize*presentationScale;
+                return;
+            }
             if (!containsRightToLeftText)
             {
                 target.enableAutoSizing = sourceAutoSizing;
-                target.fontSize = sourceFontSize;
-                target.fontSizeMin = sourceFontSizeMin;
-                target.fontSizeMax = sourceFontSizeMax;
+                target.fontSize = sourceFontSize*presentationScale;
+                target.fontSizeMin = sourceFontSizeMin*presentationScale;
+                target.fontSizeMax = sourceFontSizeMax*presentationScale;
                 return;
             }
 
@@ -163,13 +190,13 @@ namespace Game.UI.Runtime
             target.enableAutoSizing = true;
             if (sourceAutoSizing)
             {
-                target.fontSizeMin = sourceFontSizeMin;
-                target.fontSizeMax = sourceFontSizeMax;
+                target.fontSizeMin = sourceFontSizeMin*presentationScale;
+                target.fontSizeMax = sourceFontSizeMax*presentationScale;
                 return;
             }
 
-            target.fontSizeMax = sourceFontSize;
-            target.fontSizeMin = Mathf.Min(sourceFontSize, Mathf.Max(8f, sourceFontSize * 0.55f));
+            target.fontSizeMax = sourceFontSize*presentationScale;
+            target.fontSizeMin = Mathf.Min(sourceFontSize, Mathf.Max(8f, sourceFontSize * 0.55f))*presentationScale;
         }
 
         private string ReadAuthoredText()
@@ -186,13 +213,29 @@ namespace Game.UI.Runtime
         /// </summary>
         public static string ShapeForRendering(string value)
         {
-            if (string.IsNullOrEmpty(value) || !TextUtils.IsRTLInput(value))
+            if (string.IsNullOrEmpty(value) || !ContainsArabicScript(value))
                 return value ?? string.Empty;
 
             FastStringBuilder output = new(Mathf.Max(RTLSupport.DefaultBufferSize, value.Length * 4));
-            RTLSupport.FixRTL(value, output, farsi: true, fixTextTags: true, preserveNumbers: true);
+            RTLSupport.FixRTL(value, output, farsi: true, fixTextTags: true, preserveNumbers: !ContainsEasternDigits(value));
             output.Reverse();
             return output.ToString();
+        }
+        public void SetFontBounds(float minimum,float maximum)
+        {minimumPresentationSize=Mathf.Max(8,minimum); maximumPresentationSize=Mathf.Max(minimumPresentationSize,maximum); ApplyLocalization();}
+        private static bool ContainsArabicScript(string value)
+        {
+            if(value==null) return false;
+            foreach(char c in value) if(c is >= '\u0600' and <= '\u06ff' or >= '\u0750' and <= '\u077f' or >= '\u08a0' and <= '\u08ff' or >= '\ufb50' and <= '\ufdff' or >= '\ufe70' and <= '\ufeff') return true;
+            return false;
+        }
+
+        private static bool ContainsEasternDigits(string value)
+        {
+            // RTLTMPro's preserveNumbers mode recognizes only ASCII digits. Native
+            // Persian digits require its localized number mode to retain their order.
+            foreach(char c in value) if(c is >= '\u06f0' and <= '\u06f9' or >= '\u0660' and <= '\u0669') return true;
+            return false;
         }
 
         private static TextAlignmentOptions Mirror(TextAlignmentOptions alignment)

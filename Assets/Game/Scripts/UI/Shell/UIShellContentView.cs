@@ -7,7 +7,7 @@ using Game.UI.Contracts;
 namespace Game.UI.Runtime
 {
     [DisallowMultipleComponent]
-    public sealed class UIShellContentView : MonoBehaviour
+    public sealed partial class UIShellContentView : MonoBehaviour
     {
         [SerializeField] private UIShellView shellView;
         [SerializeField] private GameObject loadingContentPrefab;
@@ -28,8 +28,6 @@ namespace Game.UI.Runtime
         [SerializeField] private GameObject matchHudContentPrefab;
         [SerializeField] private GameObject buildDrawerPopupPrefab;
         [SerializeField] private GameObject fullMapPopupPrefab;
-        [SerializeField] private GameObject pauseMenuPopupPrefab;
-        [SerializeField] private GameObject settingsPopupPrefab;
         [SerializeField] private GameObject resourceExchangePopupPrefab;
         [SerializeField] private GameObject ariaCommandAssistantPopupPrefab;
         [SerializeField] private GameObject buildPlacementConfirmationBarPrefab;
@@ -60,9 +58,6 @@ namespace Game.UI.Runtime
         private UnityEngine.Events.UnityAction _buildDrawerPopupCloseButtonListener;
         private GameObject _buildDrawerPopupInstance;
         private GameObject _fullMapPopupInstance;
-        private GameObject _pauseMenuPopupInstance;
-        private GameObject _settingsPopupInstance;
-        private SettingsPopupView _settingsPopupView;
         private MatchHudFullMapPopupView _fullMapPopupView;
         private int _contentVersion;
 
@@ -179,6 +174,8 @@ namespace Game.UI.Runtime
                             CloseResourceExchangePopup(playPopupMotion: false);
                         else if (commands[i].PopupKind == UiShellPopupKind.Pause)
                             ClosePauseMenuPopup();
+                        else if (commands[i].PopupKind == UiShellPopupKind.ThreatAlert) CloseThreatAlertPopup();
+                        else if (commands[i].PopupKind == UiShellPopupKind.MissionFieldGuide) CloseMissionFieldGuide();
                         break;
                 }
             }
@@ -370,141 +367,6 @@ namespace Game.UI.Runtime
             ClearRegion(UIShellRegionId.MiddleRegion);
         }
 
-        private void BindMatchHudSelectionPanel(MatchHudSelectionPanelView view)
-        {
-            view?.HideSelection();
-            _mainMenuPlayUi?.BindMatchHudSelectionPanel(view);
-            _bindMatchHudSelectionPanel?.Invoke(view);
-        }
-
-        private void BindMatchHudFooter(MatchHudFooterContentView footer)
-        {
-            _matchHudCommandControlsView = footer != null ? footer.CommandControls : null;
-            CommandWheelPanelView commandWheel = _matchHudCommandControlsView != null
-                ? _matchHudCommandControlsView.CommandWheelPanel
-                : null;
-            MatchHudHeaderReferenceUiSystemHelper headerReferences = _matchHudHeaderContent != null
-                ? MatchHudHeaderReferenceUiSystemHelper.Create(_matchHudHeaderContent.transform)
-                : null;
-            commandWheel?.BindRuntimeSectionReferences(
-                _matchHudSelectionPanelView != null ? _matchHudSelectionPanelView.CommandWheelOpenButton : null,
-                headerReferences?.ThreatJumpPanel != null ? headerReferences.ThreatJumpPanel.gameObject : null);
-            if (footer != null && footer.RuntimeFeedback != null)
-                footer.RuntimeFeedback.BindCurrentOrderBanner(_matchHudCurrentOrderBannerView);
-            BindMatchHudCommandControls(_matchHudCommandControlsView);
-            BindMatchHudRuntimeFeedback(footer != null ? footer.RuntimeFeedback : null);
-            BindMatchHudMinimap(footer != null ? footer.Minimap : null);
-            BindMatchHudSquadTray(footer != null ? footer.SquadTray : null);
-        }
-
-        private void BindMatchHudRightQuickRail(MatchHudRightQuickRailView view)
-        {
-            UnbindRightQuickRailBuildButton();
-            TryBindMatchHudRightQuickRailView(view);
-        }
-
-        private void UnbindRightQuickRailBuildButton()
-        {
-            _rightQuickRailView?.UnbindBuildCommand();
-            _mainMenuPlayUi?.BindMatchHudRightQuickRail(null);
-            _rightQuickRailView = null;
-            _rightQuickRailBuildButton = null;
-        }
-
-        private void OpenBuildDrawerFromRightQuickRail()
-        {
-            _selectionUiCommandSystem?.CaptureUiClickSequence();
-            if (_buildDrawerPopupInstance != null)
-            {
-                BattleHudRuntimeFeedbackUiSystemHelper.ApplyStickyCommandMode(ResolveMatchHudRuntimeFeedback(), TacticalCommandMode.Build, _gameTextResolver);
-                return;
-            }
-
-            GameObject popup = InstallBuildDrawerPopup();
-            if (popup == null)
-            {
-                BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(ResolveMatchHudRuntimeFeedback(), TacticalCommandResult.Rejected(
-                    TacticalCommandReasonCode.BuildUnavailable,
-                    _gameTextResolver.Get("build.feedback.drawer_not_ready", "Build drawer is not ready.")), _gameTextResolver);
-                return;
-            }
-
-            BattleHudRuntimeFeedbackUiSystemHelper.ApplyStickyCommandMode(ResolveMatchHudRuntimeFeedback(), TacticalCommandMode.Build, _gameTextResolver);
-        }
-
-        private void BindBuildPlacementConfirmationBarInRegion()
-        {
-            RectTransform contentRoot = shellView != null ? shellView.transform as RectTransform : null;
-            if (contentRoot == null)
-                return;
-
-            BindBuildPlacementConfirmationBar(contentRoot.gameObject);
-        }
-
-        private void BindMatchHudCommandControls(MatchOverlayCommandControlsView view)
-        {
-            if (view != null)
-            {
-                _matchOverlayCommandInputSystem.Bind(
-                    view,
-                    _selectionUiCommandSystem,
-                    _matchHudFooterContentView != null ? _matchHudFooterContentView.RuntimeFeedback : null,
-                    () => InstallBuildDrawerPopup(),
-                    CloseBuildDrawerPopup,
-                    _selectionDiagnosticsSink,
-                    _selectionUiReadModelSystem,
-                    _mainMenuPlayUi != null
-                        ? new System.Action(_mainMenuPlayUi.CaptureGameplayUiClickSequence)
-                        : null,
-                    _gameTextResolver);
-                _mainMenuPlayUi?.BindMatchHudCommandControls(view);
-                RefreshMatchHudCommandControlState();
-            }
-        }
-
-        private void BindMatchHudRuntimeFeedback(BattleHudRuntimeFeedbackView view)
-        {
-            if (view != null)
-            {
-                _mainMenuPlayUi?.BindMatchHudRuntimeFeedback(view);
-            }
-            else
-            {
-                _mainMenuPlayUi?.BindMatchHudRuntimeFeedback(null);
-            }
-        }
-
-        private void BindMatchHudMinimap(MatchHudMinimapView view)
-        {
-            _mainMenuPlayUi?.BindMatchHudMinimap(view);
-        }
-
-        private void BindMatchHudSquadTray(MatchHudSquadTrayView view)
-        {
-            if (view != null)
-                _mainMenuPlayUi?.BindMatchHudSquadTray(view);
-        }
-
-        private void BindBuildPlacementConfirmationBar(GameObject footer)
-        {
-            RectTransform parent = shellView != null ? shellView.transform as RectTransform : null;
-            if (parent == null)
-                parent = footer != null ? footer.transform as RectTransform : null;
-            if (parent == null)
-                return;
-
-            _buildPlacementConfirmationBarView = BuildPlacementConfirmationBarView.Ensure(buildPlacementConfirmationBarPrefab, parent);
-            if (_buildPlacementConfirmationBarView == null)
-                return;
-
-            _buildPlacementConfirmationBarView.transform.SetAsLastSibling();
-            _buildPlacementConfirmationBarView?.BindRuntimeCommands(
-                _buildingUiCommandSystem,
-                ResolveMatchHudRuntimeFeedback(),
-                _gameTextResolver);
-            _mainMenuPlayUi?.BindBuildPlacementConfirmationBar(_buildPlacementConfirmationBarView);
-        }
-
         public GameObject InstallBuildDrawerPopup()
         {
             _mainMenuPlayUi?.PrepareToOpenLargeTacticalPopup(MatchHudLargeTacticalPopup.BuildDrawer);
@@ -520,6 +382,8 @@ namespace Game.UI.Runtime
         {
             switch (command.PopupKind)
             {
+                case UiShellPopupKind.ThreatAlert: InstallThreatAlertPopup(); break;
+                case UiShellPopupKind.MissionFieldGuide: InstallMissionFieldGuide(); break;
                 case UiShellPopupKind.BuildDrawer:
                     InstallBuildDrawerPopup();
                     break;
@@ -533,53 +397,6 @@ namespace Game.UI.Runtime
                     InstallResourceExchangePopup();
                     break;
             }
-        }
-
-        public GameObject InstallSettingsPopup(UIRoute activeRoute)
-        {
-            _settingsPopupInstance = InstallRoot(settingsPopupPrefab, UIShellRegionId.PopupLayer);
-            _settingsPopupView = _settingsPopupInstance != null
-                ? _settingsPopupInstance.GetComponent<SettingsPopupView>()
-                : null;
-            if (_settingsPopupView != null)
-            {
-                _settingsPopupView.ConfigureContext(activeRoute == UIRoute.Match
-                    ? SettingsPopupContext.Match
-                    : SettingsPopupContext.Menu);
-                _settingsPopupView.BindClose(CloseSettingsPopup);
-            }
-
-            return _settingsPopupInstance;
-        }
-
-        public GameObject InstallPauseMenuPopup()
-        {
-            _pauseMenuPopupInstance = InstallRoot(pauseMenuPopupPrefab, UIShellRegionId.PopupLayer);
-            return _pauseMenuPopupInstance;
-        }
-
-        public void ClosePauseMenuPopup()
-        {
-            GameObject popup = _pauseMenuPopupInstance;
-            _pauseMenuPopupInstance = null;
-            if (popup == null)
-                return;
-
-            if (Application.isPlaying)
-            {
-                UIPopupMotionView motionView = popup.GetComponent<UIPopupMotionView>();
-                if (motionView != null && motionView.PlayHide(() =>
-                    {
-                        DestroyRegionObject(popup);
-                        MarkContentChanged();
-                    }))
-                {
-                    return;
-                }
-            }
-
-            DestroyRegionObject(popup);
-            MarkContentChanged();
         }
 
         public GameObject InstallResourceExchangePopup()
@@ -673,32 +490,6 @@ namespace Game.UI.Runtime
                 DestroyRegionObject(popup);
                 MarkContentChanged();
             }
-        }
-
-        public void CloseSettingsPopup()
-        {
-            GameObject popup = _settingsPopupInstance;
-            _settingsPopupInstance = null;
-            _settingsPopupView = null;
-
-            if (popup == null)
-                return;
-
-            if (Application.isPlaying)
-            {
-                UIPopupMotionView motionView = popup.GetComponent<UIPopupMotionView>();
-                if (motionView != null && motionView.PlayHide(() =>
-                    {
-                        DestroyRegionObject(popup);
-                        MarkContentChanged();
-                    }))
-                {
-                    return;
-                }
-            }
-
-            DestroyRegionObject(popup);
-            MarkContentChanged();
         }
 
         public void CloseResourceExchangePopup()
@@ -981,5 +772,101 @@ namespace Game.UI.Runtime
             rect.localScale = Vector3.one;
             rect.localRotation = Quaternion.identity;
         }
+        private void InstallMissionFieldGuide()
+        { if(missionFieldGuidePrefab!=null) _missionFieldGuideInstance=InstallRoot(missionFieldGuidePrefab,UIShellRegionId.PopupLayer); }
+        private void CloseMissionFieldGuide()
+        {
+            if(_missionFieldGuideInstance==null) return;
+            DestroyRegionObject(_missionFieldGuideInstance); _missionFieldGuideInstance=null; MarkContentChanged();
+        }
+        private void InstallThreatAlertPopup()
+        {
+            if(threatAlertPopupPrefab==null) return;
+            _threatAlertPopupInstance=InstallRoot(threatAlertPopupPrefab,UIShellRegionId.PopupLayer);
+            var view=_threatAlertPopupInstance!=null ? _threatAlertPopupInstance.GetComponent<ThreatAlertV3PopupView>() : null;
+            var references=_matchHudHeaderContent!=null ? MatchHudHeaderReferenceUiSystemHelper.Create(_matchHudHeaderContent.transform) : null;
+            view?.BindLegacyThreatPanel(references?.ThreatJumpPanel?.gameObject);
+            view?.ShowAlert();
+        }
+        private void CloseThreatAlertPopup()
+        {
+            if(_threatAlertPopupInstance==null) return;
+            DestroyRegionObject(_threatAlertPopupInstance);
+            _threatAlertPopupInstance=null;
+            MarkContentChanged();
+        }
+        public void CloseSettingsPopup()
+        {
+            GameObject popup = _settingsPopupInstance;
+            _settingsPopupInstance = null;
+            _settingsPopupView = null;
+
+            if (popup == null)
+                return;
+
+            if (Application.isPlaying)
+            {
+                UIPopupMotionView motionView = popup.GetComponent<UIPopupMotionView>();
+                if (motionView != null && motionView.PlayHide(() =>
+                    {
+                        DestroyRegionObject(popup);
+                        MarkContentChanged();
+                    }))
+                {
+                    return;
+                }
+            }
+
+            DestroyRegionObject(popup);
+            MarkContentChanged();
+        }
+
+        public GameObject InstallSettingsPopup(UIRoute activeRoute)
+        {
+            _settingsPopupInstance = InstallRoot(settingsPopupPrefab, UIShellRegionId.PopupLayer);
+            _settingsPopupView = _settingsPopupInstance != null
+                ? _settingsPopupInstance.GetComponent<SettingsPopupView>()
+                : null;
+            if (_settingsPopupView != null)
+            {
+                _settingsPopupView.ConfigureContext(activeRoute == UIRoute.Match
+                    ? SettingsPopupContext.Match
+                    : SettingsPopupContext.Menu);
+                _settingsPopupView.BindClose(CloseSettingsPopup);
+            }
+
+            return _settingsPopupInstance;
+        }
+
+        public GameObject InstallPauseMenuPopup()
+        {
+            _pauseMenuPopupInstance = InstallRoot(pauseMenuPopupPrefab, UIShellRegionId.PopupLayer);
+            return _pauseMenuPopupInstance;
+        }
+
+        public void ClosePauseMenuPopup()
+        {
+            GameObject popup = _pauseMenuPopupInstance;
+            _pauseMenuPopupInstance = null;
+            if (popup == null)
+                return;
+
+            if (Application.isPlaying)
+            {
+                UIPopupMotionView motionView = popup.GetComponent<UIPopupMotionView>();
+                if (motionView != null && motionView.PlayHide(() =>
+                    {
+                        DestroyRegionObject(popup);
+                        MarkContentChanged();
+                    }))
+                {
+                    return;
+                }
+            }
+
+            DestroyRegionObject(popup);
+            MarkContentChanged();
+        }
+
     }
 }

@@ -11,9 +11,18 @@ namespace Game.UI.Runtime
 
         private MissionResultPopupView activeView;
         private UiMissionResultPopupModel activeModel;
-        private UIShellRegionView popupRegion;
+        [SerializeField] private UIShellRegionView popupRegion;
         private uint appliedVersion;
         private bool appliedActionEnabled;
+        private string appliedLocale;
+
+        private void Awake()
+        {
+            // Existing Menu scenes predate the serialized region reference. Restore the
+            // bounded parent binding so a guide's hide animation cannot hide later results.
+            if (popupRegion == null && modalOverlay != null)
+                popupRegion = modalOverlay.GetComponentInParent<UIShellRegionView>(true);
+        }
 
         public void RefreshPresentation()
         {
@@ -22,13 +31,18 @@ namespace Game.UI.Runtime
                 Close();
                 return;
             }
+            // The shell owns this shared modal region while the guide is open. Recreating
+            // the result after InstallRoot clears it would cover the guide on the next frame.
+            if((model.Defense.Applicable || model.Extraction.Applicable) && UiShellRuntimeGateway.IsMissionFieldGuidePresenting())
+            {Close(); return;}
             if (activeView == null && !Open())
                 return;
-            if (appliedVersion == model.Version && appliedActionEnabled == model.PrimaryActionEnabled)
+            if (appliedVersion == model.Version && appliedActionEnabled == model.PrimaryActionEnabled && appliedLocale==Game.Configs.GameLocalization.CurrentLocaleCode)
                 return;
             activeModel = model;
             appliedVersion = model.Version;
             appliedActionEnabled = model.PrimaryActionEnabled;
+            appliedLocale = Game.Configs.GameLocalization.CurrentLocaleCode;
             activeView.Apply(in model);
         }
 
@@ -74,6 +88,11 @@ namespace Game.UI.Runtime
 
         private void OnPrimaryRequested()
         {
+            if(activeModel.SettlementFailed)
+            {
+                UiShellRuntimeGateway.TryEnqueueMissionResultAction(UiMissionResultActionKind.RetrySave);
+                return;
+            }
             UiMissionResultActionKind action = activeModel.Outcome == UiMissionResultOutcome.Victory
                 ? UiMissionResultActionKind.Continue : UiMissionResultActionKind.Retry;
             bool queued = UiShellRuntimeGateway.TryEnqueueMissionResultAction(action);
@@ -81,7 +100,7 @@ namespace Game.UI.Runtime
             {
                 UiShellRuntimeGateway.TryEnqueueRouteRequest(
                     UiShellRouteIntent.ReturnToMainMenu,
-                    UIRoute.MainMenu,
+                    activeModel.Extraction.Applicable ? UIRoute.Campaign : UIRoute.MainMenu,
                     pushHistory: false);
             }
         }

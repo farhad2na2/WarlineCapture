@@ -1,0 +1,19 @@
+# M3 playability and fun review
+
+Scope: reproducible Editor play observations on the current combat implementation, 2026-09-09. These are automated input journeys and visual/code review, not participant studies or human ratings. All times below are mission time; accelerated runs are not timing benchmarks.
+
+| Approach | Observed outcome | What this establishes |
+|---|---|---|
+| Leave the initial force idle | One run lost at 221.119 s (3/7 stopped); a later run won at 217.112 s | Idle outcomes vary. These two observations do not establish an acceptable idle win rate or a necessary stance lesson. |
+| Full Guidance, actual Hold/Stop/Hold controls | Three-star Victory at 210.154 s; 7/7 stopped, 50,000 Credits/100 Materials and two Ping uses retained | A bounded defensive command matters. Reading/previewing optional purchases does not spend resources or force a purchase. Contact preemption does not softlock progression. |
+| Forward rifle defense with ordinary move/attack requests and one Ping | Victory at 195.935 s at normal speed | Direct positioning and target orders form a viable strategy with actual weapon fire. The same run meets the 20 ms Editor p95 budget in every phase. |
+| Paid road Barrier and rearward rifle defense | Victory at 229.728 s, 7/7 stopped; actual 6,000/15 cost and three vehicle detours | A different defense position and real obstacle interaction can also succeed. No teleport, path-buffer override or scripted damage was used. |
+| Sensor lost and initial positioning corrected at 35 s | Victory at 191.538 s, 7/7 stopped; both Ping charges retained | A deliberately injected sensor death preserves the scout warning, disables unavailable Ping truthfully, and remains recoverable with normal unit commands. |
+
+Evidence: `warline-m03-convoy-09.log`, `warline-m03-defeat-result-03.log` (failed probe: idle won, so its expected-defeat assumption was false), `warline-m03-guidance-large-comics-01.log`, `warline-m03-performance-03.log`, `warline-m03-road-barrier-05.log`, `warline-m03-recovery-02.log`, under `/private/tmp`. The [QA index](editor_qa_index.md) records limits and reproduction paths.
+
+The later idle victory invalidates an earlier inference that explicit Hold is necessary to win. The unit commands work, but the teaching value and idle difficulty still need repeated balance/play observations. Two successful positions and a real Barrier detour support tactical choice. The sensor-loss run establishes recovery rather than an immediate hidden failure. Exact source/confidence/ETA text, explicit Jump/RETURN VIEW, the 12-topic guide and its 57-class reference give players ways to inspect the situation. The opening tour begins at the actual RTS view, visits key areas and returns before the mission clock starts; combat focus remains player-requested.
+
+These observations do not show how quickly a new player understands the warning, how a fluent Persian player reads the guidance during contact, or whether optional Tower/Ping/reinforcement choices feel worthwhile. In particular, the no-spend Hold victory means optional purchases are demonstrably unnecessary for success; their perceived value and replay interest remain human playtest questions. The mission deliberately keeps them optional. One run per strategy cannot establish a win-rate distribution, a difficulty percentile or a fun score, and elapsed times from different simulation speeds should not be used to rank strategy efficiency.
+
+Remaining human acceptance evidence: first-time and experienced-player sessions in both languages, warning comprehension and reaction time, recovery after an ordinary player mistake, perceived fairness and replay interest; independent fluent Persian editorial review; listening after approved voice production. No participant/cohort results are invented. Android validation is excluded by the user.

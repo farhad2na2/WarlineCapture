@@ -8,7 +8,7 @@ using Game.UI.Contracts;
 namespace Game.UI.Runtime
 {
     [DisallowMultipleComponent]
-    public sealed class MissionResultPopupView : MonoBehaviour
+    public sealed partial class MissionResultPopupView : MonoBehaviour
     {
         [SerializeField] private TMP_Text titleText;
         [SerializeField] private TMP_Text missionNameText;
@@ -54,12 +54,18 @@ namespace Game.UI.Runtime
 
         private void OnEnable()
         {
+            Canvas.willRenderCanvases+=LayoutDefenseResult;
+            BindDefenseLayout();
+            if(defenseGuideButton!=null) defenseGuideButton.onClick.AddListener(OpenDefenseGuide);
             if (primaryButton != null) primaryButton.onClick.AddListener(OnPrimaryRequested);
             if (retryButton != null) retryButton.onClick.AddListener(OnRetryRequested);
         }
 
         private void OnDisable()
         {
+            Canvas.willRenderCanvases-=LayoutDefenseResult;
+            UnbindDefenseLayout();
+            if(defenseGuideButton!=null) defenseGuideButton.onClick.RemoveListener(OpenDefenseGuide);
             if (primaryButton != null) primaryButton.onClick.RemoveListener(OnPrimaryRequested);
             if (retryButton != null) retryButton.onClick.RemoveListener(OnRetryRequested);
         }
@@ -95,6 +101,8 @@ namespace Game.UI.Runtime
                 retryButton.interactable = model.RetryVisible;
             }
             ApplyV3Outcome(model);
+            ApplyDefenseOutcome(in model);
+            ApplyExtractionOutcome(in model);
             if (hiddenLegacyRoots != null)
                 for (int index = 0; index < hiddenLegacyRoots.Length; index++)
                     if (hiddenLegacyRoots[index] != null) hiddenLegacyRoots[index].SetActive(false);
@@ -294,7 +302,7 @@ namespace Game.UI.Runtime
             string[] parts = subtitle.Split(new[] { " • " }, StringSplitOptions.None);
             if (parts.Length < 2)
                 return subtitle;
-            string missionNumber = model.MissionId.Contains("m02") ? "M02" : "M01";
+            string missionNumber = model.MissionId.Contains("m04") ? "M04" : model.MissionId.Contains("m03") ? "M03" : model.MissionId.Contains("m02") ? "M02" : "M01";
             return $"{missionNumber} {parts[0]}\n{parts[1]}";
         }
 

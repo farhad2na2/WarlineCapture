@@ -10,15 +10,13 @@ using RuntimeSignature = Game.Runtime.BuildingRuntimeSignatureUtility;
 
 namespace Game.Runtime
 {
-    public sealed class BuildingRuntimeProcessingCompositionSystemHelper
+    public sealed partial class BuildingRuntimeProcessingCompositionSystemHelper
     {
         private const float PublishIntervalSeconds = 0.125f;
         private const float IdleRequestProbeIntervalSeconds = 0.1f;
         private const int MaxRuntimeSpawnRequestsPerUpdate = 16;
 
         private readonly List<byte> _factionIds = new();
-        private readonly BuildingRuntimeDeleteCommandProcessor _deleteCommandProcessor = new();
-        private Func<int, bool> _delete;
         private readonly List<int> _pendingSpawnRequestIndices = new();
         private readonly Dictionary<GameObject, FixedString128Bytes> _boundaryIdsByPrefab = new();
         private readonly Dictionary<string, FixedString128Bytes> _boundaryIdsByFallback = new();
@@ -151,7 +149,7 @@ namespace Game.Runtime
             float now,
             int frameCount)
         {
-            _deleteCommandProcessor.Process(_delete, em, boundaryEntity);
+            _deleteCommandProcessor.Process(_delete, em, boundaryEntity,_cleanup);
             ProcessResourceSellRequests(factionResourceSystem, runtimeBuildings, em, boundaryEntity, now);
             ProcessUiProductionRequests(productionRequestSystem, productionRequestContext, em, frameCount, now);
             ProcessProductionRequests(productionRequestSystem, productionRequestContext, runtimeQuerySystem, runtimeQueryContext, em, boundaryEntity, now);
@@ -163,9 +161,6 @@ namespace Game.Runtime
                 out _);
             ProcessRuntimeSpawnRequests(definitionSystem, runtimeSpawnSystem, runtimeSpawnContext, em, boundaryEntity, now);
         }
-
-        internal void ConfigureDeleteBuildingById(Func<int, bool> deleteBuildingById) =>
-            _delete = deleteBuildingById;
 
         internal void ProcessRuntimeSpawnRequestsForBoundary(
             BuildingDefinitionPrefabSystemHelper definitionSystem,

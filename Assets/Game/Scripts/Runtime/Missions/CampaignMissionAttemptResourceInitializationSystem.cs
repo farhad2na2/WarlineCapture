@@ -45,6 +45,21 @@ namespace Game.Runtime
                 return;
             }
 
+            // The map's normal startup can arrive after the campaign root. Apply the
+            // attempt budget only after those defaults, or they overwrite it once.
+            if (!SystemAPI.TryGetSingleton(out RuntimeGameplayStateComponent gameplay) || gameplay.PlayRequested == 0 ||
+                !entityManager.HasComponent<CampaignMissionAttemptFactsComponent>(root) ||
+                entityManager.GetComponentData<CampaignMissionAttemptFactsComponent>(root).CommandSquadSpawned == 0)
+                return;
+            foreach ((RefRO<InitialUnitsSpawnConfig> _, Entity entity) in
+                     SystemAPI.Query<RefRO<InitialUnitsSpawnConfig>>().WithEntityAccess())
+            {
+                if (entityManager.HasComponent<InitialUnitsSpawnInitialized>(entity)) continue;
+                if (!entityManager.HasComponent<InitialUnitsSpawnProgress>(entity) ||
+                    entityManager.GetComponentData<InitialUnitsSpawnProgress>(entity).InitialResourcesApplied == 0)
+                    return;
+            }
+
             Entity playerResources = Entity.Null;
             int playerResourceOwnerCount = 0;
             foreach ((RefRO<FactionEconomy> economy,

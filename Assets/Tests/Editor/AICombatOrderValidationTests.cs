@@ -74,6 +74,9 @@ public sealed class AICombatOrderValidationTests
         Entity target = CreateTarget(em, FactionIdentity.PlayerFactionId, new int2(20, 20), new float3(20f, 0f, 20f));
         Entity memberA = CreateAttacker(em, FactionIdentity.EnemyFactionId, new int2(5, 5), new float3(5f, 0f, 5f));
         Entity memberB = CreateAttacker(em, FactionIdentity.EnemyFactionId, new int2(6, 5), new float3(6f, 0f, 5f));
+        Entity missionMember = CreateAttacker(em, FactionIdentity.EnemyFactionId, new int2(7, 5), new float3(7f, 0f, 5f));
+        em.AddComponent<CampaignMissionUnitRoleComponent>(missionMember);
+        em.AddComponentData(missionMember, new UnitPathRequest { Goal = new int2(30, 5) });
         em.AddComponentData(memberA, new UnitPathRequest { Goal = new int2(9, 9) });
         em.AddComponent<ManualMoveOrderTag>(memberA);
         em.AddComponent<AutoWanderMoveTag>(memberB);
@@ -98,6 +101,7 @@ public sealed class AICombatOrderValidationTests
         DynamicBuffer<AISquadUnit> members = em.AddBuffer<AISquadUnit>(squadEntity);
         members.Add(new AISquadUnit { Unit = memberA });
         members.Add(new AISquadUnit { Unit = memberB });
+        members.Add(new AISquadUnit { Unit = missionMember });
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = world.CreateSystem<AICombatOrderSystem>();
@@ -117,6 +121,8 @@ public sealed class AICombatOrderValidationTests
         Assert.IsTrue(em.HasComponent<AICombatOrderTag>(memberA));
         Assert.IsTrue(em.HasComponent<AICombatOrderTag>(memberB));
         Assert.IsFalse(em.HasComponent<AutoWanderMoveTag>(memberB));
+        Assert.IsFalse(em.HasComponent<EngageTarget>(missionMember), "Stale squad membership cannot override a mission route.");
+        Assert.AreEqual(new int2(30, 5), em.GetComponentData<UnitPathRequest>(missionMember).Goal);
 
         AISquad squad = em.GetComponentData<AISquad>(squadEntity);
         Assert.Greater(squad.LastOrderTime, -1f);

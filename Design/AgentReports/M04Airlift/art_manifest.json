@@ -1,0 +1,124 @@
+{
+  "generator": "image_gen.imagegen",
+  "style": "M3 cinematic faceted low-poly; text-free; warm desert light; center storytelling for 16:9 and 20:9 authored Sprite viewports",
+  "identity_locks": {
+    "Samira": "M03-D03 face, gold scarf, teal blouse, charcoal civil-infrastructure jacket",
+    "Laila": "existing Pilot Female 01 face, gold scarf, brown flight suit, tan harness, headset",
+    "Dalia": "M03-B02 dark tied hair, sunglasses, headset, tan uniform",
+    "ARIA": "M03-B01 cyan geometric holographic bust"
+  },
+  "items": [
+    {
+      "id": "M04-B01",
+      "file": "Assets/Game/Art/Narrative/M04Airlift/Final/M04-B01.png",
+      "sha256": "3425457d9aed68f29bdf135d96f3a6d7c8f65f1409eb77a5018775c5ee5be235",
+      "prompt_brief": "Laila briefing at helicopter. Preserve pilot reference gold scarf, brown flight suit and tan harness in M3 rendering.",
+      "references": [
+        {
+          "file": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Pilot_Female_01_CompactPistol_Card_512.png",
+          "sha256": "62b43772ac0ece472505647543b9093786b54efadc9d74b3002be9623c187bfd"
+        },
+        {
+          "file": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B02.png",
+          "sha256": "b1798cbd1a6dd63aed05404195c2dca4d25164a28758ca5f01acf2f5c42250eb"
+        }
+      ]
+    },
+    {
+      "id": "M04-B02",
+      "file": "Assets/Game/Art/Narrative/M04Airlift/Final/M04-B02.png",
+      "sha256": "303fc79cf29215b8fa2bb9c0c11a03ef24ac88a56872973b2458a94d0318a816",
+      "prompt_brief": "Samira briefs four stranded adult medical and engineering specialists at roadside clinic.",
+      "references": [
+        {
+          "file": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-D03.png",
+          "sha256": "1677929e563f1b6a546075c4082f07353a136130a5e9d49823b7026b8f3bf307"
+        }
+      ]
+    },
+    {
+      "id": "M04-B03",
+      "file": "Assets/Game/Art/Narrative/M04Airlift/Final/M04-B03.png",
+      "sha256": "021dcad9d78267003c8d5ca387002a0256ce0069933e32b11961e0703eddea28",
+      "prompt_brief": "Dalia gives escort signal beside empty wheeled APC. Edited to remove incorrect family passengers from first generated draft.",
+      "references": [
+        {
+          "file": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B02.png",
+          "sha256": "b1798cbd1a6dd63aed05404195c2dca4d25164a28758ca5f01acf2f5c42250eb"
+        }
+      ]
+    },
+    {
+      "id": "M04-C01",
+      "file": "Assets/Game/Art/Narrative/M04Airlift/Final/M04-C01.png",
+      "sha256": "5eebcb5b8db9877a1a259b5430d6e047563db07f05c7158f3a954446578f965c",
+      "prompt_brief": "Laila in cockpit confirms four specialist passengers seated with harnesses; departure clearance.",
+      "references": [
+        {
+          "file": "Assets/Game/Art/Narrative/M04Airlift/Final/M04-B01.png",
+          "sha256": "3425457d9aed68f29bdf135d96f3a6d7c8f65f1409eb77a5018775c5ee5be235"
+        }
+      ]
+    },
+    {
+      "id": "M04-D01",
+      "file": "Assets/Game/Art/Narrative/M04Airlift/Final/M04-D01.png",
+      "sha256": "7597d46349d6290989651214cc950260c793a4fdc29f04cc1d2d86c84c04b1ff",
+      "prompt_brief": "At safe base Laila joins the operation, four specialists leave the helicopter.",
+      "references": [
+        {
+          "file": "Assets/Game/Art/Narrative/M04Airlift/Final/M04-B01.png",
+          "sha256": "3425457d9aed68f29bdf135d96f3a6d7c8f65f1409eb77a5018775c5ee5be235"
+        },
+        {
+          "file": "Assets/Game/Art/Narrative/M04Airlift/Final/M04-C01.png",
+          "sha256": "5eebcb5b8db9877a1a259b5430d6e047563db07f05c7158f3a954446578f965c"
+        }
+      ]
+    },
+    {
+      "id": "M04-D02",
+      "file": "Assets/Game/Art/Narrative/M04Airlift/Final/M04-D02.png",
+      "sha256": "e6081edc5fae8b0bde9bd0ead12dc09f75ff77a464c69f9ddb7801006ec46da6",
+      "prompt_brief": "Samira reviews engineers repair records pointing to a fortified communications node.",
+      "references": [
+        {
+          "file": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-D03.png",
+          "sha256": "1677929e563f1b6a546075c4082f07353a136130a5e9d49823b7026b8f3bf307"
+        },
+        {
+          "file": "Assets/Game/Art/Narrative/M04Airlift/Final/M04-B02.png",
+          "sha256": "303fc79cf29215b8fa2bb9c0c11a03ef24ac88a56872973b2458a94d0318a816"
+        }
+      ]
+    },
+    {
+      "id": "M04-D03",
+      "file": "Assets/Game/Art/Narrative/M04Airlift/Final/M04-D03.png",
+      "sha256": "398264c7390a0b18d298310bd19bd317543488257c2dbc1eb7679023d2071133",
+      "prompt_brief": "ARIA confirms safe extraction and the next communications-node lead; medical team returns to work.",
+      "references": [
+        {
+          "file": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B01.png",
+          "sha256": "392269f2199dde8ff7088357549f9a68729655e6abd1092a96fa3eabe0d156b6"
+        }
+      ]
+    }
+  ],
+  "portrait": {
+    "speaker": "Laila",
+    "source": "Assets/Game/Art/Narrative/M04Airlift/Final/M04-B01.png",
+    "sprite": "M04-Laila-Portrait",
+    "rect": [
+      951,
+      211,
+      540,
+      720
+    ],
+    "authoredVia": "Unity Sprite importer viewport; source bitmap unchanged"
+  },
+  "audio": {
+    "recordedM4Voices": false,
+    "delivery": "English and Persian captions; existing audio fallback; no mismatched M3 recordings"
+  }
+}

@@ -42,11 +42,13 @@ namespace Game.Runtime
                 ComponentType.ReadOnly<AIDiagnosticLogQueueComponent>(),
                 ComponentType.ReadWrite<AIDiagnosticLogComponent>());
             _planQuery = state.GetEntityQuery(ComponentType.ReadWrite<AISquadPlan>());
-            _unitQuery = state.GetEntityQuery(
-                ComponentType.ReadOnly<Faction>(),
-                ComponentType.ReadOnly<UnitGrid>(),
-                ComponentType.ReadOnly<UnitHealth>(),
-                ComponentType.ReadOnly<AIControlledTag>());
+            // Authored mission routes own these units, including suppressed future waves.
+            _unitQuery = state.GetEntityQuery(new EntityQueryDesc
+            {
+                All = new[] { ComponentType.ReadOnly<Faction>(), ComponentType.ReadOnly<UnitGrid>(),
+                    ComponentType.ReadOnly<UnitHealth>(), ComponentType.ReadOnly<AIControlledTag>() },
+                None = new[] { ComponentType.ReadOnly<CampaignMissionUnitRoleComponent>() }
+            });
             _squadQuery = state.GetEntityQuery(ComponentType.ReadOnly<AISquad>());
             _factionGridQuery = state.GetEntityQuery(ComponentType.ReadOnly<Faction>(), ComponentType.ReadOnly<UnitGrid>());
             _entityType = state.GetEntityTypeHandle();

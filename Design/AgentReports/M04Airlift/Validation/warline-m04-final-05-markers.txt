@@ -1,0 +1,27 @@
+[M04AirliftPresentation] result=Passed locales=2 lessons=12 guideClasses=57 hud=bound speaker=Laila
+[M04AirliftRules] result=Passed cases=15
+[M04AirliftIntegration] result=Passed tests=8
+[MatchHudResourceTextRepair] result=Passed bindingLocales=3 headerTests=11 m02Credits=1 ariaLayouts=48
+[RtsCameraFocusedValidation] result=Passed tests=34
+[UiShellAudioRoutePopupValidation] result=Passed tests=9
+[M03RadarWarningRuleValidation] result=Passed tests=12
+[M03CameraFallbackValidation] result=Passed tests=3
+[M03SettlementValidation] result=Passed tests=2
+[M03AttemptCleanupValidation] result=Passed tests=5
+[M01FirstContactMissionRuleValidation] result=Passed tests=14
+[M02EstablishBaseMissionRuleValidation] result=Passed tests=11
+[M02EstablishBaseResourceValidation] result=Passed tests=9
+[TransportBoardingScenarioLab] result=Passed tests=15
+[TransportBoardingScenarioLab] result=Passed tests=15
+[M04EditorRegression] result=Passed suites=14
+[M04VehicleReview] captured=vehicle-stage-1-1 entities=11
+[M04VehicleReview] captured=vehicle-stage-1-2 entities=11
+[M04VehicleReview] captured=vehicle-stage-1-3 entities=11
+[M04VehicleReview] captured=vehicle-stage-3-1 entities=19
+[M04VehicleReview] captured=vehicle-stage-3-2 entities=19
+[M04VehicleReview] captured=vehicle-stage-3-3 entities=19
+[M04VehicleReview] captured=vehicle-stage-6-1 entities=51
+[M04VehicleReview] captured=vehicle-stage-6-2 entities=51
+[M04VehicleReview] captured=vehicle-stage-6-3 entities=51
+[M04EditorProbe] Idle retry defeated at ms=600001 passengerLosses=0 escorts=0 timeout=1
+[M04EditorProbe] result=Passed 14 regression suites; HUD en/fa 16:9 and 20:9; 12 guide topics and 57 classes in both languages; real APC/helicopter rescue; debrief; saved unlocks; visible bilingual result; campaign return; real Replay carrier-loss defeat and clean Retry; idle failure under normal combat at 4x simulation; no duplicate rewards

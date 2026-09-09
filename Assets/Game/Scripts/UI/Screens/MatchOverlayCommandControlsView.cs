@@ -38,6 +38,7 @@ namespace Game.UI.Runtime
         public Button MoveButton => moveButton;
         public Button AttackButton => attackButton;
         public Button ScanButton => scanButton;
+        public Button SupportButton => FindCommandTabButton("SupportCommand");
         public Button BoardButton => boardButton;
         public Button BuildButton => buildButton;
         public Button HoldButton => holdButton;
@@ -73,6 +74,7 @@ namespace Game.UI.Runtime
             }
 
             _tutorialBuildAvailable = _tutorialBuildRequested && !cinematicInteractionLocked;
+            if(UiShellRuntimeGateway.TryReadMissionDefense(out var defense)) supportDisabled=!defense.CanPing;
             ApplyMissionRestrictionState(buildDisabled, supportDisabled);
         }
 

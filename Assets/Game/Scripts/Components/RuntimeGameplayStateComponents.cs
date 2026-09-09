@@ -27,6 +27,8 @@ namespace Game.Components
         public byte Smooth;
         public byte UseTacticalRevealZoom;
         public byte UseExplicitYaw;
+        public byte UseExplicitPerspective;
+        public float4 Perspective;
         public float SmoothTimeSeconds;
         public float YawDegrees;
         public float3 World;

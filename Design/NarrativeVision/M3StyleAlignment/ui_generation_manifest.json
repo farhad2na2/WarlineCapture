@@ -1,0 +1,70 @@
+{
+  "tool": "Built-in imagegen",
+  "jobs": [
+    {
+      "id": "commander_choices",
+      "target": "Assets/Game/Art/Narrative/FirstLaunch/Commander/commander_portrait_choices.png",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/FirstLaunch/Commander/commander_portrait_choices.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B02.png"
+      ],
+      "prompt": "Edit IMAGE 1, a production game commander-choice sprite sheet. Apply IMAGE 2's preferred newer M3 refined faceted cinematic illustration. Maintain EXACT sheet layout, charcoal background, all seven individual choices, 4 top row and 3 bottom row, precise original head/body positions and spacing, and original bust cutoff boundaries. Output exactly 1672x941 landscape. Each choice must remain its own original character (age, sex, skin tone, hairstyle and outfit), not become Dalia. Top row: brown-haired woman in tan shirt/dark vest; dark-skinned short-haired bearded man in olive shirt/tan vest; straight dark bob-haired woman in olive jacket; older gray-haired gray-bearded man tan jacket/olive shirt. Bottom row: short dark-haired man with goatee in olive jacket; blonde bob-haired woman tan jacket; completely faceless gray neutral mannequin bust. Refine faces/eyes/materials to M3's illustrated natural facial modelling, restrained warm faceted highlights and charcoal shadows. No exaggerated anime eyes, no photorealism, no coarse triangular faces. Seventh choice must remain featureless. NO new face, no missing or extra choice, no text/numbers/labels, no border. Do not merge or overlap portraits. Preserve original 1672x941 atlas layout for fixed sprite slicing.",
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/commander_choices.png",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-5ca2f7b7-e20f-4bed-955c-294e812401ac.png",
+      "sha256": "b7108eb97043a577eba6787fcf1089604fb060e175b059ebea216ed7d7c2537f",
+      "installed": true
+    },
+    {
+      "id": "ARIA_MainMenu_V3",
+      "target": "Assets/Game/Art/UI/V3Shared/Portraits/ARIA_MainMenu_V3.png",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/UI/V3Shared/Portraits/ARIA_MainMenu_V3.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B01.png",
+        "/Users/farhad/Projects/WarlineCapture/Design/NarrativeVision/M3StyleAlignment/Candidates/portrait_aria_v3.png"
+      ],
+      "prompt": "Edit IMAGE 1 UI ARIA portrait to the exact preferred M3 ARIA identity from IMAGE 2, with newly matched portrait IMAGE 3 as additional face reference. Same cyan holographic adult woman, refined polygonal face, luminous eyes, short asymmetrical side-swept geometric hair with shorter right side; match eyes/nose/lips/jaw and hair silhouette in image 3. Preserve image 1's three-quarter pose and full head/upper torso portrait purpose. Refined cinematic faceted rendering. Isolated bust on a GENUINELY TRANSPARENT background with alpha, no magenta background, no black rectangle, no checkerboard painted into art. Leave small clean margin around entire head/hair. Cyan glow contained close to silhouette. No text/frame/scene/other objects. Portrait aspect about 3:4, full head and shoulders.",
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/ARIA_MainMenu_V3-alpha.png",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-b46c178e-448f-411f-bc39-04437dfd6d72.png",
+      "rejectedCandidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/ARIA_MainMenu_V3.png",
+      "alphaCorrection": {
+        "tool": "Built-in imagegen",
+        "prompt": "Remove the entire gray checkerboard background from this ARIA portrait. Keep the cyan woman and her face, hair, geometry, body and pose exactly unchanged. Return a transparent PNG cutout with an actual alpha channel: every background pixel must be alpha=0, with clean antialiased edge transparency. No checkerboard, no gray or white or black backing, no newly painted backdrop. Transparent background.",
+        "refs": [
+          "/Users/farhad/Projects/WarlineCapture/Design/NarrativeVision/M3StyleAlignment/Candidates/ARIA_MainMenu_V3.png"
+        ],
+        "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-5257f89d-284c-43dc-9350-c9f914bcf61e.png",
+        "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/ARIA_MainMenu_V3-alpha.png"
+      },
+      "sha256": "2f7e43bddae72cd09bff3eef1037191c6d8c357108199ff9d26f72c0ec934a1f",
+      "installed": true
+    },
+    {
+      "id": "SCN16_ARIAFieldTrials_V3",
+      "target": "Assets/Game/Art/UI/V3Shared/Events/SCN16_ARIAFieldTrials_V3.png",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/UI/V3Shared/Events/SCN16_ARIAFieldTrials_V3.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B01.png",
+        "/Users/farhad/Projects/WarlineCapture/Design/NarrativeVision/M3StyleAlignment/Candidates/portrait_aria_v3.png"
+      ],
+      "prompt": "Restyle IMAGE 1 game UI event art to current M3 ARIA. Preserve exact composition: ARIA bust at right, dark navy network/waveform pattern across left negative space, no legible labels. Replace her old face and bob hairstyle with the EXACT SAME cyan polygonal holographic woman from IMAGE 2 and especially portrait IMAGE 3: same eyes/nose/lips/jaw and short asymmetric side-swept geometric hair. Refined cinematic polygonal illustrated facial modelling, restrained cyan glow. No text, numbers, borders or additional characters. Maintain full 16:9 landscape around 1672x941 and original right-weighted bust scale; background stays dark for UI readability.",
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/SCN16_ARIAFieldTrials_V3.png",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-8e029e19-e204-4610-8e6d-fdcce5486bd4.png",
+      "sha256": "8ffaf37eb1672329666fb1e4d28df7294a0456afabfeb94164fa9a4b30efe3d2",
+      "installed": true
+    },
+    {
+      "id": "SCN02_FieldCommander_01_Scene_V3",
+      "target": "Assets/Game/Art/UI/V3Shared/CommanderScenes/SCN02_FieldCommander_01_Scene_V3.png",
+      "refs": [
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/UI/V3Shared/CommanderScenes/SCN02_FieldCommander_01_Scene_V3.png",
+        "/Users/farhad/Projects/WarlineCapture/Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B02.png",
+        "/Users/farhad/Projects/WarlineCapture/Design/NarrativeVision/M3StyleAlignment/Candidates/commander_choices.png"
+      ],
+      "candidate": "Design/NarrativeVision/M3StyleAlignment/Candidates/SCN02_FieldCommander_01_Scene_V3.png",
+      "prompt": "Edit IMAGE 1 main-menu commander scene to match the preferred M3 refined cinematic polygonal illustration of IMAGE 2. Keep exact scene composition and wide dark vignette for overlay UI readability. Keep older gray-haired and gray-bearded male commander center-right leaning with both hands on cyan tactical network table, tan jacket over olive shirt. Use the SAME commander identity as the FOURTH portrait (top-right older gray-haired bearded man) in IMAGE 3, matching facial proportions and hair/beard, rendered at cinematic detail. Maintain his mature age and serious calm expression; no sunglasses or headset added. Preserve original accompanying soldiers, transport vehicles, desert watchtowers/buildings, distant non-graphic smoke, helicopter and original red compass-emblem flag; no new story elements or characters. Refined faces, rich restrained faceted materials and warm desert illumination, no coarse triangulated face, no photorealism, no comic outlines. Preserve substantial DARK margins and visual focus placement at original sizes; do not turn entire canvas bright. No text, caption, labels, UI controls or borders. Single full landscape 16:9 scene, 1672x941.",
+      "generatedSource": "/Users/farhad/.codex/generated_images/01a08250-179d-7261-9476-7492adcb4aa2/exec-e0ea469b-a84c-471b-a6ef-730d78211f21.png",
+      "sha256": "bd56cdfeef575af27f6a67dab262228d1922a63af83658d434c8b836c32409ba",
+      "installed": true
+    }
+  ]
+}

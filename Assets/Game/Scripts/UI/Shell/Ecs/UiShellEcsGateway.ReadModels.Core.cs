@@ -145,14 +145,14 @@ namespace Game.UI.Shell.Ecs
                 }
             }
             if (projection.Outcome == MissionOutcomeKind.Victory && settlementAccepted == 0)
-                return false;
+                return TryReadDefenseSettlementFailure(entityManager,root,in runtime,in projection,out result);
 
             if (cachedMissionResultWorld == entityManager.World && cachedMissionResultRoot == root &&
                 cachedMissionResultSession.Equals(projection.SessionToken) &&
                 cachedMissionResultAttempt == projection.AttemptOrdinal &&
                 cachedMissionResultVersion == projection.SourceVersion &&
                 cachedMissionSettlementAccepted == settlementAccepted &&
-                cachedMissionSettlementFirstClear == settlementFirstClear)
+                cachedMissionSettlementFirstClear == settlementFirstClear && cachedMissionResultLocale == Game.Configs.GameLocalization.CurrentLocaleCode)
             {
                 result = cachedMissionResult;
                 return true;
@@ -185,7 +185,7 @@ namespace Game.UI.Shell.Ecs
                 : victory
                     ? "Hostile patrol neutralized. The Old Market corridor is secure."
                     : "The command squad was lost. Regroup and redeploy.";
-            bool debriefRequired = establishBase && victory &&
+            bool debriefRequired = (establishBase || runtime.MissionId.Equals(RadarResultMissionId) || runtime.MissionId.Equals(AirliftId)) && victory &&
                                    runtime.Phase != MissionPhaseKind.ResultAfterDebrief;
             if (debriefRequired)
                 return false;
@@ -206,6 +206,9 @@ namespace Game.UI.Shell.Ecs
                 !victory,
                 firstClear,
                 debriefRequired);
+            if(runtime.MissionId.Equals(RadarResultMissionId)) result=LocalizeDefenseResult(in result,in facts,in runtime);
+            if(runtime.MissionId.Equals(AirliftId)) result=LocalizeExtractionResult(in result,in facts);
+            cachedMissionResultLocale=Game.Configs.GameLocalization.CurrentLocaleCode;
             cachedMissionResultVersion = projection.SourceVersion;
             cachedMissionSettlementAccepted = settlementAccepted;
             cachedMissionSettlementFirstClear = settlementFirstClear;
@@ -251,15 +254,11 @@ namespace Game.UI.Shell.Ecs
             {
                 ref CampaignMissionRewardBlob reward = ref rewards[index];
                 if (index > 0) text += "  ·  ";
-                string label = reward.Kind != MissionRewardKind.None
+                string fallback = reward.Kind != MissionRewardKind.None
                     ? reward.Kind.ToString().ToUpperInvariant()
-                    : reward.RewardConfigId.Equals(
-                        new FixedString64Bytes("reward.commander_xp"))
-                        ? "COMMANDER XP"
-                        : reward.RewardConfigId.Equals(
-                            new FixedString64Bytes("reward.ch01.m02.production_unlock"))
-                            ? "BARRACKS UNLOCK"
-                            : "REWARD";
+                    : reward.RewardConfigId.Equals(new FixedString64Bytes("reward.commander_xp")) ? "COMMANDER XP"
+                    : reward.RewardConfigId.Equals(new FixedString64Bytes("reward.ch01.m02.production_unlock")) ? "BARRACKS UNLOCK" : "REWARD";
+                string label = GameText.Get(reward.DisplayTextKey.ToString(),fallback);
                 text += $"{reward.Amount:N0} {label}";
             }
             return text;
@@ -284,7 +283,7 @@ namespace Game.UI.Shell.Ecs
                 component.PrimaryAction, component.PrimaryActionLabel.ToString());
             campaign = new UiCampaignOperationsModel(
                 component.Version, component.CatalogSourceVersion, component.ProgressSourceVersion,
-                selected, component.NextMissionId.ToString(), component.NextMissionRevealed != 0);
+                selected, component.NextMissionId.ToString(), component.NextMissionRevealed != 0, component.AvailableMissionMask);
             return campaign.IsValid;
         }
 

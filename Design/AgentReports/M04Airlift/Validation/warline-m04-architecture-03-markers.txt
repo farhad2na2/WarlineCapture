@@ -1,0 +1,18 @@
+[M03ArchitectureAudit] pass=BaselineManifestHasExpectedFrozenInventories
+[M03ArchitectureAudit] fail=NewSystemHelperPathsRequireApprovedException System.IO.InvalidDataException: New *SystemHelper.cs and *CompositionSystemHelper.cs paths require an exact `system-helper` approved exception. Violations:
+[M03ArchitectureAudit] fail=ProductionFilesAboveFiveHundredLinesRequireReview System.IO.InvalidDataException: Production files above 500 lines must be baselined at their reviewed size or covered by an exact line-bounded approved exception. Violations:
+[M03ArchitectureAudit] fail=ExistingFilesAboveOneThousandLinesDoNotGrow System.IO.InvalidDataException: The 27 production files frozen above 1,000 lines have strict no-growth ceilings. Growth requires an exact `production-over-1000-growth` exception. Violations:
+[M03ArchitectureAudit] fail=AllBaselinedPathsRespectRatchetedLineAndByteCeilings System.IO.InvalidDataException: Every baseline path remains governed after shrinking below 500 lines. Committed line/byte shrinkage ratchets future ceilings and deletion retires the path. Violations:
+[M03ArchitectureAudit] fail=ApprovedExceptionsUseExactTrackedAuthorization System.IO.InvalidDataException: Exception for `Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs` caps 453 lines/19785 bytes but the source has 493 lines/22128 bytes.
+[M03ArchitectureAudit] pass=ExactDecisionAuthorizationRejectsMismatchedTuples
+[M03ArchitectureAudit] pass=HistoricalPolicyRejectsReservedGrowthAndRecreation
+[M03ArchitectureAudit] pass=JenkinsEditModeGateFailsClosed
+[M03ArchitectureAudit] pass=JenkinsCheckoutProvidesGuardInputsAndHistory
+[M03ArchitectureAudit] pass=JenkinsResultContractRejectsIncompleteRuns
+[M03ArchitectureAudit] pass=BinaryNumstatRecordsFailClosed
+[M03ArchitectureAudit] pass=DuplicateJsonPropertiesFailClosedAtEveryLevel
+[M03ArchitectureAudit] pass=WindowsPathIdentityIsCaseInsensitiveButSpellingStable
+[M03ArchitectureAudit] pass=ByteCeilingRejectsPhysicalLineMinificationBypass
+[M03ArchitectureAudit] pass=PostHardeningGuardrailContractHasExpectedRatchets
+[M03ArchitectureAudit] fail=PostHardeningGuardedSourcesStayBoundedAndNarrow System.IO.InvalidDataException: Post-hardening source and responsibility ratchets failed:
+[M03ArchitectureAudit] result=Failed passed=11 failed=6

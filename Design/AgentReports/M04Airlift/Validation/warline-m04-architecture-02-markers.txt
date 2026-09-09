@@ -1,0 +1,36 @@
+[M03ArchitectureAudit] pass=BaselineManifestHasExpectedFrozenInventories
+[M03ArchitectureAudit] fail=NewSystemHelperPathsRequireApprovedException System.IO.InvalidDataException: New *SystemHelper.cs and *CompositionSystemHelper.cs paths require an exact `system-helper` approved exception. Violations:
+[M03ArchitectureAudit] fail=ProductionFilesAboveFiveHundredLinesRequireReview System.IO.InvalidDataException: Production files above 500 lines must be baselined at their reviewed size or covered by an exact line-bounded approved exception. Violations:
+unreviewed Assets/Game/Scripts/UI/Components/BattleHudRuntimeFeedbackView.cs (523 lines, 20716 bytes)
+grew Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.cs (lines 651 -> 852, bytes 26620 -> 37351; requires production-over-500-review)
+unreviewed Assets/Game/Scripts/UI/Components/MatchHudSquadTrayView.cs (581 lines, 24486 bytes)
+unreviewed Assets/Game/Scripts/UI/Components/MatchHudTransportPassengerDrawerView.cs (585 lines, 25332 bytes)
+grew Assets/Game/Scripts/UI/Screens/AriaCommandAssistantPopupView.cs (lines 470 -> 559, bytes 19802 -> 24424; requires production-over-500-review)
+unreviewed Assets/Game/Scripts/UI/Screens/BuildPlacementConfirmationBarView.cs (507 lines, 20663 bytes)
+grew Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs (lines 1246 -> 1308, bytes 51844 -> 53991; requires production-over-1000-growth)
+[M03ArchitectureAudit] fail=ExistingFilesAboveOneThousandLinesDoNotGrow System.IO.InvalidDataException: The 27 production files frozen above 1,000 lines have strict no-growth ceilings. Growth requires an exact `production-over-1000-growth` exception. Violations:
+[M03ArchitectureAudit] fail=AllBaselinedPathsRespectRatchetedLineAndByteCeilings System.IO.InvalidDataException: Every baseline path remains governed after shrinking below 500 lines. Committed line/byte shrinkage ratchets future ceilings and deletion retires the path. Violations:
+reviewed path regrew Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.cs (lines 651 -> 852, bytes 26620 -> 37351; requires production-over-500-review)
+reviewed path regrew Assets/Game/Scripts/UI/Screens/AriaCommandAssistantPopupView.cs (lines 470 -> 559, bytes 19802 -> 24424; requires production-over-500-review)
+reviewed path regrew Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.cs (lines 426 -> 430, bytes 20180 -> 20510; requires production-over-1000-growth)
+reviewed path regrew Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs (lines 1246 -> 1308, bytes 51844 -> 53991; requires production-over-1000-growth)
+helper path regrew Assets/Game/Scripts/UI/MenuDiagnosticsUiSystemHelper.cs (lines 271 -> 295, bytes 9447 -> 10315; requires system-helper-growth)
+helper path regrew Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs (lines 1246 -> 1308, bytes 51844 -> 53991; requires system-helper-growth)
+[M03ArchitectureAudit] fail=ApprovedExceptionsUseExactTrackedAuthorization System.IO.InvalidDataException: Exception for `Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs` caps 453 lines/19785 bytes but the source has 493 lines/22128 bytes.
+[M03ArchitectureAudit] pass=ExactDecisionAuthorizationRejectsMismatchedTuples
+[M03ArchitectureAudit] pass=HistoricalPolicyRejectsReservedGrowthAndRecreation
+[M03ArchitectureAudit] pass=JenkinsEditModeGateFailsClosed
+[M03ArchitectureAudit] pass=JenkinsCheckoutProvidesGuardInputsAndHistory
+[M03ArchitectureAudit] pass=JenkinsResultContractRejectsIncompleteRuns
+[M03ArchitectureAudit] pass=BinaryNumstatRecordsFailClosed
+[M03ArchitectureAudit] pass=DuplicateJsonPropertiesFailClosedAtEveryLevel
+[M03ArchitectureAudit] pass=WindowsPathIdentityIsCaseInsensitiveButSpellingStable
+[M03ArchitectureAudit] pass=ByteCeilingRejectsPhysicalLineMinificationBypass
+[M03ArchitectureAudit] pass=PostHardeningGuardrailContractHasExpectedRatchets
+[M03ArchitectureAudit] fail=PostHardeningGuardedSourcesStayBoundedAndNarrow System.IO.InvalidDataException: Post-hardening source and responsibility ratchets failed:
+guarded source identity changed Assets/Game/Scripts/UI/Shell/ResourceExchangeShellBinding.cs (63399e3caee4ce5ba7f582043639915507b0debc573e218519d5ee30aa276e2b != d2a8d9426a1b712c7b8d3cb47bc11617c6afbbe2be213641bb6a9ef82c08d237)
+regrew Assets/Game/Scripts/UI/Shell/ResourceExchangeShellBinding.cs (lines 104/94, bytes 3705/3201)
+guarded source identity changed Assets/Game/Scripts/UI/Shell/UIShellContentView.cs (f4eeeeb190036a59dcb2e2a8036ba16b95ed19c85f6d60a38303b0f268ef60b4 != e250b07e6bd012554d37f8ef6376922f2ab4fdf9b0e51c5be194eeedd462c93f)
+replacement owner Assets/Game/Scripts/UI/Screens/ResourceExchangePopupRuntimeView.cs grew managed lifecycle ownership (symbols 4->4, occurrences 30->26, genericSymbols 1->1, genericOccurrences 3->3, domain 36->37, lines 213->211, bytes 7466->7555)
+replacement owner Assets/Game/Scripts/UI/Screens/ResourceExchangePopupView.cs grew managed lifecycle ownership (symbols 4->4, occurrences 52->62, genericSymbols 0->0, genericOccurrences 0->0, domain 19->21, lines 341->423, bytes 13098->17145)
+[M03ArchitectureAudit] result=Failed passed=11 failed=6

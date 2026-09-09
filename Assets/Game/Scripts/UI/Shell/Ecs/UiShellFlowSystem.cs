@@ -121,10 +121,11 @@ namespace Game.UI.Shell.Ecs
                 }
                 else
                 {
-                    BeginCommandSequence(ref shellState, commands, UiShellCommandKind.ExitLoading, UiShellRegionId.LoadingLayer, UIRoute.MainMenu, UiShellMode.MainMenu);
-                    AppendCommand(commands, shellState, UiShellCommandKind.EnterMenu, UiShellRegionId.None, UIRoute.MainMenu, UiShellMode.MainMenu);
+                    UIRoute returnRoute = shellState.ActiveRoute == UIRoute.Campaign ? UIRoute.Campaign : UIRoute.MainMenu;
+                    BeginCommandSequence(ref shellState, commands, UiShellCommandKind.ExitLoading, UiShellRegionId.LoadingLayer, returnRoute, UiShellMode.MainMenu);
+                    AppendCommand(commands, shellState, UiShellCommandKind.EnterMenu, UiShellRegionId.None, returnRoute, UiShellMode.MainMenu);
                     shellState.CurrentMode = UiShellMode.MainMenu;
-                    shellState.ActiveRoute = UIRoute.MainMenu;
+                    shellState.ActiveRoute = returnRoute;
                     shellState.Phase = UiShellTransitionPhase.EnteringMenu;
                     SetMatchIntroInactive(ref matchIntro);
                     EmitMusicState(state.World, AudioEventIds.MusicMenuLoop, AudioEventIds.MusicMenuLoopHash, transitionSeconds: 1.5f);
@@ -164,7 +165,8 @@ namespace Game.UI.Shell.Ecs
                     break;
                 case UiShellRouteIntent.ReturnToMainMenu:
                     routeHistory.Clear();
-                    BeginCommandSequence(ref shellState, commands, UiShellCommandKind.ShowLoading, UiShellRegionId.LoadingLayer, UIRoute.MainMenu, UiShellMode.Loading);
+                    UIRoute returnRoute = request.Route == UIRoute.Campaign ? UIRoute.Campaign : UIRoute.MainMenu;
+                    BeginCommandSequence(ref shellState, commands, UiShellCommandKind.ShowLoading, UiShellRegionId.LoadingLayer, returnRoute, UiShellMode.Loading);
                     // Keep the return transition limited to the zero-duration opaque loading
                     // command. Packaged Android proved that combining it with the Match HUD
                     // exit tween can leave the presentation sequence running forever, which
@@ -172,7 +174,7 @@ namespace Game.UI.Shell.Ecs
                     // The later ExitLoading + EnterMenu sequence replaces every HUD region
                     // while it is still covered by the opaque loading layer.
                     shellState.CurrentMode = UiShellMode.Loading;
-                    shellState.ActiveRoute = UIRoute.MainMenu;
+                    shellState.ActiveRoute = returnRoute;
                     shellState.Phase = UiShellTransitionPhase.ShowingLoading;
                     SetMatchIntroInactive(ref matchIntro);
                     break;
@@ -276,51 +278,6 @@ namespace Game.UI.Shell.Ecs
 
             activePopup.PopupKind = request.PopupKind;
             activePopup.Visible = 1;
-        }
-
-        private static bool TryConsumeRouteRequest(
-            DynamicBuffer<UiShellRouteRequestComponent> routeRequests,
-            out UiShellRouteRequestComponent request)
-        {
-            if (routeRequests.Length == 0)
-            {
-                request = default;
-                return false;
-            }
-
-            request = routeRequests[0];
-            routeRequests.Clear();
-            return true;
-        }
-
-        private static bool TryConsumeLoadingProgressRequest(
-            DynamicBuffer<UiShellLoadingProgressRequestComponent> loadingRequests,
-            out UiShellLoadingProgressRequestComponent request)
-        {
-            if (loadingRequests.Length == 0)
-            {
-                request = default;
-                return false;
-            }
-
-            request = loadingRequests[loadingRequests.Length - 1];
-            loadingRequests.Clear();
-            return true;
-        }
-
-        private static bool TryConsumePopupRequest(
-            DynamicBuffer<UiShellPopupRequestComponent> popupRequests,
-            out UiShellPopupRequestComponent request)
-        {
-            if (popupRequests.Length == 0)
-            {
-                request = default;
-                return false;
-            }
-
-            request = popupRequests[0];
-            popupRequests.Clear();
-            return true;
         }
 
         private static void BeginCommandSequence(

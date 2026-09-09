@@ -43,6 +43,7 @@ namespace Game.UI.Shell.Ecs
 
         public static bool TryEnqueueMissionResultAction(UiMissionResultActionKind action)
         {
+            if(action==UiMissionResultActionKind.RetrySave) return UiShellEcsGateway.TryRetryDefenseSettlement();
             if (action is not (UiMissionResultActionKind.Retry or UiMissionResultActionKind.Continue) ||
                 !TryGetMissionRoot(out EntityManager entityManager, out Entity root) ||
                 !entityManager.HasComponent<CampaignMissionRuntimeComponent>(root) ||

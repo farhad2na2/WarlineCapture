@@ -1,0 +1,2 @@
+[M04AirliftPresentation] result=Passed locales=2 lessons=12 guideClasses=57 hud=bound speaker=Laila
+[M04ResultVisualValidation] result=Passed captures=8 locales=2 aspects=2 outcomes=2

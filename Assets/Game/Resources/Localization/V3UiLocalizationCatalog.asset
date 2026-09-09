@@ -172,6 +172,825 @@ MonoBehaviour:
       value: 'Blocked: civilian zone'
     - key: match.feedback.tactical_map_not_ready
       value: Tactical map is not ready.
+    - key: mission.m03.access
+      value: "Two rifle squads \xB7 Ground Radar Tank"
+    - key: mission.m03.action.continue
+      value: CONTINUE
+    - key: mission.m03.action.do_it
+      value: DO IT
+    - key: mission.m03.action.skip
+      value: SKIP OPTIONAL STEP
+    - key: mission.m03.action.warning
+      value: Read warning
+    - key: mission.m03.camera.return
+      value: RETURN VIEW
+    - key: mission.m03.camera.skip
+      value: Return to command view
+    - key: mission.m03.class.Unit_Chr_Bombsuit_Male_01
+      value: Bomb Suit Specialist
+    - key: mission.m03.class.Unit_Chr_Civilian_Female_01
+      value: Civilian Female I
+    - key: mission.m03.class.Unit_Chr_Civilian_Female_02
+      value: Civilian Female II
+    - key: mission.m03.class.Unit_Chr_Civilian_Male_01
+      value: Civilian Male I
+    - key: mission.m03.class.Unit_Chr_Civilian_Male_02
+      value: Civilian Male II
+    - key: mission.m03.class.Unit_Chr_Contractor_Female_01
+      value: Security Contractor Female I
+    - key: mission.m03.class.Unit_Chr_Contractor_Male_01
+      value: Security Contractor Male I
+    - key: mission.m03.class.Unit_Chr_Contractor_Male_02
+      value: Security Contractor Male II
+    - key: mission.m03.class.Unit_Chr_Ghillie_Male_01
+      value: Ghillie Rocketeer
+    - key: mission.m03.class.Unit_Chr_Insurgent_Female_01
+      value: Insurgent Rifleman Female I
+    - key: mission.m03.class.Unit_Chr_Insurgent_Female_02
+      value: Insurgent Sidearm Fighter Female II
+    - key: mission.m03.class.Unit_Chr_Insurgent_Male_01
+      value: Insurgent Rocketeer Male I
+    - key: mission.m03.class.Unit_Chr_Insurgent_Male_02
+      value: Insurgent Gunner Male II
+    - key: mission.m03.class.Unit_Chr_Insurgent_Male_03
+      value: Insurgent Raider Male III
+    - key: mission.m03.class.Unit_Chr_Insurgent_Male_04
+      value: Insurgent Sniper Male IV
+    - key: mission.m03.class.Unit_Chr_Insurgent_Male_05
+      value: Insurgent Rifleman Male V
+    - key: mission.m03.class.Unit_Chr_Leader_Male_01
+      value: Field Commander
+    - key: mission.m03.class.Unit_Chr_Pilot_Female_01
+      value: Pilot Female I
+    - key: mission.m03.class.Unit_Chr_Pilot_Male_01
+      value: Pilot Male I
+    - key: mission.m03.class.Unit_Chr_Soldier_Female_01
+      value: Marksman Female I
+    - key: mission.m03.class.Unit_Chr_Soldier_Female_01_Alt_01
+      value: Rifleman Female I
+    - key: mission.m03.class.Unit_Chr_Soldier_Female_01_Alt_02
+      value: Marksman Female II
+    - key: mission.m03.class.Unit_Chr_Soldier_Female_02
+      value: Rifleman Female II
+    - key: mission.m03.class.Unit_Chr_Soldier_Female_02_Alt_01
+      value: Rifleman Female I
+    - key: mission.m03.class.Unit_Chr_Soldier_Female_02_Alt_02
+      value: Assault Breacher Female II
+    - key: mission.m03.class.Unit_Chr_Soldier_Male_01
+      value: Heavy Gunner Male I
+    - key: mission.m03.class.Unit_Chr_Soldier_Male_01_Alt_01
+      value: Marksman Male I
+    - key: mission.m03.class.Unit_Chr_Soldier_Male_01_Alt_02
+      value: Advanced Rifleman Male II
+    - key: mission.m03.class.Unit_Chr_Soldier_Male_02
+      value: Rifleman Male II
+    - key: mission.m03.class.Unit_Chr_Soldier_Male_02_Alt_01
+      value: Sidearm Specialist Male I
+    - key: mission.m03.class.Unit_Chr_Soldier_Male_02_Alt_02
+      value: Rifleman Male II
+    - key: mission.m03.class.Unit_Chr_Soldier_Male_02_Alt_03
+      value: Sidearm Specialist Male III
+    - key: mission.m03.class.Unit_Chr_Soldier_Male_02_Alt_04
+      value: Rifleman Male IV
+    - key: mission.m03.class.Unit_Sea_Coastal_Cutter
+      value: Coastal Cutter
+    - key: mission.m03.class.Unit_Sea_Drone_Boat
+      value: Drone Survey Boat
+    - key: mission.m03.class.Unit_Sea_Interceptor_Boat
+      value: Fast Interceptor Boat
+    - key: mission.m03.class.Unit_Sea_Landing_Craft
+      value: Landing Craft
+    - key: mission.m03.class.Unit_Sea_Missile_Craft
+      value: Missile Patrol Craft
+    - key: mission.m03.class.Unit_Sea_Patrol_Boat
+      value: Harbor Patrol Boat
+    - key: mission.m03.class.Unit_Veh_APC_Fast
+      value: Fast APC
+    - key: mission.m03.class.Unit_Veh_APC_Heavy
+      value: Heavy APC
+    - key: mission.m03.class.Unit_Veh_APC_Slow
+      value: Armored APC
+    - key: mission.m03.class.Unit_Veh_Drone
+      value: Recon Drone
+    - key: mission.m03.class.Unit_Veh_Helicopter_Attack
+      value: Attack Helicopter
+    - key: mission.m03.class.Unit_Veh_Helicopter_Attack_Small
+      value: Light Attack Helicopter
+    - key: mission.m03.class.Unit_Veh_Helicopter_Transport
+      value: Transport Helicopter
+    - key: mission.m03.class.Unit_Veh_Jet_01
+      value: Strike Jet
+    - key: mission.m03.class.Unit_Veh_Jet_02
+      value: Fighter Jet
+    - key: mission.m03.class.Unit_Veh_Light_Armored_Car
+      value: Light Armored Car
+    - key: mission.m03.class.Unit_Veh_Missle_Launcher_Air
+      value: Air Missile Launcher
+    - key: mission.m03.class.Unit_Veh_Missle_Launcher_Ground
+      value: Ground Missile Launcher
+    - key: mission.m03.class.Unit_Veh_Plane_Transport
+      value: Transport Plane
+    - key: mission.m03.class.Unit_Veh_Radar_Tank
+      value: Radar Tank
+    - key: mission.m03.class.Unit_Veh_Tank_USA
+      value: Battle Tank
+    - key: mission.m03.class.Unit_Veh_Truck_Canopy
+      value: Canopy Truck
+    - key: mission.m03.class.Unit_Veh_Truck_Tanker
+      value: Tanker Truck
+    - key: mission.m03.class.Unit_Veh_Truck_Tray
+      value: Cargo Truck
+    - key: mission.m03.enemy_intel
+      value: "SCOUT REPORT \xB7 COMPOSITION UNCONFIRMED"
+    - key: mission.m03.goal.civilians
+      value: 'Bonus star: protect all four civilians'
+    - key: mission.m03.guide
+      value: FIELD GUIDE
+    - key: mission.m03.guide.all
+      value: All classes
+    - key: mission.m03.guide.availability.0
+      value: Friendly in M3
+    - key: mission.m03.guide.availability.1
+      value: Hostile in M3
+    - key: mission.m03.guide.availability.2
+      value: Protected civilian in M3
+    - key: mission.m03.guide.availability.3
+      value: "Reference only \xB7 unavailable in M3"
+    - key: mission.m03.guide.availability.4
+      value: "Future reference \xB7 no playable prefab"
+    - key: mission.m03.guide.category.character
+      value: Personnel
+    - key: mission.m03.guide.category.seaVehicle
+      value: Naval
+    - key: mission.m03.guide.category.vehicle
+      value: Vehicle
+    - key: mission.m03.guide.classes
+      value: 57 classes
+    - key: mission.m03.guide.close
+      value: Close guide
+    - key: mission.m03.guide.control.10
+      value: CANCEL ORDER
+    - key: mission.m03.guide.control.6
+      value: RADAR PING
+    - key: mission.m03.guide.control.8
+      value: HOLD POSITION
+    - key: mission.m03.guide.example
+      value: EXAMPLE
+    - key: mission.m03.guide.identity
+      value: Class identity
+    - key: mission.m03.guide.load_failed
+      value: Class details could not load. Reopen this card to try again.
+    - key: mission.m03.guide.loading
+      value: "Loading class\u2026"
+    - key: mission.m03.guide.mistake
+      value: COMMON MISTAKE
+    - key: mission.m03.guide.next
+      value: Next
+    - key: mission.m03.guide.no_match
+      value: No matching class
+    - key: mission.m03.guide.open
+      value: Field guide
+    - key: mission.m03.guide.pause
+      value: "Battle paused \xB7 Close to resume"
+    - key: mission.m03.guide.previous
+      value: Previous
+    - key: mission.m03.guide.radio
+      value: RADIO ARCHIVE
+    - key: mission.m03.guide.reference_notice
+      value: "Reference values come from the class configuration. Availability, production
+        price and squad size are shown by the current mission\u2019s production panel."
+    - key: mission.m03.guide.role.armed
+      value: "ROLE \xB7 Armed unit. Range and damage are configuration values; position
+        and confirmed targets determine whether it can contribute."
+    - key: mission.m03.guide.role.protected
+      value: "ROLE \xB7 Protected civilian. Keep combat away from them to preserve
+        the civilian bonus star."
+    - key: mission.m03.guide.role.sensor
+      value: "ROLE \xB7 Ground reconnaissance. Keep the unarmed sensor safe; it provides
+        warning information, not firepower."
+    - key: mission.m03.guide.role.transport
+      value: "ROLE \xB7 Transport. Passenger capacity does not guarantee an onboard
+        weapon. In M3 the enemy carrier can breach the core even without firing."
+    - key: mission.m03.guide.role.unarmed
+      value: "ROLE \xB7 Support. This configuration cannot attack. Do not count it
+        as a defensive weapon."
+    - key: mission.m03.guide.scroll
+      value: Scroll to read the example and common mistake
+    - key: mission.m03.guide.search
+      value: "Search classes\u2026"
+    - key: mission.m03.guide.stats
+      value: "Health {0} \xB7 Speed {1}\nAttack {2} \xB7 Range {3}\nGround sensor
+        {4} \xB7 Air sensor {5}\nPassenger seats {6} \xB7 Vehicle capacity {7}"
+    - key: mission.m03.guide.title
+      value: "FIELD GUIDE \xB7 RADAR WARNING"
+    - key: mission.m03.guide.topic.1.body
+      value: Stop every registered hostile while keeping the post standing and the
+        inner core clear.
+    - key: mission.m03.guide.topic.1.diagram
+      value: "WEST ROAD \u2192 DEFENSE \u2192 FORWARD POST"
+    - key: mission.m03.guide.topic.1.example
+      value: If the fast carrier survives the firefight, block or intercept it before
+        it reaches the post core.
+    - key: mission.m03.guide.topic.1.mistake
+      value: Treating civilian losses as an automatic mission defeat. They affect
+        a bonus star.
+    - key: mission.m03.guide.topic.1.title
+      value: Your mission
+    - key: mission.m03.guide.topic.10.body
+      value: Keep one squad covering the inner approach while another intercepts
+        farther west.
+    - key: mission.m03.guide.topic.10.diagram
+      value: FORWARD INTERCEPTION + INNER COVERAGE
+    - key: mission.m03.guide.topic.10.example
+      value: If a forward squad falls back, move your reserve into the approach before
+        the carrier passes the last turn.
+    - key: mission.m03.guide.topic.10.mistake
+      value: Chasing a target until every defender leaves the post approach.
+    - key: mission.m03.guide.topic.10.title
+      value: Protect the core
+    - key: mission.m03.guide.topic.11.body
+      value: After victory, review the civilian and undamaged-post stars separately;
+        retry for a better defense.
+    - key: mission.m03.guide.topic.11.diagram
+      value: VICTORY + CIVILIANS SAFE + POST UNDAMAGED
+    - key: mission.m03.guide.topic.11.example
+      value: A damaged post can still win. Afterward, the result explains which bonus
+        stars were missed and why.
+    - key: mission.m03.guide.topic.11.mistake
+      value: Expecting first-clear unlocks to be granted again on replay.
+    - key: mission.m03.guide.topic.11.title
+      value: Stars and retry
+    - key: mission.m03.guide.topic.12.body
+      value: Search the 57 class identities and compare their actual configured capabilities.
+    - key: mission.m03.guide.topic.12.diagram
+      value: "FRIENDLY \xB7 HOSTILE \xB7 PROTECTED \xB7 REFERENCE \xB7 FUTURE"
+    - key: mission.m03.guide.topic.12.example
+      value: "Search Radar Tank, compare its ground-sensor range with the Air Radar
+        Dish, then check each card\u2019s availability label."
+    - key: mission.m03.guide.topic.12.mistake
+      value: Assuming every reference class is available for production in M3.
+    - key: mission.m03.guide.topic.12.title
+      value: Every class
+    - key: mission.m03.guide.topic.2.body
+      value: Read the source before acting on a reported position.
+    - key: mission.m03.guide.topic.2.diagram
+      value: "SCOUT REPORT \u2192 SENSOR CONTACT \u2192 VISUAL CONFIRMATION"
+    - key: mission.m03.guide.topic.2.example
+      value: A scout warning gives an approach and an estimate. Read it, inspect
+        the road, then check for sensor confirmation.
+    - key: mission.m03.guide.topic.2.mistake
+      value: Assuming an estimated arrival time is a guaranteed countdown.
+    - key: mission.m03.guide.topic.2.title
+      value: Read a warning
+    - key: mission.m03.guide.topic.3.body
+      value: A Ground Radar Tank detects ground vehicles; the Air Radar Dish is for
+        air contacts.
+    - key: mission.m03.guide.topic.3.diagram
+      value: "REPORTED \u2260 CONFIRMED \xB7 STALE \u2260 DESTROYED"
+    - key: mission.m03.guide.topic.3.example
+      value: 'A vehicle leaves radar coverage: its last reported position stays useful,
+        but it is no longer a live location.'
+    - key: mission.m03.guide.topic.3.mistake
+      value: Interpreting a lost or stale contact as a destroyed enemy.
+    - key: mission.m03.guide.topic.3.title
+      value: Sources and confidence
+    - key: mission.m03.guide.topic.4.body
+      value: Inspect the road, return to your squad, then issue Move if repositioning
+        is needed.
+    - key: mission.m03.guide.topic.4.diagram
+      value: "JUMP \u2192 CAMERA \xB7 MOVE \u2192 SELECTED UNITS"
+    - key: mission.m03.guide.topic.4.example
+      value: Keep squad A selected, inspect the warning with Jump, then press Move
+        and choose a reachable roadside position.
+    - key: mission.m03.guide.topic.4.mistake
+      value: "Expecting the camera\u2019s Jump button to move a squad."
+    - key: mission.m03.guide.topic.4.title
+      value: Jump and Move
+    - key: mission.m03.guide.topic.5.body
+      value: A completed Tower adds firepower. A Barrier can change the route; keep
+        a second approach covered.
+    - key: mission.m03.guide.topic.5.diagram
+      value: "CHECK COST \u2192 VALID FOOTPRINT \u2192 CONFIRM \u2192 COMPLETION"
+    - key: mission.m03.guide.topic.5.example
+      value: Begin a Tower early and cover its construction with rifles. Place a
+        Barrier only where you can cover the detour.
+    - key: mission.m03.guide.topic.5.mistake
+      value: Spending on an unfinished defense while leaving the approach unguarded.
+    - key: mission.m03.guide.topic.5.title
+      value: Tower and Barrier
+    - key: mission.m03.guide.topic.6.body
+      value: Use the existing Barracks to order a four-person rifle squad when the
+        displayed budget allows.
+    - key: mission.m03.guide.topic.6.diagram
+      value: "BARRACKS \u2192 PRODUCTION \u2192 FOUR RIFLES \u2192 POSITION"
+    - key: mission.m03.guide.topic.6.example
+      value: Select the completed Barracks and order one rifle squad. Wait for all
+        four to arrive before counting them in your defense.
+    - key: mission.m03.guide.topic.6.mistake
+      value: "Reading a single class\u2019s reference cost as the current mission\u2019s
+        squad transaction."
+    - key: mission.m03.guide.topic.6.title
+      value: Rifle reinforcements
+    - key: mission.m03.guide.topic.7.body
+      value: Hold protects a position. Stop cancels the current order; the battle
+        continues.
+    - key: mission.m03.guide.topic.7.diagram
+      value: "HOLD \u2192 DEFEND POSITION \xB7 STOP \u2192 CANCEL ORDER"
+    - key: mission.m03.guide.topic.7.example
+      value: After reaching the roadside, use Hold. If you chose the wrong destination,
+        use Stop, then issue a corrected Move.
+    - key: mission.m03.guide.topic.7.mistake
+      value: Using Stop when you intended to pause and read the guide.
+    - key: mission.m03.guide.topic.7.title
+      value: Hold and Stop
+    - key: mission.m03.guide.topic.8.body
+      value: "Wait until an enemy vehicle is inside the living sensor\u2019s coverage
+        before spending a Ping."
+    - key: mission.m03.guide.topic.8.diagram
+      value: "2 USES \xB7 60s COOLDOWN \xB7 GROUND SENSOR COVERAGE"
+    - key: mission.m03.guide.topic.8.example
+      value: 'A confirmed vehicle is nearby: use one Ping to refresh its position.
+        Save the remaining use for the main element.'
+    - key: mission.m03.guide.topic.8.mistake
+      value: Expecting an empty scan to refund its charge or reveal the whole map.
+    - key: mission.m03.guide.topic.8.title
+      value: Radar Ping
+    - key: mission.m03.guide.topic.9.body
+      value: Shoot a confirmed armed car; also intercept the unarmed carrier before
+        it reaches the core.
+    - key: mission.m03.guide.topic.9.diagram
+      value: "ARMED CAR \u2192 DAMAGE \xB7 CARRIER \u2192 CORE BREACH"
+    - key: mission.m03.guide.topic.9.example
+      value: Concentrate rifle fire on the armed car, but keep a reserve between
+        the carrier and the post.
+    - key: mission.m03.guide.topic.9.mistake
+      value: Ignoring an unarmed enemy vehicle because it cannot shoot.
+    - key: mission.m03.guide.topic.9.title
+      value: Choose targets
+    - key: mission.m03.guide.topics
+      value: 12 lessons
+    - key: mission.m03.guide.unarmed
+      value: Unarmed
+    - key: mission.m03.guide.unavailable_stats
+      value: Gameplay statistics will appear when this class has a playable configuration.
+    - key: mission.m03.jump
+      value: JUMP TO REPORT
+    - key: mission.m03.label.forces
+      value: STARTING FORCES
+    - key: mission.m03.label.options
+      value: DEFENSE CHOICES
+    - key: mission.m03.location
+      value: "Western approach \xB7 JRC forward post"
+    - key: mission.m03.name
+      value: Radar Warning
+    - key: mission.m03.objective.hold_post
+      value: Keep the forward post standing
+    - key: mission.m03.objective.keep_core_clear
+      value: Prevent a breach of the inner core
+    - key: mission.m03.objective.prevent_breach
+      value: Prevent a breach of the inner core
+    - key: mission.m03.objective.protect_post
+      value: Keep the forward post standing
+    - key: mission.m03.objective.stop_convoy
+      value: Stop both convoy elements
+    - key: mission.m03.optional.skip
+      value: Skip optional lesson
+    - key: mission.m03.options
+      value: Tower, Barrier or rifle reinforcements
+    - key: mission.m03.ping.cooldown
+      value: Ready in {0}s
+    - key: mission.m03.ping.empty
+      value: No uses remaining
+    - key: mission.m03.ping.label
+      value: Radar Ping
+    - key: mission.m03.ping.no_sensor
+      value: Ground sensor unavailable
+    - key: mission.m03.ping.paused
+      value: Paused
+    - key: mission.m03.ping.ready
+      value: "Radar Ping \xB7 {0} uses"
+    - key: mission.m03.resources
+      value: "50,000 Credits \xB7 100 Materials"
+    - key: mission.m03.result.breach
+      value: A living hostile reached the inner core. Intercept the carrier before
+        the final turn; an unarmed vehicle can still breach.
+    - key: mission.m03.result.civilian_goal
+      value: CIVILIAN SAFETY
+    - key: mission.m03.result.civilians
+      value: CIVILIANS LOST
+    - key: mission.m03.result.damaged
+      value: DAMAGED
+    - key: mission.m03.result.defeat
+      value: MISSION FAILED
+    - key: mission.m03.result.destroyed
+      value: DESTROYED
+    - key: mission.m03.result.enemies
+      value: HOSTILES STOPPED
+    - key: mission.m03.result.incomplete
+      value: INCOMPLETE
+    - key: mission.m03.result.integrity
+      value: A required mission actor became unavailable. Restart this attempt; no
+        victory or rewards were granted.
+    - key: mission.m03.result.losses
+      value: LOSSES
+    - key: mission.m03.result.no_reward
+      value: NO REWARD
+    - key: mission.m03.result.objectives
+      value: DEFENSE & BONUS STARS
+    - key: mission.m03.result.performance
+      value: PERFORMANCE
+    - key: mission.m03.result.post
+      value: FORWARD POST CONDITION
+    - key: mission.m03.result.post_lost
+      value: The forward post was destroyed. Cover its approach and keep a reserve
+        for the next attempt.
+    - key: mission.m03.result.retry
+      value: RETRY
+    - key: mission.m03.result.rewards
+      value: REWARDS
+    - key: mission.m03.result.safe
+      value: ALL SAFE
+    - key: mission.m03.result.squad_losses
+      value: RIFLES LOST
+    - key: mission.m03.result.stars
+      value: '{0} / 3 STARS'
+    - key: mission.m03.result.stopped
+      value: STOPPED
+    - key: mission.m03.result.undamaged
+      value: UNDAMAGED
+    - key: mission.m03.result.victory
+      value: VICTORY
+    - key: mission.m03.result.victory_body
+      value: Both convoy elements stopped. The forward post is standing and the inner
+        core held. Review the civilian and post-damage stars below.
+    - key: mission.m03.reward.guard_tower
+      value: Guard Tower access
+    - key: mission.m03.reward.radar_ping
+      value: Radar Ping ownership
+    - key: mission.m03.reward.unlocks
+      value: TOWER + RADAR PING
+    - key: mission.m03.save.body
+      value: Defense complete. Progress and rewards could not be saved. Retry saving
+        before leaving this mission.
+    - key: mission.m03.save.failed
+      value: PROGRESS NOT SAVED
+    - key: mission.m03.save.pending
+      value: Rewards pending save
+    - key: mission.m03.save.retry
+      value: RETRY SAVE
+    - key: mission.m03.star.civilians_safe
+      value: All four civilians survived
+    - key: mission.m03.star.complete
+      value: Stop the convoy and hold the post
+    - key: mission.m03.star.post_undamaged
+      value: Forward post took no damage
+    - key: mission.m03.summary
+      value: Hold the forward post against two convoy elements. Position your squads,
+        read the warnings, and choose how to reinforce the defense.
+    - key: mission.m03.tutorial.1.body
+      value: Check the source, route and contact estimate. A scout report does not
+        confirm the convoy's size.
+    - key: mission.m03.tutorial.1.title
+      value: Read the warning
+    - key: mission.m03.tutorial.10.body
+      value: The armed cars can damage your defense. The unarmed carrier can still
+        breach the core. Choose targets you have confirmed.
+    - key: mission.m03.tutorial.10.title
+      value: Prioritize confirmed threats
+    - key: mission.m03.tutorial.11.body
+      value: Read the second warning and check your surviving squads. Reposition
+        if needed while keeping the approach to the post covered.
+    - key: mission.m03.tutorial.11.title
+      value: Adapt to the main convoy
+    - key: mission.m03.tutorial.12.body
+      value: Victory requires stopping both elements and keeping the post and core
+        safe. Civilian losses and post damage affect separate bonus stars.
+    - key: mission.m03.tutorial.12.title
+      value: Review the result
+    - key: mission.m03.tutorial.2.body
+      value: Jump to the reported road. This moves the camera and keeps your squads
+        and orders unchanged.
+    - key: mission.m03.tutorial.2.title
+      value: Inspect the approach
+    - key: mission.m03.tutorial.3.body
+      value: Defend forward for more interception time, or stay near the post. Keep
+        the inner approach covered.
+    - key: mission.m03.tutorial.3.title
+      value: Choose your defense
+    - key: mission.m03.tutorial.4.body
+      value: Open Build and choose a Tower or Barrier. Check the actual cost and
+        valid footprint before confirming. You can skip this lesson.
+    - key: mission.m03.tutorial.4.title
+      value: 'Optional: build a defense'
+    - key: mission.m03.tutorial.5.body
+      value: Select a friendly squad, press Move, then choose a reachable position
+        beside the convoy road. Wait for arrival.
+    - key: mission.m03.tutorial.5.title
+      value: Position your rifle squads
+    - key: mission.m03.tutorial.6.body
+      value: Select the squad and press Hold. It defends its position and fires at
+        enemies in range without chasing them.
+    - key: mission.m03.tutorial.6.title
+      value: Hold the line
+    - key: mission.m03.tutorial.7.body
+      value: Stop cancels the selected units' current orders. It does not pause the
+        battle. Skip if you want to keep your current defense.
+    - key: mission.m03.tutorial.7.title
+      value: 'Optional: cancel an order'
+    - key: mission.m03.tutorial.8.body
+      value: Radar Ping scans the living Ground Radar Tank's coverage. Two uses,
+        with a cooldown between them. An empty scan still uses a charge.
+    - key: mission.m03.tutorial.8.title
+      value: Refresh your information
+    - key: mission.m03.tutorial.9.body
+      value: Open the completed Barracks' rifle production. Confirm the displayed
+        cost for a four-person squad. Construction and production remain your choice.
+    - key: mission.m03.tutorial.9.title
+      value: 'Optional: reinforce'
+    - key: mission.m03.warning.eta
+      value: 'Contact estimate: {0}s'
+    - key: mission.m03.warning.jump
+      value: Inspect reported position
+    - key: mission.m03.warning.main
+      value: "Main convoy \xB7 western road"
+    - key: mission.m03.warning.ping
+      value: Radar Ping
+    - key: mission.m03.warning.resolved
+      value: Convoy element stopped
+    - key: mission.m03.warning.scout
+      value: Scout report
+    - key: mission.m03.warning.sensor
+      value: Ground radar
+    - key: mission.m03.warning.stale
+      value: Last known contact
+    - key: mission.m03.warning.title
+      value: CONVOY WARNING
+    - key: mission.m03.warning.unknown
+      value: Composition unconfirmed
+    - key: mission.m03.warning.vanguard
+      value: "Vanguard \xB7 western road"
+    - key: mission.m03.warning.vehicles
+      value: '{0} vehicle(s) observed'
+    - key: mission.m03.warning.visual
+      value: Visual contact
+    - key: mission.m03.warning.window
+      value: Contact window open
+    - key: mission.m04.access
+      value: "8 rifles \xB7 APC \xB7 helicopter \xB7 4 specialists"
+    - key: mission.m04.enemy_intel
+      value: A finite patrol approaches from the west after two minutes.
+    - key: mission.m04.focus.departure
+      value: DEPARTURE
+    - key: mission.m04.focus.landing
+      value: LANDING AREA
+    - key: mission.m04.focus.team
+      value: TEAM
+    - key: mission.m04.guide.availability.0
+      value: Friendly in M4
+    - key: mission.m04.guide.availability.1
+      value: Hostile in M4
+    - key: mission.m04.guide.availability.2
+      value: Protected specialist in M4
+    - key: mission.m04.guide.availability.3
+      value: "Reference only \xB7 unavailable in M4"
+    - key: mission.m04.guide.notice
+      value: These values come from the class configuration. M4 supplies its escort,
+        APC and helicopter; production is disabled. Reference classes cannot be deployed
+        here.
+    - key: mission.m04.guide.reference
+      value: "Reference only \xB7 unavailable in M4"
+    - key: mission.m04.guide.role.protected
+      value: "ROLE \xB7 Protected specialist. All four must ride the APC, transfer
+        to the helicopter and leave alive. Losing anyone fails the rescue."
+    - key: mission.m04.guide.role.transport
+      value: "ROLE \xB7 Transport. Passenger capacity does not imply an onboard weapon.
+        Use the APC for the road leg, unload at the landing area and board all four
+        specialists onto the helicopter."
+    - key: mission.m04.guide.title
+      value: "FIELD GUIDE \xB7 AIRLIFT"
+    - key: mission.m04.hud.cleared
+      value: CLEARED FOR DEPARTURE
+    - key: mission.m04.hud.contested
+      value: LANDING AREA CONTESTED
+    - key: mission.m04.hud.status
+      value: "Aboard {0}/4 \xB7 APC leg {1}/4 \xB7 Clear {2}/20s \xB7 {3}s left"
+    - key: mission.m04.location
+      value: "Eastern district \xB7 medical landing area"
+    - key: mission.m04.name
+      value: AIRLIFT
+    - key: mission.m04.objective.extract
+      value: Extract all four specialists
+    - key: mission.m04.objective.extract.body
+      value: "APC \u2192 helicopter \u2192 departure zone; every specialist must
+        survive."
+    - key: mission.m04.objective.landing
+      value: Hold the landing area clear for 20 seconds
+    - key: mission.m04.objective.landing.body
+      value: All four aboard; keep the helicopter inside the clear landing area.
+    - key: mission.m04.objective.transport
+      value: Protect the APC and helicopter
+    - key: mission.m04.objective.transport.body
+      value: Keep the APC until transfer and the helicopter through departure.
+    - key: mission.m04.options
+      value: Cover the approach, board safely, leave together
+    - key: mission.m04.resources
+      value: Mission-supplied APC and helicopter
+    - key: mission.m04.result.aircraft_lost
+      value: The helicopter was destroyed. Protect it until all four reach the departure
+        zone.
+    - key: mission.m04.result.carrier_lost
+      value: The APC was lost before the team completed the transfer.
+    - key: mission.m04.result.defeat
+      value: EXTRACTION FAILED
+    - key: mission.m04.result.escort_lost
+      value: The escort was lost. Keep at least one rifle soldier alive until departure.
+    - key: mission.m04.result.extract
+      value: Specialists rescued
+    - key: mission.m04.result.failure
+      value: Extraction failed. Review the passenger and transport status, then retry.
+    - key: mission.m04.result.integrity
+      value: The rescue roster could not be verified. Retry the operation.
+    - key: mission.m04.result.landing
+      value: 20-second LZ clearance
+    - key: mission.m04.result.objectives
+      value: RESCUE OBJECTIVES
+    - key: mission.m04.result.passenger_lost
+      value: A specialist was lost. Keep all four protected during boarding and transfer.
+    - key: mission.m04.result.subtitle
+      value: "AIRLIFT \xB7 MEDICAL LANDING ZONE"
+    - key: mission.m04.result.success
+      value: All four specialists reached safety by APC and helicopter. Captain Laila
+        Nasser joins the campaign.
+    - key: mission.m04.result.timeout
+      value: The ten-minute extraction window closed before departure.
+    - key: mission.m04.result.transport
+      value: Transport protection
+    - key: mission.m04.result.victory
+      value: EXTRACTION COMPLETE
+    - key: mission.m04.reward.card
+      value: 500 XP | 2,500 CREDITS | LAILA | TRANSPORT
+    - key: mission.m04.reward.laila
+      value: Captain Laila Nasser joins
+    - key: mission.m04.reward.transport
+      value: Transport access
+    - key: mission.m04.star.1
+      value: All four extracted
+    - key: mission.m04.star.2
+      value: No escort losses
+    - key: mission.m04.star.3
+      value: Finish within 7 minutes
+    - key: mission.m04.summary
+      value: Rescue four specialists by APC, then escort their helicopter out.
+    - key: mission.m04.tutorial.1.body
+      value: 'Save all four specialists: APC first, helicopter second. You have ten
+        minutes after the camera returns. Enemy kills are optional. Both vehicles
+        carry their own mission supply.'
+    - key: mission.m04.tutorial.1.diagram
+      value: "TEAM \u2192 APC \u2192 LANDING AREA \u2192 HELICOPTER \u2192 EXIT"
+    - key: mission.m04.tutorial.1.example
+      value: Read the route, then continue.
+    - key: mission.m04.tutorial.1.mistake
+      value: Do not leave a specialist behind.
+    - key: mission.m04.tutorial.1.title
+      value: A rescue, in two stages
+    - key: mission.m04.tutorial.10.body
+      value: Keep the loaded helicopter at the landing area for twenty uninterrupted
+        seconds. Any active hostile inside the marked radius resets the countdown.
+        Hold the approach with your rifles.
+    - key: mission.m04.tutorial.10.diagram
+      value: "TEAM \u2192 APC \u2192 LANDING AREA \u2192 HELICOPTER \u2192 EXIT"
+    - key: mission.m04.tutorial.10.example
+      value: Wait for Laila's departure clearance.
+    - key: mission.m04.tutorial.10.mistake
+      value: Taking off early does not award extraction progress.
+    - key: mission.m04.tutorial.10.title
+      value: Hold the landing area clear
+    - key: mission.m04.tutorial.11.body
+      value: Select the helicopter, choose Move, and fly to the marked departure
+        zone northeast of the landing area. Keep every specialist aboard and alive.
+        Show Me locates the exit.
+    - key: mission.m04.tutorial.11.diagram
+      value: "TEAM \u2192 APC \u2192 LANDING AREA \u2192 HELICOPTER \u2192 EXIT"
+    - key: mission.m04.tutorial.11.example
+      value: Cross the departure area with the helicopter airborne.
+    - key: mission.m04.tutorial.11.mistake
+      value: The APC reaching the exit does not count as an airlift.
+    - key: mission.m04.tutorial.11.title
+      value: Fly to the departure zone
+    - key: mission.m04.tutorial.12.body
+      value: Earn one star for extraction, one for keeping every escort alive, and
+        one for finishing within seven minutes. First-clear rewards are paid once.
+        Replays can improve your stars.
+    - key: mission.m04.tutorial.12.diagram
+      value: "TEAM \u2192 APC \u2192 LANDING AREA \u2192 HELICOPTER \u2192 EXIT"
+    - key: mission.m04.tutorial.12.example
+      value: Laila joins the campaign after the first successful extraction.
+    - key: mission.m04.tutorial.12.mistake
+      value: Failure never grants rescue rewards or shows a successful departure.
+    - key: mission.m04.tutorial.12.title
+      value: Review your rescue
+    - key: mission.m04.tutorial.2.body
+      value: Tap the wheeled APC near your rifle squads. Its passenger list shows
+        the real seats. Keep escort soldiers outside so all four specialists can
+        board.
+    - key: mission.m04.tutorial.2.diagram
+      value: "TEAM \u2192 APC \u2192 LANDING AREA \u2192 HELICOPTER \u2192 EXIT"
+    - key: mission.m04.tutorial.2.example
+      value: Select the APC before giving its movement order.
+    - key: mission.m04.tutorial.2.mistake
+      value: A selected rifle squad is not the transport.
+    - key: mission.m04.tutorial.2.title
+      value: Select the APC
+    - key: mission.m04.tutorial.3.body
+      value: Select Move and send the APC west along the road to the four specialists.
+        Keep the rifles between them and the approaching patrol. Show Me locates
+        the team.
+    - key: mission.m04.tutorial.3.diagram
+      value: "TEAM \u2192 APC \u2192 LANDING AREA \u2192 HELICOPTER \u2192 EXIT"
+    - key: mission.m04.tutorial.3.example
+      value: The road gives a clear approach for the APC.
+    - key: mission.m04.tutorial.3.mistake
+      value: Do not drive through buildings or leave the APC in enemy fire.
+    - key: mission.m04.tutorial.3.title
+      value: Reach the stranded team
+    - key: mission.m04.tutorial.4.body
+      value: Select the four unarmed specialists beside the road. They belong to
+        your rescue team and accept movement and boarding commands. Their survival
+        is mandatory.
+    - key: mission.m04.tutorial.4.diagram
+      value: "TEAM \u2192 APC \u2192 LANDING AREA \u2192 HELICOPTER \u2192 EXIT"
+    - key: mission.m04.tutorial.4.example
+      value: Use a selection box around the four people.
+    - key: mission.m04.tutorial.4.mistake
+      value: Keep armed escorts out of this selection.
+    - key: mission.m04.tutorial.4.title
+      value: Select the specialists
+    - key: mission.m04.tutorial.5.body
+      value: With the specialists selected, press Board and choose the APC. Wait
+        for all four to appear in its passenger list. A boarding order is not a completed
+        rescue.
+    - key: mission.m04.tutorial.5.diagram
+      value: "TEAM \u2192 APC \u2192 LANDING AREA \u2192 HELICOPTER \u2192 EXIT"
+    - key: mission.m04.tutorial.5.example
+      value: Check the passenger count before moving.
+    - key: mission.m04.tutorial.5.mistake
+      value: Moving too soon can leave a passenger walking behind.
+    - key: mission.m04.tutorial.5.title
+      value: Board all four into the APC
+    - key: mission.m04.tutorial.6.body
+      value: "Move the loaded APC east to the landing area. The rifles can cover
+        the road or hold the approach. Oil is \u0646\u0641\u062A; Fuel is \u0628\u0646\u0632\u06CC\u0646.
+        These loaned vehicles do not require a new fuel network here."
+    - key: mission.m04.tutorial.6.diagram
+      value: "TEAM \u2192 APC \u2192 LANDING AREA \u2192 HELICOPTER \u2192 EXIT"
+    - key: mission.m04.tutorial.6.example
+      value: Keep the passenger count at four during the trip.
+    - key: mission.m04.tutorial.6.mistake
+      value: Do not confuse the global fuel header with a passenger counter.
+    - key: mission.m04.tutorial.6.title
+      value: Escort the APC to Laila
+    - key: mission.m04.tutorial.7.body
+      value: Select the APC at the landing area and use its passenger panel to unload.
+        All four must leave the APC before they can board the helicopter. If no safe
+        cell exists, move the APC into open ground and retry.
+    - key: mission.m04.tutorial.7.diagram
+      value: "TEAM \u2192 APC \u2192 LANDING AREA \u2192 HELICOPTER \u2192 EXIT"
+    - key: mission.m04.tutorial.7.example
+      value: Unload close to the helicopter while the rifles cover.
+    - key: mission.m04.tutorial.7.mistake
+      value: A rejected unload leaves passengers safely aboard; it does not transfer
+        them.
+    - key: mission.m04.tutorial.7.title
+      value: Unload beside the helicopter
+    - key: mission.m04.tutorial.8.body
+      value: Select Laila's helicopter. Boarding requires it to be landed and close
+        to the passengers. Its seats, health and movement are real transport state,
+        not a cinematic shortcut.
+    - key: mission.m04.tutorial.8.diagram
+      value: "TEAM \u2192 APC \u2192 LANDING AREA \u2192 HELICOPTER \u2192 EXIT"
+    - key: mission.m04.tutorial.8.example
+      value: Keep it at the landing area until all four are aboard.
+    - key: mission.m04.tutorial.8.mistake
+      value: An airborne helicopter cannot instantly collect a passenger.
+    - key: mission.m04.tutorial.8.title
+      value: Inspect the transport helicopter
+    - key: mission.m04.tutorial.9.body
+      value: Select the unloaded specialists, press Board, and choose the helicopter.
+        Verify four passengers in its manifest. Every specialist must have completed
+        the APC leg first.
+    - key: mission.m04.tutorial.9.diagram
+      value: "TEAM \u2192 APC \u2192 LANDING AREA \u2192 HELICOPTER \u2192 EXIT"
+    - key: mission.m04.tutorial.9.example
+      value: Board the team, not the escort rifle squads.
+    - key: mission.m04.tutorial.9.mistake
+      value: Flying straight to the team skips the required APC leg and will not
+        complete the mission.
+    - key: mission.m04.tutorial.9.title
+      value: Transfer the specialists
+    - key: mission.reward.commander_xp
+      value: COMMANDER XP
+    - key: mission.reward.credits
+      value: CREDITS
     - key: narrative.first_launch.control.cancel_skip
       value: KEEP WATCHING
     - key: narrative.first_launch.control.confirm_skip
@@ -315,6 +1134,71 @@ MonoBehaviour:
     - key: narrative.m02.debrief.samira
       value: The post is active again. The clinic road and city response teams are
         connected.
+    - key: narrative.m03.brief.01
+      value: The warning sector is offline. Scouts report an armored convoy on the
+        western road. Our Ground Radar Tank can confirm vehicles once they enter
+        coverage.
+    - key: narrative.m03.brief.02
+      value: Hold them at the junction or defend closer to the post. Keep the clinic
+        corridor open. Even an unarmed carrier must not reach the inner core.
+    - key: narrative.m03.brief.03
+      value: We have roughly a minute to prepare. Two rifle squads and a working
+        Barracks are ready. Choose a Tower, a Barrier, or reinforcements. The first
+        warning is an estimate.
+    - key: narrative.m03.comms.01
+      value: The convoy's departure report matches the warning outage. The timing
+        suggests advance knowledge. Keep defending; we will compare the records afterward.
+    - key: narrative.m03.debrief.01
+      value: The convoy is stopped and the post still stands. Check the damage and
+        account for everyone. We need an accurate report.
+    - key: narrative.m03.debrief.02
+      value: The recovered orders name the warning outage before it happened. That
+        is evidence of advance knowledge. It does not yet tell us who supplied it.
+    - key: narrative.m03.debrief.03
+      value: A medical and engineering team is cut off beyond the road. They need
+        an airlift. Prepare a safe route for them.
+    - key: narrative.m03.debrief.civilian.loss
+      value: The convoy is stopped and the post is undamaged. We lost civilians.
+        Record the losses and secure the clinic corridor.
+    - key: narrative.m03.debrief.clean
+      value: The convoy is stopped. The post is undamaged, and every civilian is
+        accounted for. Keep the clinic corridor open.
+    - key: narrative.m03.debrief.damaged
+      value: The convoy is stopped and every civilian is safe. The post took damage.
+        Repair it before the next response.
+    - key: narrative.m03.debrief.mixed
+      value: The convoy is stopped, but the post took damage and civilians were lost.
+        Record both. The corridor still needs protection.
+    - key: narrative.m04.brief.01
+      value: Captain Laila Nasser. My helicopter is ready at the eastern landing
+        area. Bring the four specialists to me in the APC; I can keep this extraction
+        window open for ten minutes.
+    - key: narrative.m04.brief.02
+      value: Two medics and two engineers are stranded by the western road. They
+        are the people who can reopen the clinics and restore the network. Bring
+        every one of them home.
+    - key: narrative.m04.brief.03
+      value: Rifles cover the road; the APC carries the team. Unload beside Laila,
+        board the helicopter, hold the area clear for twenty seconds, then fly to
+        the marked departure zone.
+    - key: narrative.m04.comms.01
+      value: All four are aboard. The landing area is clear and departure is authorized.
+        Fly to the marked exit; I will take the team from there.
+    - key: narrative.m04.debrief.01
+      value: Four passengers accounted for. Your escort gave us the time we needed.
+        I am joining this operation; you will have an airlift pilot when the next
+        team needs a way out.
+    - key: narrative.m04.debrief.02
+      value: The engineers brought their repair records. Several outages lead back
+        to the same fortified communications node. We finally have a place to investigate.
+    - key: narrative.m04.debrief.03
+      value: 'Extraction confirmed. Captain Nasser is on the roster. Next objective:
+        assess that communications node. First, let the medical team get back to
+        work.'
+    - key: narrative.speaker.laila.name
+      value: Captain Laila Nasser
+    - key: narrative.speaker.laila.role
+      value: Airlift pilot
     - key: not_enough_money
       value: Not enough money
     - key: selection.building.base_structure
@@ -928,6 +1812,16 @@ MonoBehaviour:
       value: OPEN VIA INTEL
     - key: ui.narrative.confirm_skip_accessible
       value: Confirm skip to gameplay
+    - key: ui.narrative.pause
+      value: PAUSE
+    - key: ui.narrative.resume
+      value: RESUME
+    - key: ui.narrative.story
+      value: STORY
+    - key: ui.narrative.subtitles_off
+      value: CAPTIONS OFF
+    - key: ui.narrative.subtitles_on
+      value: CAPTIONS ON
     - key: ui.result.combat_summary
       value: "SQUAD LOSSES  {0}     \u2022     ENEMIES DEFEATED  {1}"
     - key: ui.result.reward_amount
@@ -3148,6 +4042,12 @@ MonoBehaviour:
       value: YOUR RESOURCES
     - key: ui.v3.your_squads.c31db5325c
       value: Your Squads
+    - key: unit.apc.fast.description
+      value: Fast armored personnel carrier for quickly transporting infantry across
+        the battlefield.
+    - key: unit.helicopter.transport.description
+      value: Transport helicopter that lands for boarding and deploys soldiers by
+        rope while airborne.
     - key: warning_air_attack_type
       value: Air attack detected
     - key: warning_attack_count_suffix
@@ -3394,6 +4294,1404 @@ MonoBehaviour:
     - key: match.feedback.tactical_map_not_ready
       value: "\u0646\u0642\u0634\u0647 \u062A\u0627\u06A9\u062A\u06CC\u06A9\u06CC
         \u0622\u0645\u0627\u062F\u0647 \u0646\u06CC\u0633\u062A."
+    - key: mission.m03.access
+      value: "\u062F\u0648 \u06AF\u0631\u0648\u0647 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631
+        \xB7 \u062E\u0648\u062F\u0631\u0648\u06CC \u0631\u0627\u062F\u0627\u0631
+        \u0632\u0645\u06CC\u0646\u06CC"
+    - key: mission.m03.action.continue
+      value: "\u0627\u062F\u0627\u0645\u0647"
+    - key: mission.m03.action.do_it
+      value: "\u0627\u0646\u062C\u0627\u0645\u0634 \u0628\u062F\u0647"
+    - key: mission.m03.action.skip
+      value: "\u0639\u0628\u0648\u0631 \u0627\u0632 \u0645\u0631\u062D\u0644\u0647\u0654
+        \u0627\u062E\u062A\u06CC\u0627\u0631\u06CC"
+    - key: mission.m03.action.warning
+      value: "\u062E\u0648\u0627\u0646\u062F\u0646 \u0647\u0634\u062F\u0627\u0631"
+    - key: mission.m03.camera.return
+      value: "\u0628\u0627\u0632\u06AF\u0634\u062A \u062F\u0648\u0631\u0628\u06CC\u0646"
+    - key: mission.m03.camera.skip
+      value: "\u0628\u0627\u0632\u06AF\u0634\u062A \u0628\u0647 \u0646\u0645\u0627\u06CC
+        \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
+    - key: mission.m03.class.Unit_Chr_Bombsuit_Male_01
+      value: "\u0645\u062A\u062E\u0635\u0635 \u062E\u0646\u062B\u06CC\u200C\u0633\u0627\u0632\u06CC
+        \u0628\u0645\u0628"
+    - key: mission.m03.class.Unit_Chr_Civilian_Female_01
+      value: "\u0632\u0646 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC \u06F1"
+    - key: mission.m03.class.Unit_Chr_Civilian_Female_02
+      value: "\u0632\u0646 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC \u06F2"
+    - key: mission.m03.class.Unit_Chr_Civilian_Male_01
+      value: "\u0645\u0631\u062F \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u06F1"
+    - key: mission.m03.class.Unit_Chr_Civilian_Male_02
+      value: "\u0645\u0631\u062F \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u06F2"
+    - key: mission.m03.class.Unit_Chr_Contractor_Female_01
+      value: "\u0646\u06CC\u0631\u0648\u06CC \u0642\u0631\u0627\u0631\u062F\u0627\u062F\u06CC
+        \u0632\u0646 \u06F1"
+    - key: mission.m03.class.Unit_Chr_Contractor_Male_01
+      value: "\u0646\u06CC\u0631\u0648\u06CC \u0642\u0631\u0627\u0631\u062F\u0627\u062F\u06CC
+        \u0645\u0631\u062F \u06F1"
+    - key: mission.m03.class.Unit_Chr_Contractor_Male_02
+      value: "\u0646\u06CC\u0631\u0648\u06CC \u0642\u0631\u0627\u0631\u062F\u0627\u062F\u06CC
+        \u0645\u0631\u062F \u06F2"
+    - key: mission.m03.class.Unit_Chr_Ghillie_Male_01
+      value: "\u0631\u0627\u06A9\u062A\u200C\u0627\u0646\u062F\u0627\u0632 \u0627\u0633\u062A\u062A\u0627\u0631\u06CC"
+    - key: mission.m03.class.Unit_Chr_Insurgent_Female_01
+      value: "\u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \u0634\u0648\u0631\u0634\u06CC
+        \u0632\u0646 \u06F1"
+    - key: mission.m03.class.Unit_Chr_Insurgent_Female_02
+      value: "\u0634\u0648\u0631\u0634\u06CC \u062A\u067E\u0627\u0646\u0686\u0647\u200C\u062F\u0627\u0631
+        \u0632\u0646 \u06F2"
+    - key: mission.m03.class.Unit_Chr_Insurgent_Male_01
+      value: "\u0631\u0627\u06A9\u062A\u200C\u0627\u0646\u062F\u0627\u0632 \u0634\u0648\u0631\u0634\u06CC
+        \u0645\u0631\u062F \u06F1"
+    - key: mission.m03.class.Unit_Chr_Insurgent_Male_02
+      value: "\u062A\u06CC\u0631\u0628\u0627\u0631\u0686\u06CC \u0634\u0648\u0631\u0634\u06CC
+        \u0645\u0631\u062F \u06F2"
+    - key: mission.m03.class.Unit_Chr_Insurgent_Male_03
+      value: "\u0645\u0647\u0627\u062C\u0645 \u0634\u0648\u0631\u0634\u06CC \u0645\u0631\u062F
+        \u06F3"
+    - key: mission.m03.class.Unit_Chr_Insurgent_Male_04
+      value: "\u062A\u06A9\u200C\u062A\u06CC\u0631\u0627\u0646\u062F\u0627\u0632
+        \u0634\u0648\u0631\u0634\u06CC \u0645\u0631\u062F \u06F4"
+    - key: mission.m03.class.Unit_Chr_Insurgent_Male_05
+      value: "\u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \u0634\u0648\u0631\u0634\u06CC
+        \u0645\u0631\u062F \u06F5"
+    - key: mission.m03.class.Unit_Chr_Leader_Male_01
+      value: "\u0641\u0631\u0645\u0627\u0646\u062F\u0647\u0654 \u0645\u06CC\u062F\u0627\u0646"
+    - key: mission.m03.class.Unit_Chr_Pilot_Female_01
+      value: "\u062E\u0644\u0628\u0627\u0646 \u0632\u0646 \u06F1"
+    - key: mission.m03.class.Unit_Chr_Pilot_Male_01
+      value: "\u062E\u0644\u0628\u0627\u0646 \u0645\u0631\u062F \u06F1"
+    - key: mission.m03.class.Unit_Chr_Soldier_Female_01
+      value: "\u062A\u06CC\u0631\u0627\u0646\u062F\u0627\u0632 \u062F\u0642\u06CC\u0642
+        \u0632\u0646 \u06F1"
+    - key: mission.m03.class.Unit_Chr_Soldier_Female_01_Alt_01
+      value: "\u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \u0632\u0646 \u06F1"
+    - key: mission.m03.class.Unit_Chr_Soldier_Female_01_Alt_02
+      value: "\u062A\u06CC\u0631\u0627\u0646\u062F\u0627\u0632 \u062F\u0642\u06CC\u0642
+        \u0632\u0646 \u06F2"
+    - key: mission.m03.class.Unit_Chr_Soldier_Female_02
+      value: "\u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \u0632\u0646 \u06F2"
+    - key: mission.m03.class.Unit_Chr_Soldier_Female_02_Alt_01
+      value: "\u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \u0632\u0646 \u06F1"
+    - key: mission.m03.class.Unit_Chr_Soldier_Female_02_Alt_02
+      value: "\u0646\u06CC\u0631\u0648\u06CC \u0631\u062E\u0646\u0647\u200C\u06AF\u0631
+        \u0632\u0646 \u06F2"
+    - key: mission.m03.class.Unit_Chr_Soldier_Male_01
+      value: "\u062A\u06CC\u0631\u0628\u0627\u0631\u0686\u06CC \u0633\u0646\u06AF\u06CC\u0646
+        \u0645\u0631\u062F \u06F1"
+    - key: mission.m03.class.Unit_Chr_Soldier_Male_01_Alt_01
+      value: "\u062A\u06CC\u0631\u0627\u0646\u062F\u0627\u0632 \u062F\u0642\u06CC\u0642
+        \u0645\u0631\u062F \u06F1"
+    - key: mission.m03.class.Unit_Chr_Soldier_Male_01_Alt_02
+      value: "\u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \u067E\u06CC\u0634\u0631\u0641\u062A\u0647
+        \u0645\u0631\u062F \u06F2"
+    - key: mission.m03.class.Unit_Chr_Soldier_Male_02
+      value: "\u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \u0645\u0631\u062F \u06F2"
+    - key: mission.m03.class.Unit_Chr_Soldier_Male_02_Alt_01
+      value: "\u0645\u062A\u062E\u0635\u0635 \u062A\u067E\u0627\u0646\u0686\u0647
+        \u0645\u0631\u062F \u06F1"
+    - key: mission.m03.class.Unit_Chr_Soldier_Male_02_Alt_02
+      value: "\u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \u0645\u0631\u062F \u06F2"
+    - key: mission.m03.class.Unit_Chr_Soldier_Male_02_Alt_03
+      value: "\u0645\u062A\u062E\u0635\u0635 \u062A\u067E\u0627\u0646\u0686\u0647
+        \u0645\u0631\u062F \u06F3"
+    - key: mission.m03.class.Unit_Chr_Soldier_Male_02_Alt_04
+      value: "\u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \u0645\u0631\u062F \u06F4"
+    - key: mission.m03.class.Unit_Sea_Coastal_Cutter
+      value: "\u0634\u0646\u0627\u0648\u0631 \u06AF\u0634\u062A\u06CC \u0633\u0627\u062D\u0644\u06CC"
+    - key: mission.m03.class.Unit_Sea_Drone_Boat
+      value: "\u0642\u0627\u06CC\u0642 \u0634\u0646\u0627\u0633\u0627\u06CC\u06CC
+        \u0628\u062F\u0648\u0646 \u0633\u0631\u0646\u0634\u06CC\u0646"
+    - key: mission.m03.class.Unit_Sea_Interceptor_Boat
+      value: "\u0642\u0627\u06CC\u0642 \u0631\u0647\u06AF\u06CC\u0631 \u0633\u0631\u06CC\u0639"
+    - key: mission.m03.class.Unit_Sea_Landing_Craft
+      value: "\u0634\u0646\u0627\u0648\u0631 \u067E\u06CC\u0627\u062F\u0647\u200C\u0633\u0627\u0632\u06CC"
+    - key: mission.m03.class.Unit_Sea_Missile_Craft
+      value: "\u0634\u0646\u0627\u0648\u0631 \u06AF\u0634\u062A\u06CC \u0645\u0648\u0634\u06A9\u200C\u0627\u0646\u062F\u0627\u0632"
+    - key: mission.m03.class.Unit_Sea_Patrol_Boat
+      value: "\u0642\u0627\u06CC\u0642 \u06AF\u0634\u062A \u0628\u0646\u062F\u0631"
+    - key: mission.m03.class.Unit_Veh_APC_Fast
+      value: "\u0646\u0641\u0631\u0628\u0631 \u0633\u0631\u06CC\u0639"
+    - key: mission.m03.class.Unit_Veh_APC_Heavy
+      value: "\u0646\u0641\u0631\u0628\u0631 \u0633\u0646\u06AF\u06CC\u0646"
+    - key: mission.m03.class.Unit_Veh_APC_Slow
+      value: "\u0646\u0641\u0631\u0628\u0631 \u0632\u0631\u0647\u06CC"
+    - key: mission.m03.class.Unit_Veh_Drone
+      value: "\u067E\u0647\u067E\u0627\u062F \u0634\u0646\u0627\u0633\u0627\u06CC\u06CC"
+    - key: mission.m03.class.Unit_Veh_Helicopter_Attack
+      value: "\u0628\u0627\u0644\u06AF\u0631\u062F \u062A\u0647\u0627\u062C\u0645\u06CC"
+    - key: mission.m03.class.Unit_Veh_Helicopter_Attack_Small
+      value: "\u0628\u0627\u0644\u06AF\u0631\u062F \u062A\u0647\u0627\u062C\u0645\u06CC
+        \u0633\u0628\u06A9"
+    - key: mission.m03.class.Unit_Veh_Helicopter_Transport
+      value: "\u0628\u0627\u0644\u06AF\u0631\u062F \u062A\u0631\u0627\u0628\u0631\u06CC"
+    - key: mission.m03.class.Unit_Veh_Jet_01
+      value: "\u062C\u062A \u062A\u0647\u0627\u062C\u0645\u06CC"
+    - key: mission.m03.class.Unit_Veh_Jet_02
+      value: "\u062C\u062A \u062C\u0646\u06AF\u0646\u062F\u0647"
+    - key: mission.m03.class.Unit_Veh_Light_Armored_Car
+      value: "\u062E\u0648\u062F\u0631\u0648\u06CC \u0632\u0631\u0647\u06CC \u0633\u0628\u06A9"
+    - key: mission.m03.class.Unit_Veh_Missle_Launcher_Air
+      value: "\u0645\u0648\u0634\u06A9\u200C\u0627\u0646\u062F\u0627\u0632 \u0647\u0648\u0627\u06CC\u06CC"
+    - key: mission.m03.class.Unit_Veh_Missle_Launcher_Ground
+      value: "\u0645\u0648\u0634\u06A9\u200C\u0627\u0646\u062F\u0627\u0632 \u0632\u0645\u06CC\u0646\u06CC"
+    - key: mission.m03.class.Unit_Veh_Plane_Transport
+      value: "\u0647\u0648\u0627\u067E\u06CC\u0645\u0627\u06CC \u062A\u0631\u0627\u0628\u0631\u06CC"
+    - key: mission.m03.class.Unit_Veh_Radar_Tank
+      value: "\u062E\u0648\u062F\u0631\u0648\u06CC \u0631\u0627\u062F\u0627\u0631
+        \u0632\u0645\u06CC\u0646\u06CC"
+    - key: mission.m03.class.Unit_Veh_Tank_USA
+      value: "\u062A\u0627\u0646\u06A9 \u0646\u0628\u0631\u062F"
+    - key: mission.m03.class.Unit_Veh_Truck_Canopy
+      value: "\u06A9\u0627\u0645\u06CC\u0648\u0646 \u0645\u0633\u0642\u0641"
+    - key: mission.m03.class.Unit_Veh_Truck_Tanker
+      value: "\u06A9\u0627\u0645\u06CC\u0648\u0646 \u0633\u0648\u062E\u062A\u200C\u0631\u0633\u0627\u0646"
+    - key: mission.m03.class.Unit_Veh_Truck_Tray
+      value: "\u06A9\u0627\u0645\u06CC\u0648\u0646 \u0628\u0627\u0631\u0628\u0631\u06CC"
+    - key: mission.m03.enemy_intel
+      value: "\u06AF\u0632\u0627\u0631\u0634 \u062F\u06CC\u062F\u0647\u200C\u0628\u0627\u0646
+        \xB7 \u062A\u0631\u06A9\u06CC\u0628 \u0646\u06CC\u0631\u0648\u0647\u0627
+        \u062A\u0623\u06CC\u06CC\u062F \u0646\u0634\u062F\u0647"
+    - key: mission.m03.goal.civilians
+      value: "\u0633\u062A\u0627\u0631\u0647\u0654 \u0627\u0645\u062A\u06CC\u0627\u0632\u06CC:
+        \u0647\u0631 \u0686\u0647\u0627\u0631 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u0631\u0627 \u062D\u0641\u0638 \u06A9\u0646\u06CC\u062F"
+    - key: mission.m03.guide
+      value: "\u0631\u0627\u0647\u0646\u0645\u0627\u06CC \u0645\u06CC\u062F\u0627\u0646"
+    - key: mission.m03.guide.all
+      value: "\u0647\u0645\u0647\u0654 \u06A9\u0644\u0627\u0633\u200C\u0647\u0627"
+    - key: mission.m03.guide.availability.0
+      value: "\u062E\u0648\u062F\u06CC \u062F\u0631 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A
+        \u06F3"
+    - key: mission.m03.guide.availability.1
+      value: "\u062F\u0634\u0645\u0646 \u062F\u0631 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A
+        \u06F3"
+    - key: mission.m03.guide.availability.2
+      value: "\u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC \u0645\u062D\u0627\u0641\u0638\u062A\u200C\u0634\u062F\u0647
+        \u062F\u0631 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u06F3"
+    - key: mission.m03.guide.availability.3
+      value: "\u0641\u0642\u0637 \u0628\u0631\u0627\u06CC \u0622\u0634\u0646\u0627\u06CC\u06CC
+        \xB7 \u062F\u0631 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u06F3 \u062F\u0631
+        \u062F\u0633\u062A\u0631\u0633 \u0646\u06CC\u0633\u062A"
+    - key: mission.m03.guide.availability.4
+      value: "\u0645\u0639\u0631\u0641\u06CC \u0622\u06CC\u0646\u062F\u0647 \xB7
+        \u0645\u062F\u0644 \u0642\u0627\u0628\u0644\u200C\u0628\u0627\u0632\u06CC
+        \u0622\u0645\u0627\u062F\u0647 \u0646\u06CC\u0633\u062A"
+    - key: mission.m03.guide.category.character
+      value: "\u0646\u06CC\u0631\u0648\u06CC \u0627\u0646\u0633\u0627\u0646\u06CC"
+    - key: mission.m03.guide.category.seaVehicle
+      value: "\u062F\u0631\u06CC\u0627\u06CC\u06CC"
+    - key: mission.m03.guide.category.vehicle
+      value: "\u0648\u0633\u06CC\u0644\u0647\u0654 \u0646\u0642\u0644\u06CC\u0647"
+    - key: mission.m03.guide.classes
+      value: "\u06F5\u06F7 \u06A9\u0644\u0627\u0633"
+    - key: mission.m03.guide.close
+      value: "\u0628\u0633\u062A\u0646 \u0631\u0627\u0647\u0646\u0645\u0627"
+    - key: mission.m03.guide.control.10
+      value: "\u0644\u063A\u0648 \u062F\u0633\u062A\u0648\u0631"
+    - key: mission.m03.guide.control.6
+      value: "\u067E\u0627\u0644\u0633 \u0631\u0627\u062F\u0627\u0631"
+    - key: mission.m03.guide.control.8
+      value: "\u062D\u0641\u0638 \u0645\u0648\u0636\u0639"
+    - key: mission.m03.guide.example
+      value: "\u0646\u0645\u0648\u0646\u0647"
+    - key: mission.m03.guide.identity
+      value: "\u0634\u0646\u0627\u0633\u0647\u0654 \u06A9\u0644\u0627\u0633"
+    - key: mission.m03.guide.load_failed
+      value: "\u062C\u0632\u0626\u06CC\u0627\u062A \u06A9\u0644\u0627\u0633 \u0628\u0627\u0631\u06AF\u0630\u0627\u0631\u06CC
+        \u0646\u0634\u062F. \u0628\u0631\u0627\u06CC \u062A\u0644\u0627\u0634 \u062F\u0648\u0628\u0627\u0631\u0647
+        \u0627\u06CC\u0646 \u06A9\u0627\u0631\u062A \u0631\u0627 \u0628\u0627\u0632
+        \u06A9\u0646\u06CC\u062F."
+    - key: mission.m03.guide.loading
+      value: "\u062F\u0631 \u062D\u0627\u0644 \u0628\u0627\u0631\u06AF\u0630\u0627\u0631\u06CC
+        \u06A9\u0644\u0627\u0633\u2026"
+    - key: mission.m03.guide.mistake
+      value: "\u0627\u0634\u062A\u0628\u0627\u0647 \u0631\u0627\u06CC\u062C"
+    - key: mission.m03.guide.next
+      value: "\u0628\u0639\u062F\u06CC"
+    - key: mission.m03.guide.no_match
+      value: "\u06A9\u0644\u0627\u0633\u06CC \u067E\u06CC\u062F\u0627 \u0646\u0634\u062F"
+    - key: mission.m03.guide.open
+      value: "\u0631\u0627\u0647\u0646\u0645\u0627\u06CC \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: mission.m03.guide.pause
+      value: "\u0646\u0628\u0631\u062F \u0645\u062A\u0648\u0642\u0641 \u0627\u0633\u062A
+        \xB7 \u0628\u0631\u0627\u06CC \u0627\u062F\u0627\u0645\u0647 \u0628\u0628\u0646\u062F\u06CC\u062F"
+    - key: mission.m03.guide.previous
+      value: "\u0642\u0628\u0644\u06CC"
+    - key: mission.m03.guide.radio
+      value: "\u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u067E\u06CC\u0627\u0645
+        \u0631\u0627\u062F\u06CC\u0648\u06CC\u06CC"
+    - key: mission.m03.guide.reference_notice
+      value: "\u0627\u06CC\u0646 \u0627\u0639\u062F\u0627\u062F \u0627\u0632 \u067E\u06CC\u06A9\u0631\u0628\u0646\u062F\u06CC
+        \u06A9\u0644\u0627\u0633 \u062E\u0648\u0627\u0646\u062F\u0647 \u0645\u06CC\u200C\u0634\u0648\u0646\u062F.
+        \u062F\u0633\u062A\u0631\u0633\u06CC\u060C \u0647\u0632\u06CC\u0646\u0647\u0654
+        \u062A\u0648\u0644\u06CC\u062F \u0648 \u0627\u0646\u062F\u0627\u0632\u0647\u0654
+        \u06AF\u0631\u0648\u0647 \u0631\u0627 \u062F\u0631 \u067E\u0646\u0644 \u062A\u0648\u0644\u06CC\u062F
+        \u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0628\u0628\u06CC\u0646\u06CC\u062F."
+    - key: mission.m03.guide.role.armed
+      value: "\u0646\u0642\u0634 \xB7 \u0648\u0627\u062D\u062F \u0645\u0633\u0644\u062D.
+        \u0628\u0631\u062F \u0648 \u0622\u0633\u06CC\u0628 \u0627\u0632 \u067E\u06CC\u06A9\u0631\u0628\u0646\u062F\u06CC
+        \u0645\u06CC\u200C\u0622\u06CC\u0646\u062F\u061B \u0645\u0648\u0636\u0639
+        \u0648 \u0647\u062F\u0641 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u062A\u0639\u06CC\u06CC\u0646 \u0645\u06CC\u200C\u06A9\u0646\u0646\u062F
+        \u06A9\u0647 \u0648\u0627\u062D\u062F \u062F\u0631 \u0646\u0628\u0631\u062F
+        \u0645\u0624\u062B\u0631 \u0628\u0627\u0634\u062F."
+    - key: mission.m03.guide.role.protected
+      value: "\u0646\u0642\u0634 \xB7 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u0645\u062D\u0627\u0641\u0638\u062A\u200C\u0634\u062F\u0647. \u0646\u0628\u0631\u062F
+        \u0631\u0627 \u0627\u0632 \u0622\u0646\u200C\u0647\u0627 \u062F\u0648\u0631
+        \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F \u062A\u0627 \u0633\u062A\u0627\u0631\u0647\u0654
+        \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC\u0627\u0646 \u062D\u0641\u0638
+        \u0634\u0648\u062F."
+    - key: mission.m03.guide.role.sensor
+      value: "\u0646\u0642\u0634 \xB7 \u0634\u0646\u0627\u0633\u0627\u06CC\u06CC
+        \u0632\u0645\u06CC\u0646\u06CC. \u0631\u0627\u062F\u0627\u0631 \u0628\u06CC\u200C\u0633\u0644\u0627\u062D
+        \u0631\u0627 \u062D\u0641\u0638 \u06A9\u0646\u06CC\u062F\u061B \u0627\u0637\u0644\u0627\u0639\u0627\u062A
+        \u0645\u06CC\u200C\u062F\u0647\u062F \u0648 \u0642\u062F\u0631\u062A \u0622\u062A\u0634
+        \u0646\u062F\u0627\u0631\u062F."
+    - key: mission.m03.guide.role.transport
+      value: "\u0646\u0642\u0634 \xB7 \u062A\u0631\u0627\u0628\u0631\u06CC. \u062F\u0627\u0634\u062A\u0646
+        \u0638\u0631\u0641\u06CC\u062A \u0645\u0633\u0627\u0641\u0631 \u0628\u0647
+        \u0645\u0639\u0646\u06CC \u062F\u0627\u0634\u062A\u0646 \u0633\u0644\u0627\u062D
+        \u0646\u06CC\u0633\u062A. \u062F\u0631 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A
+        \u06F3 \u0646\u0641\u0631\u0628\u0631 \u062F\u0634\u0645\u0646 \u0628\u062F\u0648\u0646
+        \u0634\u0644\u06CC\u06A9 \u0647\u0645 \u0645\u06CC\u200C\u062A\u0648\u0627\u0646\u062F
+        \u0648\u0627\u0631\u062F \u0645\u0631\u06A9\u0632 \u0634\u0648\u062F."
+    - key: mission.m03.guide.role.unarmed
+      value: "\u0646\u0642\u0634 \xB7 \u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC.
+        \u0627\u06CC\u0646 \u067E\u06CC\u06A9\u0631\u0628\u0646\u062F\u06CC \u0627\u0645\u06A9\u0627\u0646
+        \u062D\u0645\u0644\u0647 \u0646\u062F\u0627\u0631\u062F\u061B \u0622\u0646
+        \u0631\u0627 \u0633\u0644\u0627\u062D \u062F\u0641\u0627\u0639\u06CC \u062D\u0633\u0627\u0628
+        \u0646\u06A9\u0646\u06CC\u062F."
+    - key: mission.m03.guide.scroll
+      value: "\u0628\u0631\u0627\u06CC \u062E\u0648\u0627\u0646\u062F\u0646 \u0646\u0645\u0648\u0646\u0647
+        \u0648 \u0627\u0634\u062A\u0628\u0627\u0647 \u0631\u0627\u06CC\u062C\u060C
+        \u0635\u0641\u062D\u0647 \u0631\u0627 \u067E\u06CC\u0645\u0627\u06CC\u0634
+        \u06A9\u0646\u06CC\u062F"
+    - key: mission.m03.guide.search
+      value: "\u062C\u0633\u062A\u200C\u0648\u062C\u0648\u06CC \u06A9\u0644\u0627\u0633\u200C\u0647\u0627\u2026"
+    - key: mission.m03.guide.stats
+      value: "\u0633\u0644\u0627\u0645\u062A {0} \xB7 \u0633\u0631\u0639\u062A {1}\n\u0622\u0633\u06CC\u0628
+        {2} \xB7 \u0628\u0631\u062F {3}\n\u0631\u0627\u062F\u0627\u0631 \u0632\u0645\u06CC\u0646\u06CC
+        {4} \xB7 \u0631\u0627\u062F\u0627\u0631 \u0647\u0648\u0627\u06CC\u06CC {5}\n\u0638\u0631\u0641\u06CC\u062A
+        \u0646\u0641\u0631 {6} \xB7 \u0638\u0631\u0641\u06CC\u062A \u062E\u0648\u062F\u0631\u0648
+        {7}"
+    - key: mission.m03.guide.title
+      value: "\u0631\u0627\u0647\u0646\u0645\u0627\u06CC \u0645\u06CC\u062F\u0627\u0646\u06CC
+        \xB7 \u0647\u0634\u062F\u0627\u0631 \u0631\u0627\u062F\u0627\u0631"
+    - key: mission.m03.guide.topic.1.body
+      value: "\u0647\u0631 \u062F\u0634\u0645\u0646 \u062B\u0628\u062A\u200C\u0634\u062F\u0647
+        \u0631\u0627 \u0645\u062A\u0648\u0642\u0641 \u06A9\u0646\u06CC\u062F \u0648
+        \u067E\u0627\u0633\u06AF\u0627\u0647 \u0648 \u0645\u062D\u062F\u0648\u062F\u0647\u0654
+        \u0645\u0631\u06A9\u0632\u06CC \u0631\u0627 \u062D\u0641\u0638 \u06A9\u0646\u06CC\u062F."
+    - key: mission.m03.guide.topic.1.diagram
+      value: "\u062C\u0627\u062F\u0647\u0654 \u063A\u0631\u0628\u06CC \u2190 \u062F\u0641\u0627\u0639
+        \u2190 \u067E\u0627\u0633\u06AF\u0627\u0647"
+    - key: mission.m03.guide.topic.1.example
+      value: "\u0627\u06AF\u0631 \u0646\u0641\u0631\u0628\u0631 \u0633\u0631\u06CC\u0639
+        \u0627\u0632 \u062A\u06CC\u0631\u0627\u0646\u062F\u0627\u0632\u06CC \u062C\u0627\u0646
+        \u0633\u0627\u0644\u0645 \u0628\u0631\u062F\u060C \u067E\u06CC\u0634 \u0627\u0632
+        \u0631\u0633\u06CC\u062F\u0646 \u0628\u0647 \u0645\u0631\u06A9\u0632 \u067E\u0627\u0633\u06AF\u0627\u0647
+        \u062C\u0644\u0648\u06CC \u0622\u0646 \u0631\u0627 \u0628\u06AF\u06CC\u0631\u06CC\u062F."
+    - key: mission.m03.guide.topic.1.mistake
+      value: "\u0627\u0634\u062A\u0628\u0627\u0647 \u06AF\u0631\u0641\u062A\u0646
+        \u062A\u0644\u0641\u0627\u062A \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u0628\u0627 \u0634\u06A9\u0633\u062A \u0645\u0623\u0645\u0648\u0631\u06CC\u062A\u061B
+        \u0627\u06CC\u0646 \u062A\u0644\u0641\u0627\u062A \u0633\u062A\u0627\u0631\u0647\u0654
+        \u0627\u0645\u062A\u06CC\u0627\u0632\u06CC \u0631\u0627 \u06A9\u0645 \u0645\u06CC\u200C\u06A9\u0646\u0646\u062F."
+    - key: mission.m03.guide.topic.1.title
+      value: "\u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0634\u0645\u0627"
+    - key: mission.m03.guide.topic.10.body
+      value: "\u06CC\u06A9 \u06AF\u0631\u0648\u0647 \u0645\u0633\u06CC\u0631 \u062F\u0627\u062E\u0644\u06CC
+        \u0631\u0627 \u067E\u0648\u0634\u0634 \u062F\u0647\u062F \u0648 \u06AF\u0631\u0648\u0647
+        \u062F\u06CC\u06AF\u0631 \u062C\u0644\u0648\u062A\u0631 \u062F\u0631 \u063A\u0631\u0628
+        \u0645\u0642\u0627\u0628\u0644\u0647 \u06A9\u0646\u062F."
+    - key: mission.m03.guide.topic.10.diagram
+      value: "\u0645\u0642\u0627\u0628\u0644\u0647\u0654 \u062C\u0644\u0648 + \u067E\u0648\u0634\u0634
+        \u0645\u0633\u06CC\u0631 \u062F\u0627\u062E\u0644\u06CC"
+    - key: mission.m03.guide.topic.10.example
+      value: "\u0627\u06AF\u0631 \u06AF\u0631\u0648\u0647 \u062C\u0644\u0648 \u0639\u0642\u0628
+        \u0646\u0634\u0633\u062A\u060C \u067E\u06CC\u0634 \u0627\u0632 \u0639\u0628\u0648\u0631
+        \u0646\u0641\u0631\u0628\u0631 \u0627\u0632 \u0622\u062E\u0631\u06CC\u0646
+        \u067E\u06CC\u0686\u060C \u0646\u06CC\u0631\u0648\u06CC \u0630\u062E\u06CC\u0631\u0647
+        \u0631\u0627 \u062F\u0631 \u0645\u0633\u06CC\u0631 \u0645\u0633\u062A\u0642\u0631
+        \u06A9\u0646\u06CC\u062F."
+    - key: mission.m03.guide.topic.10.mistake
+      value: "\u062A\u0639\u0642\u06CC\u0628 \u0647\u062F\u0641 \u062A\u0627 \u062C\u0627\u06CC\u06CC
+        \u06A9\u0647 \u0647\u0645\u0647\u0654 \u0645\u062F\u0627\u0641\u0639\u0627\u0646
+        \u0645\u0633\u06CC\u0631 \u067E\u0627\u0633\u06AF\u0627\u0647 \u0631\u0627
+        \u062A\u0631\u06A9 \u06A9\u0646\u0646\u062F."
+    - key: mission.m03.guide.topic.10.title
+      value: "\u062D\u0641\u0627\u0638\u062A \u0627\u0632 \u0645\u0631\u06A9\u0632"
+    - key: mission.m03.guide.topic.11.body
+      value: "\u067E\u0633 \u0627\u0632 \u067E\u06CC\u0631\u0648\u0632\u06CC\u060C
+        \u0633\u062A\u0627\u0631\u0647\u0654 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC\u0627\u0646
+        \u0648 \u067E\u0627\u0633\u06AF\u0627\u0647 \u0628\u06CC\u200C\u0622\u0633\u06CC\u0628
+        \u0631\u0627 \u062C\u062F\u0627 \u0628\u0631\u0631\u0633\u06CC \u06A9\u0646\u06CC\u062F\u061B
+        \u0628\u0631\u0627\u06CC \u062F\u0641\u0627\u0639 \u0628\u0647\u062A\u0631
+        \u062F\u0648\u0628\u0627\u0631\u0647 \u062A\u0644\u0627\u0634 \u06A9\u0646\u06CC\u062F."
+    - key: mission.m03.guide.topic.11.diagram
+      value: "\u067E\u06CC\u0631\u0648\u0632\u06CC + \u0633\u0644\u0627\u0645\u062A
+        \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC\u0627\u0646 + \u067E\u0627\u0633\u06AF\u0627\u0647
+        \u0628\u06CC\u200C\u0622\u0633\u06CC\u0628"
+    - key: mission.m03.guide.topic.11.example
+      value: "\u067E\u0627\u0633\u06AF\u0627\u0647 \u0622\u0633\u06CC\u0628\u200C\u062F\u06CC\u062F\u0647
+        \u0647\u0645 \u0645\u06CC\u200C\u062A\u0648\u0627\u0646\u062F \u067E\u06CC\u0631\u0648\u0632
+        \u0634\u0648\u062F. \u067E\u0633 \u0627\u0632 \u0646\u0628\u0631\u062F\u060C
+        \u0646\u062A\u06CC\u062C\u0647 \u062A\u0648\u0636\u06CC\u062D \u0645\u06CC\u200C\u062F\u0647\u062F
+        \u06A9\u062F\u0627\u0645 \u0633\u062A\u0627\u0631\u0647\u0654 \u0627\u0645\u062A\u06CC\u0627\u0632\u06CC
+        \u0648 \u0686\u0631\u0627 \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A\u0647
+        \u0627\u0633\u062A."
+    - key: mission.m03.guide.topic.11.mistake
+      value: "\u0627\u0646\u062A\u0638\u0627\u0631 \u062F\u0631\u06CC\u0627\u0641\u062A
+        \u062F\u0648\u0628\u0627\u0631\u0647\u0654 \u067E\u0627\u062F\u0627\u0634
+        \u0627\u0648\u0644\u06CC\u0646 \u067E\u06CC\u0631\u0648\u0632\u06CC \u062F\u0631
+        \u062A\u06A9\u0631\u0627\u0631 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A."
+    - key: mission.m03.guide.topic.11.title
+      value: "\u0633\u062A\u0627\u0631\u0647\u200C\u0647\u0627 \u0648 \u062A\u0644\u0627\u0634
+        \u062F\u0648\u0628\u0627\u0631\u0647"
+    - key: mission.m03.guide.topic.12.body
+      value: "\u06F5\u06F7 \u0634\u0646\u0627\u0633\u0647\u0654 \u06A9\u0644\u0627\u0633
+        \u0631\u0627 \u062C\u0633\u062A\u200C\u0648\u062C\u0648 \u0648 \u0642\u0627\u0628\u0644\u06CC\u062A\u200C\u0647\u0627\u06CC
+        \u0648\u0627\u0642\u0639\u06CC \u067E\u06CC\u06A9\u0631\u0628\u0646\u062F\u06CC\u200C\u0634\u062F\u0647
+        \u0631\u0627 \u0645\u0642\u0627\u06CC\u0633\u0647 \u06A9\u0646\u06CC\u062F."
+    - key: mission.m03.guide.topic.12.diagram
+      value: "\u062E\u0648\u062F\u06CC \xB7 \u062F\u0634\u0645\u0646 \xB7 \u0645\u062D\u0627\u0641\u0638\u062A\u200C\u0634\u062F\u0647
+        \xB7 \u0645\u0631\u062C\u0639 \xB7 \u0622\u06CC\u0646\u062F\u0647"
+    - key: mission.m03.guide.topic.12.example
+      value: "\u062E\u0648\u062F\u0631\u0648\u06CC \u0631\u0627\u062F\u0627\u0631
+        \u0631\u0627 \u062C\u0633\u062A\u200C\u0648\u062C\u0648 \u06A9\u0646\u06CC\u062F\u060C
+        \u0628\u0631\u062F \u062D\u0633\u06AF\u0631 \u0632\u0645\u06CC\u0646\u06CC
+        \u0622\u0646 \u0631\u0627 \u0628\u0627 \u062F\u06CC\u0634 \u0631\u0627\u062F\u0627\u0631
+        \u0647\u0648\u0627\u06CC\u06CC \u0645\u0642\u0627\u06CC\u0633\u0647 \u06A9\u0646\u06CC\u062F
+        \u0648 \u0628\u0631\u0686\u0633\u0628 \u062F\u0633\u062A\u0631\u0633\u06CC
+        \u0647\u0631 \u06A9\u0627\u0631\u062A \u0631\u0627 \u0628\u062E\u0648\u0627\u0646\u06CC\u062F."
+    - key: mission.m03.guide.topic.12.mistake
+      value: "\u0641\u0631\u0636 \u0627\u06CC\u0646\u06A9\u0647 \u0647\u0645\u0647\u0654
+        \u06A9\u0644\u0627\u0633\u200C\u0647\u0627\u06CC \u0645\u0631\u062C\u0639
+        \u062F\u0631 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u06F3 \u0642\u0627\u0628\u0644\u200C\u062A\u0648\u0644\u06CC\u062F\u0646\u062F."
+    - key: mission.m03.guide.topic.12.title
+      value: "\u0647\u0645\u0647\u0654 \u06A9\u0644\u0627\u0633\u200C\u0647\u0627"
+    - key: mission.m03.guide.topic.2.body
+      value: "\u067E\u06CC\u0634 \u0627\u0632 \u0627\u0642\u062F\u0627\u0645\u060C
+        \u0645\u0646\u0628\u0639 \u0645\u0648\u0642\u0639\u06CC\u062A \u06AF\u0632\u0627\u0631\u0634\u200C\u0634\u062F\u0647
+        \u0631\u0627 \u0628\u062E\u0648\u0627\u0646\u06CC\u062F."
+    - key: mission.m03.guide.topic.2.diagram
+      value: "\u06AF\u0632\u0627\u0631\u0634 \u062F\u06CC\u062F\u0647\u200C\u0628\u0627\u0646
+        \u2190 \u062A\u0645\u0627\u0633 \u0631\u0627\u062F\u0627\u0631 \u2190 \u062A\u0623\u06CC\u06CC\u062F
+        \u062F\u06CC\u062F\u0627\u0631\u06CC"
+    - key: mission.m03.guide.topic.2.example
+      value: "\u0647\u0634\u062F\u0627\u0631 \u062F\u06CC\u062F\u0647\u200C\u0628\u0627\u0646
+        \u0645\u0633\u06CC\u0631 \u0648 \u0632\u0645\u0627\u0646 \u062A\u0642\u0631\u06CC\u0628\u06CC
+        \u0631\u0627 \u0645\u06CC\u200C\u062F\u0647\u062F. \u0622\u0646 \u0631\u0627
+        \u0628\u062E\u0648\u0627\u0646\u06CC\u062F\u060C \u062C\u0627\u062F\u0647
+        \u0631\u0627 \u0628\u0631\u0631\u0633\u06CC \u06A9\u0646\u06CC\u062F \u0648
+        \u0645\u0646\u062A\u0638\u0631 \u062A\u0623\u06CC\u06CC\u062F \u062D\u0633\u06AF\u0631
+        \u0628\u0627\u0634\u06CC\u062F."
+    - key: mission.m03.guide.topic.2.mistake
+      value: "\u0642\u0637\u0639\u06CC \u062F\u0627\u0646\u0633\u062A\u0646 \u0632\u0645\u0627\u0646
+        \u062A\u0642\u0631\u06CC\u0628\u06CC \u0631\u0633\u06CC\u062F\u0646."
+    - key: mission.m03.guide.topic.2.title
+      value: "\u062E\u0648\u0627\u0646\u062F\u0646 \u0647\u0634\u062F\u0627\u0631"
+    - key: mission.m03.guide.topic.3.body
+      value: "\u062E\u0648\u062F\u0631\u0648\u06CC \u0631\u0627\u062F\u0627\u0631
+        \u0632\u0645\u06CC\u0646\u06CC\u060C \u062E\u0648\u062F\u0631\u0648\u0647\u0627\u06CC
+        \u0632\u0645\u06CC\u0646\u06CC \u0631\u0627 \u0634\u0646\u0627\u0633\u0627\u06CC\u06CC
+        \u0645\u06CC\u200C\u06A9\u0646\u062F\u061B \u062F\u06CC\u0634 \u0631\u0627\u062F\u0627\u0631
+        \u0647\u0648\u0627\u06CC\u06CC \u0628\u0631\u0627\u06CC \u062A\u0645\u0627\u0633
+        \u0647\u0648\u0627\u06CC\u06CC \u0627\u0633\u062A."
+    - key: mission.m03.guide.topic.3.diagram
+      value: "\u06AF\u0632\u0627\u0631\u0634 \u2260 \u062A\u0623\u06CC\u06CC\u062F
+        \xB7 \u062A\u0645\u0627\u0633 \u0642\u062F\u06CC\u0645\u06CC \u2260 \u0646\u0627\u0628\u0648\u062F\u06CC"
+    - key: mission.m03.guide.topic.3.example
+      value: "\u062E\u0648\u062F\u0631\u0648\u06CC\u06CC \u0627\u0632 \u067E\u0648\u0634\u0634
+        \u0631\u0627\u062F\u0627\u0631 \u062E\u0627\u0631\u062C \u0645\u06CC\u200C\u0634\u0648\u062F:
+        \u0622\u062E\u0631\u06CC\u0646 \u0645\u0648\u0642\u0639\u06CC\u062A \u0622\u0646
+        \u0647\u0646\u0648\u0632 \u0645\u0641\u06CC\u062F \u0627\u0633\u062A\u060C
+        \u0627\u0645\u0627 \u0645\u0648\u0642\u0639\u06CC\u062A \u0632\u0646\u062F\u0647
+        \u0646\u06CC\u0633\u062A."
+    - key: mission.m03.guide.topic.3.mistake
+      value: "\u062A\u0639\u0628\u06CC\u0631 \u062A\u0645\u0627\u0633 \u0627\u0632\u062F\u0633\u062A\u200C\u0631\u0641\u062A\u0647
+        \u06CC\u0627 \u0642\u062F\u06CC\u0645\u06CC \u0628\u0647\u200C\u0639\u0646\u0648\u0627\u0646
+        \u062F\u0634\u0645\u0646 \u0646\u0627\u0628\u0648\u062F\u0634\u062F\u0647."
+    - key: mission.m03.guide.topic.3.title
+      value: "\u0645\u0646\u0628\u0639 \u0648 \u0627\u0637\u0645\u06CC\u0646\u0627\u0646"
+    - key: mission.m03.guide.topic.4.body
+      value: "\u062C\u0627\u062F\u0647 \u0631\u0627 \u0628\u0631\u0631\u0633\u06CC
+        \u06A9\u0646\u06CC\u062F\u060C \u0628\u0647 \u06AF\u0631\u0648\u0647 \u0628\u0631\u06AF\u0631\u062F\u06CC\u062F
+        \u0648 \u062F\u0631 \u0635\u0648\u0631\u062A \u0646\u06CC\u0627\u0632 \u062F\u0633\u062A\u0648\u0631
+        \u062D\u0631\u06A9\u062A \u0628\u062F\u0647\u06CC\u062F."
+    - key: mission.m03.guide.topic.4.diagram
+      value: "\u067E\u0631\u0634 \u2190 \u062F\u0648\u0631\u0628\u06CC\u0646 \xB7
+        \u062D\u0631\u06A9\u062A \u2190 \u0648\u0627\u062D\u062F\u0647\u0627\u06CC
+        \u0627\u0646\u062A\u062E\u0627\u0628\u200C\u0634\u062F\u0647"
+    - key: mission.m03.guide.topic.4.example
+      value: "\u06AF\u0631\u0648\u0647 \u0627\u0644\u0641 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F\u060C \u0628\u0627 \u067E\u0631\u0634
+        \u0647\u0634\u062F\u0627\u0631 \u0631\u0627 \u0628\u0631\u0631\u0633\u06CC
+        \u06A9\u0646\u06CC\u062F\u060C \u0633\u067E\u0633 \u062D\u0631\u06A9\u062A
+        \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F \u0648 \u0645\u0642\u0635\u062F\u06CC
+        \u0642\u0627\u0628\u0644\u200C\u062F\u0633\u062A\u0631\u0633\u06CC \u06A9\u0646\u0627\u0631
+        \u062C\u0627\u062F\u0647 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u062F."
+    - key: mission.m03.guide.topic.4.mistake
+      value: "\u0627\u0646\u062A\u0638\u0627\u0631 \u062C\u0627\u0628\u0647\u200C\u062C\u0627\u06CC\u06CC
+        \u06AF\u0631\u0648\u0647 \u0627\u0632 \u062F\u06A9\u0645\u0647\u0654 \u067E\u0631\u0634
+        \u062F\u0648\u0631\u0628\u06CC\u0646."
+    - key: mission.m03.guide.topic.4.title
+      value: "\u067E\u0631\u0634 \u0648 \u062D\u0631\u06A9\u062A"
+    - key: mission.m03.guide.topic.5.body
+      value: "\u0628\u0631\u062C \u0622\u0645\u0627\u062F\u0647 \u0642\u062F\u0631\u062A
+        \u0622\u062A\u0634 \u0645\u06CC\u200C\u062F\u0647\u062F. \u0645\u0627\u0646\u0639
+        \u0645\u06CC\u200C\u062A\u0648\u0627\u0646\u062F \u0645\u0633\u06CC\u0631
+        \u0631\u0627 \u062A\u063A\u06CC\u06CC\u0631 \u062F\u0647\u062F\u061B \u0645\u0633\u06CC\u0631
+        \u062C\u0627\u06CC\u06AF\u0632\u06CC\u0646 \u0631\u0627 \u067E\u0648\u0634\u0634
+        \u062F\u0647\u06CC\u062F."
+    - key: mission.m03.guide.topic.5.diagram
+      value: "\u0647\u0632\u06CC\u0646\u0647 \u2190 \u0645\u062D\u0644 \u0645\u062C\u0627\u0632
+        \u2190 \u062A\u0623\u06CC\u06CC\u062F \u2190 \u062A\u06A9\u0645\u06CC\u0644"
+    - key: mission.m03.guide.topic.5.example
+      value: "\u0633\u0627\u062E\u062A \u0628\u0631\u062C \u0631\u0627 \u0632\u0648\u062F
+        \u0622\u063A\u0627\u0632 \u06A9\u0646\u06CC\u062F \u0648 \u0628\u0627 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0627\u0646
+        \u0627\u0632 \u0622\u0646 \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646\u06CC\u062F.
+        \u0645\u0627\u0646\u0639 \u0631\u0627 \u062C\u0627\u06CC\u06CC \u0628\u06AF\u0630\u0627\u0631\u06CC\u062F
+        \u06A9\u0647 \u0645\u0633\u06CC\u0631 \u062C\u0627\u06CC\u06AF\u0632\u06CC\u0646
+        \u0631\u0627 \u0647\u0645 \u067E\u0648\u0634\u0634 \u062F\u0647\u06CC\u062F."
+    - key: mission.m03.guide.topic.5.mistake
+      value: "\u0647\u0632\u06CC\u0646\u0647\u200C\u06A9\u0631\u062F\u0646 \u0628\u0631\u0627\u06CC
+        \u062F\u0641\u0627\u0639 \u0646\u06CC\u0645\u0647\u200C\u062A\u0645\u0627\u0645
+        \u0648 \u0628\u06CC\u200C\u062F\u0641\u0627\u0639 \u06AF\u0630\u0627\u0634\u062A\u0646
+        \u0645\u0633\u06CC\u0631."
+    - key: mission.m03.guide.topic.5.title
+      value: "\u0628\u0631\u062C \u0648 \u0645\u0627\u0646\u0639"
+    - key: mission.m03.guide.topic.6.body
+      value: "\u062F\u0631 \u0635\u0648\u0631\u062A \u06A9\u0627\u0641\u06CC \u0628\u0648\u062F\u0646
+        \u0628\u0648\u062F\u062C\u0647\u0654 \u0646\u0645\u0627\u06CC\u0634\u200C\u062F\u0627\u062F\u0647\u200C\u0634\u062F\u0647\u060C
+        \u0627\u0632 \u067E\u0627\u062F\u06AF\u0627\u0646 \u0645\u0648\u062C\u0648\u062F
+        \u06AF\u0631\u0648\u0647 \u0686\u0647\u0627\u0631\u0646\u0641\u0631\u06CC
+        \u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \u0633\u0641\u0627\u0631\u0634
+        \u062F\u0647\u06CC\u062F."
+    - key: mission.m03.guide.topic.6.diagram
+      value: "\u067E\u0627\u062F\u06AF\u0627\u0646 \u2190 \u062A\u0648\u0644\u06CC\u062F
+        \u2190 \u0686\u0647\u0627\u0631 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631
+        \u2190 \u0627\u0633\u062A\u0642\u0631\u0627\u0631"
+    - key: mission.m03.guide.topic.6.example
+      value: "\u067E\u0627\u062F\u06AF\u0627\u0646 \u0622\u0645\u0627\u062F\u0647
+        \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628 \u0648 \u06CC\u06A9 \u06AF\u0631\u0648\u0647
+        \u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \u0633\u0641\u0627\u0631\u0634
+        \u062F\u0647\u06CC\u062F. \u067E\u06CC\u0634 \u0627\u0632 \u062D\u0633\u0627\u0628
+        \u06A9\u0631\u062F\u0646 \u0631\u0648\u06CC \u0622\u0646\u200C\u0647\u0627\u060C
+        \u0645\u0646\u062A\u0638\u0631 \u0631\u0633\u06CC\u062F\u0646 \u0647\u0631
+        \u0686\u0647\u0627\u0631 \u0646\u0641\u0631 \u0628\u0645\u0627\u0646\u06CC\u062F."
+    - key: mission.m03.guide.topic.6.mistake
+      value: "\u0627\u0634\u062A\u0628\u0627\u0647 \u06AF\u0631\u0641\u062A\u0646
+        \u0647\u0632\u06CC\u0646\u0647\u0654 \u0645\u0631\u062C\u0639 \u06CC\u06A9
+        \u06A9\u0644\u0627\u0633 \u0628\u0627 \u0647\u0632\u06CC\u0646\u0647\u0654
+        \u0648\u0627\u0642\u0639\u06CC \u06AF\u0631\u0648\u0647 \u062F\u0631 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A."
+    - key: mission.m03.guide.topic.6.title
+      value: "\u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0627\u0646 \u06A9\u0645\u06A9\u06CC"
+    - key: mission.m03.guide.topic.7.body
+      value: "\u062D\u0641\u0638 \u0627\u0632 \u0645\u0648\u0636\u0639 \u062F\u0641\u0627\u0639
+        \u0645\u06CC\u200C\u06A9\u0646\u062F. \u062A\u0648\u0642\u0641 \u062F\u0633\u062A\u0648\u0631
+        \u0641\u0639\u0644\u06CC \u0631\u0627 \u0644\u063A\u0648 \u0645\u06CC\u200C\u06A9\u0646\u062F
+        \u0648 \u0646\u0628\u0631\u062F \u0627\u062F\u0627\u0645\u0647 \u062F\u0627\u0631\u062F."
+    - key: mission.m03.guide.topic.7.diagram
+      value: "\u062D\u0641\u0638 \u2190 \u062F\u0641\u0627\u0639 \u0627\u0632 \u0645\u0648\u0636\u0639
+        \xB7 \u062A\u0648\u0642\u0641 \u2190 \u0644\u063A\u0648 \u062F\u0633\u062A\u0648\u0631"
+    - key: mission.m03.guide.topic.7.example
+      value: "\u067E\u0633 \u0627\u0632 \u0631\u0633\u06CC\u062F\u0646 \u0628\u0647
+        \u06A9\u0646\u0627\u0631 \u062C\u0627\u062F\u0647\u060C \u062D\u0641\u0638
+        \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F. \u0627\u06AF\u0631 \u0645\u0642\u0635\u062F
+        \u0627\u0634\u062A\u0628\u0627\u0647 \u0628\u0648\u062F\u060C \u062A\u0648\u0642\u0641
+        \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F \u0648 \u0633\u067E\u0633 \u0645\u0642\u0635\u062F
+        \u062D\u0631\u06A9\u062A \u0631\u0627 \u0627\u0635\u0644\u0627\u062D \u06A9\u0646\u06CC\u062F."
+    - key: mission.m03.guide.topic.7.mistake
+      value: "\u0627\u0633\u062A\u0641\u0627\u062F\u0647 \u0627\u0632 \u062A\u0648\u0642\u0641
+        \u0628\u0631\u0627\u06CC \u0645\u06A9\u062B \u0646\u0628\u0631\u062F \u0648
+        \u062E\u0648\u0627\u0646\u062F\u0646 \u0631\u0627\u0647\u0646\u0645\u0627."
+    - key: mission.m03.guide.topic.7.title
+      value: "\u062D\u0641\u0638 \u0648 \u062A\u0648\u0642\u0641"
+    - key: mission.m03.guide.topic.8.body
+      value: "\u067E\u06CC\u0634 \u0627\u0632 \u0645\u0635\u0631\u0641 \u067E\u0627\u0644\u0633\u060C
+        \u0645\u0646\u062A\u0638\u0631 \u0648\u0631\u0648\u062F \u062E\u0648\u062F\u0631\u0648\u06CC
+        \u062F\u0634\u0645\u0646 \u0628\u0647 \u067E\u0648\u0634\u0634 \u0631\u0627\u062F\u0627\u0631
+        \u0633\u0627\u0644\u0645 \u0628\u0645\u0627\u0646\u06CC\u062F."
+    - key: mission.m03.guide.topic.8.diagram
+      value: "\u06F2 \u0646\u0648\u0628\u062A \xB7 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u06F6\u06F0 \u062B\u0627\u0646\u06CC\u0647 \xB7 \u067E\u0648\u0634\u0634
+        \u0631\u0627\u062F\u0627\u0631 \u0632\u0645\u06CC\u0646\u06CC"
+    - key: mission.m03.guide.topic.8.example
+      value: "\u062E\u0648\u062F\u0631\u0648\u06CC\u06CC \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0646\u0632\u062F\u06CC\u06A9 \u0627\u0633\u062A: \u0628\u0627 \u06CC\u06A9
+        \u067E\u0627\u0644\u0633 \u0645\u0648\u0642\u0639\u06CC\u062A \u0622\u0646
+        \u0631\u0627 \u062A\u0627\u0632\u0647 \u06A9\u0646\u06CC\u062F. \u0646\u0648\u0628\u062A
+        \u0628\u0627\u0642\u06CC\u200C\u0645\u0627\u0646\u062F\u0647 \u0631\u0627
+        \u0628\u0631\u0627\u06CC \u0628\u062E\u0634 \u0627\u0635\u0644\u06CC \u06A9\u0627\u0631\u0648\u0627\u0646
+        \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F."
+    - key: mission.m03.guide.topic.8.mistake
+      value: "\u0627\u0646\u062A\u0638\u0627\u0631 \u0628\u0627\u0632\u06AF\u0634\u062A
+        \u0646\u0648\u0628\u062A \u0627\u0633\u06A9\u0646 \u0628\u062F\u0648\u0646
+        \u062A\u0645\u0627\u0633 \u06CC\u0627 \u0622\u0634\u06A9\u0627\u0631\u0634\u062F\u0646
+        \u06A9\u0644 \u0646\u0642\u0634\u0647."
+    - key: mission.m03.guide.topic.8.title
+      value: "\u067E\u0627\u0644\u0633 \u0631\u0627\u062F\u0627\u0631"
+    - key: mission.m03.guide.topic.9.body
+      value: "\u0628\u0647 \u062E\u0648\u062F\u0631\u0648\u06CC \u0645\u0633\u0644\u062D
+        \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647 \u0634\u0644\u06CC\u06A9
+        \u06A9\u0646\u06CC\u062F\u061B \u0646\u0641\u0631\u0628\u0631 \u0628\u06CC\u200C\u0633\u0644\u0627\u062D
+        \u0631\u0627 \u0647\u0645 \u067E\u06CC\u0634 \u0627\u0632 \u0631\u0633\u06CC\u062F\u0646
+        \u0628\u0647 \u0645\u0631\u06A9\u0632 \u0645\u062A\u0648\u0642\u0641 \u06A9\u0646\u06CC\u062F."
+    - key: mission.m03.guide.topic.9.diagram
+      value: "\u062E\u0648\u062F\u0631\u0648\u06CC \u0645\u0633\u0644\u062D \u2190
+        \u0622\u0633\u06CC\u0628 \xB7 \u0646\u0641\u0631\u0628\u0631 \u2190 \u0648\u0631\u0648\u062F
+        \u0628\u0647 \u0645\u0631\u06A9\u0632"
+    - key: mission.m03.guide.topic.9.example
+      value: "\u0622\u062A\u0634 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0627\u0646
+        \u0631\u0627 \u0631\u0648\u06CC \u062E\u0648\u062F\u0631\u0648\u06CC \u0645\u0633\u0644\u062D
+        \u0645\u062A\u0645\u0631\u06A9\u0632 \u06A9\u0646\u06CC\u062F\u060C \u0627\u0645\u0627
+        \u0646\u06CC\u0631\u0648\u06CC \u0630\u062E\u06CC\u0631\u0647 \u0631\u0627
+        \u0628\u06CC\u0646 \u0646\u0641\u0631\u0628\u0631 \u0648 \u067E\u0627\u0633\u06AF\u0627\u0647
+        \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F."
+    - key: mission.m03.guide.topic.9.mistake
+      value: "\u0646\u0627\u062F\u06CC\u062F\u0647 \u06AF\u0631\u0641\u062A\u0646
+        \u062E\u0648\u062F\u0631\u0648\u06CC \u062F\u0634\u0645\u0646 \u0628\u06CC\u200C\u0633\u0644\u0627\u062D
+        \u0686\u0648\u0646 \u0646\u0645\u06CC\u200C\u062A\u0648\u0627\u0646\u062F
+        \u0634\u0644\u06CC\u06A9 \u06A9\u0646\u062F."
+    - key: mission.m03.guide.topic.9.title
+      value: "\u0627\u0646\u062A\u062E\u0627\u0628 \u0647\u062F\u0641"
+    - key: mission.m03.guide.topics
+      value: "\u06F1\u06F2 \u062F\u0631\u0633"
+    - key: mission.m03.guide.unarmed
+      value: "\u0628\u06CC\u200C\u0633\u0644\u0627\u062D"
+    - key: mission.m03.guide.unavailable_stats
+      value: "\u0622\u0645\u0627\u0631 \u06AF\u06CC\u0645\u200C\u067E\u0644\u06CC
+        \u067E\u0633 \u0627\u0632 \u0622\u0645\u0627\u062F\u0647\u200C\u0634\u062F\u0646
+        \u067E\u06CC\u06A9\u0631\u0628\u0646\u062F\u06CC \u0642\u0627\u0628\u0644\u200C\u0628\u0627\u0632\u06CC
+        \u0646\u0645\u0627\u06CC\u0634 \u062F\u0627\u062F\u0647 \u0645\u06CC\u200C\u0634\u0648\u062F."
+    - key: mission.m03.jump
+      value: "\u0646\u0645\u0627\u06CC\u0634 \u0645\u062D\u0644 \u06AF\u0632\u0627\u0631\u0634"
+    - key: mission.m03.label.forces
+      value: "\u0646\u06CC\u0631\u0648\u0647\u0627\u06CC \u0622\u063A\u0627\u0632\u06CC\u0646"
+    - key: mission.m03.label.options
+      value: "\u06AF\u0632\u06CC\u0646\u0647\u200C\u0647\u0627\u06CC \u062F\u0641\u0627\u0639\u06CC"
+    - key: mission.m03.location
+      value: "\u0645\u0633\u06CC\u0631 \u063A\u0631\u0628\u06CC \xB7 \u067E\u0627\u0633\u06AF\u0627\u0647
+        \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC \u0645\u0634\u062A\u0631\u06A9"
+    - key: mission.m03.name
+      value: "\u0647\u0634\u062F\u0627\u0631 \u0631\u0627\u062F\u0627\u0631"
+    - key: mission.m03.objective.hold_post
+      value: "\u067E\u0627\u0633\u06AF\u0627\u0647 \u0631\u0627 \u062D\u0641\u0638
+        \u06A9\u0646\u06CC\u062F"
+    - key: mission.m03.objective.keep_core_clear
+      value: "\u0627\u0632 \u0648\u0631\u0648\u062F \u062F\u0634\u0645\u0646 \u0628\u0647
+        \u0645\u062D\u062F\u0648\u062F\u0647\u0654 \u0645\u0631\u06A9\u0632\u06CC
+        \u062C\u0644\u0648\u06AF\u06CC\u0631\u06CC \u06A9\u0646\u06CC\u062F"
+    - key: mission.m03.objective.prevent_breach
+      value: "\u0627\u0632 \u0648\u0631\u0648\u062F \u062F\u0634\u0645\u0646 \u0628\u0647
+        \u0645\u062D\u062F\u0648\u062F\u0647\u0654 \u0645\u0631\u06A9\u0632\u06CC
+        \u062C\u0644\u0648\u06AF\u06CC\u0631\u06CC \u06A9\u0646\u06CC\u062F"
+    - key: mission.m03.objective.protect_post
+      value: "\u067E\u0627\u0633\u06AF\u0627\u0647 \u0631\u0627 \u062D\u0641\u0638
+        \u06A9\u0646\u06CC\u062F"
+    - key: mission.m03.objective.stop_convoy
+      value: "\u0647\u0631 \u062F\u0648 \u0628\u062E\u0634 \u06A9\u0627\u0631\u0648\u0627\u0646
+        \u0631\u0627 \u0645\u062A\u0648\u0642\u0641 \u06A9\u0646\u06CC\u062F"
+    - key: mission.m03.optional.skip
+      value: "\u0631\u062F\u06A9\u0631\u062F\u0646 \u062F\u0631\u0633 \u0627\u062E\u062A\u06CC\u0627\u0631\u06CC"
+    - key: mission.m03.options
+      value: "\u0628\u0631\u062C \u0646\u06AF\u0647\u0628\u0627\u0646\u06CC\u060C
+        \u0645\u0627\u0646\u0639 \u06CC\u0627 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0627\u0646
+        \u06A9\u0645\u06A9\u06CC"
+    - key: mission.m03.ping.cooldown
+      value: "\u0622\u0645\u0627\u062F\u0647 \u062A\u0627 {0} \u062B\u0627\u0646\u06CC\u0647\u0654
+        \u062F\u06CC\u06AF\u0631"
+    - key: mission.m03.ping.empty
+      value: "\u0646\u0648\u0628\u062A\u06CC \u0628\u0627\u0642\u06CC \u0646\u0645\u0627\u0646\u062F\u0647
+        \u0627\u0633\u062A"
+    - key: mission.m03.ping.label
+      value: "\u067E\u0627\u0644\u0633 \u0631\u0627\u062F\u0627\u0631"
+    - key: mission.m03.ping.no_sensor
+      value: "\u062D\u0633\u06AF\u0631 \u0632\u0645\u06CC\u0646\u06CC \u062F\u0631
+        \u062F\u0633\u062A\u0631\u0633 \u0646\u06CC\u0633\u062A"
+    - key: mission.m03.ping.paused
+      value: "\u0645\u06A9\u062B"
+    - key: mission.m03.ping.ready
+      value: "\u067E\u0627\u0644\u0633 \u0631\u0627\u062F\u0627\u0631 \xB7 {0} \u0646\u0648\u0628\u062A"
+    - key: mission.m03.resources
+      value: "\u06F5\u06F0\u066C\u06F0\u06F0\u06F0 \u0627\u0639\u062A\u0628\u0627\u0631
+        \xB7 \u06F1\u06F0\u06F0 \u0645\u0635\u0627\u0644\u062D"
+    - key: mission.m03.result.breach
+      value: "\u062F\u0634\u0645\u0646 \u0632\u0646\u062F\u0647 \u0628\u0647 \u0645\u062D\u062F\u0648\u062F\u0647\u0654
+        \u0645\u0631\u06A9\u0632\u06CC \u0631\u0633\u06CC\u062F. \u0646\u0641\u0631\u0628\u0631
+        \u0631\u0627 \u067E\u06CC\u0634 \u0627\u0632 \u0622\u062E\u0631\u06CC\u0646
+        \u067E\u06CC\u0686 \u0645\u062A\u0648\u0642\u0641 \u06A9\u0646\u06CC\u062F\u061B
+        \u062E\u0648\u062F\u0631\u0648\u06CC \u0628\u06CC\u200C\u0633\u0644\u0627\u062D
+        \u0647\u0645 \u0645\u06CC\u200C\u062A\u0648\u0627\u0646\u062F \u0648\u0627\u0631\u062F
+        \u0645\u0631\u06A9\u0632 \u0634\u0648\u062F."
+    - key: mission.m03.result.civilian_goal
+      value: "\u0633\u0644\u0627\u0645\u062A \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC\u0627\u0646"
+    - key: mission.m03.result.civilians
+      value: "\u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC\u0627\u0646 \u0627\u0632\u062F\u0633\u062A\u200C\u0631\u0641\u062A\u0647"
+    - key: mission.m03.result.damaged
+      value: "\u0622\u0633\u06CC\u0628\u200C\u062F\u06CC\u062F\u0647"
+    - key: mission.m03.result.defeat
+      value: "\u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0646\u0627\u0645\u0648\u0641\u0642"
+    - key: mission.m03.result.destroyed
+      value: "\u0646\u0627\u0628\u0648\u062F \u0634\u062F"
+    - key: mission.m03.result.enemies
+      value: "\u062F\u0634\u0645\u0646\u0627\u0646 \u0645\u062A\u0648\u0642\u0641\u200C\u0634\u062F\u0647"
+    - key: mission.m03.result.incomplete
+      value: "\u0646\u0627\u062A\u0645\u0627\u0645"
+    - key: mission.m03.result.integrity
+      value: "\u06CC\u06A9\u06CC \u0627\u0632 \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC
+        \u0636\u0631\u0648\u0631\u06CC \u0645\u0623\u0645\u0648\u0631\u06CC\u062A
+        \u0627\u0632 \u062F\u0633\u062A\u0631\u0633 \u062E\u0627\u0631\u062C \u0634\u062F.
+        \u0627\u06CC\u0646 \u062A\u0644\u0627\u0634 \u0631\u0627 \u0627\u0632 \u0646\u0648
+        \u0622\u063A\u0627\u0632 \u06A9\u0646\u06CC\u062F\u061B \u067E\u06CC\u0631\u0648\u0632\u06CC
+        \u06CC\u0627 \u067E\u0627\u062F\u0627\u0634\u06CC \u062B\u0628\u062A \u0646\u0634\u062F."
+    - key: mission.m03.result.losses
+      value: "\u062A\u0644\u0641\u0627\u062A"
+    - key: mission.m03.result.no_reward
+      value: "\u0628\u062F\u0648\u0646 \u067E\u0627\u062F\u0627\u0634"
+    - key: mission.m03.result.objectives
+      value: "\u062F\u0641\u0627\u0639 \u0648 \u0633\u062A\u0627\u0631\u0647\u200C\u0647\u0627\u06CC
+        \u0627\u0645\u062A\u06CC\u0627\u0632\u06CC"
+    - key: mission.m03.result.performance
+      value: "\u0639\u0645\u0644\u06A9\u0631\u062F"
+    - key: mission.m03.result.post
+      value: "\u0648\u0636\u0639\u06CC\u062A \u067E\u0627\u0633\u06AF\u0627\u0647"
+    - key: mission.m03.result.post_lost
+      value: "\u067E\u0627\u0633\u06AF\u0627\u0647 \u0646\u0627\u0628\u0648\u062F
+        \u0634\u062F. \u062F\u0631 \u062A\u0644\u0627\u0634 \u0628\u0639\u062F\u06CC
+        \u0645\u0633\u06CC\u0631 \u0622\u0646 \u0631\u0627 \u067E\u0648\u0634\u0634
+        \u062F\u0647\u06CC\u062F \u0648 \u0646\u06CC\u0631\u0648\u06CC \u0630\u062E\u06CC\u0631\u0647
+        \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F."
+    - key: mission.m03.result.retry
+      value: "\u062A\u0644\u0627\u0634 \u062F\u0648\u0628\u0627\u0631\u0647"
+    - key: mission.m03.result.rewards
+      value: "\u067E\u0627\u062F\u0627\u0634\u200C\u0647\u0627"
+    - key: mission.m03.result.safe
+      value: "\u0647\u0645\u0647 \u0633\u0627\u0644\u0645"
+    - key: mission.m03.result.squad_losses
+      value: "\u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0627\u0646 \u0627\u0632\u062F\u0633\u062A\u200C\u0631\u0641\u062A\u0647"
+    - key: mission.m03.result.stars
+      value: "{0} / \u06F3 \u0633\u062A\u0627\u0631\u0647"
+    - key: mission.m03.result.stopped
+      value: "\u0645\u062A\u0648\u0642\u0641 \u0634\u062F"
+    - key: mission.m03.result.undamaged
+      value: "\u0628\u06CC\u200C\u0622\u0633\u06CC\u0628"
+    - key: mission.m03.result.victory
+      value: "\u067E\u06CC\u0631\u0648\u0632\u06CC"
+    - key: mission.m03.result.victory_body
+      value: "\u0647\u0631 \u062F\u0648 \u0628\u062E\u0634 \u06A9\u0627\u0631\u0648\u0627\u0646
+        \u0645\u062A\u0648\u0642\u0641 \u0634\u062F\u0646\u062F. \u067E\u0627\u0633\u06AF\u0627\u0647
+        \u067E\u0627\u0628\u0631\u062C\u0627\u0633\u062A \u0648 \u0645\u062D\u062F\u0648\u062F\u0647\u0654
+        \u0645\u0631\u06A9\u0632\u06CC \u062D\u0641\u0638 \u0634\u062F. \u0633\u062A\u0627\u0631\u0647\u200C\u0647\u0627\u06CC
+        \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC\u0627\u0646 \u0648 \u0622\u0633\u06CC\u0628
+        \u067E\u0627\u0633\u06AF\u0627\u0647 \u0631\u0627 \u0628\u0631\u0631\u0633\u06CC
+        \u06A9\u0646\u06CC\u062F."
+    - key: mission.m03.reward.guard_tower
+      value: "\u062F\u0633\u062A\u0631\u0633\u06CC \u0628\u0647 \u0628\u0631\u062C
+        \u0646\u06AF\u0647\u0628\u0627\u0646\u06CC"
+    - key: mission.m03.reward.radar_ping
+      value: "\u0645\u0627\u0644\u06A9\u06CC\u062A \u067E\u0627\u0644\u0633 \u0631\u0627\u062F\u0627\u0631"
+    - key: mission.m03.reward.unlocks
+      value: "\u0628\u0631\u062C \u0646\u06AF\u0647\u0628\u0627\u0646\u06CC + \u067E\u0627\u0644\u0633
+        \u0631\u0627\u062F\u0627\u0631"
+    - key: mission.m03.save.body
+      value: "\u062F\u0641\u0627\u0639 \u06A9\u0627\u0645\u0644 \u0634\u062F\u060C
+        \u0627\u0645\u0627 \u067E\u06CC\u0634\u0631\u0641\u062A \u0648 \u067E\u0627\u062F\u0627\u0634\u200C\u0647\u0627
+        \u0630\u062E\u06CC\u0631\u0647 \u0646\u0634\u062F\u0646\u062F. \u067E\u06CC\u0634
+        \u0627\u0632 \u062E\u0631\u0648\u062C \u0627\u0632 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A\u060C
+        \u0630\u062E\u06CC\u0631\u0647\u200C\u0633\u0627\u0632\u06CC \u0631\u0627
+        \u062F\u0648\u0628\u0627\u0631\u0647 \u0627\u0645\u062A\u062D\u0627\u0646
+        \u06A9\u0646\u06CC\u062F."
+    - key: mission.m03.save.failed
+      value: "\u067E\u06CC\u0634\u0631\u0641\u062A \u0630\u062E\u06CC\u0631\u0647
+        \u0646\u0634\u062F"
+    - key: mission.m03.save.pending
+      value: "\u067E\u0627\u062F\u0627\u0634\u200C\u0647\u0627 \u062F\u0631 \u0627\u0646\u062A\u0638\u0627\u0631
+        \u0630\u062E\u06CC\u0631\u0647\u200C\u0633\u0627\u0632\u06CC"
+    - key: mission.m03.save.retry
+      value: "\u0630\u062E\u06CC\u0631\u0647\u0654 \u062F\u0648\u0628\u0627\u0631\u0647"
+    - key: mission.m03.star.civilians_safe
+      value: "\u0647\u0631 \u0686\u0647\u0627\u0631 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u0632\u0646\u062F\u0647 \u0645\u0627\u0646\u062F\u0646\u062F"
+    - key: mission.m03.star.complete
+      value: "\u06A9\u0627\u0631\u0648\u0627\u0646 \u0631\u0627 \u0645\u062A\u0648\u0642\u0641
+        \u0648 \u067E\u0627\u0633\u06AF\u0627\u0647 \u0631\u0627 \u062D\u0641\u0638
+        \u06A9\u0646\u06CC\u062F"
+    - key: mission.m03.star.post_undamaged
+      value: "\u067E\u0627\u0633\u06AF\u0627\u0647 \u0622\u0633\u06CC\u0628 \u0646\u062F\u06CC\u062F"
+    - key: mission.m03.summary
+      value: "\u067E\u0627\u0633\u06AF\u0627\u0647 \u0631\u0627 \u062F\u0631 \u0628\u0631\u0627\u0628\u0631
+        \u062F\u0648 \u0628\u062E\u0634 \u06A9\u0627\u0631\u0648\u0627\u0646 \u062D\u0641\u0638
+        \u06A9\u0646\u06CC\u062F. \u06AF\u0631\u0648\u0647\u200C\u0647\u0627 \u0631\u0627
+        \u0645\u0633\u062A\u0642\u0631 \u06A9\u0646\u06CC\u062F\u060C \u0647\u0634\u062F\u0627\u0631\u0647\u0627
+        \u0631\u0627 \u0628\u062E\u0648\u0627\u0646\u06CC\u062F \u0648 \u0634\u06CC\u0648\u0647\u0654
+        \u062A\u0642\u0648\u06CC\u062A \u062F\u0641\u0627\u0639 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u06CC\u062F."
+    - key: mission.m03.tutorial.1.body
+      value: "\u0645\u0646\u0628\u0639\u060C \u0645\u0633\u06CC\u0631 \u0648 \u0632\u0645\u0627\u0646
+        \u062A\u0642\u0631\u06CC\u0628\u06CC \u062A\u0645\u0627\u0633 \u0631\u0627
+        \u0628\u0631\u0631\u0633\u06CC \u06A9\u0646\u06CC\u062F. \u06AF\u0632\u0627\u0631\u0634
+        \u062F\u06CC\u062F\u0647\u200C\u0628\u0627\u0646 \u062A\u0639\u062F\u0627\u062F
+        \u062E\u0648\u062F\u0631\u0648\u0647\u0627 \u0631\u0627 \u062A\u0623\u06CC\u06CC\u062F
+        \u0646\u0645\u06CC\u200C\u06A9\u0646\u062F."
+    - key: mission.m03.tutorial.1.title
+      value: "\u0647\u0634\u062F\u0627\u0631 \u0631\u0627 \u0628\u062E\u0648\u0627\u0646\u06CC\u062F"
+    - key: mission.m03.tutorial.10.body
+      value: "\u062E\u0648\u062F\u0631\u0648\u0647\u0627\u06CC \u0645\u0633\u0644\u062D
+        \u0628\u0647 \u0645\u062F\u0627\u0641\u0639\u0627\u0646 \u0622\u0633\u06CC\u0628
+        \u0645\u06CC\u200C\u0632\u0646\u0646\u062F. \u0646\u0641\u0631\u0628\u0631
+        \u0628\u06CC\u200C\u0633\u0644\u0627\u062D \u0647\u0645 \u0645\u06CC\u200C\u062A\u0648\u0627\u0646\u062F
+        \u0648\u0627\u0631\u062F \u0645\u062D\u062F\u0648\u062F\u0647\u0654 \u0645\u0631\u06A9\u0632\u06CC
+        \u0634\u0648\u062F. \u0647\u062F\u0641 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u062F."
+    - key: mission.m03.tutorial.10.title
+      value: "\u062A\u0647\u062F\u06CC\u062F\u0647\u0627\u06CC \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0631\u0627 \u0627\u0648\u0644\u0648\u06CC\u062A \u062F\u0647\u06CC\u062F"
+    - key: mission.m03.tutorial.11.body
+      value: "\u0647\u0634\u062F\u0627\u0631 \u062F\u0648\u0645 \u0648 \u0648\u0636\u0639\u06CC\u062A
+        \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC \u0628\u0627\u0642\u06CC\u200C\u0645\u0627\u0646\u062F\u0647
+        \u0631\u0627 \u0628\u0631\u0631\u0633\u06CC \u06A9\u0646\u06CC\u062F. \u062F\u0631
+        \u0635\u0648\u0631\u062A \u0646\u06CC\u0627\u0632 \u062C\u0627\u0628\u0647\u200C\u062C\u0627
+        \u0634\u0648\u06CC\u062F \u0648 \u0645\u0633\u06CC\u0631 \u067E\u0627\u0633\u06AF\u0627\u0647
+        \u0631\u0627 \u067E\u0648\u0634\u0634 \u062F\u0647\u06CC\u062F."
+    - key: mission.m03.tutorial.11.title
+      value: "\u0628\u0627 \u06A9\u0627\u0631\u0648\u0627\u0646 \u0627\u0635\u0644\u06CC
+        \u0633\u0627\u0632\u06AF\u0627\u0631 \u0634\u0648\u06CC\u062F"
+    - key: mission.m03.tutorial.12.body
+      value: "\u0628\u0631\u0627\u06CC \u067E\u06CC\u0631\u0648\u0632\u06CC \u0647\u0631
+        \u062F\u0648 \u0628\u062E\u0634 \u06A9\u0627\u0631\u0648\u0627\u0646 \u0631\u0627
+        \u0645\u062A\u0648\u0642\u0641 \u0648 \u067E\u0627\u0633\u06AF\u0627\u0647
+        \u0648 \u0645\u0631\u06A9\u0632 \u0631\u0627 \u062D\u0641\u0638 \u06A9\u0646\u06CC\u062F.
+        \u062A\u0644\u0641\u0627\u062A \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u0648 \u0622\u0633\u06CC\u0628 \u067E\u0627\u0633\u06AF\u0627\u0647\u060C
+        \u0633\u062A\u0627\u0631\u0647\u200C\u0647\u0627\u06CC \u0627\u0645\u062A\u06CC\u0627\u0632\u06CC
+        \u062C\u062F\u0627\u06AF\u0627\u0646\u0647 \u0631\u0627 \u06A9\u0645 \u0645\u06CC\u200C\u06A9\u0646\u0646\u062F."
+    - key: mission.m03.tutorial.12.title
+      value: "\u0646\u062A\u06CC\u062C\u0647 \u0631\u0627 \u0628\u0631\u0631\u0633\u06CC
+        \u06A9\u0646\u06CC\u062F"
+    - key: mission.m03.tutorial.2.body
+      value: "\u0628\u0647 \u062C\u0627\u062F\u0647\u0654 \u06AF\u0632\u0627\u0631\u0634\u200C\u0634\u062F\u0647
+        \u0646\u06AF\u0627\u0647 \u06A9\u0646\u06CC\u062F. \u0627\u06CC\u0646 \u06A9\u0627\u0631
+        \u0641\u0642\u0637 \u062F\u0648\u0631\u0628\u06CC\u0646 \u0631\u0627 \u062C\u0627\u0628\u0647\u200C\u062C\u0627
+        \u0645\u06CC\u200C\u06A9\u0646\u062F \u0648 \u062F\u0633\u062A\u0648\u0631
+        \u06AF\u0631\u0648\u0647\u200C\u0647\u0627 \u0631\u0627 \u062A\u063A\u06CC\u06CC\u0631
+        \u0646\u0645\u06CC\u200C\u062F\u0647\u062F."
+    - key: mission.m03.tutorial.2.title
+      value: "\u0645\u0633\u06CC\u0631 \u0631\u0627 \u0628\u0631\u0631\u0633\u06CC
+        \u06A9\u0646\u06CC\u062F"
+    - key: mission.m03.tutorial.3.body
+      value: "\u062F\u0641\u0627\u0639 \u062C\u0644\u0648\u062A\u0631 \u0641\u0631\u0635\u062A
+        \u0628\u06CC\u0634\u062A\u0631\u06CC \u0628\u0631\u0627\u06CC \u062A\u0648\u0642\u0641
+        \u06A9\u0627\u0631\u0648\u0627\u0646 \u0645\u06CC\u200C\u062F\u0647\u062F.
+        \u0646\u0632\u062F\u06CC\u06A9 \u067E\u0627\u0633\u06AF\u0627\u0647 \u0647\u0645
+        \u0645\u06CC\u200C\u062A\u0648\u0627\u0646\u06CC\u062F \u062F\u0641\u0627\u0639
+        \u06A9\u0646\u06CC\u062F\u061B \u0645\u0633\u06CC\u0631 \u0645\u0631\u06A9\u0632\u06CC
+        \u0631\u0627 \u067E\u0648\u0634\u0634 \u062F\u0647\u06CC\u062F."
+    - key: mission.m03.tutorial.3.title
+      value: "\u0634\u06CC\u0648\u0647\u0654 \u062F\u0641\u0627\u0639 \u0631\u0627
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u062F"
+    - key: mission.m03.tutorial.4.body
+      value: "\u062F\u0631 \u0628\u062E\u0634 \u0633\u0627\u062E\u062A\u060C \u0628\u0631\u062C
+        \u06CC\u0627 \u0645\u0627\u0646\u0639 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u06CC\u062F. \u067E\u06CC\u0634 \u0627\u0632 \u062A\u0623\u06CC\u06CC\u062F\u060C
+        \u0647\u0632\u06CC\u0646\u0647 \u0648 \u0645\u062D\u0644 \u0645\u062C\u0627\u0632
+        \u0631\u0627 \u0628\u0631\u0631\u0633\u06CC \u06A9\u0646\u06CC\u062F. \u0645\u06CC\u200C\u062A\u0648\u0627\u0646\u06CC\u062F
+        \u0627\u0632 \u0627\u06CC\u0646 \u0622\u0645\u0648\u0632\u0634 \u0628\u06AF\u0630\u0631\u06CC\u062F."
+    - key: mission.m03.tutorial.4.title
+      value: "\u0627\u062E\u062A\u06CC\u0627\u0631\u06CC: \u062A\u0642\u0648\u06CC\u062A
+        \u062F\u0641\u0627\u0639"
+    - key: mission.m03.tutorial.5.body
+      value: "\u06AF\u0631\u0648\u0647 \u062E\u0648\u062F\u06CC \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u06CC\u062F\u060C \u062D\u0631\u06A9\u062A \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F
+        \u0648 \u06A9\u0646\u0627\u0631 \u062C\u0627\u062F\u0647\u0654 \u06A9\u0627\u0631\u0648\u0627\u0646
+        \u0645\u0642\u0635\u062F\u06CC \u0642\u0627\u0628\u0644\u200C\u062F\u0633\u062A\u0631\u0633\u06CC
+        \u062A\u0639\u06CC\u06CC\u0646 \u06A9\u0646\u06CC\u062F. \u0645\u0646\u062A\u0638\u0631
+        \u0631\u0633\u06CC\u062F\u0646 \u06AF\u0631\u0648\u0647 \u0628\u0645\u0627\u0646\u06CC\u062F."
+    - key: mission.m03.tutorial.5.title
+      value: "\u06AF\u0631\u0648\u0647\u200C\u0647\u0627 \u0631\u0627 \u0645\u0633\u062A\u0642\u0631
+        \u06A9\u0646\u06CC\u062F"
+    - key: mission.m03.tutorial.6.body
+      value: "\u06AF\u0631\u0648\u0647 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u06CC\u062F \u0648 \u062D\u0641\u0638 \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F.
+        \u06AF\u0631\u0648\u0647 \u0627\u0632 \u0645\u0648\u0636\u0639 \u062E\u0648\u062F
+        \u062F\u0641\u0627\u0639 \u0645\u06CC\u200C\u06A9\u0646\u062F \u0648 \u0628\u062F\u0648\u0646
+        \u062A\u0639\u0642\u06CC\u0628\u060C \u0628\u0647 \u062F\u0634\u0645\u0646
+        \u062F\u0631 \u0628\u0631\u062F \u0634\u0644\u06CC\u06A9 \u0645\u06CC\u200C\u06A9\u0646\u062F."
+    - key: mission.m03.tutorial.6.title
+      value: "\u0645\u0648\u0636\u0639 \u0631\u0627 \u062D\u0641\u0638 \u06A9\u0646\u06CC\u062F"
+    - key: mission.m03.tutorial.7.body
+      value: "\u062A\u0648\u0642\u0641\u060C \u062F\u0633\u062A\u0648\u0631 \u0641\u0639\u0644\u06CC
+        \u0648\u0627\u062D\u062F\u0647\u0627\u06CC \u0627\u0646\u062A\u062E\u0627\u0628\u200C\u0634\u062F\u0647
+        \u0631\u0627 \u0644\u063A\u0648 \u0645\u06CC\u200C\u06A9\u0646\u062F\u061B
+        \u0646\u0628\u0631\u062F \u0645\u062A\u0648\u0642\u0641 \u0646\u0645\u06CC\u200C\u0634\u0648\u062F.
+        \u0628\u0631\u0627\u06CC \u062D\u0641\u0638 \u0622\u0631\u0627\u06CC\u0634
+        \u0641\u0639\u0644\u06CC \u0645\u06CC\u200C\u062A\u0648\u0627\u0646\u06CC\u062F
+        \u0627\u0632 \u0627\u06CC\u0646 \u0645\u0631\u062D\u0644\u0647 \u0628\u06AF\u0630\u0631\u06CC\u062F."
+    - key: mission.m03.tutorial.7.title
+      value: "\u0627\u062E\u062A\u06CC\u0627\u0631\u06CC: \u0644\u063A\u0648 \u062F\u0633\u062A\u0648\u0631"
+    - key: mission.m03.tutorial.8.body
+      value: "\u067E\u0627\u0644\u0633 \u0631\u0627\u062F\u0627\u0631 \u0645\u062D\u062F\u0648\u062F\u0647\u0654
+        \u062E\u0648\u062F\u0631\u0648\u06CC \u0631\u0627\u062F\u0627\u0631 \u0632\u0645\u06CC\u0646\u06CC\u0650
+        \u0633\u0627\u0644\u0645 \u0631\u0627 \u0628\u0631\u0631\u0633\u06CC \u0645\u06CC\u200C\u06A9\u0646\u062F.
+        \u062F\u0648 \u0628\u0627\u0631 \u0642\u0627\u0628\u0644\u200C\u0627\u0633\u062A\u0641\u0627\u062F\u0647
+        \u0627\u0633\u062A \u0648 \u0632\u0645\u0627\u0646 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u062F\u0627\u0631\u062F. \u0627\u0633\u06A9\u0646 \u0628\u062F\u0648\u0646
+        \u062A\u0645\u0627\u0633 \u0647\u0645 \u06CC\u06A9 \u0646\u0648\u0628\u062A
+        \u0645\u0635\u0631\u0641 \u0645\u06CC\u200C\u06A9\u0646\u062F."
+    - key: mission.m03.tutorial.8.title
+      value: "\u0627\u0637\u0644\u0627\u0639\u0627\u062A \u0631\u0627 \u062A\u0627\u0632\u0647
+        \u06A9\u0646\u06CC\u062F"
+    - key: mission.m03.tutorial.9.body
+      value: "\u062A\u0648\u0644\u06CC\u062F \u062A\u0641\u0646\u06AF\u062F\u0627\u0631
+        \u062F\u0631 \u067E\u0627\u062F\u06AF\u0627\u0646 \u0622\u0645\u0627\u062F\u0647
+        \u0631\u0627 \u0628\u0627\u0632 \u06A9\u0646\u06CC\u062F. \u0647\u0632\u06CC\u0646\u0647\u0654
+        \u0646\u0645\u0627\u06CC\u0634\u200C\u062F\u0627\u062F\u0647\u200C\u0634\u062F\u0647
+        \u0628\u0631\u0627\u06CC \u06AF\u0631\u0648\u0647 \u0686\u0647\u0627\u0631\u0646\u0641\u0631\u06CC
+        \u0631\u0627 \u0628\u0631\u0631\u0633\u06CC \u06A9\u0646\u06CC\u062F. \u0633\u0627\u062E\u062A
+        \u0648 \u062A\u0648\u0644\u06CC\u062F \u0628\u0647 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u0634\u0645\u0627\u0633\u062A."
+    - key: mission.m03.tutorial.9.title
+      value: "\u0627\u062E\u062A\u06CC\u0627\u0631\u06CC: \u0646\u06CC\u0631\u0648\u06CC
+        \u06A9\u0645\u06A9\u06CC"
+    - key: mission.m03.warning.eta
+      value: "\u0628\u0631\u0622\u0648\u0631\u062F \u0632\u0645\u0627\u0646 \u062A\u0645\u0627\u0633:
+        {0} \u062B\u0627\u0646\u06CC\u0647"
+    - key: mission.m03.warning.jump
+      value: "\u0628\u0631\u0631\u0633\u06CC \u0645\u0648\u0642\u0639\u06CC\u062A
+        \u06AF\u0632\u0627\u0631\u0634\u200C\u0634\u062F\u0647"
+    - key: mission.m03.warning.main
+      value: "\u06A9\u0627\u0631\u0648\u0627\u0646 \u0627\u0635\u0644\u06CC \xB7
+        \u062C\u0627\u062F\u0647\u0654 \u063A\u0631\u0628\u06CC"
+    - key: mission.m03.warning.ping
+      value: "\u067E\u0627\u0644\u0633 \u0631\u0627\u062F\u0627\u0631"
+    - key: mission.m03.warning.resolved
+      value: "\u0627\u06CC\u0646 \u0628\u062E\u0634 \u06A9\u0627\u0631\u0648\u0627\u0646
+        \u0645\u062A\u0648\u0642\u0641 \u0634\u062F"
+    - key: mission.m03.warning.scout
+      value: "\u06AF\u0632\u0627\u0631\u0634 \u062F\u06CC\u062F\u0647\u200C\u0628\u0627\u0646"
+    - key: mission.m03.warning.sensor
+      value: "\u0631\u0627\u062F\u0627\u0631 \u0632\u0645\u06CC\u0646\u06CC"
+    - key: mission.m03.warning.stale
+      value: "\u0622\u062E\u0631\u06CC\u0646 \u0627\u0637\u0644\u0627\u0639\u0627\u062A
+        \u062A\u0645\u0627\u0633"
+    - key: mission.m03.warning.title
+      value: "\u0647\u0634\u062F\u0627\u0631 \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: mission.m03.warning.unknown
+      value: "\u062A\u0631\u06A9\u06CC\u0628 \u0646\u06CC\u0631\u0648\u0647\u0627
+        \u062A\u0623\u06CC\u06CC\u062F \u0646\u0634\u062F\u0647"
+    - key: mission.m03.warning.vanguard
+      value: "\u067E\u06CC\u0634\u200C\u0642\u0631\u0627\u0648\u0644 \xB7 \u062C\u0627\u062F\u0647\u0654
+        \u063A\u0631\u0628\u06CC"
+    - key: mission.m03.warning.vehicles
+      value: "{0} \u062E\u0648\u062F\u0631\u0648 \u0645\u0634\u0627\u0647\u062F\u0647
+        \u0634\u062F\u0647"
+    - key: mission.m03.warning.visual
+      value: "\u0645\u0634\u0627\u0647\u062F\u0647\u0654 \u0645\u0633\u062A\u0642\u06CC\u0645"
+    - key: mission.m03.warning.window
+      value: "\u0628\u0627\u0632\u0647\u0654 \u062A\u0645\u0627\u0633 \u0622\u063A\u0627\u0632
+        \u0634\u062F\u0647"
+    - key: mission.m04.access
+      value: "\u06F8 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \xB7 \u0646\u0641\u0631\u0628\u0631
+        \xB7 \u0628\u0627\u0644\u06AF\u0631\u062F \xB7 \u06F4 \u0645\u062A\u062E\u0635\u0635"
+    - key: mission.m04.enemy_intel
+      value: "\u06CC\u06A9 \u06AF\u0634\u062A\u06CC \u0645\u062D\u062F\u0648\u062F
+        \u067E\u0633 \u0627\u0632 \u062F\u0648 \u062F\u0642\u06CC\u0642\u0647 \u0627\u0632
+        \u063A\u0631\u0628 \u0646\u0632\u062F\u06CC\u06A9 \u0645\u06CC\u200C\u0634\u0648\u062F."
+    - key: mission.m04.focus.departure
+      value: "\u062E\u0631\u0648\u062C"
+    - key: mission.m04.focus.landing
+      value: "\u0645\u062D\u0644 \u0641\u0631\u0648\u062F"
+    - key: mission.m04.focus.team
+      value: "\u062A\u06CC\u0645"
+    - key: mission.m04.guide.availability.0
+      value: "\u062E\u0648\u062F\u06CC \u062F\u0631 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A
+        \u06F4"
+    - key: mission.m04.guide.availability.1
+      value: "\u062F\u0634\u0645\u0646 \u062F\u0631 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A
+        \u06F4"
+    - key: mission.m04.guide.availability.2
+      value: "\u0645\u062A\u062E\u0635\u0635 \u0645\u062D\u0627\u0641\u0638\u062A\u200C\u0634\u062F\u0647
+        \u062F\u0631 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u06F4"
+    - key: mission.m04.guide.availability.3
+      value: "\u0641\u0642\u0637 \u0628\u0631\u0627\u06CC \u0622\u0634\u0646\u0627\u06CC\u06CC
+        \xB7 \u062F\u0631 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u06F4 \u062F\u0631
+        \u062F\u0633\u062A\u0631\u0633 \u0646\u06CC\u0633\u062A"
+    - key: mission.m04.guide.notice
+      value: "\u0627\u06CC\u0646 \u0627\u0639\u062F\u0627\u062F \u0627\u0632 \u067E\u06CC\u06A9\u0631\u0628\u0646\u062F\u06CC
+        \u06A9\u0644\u0627\u0633 \u062E\u0648\u0627\u0646\u062F\u0647 \u0645\u06CC\u200C\u0634\u0648\u0646\u062F.
+        \u0645\u062D\u0627\u0641\u0638\u0627\u0646\u060C \u0646\u0641\u0631\u0628\u0631
+        \u0648 \u0628\u0627\u0644\u06AF\u0631\u062F \u0628\u0631\u0627\u06CC \u0645\u0623\u0645\u0648\u0631\u06CC\u062A
+        \u06F4 \u0641\u0631\u0627\u0647\u0645 \u0634\u062F\u0647\u200C\u0627\u0646\u062F
+        \u0648 \u062A\u0648\u0644\u06CC\u062F \u063A\u06CC\u0631\u0641\u0639\u0627\u0644
+        \u0627\u0633\u062A. \u06A9\u0644\u0627\u0633\u200C\u0647\u0627\u06CC \u0645\u0631\u062C\u0639
+        \u0631\u0627 \u0646\u0645\u06CC\u200C\u062A\u0648\u0627\u0646 \u062F\u0631
+        \u0627\u06CC\u0646 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0645\u0633\u062A\u0642\u0631
+        \u06A9\u0631\u062F."
+    - key: mission.m04.guide.reference
+      value: "\u0641\u0642\u0637 \u0628\u0631\u0627\u06CC \u0622\u0634\u0646\u0627\u06CC\u06CC
+        \xB7 \u062F\u0631 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u06F4 \u062F\u0631
+        \u062F\u0633\u062A\u0631\u0633 \u0646\u06CC\u0633\u062A"
+    - key: mission.m04.guide.role.protected
+      value: "\u0646\u0642\u0634 \xB7 \u0645\u062A\u062E\u0635\u0635 \u0645\u062D\u0627\u0641\u0638\u062A\u200C\u0634\u062F\u0647.
+        \u0647\u0631 \u0686\u0647\u0627\u0631 \u0646\u0641\u0631 \u0628\u0627\u06CC\u062F
+        \u0633\u0648\u0627\u0631 \u0646\u0641\u0631\u0628\u0631 \u0634\u0648\u0646\u062F\u060C
+        \u0628\u0647 \u0628\u0627\u0644\u06AF\u0631\u062F \u0645\u0646\u062A\u0642\u0644
+        \u0634\u0648\u0646\u062F \u0648 \u0632\u0646\u062F\u0647 \u062E\u0627\u0631\u062C
+        \u0634\u0648\u0646\u062F. \u0627\u0632 \u062F\u0633\u062A \u062F\u0627\u062F\u0646
+        \u062D\u062A\u06CC \u06CC\u06A9 \u0646\u0641\u0631 \u0628\u0627\u0639\u062B
+        \u0634\u06A9\u0633\u062A \u0646\u062C\u0627\u062A \u0645\u06CC\u200C\u0634\u0648\u062F."
+    - key: mission.m04.guide.role.transport
+      value: "\u0646\u0642\u0634 \xB7 \u062A\u0631\u0627\u0628\u0631\u06CC. \u0638\u0631\u0641\u06CC\u062A
+        \u0645\u0633\u0627\u0641\u0631 \u0628\u0647 \u0645\u0639\u0646\u06CC \u062F\u0627\u0634\u062A\u0646
+        \u0633\u0644\u0627\u062D \u0646\u06CC\u0633\u062A. \u0645\u0633\u06CC\u0631
+        \u0632\u0645\u06CC\u0646\u06CC \u0631\u0627 \u0628\u0627 \u0646\u0641\u0631\u0628\u0631
+        \u0637\u06CC \u06A9\u0646\u06CC\u062F\u060C \u062F\u0631 \u0645\u062D\u0644
+        \u0641\u0631\u0648\u062F \u067E\u06CC\u0627\u062F\u0647 \u0634\u0648\u06CC\u062F
+        \u0648 \u0647\u0631 \u0686\u0647\u0627\u0631 \u0645\u062A\u062E\u0635\u0635
+        \u0631\u0627 \u0633\u0648\u0627\u0631 \u0628\u0627\u0644\u06AF\u0631\u062F
+        \u06A9\u0646\u06CC\u062F."
+    - key: mission.m04.guide.title
+      value: "\u0631\u0627\u0647\u0646\u0645\u0627\u06CC \u0645\u06CC\u062F\u0627\u0646\u06CC
+        \xB7 \u062A\u062E\u0644\u06CC\u0647\u0654 \u0647\u0648\u0627\u06CC\u06CC"
+    - key: mission.m04.hud.cleared
+      value: "\u0627\u062C\u0627\u0632\u0647\u0654 \u062E\u0631\u0648\u062C \u0635\u0627\u062F\u0631
+        \u0634\u062F"
+    - key: mission.m04.hud.contested
+      value: "\u0645\u062D\u0644 \u0641\u0631\u0648\u062F \u0632\u06CC\u0631 \u062A\u0647\u062F\u06CC\u062F
+        \u0627\u0633\u062A"
+    - key: mission.m04.hud.status
+      value: "\u0633\u0648\u0627\u0631: {0} \u0627\u0632 \u06F4 \xB7 \u0645\u0633\u06CC\u0631
+        \u0646\u0641\u0631\u0628\u0631: {1} \u0627\u0632 \u06F4 \xB7 \u0627\u0645\u0646:
+        {2} \u0627\u0632 \u06F2\u06F0 \u062B\u0627\u0646\u06CC\u0647 \xB7 \u0632\u0645\u0627\u0646:
+        {3} \u062B\u0627\u0646\u06CC\u0647"
+    - key: mission.m04.location
+      value: "\u0628\u062E\u0634 \u0634\u0631\u0642\u06CC \xB7 \u0645\u062D\u0644
+        \u0641\u0631\u0648\u062F \u0627\u0645\u062F\u0627\u062F\u06CC"
+    - key: mission.m04.name
+      value: "\u062A\u062E\u0644\u06CC\u0647\u0654 \u0647\u0648\u0627\u06CC\u06CC"
+    - key: mission.m04.objective.extract
+      value: "\u0647\u0631 \u0686\u0647\u0627\u0631 \u0645\u062A\u062E\u0635\u0635
+        \u0631\u0627 \u062A\u062E\u0644\u06CC\u0647 \u06A9\u0646\u06CC\u062F"
+    - key: mission.m04.objective.extract.body
+      value: "\u0646\u0641\u0631\u0628\u0631\u060C \u0633\u067E\u0633 \u0628\u0627\u0644\u06AF\u0631\u062F\u060C
+        \u0633\u067E\u0633 \u062E\u0631\u0648\u062C\u061B \u0647\u0645\u0647\u0654
+        \u0645\u062A\u062E\u0635\u0635\u0627\u0646 \u0628\u0627\u06CC\u062F \u0632\u0646\u062F\u0647
+        \u0628\u0645\u0627\u0646\u0646\u062F."
+    - key: mission.m04.objective.landing
+      value: "\u0645\u062D\u0644 \u0641\u0631\u0648\u062F \u0631\u0627 \u06F2\u06F0
+        \u062B\u0627\u0646\u06CC\u0647 \u0627\u0645\u0646 \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F"
+    - key: mission.m04.objective.landing.body
+      value: "\u0647\u0631 \u0686\u0647\u0627\u0631 \u0646\u0641\u0631 \u0633\u0648\u0627\u0631
+        \u0628\u0627\u0634\u0646\u062F\u061B \u0628\u0627\u0644\u06AF\u0631\u062F
+        \u0631\u0627 \u062F\u0631 \u0645\u062D\u0644 \u0641\u0631\u0648\u062F \u0627\u0645\u0646
+        \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F."
+    - key: mission.m04.objective.transport
+      value: "\u0646\u0641\u0631\u0628\u0631 \u0648 \u0628\u0627\u0644\u06AF\u0631\u062F
+        \u0631\u0627 \u062D\u0641\u0638 \u06A9\u0646\u06CC\u062F"
+    - key: mission.m04.objective.transport.body
+      value: "\u0646\u0641\u0631\u0628\u0631 \u0631\u0627 \u062A\u0627 \u067E\u0627\u06CC\u0627\u0646
+        \u0627\u0646\u062A\u0642\u0627\u0644 \u0648 \u0628\u0627\u0644\u06AF\u0631\u062F
+        \u0631\u0627 \u062A\u0627 \u062E\u0631\u0648\u062C \u062D\u0641\u0638 \u06A9\u0646\u06CC\u062F."
+    - key: mission.m04.options
+      value: "\u0645\u0633\u06CC\u0631 \u0631\u0627 \u067E\u0648\u0634\u0634 \u062F\u0647\u06CC\u062F\u060C
+        \u0627\u0645\u0646 \u0633\u0648\u0627\u0631 \u0634\u0648\u06CC\u062F\u060C
+        \u0628\u0627 \u0647\u0645 \u062E\u0627\u0631\u062C \u0634\u0648\u06CC\u062F"
+    - key: mission.m04.resources
+      value: "\u0646\u0641\u0631\u0628\u0631 \u0648 \u0628\u0627\u0644\u06AF\u0631\u062F
+        \u0628\u0627 \u0630\u062E\u06CC\u0631\u0647\u0654 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A"
+    - key: mission.m04.result.aircraft_lost
+      value: "\u0628\u0627\u0644\u06AF\u0631\u062F \u0646\u0627\u0628\u0648\u062F
+        \u0634\u062F. \u062A\u0627 \u0631\u0633\u06CC\u062F\u0646 \u0647\u0631 \u0686\u0647\u0627\u0631
+        \u0646\u0641\u0631 \u0628\u0647 \u0645\u062D\u0644 \u062E\u0631\u0648\u062C
+        \u0627\u0632 \u0622\u0646 \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646\u06CC\u062F."
+    - key: mission.m04.result.carrier_lost
+      value: "\u0646\u0641\u0631\u0628\u0631 \u067E\u06CC\u0634 \u0627\u0632 \u067E\u0627\u06CC\u0627\u0646
+        \u0627\u0646\u062A\u0642\u0627\u0644 \u062A\u06CC\u0645 \u0627\u0632 \u062F\u0633\u062A
+        \u0631\u0641\u062A."
+    - key: mission.m04.result.defeat
+      value: "\u062A\u062E\u0644\u06CC\u0647 \u0646\u0627\u0645\u0648\u0641\u0642
+        \u0628\u0648\u062F"
+    - key: mission.m04.result.escort_lost
+      value: "\u0645\u062D\u0627\u0641\u0638\u0627\u0646 \u0627\u0632 \u062F\u0633\u062A
+        \u0631\u0641\u062A\u0646\u062F. \u062F\u0633\u062A\u200C\u06A9\u0645 \u06CC\u06A9
+        \u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \u0631\u0627 \u062A\u0627 \u062E\u0631\u0648\u062C
+        \u0632\u0646\u062F\u0647 \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F."
+    - key: mission.m04.result.extract
+      value: "\u0645\u062A\u062E\u0635\u0635\u0627\u0646 \u0646\u062C\u0627\u062A\u200C\u06CC\u0627\u0641\u062A\u0647"
+    - key: mission.m04.result.failure
+      value: "\u062A\u062E\u0644\u06CC\u0647 \u0646\u0627\u0645\u0648\u0641\u0642
+        \u0628\u0648\u062F. \u0648\u0636\u0639\u06CC\u062A \u0645\u0633\u0627\u0641\u0631\u0627\u0646
+        \u0648 \u0648\u0633\u0627\u06CC\u0644 \u0631\u0627 \u0628\u0631\u0631\u0633\u06CC
+        \u06A9\u0646\u06CC\u062F \u0648 \u062F\u0648\u0628\u0627\u0631\u0647 \u062A\u0644\u0627\u0634
+        \u06A9\u0646\u06CC\u062F."
+    - key: mission.m04.result.integrity
+      value: "\u0641\u0647\u0631\u0633\u062A \u062A\u06CC\u0645 \u0646\u062C\u0627\u062A
+        \u0642\u0627\u0628\u0644 \u062A\u0623\u06CC\u06CC\u062F \u0646\u0628\u0648\u062F.
+        \u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0631\u0627 \u062F\u0648\u0628\u0627\u0631\u0647
+        \u0622\u063A\u0627\u0632 \u06A9\u0646\u06CC\u062F."
+    - key: mission.m04.result.landing
+      value: "\u06F2\u06F0 \u062B\u0627\u0646\u06CC\u0647 \u0627\u0645\u0646\u06CC\u062A
+        \u0645\u062D\u0644 \u0641\u0631\u0648\u062F"
+    - key: mission.m04.result.objectives
+      value: "\u0647\u062F\u0641\u200C\u0647\u0627\u06CC \u0646\u062C\u0627\u062A"
+    - key: mission.m04.result.passenger_lost
+      value: "\u06CC\u06A9 \u0645\u062A\u062E\u0635\u0635 \u0627\u0632 \u062F\u0633\u062A
+        \u0631\u0641\u062A. \u0647\u0646\u06AF\u0627\u0645 \u0633\u0648\u0627\u0631\u0634\u062F\u0646
+        \u0648 \u0627\u0646\u062A\u0642\u0627\u0644 \u0627\u0632 \u0647\u0631 \u0686\u0647\u0627\u0631
+        \u0646\u0641\u0631 \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646\u06CC\u062F."
+    - key: mission.m04.result.subtitle
+      value: "\u062A\u062E\u0644\u06CC\u0647 \u0647\u0648\u0627\u06CC\u06CC \xB7
+        \u0645\u062D\u0644 \u0641\u0631\u0648\u062F \u0627\u0645\u062F\u0627\u062F\u06CC"
+    - key: mission.m04.result.success
+      value: "\u0647\u0631 \u0686\u0647\u0627\u0631 \u0645\u062A\u062E\u0635\u0635
+        \u0628\u0627 \u0646\u0641\u0631\u0628\u0631 \u0648 \u0628\u0627\u0644\u06AF\u0631\u062F
+        \u0628\u0647 \u0645\u062D\u0644 \u0627\u0645\u0646 \u0631\u0633\u06CC\u062F\u0646\u062F.
+        \u0633\u0631\u0648\u0627\u0646 \u0644\u06CC\u0644\u0627 \u0646\u0627\u0635\u0631
+        \u0628\u0647 \u06A9\u0627\u0631\u0632\u0627\u0631 \u0645\u06CC\u200C\u067E\u06CC\u0648\u0646\u062F\u062F."
+    - key: mission.m04.result.timeout
+      value: "\u0641\u0631\u0635\u062A \u062F\u0647\u200C\u062F\u0642\u06CC\u0642\u0647\u200C\u0627\u06CC
+        \u062A\u062E\u0644\u06CC\u0647 \u067E\u06CC\u0634 \u0627\u0632 \u062E\u0631\u0648\u062C
+        \u067E\u0627\u06CC\u0627\u0646 \u06CC\u0627\u0641\u062A."
+    - key: mission.m04.result.transport
+      value: "\u062D\u0641\u0627\u0638\u062A \u0627\u0632 \u062A\u0631\u0627\u0628\u0631\u06CC"
+    - key: mission.m04.result.victory
+      value: "\u062A\u062E\u0644\u06CC\u0647 \u06A9\u0627\u0645\u0644 \u0634\u062F"
+    - key: mission.m04.reward.card
+      value: "\u06F5\u06F0\u06F0 \u062A\u062C\u0631\u0628\u0647 | \u06F2\u06F5\u06F0\u06F0
+        \u0627\u0639\u062A\u0628\u0627\u0631 | \u0644\u06CC\u0644\u0627 | \u062A\u0631\u0627\u0628\u0631\u06CC"
+    - key: mission.m04.reward.laila
+      value: "\u067E\u06CC\u0648\u0633\u062A\u0646 \u0633\u0631\u0648\u0627\u0646
+        \u0644\u06CC\u0644\u0627 \u0646\u0627\u0635\u0631"
+    - key: mission.m04.reward.transport
+      value: "\u062F\u0633\u062A\u0631\u0633\u06CC \u0628\u0647 \u062A\u0631\u0627\u0628\u0631\u06CC"
+    - key: mission.m04.star.1
+      value: "\u0647\u0631 \u0686\u0647\u0627\u0631 \u0646\u0641\u0631 \u062A\u062E\u0644\u06CC\u0647
+        \u0634\u062F\u0646\u062F"
+    - key: mission.m04.star.2
+      value: "\u0628\u062F\u0648\u0646 \u062A\u0644\u0641\u0627\u062A \u0645\u062D\u0627\u0641\u0638\u0627\u0646"
+    - key: mission.m04.star.3
+      value: "\u067E\u0627\u06CC\u0627\u0646 \u062F\u0631 \u06F7 \u062F\u0642\u06CC\u0642\u0647"
+    - key: mission.m04.summary
+      value: "\u0686\u0647\u0627\u0631 \u0645\u062A\u062E\u0635\u0635 \u0631\u0627
+        \u0628\u0627 \u0646\u0641\u0631\u0628\u0631 \u0646\u062C\u0627\u062A \u062F\u0647\u06CC\u062F
+        \u0648 \u0633\u067E\u0633 \u0628\u0627\u0644\u06AF\u0631\u062F\u0634\u0627\u0646
+        \u0631\u0627 \u062A\u0627 \u062E\u0631\u0648\u062C \u0647\u0645\u0631\u0627\u0647\u06CC
+        \u06A9\u0646\u06CC\u062F."
+    - key: mission.m04.tutorial.1.body
+      value: "\u0647\u0631 \u0686\u0647\u0627\u0631 \u0645\u062A\u062E\u0635\u0635
+        \u0631\u0627 \u0646\u062C\u0627\u062A \u062F\u0647\u06CC\u062F: \u0627\u0628\u062A\u062F\u0627
+        \u0646\u0641\u0631\u0628\u0631\u060C \u0633\u067E\u0633 \u0628\u0627\u0644\u06AF\u0631\u062F.
+        \u067E\u0633 \u0627\u0632 \u0628\u0627\u0632\u06AF\u0634\u062A \u062F\u0648\u0631\u0628\u06CC\u0646
+        \u062F\u0647 \u062F\u0642\u06CC\u0642\u0647 \u0641\u0631\u0635\u062A \u062F\u0627\u0631\u06CC\u062F.
+        \u06A9\u0634\u062A\u0646 \u062F\u0634\u0645\u0646 \u0627\u0644\u0632\u0627\u0645\u06CC
+        \u0646\u06CC\u0633\u062A. \u0647\u0631 \u062F\u0648 \u0648\u0633\u06CC\u0644\u0647
+        \u0630\u062E\u06CC\u0631\u0647\u0654 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A
+        \u062E\u0648\u062F \u0631\u0627 \u062F\u0627\u0631\u0646\u062F."
+    - key: mission.m04.tutorial.1.diagram
+      value: "\u062A\u06CC\u0645 \u2190 \u0646\u0641\u0631\u0628\u0631 \u2190 \u0645\u062D\u0644
+        \u0641\u0631\u0648\u062F \u2190 \u0628\u0627\u0644\u06AF\u0631\u062F \u2190
+        \u062E\u0631\u0648\u062C"
+    - key: mission.m04.tutorial.1.example
+      value: "\u0645\u0633\u06CC\u0631 \u0631\u0627 \u0628\u062E\u0648\u0627\u0646\u06CC\u062F
+        \u0648 \u0627\u062F\u0627\u0645\u0647 \u062F\u0647\u06CC\u062F."
+    - key: mission.m04.tutorial.1.mistake
+      value: "\u0647\u06CC\u0686 \u0645\u062A\u062E\u0635\u0635\u06CC \u0631\u0627
+        \u062C\u0627 \u0646\u06AF\u0630\u0627\u0631\u06CC\u062F."
+    - key: mission.m04.tutorial.1.title
+      value: "\u0646\u062C\u0627\u062A \u062F\u0631 \u062F\u0648 \u0645\u0631\u062D\u0644\u0647"
+    - key: mission.m04.tutorial.10.body
+      value: "\u0628\u0627\u0644\u06AF\u0631\u062F \u067E\u0631 \u0631\u0627 \u0628\u06CC\u0633\u062A
+        \u062B\u0627\u0646\u06CC\u0647\u0654 \u067E\u06CC\u0648\u0633\u062A\u0647
+        \u062F\u0631 \u0645\u062D\u0644 \u0641\u0631\u0648\u062F \u0646\u06AF\u0647
+        \u062F\u0627\u0631\u06CC\u062F. \u0648\u0631\u0648\u062F \u0647\u0631 \u062F\u0634\u0645\u0646
+        \u0641\u0639\u0627\u0644 \u0628\u0647 \u0645\u062D\u062F\u0648\u062F\u0647\u0654
+        \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647 \u0632\u0645\u0627\u0646\u200C\u0633\u0646\u062C
+        \u0631\u0627 \u0627\u0632 \u0646\u0648 \u0622\u063A\u0627\u0632 \u0645\u06CC\u200C\u06A9\u0646\u062F.
+        \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627 \u0645\u0633\u06CC\u0631
+        \u0646\u0632\u062F\u06CC\u06A9\u200C\u0634\u062F\u0646 \u0631\u0627 \u067E\u0648\u0634\u0634
+        \u062F\u0647\u0646\u062F."
+    - key: mission.m04.tutorial.10.diagram
+      value: "\u062A\u06CC\u0645 \u2190 \u0646\u0641\u0631\u0628\u0631 \u2190 \u0645\u062D\u0644
+        \u0641\u0631\u0648\u062F \u2190 \u0628\u0627\u0644\u06AF\u0631\u062F \u2190
+        \u062E\u0631\u0648\u062C"
+    - key: mission.m04.tutorial.10.example
+      value: "\u0645\u0646\u062A\u0638\u0631 \u0627\u062C\u0627\u0632\u0647\u0654
+        \u062E\u0631\u0648\u062C \u0644\u06CC\u0644\u0627 \u0628\u0645\u0627\u0646\u06CC\u062F."
+    - key: mission.m04.tutorial.10.mistake
+      value: "\u0628\u0644\u0646\u062F\u0634\u062F\u0646 \u0632\u0648\u062F\u0647\u0646\u06AF\u0627\u0645
+        \u067E\u06CC\u0634\u0631\u0641\u062A \u062A\u062E\u0644\u06CC\u0647 \u0631\u0627
+        \u062B\u0628\u062A \u0646\u0645\u06CC\u200C\u06A9\u0646\u062F."
+    - key: mission.m04.tutorial.10.title
+      value: "\u0645\u062D\u0644 \u0641\u0631\u0648\u062F \u0631\u0627 \u0627\u0645\u0646
+        \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F"
+    - key: mission.m04.tutorial.11.body
+      value: "\u0628\u0627\u0644\u06AF\u0631\u062F \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u06CC\u062F\u060C \u062D\u0631\u06A9\u062A \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F
+        \u0648 \u0628\u0647 \u0645\u062D\u062F\u0648\u062F\u0647\u0654 \u062E\u0631\u0648\u062C
+        \u062F\u0631 \u0634\u0645\u0627\u0644\u200C\u0634\u0631\u0642 \u0645\u062D\u0644
+        \u0641\u0631\u0648\u062F \u067E\u0631\u0648\u0627\u0632 \u06A9\u0646\u06CC\u062F.
+        \u0647\u0645\u0647\u0654 \u0645\u062A\u062E\u0635\u0635\u0627\u0646 \u0628\u0627\u06CC\u062F
+        \u0633\u0648\u0627\u0631 \u0648 \u0632\u0646\u062F\u0647 \u0628\u0627\u0634\u0646\u062F.
+        \u0646\u0645\u0627\u06CC\u0634 \u0645\u062D\u0644\u060C \u062E\u0631\u0648\u062C
+        \u0631\u0627 \u067E\u06CC\u062F\u0627 \u0645\u06CC\u200C\u06A9\u0646\u062F."
+    - key: mission.m04.tutorial.11.diagram
+      value: "\u062A\u06CC\u0645 \u2190 \u0646\u0641\u0631\u0628\u0631 \u2190 \u0645\u062D\u0644
+        \u0641\u0631\u0648\u062F \u2190 \u0628\u0627\u0644\u06AF\u0631\u062F \u2190
+        \u062E\u0631\u0648\u062C"
+    - key: mission.m04.tutorial.11.example
+      value: "\u0628\u0627 \u0628\u0627\u0644\u06AF\u0631\u062F \u062F\u0631 \u062D\u0627\u0644
+        \u067E\u0631\u0648\u0627\u0632 \u0648\u0627\u0631\u062F \u0645\u062D\u062F\u0648\u062F\u0647\u0654
+        \u062E\u0631\u0648\u062C \u0634\u0648\u06CC\u062F."
+    - key: mission.m04.tutorial.11.mistake
+      value: "\u0631\u0633\u06CC\u062F\u0646 \u0646\u0641\u0631\u0628\u0631 \u0628\u0647
+        \u062E\u0631\u0648\u062C\u060C \u062A\u062E\u0644\u06CC\u0647\u0654 \u0647\u0648\u0627\u06CC\u06CC
+        \u0645\u062D\u0633\u0648\u0628 \u0646\u0645\u06CC\u200C\u0634\u0648\u062F."
+    - key: mission.m04.tutorial.11.title
+      value: "\u0628\u0647 \u0645\u062D\u062F\u0648\u062F\u0647\u0654 \u062E\u0631\u0648\u062C
+        \u067E\u0631\u0648\u0627\u0632 \u06A9\u0646\u06CC\u062F"
+    - key: mission.m04.tutorial.12.body
+      value: "\u0628\u0631\u0627\u06CC \u062A\u062E\u0644\u06CC\u0647 \u06CC\u06A9
+        \u0633\u062A\u0627\u0631\u0647\u060C \u0628\u0631\u0627\u06CC \u0632\u0646\u062F\u0647\u200C\u0645\u0627\u0646\u062F\u0646
+        \u0647\u0645\u0647\u0654 \u0645\u062D\u0627\u0641\u0638\u0627\u0646 \u06CC\u06A9
+        \u0633\u062A\u0627\u0631\u0647 \u0648 \u0628\u0631\u0627\u06CC \u067E\u0627\u06CC\u0627\u0646
+        \u062F\u0631 \u0647\u0641\u062A \u062F\u0642\u06CC\u0642\u0647 \u06CC\u06A9
+        \u0633\u062A\u0627\u0631\u0647 \u0645\u06CC\u200C\u06AF\u06CC\u0631\u06CC\u062F.
+        \u067E\u0627\u062F\u0627\u0634 \u0646\u062E\u0633\u062A\u06CC\u0646 \u067E\u06CC\u0631\u0648\u0632\u06CC
+        \u06CC\u06A9\u200C\u0628\u0627\u0631 \u067E\u0631\u062F\u0627\u062E\u062A
+        \u0645\u06CC\u200C\u0634\u0648\u062F. \u062A\u06A9\u0631\u0627\u0631 \u0645\u06CC\u200C\u062A\u0648\u0627\u0646\u062F
+        \u0633\u062A\u0627\u0631\u0647\u200C\u0647\u0627 \u0631\u0627 \u0628\u0647\u062A\u0631
+        \u06A9\u0646\u062F."
+    - key: mission.m04.tutorial.12.diagram
+      value: "\u062A\u06CC\u0645 \u2190 \u0646\u0641\u0631\u0628\u0631 \u2190 \u0645\u062D\u0644
+        \u0641\u0631\u0648\u062F \u2190 \u0628\u0627\u0644\u06AF\u0631\u062F \u2190
+        \u062E\u0631\u0648\u062C"
+    - key: mission.m04.tutorial.12.example
+      value: "\u0644\u06CC\u0644\u0627 \u067E\u0633 \u0627\u0632 \u0646\u062E\u0633\u062A\u06CC\u0646
+        \u062A\u062E\u0644\u06CC\u0647\u0654 \u0645\u0648\u0641\u0642 \u0628\u0647
+        \u06A9\u0627\u0631\u0632\u0627\u0631 \u0645\u06CC\u200C\u067E\u06CC\u0648\u0646\u062F\u062F."
+    - key: mission.m04.tutorial.12.mistake
+      value: "\u0634\u06A9\u0633\u062A \u067E\u0627\u062F\u0627\u0634 \u0646\u062C\u0627\u062A
+        \u0646\u0645\u06CC\u200C\u062F\u0647\u062F \u0648 \u062E\u0631\u0648\u062C
+        \u0645\u0648\u0641\u0642 \u0646\u0634\u0627\u0646 \u0646\u0645\u06CC\u200C\u062F\u0647\u062F."
+    - key: mission.m04.tutorial.12.title
+      value: "\u0646\u062C\u0627\u062A \u0631\u0627 \u0645\u0631\u0648\u0631 \u06A9\u0646\u06CC\u062F"
+    - key: mission.m04.tutorial.2.body
+      value: "\u0646\u0641\u0631\u0628\u0631 \u0686\u0631\u062E\u200C\u062F\u0627\u0631
+        \u06A9\u0646\u0627\u0631 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627
+        \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u062F.
+        \u0641\u0647\u0631\u0633\u062A \u0645\u0633\u0627\u0641\u0631\u0627\u0646
+        \u0638\u0631\u0641\u06CC\u062A \u0648\u0627\u0642\u0639\u06CC \u0631\u0627
+        \u0646\u0634\u0627\u0646 \u0645\u06CC\u200C\u062F\u0647\u062F. \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC
+        \u0645\u062D\u0627\u0641\u0638 \u0631\u0627 \u0628\u06CC\u0631\u0648\u0646
+        \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F \u062A\u0627 \u0647\u0631
+        \u0686\u0647\u0627\u0631 \u0645\u062A\u062E\u0635\u0635 \u0633\u0648\u0627\u0631
+        \u0634\u0648\u0646\u062F."
+    - key: mission.m04.tutorial.2.diagram
+      value: "\u062A\u06CC\u0645 \u2190 \u0646\u0641\u0631\u0628\u0631 \u2190 \u0645\u062D\u0644
+        \u0641\u0631\u0648\u062F \u2190 \u0628\u0627\u0644\u06AF\u0631\u062F \u2190
+        \u062E\u0631\u0648\u062C"
+    - key: mission.m04.tutorial.2.example
+      value: "\u067E\u06CC\u0634 \u0627\u0632 \u0641\u0631\u0645\u0627\u0646 \u062D\u0631\u06A9\u062A\u060C
+        \u0646\u0641\u0631\u0628\u0631 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u06CC\u062F."
+    - key: mission.m04.tutorial.2.mistake
+      value: "\u06AF\u0631\u0648\u0647 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631
+        \u0627\u0646\u062A\u062E\u0627\u0628\u200C\u0634\u062F\u0647 \u0646\u0641\u0631\u0628\u0631
+        \u0646\u06CC\u0633\u062A."
+    - key: mission.m04.tutorial.2.title
+      value: "\u0646\u0641\u0631\u0628\u0631 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u06CC\u062F"
+    - key: mission.m04.tutorial.3.body
+      value: "\u062D\u0631\u06A9\u062A \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u06CC\u062F \u0648 \u0646\u0641\u0631\u0628\u0631 \u0631\u0627
+        \u0627\u0632 \u062C\u0627\u062F\u0647 \u0628\u0647 \u0633\u0645\u062A \u063A\u0631\u0628
+        \u0648 \u0686\u0647\u0627\u0631 \u0645\u062A\u062E\u0635\u0635 \u0628\u0641\u0631\u0633\u062A\u06CC\u062F.
+        \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627 \u0631\u0627 \u0645\u06CC\u0627\u0646
+        \u062A\u06CC\u0645 \u0648 \u06AF\u0634\u062A\u06CC \u062F\u0631 \u062D\u0627\u0644
+        \u0646\u0632\u062F\u06CC\u06A9\u200C\u0634\u062F\u0646 \u0646\u06AF\u0647
+        \u062F\u0627\u0631\u06CC\u062F. \u0646\u0645\u0627\u06CC\u0634 \u0645\u062D\u0644\u060C
+        \u062A\u06CC\u0645 \u0631\u0627 \u067E\u06CC\u062F\u0627 \u0645\u06CC\u200C\u06A9\u0646\u062F."
+    - key: mission.m04.tutorial.3.diagram
+      value: "\u062A\u06CC\u0645 \u2190 \u0646\u0641\u0631\u0628\u0631 \u2190 \u0645\u062D\u0644
+        \u0641\u0631\u0648\u062F \u2190 \u0628\u0627\u0644\u06AF\u0631\u062F \u2190
+        \u062E\u0631\u0648\u062C"
+    - key: mission.m04.tutorial.3.example
+      value: "\u062C\u0627\u062F\u0647 \u0645\u0633\u06CC\u0631 \u0645\u0646\u0627\u0633\u0628\u06CC
+        \u0628\u0631\u0627\u06CC \u0646\u0632\u062F\u06CC\u06A9\u200C\u0634\u062F\u0646
+        \u0646\u0641\u0631\u0628\u0631 \u0627\u0633\u062A."
+    - key: mission.m04.tutorial.3.mistake
+      value: "\u0627\u0632 \u0645\u06CC\u0627\u0646 \u0633\u0627\u062E\u062A\u0645\u0627\u0646\u200C\u0647\u0627
+        \u0639\u0628\u0648\u0631 \u0646\u06A9\u0646\u06CC\u062F \u0648 \u0646\u0641\u0631\u0628\u0631
+        \u0631\u0627 \u0632\u06CC\u0631 \u0622\u062A\u0634 \u0631\u0647\u0627 \u0646\u06A9\u0646\u06CC\u062F."
+    - key: mission.m04.tutorial.3.title
+      value: "\u0628\u0647 \u062A\u06CC\u0645 \u06AF\u0631\u0641\u062A\u0627\u0631
+        \u0628\u0631\u0633\u06CC\u062F"
+    - key: mission.m04.tutorial.4.body
+      value: "\u0686\u0647\u0627\u0631 \u0645\u062A\u062E\u0635\u0635 \u0628\u06CC\u200C\u0633\u0644\u0627\u062D
+        \u06A9\u0646\u0627\u0631 \u062C\u0627\u062F\u0647 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u06CC\u062F. \u0622\u0646\u200C\u0647\u0627 \u0639\u0636\u0648
+        \u062A\u06CC\u0645 \u0646\u062C\u0627\u062A \u0634\u0645\u0627 \u0647\u0633\u062A\u0646\u062F
+        \u0648 \u0641\u0631\u0645\u0627\u0646 \u062D\u0631\u06A9\u062A \u0648 \u0633\u0648\u0627\u0631\u0634\u062F\u0646
+        \u0645\u06CC\u200C\u067E\u0630\u06CC\u0631\u0646\u062F. \u0632\u0646\u062F\u0647\u200C\u0645\u0627\u0646\u062F\u0646
+        \u0647\u0645\u0647 \u0627\u0644\u0632\u0627\u0645\u06CC \u0627\u0633\u062A."
+    - key: mission.m04.tutorial.4.diagram
+      value: "\u062A\u06CC\u0645 \u2190 \u0646\u0641\u0631\u0628\u0631 \u2190 \u0645\u062D\u0644
+        \u0641\u0631\u0648\u062F \u2190 \u0628\u0627\u0644\u06AF\u0631\u062F \u2190
+        \u062E\u0631\u0648\u062C"
+    - key: mission.m04.tutorial.4.example
+      value: "\u06A9\u0627\u062F\u0631 \u0627\u0646\u062A\u062E\u0627\u0628 \u0631\u0627
+        \u062F\u0648\u0631 \u0647\u0631 \u0686\u0647\u0627\u0631 \u0646\u0641\u0631
+        \u0628\u06A9\u0634\u06CC\u062F."
+    - key: mission.m04.tutorial.4.mistake
+      value: "\u0645\u062D\u0627\u0641\u0638\u0627\u0646 \u0645\u0633\u0644\u062D
+        \u0631\u0627 \u0648\u0627\u0631\u062F \u0627\u06CC\u0646 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u0646\u06A9\u0646\u06CC\u062F."
+    - key: mission.m04.tutorial.4.title
+      value: "\u0645\u062A\u062E\u0635\u0635\u0627\u0646 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u06CC\u062F"
+    - key: mission.m04.tutorial.5.body
+      value: "\u0628\u0627 \u0627\u0646\u062A\u062E\u0627\u0628 \u0645\u062A\u062E\u0635\u0635\u0627\u0646\u060C
+        \u0633\u0648\u0627\u0631\u0634\u062F\u0646 \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F
+        \u0648 \u0646\u0641\u0631\u0628\u0631 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u06CC\u062F. \u0635\u0628\u0631 \u06A9\u0646\u06CC\u062F \u0647\u0631
+        \u0686\u0647\u0627\u0631 \u0646\u0641\u0631 \u062F\u0631 \u0641\u0647\u0631\u0633\u062A
+        \u0645\u0633\u0627\u0641\u0631\u0627\u0646 \u0622\u0646 \u0638\u0627\u0647\u0631
+        \u0634\u0648\u0646\u062F. \u0641\u0631\u0645\u0627\u0646 \u0633\u0648\u0627\u0631\u0634\u062F\u0646
+        \u0628\u0647 \u0645\u0639\u0646\u06CC \u067E\u0627\u06CC\u0627\u0646 \u0646\u062C\u0627\u062A
+        \u0646\u06CC\u0633\u062A."
+    - key: mission.m04.tutorial.5.diagram
+      value: "\u062A\u06CC\u0645 \u2190 \u0646\u0641\u0631\u0628\u0631 \u2190 \u0645\u062D\u0644
+        \u0641\u0631\u0648\u062F \u2190 \u0628\u0627\u0644\u06AF\u0631\u062F \u2190
+        \u062E\u0631\u0648\u062C"
+    - key: mission.m04.tutorial.5.example
+      value: "\u067E\u06CC\u0634 \u0627\u0632 \u062D\u0631\u06A9\u062A \u062A\u0639\u062F\u0627\u062F
+        \u0645\u0633\u0627\u0641\u0631\u0627\u0646 \u0631\u0627 \u0628\u0631\u0631\u0633\u06CC
+        \u06A9\u0646\u06CC\u062F."
+    - key: mission.m04.tutorial.5.mistake
+      value: "\u062D\u0631\u06A9\u062A \u0632\u0648\u062F\u0647\u0646\u06AF\u0627\u0645
+        \u0645\u0645\u06A9\u0646 \u0627\u0633\u062A \u06CC\u06A9 \u0645\u0633\u0627\u0641\u0631
+        \u0631\u0627 \u062C\u0627 \u0628\u06AF\u0630\u0627\u0631\u062F."
+    - key: mission.m04.tutorial.5.title
+      value: "\u0647\u0631 \u0686\u0647\u0627\u0631 \u0646\u0641\u0631 \u0631\u0627
+        \u0633\u0648\u0627\u0631 \u0646\u0641\u0631\u0628\u0631 \u06A9\u0646\u06CC\u062F"
+    - key: mission.m04.tutorial.6.body
+      value: "\u0646\u0641\u0631\u0628\u0631 \u067E\u0631 \u0631\u0627 \u0628\u0647
+        \u0633\u0645\u062A \u0634\u0631\u0642 \u0648 \u0645\u062D\u0644 \u0641\u0631\u0648\u062F
+        \u0628\u0628\u0631\u06CC\u062F. \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627
+        \u0645\u06CC\u200C\u062A\u0648\u0627\u0646\u0646\u062F \u062C\u0627\u062F\u0647
+        \u06CC\u0627 \u0645\u0633\u06CC\u0631 \u0646\u0632\u062F\u06CC\u06A9\u200C\u0634\u062F\u0646
+        \u062F\u0634\u0645\u0646 \u0631\u0627 \u067E\u0648\u0634\u0634 \u062F\u0647\u0646\u062F.
+        \u0646\u0641\u062A \u0628\u0627 \u0628\u0646\u0632\u06CC\u0646 \u0641\u0631\u0642
+        \u062F\u0627\u0631\u062F. \u0627\u06CC\u0646 \u0648\u0633\u0627\u06CC\u0644
+        \u0627\u0645\u0627\u0646\u06CC \u062F\u0631 \u0627\u06CC\u0646 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A
+        \u0628\u0647 \u0634\u0628\u06A9\u0647\u0654 \u0633\u0648\u062E\u062A \u062A\u0627\u0632\u0647
+        \u0646\u06CC\u0627\u0632 \u0646\u062F\u0627\u0631\u0646\u062F."
+    - key: mission.m04.tutorial.6.diagram
+      value: "\u062A\u06CC\u0645 \u2190 \u0646\u0641\u0631\u0628\u0631 \u2190 \u0645\u062D\u0644
+        \u0641\u0631\u0648\u062F \u2190 \u0628\u0627\u0644\u06AF\u0631\u062F \u2190
+        \u062E\u0631\u0648\u062C"
+    - key: mission.m04.tutorial.6.example
+      value: "\u062F\u0631 \u0637\u0648\u0644 \u0645\u0633\u06CC\u0631 \u062A\u0639\u062F\u0627\u062F
+        \u0645\u0633\u0627\u0641\u0631\u0627\u0646 \u0631\u0627 \u0631\u0648\u06CC
+        \u0686\u0647\u0627\u0631 \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F."
+    - key: mission.m04.tutorial.6.mistake
+      value: "\u0646\u0645\u0627\u06CC\u0634 \u0628\u0646\u0632\u06CC\u0646 \u062F\u0631
+        \u0646\u0648\u0627\u0631 \u0628\u0627\u0644\u0627 \u0634\u0645\u0627\u0631\u0646\u062F\u0647\u0654
+        \u0645\u0633\u0627\u0641\u0631 \u0646\u06CC\u0633\u062A."
+    - key: mission.m04.tutorial.6.title
+      value: "\u0646\u0641\u0631\u0628\u0631 \u0631\u0627 \u062A\u0627 \u0644\u06CC\u0644\u0627
+        \u0647\u0645\u0631\u0627\u0647\u06CC \u06A9\u0646\u06CC\u062F"
+    - key: mission.m04.tutorial.7.body
+      value: "\u0646\u0641\u0631\u0628\u0631 \u0631\u0627 \u062F\u0631 \u0645\u062D\u0644
+        \u0641\u0631\u0648\u062F \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u062F
+        \u0648 \u0627\u0632 \u0628\u062E\u0634 \u0645\u0633\u0627\u0641\u0631\u0627\u0646
+        \u067E\u06CC\u0627\u062F\u0647\u200C\u0634\u062F\u0646 \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F.
+        \u0647\u0631 \u0686\u0647\u0627\u0631 \u0646\u0641\u0631 \u0628\u0627\u06CC\u062F
+        \u067E\u06CC\u0634 \u0627\u0632 \u0633\u0648\u0627\u0631\u0634\u062F\u0646
+        \u0628\u0647 \u0628\u0627\u0644\u06AF\u0631\u062F \u0627\u0632 \u0646\u0641\u0631\u0628\u0631
+        \u062E\u0627\u0631\u062C \u0634\u0648\u0646\u062F. \u0627\u06AF\u0631 \u062C\u0627\u06CC
+        \u0627\u0645\u0646 \u0646\u06CC\u0633\u062A\u060C \u0646\u0641\u0631\u0628\u0631
+        \u0631\u0627 \u0628\u0647 \u0641\u0636\u0627\u06CC \u0628\u0627\u0632 \u0628\u0628\u0631\u06CC\u062F
+        \u0648 \u062F\u0648\u0628\u0627\u0631\u0647 \u0627\u0645\u062A\u062D\u0627\u0646
+        \u06A9\u0646\u06CC\u062F."
+    - key: mission.m04.tutorial.7.diagram
+      value: "\u062A\u06CC\u0645 \u2190 \u0646\u0641\u0631\u0628\u0631 \u2190 \u0645\u062D\u0644
+        \u0641\u0631\u0648\u062F \u2190 \u0628\u0627\u0644\u06AF\u0631\u062F \u2190
+        \u062E\u0631\u0648\u062C"
+    - key: mission.m04.tutorial.7.example
+      value: "\u0628\u0627 \u067E\u0648\u0634\u0634 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627
+        \u0646\u0632\u062F\u06CC\u06A9 \u0628\u0627\u0644\u06AF\u0631\u062F \u067E\u06CC\u0627\u062F\u0647
+        \u0634\u0648\u06CC\u062F."
+    - key: mission.m04.tutorial.7.mistake
+      value: "\u0631\u062F\u0634\u062F\u0646 \u0641\u0631\u0645\u0627\u0646 \u067E\u06CC\u0627\u062F\u0647\u200C\u0634\u062F\u0646
+        \u0645\u0633\u0627\u0641\u0631\u0627\u0646 \u0631\u0627 \u062F\u0631 \u0646\u0641\u0631\u0628\u0631
+        \u0646\u06AF\u0647 \u0645\u06CC\u200C\u062F\u0627\u0631\u062F\u061B \u0622\u0646\u200C\u0647\u0627
+        \u0645\u0646\u062A\u0642\u0644 \u0646\u0645\u06CC\u200C\u0634\u0648\u0646\u062F."
+    - key: mission.m04.tutorial.7.title
+      value: "\u06A9\u0646\u0627\u0631 \u0628\u0627\u0644\u06AF\u0631\u062F \u067E\u06CC\u0627\u062F\u0647
+        \u0634\u0648\u06CC\u062F"
+    - key: mission.m04.tutorial.8.body
+      value: "\u0628\u0627\u0644\u06AF\u0631\u062F \u0644\u06CC\u0644\u0627 \u0631\u0627
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u062F. \u0628\u0631\u0627\u06CC
+        \u0633\u0648\u0627\u0631\u0634\u062F\u0646 \u0628\u0627\u06CC\u062F \u0641\u0631\u0648\u062F
+        \u0622\u0645\u062F\u0647 \u0648 \u0646\u0632\u062F\u06CC\u06A9 \u0645\u0633\u0627\u0641\u0631\u0627\u0646
+        \u0628\u0627\u0634\u062F. \u0638\u0631\u0641\u06CC\u062A\u060C \u0633\u0644\u0627\u0645\u062A
+        \u0648 \u062D\u0631\u06A9\u062A \u0622\u0646 \u0648\u0627\u0642\u0639\u06CC
+        \u0627\u0633\u062A \u0648 \u0645\u06CC\u0627\u0646\u200C\u0628\u0631 \u0633\u06CC\u0646\u0645\u0627\u06CC\u06CC
+        \u0646\u06CC\u0633\u062A."
+    - key: mission.m04.tutorial.8.diagram
+      value: "\u062A\u06CC\u0645 \u2190 \u0646\u0641\u0631\u0628\u0631 \u2190 \u0645\u062D\u0644
+        \u0641\u0631\u0648\u062F \u2190 \u0628\u0627\u0644\u06AF\u0631\u062F \u2190
+        \u062E\u0631\u0648\u062C"
+    - key: mission.m04.tutorial.8.example
+      value: "\u062A\u0627 \u0633\u0648\u0627\u0631\u0634\u062F\u0646 \u0647\u0631
+        \u0686\u0647\u0627\u0631 \u0646\u0641\u0631 \u0622\u0646 \u0631\u0627 \u062F\u0631
+        \u0645\u062D\u0644 \u0641\u0631\u0648\u062F \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F."
+    - key: mission.m04.tutorial.8.mistake
+      value: "\u0628\u0627\u0644\u06AF\u0631\u062F \u062F\u0631 \u062D\u0627\u0644
+        \u067E\u0631\u0648\u0627\u0632 \u0646\u0645\u06CC\u200C\u062A\u0648\u0627\u0646\u062F
+        \u0645\u0633\u0627\u0641\u0631 \u0631\u0627 \u0641\u0648\u0631\u06CC \u0633\u0648\u0627\u0631
+        \u06A9\u0646\u062F."
+    - key: mission.m04.tutorial.8.title
+      value: "\u0628\u0627\u0644\u06AF\u0631\u062F \u062A\u0631\u0627\u0628\u0631\u06CC
+        \u0631\u0627 \u0628\u0631\u0631\u0633\u06CC \u06A9\u0646\u06CC\u062F"
+    - key: mission.m04.tutorial.9.body
+      value: "\u0645\u062A\u062E\u0635\u0635\u0627\u0646 \u067E\u06CC\u0627\u062F\u0647\u200C\u0634\u062F\u0647
+        \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u062F\u060C
+        \u0633\u0648\u0627\u0631\u0634\u062F\u0646 \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F
+        \u0648 \u0628\u0627\u0644\u06AF\u0631\u062F \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u06CC\u062F. \u0648\u062C\u0648\u062F \u0686\u0647\u0627\u0631
+        \u0645\u0633\u0627\u0641\u0631 \u0631\u0627 \u062F\u0631 \u0641\u0647\u0631\u0633\u062A
+        \u0628\u0631\u0631\u0633\u06CC \u06A9\u0646\u06CC\u062F. \u0647\u0631 \u0645\u062A\u062E\u0635\u0635
+        \u0628\u0627\u06CC\u062F \u0642\u0628\u0644\u0627\u064B \u0645\u0633\u06CC\u0631
+        \u0646\u0641\u0631\u0628\u0631 \u0631\u0627 \u0637\u06CC \u06A9\u0631\u062F\u0647
+        \u0628\u0627\u0634\u062F."
+    - key: mission.m04.tutorial.9.diagram
+      value: "\u062A\u06CC\u0645 \u2190 \u0646\u0641\u0631\u0628\u0631 \u2190 \u0645\u062D\u0644
+        \u0641\u0631\u0648\u062F \u2190 \u0628\u0627\u0644\u06AF\u0631\u062F \u2190
+        \u062E\u0631\u0648\u062C"
+    - key: mission.m04.tutorial.9.example
+      value: "\u062A\u06CC\u0645 \u0645\u062A\u062E\u0635\u0635\u0627\u0646 \u0631\u0627
+        \u0633\u0648\u0627\u0631 \u06A9\u0646\u06CC\u062F\u060C \u0646\u0647 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627\u06CC
+        \u0645\u062D\u0627\u0641\u0638 \u0631\u0627."
+    - key: mission.m04.tutorial.9.mistake
+      value: "\u067E\u0631\u0648\u0627\u0632 \u0645\u0633\u062A\u0642\u06CC\u0645
+        \u0628\u0647 \u0633\u0645\u062A \u062A\u06CC\u0645\u060C \u0645\u0631\u062D\u0644\u0647\u0654
+        \u0646\u0641\u0631\u0628\u0631 \u0631\u0627 \u062D\u0630\u0641 \u0645\u06CC\u200C\u06A9\u0646\u062F
+        \u0648 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0631\u0627 \u06A9\u0627\u0645\u0644
+        \u0646\u0645\u06CC\u200C\u06A9\u0646\u062F."
+    - key: mission.m04.tutorial.9.title
+      value: "\u0645\u062A\u062E\u0635\u0635\u0627\u0646 \u0631\u0627 \u0645\u0646\u062A\u0642\u0644
+        \u06A9\u0646\u06CC\u062F"
+    - key: mission.reward.commander_xp
+      value: "\u062A\u062C\u0631\u0628\u0647\u0654 \u0641\u0631\u0645\u0627\u0646\u062F\u0647"
+    - key: mission.reward.credits
+      value: "\u0627\u0639\u062A\u0628\u0627\u0631"
     - key: narrative.first_launch.control.cancel_skip
       value: "\u0627\u062F\u0627\u0645\u0647\u0654 \u062A\u0645\u0627\u0634\u0627"
     - key: narrative.first_launch.control.confirm_skip
@@ -3655,6 +5953,170 @@ MonoBehaviour:
         \u0648 \u062A\u06CC\u0645\u200C\u0647\u0627\u06CC \u0627\u0645\u062F\u0627\u062F
         \u0634\u0647\u0631\u06CC \u062F\u0648\u0628\u0627\u0631\u0647 \u0628\u0647
         \u0647\u0645 \u0645\u062A\u0635\u0644 \u0634\u062F\u0647\u200C\u0627\u0646\u062F."
+    - key: narrative.m03.brief.01
+      value: "\u0634\u0628\u06A9\u0647\u0654 \u0647\u0634\u062F\u0627\u0631 \u0627\u06CC\u0646
+        \u0628\u062E\u0634 \u0642\u0637\u0639 \u0627\u0633\u062A. \u062F\u06CC\u062F\u0647\u200C\u0628\u0627\u0646\u200C\u0647\u0627
+        \u0627\u0632 \u06CC\u06A9 \u06A9\u0627\u0631\u0648\u0627\u0646 \u0632\u0631\u0647\u06CC
+        \u062F\u0631 \u062C\u0627\u062F\u0647\u0654 \u063A\u0631\u0628\u06CC \u062E\u0628\u0631
+        \u0645\u06CC\u200C\u062F\u0647\u0646\u062F. \u062E\u0648\u062F\u0631\u0648\u06CC
+        \u0631\u0627\u062F\u0627\u0631 \u0632\u0645\u06CC\u0646\u06CC \u0645\u0627
+        \u067E\u0633 \u0627\u0632 \u0648\u0631\u0648\u062F \u062E\u0648\u062F\u0631\u0648\u0647\u0627
+        \u0628\u0647 \u0645\u062D\u062F\u0648\u062F\u0647\u0654 \u067E\u0648\u0634\u0634\u060C
+        \u062A\u0645\u0627\u0633 \u0631\u0627 \u062A\u0623\u06CC\u06CC\u062F \u0645\u06CC\u200C\u06A9\u0646\u062F."
+    - key: narrative.m03.brief.02
+      value: "\u062F\u0631 \u062A\u0642\u0627\u0637\u0639 \u062C\u0644\u0648\u06CC
+        \u0622\u0646\u200C\u0647\u0627 \u0631\u0627 \u0628\u06AF\u06CC\u0631\u06CC\u062F
+        \u06CC\u0627 \u0646\u0632\u062F\u06CC\u06A9\u200C\u062A\u0631 \u0628\u0647
+        \u067E\u0627\u0633\u06AF\u0627\u0647 \u062F\u0641\u0627\u0639 \u06A9\u0646\u06CC\u062F.
+        \u0645\u0633\u06CC\u0631 \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647
+        \u0631\u0627 \u0628\u0627\u0632 \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F.
+        \u062D\u062A\u06CC \u0646\u0641\u0631\u0628\u0631 \u0628\u06CC\u200C\u0633\u0644\u0627\u062D
+        \u0647\u0645 \u0646\u0628\u0627\u06CC\u062F \u0628\u0647 \u0645\u062D\u062F\u0648\u062F\u0647\u0654
+        \u0645\u0631\u06A9\u0632\u06CC \u0628\u0631\u0633\u062F."
+    - key: narrative.m03.brief.03
+      value: "\u062D\u062F\u0648\u062F \u06CC\u06A9 \u062F\u0642\u06CC\u0642\u0647
+        \u0628\u0631\u0627\u06CC \u0622\u0645\u0627\u062F\u0647\u200C\u0634\u062F\u0646
+        \u0641\u0631\u0635\u062A \u062F\u0627\u0631\u06CC\u0645. \u062F\u0648 \u06AF\u0631\u0648\u0647
+        \u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \u0648 \u06CC\u06A9 \u067E\u0627\u062F\u06AF\u0627\u0646
+        \u0622\u0645\u0627\u062F\u0647 \u062F\u0631 \u0627\u062E\u062A\u06CC\u0627\u0631
+        \u0634\u0645\u0627\u0633\u062A. \u0628\u0631\u062C\u060C \u0645\u0627\u0646\u0639
+        \u06CC\u0627 \u0646\u06CC\u0631\u0648\u06CC \u06A9\u0645\u06A9\u06CC \u0631\u0627
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u062F. \u0647\u0634\u062F\u0627\u0631
+        \u0646\u062E\u0633\u062A \u06CC\u06A9 \u0628\u0631\u0622\u0648\u0631\u062F
+        \u0627\u0633\u062A."
+    - key: narrative.m03.comms.01
+      value: "\u0632\u0645\u0627\u0646 \u062D\u0631\u06A9\u062A \u06A9\u0627\u0631\u0648\u0627\u0646
+        \u062F\u0631 \u06AF\u0632\u0627\u0631\u0634 \u0628\u0627 \u0632\u0645\u0627\u0646
+        \u0642\u0637\u0639 \u0634\u0628\u06A9\u0647\u0654 \u0647\u0634\u062F\u0627\u0631
+        \u06CC\u06A9\u06CC \u0627\u0633\u062A. \u0627\u06CC\u0646 \u0647\u0645\u200C\u0632\u0645\u0627\u0646\u06CC
+        \u0646\u0634\u0627\u0646 \u0627\u0632 \u0627\u0637\u0644\u0627\u0639 \u0642\u0628\u0644\u06CC
+        \u062F\u0627\u0631\u062F. \u0628\u0647 \u062F\u0641\u0627\u0639 \u0627\u062F\u0627\u0645\u0647
+        \u062F\u0647\u06CC\u062F\u061B \u067E\u0633 \u0627\u0632 \u0646\u0628\u0631\u062F
+        \u0633\u0648\u0627\u0628\u0642 \u0631\u0627 \u0645\u0642\u0627\u06CC\u0633\u0647
+        \u0645\u06CC\u200C\u06A9\u0646\u06CC\u0645."
+    - key: narrative.m03.debrief.01
+      value: "\u06A9\u0627\u0631\u0648\u0627\u0646 \u0645\u062A\u0648\u0642\u0641
+        \u0634\u062F \u0648 \u067E\u0627\u0633\u06AF\u0627\u0647 \u067E\u0627\u0628\u0631\u062C\u0627\u0633\u062A.
+        \u062E\u0633\u0627\u0631\u062A \u0648 \u0648\u0636\u0639\u06CC\u062A \u0647\u0645\u0647
+        \u0631\u0627 \u0628\u0631\u0631\u0633\u06CC \u06A9\u0646\u06CC\u062F. \u0628\u0647
+        \u06AF\u0632\u0627\u0631\u0634\u06CC \u062F\u0642\u06CC\u0642 \u0646\u06CC\u0627\u0632
+        \u062F\u0627\u0631\u06CC\u0645."
+    - key: narrative.m03.debrief.02
+      value: "\u062F\u0631 \u062F\u0633\u062A\u0648\u0631\u0647\u0627\u06CC \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC\u200C\u0634\u062F\u0647\u060C
+        \u0642\u0637\u0639 \u0634\u0628\u06A9\u0647\u0654 \u0647\u0634\u062F\u0627\u0631
+        \u067E\u06CC\u0634 \u0627\u0632 \u0648\u0642\u0648\u0639\u0634 \u062B\u0628\u062A
+        \u0634\u062F\u0647 \u0627\u0633\u062A. \u0627\u06CC\u0646 \u0645\u062F\u0631\u06A9\u0650
+        \u0627\u0637\u0644\u0627\u0639 \u0642\u0628\u0644\u06CC \u0627\u0633\u062A\u060C
+        \u0627\u0645\u0627 \u0647\u0646\u0648\u0632 \u0646\u0645\u06CC\u200C\u062F\u0627\u0646\u06CC\u0645
+        \u0686\u0647 \u06A9\u0633\u06CC \u0622\u0646 \u0631\u0627 \u062F\u0627\u062F\u0647
+        \u0627\u0633\u062A."
+    - key: narrative.m03.debrief.03
+      value: "\u06CC\u06A9 \u062A\u06CC\u0645 \u067E\u0632\u0634\u06A9\u06CC \u0648
+        \u0645\u0647\u0646\u062F\u0633\u06CC \u0622\u0646 \u0633\u0648\u06CC \u062C\u0627\u062F\u0647
+        \u06AF\u0631\u0641\u062A\u0627\u0631 \u0634\u062F\u0647 \u0627\u0633\u062A.
+        \u0628\u0647 \u062A\u062E\u0644\u06CC\u0647\u0654 \u0647\u0648\u0627\u06CC\u06CC
+        \u0646\u06CC\u0627\u0632 \u062F\u0627\u0631\u0646\u062F. \u0645\u0633\u06CC\u0631
+        \u0627\u0645\u0646\u06CC \u0628\u0631\u0627\u06CC \u0622\u0646\u200C\u0647\u0627
+        \u0622\u0645\u0627\u062F\u0647 \u06A9\u0646\u06CC\u062F."
+    - key: narrative.m03.debrief.civilian.loss
+      value: "\u06A9\u0627\u0631\u0648\u0627\u0646 \u0645\u062A\u0648\u0642\u0641
+        \u0634\u062F \u0648 \u067E\u0627\u0633\u06AF\u0627\u0647 \u0622\u0633\u06CC\u0628
+        \u0646\u062F\u06CC\u062F\u0647 \u0627\u0633\u062A. \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC\u0627\u0646\u06CC
+        \u0631\u0627 \u0627\u0632 \u062F\u0633\u062A \u062F\u0627\u062F\u06CC\u0645.
+        \u062A\u0644\u0641\u0627\u062A \u0631\u0627 \u062B\u0628\u062A \u0648 \u0645\u0633\u06CC\u0631
+        \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647 \u0631\u0627 \u0627\u0645\u0646
+        \u06A9\u0646\u06CC\u062F."
+    - key: narrative.m03.debrief.clean
+      value: "\u06A9\u0627\u0631\u0648\u0627\u0646 \u0645\u062A\u0648\u0642\u0641
+        \u0634\u062F. \u067E\u0627\u0633\u06AF\u0627\u0647 \u0622\u0633\u06CC\u0628
+        \u0646\u062F\u06CC\u062F\u0647 \u0648 \u0647\u0645\u0647\u0654 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC\u0627\u0646
+        \u0633\u0627\u0644\u0645 \u0647\u0633\u062A\u0646\u062F. \u0645\u0633\u06CC\u0631
+        \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647 \u0631\u0627 \u0628\u0627\u0632
+        \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F."
+    - key: narrative.m03.debrief.damaged
+      value: "\u06A9\u0627\u0631\u0648\u0627\u0646 \u0645\u062A\u0648\u0642\u0641
+        \u0634\u062F \u0648 \u0647\u0645\u0647\u0654 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC\u0627\u0646
+        \u0633\u0627\u0644\u0645 \u0647\u0633\u062A\u0646\u062F. \u067E\u0627\u0633\u06AF\u0627\u0647
+        \u0622\u0633\u06CC\u0628 \u062F\u06CC\u062F\u0647 \u0627\u0633\u062A. \u067E\u06CC\u0634
+        \u0627\u0632 \u0639\u0645\u0644\u06CC\u0627\u062A \u0628\u0639\u062F\u06CC
+        \u0622\u0646 \u0631\u0627 \u062A\u0639\u0645\u06CC\u0631 \u06A9\u0646\u06CC\u062F."
+    - key: narrative.m03.debrief.mixed
+      value: "\u06A9\u0627\u0631\u0648\u0627\u0646 \u0645\u062A\u0648\u0642\u0641
+        \u0634\u062F\u060C \u0627\u0645\u0627 \u067E\u0627\u0633\u06AF\u0627\u0647
+        \u0622\u0633\u06CC\u0628 \u062F\u06CC\u062F \u0648 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC\u0627\u0646\u06CC
+        \u0631\u0627 \u0627\u0632 \u062F\u0633\u062A \u062F\u0627\u062F\u06CC\u0645.
+        \u0647\u0631 \u062F\u0648 \u0631\u0627 \u062B\u0628\u062A \u06A9\u0646\u06CC\u062F.
+        \u0645\u0633\u06CC\u0631 \u0647\u0645\u0686\u0646\u0627\u0646 \u0628\u0647
+        \u062D\u0641\u0627\u0638\u062A \u0646\u06CC\u0627\u0632 \u062F\u0627\u0631\u062F."
+    - key: narrative.m04.brief.01
+      value: "\u0633\u0631\u0648\u0627\u0646 \u0644\u06CC\u0644\u0627 \u0646\u0627\u0635\u0631
+        \u0647\u0633\u062A\u0645. \u0628\u0627\u0644\u06AF\u0631\u062F\u0645 \u062F\u0631
+        \u0645\u062D\u0644 \u0641\u0631\u0648\u062F \u0634\u0631\u0642\u06CC \u0622\u0645\u0627\u062F\u0647
+        \u0627\u0633\u062A. \u0686\u0647\u0627\u0631 \u0645\u062A\u062E\u0635\u0635
+        \u0631\u0627 \u0628\u0627 \u0646\u0641\u0631\u0628\u0631 \u0628\u0647 \u0645\u0646
+        \u0628\u0631\u0633\u0627\u0646\u06CC\u062F\u061B \u0641\u0631\u0635\u062A
+        \u062A\u062E\u0644\u06CC\u0647 \u0631\u0627 \u062F\u0647 \u062F\u0642\u06CC\u0642\u0647
+        \u0628\u0627\u0632 \u0646\u06AF\u0647 \u0645\u06CC\u200C\u062F\u0627\u0631\u0645."
+    - key: narrative.m04.brief.02
+      value: "\u062F\u0648 \u0627\u0645\u062F\u0627\u062F\u06AF\u0631 \u0648 \u062F\u0648
+        \u0645\u0647\u0646\u062F\u0633 \u06A9\u0646\u0627\u0631 \u062C\u0627\u062F\u0647\u0654
+        \u063A\u0631\u0628\u06CC \u06AF\u0631\u0641\u062A\u0627\u0631 \u0634\u062F\u0647\u200C\u0627\u0646\u062F.
+        \u0622\u0646\u200C\u0647\u0627 \u0645\u06CC\u200C\u062A\u0648\u0627\u0646\u0646\u062F
+        \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647\u200C\u0647\u0627 \u0631\u0627
+        \u0628\u0627\u0632 \u06A9\u0646\u0646\u062F \u0648 \u0634\u0628\u06A9\u0647
+        \u0631\u0627 \u0628\u0627\u0632\u06AF\u0631\u062F\u0627\u0646\u0646\u062F.
+        \u0647\u0645\u0647 \u0631\u0627 \u0633\u0627\u0644\u0645 \u0628\u0631\u06AF\u0631\u062F\u0627\u0646\u06CC\u062F."
+    - key: narrative.m04.brief.03
+      value: "\u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627 \u062C\u0627\u062F\u0647
+        \u0631\u0627 \u067E\u0648\u0634\u0634 \u0645\u06CC\u200C\u062F\u0647\u0646\u062F\u061B
+        \u0646\u0641\u0631\u0628\u0631 \u062A\u06CC\u0645 \u0631\u0627 \u0645\u0646\u062A\u0642\u0644
+        \u0645\u06CC\u200C\u06A9\u0646\u062F. \u06A9\u0646\u0627\u0631 \u0644\u06CC\u0644\u0627
+        \u067E\u06CC\u0627\u062F\u0647 \u0634\u0648\u06CC\u062F\u060C \u0633\u0648\u0627\u0631
+        \u0628\u0627\u0644\u06AF\u0631\u062F \u0634\u0648\u06CC\u062F\u060C \u0628\u06CC\u0633\u062A
+        \u062B\u0627\u0646\u06CC\u0647 \u0645\u062D\u0644 \u0631\u0627 \u0627\u0645\u0646
+        \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F \u0648 \u0633\u067E\u0633
+        \u0628\u0647 \u0645\u062D\u062F\u0648\u062F\u0647\u0654 \u062E\u0631\u0648\u062C
+        \u067E\u0631\u0648\u0627\u0632 \u06A9\u0646\u06CC\u062F."
+    - key: narrative.m04.comms.01
+      value: "\u0647\u0631 \u0686\u0647\u0627\u0631 \u0646\u0641\u0631 \u0633\u0648\u0627\u0631
+        \u0634\u062F\u0647\u200C\u0627\u0646\u062F. \u0645\u062D\u0644 \u0641\u0631\u0648\u062F
+        \u0627\u0645\u0646 \u0627\u0633\u062A \u0648 \u0627\u062C\u0627\u0632\u0647\u0654
+        \u062E\u0631\u0648\u062C \u062F\u0627\u0631\u06CC\u0645. \u0628\u0647 \u0645\u062D\u0644
+        \u062E\u0631\u0648\u062C \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647
+        \u067E\u0631\u0648\u0627\u0632 \u06A9\u0646\u06CC\u062F\u061B \u0627\u0632
+        \u0622\u0646\u062C\u0627 \u062A\u06CC\u0645 \u0631\u0627 \u0645\u0646\u062A\u0642\u0644
+        \u0645\u06CC\u200C\u06A9\u0646\u0645."
+    - key: narrative.m04.debrief.01
+      value: "\u0647\u0631 \u0686\u0647\u0627\u0631 \u0645\u0633\u0627\u0641\u0631
+        \u062D\u0627\u0636\u0631\u0646\u062F. \u067E\u0648\u0634\u0634 \u0634\u0645\u0627
+        \u0632\u0645\u0627\u0646 \u0644\u0627\u0632\u0645 \u0631\u0627 \u0641\u0631\u0627\u0647\u0645
+        \u06A9\u0631\u062F. \u0628\u0647 \u0627\u06CC\u0646 \u0639\u0645\u0644\u06CC\u0627\u062A
+        \u0645\u06CC\u200C\u067E\u06CC\u0648\u0646\u062F\u0645\u061B \u0627\u0632
+        \u0627\u06CC\u0646 \u067E\u0633 \u0628\u0631\u0627\u06CC \u0646\u062C\u0627\u062A
+        \u062A\u06CC\u0645 \u0628\u0639\u062F\u06CC \u06CC\u06A9 \u062E\u0644\u0628\u0627\u0646
+        \u062A\u0631\u0627\u0628\u0631\u06CC \u0647\u0648\u0627\u06CC\u06CC \u062E\u0648\u0627\u0647\u06CC\u062F
+        \u062F\u0627\u0634\u062A."
+    - key: narrative.m04.debrief.02
+      value: "\u0645\u0647\u0646\u062F\u0633\u0627\u0646 \u0633\u0648\u0627\u0628\u0642
+        \u062A\u0639\u0645\u06CC\u0631 \u0631\u0627 \u0622\u0648\u0631\u062F\u0647\u200C\u0627\u0646\u062F.
+        \u0686\u0646\u062F \u0642\u0637\u0639\u06CC \u0628\u0647 \u06CC\u06A9 \u06AF\u0631\u0647\u0654
+        \u0627\u0631\u062A\u0628\u0627\u0637\u06CC \u0645\u0633\u062A\u062D\u06A9\u0645
+        \u0628\u0631\u0645\u06CC\u200C\u06AF\u0631\u062F\u062F. \u0633\u0631\u0627\u0646\u062C\u0627\u0645
+        \u0645\u062D\u0644\u06CC \u0628\u0631\u0627\u06CC \u0628\u0631\u0631\u0633\u06CC
+        \u062F\u0627\u0631\u06CC\u0645."
+    - key: narrative.m04.debrief.03
+      value: "\u062A\u062E\u0644\u06CC\u0647 \u062A\u0623\u06CC\u06CC\u062F \u0634\u062F.
+        \u0633\u0631\u0648\u0627\u0646 \u0646\u0627\u0635\u0631 \u0628\u0647 \u06AF\u0631\u0648\u0647
+        \u067E\u06CC\u0648\u0633\u062A. \u0647\u062F\u0641 \u0628\u0639\u062F\u06CC:
+        \u0628\u0631\u0631\u0633\u06CC \u0622\u0646 \u06AF\u0631\u0647\u0654 \u0627\u0631\u062A\u0628\u0627\u0637\u06CC.
+        \u0627\u0628\u062A\u062F\u0627 \u0628\u06AF\u0630\u0627\u0631\u06CC\u062F
+        \u062A\u06CC\u0645 \u067E\u0632\u0634\u06A9\u06CC \u0628\u0647 \u06A9\u0627\u0631\u0634
+        \u0628\u0631\u06AF\u0631\u062F\u062F."
+    - key: narrative.speaker.laila.name
+      value: "\u0633\u0631\u0648\u0627\u0646 \u0644\u06CC\u0644\u0627 \u0646\u0627\u0635\u0631"
+    - key: narrative.speaker.laila.role
+      value: "\u062E\u0644\u0628\u0627\u0646 \u062A\u0631\u0627\u0628\u0631\u06CC
+        \u0647\u0648\u0627\u06CC\u06CC"
     - key: not_enough_money
       value: "\u0627\u0639\u062A\u0628\u0627\u0631 \u06A9\u0627\u0641\u06CC \u0646\u06CC\u0633\u062A"
     - key: selection.building.base_structure
@@ -4363,9 +6825,9 @@ MonoBehaviour:
     - key: ui.hud.exit_all
       value: "\u062E\u0631\u0648\u062C \u0647\u0645\u0647"
     - key: ui.hud.fuel
-      value: "\u0633\u0648\u062E\u062A"
+      value: "\u0628\u0646\u0632\u06CC\u0646"
     - key: ui.hud.fuel_capacity
-      value: "\u0633\u0648\u062E\u062A {0}/{1}"
+      value: "\u0628\u0646\u0632\u06CC\u0646 {0}/{1}"
     - key: ui.hud.health_empty
       value: "\u0633\u0644\u0627\u0645\u062A -"
     - key: ui.hud.material_fabrication_status
@@ -4384,7 +6846,7 @@ MonoBehaviour:
     - key: ui.hud.oil_capacity
       value: "\u0646\u0641\u062A {0}/{1}"
     - key: ui.hud.oil_fuel_capacity
-      value: "\u0646\u0641\u062A {0}/{1} | \u0633\u0648\u062E\u062A {2}/{3}"
+      value: "\u0646\u0641\u062A {0}/{1} | \u0628\u0646\u0632\u06CC\u0646 {2}/{3}"
     - key: ui.hud.onboard
       value: "\u0633\u0648\u0627\u0631\u0634\u062F\u0647"
     - key: ui.hud.passengers_capacity
@@ -4408,6 +6870,16 @@ MonoBehaviour:
     - key: ui.narrative.confirm_skip_accessible
       value: "\u0631\u0641\u062A\u0646 \u0645\u0633\u062A\u0642\u06CC\u0645 \u0628\u0647
         \u0628\u0627\u0632\u06CC \u0631\u0627 \u062A\u0623\u06CC\u06CC\u062F \u06A9\u0646\u06CC\u062F"
+    - key: ui.narrative.pause
+      value: "\u0645\u06A9\u062B"
+    - key: ui.narrative.resume
+      value: "\u0627\u062F\u0627\u0645\u0647"
+    - key: ui.narrative.story
+      value: "\u062F\u0627\u0633\u062A\u0627\u0646"
+    - key: ui.narrative.subtitles_off
+      value: "\u0632\u06CC\u0631\u0646\u0648\u06CC\u0633 \u062E\u0627\u0645\u0648\u0634"
+    - key: ui.narrative.subtitles_on
+      value: "\u0632\u06CC\u0631\u0646\u0648\u06CC\u0633 \u0631\u0648\u0634\u0646"
     - key: ui.result.combat_summary
       value: "\u062A\u0644\u0641\u0627\u062A \u06AF\u0631\u0648\u0647  {0}     \u2022    
         \u062F\u0634\u0645\u0646\u0627\u0646 \u0634\u06A9\u0633\u062A\u200C\u062E\u0648\u0631\u062F\u0647 
@@ -5530,7 +8002,7 @@ MonoBehaviour:
     - key: ui.v3.from_system.9846fbfd46
       value: "\u0627\u0632: \u0633\u0627\u0645\u0627\u0646\u0647"
     - key: ui.v3.fuel.0e2f3c1696
-      value: "\u0633\u0648\u062E\u062A"
+      value: "\u0628\u0646\u0632\u06CC\u0646"
     - key: ui.v3.fuel_to_materials.7b3d9a3858
       value: "\u0633\u0648\u062E\u062A \u0628\u0647 \u0645\u0635\u0627\u0644\u062D"
     - key: ui.v3.fuel_to_materials.de1ce4759a
@@ -6945,6 +9417,17 @@ MonoBehaviour:
       value: "\u0645\u0646\u0627\u0628\u0639 \u0634\u0645\u0627"
     - key: ui.v3.your_squads.c31db5325c
       value: "\u06AF\u0631\u0648\u0647\u200C\u0647\u0627\u06CC \u0634\u0645\u0627"
+    - key: unit.apc.fast.description
+      value: "\u0646\u0641\u0631\u0628\u0631 \u0632\u0631\u0647\u06CC \u0633\u0631\u06CC\u0639
+        \u0628\u0631\u0627\u06CC \u062C\u0627\u0628\u0647\u200C\u062C\u0627\u06CC\u06CC
+        \u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645 \u062F\u0631
+        \u0645\u06CC\u062F\u0627\u0646 \u0646\u0628\u0631\u062F."
+    - key: unit.helicopter.transport.description
+      value: "\u0628\u0627\u0644\u06AF\u0631\u062F \u062A\u0631\u0627\u0628\u0631\u06CC
+        \u0628\u0631\u0627\u06CC \u0633\u0648\u0627\u0631 \u06A9\u0631\u062F\u0646
+        \u0646\u06CC\u0631\u0648\u0647\u0627 \u0631\u0648\u06CC \u0632\u0645\u06CC\u0646
+        \u0648 \u067E\u06CC\u0627\u062F\u0647\u200C\u0633\u0627\u0632\u06CC \u0628\u0627
+        \u0637\u0646\u0627\u0628 \u0647\u0646\u06AF\u0627\u0645 \u067E\u0631\u0648\u0627\u0632."
     - key: warning_air_attack_type
       value: "\u062D\u0645\u0644\u0647 \u0647\u0648\u0627\u06CC\u06CC \u0634\u0646\u0627\u0633\u0627\u06CC\u06CC
         \u0634\u062F"

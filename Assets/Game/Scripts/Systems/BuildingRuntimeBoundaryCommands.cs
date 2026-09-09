@@ -9,26 +9,30 @@ namespace Game.Runtime
 {
     internal sealed class BuildingRuntimeDeleteCommandProcessor
     {
-        private readonly List<int> _pendingBuildingIds = new();
+        private readonly List<BuildingRuntimeDeleteRequest> _pendingDeletes = new(16);
 
-        public void Process(Func<int, bool> deleteBuildingById, EntityManager entityManager, Entity boundary)
+        public void Process(Func<int, bool> deleteBuildingById, EntityManager entityManager, Entity boundary,Action<int> cleanupBuildingById=null)
         {
-            _pendingBuildingIds.Clear();
+            _pendingDeletes.Clear();
             DynamicBuffer<BuildingRuntimeDeleteRequest> requests =
                 BuildingRuntimeBoundaryBuffers.EnsureBoundaryBuffer<BuildingRuntimeDeleteRequest>(entityManager, boundary);
             for (int index = 0; index < requests.Length; index++)
             {
-                int buildingRuntimeId = requests[index].BuildingRuntimeId;
-                if (buildingRuntimeId > 0 && !_pendingBuildingIds.Contains(buildingRuntimeId))
-                    _pendingBuildingIds.Add(buildingRuntimeId);
+                var request=requests[index];
+                if(request.BuildingRuntimeId<=0 || request.ImmediateCleanup>1) continue;
+                int existing=-1;
+                for(int i=0;i<_pendingDeletes.Count;i++) if(_pendingDeletes[i].BuildingRuntimeId==request.BuildingRuntimeId) {existing=i; break;}
+                if(existing<0) _pendingDeletes.Add(request);
+                else if(request.ImmediateCleanup!=0) _pendingDeletes[existing]=request;
             }
 
             requests.Clear();
-            if (deleteBuildingById == null)
-                return;
-
-            for (int index = 0; index < _pendingBuildingIds.Count; index++)
-                deleteBuildingById(_pendingBuildingIds[index]);
+            for(int index=0;index<_pendingDeletes.Count;index++)
+            {
+                var request=_pendingDeletes[index];
+                if(request.ImmediateCleanup!=0) cleanupBuildingById?.Invoke(request.BuildingRuntimeId);
+                else deleteBuildingById?.Invoke(request.BuildingRuntimeId);
+            }
         }
     }
 

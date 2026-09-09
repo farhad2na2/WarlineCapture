@@ -28,22 +28,43 @@ namespace Game.Editor
         private static bool resultEnglishRequested;
         private static bool defeatRetreatRequested,defeatRetreatObserved;
         private static CampaignMissionRuntimeComponent defeatedAttempt;
+        private static Entity[] readinessActors;
+        private static double readinessReturnAt;
+        private static int readinessCredits,readinessXp;
         public static void RunResultValidation()=>RunChecked(()=>StartResultValidation(false));
         public static void RunDefeatResultValidation()=>RunChecked(()=>StartResultValidation(true));
-        private static void StartResultValidation(bool defeat)
+        public static void RunCommittedResultValidation()=>RunChecked(()=>
         {
-            M03RadarWarningNarrativeBuilder.BuildCaptionedArtAndInstall(); M03RadarWarningUiBuilder.Build();
+            SessionState.SetString("Warline.M03.ReadinessOutput","/private/tmp/warline-m03-readiness-victory");
+            SessionState.SetBool("Warline.M03.ReadinessReturn",true);
+            StartResultValidation(false,false);
+        });
+        public static void RunCommittedDefeatResultValidation()=>RunChecked(()=>
+        {
+            SessionState.SetString("Warline.M03.ReadinessOutput","/private/tmp/warline-m03-readiness-defeat");
+            StartResultValidation(true,false);
+        });
+        private static void StartResultValidation(bool defeat,bool rebuildAssets=true)
+        {
+            if(rebuildAssets)
+            {
+                M03RadarWarningNarrativeBuilder.BuildCaptionedArtAndInstall(); M03RadarWarningUiBuilder.Build();
+                M03RadarWarningConfigBuilder.Build(); M03RadarWarningLocalizationBuilder.Import();
+            }
             finaleStarted=dialogueClick=0; resultStep=resultGuideStep=0; resultPanels.Clear(); pendingCapture=null;
             resultEnglishRequested=false;
             defeatRetreatRequested=defeatRetreatObserved=false;
             MainMenuV3PrefabBuilder.SetGameViewResolution(1920,1080);
             SessionState.SetBool(ResultKey,true); SessionState.SetBool(DefeatResultKey,defeat);
-            if(defeat) {M03RadarWarningConfigBuilder.Build(); RunConvoy();} else RunRifleDefense();
+            SessionState.SetBool(RifleKey,!defeat);
+            riflePositioned=pingRequested=pingVerified=false; nextRifleCommand=0;
+            RunConvoy();
         }
         private static bool AdvanceResultValidation(EntityManager em,Entity root,in CampaignMissionRuntimeComponent runtime,in CampaignMissionAttemptFactsComponent facts)
         {
             if(!SessionState.GetBool(ResultKey,false)) return false;
             bool defeat=SessionState.GetBool(DefeatResultKey,false);
+            if(!defeat && resultStep==6) return AdvanceReadinessCampaignReturn(em);
             if(defeat && resultStep==0 && runtime.Phase==MissionPhaseKind.Engage)
                 PrepareDefeatRetreat(em,root,in facts);
             if(defeat && resultStep==6)
@@ -67,7 +88,13 @@ namespace Game.Editor
             if(runtime.Phase==MissionPhaseKind.SecureCorridor)
             {
                 if(EditorApplication.timeSinceStartup-finaleStarted>5) throw new InvalidOperationException("Finale failed to finish within its 3-second presentation budget.");
-                if(EditorApplication.timeSinceStartup-finaleStarted>1) CaptureUiBeforeAction("finale-post");
+                if(EditorApplication.timeSinceStartup-finaleStarted>1)
+                {
+                    if(UnityEngine.Object.FindObjectsByType<RectTransform>(FindObjectsSortMode.None)
+                        .Any(rect=>rect.name=="ThreatJumpPanel" && rect.gameObject.activeInHierarchy))
+                        throw new InvalidOperationException("A stale warning overlaps the finale camera controls.");
+                    CaptureUiBeforeAction("finale-post");
+                }
                 return true;
             }
             if(!defeat && EditorApplication.timeSinceStartup-finaleStarted<2.5) throw new InvalidOperationException("Finale ended before its visible hold.");
@@ -139,7 +166,7 @@ namespace Game.Editor
                 case 5:
                     if(guide!=null || UiShellRuntimeGateway.IsMissionFieldGuidePresenting()) return true;
                     if(!CaptureUiBeforeAction(capture+"guide-return")) return true;
-                    if(UnityEngine.Object.FindAnyObjectByType<MissionResultPopupView>()==null) throw new InvalidOperationException("Guide lost the result return context.");
+                    ValidateResultText();
                     GameLocalization.SetLocale("en",false);
                     if(defeat)
                     {
@@ -154,8 +181,51 @@ namespace Game.Editor
                         throw new InvalidOperationException("Comic QA did not capture all six opening/debrief panels in both locales and aspects.");
                     if(SessionState.GetBool(ComicKey,false) && ReadComicPresentation()?.ResidentPanelAssetCount!=0)
                         throw new InvalidOperationException("Narrative panel handles survived the result/guide round trip.");
+                    if(SessionState.GetBool("Warline.M03.ReadinessReturn",false))
+                    {
+                        var view=UnityEngine.Object.FindAnyObjectByType<MissionResultPopupView>();
+                        var button=typeof(MissionResultPopupView).GetField("primaryButton",BindingFlags.Instance|BindingFlags.NonPublic)?.GetValue(view) as Button;
+                        if(button==null || !button.isActiveAndEnabled || !button.interactable)
+                            throw new InvalidOperationException("M3 Continue is unavailable.");
+                        using(var members=em.GetBuffer<CampaignMissionDefenseMember>(root,true).ToNativeArray(Allocator.Temp))
+                            readinessActors=members.Select(member=>member.Entity).ToArray();
+                        var profile=new SaveService(new JsonSaveRepository(probeSavePath)).LoadProfile();
+                        readinessCredits=profile.credits; readinessXp=profile.commanderXp;
+                        button.onClick.Invoke(); readinessReturnAt=EditorApplication.timeSinceStartup; resultStep=6; break;
+                    }
                     Complete(true,$"real rifle victory -> 3-second finale (clock frozen) -> 3 final M3 debrief panels -> localized Victory; result guide returns; stars={model.Stars}; civiliansLost={model.Defense.CivilianLosses}"); break;
             }
+            return true;
+        }
+        private static bool AdvanceReadinessCampaignReturn(EntityManager em)
+        {
+            if(EditorApplication.timeSinceStartup-readinessReturnAt>60)
+                throw new TimeoutException("M3 Continue did not finish returning to Campaign.");
+            using var shell=em.CreateEntityQuery(typeof(Game.UI.Shell.Contracts.Ecs.UiShellStateComponent));
+            if(shell.CalculateEntityCount()!=1) return true;
+            var state=shell.GetSingleton<Game.UI.Shell.Contracts.Ecs.UiShellStateComponent>();
+            if(state.ActiveRoute==UIRoute.Match || state.CurrentMode!=UiShellMode.MainMenu || state.IsTransitionRunning!=0) return true;
+            if(state.ActiveRoute!=UIRoute.Campaign) throw new InvalidOperationException("M3 Continue returned to "+state.ActiveRoute);
+            var campaign=UnityEngine.Object.FindAnyObjectByType<CampaignOperationsScreenView>();
+            if(campaign==null || !campaign.isActiveAndEnabled) return true;
+            foreach(var group in campaign.GetComponentsInParent<CanvasGroup>())
+            {
+                if(group.alpha<.99f || !group.interactable || !group.blocksRaycasts) return true;
+                if(group.ignoreParentGroups) break;
+            }
+            if(campaign.transform.lossyScale.x<.01f || campaign.transform.lossyScale.y<.01f) return true;
+            foreach(var actor in readinessActors)
+                if(em.Exists(actor)) return true; // Allow the render/cleanup systems to finish disposal before acceptance.
+            var save=new SaveService(new JsonSaveRepository(probeSavePath));
+            var records=new CampaignMissionProgressStore(save).ReadAll();
+            if(!records.Single(record=>record.missionId==M03RadarWarningConfigBuilder.MissionId).firstClearRewardSettled ||
+                !records.Single(record=>record.missionId==M04AirliftConfigBuilder.MissionId).available)
+                throw new InvalidOperationException("M3 clear or M4 availability was not saved.");
+            var profile=save.LoadProfile();
+            if(profile.credits!=readinessCredits || profile.commanderXp!=readinessXp)
+                throw new InvalidOperationException("Campaign return changed the settled M3 rewards.");
+            if(!CaptureUiBeforeAction("campaign-return")) return true;
+            Complete(true,"real M3 victory; camera finale without stale warning; 3 debrief panels; bilingual visible results and guide return; actual Continue to visible Campaign screen; all prior actors removed; first-clear receipt and M4 availability persisted; rewards unchanged on return");
             return true;
         }
         private static void PrepareDefeatRetreat(EntityManager em,Entity root,in CampaignMissionAttemptFactsComponent facts)
@@ -186,7 +256,18 @@ namespace Game.Editor
         private static void ValidateResultText()
         {
             var result=UnityEngine.Object.FindAnyObjectByType<MissionResultPopupView>();
-            if(result==null) throw new InvalidOperationException("Result view did not appear.");
+            if(result==null || !result.isActiveAndEnabled) throw new InvalidOperationException("Result view did not appear.");
+            Canvas.ForceUpdateCanvases();
+            foreach(var group in result.GetComponentsInParent<CanvasGroup>())
+            {
+                if(group.alpha<.99f || !group.interactable || !group.blocksRaycasts)
+                    throw new InvalidOperationException("Result is invisible or blocked by " + group.name);
+                if(group.ignoreParentGroups) break;
+            }
+            var region=result.GetComponentInParent<UIShellRegionView>();
+            if((region!=null && (region.RegionRoot.localScale.x<.99f || region.RegionRoot.localScale.y<.99f)) ||
+                result.transform.localScale.x<.99f || result.transform.localScale.y<.99f)
+                throw new InvalidOperationException("Result presentation remained collapsed.");
             foreach(var text in result.GetComponentsInChildren<TMPro.TMP_Text>())
             {
                 if(string.IsNullOrWhiteSpace(text.text)) continue;

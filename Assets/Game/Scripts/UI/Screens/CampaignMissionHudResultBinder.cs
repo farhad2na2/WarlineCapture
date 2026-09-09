@@ -100,7 +100,8 @@ namespace Game.UI.Runtime
             {
                 UiShellRuntimeGateway.TryEnqueueRouteRequest(
                     UiShellRouteIntent.ReturnToMainMenu,
-                    activeModel.Extraction.Applicable ? UIRoute.Campaign : UIRoute.MainMenu,
+                    activeModel.Defense.Applicable || activeModel.Extraction.Applicable
+                        ? UIRoute.Campaign : UIRoute.MainMenu,
                     pushHistory: false);
             }
         }

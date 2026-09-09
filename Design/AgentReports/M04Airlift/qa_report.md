@@ -1,8 +1,10 @@
 # M04 Airlift — Editor QA
 
+Updated combined-build audit: [M3/M4 readiness](m03_m04_readiness_audit.md) reports **106/137 architecture tests passing and 31 failing**. This supersedes the older source-growth-only architecture scope below.
+
 Design-folder review images referenced here remain local and are excluded from Git at the user's request. Production game artwork under `Assets` is included.
 
-Date: 9 September 2026. Implementation is complete; the core end-to-end Editor acceptance passed. The final vehicle-panel repair also passed a fresh real rescue. Architecture attribution is recorded separately below. This report does not assert that the entire repository is free of defects.
+Date: 9 September 2026. The playable implementation and core end-to-end Editor checks are delivered; full readiness remains open. The combined audit above records additional ending fixes, Campaign-card presentation gaps, pacing concerns and all 31 architecture failures. The earlier vehicle-panel repair passed a fresh real rescue, but did not reproduce or resolve the reported movement fragmentation. The runs below retain their original scope.
 
 ## Implemented and exercised
 

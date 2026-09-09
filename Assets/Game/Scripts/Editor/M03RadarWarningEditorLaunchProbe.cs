@@ -18,7 +18,7 @@ namespace Game.Editor
     public static partial class M03RadarWarningEditorLaunchProbe
     {
         private const string ActiveKey = "Warline.M03.LaunchProbe.Active";
-        private const string Output = "Design/AgentReports/M03RadarWarning/LaunchProbe";
+        private static string Output => SessionState.GetString("Warline.M03.ReadinessOutput", "Design/AgentReports/M03RadarWarning/LaunchProbe");
         private static double started, lastLog, lastClick;
         private static bool prepared, deployed, capturedBrief, capturedHud, finished;
         private static int hudFrame;

@@ -89,7 +89,9 @@ namespace Game.Editor
             for (int i = 0; i < members.Length; i++)
             {
                 CampaignMissionDefenseMember member = members[i];
-                if (member.ElementIndex < 0 || !em.Exists(member.Entity)) continue;
+                if (member.ElementIndex < 0 || !em.Exists(member.Entity) ||
+                    !em.HasComponent<CampaignMissionUnitRoleComponent>(member.Entity) ||
+                    !em.HasComponent<UnitHealth>(member.Entity) || !em.HasComponent<LocalTransform>(member.Entity)) continue;
                 var role = em.GetComponentData<CampaignMissionUnitRoleComponent>(member.Entity);
                 var health = em.GetComponentData<UnitHealth>(member.Entity);
                 var position = em.GetComponentData<LocalTransform>(member.Entity).Position;

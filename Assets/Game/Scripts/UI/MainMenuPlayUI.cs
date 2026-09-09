@@ -440,28 +440,6 @@ namespace Game.UI.Runtime
                 _matchHudAssistantUiSystem.ApplyHighlightReadModel(UiAssistantHighlightModel.Empty);
         }
 
-        public bool TryShowMatchHudThreatWarning(string title, float visibleUntilTime)
-        {
-            if (_matchHudThreatJumpPanel == null || _matchHudThreatTitle == null)
-                return false;
-
-            string resolvedTitle = string.IsNullOrWhiteSpace(title) ? "Threat detected" : title;
-            if (_matchHudThreatTitle.text != resolvedTitle)
-                _matchHudThreatTitle.text = resolvedTitle;
-            _matchHudThreatVisibleUntil = visibleUntilTime;
-            SetMatchHudThreatWarningVisible(true);
-            return true;
-        }
-
-        public void TickMatchHudThreatWarning(float now)
-        {
-            if (_matchHudThreatJumpPanel == null || !_matchHudThreatJumpPanel.activeSelf)
-                return;
-
-            if (now >= _matchHudThreatVisibleUntil)
-                SetMatchHudThreatWarningVisible(false);
-        }
-
         public void BindBuildDrawer(BuildDrawerView buildDrawerView)
         {
             _buildDrawerView = buildDrawerView;
@@ -761,12 +739,5 @@ namespace Game.UI.Runtime
         {
             CaptureGameplayUiClickSequence();
         }
-
-        private void SetMatchHudThreatWarningVisible(bool visible)
-        {
-            if (_matchHudThreatJumpPanel != null && _matchHudThreatJumpPanel.activeSelf != visible)
-                _matchHudThreatJumpPanel.SetActive(visible);
-        }
-
     }
 }

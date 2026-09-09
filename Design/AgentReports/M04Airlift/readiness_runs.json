@@ -1,0 +1,159 @@
+{
+  "date": "2026-09-09",
+  "overallReadiness": "Not accepted as fully complete",
+  "editorOnly": true,
+  "architecturePassed": 106,
+  "architectureFailed": 31,
+  "architectureNote": "Read the explicit architecture result marker. Combined wrapper exit 0 reflects the independently passing live mission probe, not overall architecture acceptance.",
+  "unityVersion": "m_EditorVersion: 6000.5.2f1\nm_EditorVersionWithRevision: 6000.5.2f1 (eb73d3b415a1)",
+  "sourceSnapshot": {
+    "startingCommit": "60252791d6f9c3bebb759e4fe2aef27547d5dc6d",
+    "scope": "Changed and added Unity runtime, Editor and test sources in this readiness delivery; no production scene, prefab, config, font or art asset changed.",
+    "files": {
+      "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Convoy.cs": "be921e2ffd960a1334adaf08e4b489922c5708933668910cab29d51d0380ba30",
+      "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Results.cs": "eb0b6cba13dde42624a157907e23cdd3c4660ec78a1c15264975565b81651a8f",
+      "Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.cs": "7e2e742321822b1cac7b37950c55a1df32b5fe7547d8b2bf565f9c7bedd17bf6",
+      "Assets/Game/Scripts/Editor/M04AirliftEditorProbe.cs": "4f43e69fb8cc45b85587eb051776fa12e210c51acb110c236ee670fa367c0346",
+      "Assets/Game/Scripts/UI/MainMenuPlayUI.ThreatWarning.cs": "e0f95e16c4e80ac51d2dbedf9ae092bf7bc60c696ac9f1e15e394ed94ecc96d1",
+      "Assets/Game/Scripts/UI/MainMenuPlayUI.ThreatWarning.cs.meta": "8ba4af49b326c963fffcdc62782ac7b2b37f568aeed9c8ca553804e0df5f8dc1",
+      "Assets/Game/Scripts/UI/MainMenuPlayUI.cs": "c61c2183fdae61bb13b0faaedf1a9dce9720f7f03d4416b66957892e9a801fac",
+      "Assets/Game/Scripts/UI/Screens/CampaignMissionHudResultBinder.cs": "52debdde5f2674c9d267541fdadb6f842c9d92a46e056f25cf77490e9a9fa235",
+      "Assets/Game/Scripts/UI/Shell/UIShellView.cs": "ff48c4c438b351f0619b5648772dfad01a0b98489708ac86b83affb3022c7f5d",
+      "Assets/Tests/Editor/M04EditorRegressionValidation.cs": "caf2644afab6122436245a65beae36fee6f4c8dadd6ea2ed1de614988b80e044",
+      "Assets/Tests/Editor/MatchHudResourceTextRepairTests.cs": "78980fe1eeafa454918e4981b9c1360f3e7a3ce0ddbf9a3be8c12369dd5a07a4",
+      "Assets/Tests/Editor/MissionReadinessArchitectureValidation.cs": "b60098f008133d2bcb9d7fc6945cb64f49b2bdff3b6d788986601d7de59a21db",
+      "Assets/Tests/Editor/MissionReadinessArchitectureValidation.cs.meta": "5370a5fdbbc51e8d45e78bfac80ab7e08132d4051116e2029491e6e2e96c7812"
+    }
+  },
+  "runs": [
+    {
+      "log": "/private/tmp/warline-missions-readiness-architecture-02.log",
+      "logSha256": "62ee116015e3fee88a501eeb64eef09d760bd72440ee5ab4f10842f119e9d46d",
+      "wrapperExitCode": 0,
+      "scope": "Architecture-only baseline of nine fixtures: 106 pass, 31 fail.",
+      "resultMarkers": [
+        "[MissionReadinessArchitecture] result=Failed fixtures=9 passed=106 failed=31"
+      ],
+      "compilerErrors": 0
+    },
+    {
+      "log": "/private/tmp/warline-m03-readiness-victory-01.log",
+      "logSha256": "d362a848acf539162d33067717ef5f011e3033079b15115395da08683109361c",
+      "wrapperExitCode": 0,
+      "scope": "Initial victory data/presentation probe; capture exposed stale warning overlap. Superseded by victory-06.",
+      "resultMarkers": [
+        "[M03RadarWarningEditorLaunchProbe] result=Passed real rifle victory -> 3-second finale (clock frozen) -> 3 final M3 debrief panels -> localized Victory; result guide returns; stars=3; civiliansLost=0"
+      ],
+      "compilerErrors": 0
+    },
+    {
+      "log": "/private/tmp/warline-m03-readiness-victory-02.log",
+      "logSha256": "a6850357a9b181303290924fae4593f0da7627ffbdb8371916e28001b49a08f4",
+      "wrapperExitCode": 0,
+      "scope": "Verified warning removal and bilingual visible results; Continue not yet exercised.",
+      "resultMarkers": [
+        "[M03RadarWarningEditorLaunchProbe] result=Passed real rifle victory -> 3-second finale (clock frozen) -> 3 final M3 debrief panels -> localized Victory; result guide returns; stars=3; civiliansLost=0"
+      ],
+      "compilerErrors": 0
+    },
+    {
+      "log": "/private/tmp/warline-m03-readiness-defeat-01.log",
+      "logSha256": "698cf5df227dbac647285d7e86a643f3e567f141103bfaf9cd7a4a257e316656",
+      "wrapperExitCode": 0,
+      "scope": "Accepted real retreat/core-breach defeat, bilingual result, guide return and actual clean Retry. Before the unrelated Campaign return fix.",
+      "resultMarkers": [
+        "[M03RadarWarningEditorLaunchProbe] result=Passed real rifle-retreat core-breach defeat -> localized failure result -> guide return -> actual Retry; same session, isolated next attempt, 20 members, fresh 2 Ping uses and full budget"
+      ],
+      "compilerErrors": 0
+    },
+    {
+      "log": "/private/tmp/warline-m03-readiness-victory-03.log",
+      "logSha256": "66ebf2f46684a33f8548e5966557ea0760f6c6d677f37972ab39a972d29cc69d",
+      "wrapperExitCode": 1,
+      "scope": "Discovery failure in probe diagnostics reading a cleanup entity; probe guard fixed.",
+      "resultMarkers": [
+        "[M03RadarWarningEditorLaunchProbe] result=Failed A component with type:Game.Components.CampaignMissionUnitRoleComponent has not been added to the entity. Entities Journaling may be able to help determine more information. Please enable Entities Journaling for a more helpful error message."
+      ],
+      "compilerErrors": 0
+    },
+    {
+      "log": "/private/tmp/warline-m03-readiness-victory-04.log",
+      "logSha256": "fd468a3606f2230ba1ed3fa576855f4c6d6d19a138f070f5045b1febb6467291",
+      "wrapperExitCode": 1,
+      "scope": "Discovery failure: M3 Continue routed to MainMenu; runtime result route fixed.",
+      "resultMarkers": [
+        "[M03RadarWarningEditorLaunchProbe] result=Failed M3 Continue returned to MainMenu"
+      ],
+      "compilerErrors": 0
+    },
+    {
+      "log": "/private/tmp/warline-m03-readiness-victory-05.log",
+      "logSha256": "b02e9a576b1ef6e384788a6d441625a1fce7ca0f6f159647c7a68044952ebce5",
+      "wrapperExitCode": 0,
+      "scope": "Logical Campaign route, cleanup and saved settlement passed; capture still showed MainMenu. Not visual-return acceptance.",
+      "resultMarkers": [
+        "[M03RadarWarningEditorLaunchProbe] result=Passed real M3 victory; camera finale without stale warning; 3 debrief panels; bilingual visible results and guide return; actual Continue to Campaign; all prior actors removed; first-clear receipt and M4 availability persisted; rewards unchanged on return"
+      ],
+      "compilerErrors": 0
+    },
+    {
+      "log": "/private/tmp/warline-m04-readiness-final-01.log",
+      "logSha256": "a66973dc1319d20e68fc9e0847b1758f787cca4e4fd1776c0091997b64987b34",
+      "wrapperExitCode": 0,
+      "scope": "Architecture failed 106/31; 14 regressions and live M4 journey passed. Logical Campaign return only; superseded by final-02.",
+      "resultMarkers": [
+        "[MissionReadinessArchitecture] result=Failed fixtures=9 passed=106 failed=31",
+        "[M04EditorRegression] result=Passed suites=14",
+        "[M04EditorProbe] result=Passed 14 regression suites; HUD en/fa 16:9 and 20:9; 12 guide topics and 57 classes in both languages; real APC/helicopter rescue; debrief; saved unlocks; visible bilingual result; campaign return; real Replay carrier-loss defeat and clean Retry; idle failure under normal combat at 4x simulation; no duplicate rewards"
+      ],
+      "compilerErrors": 0
+    },
+    {
+      "log": "/private/tmp/warline-m03-readiness-victory-06.log",
+      "logSha256": "04a4129d33ab4fbd1f1f2566fc92c9a53d50fed0cbbc28f61b8516dc61dec49f",
+      "wrapperExitCode": 0,
+      "scope": "Accepted final M3 real victory, finale, debrief, bilingual visible results, guide return, actual visible Campaign, cleanup and durable settlement.",
+      "resultMarkers": [
+        "[M03RadarWarningEditorLaunchProbe] result=Passed real M3 victory; camera finale without stale warning; 3 debrief panels; bilingual visible results and guide return; actual Continue to visible Campaign screen; all prior actors removed; first-clear receipt and M4 availability persisted; rewards unchanged on return"
+      ],
+      "compilerErrors": 0
+    },
+    {
+      "log": "/private/tmp/warline-m04-readiness-final-02.log",
+      "logSha256": "5624e3874341a415c537152eb4c0faf6ebf61a985a9263d7c6003ecc9fcd075a",
+      "wrapperExitCode": 0,
+      "scope": "Final architecture failed 106/31. All 14 M4 regression suites and live rescue/result/visible Campaign/replay/retry/deadline checks passed independently.",
+      "resultMarkers": [
+        "[MissionReadinessArchitecture] result=Failed fixtures=9 passed=106 failed=31",
+        "[M04EditorRegression] result=Passed suites=14",
+        "[M04EditorProbe] result=Passed 14 regression suites; HUD en/fa 16:9 and 20:9; 12 guide topics and 57 classes in both languages; real APC/helicopter rescue; debrief; saved unlocks; visible bilingual result; campaign return; real Replay carrier-loss defeat and clean Retry; idle failure under normal combat at 4x simulation; no duplicate rewards"
+      ],
+      "compilerErrors": 0
+    }
+  ],
+  "visuallyReviewedLocalCaptures": {
+    "/private/tmp/warline-m03-readiness-victory/campaign-return.png": "a53cb8f73eb4c785abf2ca3b06bf9e12f57f7432326d28ab8fae57f1ded758a4",
+    "/private/tmp/warline-m03-readiness-victory/result-en-16x9.png": "f4ff4e97858337225ebf8ef2f8b863bd1294a3fe977366e94c5f135d7278d86d",
+    "/private/tmp/warline-m03-readiness-victory/finale-post.png": "8bb9bfbb69117b4a4cec606f55c492b90f042f1edb946903d90a515d6a26a0c2",
+    "/private/tmp/warline-m03-readiness-defeat/defeat-en-16x9.png": "0c50d0dd0b0a29f33f7354482c8901cc90870dbb1d03ee14f919a6e00914707a",
+    "/private/tmp/warline-m03-readiness-defeat/defeat-fa-20x9.png": "6a520c041bd59bc8ac8e8e855b50ed1bfef105b138a2dfc92707f626d538f40e",
+    "/private/tmp/warline-m04-readiness/campaign-return.png": "8b359f528fd365bd266e1a2ae73be7c3c81c32e10d5ac943239fd145cf2ec88c",
+    "/private/tmp/warline-m04-readiness/result-fa-16x9.png": "e8ce6bef141c5f9fcc6d0fa8b17d4f06b555d2df0df05d5d363fe2e2cc13fdcd"
+  },
+  "capturePolicy": "Images remain in /private/tmp and are not added to Design or Git.",
+  "unaccepted": [
+    "Architecture failures",
+    "M3 inclusive allocation target",
+    "Recorded voice scope",
+    "Campaign secondary objective and star-goal labels",
+    "First-time learning, pacing and replay fun",
+    "Independent Persian editorial/listening review",
+    "Reported APC movement fragmentation not reproduced"
+  ],
+  "limits": [
+    "Nine named architecture fixtures, not the entire Unity test inventory.",
+    "Accelerated simulation journeys are not performance measurements.",
+    "Mission save validation uses isolated temporary profiles; normal-profile Campaign progression displayed after return is not used as unlock evidence.",
+    "Prior broader camera/guidance evidence is documented separately and is not represented as a full retest of every integrated acceptance row."
+  ]
+}

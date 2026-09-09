@@ -73,6 +73,10 @@ namespace Game.UI.Runtime
             }
 
             contentSystem?.PrepareForCommandSequence(commands);
+            // Install the requested destination while the loading layer is still opaque.
+            for (int i = 0; i < commands.Count; i++)
+                if (commands[i].Kind == UiShellCommandKind.EnterMenu && commands[i].Route == UIRoute.Campaign)
+                    contentSystem?.InstallMenuRouteBody(commands[i].Route);
 
             int transitionId = motionHost.BeginTransition();
             if (commands.Count == 1 && commands[0].Kind == UiShellCommandKind.ShowLoading)

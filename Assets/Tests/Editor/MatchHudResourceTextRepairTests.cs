@@ -15,11 +15,13 @@ using UnityEngine;
 
 public sealed class MatchHudResourceTextRepairTests
 {
-    public static void RunFocusedValidation()
+    public static void RunFocusedValidation()=>RunValidation(true);
+    public static void RunDeliveredAssetsValidation()=>RunValidation(false);
+    private static void RunValidation(bool rebuildAssets)
     {
         try
         {
-            MatchHudResourceTextRepair.Build();
+            if(rebuildAssets) MatchHudResourceTextRepair.Build();
             new MatchHudResourceTextRepairTests().LiveValuesSurviveLocaleAndBindingRefresh();
             var resources = new UiShellEcsGatewayResourceHeaderTests();
             int count = 0;

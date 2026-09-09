@@ -1,10 +1,12 @@
 # M3 Editor QA record
 
+Updated combined-build audit: [M3/M4 readiness](../M04Airlift/m03_m04_readiness_audit.md) reports **106/137 architecture tests passing and 31 failing**. This supersedes the older source-growth-only architecture scope below.
+
 Design-folder review images referenced here remain local and are excluded from Git at the user's request. Production game artwork under `Assets` is included.
 
 Checkpoint: 2026-09-09 · `codex/m03-radar-warning` · base `b6b8153d241786b8e368a3910f07fb435396805e`.
 
-**Playable implementation and substantial Editor QA are delivered; full Editor acceptance remains open.** The behavior audit has 30 passing suites and one missing-voice failure. The architecture audit has 11 passing and six failing checks. The inclusive zero-allocation gate, final voice/listening work, independent Persian editorial review and human learning/fun rounds are unaccepted. Android QA is excluded by the user's instruction.
+**Playable implementation and substantial Editor QA are delivered; full Editor acceptance remains open.** This earlier checkpoint's behavior audit has 30 passing suites and one missing-voice failure; its source-growth subset has 11 passing and six failing checks. The combined architecture audit above covers 137 tests with 31 failures. The inclusive zero-allocation gate, final voice/listening work, independent Persian editorial review and human learning/fun rounds are unaccepted. Android QA is excluded by the user's instruction.
 
 Source was uncommitted at this M3 QA snapshot; a later user instruction authorized committing and pushing the combined M3/M4 work. [Source snapshot](source_snapshot.json) records the final changed/new runtime, Editor, test and asset hashes; [run ledger](editor_validation_ledger.json) preserves compact result markers and full-log hashes. Earlier captures/runs are identified below and must not be interpreted as having identical source bytes to every later fix. Existing user font edits are preserved and excluded from the M3 source snapshot. No architecture baseline, identity guard, exception or performance budget was relaxed.
 

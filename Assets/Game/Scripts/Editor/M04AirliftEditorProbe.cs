@@ -23,12 +23,17 @@ namespace Game.Editor
     public static partial class M04AirliftEditorProbe
     {
         private const string Active="Warline.M04.EditorProbe",Full="Warline.M04.EditorProbe.Full",Both="Warline.M04.EditorProbe.Both";
-        private const string Output="Design/AgentReports/M04Airlift/EditorProbe";
+        private static string Output=>SessionState.GetString("Warline.M04.ReadinessOutput","Design/AgentReports/M04Airlift/EditorProbe");
         private static bool prepared,deployed,finished,uiPassed;private static int step,passenger,frame;private static double started,lastLog,lastClick,stepAt;
         private static string error,oldLocale;private static CampaignMissionProgressStore store;private static SaveService save;
         static M04AirliftEditorProbe(){if(SessionState.GetBool(Active,false)){EditorApplication.update+=Tick;Application.logMessageReceived+=Observe;}}
         public static void RunLaunch(){SessionState.SetBool(Both,false);SessionState.SetBool(Full,false);Run();}
         public static void RunFull(){M04AirliftPresentationBuilder.Build();SessionState.SetBool(Both,false);SessionState.SetBool(Full,true);Run();}
+        public static void RunCommittedAcceptance()
+        {
+            SessionState.SetString("Warline.M04.ReadinessOutput","/private/tmp/warline-m04-readiness");
+            RunFinal();
+        }
         public static void RunFinal(){SessionState.SetBool(Both,true);SessionState.SetBool(Full,true);Run();}
         private static void Run()
         {
@@ -65,14 +70,26 @@ namespace Game.Editor
                 var runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);var facts=em.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
                 SkipNarrative();
                 if(recoveryActive){TickRecovery(em,root,runtime,facts);return;}
-                if(step==30)
+                if(step==30 || step==31)
                 {
+                    if(EditorApplication.timeSinceStartup-stepAt>60)throw new TimeoutException("Continue did not show the Campaign screen");
                     using var shell=em.CreateEntityQuery(typeof(Game.UI.Shell.Contracts.Ecs.UiShellStateComponent));
                     if(shell.CalculateEntityCount()!=1)return;
                     var shellState=shell.GetSingleton<Game.UI.Shell.Contracts.Ecs.UiShellStateComponent>();var route=shellState.ActiveRoute;
                     if(route==UIRoute.Match || shellState.CurrentMode!=UiShellMode.MainMenu || shellState.IsTransitionRunning!=0)
                     {if(EditorApplication.timeSinceStartup-stepAt>60)throw new TimeoutException("Continue did not finish leaving Match");return;}
                     if(route!=UIRoute.Campaign)throw new InvalidOperationException("M04 Continue returned to "+route+" instead of Campaign");
+                    var campaignView=UnityEngine.Object.FindAnyObjectByType<CampaignOperationsScreenView>();
+                    if(campaignView==null || !campaignView.isActiveAndEnabled)return;
+                    foreach(var group in campaignView.GetComponentsInParent<CanvasGroup>())
+                    {
+                        if(group.alpha<.99f || !group.interactable || !group.blocksRaycasts)return;
+                        if(group.ignoreParentGroups)break;
+                    }
+                    if(campaignView.transform.lossyScale.x<.01f || campaignView.transform.lossyScale.y<.01f)return;
+                    if(step==30){ScreenCapture.CaptureScreenshot(Output+"/campaign-return.png");step=31;frame=Time.frameCount;return;}
+                    if(Time.frameCount-frame<3)return;
+                    Debug.Log("[M04EditorProbe] Continue reached the visible, interactive Campaign screen");
                     if(SessionState.GetBool(Both,false)){BeginRecovery(em,root);return;}
                     Complete(true,"real APC board -> drive -> unload -> helicopter board -> clear 20s -> airborne departure -> debrief -> bilingual result -> saved three unit unlocks -> campaign return; no rescue/health/position/outcome edits");return;
                 }

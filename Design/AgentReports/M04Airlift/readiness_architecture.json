@@ -1,0 +1,734 @@
+{
+  "scope": "Every ordinary Test in nine named production architecture fixtures, read-only; not the entire Unity test inventory",
+  "log": "/private/tmp/warline-m04-readiness-final-02.log",
+  "logSha256": "5624e3874341a415c537152eb4c0faf6ebf61a985a9263d7c6003ecc9fcd075a",
+  "wrapperExitCode": 0,
+  "aggregate": "[MissionReadinessArchitecture] result=Failed fixtures=9 passed=106 failed=31",
+  "compilerErrors": 0,
+  "fixtures": {
+    "ProductionSourceGrowthArchitectureTests": {
+      "passed": 11,
+      "failed": 6
+    },
+    "ScriptArchitectureAlignmentContractTests": {
+      "passed": 43,
+      "failed": 15
+    },
+    "EcsBurstHotPathArchitectureTests": {
+      "passed": 8,
+      "failed": 4
+    },
+    "NonUiSystemBaseMigrationArchitectureTests": {
+      "passed": 17,
+      "failed": 2
+    },
+    "NonEcsSystemConversionArchitectureTests": {
+      "passed": 8,
+      "failed": 1
+    },
+    "ResourceExchangeArchitectureGuardrailTests": {
+      "passed": 8,
+      "failed": 0
+    },
+    "TacticalResourceOwnershipArchitectureTests": {
+      "passed": 1,
+      "failed": 0
+    },
+    "M01FirstContactBurstAotArchitectureTests": {
+      "passed": 2,
+      "failed": 1
+    },
+    "FirstLaunchArchitectureAlignmentTests": {
+      "passed": 8,
+      "failed": 2
+    }
+  },
+  "tests": [
+    {
+      "test": "ProductionSourceGrowthArchitectureTests.BaselineManifestHasExpectedFrozenInventories",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ProductionSourceGrowthArchitectureTests.NewSystemHelperPathsRequireApprovedException",
+      "result": "fail",
+      "failure": "System.IO.InvalidDataException: New *SystemHelper.cs and *CompositionSystemHelper.cs paths require an exact `system-helper` approved exception. Violations:\nAssets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs (493 lines, 22128 bytes)\nAssets/Game/Scripts/Composition/Narrative/SharedLocalizationTextCompositionSystemHelper.cs (50 lines, 1572 bytes)\n  at ProductionSourceGrowthArchitectureTests.Require (System.Boolean condition, System.String message) [0x0000a] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs:2309 \n  at ProductionSourceGrowthArchitectureTests.NewSystemHelperPathsRequireApprovedException () [0x000fe] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs:257 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "ProductionSourceGrowthArchitectureTests.ProductionFilesAboveFiveHundredLinesRequireReview",
+      "result": "fail",
+      "failure": "System.IO.InvalidDataException: Production files above 500 lines must be baselined at their reviewed size or covered by an exact line-bounded approved exception. Violations:\nunreviewed Assets/Game/Scripts/UI/Components/BattleHudRuntimeFeedbackView.cs (523 lines, 20716 bytes)\ngrew Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.cs (lines 651 -> 852, bytes 26620 -> 37351; requires production-over-500-review)\nunreviewed Assets/Game/Scripts/UI/Components/MatchHudSquadTrayView.cs (581 lines, 24486 bytes)\nunreviewed Assets/Game/Scripts/UI/Components/MatchHudTransportPassengerDrawerView.cs (585 lines, 25332 bytes)\ngrew Assets/Game/Scripts/UI/Screens/AriaCommandAssistantPopupView.cs (lines 470 -> 559, bytes 19802 -> 24424; requires production-over-500-review)\nunreviewed Assets/Game/Scripts/UI/Screens/BuildPlacementConfirmationBarView.cs (507 lines, 20663 bytes)\ngrew Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs (lines 1246 -> 1308, bytes 51844 -> 53991; requires production-over-1000-growth)\n  at ProductionSourceGrowthArchitectureTests.Require (System.Boolean condition, System.String message) [0x0000a] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs:2309 \n  at ProductionSourceGrowthArchitectureTests.ProductionFilesAboveFiveHundredLinesRequireReview () [0x001ef] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs:302 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "ProductionSourceGrowthArchitectureTests.ExistingFilesAboveOneThousandLinesDoNotGrow",
+      "result": "fail",
+      "failure": "System.IO.InvalidDataException: The 27 production files frozen above 1,000 lines have strict no-growth ceilings. Growth requires an exact `production-over-1000-growth` exception. Violations:\nAssets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.cs (lines 426 -> 430, bytes 20180 -> 20510)\nAssets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs (lines 1246 -> 1308, bytes 51844 -> 53991)\n  at ProductionSourceGrowthArchitectureTests.Require (System.Boolean condition, System.String message) [0x0000a] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs:2309 \n  at ProductionSourceGrowthArchitectureTests.ExistingFilesAboveOneThousandLinesDoNotGrow () [0x0011a] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs:334 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "ProductionSourceGrowthArchitectureTests.AllBaselinedPathsRespectRatchetedLineAndByteCeilings",
+      "result": "fail",
+      "failure": "System.IO.InvalidDataException: Every baseline path remains governed after shrinking below 500 lines. Committed line/byte shrinkage ratchets future ceilings and deletion retires the path. Violations:\nreviewed path regrew Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.cs (lines 651 -> 852, bytes 26620 -> 37351; requires production-over-500-review)\nreviewed path regrew Assets/Game/Scripts/UI/Screens/AriaCommandAssistantPopupView.cs (lines 470 -> 559, bytes 19802 -> 24424; requires production-over-500-review)\nreviewed path regrew Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.cs (lines 426 -> 430, bytes 20180 -> 20510; requires production-over-1000-growth)\nreviewed path regrew Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs (lines 1246 -> 1308, bytes 51844 -> 53991; requires production-over-1000-growth)\nhelper path regrew Assets/Game/Scripts/UI/MenuDiagnosticsUiSystemHelper.cs (lines 271 -> 295, bytes 9447 -> 10315; requires system-helper-growth)\nhelper path regrew Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs (lines 1246 -> 1308, bytes 51844 -> 53991; requires system-helper-growth)\n  at ProductionSourceGrowthArchitectureTests.Require (System.Boolean condition, System.String message) [0x0000a] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs:2309 \n  at ProductionSourceGrowthArchitectureTests.AllBaselinedPathsRespectRatchetedLineAndByteCeilings () [0x00331] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs:395 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "ProductionSourceGrowthArchitectureTests.ApprovedExceptionsUseExactTrackedAuthorization",
+      "result": "fail",
+      "failure": "System.IO.InvalidDataException: Exception for `Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs` caps 453 lines/19785 bytes but the source has 493 lines/22128 bytes.\n  at ProductionSourceGrowthArchitectureTests.Require (System.Boolean condition, System.String message) [0x0000a] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs:2309 \n  at ProductionSourceGrowthArchitectureTests.ApprovedExceptionsUseExactTrackedAuthorization () [0x00458] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs:474 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "ProductionSourceGrowthArchitectureTests.ExactDecisionAuthorizationRejectsMismatchedTuples",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ProductionSourceGrowthArchitectureTests.HistoricalPolicyRejectsReservedGrowthAndRecreation",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ProductionSourceGrowthArchitectureTests.JenkinsEditModeGateFailsClosed",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ProductionSourceGrowthArchitectureTests.JenkinsCheckoutProvidesGuardInputsAndHistory",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ProductionSourceGrowthArchitectureTests.JenkinsResultContractRejectsIncompleteRuns",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ProductionSourceGrowthArchitectureTests.BinaryNumstatRecordsFailClosed",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ProductionSourceGrowthArchitectureTests.DuplicateJsonPropertiesFailClosedAtEveryLevel",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ProductionSourceGrowthArchitectureTests.WindowsPathIdentityIsCaseInsensitiveButSpellingStable",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ProductionSourceGrowthArchitectureTests.ByteCeilingRejectsPhysicalLineMinificationBypass",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ProductionSourceGrowthArchitectureTests.PostHardeningGuardrailContractHasExpectedRatchets",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ProductionSourceGrowthArchitectureTests.PostHardeningGuardedSourcesStayBoundedAndNarrow",
+      "result": "fail",
+      "failure": "System.IO.InvalidDataException: Post-hardening source and responsibility ratchets failed:\nguarded source identity changed Assets/Game/Scripts/UI/Shell/ResourceExchangeShellBinding.cs (63399e3caee4ce5ba7f582043639915507b0debc573e218519d5ee30aa276e2b != d2a8d9426a1b712c7b8d3cb47bc11617c6afbbe2be213641bb6a9ef82c08d237)\nregrew Assets/Game/Scripts/UI/Shell/ResourceExchangeShellBinding.cs (lines 104/94, bytes 3705/3201)\nguarded source identity changed Assets/Game/Scripts/UI/Shell/UIShellContentView.cs (f4eeeeb190036a59dcb2e2a8036ba16b95ed19c85f6d60a38303b0f268ef60b4 != e250b07e6bd012554d37f8ef6376922f2ab4fdf9b0e51c5be194eeedd462c93f)\nreplacement owner Assets/Game/Scripts/UI/Screens/ResourceExchangePopupRuntimeView.cs grew managed lifecycle ownership (symbols 4->4, occurrences 30->26, genericSymbols 1->1, genericOccurrences 3->3, domain 36->37, lines 213->211, bytes 7466->7555)\nreplacement owner Assets/Game/Scripts/UI/Screens/ResourceExchangePopupView.cs grew managed lifecycle ownership (symbols 4->4, occurrences 52->62, genericSymbols 0->0, genericOccurrences 0->0, domain 19->21, lines 341->423, bytes 13098->17145)\n  at ProductionSourceGrowthArchitectureTests.Require (System.Boolean condition, System.String message) [0x0000a] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs:2309 \n  at ProductionSourceGrowthArchitectureTests.PostHardeningGuardedSourcesStayBoundedAndNarrow () [0x0089f] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs:1045 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.SourceFilenamesMustNotStartWithProjectName",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.AssemblyCSharpProjectsMustNotCompileAssetsSourceFiles",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.RuntimeAssemblyMustNotReferenceConcreteUiRuntimeAssembly",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.RuntimeAssemblyMustNotReferenceAuthoringAssembly",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.RuntimeDomainAssembliesMustUseOnlyContractOrDataGameReferences",
+      "result": "fail",
+      "failure": "NUnit.Framework.AssertionException: Game.Runtime domain splits must keep contract/data assemblies as the only first-party cross-domain currency.\nAssets/Game/Scripts/Systems/Combat/Game.Runtime.Combat.asmdef (Game.Runtime.Combat) references `Game.Missions.Contracts`. Runtime domain assemblies must communicate through contract/data assemblies, not parent runtime, sibling domains, UI, rendering, authoring, editor, or composition assemblies.\nAssets/Game/Scripts/Systems/Combat/Game.Runtime.Combat.asmdef (Game.Runtime.Combat) references `Game.Narrative.Contracts`. Runtime domain assemblies must communicate through contract/data assemblies, not parent runtime, sibling domains, UI, rendering, authoring, editor, or composition assemblies.\nAssets/Game/Scripts/Systems/Pathfinding/Surface/Game.Runtime.Pathfinding.asmdef (Game.Runtime.Pathfinding) references `Game.Missions.Contracts`. Runtime domain assemblies must communicate through contract/data assemblies, not parent runtime, sibling domains, UI, rendering, authoring, editor, or composition assemblies.\nAssets/Game/Scripts/Systems/Pathfinding/Surface/Game.Runtime.Pathfinding.asmdef (Game.Runtime.Pathfinding) references `Game.Narrative.Contracts`. Runtime domain assemblies must communicate through contract/data assemblies, not parent runtime, sibling domains, UI, rendering, authoring, editor, or composition assemblies.\n  at NUnit.Framework.Assert.Fail (System.String message, System.Object[] args) [0x00030] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at NUnit.Framework.Assert.Fail (System.String message) [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at ScriptArchitectureAlignmentContractTests.AssertNoViolations (System.Collections.Generic.IReadOnlyCollection`1[T] violations, System.String header) [0x00009] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:1983 \n  at ScriptArchitectureAlignmentContractTests.RuntimeDomainAssembliesMustUseOnlyContractOrDataGameReferences () [0x00144] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:544 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.UiRuntimeAssemblyMustNotReferenceRuntimeAssembly",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.UiRuntimeAssemblyMustNotReferenceAuthoringAssembly",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.UiRuntimeAssemblyMustNotReferenceComponentsAssembly",
+      "result": "fail",
+      "failure": "NUnit.Framework.AssertionException:   `Game.UI.Runtime` must not reference `Game.Components`. Composition owns ECS component reads and maps them into UI contracts.\n  Expected: False\n  But was:  True\n\n  at NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) [0x00044] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at NUnit.Framework.Assert.IsFalse (System.Boolean condition, System.String message, System.Object[] args) [0x00007] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at ScriptArchitectureAlignmentContractTests.UiRuntimeAssemblyMustNotReferenceComponentsAssembly () [0x00014] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:577 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.UiRuntimeAssemblyMustNotReferenceEntitiesPackage",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.UiRuntimeAssemblyMustNotReferenceCollectionsPackage",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.UiRuntimeAssemblyMustNotReferenceUiShellEcsAssembly",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.ConfigsAssemblyMustNotReferenceUiContractsAssembly",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.GameScriptAsmdefsMustDeclareMatchingRootNamespace",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.GameScriptsMustDeclareOwningAssemblyNamespace",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.UiContractsAssemblyMustNotReferenceGameComponentsOrConfigs",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.UiContractsAssemblyMustNotReferenceEcsPackages",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.UiRuntimeAssemblyMustNotReferenceConfigsAssembly",
+      "result": "fail",
+      "failure": "NUnit.Framework.AssertionException: `Game.UI.Runtime` must not reference `Game.Configs`, import its namespace, or call `GameText` directly. Use UI contracts and composition-owned adapters instead.\nAssets/Game/Scripts/UI/Components/AssistantButtonView.cs:1 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Components/MatchHudSquadTrayView.cs:2 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Components/UIToggleRowView.cs:1 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Game.UI.Runtime.asmdef references `Game.Configs`.\nAssets/Game/Scripts/UI/Localization/V3LocalizationRuntimeBinder.cs:1 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Localization/V3LocalizedTextBinding.cs:1 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Narrative/FirstLaunchLanguageChoiceView.cs:2 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Narrative/NarrativePlaybackControlsView.cs:2 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Narrative/NarrativeReviewerControlsView.cs:2 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Narrative/NarrativeSkipConfirmationView.cs:2 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Screens/AriaCommandAssistantPopupView.cs:2 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Screens/AssistantHighlightPresentationSystemHelper.TargetVisuals.cs:1 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Screens/AssistantHighlightPresentationSystemHelper.UiSurfaceGuidance.cs:1 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Screens/CampaignOperationsScreenView.Airlift.cs:1 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Screens/CampaignOperationsScreenView.Airlift.cs:12 references token `GameText.`: radarGuideAvailable=mission.Available;Set(missionNumber,\"M04\");Set(missionName,GameText.Get(\"mission.m04.name\"));\nAssets/Game/Scripts/UI/Screens/CampaignOperationsScreenView.Airlift.cs:13 references token `GameText.`: Set(missionBriefingText,GameText.Get(\"mission.m04.summary\"));Set(primaryObjectiveText,GameText.Get(\"mission.m04.objective.extract\"));\nAssets/Game/Scripts/UI/Screens/CampaignOperationsScreenView.Airlift.cs:14 references token `GameText.`: Set(rewardSummaryText,GameText.Get(\"mission.m04.reward.card\"));if(missionPreviewImage!=null)missionPreviewImage.texture=m04MissionPreview;\nAssets/Game/Scripts/UI/Screens/CampaignOperationsScreenView.RadarWarning.cs:1 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Screens/CampaignOperationsScreenView.cs:1 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Screens/DistrictDetailActionsScreenView.cs:2 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Screens/EventsV3View.cs:2 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Screens/InboxV3View.cs:3 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Screens/MatchHudResourceHeaderPresentation.cs:1 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Screens/MissionBriefingScreenView.Airlift.cs:1 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Screens/MissionBriefingScreenView.Airlift.cs:11 references token `GameText.`: Set(missionNumber,\"M04\");Set(operationCodename,GameText.Get(\"mission.m04.name\"));Set(missionTitle,GameText.Get(\"mission.m04.name\"));\nAssets/Game/Scripts/UI/Screens/MissionBriefingScreenView.Airlift.cs:12 references token `GameText.`: Set(missionSummary,GameText.Get(\"mission.m04.summary\"));Set(locationLabel,GameText.Get(\"mission.m04.location\"));Set(enemyIntelLabel,GameText.Get(\"mission.m04.enemy_intel\"));\nAssets/Game/Scripts/UI/Screens/MissionBriefingScreenView.Airlift.cs:14 references token `GameText.`: string[] objectives={\"extract\",\"transport\",\"landing\"};for(int i=0;i<(objectiveLabels?.Length??0);i++)Set(objectiveLabels[i],i<3?GameText.Get(\"mission.m04.objective.\"+objectives[i]):GameText.Get(\"mission.m04.star.3\"));\nAssets/Game/Scripts/UI/Screens/MissionBriefingScreenView.Airlift.cs:15 references token `GameText.`: SetAt(conditionLabels,0,GameText.Get(\"mission.m04.resources\"));SetAt(conditionLabels,1,GameText.Get(\"mission.m04.access\"));SetAt(conditionLabels,2,GameText.Get(\"mission.m04.options\"));\nAssets/Game/Scripts/UI/Screens/MissionBriefingScreenView.Airlift.cs:16 references token `GameText.`: SetAt(conditionNameLabels,0,GameText.Get(\"mission.m02.resources.label\"));SetAt(conditionNameLabels,1,GameText.Get(\"mission.m03.label.forces\"));SetAt(conditionNameLabels,2,GameText.Get(\"mission.m03.guide\"));\nAssets/Game/Scripts/UI/Screens/MissionBriefingScreenView.Airlift.cs:17 references token `GameText.`: SetAt(rewardLabels,2,GameText.Get(\"mission.m04.reward.laila\")+\" + \"+GameText.Get(\"mission.m04.reward.transport\"));SetAt(rewardValues,2,GameText.Get(\"mission.reward.unlock\"));\nAssets/Game/Scripts/UI/Screens/MissionDefenseHudView.cs:1 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Screens/MissionDefenseHudView.cs:67 references token `GameText.`: if(supportLabel!=null) supportLabel.SetLocalizedValue(active ? GameText.Get(\"mission.m03.ping.label\",\"Radar Ping\") : GameText.Get(\"\",originalLabel));\nAssets/Game/Scripts/UI/Screens/MissionExtractionHudView.cs:1 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Screens/MissionExtractionHudView.cs:24 references token `GameText.`: string text=GameText.Format(\"mission.m04.hud.status\",\"Aboard {0}/4 · APC leg {1}/4 · Clear {2}/20s · {3}s left\",model.Aboard,model.CarrierLeg,model.SecureSeconds,model.RemainingSeconds);\nAssets/Game/Scripts/UI/Screens/MissionExtractionHudView.cs:25 references token `GameText.`: if(model.Contested)text+=\"\\n\"+GameText.Get(\"mission.m04.hud.contested\");else if(model.Cleared)text+=\"\\n\"+GameText.Get(\"mission.m04.hud.cleared\");\nAssets/Game/Scripts/UI/Screens/MissionFieldGuideView.cs:107 references token `GameText.`: Set(title,\"mission.m03.guide.radio\"); body.SetLocalizedValue(GameText.Get(M03RadarWarningCopyCatalog.Comms[0].Key));\nAssets/Game/Scripts/UI/Screens/MissionFieldGuideView.cs:118 references token `GameText.`: filterLabel.SetLocalizedValue(GameText.Get(filter<0 ? \"mission.m03.guide.all\" : AvailabilityKey(filter)));\nAssets/Game/Scripts/UI/Screens/MissionFieldGuideView.cs:124 references token `GameText.`: example.SetLocalizedValue(GameText.Get(\"mission.m03.guide.example\")+\"\\n\"+GameText.Get(topic.ExampleKey));\nAssets/Game/Scripts/UI/Screens/MissionFieldGuideView.cs:125 references token `GameText.`: mistake.SetLocalizedValue(GameText.Get(\"mission.m03.guide.mistake\")+\"\\n\"+GameText.Get(topic.MistakeKey));\nAssets/Game/Scripts/UI/Screens/MissionFieldGuideView.cs:132 references token `GameText.`: string stats=unit==null ? GameText.Get(card.Availability==MissionGuideAvailability.Unavailable ? \"mission.m03.guide.unavailable_stats\" :\nAssets/Game/Scripts/UI/Screens/MissionFieldGuideView.cs:133 references token `GameText.`: unitHandle.IsValid() && unitHandle.IsDone ? \"mission.m03.guide.load_failed\" : \"mission.m03.guide.loading\") : GameText.Format(\"mission.m03.guide.stats\",\"\",\nAssets/Game/Scripts/UI/Screens/MissionFieldGuideView.cs:135 references token `GameText.`: unit.CanAttack ? unit.AttackDamage.ToString() : GameText.Get(\"mission.m03.guide.unarmed\"),unit.CanAttack ? unit.AttackRange : 0,\nAssets/Game/Scripts/UI/Screens/MissionFieldGuideView.cs:137 references token `GameText.`: body.SetLocalizedValue(GameText.Get(card.CategoryKey)+\" · \"+GameText.Get(AvailabilityKey((int)card.Availability))+\"\\n\\n\"+stats);\nAssets/Game/Scripts/UI/Screens/MissionFieldGuideView.cs:142 references token `GameText.`: example.SetLocalizedValue(unit==null ? \"\" : GameText.Get(roleKey+role));\nAssets/Game/Scripts/UI/Screens/MissionFieldGuideView.cs:149 references token `GameText.`: private static void Set(V3LocalizedTextBinding text,string key)=>text.SetLocalizedValue(GameText.Get(key));\nAssets/Game/Scripts/UI/Screens/MissionFieldGuideView.cs:3 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Screens/MissionFieldGuideView.cs:65 references token `GameText.`: private void RefreshScopedTitle()=>scopedTitle?.SetLocalizedValue(GameText.Get(guide==extractionGuide?\"mission.m04.guide.title\":\"mission.m03.guide.title\"));\nAssets/Game/Scripts/UI/Screens/MissionFieldGuideView.cs:84 references token `GameText.`: GameText.Get(entry.NameKey,entry.Id).IndexOf(query,StringComparison.OrdinalIgnoreCase)<0) continue;\nAssets/Game/Scripts/UI/Screens/MissionResultPopupView.Defense.cs:1 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Screens/MissionResultPopupView.Defense.cs:37 references token `GameText.`: reviewNarrated=UiShellRuntimeGateway.TryEnqueueTutorialNarration(12,12,UiTutorialNarrationPhase.PrimaryAction,GameText.Get(\"mission.m03.tutorial.12.body\"));\nAssets/Game/Scripts/UI/Screens/MissionResultPopupView.Defense.cs:41 references token `GameText.`: SetDefenseText(starCountText,GameText.Format(\"mission.m03.result.stars\",\"\",model.Stars));\nAssets/Game/Scripts/UI/Screens/MissionResultPopupView.Defense.cs:43 references token `GameText.`: SetDefenseText(objectivePatrolStatusText,GameText.Get(\"mission.m03.result.\"+(victory ? \"stopped\" : \"incomplete\")));\nAssets/Game/Scripts/UI/Screens/MissionResultPopupView.Defense.cs:44 references token `GameText.`: SetDefenseText(objectiveSquadStatusText,GameText.Get(\"mission.m03.result.\"+(model.Defense.PostDestroyed ? \"destroyed\" : model.Defense.PostDamaged ? \"damaged\" : \"undamaged\")));\nAssets/Game/Scripts/UI/Screens/MissionResultPopupView.Defense.cs:45 references token `GameText.`: SetDefenseText(objectiveCivilianStatusText,GameText.Get(\"mission.m03.result.\"+(model.Defense.CivilianLosses==0 ? \"safe\" : \"losses\")));\nAssets/Game/Scripts/UI/Screens/MissionResultPopupView.Defense.cs:49 references token `GameText.`: SetDefenseText(label.Text,GameText.Get(label.Key));\nAssets/Game/Scripts/UI/Screens/MissionResultPopupView.Extraction.cs:1 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Screens/MissionResultPopupView.Extraction.cs:21 references token `GameText.`: label.Text?.GetComponent<V3LocalizedTextBinding>()?.SetFontBounds(18,27);SetDefenseText(label.Text,GameText.Get(key));\nAssets/Game/Scripts/UI/Screens/MissionResultPopupView.Extraction.cs:25 references token `GameText.`: SetDefenseText(starCountText,GameText.Format(\"mission.m03.result.stars\",\"\",model.Stars));SetDefenseText(civilianLostText,model.Extraction.Losses.ToString());\nAssets/Game/Scripts/UI/Screens/MissionResultPopupView.Extraction.cs:27 references token `GameText.`: SetDefenseText(objectiveSquadStatusText,GameText.Get(model.Extraction.CarrierLost||model.Extraction.AircraftLost?\"mission.m03.result.losses\":\"mission.m03.result.safe\"));\nAssets/Game/Scripts/UI/Screens/MissionResultPopupView.Extraction.cs:28 references token `GameText.`: SetDefenseText(objectiveCivilianStatusText,GameText.Get(model.Outcome==UiMissionResultOutcome.Victory?\"mission.m03.result.safe\":\"mission.m03.result.incomplete\"));\nAssets/Game/Scripts/UI/Screens/QuickCustomScreenView.cs:1 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Screens/SplashScreenView.cs:1 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Screens/StoreCommandExchangeV3View.cs:2 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Screens/ThreatAlertV3PopupView.MissionDefense.cs:1 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Screens/ThreatAlertV3PopupView.MissionDefense.cs:36 references token `GameText.`: string text=model.HasWarning ? model.WarningText : GameText.Get(\"mission.m03.warning.resolved\",\"Convoy element stopped\");\nAssets/Game/Scripts/UI/Screens/ThreatAlertV3PopupView.cs:3 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Settings/SettingsPanelView.cs:1 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Settings/SettingsPopupView.cs:1 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Settings/SettingsScreenView.cs:1 references token `using Game.Configs`: using Game.Configs;\nAssets/Game/Scripts/UI/Settings/SettingsService.cs:1 references token `using Game.Configs`: using Game.Configs;\n  at NUnit.Framework.Assert.Fail (System.String message, System.Object[] args) [0x00030] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at NUnit.Framework.Assert.Fail (System.String message) [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at ScriptArchitectureAlignmentContractTests.AssertNoViolations (System.Collections.Generic.IReadOnlyCollection`1[T] violations, System.String header) [0x00009] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:1983 \n  at ScriptArchitectureAlignmentContractTests.UiRuntimeAssemblyMustNotReferenceConfigsAssembly () [0x0006f] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:729 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.UiRuntimeAssemblyMustNotReadAuthoringComponents",
+      "result": "fail",
+      "failure": "NUnit.Framework.AssertionException: `Game.UI.Runtime` must not read authoring components. Use UI catalog metadata delegates injected by composition.\nAssets/Game/Scripts/UI/Screens/MissionFieldGuideView.cs:150 references authoring component: private UnitGridAuthoringConfig RequestUnit(MissionGuideClass card)\nAssets/Game/Scripts/UI/Screens/MissionFieldGuideView.cs:156 references authoring component: if(key!=null) {unitHandle=Addressables.LoadAssetAsync<UnitGridAuthoringConfig>(card.UnitAsset.RuntimeKey); unitHandle.Completed+=UnitReady;}\nAssets/Game/Scripts/UI/Screens/MissionFieldGuideView.cs:160 references authoring component: private void UnitReady(AsyncOperationHandle<UnitGridAuthoringConfig> handle)\nAssets/Game/Scripts/UI/Screens/MissionFieldGuideView.cs:30 references authoring component: private AsyncOperationHandle<UnitGridAuthoringConfig> unitHandle;\n  at NUnit.Framework.Assert.Fail (System.String message, System.Object[] args) [0x00030] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at NUnit.Framework.Assert.Fail (System.String message) [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at ScriptArchitectureAlignmentContractTests.AssertNoViolations (System.Collections.Generic.IReadOnlyCollection`1[T] violations, System.String header) [0x00009] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:1983 \n  at ScriptArchitectureAlignmentContractTests.UiRuntimeAssemblyMustNotReadAuthoringComponents () [0x00066] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:742 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.UiRuntimeScriptsMustNotReferenceSelectionUiCommandUiSystemHelper",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.UiRuntimeScriptsMustNotReferenceConcreteRuntimeTypes",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.UiRuntimeScriptsMustNotMutateFuelLogisticsSimulationState",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.UiRuntimeScriptsMustNotUseDirectEcsApis",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.RuntimeAssemblyMustNotReferenceUiShellEcsAssembly",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.RuntimeAssemblyMustNotReferenceUiShellEcsContractsAssembly",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.RuntimeAssemblyMustNotReferenceUnityUiPackage",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.RuntimeAssemblyMustNotReferenceTextMeshProPackage",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.RuntimeAssemblyMustNotReferenceEntitiesHybridPackage",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.RuntimeAssemblyMustNotReferenceEntitiesGraphicsPackage",
+      "result": "fail",
+      "failure": "NUnit.Framework.AssertionException:   `Game.Runtime` must not reference `Unity.Entities.Graphics`. Unit render/model visibility systems belong in `Game.Rendering`.\n  Expected: False\n  But was:  True\n\n  at NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) [0x00044] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at NUnit.Framework.Assert.IsFalse (System.Boolean condition, System.String message, System.Object[] args) [0x00007] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at ScriptArchitectureAlignmentContractTests.RuntimeAssemblyMustNotReferenceEntitiesGraphicsPackage () [0x00014] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:874 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.RuntimeAssemblyMustNotReferenceConcreteRenderingAssembly",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.RenderingAssemblyMustNotReferenceRuntimeAssembly",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.RenderingAssemblyMustNotReferenceAuthoringAssembly",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.RenderingAssemblyMustNotReadAuthoringComponents",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.UiAndCompositionAssembliesMustNotReferenceUnusedHeavyPackages",
+      "result": "fail",
+      "failure": "NUnit.Framework.AssertionException: `Game.UI.Runtime` and `Game.Composition` must not carry heavy runtime/rendering package references unless their source directly uses them.\nAssets/Game/Scripts/Composition/Game.Composition.asmdef references \"sniveler-code.gpu-animation\".\n  at NUnit.Framework.Assert.Fail (System.String message, System.Object[] args) [0x00030] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at NUnit.Framework.Assert.Fail (System.String message) [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at ScriptArchitectureAlignmentContractTests.AssertNoViolations (System.Collections.Generic.IReadOnlyCollection`1[T] violations, System.String header) [0x00009] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:1983 \n  at ScriptArchitectureAlignmentContractTests.UiAndCompositionAssembliesMustNotReferenceUnusedHeavyPackages () [0x000ba] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:951 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.GameRuntimeStatsMustRemainAnImmutableValue",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.BuildingProductionQueueCompositionSystemHelperMustNotReadAuthoringComponents",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.BuildingProductionRequestSystemHelperMustNotReadAuthoringComponents",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.BuildingProductionTransportPresentationSystemHelperMustNotReadAuthoringComponents",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.BuildingSpawnPrefabSystemMustNotReadAuthoringComponents",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.BuildingDefinitionPrefabSystemHelperMustNotReadAuthoringComponents",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.SceneAndMapAuthoringBootstrapMustStayInComposition",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.BootstrapCompositionSystemsMustNotOwnGameplayPolicy",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.RuntimeCompositionSystemHelpersMustStayOnArchitectureLedger",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.LegacyBootstrapFolderMustNotContainRuntimeSourceFiles",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.RuntimeLogicMustNotReferenceConcreteUiViews",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.SourceMustNotHardcodeLegacyDefaultAssemblyNames",
+      "result": "fail",
+      "failure": "NUnit.Framework.AssertionException: Source must not hardcode legacy default assembly names. Use direct type references, asmdef names, or assembly-agnostic lookup helpers.\nAssets/Game/Scripts/Editor/OperationMapEntitySceneCandidateAddressablesLayoutBuilder.cs:1015 hardcodes `Assembly-CSharp`: \"m_EditorClassIdentifier: Assembly-CSharp::CombinedMeshBaker\");\nAssets/Game/Scripts/Editor/OperationMapEntitySceneCandidateAddressablesLayoutBuilder.cs:990 hardcodes `Assembly-CSharp`: \"m_EditorClassIdentifier: Assembly-CSharp::CombinedMeshBaker\");\n  at NUnit.Framework.Assert.Fail (System.String message, System.Object[] args) [0x00030] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at NUnit.Framework.Assert.Fail (System.String message) [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at ScriptArchitectureAlignmentContractTests.AssertNoViolations (System.Collections.Generic.IReadOnlyCollection`1[T] violations, System.String header) [0x00009] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:1983 \n  at ScriptArchitectureAlignmentContractTests.SourceMustNotHardcodeLegacyDefaultAssemblyNames () [0x000ae] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:1166 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.RuntimeScriptsMustNotAddHierarchyLookupOrObjectFindUsage",
+      "result": "fail",
+      "failure": "NUnit.Framework.AssertionException: Runtime scripts must not add hierarchy string lookup or Object.Find-style discovery. Add serialized references, authoring data, cached spawn references, or ECS managed references instead.\nAssets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.cs:645 uses HierarchyFind: _passengerChipIconRect = _passengerChipRect.Find(\"Icon\") as RectTransform;\nAssets/Game/Scripts/UI/Components/MatchHudSquadTrayView.cs:114 uses HierarchyFind: Transform existingLabel = stripRect.Find(\"Label\");\nAssets/Game/Scripts/UI/Components/MatchHudSquadTrayView.cs:413 uses HierarchyFind: Transform existing = card.Button.transform.Find(\"MissionDisabledBlueWash\");\nAssets/Game/Scripts/UI/Components/MatchHudSquadTrayView.cs:99 uses HierarchyFind: Transform existingStrip = cardRect.Find(\"NameStrip\");\nAssets/Game/Scripts/UI/Localization/V3LocalizationRuntimeBinder.cs:22 uses ObjectFind: if (FindAnyObjectByType<V3LocalizationRuntimeBinder>() != null)\nAssets/Game/Scripts/UI/Localization/V3LocalizationRuntimeBinder.cs:56 uses ObjectFind: TMP_Text[] texts = FindObjectsByType<TMP_Text>(FindObjectsInactive.Include);\nAssets/Game/Scripts/UI/Narrative/NarrativePlaybackControlsView.cs:53 uses HierarchyFind: pauseButton = transform.Find(\"PauseButton\")?.GetComponent<Button>();\nAssets/Game/Scripts/UI/Narrative/NarrativePlaybackControlsView.cs:54 uses HierarchyFind: subtitlesButton = transform.Find(\"SubtitlesButton\")?.GetComponent<Button>();\nAssets/Game/Scripts/UI/Narrative/NarrativePlaybackControlsView.cs:57 uses HierarchyFind: Transform timeline = transform.parent?.Find(\"ComicTimeline\");\nAssets/Game/Scripts/UI/Narrative/NarrativePlaybackControlsView.cs:58 uses HierarchyFind: stateLabel = timeline?.Find(\"State\")?.GetComponent<TMP_Text>();\nAssets/Game/Scripts/UI/Narrative/NarrativePlaybackControlsView.cs:59 uses HierarchyFind: pageLabel = timeline?.Find(\"Page\")?.GetComponent<TMP_Text>();\nAssets/Game/Scripts/UI/Narrative/NarrativePlaybackControlsView.cs:60 uses HierarchyFind: progressTrack = timeline?.Find(\"Track\") as RectTransform;\nAssets/Game/Scripts/UI/Narrative/NarrativePlaybackControlsView.cs:61 uses HierarchyFind: progressFill = timeline?.Find(\"Fill\") as RectTransform;\nAssets/Game/Scripts/UI/Narrative/NarrativePlaybackControlsView.cs:62 uses HierarchyFind: progressHandle = timeline?.Find(\"Handle\") as RectTransform;\nAssets/Game/Scripts/UI/Screens/BuildDrawerHudOcclusionView.cs:35 uses ObjectFind: RectTransform[] candidates = Object.FindObjectsByType<RectTransform>(\nAssets/Game/Scripts/UI/Screens/BuildDrawerView.cs:154 uses HierarchyFind: Transform overlay = card.Find(\"DisabledOverlay\");\nAssets/Game/Scripts/UI/Screens/BuildDrawerView.cs:158 uses HierarchyFind: Image art = card.Find(\"ArtClip/Thumb\")?.GetComponent<Image>();\nAssets/Game/Scripts/UI/Screens/CampaignOperationsScreenView.cs:195 uses HierarchyFind: Transform lockIcon = missionNodes[index] != null ? missionNodes[index].Find(\"Lock\") : null;\nAssets/Game/Scripts/UI/Screens/MatchOverlayCommandControlsView.cs:212 uses HierarchyFind: Transform selectedVisual = button.transform.Find(\"V3SelectedState\");\nAssets/Game/Scripts/UI/Screens/MissionResultPopupView.cs:279 uses HierarchyFind: Transform filledRoot = starRoot.transform.Find(\"StarFilled\");\nAssets/Game/Scripts/UI/Screens/MissionResultPopupView.cs:280 uses HierarchyFind: Transform outlineRoot = starRoot.transform.Find(\"StarOutline\");\n  at NUnit.Framework.Assert.Fail (System.String message, System.Object[] args) [0x00030] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at NUnit.Framework.Assert.Fail (System.String message) [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at ScriptArchitectureAlignmentContractTests.AssertNoViolations (System.Collections.Generic.IReadOnlyCollection`1[T] violations, System.String header) [0x00009] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:1983 \n  at ScriptArchitectureAlignmentContractTests.RuntimeScriptsMustNotAddHierarchyLookupOrObjectFindUsage () [0x000f7] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:1198 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.RuntimeScriptsMustNotUseCameraMain",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.RuntimeLogicMustNotReferenceUnityUiImplementationTypes",
+      "result": "fail",
+      "failure": "NUnit.Framework.AssertionException: Runtime logic must not reference Unity UI implementation types. Expose UI hit testing through `Game.UI.Contracts` and keep EventSystem/GraphicRaycaster code in `Game.UI.Runtime`.\nAssets/Game/Scripts/ScenarioLab/BattleScenarioLabOverlayView.cs:3 references UI implementation token `using UnityEngine.UI`: using UnityEngine.UI;\nAssets/Game/Scripts/ScenarioLab/BattleScenarioLabPlayBootstrap.cs:4 references UI implementation token `using UnityEngine.UI`: using UnityEngine.UI;\n  at NUnit.Framework.Assert.Fail (System.String message, System.Object[] args) [0x00030] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at NUnit.Framework.Assert.Fail (System.String message) [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at ScriptArchitectureAlignmentContractTests.AssertNoViolations (System.Collections.Generic.IReadOnlyCollection`1[T] violations, System.String header) [0x00009] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:1983 \n  at ScriptArchitectureAlignmentContractTests.RuntimeLogicMustNotReferenceUnityUiImplementationTypes () [0x0011b] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:1259 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.RuntimeUiScriptsMustNotAddDirectDebugLogs",
+      "result": "fail",
+      "failure": "NUnit.Framework.AssertionException: Runtime UI scripts must not add direct Debug.Log* diagnostics. Use user-facing feedback, gated diagnostics, or ECS diagnostic buffers instead.\nAssets/Game/Scripts/UI/MainMenuPlayUI.cs:402 uses Debug.LogWarning: Debug.LogWarning($\"[MainMenuPlayUI] {slot.name} is missing its authored Resource Exchange button.\");\nAssets/Game/Scripts/UI/Narrative/NarrativeDialogueView.cs:240 uses Debug.LogWarning: Debug.LogWarning($\"[{nameof(NarrativeDialogueView)}] Missing required serialized reference on {name}.\", this);\nAssets/Game/Scripts/UI/Narrative/NarrativeReviewerControlsView.cs:241 uses Debug.LogWarning: Debug.LogWarning($\"[{nameof(NarrativeReviewerControlsView)}] Missing required serialized reference on {name}.\", this);\nAssets/Game/Scripts/UI/Narrative/NarrativeSkipConfirmationView.cs:80 uses Debug.LogWarning: Debug.LogWarning($\"[{nameof(NarrativeSkipConfirmationView)}] Missing required serialized reference on {name}.\", this);\nAssets/Game/Scripts/UI/Screens/LoadoutSquadPrepScreenView.cs:62 uses Debug.LogError: Debug.LogError($\"[LoadoutSquadPrep] Mission deploy request was rejected. mission={missionId}\");\nAssets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Presentation.cs:312 uses Debug.LogError: Debug.LogError(\"[ARIA] POP13 popup is missing AriaCommandAssistantPopupView or its locked LandscapeLayout hierarchy.\");\nAssets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.PresentationLifecycle.cs:39 uses Debug.LogError: Debug.LogError(\"[ARIA] Match HUD prefab is missing HeaderContent/AriaAssistantButton; runtime button creation is disabled.\");\nAssets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.PresentationLifecycle.cs:49 uses Debug.LogError: Debug.LogError(\"[ARIA] HeaderContent/AriaAssistantButton must contain a Button plus TMP State and AlertCue children.\");\nAssets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138 uses Debug.Log: Debug.Log(\nAssets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146 uses Debug.Log: Debug.Log(\n  at NUnit.Framework.Assert.Fail (System.String message, System.Object[] args) [0x00030] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at NUnit.Framework.Assert.Fail (System.String message) [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at ScriptArchitectureAlignmentContractTests.AssertNoViolations (System.Collections.Generic.IReadOnlyCollection`1[T] violations, System.String header) [0x00009] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:1983 \n  at ScriptArchitectureAlignmentContractTests.RuntimeUiScriptsMustNotAddDirectDebugLogs () [0x0010f] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:1294 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.SelectionSystemsMustBindSelectionPanelThroughContract",
+      "result": "fail",
+      "failure": "NUnit.Framework.AssertionException: Selection/runtime systems must bind the match HUD selection panel through `IMatchHudSelectionPanelView`. Concrete `MatchHudSelectionPanelView` lookup is limited to bootstrap scene/UI discovery.\nAssets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs:2066 binds concrete selection panel view: LiveMatchHudSelectionPanelView?.SetSelectionVisible(false);\nAssets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs:2081 binds concrete selection panel view: LiveMatchHudSelectionPanelView?.SetBoardActionSelected(mode == TacticalCommandMode.Board);\nAssets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs:2102 binds concrete selection panel view: LiveMatchHudSelectionPanelView?.SetBoardActionSelected(true);\nAssets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs:2122 binds concrete selection panel view: LiveMatchHudSelectionPanelView?.SetBoardActionSelected(false);\nAssets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs:2182 binds concrete selection panel view: LiveMatchHudSelectionPanelView?.SetSelectionVisible(true);\nAssets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs:2186 binds concrete selection panel view: LiveMatchHudSelectionPanelView?.SetSelectionVisible(false);\nAssets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs:329 binds concrete selection panel view: LiveMatchHudSelectionPanelView?.SetSelectionVisible(validSelection);\nAssets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs:343 binds concrete selection panel view: LiveMatchHudSelectionPanelView?.SetSelectionVisible(validSelection, portraitSprite);\nAssets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs:350 binds concrete selection panel view: LiveMatchHudSelectionPanelView?.SetSelectionVisible(selectedCount > 0);\nAssets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs:363 binds concrete selection panel view: LiveMatchHudSelectionPanelView?.SetSelectionVisible(true, portraitSprite);\nAssets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs:448 binds concrete selection panel view: if (LiveMatchHudSelectionPanelView == null)\nAssets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs:921 binds concrete selection panel view: LiveMatchHudSelectionPanelView?.Apply(MatchHudSelectionPanelModel.Hidden);\nAssets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs:922 binds concrete selection panel view: LiveMatchHudSelectionPanelView?.ApplyTransportPassengers(MatchHudTransportPassengersModel.Hidden);\n  at NUnit.Framework.Assert.Fail (System.String message, System.Object[] args) [0x00030] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at NUnit.Framework.Assert.Fail (System.String message) [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at ScriptArchitectureAlignmentContractTests.AssertNoViolations (System.Collections.Generic.IReadOnlyCollection`1[T] violations, System.String header) [0x00009] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:1983 \n  at ScriptArchitectureAlignmentContractTests.SelectionSystemsMustBindSelectionPanelThroughContract () [0x000ab] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:1322 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.RuntimeScriptsMustNotAddStaticViewRegistries",
+      "result": "fail",
+      "failure": "NUnit.Framework.AssertionException: Runtime scripts must not add static mutable view registries. Bind views through serialized references or explicit shell/gameplay dependency edges.\nAssets/Game/Scripts/UI/Screens/BuildDrawerProductionQueueUiSystemHelper.cs:186 uses StaticViewCollection: internal static void ClearRuntimeItems(List<BuildDrawerQueueItemView> runtimeItems)\nAssets/Game/Scripts/UI/Screens/BuildDrawerProductionQueueUiSystemHelper.cs:351 uses StaticViewCollection: private static void HideRuntimeItems(List<BuildDrawerQueueItemView> runtimeItems, int usedCount)\nAssets/Game/Scripts/UI/Screens/ResourceExchangePopupRuntimeView.cs:16 uses StaticViewRegistry: private static void ResetActiveView()\nAssets/Game/Scripts/UI/Screens/ResourceExchangePopupRuntimeView.cs:163 uses StaticViewRegistry: private static void RemoveActiveView(ResourceExchangePopupRuntimeView target)\nAssets/Game/Scripts/UI/Screens/ResourceExchangePopupRuntimeView.cs:167 uses StaticViewRegistry: activeView = target._previousActiveView;\nAssets/Game/Scripts/UI/Screens/ResourceExchangePopupRuntimeView.cs:168 uses StaticViewRegistry: target._previousActiveView = null;\nAssets/Game/Scripts/UI/Screens/ResourceExchangePopupRuntimeView.cs:175 uses StaticViewRegistry: if (ReferenceEquals(current._previousActiveView, target))\nAssets/Game/Scripts/UI/Screens/ResourceExchangePopupRuntimeView.cs:177 uses StaticViewRegistry: current._previousActiveView = target._previousActiveView;\nAssets/Game/Scripts/UI/Screens/ResourceExchangePopupRuntimeView.cs:178 uses StaticViewRegistry: target._previousActiveView = null;\nAssets/Game/Scripts/UI/Screens/ResourceExchangePopupRuntimeView.cs:182 uses StaticViewRegistry: current = current._previousActiveView;\nAssets/Game/Scripts/UI/Screens/ResourceExchangePopupRuntimeView.cs:24 uses StaticViewRegistry: private ResourceExchangePopupRuntimeView _previousActiveView;\nAssets/Game/Scripts/UI/Screens/ResourceExchangePopupRuntimeView.cs:38 uses StaticViewRegistry: RemoveActiveView(this);\nAssets/Game/Scripts/UI/Screens/ResourceExchangePopupRuntimeView.cs:39 uses StaticViewRegistry: _previousActiveView = activeView;\nAssets/Game/Scripts/UI/Screens/ResourceExchangePopupRuntimeView.cs:47 uses StaticViewRegistry: RemoveActiveView(this);\nAssets/Game/Scripts/UI/Screens/ResourceExchangePopupRuntimeView.cs:56 uses StaticViewRegistry: RemoveActiveView(this);\nAssets/Game/Scripts/UI/Screens/ResourceExchangePopupRuntimeView.cs:60 uses StaticViewRegistry: internal static void RefreshActiveView()\nAssets/Game/Scripts/UI/Screens/ResourceExchangePopupRuntimeView.cs:66 uses StaticViewRegistry: activeView = stale._previousActiveView;\nAssets/Game/Scripts/UI/Screens/ResourceExchangePopupRuntimeView.cs:67 uses StaticViewRegistry: stale._previousActiveView = null;\nAssets/Game/Scripts/UI/Screens/ResourceExchangePopupRuntimeView.cs:74 uses StaticViewRegistry: internal static bool IsActiveViewForTests(ResourceExchangePopupRuntimeView candidate)\nAssets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:73 uses StaticViewRegistry: ResourceExchangePopupRuntimeView.RefreshActiveView();\n  at NUnit.Framework.Assert.Fail (System.String message, System.Object[] args) [0x00030] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at NUnit.Framework.Assert.Fail (System.String message) [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at ScriptArchitectureAlignmentContractTests.AssertNoViolations (System.Collections.Generic.IReadOnlyCollection`1[T] violations, System.String header) [0x00009] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:1983 \n  at ScriptArchitectureAlignmentContractTests.RuntimeScriptsMustNotAddStaticViewRegistries () [0x00094] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:1347 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.RuntimeGameplayLogicMustNotAddStaticMutableRegistries",
+      "result": "fail",
+      "failure": "NUnit.Framework.AssertionException: Runtime gameplay logic must not add static mutable registries. Use ECS singletons, buffers, system-owned instance state, or explicit managed presentation boundaries instead.\nAssets/Game/Scripts/Configs/Localization/GameLocalization.cs:21 declares static mutable collection `SourceEntries`: private static readonly Dictionary<string, string> SourceEntries =\nAssets/Game/Scripts/Configs/Localization/GameLocalization.cs:23 declares static mutable collection `CurrentEntries`: private static readonly Dictionary<string, string> CurrentEntries =\nAssets/Game/Scripts/Configs/Localization/GameLocalization.cs:25 declares static mutable collection `SourceKeysByValue`: private static readonly Dictionary<string, string> SourceKeysByValue =\nAssets/Game/Scripts/Configs/Localization/GameLocalization.cs:27 declares static mutable collection `CurrentKeysByValue`: private static readonly Dictionary<string, string> CurrentKeysByValue =\nAssets/Game/Scripts/Configs/Localization/GameLocalization.cs:29 declares static mutable collection `SourceTemplates`: private static readonly List<SourceTemplate> SourceTemplates = new();\nAssets/Game/Scripts/Configs/Localization/GameLocalization.cs:30 declares static mutable collection `CurrentTemplates`: private static readonly List<SourceTemplate> CurrentTemplates = new();\n  at NUnit.Framework.Assert.Fail (System.String message, System.Object[] args) [0x00030] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at NUnit.Framework.Assert.Fail (System.String message) [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at ScriptArchitectureAlignmentContractTests.AssertNoViolations (System.Collections.Generic.IReadOnlyCollection`1[T] violations, System.String header) [0x00009] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:1983 \n  at ScriptArchitectureAlignmentContractTests.RuntimeGameplayLogicMustNotAddStaticMutableRegistries () [0x00107] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:1383 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.UiMonoBehavioursMustEndWithViewOrBeAllowlisted",
+      "result": "fail",
+      "failure": "NUnit.Framework.AssertionException: New UI MonoBehaviours must use `*View` naming or move flow/state behavior into ECS/shell systems.\nAssets/Game/Scripts/UI/Components/UiDisabledMaterialUtility.cs declares UI MonoBehaviour `UiDisabledMaterialState`. UI MonoBehaviours should be `*View` reference binders unless explicitly allowlisted.\nAssets/Game/Scripts/UI/Components/UiDisabledMaterialUtility.cs declares UI MonoBehaviour `UiDisabledSelectableVisualState`. UI MonoBehaviours should be `*View` reference binders unless explicitly allowlisted.\nAssets/Game/Scripts/UI/Localization/V3LocalizationRuntimeBinder.cs declares UI MonoBehaviour `V3LocalizationRuntimeBinder`. UI MonoBehaviours should be `*View` reference binders unless explicitly allowlisted.\nAssets/Game/Scripts/UI/Localization/V3LocalizedTextBinding.cs declares UI MonoBehaviour `V3LocalizedTextBinding`. UI MonoBehaviours should be `*View` reference binders unless explicitly allowlisted.\nAssets/Game/Scripts/UI/Screens/ArmoryV3CatalogItemVisual.cs declares UI MonoBehaviour `ArmoryV3CatalogItemVisual`. UI MonoBehaviours should be `*View` reference binders unless explicitly allowlisted.\nAssets/Game/Scripts/UI/Screens/ArmoryV3CategoryTabVisual.cs declares UI MonoBehaviour `ArmoryV3CategoryTabVisual`. UI MonoBehaviours should be `*View` reference binders unless explicitly allowlisted.\nAssets/Game/Scripts/UI/Screens/ArmoryV3ResponsiveCatalogGrid.cs declares UI MonoBehaviour `ArmoryV3ResponsiveCatalogGrid`. UI MonoBehaviours should be `*View` reference binders unless explicitly allowlisted.\nAssets/Game/Scripts/UI/Screens/CampaignMissionHudResultBinder.cs declares UI MonoBehaviour `CampaignMissionHudResultBinder`. UI MonoBehaviours should be `*View` reference binders unless explicitly allowlisted.\nAssets/Game/Scripts/UI/Screens/CampaignMissionScreenBinder.cs declares UI MonoBehaviour `CampaignMissionScreenBinder`. UI MonoBehaviours should be `*View` reference binders unless explicitly allowlisted.\nAssets/Game/Scripts/UI/Screens/MatchHudMinimapViewportDragRelay.cs declares UI MonoBehaviour `MatchHudMinimapViewportDragRelay`. UI MonoBehaviours should be `*View` reference binders unless explicitly allowlisted.\nAssets/Game/Scripts/UI/Screens/SkirmishSetupV3CycleControl.cs declares UI MonoBehaviour `SkirmishSetupV3CycleControl`. UI MonoBehaviours should be `*View` reference binders unless explicitly allowlisted.\nAssets/Game/Scripts/UI/Screens/SkirmishSetupV3SegmentVisual.cs declares UI MonoBehaviour `SkirmishSetupV3SegmentVisual`. UI MonoBehaviours should be `*View` reference binders unless explicitly allowlisted.\n  at NUnit.Framework.Assert.Fail (System.String message, System.Object[] args) [0x00030] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at NUnit.Framework.Assert.Fail (System.String message) [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at ScriptArchitectureAlignmentContractTests.AssertNoViolations (System.Collections.Generic.IReadOnlyCollection`1[T] violations, System.String header) [0x00009] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:1983 \n  at ScriptArchitectureAlignmentContractTests.UiMonoBehavioursMustEndWithViewOrBeAllowlisted () [0x000ba] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:1411 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.UiMonoBehavioursMustNotOwnDirectEcsAccess",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.RuntimeTypeNamesMustNotIntroduceBroadApplicationLayerSuffixes",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.UiMonoBehavioursMustNotAddStaticMutableRegistries",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.ShellContentPrefabsMustExposeSerializedSectionReferences",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ScriptArchitectureAlignmentContractTests.RuntimeInstantiateCallsMustStayEntityOwnedOrClassifiedPresentation",
+      "result": "fail",
+      "failure": "NUnit.Framework.AssertionException: Runtime ECS/system code must not add gameplay GameObject spawn paths. Use entity prefab/ECB ownership for gameplay spawns, or classify presentation/probe/material instantiates explicitly in this test.\nAssets/Game/Scripts/Environment/DayNightSystem.cs:294 has unclassified Unity object instantiate: ? Object.Instantiate(sourceProfile)\nAssets/Game/Scripts/Environment/RuntimeCityAlgorithmicAftermathPresentationSystemHelper.cs:170 has unclassified Unity object instantiate: GameObject instance = UnityEngine.Object.Instantiate(prefab, groupRoot);\nAssets/Game/Scripts/Environment/RuntimeOperationMapVisualRecipePresentationSystemHelper.cs:284 has unclassified Unity object instantiate: GameObject visual = Object.Instantiate(module.Prefab, stageRoot);\nAssets/Game/Scripts/Environment/RuntimeOperationMapVisualRecipePresentationSystemHelper.cs:307 has unclassified Unity object instantiate: GameObject visual = Object.Instantiate(sourceSlice.gameObject, moduleRoot);\nAssets/Game/Scripts/Environment/RuntimeOperationMapVisualRecipePresentationSystemHelper.cs:345 has unclassified Unity object instantiate: visual = Object.Instantiate(entry.Prefab, parent);\nAssets/Game/Scripts/Systems/ResourceExchangeVisualPresentationSystemHelper.cs:343 has unclassified Unity object instantiate: ? Object.Instantiate(prefab, root, false)\nAssets/Game/Scripts/Systems/ResourceExchangeVisualPresentationSystemHelper.cs:344 has unclassified Unity object instantiate: : Object.Instantiate(prefab);\n  at NUnit.Framework.Assert.Fail (System.String message, System.Object[] args) [0x00030] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at NUnit.Framework.Assert.Fail (System.String message) [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at ScriptArchitectureAlignmentContractTests.AssertNoViolations (System.Collections.Generic.IReadOnlyCollection`1[T] violations, System.String header) [0x00009] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:1983 \n  at ScriptArchitectureAlignmentContractTests.RuntimeInstantiateCallsMustStayEntityOwnedOrClassifiedPresentation () [0x000d0] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:1554 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "EcsBurstHotPathArchitectureTests.ObsoleteBuildUiEcsPathMustNotReturn",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "EcsBurstHotPathArchitectureTests.HotPathArraySnapshotDebtMustNotIncrease",
+      "result": "fail",
+      "failure": "NUnit.Framework.AssertionException:   Hot-path ECS array snapshot debt increased from the roadmap baseline. Current=27, ceiling=0. Reduce existing debt or update the roadmap with an approved performance report before raising this ceiling.\n  Expected: less than or equal to 0\n  But was:  27\n\n  at NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) [0x00044] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at NUnit.Framework.Assert.LessOrEqual (System.Int32 arg1, System.Int32 arg2, System.String message, System.Object[] args) [0x0000d] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at EcsBurstHotPathArchitectureTests.HotPathArraySnapshotDebtMustNotIncrease () [0x00046] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs:342 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "EcsBurstHotPathArchitectureTests.DirectEntityManagerMutationDebtMustNotIncrease",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "EcsBurstHotPathArchitectureTests.NonBurstOnUpdateDebtMustNotIncrease",
+      "result": "fail",
+      "failure": "NUnit.Framework.AssertionException:   Non-Burst OnUpdate files must be classified as an approved managed boundary or tracked hot-path debt before landing:\nAssets/Game/Scripts/Systems/MissionDefenseInteractionSystem.cs\nAssets/Game/Scripts/Systems/RadarPingRequestSystem.cs\nAssets/Game/Scripts/Systems/ThreatWarningResolveSystem.cs\nAssets/Game/Scripts/UI/Shell/Ecs/M03RadioReportProjectionSystem.cs\nAssets/Game/Scripts/UI/Shell/Ecs/M04RadioReportProjectionSystem.cs\nAssets/Game/Scripts/UI/Shell/Ecs/MissionDefensePauseSystem.cs\nAssets/Game/Scripts/UI/Shell/Ecs/UiCampaignMissionProjectionSystem.cs\n  Expected: <empty>\n  But was:  < \"Assets/Game/Scripts/Systems/MissionDefenseInteractionSystem.cs\", \"Assets/Game/Scripts/Systems/RadarPingRequestSystem.cs\", \"Assets/Game/Scripts/Systems/ThreatWarningResolveSystem.cs\", \"Assets/Game/Scripts/UI/Shell/Ecs/M03RadioReportProjectionSystem.cs\", \"Assets/Game/Scripts/UI/Shell/Ecs/M04RadioReportProjectionSystem.cs\", \"Assets/Game/Scripts/UI/Shell/Ecs/MissionDefensePauseSystem.cs\", \"Assets/Game/Scripts/UI/Shell/Ecs/UiCampaignMissionProjectionSystem.cs\" >\n\n  at NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) [0x00044] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at NUnit.Framework.Assert.IsEmpty (System.Collections.IEnumerable collection, System.String message, System.Object[] args) [0x00007] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at EcsBurstHotPathArchitectureTests.NonBurstOnUpdateDebtMustNotIncrease () [0x00214] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs:418 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "EcsBurstHotPathArchitectureTests.ManagedBoundaryNonBurstFilesMustBeSeparateFromTrackedHotPathDebt",
+      "result": "fail",
+      "failure": "NUnit.Framework.AssertionException:   Every current non-Burst OnUpdate file must be classified exactly once as managed boundary or tracked hot-path debt.\n  Expected: 120\n  But was:  113\n\n  at NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) [0x00044] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at NUnit.Framework.Assert.AreEqual (System.Object expected, System.Object actual, System.String message, System.Object[] args) [0x00008] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at EcsBurstHotPathArchitectureTests.ManagedBoundaryNonBurstFilesMustBeSeparateFromTrackedHotPathDebt () [0x0011a] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs:458 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "EcsBurstHotPathArchitectureTests.ManagedBoundaryClassificationsMustBeDisjointAndConcrete",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "EcsBurstHotPathArchitectureTests.NoBurstISystemFilesMustBeClassified",
+      "result": "fail",
+      "failure": "NUnit.Framework.AssertionException:   Runtime ISystem files without [BurstCompile] must be classified before landing. Either make the system Burst-compatible or document why it is a managed/presentation/bootstrap boundary:\nAssets/Game/Scripts/Systems/MissionDefenseInteractionSystem.cs\nAssets/Game/Scripts/Systems/RadarPingRequestSystem.cs\nAssets/Game/Scripts/Systems/RtsSelectionImmediateSelectedUnitCommandSystem.ImmediateOrders.cs\nAssets/Game/Scripts/Systems/ThreatWarningResolveSystem.cs\nAssets/Game/Scripts/UI/Shell/Ecs/M03RadioReportProjectionSystem.cs\nAssets/Game/Scripts/UI/Shell/Ecs/M04RadioReportProjectionSystem.cs\nAssets/Game/Scripts/UI/Shell/Ecs/MissionDefensePauseSystem.cs\nAssets/Game/Scripts/UI/Shell/Ecs/UiCampaignMissionProjectionSystem.cs\n  Expected: <empty>\n  But was:  < \"Assets/Game/Scripts/Systems/MissionDefenseInteractionSystem.cs\", \"Assets/Game/Scripts/Systems/RadarPingRequestSystem.cs\", \"Assets/Game/Scripts/Systems/RtsSelectionImmediateSelectedUnitCommandSystem.ImmediateOrders.cs\", \"Assets/Game/Scripts/Systems/ThreatWarningResolveSystem.cs\", \"Assets/Game/Scripts/UI/Shell/Ecs/M03RadioReportProjectionSystem.cs\", \"Assets/Game/Scripts/UI/Shell/Ecs/M04RadioReportProjectionSystem.cs\", \"Assets/Game/Scripts/UI/Shell/Ecs/MissionDefensePauseSystem.cs\", \"Assets/Game/Scripts/UI/Shell/Ecs/UiCampaignMissionProjectionSystem.cs\" >\n\n  at NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) [0x00044] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at NUnit.Framework.Assert.IsEmpty (System.Collections.IEnumerable collection, System.String message, System.Object[] args) [0x00007] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at EcsBurstHotPathArchitectureTests.NoBurstISystemFilesMustBeClassified () [0x000ba] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs:525 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "EcsBurstHotPathArchitectureTests.RuntimeOnUpdateMustNotReadScriptableObjectConfigAssets",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "EcsBurstHotPathArchitectureTests.BurstCompileCoverageMustNotDecrease",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "EcsBurstHotPathArchitectureTests.SystemStateTypeHandlesMustBeCreatedOnlyDuringInitialization",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "EcsBurstHotPathArchitectureTests.UnitRenderBudgetPureEcsSystemsMustNotUseUnityObjectApis",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "EcsBurstHotPathArchitectureTests.GameplayConsumersMustRemainIndependentFromRenderProxyAssignment",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "NonUiSystemBaseMigrationArchitectureTests.InventoryFileExistsAndRowsParse",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "NonUiSystemBaseMigrationArchitectureTests.EveryProductionNonUiSystemBaseHasExactlyOneInventoryRow",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "NonUiSystemBaseMigrationArchitectureTests.EveryProductionNonUiEcsDeclarationHasExactlyOneInventoryRow",
+      "result": "fail",
+      "failure": "NUnit.Framework.AssertionException:   Every production non-UI ECS declaration must have exactly one Phase 7 inventory row. Regenerate the inventory after adding ECS systems:\nAssets/Game/Scripts/Runtime/Missions/CampaignMissionAttemptFactProjectionSystem.cs|CampaignMissionAttemptFactProjectionSystem|struct|ISystem\nAssets/Game/Scripts/Runtime/Missions/CampaignMissionAttemptResourceInitializationSystem.cs|CampaignMissionAttemptResourceInitializationSystem|struct|ISystem\nAssets/Game/Scripts/Runtime/Missions/CampaignMissionDelayedWaveSystem.cs|CampaignMissionDelayedWaveSystem|struct|ISystem\nAssets/Game/Scripts/Systems/MissionDefenseInteractionSystem.cs|MissionDefenseInteractionSystem|struct|ISystem\nAssets/Game/Scripts/Systems/RadarPingRequestSystem.cs|RadarPingRequestSystem|struct|ISystem\nAssets/Game/Scripts/Systems/RtsSelectionImmediateSelectedUnitCommandSystem.ImmediateOrders.cs|RtsSelectionImmediateSelectedUnitCommandSystem|struct|ISystem\nAssets/Game/Scripts/Systems/ThreatWarningResolveSystem.cs|ThreatWarningResolveSystem|struct|ISystem\n  Expected: <empty>\n  But was:  < \"Assets/Game/Scripts/Runtime/Missions/CampaignMissionAttemptFactProjectionSystem.cs|CampaignMissionAttemptFactProjectionSystem|struct|ISystem\", \"Assets/Game/Scripts/Runtime/Missions/CampaignMissionAttemptResourceInitializationSystem.cs|CampaignMissionAttemptResourceInitializationSystem|struct|ISystem\", \"Assets/Game/Scripts/Runtime/Missions/CampaignMissionDelayedWaveSystem.cs|CampaignMissionDelayedWaveSystem|struct|ISystem\", \"Assets/Game/Scripts/Systems/MissionDefenseInteractionSystem.cs|MissionDefenseInteractionSystem|struct|ISystem\", \"Assets/Game/Scripts/Systems/RadarPingRequestSystem.cs|RadarPingRequestSystem|struct|ISystem\", \"Assets/Game/Scripts/Systems/RtsSelectionImmediateSelectedUnitCommandSystem.ImmediateOrders.cs|RtsSelectionImmediateSelectedUnitCommandSystem|struct|ISystem\", \"Assets/Game/Scripts/Systems/ThreatWarningResolveSystem.cs|ThreatWarningResolveSystem|struct|ISystem\" >\n\n  at NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) [0x00044] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at NUnit.Framework.Assert.IsEmpty (System.Collections.IEnumerable collection, System.String message, System.Object[] args) [0x00007] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at NonUiSystemBaseMigrationArchitectureTests.EveryProductionNonUiEcsDeclarationHasExactlyOneInventoryRow () [0x0010a] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/NonUiSystemBaseMigrationArchitectureTests.cs:198 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "NonUiSystemBaseMigrationArchitectureTests.InventoryRowsPointToExistingFilesAndUniqueTypes",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "NonUiSystemBaseMigrationArchitectureTests.ConvertedRowsCannotRegainSystemBase",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "NonUiSystemBaseMigrationArchitectureTests.ConvertedRowsAvoidManagedUnityObjectBlockers",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "NonUiSystemBaseMigrationArchitectureTests.ManagedPresentationExceptionsStayPresentationOnly",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "NonUiSystemBaseMigrationArchitectureTests.ViewReferenceOnlyMonoBehaviourRowsHaveNoRuntimeLoops",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "NonUiSystemBaseMigrationArchitectureTests.NoNewMonoBehaviourRuntimeLoopsOutsideBaseline",
+      "result": "fail",
+      "failure": "NUnit.Framework.AssertionException:   Phase 7 must not introduce new MonoBehaviour Update/LateUpdate/FixedUpdate/coroutine loops. Remove the loop or update the baseline only with explicit architecture approval:\nAssets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Allocation.cs AllocationPositiveControl.Update line=153 key=Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Allocation.cs|AllocationPositiveControl|Update\nAssets/Game/Scripts/UI/Components/MatchHudTransportPassengerDrawerView.cs MatchHudTransportPassengerDrawerView.LateUpdate line=179 key=Assets/Game/Scripts/UI/Components/MatchHudTransportPassengerDrawerView.cs|MatchHudTransportPassengerDrawerView|LateUpdate\nAssets/Game/Scripts/UI/Localization/V3LocalizationRuntimeBinder.cs V3LocalizationRuntimeBinder.Update line=44 key=Assets/Game/Scripts/UI/Localization/V3LocalizationRuntimeBinder.cs|V3LocalizationRuntimeBinder|Update\nAssets/Game/Scripts/UI/Localization/V3LocalizedTextBinding.cs V3LocalizedTextBinding.LateUpdate line=66 key=Assets/Game/Scripts/UI/Localization/V3LocalizedTextBinding.cs|V3LocalizedTextBinding|LateUpdate\nAssets/Game/Scripts/UI/Screens/AriaTutorialHudVariantLayoutView.cs AriaTutorialHudVariantLayoutView.LateUpdate line=43 key=Assets/Game/Scripts/UI/Screens/AriaTutorialHudVariantLayoutView.cs|AriaTutorialHudVariantLayoutView|LateUpdate\nAssets/Game/Scripts/UI/Screens/ArmoryV3ResponsiveCatalogGrid.cs ArmoryV3ResponsiveCatalogGrid.LateUpdate line=31 key=Assets/Game/Scripts/UI/Screens/ArmoryV3ResponsiveCatalogGrid.cs|ArmoryV3ResponsiveCatalogGrid|LateUpdate\nAssets/Game/Scripts/UI/Screens/BuildDrawerHudOcclusionView.cs BuildDrawerHudOcclusionView.LateUpdate line=71 key=Assets/Game/Scripts/UI/Screens/BuildDrawerHudOcclusionView.cs|BuildDrawerHudOcclusionView|LateUpdate\nAssets/Game/Scripts/UI/Screens/BuildPlacementConfirmationBarDesignLayoutView.cs BuildPlacementConfirmationBarDesignLayoutView.LateUpdate line=90 key=Assets/Game/Scripts/UI/Screens/BuildPlacementConfirmationBarDesignLayoutView.cs|BuildPlacementConfirmationBarDesignLayoutView|LateUpdate\nAssets/Game/Scripts/UI/Screens/BuildPlacementConfirmationResponsiveLayoutView.cs BuildPlacementConfirmationResponsiveLayoutView.LateUpdate line=83 key=Assets/Game/Scripts/UI/Screens/BuildPlacementConfirmationResponsiveLayoutView.cs|BuildPlacementConfirmationResponsiveLayoutView|LateUpdate\nAssets/Game/Scripts/UI/Screens/ButtonTemporaryFeedbackView.cs ButtonTemporaryFeedbackView.Update line=32 key=Assets/Game/Scripts/UI/Screens/ButtonTemporaryFeedbackView.cs|ButtonTemporaryFeedbackView|Update\nAssets/Game/Scripts/UI/Screens/CampaignMissionScreenBinder.cs CampaignMissionScreenBinder.Coroutine:RefreshAfterProjection line=128 key=Assets/Game/Scripts/UI/Screens/CampaignMissionScreenBinder.cs|CampaignMissionScreenBinder|Coroutine:RefreshAfterProjection\nAssets/Game/Scripts/UI/Screens/MainMenuV3SectionLayoutView.cs MainMenuV3SectionLayoutView.LateUpdate line=208 key=Assets/Game/Scripts/UI/Screens/MainMenuV3SectionLayoutView.cs|MainMenuV3SectionLayoutView|LateUpdate\nAssets/Game/Scripts/UI/Screens/MatchHudFullMapFilterView.cs MatchHudFullMapFilterView.LateUpdate line=92 key=Assets/Game/Scripts/UI/Screens/MatchHudFullMapFilterView.cs|MatchHudFullMapFilterView|LateUpdate\nAssets/Game/Scripts/UI/Screens/MissionDefenseHudView.cs MissionDefenseHudView.Update line=46 key=Assets/Game/Scripts/UI/Screens/MissionDefenseHudView.cs|MissionDefenseHudView|Update\nAssets/Game/Scripts/UI/Screens/MissionExtractionHudView.cs MissionExtractionHudView.Update line=16 key=Assets/Game/Scripts/UI/Screens/MissionExtractionHudView.cs|MissionExtractionHudView|Update\nAssets/Game/Scripts/UI/Screens/OperationsDashboardMapResponsiveView.cs OperationsDashboardMapResponsiveView.LateUpdate line=87 key=Assets/Game/Scripts/UI/Screens/OperationsDashboardMapResponsiveView.cs|OperationsDashboardMapResponsiveView|LateUpdate\nAssets/Game/Scripts/UI/Screens/PauseOptionsV3PopupView.cs PauseOptionsV3PopupView.Update line=52 key=Assets/Game/Scripts/UI/Screens/PauseOptionsV3PopupView.cs|PauseOptionsV3PopupView|Update\nAssets/Game/Scripts/UI/Screens/SkirmishSetupV3CycleControl.cs SkirmishSetupV3CycleControl.LateUpdate line=70 key=Assets/Game/Scripts/UI/Screens/SkirmishSetupV3CycleControl.cs|SkirmishSetupV3CycleControl|LateUpdate\nAssets/Game/Scripts/UI/Screens/SkirmishSetupV3SegmentVisual.cs SkirmishSetupV3SegmentVisual.LateUpdate line=49 key=Assets/Game/Scripts/UI/Screens/SkirmishSetupV3SegmentVisual.cs|SkirmishSetupV3SegmentVisual|LateUpdate\nAssets/Game/Scripts/UI/Settings/SettingsPopupResponsiveScaleView.cs SettingsPopupResponsiveScaleView.LateUpdate line=68 key=Assets/Game/Scripts/UI/Settings/SettingsPopupResponsiveScaleView.cs|SettingsPopupResponsiveScaleView|LateUpdate\n  Expected: <empty>\n  But was:  < \"Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Allocation.cs AllocationPositiveControl.Update line=153 key=Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Allocation.cs|AllocationPositiveControl|Update\", \"Assets/Game/Scripts/UI/Components/MatchHudTransportPassengerDrawerView.cs MatchHudTransportPassengerDrawerView.LateUpdate line=179 key=Assets/Game/Scripts/UI/Components/MatchHudTransportPassengerDrawerView.cs|MatchHudTransportPassengerDrawerView|LateUpdate\", \"Assets/Game/Scripts/UI/Localization/V3LocalizationRuntimeBinder.cs V3LocalizationRuntimeBinder.Update line=44 key=Assets/Game/Scripts/UI/Localization/V3LocalizationRuntimeBinder.cs|V3LocalizationRuntimeBinder|Update\", \"Assets/Game/Scripts/UI/Localization/V3LocalizedTextBinding.cs V3LocalizedTextBinding.LateUpdate line=66 key=Assets/Game/Scripts/UI/Localization/V3LocalizedTextBinding.cs|V3LocalizedTextBinding|LateUpdate\", \"Assets/Game/Scripts/UI/Screens/AriaTutorialHudVariantLayoutView.cs AriaTutorialHudVariantLayoutView.LateUpdate line=43 key=Assets/Game/Scripts/UI/Screens/AriaTutorialHudVariantLayoutView.cs|AriaTutorialHudVariantLayoutView|LateUpdate\", \"Assets/Game/Scripts/UI/Screens/ArmoryV3ResponsiveCatalogGrid.cs ArmoryV3ResponsiveCatalogGrid.LateUpdate line=31 key=Assets/Game/Scripts/UI/Screens/ArmoryV3ResponsiveCatalogGrid.cs|ArmoryV3ResponsiveCatalogGrid|LateUpdate\", \"Assets/Game/Scripts/UI/Screens/BuildDrawerHudOcclusionView.cs BuildDrawerHudOcclusionView.LateUpdate line=71 key=Assets/Game/Scripts/UI/Screens/BuildDrawerHudOcclusionView.cs|BuildDrawerHudOcclusionView|LateUpdate\", \"Assets/Game/Scripts/UI/Screens/BuildPlacementConfirmationBarDesignLayoutView.cs BuildPlacementConfirmationBarDesignLayoutView.LateUpdate line=90 key=Assets/Game/Scripts/UI/Screens/BuildPlacementConfirmationBarDesignLayoutView.cs|BuildPlacementConfirmationBarDesignLayoutView|LateUpdate\", \"Assets/Game/Scripts/UI/Screens/BuildPlacementConfirmationResponsiveLayoutView.cs BuildPlacementConfirmationResponsiveLayoutView.LateUpdate line=83 key=Assets/Game/Scripts/UI/Screens/BuildPlacementConfirmationResponsiveLayoutView.cs|BuildPlacementConfirmationResponsiveLayoutView|LateUpdate\", \"Assets/Game/Scripts/UI/Screens/ButtonTemporaryFeedbackView.cs ButtonTemporaryFeedbackView.Update line=32 key=Assets/Game/Scripts/UI/Screens/ButtonTemporaryFeedbackView.cs|ButtonTemporaryFeedbackView|Update\", \"Assets/Game/Scripts/UI/Screens/CampaignMissionScreenBinder.cs CampaignMissionScreenBinder.Coroutine:RefreshAfterProjection line=128 key=Assets/Game/Scripts/UI/Screens/CampaignMissionScreenBinder.cs|CampaignMissionScreenBinder|Coroutine:RefreshAfterProjection\", \"Assets/Game/Scripts/UI/Screens/MainMenuV3SectionLayoutView.cs MainMenuV3SectionLayoutView.LateUpdate line=208 key=Assets/Game/Scripts/UI/Screens/MainMenuV3SectionLayoutView.cs|MainMenuV3SectionLayoutView|LateUpdate\", \"Assets/Game/Scripts/UI/Screens/MatchHudFullMapFilterView.cs MatchHudFullMapFilterView.LateUpdate line=92 key=Assets/Game/Scripts/UI/Screens/MatchHudFullMapFilterView.cs|MatchHudFullMapFilterView|LateUpdate\", \"Assets/Game/Scripts/UI/Screens/MissionDefenseHudView.cs MissionDefenseHudView.Update line=46 key=Assets/Game/Scripts/UI/Screens/MissionDefenseHudView.cs|MissionDefenseHudView|Update\", \"Assets/Game/Scripts/UI/Screens/MissionExtractionHudView.cs MissionExtractionHudView.Update line=16 key=Assets/Game/Scripts/UI/Screens/MissionExtractionHudView.cs|MissionExtractionHudView|Update\", \"Assets/Game/Scripts/UI/Screens/OperationsDashboardMapResponsiveView.cs OperationsDashboardMapResponsiveView.LateUpdate line=87 key=Assets/Game/Scripts/UI/Screens/OperationsDashboardMapResponsiveView.cs|OperationsDashboardMapResponsiveView|LateUpdate\", \"Assets/Game/Scripts/UI/Screens/PauseOptionsV3PopupView.cs PauseOptionsV3PopupView.Update line=52 key=Assets/Game/Scripts/UI/Screens/PauseOptionsV3PopupView.cs|PauseOptionsV3PopupView|Update\", \"Assets/Game/Scripts/UI/Screens/SkirmishSetupV3CycleControl.cs SkirmishSetupV3CycleControl.LateUpdate line=70 key=Assets/Game/Scripts/UI/Screens/SkirmishSetupV3CycleControl.cs|SkirmishSetupV3CycleControl|LateUpdate\", \"Assets/Game/Scripts/UI/Screens/SkirmishSetupV3SegmentVisual.cs SkirmishSetupV3SegmentVisual.LateUpdate line=49 key=Assets/Game/Scripts/UI/Screens/SkirmishSetupV3SegmentVisual.cs|SkirmishSetupV3SegmentVisual|LateUpdate\", \"Assets/Game/Scripts/UI/Settings/SettingsPopupResponsiveScaleView.cs SettingsPopupResponsiveScaleView.LateUpdate line=68 key=Assets/Game/Scripts/UI/Settings/SettingsPopupResponsiveScaleView.cs|SettingsPopupResponsiveScaleView|LateUpdate\" >\n\n  at NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) [0x00044] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at NUnit.Framework.Assert.IsEmpty (System.Collections.IEnumerable collection, System.String message, System.Object[] args) [0x00007] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at NonUiSystemBaseMigrationArchitectureTests.NoNewMonoBehaviourRuntimeLoopsOutsideBaseline () [0x0007a] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/NonUiSystemBaseMigrationArchitectureTests.cs:323 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "NonUiSystemBaseMigrationArchitectureTests.BroadConvertedISystemRowsAreListedForReview",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "NonUiSystemBaseMigrationArchitectureTests.ConvertedPublicHelperApisRemainTrackedAsDebt",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "NonUiSystemBaseMigrationArchitectureTests.ProductionNonUiSystemBaseRowsStayOpenOrManagedExceptionDebt",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "NonUiSystemBaseMigrationArchitectureTests.OwnerLaneNamesMatchAgentTrackers",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "NonUiSystemBaseMigrationArchitectureTests.ManagedExceptionCountStaysUnderPlanningCap",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "NonUiSystemBaseMigrationArchitectureTests.FinalShareCanBeComputedFromInventoryCounts",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "NonUiSystemBaseMigrationArchitectureTests.DeliberateSystemBaseViolationIsDetectedByInventoryKeyGuard",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "NonUiSystemBaseMigrationArchitectureTests.DeliberateMonoBehaviourLoopViolationIsDetected",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "NonUiSystemBaseMigrationArchitectureTests.DeliberateManagedExceptionPolicyViolationIsDetected",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "NonUiSystemBaseMigrationArchitectureTests.UnmanagedEcsReferenceShapesAreNotManagedBlockers",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "NonEcsSystemConversionArchitectureTests.RuntimeSystemInventoryCanBeEnumerated",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "NonEcsSystemConversionArchitectureTests.GeneratedInventoryContainsEveryRuntimeNonEcsSystem",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "NonEcsSystemConversionArchitectureTests.DirectUnitPathRequestWritesStayInApprovedOrderOwners",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "NonEcsSystemConversionArchitectureTests.UiRuntimeMustNotMutateGameplayDirectly",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "NonEcsSystemConversionArchitectureTests.PointerAndUiBoundariesMustUseCommandRequests",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "NonEcsSystemConversionArchitectureTests.PublicNonEcsCommandMutatorHelpersStayOnApprovedTransitionList",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "NonEcsSystemConversionArchitectureTests.TopLevelGameplayNamingEscapesStayOnApprovedBoundaryList",
+      "result": "fail",
+      "failure": "NUnit.Framework.AssertionException:   Do not rename gameplay behavior into top-level `Service`, `Query`, `Rule`, `Cell`, `Resolver`, `Adapter`, `Composer`, or `Context` types. Use an ECS system, owner-local helper, passive UI contract, or explicitly approved boundary instead. Unexpected:\nAssets/Game/Scripts/Composition/CampaignMissionOperationMapLaunchResolver.cs|CampaignMissionOperationMapLaunchResolver\n  Expected: <empty>\n  But was:  < \"Assets/Game/Scripts/Composition/CampaignMissionOperationMapLaunchResolver.cs|CampaignMissionOperationMapLaunchResolver\" >\n\n  at NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) [0x00044] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at NUnit.Framework.Assert.IsEmpty (System.Collections.IEnumerable collection, System.String message, System.Object[] args) [0x00007] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at NonEcsSystemConversionArchitectureTests.TopLevelGameplayNamingEscapesStayOnApprovedBoundaryList () [0x000fd] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/NonEcsSystemConversionArchitectureTests.cs:354 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "NonEcsSystemConversionArchitectureTests.RetiredDirectCallContextSystemsStayDeleted",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "NonEcsSystemConversionArchitectureTests.ConvertedFiveSystemBaseTargetsStayFreeOfManagedPrefabDependencies",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ResourceExchangeArchitectureGuardrailTests.ResourceExchangeRuntimeSystemsPreferISystemAndAvoidSystemBase",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ResourceExchangeArchitectureGuardrailTests.ResourceExchangeProductionTypesAvoidBroadShellNames",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ResourceExchangeArchitectureGuardrailTests.ResourceExchangeUiScreensDoNotMutateEcsDirectly",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ResourceExchangeArchitectureGuardrailTests.ResourceExchangeHotPathSystemsAvoidManagedScanTokens",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ResourceExchangeArchitectureGuardrailTests.RequestValidationSystemUsesDirectMultiEntityQueryWithoutForbiddenHotPathApis",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ResourceExchangeArchitectureGuardrailTests.ResourceExchangeManagedPresentationBoundaryDoesNotMutateAuthoritativeExchangeState",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ResourceExchangeArchitectureGuardrailTests.ResourceExchangeWalletDoesNotMirrorPhysicalOilOrFuel",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "ResourceExchangeArchitectureGuardrailTests.ResourceExchangePopupUsesExistingShellPresentationLoop",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "TacticalResourceOwnershipArchitectureTests.ProductionEcs_HasOneTacticalCreditsAndMaterialsAuthority",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "M01FirstContactBurstAotArchitectureTests.RuntimeBurstReasonsUseUnmanagedConstants",
+      "result": "fail",
+      "failure": "NUnit.Framework.AssertionException:   Expected: String containing \"= \"result-not-settled\";\"\n  But was:  \"using System;\nusing Game.Components;\nusing Game.Missions.Contracts;\nusing Unity.Burst;\nusing Unity.Collections;\nusing Unity.Entities;\nusing Unity.Mathematics;\nusing Unity.Transforms;\n\nnamespace Game.Runtime\n{\n    [BurstCompile]\n    [UpdateInGroup(typeof(SimulationSystemGroup))]\n    [UpdateAfter(typeof(UnitDeathSystem))]\n    public partial struct CampaignMissionRuntimeSystem : ISystem\n    {\n        private static readonly FixedString64Bytes StaleResultActionReason = \"stale-result-action\";\n        private static readonly FixedString64Bytes UnsupportedResultActionReason = \"unsupported-result-action\";\n        private static readonly FixedString64Bytes RetryUnavailableReason = \"retry-unavailable\";\n        private static readonly FixedString64Bytes RetryAlreadyQueuedReason = \"retry-already-queued\";\n        private static readonly FixedString64Bytes MoveTargetAnchorId = \"anchor.ch01.m01.move_target\";\n\n        [BurstCompile]\n        public void OnCreate(ref SystemState state)\n        {\n            state.RequireForUpdate<CampaignMissionRootComponent>();\n            state.RequireForUpdate<CampaignMissionRuntimeComponent>();\n            state.RequireForUpdate<CampaignMissionAttemptFactsComponent>();\n            state.RequireForUpdate<CampaignMissionActionRequestElement>();\n        }\n\n        [BurstCompile]\n        public void OnUpdate(ref SystemState state)\n        {\n            if (SystemAPI.TryGetSingletonEntity<CampaignMissionRootComponent>(out Entity root) &&\n                TryConsumeAction(state.EntityManager, root))\n                return;\n            if (SystemAPI.TryGetSingleton(out RuntimeGameplayStateComponent gameplayState) &&\n                (gameplayState.PlayRequested == 0 || gameplayState.SimulationActive == 0))\n                return;\n\n            if (!SystemAPI.TryGetSingleton(out CampaignMissionRuntimeComponent activeRuntime) ||\n                !SystemAPI.TryGetSingleton(out CampaignMissionAttemptFactsComponent _))\n                return;\n            if (TryAdvanceExtraction(ref state, root, in activeRuntime)) return;\n            if (TryAdvanceDefense(ref state, root, in activeRuntime)) return;\n\n            RefRW<CampaignMissionAttemptFactsComponent> factsRw =\n                SystemAPI.GetSingletonRW<CampaignMissionAttemptFactsComponent>();\n            CampaignMissionAttemptFactsComponent projectedFacts = factsRw.ValueRO;\n            bool commandSquadSelected = projectedFacts.CommandSquadSpawned != 0;\n            bool progressProjectionReady = true;\n            if (activeRuntime.Outcome == MissionOutcomeKind.None &&\n                activeRuntime.Phase is >= MissionPhaseKind.FindSquad and <= MissionPhaseKind.SecureCorridor &&\n                projectedFacts.CommandSquadSpawned != 0)\n            {\n                float3 moveTarget = default;\n                float moveRadius = 0f;\n                OperationMapAnchorBlob moveAnchor = default;\n                bool hasMoveTarget = SystemAPI.TryGetSingleton(out OperationMapMetadataComponent metadata) &&\n                    metadata.Blob.IsCreated && CampaignMissionSpawnSystem.TryFindAnchor(\n                        ref metadata.Blob.Value, MoveTargetAnchorId, out moveAnchor);\n                if (hasMoveTarget)\n                {\n                    moveTarget = moveAnchor.Position;\n                    moveRadius = math.max(0.25f, moveAnchor.Radius);\n                }\n                ComponentLookup<EngageTarget> engageTargets = SystemAPI.GetComponentLookup<EngageTarget>(true);\n                ComponentLookup<CampaignMissionUnitRoleComponent> roles =\n                    SystemAPI.GetComponentLookup<CampaignMissionUnitRoleComponent>(true);\n                ComponentLookup<Faction> factions = SystemAPI.GetComponentLookup<Faction>(true);\n                ComponentLookup<UnitHealth> health = SystemAPI.GetComponentLookup<UnitHealth>(true);\n                ComponentLookup<SelectedUnitTag> selectedUnits = SystemAPI.GetComponentLookup<SelectedUnitTag>(true);\n                ComponentLookup<UnitGrid> unitGrids = SystemAPI.GetComponentLookup<UnitGrid>(true);\n                ComponentLookup<LocalTransform> transforms = SystemAPI.GetComponentLookup<LocalTransform>(true);\n                GridConfig grid = default;\n                bool hasGrid = SystemAPI.TryGetSingleton(out grid);\n                CampaignMissionRuntimeProgressUtility.MoveTargetContext moveContext =\n                    CampaignMissionRuntimeProgressUtility.CreateMoveTargetContext(\n                        moveTarget, moveRadius, hasGrid, in grid);\n                int aliveFriendly = 0;\n                int aliveHostile = 0;\n                int expectedFriendly = 0;\n                int observedFriendly = 0;\n                int observedHostile = 0;\n                int friendliesAtMoveTarget = 0;\n                bool commandedHostileAttack = false;\n\n                if (SystemAPI.TryGetSingleton(out CampaignMissionCatalogComponent catalog) &&\n                    CampaignMissionSpawnSystem.TryFindDefinition(in catalog, in activeRuntime, out int definitionIndex))\n                {\n                    ref CampaignMissionDefinitionBlob definition = ref catalog.Blob.Value.Missions[definitionIndex];\n                    expectedFriendly = CampaignMissionRuntimeProgressUtility.CountFriendlyUnits(ref definition);\n                }\n\n                foreach ((RefRO<CampaignMissionUnitRoleComponent> role,\n                          RefRO<Faction> faction,\n                          RefRO<UnitHealth> unitHealth,\n                          Entity entity)\n                         in SystemAPI.Query<RefRO<CampaignMissionUnitRoleComponent>, RefRO<Faction>,\n                             RefRO<UnitHealth>>().WithEntityAccess())\n                {\n                    if (!role.ValueRO.SessionToken.Equals(activeRuntime.SessionToken))\n                        continue;\n                    // Spawned mission entities receive their authored health after the ECS\n                    // entity itself becomes visible. A zero Max value is initialization, not\n                    // death; counting it as a ready roster can settle an irreversible defeat\n                    // one frame before the four soldiers receive 125/125 health.\n                    if (unitHealth.ValueRO.Max <= 0)\n                        continue;\n                    if (faction.ValueRO.Id > 1)\n                    {\n                        observedHostile++;\n                        if (unitHealth.ValueRO.Current <= 0)\n                            continue;\n                        aliveHostile++;\n                        continue;\n                    }\n                    observedFriendly++;\n                    if (unitHealth.ValueRO.Current <= 0)\n                        continue;\n                    aliveFriendly++;\n                    commandSquadSelected &= selectedUnits.HasComponent(entity);\n                    if (hasMoveTarget && transforms.HasComponent(entity) &&\n                        CampaignMissionRuntimeProgressUtility.IsAtMoveTarget(\n                            transforms[entity].Position,\n                            unitGrids.HasComponent(entity),\n                            unitGrids.HasComponent(entity) ? unitGrids[entity].Cell : default,\n                            in moveContext))\n                        friendliesAtMoveTarget++;\n                    if (!engageTargets.HasComponent(entity))\n                        continue;\n                    EngageTarget target = engageTargets[entity];\n                    if (target.IsCommanded == 0 || target.Target == Entity.Null ||\n                        !roles.HasComponent(target.Target) || !factions.HasComponent(target.Target) ||\n                        !health.HasComponent(target.Target) || health[target.Target].Current <= 0 ||\n                        !roles[target.Target].SessionToken.Equals(activeRuntime.SessionToken) ||\n                        factions[target.Target].Id <= 1)\n                        continue;\n                    commandedHostileAttack = true;\n                }\n\n                projectedFacts.ElapsedMilliseconds = SaturatingAddMilliseconds(\n                    projectedFacts.ElapsedMilliseconds, SystemAPI.Time.DeltaTime);\n                bool friendlyRosterReady = IsRosterProjectionReady(\n                    expectedFriendly, observedFriendly, activeRuntime.Phase);\n                progressProjectionReady = friendlyRosterReady;\n                if (friendlyRosterReady)\n                {\n                    projectedFacts.CommandSquadAlive = aliveFriendly > 0 ? (byte)1 : (byte)0;\n                    if (expectedFriendly > 0)\n                    {\n                        projectedFacts.SquadLossCount = math.max(\n                            projectedFacts.SquadLossCount, math.max(0, expectedFriendly - aliveFriendly));\n                    }\n                }\n                else\n                {\n                    // Spawn and prefab initialization cross system-group boundaries. Preserve\n                    // the one-time spawn facts until all four authored soldiers are visible to\n                    // the health roster instead of settling a false defeat on a partial frame.\n                    commandSquadSelected = false;\n                }\n                bool hostileRosterReady = IsRosterProjectionReady(\n                    projectedFacts.HostileTotalCount, observedHostile, activeRuntime.Phase);\n                if (hostileRosterReady)\n                {\n                    int defeated = math.clamp(projectedFacts.HostileTotalCount - aliveHostile,\n                        0, projectedFacts.HostileTotalCount);\n                    projectedFacts.HostileDefeatedCount = math.max(projectedFacts.HostileDefeatedCount, defeated);\n                }\n                if (friendlyRosterReady &&\n                    CampaignMissionRuntimeProgressUtility.AllAliveFriendliesReachedMoveTarget(\n                        aliveFriendly, friendliesAtMoveTarget))\n                    projectedFacts.MoveToCoverComplete = 1;\n                if (commandedHostileAttack)\n                {\n                    projectedFacts.ThreatConfirmed = 1;\n                    projectedFacts.AttackIssued = 1;\n                }\n                commandSquadSelected &= friendlyRosterReady && aliveFriendly > 0;\n                factsRw.ValueRW = projectedFacts;\n            }\n            // Evaluate from the authoritative local projection written above. Re-querying the\n            // same facts component in this update can observe its pre-projection value and was\n            // able to settle Defeat while the freshly projected roster still contained four\n            // living soldiers.\n            RefRW<CampaignMissionRuntimeComponent> runtimeRw =\n                SystemAPI.GetSingletonRW<CampaignMissionRuntimeComponent>();\n            CampaignMissionRuntimeComponent currentRuntime = runtimeRw.ValueRO;\n            CampaignMissionRuntimeComponent nextRuntime = currentRuntime;\n            bool transitioned = false;\n            if (progressProjectionReady)\n            {\n                transitioned = SystemAPI.TryGetSingleton(out CampaignMissionCatalogComponent missionCatalog)\n                    ? CampaignMissionRuntimeProgressUtility.TryEvaluateSettled(\n                        in currentRuntime, in projectedFacts, commandSquadSelected, in missionCatalog, out nextRuntime)\n                    : CampaignMissionRuntimeProgressUtility.TryEvaluateSettled(\n                        in currentRuntime, in projectedFacts, commandSquadSelected, out nextRuntime);\n            }\n            if (transitioned)\n            {\n                runtimeRw.ValueRW = nextRuntime;\n            }\n        }\n        private static int SaturatingAddMilliseconds(int current, float deltaSeconds)\n        {\n            int delta = (int)math.min(int.MaxValue, math.max(0f, math.round(deltaSeconds * 1000f)));\n            return current >= int.MaxValue - delta ? int.MaxValue : current + delta;\n        }\n\n        internal static bool IsRosterProjectionReady(\n            int expectedCount,\n            int observedCount,\n            MissionPhaseKind phase) =>\n            phase >= MissionPhaseKind.Engage || expectedCount > 0 && observedCount >= expectedCount;\n\n        internal static bool TryConsumeAction(EntityManager entityManager, Entity root)\n        {\n            if (!entityManager.HasComponent<CampaignMissionRuntimeComponent>(root) ||\n                !entityManager.HasBuffer<CampaignMissionActionRequestElement>(root) ||\n                !entityManager.HasBuffer<CampaignMissionActionResultElement>(root))\n                return false;\n            DynamicBuffer<CampaignMissionActionRequestElement> requests =\n                entityManager.GetBuffer<CampaignMissionActionRequestElement>(root);\n            if (requests.Length == 0)\n                return false;\n\n            CampaignMissionActionRequestElement request = requests[0];\n            requests.RemoveAt(0);\n            CampaignMissionRuntimeComponent runtime =\n                entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root);\n            bool correlated = request.TransitionToken == runtime.TransitionToken &&\n                              request.SessionToken.Equals(runtime.SessionToken) &&\n                              request.AttemptOrdinal == runtime.AttemptOrdinal;\n            bool accepted = false;\n            FixedString64Bytes reason = default;\n            if (!correlated || runtime.Phase is not (\n                    MissionPhaseKind.Result or MissionPhaseKind.ResultAfterDebrief))\n                reason = StaleResultActionReason;\n            else if (request.Action == MissionActionKind.Continue)\n                accepted = CampaignMissionResultDebriefTransitionUtility.TryContinueResult(\n                    entityManager, root, ref runtime, out reason);\n            else if (request.Action == MissionActionKind.Retry)\n                accepted = TryQueueRetry(entityManager, root, in runtime, in request, out reason);\n            else\n                reason = UnsupportedResultActionReason;\n\n            if (accepted && request.Action == MissionActionKind.Continue)\n                entityManager.SetComponentData(root, runtime);\n            entityManager.GetBuffer<CampaignMissionActionResultElement>(root).Add(\n                new CampaignMissionActionResultElement\n                {\n                    Action = request.Action,\n                    Accepted = accepted ? (byte)1 : (byte)0,\n                    TransitionToken = request.TransitionToken,\n                    SessionToken = request.SessionToken,\n                    AttemptOrdinal = request.AttemptOrdinal,\n                    ReasonCode = reason\n                });\n            return true;\n        }\n        [BurstDiscard]\n        public static void TryConsumeActionManaged(\n            EntityManager entityManager, Entity root, ref bool consumed)\n        {\n            if (!entityManager.HasComponent<CampaignMissionRuntimeComponent>(root) ||\n                !entityManager.HasBuffer<CampaignMissionActionRequestElement>(root) ||\n                !entityManager.HasBuffer<CampaignMissionActionResultElement>(root))\n                return;\n            DynamicBuffer<CampaignMissionActionRequestElement> requests =\n                entityManager.GetBuffer<CampaignMissionActionRequestElement>(root);\n            if (requests.Length == 0 || requests[0].Action != MissionActionKind.Exit)\n            {\n                consumed = TryConsumeAction(entityManager, root);\n                return;\n            }\n\n            CampaignMissionActionRequestElement request = requests[0];\n            requests.RemoveAt(0);\n            CampaignMissionRuntimeComponent runtime =\n                entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root);\n            bool correlated = request.TransitionToken == runtime.TransitionToken &&\n                              request.SessionToken.Equals(runtime.SessionToken) &&\n                              request.AttemptOrdinal == runtime.AttemptOrdinal;\n            FixedString64Bytes reason = default;\n            bool accepted = correlated && TryExit(entityManager, root, in runtime, out reason);\n            if (!correlated)\n                reason = new FixedString64Bytes(\"stale-exit-action\");\n            entityManager.GetBuffer<CampaignMissionActionResultElement>(root).Add(\n                new CampaignMissionActionResultElement\n                {\n                    Action = request.Action,\n                    Accepted = accepted ? (byte)1 : (byte)0,\n                    TransitionToken = request.TransitionToken,\n                    SessionToken = request.SessionToken,\n                    AttemptOrdinal = request.AttemptOrdinal,\n                    ReasonCode = reason\n                });\n            consumed = true;\n        }\n        private static bool TryExit(\n            EntityManager entityManager, Entity root, in CampaignMissionRuntimeComponent runtime,\n            out FixedString64Bytes reason)\n        {\n            reason = default;\n            if (runtime.Phase < MissionPhaseKind.Preparing || runtime.Phase > MissionPhaseKind.SecureCorridor ||\n                !entityManager.HasComponent<CampaignMissionProgressStoreReferenceComponent>(root))\n            {\n                reason = new FixedString64Bytes(\"exit-unavailable\");\n                return false;\n            }\n\n            CampaignMissionProgressStore store = entityManager\n                .GetComponentObject<CampaignMissionProgressStoreReferenceComponent>(root).Store;\n            try\n            {\n                if (store == null)\n                    throw new InvalidOperationException(\"Campaign mission progress store is unavailable.\");\n                store.SetPendingResume(runtime.MissionId.ToString(), true, runtime.AttemptOrdinal);\n            }\n            catch (Exception)\n            {\n                reason = new FixedString64Bytes(\"exit-persistence-failed\");\n                return false;\n            }\n\n            EntityCommandBuffer cleanup = new(Allocator.Temp);\n            CampaignMissionLaunchSystem.QueueAttemptCleanup(entityManager, ref cleanup, root);\n            cleanup.Playback(entityManager);\n            cleanup.Dispose();\n            if (entityManager.HasComponent<CampaignMissionAttemptFactsComponent>(root))\n                entityManager.SetComponentData(root, default(CampaignMissionAttemptFactsComponent));\n            entityManager.SetComponentData(root, default(CampaignMissionRuntimeComponent));\n            return true;\n        }\n        private static bool TryQueueRetry(\n            EntityManager entityManager, Entity root, in CampaignMissionRuntimeComponent runtime,\n            in CampaignMissionActionRequestElement action, out FixedString64Bytes reason)\n        {\n            reason = default;\n            if (runtime.Outcome != MissionOutcomeKind.Defeat || runtime.TransitionToken == ulong.MaxValue ||\n                runtime.AttemptOrdinal == int.MaxValue ||\n                !entityManager.HasBuffer<CampaignMissionLaunchRequestElement>(root))\n            {\n                reason = RetryUnavailableReason;\n                return false;\n            }\n            DynamicBuffer<CampaignMissionLaunchRequestElement> launches =\n                entityManager.GetBuffer<CampaignMissionLaunchRequestElement>(root);\n            if (launches.Length != 0)\n            {\n                reason = RetryAlreadyQueuedReason;\n                return false;\n            }\n            launches.Add(new CampaignMissionLaunchRequestElement\n            {\n                SchemaVersion = MissionLaunchPayloadFactory.CurrentSchemaVersion,\n                MissionId = runtime.MissionId,\n                ScenarioId = runtime.ScenarioId,\n                OperationMapId = runtime.OperationMapId,\n                LaunchOrigin = runtime.LaunchOrigin,\n                RunKind = MissionRunKind.Retry,\n                Guidance = runtime.Guidance,\n                ReplayTutorialEnabled = action.ReplayTutorialEnabled,\n                TransitionToken = runtime.TransitionToken + 1ul,\n                SessionToken = runtime.SessionToken,\n                AttemptOrdinal = runtime.AttemptOrdinal + 1,\n                DeterministicSeed = runtime.DeterministicSeed\n            });\n            return true;\n        }\n        public static bool TryEvaluate(\n            in CampaignMissionRuntimeComponent current,\n            in CampaignMissionAttemptFactsComponent facts,\n            out CampaignMissionRuntimeComponent next)\n            => TryEvaluate(in current, in facts, false, out next);\n\n        public static bool TryEvaluate(\n            in CampaignMissionRuntimeComponent current, in CampaignMissionAttemptFactsComponent facts,\n            bool commandSquadSelected, out CampaignMissionRuntimeComponent next)\n        {\n            next = current;\n            if (!CampaignMissionRuntimeProgressUtility.TryResolveAutomaticTransition(\n                    in current, in facts, commandSquadSelected,\n                    out MissionPhaseKind phase,\n                    out MissionOutcomeKind outcome, out MissionReturnDestinationKind destination))\n                return false;\n            return TryTransition(in current, phase, outcome, destination, out next);\n        }\n\n        public static bool TryTransition(\n            in CampaignMissionRuntimeComponent current,\n            MissionPhaseKind phase,\n            MissionOutcomeKind outcome,\n            MissionReturnDestinationKind destination,\n            out CampaignMissionRuntimeComponent next)\n        {\n            next = current;\n            if (!IsValidState(in current) || !IsValidTransition(current.Phase, phase) ||\n                !IsValidOutcome(phase, outcome, destination) || current.Version == uint.MaxValue)\n                return false;\n\n            if (current.Outcome != MissionOutcomeKind.None &&\n                (current.Phase is not (\n                     MissionPhaseKind.Result or MissionPhaseKind.DebriefFirstClear or\n                     MissionPhaseKind.ResultAfterDebrief) ||\n                 outcome != current.Outcome || destination != current.ReturnDestination))\n                return false;\n\n            if (current.Phase == phase && current.Outcome == outcome &&\n                current.ReturnDestination == destination)\n                return false;\n\n            next.Phase = phase;\n            next.Outcome = outcome;\n            next.ReturnDestination = destination;\n            next.Version = current.Version + 1u;\n            return true;\n        }\n\n        public static bool IsValidTransition(MissionPhaseKind from, MissionPhaseKind to)\n        {\n            if (from == to)\n                return true;\n            return from switch\n            {\n                MissionPhaseKind.Preparing => to == MissionPhaseKind.InteractiveBrief,\n                MissionPhaseKind.InteractiveBrief => to == MissionPhaseKind.FindSquad,\n                MissionPhaseKind.FindSquad => to is MissionPhaseKind.MoveToCover or\n                    MissionPhaseKind.Engage or MissionPhaseKind.Result,\n                MissionPhaseKind.MoveToCover => to is MissionPhaseKind.ConfirmThreat or MissionPhaseKind.Result,\n                MissionPhaseKind.ConfirmThreat => to is MissionPhaseKind.Engage or MissionPhaseKind.Result,\n                MissionPhaseKind.Engage => to is MissionPhaseKind.SecureCorridor or MissionPhaseKind.Result,\n                MissionPhaseKind.SecureCorridor => to == MissionPhaseKind.Result,\n                MissionPhaseKind.Result => to is MissionPhaseKind.DebriefFirstClear or MissionPhaseKind.ReturnReplay,\n                MissionPhaseKind.DebriefFirstClear => to == MissionPhaseKind.ResultAfterDebrief,\n                MissionPhaseKind.ResultAfterDebrief => to == MissionPhaseKind.ReturnReplay,\n                _ => false\n            };\n        }\n\n        private static bool IsValidState(in CampaignMissionRuntimeComponent state) =>\n            state.Version > 0 && state.SourceVersion > 0 && state.AttemptOrdinal >= 0 &&\n            state.DeterministicSeed != 0 && !state.MissionId.IsEmpty &&\n            !state.ScenarioId.IsEmpty && !state.OperationMapId.IsEmpty &&\n            !state.SessionToken.IsEmpty && state.Phase is >= MissionPhaseKind.Preparing and\n                <= MissionPhaseKind.ResultAfterDebrief && state.Outcome is >= MissionOutcomeKind.None and\n                <= MissionOutcomeKind.Defeat;\n\n        private static bool IsValidOutcome(\n            MissionPhaseKind phase,\n            MissionOutcomeKind outcome,\n            MissionReturnDestinationKind destination)\n        {\n            if (phase < MissionPhaseKind.Result)\n                return outcome == MissionOutcomeKind.None && destination == MissionReturnDestinationKind.None;\n            if (phase == MissionPhaseKind.Result)\n                return outcome != MissionOutcomeKind.None && destination != MissionReturnDestinationKind.None;\n            return outcome == MissionOutcomeKind.Victory && destination != MissionReturnDestinationKind.None;\n        }\n    }\n}\n\"\n\n  at NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) [0x00044] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at NUnit.Framework.StringAssert.Contains (System.String expected, System.String actual, System.String message, System.Object[] args) [0x00008] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at NUnit.Framework.StringAssert.Contains (System.String expected, System.String actual) [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at M01FirstContactBurstAotArchitectureTests.RuntimeBurstReasonsUseUnmanagedConstants () [0x00019] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/M01FirstContactBurstAotArchitectureTests.cs:72 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "M01FirstContactBurstAotArchitectureTests.GuidanceBurstTextUsesUnmanagedConstants",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "M01FirstContactBurstAotArchitectureTests.BurstCompilationRemainsEnabled",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "FirstLaunchArchitectureAlignmentTests.RuntimeTypeNamesUseApprovedFirstLaunchBoundaries",
+      "result": "fail",
+      "failure": "NUnit.Framework.AssertionException:   FirstLaunch runtime classes must use passive View/Config/data names or approved managed reason suffixes.\nAssets/Game/Scripts/Composition/Narrative/CampaignMissionNarrativePlaybackRuntime.cs declares `CampaignMissionNarrativePlaybackRuntime` without an approved FirstLaunch boundary suffix.\nAssets/Game/Scripts/Configs/Narrative/M02EstablishBaseLocalizedText.cs declares `M02EstablishBaseLocalizedText` without an approved FirstLaunch boundary suffix.\n  Expected: <empty>\n  But was:  < \"Assets/Game/Scripts/Composition/Narrative/CampaignMissionNarrativePlaybackRuntime.cs declares `CampaignMissionNarrativePlaybackRuntime` without an approved FirstLaunch boundary suffix.\", \"Assets/Game/Scripts/Configs/Narrative/M02EstablishBaseLocalizedText.cs declares `M02EstablishBaseLocalizedText` without an approved FirstLaunch boundary suffix.\" >\n\n  at NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) [0x00044] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at NUnit.Framework.Assert.IsEmpty (System.Collections.IEnumerable collection, System.String message, System.Object[] args) [0x00007] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at FirstLaunchArchitectureAlignmentTests.RuntimeTypeNamesUseApprovedFirstLaunchBoundaries () [0x00138] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/Narrative/FirstLaunchArchitectureAlignmentTests.cs:105 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "FirstLaunchArchitectureAlignmentTests.UiRuntimeAssemblyPreservesNarrativeDependencyDirection",
+      "result": "fail",
+      "failure": "NUnit.Framework.AssertionException:   Game.UI.Runtime must remain a presentation edge and must not reference composition, configs, runtime, or ECS. Violations: Game.Configs\n  Expected: <empty>\n  But was:  < \"Game.Configs\" >\n\n  at NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) [0x00044] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at NUnit.Framework.Assert.IsEmpty (System.Collections.IEnumerable collection, System.String message, System.Object[] args) [0x00007] in <8b63e8ac0a4746599ed207982825ae6c>:0 \n  at FirstLaunchArchitectureAlignmentTests.UiRuntimeAssemblyPreservesNarrativeDependencyDirection () [0x00053] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/Narrative/FirstLaunchArchitectureAlignmentTests.cs:127 \n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <299d5c9ae27b4d27af003e5f456f4b13>:0"
+    },
+    {
+      "test": "FirstLaunchArchitectureAlignmentTests.MenuBootstrapUsesOnlyTheFirstLaunchCompositionBoundary",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "FirstLaunchArchitectureAlignmentTests.CompositionOwnerUsesDedicatedProfileShellAndReviewBoundaries",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "FirstLaunchArchitectureAlignmentTests.NarrativeRuntimeOwnsRoutePolicyWithoutUiCompositionOrEcsDependencies",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "FirstLaunchArchitectureAlignmentTests.SequenceProgressionStaysInPureNarrativeRuntime",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "FirstLaunchArchitectureAlignmentTests.NarrativeContractsOwnDomainDataWithoutUiDependencies",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "FirstLaunchArchitectureAlignmentTests.ProductionPolicyConsumesAuthoredNarrativeMetadata",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "FirstLaunchArchitectureAlignmentTests.PanelResidencyIsAsynchronousAndOutsideSequenceProgression",
+      "result": "pass",
+      "failure": null
+    },
+    {
+      "test": "FirstLaunchArchitectureAlignmentTests.NarrativeViewsRemainPassiveReferenceAndIntentBoundaries",
+      "result": "pass",
+      "failure": null
+    }
+  ],
+  "startingCommit": "60252791d6f9c3bebb759e4fe2aef27547d5dc6d"
+}

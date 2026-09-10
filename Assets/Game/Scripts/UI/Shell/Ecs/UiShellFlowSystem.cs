@@ -121,7 +121,7 @@ namespace Game.UI.Shell.Ecs
                 }
                 else
                 {
-                    UIRoute returnRoute = shellState.ActiveRoute == UIRoute.Campaign ? UIRoute.Campaign : UIRoute.MainMenu;
+                    UIRoute returnRoute = ResolveModePage(shellState.ActiveRoute);
                     BeginCommandSequence(ref shellState, commands, UiShellCommandKind.ExitLoading, UiShellRegionId.LoadingLayer, returnRoute, UiShellMode.MainMenu);
                     AppendCommand(commands, shellState, UiShellCommandKind.EnterMenu, UiShellRegionId.None, returnRoute, UiShellMode.MainMenu);
                     shellState.CurrentMode = UiShellMode.MainMenu;
@@ -139,6 +139,14 @@ namespace Game.UI.Shell.Ecs
             state.EntityManager.SetComponentData(boundary, matchIntro);
         }
 
+        private static UIRoute ResolveModePage(UIRoute route) => route switch
+        {
+            UIRoute.Campaign or UIRoute.MissionBriefing => UIRoute.Campaign,
+            UIRoute.Operations or UIRoute.DistrictDetail => UIRoute.Operations,
+            UIRoute.QuickCustomSetup => UIRoute.QuickCustomSetup,
+            _ => UIRoute.MainMenu
+        };
+
         private static void ProcessRouteRequest(
             ref UiShellStateComponent shellState,
             ref MatchIntroTransitionComponent matchIntro,
@@ -149,6 +157,10 @@ namespace Game.UI.Shell.Ecs
             switch (request.Intent)
             {
                 case UiShellRouteIntent.EnterMatch:
+                    if (shellState.ActiveRoute != UIRoute.Match)
+                        shellState.MatchReturnRoute = ResolveModePage(shellState.ActiveRoute);
+                    if (shellState.ActiveRoute == UIRoute.LoadoutSquadPrep && routeHistory.Length > 0)
+                        shellState.MatchReturnRoute = ResolveModePage(routeHistory[routeHistory.Length - 1].Route);
                     routeHistory.Clear();
                     BeginCommandSequence(ref shellState, commands, UiShellCommandKind.ShowLoading, UiShellRegionId.LoadingLayer, UIRoute.Match, UiShellMode.Loading);
                     AppendCommand(commands, shellState, UiShellCommandKind.ExitMenu, UiShellRegionId.None, UIRoute.Match, UiShellMode.Loading);
@@ -165,7 +177,8 @@ namespace Game.UI.Shell.Ecs
                     break;
                 case UiShellRouteIntent.ReturnToMainMenu:
                     routeHistory.Clear();
-                    UIRoute returnRoute = request.Route == UIRoute.Campaign ? UIRoute.Campaign : UIRoute.MainMenu;
+                    UIRoute returnRoute = request.Route == UIRoute.MainMenu
+                        ? ResolveModePage(shellState.MatchReturnRoute) : ResolveModePage(request.Route);
                     BeginCommandSequence(ref shellState, commands, UiShellCommandKind.ShowLoading, UiShellRegionId.LoadingLayer, returnRoute, UiShellMode.Loading);
                     // Keep the return transition limited to the zero-duration opaque loading
                     // command. Packaged Android proved that combining it with the Match HUD

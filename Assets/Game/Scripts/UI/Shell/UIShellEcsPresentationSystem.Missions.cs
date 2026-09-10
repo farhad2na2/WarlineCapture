@@ -28,6 +28,7 @@ namespace Game.UI.Runtime
                     CollectMissionViews(content, UIShellRegionId.LeftRegion);
                     CollectMissionViews(content, UIShellRegionId.RightRegion);
                     CollectMissionViews(content, UIShellRegionId.FooterRegion);
+                    CollectMissionViews(content, UIShellRegionId.PopupLayer);
                 }
                 nextMissionProjectionRefresh = 0;
             }

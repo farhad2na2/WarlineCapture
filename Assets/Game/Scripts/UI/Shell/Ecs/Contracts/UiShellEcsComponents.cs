@@ -25,6 +25,7 @@ namespace Game.UI.Shell.Contracts.Ecs
     {
         public UiShellMode CurrentMode;
         public UIRoute ActiveRoute;
+        public UIRoute MatchReturnRoute;
         public UiShellTransitionPhase Phase;
         public int TransitionSequenceId;
         public byte IsTransitionRunning;

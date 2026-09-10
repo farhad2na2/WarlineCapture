@@ -116,7 +116,7 @@ namespace Game.Editor
             foreach(var view in root.GetComponentsInChildren<CampaignOperationsScreenView>(true))
             {
                 var data = new SerializedObject(view);
-                SetArray(data, "missionLockIcons", (view.MissionNodes ?? Array.Empty<RectTransform>()).Select(n => n != null ? n.Find("Lock")?.gameObject : null).ToArray());
+                SetArray(data, "missionLockIcons", (view.MissionNodes ?? Array.Empty<RectTransform>()).Select(n => n != null ? (n.Find("Lock") ?? n.Find("StateIcon"))?.gameObject : null).ToArray());
                 Transform briefing = view.MissionBriefing;
                 var objectives = briefing != null ? Enumerable.Range(0, briefing.childCount).Select(briefing.GetChild)
                     .Where(t => t.name == "Objective").Select(t => t.Find("Label")?.GetComponent<TMP_Text>()).ToArray() : Array.Empty<TMP_Text>();

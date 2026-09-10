@@ -98,7 +98,13 @@ namespace Game.UI.Shell.Ecs
             _observedProfileVersion = profileVersion;
             ref CampaignMissionCatalogBlob catalogBlob = ref catalog.Blob.Value;
             int definitionIndex = FindDefinitionIndex(ref catalogBlob, current.SelectedMissionId);
-            if (definitionIndex < 0 || progressionCompatibilityApplied)
+            bool campaignPage = entityManager.HasComponent<UiShellStateComponent>(uiRoot) &&
+                entityManager.GetComponentData<UiShellStateComponent>(uiRoot).ActiveRoute == UIRoute.Campaign;
+            bool refreshCompleted = false;
+            for (int i = 0; i < requests.Length; i++)
+                refreshCompleted |= campaignPage && requests[i].Action == UiCampaignMissionActionKind.Refresh &&
+                    Find(progress, current.SelectedMissionId)?.firstClearCompleted == true;
+            if (definitionIndex < 0 || progressionCompatibilityApplied || refreshCompleted)
                 definitionIndex = FindDefaultDefinitionIndex(ref catalogBlob, progress);
 
             bool actionRequested = requests.Length > 0;
@@ -417,7 +423,7 @@ namespace Game.UI.Shell.Ecs
             left.SuccessfulReplayCount == right.SuccessfulReplayCount &&
             left.LastAttemptOrdinal == right.LastAttemptOrdinal && left.Available == right.Available &&
             left.FirstClearCompleted == right.FirstClearCompleted && left.PendingResume == right.PendingResume &&
-            left.NextMissionRevealed == right.NextMissionRevealed && left.AvailableMissionMask == right.AvailableMissionMask;
+            left.NextMissionRevealed == right.NextMissionRevealed && left.AvailableMissionMask == right.AvailableMissionMask && left.CompletedMissionMask == right.CompletedMissionMask;
 
         private static bool SameBriefing(
             in UiMissionBriefingComponent left, in UiMissionBriefingComponent right)

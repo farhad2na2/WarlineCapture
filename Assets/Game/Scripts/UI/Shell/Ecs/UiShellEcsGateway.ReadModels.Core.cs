@@ -283,7 +283,7 @@ namespace Game.UI.Shell.Ecs
                 component.PrimaryAction, component.PrimaryActionLabel.ToString());
             campaign = new UiCampaignOperationsModel(
                 component.Version, component.CatalogSourceVersion, component.ProgressSourceVersion,
-                selected, component.NextMissionId.ToString(), component.NextMissionRevealed != 0, component.AvailableMissionMask);
+                selected, component.NextMissionId.ToString(), component.NextMissionRevealed != 0, component.AvailableMissionMask, component.CompletedMissionMask);
             return campaign.IsValid;
         }
 

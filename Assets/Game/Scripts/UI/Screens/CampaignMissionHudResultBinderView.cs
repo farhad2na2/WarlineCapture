@@ -100,7 +100,7 @@ namespace Game.UI.Runtime
             {
                 UiShellRuntimeGateway.TryEnqueueRouteRequest(
                     UiShellRouteIntent.ReturnToMainMenu,
-                    activeModel.Defense.Applicable || activeModel.Extraction.Applicable
+                    activeModel.MissionId != UiCampaignMissionProjectionIds.M01
                         ? UIRoute.Campaign : UIRoute.MainMenu,
                     pushHistory: false);
             }

@@ -157,7 +157,7 @@ namespace Game.UI.Runtime
                     ? UiShellRuntimeGateway.Localization.Get("ui.campaign.start_briefing", "START BRIEFING")
                     : UiShellRuntimeGateway.Localization.GetBySource(mission.PrimaryActionLabel));
             launchMissionButton.interactable = mission.Available;
-            ApplyMissionNodes(mission.MissionId, model.NextMissionRevealed, model.AvailableMissionMask);
+            ApplyMissionNodes(mission.MissionId, model.NextMissionRevealed, model.AvailableMissionMask, model.CompletedMissionMask);
             ApplyRadarWarning(mission);
             ApplyAirlift(mission);
             ApplyMissionGoals(mission.MissionId);
@@ -183,7 +183,7 @@ namespace Game.UI.Runtime
             return $"{mission.DisplayName}  |  {mission.PrimaryActionLabel}  |  {mission.BestStars}/3{time}";
         }
 
-        private void ApplyMissionNodes(string selectedMissionId, bool m02Revealed, byte availableMask)
+        private void ApplyMissionNodes(string selectedMissionId, bool m02Revealed, byte availableMask, byte completedMask)
         {
             for (int index = 0; index < (missionNodes?.Length ?? 0); index++)
             {
@@ -196,6 +196,8 @@ namespace Game.UI.Runtime
                 GameObject lockIcon = missionLockIcons != null && index < missionLockIcons.Length ? missionLockIcons[index] : null;
                 if (lockIcon != null)
                     lockIcon.SetActive(!available);
+                bool selected = selectedMissionId == (index == 0 ? UiCampaignMissionProjectionIds.M01 : index == 1 ? UiCampaignMissionProjectionIds.M02 : index == 2 ? UiCampaignMissionProjectionIds.M03 : "saga.ch01.m04.airlift") && index < 4;
+                ApplyNodeAppearance(index, available, (completedMask & (1 << index)) != 0, selected);
             }
         }
 

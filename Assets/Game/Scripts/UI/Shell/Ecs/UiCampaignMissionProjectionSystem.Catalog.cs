@@ -85,6 +85,16 @@ namespace Game.UI.Shell.Ecs
             return mask;
         }
 
+        private static byte CompletedMissionMask(CampaignMissionProgressSaveData[] progress)
+        {
+            byte mask = 0;
+            string[] ids = { M01MissionId, M02MissionId, "saga.ch01.m03.radar_warning", "saga.ch01.m04.airlift" };
+            for (int i = 0; i < ids.Length; i++)
+                if (Find(progress, new FixedString64Bytes(ids[i]))?.firstClearCompleted == true)
+                    mask |= (byte)(1 << i);
+            return mask;
+        }
+
         private static bool IsDefinitionAvailable(
             ref CampaignMissionDefinitionBlob definition,
             CampaignMissionProgressSaveData[] progress)
@@ -144,6 +154,7 @@ namespace Game.UI.Shell.Ecs
                 FirstClearCompleted = completed ? (byte)1 : (byte)0,
                 PendingResume = pending ? (byte)1 : (byte)0,
                 AvailableMissionMask = availableMissionMask,
+                CompletedMissionMask = CompletedMissionMask(progress),
                 NextMissionRevealed = !nextMissionId.IsEmpty &&
                                       Find(progress, nextMissionId)?.available == true
                     ? (byte)1

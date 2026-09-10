@@ -26,6 +26,7 @@ namespace Game.UI.Shell.Contracts.Ecs
         public byte PendingResume;
         public byte NextMissionRevealed;
         public byte AvailableMissionMask;
+        public byte CompletedMissionMask;
     }
 
     public struct UiMissionObjectiveProjectionData

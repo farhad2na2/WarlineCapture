@@ -18,7 +18,7 @@ namespace Game.Editor
 {
     /// <summary>Exercises M2's visible build buttons, construction and production with an isolated save.</summary>
     [InitializeOnLoad]
-    public static class M02BuildingPlacementEditorProbe
+    public static partial class M02BuildingPlacementEditorProbe
     {
         private const string Active = "Warline.M02.PlacementProbe.Active";
         private const string Output = "/private/tmp/warline-m02-placement";
@@ -52,7 +52,7 @@ namespace Game.Editor
             try
             {
                 if (error != null) throw new InvalidOperationException(error);
-                if (EditorApplication.timeSinceStartup - started > 240) throw new TimeoutException("M2 placement/production deadline, step=" + step);
+                if (EditorApplication.timeSinceStartup - started > 480) throw new TimeoutException("M2 placement/production deadline, step=" + step);
                 var world = World.DefaultGameObjectInjectionWorld;
                 if (world == null || !world.IsCreated) return;
                 var em = world.EntityManager;
@@ -63,7 +63,7 @@ namespace Game.Editor
                 {
                     if (!em.HasComponent<CampaignMissionProgressStoreReferenceComponent>(root)) return;
                     var store = new CampaignMissionProgressStore(new SaveService(new JsonSaveRepository(Output + "/save-" + Guid.NewGuid().ToString("N"))));
-                    store.EnsureAvailable(M02EstablishBaseConfigBuilder.MissionId);
+                    store.Settle("saga.ch01.m01.first_contact", "qa-prerequisite", 0, true, 3, 30000, M02EstablishBaseConfigBuilder.MissionId);
                     em.GetComponentObject<CampaignMissionProgressStoreReferenceComponent>(root).Store = store;
                     prepared = true; return;
                 }
@@ -76,6 +76,7 @@ namespace Game.Editor
                     return;
                 }
                 SkipNarrative();
+                if (step >= 7) { AdvanceCampaignReturn(em, root); return; }
                 if (!em.HasComponent<CampaignMissionOpeningPresentationComponent>(root)) return;
                 var facts = em.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
                 if (facts.InteractiveBriefCompleted == 0 || em.GetComponentData<CampaignMissionOpeningPresentationComponent>(root).Stage < 7) return;
@@ -132,8 +133,12 @@ namespace Game.Editor
                         var runtime = em.GetComponentData<CampaignMissionRuntimeComponent>(root);
                         if (runtime.Outcome == MissionOutcomeKind.None) return;
                         if (runtime.Outcome != MissionOutcomeKind.Victory) throw new InvalidOperationException("M2 settled without Victory.");
+                        if (!UiShellRuntimeGateway.TryReadMissionResult(out var result) || result.DebriefRequired || !result.PrimaryActionEnabled) return;
+                        var popup = UnityEngine.Object.FindAnyObjectByType<MissionResultPopupView>();
+                        var primary = popup?.GetType().GetField("primaryButton", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(popup) as Button;
+                        if (!Click(primary)) return;
                         ScreenCapture.CaptureScreenshot(Output + "/produced.png");
-                        Complete(true, $"buildingPlaced={facts.RequiredBuildingPlacedCount} buildingCompleted={facts.RequiredBuildingCompletedCount} produced={facts.RequiredUnitProducedCount} outcome={runtime.Outcome}; actual place/confirm/recruit buttons responsive");
+                        Log("M2 settled and final result Continue accepted"); Next();
                         break;
                 }
             }

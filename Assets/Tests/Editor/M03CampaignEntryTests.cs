@@ -113,6 +113,23 @@ public sealed class M03CampaignEntryTests
         Assert.IsTrue(f.Store.SetPendingResume(M3, true, 1)); f.Project();
         Assert.AreEqual(1, f.Card.PendingResume);
     }
+    [Test] public void ReturningToCampaignFocusesNextUnfinishedMissionWithoutChangingManualSelection()
+    {
+        using var f = new Fixture(true); f.Project();
+        f.Em.AddComponentData(f.UiRoot, new UiShellStateComponent { ActiveRoute = UIRoute.Campaign });
+        f.Request(UiCampaignMissionActionKind.Select,M2); f.Project();
+        Assert.AreEqual(M2, f.Card.SelectedMissionId.ToString());
+        Assert.AreEqual(3, f.Card.CompletedMissionMask & 3);
+        f.Request(UiCampaignMissionActionKind.Refresh,M2); f.Project();
+        Assert.AreEqual(M3, f.Card.SelectedMissionId.ToString());
+        Assert.AreEqual(4, f.Card.AvailableMissionMask & 4);
+        f.Request(UiCampaignMissionActionKind.Select,M2); f.Project();
+        Assert.AreEqual(M2, f.Card.SelectedMissionId.ToString());
+        f.Em.SetComponentData(f.UiRoot, new UiShellStateComponent { ActiveRoute = UIRoute.MissionBriefing });
+        f.Request(UiCampaignMissionActionKind.Refresh,M2); f.Project();
+        Assert.AreEqual(M2, f.Card.SelectedMissionId.ToString(), "Opening a replay briefing must preserve the chosen completed mission.");
+    }
+
     private sealed class Fixture:IDisposable
     {
         public readonly World World=new("M3 campaign entry");

@@ -95,7 +95,7 @@ namespace Game.UI.Contracts
     {
         public UiCampaignOperationsModel(
             uint version, uint catalogSourceVersion, uint progressSourceVersion,
-            UiCampaignMissionModel selectedMission, string nextMissionId, bool nextMissionRevealed, byte availableMissionMask = 0)
+            UiCampaignMissionModel selectedMission, string nextMissionId, bool nextMissionRevealed, byte availableMissionMask = 0, byte completedMissionMask = 0)
         {
             Version = version;
             CatalogSourceVersion = catalogSourceVersion;
@@ -104,6 +104,7 @@ namespace Game.UI.Contracts
             NextMissionId = nextMissionId ?? string.Empty;
             NextMissionRevealed = nextMissionRevealed;
             AvailableMissionMask = availableMissionMask;
+            CompletedMissionMask = completedMissionMask;
         }
 
         public uint Version { get; }
@@ -113,6 +114,7 @@ namespace Game.UI.Contracts
         public string NextMissionId { get; }
         public bool NextMissionRevealed { get; }
         public byte AvailableMissionMask { get; }
+        public byte CompletedMissionMask { get; }
         public bool IsValid => Version != 0 && !string.IsNullOrWhiteSpace(SelectedMission.MissionId);
     }
 

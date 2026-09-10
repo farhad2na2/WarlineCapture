@@ -557,6 +557,7 @@ namespace Game.Editor
             StyleHeaderButton(RequireRect(header, "PauseButton"), 1120f, RequireSprite(V3UiFoundationBuilder.MatchPauseIconPath));
 
             RectTransform threat = RequireRect(header, "ThreatJumpPanel");
+            if(threat.GetComponent<MatchHudThreatVisibilityView>()==null) threat.gameObject.AddComponent<MatchHudThreatVisibilityView>();
             // Keep the alert and ARIA in the same right-anchored group so their
             // 15 px gap stays constant instead of overlapping on ultrawide.
             // The target lock aligns the warning strip with the right edge of the
@@ -1002,15 +1003,15 @@ namespace Game.Editor
             ropeDropButton.gameObject.SetActive(false);
 
             RectTransform chip = RequireRect(frame, "PassengerChip");
-            SetTopLeft(chip, 17f, 665f, 352f, 39f);
+            SetTopLeft(chip, 17f, 636f, 352f, 72f);
             SetImageTransparent(chip.GetComponent<Image>());
             EnsureGradient(chip, new Color32(17, 50, 32, 255), new Color32(4, 22, 12, 255), theme.Green, 2f, chip.GetComponent<Button>());
             TMP_Text chipText = FindDeepChild(chip, "Label")?.GetComponent<TMP_Text>();
             ConfigureText(chipText, "PASSENGERS 0/4", 17f, boldFont, theme.TextPrimary, TextAlignmentOptions.Center);
-            SetTopLeft(chipText.rectTransform, 42f, 3f, 300f, 33f);
+            SetTopLeft(chipText.rectTransform, 52f, 6f, 290f, 60f);
             Image chipIcon = EnsureImage(chip, "Icon");
             SetSprite(chipIcon, RequireSprite(V3UiFoundationBuilder.MatchCiviliansIconPath), theme.TextPrimary);
-            SetTopLeft(chipIcon.rectTransform, 9f, 7f, 25f, 25f);
+            SetTopLeft(chipIcon.rectTransform, 10f, 18f, 36f, 36f);
             StylePassengerDrawer(frame);
         }
 
@@ -1435,10 +1436,10 @@ namespace Game.Editor
                 openButton);
             openButton.targetGraphic = portraitTarget;
             RectTransform commandChip = EnsureRect("CommandWheelCue", portraitFrame);
-            SetTopLeft(commandChip, 238f, 129f, 112f, 29f);
+            SetTopLeft(commandChip, 5f, 94f, 348f, 64f);
             EnsureGradient(commandChip, CyanTop, CyanBottom, theme.Cyan, 2f);
             TMP_Text commandChipText = EnsureText(commandChip, "Label");
-            ConfigureText(commandChipText, "COMMANDS", 13f, boldFont, theme.TextPrimary, TextAlignmentOptions.Center);
+            ConfigureText(commandChipText, "COMMANDS", 22f, boldFont, theme.TextPrimary, TextAlignmentOptions.Center);
             Stretch(commandChipText.rectTransform, 3f, 2f);
 
             MatchHudSelectionPanelView selectionPanel = root.GetComponentInChildren<MatchHudSelectionPanelView>(true);

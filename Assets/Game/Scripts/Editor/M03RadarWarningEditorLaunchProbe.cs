@@ -114,6 +114,7 @@ namespace Game.Editor
                 }
                 if(runtime.Outcome!=MissionOutcomeKind.None && !ConvoyProbeActive) throw new InvalidOperationException("Mission settled during opening: "+runtime.Outcome);
                 if(!SessionState.GetBool(ComicKey,false) && (!PerformanceActive || runtime.Phase<MissionPhaseKind.Engage) && (!SessionState.GetBool(ResultKey,false) || runtime.Phase<MissionPhaseKind.SecureCorridor)) SkipNarrative();
+                if(AdvanceHudRoadValidation(em,root,in runtime,in facts)) return;
                 if(AdvanceComicValidation(em)) return;
                 if(AdvanceSaveRecoveryValidation(em,root,in runtime,in facts)) return;
                 if(AdvanceGuidanceJourney(em,root,in runtime,in facts)) return;
@@ -159,6 +160,7 @@ namespace Game.Editor
         }
         private static void Complete(bool passed,string detail)
         {
+            SessionState.SetBool(HudRoadKey,false);
             SessionState.SetBool(CrossMissionKey,false);
             StopComicValidation();
             StopGuidanceJourney();

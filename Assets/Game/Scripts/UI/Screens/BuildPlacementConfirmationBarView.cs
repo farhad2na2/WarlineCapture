@@ -54,8 +54,6 @@ namespace Game.UI.Runtime
         private Canvas _cachedCanvas;
         private BuildPlacementValidityPanelView _validityPanel;
         private BuildPlacementConfirmationBarDesignLayoutView _designLayout;
-        private GameObject _suppressedThreatPanel;
-        private bool _restoreThreatPanelWhenHidden;
 
         public RectTransform Root => root != null ? root : transform as RectTransform;
         public TMP_Text TitleText => titleText;
@@ -167,7 +165,6 @@ namespace Game.UI.Runtime
             UnwireButtons();
             _nextRefreshAt = 0f;
             _validityPanel?.Hide();
-            RestoreThreatPanel();
         }
 
         private void Update()
@@ -307,7 +304,6 @@ namespace Game.UI.Runtime
 
         private void Show()
         {
-            SuppressThreatPanel();
             if (Root != null && !Root.gameObject.activeSelf)
                 Root.gameObject.SetActive(true);
 
@@ -322,7 +318,6 @@ namespace Game.UI.Runtime
         private void Hide()
         {
             _validityPanel?.Hide();
-            RestoreThreatPanel();
             if (_canvasGroup == null)
                 _canvasGroup = GetComponent<CanvasGroup>();
             if (_canvasGroup == null)

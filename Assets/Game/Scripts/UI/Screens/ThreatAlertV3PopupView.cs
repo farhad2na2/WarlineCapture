@@ -21,8 +21,7 @@ namespace Game.UI.Runtime
         [SerializeField] private Button alertCloseButton;
         [SerializeField] private Button routeCloseButton;
 
-        private GameObject _suppressedThreatPanel;
-        private bool _restoreSuppressedThreatPanel;
+        private MatchHudThreatVisibilityView _suppressedThreatPanel;
 
         public GameObject Scrim => scrim;
         public GameObject AlertSurface => alertSurface;
@@ -113,22 +112,15 @@ namespace Game.UI.Runtime
 
         private void SuppressLegacyThreatBanner()
         {
-            if (_suppressedThreatPanel != null)
-                return;
-
             if (_boundLegacyThreatPanel==null) return;
-            _suppressedThreatPanel = _boundLegacyThreatPanel;
-            _restoreSuppressedThreatPanel = _suppressedThreatPanel.activeSelf;
-            if (_restoreSuppressedThreatPanel)
-                _suppressedThreatPanel.SetActive(false);
+            _suppressedThreatPanel=_boundLegacyThreatPanel.GetComponent<MatchHudThreatVisibilityView>();
+            _suppressedThreatPanel?.SetSuppressed(this,true);
         }
 
         private void RestoreLegacyThreatBanner()
         {
-            if (_suppressedThreatPanel != null && _restoreSuppressedThreatPanel)
-                _suppressedThreatPanel.SetActive(true);
-            _suppressedThreatPanel = null;
-            _restoreSuppressedThreatPanel = false;
+            if(_suppressedThreatPanel!=null) _suppressedThreatPanel.SetSuppressed(this,false);
+            _suppressedThreatPanel=null;
         }
 
 #if UNITY_EDITOR

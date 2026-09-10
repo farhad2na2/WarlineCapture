@@ -13,6 +13,7 @@ namespace Game.Runtime
             bool rotateVertical);
 
         private int[] _placementInvalidPrefix;
+        internal readonly BuildingPlacementAuthoredRoadCache RoadSurfaces=new();
         private bool _hasPlacementInvalidPrefix;
         private int _placementInvalidPrefixWidth;
         private int _placementInvalidPrefixHeight;
@@ -33,15 +34,17 @@ namespace Game.Runtime
             if (!gridDataSystem.TryGetGridData(ecsQuerySystem, tryGetEntityManager, out _, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData))
                 return;
 
-            bool[] roadFootprintMask = new bool[grid.Width * grid.Height];
-            startupSystem.FillRoadFootprintMask(grid, roadFootprintMask);
+            bool[] roadMask = new bool[grid.Width * grid.Height];
+            startupSystem.FillRoadFootprintMask(grid, roadMask);
+            if(tryGetEntityManager(out var em)) RoadSurfaces.Ensure(em,ecsQuerySystem.SurfaceQuery,grid);
+            RoadSurfaces.AppendTo(roadMask);
 
             BuildingPlacementValidationUtilitySystemHelper.RebuildInvalidPrefix(
                 grid,
                 roads,
                 blockerData,
-                roadFootprintMask,
-                (x, y, width, height) => IsRuntimeBlockerCell(dependencySystem, x, y, width, height),
+                roadMask,
+                dependencySystem.IsRuntimeBlockerCell,
                 ref _placementInvalidPrefix,
                 out _placementInvalidPrefixWidth,
                 out _placementInvalidPrefixHeight,
@@ -65,7 +68,8 @@ namespace Game.Runtime
                 ? getEffectivePlacementRect(definition, originCell, grid, rotateVertical)
                 : new RectInt(originCell, footprintCells);
 
-            return BuildingPlacementValidationUtilitySystemHelper.IsPlacementRectValid(
+            return !RoadSurfaces.Overlaps(grid,placementRect.position,placementRect.size) &&
+                BuildingPlacementValidationUtilitySystemHelper.IsPlacementRectValid(
                 placementRect,
                 grid,
                 roads,
@@ -74,7 +78,7 @@ namespace Game.Runtime
                 _placementInvalidPrefix,
                 _placementInvalidPrefixWidth,
                 _placementInvalidPrefixHeight,
-                (x, y, width, height) => IsRuntimeBlockerCell(dependencySystem, x, y, width, height),
+                dependencySystem.IsRuntimeBlockerCell,
                 (queryGrid, queryOrigin, queryFootprint) => HasRoadInFootprint(startupSystem, queryGrid, queryOrigin, queryFootprint),
                 overlapsRuntimeBuilding);
         }
@@ -98,17 +102,9 @@ namespace Game.Runtime
             Vector2Int originCell,
             Vector2Int footprintCells)
         {
+            if(RoadSurfaces.Overlaps(grid,originCell,footprintCells)) return true;
             return startupSystem.HasRoadInFootprint(grid, originCell, footprintCells);
         }
 
-        internal bool IsRuntimeBlockerCell(
-            BuildingGameplayDependencyCompositionSystemHelper dependencySystem,
-            int x,
-            int y,
-            int width,
-            int height)
-        {
-            return dependencySystem.IsRuntimeBlockerCell(x, y, width, height);
-        }
     }
 }

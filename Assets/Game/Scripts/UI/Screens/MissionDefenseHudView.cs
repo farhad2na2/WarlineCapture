@@ -11,19 +11,19 @@ namespace Game.UI.Runtime
         [SerializeField] private Button skipCameraTourButton;
         private bool cameraPreferencesApplied;
         [SerializeField] private GameObject actions;
+        [SerializeField] private MissionHudTouchLayoutView touchLayout;
         [SerializeField] private Button guideButton,warningButton,skipButton,supportButton;
         [SerializeField] private Button returnCameraButton;
         [SerializeField] private V3LocalizedTextBindingView status,supportLabel;
         [SerializeField] private Image supportIcon;
         [SerializeField] private Sprite radarIcon;
         private Sprite originalIcon;
-        private string originalLabel,lastStatus,lastLocale;
+        private string originalLabel,lastLocale;
         private bool showingDefense;
-        private Color warningDefaultColor;
-        private bool warningAttention;
+        private int lastCharges=-1,lastCooldown=-1;
         public bool IsCameraTourControl(Selectable control)=>control==skipCameraTourButton;
         private void Awake()
-        {if(warningButton!=null && warningButton.targetGraphic!=null) warningDefaultColor=warningButton.targetGraphic.color; originalIcon=supportIcon!=null ? supportIcon.sprite : null; originalLabel=supportLabel!=null ? supportLabel.EnglishFallback : "";}
+        {originalIcon=supportIcon!=null ? supportIcon.sprite : null; originalLabel=supportLabel!=null ? supportLabel.EnglishFallback : "";}
         private void OnEnable()
         {
             cameraPreferencesApplied=false;
@@ -63,26 +63,24 @@ namespace Game.UI.Runtime
             using var marker = RefreshMarker.Auto();
             bool active=UiShellRuntimeGateway.TryReadMissionDefense(out var model);
             if(actions!=null) actions.SetActive(active);
+            if(touchLayout!=null) touchLayout.Apply(active);
             if(showingDefense!=active || lastLocale!=UiShellRuntimeGateway.Localization.CurrentLocaleCode)
             {
                 if(supportLabel!=null) supportLabel.SetLocalizedValue(active ? UiShellRuntimeGateway.Localization.Get("mission.m03.ping.label","Radar Ping") : UiShellRuntimeGateway.Localization.Get("",originalLabel));
                 if(supportIcon!=null) supportIcon.sprite=active ? radarIcon : originalIcon;
                 showingDefense=active;
             }
-            bool attention=active && model.WarningNeedsAttention;
-            if(warningAttention!=attention)
-            {
-                warningAttention=attention;
-                if(warningButton!=null && warningButton.targetGraphic!=null)
-                    warningButton.targetGraphic.color=attention ? new Color(.62f,.32f,.04f,1f) : warningDefaultColor;
-            }
+            if(returnCameraButton!=null) returnCameraButton.gameObject.SetActive(active && model.CanReturnCamera);
+            if(status!=null) status.gameObject.SetActive(active);
             if(!active) {lastLocale=UiShellRuntimeGateway.Localization.CurrentLocaleCode; return;}
             if(supportButton!=null) supportButton.interactable=model.CanPing;
             if(warningButton!=null) warningButton.interactable=model.HasWarning;
-            if(returnCameraButton!=null) returnCameraButton.gameObject.SetActive(model.CanReturnCamera);
             if(skipButton!=null) skipButton.gameObject.SetActive(model.GuidanceId is 45004 or 45007 or 45008 or 45009);
-            if(lastStatus!=model.PingText || lastLocale!=UiShellRuntimeGateway.Localization.CurrentLocaleCode)
-            {if(status!=null) status.SetLocalizedValue(model.PingText); lastStatus=model.PingText;}
+            if(status!=null && (lastCharges!=model.Charges || lastCooldown!=model.CooldownSeconds || lastLocale!=UiShellRuntimeGateway.Localization.CurrentLocaleCode))
+            {
+                string pingStatus=model.CooldownSeconds>0 ? (model.CooldownSeconds/60)+":"+(model.CooldownSeconds%60).ToString("00") : model.Charges.ToString();
+                status.SetLocalizedValue(pingStatus);lastCharges=model.Charges;lastCooldown=model.CooldownSeconds;
+            }
             lastLocale=UiShellRuntimeGateway.Localization.CurrentLocaleCode;
         }
         private void OpenGuide()=>UiShellRuntimeGateway.TryRequestMissionDefenseAction(UiMissionDefenseAction.OpenGuide);

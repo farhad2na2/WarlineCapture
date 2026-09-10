@@ -15,7 +15,7 @@ namespace Game.Editor
         private const string ConvoyKey = "Warline.M03.LaunchProbe.Convoy";
         private const string InspectKey = "Warline.M03.LaunchProbe.Inspect";
         private static bool ConvoyProbeActive => SessionState.GetBool(ConvoyKey, false);
-        private static double ProbeTimeoutSeconds => CrossMissionActive ? 800 : SessionState.GetBool(LifecycleKey,false) ? 1500 : ConvoyProbeActive ? 420 : 180;
+        private static double ProbeTimeoutSeconds => SessionState.GetBool(HudRoadKey,false) ? 420 : CrossMissionActive ? 800 : SessionState.GetBool(LifecycleKey,false) ? 1500 : ConvoyProbeActive ? 420 : 180;
 
         public static void RunConvoy()
         {

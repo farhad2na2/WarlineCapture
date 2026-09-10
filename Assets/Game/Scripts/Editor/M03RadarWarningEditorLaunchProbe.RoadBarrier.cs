@@ -28,12 +28,7 @@ namespace Game.Editor
         private static readonly HashSet<int> roadOriginalBuildings=new();
         private static readonly HashSet<Entity> roadDetours=new(),roadCrossed=new();
         private static bool roadBarrierVerified;
-        public static void RunRoadBarrierDefense()=>RunChecked(()=>
-        {
-            roadStep=-1; roadNextFrame=roadDragSteps=0; roadBarrier=null; roadBarrierVerified=false;
-            roadOriginalBuildings.Clear(); roadDetours.Clear(); roadCrossed.Clear();
-            SessionState.SetBool(RoadBarrierKey,true); RunRifleDefense();
-        });
+        public static void RunRoadBarrierDefense()=>RunHudRoadValidation();
         private static bool AdvanceRoadBarrierValidation(EntityManager em,Entity root,in CampaignMissionRuntimeComponent runtime,
             in CampaignMissionAttemptFactsComponent facts)
         {

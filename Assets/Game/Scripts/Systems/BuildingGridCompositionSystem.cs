@@ -25,13 +25,17 @@ namespace Game.Runtime
             out DynamicBuffer<GridRoad> roads,
             out DynamicBlockerComponent blockerData)
         {
-            return source.BuildingGameplayGridDataCompositionSystemHelper.TryGetGridData(
+            bool found=source.BuildingGameplayGridDataCompositionSystemHelper.TryGetGridData(
                 source.BuildingGameplayEcsQueryCompositionSystemHelper,
                 tryGetEntityManager,
                 out gridEntity,
                 out grid,
                 out roads,
                 out blockerData);
+            if(found && tryGetEntityManager(out var em))
+                source.BuildingPlacementInvalidCellCacheCompositionSystemHelper.RoadSurfaces.Ensure(
+                    em,source.BuildingGameplayEcsQueryCompositionSystemHelper.SurfaceQuery,grid);
+            return found;
         }
 
         public bool TryGetGridForSelection(

@@ -33,9 +33,12 @@ namespace Game.Editor
         private static (Entity Entity,float3 Position,int Health)[] frozenMembers;
         public static void RunUiValidation()=>RunChecked(()=>StartUiValidation(false));
         public static void RunUiLargeValidation()=>RunChecked(()=>StartUiValidation(true));
-        private static void StartUiValidation(bool large)
+        public static void RunDeliveredUiValidation()=>RunChecked(()=>StartUiValidation(false,false));
+        public static void RepairAndRunUiValidation()=>RunChecked(()=>
+        {M03RadarWarningUiBuilder.RepairHud();StartUiValidation(false,false);});
+        private static void StartUiValidation(bool large,bool rebuild=true)
         {
-            M03RadarWarningConfigBuilder.Build(); M03RadarWarningUiBuilder.Build();
+            if(rebuild) {M03RadarWarningConfigBuilder.Build(); M03RadarWarningUiBuilder.Build();}
             var settings=SettingsService.Load(); SessionState.SetBool(UiOldLargeKey,settings.Accessibility.LargeText);
             SessionState.SetBool(UiLargeKey,large); settings.Accessibility.LargeText=large; SettingsService.Save(settings);
             SessionState.SetBool(UiKey,true); uiStep=uiClass=uiTopic=uiFrame=uiWarningStep=0; uiNext=0; uiDeadline=0; pendingCapture=null;

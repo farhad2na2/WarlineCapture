@@ -108,7 +108,7 @@ public sealed class BuildPlacementConfirmationBarV3PrefabTests
             Assert.IsTrue(view.ConfirmButton.interactable);
             Assert.IsFalse(view.ValidityPanel.IsVisible);
             Assert.IsTrue(aria.activeSelf);
-            Assert.IsFalse(threat.activeSelf);
+            Assert.IsTrue(threat.activeSelf,"Placement must not fight the alert presenter for visibility.");
             Assert.AreEqual(231f, view.Root.rect.height, 0.01f);
 
             view.BindRuntimeCommands(new PreviewBuildingCommand(false));

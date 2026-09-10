@@ -48,41 +48,6 @@ namespace Game.UI.Runtime
             _validityPanel = BuildPlacementValidityPanelView.Ensure(validityPanelPrefab, parent);
         }
 
-        private void SuppressThreatPanel()
-        {
-            if (_suppressedThreatPanel == null)
-            {
-                RectTransform[] candidates = transform.root.GetComponentsInChildren<RectTransform>(true);
-                for (int i = 0; i < candidates.Length; i++)
-                {
-                    RectTransform candidate = candidates[i];
-                    if (candidate != null && candidate.name == "ThreatJumpPanel")
-                    {
-                        _suppressedThreatPanel = candidate.gameObject;
-                        break;
-                    }
-                }
-            }
-
-            if (_suppressedThreatPanel == null)
-                return;
-            if (!_restoreThreatPanelWhenHidden)
-                _restoreThreatPanelWhenHidden = _suppressedThreatPanel.activeSelf;
-            if (_suppressedThreatPanel.activeSelf)
-                _suppressedThreatPanel.SetActive(false);
-        }
-
-        private void RestoreThreatPanel()
-        {
-            if (_suppressedThreatPanel != null && _restoreThreatPanelWhenHidden &&
-                !_suppressedThreatPanel.activeSelf)
-            {
-                _suppressedThreatPanel.SetActive(true);
-            }
-            _suppressedThreatPanel = null;
-            _restoreThreatPanelWhenHidden = false;
-        }
-
         private static void ApplyDefaultPlacementAnchors(RectTransform rect)
         {
             if (rect == null)

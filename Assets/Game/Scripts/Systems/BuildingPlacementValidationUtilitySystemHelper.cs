@@ -120,22 +120,22 @@ namespace Game.Runtime
             Func<GridConfig, Vector2Int, Vector2Int, bool> hasRoadInFootprint,
             Func<RectInt, bool> overlapsRuntimeBuilding)
         {
-            if (!IsFootprintInsideGrid(placementRect.position, placementRect.size, grid))
+            var origin = placementRect.position;
+            var size = placementRect.size;
+            if (!IsFootprintInsideGrid(origin, size, grid))
                 return false;
 
-            if (overlapsRuntimeBuilding != null && overlapsRuntimeBuilding(placementRect))
-                return false;
-
+            // Check terrain first.
             if (hasInvalidPrefix)
-                return !HasCachedInvalidCellInFootprint(invalidPrefix, prefixWidth, prefixHeight, placementRect.position, placementRect.size);
-
-            if (HasBlockedCell(placementRect.position, placementRect.size, grid, roads, blockerData, isRuntimeBlockerCell))
+            {
+                if (HasCachedInvalidCellInFootprint(invalidPrefix, prefixWidth, prefixHeight, origin, size))
+                    return false;
+            }
+            else if (HasBlockedCell(origin, size, grid, roads, blockerData, isRuntimeBlockerCell) ||
+                     hasRoadInFootprint != null && hasRoadInFootprint(grid, origin, size))
                 return false;
 
-            if (hasRoadInFootprint != null && hasRoadInFootprint(grid, placementRect.position, placementRect.size))
-                return false;
-
-            return true;
+            return overlapsRuntimeBuilding == null || !overlapsRuntimeBuilding(placementRect);
         }
 
         public static bool IsWallFootprintValid(

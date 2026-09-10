@@ -294,8 +294,8 @@ namespace Game.UI.Runtime
             }
             else
             {
-                SetTopLeft(icon, 9f, 7f, 25f, 25f);
-                SetTopLeft(label, 42f, 3f, 300f, 33f);
+                SetTopLeft(icon, 10f, (_passengerChip.rect.height - 36f) * .5f, 36f, 36f);
+                SetTopLeft(label, 52f, 6f, _passengerChip.rect.width - 62f, _passengerChip.rect.height - 12f);
                 TMP_Text text = label != null ? label.GetComponent<TMP_Text>() : null;
                 if (text != null)
                     text.alignment = TextAlignmentOptions.Center;

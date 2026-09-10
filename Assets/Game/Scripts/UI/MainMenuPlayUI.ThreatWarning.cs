@@ -9,7 +9,11 @@ namespace Game.UI.Runtime
 
             string resolvedTitle = string.IsNullOrWhiteSpace(title) ? "Threat detected" : title;
             if (_matchHudThreatTitle.text != resolvedTitle)
-                _matchHudThreatTitle.text = resolvedTitle;
+            {
+                var binding=_matchHudThreatTitle.GetComponent<V3LocalizedTextBindingView>();
+                if(binding!=null) binding.SetLocalizedValue(resolvedTitle);
+                else _matchHudThreatTitle.text=resolvedTitle;
+            }
             _matchHudThreatVisibleUntil = visibleUntilTime;
             SetMatchHudThreatWarningVisible(true);
             return true;
@@ -28,8 +32,10 @@ namespace Game.UI.Runtime
             // Cinematic controls occupy the warning strip; combat time is frozen during the tour.
             visible &= !UiShellRuntimeGateway.TryReadMissionCameraTour() &&
                 !(_matchHudSelectionPanelView != null && _matchHudSelectionPanelView.IsPassengerDrawerOpen);
-            if (_matchHudThreatJumpPanel != null && _matchHudThreatJumpPanel.activeSelf != visible)
-                _matchHudThreatJumpPanel.SetActive(visible);
+            if (_matchHudThreatJumpPanel == null) return;
+            var visibility = _matchHudThreatJumpPanel.GetComponent<MatchHudThreatVisibilityView>();
+            if (visibility != null) visibility.SetRequested(visible);
+            else if (_matchHudThreatJumpPanel.activeSelf != visible) _matchHudThreatJumpPanel.SetActive(visible);
         }
     }
 }

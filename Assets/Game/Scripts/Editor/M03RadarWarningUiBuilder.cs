@@ -106,6 +106,11 @@ namespace Game.Editor
             }
             finally {UnityEngine.Object.DestroyImmediate(root);}
         }
+        public static void RepairHud()
+        {
+            BuildGuide(); BuildHud(); M04AirliftPresentationBuilder.BuildHud(); AssetDatabase.SaveAssets();
+            Debug.Log("[M03HudRepair] result=Passed controls=integratedAria warning=singleOwner");
+        }
         internal static void BuildHud()=>Edit(HudPath,root=>
         {
             var tutorial=root.GetComponentInChildren<AriaTutorialBriefingView>(true);
@@ -115,8 +120,11 @@ namespace Game.Editor
             Ref(tutorialData,"missionTelemetry",Find(tutorial.gameObject,"V3Telemetry").gameObject);
             tutorialData.ApplyModifiedPropertiesWithoutUndo();
             var composition=Find(root,"HeaderContent");
-            var old=composition.Find("M03Actions"); if(old!=null) UnityEngine.Object.DestroyImmediate(old.gameObject);
-            var oldTour=composition.Find("SkipCameraTour"); if(oldTour!=null) UnityEngine.Object.DestroyImmediate(oldTour.gameObject);
+            foreach(string name in new[]{"M03Actions","SkipCameraTour","ReturnWarningCamera","ReadWarning","RadarStatus"})
+                foreach(var old in root.GetComponentsInChildren<Transform>(true).Where(t=>t.name==name).ToArray())
+                    UnityEngine.Object.DestroyImmediate(old.gameObject);
+            var threat=composition.Find("ThreatJumpPanel");
+            if(threat.GetComponent<MatchHudThreatVisibilityView>()==null) threat.gameObject.AddComponent<MatchHudThreatVisibilityView>();
             var skipTour=Button("SkipCameraTour",composition,765,94,360,54,"mission.m03.camera.skip");
             // Header coordinates share the existing responsive HUD reference space.
             var actions=Rect("M03Actions",composition,660,181,540,95);
@@ -135,11 +143,11 @@ namespace Game.Editor
             Ref(data,"skipCameraTourButton",skipTour);
             Ref(data,"returnCameraButton",returnCamera);
             Ref(data,"actions",actions.gameObject); Ref(data,"guideButton",guide); Ref(data,"warningButton",warning); Ref(data,"skipButton",skip);
-            Ref(data,"status",Binding(status)); data.ApplyModifiedPropertiesWithoutUndo();
+            Ref(data,"status",null); data.ApplyModifiedPropertiesWithoutUndo();
             var footer=Find(root,"FooterContent");
             var supportView=footer.GetComponent<MissionDefenseHudView>() ?? footer.gameObject.AddComponent<MissionDefenseHudView>();
             data=new SerializedObject(supportView);
-            Ref(data,"supportButton",support.GetComponent<Button>()); Ref(data,"supportLabel",Binding(supportText));
+            Ref(data,"supportButton",support.GetComponent<Button>()); Ref(data,"supportLabel",Binding(supportText)); Ref(data,"status",Binding(status));
             Ref(data,"supportIcon",Find(support.gameObject,"Icon").GetComponent<Image>()); Ref(data,"radarIcon",Find(scan.gameObject,"Icon").GetComponent<Image>().sprite);
             data.ApplyModifiedPropertiesWithoutUndo(); MissionSupportUiStyle.Defense(root); actions.gameObject.SetActive(false);
         });

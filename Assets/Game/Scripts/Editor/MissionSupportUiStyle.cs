@@ -9,7 +9,7 @@ using UnityEngine.UI;
 namespace Game.Editor
 {
     /// <summary>Shared target-lock chrome for the mission extensions, using the existing HUD graphics and icons.</summary>
-    internal static class MissionSupportUiStyle
+    internal static partial class MissionSupportUiStyle
     {
         internal static readonly Color Cyan = new Color32(0,198,235,255);
         private static readonly Color Line = new Color32(91,119,128,255);
@@ -39,11 +39,17 @@ namespace Game.Editor
             Find(root,"Title").GetComponent<TMP_Text>().color=Cyan;
             Place(Find(root,"Paused"),96,78,980,40);
             Find(root,"Paused").GetComponent<TMP_Text>().color=new Color32(175,195,201,255);
-            foreach(var button in root.GetComponentsInChildren<Button>(true)) StyleButton(button,button.name=="Next"||button.name=="Close");
-            Frame(Find(root,"Search"),Ink,Raised,Line,1);
-            var viewport=Find(root,"ReadingViewport");
-            Box("ReadingFrame",surface,28,203,1322,536,Ink,Ink,Line,1).SetSiblingIndex(viewport.GetSiblingIndex());
-            var track=Box("ReadingScrollbar",surface,1356,205,8,532,Ink,Ink,Line,1);
+            foreach(var button in root.GetComponentsInChildren<Button>(true))
+            {
+                StyleButton(button,button.name=="Next"||button.name=="Close");
+                var rect=(RectTransform)button.transform;rect.sizeDelta=new Vector2(rect.sizeDelta.x,Mathf.Max(72,rect.sizeDelta.y));
+                var label=button.GetComponentInChildren<TMP_Text>(true).rectTransform;label.anchorMin=Vector2.zero;label.anchorMax=Vector2.one;
+                label.offsetMin=new Vector2(8,6);label.offsetMax=new Vector2(-8,-6);
+            }
+            Place(Find(root,"Search"),986,132,362,72);Frame(Find(root,"Search"),Ink,Raised,Line,1);
+            var viewport=Find(root,"ReadingViewport");Place(viewport,30,215,1318,518);
+            Box("ReadingFrame",surface,28,213,1322,522,Ink,Ink,Line,1).SetSiblingIndex(viewport.GetSiblingIndex());
+            var track=Box("ReadingScrollbar",surface,1356,215,8,518,Ink,Ink,Line,1);
             var handle=Box("Handle",track,1,1,6,530,Cyan,Cyan,Cyan,0);
             handle.anchorMin=Vector2.zero;handle.anchorMax=Vector2.one;handle.offsetMin=Vector2.one;handle.offsetMax=-Vector2.one;
             var scrollbar=track.gameObject.AddComponent<Scrollbar>();scrollbar.handleRect=handle;scrollbar.targetGraphic=handle.GetComponent<V3GradientGraphic>();scrollbar.direction=Scrollbar.Direction.BottomToTop;
@@ -70,25 +76,42 @@ namespace Game.Editor
         internal static void Defense(GameObject root)
         {
             var actions=Find(root,"M03Actions");
-            var warning=(RectTransform)Find(root,"ThreatJumpPanel");
-            float actionsTop=-warning.anchoredPosition.y+warning.sizeDelta.y+10;
-            Place(actions,414,actionsTop,774,108); Frame(actions,Raised,Ink,Line,1);
-            FollowHeaderLayout((RectTransform)actions);
-            Place(Find(root,"FieldGuide"),10,10,240,44);
-            Place(Find(root,"ReadWarning"),264,10,240,44);
-            Place(Find(root,"SkipLesson"),518,10,246,44);
-            Place(Find(root,"RadarStatus"),18,62,492,36);
-            Place(Find(root,"ReturnWarningCamera"),518,60,246,38);
-            foreach(var button in actions.GetComponentsInChildren<Button>(true))StyleButton(button,true);
-            ButtonIcon(Find(root,"FieldGuide"),V3UiFoundationBuilder.MatchInfoIconPath);
-            ButtonIcon(Find(root,"ReadWarning"),V3UiFoundationBuilder.MatchInvalidIconPath);
-            ButtonIcon(Find(root,"ReturnWarningCamera"),V3UiFoundationBuilder.MatchReturnIconPath);
+            var aria=Find(root,"AriaAssistantButton");
+            actions.SetParent(aria,false);
+            Place(actions,20,392,360,72);
+            Place(Find(root,"FieldGuide"),0,0,172,72);
+            Place(Find(root,"SkipLesson"),182,0,178,72);
+            StyleButton(Find(root,"FieldGuide").GetComponent<Button>(),true);
+            StyleButton(Find(root,"SkipLesson").GetComponent<Button>(),false);
+            var warning=(RectTransform)Find(root,"ReadWarning");
+            var title=Find(Find(root,"ThreatJumpPanel").gameObject,"Title");
+            warning.SetParent(Find(root,"ThreatJumpPanel"),false);
+            Place(warning,0,0,440,79);
+            Object.DestroyImmediate(warning.GetChild(0).gameObject);
+            warning.GetComponent<Image>().color=Color.clear;
+            warning.GetComponent<Button>().transition=Selectable.Transition.None;
+            var restore=Find(root,"ReturnWarningCamera");restore.SetParent(Find(root,"HeaderContent"),false);
+            Place(restore,414,98,225,72);StyleButton(restore.GetComponent<Button>(),true);
+            ButtonIcon(restore,V3UiFoundationBuilder.MatchReturnIconPath);FollowHeaderLayout((RectTransform)restore);
+            var status=Find(root,"RadarStatus");status.SetParent(Find(root,"SupportCommand"),false);
+            Place(status,95,6,48,26);
+            var text=status.GetComponent<TMP_Text>();text.font=Bold;text.fontSizeMax=19;text.fontSizeMin=14;
+            text.alignment=TextAlignmentOptions.Center;text.color=new Color32(255,196,67,255);
+            Place(Find(root,"SkipCameraTour"),765,94,360,72);
             StyleButton(Find(root,"SkipCameraTour").GetComponent<Button>(),false);
+            foreach(var button in actions.GetComponentsInChildren<Button>(true))
+            {
+                var label=button.GetComponentInChildren<TMP_Text>(true);label.fontSizeMax=21;label.fontSizeMin=18;
+                label.textWrappingMode=TextWrappingModes.Normal;
+                var rect=label.rectTransform;rect.anchorMin=Vector2.zero;rect.anchorMax=Vector2.one;
+                rect.offsetMin=new Vector2(8,6);rect.offsetMax=new Vector2(-8,-6);
+            }
+            MobileSelection(root);
         }
 
         internal static void Extraction(GameObject root)
         {
-            var actions=Find(root,"M04Actions");Place(actions,414,164,774,150);Frame(actions,Raised,Ink,Line,1);
+            var actions=Find(root,"M04Actions");Place(actions,414,164,774,182);Frame(actions,Raised,Ink,Line,1);
             FollowHeaderLayout((RectTransform)actions);
             var data=new SerializedObject(actions.parent.GetComponent<MissionExtractionHudView>());
             string[] names={"Aboard","Carrier","Secure","Remaining"};
@@ -105,9 +128,9 @@ namespace Game.Editor
             string[] icons={V3UiFoundationBuilder.MatchInfoIconPath,V3UiFoundationBuilder.MatchPlayerIconPath,V3UiFoundationBuilder.MatchJumpIconPath,V3UiFoundationBuilder.MatchAirTransportIconPath};
             for(int i=0;i<4;i++)
             {
-                var button=actions.Find(buttons[i]);Place(button,10+i*191,78,181,44);StyleButton(button.GetComponent<Button>(),true);ButtonIcon(button,icons[i]);
+                var button=actions.Find(buttons[i]);Place(button,10+i*191,78,181,72);StyleButton(button.GetComponent<Button>(),true);ButtonIcon(button,icons[i]);
             }
-            var status=Find(root,"ExtractionStatus");Place(status,18,123,738,24);status.GetComponent<TMP_Text>().fontSizeMax=15;status.GetComponent<TMP_Text>().color=Cyan;
+            var status=Find(root,"ExtractionStatus");Place(status,18,154,738,24);status.GetComponent<TMP_Text>().fontSizeMax=15;status.GetComponent<TMP_Text>().color=Cyan;
             data.ApplyModifiedPropertiesWithoutUndo();
         }
 
@@ -142,7 +165,7 @@ namespace Game.Editor
         }
         private static void ButtonIcon(Transform button,string path)
         {
-            Icon(button,"MissionIcon",path,4,2,40,Color.white);
+            Icon(button,"MissionIcon",path,4,(((RectTransform)button).sizeDelta.y-40)/2,40,Color.white);
             var label=button.GetComponentInChildren<TMP_Text>(true);var r=label.rectTransform;r.anchorMin=Vector2.zero;r.anchorMax=Vector2.one;r.offsetMin=new Vector2(48,2);r.offsetMax=new Vector2(-6,-2);
         }
         private static void Icon(Transform parent,string name,string path,float x,float y,float size,Color color)

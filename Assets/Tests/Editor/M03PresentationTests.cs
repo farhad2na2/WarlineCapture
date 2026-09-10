@@ -30,10 +30,14 @@ public sealed class M03PresentationTests
     {
         var prefab=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab");
         Assert.NotNull(prefab);
-        var instance=UnityEngine.Object.Instantiate(prefab);
+        var canvasRoot=new GameObject("ARIA layout canvas",typeof(RectTransform),typeof(Canvas));
+        canvasRoot.GetComponent<Canvas>().renderMode=RenderMode.WorldSpace;
+        ((RectTransform)canvasRoot.transform).sizeDelta=new Vector2(1920,1080);
+        var instance=UnityEngine.Object.Instantiate(prefab,canvasRoot.transform);
         try
         {
             var view=instance.GetComponentInChildren<AriaTutorialBriefingView>(true);
+            instance.GetComponentInChildren<MissionHudTouchLayoutView>(true).Apply(true);
             Assert.NotNull(view);
             Assert.IsTrue(view.TryBindHierarchy());
             var originalSize=view.BriefingLayout.sizeDelta;
@@ -61,13 +65,19 @@ public sealed class M03PresentationTests
                     Assert.IsTrue(text.textInfo.characterInfo.Take(text.textInfo.characterCount).Any(c=>c.isVisible));
                     Assert.IsFalse(text.textInfo.characterInfo.Take(text.textInfo.characterCount).Any(c=>c.character=='\u25a1' || c.character=='\ufffd'));
                 }
+                var utility=view.transform.Find("M03Actions") as RectTransform;
+                Assert.NotNull(utility);
+                utility.gameObject.SetActive(true);
+                var corners=new Vector3[4];var utilityCorners=new Vector3[4];
+                ((RectTransform)view.DoItButton.transform).GetWorldCorners(corners);utility.GetWorldCorners(utilityCorners);
+                Assert.Less(utilityCorners[1].y,corners[0].y,"Guide controls must sit below ARIA's primary actions.");
                 Assert.IsTrue(view.FirstStepGuideRoot==null || !view.FirstStepGuideRoot.gameObject.activeSelf,"M3 must not display M1's selection-only diagram.");
             }
             view.Apply(AriaTutorialBriefingPrefabBuilder.CreateTargetLockPreviewModel());
             Assert.AreEqual(originalSize,view.BriefingLayout.sizeDelta,"M1 card size must restore after M3.");
             Assert.AreEqual(originalPosition,view.BriefingLayout.anchoredPosition,"M1 card position must restore after M3.");
         }
-        finally {UnityEngine.Object.DestroyImmediate(instance);}
+        finally {UnityEngine.Object.DestroyImmediate(canvasRoot);}
     }
 
     [Test]
@@ -96,7 +106,7 @@ public sealed class M03PresentationTests
             var instance=UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(
                 "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab"),canvasRoot.transform);
             var header=instance.transform.Find("V3Composition/HeaderContent");
-            var actions=(RectTransform)header.Find("M03Actions");
+            var actions=(RectTransform)header.Find("AriaAssistantButton/M03Actions");
             var aria=(RectTransform)header.Find("AriaAssistantButton");
             var title=header.Find("ThreatJumpPanel").GetComponentsInChildren<TMP_Text>(true).Single(t=>t.name=="Title");
             actions.gameObject.SetActive(true);
@@ -106,20 +116,11 @@ public sealed class M03PresentationTests
                 foreach(var layout in instance.GetComponentsInChildren<MainMenuV3SectionLayoutView>(true)) layout.RefreshLayout();
                 var actionCorners=new Vector3[4]; var ariaCorners=new Vector3[4];
                 actions.GetWorldCorners(actionCorners); aria.GetWorldCorners(ariaCorners);
-                Assert.Less(actionCorners[2].x,ariaCorners[0].x,"Optional controls must leave ARIA's column clear at width "+width);
-                var warningCorners=new Vector3[4];
-                ((RectTransform)header.Find("ThreatJumpPanel")).GetWorldCorners(warningCorners);
-                Assert.Less(actionCorners[1].y,warningCorners[0].y,
-                    "Mission controls must leave the warning strip fully visible at width "+width);
-                var resourceCorners=new Vector3[4];
-                ((RectTransform)header.Find("ResourceStrip")).GetWorldCorners(resourceCorners);
-                foreach(string panelName in new[]{"M03Actions","M04Actions"})
-                {
-                    var panelCorners=new Vector3[4];
-                    ((RectTransform)header.Find(panelName)).GetWorldCorners(panelCorners);
-                    Assert.That(panelCorners[0].x,Is.EqualTo(resourceCorners[0].x).Within(.1f),
-                        panelName+" must follow the resource header at width "+width);
-                }
+                Assert.GreaterOrEqual(actionCorners[0].x,ariaCorners[0].x,"Guide actions belong inside ARIA.");
+                Assert.LessOrEqual(actionCorners[2].x,ariaCorners[2].x,"Guide actions belong inside ARIA.");
+                Assert.IsNull(header.Find("M03Actions"),"No extra panel may cover the battlefield below the warning.");
+                Assert.NotNull(header.Find("ThreatJumpPanel/ReadWarning").GetComponent<UnityEngine.UI.Button>(),"Read details through the alert itself.");
+                Assert.NotNull(header.Find("ThreatJumpPanel").GetComponent<MatchHudThreatVisibilityView>());
                 foreach(bool persian in new[]{false,true})
                 {
                     GameLocalization.SetLocale(persian ? "fa-IR" : "en",false);

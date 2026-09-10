@@ -9,9 +9,8 @@ namespace Game.Runtime
         private World _queryWorld;
         private EntityQuery _gridDataQuery, _redirectQuery, _prefabRegistryQuery, _spawnPrefabsQuery;
         private EntityQuery _selectedQuery, _haulerQuery, _playerUnitsQuery, _liveUnitFootprintQuery;
-        private EntityQuery _factionUnitsQuery, _runtimeBoundaryQuery, _missionQuery, _operationMapQuery;
+        private EntityQuery _factionUnitsQuery, _stateQuery, _missionQuery, _operationMapQuery, _surfaceQuery;
         internal readonly BuildingFactionAIOilAllocationInputSystemHelper AIOilInputSystemHelper;
-
         internal BuildingGameplayEcsQueryCompositionSystemHelper() => AIOilInputSystemHelper = new(this);
 
         internal EntityQuery GridDataQuery => _gridDataQuery;
@@ -23,10 +22,10 @@ namespace Game.Runtime
         internal EntityQuery LivePlayerUnitsQuery => _playerUnitsQuery;
         internal EntityQuery LiveUnitFootprintQuery => _liveUnitFootprintQuery;
         internal EntityQuery LiveFactionUnitsQuery => _factionUnitsQuery;
-        internal EntityQuery BuildingRuntimeStateQuery => _runtimeBoundaryQuery;
+        internal EntityQuery BuildingRuntimeStateQuery => _stateQuery;
         internal EntityQuery CampaignMissionQuery => _missionQuery;
         internal EntityQuery OperationMapQuery => _operationMapQuery;
-
+        internal EntityQuery SurfaceQuery => _surfaceQuery;
         internal bool TryResolveFactionAIOilAllocationInput(
             EntityManager em,
             byte factionId,
@@ -40,6 +39,7 @@ namespace Game.Runtime
                 return;
 
             _queryWorld = world;
+            _surfaceQuery = em.CreateEntityQuery(R<MapSurfaceComponent>());
             _gridDataQuery = em.CreateEntityQuery(R<GridConfig>(), R<GridRoad>(), R<DynamicBlockerComponent>());
             _redirectQuery = em.CreateEntityQuery(R<UnitMove>(), R<UnitGrid>(), R<LocalTransform>());
             _prefabRegistryQuery = em.CreateEntityQuery(R<UnitPrefabRegistryTag>(), R<UnitPrefabRegistryEntry>());
@@ -50,10 +50,10 @@ namespace Game.Runtime
             _liveUnitFootprintQuery = em.CreateEntityQuery(R<UnitGrid>(), R<UnitFootprint>());
             _factionUnitsQuery = em.CreateEntityQuery(new EntityQueryDesc
             {
-                All = new[] { ComponentType.ReadOnly<Faction>(), ComponentType.ReadOnly<UnitGrid>(), ComponentType.ReadOnly<UnitFootprint>() },
-                None = new[] { ComponentType.ReadOnly<StaticGridBlocker>(), ComponentType.ReadOnly<RuntimeBuildingCombatTag>() }
+                All = new[] { R<Faction>(), R<UnitGrid>(), R<UnitFootprint>() },
+                None = new[] { R<StaticGridBlocker>(), R<RuntimeBuildingCombatTag>() }
             });
-            _runtimeBoundaryQuery = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeStateTag>());
+            _stateQuery = em.CreateEntityQuery(R<BuildingRuntimeStateTag>());
             _missionQuery = em.CreateEntityQuery(R<CampaignMissionRootComponent>(),
                 R<CampaignMissionCatalogComponent>(), R<CampaignMissionRuntimeComponent>());
             _operationMapQuery = em.CreateEntityQuery(R<OperationMapRootComponent>(),

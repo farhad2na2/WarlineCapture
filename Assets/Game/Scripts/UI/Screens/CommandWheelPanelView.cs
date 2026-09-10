@@ -88,6 +88,9 @@ namespace Game.UI.Runtime
                 wheelAttackButton.onClick.AddListener(OnWheelAttackClicked);
         }
 
+        private void OnDisable()
+        {if(threatRoot!=null) threatRoot.GetComponent<MatchHudThreatVisibilityView>()?.SetSuppressed(this,false);}
+
         private void OnDestroy()
         {
             if (openButton != null)
@@ -125,6 +128,7 @@ namespace Game.UI.Runtime
 
         public void Close()
         {
+            SetTargetingPreview(false);
             if (wheelRoot != null)
                 wheelRoot.SetActive(false);
             ClearSpecialMode();
@@ -153,7 +157,7 @@ namespace Game.UI.Runtime
             if (instructionRoot != null)
                 instructionRoot.SetActive(!targeting);
             if (threatRoot != null)
-                threatRoot.SetActive(!targeting);
+                threatRoot.GetComponent<MatchHudThreatVisibilityView>()?.SetSuppressed(this,targeting);
             if (unitCard != null)
             {
                 if (!_unitCardPositionCached)

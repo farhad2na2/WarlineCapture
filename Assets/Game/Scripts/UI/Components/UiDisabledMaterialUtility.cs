@@ -14,7 +14,7 @@ namespace Game.UI.Runtime
     }
 
     [DisallowMultipleComponent]
-    internal sealed class UiDisabledMaterialState : MonoBehaviour
+    internal sealed class UiDisabledMaterialStateView : MonoBehaviour
     {
         [NonSerialized] public Material OriginalMaterial;
         [NonSerialized] public Color OriginalColor;
@@ -22,7 +22,7 @@ namespace Game.UI.Runtime
     }
 
     [DisallowMultipleComponent]
-    internal sealed class UiDisabledSelectableVisualState : MonoBehaviour
+    internal sealed class UiDisabledSelectableVisualStateView : MonoBehaviour
     {
         [NonSerialized] public ColorBlock OriginalColors;
         [NonSerialized] public UiDisabledVisualReason Reasons;
@@ -90,12 +90,12 @@ namespace Game.UI.Runtime
             if (graphic is TMP_SubMeshUI)
                 return;
 
-            UiDisabledMaterialState state = graphic.GetComponent<UiDisabledMaterialState>();
+            UiDisabledMaterialStateView state = graphic.GetComponent<UiDisabledMaterialStateView>();
             if (state == null)
             {
                 if (!disabled)
                     return;
-                state = graphic.gameObject.AddComponent<UiDisabledMaterialState>();
+                state = graphic.gameObject.AddComponent<UiDisabledMaterialStateView>();
             }
 
             if (disabled)
@@ -144,13 +144,13 @@ namespace Game.UI.Runtime
             if (selectable == null || reason == UiDisabledVisualReason.None)
                 return;
 
-            UiDisabledSelectableVisualState state =
-                selectable.GetComponent<UiDisabledSelectableVisualState>();
+            UiDisabledSelectableVisualStateView state =
+                selectable.GetComponent<UiDisabledSelectableVisualStateView>();
             if (state == null)
             {
                 if (!disabled)
                     return;
-                state = selectable.gameObject.AddComponent<UiDisabledSelectableVisualState>();
+                state = selectable.gameObject.AddComponent<UiDisabledSelectableVisualStateView>();
             }
 
             if (disabled)

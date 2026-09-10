@@ -40,8 +40,8 @@ public sealed class InitialFactionBaseValidationTests
         {
             var tests = new InitialFactionBaseValidationTests();
             tests.InitialFactionBaseLayoutPlanner_BuildsExactBaseRecipe();
-            tests.SceneInitialUnitsConfig_DisablesAutomaticFactionBasesAndKeepsConfiguredStarts();
-            tests.SceneInitialUnitsConfig_SeedsFuelLogisticsTrucksNearFactionBases();
+            tests.SceneInitialUnitsConfig_LeavesFactionSpawnsToTheOperationMap();
+            tests.LogisticsTrucksRemainRegisteredForExplicitDeployment();
             tests.FuelLogisticsConfigs_HaveUsableStorageAndHaulerCapacity();
             tests.BuildingPlacementConfig_ResolvesEveryInitialBasePrefab();
             tests.InitialBaseAirPlatformPrefabs_HaveProductionSpawnPoints();
@@ -65,8 +65,8 @@ public sealed class InitialFactionBaseValidationTests
         try
         {
             var tests = new InitialFactionBaseValidationTests();
-            tests.SceneInitialUnitsConfig_DisablesAutomaticFactionBasesAndKeepsConfiguredStarts();
-            tests.SceneInitialUnitsConfig_SeedsFuelLogisticsTrucksNearFactionBases();
+            tests.SceneInitialUnitsConfig_LeavesFactionSpawnsToTheOperationMap();
+            tests.LogisticsTrucksRemainRegisteredForExplicitDeployment();
             Debug.Log("[InitialFactionSceneConfigValidation] result=Passed");
             ValidationExit.Exit(0);
         }
@@ -198,90 +198,29 @@ public sealed class InitialFactionBaseValidationTests
     }
 
     [Test]
-    public void SceneInitialUnitsConfig_DisablesAutomaticFactionBasesAndKeepsConfiguredStarts()
+    public void SceneInitialUnitsConfig_LeavesFactionSpawnsToTheOperationMap()
     {
-        InitialUnitsSpawnerAuthoringConfig config =
-            AssetDatabase.LoadAssetAtPath<InitialUnitsSpawnerAuthoringConfig>(SceneConfigPath);
-
-        Assert.NotNull(config);
-        Assert.IsFalse(config.CreateFactionBases);
-        Assert.GreaterOrEqual(config.Factions.Count, 2);
-        Assert.IsTrue(
-            config.Factions.Exists(faction => faction != null && faction.FactionId == FactionIdentity.PlayerFactionId),
-            "Initial match config should include the player faction.");
-
-        BuildingPlacementSystemConfig placementConfig =
-            AssetDatabase.LoadAssetAtPath<BuildingPlacementSystemConfig>(BuildingPlacementConfigPath);
-        Assert.NotNull(placementConfig);
-        Assert.NotNull(placementConfig.UnitPrefabRegistryConfig);
-        var registeredUnitPrefabs = new HashSet<GameObject>(placementConfig.UnitPrefabRegistryConfig.UnitSpawnPrefabs);
-        var registeredBuildingPrefabs = new HashSet<GameObject>(placementConfig.Spawnables);
-
-        for (int i = 0; i < config.Factions.Count; i++)
-        {
-            InitialUnitsSpawnerAuthoringConfig.FactionEntry faction = config.Factions[i];
-            Assert.NotNull(faction);
-            Assert.IsNotEmpty(faction.Units, $"Faction {faction.FactionId} needs at least one configured unit prefab.");
-            int totalUnits = 0;
-            for (int unitIndex = 0; unitIndex < faction.Units.Count; unitIndex++)
-            {
-                InitialUnitsSpawnerAuthoringConfig.FactionUnitEntry unit = faction.Units[unitIndex];
-                Assert.NotNull(unit);
-                Assert.NotNull(unit.Prefab, $"Faction {faction.FactionId} unit {unitIndex} needs a prefab.");
-                Assert.IsTrue(
-                    registeredUnitPrefabs.Contains(unit.Prefab),
-                    $"Faction {faction.FactionId} unit prefab {unit.Prefab.name} must be present in UnitPrefabRegistryConfig.");
-                totalUnits += unit.Count;
-            }
-
-            Assert.Greater(totalUnits, 0);
-            if (faction.Buildings == null)
-                continue;
-
-            for (int buildingIndex = 0; buildingIndex < faction.Buildings.Count; buildingIndex++)
-            {
-                InitialUnitsSpawnerAuthoringConfig.FactionBuildingEntry building = faction.Buildings[buildingIndex];
-                Assert.NotNull(building);
-                Assert.NotNull(building.Prefab, $"Faction {faction.FactionId} building {buildingIndex} needs a prefab.");
-                Assert.IsTrue(
-                    registeredBuildingPrefabs.Contains(building.Prefab),
-                    $"Faction {faction.FactionId} building prefab {building.Prefab.name} must be present in BuildingPlacementSystemConfig spawnables.");
-            }
-        }
-
-        InitialUnitsSpawnerAuthoringConfig.FactionEntry faction2 =
-            config.Factions.Find(faction => faction != null && faction.FactionId == 2);
-        Assert.NotNull(faction2, "Initial match config should include Faction 2.");
-        Assert.IsNotEmpty(faction2.Units, "Faction 2 should have configured initial soldiers.");
-        Assert.IsNotEmpty(faction2.Buildings, "Faction 2 should have its configured initial building.");
-
-        RuntimeCitySpawnerSystemConfig cityConfig =
-            AssetDatabase.LoadAssetAtPath<RuntimeCitySpawnerSystemConfig>(RuntimeCityConfigPath);
-        Assert.NotNull(cityConfig);
-        for (int i = 0; i < config.Factions.Count; i++)
-        {
-            InitialUnitsSpawnerAuthoringConfig.FactionEntry faction = config.Factions[i];
-            float distance = Vector2Int.Distance(cityConfig.StartCell, faction.SpawnCell);
-            Assert.GreaterOrEqual(distance, 300f, $"Runtime city start cell should stay away from faction {faction.FactionId} base.");
-        }
+        var config=AssetDatabase.LoadAssetAtPath<InitialUnitsSpawnerAuthoringConfig>(SceneConfigPath);
+        Assert.That(config,Is.Not.Null);
+        Assert.That(config.CreateFactionBases,Is.False);
+        Assert.That(config.Factions,Is.Empty,"The shared match shell must not duplicate map-owned armies.");
+        Assert.That(config.BlockerCount,Is.Zero);
+        Assert.That(config.EnableBlockerChurn,Is.False);
+        var map=AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(OperationMapAddressablesLayoutBuilder.DefinitionPath);
+        Assert.That(map,Is.Not.Null);
+        Assert.That(map.PresentationKind,Is.EqualTo(OperationMapPresentationKind.EntityScene));
+        Assert.That(map.TryValidateLocalContentReferences(out string error),Is.True,error);
     }
 
     [Test]
-    public void SceneInitialUnitsConfig_SeedsFuelLogisticsTrucksNearFactionBases()
+    public void LogisticsTrucksRemainRegisteredForExplicitDeployment()
     {
-        InitialUnitsSpawnerAuthoringConfig config =
-            AssetDatabase.LoadAssetAtPath<InitialUnitsSpawnerAuthoringConfig>(SceneConfigPath);
-
-        Assert.NotNull(config);
-        Assert.GreaterOrEqual(config.Factions.Count, 2);
-
-        for (int i = 0; i < config.Factions.Count; i++)
-        {
-            InitialUnitsSpawnerAuthoringConfig.FactionEntry faction = config.Factions[i];
-            Assert.NotNull(faction);
-            AssertSeededLogisticsTruck(faction, "Unit_Veh_Truck_Tray");
-            AssertSeededLogisticsTruck(faction, "Unit_Veh_Truck_Tanker");
-        }
+        var placement=AssetDatabase.LoadAssetAtPath<BuildingPlacementSystemConfig>(BuildingPlacementConfigPath);
+        Assert.That(placement,Is.Not.Null);
+        Assert.That(placement.UnitPrefabRegistryConfig,Is.Not.Null);
+        var registered=new HashSet<GameObject>(placement.UnitPrefabRegistryConfig.UnitSpawnPrefabs);
+        foreach(string key in new[]{"Unit_Veh_Truck_Tray","Unit_Veh_Truck_Tanker"})
+            Assert.That(registered,Has.Some.Matches<GameObject>(prefab=>prefab!=null && prefab.name==key),key);
     }
 
     [Test]

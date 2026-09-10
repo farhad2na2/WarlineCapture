@@ -1,5 +1,4 @@
 using System;
-using Game.Configs;
 using Game.UI.Contracts;
 using TMPro;
 using UnityEngine;
@@ -149,9 +148,9 @@ namespace Game.UI.Runtime
             for (int i = 0; i < events.Length; i++)
             {
                 EventData data = events[i];
-                if (eventTitles != null && i < eventTitles.Length) eventTitles[i].text = GameLocalization.GetBySource(data.Title);
-                if (eventTimers != null && i < eventTimers.Length) eventTimers[i].text = GameLocalization.GetBySource(data.Timer);
-                if (eventDescriptions != null && i < eventDescriptions.Length) eventDescriptions[i].text = GameLocalization.GetBySource(data.CardDescription);
+                if (eventTitles != null && i < eventTitles.Length) eventTitles[i].text = UiShellRuntimeGateway.Localization.GetBySource(data.Title);
+                if (eventTimers != null && i < eventTimers.Length) eventTimers[i].text = UiShellRuntimeGateway.Localization.GetBySource(data.Timer);
+                if (eventDescriptions != null && i < eventDescriptions.Length) eventDescriptions[i].text = UiShellRuntimeGateway.Localization.GetBySource(data.CardDescription);
                 if (eventProgressTexts != null && i < eventProgressTexts.Length) eventProgressTexts[i].text = data.Progress + "/" + data.Total;
                 if (eventProgressFills != null && i < eventProgressFills.Length)
                 {
@@ -172,21 +171,21 @@ namespace Game.UI.Runtime
                     selected ? new Color32(92, 194, 83, 255) : new Color32(56, 70, 74, 255), 3f);
             }
             EventData selectedEvent = events[Mathf.Clamp(_eventIndex, 0, events.Length - 1)];
-            if (detailTitle != null) detailTitle.text = GameLocalization.GetBySource(selectedEvent.Title);
+            if (detailTitle != null) detailTitle.text = UiShellRuntimeGateway.Localization.GetBySource(selectedEvent.Title);
             if (detailTimer != null)
-                detailTimer.text = GameLocalization.Format(
+                detailTimer.text = UiShellRuntimeGateway.Localization.Format(
                     "ui.events.remaining",
                     "{0} REMAINING",
-                    GameLocalization.GetBySource(selectedEvent.Timer));
-            if (detailDescription != null) detailDescription.text = GameLocalization.GetBySource(selectedEvent.DetailDescription);
+                    UiShellRuntimeGateway.Localization.GetBySource(selectedEvent.Timer));
+            if (detailDescription != null) detailDescription.text = UiShellRuntimeGateway.Localization.GetBySource(selectedEvent.DetailDescription);
             string[] objectives = { selectedEvent.ObjectiveA, selectedEvent.ObjectiveB, selectedEvent.ObjectiveC };
             string[] states = { selectedEvent.StateA, selectedEvent.StateB, selectedEvent.StateC };
             for (int i = 0; i < 3; i++)
             {
-                if (detailObjectives != null && i < detailObjectives.Length) detailObjectives[i].text = GameLocalization.GetBySource(objectives[i]);
-                if (detailObjectiveStates != null && i < detailObjectiveStates.Length) detailObjectiveStates[i].text = GameLocalization.GetBySource(states[i]);
+                if (detailObjectives != null && i < detailObjectives.Length) detailObjectives[i].text = UiShellRuntimeGateway.Localization.GetBySource(objectives[i]);
+                if (detailObjectiveStates != null && i < detailObjectiveStates.Length) detailObjectiveStates[i].text = UiShellRuntimeGateway.Localization.GetBySource(states[i]);
             }
-            if (detailModifiers != null && detailModifiers.Length >= 2) { detailModifiers[0].text = GameLocalization.GetBySource(selectedEvent.ModifierA); detailModifiers[1].text = GameLocalization.GetBySource(selectedEvent.ModifierB); }
+            if (detailModifiers != null && detailModifiers.Length >= 2) { detailModifiers[0].text = UiShellRuntimeGateway.Localization.GetBySource(selectedEvent.ModifierA); detailModifiers[1].text = UiShellRuntimeGateway.Localization.GetBySource(selectedEvent.ModifierB); }
             if (detailRewards != null && detailRewards.Length >= 3) { detailRewards[0].text = selectedEvent.RewardA; detailRewards[1].text = selectedEvent.RewardB; detailRewards[2].text = selectedEvent.RewardC; }
         }
 

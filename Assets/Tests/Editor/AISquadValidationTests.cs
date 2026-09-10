@@ -81,6 +81,7 @@ public sealed class AISquadValidationTests
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = world.CreateSystem<AISquadSystem>();
+        RuntimeGameplayStateTestHelper.SetVerboseAILogs(em, true);
         SystemHandle logFlushSystem = world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
         if (assertDiagnosticLog)

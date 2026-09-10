@@ -25,111 +25,23 @@ public sealed class OperationMapAddressablesLayoutBuilderTests
         Assert.That(settings.BuildRemoteCatalog, Is.False);
         Assert.That(settings.DisableCatalogUpdateOnStartup, Is.True);
         Assert.That(settings.UniqueBundleIds, Is.False);
-
-        AddressableAssetGroup catalog = RequireGroup(
-            settings,
-            OperationMapAddressablesLayoutBuilder.CatalogGroupName,
-            BundledAssetGroupSchema.BundlePackingMode.PackTogether);
-        AddressableAssetGroup shared = RequireGroup(
-            settings,
-            OperationMapAddressablesLayoutBuilder.SharedGroupName,
-            BundledAssetGroupSchema.BundlePackingMode.PackTogetherByLabel);
-        AddressableAssetGroup core = RequireGroup(
-            settings,
-            OperationMapAddressablesLayoutBuilder.CoreGroupName,
-            BundledAssetGroupSchema.BundlePackingMode.PackTogether);
-        AddressableAssetGroup presentation = RequireGroup(
-            settings,
-            OperationMapAddressablesLayoutBuilder.PresentationGroupName,
-            BundledAssetGroupSchema.BundlePackingMode.PackTogetherByLabel);
-
-        Assert.That(catalog.entries.Count, Is.EqualTo(2));
-        Game.Rendering.StaticMapPresentationManifest manifest = AssetDatabase.LoadAssetAtPath<Game.Rendering.StaticMapPresentationManifest>(
-            OperationMapAddressablesLayoutBuilder.ManifestPath);
-        string[] expectedShared = OperationMapAddressablesLayoutBuilder.CollectSharedDependencyPaths(
-            settings,
-            manifest);
-        Assert.That(shared.entries.Count, Is.EqualTo(expectedShared.Length));
-        Assert.That(shared.entries, Is.Not.Empty);
-        Assert.That(core.entries.Count, Is.EqualTo(6));
-        Assert.That(presentation.entries.Count, Is.EqualTo(manifest.Chunks.Count));
-
+        var catalog = RequireGroup(settings, OperationMapAddressablesLayoutBuilder.CatalogGroupName, BundledAssetGroupSchema.BundlePackingMode.PackTogether);
+        var shared = RequireGroup(settings, OperationMapAddressablesLayoutBuilder.SharedGroupName, BundledAssetGroupSchema.BundlePackingMode.PackTogetherByLabel);
+        var core = RequireGroup(settings, OperationMapAddressablesLayoutBuilder.CoreGroupName, BundledAssetGroupSchema.BundlePackingMode.PackTogether);
+        var presentation = RequireGroup(settings, OperationMapAddressablesLayoutBuilder.PresentationGroupName, BundledAssetGroupSchema.BundlePackingMode.PackTogetherByLabel);
+        Assert.That(catalog.entries, Has.Count.EqualTo(2));
+        Assert.That(core.entries, Has.Count.EqualTo(4));
+        Assert.That(shared.entries, Is.Empty);
+        Assert.That(presentation.entries, Is.Empty);
         AssertEntry(settings, OperationMapAddressablesLayoutBuilder.CatalogPath, catalog, "operation-map/catalog");
-        AssertEntry(
-            settings,
-            OperationMapAddressablesLayoutBuilder.DefinitionPath,
-            catalog,
-            "operation-map/opmap.skirmish.desert_base_01/definition");
+        AssertEntry(settings, OperationMapAddressablesLayoutBuilder.DefinitionPath, catalog, "operation-map/opmap.skirmish.desert_base_01/definition");
         AssertEntry(settings, OperationMapAddressablesLayoutBuilder.SourceScenePath, core, OperationMapAddressablesLayoutBuilder.AddressPrefix + "source-scene");
-        Assert.That(
-            settings.FindAssetEntry(AssetDatabase.AssetPathToGUID(
-                OperationMapAddressablesLayoutBuilder.AuthoringScenePath)),
-            Is.Null,
-            "The hand-authored scene must remain outside Addressables after runtime-binding cutover.");
-        Assert.That(
-            AssetDatabase.GetDependencies(OperationMapAddressablesLayoutBuilder.SourceScenePath, true),
-            Does.Not.Contain(OperationMapAddressablesLayoutBuilder.AuthoringScenePath));
         AssertEntry(settings, OperationMapAddressablesLayoutBuilder.MapSurfacePath, core, OperationMapAddressablesLayoutBuilder.AddressPrefix + "map-surface");
-        AssertEntry(settings, OperationMapAddressablesLayoutBuilder.ManifestPath, core, OperationMapAddressablesLayoutBuilder.AddressPrefix + "static-manifest");
-        AssertEntry(settings, OperationMapAddressablesLayoutBuilder.BuildingPlacementsPath, core, OperationMapAddressablesLayoutBuilder.AddressPrefix + "building-placements");
-        AssertEntry(settings, OperationMapAddressablesLayoutBuilder.VehiclePlacementsPath, core, OperationMapAddressablesLayoutBuilder.AddressPrefix + "vehicle-placements");
         AssertEntry(settings, OperationMapAddressablesLayoutBuilder.MinimapRasterPath, core, OperationMapAddressablesLayoutBuilder.AddressPrefix + "minimap-raster");
-
-        Dictionary<string, int> partitionCounts = new();
-        foreach (AddressableAssetEntry entry in presentation.entries)
-        {
-            Assert.That(entry.address, Does.StartWith(OperationMapAddressablesLayoutBuilder.AddressPrefix + "presentation/chunk_"));
-            AssertOperationMapLabels(entry, OperationMapAddressablesLayoutBuilder.PresentationRoleLabel, true);
-            foreach (string label in entry.labels)
-            {
-                if (!label.StartsWith("operation-map-partition-", System.StringComparison.Ordinal))
-                    continue;
-                partitionCounts.TryGetValue(label, out int count);
-                partitionCounts[label] = count + 1;
-            }
-        }
-
-        Assert.That(partitionCounts, Is.Not.Empty);
-        foreach (KeyValuePair<string, int> partition in partitionCounts)
-            Assert.That(partition.Value, Is.InRange(1, 25), partition.Key);
-
-        foreach (AddressableAssetEntry entry in shared.entries)
-        {
-            Assert.That(entry.address, Does.StartWith("operation-map/shared/"));
-            AssertOperationMapLabels(entry, OperationMapAddressablesLayoutBuilder.SharedDependencyRoleLabel, false);
-            string path = AssetDatabase.GUIDToAssetPath(entry.guid);
-            string expectedShard = OperationMapAddressablesLayoutBuilder.BuildSharedShardLabel(path, entry.guid);
-            Assert.That(entry.labels, Does.Contain(expectedShard));
-            Assert.That(entry.labels.Count(label => label.StartsWith(
-                OperationMapAddressablesLayoutBuilder.SharedShardLabelPrefix,
-                System.StringComparison.Ordinal)), Is.EqualTo(1));
-        }
-
-        string[] activeSharedShardLabels = shared.entries
-            .SelectMany(entry => entry.labels)
-            .Where(label => label.StartsWith(
-                OperationMapAddressablesLayoutBuilder.SharedShardLabelPrefix,
-                System.StringComparison.Ordinal))
-            .Distinct(System.StringComparer.Ordinal)
-            .ToArray();
-        string[] configuredSharedShardLabels = settings.GetLabels()
-            .Where(label => label.StartsWith(
-                OperationMapAddressablesLayoutBuilder.SharedShardLabelPrefix,
-                System.StringComparison.Ordinal))
-            .ToArray();
-        Assert.That(configuredSharedShardLabels, Is.EquivalentTo(activeSharedShardLabels));
-
-        AssertOperationMapLabels(settings.FindAssetEntry(UnityEditor.AssetDatabase.AssetPathToGUID(OperationMapAddressablesLayoutBuilder.CatalogPath)), OperationMapAddressablesLayoutBuilder.MetadataRoleLabel, false);
-        AssertOperationMapLabels(settings.FindAssetEntry(UnityEditor.AssetDatabase.AssetPathToGUID(OperationMapAddressablesLayoutBuilder.DefinitionPath)), OperationMapAddressablesLayoutBuilder.DefinitionRoleLabel, false);
-        foreach (AddressableAssetEntry entry in core.entries)
-        {
-            string role = entry.address.EndsWith("/source-scene", System.StringComparison.Ordinal)
-                ? OperationMapAddressablesLayoutBuilder.SourceSceneRoleLabel
-                : entry.address.EndsWith("/minimap-raster", System.StringComparison.Ordinal)
-                    ? OperationMapAddressablesLayoutBuilder.MinimapRasterRoleLabel
-                    : OperationMapAddressablesLayoutBuilder.MetadataRoleLabel;
-            AssertOperationMapLabels(entry, role, false);
-        }
+        AssertEntry(settings, "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity", core, OperationMapAddressablesLayoutBuilder.AddressPrefix + "entity-scene");
+        foreach (string retiredPath in new[] { OperationMapAddressablesLayoutBuilder.AuthoringScenePath, OperationMapAddressablesLayoutBuilder.ManifestPath,
+                     OperationMapAddressablesLayoutBuilder.BuildingPlacementsPath, OperationMapAddressablesLayoutBuilder.VehiclePlacementsPath })
+            Assert.That(settings.FindAssetEntry(AssetDatabase.AssetPathToGUID(retiredPath)), Is.Null, retiredPath);
     }
 
     [Test]
@@ -182,15 +94,9 @@ public sealed class OperationMapAddressablesLayoutBuilderTests
 
         AssertReference(definition.SourceSceneReference, OperationMapAddressablesLayoutBuilder.SourceScenePath);
         AssertReference(definition.MapSurfaceDataReference, OperationMapAddressablesLayoutBuilder.MapSurfacePath);
-        AssertReference(
-            definition.StaticPresentationManifestReference,
-            OperationMapAddressablesLayoutBuilder.ManifestPath);
-        AssertReference(
-            definition.BuildingPlacementsReference,
-            OperationMapAddressablesLayoutBuilder.BuildingPlacementsPath);
-        AssertReference(
-            definition.VehiclePlacementsReference,
-            OperationMapAddressablesLayoutBuilder.VehiclePlacementsPath);
+        Assert.That(definition.StaticPresentationManifestReference.RuntimeKeyIsValid(), Is.False);
+        Assert.That(definition.BuildingPlacementsReference.RuntimeKeyIsValid(), Is.False);
+        Assert.That(definition.VehiclePlacementsReference.RuntimeKeyIsValid(), Is.False);
         AssertReference(
             definition.MinimapRasterReference,
             OperationMapAddressablesLayoutBuilder.MinimapRasterPath);

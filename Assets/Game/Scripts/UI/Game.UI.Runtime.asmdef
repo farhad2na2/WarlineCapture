@@ -3,7 +3,6 @@
     "rootNamespace": "Game.UI.Runtime",
     "references": [
         "Game.Catalog.Contracts",
-        "Game.Configs",
         "Game.Narrative.Contracts",
         "Game.Tactical.Contracts",
         "Game.UI.Contracts",
@@ -14,7 +13,6 @@
         "Unity.TextMeshPro",
         "UnityEngine.UI",
         "RTLTMPro",
-        "Game.Components",
         "Game.Missions.Contracts"
     ],
     "includePlatforms": [],

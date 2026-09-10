@@ -131,7 +131,7 @@ namespace Game.Editor
             SetReference(serialized, "showChapterSelectButton", showChapters);
             serialized.ApplyModifiedPropertiesWithoutUndo();
 
-            CampaignMissionScreenBinder binder = composition.gameObject.AddComponent<CampaignMissionScreenBinder>();
+            CampaignMissionScreenBinderView binder = composition.gameObject.AddComponent<CampaignMissionScreenBinderView>();
             binder.Configure(screen, "saga.ch01.m02.establish_base");
 
             ConfigureResponsiveLayout(
@@ -144,6 +144,7 @@ namespace Game.Editor
                 screenTitle,
                 launch);
 
+            MissionUiSerializedBindingsAuthoring.Apply(root);
             PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root);
             AssetDatabase.SaveAssets();
@@ -492,7 +493,7 @@ namespace Game.Editor
             previewFitter.aspectRatio = missionPreview.rect.width / missionPreview.rect.height;
             briefingText = CreateText("MissionBriefingText", briefingPanel, "Reopen an abandoned JRC forward post and establish our foothold in Sahrin.", 16f, mediumFont, TextAlignmentOptions.TopLeft, theme.TextPrimary);
             SetTopLeft(briefingText.rectTransform, 20f, 267f, 422f, 61f);
-            briefingText.enableWordWrapping = true;
+            briefingText.textWrappingMode = TMPro.TextWrappingModes.Normal;
             TMP_Text objectivesTitle = CreateText("ObjectivesTitle", briefingPanel, "OBJECTIVES", 21f, boldFont, TextAlignmentOptions.MidlineLeft, theme.Amber);
             SetTopLeft(objectivesTitle.rectTransform, 20f, 329f, 200f, 30f);
             objectiveText = BuildObjectiveCard(briefingPanel, 20f, 360f, 128f, "BUILD\nBARRACK", V3UiFoundationBuilder.CampaignBarracksIconPath);
@@ -725,7 +726,7 @@ namespace Game.Editor
             text.alignment = alignment;
             text.color = color;
             text.raycastTarget = false;
-            text.enableWordWrapping = false;
+            text.textWrappingMode = TMPro.TextWrappingModes.NoWrap;
             text.overflowMode = TextOverflowModes.Ellipsis;
             return text;
         }

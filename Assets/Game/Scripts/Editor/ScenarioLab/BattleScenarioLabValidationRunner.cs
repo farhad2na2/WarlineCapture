@@ -1,3 +1,4 @@
+using Game.UI.ScenarioLab.Runtime;
 using Game.Components;
 using Game.Configs;
 using Game.Runtime;
@@ -687,7 +688,7 @@ namespace Game.Editor
 
                 GameObject root = RequireObject("BattleScenarioLabRoot");
                 BattleScenarioLabSceneReferences references = RequireComponent<BattleScenarioLabSceneReferences>(root);
-                BattleScenarioLabPlayBootstrap bootstrap = RequireComponent<BattleScenarioLabPlayBootstrap>(root);
+                BattleScenarioLabPlayBootstrapView bootstrap = RequireComponent<BattleScenarioLabPlayBootstrapView>(root);
                 BattleScenarioLabVisualPlayback visualPlayback = RequireComponent<BattleScenarioLabVisualPlayback>(root);
                 BattleScenarioLabOverlayView overlay = RequireSceneComponent<BattleScenarioLabOverlayView>();
 
@@ -1182,7 +1183,7 @@ namespace Game.Editor
             if (!EditorApplication.isPlaying)
                 return;
 
-            BattleScenarioLabPlayBootstrap bootstrap = UnityEngine.Object.FindAnyObjectByType<BattleScenarioLabPlayBootstrap>();
+            BattleScenarioLabPlayBootstrapView bootstrap = UnityEngine.Object.FindAnyObjectByType<BattleScenarioLabPlayBootstrapView>();
             Dropdown scenarioDropdown = GameObject.Find("ScenarioSelector")?.GetComponent<Dropdown>();
             Dropdown variantDropdown = GameObject.Find("VariantSelector")?.GetComponent<Dropdown>();
             Text titleText = GameObject.Find("Title")?.GetComponent<Text>();
@@ -1378,7 +1379,7 @@ namespace Game.Editor
             if (!EditorApplication.isPlaying)
                 return;
 
-            BattleScenarioLabPlayBootstrap bootstrap = UnityEngine.Object.FindAnyObjectByType<BattleScenarioLabPlayBootstrap>();
+            BattleScenarioLabPlayBootstrapView bootstrap = UnityEngine.Object.FindAnyObjectByType<BattleScenarioLabPlayBootstrapView>();
             if (bootstrap == null)
                 return;
 
@@ -1529,7 +1530,7 @@ namespace Game.Editor
             if (!EditorApplication.isPlaying)
                 return;
 
-            BattleScenarioLabPlayBootstrap bootstrap = UnityEngine.Object.FindAnyObjectByType<BattleScenarioLabPlayBootstrap>();
+            BattleScenarioLabPlayBootstrapView bootstrap = UnityEngine.Object.FindAnyObjectByType<BattleScenarioLabPlayBootstrapView>();
             if (bootstrap == null)
                 return;
 
@@ -1717,7 +1718,7 @@ namespace Game.Editor
 
         private static void HandleTransportBoardingMixedLoadVisualValidation(
             EntityManager em,
-            BattleScenarioLabPlayBootstrap bootstrap,
+            BattleScenarioLabPlayBootstrapView bootstrap,
             string scenarioId,
             string transportSourceKey,
             bool hasTransport,
@@ -2118,7 +2119,7 @@ namespace Game.Editor
 
         private static bool TryStartLiveEcsPlaybackVariant()
         {
-            BattleScenarioLabPlayBootstrap bootstrap = UnityEngine.Object.FindAnyObjectByType<BattleScenarioLabPlayBootstrap>();
+            BattleScenarioLabPlayBootstrapView bootstrap = UnityEngine.Object.FindAnyObjectByType<BattleScenarioLabPlayBootstrapView>();
             GameObject variantObject = GameObject.Find("VariantSelector");
             if (bootstrap == null ||
                 variantObject == null ||

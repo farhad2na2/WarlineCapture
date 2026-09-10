@@ -58,8 +58,8 @@ public sealed class GroundMissileLauncherAuthoringTests
 
         Assert.NotNull(unitConfig, $"Missing ground launcher unit config at {GroundLauncherUnitConfigPath}.");
         Assert.NotNull(missileConfig, $"Missing ground missile launcher config at {GroundLauncherConfigPath}.");
-        Assert.Greater(unitConfig.AttackRange, missileConfig.MaxRange);
-        Assert.GreaterOrEqual(unitConfig.AttackRange, 5000f);
+        Assert.GreaterOrEqual(unitConfig.AttackRange, missileConfig.MaxRange);
+        Assert.AreEqual(600f, unitConfig.AttackRange, "Canonical ground missile balance.");
     }
 
     [Test]

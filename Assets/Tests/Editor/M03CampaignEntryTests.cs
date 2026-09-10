@@ -25,7 +25,7 @@ public sealed class M03CampaignEntryTests
             var tests=new M03CampaignEntryTests();
             tests.LockedM3CannotSelectOrDeploy();
             tests.LegacyM2ClearUnlocksExactM3AndDoubleDeployQueuesOnce();
-            tests.UnimplementedM4CannotDeployEvenWhenProgressRevealsIt();
+            tests.CompletedM3UnlocksImplementedM4Deployment();
             tests.ReadinessAndMapIdentityNeverFallBackToAnotherMission();
             tests.ProjectionRefreshesAfterOtherSaveServiceWritesAndStoreReplacement();
             tests.ProjectionPreservesDurableStateAfterFailedWriteAndAcceptsRetry();
@@ -55,12 +55,13 @@ public sealed class M03CampaignEntryTests
         Assert.AreEqual(MissionRunKind.FirstClear,launch.RunKind); Assert.AreEqual(1,f.Briefing.DeployQueued);
         f.Request(UiCampaignMissionActionKind.Deploy,M3); f.Project(); Assert.AreEqual(1,f.Launches.Length);
     }
-    [Test] public void UnimplementedM4CannotDeployEvenWhenProgressRevealsIt()
+    [Test] public void CompletedM3UnlocksImplementedM4Deployment()
     {
         using var f=new Fixture(true); f.Store.EnsureAvailable(M4); f.Project();
         f.Request(UiCampaignMissionActionKind.Select,M4); f.Request(UiCampaignMissionActionKind.Deploy,M4); f.Project();
-        Assert.AreEqual(M3,f.Card.SelectedMissionId.ToString()); Assert.AreEqual(0,f.Launches.Length);
-        Assert.AreEqual(0,f.Card.AvailableMissionMask&8);
+        Assert.AreEqual(M4,f.Card.SelectedMissionId.ToString()); Assert.AreEqual(1,f.Launches.Length);
+        Assert.AreEqual(M4,f.Launches[0].MissionId.ToString());
+        Assert.AreEqual(8,f.Card.AvailableMissionMask&8);
     }
     [Test] public void ReadinessAndMapIdentityNeverFallBackToAnotherMission()
     {

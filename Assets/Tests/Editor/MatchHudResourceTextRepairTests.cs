@@ -58,7 +58,7 @@ public sealed class MatchHudResourceTextRepairTests
             TMP_Text Label(string name) => Slot(name).Find("Label").GetComponent<TMP_Text>();
             TMP_Text Value(string name) => Slot(name).Find("Value").GetComponent<TMP_Text>();
             // Exercise the shared binding path as well as the prefab's unbound numeric text path.
-            var numericBinding=Value("FuelSlot").GetComponent<V3LocalizedTextBinding>()??Value("FuelSlot").gameObject.AddComponent<V3LocalizedTextBinding>();
+            var numericBinding=Value("FuelSlot").GetComponent<V3LocalizedTextBindingView>()??Value("FuelSlot").gameObject.AddComponent<V3LocalizedTextBindingView>();
             numericBinding.Configure("","",false);
             var presentation = new MatchHudResourceHeaderPresentation();
             presentation.Bind(Slot("OilSlot").gameObject, Label("MaterialsSlot"), Value("MaterialsSlot"),
@@ -67,7 +67,7 @@ public sealed class MatchHudResourceTextRepairTests
             {
                 GameLocalization.SetLocale(language, false);
                 presentation.RefreshNow();
-                foreach (var binding in instance.GetComponentsInChildren<V3LocalizedTextBinding>(true)) binding.ApplyLocalization();
+                foreach (var binding in instance.GetComponentsInChildren<V3LocalizedTextBindingView>(true)) binding.ApplyLocalization();
                 presentation.RefreshNow();
                 Assert.AreEqual("12K", Value("OilSlot").text);
                 Assert.AreEqual("25.7K", Value("FuelSlot").text);
@@ -75,11 +75,11 @@ public sealed class MatchHudResourceTextRepairTests
                 if (language == "fa-IR")
                 {
                     Assert.AreEqual("نفت", GameLocalization.Get("ui.hud.oil"));
-                    Assert.AreEqual(V3LocalizedTextBinding.ShapeForRendering("بنزین"), Label("FuelSlot").text);
+                    Assert.AreEqual(V3LocalizedTextBindingView.ShapeForRendering("بنزین"), Label("FuelSlot").text);
                 }
                 Assert.IsFalse(Value("FuelSlot").text.Contains("#"));
                 Value("FuelSlot").text="authoring placeholder";
-                Value("FuelSlot").GetComponent<V3LocalizedTextBinding>().SetLocalizedValue("25.7K");
+                Value("FuelSlot").GetComponent<V3LocalizedTextBindingView>().SetLocalizedValue("25.7K");
                 Assert.AreEqual("25.7K",Value("FuelSlot").text,"Reapplying the same live value must repair an intervening prefab/presentation write.");
             }
             var changed = summary[0]; changed.StoredOilBarrels = 0; changed.StoredFuelBarrels = 900; changed.Version++; summary[0] = changed;

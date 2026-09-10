@@ -1,7 +1,7 @@
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Rendering;
+using Game.Rendering.Contracts;
 using Unity.Transforms;
 using UnityEngine;
 using Game.Tactical.Contracts;
@@ -870,20 +870,12 @@ namespace Game.Runtime
 
         private static bool TryReadWorldAabb(EntityManager em, Entity entity, out AABB bounds)
         {
-            if (em.HasComponent<WorldRenderBounds>(entity))
+            if (RenderBoundsGateway.Provider != null &&
+                RenderBoundsGateway.Provider.TryReadWorldBounds(em, entity, out Bounds value))
             {
-                bounds = em.GetComponentData<WorldRenderBounds>(entity).Value;
+                bounds = new AABB { Center = value.center, Extents = value.extents };
                 return IsUsableAabb(bounds);
             }
-
-            if (em.HasComponent<RenderBounds>(entity) && em.HasComponent<LocalToWorld>(entity))
-            {
-                bounds = AABB.Transform(
-                    em.GetComponentData<LocalToWorld>(entity).Value,
-                    em.GetComponentData<RenderBounds>(entity).Value);
-                return IsUsableAabb(bounds);
-            }
-
             bounds = default;
             return false;
         }

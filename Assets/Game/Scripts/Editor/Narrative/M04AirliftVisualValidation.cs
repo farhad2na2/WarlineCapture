@@ -42,7 +42,7 @@ namespace Game.Editor
                 {
                     GameLocalization.SetLocale(persian ? "fa-IR" : "en", false);
                     // NewScene releases unused Unity assets; reacquire the locale for each variant.
-                    var resolver = new SharedLocalizationTextCompositionSystemHelper(FallbackGameTextResolver.Instance);
+                    var resolver = new FirstLaunchNarrativeCompositionSystemHelper.SharedLocaleCompositionSystemHelper(FallbackGameTextResolver.Instance);
                     foreach (var sequence in sequences)
                     foreach (var state in sequence.States.Where(s => s.HasPanelBinding))
                     {

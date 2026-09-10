@@ -1,4 +1,3 @@
-using Game.Configs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -92,7 +91,7 @@ namespace Game.UI.Runtime
         private void ApplyContextTitle()
         {
             if (titleText != null)
-                titleText.text = GameLocalization.Get("ui.settings.command_title", "COMMAND SETTINGS");
+                titleText.text = UiShellRuntimeGateway.Localization.Get("ui.settings.command_title", "COMMAND SETTINGS");
         }
     }
 }

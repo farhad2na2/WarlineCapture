@@ -1,5 +1,4 @@
 using System;
-using Game.Configs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -120,7 +119,7 @@ namespace Game.UI.Runtime
             TMP_Text detail = FindText(button.transform, "Time");
             if (detail != null)
             {
-                detail.text = GameLocalization.Get("ui.common.queued", "QUEUED");
+                detail.text = UiShellRuntimeGateway.Localization.Get("ui.common.queued", "QUEUED");
                 detail.color = new Color32(255, 255, 255, 255);
             }
             ActionRequested?.Invoke(action);

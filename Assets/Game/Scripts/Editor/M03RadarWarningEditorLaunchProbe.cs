@@ -18,7 +18,7 @@ namespace Game.Editor
     public static partial class M03RadarWarningEditorLaunchProbe
     {
         private const string ActiveKey = "Warline.M03.LaunchProbe.Active";
-        private static string Output => SessionState.GetString("Warline.M03.ReadinessOutput", "Design/AgentReports/M03RadarWarning/LaunchProbe");
+        private static string Output => SessionState.GetString("Warline.M03.ReadinessOutput", "/private/tmp/warline-m03-editor-probe");
         private static double started, lastLog, lastClick;
         private static bool prepared, deployed, capturedBrief, capturedHud, finished;
         private static int hudFrame;
@@ -101,6 +101,7 @@ namespace Game.Editor
                 }
                 var runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);
                 var facts=em.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
+                MissionMotionEditorAudit.Sample(em,root,in runtime,in facts);
                 if(ConvoyProbeActive && !PerformanceActive) LogCombatDamage(em);
                 if(!PerformanceActive && EditorApplication.timeSinceStartup-lastLog>5)
                 {
@@ -184,23 +185,7 @@ namespace Game.Editor
             Application.logMessageReceived-=ObserveError;
             string marker=$"[M03RadarWarningEditorLaunchProbe] result={(passed ? "Passed" : "Failed")} {detail}";
             File.AppendAllText(Output+"/state.txt",marker+"\n"); Debug.Log(marker);
-            void OnExited(PlayModeStateChange state)
-            {
-                if (state != PlayModeStateChange.EnteredEditMode) return;
-                EditorApplication.playModeStateChanged -= OnExited;
-                AssetDatabase.AllowAutoRefresh();
-                // Let scene/prefab preview cleanup finish before shutting down this wrapper Editor.
-                double exitAt = EditorApplication.timeSinceStartup + 3;
-                void ExitWhenSettled()
-                {
-                    if (EditorApplication.isCompiling || EditorApplication.isUpdating || EditorApplication.timeSinceStartup < exitAt) return;
-                    EditorApplication.update -= ExitWhenSettled;
-                    EditorApplication.Exit(passed ? 0 : 1);
-                }
-                EditorApplication.update += ExitWhenSettled;
-            }
-            EditorApplication.playModeStateChanged += OnExited;
-            EditorApplication.ExitPlaymode();
+            MissionEditorValidationExit.Complete(passed);
         }
         private static void ObserveError(string message,string stack,LogType type)
         {

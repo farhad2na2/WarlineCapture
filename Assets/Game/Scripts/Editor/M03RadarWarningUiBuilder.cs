@@ -101,7 +101,7 @@ namespace Game.Editor
                 Ref(data,"radioButton",radioButton); Ref(data,"radioPanel",radioPanel);
                 Ref(data,"radio16x9",M03RadarWarningMediaImporter.Panel("C01",false)); Ref(data,"radio20x9",M03RadarWarningMediaImporter.Panel("C01",true));
                 Ref(data,"title",Binding(heading)); Ref(data,"body",Binding(body)); Ref(data,"example",Binding(example)); Ref(data,"mistake",Binding(mistake));
-                Ref(data,"diagram",Binding(diagram)); Ref(data,"page",Binding(page)); Ref(data,"filterLabel",filter.GetComponentInChildren<V3LocalizedTextBinding>());
+                Ref(data,"diagram",Binding(diagram)); Ref(data,"page",Binding(page)); Ref(data,"filterLabel",filter.GetComponentInChildren<V3LocalizedTextBindingView>());
                 data.ApplyModifiedPropertiesWithoutUndo(); PrefabUtility.SaveAsPrefabAsset(root,GuidePath);
             }
             finally {UnityEngine.Object.DestroyImmediate(root);}
@@ -159,7 +159,7 @@ namespace Game.Editor
             // Static labels remain compatible with the old alert; only M3's live detail body is substituted.
         }
         private static void Edit(string path,Action<GameObject> action)
-        {var root=PrefabUtility.LoadPrefabContents(path); try {action(root); PrefabUtility.SaveAsPrefabAsset(root,path);} finally {PrefabUtility.UnloadPrefabContents(root);}}
+        {var root=PrefabUtility.LoadPrefabContents(path); try {action(root); MissionUiSerializedBindingsAuthoring.Apply(root); PrefabUtility.SaveAsPrefabAsset(root,path);} finally {PrefabUtility.UnloadPrefabContents(root);}}
         private static Transform Find(GameObject root,string name)=>root.GetComponentsInChildren<Transform>(true).First(t=>t.name==name);
         private static void Ref(SerializedObject data,string name,UnityEngine.Object value)
         {var p=data.FindProperty(name) ?? throw new InvalidOperationException("Missing serialized binding "+name); p.objectReferenceValue=value;}
@@ -178,7 +178,7 @@ namespace Game.Editor
             string fallback=M03RadarWarningGuideCopyCatalog.Entries.FirstOrDefault(e=>e.Key==key).English ?? key;
             text.text=fallback; Binding(text).Configure(key,fallback,false); return text;
         }
-        private static V3LocalizedTextBinding Binding(TMP_Text text)=>text.GetComponent<V3LocalizedTextBinding>() ?? text.gameObject.AddComponent<V3LocalizedTextBinding>();
+        private static V3LocalizedTextBindingView Binding(TMP_Text text)=>text.GetComponent<V3LocalizedTextBindingView>() ?? text.gameObject.AddComponent<V3LocalizedTextBindingView>();
         private static Button Button(string name,Transform parent,float x,float y,float w,float h,string key)
         {
             var rect=Panel(name,parent,x,y,w,h,Raised); var button=rect.gameObject.AddComponent<Button>(); button.targetGraphic=rect.GetComponent<Image>();

@@ -199,7 +199,7 @@ namespace Game.UI.Shell.Ecs
             out bool rightToLeft)
         {
             rightToLeft = language == FirstLaunchNarrativeLanguage.Persian;
-            return M02EstablishBaseLocalizedText.TryGetTutorial(
+            return M02EstablishBaseTextCatalog.TryGetTutorial(
                 recommendation.TutorialStep,
                 language,
                 out title,

@@ -51,7 +51,7 @@ public sealed class RoadBuildCommandCompositionSystemHelperTests
     public void RoadBuildCommandRequest_EnterWritesAcceptedResult()
     {
         using World world = new("RoadBuildCommandEnterTest");
-        RoadBuildCommandTestState state = new();
+        RoadBuildCommandTestState state = new(world.EntityManager);
 
         int requestId = state.CommandSystem.EnqueueEnterRoadBuildMode(world.EntityManager);
         state.CommandSystem.ProcessPendingRoadBuildCommands(world.EntityManager, state.CommandContext);
@@ -78,9 +78,9 @@ public sealed class RoadBuildCommandCompositionSystemHelperTests
     public void RoadBuildCommandRequest_EnterAcceptsDefaultRuntimeState()
     {
         using World world = new("RoadBuildCommandEnterDefaultRuntimeStateTest");
-        RoadBuildCommandTestState state = new();
+        RoadBuildCommandTestState state = new(world.EntityManager);
         RoadBuildCommandCompositionSystemHelper.Context context = new(
-            new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager),
+            new RuntimeGameplayStateSystem(world.EntityManager),
             state.SessionSystem,
             state.CommandContext.SessionContext,
             () => state.ClearRoadBuildDragStateCount++);
@@ -104,7 +104,7 @@ public sealed class RoadBuildCommandCompositionSystemHelperTests
     public void RoadBuildCommandRequest_ConfirmWritesAcceptedResult()
     {
         using World world = new("RoadBuildCommandConfirmTest");
-        RoadBuildCommandTestState state = new();
+        RoadBuildCommandTestState state = new(world.EntityManager);
         state.SessionState.RoadBuildSessionSnapshot = state.CapturedSnapshot;
 
         int requestId = state.CommandSystem.EnqueueConfirmRoadBuildSession(world.EntityManager);
@@ -126,7 +126,7 @@ public sealed class RoadBuildCommandCompositionSystemHelperTests
     public void RoadBuildCommandRequest_CancelWritesAcceptedResult()
     {
         using World world = new("RoadBuildCommandCancelTest");
-        RoadBuildCommandTestState state = new();
+        RoadBuildCommandTestState state = new(world.EntityManager);
         state.SessionState.RoadBuildSessionSnapshot = state.CapturedSnapshot;
 
         int requestId = state.CommandSystem.EnqueueCancelRoadBuildSession(world.EntityManager);
@@ -149,7 +149,7 @@ public sealed class RoadBuildCommandCompositionSystemHelperTests
     public void RoadBuildCommandRequest_ExitWritesAcceptedResult()
     {
         using World world = new("RoadBuildCommandExitTest");
-        RoadBuildCommandTestState state = new();
+        RoadBuildCommandTestState state = new(world.EntityManager);
         state.RuntimeGameplayStateSystem.BuildModeActive = true;
         state.SessionState.ActiveBuildTool = RoadBuildSessionCompositionSystemHelper.BuildToolMode.Road;
         state.SessionState.PendingDeleteStrokeId = 7;
@@ -182,7 +182,7 @@ public sealed class RoadBuildCommandCompositionSystemHelperTests
     public void RoadBuildRuntimeAction_UpdateProcessesQueuedEnterCommand()
     {
         using World world = new("RoadBuildRuntimeActionCommandQueueTest");
-        RoadBuildCommandTestState state = new();
+        RoadBuildCommandTestState state = new(world.EntityManager);
         RoadBuildRuntimeActionCompositionSystemHelper.State runtimeState = RoadBuildRuntimeActionCompositionSystemHelper.CreateState();
         RoadBuildRuntimeActionCompositionSystemHelper.ConfigureCommands(
             runtimeState,
@@ -213,7 +213,7 @@ public sealed class RoadBuildCommandCompositionSystemHelperTests
     public void RoadBuildCommandRequest_EnqueueAndProcessExitWritesAcceptedResult()
     {
         using World world = new("RoadBuildCommandEnqueueProcessExitTest");
-        RoadBuildCommandTestState state = new();
+        RoadBuildCommandTestState state = new(world.EntityManager);
         state.RuntimeGameplayStateSystem.BuildModeActive = true;
         state.SessionState.ActiveBuildTool = RoadBuildSessionCompositionSystemHelper.BuildToolMode.Road;
 
@@ -231,7 +231,7 @@ public sealed class RoadBuildCommandCompositionSystemHelperTests
     public void ProcessPendingRoadBuildCommands_ReusesQueueEntityWithoutManagedAllocation()
     {
         using World world = new("RoadBuildCommandAllocationTest");
-        RoadBuildCommandTestState state = new();
+        RoadBuildCommandTestState state = new(world.EntityManager);
         state.CommandSystem.ProcessPendingRoadBuildCommands(world.EntityManager, state.CommandContext);
 
         long allocationStart = GC.GetAllocatedBytesForCurrentThread();
@@ -324,7 +324,7 @@ public sealed class RoadBuildCommandCompositionSystemHelperTests
 
     private sealed class RoadBuildCommandTestState
     {
-        public RuntimeGameplayStateSystem RuntimeGameplayStateSystem = new();
+        public RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
         public readonly RoadBuildSessionCompositionSystemHelper SessionSystem = new();
         public readonly RoadBuildSessionCompositionSystemHelper.State SessionState = new();
         public readonly RoadBuildCommandCompositionSystemHelper CommandSystem = new();
@@ -344,8 +344,9 @@ public sealed class RoadBuildCommandCompositionSystemHelperTests
         public int UpdatePreviewCount;
         public int ClearRoadBuildDragStateCount;
 
-        public RoadBuildCommandTestState()
+        public RoadBuildCommandTestState(EntityManager entityManager)
         {
+            RuntimeGameplayStateSystem = new RuntimeGameplayStateSystem(entityManager);
             RuntimeGameplayStateSystem.PlayRequested = true;
             RoadBuildSessionCompositionSystemHelper.Context sessionContext = new(
                 SessionState,

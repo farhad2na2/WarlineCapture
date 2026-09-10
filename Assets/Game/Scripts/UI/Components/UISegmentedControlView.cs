@@ -18,6 +18,8 @@ namespace Game.UI.Runtime
         [SerializeField] private Color normalLabelColor = new(0.88f, 0.94f, 0.95f, 1f);
         [SerializeField] private Color selectedLabelColor = new(0.98f, 1f, 1f, 1f);
 
+        public event System.Action SelectionChanged;
+
         public Transform SegmentRoot => segmentRoot;
         public Button[] SegmentButtons => segmentButtons;
         public TMP_Text[] SegmentLabels => segmentLabels;
@@ -76,6 +78,7 @@ namespace Game.UI.Runtime
                     segmentButtons[i].interactable = active && !selected;
                 }
             }
+            SelectionChanged?.Invoke();
         }
 
         private void ApplyVisualState(int index, bool selected)

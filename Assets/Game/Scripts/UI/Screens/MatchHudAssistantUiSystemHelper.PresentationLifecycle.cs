@@ -36,7 +36,7 @@ namespace Game.UI.Runtime
             if (_loggedMissingButton)
                 return;
             _loggedMissingButton = true;
-            Debug.LogError("[ARIA] Match HUD prefab is missing HeaderContent/AriaAssistantButton; runtime button creation is disabled.");
+            Game.UI.Contracts.UiDiagnostics.Error("[ARIA] Match HUD prefab is missing HeaderContent/AriaAssistantButton; runtime button creation is disabled.");
 #endif
         }
 
@@ -46,7 +46,7 @@ namespace Game.UI.Runtime
             if (_loggedInvalidButton)
                 return;
             _loggedInvalidButton = true;
-            Debug.LogError("[ARIA] HeaderContent/AriaAssistantButton must contain a Button plus TMP State and AlertCue children.");
+            Game.UI.Contracts.UiDiagnostics.Error("[ARIA] HeaderContent/AriaAssistantButton must contain a Button plus TMP State and AlertCue children.");
 #endif
         }
 

@@ -60,6 +60,7 @@ namespace Game.Runtime
                         ? state.EntityManager.GetBuffer<ResourceExchangePhysicalReservationComponent>(exchangeEntity)
                         : default;
 
+                int feedbackEventStart = economyEvents.Length;
                 ProcessRequests(
                     ref requestQueue.ValueRW,
                     enabled.ValueRO,
@@ -78,18 +79,7 @@ namespace Game.Runtime
                     physicalReservations,
                     usePhysicalStorage);
 
-                if (!state.EntityManager.HasBuffer<ResourceExchangeToastComponent>(exchangeEntity))
-                    continue;
-
-                DynamicBuffer<ResourceExchangeToastComponent> toasts =
-                    state.EntityManager.GetBuffer<ResourceExchangeToastComponent>(exchangeEntity);
-                for (int i = 0; i < results.Length; i++)
-                {
-                    ResourceExchangeToastTextUtility.TryAppendToast(
-                        toasts,
-                        true,
-                        results[i]);
-                }
+                PublishRequestFeedback(state.EntityManager, exchangeEntity, results, economyEvents, feedbackEventStart);
             }
         }
 

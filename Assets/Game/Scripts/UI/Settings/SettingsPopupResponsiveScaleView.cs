@@ -65,13 +65,7 @@ namespace Game.UI.Runtime
             RefreshLayout();
         }
 
-        private void LateUpdate()
-        {
-            Canvas canvas = GetComponentInParent<Canvas>();
-            RectTransform canvasRect = canvas != null ? canvas.rootCanvas.transform as RectTransform : null;
-            if (canvasRect != null && canvasRect.rect.size != _lastCanvasSize)
-                RefreshLayout();
-        }
+
 
         private void OnRectTransformDimensionsChange()
         {

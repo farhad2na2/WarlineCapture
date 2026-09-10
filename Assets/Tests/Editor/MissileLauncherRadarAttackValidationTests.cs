@@ -61,7 +61,7 @@ public sealed class MissileLauncherRadarAttackValidationTests
 
         Assert.NotNull(airConfig);
         Assert.NotNull(groundConfig);
-        Assert.That(airConfig.AttackRange, Is.GreaterThanOrEqualTo(600f));
+        Assert.That(airConfig.AttackRange, Is.EqualTo(420f), "Canonical air-defense balance.");
         Assert.That(groundConfig.AttackRange, Is.GreaterThanOrEqualTo(600f));
         Assert.IsTrue(airConfig.CanAttack);
         Assert.IsTrue(groundConfig.CanAttack);

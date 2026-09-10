@@ -396,7 +396,7 @@ public sealed class AndroidVisualQualityValidationTests
             source,
             "The hidden compact minimap must not keep refreshing while the fullscreen tactical map owns presentation.");
         StringAssert.Contains(
-            "if (fullMapOpen)\n                    _matchHudFullMapInputSystem.Update();",
+            "if (fullMapOpen)\n                {\n                    _matchHudFullMapInputSystem.Update();",
             source.Replace("\r\n", "\n"),
             "The visible fullscreen tactical map must retain its own update path.");
     }

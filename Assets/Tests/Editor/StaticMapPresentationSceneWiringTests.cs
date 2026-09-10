@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Game.Composition;
 using Game.Editor;
 using Game.Rendering;
@@ -119,7 +120,7 @@ public sealed class StaticMapPresentationSceneWiringTests
 
         for (int index = 0; index < sourcePaths.Length; index++)
         {
-            string source = File.ReadAllText(Path.Combine(projectRoot, sourcePaths[index]));
+            string source = ReadOwnedSource(Path.Combine(projectRoot, sourcePaths[index]));
             StringAssert.DoesNotContain(
                 "GameObject.Find(",
                 source,
@@ -138,7 +139,7 @@ public sealed class StaticMapPresentationSceneWiringTests
     public void MenuLifecycle_GatesMatchStartAndUnloadOnPresentationStreaming()
     {
         string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
-        string source = File.ReadAllText(Path.Combine(
+        string source = ReadOwnedSource(Path.Combine(
             projectRoot,
             "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs"));
 
@@ -177,10 +178,10 @@ public sealed class StaticMapPresentationSceneWiringTests
     public void MatchTeardown_RestoresCanonicalRenderersBeforeSourceSceneUnload()
     {
         string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
-        string matchSceneViewSource = File.ReadAllText(Path.Combine(
+        string matchSceneViewSource = ReadOwnedSource(Path.Combine(
             projectRoot,
             "Assets/Game/Scripts/Composition/MatchSceneView.cs"));
-        string bootstrapSource = File.ReadAllText(Path.Combine(
+        string bootstrapSource = ReadOwnedSource(Path.Combine(
             projectRoot,
             "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs"));
 
@@ -208,13 +209,13 @@ public sealed class StaticMapPresentationSceneWiringTests
     public void EntitySceneMenuTeardown_ReleasesMetadataBeforePackedContentAndMatchShell()
     {
         string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
-        string matchSceneViewSource = File.ReadAllText(Path.Combine(
+        string matchSceneViewSource = ReadOwnedSource(Path.Combine(
             projectRoot,
             "Assets/Game/Scripts/Composition/MatchSceneView.cs"));
-        string packedOwnershipSource = File.ReadAllText(Path.Combine(
+        string packedOwnershipSource = ReadOwnedSource(Path.Combine(
             projectRoot,
             "Assets/Game/Scripts/Composition/OperationMapPackedEntitySceneOwnership.cs"));
-        string menuSource = File.ReadAllText(Path.Combine(
+        string menuSource = ReadOwnedSource(Path.Combine(
             projectRoot,
             "Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs"));
 
@@ -385,9 +386,18 @@ public sealed class StaticMapPresentationSceneWiringTests
         return count;
     }
 
+    private static string ReadOwnedSource(string path)
+    {
+        string stem = Path.GetFileNameWithoutExtension(path);
+        return string.Join("\n", Directory.GetFiles(Path.GetDirectoryName(path), stem + "*.cs")
+            .Where(candidate => Path.GetFileNameWithoutExtension(candidate) == stem ||
+                Path.GetFileNameWithoutExtension(candidate).StartsWith(stem + ".", StringComparison.Ordinal))
+            .OrderBy(candidate => candidate, StringComparer.Ordinal).Select(File.ReadAllText));
+    }
+
     private static string ReadProjectSource(string projectRoot, string relativePath)
     {
-        return File.ReadAllText(Path.Combine(projectRoot, relativePath));
+        return ReadOwnedSource(Path.Combine(projectRoot, relativePath));
     }
 
     private static void AssertMethodExcludes(

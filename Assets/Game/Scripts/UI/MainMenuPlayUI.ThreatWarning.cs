@@ -17,17 +17,17 @@ namespace Game.UI.Runtime
 
         public void TickMatchHudThreatWarning(float now)
         {
-            if (_matchHudThreatJumpPanel == null || !_matchHudThreatJumpPanel.activeSelf)
+            if (_matchHudThreatJumpPanel == null)
                 return;
 
-            if (now >= _matchHudThreatVisibleUntil || UiShellRuntimeGateway.TryReadMissionCameraTour())
-                SetMatchHudThreatWarningVisible(false);
+            SetMatchHudThreatWarningVisible(now < _matchHudThreatVisibleUntil);
         }
 
         private void SetMatchHudThreatWarningVisible(bool visible)
         {
             // Cinematic controls occupy the warning strip; combat time is frozen during the tour.
-            visible &= !UiShellRuntimeGateway.TryReadMissionCameraTour();
+            visible &= !UiShellRuntimeGateway.TryReadMissionCameraTour() &&
+                !(_matchHudSelectionPanelView != null && _matchHudSelectionPanelView.IsPassengerDrawerOpen);
             if (_matchHudThreatJumpPanel != null && _matchHudThreatJumpPanel.activeSelf != visible)
                 _matchHudThreatJumpPanel.SetActive(visible);
         }

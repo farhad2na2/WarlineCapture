@@ -22,7 +22,8 @@ public sealed class StaticMapPresentationStructuralValidationTests
     [Test]
     public void Manifest_DefinesExactSourceChunkBijection()
     {
-        StaticMapPresentationManifest manifest = LoadManifest();
+        using var fixture = new StaticMapPresentationTestFixture();
+        StaticMapPresentationManifest manifest = fixture.Manifest;
         ValidationFailures failures = new();
 
         ValidateManifestBijection(manifest, CurrentMapId, true, failures);
@@ -34,7 +35,8 @@ public sealed class StaticMapPresentationStructuralValidationTests
     [Timeout(1800000)]
     public void GeneratedChunks_PreserveCanonicalRendererStateAndPresentationOnlyContract()
     {
-        StaticMapPresentationManifest manifest = LoadManifest();
+        using var fixture = new StaticMapPresentationTestFixture();
+        StaticMapPresentationManifest manifest = fixture.Manifest;
         ValidationFailures failures = new();
         ValidateManifestBijection(manifest, CurrentMapId, true, failures);
         failures.AssertNone("Static map presentation manifest must be valid before scene parity can run.");
@@ -81,7 +83,8 @@ public sealed class StaticMapPresentationStructuralValidationTests
     [Test]
     public void SyntheticSecondMap_PreservesIndependentStructuralBijection()
     {
-        StaticMapPresentationManifest current = LoadManifest();
+        using var fixture = new StaticMapPresentationTestFixture();
+        StaticMapPresentationManifest current = fixture.Manifest;
         StaticMapPresentationManifest alternate =
             ScriptableObject.CreateInstance<StaticMapPresentationManifest>();
         try
@@ -124,13 +127,7 @@ public sealed class StaticMapPresentationStructuralValidationTests
         }
     }
 
-    private static StaticMapPresentationManifest LoadManifest()
-    {
-        StaticMapPresentationManifest manifest =
-            AssetDatabase.LoadAssetAtPath<StaticMapPresentationManifest>(ManifestPath);
-        Assert.NotNull(manifest, $"Missing static map presentation manifest at {ManifestPath}.");
-        return manifest;
-    }
+
 
     private static void ValidateManifestBijection(
         StaticMapPresentationManifest manifest,

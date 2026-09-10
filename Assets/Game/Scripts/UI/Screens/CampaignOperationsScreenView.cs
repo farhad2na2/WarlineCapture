@@ -1,4 +1,3 @@
-using Game.Configs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,6 +14,7 @@ namespace Game.UI.Runtime
         [SerializeField] private RectTransform missionBriefing;
         [SerializeField] private RectTransform[] chapterCards;
         [SerializeField] private RectTransform[] missionNodes;
+        [SerializeField] private GameObject[] missionLockIcons;
         [SerializeField] private Button[] missionNodeButtons;
         [SerializeField] private RectTransform[] progressNodes;
         [SerializeField] private RawImage districtMapImage;
@@ -124,15 +124,15 @@ namespace Game.UI.Runtime
             missionName.fontSizeMin = v3StateLayout ? 22f : 36f;
             missionName.fontSizeMax = v3StateLayout ? 34f : 84f;
             screenTitle.text = v3StateLayout
-                ? GameLocalization.Get("ui.campaign.title", "CAMPAIGN")
+                ? UiShellRuntimeGateway.Localization.Get("ui.campaign.title", "CAMPAIGN")
                 : _gameTextResolver.Get(
                     "campaign.operations.title",
                     model.NextMissionRevealed ? "CAMPAIGN OPERATIONS  |  NEXT READY" : "CAMPAIGN OPERATIONS");
             Set(missionNumber, v3StateLayout ? (m02 ? "M02" : "M01") : (m02 ? "MISSION 02" : "MISSION 01"));
             missionName.text = v3StateLayout
                 ? m02
-                    ? GameLocalization.Get("ui.campaign.m02_name", "ESTABLISH THE BASE")
-                    : GameLocalization.Get("ui.campaign.m01_name", "FIRST CONTACT")
+                    ? UiShellRuntimeGateway.Localization.Get("ui.campaign.m02_name", "ESTABLISH THE BASE")
+                    : UiShellRuntimeGateway.Localization.Get("ui.campaign.m01_name", "FIRST CONTACT")
                 : FormatMissionSummary(mission);
             Set(missionBriefingText, _gameTextResolver.Get(
                 m02 ? "mission.m02.summary" : "mission.m01.summary",
@@ -141,8 +141,8 @@ namespace Game.UI.Runtime
                     : "Secure the Old Market corridor and protect the civilian route."));
             Set(primaryObjectiveText, v3StateLayout
                 ? m02
-                    ? GameLocalization.Get("ui.campaign.build_barrack", "BUILD\nBARRACK")
-                    : GameLocalization.Get("ui.campaign.secure_corridor", "SECURE\nCORRIDOR")
+                    ? UiShellRuntimeGateway.Localization.Get("ui.campaign.build_barrack", "BUILD\nBARRACK")
+                    : UiShellRuntimeGateway.Localization.Get("ui.campaign.secure_corridor", "SECURE\nCORRIDOR")
                 : _gameTextResolver.Get(
                     m02 ? "mission.m02.objective.build_forward_barracks" : "mission.m01.objective.secure_corridor",
                     m02 ? "BUILD THE FORWARD BARRACKS" : "ELIMINATE THE HOSTILE PATROL"));
@@ -154,19 +154,20 @@ namespace Game.UI.Runtime
             Set(
                 launchMissionLabel,
                 v3StateLayout
-                    ? GameLocalization.Get("ui.campaign.start_briefing", "START BRIEFING")
-                    : GameLocalization.GetBySource(mission.PrimaryActionLabel));
+                    ? UiShellRuntimeGateway.Localization.Get("ui.campaign.start_briefing", "START BRIEFING")
+                    : UiShellRuntimeGateway.Localization.GetBySource(mission.PrimaryActionLabel));
             launchMissionButton.interactable = mission.Available;
             ApplyMissionNodes(mission.MissionId, model.NextMissionRevealed, model.AvailableMissionMask);
             ApplyRadarWarning(mission);
             ApplyAirlift(mission);
+            ApplyMissionGoals(mission.MissionId);
             for (int index = 0; index < progressNodes.Length; index++)
                 progressNodes[index].gameObject.SetActive(index < mission.BestStars);
         }
 
         public void ApplyUnavailable()
         {
-            missionName.text = GameLocalization.Get(
+            missionName.text = UiShellRuntimeGateway.Localization.Get(
                 "ui.campaign.mission_unavailable",
                 "MISSION DATA UNAVAILABLE");
             launchMissionButton.interactable = false;
@@ -192,9 +193,9 @@ namespace Game.UI.Runtime
                 if (missionNodeButtons != null && index < missionNodeButtons.Length &&
                     missionNodeButtons[index] != null)
                     missionNodeButtons[index].interactable = available;
-                Transform lockIcon = missionNodes[index] != null ? missionNodes[index].Find("Lock") : null;
+                GameObject lockIcon = missionLockIcons != null && index < missionLockIcons.Length ? missionLockIcons[index] : null;
                 if (lockIcon != null)
-                    lockIcon.gameObject.SetActive(!available);
+                    lockIcon.SetActive(!available);
             }
         }
 

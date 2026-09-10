@@ -1,5 +1,4 @@
 using System;
-using Game.Configs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -55,7 +54,7 @@ namespace Game.UI.Runtime
         {
             if (accessibleLabel != null)
                 accessibleLabel.text = string.IsNullOrWhiteSpace(value)
-                    ? GameLocalization.Get(
+                    ? UiShellRuntimeGateway.Localization.Get(
                         "ui.narrative.confirm_skip_accessible",
                         "Confirm skip to gameplay")
                     : value;
@@ -77,7 +76,7 @@ namespace Game.UI.Runtime
         private void OnValidate()
         {
             if (group == null || confirmButton == null || cancelButton == null || accessibleLabel == null)
-                Debug.LogWarning($"[{nameof(NarrativeSkipConfirmationView)}] Missing required serialized reference on {name}.", this);
+                Game.UI.Contracts.UiDiagnostics.Warning($"[{nameof(NarrativeSkipConfirmationView)}] Missing required serialized reference on {name}.", this);
         }
 #endif
     }

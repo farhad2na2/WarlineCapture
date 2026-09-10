@@ -164,6 +164,7 @@ class FullFakeAdb:
         if args == ("devices", "-l"):
             return result(args, f"List of devices attached\n{self.profile['device']['serial']} device product:x model:y\n")
         properties = {
+            "ro.serialno": self.profile["device"]["serial"],
             "ro.product.manufacturer": self.profile["device"]["manufacturer"],
             "ro.product.model": self.profile["device"]["model"],
             "ro.product.device": self.profile["device"]["deviceCodeName"],

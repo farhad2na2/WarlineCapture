@@ -16,8 +16,8 @@ MonoBehaviour:
   schemaVersion: 1
   contentVersion: 1
   sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
-  contentHash: 38474d592b6cd91aace2f7b99cc08f13a727ece3a81d0d8e6e1341feaa5a42ee
-  generatedMetadataHash: 38474d592b6cd91aace2f7b99cc08f13a727ece3a81d0d8e6e1341feaa5a42ee
+  contentHash: 16b73efcc8bbb01e171d9286729e12690904b2485d91e1d5578217f8730822be
+  generatedMetadataHash: 16b73efcc8bbb01e171d9286729e12690904b2485d91e1d5578217f8730822be
   sourceBinding:
     sourceOperationMapId: opmap.skirmish.desert_base_01
     sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
@@ -27,8 +27,8 @@ MonoBehaviour:
     worldMax: {x: 2048, y: 100, z: 1024}
     playableMin: {x: 540, y: -6.9545445, z: 270}
     playableMax: {x: 1100, y: 40.375454, z: 490}
-    cameraMin: {x: 540, y: 4, z: 270}
-    cameraMax: {x: 1100, y: 100, z: 490}
+    cameraMin: {x: 540, y: 4, z: 220}
+    cameraMax: {x: 1280, y: 100, z: 640}
   gridMetadata:
     assetGuid: b201000000000000000000000000000b
     contentHash: 8ef1b3f17074774040111a48ea82901b3355da8b8b86c8dc5c6e2a0bcccc2cfb
@@ -191,43 +191,43 @@ MonoBehaviour:
   renderResidencyMode: 1
   sourceSceneReference:
     m_AssetGUID: dad0bd13fb20943dfb2f881cbe225f05
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_SubObjectGUID: 
+    m_SubObjectName:
+    m_SubObjectType:
+    m_SubObjectGUID:
     m_EditorAssetChanged: 0
   optionalHeavyMetadataReference:
-    m_AssetGUID: 
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_SubObjectGUID: 
+    m_AssetGUID:
+    m_SubObjectName:
+    m_SubObjectType:
+    m_SubObjectGUID:
     m_EditorAssetChanged: 0
   staticPresentationManifestReference:
-    m_AssetGUID: 
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_SubObjectGUID: 
+    m_AssetGUID:
+    m_SubObjectName:
+    m_SubObjectType:
+    m_SubObjectGUID:
     m_EditorAssetChanged: 0
   mapSurfaceDataReference:
     m_AssetGUID: 12f517deb32ab49698acbfdaf7c3eac7
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_SubObjectGUID: 
+    m_SubObjectName:
+    m_SubObjectType:
+    m_SubObjectGUID:
     m_EditorAssetChanged: 0
   minimapRasterReference:
     m_AssetGUID: 3b1a8dbd670bf4e94863c00acbc3a3a7
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_SubObjectGUID: 
+    m_SubObjectName:
+    m_SubObjectType:
+    m_SubObjectGUID:
     m_EditorAssetChanged: 0
   buildingPlacementsReference:
-    m_AssetGUID: 
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_SubObjectGUID: 
+    m_AssetGUID:
+    m_SubObjectName:
+    m_SubObjectType:
+    m_SubObjectGUID:
     m_EditorAssetChanged: 0
   vehiclePlacementsReference:
-    m_AssetGUID: 
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_SubObjectGUID: 
+    m_AssetGUID:
+    m_SubObjectName:
+    m_SubObjectType:
+    m_SubObjectGUID:
     m_EditorAssetChanged: 0

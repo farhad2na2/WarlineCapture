@@ -147,16 +147,18 @@ public sealed class ResourceExchangeHeaderRoutingTests
         GameObject header = UnityEngine.Object.Instantiate(prefab);
         try
         {
-            Transform resourceStrip = header.transform.Find("HeaderContent/ResourceStrip");
+            Transform resourceStrip = header.transform.Find("V3Composition/HeaderContent/ResourceStrip");
             Assert.NotNull(resourceStrip);
             Button exchangeButton = resourceStrip.GetComponent<Button>();
             Image panelImage = resourceStrip.GetComponent<Image>();
             Assert.NotNull(exchangeButton, "The existing resource panel must own the exchange button.");
             Assert.NotNull(panelImage, "The existing resource panel Image must remain the click surface.");
-            Assert.IsTrue(panelImage.raycastTarget);
-            Assert.AreSame(panelImage, exchangeButton.targetGraphic);
+            Assert.IsFalse(panelImage.raycastTarget, "Transparent background must defer to its visible gradient button target.");
+            Assert.NotNull(exchangeButton.targetGraphic);
+            Assert.IsTrue(exchangeButton.targetGraphic.raycastTarget);
+            Assert.AreSame(resourceStrip, exchangeButton.targetGraphic.transform.parent);
 
-            runtimeUi.BindMatchHudThreatJumpPanel(header);
+            runtimeUi.BindMatchHudThreatJumpPanel(resourceStrip.parent.gameObject);
             exchangeButton.onClick.Invoke();
 
             Assert.AreEqual(1, gateway.ActionCount);
@@ -174,7 +176,7 @@ public sealed class ResourceExchangeHeaderRoutingTests
     {
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(MatchHudContentPrefabPath);
         Assert.NotNull(prefab);
-        Transform sourceHeader = prefab.transform.Find("HeaderContent");
+        Transform sourceHeader = prefab.transform.Find("V3Composition/HeaderContent");
         Assert.NotNull(sourceHeader);
         Assert.NotNull(sourceHeader.GetComponent<Canvas>(),
             "HeaderContent must retain its original batching canvas.");
@@ -186,7 +188,7 @@ public sealed class ResourceExchangeHeaderRoutingTests
         Assert.NotNull(resourceStrip.GetComponent<Canvas>());
         Assert.NotNull(resourceStrip.GetComponent<GraphicRaycaster>());
         Assert.NotNull(resourceStrip.GetComponent<Button>());
-        Assert.IsTrue(resourceStrip.GetComponent<Image>().raycastTarget);
+        Assert.IsTrue(resourceStrip.GetComponent<Button>().targetGraphic.raycastTarget);
 
         AssertScopedHeaderButton(sourceHeader, "PauseButton", UiActionKind.Pause);
         AssertScopedHeaderButton(sourceHeader, "SettingsButton", UiActionKind.OpenSettings);
@@ -224,7 +226,7 @@ public sealed class ResourceExchangeHeaderRoutingTests
         GameObject instance = UnityEngine.Object.Instantiate(prefab);
         try
         {
-            Transform header = instance.transform.Find("HeaderContent");
+            Transform header = instance.transform.Find("V3Composition/HeaderContent");
             Assert.NotNull(header);
             Transform[] slots =
             {

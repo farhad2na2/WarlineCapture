@@ -87,11 +87,6 @@ namespace Game.UI.Runtime
         private void Start() => RefreshLayout();
         private void OnRectTransformDimensionsChange() => RefreshLayout();
 
-        private void LateUpdate()
-        {
-            _panel ??= transform as RectTransform;
-            if (_panel != null && _panel.rect.size != _lastPanelSize)
-                RefreshLayout();
-        }
+
     }
 }

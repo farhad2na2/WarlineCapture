@@ -178,6 +178,7 @@ namespace Game.Editor
             try
             {
                 ConfigureLanguageChoiceLocalization(root);
+                MissionUiSerializedBindingsAuthoring.Apply(root);
                 PrefabUtility.SaveAsPrefabAsset(
                     root,
                     FirstLaunchNarrativePresentationPrefabBuilder.LanguageChoicePrefabPath);
@@ -203,6 +204,7 @@ namespace Game.Editor
                     throw new UnityException("First Launch narrative prefab is missing its view or SafeArea.");
 
                 AssignLocalizedBindings(sequence, safeArea);
+                MissionUiSerializedBindingsAuthoring.Apply(root);
                 PrefabUtility.SaveAsPrefabAsset(
                     root,
                     FirstLaunchNarrativePresentationPrefabBuilder.PrefabPath);
@@ -379,6 +381,7 @@ namespace Game.Editor
                 ConfigureResponsiveLanguageChoice(
                     composition.GetComponent<MainMenuV3SectionLayoutView>(),
                     composition);
+                MissionUiSerializedBindingsAuthoring.Apply(root);
                 PrefabUtility.SaveAsPrefabAsset(root, FirstLaunchNarrativePresentationPrefabBuilder.LanguageChoicePrefabPath);
             }
             finally
@@ -481,6 +484,7 @@ namespace Game.Editor
                 SetObject(sequence, "guidanceChoiceView", guidance);
                 SetObject(sequence, "skipConfirmationView", skip);
                 AssignLocalizedBindings(sequence, safeArea);
+                MissionUiSerializedBindingsAuthoring.Apply(root);
                 PrefabUtility.SaveAsPrefabAsset(root, FirstLaunchNarrativePresentationPrefabBuilder.PrefabPath);
             }
             finally
@@ -1193,7 +1197,7 @@ namespace Game.Editor
                         new FirstLaunchNarrativeLocaleTextCompositionSystemHelper(
                             FallbackGameTextResolver.Instance,
                             locale);
-                    resolver = new SharedLocalizationTextCompositionSystemHelper(legacy);
+                    resolver = new FirstLaunchNarrativeCompositionSystemHelper.SharedLocaleCompositionSystemHelper(legacy);
                 }
 
                 view.ApplyLanguage(rightToLeft, resolver);

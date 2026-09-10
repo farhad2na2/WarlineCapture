@@ -18,7 +18,7 @@ namespace Game.Composition
         AwaitingLanguage = 3
     }
 
-    internal sealed class FirstLaunchNarrativeCompositionSystemHelper
+    internal sealed partial class FirstLaunchNarrativeCompositionSystemHelper
     {
         private readonly FirstLaunchNarrativeSequencePresentationSystemHelper sequencePresentation = new();
         private readonly FirstLaunchNarrativeProfileCompositionSystemHelper profileComposition = new();
@@ -267,66 +267,6 @@ namespace Game.Composition
             profileComposition.Reset();
         }
 
-        private void HandleLanguageSelected(FirstLaunchNarrativeLanguage language)
-        {
-            if (!awaitingLanguage ||
-                language != FirstLaunchNarrativeLanguage.English &&
-                language != FirstLaunchNarrativeLanguage.Persian)
-            {
-                return;
-            }
-
-            if (language == FirstLaunchNarrativeLanguage.Persian && persianLocale == null)
-            {
-                UnityEngine.Debug.LogError(
-                    "[FirstLaunchNarrative] Persian was selected, but no Persian locale is configured.");
-                languageChoiceView?.SetVisible(true);
-                return;
-            }
-
-            profileComposition.CommitLanguage(language, true);
-            UISettingsModel settings = SettingsService.Load();
-            settings.Localization.Language = language == FirstLaunchNarrativeLanguage.Persian
-                ? UILanguage.Persian
-                : UILanguage.English;
-            settings.Localization.LocaleCode = language == FirstLaunchNarrativeLanguage.Persian
-                ? GameLocalization.PersianLocaleCode
-                : GameLocalization.EnglishLocaleCode;
-            SettingsService.Save(settings);
-            SettingsService.ApplyRuntime(settings);
-            awaitingLanguage = false;
-            languageChoiceView?.SetVisible(false);
-            if (StartNarrative(language))
-                return;
-
-            shellComposition.SetStartupDisposition(FirstLaunchNarrativeStartupDisposition.EnterMenu);
-        }
-
-        private static void SynchronizeUiLocale(FirstLaunchNarrativeLanguage language)
-        {
-            if (language == FirstLaunchNarrativeLanguage.Unselected ||
-                UnityEngine.PlayerPrefs.HasKey(GameLocalization.LocalePreferenceKey))
-                return;
-
-            UISettingsModel settings = SettingsService.Load();
-            UILanguage uiLanguage = language == FirstLaunchNarrativeLanguage.Persian
-                ? UILanguage.Persian
-                : UILanguage.English;
-            if (settings.Localization.Language != uiLanguage)
-            {
-                settings.Localization.Language = uiLanguage;
-            }
-            settings.Localization.LocaleCode = uiLanguage == UILanguage.Persian
-                ? GameLocalization.PersianLocaleCode
-                : GameLocalization.EnglishLocaleCode;
-            SettingsService.Save(settings);
-            GameLocalization.SetLocale(
-                uiLanguage == UILanguage.Persian
-                    ? GameLocalization.PersianLocaleCode
-                    : GameLocalization.EnglishLocaleCode,
-                persist: true);
-        }
-
         private bool StartNarrative(FirstLaunchNarrativeLanguage language)
         {
             if (!reviewerMode)
@@ -346,7 +286,7 @@ namespace Game.Composition
                 ? new FirstLaunchNarrativeLocaleTextCompositionSystemHelper(baseTextResolver, locale)
                 : baseTextResolver;
             IGameTextResolver resolver =
-                new SharedLocalizationTextCompositionSystemHelper(legacyResolver);
+                new FirstLaunchNarrativeCompositionSystemHelper.SharedLocaleCompositionSystemHelper(legacyResolver);
             if (!sequencePresentation.Initialize(
                     sequenceConfig,
                     speakerCatalog,

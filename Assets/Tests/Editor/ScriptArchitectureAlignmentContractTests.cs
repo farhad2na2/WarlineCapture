@@ -243,6 +243,14 @@ public sealed class ScriptArchitectureAlignmentContractTests
 
     private static readonly HashSet<string> ClassifiedRuntimeGameObjectInstantiateCalls = new(StringComparer.Ordinal)
     {
+        // Owned VolumeProfile copies and collider-disabled dressing/pool visuals; gameplay remains ECS-owned.
+        "Assets/Game/Scripts/Environment/DayNightSystem.cs|? Object.Instantiate(sourceProfile)",
+        "Assets/Game/Scripts/Environment/RuntimeCityAlgorithmicAftermathPresentationSystemHelper.cs|GameObject instance = UnityEngine.Object.Instantiate(prefab, groupRoot);",
+        "Assets/Game/Scripts/Environment/RuntimeOperationMapVisualRecipePresentationSystemHelper.cs|GameObject visual = Object.Instantiate(module.Prefab, stageRoot);",
+        "Assets/Game/Scripts/Environment/RuntimeOperationMapVisualRecipePresentationSystemHelper.cs|GameObject visual = Object.Instantiate(sourceSlice.gameObject, moduleRoot);",
+        "Assets/Game/Scripts/Environment/RuntimeOperationMapVisualRecipePresentationSystemHelper.cs|visual = Object.Instantiate(entry.Prefab, parent);",
+        "Assets/Game/Scripts/Systems/ResourceExchangeVisualPresentationSystemHelper.cs|? Object.Instantiate(prefab, root, false)",
+        "Assets/Game/Scripts/Systems/ResourceExchangeVisualPresentationSystemHelper.cs|: Object.Instantiate(prefab);",
         "Assets/Game/Scripts/Environment/DayNightSystem.cs|_runtimeSkyboxMaterial = Object.Instantiate(RenderSettings.skybox);",
         "Assets/Game/Scripts/Environment/RuntimeCityVisualPresentationSystemHelper.cs|visual = UnityEngine.Object.Instantiate(combinedMesh.gameObject, wrapper.transform);",
         "Assets/Game/Scripts/Environment/RuntimeCityVisualPresentationSystemHelper.cs|visual = UnityEngine.Object.Instantiate(prefab, wrapper.transform);",
@@ -1311,8 +1319,7 @@ public sealed class ScriptArchitectureAlignmentContractTests
             for (int lineIndex = 0; lineIndex < lines.Length; lineIndex++)
             {
                 string line = lines[lineIndex];
-                if (line.Contains("MatchHudSelectionPanelView", StringComparison.Ordinal) &&
-                    !line.Contains("IMatchHudSelectionPanelView", StringComparison.Ordinal))
+                if (Regex.IsMatch(line, @"\bMatchHudSelectionPanelView\b", RegexOptions.CultureInvariant))
                 {
                     violations.Add($"{normalized}:{lineIndex + 1} binds concrete selection panel view: {line.Trim()}");
                 }
@@ -1322,6 +1329,18 @@ public sealed class ScriptArchitectureAlignmentContractTests
         AssertNoViolations(
             violations,
             "Selection/runtime systems must bind the match HUD selection panel through `IMatchHudSelectionPanelView`. Concrete `MatchHudSelectionPanelView` lookup is limited to bootstrap scene/UI discovery.");
+    }
+
+    [Test]
+    public void SourceGuardsDistinguishTypeAndFieldDeclarationsFromIdentifiersAndParameters()
+    {
+        Assert.IsTrue(Regex.IsMatch("MatchHudSelectionPanelView view;", @"\bMatchHudSelectionPanelView\b"));
+        Assert.IsTrue(Regex.IsMatch("GetComponent<MatchHudSelectionPanelView>()", @"\bMatchHudSelectionPanelView\b"));
+        Assert.IsFalse(Regex.IsMatch("IMatchHudSelectionPanelView LiveMatchHudSelectionPanelView;", @"\bMatchHudSelectionPanelView\b"));
+        Assert.AreEqual("StaticViewCollection", ResolveForbiddenStaticViewRegistryKind("private static readonly List<PanelView> views = new();"));
+        Assert.AreEqual("StaticViewCollection", ResolveForbiddenStaticViewRegistryKind("static Dictionary<int, PanelView> views;"));
+        Assert.IsNull(ResolveForbiddenStaticViewRegistryKind("internal static void ClearRuntimeItems(List<PanelView> items)"));
+        Assert.IsNull(ResolveForbiddenStaticViewRegistryKind("private readonly List<PanelView> views = new();"));
     }
 
     [Test]
@@ -1820,9 +1839,7 @@ public sealed class ScriptArchitectureAlignmentContractTests
             return null;
         }
 
-        if (line.Contains("Dictionary<", StringComparison.Ordinal) ||
-            line.Contains("List<", StringComparison.Ordinal) ||
-            line.Contains("HashSet<", StringComparison.Ordinal))
+        if (StaticMutableCollectionFieldRegex.IsMatch(line))
         {
             return "StaticViewCollection";
         }

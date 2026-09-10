@@ -57,7 +57,7 @@ public sealed class MissionBriefingScreenTests
         Assert.NotNull(content);
         Assert.NotNull(content.MissionBriefingContentPrefab, "Menu scene must assign the SCN-06 Mission Briefing prefab.");
         Assert.AreEqual("SCN06_MissionBriefingContent", content.MissionBriefingContentPrefab.name);
-        Assert.NotNull(content.MissionBriefingContentPrefab.GetComponent<MissionBriefingScreenView>());
+        Assert.NotNull(content.MissionBriefingContentPrefab.GetComponentInChildren<MissionBriefingScreenView>(true));
 
         content.PrepareForCommandSequence(new[]
         {
@@ -74,7 +74,7 @@ public sealed class MissionBriefingScreenTests
         AssertRegionIsEmpty(content.ShellView, UIShellRegionId.RightRegion);
         AssertRegionIsEmpty(content.ShellView, UIShellRegionId.FooterRegion);
         GameObject briefing = AssertRegionHasChild(content.ShellView, UIShellRegionId.PopupLayer);
-        MissionBriefingScreenView installedView = briefing.GetComponent<MissionBriefingScreenView>();
+        MissionBriefingScreenView installedView = briefing.GetComponentInChildren<MissionBriefingScreenView>(true);
         Assert.NotNull(installedView);
         Assert.NotNull(installedView.MissionOverview);
         Assert.NotNull(installedView.PrimaryObjectives);
@@ -86,21 +86,19 @@ public sealed class MissionBriefingScreenTests
     {
         Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
         UIShellContentView content = ResolveComponentInScene<UIShellContentView>(scene);
-        CampaignOperationsScreenView campaign = content.CampaignContentPrefab.GetComponent<CampaignOperationsScreenView>();
+        CampaignOperationsScreenView campaign = content.CampaignContentPrefab.GetComponentInChildren<CampaignOperationsScreenView>(true);
         Assert.NotNull(campaign);
         Assert.IsTrue(campaign.LaunchMissionButton.interactable);
-        UIShellRouteButtonView briefingRoute = campaign.LaunchMissionButton.GetComponent<UIShellRouteButtonView>();
-        Assert.NotNull(briefingRoute, "SCN-05 selected mission action must be a shell route button.");
-        Assert.AreEqual(UiShellRouteIntent.OpenMenuRoute, briefingRoute.Intent);
-        Assert.AreEqual(UIRoute.MissionBriefing, briefingRoute.Route);
-        Assert.IsTrue(briefingRoute.PushHistory);
+        Assert.NotNull(campaign.GetComponent<CampaignMissionScreenBinderView>(),
+            "The selected mission opens through its typed ECS action binder.");
 
-        MissionBriefingScreenView briefing = content.MissionBriefingContentPrefab.GetComponent<MissionBriefingScreenView>();
+        MissionBriefingScreenView briefing = content.MissionBriefingContentPrefab.GetComponentInChildren<MissionBriefingScreenView>(true);
         Assert.NotNull(briefing);
         Assert.NotNull(briefing.BackRouteButton);
         Assert.AreEqual(UiShellRouteIntent.BackMenuRoute, briefing.BackRouteButton.Intent);
         Assert.AreEqual(UIRoute.Campaign, briefing.BackRouteButton.Route);
-        Assert.IsFalse(briefing.DeployOperationButton.interactable, "Deploy must remain disabled until Campaign startup contracts exist.");
+        Assert.IsTrue(briefing.DeployOperationButton.interactable);
+        Assert.NotNull(briefing.GetComponent<CampaignMissionScreenBinderView>());
         Assert.IsNull(ResolveComponentInHierarchy<UIGameStartButtonView>(content.MissionBriefingContentPrefab.transform),
             "SCN-06 must not invoke the default Skirmish Match startup path.");
     }
@@ -134,15 +132,20 @@ public sealed class MissionBriefingScreenTests
         DynamicBuffer<UiShellRouteHistoryComponent> history = em.GetBuffer<UiShellRouteHistoryComponent>(boundary);
         history.Add(new UiShellRouteHistoryComponent { Route = UIRoute.MainMenu });
 
+        em.AddComponentData(boundary, new UiCampaignOperationsComponent
+        { Version = 1, Available = 1, SelectedMissionId = new Unity.Collections.FixedString64Bytes("saga.ch01.m02.establish_base") });
         SystemHandle flowSystem = _world.CreateSystem<UiShellFlowSystem>();
         GameObject campaignInstance = UnityEngine.Object.Instantiate(content.CampaignContentPrefab);
         GameObject briefingInstance = UnityEngine.Object.Instantiate(content.MissionBriefingContentPrefab);
         try
         {
-            CampaignOperationsScreenView campaign = campaignInstance.GetComponent<CampaignOperationsScreenView>();
-            UIShellRouteButtonView briefingRoute = campaign.LaunchMissionButton.GetComponent<UIShellRouteButtonView>();
-            briefingRoute.SendMessage("OnEnable");
+            CampaignOperationsScreenView campaign = campaignInstance.GetComponentInChildren<CampaignOperationsScreenView>(true);
+            var binder = campaign.GetComponent<CampaignMissionScreenBinderView>();
+            binder.Configure(campaign, "saga.ch01.m02.establish_base");
+            EditModeViewLifecycle.Invoke(binder, "OnEnable");
             campaign.LaunchMissionButton.onClick.Invoke();
+            var actions = em.GetBuffer<UiCampaignMissionActionRequestElement>(boundary);
+            Assert.AreEqual(UiCampaignMissionActionKind.OpenBriefing, actions[actions.Length - 1].Action);
             flowSystem.Update(_world.Unmanaged);
 
             UiShellStateComponent shellState = em.GetComponentData<UiShellStateComponent>(boundary);
@@ -160,8 +163,8 @@ public sealed class MissionBriefingScreenTests
             });
             flowSystem.Update(_world.Unmanaged);
 
-            MissionBriefingScreenView briefing = briefingInstance.GetComponent<MissionBriefingScreenView>();
-            briefing.BackRouteButton.SendMessage("OnEnable");
+            MissionBriefingScreenView briefing = briefingInstance.GetComponentInChildren<MissionBriefingScreenView>(true);
+            EditModeViewLifecycle.Invoke(briefing.BackRouteButton, "OnEnable");
             briefing.BackRouteButton.GetComponent<Button>().onClick.Invoke();
             flowSystem.Update(_world.Unmanaged);
 
@@ -183,7 +186,7 @@ public sealed class MissionBriefingScreenTests
     {
         Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
         UIShellContentView content = ResolveComponentInScene<UIShellContentView>(scene);
-        MissionBriefingScreenView view = content.MissionBriefingContentPrefab.GetComponent<MissionBriefingScreenView>();
+        MissionBriefingScreenView view = content.MissionBriefingContentPrefab.GetComponentInChildren<MissionBriefingScreenView>(true);
         Assert.NotNull(view);
         Assert.NotNull(view.MissionOverview);
         Assert.NotNull(view.PrimaryObjectives);
@@ -191,20 +194,21 @@ public sealed class MissionBriefingScreenTests
         Assert.NotNull(view.EnemyIntel);
         Assert.NotNull(view.ChapterProgress);
         Assert.NotNull(view.Rewards);
-        Assert.AreEqual(5, view.ProgressNodes.Length);
+        Assert.IsEmpty(view.ProgressNodes);
+        Assert.IsFalse(view.ChapterProgress.gameObject.activeSelf);
         AssertAllAssigned(view.ProgressNodes, "progress node");
         Assert.AreEqual(
-            "Assets/Game/Art/UI/Generated/CampaignOperations/TargetLockV01/scn05_blackout_relay_preview_v01.png",
+            "Assets/Game/Art/UI/V3Shared/MissionBriefing/SCN06_ForwardPost_V3.png",
             AssetDatabase.GetAssetPath(view.MissionArtImage.texture));
         Assert.AreEqual(
             "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold SDF.asset",
             AssetDatabase.GetAssetPath(view.ScreenTitle.font));
-        Assert.GreaterOrEqual(view.ScreenTitle.fontSize, 110f);
-        Assert.GreaterOrEqual(view.MissionTitle.fontSize, 80f);
-        Assert.IsFalse(view.DeployOperationButton.interactable);
+        Assert.GreaterOrEqual(view.ScreenTitle.fontSize, 32f);
+        Assert.GreaterOrEqual(view.MissionTitle.fontSize, 48f);
+        Assert.IsTrue(view.DeployOperationButton.interactable);
         RectTransform deployRect = view.DeployOperationButton.GetComponent<RectTransform>();
-        Assert.AreEqual(0f, deployRect.anchorMin.y, 0.001f);
-        Assert.AreEqual(0f, deployRect.anchorMax.y, 0.001f);
+        Assert.AreEqual(1f, deployRect.anchorMin.y, 0.001f);
+        Assert.AreEqual(1f, deployRect.anchorMax.y, 0.001f);
     }
 
     private static void Run(string name, Action<MissionBriefingScreenTests> action, ref int passed)

@@ -982,7 +982,8 @@ public sealed class BuildingResourceProductionEcsSystemTests
         new BuildingProductionRuntimeTickCompositionSystemHelper().UpdateResourceProduction(context);
 
         Assert.AreEqual(1, syncCount);
-        Assert.AreEqual(7f, syncedOil);
+        Assert.AreEqual(building.StoredOilBarrels, syncedOil);
+        Assert.Greater(syncedOil, 7f, "The mirror must contain the post-production amount.");
     }
 
     [Test]

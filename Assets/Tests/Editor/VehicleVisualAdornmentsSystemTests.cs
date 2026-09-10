@@ -36,7 +36,7 @@ public sealed class VehicleVisualAdornmentsSystemTests
             tests.UnitSelectionMarkerSystemSizesVehicleMarkerFromMeshBoundsWhenAvailable();
             tests.UnitSelectionMarkerSystemCreatesMarkerForSelectedCharacterUnit();
             tests.UnitSelectionMarkerSystemSplitsReferenceMarkerPrefabForVehiclesAndInfantry();
-            tests.UnitSelectionMarkerSystemCreatesEcsObjectOutlinesForSelectedVehicleAndCharacterRenderChildren();
+            tests.UnitSelectionMarkerSystemUsesVehicleOutlineAndInfantryGroundRing();
             tests.UnitSelectionMarkerSystemKeepsAirVehicleObjectOutlineWhileGroundMarkerIsHidden();
             tests.UnitSelectionMarkerSystemOutlinesReferencedAirVehicleVisualRoot();
             tests.UnitSelectionMarkerSystemSuppressesHelicopterBladeOutlineSourcesByBakedBladeReference();
@@ -328,9 +328,9 @@ public sealed class VehicleVisualAdornmentsSystemTests
     }
 
     [Test]
-    public void UnitSelectionMarkerSystemCreatesEcsObjectOutlinesForSelectedVehicleAndCharacterRenderChildren()
+    public void UnitSelectionMarkerSystemUsesVehicleOutlineAndInfantryGroundRing()
     {
-        using var world = new World(nameof(UnitSelectionMarkerSystemCreatesEcsObjectOutlinesForSelectedVehicleAndCharacterRenderChildren));
+        using var world = new World(nameof(UnitSelectionMarkerSystemUsesVehicleOutlineAndInfantryGroundRing));
         EntityManager em = world.EntityManager;
         Entity markerPrefab = CreateVisualPrefab(em);
         Entity vehicle = CreateVehicle(em, health: 100);
@@ -349,22 +349,24 @@ public sealed class VehicleVisualAdornmentsSystemTests
         outlineSystem.Update(world.Unmanaged);
 
         Entity vehicleOutline = AssertSelectionObjectOutline(em, vehicle, vehicleRenderer, "Vehicle");
-        Entity characterOutline = AssertSelectionObjectOutline(em, character, characterRenderer, "Character");
+        Entity characterMarker = em.GetComponentData<UnitSelectionMarkerInstanceReference>(character).Instance;
+        Assert.IsTrue(em.Exists(characterMarker));
+        Assert.AreEqual(0, em.GetBuffer<SelectionObjectOutlineInstanceElement>(characterMarker).Length);
         Assert.AreEqual(1.5f, em.GetComponentData<LocalTransform>(vehicleOutline).Scale, 0.001f);
-        Assert.AreEqual(0.8f, em.GetComponentData<LocalTransform>(characterOutline).Scale, 0.001f);
+        Assert.IsTrue(em.Exists(characterMarker));
 
         em.RemoveComponent<SelectedUnitTag>(vehicle);
         visibilitySystem.Update(world.Unmanaged);
         em.CompleteAllTrackedJobs();
 
         Assert.AreEqual(0f, em.GetComponentData<LocalTransform>(vehicleOutline).Scale, 0.001f);
-        Assert.AreEqual(0.8f, em.GetComponentData<LocalTransform>(characterOutline).Scale, 0.001f);
+        Assert.IsTrue(em.Exists(characterMarker));
 
         em.SetComponentData(character, new UnitHealth { Current = 0, Max = 100 });
         system.Update(world.Unmanaged);
 
         Assert.IsFalse(em.HasComponent<UnitSelectionMarkerInstanceReference>(character));
-        Assert.IsFalse(em.Exists(characterOutline), "Destroying a selected unit marker must also destroy ECS selection-object outlines that parent outside the marker tree.");
+        Assert.IsFalse(em.Exists(characterMarker), "The infantry ring must be destroyed with its unit.");
     }
 
     [Test]

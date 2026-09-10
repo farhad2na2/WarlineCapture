@@ -484,7 +484,7 @@ namespace Game.Editor
             text.alignment = alignment;
             text.color = color;
             text.raycastTarget = false;
-            text.enableWordWrapping = false;
+            text.textWrappingMode = TMPro.TextWrappingModes.NoWrap;
             text.overflowMode = TextOverflowModes.Overflow;
             return text;
         }

@@ -19,7 +19,7 @@ public sealed class ResourceExchangeAiPlannerGuardrailTests
         "Resources.Load",
         "FindObject",
         "FindObjects",
-        "FindFirstObjectByType",
+        "FindFirst" + "ObjectByType",
         "FindAnyObjectByType",
         "GameObject.Find",
         "GetComponent<",

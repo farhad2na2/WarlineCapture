@@ -94,7 +94,7 @@ public sealed class ResourceExchangeAudioConfigTests
             AudioClipJson clip = entry.clips[0];
             StringAssert.StartsWith("Assets/Game/Audio/Gameplay/game_resource_exchange_", clip.assetPath, eventId);
             StringAssert.EndsWith(".wav", clip.assetPath, eventId);
-            Assert.AreEqual("placeholder", clip.status, eventId);
+            Assert.AreEqual("generated-elevenlabs", clip.status, eventId);
             Assert.AreEqual(1, clip.weight, eventId);
             Assert.IsTrue(File.Exists(clip.assetPath), $"{eventId} references missing clip {clip.assetPath}.");
             Assert.IsTrue(clipPaths.Add(clip.assetPath), $"Duplicate Resource Exchange clip path: {clip.assetPath}");

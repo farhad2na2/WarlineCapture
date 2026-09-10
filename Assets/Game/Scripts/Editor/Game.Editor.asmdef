@@ -39,7 +39,8 @@
         "Game.Missions.Contracts",
         "Game.Narrative.Runtime",
         "Game.Runtime.Combat",
-        "Unity.InputSystem"
+        "Unity.InputSystem",
+        "Game.UI.ScenarioLab.Runtime"
     ],
     "includePlatforms": [
         "Editor"

@@ -535,7 +535,7 @@ public sealed class OperationMapRuntimeBootstrapSceneSystemHelperTests
     public void MatchLaunchSelection_WithoutCampaignUsesCompatibilityIdentity()
     {
         using World world = new("OperationMapCompatibilityLaunchSelection");
-        Assert.That(CampaignMissionOperationMapLaunchResolver.TryResolve(
+        Assert.That(MatchSceneView.OperationMapLaunchResolver.TryResolve(
             world,
             "skirmish",
             "scenario.skirmish.desert_base_standard",
@@ -563,7 +563,7 @@ public sealed class OperationMapRuntimeBootstrapSceneSystemHelperTests
         requests.Add(default);
         requests.Add(default);
 
-        Assert.That(CampaignMissionOperationMapLaunchResolver.TryResolve(
+        Assert.That(MatchSceneView.OperationMapLaunchResolver.TryResolve(
             world,
             "skirmish",
             "scenario.skirmish.desert_base_standard",

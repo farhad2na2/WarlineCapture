@@ -13,14 +13,14 @@ public sealed class NonUiSystemBaseMigrationArchitectureTests
     private const string InventoryPath = "Design/Architecture/systembase_to_isystem_inventory.md";
     private const string MonoBehaviourLoopBaselinePath = "Design/Architecture/phase7_monobehaviour_loop_baseline.md";
     private const int ManagedExceptionPlanningCap = 30;
-    private const int FinalProductionDeclarationCount = 220;
-    private const int FinalProductionNonUiCount = 197;
-    private const int FinalProductionUiCount = 23;
+    private const int FinalProductionDeclarationCount = 229;
+    private const int FinalProductionNonUiCount = 203;
+    private const int FinalProductionUiCount = 26;
     private const int FinalProductionSystemBaseCount = 25;
-    private const int FinalProductionISystemCount = 195;
-    private const int FinalConvertedCount = 172;
+    private const int FinalProductionISystemCount = 204;
+    private const int FinalConvertedCount = 178;
     private const int FinalManagedExceptionCount = 25;
-    private const int FinalUiOutOfScopeCount = 23;
+    private const int FinalUiOutOfScopeCount = 26;
 
     private static readonly Regex TypeDeclarationRegex = new(
         @"^[ \t]*(?:(?:\[[^\]\r\n]*(?:\r?\n[ \t]*\[[^\]\r\n]*)*\][ \t]*)\r?\n[ \t]*)*" +
@@ -315,6 +315,7 @@ public sealed class NonUiSystemBaseMigrationArchitectureTests
     {
         HashSet<string> baseline = LoadMonoBehaviourLoopBaselineKeys();
         string[] violations = EnumerateCurrentMonoBehaviourLoops()
+            .Where(entry => IsProductionLoopScope(entry.Scope))
             .Where(entry => !baseline.Contains(entry.Key))
             .Select(entry => $"{entry.Path} {entry.Type}.{entry.Method} line={entry.Line} key={entry.Key}")
             .OrderBy(value => value, StringComparer.Ordinal)
@@ -324,6 +325,16 @@ public sealed class NonUiSystemBaseMigrationArchitectureTests
             violations,
             "Phase 7 must not introduce new MonoBehaviour Update/LateUpdate/FixedUpdate/coroutine loops. Remove the loop or update the baseline only with explicit architecture approval:\n" +
             string.Join(Environment.NewLine, violations));
+    }
+
+    private static bool IsProductionLoopScope(string scope) => scope is "ProductionUI" or "ProductionNonUI";
+
+    [Test]
+    public void LoopScopeIncludesProductionUiButExcludesEditorProbes()
+    {
+        Assert.IsTrue(IsProductionLoopScope(ScopeFor("Assets/Game/Scripts/UI/Screens/ExampleView.cs")));
+        Assert.IsTrue(IsProductionLoopScope(ScopeFor("Assets/Game/Scripts/Systems/Example.cs")));
+        Assert.IsFalse(IsProductionLoopScope(ScopeFor("Assets/Game/Scripts/Editor/MissionAllocationProbe.cs")));
     }
 
     [Test]
@@ -443,7 +454,7 @@ public sealed class NonUiSystemBaseMigrationArchitectureTests
         Assert.AreEqual(FinalManagedExceptionCount, managedExceptions, "Final Phase 7 managed exception count drifted.");
         Assert.AreEqual(FinalUiOutOfScopeCount, uiOutOfScope, "Final Phase 7 UI out-of-scope count drifted.");
         Assert.AreEqual(0, reviewRequired, "Final Phase 7 inventory must not retain ReviewRequired rows.");
-        Assert.AreEqual(195f / 220f, share, 0.001f, "Final Phase 7 production ISystem share drifted.");
+        Assert.AreEqual((float)FinalProductionISystemCount / FinalProductionDeclarationCount, share, 0.001f, "Final Phase 7 production ISystem share drifted.");
     }
 
     [Test]

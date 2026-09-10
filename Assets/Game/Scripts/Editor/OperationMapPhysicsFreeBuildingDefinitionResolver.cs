@@ -98,8 +98,7 @@ namespace Game.Editor
                 Scene scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
                 OperationMapBuildingAuthoring[] authorings =
                     UnityEngine.Object.FindObjectsByType<OperationMapBuildingAuthoring>(
-                        FindObjectsInactive.Include,
-                        FindObjectsSortMode.None);
+                        FindObjectsInactive.Include);
                 int remapped = 0;
                 int uniqueGeneratedDefinitions = 0;
                 var generatedPaths = new System.Collections.Generic.HashSet<string>(

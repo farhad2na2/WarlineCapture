@@ -1,5 +1,4 @@
 using System;
-using Game.Configs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -87,8 +86,8 @@ namespace Game.UI.Runtime
         {
             if (playPauseLabel != null)
                 playPauseLabel.text = isPlaying
-                    ? GameLocalization.Get("ui.common.pause", "PAUSE")
-                    : GameLocalization.Get("ui.common.play", "PLAY");
+                    ? UiShellRuntimeGateway.Localization.Get("ui.common.pause", "PAUSE")
+                    : UiShellRuntimeGateway.Localization.Get("ui.common.play", "PLAY");
         }
 
         public void SetPosition(float position)
@@ -238,7 +237,7 @@ namespace Game.UI.Runtime
                 playPauseLabel == null || stateIdLabel == null || positionLabel == null ||
                 reducedMotionToggle == null || subtitlesToggle == null || safeAreaToggle == null || visibilityGroup == null)
             {
-                Debug.LogWarning($"[{nameof(NarrativeReviewerControlsView)}] Missing required serialized reference on {name}.", this);
+                Game.UI.Contracts.UiDiagnostics.Warning($"[{nameof(NarrativeReviewerControlsView)}] Missing required serialized reference on {name}.", this);
             }
         }
 #endif

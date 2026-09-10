@@ -12,7 +12,8 @@ public sealed class StaticMapPresentationAddressablesSceneApiTests
     [Test]
     public void BindLoadUnload_RetainsAndReleasesOneSceneOperation()
     {
-        StaticMapPresentationManifest manifest = LoadManifest();
+        using var fixture = new StaticMapPresentationTestFixture();
+        StaticMapPresentationManifest manifest = fixture.Manifest;
         StaticMapPresentationChunkEntry chunk = manifest.Chunks[0];
         var backend = new FakeBackend();
         var api = new StaticMapPresentationAddressablesSceneApi(backend);
@@ -40,7 +41,8 @@ public sealed class StaticMapPresentationAddressablesSceneApiTests
     [Test]
     public void FailedLoad_IsReleasedBeforeSingleRetry()
     {
-        StaticMapPresentationManifest manifest = LoadManifest();
+        using var fixture = new StaticMapPresentationTestFixture();
+        StaticMapPresentationManifest manifest = fixture.Manifest;
         string path = manifest.Chunks[0].ScenePath;
         var backend = new FakeBackend();
         var api = new StaticMapPresentationAddressablesSceneApi(backend);
@@ -60,7 +62,8 @@ public sealed class StaticMapPresentationAddressablesSceneApiTests
     [Test]
     public void Bind_RejectsReplacementWhileSceneIsRetained()
     {
-        StaticMapPresentationManifest manifest = LoadManifest();
+        using var fixture = new StaticMapPresentationTestFixture();
+        StaticMapPresentationManifest manifest = fixture.Manifest;
         var backend = new FakeBackend();
         var api = new StaticMapPresentationAddressablesSceneApi(backend);
         Assert.That(api.TryBindManifest(manifest, out string error), Is.True, error);
@@ -73,7 +76,8 @@ public sealed class StaticMapPresentationAddressablesSceneApiTests
     [Test]
     public void FailedUnload_KeepsLoadedSceneForRetry()
     {
-        StaticMapPresentationManifest manifest = LoadManifest();
+        using var fixture = new StaticMapPresentationTestFixture();
+        StaticMapPresentationManifest manifest = fixture.Manifest;
         string path = manifest.Chunks[0].ScenePath;
         var backend = new FakeBackend();
         var api = new StaticMapPresentationAddressablesSceneApi(backend);
@@ -92,13 +96,7 @@ public sealed class StaticMapPresentationAddressablesSceneApiTests
         Assert.That(backend.UnloadCount, Is.EqualTo(2));
     }
 
-    private static StaticMapPresentationManifest LoadManifest()
-    {
-        StaticMapPresentationManifest manifest =
-            AssetDatabase.LoadAssetAtPath<StaticMapPresentationManifest>(ManifestPath);
-        Assert.That(manifest, Is.Not.Null);
-        return manifest;
-    }
+
 
     private sealed class FakeBackend : IStaticMapPresentationAddressablesSceneBackend
     {

@@ -25,7 +25,10 @@ public sealed class UnitAnimationIndexSystemTests
             tests.ProductionCivilianConfigsPlaceRunInSecondGpuClip();
             tests.DeathAnimationAppliesToDetachedDetailedVisualOnFirstResolvedFrame();
             tests.GameplayInertResolvedAnimationAppliesToModelVisual();
-            Debug.Log("[UnitAnimationIndexFocusedValidation] result=Passed tests=7");
+            tests.MovingCombatUsesLocomotionWhenBlendedClipsAreMissing();
+            tests.UnconfiguredMovingCombatKeepsRunAnimation();
+            tests.MatchingVisualRootStillUpdatesStaleChildAnimation();
+            Debug.Log("[UnitAnimationIndexFocusedValidation] result=Passed tests=10");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -174,6 +177,65 @@ public sealed class UnitAnimationIndexSystemTests
 
         Assert.AreEqual(runIndex, em.GetComponentData<MaterialAnimationIndex>(visual).Value);
         Assert.AreEqual(0, em.GetComponentData<UnitResolvedAnimationIndex>(presentation).Changed);
+    }
+
+    [Test]
+    public void MovingCombatUsesLocomotionWhenBlendedClipsAreMissing()
+    {
+        foreach (bool firing in new[] { false, true })
+        foreach (bool wandering in new[] { false, true })
+        {
+            using var world = new World(nameof(MovingCombatUsesLocomotionWhenBlendedClipsAreMissing));
+            EntityManager em = world.EntityManager;
+            Entity unit = CreateUnit(em, true, 100, firing ? 1f : 0f, true);
+            em.AddComponent<EngageTarget>(unit);
+            if (wandering) em.AddComponent<AutoWanderMoveTag>(unit);
+            var order = em.GetBuffer<UnitAnimationOrderEntry>(unit);
+            foreach (var kind in new[] { UnitAnimationKind.Idle, UnitAnimationKind.Run, UnitAnimationKind.Walk,
+                         UnitAnimationKind.Aim, UnitAnimationKind.Shoot })
+                order.Add(new UnitAnimationOrderEntry { Kind = (byte)kind });
+            Entity renderer = em.CreateEntity(typeof(MaterialAnimationIndex));
+            em.AddComponentData(unit, new UnitModelInstanceReference { Instance = renderer });
+            var system = world.CreateSystem<UnitAnimationIndexSystem>();
+            system.Update(world.Unmanaged);
+            byte expected = wandering ? (byte)3 : (byte)2;
+            Assert.AreEqual(expected, em.GetComponentData<UnitResolvedAnimationIndex>(unit).Value,
+                $"firing={firing}, wandering={wandering}: a stationary combat pose would slide");
+            Assert.AreEqual(expected, em.GetComponentData<MaterialAnimationIndex>(renderer).Value);
+
+            em.SetComponentData(unit, new UnitMoveVisualComponent());
+            system.Update(world.Unmanaged);
+            Assert.AreEqual(firing ? 5 : 4, em.GetComponentData<UnitResolvedAnimationIndex>(unit).Value,
+                "Stopping must restore the stationary combat pose.");
+        }
+    }
+
+    [Test]
+    public void UnconfiguredMovingCombatKeepsRunAnimation()
+    {
+        using var world = new World(nameof(UnconfiguredMovingCombatKeepsRunAnimation));
+        EntityManager em = world.EntityManager;
+        Entity unit = CreateUnit(em, true, 100, 1f, false);
+        em.AddComponent<EngageTarget>(unit);
+        world.CreateSystem<UnitAnimationIndexSystem>().Update(world.Unmanaged);
+        Assert.AreEqual(3, em.GetComponentData<UnitResolvedAnimationIndex>(unit).Value);
+    }
+
+    [Test]
+    public void MatchingVisualRootStillUpdatesStaleChildAnimation()
+    {
+        using var world = new World(nameof(MatchingVisualRootStillUpdatesStaleChildAnimation));
+        EntityManager em = world.EntityManager;
+        Entity unit = CreateUnit(em, true, 100, 0f, false);
+        Entity root = em.CreateEntity(typeof(MaterialAnimationIndex));
+        Entity child = em.CreateEntity(typeof(MaterialAnimationIndex));
+        em.SetComponentData(root, new MaterialAnimationIndex { Value = 3 });
+        em.SetComponentData(child, new MaterialAnimationIndex { Value = 1 });
+        em.AddBuffer<Child>(root).Add(new Child { Value = child });
+        em.AddComponentData(unit, new UnitDetailedVisualReference { Root = root });
+        world.CreateSystem<UnitAnimationIndexSystem>().Update(world.Unmanaged);
+        Assert.AreEqual(3, em.GetComponentData<MaterialAnimationIndex>(child).Value,
+            "An idle child under an already-running root must receive the run clip.");
     }
 
     private static Entity CreateUnit(

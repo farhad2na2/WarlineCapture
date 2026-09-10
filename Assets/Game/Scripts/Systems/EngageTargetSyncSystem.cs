@@ -17,7 +17,8 @@ namespace Game.Runtime
         public void OnCreate(ref SystemState state)
         {
             _gridQuery = state.GetEntityQuery(ComponentType.ReadOnly<GridConfig>());
-            _ecbSingletonQuery = state.GetEntityQuery(ComponentType.ReadOnly<EndSimulationEntityCommandBufferSystem.Singleton>());
+            _ecbSingletonQuery = new EntityQueryBuilder(Allocator.Temp).WithAll<EndSimulationEntityCommandBufferSystem.Singleton>()
+                .WithOptions(EntityQueryOptions.IncludeSystems).Build(ref state);
             state.RequireForUpdate(_gridQuery);
             state.RequireForUpdate<EngageTarget>();
             state.RequireForUpdate(_ecbSingletonQuery);

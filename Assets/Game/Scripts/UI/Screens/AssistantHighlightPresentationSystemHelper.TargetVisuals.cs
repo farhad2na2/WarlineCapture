@@ -1,4 +1,3 @@
-using Game.Configs;
 using Game.UI.Contracts;
 using TMPro;
 using UnityEngine;
@@ -111,7 +110,7 @@ namespace Game.UI.Runtime
             labelRect.offsetMin = new Vector2(12f, 4f);
             labelRect.offsetMax = new Vector2(-12f, -4f);
             _screenTargetLabel = labelObject.GetComponent<TextMeshProUGUI>();
-            _screenTargetLabel.text = GameLocalization.Get("ui.hud.aria_target", "ARIA TARGET");
+            _screenTargetLabel.text = UiShellRuntimeGateway.Localization.Get("ui.hud.aria_target", "ARIA TARGET");
             _screenTargetLabel.fontStyle = FontStyles.Bold;
             _screenTargetLabel.fontSize = 36f;
             _screenTargetLabel.enableAutoSizing = true;
@@ -121,7 +120,7 @@ namespace Game.UI.Runtime
             _screenTargetLabel.alignment = TextAlignmentOptions.Center;
             _screenTargetLabel.textWrappingMode = TextWrappingModes.NoWrap;
             _screenTargetLabel.raycastTarget = false;
-            V3LocalizedTextBinding localizedLabel = labelObject.AddComponent<V3LocalizedTextBinding>();
+            V3LocalizedTextBindingView localizedLabel = labelObject.AddComponent<V3LocalizedTextBindingView>();
             localizedLabel.Configure("ui.hud.aria_target", "ARIA TARGET");
             indicator.SetActive(false);
         }

@@ -7,7 +7,7 @@ namespace Game.Rendering.Contracts
     {
         private const float CharacterTacticalBillboardStartCameraY = 80f;
         private const float CharacterTacticalBillboardFullCameraY = 200f;
-        private const float CharacterTacticalBillboardMaxScale = 16f;
+        private const float CharacterTacticalBillboardMaxScale = 2.5f;
 
         public static bool HasUnitPrefix(FixedString64Bytes sourceKey)
         {

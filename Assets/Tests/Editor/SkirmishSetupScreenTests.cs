@@ -82,10 +82,10 @@ public sealed class SkirmishSetupScreenTests
 
         Assert.GreaterOrEqual(prefab.GetComponentsInChildren<V3GradientGraphic>(true).Length, 42,
             "SCN-13 must render directional V3 gradients instead of solid legacy panels.");
-        Assert.NotNull(FindRecursive(prefab.transform, "StartingMaterialsRow")?.GetComponent<SkirmishSetupV3CycleControl>());
-        Assert.NotNull(FindRecursive(prefab.transform, "IncomeRow")?.GetComponent<SkirmishSetupV3CycleControl>());
-        Assert.NotNull(FindRecursive(prefab.transform, "AggressionRow")?.GetComponent<SkirmishSetupV3CycleControl>());
-        Assert.NotNull(FindRecursive(prefab.transform, "WinConditionRow")?.GetComponent<SkirmishSetupV3CycleControl>());
+        Assert.NotNull(FindRecursive(prefab.transform, "StartingMaterialsRow")?.GetComponent<SkirmishSetupV3CycleControlView>());
+        Assert.NotNull(FindRecursive(prefab.transform, "IncomeRow")?.GetComponent<SkirmishSetupV3CycleControlView>());
+        Assert.NotNull(FindRecursive(prefab.transform, "AggressionRow")?.GetComponent<SkirmishSetupV3CycleControlView>());
+        Assert.NotNull(FindRecursive(prefab.transform, "WinConditionRow")?.GetComponent<SkirmishSetupV3CycleControlView>());
     }
 
     [TearDown]
@@ -201,7 +201,7 @@ public sealed class SkirmishSetupScreenTests
             UIShellRouteButtonView skirmishRoute = FindRecursive(menuInstance.transform, "Card_Skirmish")
                 ?.GetComponentInChildren<UIShellRouteButtonView>(true);
             Assert.NotNull(skirmishRoute, "Instantiated Skirmish card must expose its route component.");
-            skirmishRoute.SendMessage("OnEnable");
+            EditModeViewLifecycle.Invoke(skirmishRoute, "OnEnable");
             Button skirmishButton = skirmishRoute.GetComponent<Button>();
             Assert.NotNull(skirmishButton, "Instantiated Skirmish card must expose its route button.");
             skirmishButton.onClick.Invoke();
@@ -226,7 +226,7 @@ public sealed class SkirmishSetupScreenTests
             UIShellRouteButtonView backRoute = FindRecursive(setupInstance.transform, "BackButton")
                 ?.GetComponent<UIShellRouteButtonView>();
             Assert.NotNull(backRoute, "Instantiated SCN-13 must expose its Back route component.");
-            backRoute.SendMessage("OnEnable");
+            EditModeViewLifecycle.Invoke(backRoute, "OnEnable");
             Button backButton = backRoute.GetComponent<Button>();
             Assert.NotNull(backButton, "Instantiated SCN-13 must expose its Back button.");
             backButton.onClick.Invoke();

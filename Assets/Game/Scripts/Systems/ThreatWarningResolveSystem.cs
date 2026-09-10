@@ -1,3 +1,4 @@
+using Unity.Burst;
 using Game.Components;
 using Game.Missions.Contracts;
 using Unity.Entities;
@@ -8,10 +9,13 @@ namespace Game.Runtime
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     [UpdateAfter(typeof(ThreatDetectionWarningSystem))]
     [UpdateAfter(typeof(CampaignMissionRuntimeSystem))]
+    [BurstCompile]
     public partial struct ThreatWarningResolveSystem : ISystem
     {
+        [BurstCompile]
         public void OnCreate(ref SystemState state) => state.RequireForUpdate<ThreatWarningLedgerState>();
 
+        [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
             if (!SystemAPI.TryGetSingletonEntity<CampaignMissionRootComponent>(out Entity root)) return;

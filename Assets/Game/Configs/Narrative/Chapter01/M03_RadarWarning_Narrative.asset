@@ -23,14 +23,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 8a9f584496ddc46e2b18b66aa384e0ad
       m_SubObjectName: M03-D01-16x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 8a9f584496ddc46e2b18b66aa384e0ad
       m_SubObjectName: M03-D01-20x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-debrief-clean
@@ -38,27 +38,27 @@ MonoBehaviour:
       englishFallback: The convoy is stopped. The post is undamaged, and every civilian
         is accounted for. Keep the clinic corridor open.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 69d5f8592037a402da11b104d032d890, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 8.071428
+      deadlineSeconds: 10.28
       essentialCaption: 1
     continueStateId: M03-debrief.clean-1
     skipStateId: M03-debrief.clean-complete
     reducedMotionSupported: 1
-    durationSeconds: 8.071428
+    durationSeconds: 10.28
     motionPreset: 0
-    locationTitleKey: 
-    locationTitleFallback: 
-    locationSubtitleKey: 
-    locationSubtitleFallback: 
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId: 
+    completionPayloadId:
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-debrief.clean-1
@@ -68,14 +68,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 4cc09a704f6cd43e28197c8aede8dea5
       m_SubObjectName: M03-D02-16x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 4cc09a704f6cd43e28197c8aede8dea5
       m_SubObjectName: M03-D02-20x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-debrief-02
@@ -84,27 +84,27 @@ MonoBehaviour:
         That is evidence of advance knowledge. It does not yet tell us who supplied
         it.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 581cf1a2cad694d72bff6ba5da4535f9, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 10.285714
+      deadlineSeconds: 12.28
       essentialCaption: 1
     continueStateId: M03-debrief.clean-2
     skipStateId: M03-debrief.clean-complete
     reducedMotionSupported: 1
-    durationSeconds: 10.285714
+    durationSeconds: 12.28
     motionPreset: 0
-    locationTitleKey: 
-    locationTitleFallback: 
-    locationSubtitleKey: 
-    locationSubtitleFallback: 
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId: 
+    completionPayloadId:
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-debrief.clean-2
@@ -114,14 +114,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: b64e2e511d6a948ee9f728fc6f59563b
       m_SubObjectName: M03-D03-16x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: b64e2e511d6a948ee9f728fc6f59563b
       m_SubObjectName: M03-D03-20x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-debrief-03
@@ -129,27 +129,27 @@ MonoBehaviour:
       englishFallback: A medical and engineering team is cut off beyond the road.
         They need an airlift. Prepare a safe route for them.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 341213cd7f3d54e8fae6b31be62b1a01, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 8
+      deadlineSeconds: 9.88
       essentialCaption: 1
     continueStateId: M03-debrief.clean-complete
     skipStateId: M03-debrief.clean-complete
     reducedMotionSupported: 1
-    durationSeconds: 8
+    durationSeconds: 9.88
     motionPreset: 0
-    locationTitleKey: 
-    locationTitleFallback: 
-    locationSubtitleKey: 
-    locationSubtitleFallback: 
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId: 
+    completionPayloadId:
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-debrief.clean-complete
@@ -157,27 +157,27 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID: 
-      m_SubObjectName: 
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_AssetGUID:
+      m_SubObjectName:
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID: 
-      m_SubObjectName: 
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_AssetGUID:
+      m_SubObjectName:
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     lines: []
-    continueStateId: 
-    skipStateId: 
+    continueStateId:
+    skipStateId:
     reducedMotionSupported: 1
     durationSeconds: 0
     motionPreset: 0
-    locationTitleKey: 
-    locationTitleFallback: 
-    locationSubtitleKey: 
-    locationSubtitleFallback: 
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
@@ -209,14 +209,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 8a9f584496ddc46e2b18b66aa384e0ad
       m_SubObjectName: M03-D01-16x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 8a9f584496ddc46e2b18b66aa384e0ad
       m_SubObjectName: M03-D01-20x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-debrief-mixed
@@ -224,27 +224,27 @@ MonoBehaviour:
       englishFallback: The convoy is stopped, but the post took damage and civilians
         were lost. Record both. The corridor still needs protection.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: ac849aae6a80d48719683f5c2e2f6ff4, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 8.714286
+      deadlineSeconds: 12.6
       essentialCaption: 1
     continueStateId: M03-debrief.mixed-1
     skipStateId: M03-debrief.mixed-complete
     reducedMotionSupported: 1
-    durationSeconds: 8.714286
+    durationSeconds: 12.6
     motionPreset: 0
-    locationTitleKey: 
-    locationTitleFallback: 
-    locationSubtitleKey: 
-    locationSubtitleFallback: 
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId: 
+    completionPayloadId:
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-debrief.mixed-1
@@ -254,14 +254,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 4cc09a704f6cd43e28197c8aede8dea5
       m_SubObjectName: M03-D02-16x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 4cc09a704f6cd43e28197c8aede8dea5
       m_SubObjectName: M03-D02-20x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-debrief-02
@@ -270,27 +270,27 @@ MonoBehaviour:
         That is evidence of advance knowledge. It does not yet tell us who supplied
         it.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 581cf1a2cad694d72bff6ba5da4535f9, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 10.285714
+      deadlineSeconds: 12.28
       essentialCaption: 1
     continueStateId: M03-debrief.mixed-2
     skipStateId: M03-debrief.mixed-complete
     reducedMotionSupported: 1
-    durationSeconds: 10.285714
+    durationSeconds: 12.28
     motionPreset: 0
-    locationTitleKey: 
-    locationTitleFallback: 
-    locationSubtitleKey: 
-    locationSubtitleFallback: 
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId: 
+    completionPayloadId:
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-debrief.mixed-2
@@ -300,14 +300,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: b64e2e511d6a948ee9f728fc6f59563b
       m_SubObjectName: M03-D03-16x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: b64e2e511d6a948ee9f728fc6f59563b
       m_SubObjectName: M03-D03-20x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-debrief-03
@@ -315,27 +315,27 @@ MonoBehaviour:
       englishFallback: A medical and engineering team is cut off beyond the road.
         They need an airlift. Prepare a safe route for them.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 341213cd7f3d54e8fae6b31be62b1a01, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 8
+      deadlineSeconds: 9.88
       essentialCaption: 1
     continueStateId: M03-debrief.mixed-complete
     skipStateId: M03-debrief.mixed-complete
     reducedMotionSupported: 1
-    durationSeconds: 8
+    durationSeconds: 9.88
     motionPreset: 0
-    locationTitleKey: 
-    locationTitleFallback: 
-    locationSubtitleKey: 
-    locationSubtitleFallback: 
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId: 
+    completionPayloadId:
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-debrief.mixed-complete
@@ -343,27 +343,27 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID: 
-      m_SubObjectName: 
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_AssetGUID:
+      m_SubObjectName:
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID: 
-      m_SubObjectName: 
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_AssetGUID:
+      m_SubObjectName:
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     lines: []
-    continueStateId: 
-    skipStateId: 
+    continueStateId:
+    skipStateId:
     reducedMotionSupported: 1
     durationSeconds: 0
     motionPreset: 0
-    locationTitleKey: 
-    locationTitleFallback: 
-    locationSubtitleKey: 
-    locationSubtitleFallback: 
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
@@ -395,14 +395,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: eddc7e8ce8d4d4817a5a8ceb1c554cde
       m_SubObjectName: M03-C01-16x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: eddc7e8ce8d4d4817a5a8ceb1c554cde
       m_SubObjectName: M03-C01-20x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-comms-01
@@ -411,27 +411,27 @@ MonoBehaviour:
         The timing suggests advance knowledge. Keep defending; we will compare the
         records afterward.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: ea63b88a6539746768f2001415e434be, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 10.857142
+      deadlineSeconds: 15.4
       essentialCaption: 1
     continueStateId: M03-comms-complete
     skipStateId: M03-comms-complete
     reducedMotionSupported: 1
-    durationSeconds: 10.857142
+    durationSeconds: 15.4
     motionPreset: 0
-    locationTitleKey: 
-    locationTitleFallback: 
-    locationSubtitleKey: 
-    locationSubtitleFallback: 
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId: 
+    completionPayloadId:
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-comms-complete
@@ -439,27 +439,27 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID: 
-      m_SubObjectName: 
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_AssetGUID:
+      m_SubObjectName:
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID: 
-      m_SubObjectName: 
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_AssetGUID:
+      m_SubObjectName:
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     lines: []
-    continueStateId: 
-    skipStateId: 
+    continueStateId:
+    skipStateId:
     reducedMotionSupported: 1
     durationSeconds: 0
     motionPreset: 0
-    locationTitleKey: 
-    locationTitleFallback: 
-    locationSubtitleKey: 
-    locationSubtitleFallback: 
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
@@ -491,14 +491,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 0f000af5086ec458f9fa30b1191960d6
       m_SubObjectName: M03-B01-16x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 0f000af5086ec458f9fa30b1191960d6
       m_SubObjectName: M03-B01-20x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-brief-01
@@ -507,27 +507,27 @@ MonoBehaviour:
         on the western road. Our Ground Radar Tank can confirm vehicles once they
         enter coverage.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 01d374e363358425ea29e337d9b32fd2, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 11.785714
+      deadlineSeconds: 15.24
       essentialCaption: 1
     continueStateId: M03-brief-1
     skipStateId: M03-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 11.785714
+    durationSeconds: 15.24
     motionPreset: 0
-    locationTitleKey: 
-    locationTitleFallback: 
-    locationSubtitleKey: 
-    locationSubtitleFallback: 
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId: 
+    completionPayloadId:
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-brief-1
@@ -537,14 +537,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 2686a20211ec94f4bb6a95e7ae00d7d3
       m_SubObjectName: M03-B02-16x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 2686a20211ec94f4bb6a95e7ae00d7d3
       m_SubObjectName: M03-B02-20x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-brief-02
@@ -553,27 +553,27 @@ MonoBehaviour:
         the clinic corridor open. Even an unarmed carrier must not reach the inner
         core.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 468eade130e554e1c95b63f03d90d59e, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 10.285714
+      deadlineSeconds: 13.4
       essentialCaption: 1
     continueStateId: M03-brief-2
     skipStateId: M03-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 10.285714
+    durationSeconds: 13.4
     motionPreset: 0
-    locationTitleKey: 
-    locationTitleFallback: 
-    locationSubtitleKey: 
-    locationSubtitleFallback: 
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId: 
+    completionPayloadId:
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-brief-2
@@ -583,14 +583,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: d7639c78644fa44a5ab20e88abe4b3c7
       m_SubObjectName: M03-B03-16x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: d7639c78644fa44a5ab20e88abe4b3c7
       m_SubObjectName: M03-B03-20x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-brief-03
@@ -599,27 +599,27 @@ MonoBehaviour:
         a working Barracks are ready. Choose a Tower, a Barrier, or reinforcements.
         The first warning is an estimate.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 78be0347e2db04fae802ac187911a557, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 11.928572
+      deadlineSeconds: 15.8
       essentialCaption: 1
     continueStateId: M03-brief-complete
     skipStateId: M03-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 11.928572
+    durationSeconds: 15.8
     motionPreset: 0
-    locationTitleKey: 
-    locationTitleFallback: 
-    locationSubtitleKey: 
-    locationSubtitleFallback: 
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId: 
+    completionPayloadId:
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-brief-complete
@@ -627,27 +627,27 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID: 
-      m_SubObjectName: 
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_AssetGUID:
+      m_SubObjectName:
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID: 
-      m_SubObjectName: 
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_AssetGUID:
+      m_SubObjectName:
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     lines: []
-    continueStateId: 
-    skipStateId: 
+    continueStateId:
+    skipStateId:
     reducedMotionSupported: 1
     durationSeconds: 0
     motionPreset: 0
-    locationTitleKey: 
-    locationTitleFallback: 
-    locationSubtitleKey: 
-    locationSubtitleFallback: 
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
@@ -679,14 +679,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 8a9f584496ddc46e2b18b66aa384e0ad
       m_SubObjectName: M03-D01-16x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 8a9f584496ddc46e2b18b66aa384e0ad
       m_SubObjectName: M03-D01-20x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-debrief-civilian-loss
@@ -694,27 +694,27 @@ MonoBehaviour:
       englishFallback: The convoy is stopped and the post is undamaged. We lost civilians.
         Record the losses and secure the clinic corridor.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 38828dfc5875f40148424fe4fdaa7a6b, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 8.357142
+      deadlineSeconds: 11.72
       essentialCaption: 1
     continueStateId: M03-debrief.civilian-loss-1
     skipStateId: M03-debrief.civilian-loss-complete
     reducedMotionSupported: 1
-    durationSeconds: 8.357142
+    durationSeconds: 11.72
     motionPreset: 0
-    locationTitleKey: 
-    locationTitleFallback: 
-    locationSubtitleKey: 
-    locationSubtitleFallback: 
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId: 
+    completionPayloadId:
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-debrief.civilian-loss-1
@@ -724,14 +724,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 4cc09a704f6cd43e28197c8aede8dea5
       m_SubObjectName: M03-D02-16x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 4cc09a704f6cd43e28197c8aede8dea5
       m_SubObjectName: M03-D02-20x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-debrief-02
@@ -740,27 +740,27 @@ MonoBehaviour:
         That is evidence of advance knowledge. It does not yet tell us who supplied
         it.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 581cf1a2cad694d72bff6ba5da4535f9, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 10.285714
+      deadlineSeconds: 12.28
       essentialCaption: 1
     continueStateId: M03-debrief.civilian-loss-2
     skipStateId: M03-debrief.civilian-loss-complete
     reducedMotionSupported: 1
-    durationSeconds: 10.285714
+    durationSeconds: 12.28
     motionPreset: 0
-    locationTitleKey: 
-    locationTitleFallback: 
-    locationSubtitleKey: 
-    locationSubtitleFallback: 
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId: 
+    completionPayloadId:
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-debrief.civilian-loss-2
@@ -770,14 +770,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: b64e2e511d6a948ee9f728fc6f59563b
       m_SubObjectName: M03-D03-16x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: b64e2e511d6a948ee9f728fc6f59563b
       m_SubObjectName: M03-D03-20x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-debrief-03
@@ -785,27 +785,27 @@ MonoBehaviour:
       englishFallback: A medical and engineering team is cut off beyond the road.
         They need an airlift. Prepare a safe route for them.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 341213cd7f3d54e8fae6b31be62b1a01, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 8
+      deadlineSeconds: 9.88
       essentialCaption: 1
     continueStateId: M03-debrief.civilian-loss-complete
     skipStateId: M03-debrief.civilian-loss-complete
     reducedMotionSupported: 1
-    durationSeconds: 8
+    durationSeconds: 9.88
     motionPreset: 0
-    locationTitleKey: 
-    locationTitleFallback: 
-    locationSubtitleKey: 
-    locationSubtitleFallback: 
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId: 
+    completionPayloadId:
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-debrief.civilian-loss-complete
@@ -813,27 +813,27 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID: 
-      m_SubObjectName: 
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_AssetGUID:
+      m_SubObjectName:
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID: 
-      m_SubObjectName: 
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_AssetGUID:
+      m_SubObjectName:
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     lines: []
-    continueStateId: 
-    skipStateId: 
+    continueStateId:
+    skipStateId:
     reducedMotionSupported: 1
     durationSeconds: 0
     motionPreset: 0
-    locationTitleKey: 
-    locationTitleFallback: 
-    locationSubtitleKey: 
-    locationSubtitleFallback: 
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
@@ -865,14 +865,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 8a9f584496ddc46e2b18b66aa384e0ad
       m_SubObjectName: M03-D01-16x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 8a9f584496ddc46e2b18b66aa384e0ad
       m_SubObjectName: M03-D01-20x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-debrief-damaged
@@ -880,27 +880,27 @@ MonoBehaviour:
       englishFallback: The convoy is stopped and every civilian is safe. The post
         took damage. Repair it before the next response.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 572187833ace94d448a0c5c63fadb1e8, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 8
+      deadlineSeconds: 11.16
       essentialCaption: 1
     continueStateId: M03-debrief.damaged-1
     skipStateId: M03-debrief.damaged-complete
     reducedMotionSupported: 1
-    durationSeconds: 8
+    durationSeconds: 11.16
     motionPreset: 0
-    locationTitleKey: 
-    locationTitleFallback: 
-    locationSubtitleKey: 
-    locationSubtitleFallback: 
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId: 
+    completionPayloadId:
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-debrief.damaged-1
@@ -910,14 +910,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 4cc09a704f6cd43e28197c8aede8dea5
       m_SubObjectName: M03-D02-16x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 4cc09a704f6cd43e28197c8aede8dea5
       m_SubObjectName: M03-D02-20x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-debrief-02
@@ -926,27 +926,27 @@ MonoBehaviour:
         That is evidence of advance knowledge. It does not yet tell us who supplied
         it.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 581cf1a2cad694d72bff6ba5da4535f9, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 10.285714
+      deadlineSeconds: 12.28
       essentialCaption: 1
     continueStateId: M03-debrief.damaged-2
     skipStateId: M03-debrief.damaged-complete
     reducedMotionSupported: 1
-    durationSeconds: 10.285714
+    durationSeconds: 12.28
     motionPreset: 0
-    locationTitleKey: 
-    locationTitleFallback: 
-    locationSubtitleKey: 
-    locationSubtitleFallback: 
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId: 
+    completionPayloadId:
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-debrief.damaged-2
@@ -956,14 +956,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: b64e2e511d6a948ee9f728fc6f59563b
       m_SubObjectName: M03-D03-16x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: b64e2e511d6a948ee9f728fc6f59563b
       m_SubObjectName: M03-D03-20x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-debrief-03
@@ -971,27 +971,27 @@ MonoBehaviour:
       englishFallback: A medical and engineering team is cut off beyond the road.
         They need an airlift. Prepare a safe route for them.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 341213cd7f3d54e8fae6b31be62b1a01, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 8
+      deadlineSeconds: 9.88
       essentialCaption: 1
     continueStateId: M03-debrief.damaged-complete
     skipStateId: M03-debrief.damaged-complete
     reducedMotionSupported: 1
-    durationSeconds: 8
+    durationSeconds: 9.88
     motionPreset: 0
-    locationTitleKey: 
-    locationTitleFallback: 
-    locationSubtitleKey: 
-    locationSubtitleFallback: 
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId: 
+    completionPayloadId:
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-debrief.damaged-complete
@@ -999,27 +999,27 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID: 
-      m_SubObjectName: 
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_AssetGUID:
+      m_SubObjectName:
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID: 
-      m_SubObjectName: 
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_AssetGUID:
+      m_SubObjectName:
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     lines: []
-    continueStateId: 
-    skipStateId: 
+    continueStateId:
+    skipStateId:
     reducedMotionSupported: 1
     durationSeconds: 0
     motionPreset: 0
-    locationTitleKey: 
-    locationTitleFallback: 
-    locationSubtitleKey: 
-    locationSubtitleFallback: 
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
@@ -1051,14 +1051,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 8a9f584496ddc46e2b18b66aa384e0ad
       m_SubObjectName: M03-D01-16x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 8a9f584496ddc46e2b18b66aa384e0ad
       m_SubObjectName: M03-D01-20x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-debrief-01
@@ -1066,27 +1066,27 @@ MonoBehaviour:
       englishFallback: The convoy is stopped and the post still stands. Check the
         damage and account for everyone. We need an accurate report.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 5cd336bc4bfa2426caf0985ee7eb97f3, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 8.5
+      deadlineSeconds: 10.36
       essentialCaption: 1
     continueStateId: M03-debrief-1
     skipStateId: M03-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 8.5
+    durationSeconds: 10.36
     motionPreset: 0
-    locationTitleKey: 
-    locationTitleFallback: 
-    locationSubtitleKey: 
-    locationSubtitleFallback: 
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId: 
+    completionPayloadId:
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-debrief-1
@@ -1096,14 +1096,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 4cc09a704f6cd43e28197c8aede8dea5
       m_SubObjectName: M03-D02-16x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 4cc09a704f6cd43e28197c8aede8dea5
       m_SubObjectName: M03-D02-20x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-debrief-02
@@ -1112,27 +1112,27 @@ MonoBehaviour:
         That is evidence of advance knowledge. It does not yet tell us who supplied
         it.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 581cf1a2cad694d72bff6ba5da4535f9, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 10.285714
+      deadlineSeconds: 12.28
       essentialCaption: 1
     continueStateId: M03-debrief-2
     skipStateId: M03-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 10.285714
+    durationSeconds: 12.28
     motionPreset: 0
-    locationTitleKey: 
-    locationTitleFallback: 
-    locationSubtitleKey: 
-    locationSubtitleFallback: 
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId: 
+    completionPayloadId:
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-debrief-2
@@ -1142,14 +1142,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: b64e2e511d6a948ee9f728fc6f59563b
       m_SubObjectName: M03-D03-16x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: b64e2e511d6a948ee9f728fc6f59563b
       m_SubObjectName: M03-D03-20x9
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-debrief-03
@@ -1157,27 +1157,27 @@ MonoBehaviour:
       englishFallback: A medical and engineering team is cut off beyond the road.
         They need an airlift. Prepare a safe route for them.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 341213cd7f3d54e8fae6b31be62b1a01, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 8
+      deadlineSeconds: 9.88
       essentialCaption: 1
     continueStateId: M03-debrief-complete
     skipStateId: M03-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 8
+    durationSeconds: 9.88
     motionPreset: 0
-    locationTitleKey: 
-    locationTitleFallback: 
-    locationSubtitleKey: 
-    locationSubtitleFallback: 
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId: 
+    completionPayloadId:
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-debrief-complete
@@ -1185,27 +1185,27 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID: 
-      m_SubObjectName: 
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_AssetGUID:
+      m_SubObjectName:
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID: 
-      m_SubObjectName: 
-      m_SubObjectType: 
-      m_SubObjectGUID: 
+      m_AssetGUID:
+      m_SubObjectName:
+      m_SubObjectType:
+      m_SubObjectGUID:
       m_EditorAssetChanged: 0
     lines: []
-    continueStateId: 
-    skipStateId: 
+    continueStateId:
+    skipStateId:
     reducedMotionSupported: 1
     durationSeconds: 0
     motionPreset: 0
-    locationTitleKey: 
-    locationTitleFallback: 
-    locationSubtitleKey: 
-    locationSubtitleFallback: 
+    locationTitleKey:
+    locationTitleFallback:
+    locationSubtitleKey:
+    locationSubtitleFallback:
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0

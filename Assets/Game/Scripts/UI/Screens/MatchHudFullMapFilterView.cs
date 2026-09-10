@@ -89,10 +89,7 @@ namespace Game.UI.Runtime
             Unbind();
         }
 
-        private void LateUpdate()
-        {
-            RefreshRuntimeMarkers();
-        }
+
 
         private void Bind()
         {

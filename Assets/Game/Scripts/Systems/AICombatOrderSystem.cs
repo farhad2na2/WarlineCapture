@@ -202,7 +202,7 @@ namespace Game.Runtime
                     CountMembersNeedingOrder(squadEntity, squad) == 0)
                     continue;
 
-                bool targetMayNeedBreach = em.HasComponent<RuntimeBuildingCombatTag>(squad.TargetEntity);
+                bool targetMayNeedBreach = !_runtimeBuildingCombatQuery.IsEmptyIgnoreFilter;
                 if (targetMayNeedBreach)
                 {
                     EnsureBreachContext(

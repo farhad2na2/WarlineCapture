@@ -92,7 +92,7 @@ public sealed class ResourceExchangeEconomyEventSystemTests
         });
         em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Add(CreateQueueItem(
             inputResource: ResourceExchangeResourceKind.Oil,
-            outputResource: ResourceExchangeResourceKind.Oil,
+            outputResource: ResourceExchangeResourceKind.Materials,
             reservedInputAmount: 0,
             outputAmount: 75,
             remainingSeconds: 0.1f));
@@ -106,7 +106,7 @@ public sealed class ResourceExchangeEconomyEventSystemTests
             events[0],
             queueItemId: 1,
             ResourceExchangeResultKind.QueueCompleted,
-            ResourceExchangeResourceKind.Oil,
+            ResourceExchangeResourceKind.Materials,
             75);
     }
 
@@ -179,7 +179,7 @@ public sealed class ResourceExchangeEconomyEventSystemTests
             fuel: 930,
             fuelCapacity: 1000);
         ResourceExchangeQueueComponent item = CreateQueueItem(
-            inputResource: ResourceExchangeResourceKind.Oil,
+            inputResource: ResourceExchangeResourceKind.Materials,
             outputResource: ResourceExchangeResourceKind.Fuel,
             reservedInputAmount: 0,
             outputAmount: 50,
@@ -296,7 +296,7 @@ public sealed class ResourceExchangeEconomyEventSystemTests
             DisplayName = new FixedString128Bytes("Export Oil"),
             RouteType = ResourceExchangeRouteType.Export,
             InputResource = ResourceExchangeResourceKind.Oil,
-            OutputResource = ResourceExchangeResourceKind.Oil,
+            OutputResource = ResourceExchangeResourceKind.Materials,
             InputAmountMin = 100,
             InputAmountMax = 1000,
             InputStep = 100,
@@ -313,7 +313,7 @@ public sealed class ResourceExchangeEconomyEventSystemTests
     private static ResourceExchangeQueueComponent CreateQueueItem(
         int queueItemId = 1,
         ResourceExchangeResourceKind inputResource = ResourceExchangeResourceKind.Oil,
-        ResourceExchangeResourceKind outputResource = ResourceExchangeResourceKind.Oil,
+        ResourceExchangeResourceKind outputResource = ResourceExchangeResourceKind.Materials,
         int reservedInputAmount = 200,
         int outputAmount = 75,
         float remainingSeconds = 1f,

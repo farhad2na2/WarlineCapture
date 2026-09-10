@@ -5,6 +5,14 @@ using UnityEngine;
 
 public static class M04EditorRegressionValidation
 {
+    public static void RunCompletionArchitectureCheckpoint()
+    {
+        Game.Editor.MissionUiSerializedBindingsAuthoring.RepairCommittedPrefabs();
+        Game.Editor.Aph700AssemblyDependencyReportGenerator.GenerateFromMenu();
+        RunSuite(ProductionSourceGrowthArchitectureTests.RunFocusedValidation);
+        RunSuite(ProductionSourceGrowthArchitectureTests.RunPostHardeningAuthorizationFocusedValidation);
+        ValidationExit.Exit(0);
+    }
     public static void RunPresentationAcceptance()
     {
         Game.Editor.M04AirliftPresentationBuilder.Build();

@@ -9,11 +9,18 @@ namespace Game.Runtime
 {
     public partial struct CampaignMissionGuidanceProjectionSystem
     {
+        private static readonly FixedString64Bytes ExtractionMissionId = "saga.ch01.m04.airlift";
+        private static readonly FixedString64Bytes ExtractionTitlePrefix = "mission.m04.tutorial.";
+        private static readonly FixedString128Bytes ExtractionBodyPrefix = "mission.m04.tutorial.";
+        private static readonly FixedString32Bytes ExtractionTitleSuffix = ".title";
+        private static readonly FixedString32Bytes ExtractionBodySuffix = ".body";
+        private static readonly FixedString64Bytes ExtractionTargetPrefix = "tutorial.ch01.m04.";
+        private static readonly FixedString64Bytes ExtractionGuideAction = "mission.m03.guide.open";
         private bool TryUpdateExtractionGuidance(ref SystemState state,Entity root,in CampaignMissionRuntimeComponent runtime,
             in CampaignMissionAttemptFactsComponent facts,in AssistantSettingsComponent settings,in CampaignMissionGuidanceProjectionComponent current)
         {
             var em=state.EntityManager;
-            if(!runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes("saga.ch01.m04.airlift")))return false;
+            if(!runtime.MissionId.Equals(ExtractionMissionId))return false;
             if(!em.HasComponent<CampaignMissionExtractionState>(root)) {ClearDefenseGuidance(em,root,in current);return true;}
             var extraction=em.GetComponentData<CampaignMissionExtractionState>(root);
             if(!extraction.SessionToken.Equals(runtime.SessionToken) || extraction.AttemptOrdinal!=runtime.AttemptOrdinal || extraction.SourceVersion!=runtime.SourceVersion ||
@@ -51,15 +58,15 @@ namespace Game.Runtime
             em.SetComponentData(root,extraction);
             int chosen=1;while(chosen<=12&&(extraction.GuidanceCompletedMask&(1u<<(chosen-1)))!=0)chosen++;
             if(chosen>12){ClearDefenseGuidance(em,root,in current);return true;}
-            var title=new Unity.Collections.FixedString64Bytes("mission.m04.tutorial.");title.Append(chosen);title.Append(".title");
-            var body=new Unity.Collections.FixedString128Bytes("mission.m04.tutorial.");body.Append(chosen);body.Append(".body");
-            var targetId=new Unity.Collections.FixedString64Bytes("tutorial.ch01.m04.");targetId.Append(chosen);
+            var title=ExtractionTitlePrefix;title.Append(chosen);title.Append(ExtractionTitleSuffix);
+            var body=ExtractionBodyPrefix;body.Append(chosen);body.Append(ExtractionBodySuffix);
+            var targetId=ExtractionTargetPrefix;targetId.Append(chosen);
             var next=new CampaignMissionGuidanceProjectionComponent {GuidanceId=55000+chosen,Version=Next(current.Version),MissionSourceVersion=runtime.Version,
                 Prompt=(CampaignMissionGuidancePromptKind)(24+chosen),GuidanceMode=runtime.Guidance,Active=1,
                 RecommendationKind=AssistantRecommendationKind.Explain,TargetKind=AssistantTargetKind.UiSurface,
                 TargetId=targetId,
                 Title=title,Body=body,
-                ActionLabel=chosen==1?new Unity.Collections.FixedString64Bytes("mission.m03.action.continue"):chosen is 7 or 10 or 12?new Unity.Collections.FixedString64Bytes("mission.m03.guide.open"):new Unity.Collections.FixedString64Bytes("mission.m03.action.do_it"),
+                ActionLabel=chosen==1?RadarContinue:chosen is 7 or 10 or 12?ExtractionGuideAction:RadarAct,
                 Priority=facts.ElapsedMilliseconds>=480000?AssistantMessagePriority.Critical:AssistantMessagePriority.High,
                 CanShow=1,CanExecute=1,WorldPosition=chosen<=5?team:chosen>=11?extraction.DepartureCenter:extraction.LandingCenter,HasWorldPosition=1,
                 SubtitlesEnabled=settings.SubtitlesEnabled,LargeTextEnabled=settings.LargeTextEnabled,HighContrastEnabled=settings.HighContrastEnabled};

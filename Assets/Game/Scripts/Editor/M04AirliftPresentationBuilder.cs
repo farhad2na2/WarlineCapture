@@ -63,7 +63,7 @@ namespace Game.Editor
             var guide=Button("Guide",actions,0,172,"mission.m03.guide.open");var team=Button("Team",actions,182,110,"mission.m04.focus.team");var landing=Button("Landing",actions,302,172,"mission.m04.focus.landing");var departure=Button("Departure",actions,484,130,"mission.m04.focus.departure");
             var status=Text("ExtractionStatus",actions,0,47,614,76,19,"");
             var view=parent.GetComponent<MissionExtractionHudView>()??parent.gameObject.AddComponent<MissionExtractionHudView>();var data=new SerializedObject(view);
-            Ref(data,"actions",actions.gameObject);Ref(data,"guide",guide);Ref(data,"team",team);Ref(data,"landing",landing);Ref(data,"departure",departure);Ref(data,"status",status.GetComponent<V3LocalizedTextBinding>());data.ApplyModifiedPropertiesWithoutUndo();actions.gameObject.SetActive(false);
+            Ref(data,"actions",actions.gameObject);Ref(data,"guide",guide);Ref(data,"team",team);Ref(data,"landing",landing);Ref(data,"departure",departure);Ref(data,"status",status.GetComponent<V3LocalizedTextBindingView>());data.ApplyModifiedPropertiesWithoutUndo();actions.gameObject.SetActive(false);
         });
         private static void InstallSpeaker()
         {
@@ -77,10 +77,10 @@ namespace Game.Editor
             entry.FindPropertyRelative("identitySprite").objectReferenceValue=M04AirliftMediaImporter.LailaPortrait();entry.FindPropertyRelative("accentColor").colorValue=new Color(.91f,.66f,.27f);
             data.ApplyModifiedPropertiesWithoutUndo();EditorUtility.SetDirty(catalog);
         }
-        private static void Edit(string path,Action<GameObject> action){var root=PrefabUtility.LoadPrefabContents(path);try{action(root);PrefabUtility.SaveAsPrefabAsset(root,path);}finally{PrefabUtility.UnloadPrefabContents(root);}}
+        private static void Edit(string path,Action<GameObject> action){var root=PrefabUtility.LoadPrefabContents(path);try{action(root);MissionUiSerializedBindingsAuthoring.Apply(root);PrefabUtility.SaveAsPrefabAsset(root,path);}finally{PrefabUtility.UnloadPrefabContents(root);}}
         private static void Ref(SerializedObject data,string name,UnityEngine.Object value)=>data.FindProperty(name).objectReferenceValue=value;
         private static RectTransform Rect(string name,Transform parent,float x,float y,float w,float h){var rect=new GameObject(name,typeof(RectTransform)).GetComponent<RectTransform>();rect.SetParent(parent,false);rect.anchorMin=rect.anchorMax=rect.pivot=new Vector2(0,1);rect.anchoredPosition=new Vector2(x,-y);rect.sizeDelta=new Vector2(w,h);return rect;}
-        private static TMP_Text Text(string name,Transform parent,float x,float y,float w,float h,float size,string key){var rect=Rect(name,parent,x,y,w,h);var text=rect.gameObject.AddComponent<RTLTextMeshPro>();text.font=AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium SDF.asset");text.fontSize=size;text.enableAutoSizing=true;text.fontSizeMin=12;text.fontSizeMax=size;text.color=Color.white;text.raycastTarget=false;text.alignment=TextAlignmentOptions.Center;text.gameObject.AddComponent<V3LocalizedTextBinding>().Configure(key,GameText.Get(key),false);return text;}
+        private static TMP_Text Text(string name,Transform parent,float x,float y,float w,float h,float size,string key){var rect=Rect(name,parent,x,y,w,h);var text=rect.gameObject.AddComponent<RTLTextMeshPro>();text.font=AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium SDF.asset");text.fontSize=size;text.enableAutoSizing=true;text.fontSizeMin=12;text.fontSizeMax=size;text.color=Color.white;text.raycastTarget=false;text.alignment=TextAlignmentOptions.Center;text.gameObject.AddComponent<V3LocalizedTextBindingView>().Configure(key,GameText.Get(key),false);return text;}
         private static Button Button(string name,Transform parent,float x,float w,string key){var rect=Rect(name,parent,x,0,w,42);var image=rect.gameObject.AddComponent<Image>();image.color=new Color32(29,48,57,255);var button=rect.gameObject.AddComponent<Button>();button.targetGraphic=image;Text("Label",rect,6,2,w-12,38,18,key);return button;}
     }
 }

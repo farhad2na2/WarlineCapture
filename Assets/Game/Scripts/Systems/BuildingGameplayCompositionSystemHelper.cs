@@ -6,7 +6,7 @@ using Game.Configs;
 
 namespace Game.Runtime
 {
-    internal sealed class BuildingGameplayCompositionSystemHelper
+    internal sealed partial class BuildingGameplayCompositionSystemHelper
     {
         private const float DestroyedBuildingLifetimeSeconds = 5f;
         private const float OilBarrelsPerFuelBarrel = 2f;
@@ -77,134 +77,15 @@ namespace Game.Runtime
                 BuildingRuntimeResourcePrefabCompositionSystemHelper.Create(
                     childSystems.BuildingRuntimeResourcePrefabCompositionHelper,
                     childSystems);
-            bool tryGetEntityManager(out EntityManager entityManager)
-            {
-                return childSystems.BuildingEntityManagerAccessSystem.TryGetEntityManager(out entityManager);
-            }
-            BuildingGameplayGridDataCompositionSystemHelper.TryGetEntityManagerDelegate tryGetGridEntityManager = tryGetEntityManager;
-
-            bool tryGetGridData(
-                BuildingGameplaySourceCompositionSystemHelper source,
-                out Entity gridEntity,
-                out GridConfig grid,
-                out DynamicBuffer<GridRoad> roads,
-                out DynamicBlockerComponent blockerData)
-            {
-                return source.BuildingGridCompositionSystem.TryGetGridData(
-                    source,
-                    tryGetGridEntityManager,
-                    out gridEntity,
-                    out grid,
-                    out roads,
-                    out blockerData);
-            }
-
-            bool tryGetGridForSelection(BuildingGameplaySourceCompositionSystemHelper source, out GridConfig grid)
-            {
-                return source.BuildingGridCompositionSystem.TryGetGridForSelection(
-                    source,
-                    tryGetGridEntityManager,
-                    out grid);
-            }
-
-            bool tryGetGridForPlacementInput(BuildingGameplaySourceCompositionSystemHelper source, out GridConfig grid)
-            {
-                return source.BuildingGridCompositionSystem.TryGetGridForPlacementInput(
-                    source,
-                    tryGetGridEntityManager,
-                    out grid);
-            }
-
-            bool tryGetGridCell(
-                BuildingGameplaySourceCompositionSystemHelper source,
-                Vector2 screenPosition,
-                GridConfig grid,
-                out Vector2Int cell)
-            {
-                return source.BuildingGridCompositionSystem.TryGetGridCell(
-                    source,
-                    screenPosition,
-                    grid,
-                    out cell);
-            }
-
-            BuildingRuntimeContextCompositionSystemHelper.GetEffectivePlacementRectDelegate getEffectivePlacementRect =
-                (source, definition, originCell, grid, rotateVertical) => source.BuildingRuntimeQueryCompositionSystemHelper.GetEffectivePlacementRect(
-                    source,
-                    definition,
-                    originCell,
-                    grid,
-                    rotateVertical);
-            BuildingRuntimeContextCompositionSystemHelper.IsHouseBuildingDelegate isHouseBuilding =
-                (source, building) => source.BuildingRuntimeQueryCompositionSystemHelper.IsHouseBuilding(source, building);
-            BuildingRuntimeContextCompositionSystemHelper.TryResolveBuildingFocusWorldPositionDelegate tryResolveBuildingFocusWorldPosition =
-                (BuildingGameplaySourceCompositionSystemHelper source, RuntimeBuildingEntity building, out Vector3 worldPosition) =>
-                    source.BuildingRuntimeQueryCompositionSystemHelper.TryResolveBuildingFocusWorldPosition(
-                        source,
-                        building,
-                        tryGetEntityManager,
-                        out worldPosition);
-            BuildingRuntimeContextCompositionSystemHelper.TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding =
-                (BuildingGameplaySourceCompositionSystemHelper source, int id, out RuntimeBuildingEntity building) =>
-                    source.BuildingRuntimeQueryCompositionSystemHelper.TryGetRuntimeBuilding(source, id, out building);
-            BuildingRuntimeContextCompositionSystemHelper.OverlapsAnyPlacementOccupantDelegate overlapsAnyPlacementOccupant =
-                (source, candidateRect) =>
-                    source.BuildingRuntimeQueryCompositionSystemHelper.OverlapsAnyRuntimeBuilding(
-                        source,
-                        candidateRect,
-                        tryGetGridData,
-                        (querySource, definition, originCell, grid, rotateVertical) => getEffectivePlacementRect(querySource, definition, originCell, grid, rotateVertical)) ||
-                    source.BuildingRuntimeQueryCompositionSystemHelper.OverlapsAnyLiveUnitFootprint(
-                        source,
-                        candidateRect,
-                        (out EntityManager entityManager) => tryGetEntityManager(out entityManager));
-            Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource> createRuntimeContextSource =
-                source => source.BuildingRuntimeContextCompositionSystemHelper.CreateRuntimeContextSource(
-                    source,
-                    tryGetEntityManager,
-                    tryGetGridData,
-                    isHouseBuilding,
-                    tryResolveBuildingFocusWorldPosition,
-                    tryGetRuntimeBuilding,
-                    getEffectivePlacementRect);
-            Func<BuildingGameplaySourceCompositionSystemHelper, BuildingRuntimeEntityCompositionSystemHelper.Context> createBuildingRuntimeEntityContext =
-                source => source.BuildingRuntimeContextCompositionSystemHelper.CreateBuildingRuntimeEntityContext(
-                    source,
-                    tryGetEntityManager,
-                    tryGetGridData,
-                    isHouseBuilding,
-                    tryResolveBuildingFocusWorldPosition,
-                    tryGetRuntimeBuilding,
-                    getEffectivePlacementRect,
-                    DestroyedBuildingLifetimeSeconds);
-            Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingRuntimeContextFactoryCompositionSystemHelper.Source> createBuildingRuntimeContextSource =
-                (source, placementInteractionContext, placementMarkerPropertyBlock) => source.BuildingRuntimeContextCompositionSystemHelper.CreateBuildingRuntimeContextSource(
-                    source,
-                    placementInteractionContext,
-                    placementMarkerPropertyBlock,
-                    tryGetEntityManager,
-                    tryGetGridData,
-                    getEffectivePlacementRect,
-                    overlapsAnyPlacementOccupant,
-                    isHouseBuilding,
-                    tryResolveBuildingFocusWorldPosition,
-                    tryGetRuntimeBuilding,
-                    source => source.BuildingRuntimeSideEffectCompositionSystemHelper.BeginDeferredRuntimeBuildingSideEffects(source, tryGetEntityManager),
-                    source => source.BuildingRuntimeSideEffectCompositionSystemHelper.EndDeferredRuntimeBuildingSideEffects(source, tryGetEntityManager),
-                    DestroyedBuildingLifetimeSeconds);
-            BuildingPlacementAdapterCompositionSystemHelper.CreateRuntimeContextSourceDelegate createRuntimeContextSourceForAdapter =
-                source => createRuntimeContextSource(source);
-            BuildingPlacementAdapterCompositionSystemHelper.CreateBuildingRuntimeContextSourceDelegate createBuildingRuntimeContextSourceForAdapter =
-                (source, placementInteractionContext, placementMarkerPropertyBlock) =>
-                    createBuildingRuntimeContextSource(source, placementInteractionContext, placementMarkerPropertyBlock);
+            var queries = new RuntimeBindings(childSystems);
             Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementQueryUiSystemHelper.Context> createPlacementQueryContext =
                 source => source.BuildingPlacementQueryCompositionSystem.Create(source);
             Func<BuildingGameplaySourceCompositionSystemHelper, BuildingSelectionRuntimeCompositionSystemHelper.Context> createBuildingSelectionContext =
                 source => source.BuildingSelectionCompositionHelper.Create(
                     source,
-                    tryGetGridForSelection,
+                    queries.tryGetGridForSelection,
                     resolveSelectionPortraitSpriteFromPrefab,
-                    createRuntimeContextSource);
+                    queries.createRuntimeContextSource);
             BuildingPlacementAdapterCompositionSystemHelper.IsPlacementValidDelegate isPlacementValid =
                 (source, definition, originCell, footprintCells, rotateVertical, grid, roads, blockerData) =>
                     source.BuildingPlacementAdapterCompositionSystemHelper.IsPlacementValid(
@@ -217,13 +98,13 @@ namespace Game.Runtime
                         roads,
                         blockerData,
                         (placementSource, definition, originCell, placementGrid, placementRotateVertical) =>
-                            getEffectivePlacementRect(placementSource, definition, originCell, placementGrid, placementRotateVertical),
-                        (placementSource, candidateRect) => overlapsAnyPlacementOccupant(placementSource, candidateRect));
+                            queries.getEffectivePlacementRect(placementSource, definition, originCell, placementGrid, placementRotateVertical),
+                        (placementSource, candidateRect) => queries.overlapsAnyPlacementOccupant(placementSource, candidateRect));
             BuildingPlacementCommandCompositionSystemHelper.GetCenterScreenPlacementOriginDelegate getCenterScreenPlacementOrigin =
                 (source, footprintCells) => source.BuildingPlacementAdapterCompositionSystemHelper.GetCenterScreenPlacementOrigin(
                     source,
                     footprintCells,
-                    tryGetGridData);
+                    queries.tryGetGridData);
             BuildingPlacementCommandCompositionSystemHelper.TryResolveInitialPlacementOriginDelegate tryResolveInitialPlacementOrigin =
                 (
                     BuildingGameplaySourceCompositionSystemHelper source,
@@ -237,7 +118,7 @@ namespace Game.Runtime
                     placementMarkerPropertyBlock,
                     definition,
                     preferredOrigin,
-                    createBuildingRuntimeContextSourceForAdapter,
+                    queries.createBuildingRuntimeContextSourceForAdapter,
                     out resolvedOrigin);
             BuildingPlacementVisualCompositionPresentationSystemHelper.IsActivePlacementValidDelegate isActivePlacementValid =
                 (source, originCell, footprintCells, grid, roads, blockerData) => source.BuildingPlacementAdapterCompositionSystemHelper.IsActivePlacementValid(
@@ -247,7 +128,7 @@ namespace Game.Runtime
                     grid,
                     roads,
                     blockerData,
-                    createRuntimeContextSourceForAdapter,
+                    queries.createRuntimeContextSourceForAdapter,
                     isPlacementValid);
             BuildingPlacementCommandCompositionSystemHelper.TryAlignGateToNearbyWallDelegate tryAlignGateForCommand =
                 (BuildingGameplaySourceCompositionSystemHelper source, Vector2Int originCell, BuildingDefinition definition, out bool gateVertical) =>
@@ -255,7 +136,7 @@ namespace Game.Runtime
                         source,
                         originCell,
                         definition,
-                        createRuntimeContextSourceForAdapter,
+                        queries.createRuntimeContextSourceForAdapter,
                         out gateVertical);
             BuildingPlacementVisualCompositionPresentationSystemHelper.TryAlignGateToNearbyWallDelegate tryAlignGateForVisual =
                 (BuildingGameplaySourceCompositionSystemHelper source, Vector2Int originCell, BuildingDefinition definition, out bool gateVertical) =>
@@ -263,7 +144,7 @@ namespace Game.Runtime
                         source,
                         originCell,
                         definition,
-                        createRuntimeContextSourceForAdapter,
+                        queries.createRuntimeContextSourceForAdapter,
                         out gateVertical);
             BuildingPlacementVisualCompositionPresentationSystemHelper.CreatePlacementContextSourceDelegate createPlacementContextSource = null;
             BuildingPlacementCommandCompositionSystemHelper.UpdatePlacementVisualDelegate updatePlacementVisual =
@@ -275,12 +156,12 @@ namespace Game.Runtime
                         placement,
                         updateCellFromPointer,
                         screenPosition,
-                        tryGetGridCell,
-                        tryGetGridData,
+                        queries.tryGetGridCell,
+                        queries.tryGetGridData,
                         isActivePlacementValid,
                         tryAlignGateForVisual,
                         createPlacementContextSource,
-                        createRuntimeContextSource,
+                        queries.createRuntimeContextSource,
                         createBuildingSelectionContext);
             BuildingPlacementCommandCompositionSystemHelper.FocusActivePlacementDelegate focusActivePlacement =
                 (source, placementInteractionContext, placementMarkerPropertyBlock, placement) =>
@@ -289,12 +170,12 @@ namespace Game.Runtime
                         placementInteractionContext,
                         placementMarkerPropertyBlock,
                         placement,
-                        tryGetGridCell,
-                        tryGetGridData,
+                        queries.tryGetGridCell,
+                        queries.tryGetGridData,
                         isActivePlacementValid,
                         tryAlignGateForVisual,
                         createPlacementContextSource,
-                        createRuntimeContextSource,
+                        queries.createRuntimeContextSource,
                         createBuildingSelectionContext);
             BuildingPlacementCommandCompositionSystemHelper.ValidateActivePlacementForConfirmDelegate validateActivePlacementForConfirm =
                 (source, placementInteractionContext, placementMarkerPropertyBlock, placement) =>
@@ -304,12 +185,12 @@ namespace Game.Runtime
                         placementInteractionContext,
                         placementMarkerPropertyBlock,
                         placement,
-                        tryGetGridCell,
-                        tryGetGridData,
+                        queries.tryGetGridCell,
+                        queries.tryGetGridData,
                         isActivePlacementValid,
                         tryAlignGateForVisual,
                         createPlacementContextSource,
-                        createRuntimeContextSource,
+                        queries.createRuntimeContextSource,
                         createBuildingSelectionContext);
             BuildingPlacementCommandCompositionSystemHelper.PlaceBuildingDelegate placeBuilding =
                 (source, placementInteractionContext, placementMarkerPropertyBlock, placement) =>
@@ -319,12 +200,12 @@ namespace Game.Runtime
                             placementInteractionContext,
                             placementMarkerPropertyBlock,
                             placement,
-                            tryGetGridCell,
-                            tryGetGridData,
+                            queries.tryGetGridCell,
+                            queries.tryGetGridData,
                             isActivePlacementValid,
                             tryAlignGateForVisual,
                             createPlacementContextSource,
-                            createRuntimeContextSource,
+                            queries.createRuntimeContextSource,
                             createBuildingSelectionContext)
                         : default;
             BuildingPlacementCommandCompositionSystemHelper.UpdatePlacementDelegate updatePlacement =
@@ -334,12 +215,12 @@ namespace Game.Runtime
                         placementInteractionContext,
                         placementMarkerPropertyBlock,
                         screenPosition,
-                        tryGetGridCell,
-                        tryGetGridData,
+                        queries.tryGetGridCell,
+                        queries.tryGetGridData,
                         isActivePlacementValid,
                         tryAlignGateForVisual,
                         createPlacementContextSource,
-                        createRuntimeContextSource,
+                        queries.createRuntimeContextSource,
                         createBuildingSelectionContext);
             createPlacementContextSource = (source, placementInteractionContext, placementMarkerPropertyBlock) =>
                 source.BuildingPlacementCommandCompositionSystemHelper.CreateContextSource(
@@ -352,11 +233,11 @@ namespace Game.Runtime
                     focusActivePlacement,
                     validateActivePlacementForConfirm,
                     placeBuilding,
-                    tryGetGridForPlacementInput,
-                    tryGetGridCell,
+                    queries.tryGetGridForPlacementInput,
+                    queries.tryGetGridCell,
                     updatePlacement,
                     tryAlignGateForCommand,
-                    createBuildingRuntimeContextSource,
+                    queries.createBuildingRuntimeContextSource,
                     createBuildingSelectionContext);
             Func<BuildingGameplaySourceCompositionSystemHelper, BuildingPlacementInteractionCompositionSystemHelper.Context, MaterialPropertyBlock, BuildingPlacementCommandRequestCompositionSystemHelper.Context> createPlacementCommandContext =
                 (source, placementInteractionContext, placementMarkerPropertyBlock) =>
@@ -370,18 +251,18 @@ namespace Game.Runtime
                         focusActivePlacement,
                         validateActivePlacementForConfirm,
                         placeBuilding,
-                        tryGetGridForPlacementInput,
-                        tryGetGridCell,
+                        queries.tryGetGridForPlacementInput,
+                        queries.tryGetGridCell,
                         updatePlacement,
                         tryAlignGateForCommand,
-                        createBuildingRuntimeContextSource,
+                        queries.createBuildingRuntimeContextSource,
                         createBuildingSelectionContext);
             BuildingPlacementInteractionCompositionSystemHelper.Context interactionContext = default;
             void BeginSoldierBasePlacement()
             {
                 BuildingPlacementCommandRequestCompositionSystemHelper.Context commandContext =
                     createPlacementCommandContext(childSystems, interactionContext, markerPropertyBlock);
-                if (tryGetEntityManager(out EntityManager em))
+                if (queries.tryGetEntityManager(out EntityManager em))
                 {
                     childSystems.BuildingPlacementCommandRequestCompositionSystemHelper.EnqueueAndProcessBeginSoldierBasePlacement(em, commandContext);
                     return;
@@ -395,7 +276,7 @@ namespace Game.Runtime
             {
                 BuildingPlacementCommandRequestCompositionSystemHelper.Context commandContext =
                     createPlacementCommandContext(childSystems, interactionContext, markerPropertyBlock);
-                return tryGetEntityManager(out EntityManager em)
+                return queries.tryGetEntityManager(out EntityManager em)
                     ? childSystems.BuildingPlacementCommandRequestCompositionSystemHelper.EnqueueAndProcessConfirmBuildingPlacement(em, commandContext)
                     : commandContext.SessionSystem != null && commandContext.SessionSystem.ConfirmBuildingPlacement(commandContext.SessionContext);
             }
@@ -404,7 +285,7 @@ namespace Game.Runtime
             {
                 BuildingPlacementCommandRequestCompositionSystemHelper.Context commandContext =
                     createPlacementCommandContext(childSystems, interactionContext, markerPropertyBlock);
-                if (tryGetEntityManager(out EntityManager em))
+                if (queries.tryGetEntityManager(out EntityManager em))
                     childSystems.BuildingPlacementCommandRequestCompositionSystemHelper.EnqueueAndProcessCancelBuildingPlacement(em, commandContext);
                 else
                     commandContext.SessionSystem?.CancelBuildingPlacement(commandContext.SessionContext);
@@ -412,13 +293,13 @@ namespace Game.Runtime
 
             void CreateUnitFromSelectedBuilding()
             {
-                if (!tryGetEntityManager(out EntityManager em))
+                if (!queries.tryGetEntityManager(out EntityManager em))
                     return;
 
                 BuildingProductionContextCompositionSystemHelper.Source productionSource =
                     childSystems.BuildingProductionCompositionSystemHelper.CreateRuntimeContextSource(
                         childSystems,
-                        createRuntimeContextSource,
+                        queries.createRuntimeContextSource,
                         createPlacementCommandContext,
                         interactionContext,
                         markerPropertyBlock);
@@ -439,11 +320,11 @@ namespace Game.Runtime
                 bool DeleteBuildingById(int buildingId)
                 {
                     return childSystems.BuildingRuntimeEntityCompositionSystemHelper.DeleteBuildingById(
-                        createBuildingRuntimeEntityContext(childSystems),
+                        queries.createBuildingRuntimeEntityContext(childSystems),
                         buildingId);
                 }
 
-                if (tryGetEntityManager(out EntityManager em))
+                if (queries.tryGetEntityManager(out EntityManager em))
                     childSystems.BuildingSelectionRuntimeCompositionSystemHelper.EnqueueAndProcessDeleteSelectedBuilding(em, selectionContext, DeleteBuildingById);
                 else
                     childSystems.BuildingSelectionRuntimeCompositionSystemHelper.DeleteSelectedBuilding(selectionContext, DeleteBuildingById);
@@ -453,7 +334,7 @@ namespace Game.Runtime
             {
                 BuildingSelectionRuntimeCompositionSystemHelper.Context selectionContext =
                     createBuildingSelectionContext(childSystems);
-                if (tryGetEntityManager(out EntityManager em))
+                if (queries.tryGetEntityManager(out EntityManager em))
                     childSystems.BuildingSelectionRuntimeCompositionSystemHelper.EnqueueAndProcessClearSelectedBuilding(em, selectionContext);
                 else
                     childSystems.BuildingSelectionRuntimeCompositionSystemHelper.ClearSelectedBuilding(selectionContext);
@@ -463,7 +344,7 @@ namespace Game.Runtime
             {
                 BuildingPlacementCommandRequestCompositionSystemHelper.Context commandContext =
                     createPlacementCommandContext(childSystems, interactionContext, markerPropertyBlock);
-                if (tryGetEntityManager(out EntityManager em))
+                if (queries.tryGetEntityManager(out EntityManager em))
                     childSystems.BuildingPlacementCommandRequestCompositionSystemHelper.EnqueueAndProcessExitBuildMode(em, commandContext);
                 else
                     commandContext.SessionSystem?.ExitBuildMode(commandContext.SessionContext);
@@ -478,7 +359,7 @@ namespace Game.Runtime
                     return false;
 
                 BuildingRuntimeContextFactoryCompositionSystemHelper.RuntimeSource runtimeSource =
-                    createRuntimeContextSource(childSystems);
+                    queries.createRuntimeContextSource(childSystems);
                 if (runtimeSource.TryGetRuntimeBuilding == null ||
                     !runtimeSource.TryGetRuntimeBuilding(buildingId.Value, out RuntimeBuildingEntity building) ||
                     building == null)
@@ -515,7 +396,7 @@ namespace Game.Runtime
                     ClearSelectedBuilding,
                     ExitBuildMode,
                     (buildingId, blockerEntity, buildingObject) => childSystems.BuildingRuntimeEntityCompositionSystemHelper.HandleRuntimeBuildingEntityDestroyed(
-                        createBuildingRuntimeEntityContext(childSystems),
+                        queries.createBuildingRuntimeEntityContext(childSystems),
                         buildingId,
                         blockerEntity,
                         buildingObject),
@@ -527,7 +408,7 @@ namespace Game.Runtime
                         out Unity.Mathematics.int2 breachCell,
                         out Unity.Mathematics.float3 breachPosition,
                         out string reason) => childSystems.BuildingRuntimeReadModelCompositionSystemHelper.TryResolveBaseBreachTarget(
-                        childSystems.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeQueryContext(createRuntimeContextSource(childSystems)),
+                        childSystems.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeQueryContext(queries.createRuntimeContextSource(childSystems)),
                         attackerFactionId,
                         finalTarget,
                         finalTargetCell,
@@ -549,7 +430,7 @@ namespace Game.Runtime
                             createPlacementQueryContext(childSystems),
                             out snapshot)));
             BuildingRuntimeContextFactoryCompositionSystemHelper.Source buildingRuntimeContextSource =
-                createBuildingRuntimeContextSource(childSystems, interactionContext, markerPropertyBlock);
+                queries.createBuildingRuntimeContextSource(childSystems, interactionContext, markerPropertyBlock);
             CitizenPopulationCompositionSystemHelper citizenPopulationCompositionBoundary =
                 BuildingCitizenPopulationCompositionSystemHelper.CreateBoundary(_citizenPopulationCompositionSystem);
             CitizenPopulationCompositionSystemHelper.Result citizenPopulationComposition =
@@ -562,26 +443,27 @@ namespace Game.Runtime
                     childSystems.BuildingRuntimeSpawnCompositionSystemHelper);
             Func<BuildingSpawnCompositionSystemHelper.Context> createSpawnContext = () =>
             {
-                if (tryGetEntityManager(out EntityManager em))
+                if (queries.tryGetEntityManager(out EntityManager em))
                     childSystems.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries(em);
-                return childSystems.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateBuildingSpawnContext(createRuntimeContextSource(childSystems));
+                return childSystems.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateBuildingSpawnContext(queries.createRuntimeContextSource(childSystems));
             };
             Func<BuildingBarrierUtilitySystemHelper.Context> createBarrierContext = () =>
             {
-                if (tryGetEntityManager(out EntityManager em))
+                if (queries.tryGetEntityManager(out EntityManager em))
                     childSystems.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries(em);
-                return childSystems.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateBarrierContext(createRuntimeContextSource(childSystems));
+                return childSystems.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateBarrierContext(queries.createRuntimeContextSource(childSystems));
             };
             Func<BuildingCombatUtilitySystemHelper.Context<RuntimeBuildingEntity>> createCombatContext = () =>
             {
-                if (tryGetEntityManager(out EntityManager em))
+                if (queries.tryGetEntityManager(out EntityManager em))
                     childSystems.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries(em);
-                return childSystems.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateCombatContext(createRuntimeContextSource(childSystems));
+                return childSystems.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateCombatContext(queries.createRuntimeContextSource(childSystems));
             };
             BuildingPlacementRuntimeTickCompositionSystemHelper.Context runtimeTickContext = default;
             bool runtimeTickContextReady = false;
             bool liveVehicleContractDiagnosticLogged = false;
-            Debug.Log(
+            if (ResolveMapVehiclePlacementConfig() != null || requirePackedVehiclePresentationContract)
+                Debug.Log(
                 $"[MapVehicleOwnershipRuntime] phase=CompositionInit " +
                 $"configAssigned={(ResolveMapVehiclePlacementConfig() != null ? 1 : 0)} " +
                 $"placements={ResolveMapVehiclePlacementConfig()?.Placements?.Count ?? -1} " +
@@ -592,11 +474,12 @@ namespace Game.Runtime
                 if (runtimeTickContextReady)
                     return true;
 
-                if (!tryGetEntityManager(out EntityManager em))
+                if (!queries.tryGetEntityManager(out EntityManager em))
                     return false;
 
                 childSystems.BuildingGameplayEcsQueryCompositionSystemHelper.EnsureEntityQueries(em);
-                Debug.Log(
+                if (ResolveMapVehiclePlacementConfig() != null || requirePackedVehiclePresentationContract)
+                    Debug.Log(
                     $"[MapVehicleOwnershipRuntime] phase=RuntimeContextReady " +
                     $"configAssigned={(ResolveMapVehiclePlacementConfig() != null ? 1 : 0)} " +
                     $"placements={ResolveMapVehiclePlacementConfig()?.Placements?.Count ?? -1} " +
@@ -607,7 +490,7 @@ namespace Game.Runtime
                     childSystems,
                     interactionContext,
                     markerPropertyBlock,
-                    createRuntimeContextSource,
+                    queries.createRuntimeContextSource,
                     (source, placementInteractionContext, placementMarkerPropertyBlock) => _placementInputTickCompositionHelper.Create(
                         source,
                         placementInteractionContext,
@@ -619,30 +502,30 @@ namespace Game.Runtime
                                 createPlacementContextSource(pointerSource, pointerInteractionContext, pointerMarkerPropertyBlock)),
                         source => source.BuildingSelectionClickCompositionHelper.Create(
                             source,
-                            tryGetGridForSelection,
-                            tryGetGridCell,
+                            queries.tryGetGridForSelection,
+                            queries.tryGetGridCell,
                             createBuildingSelectionContext)),
                     source => _productionTickCompositionHelper.Create(
                         source,
                         productionSource => productionSource.BuildingProductionCompositionSystemHelper.CreateRuntimeContextSource(
                             productionSource,
-                            createRuntimeContextSource,
+                            queries.createRuntimeContextSource,
                             createPlacementCommandContext),
                         OilBarrelsPerFuelBarrel),
                     (source, placementInteractionContext, placementMarkerPropertyBlock) => _runtimeBoundaryCompositionHelper.Create(
                         source,
                         placementInteractionContext,
                         placementMarkerPropertyBlock,
-                        createBuildingRuntimeContextSource,
+                        queries.createBuildingRuntimeContextSource,
                         boundarySource => boundarySource.BuildingProductionCompositionSystemHelper.CreateRuntimeContextSource(
                             boundarySource,
-                            createRuntimeContextSource,
+                            queries.createRuntimeContextSource,
                             createPlacementCommandContext),
-                        createRuntimeContextSource),
+                        queries.createRuntimeContextSource),
                     (source, placementInteractionContext, placementMarkerPropertyBlock) =>
                     {
                         BuildingRuntimeContextFactoryCompositionSystemHelper.Source mapRuntimeContextSource =
-                            createBuildingRuntimeContextSource(source, placementInteractionContext, placementMarkerPropertyBlock);
+                            queries.createBuildingRuntimeContextSource(source, placementInteractionContext, placementMarkerPropertyBlock);
                         BuildingRuntimeSpawnCompositionSystemHelper.Context mapSpawnContext =
                             source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateSpawnContext(mapRuntimeContextSource);
                         bool TryGetMapGridData(
@@ -651,7 +534,7 @@ namespace Game.Runtime
                             out DynamicBuffer<GridRoad> roads,
                             out DynamicBlockerComponent blockerData)
                         {
-                            return tryGetGridData(source, out gridEntity, out grid, out roads, out blockerData);
+                            return queries.tryGetGridData(source, out gridEntity, out grid, out roads, out blockerData);
                         }
 
                         MapBuildingPlacementSpawnPrefabSystemHelper.Context mapSpawnPlacementContext =
@@ -677,7 +560,7 @@ namespace Game.Runtime
                             out DynamicBuffer<GridRoad> roads,
                             out DynamicBlockerComponent blockerData)
                         {
-                            return tryGetGridData(source, out gridEntity, out grid, out roads, out blockerData);
+                            return queries.tryGetGridData(source, out gridEntity, out grid, out roads, out blockerData);
                         }
 
                         bool TryGetMapRuntimeBoundary(EntityManager em, out Entity boundaryEntity)
@@ -726,7 +609,7 @@ namespace Game.Runtime
 
                 childSystems.BuildingPlacementRuntimeTickCompositionSystemHelper.UpdateSimulation(runtimeTickContext);
                 if (!liveVehicleContractDiagnosticLogged &&
-                    tryGetEntityManager(out EntityManager diagnosticEntityManager) &&
+                    queries.tryGetEntityManager(out EntityManager diagnosticEntityManager) &&
                     MapVehiclePlacementSpawnPrefabSystemHelper.HasPositivePackedPresentationContract(diagnosticEntityManager))
                 {
                     using EntityQuery authoredVehicleQuery = diagnosticEntityManager.CreateEntityQuery(
@@ -751,7 +634,7 @@ namespace Game.Runtime
                 ownershipReady = false;
                 MapVehiclePlacementConfig currentVehicleConfig = ResolveMapVehiclePlacementConfig();
                 Transform currentVehicleAuthoringRoot = ResolveMapVehicleAuthoringRoot();
-                if (!tryGetEntityManager(out em) ||
+                if (!queries.tryGetEntityManager(out em) ||
                     currentVehicleConfig == null ||
                     currentVehicleConfig.Placements == null ||
                     currentVehicleConfig.Placements.Count == 0)
@@ -791,8 +674,8 @@ namespace Game.Runtime
                 childSystems.BuildingSelectionClickUtilitySystemHelper,
                 childSystems.BuildingSelectionClickCompositionHelper.Create(
                 childSystems,
-                tryGetGridForSelection,
-                tryGetGridCell,
+                queries.tryGetGridForSelection,
+                queries.tryGetGridCell,
                 createBuildingSelectionContext),
                 runtimeUpdate,
                 new BuildingRuntimeUpdateCompositionSystemHelper.Context(
@@ -807,7 +690,7 @@ namespace Game.Runtime
                     runtimeSpawnCommandContext,
                     childSystems.BuildingRuntimeProcessingCompositionSystemHelper),
                 childSystems.BuildingRuntimeReadModelCompositionSystemHelper,
-                childSystems.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeQueryContext(createRuntimeContextSource(childSystems)),
+                childSystems.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateRuntimeQueryContext(queries.createRuntimeContextSource(childSystems)),
                 childSystems.BuildingRuntimeSpawnCommandSystemHelper,
                 runtimeSpawnCommandContext,
                 childSystems.BuildingSpawnCompositionSystemHelper,
@@ -822,7 +705,7 @@ namespace Game.Runtime
                     childSystems,
                     interactionContext,
                     markerPropertyBlock,
-                    createRuntimeContextSource,
+                    queries.createRuntimeContextSource,
                     createPlacementCommandContext,
                     createPlacementQueryContext,
                     createBuildingSelectionContext),
@@ -831,7 +714,7 @@ namespace Game.Runtime
                     childSystems,
                     interactionContext,
                     markerPropertyBlock,
-                    createRuntimeContextSource,
+                    queries.createRuntimeContextSource,
                     createPlacementCommandContext,
                     createPlacementQueryContext,
                     createBuildingSelectionContext),

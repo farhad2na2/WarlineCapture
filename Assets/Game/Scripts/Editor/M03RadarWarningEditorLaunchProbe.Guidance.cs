@@ -29,6 +29,13 @@ namespace Game.Editor
         private static bool guidanceHeld,guidanceVerifyHold,guidanceRestoreHold,guidanceJourneyVerified;
         private static UIAssistanceLevel guidanceOriginalMode;
         private static string guidanceOriginalLocale;
+        public static void RunCompletionGuidanceAndMotion()
+        {
+            SessionState.SetString("Warline.M03.ReadinessOutput", "/private/tmp/warline-m03-final-guidance");
+            MissionMotionEditorAudit.Begin();
+            SessionState.SetBool("Warline.M03.ReadinessReturn", true);
+            RunFullGuidanceLargeComicValidation();
+        }
         public static void RunFullGuidanceJourney()=>RunChecked(()=>
         {
             var settings=SettingsService.Load(); guidanceOriginalMode=settings.Assistant.AssistanceLevel;

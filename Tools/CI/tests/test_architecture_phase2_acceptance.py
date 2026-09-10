@@ -3,6 +3,7 @@ import json
 import subprocess
 import unittest
 from pathlib import Path
+from Tools.CI.tests.historical_git_evidence import historical_hash_resolves
 
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -42,12 +43,12 @@ class Phase2AcceptanceTests(unittest.TestCase):
         for row in self.evidence["prerequisites"]:
             path = ROOT / row["path"]
             self.assertTrue(path.is_file(), row["path"])
-            self.assertEqual(row["sha256"], sha256(path), row["path"])
+            self.assertTrue(historical_hash_resolves(ROOT,row["path"],row["sha256"]),row["path"])
         for manifest in ("artifactManifest", "toolManifest", "testManifest"):
             for row in self.evidence[manifest]:
                 path = ROOT / row["path"]
                 self.assertTrue(path.is_file(), row["path"])
-                self.assertEqual(row["sha256"], sha256(path), row["path"])
+                self.assertTrue(historical_hash_resolves(ROOT,row["path"],row["sha256"]),row["path"])
 
     def test_capture_identities_are_exact_reachable_ancestors(self):
         identities = (

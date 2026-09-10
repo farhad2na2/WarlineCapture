@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Unity.Entities;
-using UnityEngine;
 
 namespace Game.Runtime
 {
@@ -75,7 +74,7 @@ namespace Game.Runtime
                 em,
                 boundaryQuery,
                 context.RuntimeBuildings,
-                UnityEngine.Time.time,
+                (float)em.World.Time.ElapsedTime,
                 UnityEngine.Time.frameCount);
         }
     }

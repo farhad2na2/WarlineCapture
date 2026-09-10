@@ -59,7 +59,7 @@ namespace Game.UI.Runtime
                     UiCampaignMissionActionKind.Deploy,
                     missionId))
             {
-                Debug.LogError($"[LoadoutSquadPrep] Mission deploy request was rejected. mission={missionId}");
+                Game.UI.Contracts.UiDiagnostics.Error($"[LoadoutSquadPrep] Mission deploy request was rejected. mission={missionId}");
                 return;
             }
 

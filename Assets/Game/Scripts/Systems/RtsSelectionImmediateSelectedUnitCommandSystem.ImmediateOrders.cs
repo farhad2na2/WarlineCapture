@@ -6,7 +6,7 @@ using Game.Components;
 
 namespace Game.Runtime
 {
-    public partial struct RtsSelectionImmediateSelectedUnitCommandSystem : ISystem
+    public partial struct RtsSelectionImmediateSelectedUnitCommandSystem
     {
         private static int ApplyImmediateSelectedUnitOrder(
             EntityManager em,

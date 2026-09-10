@@ -56,7 +56,7 @@ public sealed class CampaignOperationsScreenTests
         Assert.NotNull(content);
         Assert.NotNull(content.CampaignContentPrefab, "Menu scene must assign the SCN-05 Campaign prefab.");
         Assert.AreEqual("SCN05_CampaignOperationsContent", content.CampaignContentPrefab.name);
-        CampaignOperationsScreenView prefabView = content.CampaignContentPrefab.GetComponent<CampaignOperationsScreenView>();
+        CampaignOperationsScreenView prefabView = content.CampaignContentPrefab.GetComponentInChildren<CampaignOperationsScreenView>(true);
         Assert.NotNull(prefabView, "SCN-05 must expose its serialized screen contract at the prefab root.");
 
         content.PrepareForCommandSequence(new[]
@@ -74,7 +74,7 @@ public sealed class CampaignOperationsScreenTests
         AssertRegionIsEmpty(content.ShellView, UIShellRegionId.RightRegion);
         AssertRegionIsEmpty(content.ShellView, UIShellRegionId.FooterRegion);
         GameObject campaign = AssertRegionHasChild(content.ShellView, UIShellRegionId.PopupLayer);
-        CampaignOperationsScreenView installedView = campaign.GetComponent<CampaignOperationsScreenView>();
+        CampaignOperationsScreenView installedView = campaign.GetComponentInChildren<CampaignOperationsScreenView>(true);
         Assert.NotNull(installedView);
         Assert.NotNull(installedView.ChapterRail);
         Assert.NotNull(installedView.StrategicMap);
@@ -96,21 +96,18 @@ public sealed class CampaignOperationsScreenTests
         Assert.AreEqual(UIRoute.Campaign, campaignRoute.Route);
         Assert.IsTrue(campaignRoute.PushHistory);
 
-        CampaignOperationsScreenView campaignView = content.CampaignContentPrefab.GetComponent<CampaignOperationsScreenView>();
+        CampaignOperationsScreenView campaignView = content.CampaignContentPrefab.GetComponentInChildren<CampaignOperationsScreenView>(true);
         Assert.NotNull(campaignView);
         UIShellRouteButtonView backRoute = campaignView.BackRouteButton;
         Assert.NotNull(backRoute);
         Assert.AreEqual(UiShellRouteIntent.BackMenuRoute, backRoute.Intent);
         Assert.AreEqual(UIRoute.MainMenu, backRoute.Route);
 
-        Assert.IsFalse(campaignView.StoryArchiveButton.interactable);
-        Assert.IsFalse(campaignView.ChapterIntelButton.interactable);
+        Assert.IsTrue(campaignView.StoryArchiveButton.interactable, "The implemented story archive must be reachable.");
+        Assert.IsTrue(campaignView.ChapterIntelButton.interactable, "Chapter navigation is implemented.");
         Assert.IsTrue(campaignView.LaunchMissionButton.interactable, "Selected Campaign missions must open their briefing screen.");
-        UIShellRouteButtonView missionBriefingRoute = campaignView.LaunchMissionButton.GetComponent<UIShellRouteButtonView>();
-        Assert.NotNull(missionBriefingRoute);
-        Assert.AreEqual(UiShellRouteIntent.OpenMenuRoute, missionBriefingRoute.Intent);
-        Assert.AreEqual(UIRoute.MissionBriefing, missionBriefingRoute.Route);
-        Assert.IsTrue(missionBriefingRoute.PushHistory);
+        Assert.NotNull(campaignView.GetComponent<CampaignMissionScreenBinderView>(),
+            "Campaign entry must use the typed mission action binder.");
         Assert.IsNull(ResolveComponentInHierarchy<UIGameStartButtonView>(content.CampaignContentPrefab.transform),
             "SCN-05 must not launch the default Skirmish Match path while Campaign launch data is unavailable.");
 
@@ -164,7 +161,7 @@ public sealed class CampaignOperationsScreenTests
             List<UIShellRouteButtonView> menuRoutes = CollectComponentsInHierarchy<UIShellRouteButtonView>(menuInstance.transform);
             UIShellRouteButtonView campaignRoute = ResolveRoute(menuRoutes, UiShellRouteIntent.OpenMenuRoute, UIRoute.Campaign);
             Assert.NotNull(campaignRoute);
-            campaignRoute.SendMessage("OnEnable");
+            EditModeViewLifecycle.Invoke(campaignRoute, "OnEnable");
             campaignRoute.GetComponent<Button>().onClick.Invoke();
             flowSystem.Update(_world.Unmanaged);
 
@@ -183,11 +180,11 @@ public sealed class CampaignOperationsScreenTests
             });
             flowSystem.Update(_world.Unmanaged);
 
-            CampaignOperationsScreenView campaignView = campaignInstance.GetComponent<CampaignOperationsScreenView>();
+            CampaignOperationsScreenView campaignView = campaignInstance.GetComponentInChildren<CampaignOperationsScreenView>(true);
             Assert.NotNull(campaignView);
             UIShellRouteButtonView backRoute = campaignView.BackRouteButton;
             Assert.NotNull(backRoute);
-            backRoute.SendMessage("OnEnable");
+            EditModeViewLifecycle.Invoke(backRoute, "OnEnable");
             backRoute.GetComponent<Button>().onClick.Invoke();
             flowSystem.Update(_world.Unmanaged);
 
@@ -210,7 +207,7 @@ public sealed class CampaignOperationsScreenTests
         GameObject prefab = content.CampaignContentPrefab;
         Assert.NotNull(prefab);
 
-        CampaignOperationsScreenView view = prefab.GetComponent<CampaignOperationsScreenView>();
+        CampaignOperationsScreenView view = prefab.GetComponentInChildren<CampaignOperationsScreenView>(true);
         Assert.NotNull(view);
         Assert.NotNull(view.ChapterRail);
         Assert.NotNull(view.StrategicMap);
@@ -222,16 +219,16 @@ public sealed class CampaignOperationsScreenTests
         AssertAllAssigned(view.MissionNodes, "mission node");
         AssertAllAssigned(view.ProgressNodes, "progress node");
 
-        Assert.AreEqual("Assets/Game/Art/UI/Generated/CampaignOperations/TargetLockV01/scn05_sahrin_district_map_v01.png", AssetDatabase.GetAssetPath(view.DistrictMapImage.texture));
-        Assert.AreEqual("Assets/Game/Art/UI/Generated/CampaignOperations/TargetLockV01/scn05_blackout_relay_preview_v01.png", AssetDatabase.GetAssetPath(view.MissionPreviewImage.texture));
+        Assert.AreEqual("Assets/Game/Art/UI/V3Shared/CampaignScenes/SCN05_SahrinMissionMap_V3.png", AssetDatabase.GetAssetPath(view.DistrictMapImage.texture));
+        Assert.AreEqual("Assets/Game/Art/UI/Generated/SkirmishSetup/TargetLockV02/scn13_operation_preview_sahrin_v02.png", AssetDatabase.GetAssetPath(view.MissionPreviewImage.texture));
         Assert.AreEqual("Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold SDF.asset", AssetDatabase.GetAssetPath(view.ScreenTitle.font));
-        Assert.GreaterOrEqual(view.ScreenTitle.fontSize, 110f);
-        Assert.GreaterOrEqual(view.MissionName.fontSize, 80f);
-        Assert.AreEqual(0f, view.ChapterRail.anchorMin.y, 0.001f);
+        Assert.GreaterOrEqual(view.ScreenTitle.fontSize, 38f);
+        Assert.GreaterOrEqual(view.MissionName.fontSize, 30f);
+        Assert.AreEqual(1f, view.ChapterRail.anchorMin.y, 0.001f);
         Assert.AreEqual(1f, view.ChapterRail.anchorMax.y, 0.001f);
         RectTransform launchRect = view.LaunchMissionButton.GetComponent<RectTransform>();
-        Assert.AreEqual(0f, launchRect.anchorMin.y, 0.001f);
-        Assert.AreEqual(0f, launchRect.anchorMax.y, 0.001f);
+        Assert.AreEqual(1f, launchRect.anchorMin.y, 0.001f);
+        Assert.AreEqual(1f, launchRect.anchorMax.y, 0.001f);
     }
 
     private static void Run(string name, Action<CampaignOperationsScreenTests> action, ref int passed)

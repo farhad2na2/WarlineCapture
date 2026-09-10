@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Game.Configs;
 using Game.UI.Contracts;
 using TMPro;
 using UnityEngine;
@@ -276,7 +275,7 @@ namespace Game.UI.Runtime
         {
             if (attachmentStates == null || slot < 0 || slot >= attachmentStates.Length || attachmentStates[slot] == null)
                 return;
-            attachmentStates[slot].text = GameLocalization.Get("ui.inbox.open_via_intel", "OPEN VIA INTEL");
+            attachmentStates[slot].text = UiShellRuntimeGateway.Localization.Get("ui.inbox.open_via_intel", "OPEN VIA INTEL");
         }
 
         private void RefreshList(bool resetSelection)
@@ -290,9 +289,9 @@ namespace Game.UI.Runtime
                     continue;
                 if (_unreadOnly && !_unread[i])
                     continue;
-                string localizedTitle = GameLocalization.GetBySource(message.Title);
-                string localizedFrom = GameLocalization.GetBySource(message.From);
-                string localizedBody = GameLocalization.GetBySource(message.Body);
+                string localizedTitle = UiShellRuntimeGateway.Localization.GetBySource(message.Title);
+                string localizedFrom = UiShellRuntimeGateway.Localization.GetBySource(message.From);
+                string localizedBody = UiShellRuntimeGateway.Localization.GetBySource(message.Body);
                 if (query.Length > 0 &&
                     localizedTitle.IndexOf(query, StringComparison.OrdinalIgnoreCase) < 0 &&
                     localizedFrom.IndexOf(query, StringComparison.OrdinalIgnoreCase) < 0 &&
@@ -313,15 +312,15 @@ namespace Game.UI.Runtime
                     continue;
                 int messageIndex = _visibleMessages[i];
                 MessageData message = Messages[messageIndex];
-                if (messageTitles != null && i < messageTitles.Length && messageTitles[i] != null) messageTitles[i].text = GameLocalization.GetBySource(message.Title);
+                if (messageTitles != null && i < messageTitles.Length && messageTitles[i] != null) messageTitles[i].text = UiShellRuntimeGateway.Localization.GetBySource(message.Title);
                 if (messageSenders != null && i < messageSenders.Length && messageSenders[i] != null)
-                    messageSenders[i].text = GameLocalization.Format("ui.inbox.from", "From: {0}", message.From);
+                    messageSenders[i].text = UiShellRuntimeGateway.Localization.Format("ui.inbox.from", "From: {0}", message.From);
                 if (messageTimes != null && i < messageTimes.Length && messageTimes[i] != null)
                 {
                     int separator = message.Time.IndexOf(',');
                     messageTimes[i].text = separator >= 0
                         ? message.Time.Substring(separator + 1).Trim()
-                        : GameLocalization.GetBySource(message.Time);
+                        : UiShellRuntimeGateway.Localization.GetBySource(message.Time);
                 }
                 if (messageUnreadBars != null && i < messageUnreadBars.Length && messageUnreadBars[i] != null) messageUnreadBars[i].SetActive(_unread[messageIndex]);
                 if (messageGradients != null && i < messageGradients.Length && messageGradients[i] != null)
@@ -340,12 +339,12 @@ namespace Game.UI.Runtime
                 emptyState.SetActive(_visibleMessages.Count == 0);
             if (sortLabel != null)
                 sortLabel.text = _oldestFirst
-                    ? GameLocalization.Get("ui.common.oldest", "OLDEST")
-                    : GameLocalization.GetBySource("NEWEST");
+                    ? UiShellRuntimeGateway.Localization.Get("ui.common.oldest", "OLDEST")
+                    : UiShellRuntimeGateway.Localization.GetBySource("NEWEST");
             if (filterLabel != null)
                 filterLabel.text = _unreadOnly
-                    ? GameLocalization.Get("ui.common.unread", "UNREAD")
-                    : GameLocalization.Get("ui.common.filters", "FILTERS");
+                    ? UiShellRuntimeGateway.Localization.Get("ui.common.unread", "UNREAD")
+                    : UiShellRuntimeGateway.Localization.Get("ui.common.filters", "FILTERS");
             RefreshCategories();
             RefreshDetail();
         }
@@ -376,14 +375,14 @@ namespace Game.UI.Runtime
         private void RefreshDetail()
         {
             MessageData selected = Messages[Mathf.Clamp(_selectedMessageIndex, 0, Messages.Length - 1)];
-            if (detailTitle != null) detailTitle.text = GameLocalization.GetBySource(selected.Title);
+            if (detailTitle != null) detailTitle.text = UiShellRuntimeGateway.Localization.GetBySource(selected.Title);
             if (detailFrom != null)
-                detailFrom.text = GameLocalization.Format(
+                detailFrom.text = UiShellRuntimeGateway.Localization.Format(
                     "ui.inbox.from_highlight",
                     "From: <color=#77B936>{0}</color>",
                     selected.From);
-            if (detailDate != null) detailDate.text = GameLocalization.GetBySource(selected.Time);
-            if (detailBody != null) detailBody.text = GameLocalization.GetBySource(selected.Body);
+            if (detailDate != null) detailDate.text = UiShellRuntimeGateway.Localization.GetBySource(selected.Time);
+            if (detailBody != null) detailBody.text = UiShellRuntimeGateway.Localization.GetBySource(selected.Body);
             if (detailArt != null && detailArtTextures != null && _selectedMessageIndex < detailArtTextures.Length)
             {
                 Texture texture = detailArtTextures[_selectedMessageIndex];
@@ -396,8 +395,8 @@ namespace Game.UI.Runtime
                 favoriteStar.color = _favorite[_selectedMessageIndex] ? new Color32(250, 177, 0, 255) : new Color32(160, 169, 170, 255);
             if (markReadLabel != null)
                 markReadLabel.text = _unread[_selectedMessageIndex]
-                    ? GameLocalization.Get("ui.common.mark_read", "MARK READ")
-                    : GameLocalization.Get("ui.common.marked_read", "MARKED READ");
+                    ? UiShellRuntimeGateway.Localization.Get("ui.common.mark_read", "MARK READ")
+                    : UiShellRuntimeGateway.Localization.Get("ui.common.marked_read", "MARKED READ");
             if (markReadButton != null)
                 markReadButton.interactable = _unread[_selectedMessageIndex];
 
@@ -406,7 +405,7 @@ namespace Game.UI.Runtime
             string[] sizes = { selected.AttachmentSizeA, selected.AttachmentSizeB };
             for (int i = 0; i < 2; i++)
             {
-                if (attachmentTitles != null && i < attachmentTitles.Length && attachmentTitles[i] != null) attachmentTitles[i].text = GameLocalization.GetBySource(titles[i]);
+                if (attachmentTitles != null && i < attachmentTitles.Length && attachmentTitles[i] != null) attachmentTitles[i].text = UiShellRuntimeGateway.Localization.GetBySource(titles[i]);
                 if (attachmentFiles != null && i < attachmentFiles.Length && attachmentFiles[i] != null) attachmentFiles[i].text = files[i];
                 if (attachmentStates != null && i < attachmentStates.Length && attachmentStates[i] != null) attachmentStates[i].text = sizes[i];
             }

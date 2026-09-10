@@ -36,8 +36,8 @@ public sealed class ArmoryV3PrefabTests
     public void Catalog_ExpandsAcrossWideScreensWithoutClippedLabels()
     {
         GameObject prefab = RequirePrefab();
-        ArmoryV3ResponsiveCatalogGrid responsive =
-            prefab.GetComponentInChildren<ArmoryV3ResponsiveCatalogGrid>(true);
+        ArmoryV3ResponsiveCatalogGridView responsive =
+            prefab.GetComponentInChildren<ArmoryV3ResponsiveCatalogGridView>(true);
         Assert.NotNull(responsive);
         Assert.AreEqual(4, responsive.ColumnCount);
 
@@ -124,7 +124,7 @@ public sealed class ArmoryV3PrefabTests
             Button button = tabs.GetArrayElementAtIndex(i)
                 .FindPropertyRelative("button").objectReferenceValue as Button;
             Assert.NotNull(button);
-            Assert.NotNull(button.GetComponent<ArmoryV3CategoryTabVisual>());
+            Assert.NotNull(button.GetComponent<ArmoryV3CategoryTabVisualView>());
         }
 
         ArmoryContentListView list =
@@ -136,7 +136,7 @@ public sealed class ArmoryV3PrefabTests
         ArmoryCatalogItemView template = listObject.FindProperty("itemTemplate")
             .objectReferenceValue as ArmoryCatalogItemView;
         Assert.NotNull(template);
-        Assert.NotNull(template.GetComponent<ArmoryV3CatalogItemVisual>());
+        Assert.NotNull(template.GetComponent<ArmoryV3CatalogItemVisualView>());
 
         SerializedProperty visuals =
             new SerializedObject(template).FindProperty("categoryVisuals");

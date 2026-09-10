@@ -26,7 +26,6 @@ namespace Game.UI.Runtime
         [SerializeField] private TMP_Text squadsAliveText;
         [SerializeField] private TMP_Text civilianRiskText;
 
-        private float nextRefreshAt;
 
         public Button CloseButton => closeButton;
         public Button ResumeButton => resumeButton;
@@ -42,20 +41,16 @@ namespace Game.UI.Runtime
             Bind();
             ShowDefault();
             RefreshLiveText();
+            UiShellRuntimeGateway.Localization.LocaleChanged += RefreshLiveText;
         }
 
         private void OnDisable()
         {
+            UiShellRuntimeGateway.Localization.LocaleChanged -= RefreshLiveText;
             Unbind();
         }
 
-        private void Update()
-        {
-            if (Time.unscaledTime < nextRefreshAt)
-                return;
-            nextRefreshAt = Time.unscaledTime + .25f;
-            RefreshLiveText();
-        }
+
 
         public void Configure(
             Button configuredClose,

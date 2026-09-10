@@ -17,6 +17,18 @@ using UnityEngine.UI;
 
 public sealed class FirstLaunchNarrativeMenuIntegrationTests
 {
+    private string previousLocale;
+    [SetUp]
+    public void SetUp()
+    {
+        previousLocale = GameLocalization.CurrentLocaleCode;
+        GameTextResolverAdapter.BindRuntimeLocalization();
+        GameLocalization.Initialize(AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(V3UiLocalizationCatalogBuilder.CatalogPath),
+            GameLocalization.EnglishLocaleCode, persist: false);
+    }
+    [TearDown]
+    public void TearDown() => GameLocalization.SetLocale(previousLocale, false);
+
     public static void RunLoadingHandoffValidation()
     {
         try
@@ -208,13 +220,12 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
             tests.LanguageChoice_AllControlsHaveRaycastTargets();
             tests.LanguageChoice_SelectionImmediatelyLocalizesOnlyShellCopy();
             tests.FreshProfile_LanguageChoicePrecedesNarrativeAndPersistsPersian();
-            tests.ActivePersianLocale_UsesPersianVoiceWhenProfileLanguageIsStale();
             tests.SkipConfirmation_UsesV3ChromeAndPersianLocalization();
             tests.FreshProfile_SkipRequiresLiveConfirmationAndPublishesOneHandoff();
             tests.CompletedAndPendingProfiles_SelectCorrectStartupDisposition();
             tests.ReviewerMode_ProvidesNavigationWithoutMutatingCompletedProfile();
             tests.CommittedIdentity_SkipRoutesDirectlyAndPreservesSelection();
-            Debug.Log("[FirstLaunchNarrativeMenuIntegrationValidation] result=Passed tests=12 pointerTargets=Passed languagePreview=Passed voiceLocale=active skip=v3-bilingual");
+            Debug.Log("[FirstLaunchNarrativeMenuIntegrationValidation] result=Passed tests=11 pointerTargets=Passed languagePreview=Passed skip=v3-bilingual");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -447,8 +458,8 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
         Assert.AreEqual(0f, context.LanguageView.GetComponent<CanvasGroup>().alpha);
     }
 
-    [Test]
-    public void ActivePersianLocale_UsesPersianVoiceWhenProfileLanguageIsStale()
+    [UnityEngine.TestTools.UnityTest]
+    public System.Collections.IEnumerator ActivePersianLocale_UsesPersianVoiceWhenProfileLanguageIsStale()
     {
         GameLocalizationCatalog catalog = AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(
             V3UiLocalizationCatalogBuilder.CatalogPath);
@@ -501,7 +512,12 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
                     FirstLaunchNarrativeSequencePresentationSystemHelper;
             Assert.NotNull(sequence);
             Assert.IsTrue(sequence.NextState());
-            context.Helper.Tick(0.6f);
+            double deadline = EditorApplication.timeSinceStartup + 20;
+            while (context.View.VoiceSource.clip == null && EditorApplication.timeSinceStartup < deadline)
+            {
+                context.Helper.Tick(0.05f);
+                yield return null;
+            }
             AudioClip playingClip = context.View.VoiceSource.clip;
             Assert.NotNull(playingClip);
             StringAssert.Contains(

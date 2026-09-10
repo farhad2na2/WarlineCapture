@@ -987,7 +987,7 @@ namespace Game.Editor
             {
                 text = text.Replace(
                     identity,
-                    "m_EditorClassIdentifier: Assembly-CSharp::CombinedMeshBaker");
+                    "m_EditorClassIdentifier: " + typeof(CombinedMeshBaker).Assembly.GetName().Name + "::" + typeof(CombinedMeshBaker).FullName);
                 AssetDatabase.ReleaseCachedFileHandles();
                 File.WriteAllText(physical, text, Utf8WithoutBom);
                 return true;
@@ -1012,7 +1012,7 @@ namespace Game.Editor
             text = text.Remove(monoScriptStart, monoScriptEnd - monoScriptStart);
             text = text.Replace(
                 identity,
-                "m_EditorClassIdentifier: Assembly-CSharp::CombinedMeshBaker");
+                "m_EditorClassIdentifier: " + typeof(CombinedMeshBaker).Assembly.GetName().Name + "::" + typeof(CombinedMeshBaker).FullName);
             AssetDatabase.ReleaseCachedFileHandles();
             File.WriteAllText(physical, text, Utf8WithoutBom);
             return true;

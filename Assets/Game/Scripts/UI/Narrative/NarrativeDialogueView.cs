@@ -237,7 +237,7 @@ namespace Game.UI.Runtime
         private void OnValidate()
         {
             if (dialogueGroup == null || frameImage == null || pointerImage == null || dialogueText == null || inputButton == null)
-                Debug.LogWarning($"[{nameof(NarrativeDialogueView)}] Missing required serialized reference on {name}.", this);
+                Game.UI.Contracts.UiDiagnostics.Warning($"[{nameof(NarrativeDialogueView)}] Missing required serialized reference on {name}.", this);
         }
 #endif
     }

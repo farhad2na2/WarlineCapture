@@ -41,6 +41,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         int passed = 0;
         try
         {
+            RunCase(test => test.MissionGuidance_ShowsEveryStepImmediatelyAndIgnoresLegacyCompletion());
+            passed++;
             RunCase(test => test.PopupPrefab_BindsLockedLandscapeHierarchyAndMenuReference());
             passed++;
             RunCase(test => test.TutorialBriefing_RemainsVisibleThroughEachInstructionAndResetsForReplay());
@@ -246,6 +248,43 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         UIShellContentView content = FindInScene<UIShellContentView>(scene);
         Assert.NotNull(content);
         Assert.AreSame(prefab, content.AriaCommandAssistantPopupPrefab);
+    }
+
+    [Test]
+    public void MissionGuidance_ShowsEveryStepImmediatelyAndIgnoresLegacyCompletion()
+    {
+        CreateHudHarness(true, out RectTransform overlay, out RectTransform header, out _);
+        var gateway = new FakeAssistantPanelGateway(CreateStructuredModel(900u), UiAssistantHighlightModel.Empty);
+        UiShellRuntimeGateway.Register(gateway);
+        var ui = new MainMenuPlayUI();
+        ui.Init(null, new FakeMatchRuntimeState());
+        ui.BindMatchHudAssistant(header.gameObject, overlay, LoadPopupPrefab());
+        var helper = GetPrivateField<MatchHudAssistantUiSystemHelper>(ui, "_matchHudAssistantUiSystem");
+        var tutorial = header.Find("AriaAssistantButton").GetComponent<AriaTutorialBriefingView>();
+        for (byte step = 1; step <= 12; step++)
+        {
+            var model = CreateStructuredModel((uint)(900 + step), recommendationKind: 9,
+                recommendationTargetKind: 4, tutorialStep: step, tutorialStepCount: 12,
+                recommendationTitle: "Mission instruction " + step);
+            helper.ApplyReadModel(model);
+            helper.TickHighlight(100f + step);
+            Assert.IsTrue(tutorial.IsPresentationVisible, "Instruction has a blank transition: " + step);
+            helper.CompleteWorldTarget(TacticalCommandMode.Move);
+            helper.CompleteWorldTarget(TacticalCommandMode.Attack);
+            typeof(MatchHudAssistantUiSystemHelper).GetMethod("HandleUiSurfaceAcknowledged",
+                BindingFlags.Instance | BindingFlags.NonPublic).Invoke(helper, new object[] { (byte)5 });
+            helper.ApplyReadModel(model);
+            helper.TickHighlight(100f + step);
+            Assert.IsTrue(tutorial.IsPresentationVisible, "Legacy acknowledgement suppressed mission instruction: " + step);
+            Assert.IsFalse(GetPrivateField<bool>(helper, "_finalTutorialSuppressed"));
+        }
+        gateway.CinematicInteractionLocked = true;
+        helper.TickHighlight(120f);
+        Assert.IsFalse(tutorial.IsPresentationVisible, "Cinematics still own the screen.");
+        gateway.CinematicInteractionLocked = false;
+        helper.TickHighlight(121f);
+        Assert.IsTrue(tutorial.IsPresentationVisible, "Current guidance resumes immediately after a cinematic.");
+        ui.Dispose();
     }
 
     [Test]
@@ -1215,15 +1254,15 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             GetPrivateField<MatchHudAssistantUiSystemHelper>(ui, "_matchHudAssistantUiSystem");
         SetPrivateField(assistant, "_pendingM02DoItStep", (byte)6);
         SetPrivateField(assistant, "_pendingM02DoItUntilUnscaledTime", 123f);
-        SetPrivateField(assistant, "_narratedTutorialCues", (ushort)(1 << 5));
+        SetPrivateField(assistant, "_narratedTutorialCues", (1u << 23));
 
         ui.BindMatchHudAssistant(header.gameObject, overlay, popupPrefab);
 
         Assert.AreEqual(6, GetPrivateField<byte>(assistant, "_pendingM02DoItStep"));
         Assert.AreEqual(123f,
             GetPrivateField<float>(assistant, "_pendingM02DoItUntilUnscaledTime"));
-        Assert.AreEqual((ushort)(1 << 5),
-            GetPrivateField<ushort>(assistant, "_narratedTutorialCues"),
+        Assert.AreEqual((1u << 23),
+            GetPrivateField<uint>(assistant, "_narratedTutorialCues"),
             "Rebinding controls after opening the Build drawer must not replay ARIA or lose DO IT.");
         ui.Dispose();
     }

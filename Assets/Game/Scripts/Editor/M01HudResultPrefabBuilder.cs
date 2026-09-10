@@ -162,8 +162,8 @@ namespace Game.Editor
             {
                 foreach (Transform transform in root.GetComponentsInChildren<Transform>(true))
                     GameObjectUtility.RemoveMonoBehavioursWithMissingScript(transform.gameObject);
-                CampaignMissionHudResultBinder binder = root.GetComponent<CampaignMissionHudResultBinder>() ??
-                                                        root.AddComponent<CampaignMissionHudResultBinder>();
+                CampaignMissionHudResultBinderView binder = root.GetComponent<CampaignMissionHudResultBinderView>() ??
+                                                        root.AddComponent<CampaignMissionHudResultBinderView>();
                 GameObject popup = AssetDatabase.LoadAssetAtPath<GameObject>(ResultPath);
                 binder.Configure(Find(root.transform, "ModalOverlay").GetComponent<RectTransform>(), popup);
                 PrefabUtility.SaveAsPrefabAsset(root, AppCanvasPath);
@@ -178,7 +178,7 @@ namespace Game.Editor
             GameObject canvas = AssetDatabase.LoadAssetAtPath<GameObject>(AppCanvasPath);
             if (result == null || result.GetComponent<MissionResultPopupView>() == null ||
                 hud == null || hud.GetComponentInChildren<MatchHudObjectivesElapsedView>(true) == null ||
-                canvas == null || canvas.GetComponent<CampaignMissionHudResultBinder>() == null ||
+                canvas == null || canvas.GetComponent<CampaignMissionHudResultBinderView>() == null ||
                 canvas.GetComponentsInChildren<MonoBehaviour>(true).Any(component => component == null))
                 throw new InvalidOperationException("M01 HUD/result prefab validation failed.");
         }

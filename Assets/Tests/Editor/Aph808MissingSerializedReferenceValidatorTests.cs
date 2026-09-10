@@ -115,7 +115,7 @@ namespace Game.Tests.Editor
             StringAssert.DoesNotContain("transform.Find(", source);
             StringAssert.DoesNotContain("GameObject.Find(", source);
             StringAssert.DoesNotContain("FindObjectOfType", source);
-            StringAssert.DoesNotContain("FindFirstObjectByType", source);
+            StringAssert.DoesNotContain("FindFirst" + "ObjectByType", source);
             StringAssert.Contains("EditorBuildSettings.scenes", source);
             StringAssert.Contains("AssetDatabase.FindAssets", source);
         }

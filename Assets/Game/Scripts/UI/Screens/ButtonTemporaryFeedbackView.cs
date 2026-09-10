@@ -1,4 +1,6 @@
 using TMPro;
+using System;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,7 +15,7 @@ namespace Game.UI.Runtime
         [SerializeField, Min(.25f)] private float duration = 1.8f;
         private Button _button;
         private string _defaultText;
-        private float _restoreAt;
+        private CancellationTokenSource restoreCancellation;
 
         public void Configure(TMP_Text configuredLabel, string configuredFeedbackText, float configuredDuration = 1.8f)
         {
@@ -29,13 +31,28 @@ namespace Game.UI.Runtime
             _button.onClick.AddListener(ShowFeedback);
         }
 
-        private void Update()
+
+
+        private async void RestoreAfterDelay()
         {
-            if (_restoreAt <= 0f || Time.unscaledTime < _restoreAt)
-                return;
-            _restoreAt = 0f;
-            if (label != null)
-                label.text = _defaultText;
+            restoreCancellation?.Cancel();
+            using var pending = new CancellationTokenSource();
+            restoreCancellation = pending;
+            try
+            {
+                float deadline = Time.unscaledTime + duration;
+                while (Time.unscaledTime < deadline)
+                    await Awaitable.NextFrameAsync(pending.Token);
+                if(label != null) label.text = _defaultText;
+            }
+            catch(OperationCanceledException) { }
+            finally { if(ReferenceEquals(restoreCancellation, pending)) restoreCancellation = null; }
+        }
+
+        private void OnDisable()
+        {
+            restoreCancellation?.Cancel();
+            if(label != null && !string.IsNullOrEmpty(_defaultText)) label.text = _defaultText;
         }
 
         private void OnDestroy()
@@ -50,7 +67,7 @@ namespace Game.UI.Runtime
             if (string.IsNullOrEmpty(_defaultText))
                 _defaultText = label.text;
             label.text = feedbackText;
-            _restoreAt = Time.unscaledTime + duration;
+            RestoreAfterDelay();
         }
     }
 }

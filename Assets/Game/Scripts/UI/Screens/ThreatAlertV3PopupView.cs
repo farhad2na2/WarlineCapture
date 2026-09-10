@@ -1,6 +1,5 @@
 using UnityEngine;
 using Game.UI.Contracts;
-using Game.Configs;
 using TMPro;
 using UnityEngine.UI;
 

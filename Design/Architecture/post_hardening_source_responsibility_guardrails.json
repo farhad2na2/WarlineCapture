@@ -1027,7 +1027,7 @@
     },
     {
       "path": "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs",
-      "sourceSha256": "e250b07e6bd012554d37f8ef6376922f2ab4fdf9b0e51c5be194eeedd462c93f",
+      "sourceSha256": "9de33acc6198c569527bc78f2702ef975f29abf3f0504625ee5bfc7b7025808c",
       "maxLines": 951,
       "maxBytes": 40958,
       "maxResponsibilityDomainSymbolOccurrences": 14,

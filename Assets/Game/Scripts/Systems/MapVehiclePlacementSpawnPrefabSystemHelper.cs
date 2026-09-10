@@ -9,7 +9,7 @@ using Game.Configs;
 
 namespace Game.Runtime
 {
-    internal sealed class MapVehiclePlacementSpawnPrefabSystemHelper
+    internal sealed partial class MapVehiclePlacementSpawnPrefabSystemHelper
     {
         private const int MaxPlacementsPerUpdate = 32;
         private const float UniformScaleEpsilon = 0.0001f;
@@ -163,27 +163,7 @@ namespace Game.Runtime
             SyncProgressSnapshot(progress);
         }
 
-        internal static bool IsAuthoredVehiclePresentationReady(
-            EntityManager em,
-            bool requireReadinessContract = false)
-        {
-            using EntityQuery contractQuery = em.CreateEntityQuery(
-                ComponentType.ReadOnly<OperationMapEntityPresentationReadinessContract>());
-            if (contractQuery.IsEmptyIgnoreFilter)
-                return !requireReadinessContract;
 
-            using NativeArray<OperationMapEntityPresentationReadinessContract> contracts =
-                contractQuery.ToComponentDataArray<OperationMapEntityPresentationReadinessContract>(Allocator.Temp);
-            int expectedVehicleCount = 0;
-            for (int i = 0; i < contracts.Length; i++)
-                expectedVehicleCount = math.max(expectedVehicleCount, contracts[i].ExpectedGameplayVehicleCount);
-            if (expectedVehicleCount <= 0)
-                return !requireReadinessContract;
-
-            using EntityQuery vehicleQuery = em.CreateEntityQuery(
-                ComponentType.ReadOnly<OperationMapAuthoredVehiclePresentation>());
-            return vehicleQuery.CalculateEntityCount() >= expectedVehicleCount;
-        }
 
         internal static bool RequiresPackedPresentationContract(Context context)
         {
@@ -203,139 +183,11 @@ namespace Game.Runtime
                     HasPositivePackedPresentationContract(em));
         }
 
-        internal static bool HasPositivePackedPresentationContract(EntityManager em)
-        {
-            using EntityQuery contractQuery = em.CreateEntityQuery(
-                ComponentType.ReadOnly<OperationMapEntityPresentationReadinessContract>());
-            if (contractQuery.IsEmptyIgnoreFilter)
-                return false;
 
-            using NativeArray<OperationMapEntityPresentationReadinessContract> contracts =
-                contractQuery.ToComponentDataArray<OperationMapEntityPresentationReadinessContract>(Allocator.Temp);
-            for (int i = 0; i < contracts.Length; i++)
-            {
-                if (contracts[i].ExpectedGameplayVehicleCount > 0)
-                    return true;
-            }
 
-            return false;
-        }
 
-        internal static int ReconcileAuthoredVehicleOwnership(
-            EntityManager em,
-            MapVehiclePlacementConfig config)
-        {
-            if (config == null || config.Placements == null || config.Placements.Count == 0)
-                return 0;
 
-            using EntityQuery query = em.CreateEntityQuery(
-                ComponentType.ReadOnly<OperationMapAuthoredVehiclePresentation>(),
-                ComponentType.ReadOnly<UnitDetailedVisualReference>(),
-                ComponentType.ReadWrite<Faction>());
-            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-            int reconciled = 0;
-            for (int i = 0; i < entities.Length; i++)
-            {
-                Entity candidate = entities[i];
-                if (em.HasComponent<Prefab>(candidate) || em.HasComponent<Disabled>(candidate))
-                    continue;
 
-                Entity visualRoot = em.GetComponentData<UnitDetailedVisualReference>(candidate).Root;
-                if (visualRoot == Entity.Null ||
-                    !em.Exists(visualRoot) ||
-                    !em.HasComponent<OperationMapEntityPresentationIdentity>(visualRoot))
-                {
-                    continue;
-                }
-
-                int placementIndex =
-                    em.GetComponentData<OperationMapEntityPresentationIdentity>(visualRoot).PlacementIndex;
-                if (placementIndex < 0 || placementIndex >= config.Placements.Count)
-                    continue;
-
-                MapVehiclePlacementConfigEntry placement = config.Placements[placementIndex];
-                FixedString64Bytes sourceKey = GetVehiclePrefabSourceKey(placement);
-                if (placement == null || sourceKey.Length == 0)
-                    continue;
-
-                Faction faction = em.GetComponentData<Faction>(candidate);
-                if (faction.Id != placement.FactionId)
-                {
-                    faction.Id = placement.FactionId;
-                    em.SetComponentData(candidate, faction);
-                }
-
-                UnitSourcePrefabKey source = new() { Value = sourceKey };
-                if (em.HasComponent<UnitSourcePrefabKey>(candidate))
-                    em.SetComponentData(candidate, source);
-                else
-                    em.AddComponentData(candidate, source);
-                reconciled++;
-            }
-
-            return reconciled;
-        }
-
-        internal static bool IsAuthoredVehicleOwnershipReady(
-            EntityManager em,
-            MapVehiclePlacementConfig config,
-            bool requireReadinessContract)
-        {
-            if (!requireReadinessContract)
-                return true;
-            if (config == null || config.Placements == null || config.Placements.Count == 0)
-                return true;
-            if (!IsAuthoredVehiclePresentationReady(em, requireReadinessContract: true))
-                return false;
-
-            using EntityQuery query = em.CreateEntityQuery(
-                ComponentType.ReadOnly<OperationMapAuthoredVehiclePresentation>(),
-                ComponentType.ReadOnly<UnitDetailedVisualReference>(),
-                ComponentType.ReadOnly<Faction>());
-            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-            int ready = 0;
-            for (int i = 0; i < entities.Length; i++)
-            {
-                Entity candidate = entities[i];
-                if (em.HasComponent<Prefab>(candidate) || em.HasComponent<Disabled>(candidate))
-                    continue;
-
-                Entity visualRoot = em.GetComponentData<UnitDetailedVisualReference>(candidate).Root;
-                if (visualRoot == Entity.Null ||
-                    !em.Exists(visualRoot) ||
-                    !em.HasComponent<OperationMapEntityPresentationIdentity>(visualRoot))
-                {
-                    return false;
-                }
-
-                int placementIndex =
-                    em.GetComponentData<OperationMapEntityPresentationIdentity>(visualRoot).PlacementIndex;
-                if (placementIndex < 0 || placementIndex >= config.Placements.Count)
-                    return false;
-
-                MapVehiclePlacementConfigEntry placement = config.Placements[placementIndex];
-                FixedString64Bytes sourceKey = GetVehiclePrefabSourceKey(placement);
-                if (placement == null ||
-                    sourceKey.Length == 0 ||
-                    em.GetComponentData<Faction>(candidate).Id != placement.FactionId ||
-                    !em.HasComponent<UnitSourcePrefabKey>(candidate) ||
-                    !em.GetComponentData<UnitSourcePrefabKey>(candidate).Value.Equals(sourceKey))
-                {
-                    return false;
-                }
-
-                ready++;
-            }
-
-            using EntityQuery contractQuery = em.CreateEntityQuery(
-                ComponentType.ReadOnly<OperationMapEntityPresentationReadinessContract>());
-            using NativeArray<OperationMapEntityPresentationReadinessContract> contracts =
-                contractQuery.ToComponentDataArray<OperationMapEntityPresentationReadinessContract>(Allocator.Temp);
-            int expected = 0;
-            for (int i = 0; i < contracts.Length; i++)
-                expected = math.max(expected, contracts[i].ExpectedGameplayVehicleCount);
-            return expected > 0 && ready >= expected;
-        }
 
         private void SpawnPlacements(
             Context context,
@@ -471,84 +323,7 @@ namespace Game.Runtime
             SetOrAddComponent(em, ecb, instance, prefabEntity, hasPrefab, new UnitRespawnPrefab { Prefab = prefabEntity });
         }
 
-        internal static bool TryFindAuthoredVehicleEntity(
-            EntityManager em,
-            int placementIndex,
-            MapVehiclePlacementConfigEntry placement,
-            NativeHashSet<Entity> claimedEntities,
-            out Entity entity)
-        {
-            entity = Entity.Null;
-            if (placement == null)
-                return false;
 
-            float3 target = ToFloat3(placement.WorldPosition);
-            float maximumDistanceSquared = AuthoredVehicleAdoptionDistance * AuthoredVehicleAdoptionDistance;
-            float bestDistanceSquared = maximumDistanceSquared;
-            using EntityQuery query = em.CreateEntityQuery(
-                ComponentType.ReadOnly<Faction>(),
-                ComponentType.ReadOnly<UnitGrid>(),
-                ComponentType.ReadOnly<UnitMove>(),
-                ComponentType.ReadOnly<UnitMovementBehavior>(),
-                ComponentType.ReadOnly<UnitRespawnPrefab>(),
-                ComponentType.ReadOnly<LocalTransform>());
-            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-
-            // Entity-presentation candidates already carry the canonical placement identity on
-            // their detailed visual root. Resolve that identity before considering the legacy
-            // transform heuristic: render-bound pivots and migration transforms are not required
-            // to remain within the compatibility placement's one-metre adoption radius.
-            if (placementIndex >= 0)
-            {
-                for (int i = 0; i < entities.Length; i++)
-                {
-                    Entity candidate = entities[i];
-                    if (!IsUnclaimedNeutralAuthoredVehicle(em, candidate, claimedEntities) ||
-                        !em.HasComponent<OperationMapAuthoredVehiclePresentation>(candidate) ||
-                        !em.HasComponent<UnitDetailedVisualReference>(candidate))
-                    {
-                        continue;
-                    }
-
-                    Entity visualRoot = em.GetComponentData<UnitDetailedVisualReference>(candidate).Root;
-                    if (visualRoot == Entity.Null ||
-                        !em.Exists(visualRoot) ||
-                        !em.HasComponent<OperationMapEntityPresentationIdentity>(visualRoot) ||
-                        em.GetComponentData<OperationMapEntityPresentationIdentity>(visualRoot).PlacementIndex != placementIndex)
-                    {
-                        continue;
-                    }
-
-                    entity = candidate;
-                    return true;
-                }
-            }
-
-            for (int i = 0; i < entities.Length; i++)
-            {
-                Entity candidate = entities[i];
-                if (!IsUnclaimedNeutralAuthoredVehicle(em, candidate, claimedEntities) ||
-                    em.HasComponent<OperationMapAuthoredVehiclePresentation>(candidate))
-                {
-                    continue;
-                }
-
-                float3 candidatePosition = em.GetComponentData<LocalTransform>(candidate).Position;
-                float distanceSquared = math.distancesq(target, candidatePosition);
-                if (distanceSquared > bestDistanceSquared)
-                    continue;
-
-                if (entity == Entity.Null ||
-                    distanceSquared < bestDistanceSquared ||
-                    candidate.Index < entity.Index)
-                {
-                    entity = candidate;
-                    bestDistanceSquared = distanceSquared;
-                }
-            }
-
-            return entity != Entity.Null;
-        }
 
         private static bool IsUnclaimedNeutralAuthoredVehicle(
             EntityManager em,

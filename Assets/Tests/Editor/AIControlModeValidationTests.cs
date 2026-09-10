@@ -84,6 +84,7 @@ public sealed class AIControlModeValidationTests
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = world.CreateSystem<AIFactionControlSystem>();
+        RuntimeGameplayStateTestHelper.SetVerboseAILogs(em, true);
         SystemHandle logFlushSystem = expectLogs ? world.CreateSystem<AIDiagnosticLogFlushSystem>() : default;
 
         if (expectLogs)

@@ -38,6 +38,15 @@ namespace Game.UI.Runtime
         [SerializeField] private Button orderButton;
         [SerializeField] private TMP_Text primaryActionLabelText;
 
+        [System.Serializable]
+        private struct AvailabilityVisual
+        {
+            public Transform Root;
+            public GameObject Overlay;
+            public Image Art;
+        }
+        [SerializeField] private AvailabilityVisual[] availabilityVisuals = System.Array.Empty<AvailabilityVisual>();
+
         [Header("Availability")]
         [SerializeField] private GameObject unavailablePanel;
         [SerializeField] private TMP_Text unavailableTitleText;
@@ -148,14 +157,15 @@ namespace Game.UI.Runtime
                 for (int i = 0; i < items.Length; i++)
                     items[i].SetInteractable(available);
 
-                for (int i = 0; i < itemContentRoot.childCount; i++)
+                for (int i = 0; i < availabilityVisuals.Length; i++)
                 {
-                    Transform card = itemContentRoot.GetChild(i);
-                    Transform overlay = card.Find("DisabledOverlay");
+                    Transform card = availabilityVisuals[i].Root;
+                    if(card == null) continue;
+                    GameObject overlay = availabilityVisuals[i].Overlay;
                     if (overlay != null)
-                        overlay.gameObject.SetActive(!available);
+                        overlay.SetActive(!available);
 
-                    Image art = card.Find("ArtClip/Thumb")?.GetComponent<Image>();
+                    Image art = availabilityVisuals[i].Art;
                     if (art != null)
                         art.color = available ? Color.white : new Color(.42f, .47f, .49f, 1f);
 

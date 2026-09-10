@@ -105,7 +105,11 @@ namespace Game.Runtime
                             continue;
 
                         FactionEconomy economy = economyRecord.Economy;
-                        ProcessCompletedProductionRequests(ref state, boundaryEntity, ref economy, shouldLog);
+                        bool hasMaterials = em.HasComponent<FactionTacticalMaterialsComponent>(economyRecord.Entity);
+                        FactionTacticalMaterialsComponent materials = hasMaterials
+                            ? em.GetComponentData<FactionTacticalMaterialsComponent>(economyRecord.Entity)
+                            : new FactionTacticalMaterialsComponent { FactionId = economy.FactionId };
+                        ProcessCompletedProductionRequests(ref state, boundaryEntity, ref economy, ref materials, shouldLog);
                         em.SetComponentData(economyRecord.Entity, economy);
                         economyRecords[economyRecordIndex] = new FactionEconomyRecord(economyRecord.Entity, economy);
 
@@ -115,10 +119,13 @@ namespace Game.Runtime
                             ref plan,
                             entriesByPlan[planIndex],
                             ref economy,
+                            ref materials,
                             now,
                             shouldLog);
                         em.SetComponentData(economyRecord.Entity, economy);
                         economyRecords[economyRecordIndex] = new FactionEconomyRecord(economyRecord.Entity, economy);
+                        if (hasMaterials)
+                            em.SetComponentData(economyRecord.Entity, materials);
                         plans[planIndex] = plan;
                     }
                 }
@@ -175,6 +182,7 @@ namespace Game.Runtime
             ref AIProductionPlan plan,
             DynamicBuffer<AIProductionPlanEntry> entries,
             ref FactionEconomy economy,
+            ref FactionTacticalMaterialsComponent materials,
             float now,
             bool shouldLog)
         {
@@ -188,7 +196,7 @@ namespace Game.Runtime
                 return;
             }
 
-            ProductionDecision decision = SelectProductionDecision(ref state, boundaryEntity, entries, plan, economy.Money);
+            ProductionDecision decision = SelectProductionDecision(ref state, boundaryEntity, entries, plan, economy, materials);
             bool handledDecision = decision.Result != ProductionDecisionResult.None;
             switch (decision.Result)
             {
@@ -216,7 +224,11 @@ namespace Game.Runtime
                     break;
 
                 case ProductionDecisionResult.Request:
-                    EnqueueProductionRequest(ref state, boundaryEntity, plan.FactionId, decision.UnitId);
+                    if (FactionConstructionResourceUtilitySystemHelper.TrySpend(
+                            ref economy, ref materials, decision.Cost, decision.Unit.Price) !=
+                        FactionConstructionResourceMutationResult.Applied)
+                        break;
+                    EnqueueProductionRequest(ref state, boundaryEntity, plan.FactionId, decision.UnitId, decision.Cost, decision.Unit.Price);
                     plan.LastProductionTime = now;
                     plan.NextUnitIndex = decision.EntryIndex + 1;
                     if (shouldLog)
@@ -247,7 +259,8 @@ namespace Game.Runtime
             Entity boundaryEntity,
             DynamicBuffer<AIProductionPlanEntry> entries,
             AIProductionPlan plan,
-            int economyMoney)
+            in FactionEconomy economy,
+            in FactionTacticalMaterialsComponent materials)
         {
             EntityManager em = state.EntityManager;
             DynamicBuffer<BuildingConfiguredUnitReadModel> units = em.HasBuffer<BuildingConfiguredUnitReadModel>(boundaryEntity)
@@ -266,7 +279,7 @@ namespace Game.Runtime
                 ? em.GetBuffer<BuildingFactionUnitProductionRequest>(boundaryEntity, true)
                 : default;
 
-            return SelectProductionDecision(entries, units, factionSummaries, usableFuelSummaries, summaries, requests, plan, economyMoney);
+            return SelectProductionDecision(entries, units, factionSummaries, usableFuelSummaries, summaries, requests, plan, economy, materials);
         }
 
         private static ProductionDecision SelectProductionDecision(
@@ -277,7 +290,8 @@ namespace Game.Runtime
             DynamicBuffer<BuildingRuntimeUnitProductionSummary> summaries,
             DynamicBuffer<BuildingFactionUnitProductionRequest> requests,
             AIProductionPlan plan,
-            int economyMoney)
+            in FactionEconomy economy,
+            in FactionTacticalMaterialsComponent materials)
         {
             ProductionDecision decision = default;
             if (entries.Length == 0)
@@ -320,7 +334,7 @@ namespace Game.Runtime
                     break;
                 }
 
-                int cost = math.max(0, unit.Price);
+                int cost = math.max(0, unit.CreditsCost);
                 decision.Unit = unit;
                 decision.Cost = cost;
                 if (!HasFuelSupportForProduction(unit, plan.FactionId, factionSummaries, usableFuelSummaries))
@@ -329,7 +343,8 @@ namespace Game.Runtime
                     break;
                 }
 
-                if (economyMoney < cost)
+                if (FactionConstructionResourceUtilitySystemHelper.Evaluate(economy, materials, cost, unit.Price) !=
+                    FactionConstructionResourceMutationResult.Applied)
                 {
                     decision.Result = ProductionDecisionResult.InsufficientFunds;
                     break;
@@ -444,60 +459,13 @@ namespace Game.Runtime
                 BuildingFactionUnitProductionRequest request = requests[i];
                 if (request.FactionId == factionId &&
                     request.UnitId.Equals(unitId) &&
-                    request.Status == BuildingFactionUnitProductionRequest.Pending)
+                    (request.Status == BuildingFactionUnitProductionRequest.Pending || request.ResourcesReserved != 0))
                 {
                     return true;
                 }
             }
 
             return false;
-        }
-
-        private void EnqueueProductionRequest(ref SystemState state, Entity boundaryEntity, byte factionId, FixedString128Bytes unitId)
-        {
-            DynamicBuffer<BuildingFactionUnitProductionRequest> requests =
-                state.EntityManager.GetBuffer<BuildingFactionUnitProductionRequest>(boundaryEntity);
-            requests.Add(new BuildingFactionUnitProductionRequest
-            {
-                RequestId = ++_nextProductionRequestId,
-                FactionId = factionId,
-                UnitId = unitId,
-                Status = BuildingFactionUnitProductionRequest.Pending
-            });
-        }
-
-        private void ProcessCompletedProductionRequests(
-            ref SystemState state,
-            Entity boundaryEntity,
-            ref FactionEconomy economy,
-            bool shouldLog)
-        {
-            if (!state.EntityManager.HasBuffer<BuildingFactionUnitProductionRequest>(boundaryEntity))
-                return;
-
-            DynamicBuffer<BuildingFactionUnitProductionRequest> requests =
-                state.EntityManager.GetBuffer<BuildingFactionUnitProductionRequest>(boundaryEntity);
-            for (int i = requests.Length - 1; i >= 0; i--)
-            {
-                BuildingFactionUnitProductionRequest request = requests[i];
-                if (request.FactionId != economy.FactionId ||
-                    request.Status == BuildingFactionUnitProductionRequest.Pending)
-                {
-                    continue;
-                }
-
-                if (request.Status == BuildingFactionUnitProductionRequest.Succeeded)
-                    economy.Money = math.max(0, economy.Money - math.max(0, request.Cost));
-
-                if (shouldLog)
-                {
-                    EnqueueDiagnostic(
-                        ref state,
-                        $"[AIProduction] faction={request.FactionId} producer={request.ProducerDisplayName.ToString()} unit={request.UnitDisplayName.ToString()} cost={request.Cost} queue={request.QueueCount} result={ProductionResultLabel(request)}");
-                }
-
-                requests.RemoveAt(i);
-            }
         }
 
         private static string ProductionResultLabel(BuildingFactionUnitProductionRequest request)

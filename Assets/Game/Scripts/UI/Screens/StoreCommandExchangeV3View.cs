@@ -1,5 +1,4 @@
 using System;
-using Game.Configs;
 using Game.UI.Contracts;
 using TMPro;
 using UnityEngine;
@@ -199,10 +198,10 @@ namespace Game.UI.Runtime
         private void RefreshPresentation()
         {
             if (offersHeading != null)
-                offersHeading.text = GameLocalization.Format(
+                offersHeading.text = UiShellRuntimeGateway.Localization.Format(
                     "ui.store.category_offers",
                     "{0} OFFERS",
-                    GameLocalization.GetBySource(CategoryNames[_categoryIndex]));
+                    UiShellRuntimeGateway.Localization.GetBySource(CategoryNames[_categoryIndex]));
             for (int i = 0; i < (categoryGradients?.Length ?? 0); i++)
             {
                 bool selected = i == _categoryIndex;
@@ -221,9 +220,9 @@ namespace Game.UI.Runtime
             {
                 OfferData offer = offers[i];
                 if (offerTitles != null && i < offerTitles.Length && offerTitles[i] != null)
-                    offerTitles[i].text = GameLocalization.GetBySource(offer.Name);
+                    offerTitles[i].text = UiShellRuntimeGateway.Localization.GetBySource(offer.Name);
                 if (offerSubtitles != null && i < offerSubtitles.Length && offerSubtitles[i] != null)
-                    offerSubtitles[i].text = GameLocalization.GetBySource(offer.Summary);
+                    offerSubtitles[i].text = UiShellRuntimeGateway.Localization.GetBySource(offer.Summary);
                 if (offerPrices != null && i < offerPrices.Length && offerPrices[i] != null)
                     offerPrices[i].text = offer.Price;
                 bool selected = i == _offerIndex;
@@ -234,8 +233,8 @@ namespace Game.UI.Runtime
             }
 
             OfferData selectedOffer = offers[_offerIndex];
-            if (detailTitle != null) detailTitle.text = GameLocalization.GetBySource(selectedOffer.Name);
-            if (detailTimer != null) detailTimer.text = GameLocalization.GetBySource(selectedOffer.Timer);
+            if (detailTitle != null) detailTitle.text = UiShellRuntimeGateway.Localization.GetBySource(selectedOffer.Name);
+            if (detailTimer != null) detailTimer.text = UiShellRuntimeGateway.Localization.GetBySource(selectedOffer.Timer);
             if (detailArt != null && detailArtTextures != null && _offerIndex < detailArtTextures.Length)
             {
                 Texture texture = detailArtTextures[_offerIndex];
@@ -246,10 +245,10 @@ namespace Game.UI.Runtime
             }
             string[] lines = { selectedOffer.Line1, selectedOffer.Line2, selectedOffer.Line3, selectedOffer.Line4 };
             for (int i = 0; i < Mathf.Min(lines.Length, detailLines?.Length ?? 0); i++)
-                if (detailLines[i] != null) detailLines[i].text = GameLocalization.GetBySource(lines[i]);
-            if (detailNote != null) detailNote.text = GameLocalization.GetBySource(selectedOffer.Note);
+                if (detailLines[i] != null) detailLines[i].text = UiShellRuntimeGateway.Localization.GetBySource(lines[i]);
+            if (detailNote != null) detailNote.text = UiShellRuntimeGateway.Localization.GetBySource(selectedOffer.Note);
             if (purchaseLabel != null)
-                purchaseLabel.text = GameLocalization.Format(
+                purchaseLabel.text = UiShellRuntimeGateway.Localization.Format(
                     "ui.store.purchase_price",
                     "PURCHASE {0}",
                     selectedOffer.Price);

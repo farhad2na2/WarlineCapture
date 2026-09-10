@@ -149,7 +149,7 @@ namespace Game.Rendering
                     cameraMotionActive,
                     currentUnitCount,
                     currentSelectedUnitCount,
-                    currentSelectedUnitHash))
+                    currentSelectedUnitHash, Time.frameCount))
                 return;
 
             if (_scheduleSystem.ShouldSkipUpdateFrame(

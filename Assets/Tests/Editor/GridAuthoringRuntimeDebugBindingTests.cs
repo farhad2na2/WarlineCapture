@@ -55,12 +55,12 @@ namespace Game.Tests.Editor
                 Assert.That(authoring.TryGetRuntimeDebugGridConfig(out GridConfig replacementGrid), Is.True);
                 Assert.That(replacementGrid.Width, Is.EqualTo(22));
 
-                gameObject.SendMessage("OnDisable");
+                EditModeViewLifecycle.Invoke(authoring, "OnDisable");
                 Assert.That(authoring.TryGetRuntimeDebugGridConfig(out _), Is.False);
 
                 authoring.BindRuntimeDebugSources(runtimeGridBlockers: null, first);
                 first.Dispose();
-                Assert.DoesNotThrow(() => gameObject.SendMessage("OnDisable"));
+                Assert.DoesNotThrow(() => EditModeViewLifecycle.Invoke(authoring, "OnDisable"));
                 Assert.That(authoring.TryGetRuntimeDebugGridConfig(out _), Is.False);
             }
             finally

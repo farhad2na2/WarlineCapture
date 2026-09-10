@@ -95,8 +95,7 @@ namespace Game.Editor
                 OperationMapVirtualizedPresentationAuthoring[] existing =
                     UnityEngine.Object.FindObjectsByType<
                         OperationMapVirtualizedPresentationAuthoring>(
-                        FindObjectsInactive.Include,
-                        FindObjectsSortMode.None);
+                        FindObjectsInactive.Include);
                 OperationMapVirtualizedPresentationAuthoring authoring;
                 if (existing.Length == 0)
                 {
@@ -201,13 +200,11 @@ namespace Game.Editor
                 DenseCityPresentationIdentityAuthoring[] generatedIdentities =
                     UnityEngine.Object.FindObjectsByType<
                         DenseCityPresentationIdentityAuthoring>(
-                        FindObjectsInactive.Include,
-                        FindObjectsSortMode.None);
+                        FindObjectsInactive.Include);
                 OperationMapEntityPresentationIdentityAuthoring[] acceptedIdentities =
                     UnityEngine.Object.FindObjectsByType<
                         OperationMapEntityPresentationIdentityAuthoring>(
-                        FindObjectsInactive.Include,
-                        FindObjectsSortMode.None);
+                        FindObjectsInactive.Include);
                 int generatedIdentityCount = 0;
                 int acceptedIdentityCount = 0;
                 int gameplayBuildingCount = 0;
@@ -286,8 +283,7 @@ namespace Game.Editor
                 OperationMapEntityPresentationRootAuthoring[] roots =
                     UnityEngine.Object.FindObjectsByType<
                         OperationMapEntityPresentationRootAuthoring>(
-                        FindObjectsInactive.Include,
-                        FindObjectsSortMode.None);
+                        FindObjectsInactive.Include);
                 OperationMapEntityPresentationRootAuthoring contractRoot = null;
                 for (int index = 0; index < roots.Length; index++)
                 {

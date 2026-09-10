@@ -112,16 +112,13 @@ public sealed class AIEndToEndValidationTests
         CreateBuildingPlacementHarness();
         RuntimeGameplayStateTestHelper.SetBuildingPlacement(em, TickBuildingRuntime);
 
-        Entity economyEntity = em.CreateEntity(
-            typeof(FactionEconomy),
-            typeof(FactionEconomyPolicy),
-            typeof(FactionTacticalMaterialsComponent));
+        Entity economyEntity = FindFactionEconomyEntity(em, FactionIdentity.EnemyFactionId);
         em.SetComponentData(economyEntity, new FactionEconomy { FactionId = FactionIdentity.EnemyFactionId, Money = 100000, LastLogTime = -999f });
         em.SetComponentData(economyEntity, new FactionEconomyPolicy { Enabled = 1, SellIntervalSeconds = 8f });
         em.SetComponentData(economyEntity, new FactionTacticalMaterialsComponent
         {
             FactionId = FactionIdentity.EnemyFactionId,
-            Capacity = 0
+            Current = 100, Capacity = 100
         });
 
         Entity controlEntity = em.CreateEntity(typeof(FactionControlConfigTag));
@@ -142,6 +139,7 @@ public sealed class AIEndToEndValidationTests
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         RuntimeGameplayStateTestHelper.PublishBuildingRuntimeState(em, TickBuildingRuntime);
         SystemHandle buildSystem = _world.CreateSystem<AIBuildPlannerSystem>();
+        RuntimeGameplayStateTestHelper.SetVerboseAILogs(em, true);
         SystemHandle logFlushSystem = _world.CreateSystem<AIDiagnosticLogFlushSystem>();
         SystemHandle productionSystem = _world.CreateSystem<AIProductionSystem>();
         SystemHandle squadSystem = _world.CreateSystem<AISquadSystem>();
@@ -149,7 +147,7 @@ public sealed class AIEndToEndValidationTests
         SystemHandle combatSystem = _world.CreateSystem<AICombatOrderSystem>();
 
         if (assertDiagnosticLog)
-            LogAssert.Expect(LogType.Log, new Regex(@"\[AIBuild\] faction=2 building=Tent_Regular cell=int2\(\d+, \d+\) cost=20000 result=Requested"));
+            LogAssert.Expect(LogType.Log, new Regex(@"\[AIBuild\] faction=2 building=Tent_Regular cell=int2\(\d+, \d+\) cost=0 materialsCost=40 result=Requested"));
         buildSystem.Update(_world.Unmanaged);
         logFlushSystem.Update(_world.Unmanaged);
         if (assertDiagnosticLog)
@@ -158,7 +156,7 @@ public sealed class AIEndToEndValidationTests
         RuntimeGameplayStateTestHelper.PublishBuildingRuntimeState(em, TickBuildingRuntime);
 
         if (assertDiagnosticLog)
-            LogAssert.Expect(LogType.Log, new Regex(@"\[AIBuild\] faction=2 building=Tent_Regular cell=int2\(\d+, \d+\) cost=20000 result=Placed"));
+            LogAssert.Expect(LogType.Log, new Regex(@"\[AIBuild\] faction=2 building=Tent_Regular cell=int2\(\d+, \d+\) cost=0 materialsCost=40 result=Placed"));
         buildSystem.Update(_world.Unmanaged);
         logFlushSystem.Update(_world.Unmanaged);
         if (assertDiagnosticLog)
@@ -167,7 +165,7 @@ public sealed class AIEndToEndValidationTests
         Assert.AreEqual(1, RuntimeGameplayStateTestHelper.CountRuntimeBuildingsForFaction(em, FactionIdentity.EnemyFactionId, "Tent_Regular"));
 
         if (assertDiagnosticLog)
-            LogAssert.Expect(LogType.Log, new Regex(@"\[AIProduction\] faction=2 unit=Rifleman cost=20 result=Requested"));
+            LogAssert.Expect(LogType.Log, new Regex(@"\[AIProduction\] faction=2 unit=Rifleman cost=10000 result=Requested"));
         productionSystem.Update(_world.Unmanaged);
         logFlushSystem.Update(_world.Unmanaged);
         if (assertDiagnosticLog)
@@ -179,7 +177,7 @@ public sealed class AIEndToEndValidationTests
         RuntimeGameplayStateTestHelper.PublishBuildingRuntimeState(em, TickBuildingRuntime);
 
         if (assertDiagnosticLog)
-            LogAssert.Expect(LogType.Log, new Regex(@"\[AIProduction\] faction=2 producer=Tent_Regular unit=Rifleman cost=20 queue=1 result=Queued"));
+            LogAssert.Expect(LogType.Log, new Regex(@"\[AIProduction\] faction=2 producer=Tent_Regular unit=Rifleman cost=10000 queue=1 result=Queued"));
         productionSystem.Update(_world.Unmanaged);
         logFlushSystem.Update(_world.Unmanaged);
         if (assertDiagnosticLog)
@@ -227,7 +225,8 @@ public sealed class AIEndToEndValidationTests
         AssertEngageOrder(em, unitD, target);
 
         FactionEconomy economy = em.GetComponentData<FactionEconomy>(economyEntity);
-        Assert.AreEqual(99980, economy.Money);
+        Assert.AreEqual(90000, economy.Money);
+        Assert.AreEqual(40, em.GetComponentData<FactionTacticalMaterialsComponent>(economyEntity).Current);
     }
 
     private void CreateBuildingPlacementHarness()
@@ -258,8 +257,28 @@ public sealed class AIEndToEndValidationTests
         _buildingGameplayInitialized = true;
     }
 
+    private static Entity FindFactionEconomyEntity(EntityManager entityManager, byte factionId)
+    {
+        using EntityQuery query = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<FactionEconomy>(),
+            ComponentType.ReadOnly<FactionEconomyPolicy>(),
+            ComponentType.ReadOnly<FactionTacticalMaterialsComponent>());
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < entities.Length; i++)
+        {
+            Entity entity = entities[i];
+            if (entityManager.GetComponentData<FactionEconomy>(entity).FactionId == factionId)
+                return entity;
+        }
+
+        Entity created = entityManager.CreateEntity(typeof(FactionEconomy), typeof(FactionEconomyPolicy), typeof(FactionTacticalMaterialsComponent));
+        entityManager.SetComponentData(created, new FactionEconomy { FactionId = factionId });
+        return created;
+    }
+
     private void TickBuildingRuntime()
     {
+        _world.SetTime(new Unity.Core.TimeData(_world.Time.ElapsedTime + 0.2, 0.2f));
         if (_buildingGameplayInitialized)
             _buildingGameplay.RuntimeUpdate.Update(_buildingGameplay.RuntimeUpdateContext);
     }
@@ -429,6 +448,7 @@ public sealed class AIEndToEndValidationTests
         SetPrivateField(authoring, "maxHealth", 500);
         SetPrivateField(authoring, "canRequest", true);
         SetPrivateField(authoring, "price", price);
+        SetPrivateField(authoring, "materialsCost", 40);
         SetPrivateField(authoring, "productions", new List<BuildingDefinitionAuthoring.ProductionDefinition>
         {
             new() { spawnUnitPrefab = producedUnitPrefab }

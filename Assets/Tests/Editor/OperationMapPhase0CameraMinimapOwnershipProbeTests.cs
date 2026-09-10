@@ -45,13 +45,11 @@ namespace Game.Tests.Editor
         }
 
         [Test]
-        public void CurrentInputs_HaveExactBaselineHashesAndMissingRootFailsClosed()
+        public void HistoricalProbeRejectsCurrentSourceDriftAndMissingRoot()
         {
             string projectRoot = Directory.GetParent(Application.dataPath).FullName;
-            List<OperationMapPhase0CameraMinimapOwnershipProbe.InputHashReport> hashes =
-                OperationMapPhase0CameraMinimapOwnershipProbe.CaptureAndValidateInputs(projectRoot);
-            Assert.That(hashes.Select(hash => hash.path), Is.Ordered);
-            Assert.That(hashes.Select(hash => hash.path), Does.Contain("Design/AgentReports/2026-07-15_opmap-004_phase0_ownership_baseline.json"));
+            Assert.Throws<InvalidOperationException>(() =>
+                OperationMapPhase0CameraMinimapOwnershipProbe.CaptureAndValidateInputs(projectRoot));
             Assert.Throws<InvalidOperationException>(() =>
                 OperationMapPhase0CameraMinimapOwnershipProbe.CaptureAndValidateInputs(
                     Path.Combine(Path.GetTempPath(), "opmap007-missing-" + Guid.NewGuid().ToString("N"))));
@@ -441,7 +439,7 @@ namespace Game.Tests.Editor
         }
 
         [Test]
-        public void Run_WritesOnlyExternalOutputAndLeavesAllInputsUnchanged()
+        public void HistoricalProbeDoesNotPublishSuccessForDriftedCurrentSources()
         {
             RequireDescriptorRelativePublication();
             string projectRoot = Directory.GetParent(Application.dataPath).FullName;
@@ -450,23 +448,15 @@ namespace Game.Tests.Editor
                 "opmap007-isolation-" + Guid.NewGuid().ToString("N") + ".json");
             string priorOverride = Environment.GetEnvironmentVariable(
                 OperationMapPhase0CameraMinimapOwnershipProbe.ReportPathEnvironmentVariable);
-            List<OperationMapPhase0CameraMinimapOwnershipProbe.InputHashReport> before =
-                OperationMapPhase0CameraMinimapOwnershipProbe.CaptureAndValidateInputs(projectRoot);
+            byte[] before = File.ReadAllBytes(ReportPath);
             try
             {
                 Environment.SetEnvironmentVariable(
                     OperationMapPhase0CameraMinimapOwnershipProbe.ReportPathEnvironmentVariable,
                     outputPath);
-                OperationMapPhase0CameraMinimapOwnershipProbe.Run();
-
-                Assert.That(File.Exists(outputPath), Is.True);
-                Assert.That(
-                    OperationMapPhase0CameraMinimapOwnershipProbe.HasRequiredReportShape(
-                        File.ReadAllText(outputPath)),
-                    Is.True);
-                List<OperationMapPhase0CameraMinimapOwnershipProbe.InputHashReport> after =
-                    OperationMapPhase0CameraMinimapOwnershipProbe.CaptureAndValidateInputs(projectRoot);
-                Assert.That(after.Select(row => row.sha256), Is.EqualTo(before.Select(row => row.sha256)));
+                Assert.Throws<InvalidOperationException>(() => OperationMapPhase0CameraMinimapOwnershipProbe.Run());
+                Assert.That(File.Exists(outputPath), Is.False);
+                CollectionAssert.AreEqual(before, File.ReadAllBytes(ReportPath));
             }
             finally
             {

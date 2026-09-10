@@ -146,12 +146,12 @@ namespace Game.Runtime
                     targetAnimationIndex = 1;
                     if (health.Current <= 0 || DeathAnimationLookup.HasComponent(entity))
                         targetAnimationIndex = 5;
+                    else if (moveVisual.IsMoving != 0)
+                        targetAnimationIndex = AutoWanderLookup.HasComponent(entity) ? (byte)2 : (byte)3;
                     else if (attackAnimation.TimeRemaining > 0f)
                         targetAnimationIndex = 4;
                     else if (EngageTargetLookup.HasComponent(entity))
                         targetAnimationIndex = 4;
-                    else if (moveVisual.IsMoving != 0)
-                        targetAnimationIndex = AutoWanderLookup.HasComponent(entity) ? (byte)2 : (byte)3;
                 }
 
                 bool resolvedChanged = resolvedAnimation.Value != targetAnimationIndex;
@@ -179,11 +179,7 @@ namespace Game.Runtime
             if (isAttacking)
             {
                 if (isMoving)
-                {
-                    return isAutoWandering
-                        ? FindFirstAnimationIndex(animationOrder, UnitAnimationKind.WalkShoot, UnitAnimationKind.WalkAim, UnitAnimationKind.Shoot, UnitAnimationKind.Aim)
-                        : FindFirstAnimationIndex(animationOrder, UnitAnimationKind.RunShoot, UnitAnimationKind.RunAim, UnitAnimationKind.Shoot, UnitAnimationKind.Aim);
-                }
+                    return FindMovingCombatAnimationIndex(animationOrder, true, isAutoWandering);
 
                 return FindFirstAnimationIndex(animationOrder, UnitAnimationKind.Shoot, UnitAnimationKind.Aim, UnitAnimationKind.Idle);
             }
@@ -191,11 +187,7 @@ namespace Game.Runtime
             if (isInAttackMode)
             {
                 if (isMoving)
-                {
-                    return isAutoWandering
-                        ? FindFirstAnimationIndex(animationOrder, UnitAnimationKind.WalkAim, UnitAnimationKind.WalkShoot, UnitAnimationKind.Aim, UnitAnimationKind.Shoot)
-                        : FindFirstAnimationIndex(animationOrder, UnitAnimationKind.RunAim, UnitAnimationKind.RunShoot, UnitAnimationKind.Aim, UnitAnimationKind.Shoot);
-                }
+                    return FindMovingCombatAnimationIndex(animationOrder, false, isAutoWandering);
 
                 return FindFirstAnimationIndex(animationOrder, UnitAnimationKind.Aim, UnitAnimationKind.Shoot, UnitAnimationKind.Idle);
             }
@@ -208,6 +200,23 @@ namespace Game.Runtime
             }
 
             return FindFirstAnimationIndex(animationOrder, UnitAnimationKind.Idle, UnitAnimationKind.Aim, UnitAnimationKind.Walk);
+        }
+
+        private static byte FindMovingCombatAnimationIndex(
+            DynamicBuffer<UnitAnimationOrderEntry> order, bool firing, bool walking)
+        {
+            UnitAnimationKind aim = walking ? UnitAnimationKind.WalkAim : UnitAnimationKind.RunAim;
+            UnitAnimationKind shoot = walking ? UnitAnimationKind.WalkShoot : UnitAnimationKind.RunShoot;
+            if (TryFindAnimationIndex(order, firing ? shoot : aim, out byte index) ||
+                TryFindAnimationIndex(order, firing ? aim : shoot, out index))
+                return index;
+
+            // Characters without blended combat clips must still move their legs while chasing/firing.
+            if (TryFindAnimationIndex(order, walking ? UnitAnimationKind.Walk : UnitAnimationKind.Run, out index) ||
+                TryFindAnimationIndex(order, walking ? UnitAnimationKind.Run : UnitAnimationKind.Walk, out index))
+                return index;
+
+            return FindFirstAnimationIndex(order, UnitAnimationKind.Shoot, UnitAnimationKind.Aim, UnitAnimationKind.Idle);
         }
 
         private static byte FindFirstAnimationIndex(DynamicBuffer<UnitAnimationOrderEntry> animationOrder, UnitAnimationKind preferredKind)
@@ -299,12 +308,7 @@ namespace Game.Runtime
             if (entity == Entity.Null)
                 return false;
 
-            if (animationIndexLookup.HasComponent(entity) &&
-                animationIndexLookup[entity].Value == animationIndex)
-            {
-                return false;
-            }
-
+            // A matching root does not imply newly spawned/activated child renderers match it.
             return ApplyAnimationIndexRecursive(entity, animationIndex, ref animationIndexLookup, ref childLookup);
         }
 

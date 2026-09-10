@@ -222,14 +222,18 @@ public sealed class M02EstablishBaseCanonicalDataTests
             M02EstablishBaseConfigBuilder.OperationMapCatalogPath);
         Assert.IsTrue(MissionDefinitionContractValidation.TryValidateCatalog(missions, out string error), error);
         Assert.IsTrue(maps.TryValidate(out error), error);
-        Assert.AreEqual(2, missions.Entries.Length);
+        Assert.AreEqual(4, missions.Entries.Length);
+        Assert.AreEqual("saga.ch01.m03.radar_warning", missions.Entries[2].MissionId);
+        Assert.AreEqual("saga.ch01.m04.airlift", missions.Entries[3].MissionId);
         Assert.AreEqual("saga.ch01.m01.first_contact", missions.Entries[0].MissionId);
         Assert.AreEqual(M02EstablishBaseConfigBuilder.MissionId, missions.Entries[1].MissionId);
         Assert.IsTrue(missions.TryResolve(M02EstablishBaseConfigBuilder.MissionId, out var mission));
         Assert.AreEqual(M02EstablishBaseConfigBuilder.MissionPath, AssetDatabase.GetAssetPath(mission));
-        Assert.AreEqual(2, maps.Definitions.Length);
-        Assert.AreEqual("opmap.ch01.district_edge_01", maps.Definitions[0].OperationMapId);
-        Assert.AreEqual("opmap.ch01.forward_post_01", maps.Definitions[1].OperationMapId);
+        Assert.AreEqual(4, maps.Definitions.Length);
+        Assert.IsTrue(maps.TryResolve("opmap.ch01.convoy_approach_01", out _));
+        Assert.IsTrue(maps.TryResolve("opmap.ch01.airlift_01", out _));
+        Assert.IsTrue(maps.TryResolve("opmap.ch01.district_edge_01", out _));
+        Assert.IsTrue(maps.TryResolve("opmap.ch01.forward_post_01", out _));
         Assert.IsTrue(maps.TryResolve("opmap.ch01.forward_post_01", out var map));
         Assert.AreEqual(M02EstablishBaseForwardPostWindowValidation.DefinitionPath,
             AssetDatabase.GetAssetPath(map));

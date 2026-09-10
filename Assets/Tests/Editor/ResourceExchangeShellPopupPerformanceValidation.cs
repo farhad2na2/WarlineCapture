@@ -195,12 +195,12 @@ public sealed class ResourceExchangeShellPopupPerformanceValidation
 
             // EditMode does not guarantee an automatic enable callback for every prefab load path.
             runtimeView.ConfigureForTests(popupView);
-            runtimeView.SendMessage("OnEnable");
+            EditModeViewLifecycle.Invoke(runtimeView, "OnEnable");
             runtimeView.RefreshNow(force: true);
             Assert.IsTrue(popupView.IsOpen, "Measured popup must be open.");
             Assert.IsTrue(runtimeView.isActiveAndEnabled, "Measured popup runtime view must be active.");
             Assert.IsTrue(
-                ResourceExchangePopupRuntimeView.IsActiveViewForTests(runtimeView),
+                runtimeUi.OwnsResourceExchangePopup(runtimeView),
                 "Measured popup runtime view must own recurring refreshes.");
 
             Canvas.ForceUpdateCanvases();
@@ -214,7 +214,7 @@ public sealed class ResourceExchangeShellPopupPerformanceValidation
             int contentVersionBefore = content.ContentVersion;
             int readsBeforeWarmup = gateway.ResourceExchangeReadCount;
             for (int frame = 0; frame < WarmupFrames; frame++)
-                ResourceExchangePopupRuntimeView.RefreshActiveView();
+                runtimeUi.RefreshResourceExchangePopup();
 
             Assert.AreEqual(
                 WarmupFrames,
@@ -237,7 +237,7 @@ public sealed class ResourceExchangeShellPopupPerformanceValidation
             {
                 long allocationBefore = GC.GetAllocatedBytesForCurrentThread();
                 long startTicks = Stopwatch.GetTimestamp();
-                ResourceExchangePopupRuntimeView.RefreshActiveView();
+                runtimeUi.RefreshResourceExchangePopup();
                 long stopTicks = Stopwatch.GetTimestamp();
                 long frameAllocatedBytes =
                     GC.GetAllocatedBytesForCurrentThread() - allocationBefore;
@@ -257,7 +257,7 @@ public sealed class ResourceExchangeShellPopupPerformanceValidation
                 popup != null &&
                 popupView.IsOpen &&
                 runtimeView.isActiveAndEnabled &&
-                ResourceExchangePopupRuntimeView.IsActiveViewForTests(runtimeView);
+                runtimeUi.OwnsResourceExchangePopup(runtimeView);
 
             return new UnchangedMetrics(
                 productionAllocatedBytes,
@@ -392,8 +392,7 @@ public sealed class ResourceExchangeShellPopupPerformanceValidation
                popupView.CloseButton != null &&
                popupView.IsOpen &&
                runtimeView != null &&
-               runtimeView.isActiveAndEnabled &&
-               ResourceExchangePopupRuntimeView.IsActiveViewForTests(runtimeView);
+               runtimeView.isActiveAndEnabled;
     }
 
     private static void PreparePopupForEditMode(GameObject popup)
@@ -404,7 +403,7 @@ public sealed class ResourceExchangeShellPopupPerformanceValidation
         Assert.NotNull(popupView);
         Assert.NotNull(runtimeView);
         runtimeView.ConfigureForTests(popupView);
-        runtimeView.SendMessage("OnEnable");
+        EditModeViewLifecycle.Invoke(runtimeView, "OnEnable");
         runtimeView.RefreshNow(force: true);
     }
 

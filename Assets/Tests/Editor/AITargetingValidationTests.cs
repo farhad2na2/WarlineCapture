@@ -99,6 +99,7 @@ public sealed class AITargetingValidationTests
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = world.CreateSystem<AITargetingSystem>();
+        RuntimeGameplayStateTestHelper.SetVerboseAILogs(em, true);
         SystemHandle logFlushSystem = world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
         if (assertDiagnosticLog)
@@ -142,6 +143,7 @@ public sealed class AITargetingValidationTests
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = world.CreateSystem<AITargetingSystem>();
+        RuntimeGameplayStateTestHelper.SetVerboseAILogs(em, true);
         SystemHandle logFlushSystem = world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
         if (assertDiagnosticLog)
@@ -182,6 +184,7 @@ public sealed class AITargetingValidationTests
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = world.CreateSystem<AITargetingSystem>();
+        RuntimeGameplayStateTestHelper.SetVerboseAILogs(em, true);
         SystemHandle logFlushSystem = world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
         if (assertDiagnosticLog)
@@ -225,6 +228,7 @@ public sealed class AITargetingValidationTests
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = world.CreateSystem<AITargetingSystem>();
+        RuntimeGameplayStateTestHelper.SetVerboseAILogs(em, true);
         SystemHandle logFlushSystem = world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
         if (assertDiagnosticLog)

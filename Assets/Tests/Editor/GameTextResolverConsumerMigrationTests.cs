@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Linq;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -8,7 +10,7 @@ using UnityEngine;
 
 public sealed class GameTextResolverConsumerMigrationTests
 {
-    private const string ExpectedLiteralCallHash = "229b5e5091a6e12e95823c5c74ad598f67f84905cc52c731e11b31a3e3f3a792";
+    private const string ExpectedLiteralCallHash = "8d804f752de6de36009fc80f258bef9ff5bd9485d6973af195f97440f8223e10";
     private const string MainMenuPlayUiPath = "Assets/Game/Scripts/UI/MainMenuPlayUI.cs";
     private const string BattleFeedbackSinkPath = "Assets/Game/Scripts/UI/Screens/BattleHudRuntimeFeedbackSink.cs";
     private const string UiShellContentViewPath = "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs";
@@ -48,11 +50,11 @@ public sealed class GameTextResolverConsumerMigrationTests
         try
         {
             var tests = new GameTextResolverConsumerMigrationTests();
-            tests.ConsumerCalls_MigrateExactlySixtyFiveGetsAndTwentySixFormats();
+            tests.ConsumerCalls_PreserveNinetyOneResolverCallsAcrossOwnedPartials();
             tests.ConsumerCalls_PreserveOrderedLiteralKeysAndFallbacks();
             tests.ConsumerCalls_PreserveDynamicKeyAndFallbackShapes();
             tests.ResolverPropagation_UsesExistingRootsAndFallbackOnlyNullHandling();
-            Debug.Log("[GameTextResolverConsumerMigrationValidation] result=Passed tests=4 gets=65 formats=26 expressions=91");
+            Debug.Log("[GameTextResolverConsumerMigrationValidation] result=Passed tests=4 gets=66 formats=25 expressions=91");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -64,14 +66,14 @@ public sealed class GameTextResolverConsumerMigrationTests
     }
 
     [Test]
-    public void ConsumerCalls_MigrateExactlySixtyFiveGetsAndTwentySixFormats()
+    public void ConsumerCalls_PreserveNinetyOneResolverCallsAcrossOwnedPartials()
     {
         int getCount = 0;
         int formatCount = 0;
 
         for (int i = 0; i < ConsumerPaths.Length; i++)
         {
-            string source = File.ReadAllText(ConsumerPaths[i]);
+            string source = ReadOwnedSource(ConsumerPaths[i]);
             StringAssert.DoesNotContain("GameText.Get(", source, $"Direct Get remains in {ConsumerPaths[i]}.");
             StringAssert.DoesNotContain("GameText.Format(", source, $"Direct Format remains in {ConsumerPaths[i]}.");
             StringAssert.DoesNotContain("using Game.Configs;", source, $"Stale Game.Configs import remains in {ConsumerPaths[i]}.");
@@ -86,42 +88,39 @@ public sealed class GameTextResolverConsumerMigrationTests
             }
         }
 
-        Assert.AreEqual(65, getCount);
-        Assert.AreEqual(26, formatCount);
+        Assert.AreEqual(66, getCount);
+        Assert.AreEqual(25, formatCount);
     }
 
     [Test]
     public void ConsumerCalls_PreserveOrderedLiteralKeysAndFallbacks()
     {
-        var canonicalCalls = new StringBuilder();
+        var canonicalCalls = new List<string>();
         int literalCallCount = 0;
 
         for (int i = 0; i < ConsumerPaths.Length; i++)
         {
             string path = ConsumerPaths[i];
-            MatchCollection calls = LiteralCallRegex.Matches(File.ReadAllText(path));
+            MatchCollection calls = LiteralCallRegex.Matches(ReadOwnedSource(path));
             for (int callIndex = 0; callIndex < calls.Count; callIndex++)
             {
                 Match call = calls[callIndex];
-                canonicalCalls
-                    .Append(path).Append('\t')
-                    .Append(call.Groups[1].Value).Append('\t')
-                    .Append(call.Groups[2].Value).Append('\t')
-                    .Append(call.Groups[3].Value).Append('\n');
+                canonicalCalls.Add(path + "\t" + call.Groups[1].Value + "\t" +
+                    call.Groups[2].Value + "\t" + call.Groups[3].Value);
                 literalCallCount++;
             }
         }
 
         Assert.AreEqual(86, literalCallCount);
-        Assert.AreEqual(ExpectedLiteralCallHash, ComputeSha256(canonicalCalls.ToString()));
+        Assert.AreEqual(ExpectedLiteralCallHash, ComputeSha256(string.Join("\n", canonicalCalls.OrderBy(call => call, StringComparer.Ordinal)) + "\n"));
     }
 
     [Test]
     public void ConsumerCalls_PreserveDynamicKeyAndFallbackShapes()
     {
-        string battleSource = File.ReadAllText(BattleFeedbackPath);
-        string currentOrderSource = File.ReadAllText(CurrentOrderPath);
-        string commandInputSource = File.ReadAllText(CommandInputPath);
+        string battleSource = ReadOwnedSource(BattleFeedbackPath);
+        string currentOrderSource = ReadOwnedSource(CurrentOrderPath);
+        string commandInputSource = ReadOwnedSource(CommandInputPath);
 
         StringAssert.Contains("textResolver.Get(\n                TacticalCommandFeedbackText.ToDisplayTextKey(mode),\n                TacticalCommandFeedbackText.ToDisplayText(mode))", battleSource);
         StringAssert.Contains("textResolver.Get(\n                TacticalCommandFeedbackText.ToDisplayTextKey(reasonCode),\n                TacticalCommandFeedbackText.ToDisplayText(reasonCode))", battleSource);
@@ -133,20 +132,20 @@ public sealed class GameTextResolverConsumerMigrationTests
     [Test]
     public void ResolverPropagation_UsesExistingRootsAndFallbackOnlyNullHandling()
     {
-        string mainMenuSource = File.ReadAllText(MainMenuPlayUiPath);
-        string feedbackSinkSource = File.ReadAllText(BattleFeedbackSinkPath);
-        string commandWheelSource = File.ReadAllText(CommandWheelPath);
-        string contentSource = File.ReadAllText(UiShellContentViewPath);
+        string mainMenuSource = ReadOwnedSource(MainMenuPlayUiPath);
+        string feedbackSinkSource = ReadOwnedSource(BattleFeedbackSinkPath);
+        string commandWheelSource = ReadOwnedSource(CommandWheelPath);
+        string contentSource = ReadOwnedSource(UiShellContentViewPath);
         var combined = new StringBuilder();
         combined.Append(mainMenuSource).Append(feedbackSinkSource).Append(commandWheelSource).Append(contentSource);
         for (int i = 0; i < ConsumerPaths.Length; i++)
-            combined.Append(File.ReadAllText(ConsumerPaths[i]));
+            combined.Append(ReadOwnedSource(ConsumerPaths[i]));
 
         string source = combined.ToString();
         StringAssert.Contains("new BattleHudRuntimeFeedbackSink(_matchHudRuntimeFeedbackView, _gameTextResolver)", mainMenuSource);
         StringAssert.Contains("gameTextResolver ?? FallbackGameTextResolver.Instance", feedbackSinkSource);
         StringAssert.Contains("ApplyCommandResult(_view, result, _gameTextResolver)", feedbackSinkSource);
-        StringAssert.Contains("_view.CommandWheelPanel?.BindGameTextResolver(_gameTextResolver);", File.ReadAllText(CommandInputPath));
+        StringAssert.Contains("_view.CommandWheelPanel?.BindGameTextResolver(_gameTextResolver);", ReadOwnedSource(CommandInputPath));
         StringAssert.Contains("gameTextResolver ?? FallbackGameTextResolver.Instance", commandWheelSource);
         StringAssert.Contains("_rightQuickRailView.BindBuildCommand(\n                OpenBuildDrawerFromRightQuickRail,\n                _selectionUiCommandSystem,\n                ResolveMatchHudRuntimeFeedback(),\n                _gameTextResolver);", contentSource);
         StringAssert.Contains("_matchOverlayCommandInputSystem.Bind(", contentSource);
@@ -156,6 +155,16 @@ public sealed class GameTextResolverConsumerMigrationTests
 
         int nullCoalesceCount = CountOccurrences(source, "gameTextResolver ?? FallbackGameTextResolver.Instance");
         Assert.GreaterOrEqual(nullCoalesceCount, 6, "Every nullable consumer seam must use the immutable fallback resolver.");
+    }
+
+    // Partial extraction changes file/order, not the owning consumer or translated fallback contract.
+    private static string ReadOwnedSource(string path)
+    {
+        string stem = Path.GetFileNameWithoutExtension(path);
+        return string.Join("\n", Directory.GetFiles(Path.GetDirectoryName(path), stem + "*.cs")
+            .Where(candidate => Path.GetFileNameWithoutExtension(candidate) == stem ||
+                Path.GetFileNameWithoutExtension(candidate).StartsWith(stem + ".", StringComparison.Ordinal))
+            .OrderBy(candidate => candidate, StringComparer.Ordinal).Select(File.ReadAllText));
     }
 
     private static string ComputeSha256(string value)

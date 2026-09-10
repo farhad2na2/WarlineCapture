@@ -10,18 +10,12 @@ namespace Game.UI.Runtime
     [RequireComponent(typeof(ResourceExchangePopupView))]
     public sealed class ResourceExchangePopupRuntimeView : MonoBehaviour
     {
-        private static ResourceExchangePopupRuntimeView activeView;
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetActiveView()
-        {
-            activeView = null;
-        }
+
 
         [SerializeField] private ResourceExchangePopupView view;
 
         private readonly List<(Button Button, UnityAction Action)> _bindings = new();
-        private ResourceExchangePopupRuntimeView _previousActiveView;
         private uint _lastAppliedVersion;
         private bool _hasAppliedVersion;
 
@@ -35,16 +29,12 @@ namespace Game.UI.Runtime
 
         private void OnEnable()
         {
-            RemoveActiveView(this);
-            _previousActiveView = activeView;
-            activeView = this;
             WireButtons();
             RefreshNow(force: true);
         }
 
         private void OnDisable()
         {
-            RemoveActiveView(this);
 
             ClearBindings();
             _hasAppliedVersion = false;
@@ -53,34 +43,18 @@ namespace Game.UI.Runtime
 
         private void OnDestroy()
         {
-            RemoveActiveView(this);
             ClearBindings();
         }
 
-        internal static void RefreshActiveView()
-        {
-            while (!ReferenceEquals(activeView, null) &&
-                   (activeView == null || !activeView.isActiveAndEnabled))
-            {
-                ResourceExchangePopupRuntimeView stale = activeView;
-                activeView = stale._previousActiveView;
-                stale._previousActiveView = null;
-            }
 
-            if (!ReferenceEquals(activeView, null))
-                activeView.RefreshNow(force: false);
-        }
 
-        internal static bool IsActiveViewForTests(ResourceExchangePopupRuntimeView candidate)
-        {
-            return ReferenceEquals(activeView, candidate);
-        }
+
 
         public void ConfigureForTests(ResourceExchangePopupView popupView) => view = popupView;
 
         public void RefreshNow(bool force = false)
         {
-            if (view == null || !view.IsOpen)
+            if (!isActiveAndEnabled || view == null || !view.IsOpen)
                 return;
 
             if (!UiShellRuntimeGateway.TryReadResourceExchange(out UiResourceExchangeModel model))
@@ -105,6 +79,7 @@ namespace Game.UI.Runtime
             AddBinding(view.AmountDecreaseButton, () => Enqueue(UiActionKind.ResourceExchangeAmountDecrease, 0));
             AddBinding(view.AmountIncreaseButton, () => Enqueue(UiActionKind.ResourceExchangeAmountIncrease, 0));
             AddBinding(view.ConfirmButton, () => Enqueue(UiActionKind.ResourceExchangeConfirm, 0));
+            AddBinding(view.FooterCancelButton, () => view.CloseButton?.onClick.Invoke());
             AddBinding(view.FooterConfirmButton, () => Enqueue(UiActionKind.ResourceExchangeConfirm, 0));
             AddBinding(view.RushAllButton, () => Enqueue(UiActionKind.ResourceExchangeRushAll, 0));
             AddBinding(view.ClearCompletedButton, () => Enqueue(UiActionKind.ResourceExchangeClearCompleted, 0));
@@ -160,28 +135,7 @@ namespace Game.UI.Runtime
             _bindings.Clear();
         }
 
-        private static void RemoveActiveView(ResourceExchangePopupRuntimeView target)
-        {
-            if (ReferenceEquals(activeView, target))
-            {
-                activeView = target._previousActiveView;
-                target._previousActiveView = null;
-                return;
-            }
 
-            ResourceExchangePopupRuntimeView current = activeView;
-            while (!ReferenceEquals(current, null))
-            {
-                if (ReferenceEquals(current._previousActiveView, target))
-                {
-                    current._previousActiveView = target._previousActiveView;
-                    target._previousActiveView = null;
-                    return;
-                }
-
-                current = current._previousActiveView;
-            }
-        }
 
         private static void Enqueue(UiActionKind kind, int payloadId)
         {

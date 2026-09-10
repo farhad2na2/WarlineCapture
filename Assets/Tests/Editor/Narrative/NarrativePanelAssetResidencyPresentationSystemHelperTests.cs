@@ -94,9 +94,13 @@ public sealed class NarrativePanelAssetResidencyPresentationSystemHelperTests
             if (token == 30)
                 completed = sprite;
         };
-        residency.RequestCurrentAndPrepareNext(first.Panel16x9Reference, null, 30);
-        for (int frame = 0; frame < 120 && completed == null; frame++)
+        completed = residency.RequestCurrentAndPrepareNext(first.Panel16x9Reference, null, 30);
+        double deadline = EditorApplication.timeSinceStartup + 20;
+        while (completed == null && EditorApplication.timeSinceStartup < deadline)
+        {
+            TickAddressables();
             yield return null;
+        }
         Assert.NotNull(completed);
         Assert.IsTrue(residency.IsCurrentReady);
         residency.ReleaseAll();
@@ -109,10 +113,14 @@ public sealed class NarrativePanelAssetResidencyPresentationSystemHelperTests
         bool failed = false;
         residency.CurrentFailed += token => failed = token == 40;
         AssetReferenceSprite missing = new("00000000000000000000000000000000");
-        LogAssert.Expect(LogType.Error, new Regex(".*InvalidKeyException.*No Location found for Key=.*"));
+        LogAssert.Expect(LogType.Error, new Regex(".*InvalidKeyException.*No Location found for Key=.*", RegexOptions.Singleline));
         residency.RequestCurrentAndPrepareNext(missing, null, 40);
-        for (int frame = 0; frame < 120 && !failed; frame++)
+        double deadline=EditorApplication.timeSinceStartup+20;
+        while (!failed && EditorApplication.timeSinceStartup<deadline)
+        {
+            TickAddressables();
             yield return null;
+        }
         Assert.IsTrue(failed);
         Assert.AreEqual(0, residency.ResidentAssetCount);
     }
@@ -130,6 +138,13 @@ public sealed class NarrativePanelAssetResidencyPresentationSystemHelperTests
             yield return null;
         Assert.IsFalse(published);
         Assert.AreEqual(0, residency.ResidentAssetCount);
+    }
+
+    private static void TickAddressables()
+    {
+        typeof(UnityEngine.ResourceManagement.ResourceManager).GetMethod("Update",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+            .Invoke(Addressables.ResourceManager, new object[] { .016f });
     }
 
     private static NarrativeSequenceConfig LoadConfig()

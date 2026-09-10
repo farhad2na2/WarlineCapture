@@ -18,6 +18,11 @@ BEHAVIOR_TESTS = ROOT / "Assets/Tests/Editor/ThreatWarningValidationTests.cs"
 PERFORMANCE_TESTS = ROOT / "Assets/Tests/Editor/WorldScopedComponentQueryCachePerformanceValidation.cs"
 
 
+def read_owned_source(path: Path) -> str:
+    return "\n".join(p.read_text(encoding="utf-8") for p in sorted(path.parent.glob(path.stem + "*.cs"))
+        if p.stem == path.stem or p.stem.startswith(path.stem + "."))
+
+
 class ArchitectureWorldOwnedRuntimeStateTests(unittest.TestCase):
     def test_threat_warning_mailbox_is_world_owned_and_explicit(self) -> None:
         state = THREAT_STATE.read_text(encoding="utf-8")
@@ -34,16 +39,16 @@ class ArchitectureWorldOwnedRuntimeStateTests(unittest.TestCase):
             self.assertNotIn(forbidden, state)
 
     def test_unmanaged_detection_system_owns_singleton_creation_and_writes(self) -> None:
-        system = THREAT_SYSTEM.read_text(encoding="utf-8")
+        system = read_owned_source(THREAT_SYSTEM)
         self.assertIn("partial struct ThreatDetectionWarningSystem : ISystem", system)
         self.assertNotIn("SystemBase", system)
         self.assertIn("EntityQuery _warningStateQuery", system)
         self.assertIn("ThreatWarningRuntimeState.EnsureSingleton", system)
-        self.assertIn("state.EntityManager,\n                    _warningStateQuery", system)
+        self.assertRegex(system, r"ThreatWarningRuntimeState\.RequestWarning\(\s*state\.EntityManager,\s*_warningStateQuery")
 
     def test_presentation_cache_has_explicit_world_and_disposal_owner(self) -> None:
-        update = GAMEPLAY_UPDATE.read_text(encoding="utf-8")
-        presentation = THREAT_PRESENTATION_STATE.read_text(encoding="utf-8")
+        update = read_owned_source(GAMEPLAY_UPDATE)
+        presentation = read_owned_source(THREAT_PRESENTATION_STATE)
         self.assertIn(
             "WorldScopedComponentQueryCache<ThreatWarningRuntimeStateComponent>",
             presentation,
@@ -58,8 +63,8 @@ class ArchitectureWorldOwnedRuntimeStateTests(unittest.TestCase):
 
     def test_match_intro_query_uses_composition_supplied_world(self) -> None:
         query = MATCH_INTRO_QUERY.read_text(encoding="utf-8")
-        bootstrap = MATCH_BOOTSTRAP.read_text(encoding="utf-8")
-        scene = MATCH_SCENE.read_text(encoding="utf-8")
+        bootstrap = read_owned_source(MATCH_BOOTSTRAP)
+        scene = read_owned_source(MATCH_SCENE)
         self.assertIn("public void Bind(World world)", query)
         self.assertIn("WorldScopedComponentQueryCache<MatchIntroTransitionComponent>", query)
         self.assertNotIn("World.DefaultGameObjectInjectionWorld", query)

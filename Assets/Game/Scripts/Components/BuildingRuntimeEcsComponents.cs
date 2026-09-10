@@ -73,7 +73,8 @@ namespace Game.Components
     {
         public FixedString128Bytes UnitId;
         public FixedString128Bytes DisplayName;
-        public int Price;
+        public int Price; // Tactical Materials. Credits remain a separate resource.
+        public int CreditsCost;
         public byte CanRequest;
         public byte IsVehicle;
     }
@@ -439,6 +440,8 @@ namespace Game.Components
         public FixedString128Bytes ProducerDisplayName;
         public FixedString128Bytes UnitDisplayName;
         public int Cost;
+        public int MaterialsCost;
+        public byte ResourcesReserved;
         public int QueueCount;
         public int ProducedCount;
     }

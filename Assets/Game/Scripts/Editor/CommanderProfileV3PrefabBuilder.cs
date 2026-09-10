@@ -292,7 +292,7 @@ namespace Game.Editor
             CreateGradientPanel(xpFill, new Color32(37, 175, 238, 255), new Color32(5, 112, 184, 255), Color.clear, 0f);
             TMP_Text milestone = CreateText("Milestone", identity, "NEXT MILESTONE:  LEVEL 39", 18f, boldFont, TextAlignmentOptions.MidlineLeft, theme.TextPrimary);
             SetTopLeft(milestone.rectTransform, 62f, 454f, 330f, 37f);
-            identity.gameObject.AddComponent<CommanderProfileContentView>().Configure(name, subtitle);
+            root.gameObject.AddComponent<CommanderProfileContentView>().Configure(name, subtitle);
 
             RectTransform stats = CreateTopLeft("CommanderStatsPanel", root, 262f, 645f, 860f, 145f);
             CreateGradientPanel(stats, DarkTop, DarkBottom, Border, 3f);

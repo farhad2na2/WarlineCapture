@@ -205,37 +205,7 @@ namespace Game.UI.Runtime
             RefreshLayout();
         }
 
-        private void LateUpdate()
-        {
-            Canvas canvas = GetComponentInParent<Canvas>();
-            RectTransform canvasRect = canvas != null ? canvas.rootCanvas.transform as RectTransform : null;
-            if (canvasRect == null)
-                return;
 
-            if (_rectTransform == null)
-                _rectTransform = (RectTransform)transform;
-
-            Vector3 expectedPosition = ResolveCanvasAnchorWorldPosition(canvasRect, alignment);
-            float expectedScale = Mathf.Min(
-                canvasRect.rect.width / referenceResolution.x,
-                canvasRect.rect.height / referenceResolution.y);
-            float expectedExtraWidth = expectedScale > 0f
-                ? Mathf.Max(0f, canvasRect.rect.width / expectedScale - referenceResolution.x)
-                : 0f;
-            Vector2 expectedSize = new(
-                referenceResolution.x + (expandToCanvasWidth ? expectedExtraWidth : 0f),
-                referenceResolution.y);
-            bool mountMovedAfterInitialLayout =
-                (_rectTransform.position - expectedPosition).sqrMagnitude > 0.01f ||
-                Mathf.Abs(_rectTransform.localScale.x - expectedScale) > 0.001f ||
-                _rectTransform.rect.size != expectedSize;
-
-            // The shell's region layout settles after a section is instantiated. Its
-            // parent can therefore move without changing the root Canvas dimensions.
-            // Re-apply only when that late mount changes our authored reference frame.
-            if (canvasRect.rect.size != _lastCanvasSize || mountMovedAfterInitialLayout)
-                RefreshLayout();
-        }
 
         private void OnRectTransformDimensionsChange()
         {

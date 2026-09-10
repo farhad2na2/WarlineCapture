@@ -355,7 +355,7 @@ namespace Game.Composition
         {
             if (!hasResolvedOperationMapLaunchSelection)
             {
-                if (!CampaignMissionOperationMapLaunchResolver.TryResolve(
+                if (!MatchSceneView.OperationMapLaunchResolver.TryResolve(
                         world,
                         missionId,
                         scenarioId,

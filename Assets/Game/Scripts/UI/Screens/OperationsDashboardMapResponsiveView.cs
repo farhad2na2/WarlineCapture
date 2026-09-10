@@ -84,13 +84,6 @@ namespace Game.UI.Runtime
         private void Start() => RefreshLayout();
         private void OnRectTransformDimensionsChange() => RefreshLayout();
 
-        private void LateUpdate()
-        {
-            if (mapClip == null)
-                return;
-            float width = mapClip.rect.width > 0f ? mapClip.rect.width : mapClip.sizeDelta.x;
-            if (!Mathf.Approximately(width, _lastWidth))
-                RefreshLayout();
-        }
+
     }
 }

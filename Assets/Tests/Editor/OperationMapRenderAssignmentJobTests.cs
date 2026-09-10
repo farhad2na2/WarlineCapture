@@ -211,12 +211,14 @@ public sealed class OperationMapRenderAssignmentJobTests
 
         internal void Run(int generation)
         {
+            using var selectionFailure = new NativeReference<OperationMapRenderCellSelectionFailure>(Allocator.TempJob);
             new OperationMapRenderAssignmentJob
             {
                 Database = _database,
                 SelectedCellIndices = Cells,
                 RequiredRows = Rows,
                 PlacementFirstLogicalRow = Prefix,
+                SelectionFailure = selectionFailure,
                 AssignmentGeneration = generation,
                 MaxDirtySlotCount = 3,
                 SlotToLogicalRow = SlotToRow,

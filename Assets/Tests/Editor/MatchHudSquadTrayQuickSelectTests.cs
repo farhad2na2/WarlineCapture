@@ -22,7 +22,7 @@ public sealed class MatchHudSquadTrayQuickSelectTests
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(MatchHudContentPrefabPath);
         Assert.NotNull(prefab);
 
-        Transform frame = prefab.transform.Find("FooterContent/SquadTray/Frame");
+        Transform frame = prefab.transform.Find("V3Composition/FooterContent/SquadTray/Frame");
         Assert.NotNull(frame);
 
         for (int i = 1; i <= 5; i++)
@@ -36,7 +36,8 @@ public sealed class MatchHudSquadTrayQuickSelectTests
 
             Image frameImage = card.Find("Frame")?.GetComponent<Image>();
             Assert.NotNull(frameImage, $"SquadCard{i}/Frame must keep its frame image.");
-            Assert.AreSame(frameImage, button.targetGraphic, $"SquadCard{i} button should target its existing frame image.");
+            Assert.IsTrue(button.targetGraphic is V3GradientGraphic, $"SquadCard{i} must tint its V3 gradient interaction surface.");
+            Assert.IsTrue(button.targetGraphic.raycastTarget);
             Assert.IsTrue(frameImage.raycastTarget, $"SquadCard{i}/Frame image must receive pointer raycasts.");
         }
     }
@@ -47,7 +48,7 @@ public sealed class MatchHudSquadTrayQuickSelectTests
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(MatchHudContentPrefabPath);
         Assert.NotNull(prefab);
 
-        Transform frame = prefab.transform.Find("FooterContent/SquadTray/Frame");
+        Transform frame = prefab.transform.Find("V3Composition/FooterContent/SquadTray/Frame");
         Assert.NotNull(frame);
 
         MatchHudSquadTrayView view = frame.GetComponent<MatchHudSquadTrayView>();
@@ -76,7 +77,7 @@ public sealed class MatchHudSquadTrayQuickSelectTests
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(MatchHudContentPrefabPath);
         Assert.NotNull(prefab);
 
-        Transform frame = prefab.transform.Find("FooterContent/SquadTray/Frame");
+        Transform frame = prefab.transform.Find("V3Composition/FooterContent/SquadTray/Frame");
         Assert.NotNull(frame);
 
         MatchHudSquadTrayView view = frame.GetComponent<MatchHudSquadTrayView>();
@@ -107,7 +108,7 @@ public sealed class MatchHudSquadTrayQuickSelectTests
         GameObject instance = Object.Instantiate(prefab);
         try
         {
-            Transform frame = instance.transform.Find("FooterContent/SquadTray/Frame");
+            Transform frame = instance.transform.Find("V3Composition/FooterContent/SquadTray/Frame");
             Assert.NotNull(frame);
 
             MatchHudSquadTrayView view = frame.GetComponent<MatchHudSquadTrayView>();

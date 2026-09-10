@@ -167,6 +167,45 @@ namespace Game.Editor
                 $"catalog={CatalogPath} report={MissingPersianReportPath}");
         }
 
+        public static void RepairMissionResultBindingsAndFont()
+        {
+            var catalog = AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(CatalogPath);
+            if (catalog == null) throw new InvalidOperationException("Missing shared locale catalog.");
+            var english = ToDictionary(catalog.FindLocale(GameLocalization.EnglishLocaleCode));
+            var keysBySource = new Dictionary<string, string>(StringComparer.Ordinal);
+            foreach (var entry in english.OrderBy(pair => pair.Key, StringComparer.Ordinal))
+            {
+                string source = NormalizeSource(entry.Value);
+                if (!keysBySource.ContainsKey(source)) keysBySource.Add(source, entry.Key);
+            }
+            foreach (string path in new[] { MissionResultV3PrefabBuilder.PrefabPath,
+                         "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab" })
+            {
+            var root = PrefabUtility.LoadPrefabContents(path);
+            try
+            {
+                var bindings = new List<(V3LocalizedTextBindingView binding, string key, string source)>();
+                var missing = new List<string>();
+                foreach (var text in root.GetComponentsInChildren<TMP_Text>(true))
+                {
+                    string source = NormalizeSource(ReadAuthoredText(text));
+                    if (!IsTranslatable(source)) continue;
+                    var binding = text.GetComponent<V3LocalizedTextBindingView>();
+                    if (binding != null && !string.IsNullOrEmpty(binding.LocalizationKey) && english.ContainsKey(binding.LocalizationKey)) continue;
+                    if (!keysBySource.TryGetValue(source, out string key)) { missing.Add(source); continue; }
+                    bindings.Add((binding ?? text.gameObject.AddComponent<V3LocalizedTextBindingView>(), key, source));
+                }
+                if (missing.Count != 0) throw new InvalidOperationException(path + " needs explicit translations: " + string.Join(" | ", missing));
+                foreach (var entry in bindings) entry.binding.Configure(entry.key, entry.source, true);
+                if (bindings.Count != 0) PrefabUtility.SaveAsPrefabAsset(root, path);
+                Debug.Log("[MissionUiLocalization] prefab=" + path + " repairedBindings=" + bindings.Count);
+            }
+            finally { PrefabUtility.UnloadPrefabContents(root); }
+            }
+            RebuildSharedPersianFontCoverage();
+            ValidateBindingsAndCoverage();
+        }
+
         [MenuItem("Game/UI/V3/Localization/Validate Bindings And Coverage")]
         public static void ValidateBindingsAndCoverage()
         {
@@ -228,7 +267,7 @@ namespace Game.Editor
                     if (!IsTranslatable(source))
                         continue;
 
-                    V3LocalizedTextBinding binding = text[i].GetComponent<V3LocalizedTextBinding>();
+                    V3LocalizedTextBindingView binding = text[i].GetComponent<V3LocalizedTextBindingView>();
                     if (binding == null)
                     {
                         errors.Add($"{path}:{HierarchyPath(text[i].transform)} missing binding");
@@ -396,10 +435,10 @@ namespace Game.Editor
                         continue;
 
                     string key = GetOrCreateKey(source, english, keysByEnglish);
-                    V3LocalizedTextBinding binding = text[i].GetComponent<V3LocalizedTextBinding>();
+                    V3LocalizedTextBindingView binding = text[i].GetComponent<V3LocalizedTextBindingView>();
                     if (binding == null)
                     {
-                        binding = text[i].gameObject.AddComponent<V3LocalizedTextBinding>();
+                        binding = text[i].gameObject.AddComponent<V3LocalizedTextBindingView>();
                         changed = true;
                     }
 
@@ -525,10 +564,16 @@ namespace Game.Editor
             clearOnBuild.boolValue = false;
             serializedFont.ApplyModifiedPropertiesWithoutUndo();
 
-            // A deterministic, complete atlas is safer than whichever small glyph subset happened
-            // to be visited by the most recent Editor play session. This fixes missing letters on
-            // menu, match, popup, and narrative screens and also survives player builds.
-            font.ClearFontAssetData();
+            // Preserve the existing atlas and Latin/Arabic glyphs used by authored UI and
+            // narrative assets. Append missing catalog glyphs without invalidating UVs.
+            // FontEngine is not guaranteed to have been initialized in executeMethod startup.
+            // An already complete font needs no mutation, especially on repeated validation runs.
+            if (font.HasCharacters(requiredCharacters, out uint[] _, searchFallbacks: false, tryAddCharacter: false))
+            {
+                EditorUtility.SetDirty(font);
+                return;
+            }
+            UnityEngine.TextCore.LowLevel.FontEngine.InitializeFontEngine();
             bool addedAll = font.TryAddCharacters(
                 requiredCharacters,
                 out string missingCharacters,
@@ -585,7 +630,7 @@ namespace Game.Editor
             var characters = new SortedSet<char>();
             foreach (string value in localizedValues ?? Array.Empty<string>())
             {
-                string shaped = V3LocalizedTextBinding.ShapeForRendering(value);
+                string shaped = V3LocalizedTextBindingView.ShapeForRendering(value);
                 for (int i = 0; i < shaped.Length; i++)
                 {
                     char character = shaped[i];
@@ -712,9 +757,9 @@ namespace Game.Editor
             Dictionary<string, string> persian,
             Dictionary<string, string> keysByEnglish)
         {
-            ImportM02Lines(M02EstablishBaseLocalizedText.Brief, english, persian, keysByEnglish);
-            ImportM02Lines(M02EstablishBaseLocalizedText.Comms, english, persian, keysByEnglish);
-            ImportM02Lines(M02EstablishBaseLocalizedText.Debrief, english, persian, keysByEnglish);
+            ImportM02Lines(M02EstablishBaseTextCatalog.Brief, english, persian, keysByEnglish);
+            ImportM02Lines(M02EstablishBaseTextCatalog.Comms, english, persian, keysByEnglish);
+            ImportM02Lines(M02EstablishBaseTextCatalog.Debrief, english, persian, keysByEnglish);
         }
 
         private static void ImportRuntimeUiStrings(
@@ -830,7 +875,7 @@ namespace Game.Editor
             AddRuntimeText("ui.narrative.confirm_skip_accessible", "Confirm skip to gameplay", "رفتن مستقیم به بازی را تأیید کنید");
 
             // Match HUD values are frequently rebuilt from live ECS data. Template entries let
-            // V3LocalizedTextBinding translate the rendered value without teaching each view
+            // V3LocalizedTextBindingView translate the rendered value without teaching each view
             // about individual languages.
             AddRuntimeText("ui.hud.passengers_capacity", "PASSENGERS {0}/{1}", "مسافران {0}/{1}");
             AddRuntimeText("ui.hud.passengers_soldiers_capacity", "PASSENGERS {0}/{1} | SOLDIERS {2}/{3}", "مسافران {0}/{1} | سربازان {2}/{3}");

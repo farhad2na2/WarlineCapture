@@ -321,6 +321,7 @@ public sealed class BaseBreachValidationTests
             DynamicBuffer<AISquadUnit> members = em.AddBuffer<AISquadUnit>(squadEntity);
             members.Add(new AISquadUnit { Unit = attacker });
 
+            buildingPlacement.TickRuntimeForTests();
             SystemHandle system = World.DefaultGameObjectInjectionWorld.CreateSystem<AICombatOrderSystem>();
             system.Update(World.DefaultGameObjectInjectionWorld.Unmanaged);
 
@@ -378,6 +379,7 @@ public sealed class BaseBreachValidationTests
             Entity squadEntity = CreateAttackSquad(em, 8, FactionIdentity.EnemyFactionId, FactionIdentity.PlayerFactionId, target, new int2(60, 100), new int2(190, 100));
             em.AddBuffer<AISquadUnit>(squadEntity).Add(new AISquadUnit { Unit = attacker });
 
+            buildingPlacement.TickRuntimeForTests();
             SystemHandle combatSystem = World.DefaultGameObjectInjectionWorld.CreateSystem<AICombatOrderSystem>();
             combatSystem.Update(World.DefaultGameObjectInjectionWorld.Unmanaged);
 
@@ -1444,7 +1446,12 @@ public sealed class BaseBreachValidationTests
 
         public void TickRuntimeForTests()
         {
-            _buildingGameplay.RuntimeUpdate.Update(_buildingGameplay.RuntimeUpdateContext);
+            World world = World.DefaultGameObjectInjectionWorld;
+            for (int i = 0; i < 4; i++)
+            {
+                world.SetTime(new Unity.Core.TimeData(world.Time.ElapsedTime + 0.2, 0.2f));
+                _buildingGameplay.RuntimeUpdate.Update(_buildingGameplay.RuntimeUpdateContext);
+            }
         }
 
         public void SyncDestroyedRuntimeBuildingCombatEntitiesForTests()

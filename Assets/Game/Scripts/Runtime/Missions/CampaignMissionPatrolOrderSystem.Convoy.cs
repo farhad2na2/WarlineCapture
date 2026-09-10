@@ -27,6 +27,9 @@ namespace Game.Runtime
                 CampaignMissionUnitRoleComponent current = role.ValueRO;
                 if (!current.SessionToken.Equals(runtime.SessionToken) || current.RouteId.IsEmpty || health.ValueRO.Current <= 0 ||
                     !TryFindRoute(ref definition, current.RouteId, out int routeIndex)) continue;
+                // Pursuers retain autonomous combat along the route. A manual move suppresses
+                // acquisition and would make them walk past the stranded specialists.
+                if (definition.Extraction.Enabled != 0 && state.EntityManager.HasComponent<EngageTarget>(entity)) continue;
                 ref CampaignMissionPatrolRouteBlob route = ref definition.PatrolRoutes[routeIndex];
                 if (facts.ElapsedMilliseconds < route.StartDelayMilliseconds || current.RouteIndex >= route.AnchorIds.Length) continue;
                 var progress = progressRef.ValueRO;
@@ -59,7 +62,8 @@ namespace Game.Runtime
             }
             for (int i = 0; i < targets.Length; i++)
                 UnitMoveOrderRequestSystem.EnqueueMoveOrder(state.EntityManager, targets[i], cells[i],
-                    UnitMoveOrderRequestKind.Immediate, true, false, 0, 0, _convoyMoveOrderQueueQuery);
+                    definition.Extraction.Enabled != 0 ? UnitMoveOrderRequestKind.TargetPathOnly : UnitMoveOrderRequestKind.Immediate,
+                    true, false, 0, 0, _convoyMoveOrderQueueQuery);
             targets.Dispose();
             cells.Dispose();
         }

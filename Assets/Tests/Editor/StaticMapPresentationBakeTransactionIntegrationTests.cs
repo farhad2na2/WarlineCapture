@@ -9,8 +9,9 @@ using UnityEngine.SceneManagement;
 
 public sealed class StaticMapPresentationBakeTransactionIntegrationTests
 {
-    private const string IntegrationScenePath =
-        "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/desert_base_01/Scenes/StaticMapPresentation_opmap_skirmish_desert_base_01_chunk_p999_p999.unity";
+    private const string MapId = "opmap.test.bake_transaction";
+    private const string OutputRoot = "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/test/bake_transaction";
+    private const string IntegrationScenePath = OutputRoot + "/Scenes/StaticMapPresentation_opmap_test_bake_transaction_chunk_p999_p999.unity";
 
     [Test]
     public void Rollback_RestoresDeletedSceneBytesAndGuidAfterAssetDatabaseRefresh()
@@ -23,6 +24,9 @@ public sealed class StaticMapPresentationBakeTransactionIntegrationTests
         string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
         string sceneFilePath = Path.Combine(projectRoot, IntegrationScenePath);
         string sceneMetaPath = sceneFilePath + ".meta";
+        Assert.That(Directory.Exists(OutputRoot), Is.False, "The fixture must own its entire output directory.");
+        Directory.CreateDirectory(OutputRoot + "/Scenes");
+        AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
         Scene scene = default;
         try
         {
@@ -43,7 +47,7 @@ public sealed class StaticMapPresentationBakeTransactionIntegrationTests
             Assert.Throws<InvalidOperationException>(() =>
             {
                 using StaticMapPresentationBakeTransaction transaction =
-                    StaticMapPresentationBakeTransaction.Begin(projectRoot, new[] { IntegrationScenePath });
+                    StaticMapPresentationBakeTransaction.Begin(projectRoot, MapId, OutputRoot, OutputRoot + "/StaticMapPresentationManifest.asset", OutputRoot + "/StaticMapPresentationSceneIntegrity.json", new[] { IntegrationScenePath });
                 Assert.That(AssetDatabase.DeleteAsset(IntegrationScenePath), Is.True);
                 throw new InvalidOperationException("Simulated bake failure after deleting an owned scene.");
             });
@@ -58,7 +62,7 @@ public sealed class StaticMapPresentationBakeTransactionIntegrationTests
         {
             if (scene.IsValid() && scene.isLoaded)
                 EditorSceneManager.CloseScene(scene, true);
-            AssetDatabase.DeleteAsset(IntegrationScenePath);
+            AssetDatabase.DeleteAsset(OutputRoot);
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
         }
     }

@@ -24,7 +24,7 @@ public sealed class RuntimeBuildingSystemTests
             markerTests.SetUp();
             try
             {
-                markerTests.RefreshUsesPlausibleOwnedRendererBoundsWhenExactGeometryIsMissing();
+                markerTests.RefreshKeepsGameplayFootprintWithOwnedRendererCenter();
             }
             finally
             {

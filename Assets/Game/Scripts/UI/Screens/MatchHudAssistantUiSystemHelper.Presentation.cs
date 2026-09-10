@@ -256,6 +256,8 @@ namespace Game.UI.Runtime
         public void CompleteWorldTarget(TacticalCommandMode mode)
         {
             _highlightPresentationSystem.CompleteWorldTarget(mode);
+            // M3/M4 completion is projected from mission facts, never inferred from a legacy click.
+            if (_lastPanelModel.TutorialStepCount != 5) return;
             bool completesTutorialTarget =
                 (_lastPanelModel.TutorialStep == 2 && mode == TacticalCommandMode.Move) ||
                 (_lastPanelModel.TutorialStep is 3 or 4 && mode == TacticalCommandMode.Attack);
@@ -309,7 +311,7 @@ namespace Game.UI.Runtime
             if (_popupView == null || !_popupView.TryBindHierarchy())
             {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-                Debug.LogError("[ARIA] POP13 popup is missing AriaCommandAssistantPopupView or its locked LandscapeLayout hierarchy.");
+                Game.UI.Contracts.UiDiagnostics.Error("[ARIA] POP13 popup is missing AriaCommandAssistantPopupView or its locked LandscapeLayout hierarchy.");
 #endif
                 DestroyPopupInstance();
                 return false;
@@ -449,8 +451,9 @@ namespace Game.UI.Runtime
             _embeddedTutorialView?.ApplyInteractionState(
                 mode,
                 _tutorialWorldTargetCompleted);
-            if ((_lastPanelModel.TutorialStep == 2 && mode == TacticalCommandMode.Move) ||
-                (_lastPanelModel.TutorialStep is 3 or 4 && mode == TacticalCommandMode.Attack))
+            if (_lastPanelModel.TutorialStepCount == 5 &&
+                ((_lastPanelModel.TutorialStep == 2 && mode == TacticalCommandMode.Move) ||
+                (_lastPanelModel.TutorialStep is 3 or 4 && mode == TacticalCommandMode.Attack)))
             {
                 ScheduleTutorialSubstep(_lastPanelModel.TutorialStep, Time.unscaledTime);
             }
@@ -458,6 +461,7 @@ namespace Game.UI.Runtime
 
         private void HandleUiSurfaceAcknowledged(byte recommendationKind)
         {
+            if (_lastPanelModel.TutorialStepCount != 9) return;
             byte step = recommendationKind switch
             {
                 4 => 2,

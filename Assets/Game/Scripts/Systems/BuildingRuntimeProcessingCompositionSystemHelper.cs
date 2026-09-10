@@ -649,11 +649,13 @@ namespace Game.Runtime
                     continue;
                 }
 
+                definitionSystem.TryResolveConfiguredUnitResourceCosts(prefab, price, out int creditsCost, out int materialsCost);
                 buffer.Add(new BuildingConfiguredUnitReadModel
                 {
                     UnitId = ResolveBoundaryId(prefab, displayName),
                     DisplayName = ToFixedString128(displayName),
-                    Price = Mathf.Max(0, price),
+                    Price = Mathf.Max(0, materialsCost),
+                    CreditsCost = Mathf.Max(0, creditsCost),
                     CanRequest = canRequest ? (byte)1 : (byte)0,
                     IsVehicle = isVehicle ? (byte)1 : (byte)0
                 });

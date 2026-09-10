@@ -136,3 +136,47 @@ MonoBehaviour:
       targetMissionRoleId: role.friendly.forward_post
       warningAtMilliseconds: 90000
       activationAtMilliseconds: 120000
+  defense:
+    enabled: 0
+    vehiclesSelfSupplied: 0
+    authoredMapDefensesDormant: 0
+    forwardPostStableId:
+    innerCoreAnchorId:
+    innerCoreRadius: 0
+    sensorMissionRoleId:
+    initialProducerAnchorId:
+    radarPingCharges: 0
+    radarPingCooldownMilliseconds: 0
+    convoyElements: []
+    guidanceSteps: []
+    cameraTour:
+      StartHoldMilliseconds: 0
+      PostHoldMilliseconds: 0
+      ApproachHoldMilliseconds: 0
+      ReturnHoldMilliseconds: 0
+      SmoothTimeSeconds: 0
+      PostPerspective: {x: 0, y: 0, z: 0, w: 0}
+      ApproachPerspective: {x: 0, y: 0, z: 0, w: 0}
+  extraction:
+    enabled: 0
+    passengerRoleId:
+    carrierRoleId:
+    aircraftRoleId:
+    rescueAnchorId:
+    landingAnchorId:
+    departureAnchorId:
+    requiredPassengers: 0
+    secureHoldMilliseconds: 0
+    deadlineMilliseconds: 0
+    landingRadius: 0
+    departureRadius: 0
+    vehiclesSelfSupplied: 0
+    authoredMapDefensesDormant: 0
+    cameraTour:
+      StartHoldMilliseconds: 0
+      PostHoldMilliseconds: 0
+      ApproachHoldMilliseconds: 0
+      ReturnHoldMilliseconds: 0
+      SmoothTimeSeconds: 0
+      PostPerspective: {x: 0, y: 0, z: 0, w: 0}
+      ApproachPerspective: {x: 0, y: 0, z: 0, w: 0}

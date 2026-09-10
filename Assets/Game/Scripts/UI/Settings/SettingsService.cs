@@ -1,4 +1,3 @@
-using Game.Configs;
 using UnityEngine;
 
 namespace Game.UI.Runtime
@@ -89,7 +88,7 @@ namespace Game.UI.Runtime
                 Localization = new LocalizationSettingsModel
                 {
                     Language = UILanguage.English,
-                    LocaleCode = GameLocalization.EnglishLocaleCode
+                    LocaleCode = Game.UI.Contracts.UiLocaleCodes.English
                 },
                 Assistant = new AssistantSettingsModel
                 {
@@ -202,7 +201,7 @@ namespace Game.UI.Runtime
             PlayerPrefs.SetInt(LanguageKey, (int)model.Localization.Language);
             string localeCode = ResolveLocaleCode(model.Localization);
             PlayerPrefs.SetString(LocaleCodeKey, localeCode);
-            PlayerPrefs.SetString(GameLocalization.LocalePreferenceKey, localeCode);
+            PlayerPrefs.SetString(Game.UI.Contracts.UiLocaleCodes.PreferenceKey, localeCode);
             PlayerPrefs.SetInt(AssistanceLevelKey, (int)model.Assistant.AssistanceLevel);
             PlayerPrefs.SetInt(AssistantNarrationModeKey, (int)model.Assistant.NarrationMode);
             PlayerPrefs.SetInt(AssistantAllowTakeoverKey, model.Assistant.AllowTakeover ? 1 : 0);
@@ -252,7 +251,7 @@ namespace Game.UI.Runtime
 
         internal static void PublishRuntimeSettings(UISettingsModel model)
         {
-            GameLocalization.SetLocale(
+            UiShellRuntimeGateway.Localization.SetLocale(
                 ResolveLocaleCode(model.Localization),
                 persist: true);
             RuntimeApplied?.Invoke(model);
@@ -263,8 +262,8 @@ namespace Game.UI.Runtime
             if (!string.IsNullOrWhiteSpace(localization.LocaleCode))
                 return localization.LocaleCode;
             return localization.Language == UILanguage.Persian
-                ? GameLocalization.PersianLocaleCode
-                : GameLocalization.EnglishLocaleCode;
+                ? Game.UI.Contracts.UiLocaleCodes.Persian
+                : Game.UI.Contracts.UiLocaleCodes.English;
         }
 
         internal static LocalizationSettingsModel SetLocaleCode(
@@ -272,11 +271,11 @@ namespace Game.UI.Runtime
             string localeCode)
         {
             localization.LocaleCode = string.IsNullOrWhiteSpace(localeCode)
-                ? GameLocalization.EnglishLocaleCode
+                ? Game.UI.Contracts.UiLocaleCodes.English
                 : localeCode;
             localization.Language = string.Equals(
                 localization.LocaleCode,
-                GameLocalization.PersianLocaleCode,
+                Game.UI.Contracts.UiLocaleCodes.Persian,
                 System.StringComparison.OrdinalIgnoreCase)
                 ? UILanguage.Persian
                 : UILanguage.English;
@@ -288,13 +287,13 @@ namespace Game.UI.Runtime
         {
             UILanguage legacy = GetEnum(LanguageKey, defaults.Language);
             string legacyCode = legacy == UILanguage.Persian
-                ? GameLocalization.PersianLocaleCode
-                : GameLocalization.EnglishLocaleCode;
+                ? Game.UI.Contracts.UiLocaleCodes.Persian
+                : Game.UI.Contracts.UiLocaleCodes.English;
             // First-launch and the Settings screen both write the shared preference. Keep the
             // Settings-only key as a migration bridge, but let the central locale win so a newly
             // added language remains selected without adding another UILanguage enum value.
-            string localeCode = PlayerPrefs.HasKey(GameLocalization.LocalePreferenceKey)
-                ? PlayerPrefs.GetString(GameLocalization.LocalePreferenceKey, legacyCode)
+            string localeCode = PlayerPrefs.HasKey(Game.UI.Contracts.UiLocaleCodes.PreferenceKey)
+                ? PlayerPrefs.GetString(Game.UI.Contracts.UiLocaleCodes.PreferenceKey, legacyCode)
                 : PlayerPrefs.GetString(LocaleCodeKey, legacyCode);
             return SetLocaleCode(defaults, localeCode);
         }

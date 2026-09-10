@@ -1,0 +1,150 @@
+{
+  "provider": "ElevenLabs",
+  "destination": "https://api.elevenlabs.io",
+  "model": "eleven_v3",
+  "clips": 38,
+  "existingPaidAccount": true,
+  "noSubscriptionChanges": true,
+  "voices": {
+    "DALIA": "MK1Zvh93428YrgOQ8Obr",
+    "SAMIRA": "7uxeJ73HfJL9gOH2mttA",
+    "ARIA": "Fi9tPTnEcbh3of7hOHC8",
+    "LAILA": "EXAVITQu4vr4xnSDxMaL"
+  },
+  "lailaVoice": "Sarah - Mature, Reassuring, Confident (existing licensed premade voice; fictional character performance)",
+  "entries": [
+    [
+      "narrative",
+      "m04-brief-01",
+      "LAILA",
+      "Captain Laila Nasser. My helicopter is ready at the eastern landing area. Bring the four specialists to me in the APC; I can keep this extraction window open for ten minutes.",
+      "سروان لیلا ناصر هستم. بالگردم در محل فرود شرقی آماده است. چهار متخصص را با نفربر به من برسانید؛ فرصت تخلیه را ده دقیقه باز نگه می‌دارم."
+    ],
+    [
+      "narrative",
+      "m04-brief-02",
+      "SAMIRA",
+      "Two medics and two engineers are stranded by the western road. They are the people who can reopen the clinics and restore the network. Bring every one of them home.",
+      "دو امدادگر و دو مهندس کنار جادهٔ غربی گرفتار شده‌اند. آن‌ها می‌توانند درمانگاه‌ها را باز کنند و شبکه را بازگردانند. همه را سالم برگردانید."
+    ],
+    [
+      "narrative",
+      "m04-brief-03",
+      "DALIA",
+      "Rifles cover the road; the APC carries the team. Unload beside Laila, board the helicopter, hold the area clear for twenty seconds, then fly to the marked departure zone.",
+      "تفنگدارها جاده را پوشش می‌دهند؛ نفربر تیم را منتقل می‌کند. کنار لیلا پیاده شوید، سوار بالگرد شوید، بیست ثانیه محل را امن نگه دارید و سپس به محدودهٔ خروج پرواز کنید."
+    ],
+    [
+      "narrative",
+      "m04-comms-01",
+      "LAILA",
+      "All four are aboard. The landing area is clear and departure is authorized. Fly to the marked exit; I will take the team from there.",
+      "هر چهار نفر سوار شده‌اند. محل فرود امن است و اجازهٔ خروج داریم. به محل خروج مشخص‌شده پرواز کنید؛ از آنجا تیم را منتقل می‌کنم."
+    ],
+    [
+      "narrative",
+      "m04-debrief-01",
+      "LAILA",
+      "Four passengers accounted for. Your escort gave us the time we needed. I am joining this operation; you will have an airlift pilot when the next team needs a way out.",
+      "هر چهار مسافر حاضرند. پوشش شما زمان لازم را فراهم کرد. به این عملیات می‌پیوندم؛ از این پس برای نجات تیم بعدی یک خلبان ترابری هوایی خواهید داشت."
+    ],
+    [
+      "narrative",
+      "m04-debrief-02",
+      "SAMIRA",
+      "The engineers brought their repair records. Several outages lead back to the same fortified communications node. We finally have a place to investigate.",
+      "مهندسان سوابق تعمیر را آورده‌اند. چند قطعی به یک گرهٔ ارتباطی مستحکم برمی‌گردد. سرانجام محلی برای بررسی داریم."
+    ],
+    [
+      "narrative",
+      "m04-debrief-03",
+      "ARIA",
+      "Extraction confirmed. Captain Nasser is on the roster. Next objective: assess that communications node. First, let the medical team get back to work.",
+      "تخلیه تأیید شد. سروان ناصر به گروه پیوست. هدف بعدی: بررسی آن گرهٔ ارتباطی. ابتدا بگذارید تیم پزشکی به کارش برگردد."
+    ],
+    [
+      "tutorial",
+      "tutorial-m04-01",
+      "ARIA",
+      "Save all four specialists: APC first, helicopter second. You have ten minutes after the camera returns. Enemy kills are optional. Both vehicles carry their own mission supply.",
+      "هر چهار متخصص را نجات دهید: ابتدا نفربر، سپس بالگرد. پس از بازگشت دوربین ده دقیقه فرصت دارید. کشتن دشمن الزامی نیست. هر دو وسیله ذخیرهٔ مأموریت خود را دارند."
+    ],
+    [
+      "tutorial",
+      "tutorial-m04-02",
+      "ARIA",
+      "Tap the wheeled APC near your rifle squads. Its passenger list shows the real seats. Keep escort soldiers outside so all four specialists can board.",
+      "نفربر چرخ‌دار کنار تفنگدارها را انتخاب کنید. فهرست مسافران ظرفیت واقعی را نشان می‌دهد. نیروهای محافظ را بیرون نگه دارید تا هر چهار متخصص سوار شوند."
+    ],
+    [
+      "tutorial",
+      "tutorial-m04-03",
+      "ARIA",
+      "Select Move and send the APC west along the road to the four specialists. Keep the rifles between them and the approaching patrol. Show Me locates the team.",
+      "حرکت را انتخاب کنید و نفربر را از جاده به سمت غرب و چهار متخصص بفرستید. تفنگدارها را میان تیم و گشتی در حال نزدیک‌شدن نگه دارید. نمایش محل، تیم را پیدا می‌کند."
+    ],
+    [
+      "tutorial",
+      "tutorial-m04-04",
+      "ARIA",
+      "Select the four unarmed specialists beside the road. They belong to your rescue team and accept movement and boarding commands. Their survival is mandatory.",
+      "چهار متخصص بی‌سلاح کنار جاده را انتخاب کنید. آن‌ها عضو تیم نجات شما هستند و فرمان حرکت و سوارشدن می‌پذیرند. زنده‌ماندن همه الزامی است."
+    ],
+    [
+      "tutorial",
+      "tutorial-m04-05",
+      "ARIA",
+      "With the specialists selected, press Board and choose the APC. Wait for all four to appear in its passenger list. A boarding order is not a completed rescue.",
+      "با انتخاب متخصصان، سوارشدن را بزنید و نفربر را انتخاب کنید. صبر کنید هر چهار نفر در فهرست مسافران آن ظاهر شوند. فرمان سوارشدن به معنی پایان نجات نیست."
+    ],
+    [
+      "tutorial",
+      "tutorial-m04-06",
+      "ARIA",
+      "Move the loaded APC east to the landing area. The rifles can cover the road or hold the approach. Oil is نفت; Fuel is بنزین. These loaned vehicles do not require a new fuel network here.",
+      "نفربر پر را به سمت شرق و محل فرود ببرید. تفنگدارها می‌توانند جاده یا مسیر نزدیک‌شدن دشمن را پوشش دهند. نفت با بنزین فرق دارد. این وسایل امانی در این مأموریت به شبکهٔ سوخت تازه نیاز ندارند."
+    ],
+    [
+      "tutorial",
+      "tutorial-m04-07",
+      "ARIA",
+      "Select the APC at the landing area and use its passenger panel to unload. All four must leave the APC before they can board the helicopter. If no safe cell exists, move the APC into open ground and retry.",
+      "نفربر را در محل فرود انتخاب کنید و از بخش مسافران پیاده‌شدن را بزنید. هر چهار نفر باید پیش از سوارشدن به بالگرد از نفربر خارج شوند. اگر جای امن نیست، نفربر را به فضای باز ببرید و دوباره امتحان کنید."
+    ],
+    [
+      "tutorial",
+      "tutorial-m04-08",
+      "ARIA",
+      "Select Laila's helicopter. Boarding requires it to be landed and close to the passengers. Its seats, health and movement are real transport state, not a cinematic shortcut.",
+      "بالگرد لیلا را انتخاب کنید. برای سوارشدن باید فرود آمده و نزدیک مسافران باشد. ظرفیت، سلامت و حرکت آن واقعی است و میان‌بر سینمایی نیست."
+    ],
+    [
+      "tutorial",
+      "tutorial-m04-09",
+      "ARIA",
+      "Select the unloaded specialists, press Board, and choose the helicopter. Verify four passengers in its manifest. Every specialist must have completed the APC leg first.",
+      "متخصصان پیاده‌شده را انتخاب کنید، سوارشدن را بزنید و بالگرد را انتخاب کنید. وجود چهار مسافر را در فهرست بررسی کنید. هر متخصص باید قبلاً مسیر نفربر را طی کرده باشد."
+    ],
+    [
+      "tutorial",
+      "tutorial-m04-10",
+      "ARIA",
+      "Keep the loaded helicopter at the landing area for twenty uninterrupted seconds. Any active hostile inside the marked radius resets the countdown. Hold the approach with your rifles.",
+      "بالگرد پر را بیست ثانیهٔ پیوسته در محل فرود نگه دارید. ورود هر دشمن فعال به محدودهٔ مشخص‌شده زمان‌سنج را از نو آغاز می‌کند. تفنگدارها مسیر نزدیک‌شدن را پوشش دهند."
+    ],
+    [
+      "tutorial",
+      "tutorial-m04-11",
+      "ARIA",
+      "Select the helicopter, choose Move, and fly to the marked departure zone northeast of the landing area. Keep every specialist aboard and alive. Show Me locates the exit.",
+      "بالگرد را انتخاب کنید، حرکت را بزنید و به محدودهٔ خروج در شمال‌شرق محل فرود پرواز کنید. همهٔ متخصصان باید سوار و زنده باشند. نمایش محل، خروج را پیدا می‌کند."
+    ],
+    [
+      "tutorial",
+      "tutorial-m04-12",
+      "ARIA",
+      "Earn one star for extraction, one for keeping every escort alive, and one for finishing within seven minutes. First-clear rewards are paid once. Replays can improve your stars.",
+      "برای تخلیه یک ستاره، برای زنده‌ماندن همهٔ محافظان یک ستاره و برای پایان در هفت دقیقه یک ستاره می‌گیرید. پاداش نخستین پیروزی یک‌بار پرداخت می‌شود. تکرار می‌تواند ستاره‌ها را بهتر کند."
+    ]
+  ]
+}

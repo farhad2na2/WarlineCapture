@@ -204,7 +204,7 @@ public sealed class M02EstablishBaseCampaignUiTests
         Assert.That(view.MissionNodeButtons, Has.Length.EqualTo(5));
         Assert.NotNull(view.MissionNodeButtons[0]);
         Assert.NotNull(view.MissionNodeButtons[1]);
-        Assert.NotNull(prefab.GetComponentInChildren<CampaignMissionScreenBinder>(true));
+        Assert.NotNull(prefab.GetComponentInChildren<CampaignMissionScreenBinderView>(true));
     }
 
     [Test]
@@ -340,11 +340,11 @@ public sealed class M02EstablishBaseCampaignUiTests
     [Test]
     public void ViewsAndBinderKeepSingleEventDrivenUiOwnership()
     {
-        Assert.That(typeof(CampaignMissionScreenBinder).GetMethod(
+        Assert.That(typeof(CampaignMissionScreenBinderView).GetMethod(
             "Update", System.Reflection.BindingFlags.Instance |
                       System.Reflection.BindingFlags.Public |
                       System.Reflection.BindingFlags.NonPublic), Is.Null);
-        string sources = File.ReadAllText("Assets/Game/Scripts/UI/Screens/CampaignMissionScreenBinder.cs") +
+        string sources = File.ReadAllText("Assets/Game/Scripts/UI/Screens/CampaignMissionScreenBinderView.cs") +
                          File.ReadAllText("Assets/Game/Scripts/UI/Screens/CampaignOperationsScreenView.cs") +
                          File.ReadAllText("Assets/Game/Scripts/UI/Screens/MissionBriefingScreenView.cs");
         Assert.That(sources, Does.Not.Contain("GameObject.Find"));

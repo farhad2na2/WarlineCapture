@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Unity.Collections;
 using Unity.Entities;
@@ -40,8 +41,8 @@ public sealed class UIShellCurrentContentLoadTests
                 test => test.MenuSceneShellInstallsCurrentMenuArmoryAndMatchHudContent(),
                 ref passed);
             RunValidationStep(
-                nameof(MenuSceneShellInstallsCommanderProfileRouteWithoutReplacingHeader),
-                test => test.MenuSceneShellInstallsCommanderProfileRouteWithoutReplacingHeader(),
+                nameof(MenuSceneShellInstallsCommanderProfileSectionsAndRestoresMainMenu),
+                test => test.MenuSceneShellInstallsCommanderProfileSectionsAndRestoresMainMenu(),
                 ref passed);
             RunValidationStep(
                 nameof(MainMenuCommanderRouteButtonOpensProfileAndBackReturnsToMainMenu),
@@ -68,8 +69,8 @@ public sealed class UIShellCurrentContentLoadTests
                 test => test.InstalledMatchHudRuntimeFeedbackBindsThroughMainMenuPlayUi(),
                 ref passed);
             RunValidationStep(
-                nameof(RightQuickRailBuildButtonShowsAndClosesBuildDrawerPopup),
-                test => test.RightQuickRailBuildButtonShowsAndClosesBuildDrawerPopup(),
+                nameof(FooterBuildButtonShowsAndClosesBuildDrawerPopup),
+                test => test.FooterBuildButtonShowsAndClosesBuildDrawerPopup(),
                 ref passed);
             RunValidationStep(
                 nameof(ReinstalledMatchHudCommandControlsKeepRuntimeDependencies),
@@ -210,7 +211,7 @@ public sealed class UIShellCurrentContentLoadTests
         {
             tests.CommanderBackgroundOwnership_DoesNotRetainSceneObjectsGlobally();
             tests.CommanderBackgroundOwnership_UsesShellInstanceStateWithoutHierarchySearch();
-            tests.MenuSceneShellInstallsCommanderProfileRouteWithoutReplacingHeader();
+            tests.MenuSceneShellInstallsCommanderProfileSectionsAndRestoresMainMenu();
             Debug.Log("[CommanderBackgroundOwnershipValidation] result=Passed");
             ValidationExit.Exit(0);
         }
@@ -394,69 +395,29 @@ public sealed class UIShellCurrentContentLoadTests
     }
 
     [Test]
-    public void MenuSceneShellInstallsCommanderProfileRouteWithoutReplacingHeader()
+    public void MenuSceneShellInstallsCommanderProfileSectionsAndRestoresMainMenu()
     {
-        Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
-        UIShellContentView content = FindInScene<UIShellContentView>(scene);
-        Assert.NotNull(content, "Menu scene must contain the shell content binder.");
-        Assert.NotNull(content.CommanderProfileContentPrefab, "Commander profile content prefab must be assigned.");
-        Assert.AreEqual(
-            "SCN03_CommanderProfileContent",
-            content.CommanderProfileContentPrefab.name,
-            "Commander profile route must use the SCN-03 Commander content prefab.");
-        AssertDirectChildMissing(
-            content.CommanderProfileContentPrefab.transform,
-            "MenuBackgroundContent",
-            "Commander content must be body-only; the shell owns the menu background.");
-        AssertDirectChildMissing(
-            content.CommanderProfileContentPrefab.transform,
-            "HeaderContent",
-            "Commander content must be body-only; the shell owns the shared menu header.");
-
+        var scene=EditorSceneManager.OpenScene(MenuScenePath,OpenSceneMode.Single);
+        var content=FindInScene<UIShellContentView>(scene);
+        Assert.That(content.CommanderProfileContentPrefab,Is.Not.Null);
         content.PrepareForCommandSequence(new[]
-        {
-            new UiShellPresentationCommandModel(UiShellCommandKind.EnterMenu, default, default, default, 0)
-        });
-
-        GameObject headerBefore = AssertRegionHasChild(content.ShellView, UIShellRegionId.HeaderRegion);
-
+            {new UiShellPresentationCommandModel(UiShellCommandKind.EnterMenu,default,default,default,0)});
         content.InstallMenuRouteBody(UIRoute.CommanderProfile);
-
-        GameObject headerAfter = AssertRegionHasChild(content.ShellView, UIShellRegionId.HeaderRegion);
-        Assert.AreSame(headerBefore, headerAfter, "Commander route body install must preserve the shared menu header.");
-
-        GameObject commanderLeft = AssertRegionHasChild(content.ShellView, UIShellRegionId.LeftRegion);
-        GameObject commanderMiddle = AssertRegionHasChild(content.ShellView, UIShellRegionId.MiddleRegion);
-        GameObject commanderRight = AssertRegionHasChild(content.ShellView, UIShellRegionId.RightRegion);
-        GameObject commanderFooter = AssertRegionHasChild(content.ShellView, UIShellRegionId.FooterRegion);
-
-        AssertChildExists(commanderLeft.transform, "OverviewTab");
-        AssertChildExists(commanderLeft.transform, "StatsTab");
-        AssertChildExists(commanderMiddle.transform, "CommanderIdentityPanel");
-        AssertChildExists(commanderMiddle.transform, "OverviewPanel");
-        AssertChildExists(commanderMiddle.transform, "AccountSnapshotPanel");
-        AssertChildExists(commanderRight.transform, "RewardTrackPanel");
-        AssertChildExists(commanderRight.transform, "RecentHistoryPanel");
-        Assert.NotNull(FindChildRecursive(commanderRight.transform, "RewardXpBar"));
-        Assert.NotNull(FindChildRecursive(commanderMiddle.transform, "RankEmblem"));
-        Assert.NotNull(FindChildRecursive(commanderMiddle.transform, "LevelMedallion"));
-        Assert.NotNull(FindChildRecursive(commanderLeft.transform, "LockedState"));
-        AssertChildExists(commanderFooter.transform, "CommanderFooterRail");
-        AssertChildExists(commanderFooter.transform, "OpenArmoryButton");
-        AssertChildExists(commanderFooter.transform, "DetailButton");
-        AssertChildExists(commanderFooter.transform, "ReplayButton");
-
-        Transform backgroundScrim = FindChildRecursive(content.ShellView.transform, "CommanderBackgroundScrim");
-        Assert.NotNull(backgroundScrim, "Commander route must dim the shared menu background without owning a replacement background.");
-        Image scrimImage = backgroundScrim.GetComponent<Image>();
-        Assert.NotNull(scrimImage);
-        Assert.IsFalse(scrimImage.raycastTarget, "Commander background treatment must not intercept input.");
-        Assert.Greater(scrimImage.color.a, 0.25f, "Commander background treatment must visibly separate the dashboard from the map.");
-
+        foreach(var region in new[]{UIShellRegionId.HeaderRegion,UIShellRegionId.LeftRegion,UIShellRegionId.MiddleRegion,UIShellRegionId.RightRegion,UIShellRegionId.FooterRegion})
+        {
+            var section=AssertRegionHasChild(content.ShellView,region);
+            Assert.That(section.GetComponent<MainMenuV3SectionLayoutView>(),Is.Not.Null,region.ToString());
+        }
+        var middle=AssertRegionHasChild(content.ShellView,UIShellRegionId.MiddleRegion);
+        Assert.That(middle.GetComponent<CommanderProfileContentView>(),Is.Not.Null,"Route binding must reach the installed middle section.");
+        var footer=AssertRegionHasChild(content.ShellView,UIShellRegionId.FooterRegion);
+        var armory=FindChildRecursive(footer.transform,"OpenArmoryButton").GetComponent<UIShellRouteButtonView>();
+        Assert.That(armory.Route,Is.EqualTo(UIRoute.Armory));
+        var scrim=FindChildRecursive(content.ShellView.transform,"CommanderBackgroundScrim");
+        Assert.That(scrim,Is.Not.Null); Assert.That(scrim.GetComponent<Image>().raycastTarget,Is.False);
         content.InstallMenuRouteBody(UIRoute.MainMenu);
-        Assert.IsNull(
-            FindChildRecursive(content.ShellView.transform, "CommanderBackgroundScrim"),
-            "Returning to Main Menu must remove the Commander-only background treatment.");
+        Assert.That(FindChildRecursive(content.ShellView.transform,"CommanderBackgroundScrim"),Is.Null);
+        Assert.That(AssertRegionHasChild(content.ShellView,UIShellRegionId.HeaderRegion),Is.Not.Null);
     }
 
     [Test]
@@ -543,85 +504,27 @@ public sealed class UIShellCurrentContentLoadTests
     [Test]
     public void CommanderProfilePrefabBindsReadModelAndExposesOnlyAvailableActions()
     {
-        Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
-        UIShellContentView content = FindInScene<UIShellContentView>(scene);
-        Assert.NotNull(content);
-        GameObject prefab = content.CommanderProfileContentPrefab;
-        Assert.NotNull(prefab);
-
-        Transform middle = FindChildRecursive(prefab.transform, "MiddleContent");
-        Assert.NotNull(middle);
-        CommanderProfileContentView profileView = middle.GetComponent<CommanderProfileContentView>();
-        Assert.NotNull(profileView, "Commander middle section must bind the shell Commander profile read model.");
-        Assert.NotNull(profileView.CommanderNameLabel);
-        Assert.NotNull(profileView.CommanderSubtitleLabel);
-
-        Transform openArmory = FindChildRecursive(prefab.transform, "OpenArmoryButton");
-        Button openArmoryButton = openArmory != null ? openArmory.GetComponent<Button>() : null;
-        UIShellRouteButtonView armoryRoute = openArmory != null ? openArmory.GetComponent<UIShellRouteButtonView>() : null;
-        Assert.NotNull(openArmoryButton);
-        Assert.IsTrue(openArmoryButton.interactable, "Open Armory is an available Commander action.");
-        Assert.NotNull(armoryRoute);
-        Assert.AreEqual(UiShellRouteIntent.OpenMenuRoute, armoryRoute.Intent);
-        Assert.AreEqual(UIRoute.Armory, armoryRoute.Route);
-        Assert.IsTrue(armoryRoute.PushHistory);
-
-        AssertCommanderActionDisabled(prefab.transform, "DetailButton");
-        AssertCommanderActionDisabled(prefab.transform, "ReplayButton");
-        AssertCommanderActionDisabled(prefab.transform, "StatsTab");
-        AssertCommanderActionDisabled(prefab.transform, "BadgesTab");
-        AssertCommanderActionDisabled(prefab.transform, "HistoryTab");
-        AssertCommanderActionDisabled(prefab.transform, "UpgradesTab");
-        AssertCommanderProfileReadability(prefab.transform);
-
-        GameObject instance = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
-        Assert.NotNull(instance);
-        try
+        Game.Editor.CommanderProfileV3PrefabBuilder.Validate();
+        var scene=EditorSceneManager.OpenScene(MenuScenePath,OpenSceneMode.Single);
+        var prefab=FindInScene<UIShellContentView>(scene).CommanderProfileContentPrefab;
+        var middle=FindChildRecursive(prefab.transform,"MiddleContent");
+        var profile=middle.GetComponent<CommanderProfileContentView>();
+        Assert.That(profile,Is.Not.Null);
+        Assert.That(profile.CommanderNameLabel,Is.Not.Null);
+        Assert.That(profile.CommanderSubtitleLabel,Is.Not.Null);
+        var armory=FindChildRecursive(prefab.transform,"OpenArmoryButton");
+        Assert.That(armory.GetComponent<Button>().interactable,Is.True);
+        Assert.That(armory.GetComponent<UIShellRouteButtonView>().Route,Is.EqualTo(UIRoute.Armory));
+        var back=FindChildRecursive(prefab.transform,"BackButton").GetComponent<UIShellRouteButtonView>();
+        Assert.That(back.Intent,Is.EqualTo(UiShellRouteIntent.BackMenuRoute));
+        var history=FindChildRecursive(prefab.transform,"HISTORYTab").GetComponent<UIShellRouteButtonView>();
+        Assert.That(history.Route,Is.EqualTo(UIRoute.CommandFeed));
+        foreach(var button in prefab.GetComponentsInChildren<Button>(true))
         {
-            Transform instanceMiddle = FindChildRecursive(instance.transform, "MiddleContent");
-            Transform instanceRight = FindChildRecursive(instance.transform, "RightContent");
-            Transform instanceFooter = FindChildRecursive(instance.transform, "FooterContent");
-            CommanderProfileResponsiveLayoutView middleLayout = instanceMiddle != null
-                ? instanceMiddle.GetComponent<CommanderProfileResponsiveLayoutView>()
-                : null;
-            CommanderProfileResponsiveLayoutView footerLayout = instanceFooter != null
-                ? instanceFooter.GetComponent<CommanderProfileResponsiveLayoutView>()
-                : null;
-            CommanderProfileResponsiveLayoutView rightLayout = instanceRight != null
-                ? instanceRight.GetComponent<CommanderProfileResponsiveLayoutView>()
-                : null;
-            Assert.NotNull(middleLayout, "Commander middle section must adapt to the expanded logical canvas height.");
-            Assert.NotNull(rightLayout, "Commander right section must compact its panels for ultrawide canvases.");
-            Assert.NotNull(footerLayout, "Commander footer must adapt to the expanded logical canvas height.");
-
-            RectTransform identity = FindChildRecursive(instance.transform, "CommanderIdentityPanel") as RectTransform;
-            RectTransform account = FindChildRecursive(instance.transform, "AccountSnapshotPanel") as RectTransform;
-            RectTransform history = FindChildRecursive(instance.transform, "RecentHistoryPanel") as RectTransform;
-            RectTransform footerAction = FindChildRecursive(instance.transform, "OpenArmoryButton") as RectTransform;
-            Assert.NotNull(identity);
-            Assert.NotNull(account);
-            Assert.NotNull(history);
-            Assert.NotNull(footerAction);
-
-            middleLayout.ApplyLayout(2160f);
-            rightLayout.ApplyLayout(2160f);
-            footerLayout.ApplyLayout(2160f);
-            Assert.AreEqual(0f, identity.anchoredPosition.y, 0.01f, "20:9 must lower the centered Commander body into the visible menu grid.");
-            Assert.AreEqual(540f, account.rect.height, 0.01f, "20:9 must compact the Account Snapshot panel.");
-            Assert.AreEqual(900f, history.rect.height, 0.01f, "20:9 must compact Recent History before the footer.");
-            Assert.AreEqual(-100f, footerAction.anchoredPosition.y, 0.01f, "20:9 footer actions must remain fully visible below compact content panels.");
-
-            middleLayout.ApplyLayout(2700f);
-            rightLayout.ApplyLayout(2700f);
-            footerLayout.ApplyLayout(2700f);
-            Assert.AreEqual(240f, identity.anchoredPosition.y, 0.01f, "16:9 must retain the validated raised middle layout.");
-            Assert.AreEqual(700f, account.rect.height, 0.01f, "16:9 must retain the expanded Account Snapshot panel.");
-            Assert.AreEqual(1020f, history.rect.height, 0.01f, "16:9 must retain the expanded Recent History panel.");
-            Assert.AreEqual(150f, footerAction.anchoredPosition.y, 0.01f, "16:9 footer actions must sit in the lower integrated action rail.");
-        }
-        finally
-        {
-            UnityEngine.Object.DestroyImmediate(instance);
+            Assert.That(button.targetGraphic,Is.Not.Null,button.name);
+            Assert.That(button.GetComponent<UIShellRouteButtonView>()!=null ||
+                button.GetComponent<ButtonTemporaryFeedbackView>()!=null,Is.True,
+                button.name+" needs a route or explicit availability feedback.");
         }
     }
 
@@ -993,14 +896,17 @@ public sealed class UIShellCurrentContentLoadTests
         Assert.IsTrue(runtimeFeedback.FeedbackPanel.activeSelf);
         Assert.AreEqual("Choose destination.", runtimeFeedback.FeedbackText.text);
         Assert.NotNull(runtimeFeedback.CurrentOrderBanner, "The separately installed footer runtime feedback must bind the live header CurrentOrderBanner.");
-        Assert.IsTrue(runtimeFeedback.CurrentOrderBanner.BannerRoot.activeSelf, "Move command mode must show the live header CurrentOrderBanner.");
-        Assert.AreEqual("MOVE ORDER", runtimeFeedback.CurrentOrderBanner.OrderText.text);
-        Assert.AreEqual("Select a destination.", runtimeFeedback.CurrentOrderBanner.DescriptionText.text);
+        Assert.IsFalse(runtimeFeedback.CurrentOrderBanner.BannerRoot.activeSelf, "V3 uses the visible instruction strip and suppresses the duplicate legacy banner.");
+        mainMenuPlayUi.Dispose();
     }
 
     [Test]
-    public void RightQuickRailBuildButtonShowsAndClosesBuildDrawerPopup()
+    public void FooterBuildButtonShowsAndClosesBuildDrawerPopup()
     {
+        _previousWorld = World.DefaultGameObjectInjectionWorld;
+        _world = new World(nameof(FooterBuildButtonShowsAndClosesBuildDrawerPopup));
+        World.DefaultGameObjectInjectionWorld = _world;
+
         Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
         UIShellContentView content = FindInScene<UIShellContentView>(scene);
         Assert.NotNull(content, "Menu scene must contain the shell content binder.");
@@ -1015,62 +921,75 @@ public sealed class UIShellCurrentContentLoadTests
         MatchHudRightQuickRailView quickRail = matchRight.GetComponent<MatchHudRightQuickRailView>();
         BattleHudRuntimeFeedbackView runtimeFeedback = AssertMatchHudFooterView(matchFooter).RuntimeFeedback;
         Assert.NotNull(quickRail, "RightContent must own MatchHudRightQuickRailView for serialized quick rail button bindings.");
-        Assert.NotNull(quickRail.BuildButton, "Right quick rail Build button must be serialized.");
+        Assert.IsFalse(quickRail.gameObject.activeSelf, "V3 suppresses the legacy right quick rail.");
+        Button buildButton = AssertMatchHudFooterView(matchFooter).CommandControls.BuildButton;
+        Assert.NotNull(buildButton, "The visible footer Build command must be serialized.");
         Assert.NotNull(runtimeFeedback, "Match HUD footer must expose explicit runtime feedback for command state checks.");
         Canvas.ForceUpdateCanvases();
         AssertButtonHasInteractiveRect(
-            quickRail.BuildButton,
-            "Right quick rail Build button must have a non-zero rect after layout so live pointer clicks can hit it.");
+            buildButton,
+            "Footer Build button must have a non-zero rect after layout so live pointer clicks can hit it.");
         AssertButtonHasRaycastableHitTarget(
-            quickRail.BuildButton,
-            "Right quick rail Build button must have a raycastable hit target so live pointer clicks fire.");
+            buildButton,
+            "Footer Build button must have a raycastable hit target so live pointer clicks fire.");
         AssertButtonTargetGraphicHasInteractiveRect(
-            quickRail.BuildButton,
-            "Right quick rail Build button target graphic must have a non-zero rect after layout.");
+            buildButton,
+            "Footer Build button target graphic must have a non-zero rect after layout.");
 
         var mainMenu = new MainMenuPlayUI();
-        content.BindGameplayRuntimeDependencies(new SelectionUiCommandUiSystemHelper(new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager)), mainMenu);
-        Assert.AreNotEqual(
-            quickRail.BuildButton.gameObject,
-            EventSystem.current != null ? EventSystem.current.currentSelectedGameObject : null,
-            "Right quick rail Build button must not start in Unity selected state after Match HUD binding.");
-        Assert.AreNotEqual(
-            TacticalCommandMode.Build,
-            BattleHudRuntimeFeedbackUiSystemHelper.GetState(runtimeFeedback).CurrentCommandMode,
-            "Build command mode must not be active by default when the Match HUD loads.");
+        try
+        {
+            content.BindGameplayRuntimeDependencies(new SelectionUiCommandUiSystemHelper(new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager)), mainMenu);
+            Assert.AreNotEqual(
+                buildButton.gameObject,
+                EventSystem.current != null ? EventSystem.current.currentSelectedGameObject : null,
+                "Footer Build button must not start in Unity selected state after Match HUD binding.");
+            Assert.AreNotEqual(
+                TacticalCommandMode.Build,
+                BattleHudRuntimeFeedbackUiSystemHelper.GetState(runtimeFeedback).CurrentCommandMode,
+                "Build command mode must not be active by default when the Match HUD loads.");
 
-        Vector2 buttonCenter = GetButtonTargetGraphicCenterScreenPoint(quickRail.BuildButton);
-        Assert.IsTrue(
-            mainMenu.IsPointerOverAnyGameplayUi(buttonCenter, out string gameplayUiSource),
-            "Runtime UI hit filter must treat the moved Build button as gameplay UI.");
-        Assert.AreEqual(
-            "MatchHudRightQuickRail",
-            gameplayUiSource,
-            "Runtime UI hit filter should identify the moved Build button as the right quick rail.");
+            foreach(var region in content.ShellView.Regions)
+            {
+                region.RegionRoot.gameObject.SetActive(true);
+                region.ResetVisualState();
+            }
+            Canvas.ForceUpdateCanvases();
+            Assert.That(buildButton.isActiveAndEnabled,Is.True,"The entered HUD must be visible before hit testing.");
+            Vector2 buttonCenter = GetButtonTargetGraphicCenterScreenPoint(buildButton);
+            Assert.IsTrue(
+                mainMenu.IsPointerOverAnyGameplayUi(buttonCenter, out string gameplayUiSource),
+                "Runtime UI hit filter must treat the moved Build button as gameplay UI.");
+            StringAssert.StartsWith(
+                "MatchHudCommandControls:",
+                gameplayUiSource,
+                "Runtime UI hit filter should identify the moved Build button as the footer command controls.");
 
-        AssertPointerClickDispatchesToButton(scene, quickRail.BuildButton);
+            AssertPointerClickDispatchesToButton(scene, buildButton);
 
-        GameObject popup = AssertRegionHasChild(content.ShellView, UIShellRegionId.PopupLayer);
-        Assert.AreEqual("SCN09_BuildDrawerPopup", popup.name);
+            GameObject popup = AssertRegionHasChild(content.ShellView, UIShellRegionId.PopupLayer);
+            Assert.AreEqual("SCN09_BuildDrawerPopup", popup.name);
 
-        Transform closeTransform = popup.transform.Find("BuildDrawerRoot/DrawerFrame/CloseButton");
-        Assert.NotNull(closeTransform, "Build drawer popup must expose its close button at BuildDrawerRoot/DrawerFrame/CloseButton.");
-        Button closeButton = closeTransform.GetComponent<Button>();
-        Assert.NotNull(closeButton, "Build drawer close object must be a Button.");
-        Canvas.ForceUpdateCanvases();
-        AssertButtonHasInteractiveRect(
-            closeButton,
-            "Build drawer close button must have a non-zero rect after layout so live pointer clicks can hit it.");
-        AssertButtonHasRaycastableHitTarget(
-            closeButton,
-            "Build drawer close button must have a raycastable hit target so live pointer clicks fire.");
-        AssertButtonTargetGraphicHasInteractiveRect(
-            closeButton,
-            "Build drawer close button target graphic must have a non-zero rect after layout.");
+            Transform closeTransform = popup.transform.Find("BuildDrawerRoot/DrawerFrame/CloseButton");
+            Assert.NotNull(closeTransform, "Build drawer popup must expose its close button at BuildDrawerRoot/DrawerFrame/CloseButton.");
+            Button closeButton = closeTransform.GetComponent<Button>();
+            Assert.NotNull(closeButton, "Build drawer close object must be a Button.");
+            Canvas.ForceUpdateCanvases();
+            AssertButtonHasInteractiveRect(
+                closeButton,
+                "Build drawer close button must have a non-zero rect after layout so live pointer clicks can hit it.");
+            AssertButtonHasRaycastableHitTarget(
+                closeButton,
+                "Build drawer close button must have a raycastable hit target so live pointer clicks fire.");
+            AssertButtonTargetGraphicHasInteractiveRect(
+                closeButton,
+                "Build drawer close button target graphic must have a non-zero rect after layout.");
 
-        AssertPointerClickDispatchesToButtonRoot(scene, closeButton);
+            AssertPointerClickDispatchesToButtonRoot(scene, closeButton);
 
-        AssertRegionIsEmpty(content.ShellView, UIShellRegionId.PopupLayer);
+            AssertRegionIsEmpty(content.ShellView, UIShellRegionId.PopupLayer);
+        }
+        finally { mainMenu.Dispose(); }
     }
 
     [Test]

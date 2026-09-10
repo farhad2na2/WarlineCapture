@@ -105,6 +105,7 @@ public sealed class AICombatOrderValidationTests
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = world.CreateSystem<AICombatOrderSystem>();
+        RuntimeGameplayStateTestHelper.SetVerboseAILogs(em, true);
         SystemHandle logFlushSystem = world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
         if (assertDiagnosticLog)

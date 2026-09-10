@@ -2,7 +2,6 @@ using Game.Components;
 using Game.Missions.Contracts;
 using Unity.Entities;
 using Unity.Mathematics;
-using UnityEngine;
 
 namespace Game.Runtime
 {
@@ -68,9 +67,12 @@ namespace Game.Runtime
             if(snapshot.IsValid==0 || !math.all(math.isfinite(snapshot.Position)) || forward.y>=-.01f ||
                 !math.isfinite(snapshot.Projection.c1.y) || math.abs(snapshot.Projection.c1.y)<.01f) return false;
             focus=snapshot.Position+forward*((groundHeight-snapshot.Position.y)/forward.y);
-            Quaternion rotation=new(snapshot.Rotation.value.x,snapshot.Rotation.value.y,snapshot.Rotation.value.z,snapshot.Rotation.value.w);
-            Vector3 angles=rotation.eulerAngles;
-            perspective=new float4(snapshot.Position.y,angles.x,angles.y,math.degrees(2*math.atan(1/math.abs(snapshot.Projection.c1.y))));
+            // RTS/tour poses are roll-free; derive the same pitch/yaw without a managed Unity API.
+            float pitch = math.degrees(math.asin(math.clamp(-forward.y, -1f, 1f)));
+            float yaw = math.degrees(math.atan2(forward.x, forward.z));
+            if (yaw < 0) yaw += 360f;
+            perspective = new float4(snapshot.Position.y, pitch, yaw,
+                math.degrees(2 * math.atan(1 / math.abs(snapshot.Projection.c1.y))));
             return math.all(math.isfinite(focus)) && math.all(math.isfinite(perspective));
         }
         private void AdvanceDefenseFinale(ref SystemState state,Entity focusEntity,in CampaignMissionRuntimeComponent runtime,

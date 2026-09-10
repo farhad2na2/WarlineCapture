@@ -143,7 +143,7 @@ public sealed class M01FirstContactHudResultTests
     [Test] public static void ContinueQueuesReturnToMainMenu()
     {
         string source = File.ReadAllText(
-            "Assets/Game/Scripts/UI/Screens/CampaignMissionHudResultBinder.cs");
+            "Assets/Game/Scripts/UI/Screens/CampaignMissionHudResultBinderView.cs");
         StringAssert.Contains("UiShellRouteIntent.ReturnToMainMenu", source);
         StringAssert.Contains("UIRoute.MainMenu", source);
         StringAssert.Contains("action == UiMissionResultActionKind.Continue", source);
@@ -162,7 +162,7 @@ public sealed class M01FirstContactHudResultTests
         Assert.That(resultRect.anchoredPosition, Is.EqualTo(Vector2.zero));
         Assert.That(resultRect.sizeDelta, Is.EqualTo(Vector2.zero),
             "A stretch-anchored popup must not add its authored reference resolution to the live screen.");
-        Assert.NotNull(canvas.GetComponent<CampaignMissionHudResultBinder>());
+        Assert.NotNull(canvas.GetComponent<CampaignMissionHudResultBinderView>());
         Assert.That(GameObjectUtility.GetMonoBehavioursWithMissingScriptCount(canvas), Is.Zero);
     }
 

@@ -5,9 +5,7 @@
         "Game.Components",
         "Unity.Collections",
         "Unity.Entities",
-        "Unity.Mathematics",
-        "Game.Missions.Contracts",
-        "Game.Narrative.Contracts"
+        "Unity.Mathematics"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

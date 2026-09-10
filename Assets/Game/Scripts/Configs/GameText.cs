@@ -62,7 +62,9 @@ namespace Game.Configs
                 return true;
             }
 
-            return GameLocalization.TryGet(key, out value);
+            if (GameLocalization.TryGet(key, out value)) return true;
+            value = null;
+            return false;
         }
 
         public static string GetAudioEventId(string key, string fallback = "")
@@ -88,7 +90,10 @@ namespace Game.Configs
 
         public static string Format(string key, string fallback, params object[] args)
         {
-            return GameLocalization.Format(key, Get(key, fallback), args);
+            string format = Get(key, fallback);
+            if (args == null || args.Length == 0) return format;
+            try { return string.Format(System.Globalization.CultureInfo.CurrentCulture, format, args); }
+            catch (FormatException) { return fallback ?? string.Empty; }
         }
 
         public static bool IsInitialized => currentSnapshot.IsInitialized;

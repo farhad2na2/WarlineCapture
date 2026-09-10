@@ -1,3 +1,4 @@
+using Game.UI.ScenarioLab.Runtime;
 using Game.Runtime;
 using Game.Composition;
 namespace Game.Editor
@@ -105,9 +106,9 @@ namespace Game.Editor
                 }
 
                 string scenarioId = TransportProofScenarioIds[index];
-                BattleScenarioLabPlayBootstrap bootstrap = Object.FindAnyObjectByType<BattleScenarioLabPlayBootstrap>();
+                BattleScenarioLabPlayBootstrapView bootstrap = Object.FindAnyObjectByType<BattleScenarioLabPlayBootstrapView>();
                 Camera camera = Object.FindAnyObjectByType<Camera>();
-                Require(bootstrap != null, "Missing BattleScenarioLabPlayBootstrap for transport proof capture.");
+                Require(bootstrap != null, "Missing BattleScenarioLabPlayBootstrapView for transport proof capture.");
                 Require(camera != null, "Missing Scenario Lab camera for transport proof capture.");
 
                 if (!SessionState.GetBool(TransportCaptureSelectedKey, false))

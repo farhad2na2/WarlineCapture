@@ -19,7 +19,7 @@ class UnityInvocationContractTests(unittest.TestCase):
             self.source[wait_index:exit_code_index],
         )
         self.assertIn(
-            "$exitCode = if ($timedOut) { 124 } else { $process.ExitCode }",
+            "$exitCode = if ($timedOut) {\n    124\n} elseif (-not [string]::IsNullOrWhiteSpace($fatalLogFailure)) {\n    1\n} else {\n    $process.ExitCode\n}",
             self.source,
         )
 
@@ -80,7 +80,8 @@ class UnityInvocationContractTests(unittest.TestCase):
             '$taskkillExe = Join-Path $env:SystemRoot "System32\\taskkill.exe"',
             self.source,
         )
-        self.assertIn("& $taskkillExe /PID $process.Id /T /F", self.source)
+        self.assertIn("& $taskkillExe /PID $UnityProcess.Id /T /F", self.source)
+        self.assertIn("Stop-UnityProcessTree -UnityProcess $process", self.source)
         self.assertNotIn("& taskkill.exe", self.source)
 
 

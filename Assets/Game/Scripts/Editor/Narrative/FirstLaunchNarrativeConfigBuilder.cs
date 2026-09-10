@@ -353,6 +353,9 @@ namespace Game.Editor
                 Speaker(NarrativeSpeakerId.Aria, "ARIA", "CIVIC RELAY ASSISTANT", NarrativeSpeakerTreatment.AriaIcon, V3UiFoundationBuilder.SharedAriaPortraitPath, new Color(0.2f, 0.92f, 1f)),
                 Speaker(NarrativeSpeakerId.Commander, "COMMANDER", "JOINT RESPONSE AUTHORITY", NarrativeSpeakerTreatment.Commander, CommanderFallbackPortrait(), new Color(0.86f, 0.82f, 0.7f))
             };
+            foreach (NarrativeSpeakerRecord existing in catalog.Speakers)
+                if (existing != null && !records.Exists(record => record.SpeakerId == existing.SpeakerId))
+                    records.Add(existing);
             Set(catalog, "speakers", records);
             EditorUtility.SetDirty(catalog);
         }

@@ -430,7 +430,7 @@ namespace Game.Editor
             SetTopLeft(labelText.rectTransform, 15f, 1f, 255f, 43f);
             TMP_Text valueText = CreateText("Value", row.transform, initialValue, 20f, boldFont, TextAlignmentOptions.MidlineRight, Cyan);
             SetTopLeft(valueText.rectTransform, 254f, 1f, 242f, 43f);
-            SkirmishSetupV3CycleControl cycle = row.gameObject.AddComponent<SkirmishSetupV3CycleControl>();
+            SkirmishSetupV3CycleControlView cycle = row.gameObject.AddComponent<SkirmishSetupV3CycleControlView>();
             if (segment != null)
                 cycle.ConfigureSegment(row, segment, valueText, segmentValues, displayValues);
             else
@@ -478,7 +478,7 @@ namespace Game.Editor
             serialized.FindProperty("normalLabelColor").colorValue = TextMuted;
             serialized.FindProperty("selectedLabelColor").colorValue = TextPrimary;
             serialized.ApplyModifiedPropertiesWithoutUndo();
-            SkirmishSetupV3SegmentVisual visual = root.gameObject.AddComponent<SkirmishSetupV3SegmentVisual>();
+            SkirmishSetupV3SegmentVisualView visual = root.gameObject.AddComponent<SkirmishSetupV3SegmentVisualView>();
             visual.Configure(buttons, gradients, fixedVisualIndex, RaisedTop, RaisedBottom, Border, SelectedTop, SelectedBottom, Lime, 3f);
             return view;
         }

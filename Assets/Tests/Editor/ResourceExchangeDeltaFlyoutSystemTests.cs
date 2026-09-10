@@ -99,7 +99,7 @@ public sealed class ResourceExchangeDeltaFlyoutSystemTests
             queueItemId: 1,
             ResourceExchangeDeltaFlyoutKind.OutputGranted,
             ResourceExchangeResultKind.QueueCompleted,
-            ResourceExchangeResourceKind.Oil,
+            ResourceExchangeResourceKind.Materials,
             93);
     }
 
@@ -191,7 +191,7 @@ public sealed class ResourceExchangeDeltaFlyoutSystemTests
             queueItemId: 1,
             ResourceExchangeDeltaFlyoutKind.OutputGranted,
             ResourceExchangeResultKind.QueueCompleted,
-            ResourceExchangeResourceKind.Oil,
+            ResourceExchangeResourceKind.Materials,
             93);
     }
 
@@ -259,7 +259,7 @@ public sealed class ResourceExchangeDeltaFlyoutSystemTests
             DisplayName = new FixedString128Bytes("Export Oil"),
             RouteType = ResourceExchangeRouteType.Export,
             InputResource = ResourceExchangeResourceKind.Oil,
-            OutputResource = ResourceExchangeResourceKind.Oil,
+            OutputResource = ResourceExchangeResourceKind.Materials,
             InputAmountMin = 100,
             InputAmountMax = 1000,
             InputStep = 100,
@@ -295,7 +295,7 @@ public sealed class ResourceExchangeDeltaFlyoutSystemTests
             RecipeId = new FixedString128Bytes("exchange.rush.test"),
             RouteType = ResourceExchangeRouteType.Export,
             InputResource = inputResource,
-            OutputResource = ResourceExchangeResourceKind.Oil,
+            OutputResource = ResourceExchangeResourceKind.Materials,
             InputAmount = reservedInputAmount,
             ReservedInputAmount = reservedInputAmount,
             OutputAmount = outputAmount,

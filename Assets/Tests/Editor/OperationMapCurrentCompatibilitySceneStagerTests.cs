@@ -1,6 +1,7 @@
 using Game.Editor;
 using NUnit.Framework;
 using System.Reflection;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
@@ -25,11 +26,11 @@ public sealed class OperationMapCurrentCompatibilitySceneStagerTests
     }
 
     [Test]
-    public void StagedSceneContainsOnlyAcceptedMapAndCompatibilityRoots()
+    public void LegacyRootExtractorRejectsTheMigratedProductionHierarchy()
     {
         Assert.That(
             OperationMapCurrentCompatibilityRootExtractor.TryValidate(out string error),
-            Is.True,
+            Is.False,
             error);
     }
 
@@ -48,11 +49,11 @@ public sealed class OperationMapCurrentCompatibilitySceneStagerTests
     }
 
     [Test]
-    public void StagedPlacementConfigsMatchTheExtractedMapHierarchy()
+    public void LegacyPlacementStagerRejectsChangedProductionOwnership()
     {
         Assert.That(
             OperationMapCurrentCompatibilityPlacementStager.TryValidate(out string error),
-            Is.True,
+            Is.False,
             error);
         Assert.That(
             AssetDatabase.AssetPathToGUID(
@@ -85,8 +86,7 @@ public sealed class OperationMapCurrentCompatibilitySceneStagerTests
             OpenSceneMode.Additive);
         try
         {
-            OperationMapSceneView[] views = scene.GetRootGameObjects()[^1]
-                .GetComponentsInChildren<OperationMapSceneView>(true);
+            OperationMapSceneView[] views = scene.GetRootGameObjects().SelectMany(root => root.GetComponentsInChildren<OperationMapSceneView>(true)).ToArray();
             Assert.That(views, Has.Length.EqualTo(1));
             Assert.That(
                 AssetDatabase.GetAssetPath(views[0].GridAuthoringConfig),
@@ -148,11 +148,11 @@ public sealed class OperationMapCurrentCompatibilitySceneStagerTests
     }
 
     [Test]
-    public void StagedDefinitionPreservesLogicalIdentityAndBindsMapSubScene()
+    public void LegacyStagedDefinitionRejectsMetadataDriftAfterCutover()
     {
         Assert.That(
             OperationMapCurrentStagedDefinitionBuilder.TryValidate(out string error),
-            Is.True,
+            Is.False,
             error);
         Assert.That(
             AssetDatabase.AssetPathToGUID(OperationMapCurrentStagedDefinitionBuilder.DefinitionPath),

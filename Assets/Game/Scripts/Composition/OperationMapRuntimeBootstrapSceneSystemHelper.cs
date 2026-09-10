@@ -4,7 +4,6 @@ using Game.Configs;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
-
 namespace Game.Composition
 {
     internal sealed class OperationMapRuntimeBootstrapSceneSystemHelper : IDisposable

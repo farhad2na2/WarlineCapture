@@ -51,7 +51,6 @@ namespace Game.UI.Runtime
         private float _nextZoomControlRefreshTime;
         private BuildDrawerView _buildDrawerView;
         private BuildPlacementConfirmationBarView _buildPlacementConfirmationBarView;
-        private ResourceExchangePopupView _resourceExchangePopupView;
         private System.Action _closeBuildDrawerPopup;
         private System.Action _closeFullMapPopup;
         private System.Action _closeResourceExchangePopup;
@@ -116,7 +115,7 @@ namespace Game.UI.Runtime
             BindMatchHudThreatJumpPanel(null);
             _buildDrawerView = null;
             _buildPlacementConfirmationBarView = null;
-            _resourceExchangePopupView = null;
+            BindResourceExchangePopup(null);
             _closeBuildDrawerPopup = null;
             _closeFullMapPopup = null;
             _closeResourceExchangePopup = null;
@@ -150,7 +149,10 @@ namespace Game.UI.Runtime
                 }
 
                 if (fullMapOpen)
+                {
                     _matchHudFullMapInputSystem.Update();
+                    _matchHudFullMapPopupView.RefreshMarkerFilters();
+                }
             }
 
             using (FeedbackLifetimeMarker.Auto())
@@ -165,6 +167,7 @@ namespace Game.UI.Runtime
             _matchHudAssistantUiSystem.TickHighlight(now);
             TickGuidedHudRuntime();
             TickMatchHudThreatWarning(now);
+            RefreshResourceExchangePopup();
         }
 
         public void NotifyStaticMinimapChanged()
@@ -399,7 +402,7 @@ namespace Game.UI.Runtime
             Button button = slot.GetComponent<Button>();
             if (button == null)
             {
-                Debug.LogWarning($"[MainMenuPlayUI] {slot.name} is missing its authored Resource Exchange button.");
+                Game.UI.Contracts.UiDiagnostics.Warning($"[MainMenuPlayUI] {slot.name} is missing its authored Resource Exchange button.");
                 return;
             }
 
@@ -451,10 +454,7 @@ namespace Game.UI.Runtime
             _buildPlacementConfirmationBarView = buildPlacementConfirmationBarView;
         }
 
-        public void BindResourceExchangePopup(ResourceExchangePopupView resourceExchangePopupView)
-        {
-            _resourceExchangePopupView = resourceExchangePopupView;
-        }
+
 
         public bool IsBuildDrawerOpen => _buildDrawerView != null && _buildDrawerView.IsOpen;
 

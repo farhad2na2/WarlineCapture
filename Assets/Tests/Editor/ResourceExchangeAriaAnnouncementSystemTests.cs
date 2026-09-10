@@ -144,11 +144,11 @@ public sealed class ResourceExchangeAriaAnnouncementSystemTests
         EntityManager em = world.EntityManager;
         Entity exchange = CreateExchangeEntity(em, fuel: 65, fuelCapacity: 100);
         ResourceExchangeQueueComponent item = CreateQueueItem(
-            inputResource: ResourceExchangeResourceKind.Oil,
+            inputResource: ResourceExchangeResourceKind.Materials,
             outputResource: ResourceExchangeResourceKind.Fuel,
             reservedInputAmount: 0,
             outputAmount: 25,
-            remainingSeconds: 10f);
+            remainingSeconds: 0.1f);
         Assert.IsTrue(ResourceExchangePhysicalStorageTestHelper.TryReserve(em, exchange, item, out _));
         BuildingResourceStorageComponent storage = ResourceExchangePhysicalStorageTestHelper.GetStorage(em);
         storage.StoredFuelBarrels = 90f;
@@ -275,7 +275,7 @@ public sealed class ResourceExchangeAriaAnnouncementSystemTests
             DisplayName = new FixedString128Bytes("Export Oil"),
             RouteType = ResourceExchangeRouteType.Export,
             InputResource = ResourceExchangeResourceKind.Oil,
-            OutputResource = ResourceExchangeResourceKind.Oil,
+            OutputResource = ResourceExchangeResourceKind.Materials,
             InputAmountMin = 100,
             InputAmountMax = 1000,
             InputStep = 100,
@@ -290,7 +290,7 @@ public sealed class ResourceExchangeAriaAnnouncementSystemTests
     private static ResourceExchangeQueueComponent CreateQueueItem(
         int queueItemId = 1,
         ResourceExchangeResourceKind inputResource = ResourceExchangeResourceKind.Oil,
-        ResourceExchangeResourceKind outputResource = ResourceExchangeResourceKind.Oil,
+        ResourceExchangeResourceKind outputResource = ResourceExchangeResourceKind.Materials,
         int reservedInputAmount = 100,
         int outputAmount = 100,
         float remainingSeconds = 30f)

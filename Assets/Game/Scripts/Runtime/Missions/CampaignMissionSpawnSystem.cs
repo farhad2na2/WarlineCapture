@@ -108,10 +108,10 @@ namespace Game.Runtime
             };
             if (_cameraFocusQuery.CalculateEntityCount() == 1)
             {
-                QueueInitialRtsOverview(
+                QueueMissionOpeningOverview(
                     em,
                     _cameraFocusQuery.GetSingletonEntity(),
-                    openingStartFocus);
+                    in opening, definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0);
                 opening.InitialRtsOverviewRequested = 1;
             }
             SetOrAdd(em, root, opening);

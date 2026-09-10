@@ -80,11 +80,13 @@ namespace Game.Editor
             }
             if(step==108)
             {
+                RecordIdlePursuit(em,facts.ElapsedMilliseconds);
                 if(runtime.Outcome!=MissionOutcomeKind.Defeat)return;
                 Time.timeScale=1;
+                if(facts.ExtractionTimedOut != 0) throw new InvalidOperationException("Idle rescue failed only at the deadline; pursuers never made contact.");
                 var profile=save.LoadProfile();if(profile.credits!=settledCredits||profile.commanderXp!=settledXp)throw new InvalidOperationException("Idle defeat changed settled rewards");
                 Debug.Log("[M04EditorProbe] Idle retry defeated at ms="+facts.ElapsedMilliseconds+" passengerLosses="+facts.CivilianLossCount+" escorts="+facts.SquadLossCount+" timeout="+facts.ExtractionTimedOut);
-                Complete(true,"14 regression suites; HUD en/fa 16:9 and 20:9; 12 guide topics and 57 classes in both languages; real APC/helicopter rescue; debrief; saved unlocks; visible bilingual result; campaign return; real Replay carrier-loss defeat and clean Retry; idle failure under normal combat at 4x simulation; no duplicate rewards");
+                Complete(true,"HUD en/fa 16:9 and 20:9; 12 guide topics and 57 classes in both languages; real APC/helicopter rescue; debrief; saved unlocks; visible bilingual result; campaign return; real Replay carrier-loss defeat and clean Retry; idle failure under normal combat at 4x simulation; no duplicate rewards");
             }
         }
         private static bool ResultVisible()

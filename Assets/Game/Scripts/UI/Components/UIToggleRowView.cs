@@ -1,4 +1,3 @@
-using Game.Configs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -56,8 +55,8 @@ namespace Game.UI.Runtime
             if (stateText != null)
             {
                 stateText.text = value
-                    ? GameLocalization.Get("ui.common.on", "ON")
-                    : GameLocalization.Get("ui.common.off", "OFF");
+                    ? UiShellRuntimeGateway.Localization.Get("ui.common.on", "ON")
+                    : UiShellRuntimeGateway.Localization.Get("ui.common.off", "OFF");
                 stateText.alignment = value ? TextAlignmentOptions.Left : TextAlignmentOptions.Right;
             }
 

@@ -1216,7 +1216,7 @@ public sealed class M02EstablishBaseGuidanceTests
         Assert.That(buildDrawerGuidance, Does.Contain("soldiersTab.onClick.Invoke()"));
         Assert.That(buildDrawerGuidance, Does.Contain("itemButton.onClick.Invoke()"));
         Assert.That(readModel, Does.Contain("topRecommendation.TargetKind != AssistantTargetKind.UiSurface"));
-        Assert.That(readModel, Does.Contain("topRecommendation.TutorialStepCount != 9"));
+        Assert.That(readModel, Does.Contain("topRecommendation.TutorialStepCount == 9"));
         Assert.That(guidance, Does.Not.Contain("Screen.width"));
         Assert.That(guidance, Does.Not.Contain("Screen.height"));
     }

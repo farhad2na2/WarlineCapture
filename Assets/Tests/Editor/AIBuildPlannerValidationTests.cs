@@ -167,6 +167,7 @@ public sealed class AIBuildPlannerValidationTests
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         RuntimeGameplayStateTestHelper.PublishBuildingRuntimeState(em, TickBuildingRuntime);
         SystemHandle system = _world.CreateSystem<AIBuildPlannerSystem>();
+        RuntimeGameplayStateTestHelper.SetVerboseAILogs(em, true);
         SystemHandle logFlushSystem = _world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
         if (assertDiagnosticLog)

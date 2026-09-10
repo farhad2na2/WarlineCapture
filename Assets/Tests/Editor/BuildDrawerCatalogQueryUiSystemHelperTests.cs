@@ -1300,12 +1300,16 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
 
         string[] sectionNames = { "HeaderContent", "LeftContent", "RightContent", "FooterContent" };
         var sections = new List<GameObject>();
+        var regions = new UIShellRegionView[4];
+        UIShellRegionId[] ids = { UIShellRegionId.HeaderRegion, UIShellRegionId.LeftRegion, UIShellRegionId.RightRegion, UIShellRegionId.FooterRegion };
         for (int i = 0; i < sectionNames.Length; i++)
         {
             GameObject section = new(sectionNames[i], typeof(RectTransform));
             section.transform.SetParent(canvasObject.transform, false);
             section.SetActive(true);
             sections.Add(section);
+            regions[i] = section.AddComponent<UIShellRegionView>();
+            regions[i].Configure(ids[i], (RectTransform)section.transform, (RectTransform)section.transform, section.GetComponent<CanvasGroup>(), Vector2.zero);
         }
 
         GameObject instance = UnityEngine.Object.Instantiate(prefab, canvasObject.transform, false);
@@ -1313,7 +1317,11 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
         BuildDrawerHudOcclusionView occlusion =
             instance.GetComponent<BuildDrawerHudOcclusionView>();
         Assert.NotNull(occlusion);
-        occlusion.RefreshOcclusion();
+        var shell = canvasObject.AddComponent<UIShellView>();
+        var content = canvasObject.AddComponent<UIShellContentView>();
+        shell.Configure(null, regions, content);
+        content.Configure(shell, null, null, null, null, null);
+        occlusion.Configure(content);
 
         for (int i = 0; i < sections.Count; i++)
             Assert.IsFalse(sections[i].activeSelf, $"{sections[i].name} must be hidden behind the V3 drawer.");

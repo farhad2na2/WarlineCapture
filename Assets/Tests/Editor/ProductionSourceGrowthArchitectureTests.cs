@@ -498,7 +498,7 @@ public sealed class ProductionSourceGrowthArchitectureTests
                 Require(
                     current.LineCount > state.MinimumPositiveLines ||
                     current.ByteCount > state.MinimumPositiveBytes ||
-                    supersededByPostHardeningRatchet,
+                    supersededByPostHardeningRatchet || supersededByPostHardeningAuthorization,
                     $"Helper growth exception for `{exception.Path}` is unused.");
             }
             else if (exception.Scope == ProductionReviewScope)
@@ -525,7 +525,7 @@ public sealed class ProductionSourceGrowthArchitectureTests
                     Require(
                         current.LineCount > state.MinimumPositiveLines ||
                         current.ByteCount > state.MinimumPositiveBytes ||
-                        supersededByPostHardeningRatchet,
+                        supersededByPostHardeningRatchet || supersededByPostHardeningAuthorization,
                         $"Review exception for `{exception.Path}` is unused at " +
                         $"{current.LineCount}/{state.MinimumPositiveLines} lines and " +
                         $"{current.ByteCount}/{state.MinimumPositiveBytes} bytes.");
@@ -542,8 +542,13 @@ public sealed class ProductionSourceGrowthArchitectureTests
                     exception.MaxBytes > history[exception.Path].MinimumPositiveBytes,
                     $"Strict growth exception for `{exception.Path}` must exceed an effective historical ceiling.");
                 SourceHistoryState state = history[exception.Path];
+                bool supersededByPostHardeningRatchet =
+                    TryGetPostHardeningGuardrail(exception.Path, out PostHardeningSourceGuardrail guardrail) &&
+                    guardrail.MaxLines <= state.MinimumPositiveLines &&
+                    guardrail.MaxBytes <= state.MinimumPositiveBytes;
                 Require(
-                    current.LineCount > state.MinimumPositiveLines || current.ByteCount > state.MinimumPositiveBytes,
+                    current.LineCount > state.MinimumPositiveLines || current.ByteCount > state.MinimumPositiveBytes ||
+                    supersededByPostHardeningRatchet || supersededByPostHardeningAuthorization,
                     $"Strict growth exception for `{exception.Path}` is unused.");
             }
             else if (exception.Scope == ProductionPathRecreationScope)
@@ -1290,7 +1295,7 @@ public sealed class ProductionSourceGrowthArchitectureTests
             new()
             {
                 Path = "Assets/Game/Scripts/UI/Shell/UIShellContentView.cs",
-                SourceSha256 = "e250b07e6bd012554d37f8ef6376922f2ab4fdf9b0e51c5be194eeedd462c93f",
+                SourceSha256 = "9de33acc6198c569527bc78f2702ef975f29abf3f0504625ee5bfc7b7025808c",
                 MaxLines = 951,
                 MaxBytes = 40958,
                 MaxResponsibilityDomainSymbolOccurrences = 14,

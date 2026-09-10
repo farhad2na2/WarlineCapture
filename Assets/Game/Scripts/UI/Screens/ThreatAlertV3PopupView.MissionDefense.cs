@@ -1,4 +1,3 @@
-using Game.Configs;
 using Game.UI.Contracts;
 using TMPro;
 using UnityEngine;
@@ -11,7 +10,7 @@ namespace Game.UI.Runtime
         [SerializeField] private TMP_Text missionWarningDetails;
         [SerializeField] private TMP_Text missionWarningTitle;
         [SerializeField] private TMP_Text jumpLabel;
-        [SerializeField] private V3LocalizedTextBinding detailsLocalization;
+        [SerializeField] private V3LocalizedTextBindingView detailsLocalization;
         [SerializeField] private UnityEngine.UI.Button missionGuideButton;
         [SerializeField] private RectTransform missionJumpIcon;
         private GameObject _boundLegacyThreatPanel;
@@ -33,12 +32,12 @@ namespace Game.UI.Runtime
             {jumpLabel.rectTransform.anchoredPosition=new Vector2(85,-5); jumpLabel.rectTransform.sizeDelta=new Vector2(345,72); jumpLabel.fontSizeMax=27;}
             if(authoredExampleBody!=null) authoredExampleBody.SetActive(false);
             if(missionWarningDetails!=null) missionWarningDetails.gameObject.SetActive(true);
-            string text=model.HasWarning ? model.WarningText : GameText.Get("mission.m03.warning.resolved","Convoy element stopped");
-            if(text!=lastWarningText || lastWarningLocale!=GameLocalization.CurrentLocaleCode)
+            string text=model.HasWarning ? model.WarningText : UiShellRuntimeGateway.Localization.Get("mission.m03.warning.resolved","Convoy element stopped");
+            if(text!=lastWarningText || lastWarningLocale!=UiShellRuntimeGateway.Localization.CurrentLocaleCode)
             {
                 if(detailsLocalization!=null) detailsLocalization.SetLocalizedValue(text);
                 else if(missionWarningDetails!=null) missionWarningDetails.text=text;
-                lastWarningText=text; lastWarningLocale=GameLocalization.CurrentLocaleCode;
+                lastWarningText=text; lastWarningLocale=UiShellRuntimeGateway.Localization.CurrentLocaleCode;
             }
             if(jumpToThreatButton!=null) jumpToThreatButton.interactable=model.CanFocus;
         }

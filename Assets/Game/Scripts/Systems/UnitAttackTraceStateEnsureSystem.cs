@@ -1,3 +1,4 @@
+using Unity.Collections;
 using Unity.Burst;
 using Unity.Entities;
 using Game.Components;
@@ -13,7 +14,8 @@ namespace Game.Runtime
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            _ecbSingletonQuery = state.GetEntityQuery(ComponentType.ReadOnly<EndSimulationEntityCommandBufferSystem.Singleton>());
+            _ecbSingletonQuery = new EntityQueryBuilder(Allocator.Temp).WithAll<EndSimulationEntityCommandBufferSystem.Singleton>()
+                .WithOptions(EntityQueryOptions.IncludeSystems).Build(ref state);
             state.RequireForUpdate<UnitAttack>();
             state.RequireForUpdate(_ecbSingletonQuery);
         }

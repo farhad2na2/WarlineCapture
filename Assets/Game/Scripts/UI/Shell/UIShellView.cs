@@ -92,7 +92,11 @@ namespace Game.UI.Runtime
 
             motionHost.PlaySequence(
                 transitionId,
-                () => completed?.Invoke(sequenceId),
+                () =>
+                {
+                    contentSystem?.RefreshMountedLayouts();
+                    completed?.Invoke(sequenceId);
+                },
                 steps.ToArray());
         }
 

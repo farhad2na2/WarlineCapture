@@ -169,11 +169,11 @@ public sealed class GameLocalizationCatalogTests
 
         try
         {
-            Assert.IsTrue(V3LocalizationRuntimeBinder.IsSpecializedNarrativeText(
+            Assert.IsTrue(V3LocalizationRuntimeBinderView.IsSpecializedNarrativeText(
                 languageTextObject.GetComponent<TMP_Text>()));
-            Assert.IsTrue(V3LocalizationRuntimeBinder.IsSpecializedNarrativeText(
+            Assert.IsTrue(V3LocalizationRuntimeBinderView.IsSpecializedNarrativeText(
                 comicTextObject.GetComponent<TMP_Text>()));
-            Assert.IsFalse(V3LocalizationRuntimeBinder.IsSpecializedNarrativeText(
+            Assert.IsFalse(V3LocalizationRuntimeBinderView.IsSpecializedNarrativeText(
                 ordinaryTextObject.GetComponent<TMP_Text>()));
         }
         finally
@@ -203,7 +203,7 @@ public sealed class GameLocalizationCatalogTests
         GameLocalization.Initialize(catalog, GameLocalization.PersianLocaleCode, persist: false);
         GameObject root = new("LocalizedAcronym", typeof(RectTransform), typeof(TextMeshProUGUI));
         TMP_Text text = root.GetComponent<TMP_Text>();
-        V3LocalizedTextBinding binding = root.AddComponent<V3LocalizedTextBinding>();
+        V3LocalizedTextBindingView binding = root.AddComponent<V3LocalizedTextBindingView>();
         binding.Configure("ui.acronym", "APC", observeRuntimeChanges: false);
 
         try
@@ -229,7 +229,7 @@ public sealed class GameLocalizationCatalogTests
         text.enableAutoSizing = false;
         text.fontSizeMin = 18f;
         text.fontSizeMax = 72f;
-        V3LocalizedTextBinding binding = root.AddComponent<V3LocalizedTextBinding>();
+        V3LocalizedTextBindingView binding = root.AddComponent<V3LocalizedTextBindingView>();
         binding.Configure("ui.continue", "CONTINUE", observeRuntimeChanges: false);
 
         try
@@ -248,6 +248,40 @@ public sealed class GameLocalizationCatalogTests
         }
         finally
         {
+            Object.DestroyImmediate(root);
+        }
+    }
+
+    [Test]
+    public void RuntimeTextDirtyEventLocalizesChangedSourceBeforeRenderingWithoutPolling()
+    {
+        GameLocalization.Initialize(catalog, GameLocalization.PersianLocaleCode, persist: false);
+        var root = new GameObject("Localized dynamic source", typeof(RectTransform), typeof(Canvas));
+        var label = new GameObject("Label", typeof(RectTransform), typeof(TextMeshProUGUI));
+        label.transform.SetParent(root.transform, false);
+        label.GetComponent<RectTransform>().sizeDelta = new Vector2(500, 100);
+        try
+        {
+            var text = label.GetComponent<TMP_Text>();
+            var binding = label.AddComponent<V3LocalizedTextBindingView>();
+            binding.Configure("ui.acronym", "APC", observeRuntimeChanges: true);
+            // EditMode components do not receive the normal PlayMode enable lifecycle.
+            EditModeViewLifecycle.Invoke(binding, "OnEnable");
+            binding.ApplyLocalization();
+            text.text = "Dynamic panel";
+            Assert.AreEqual(V3LocalizedTextBindingView.ShapeForRendering("پنل پویا"), text.text);
+            Assert.IsTrue(text.isRightToLeftText);
+            text.ForceMeshUpdate(ignoreActiveState: true);
+            text.text = "Fast APC";
+            Assert.AreEqual("Fast APC", text.text);
+            Assert.IsFalse(text.isRightToLeftText, "Untranslated Latin text must clear the preceding Persian direction before rendering.");
+            text.text = "Dynamic panel";
+            GameLocalization.SetLocale(GameLocalization.EnglishLocaleCode, persist: false);
+            Assert.AreEqual("Dynamic panel", text.text);
+        }
+        finally
+        {
+            EditModeViewLifecycle.Invoke(label.GetComponent<V3LocalizedTextBindingView>(), "OnDisable");
             Object.DestroyImmediate(root);
         }
     }

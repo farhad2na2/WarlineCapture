@@ -25,8 +25,8 @@ public sealed class BuildingSelectionMarkerPresentationSystemHelperTests
             RunCase(test => test.RefreshAppliesHologramCompatibleMarkerColorProperties());
             RunCase(test => test.RefreshKeepsMapAuthoredMarkerRenderableBoundsAboveSurface());
             RunCase(test => test.RefreshKeepsMapAuthoredAggregateBoundsInsideGameplayFootprint());
-            RunCase(test => test.RefreshUsesPlausibleOwnedRendererBoundsWhenExactGeometryIsMissing());
-            RunCase(test => test.RefreshUsesBakedCenterForStaticReuseWithoutChildRenderers());
+            RunCase(test => test.RefreshKeepsGameplayFootprintWithOwnedRendererCenter());
+            RunCase(test => test.RefreshKeepsGameplayFootprintWithBakedCenterAndRotation());
             RunCase(test => test.SelectedBuildingPortraitRefreshPrefersRuntimeDefinitionSprite());
             RunCase(test => test.RuntimeVisualInitializationCachesBuildingRenderersWithoutMarkerChildren());
             RunCase(test => test.RuntimeResourceVisualsPreferEcsStorageForProductionState());
@@ -223,7 +223,7 @@ public sealed class BuildingSelectionMarkerPresentationSystemHelperTests
     }
 
     [Test]
-    public void RefreshUsesPlausibleOwnedRendererBoundsWhenExactGeometryIsMissing()
+    public void RefreshKeepsGameplayFootprintWithOwnedRendererCenter()
     {
         var runtimeBuildings = new RuntimeBuildingCollection<RuntimeBuildingEntity>();
         RuntimeBuildingEntity building = CreateBuilding(1, new Vector2Int(4, 5), new Vector2Int(10, 20), 0.25f);
@@ -249,12 +249,12 @@ public sealed class BuildingSelectionMarkerPresentationSystemHelperTests
         Assert.IsNotNull(marker);
         Assert.That(marker.transform.position.x, Is.EqualTo(9f).Within(0.001f));
         Assert.That(marker.transform.position.z, Is.EqualTo(12f).Within(0.001f));
-        Assert.That(marker.transform.localScale.x, Is.EqualTo(10.72f).Within(0.001f));
-        Assert.That(marker.transform.localScale.z, Is.EqualTo(12.67f).Within(0.001f));
+        Assert.That(marker.transform.localScale.x, Is.EqualTo(10f).Within(0.001f));
+        Assert.That(marker.transform.localScale.z, Is.EqualTo(20f).Within(0.001f));
     }
 
     [Test]
-    public void RefreshUsesBakedCenterForStaticReuseWithoutChildRenderers()
+    public void RefreshKeepsGameplayFootprintWithBakedCenterAndRotation()
     {
         var runtimeBuildings = new RuntimeBuildingCollection<RuntimeBuildingEntity>();
         RuntimeBuildingEntity building = CreateBuilding(1, new Vector2Int(40, 50), new Vector2Int(8, 14), 0.25f);
@@ -277,8 +277,8 @@ public sealed class BuildingSelectionMarkerPresentationSystemHelperTests
         Assert.IsNotNull(marker);
         Assert.That(marker.transform.position.x, Is.EqualTo(47.25f).Within(0.001f));
         Assert.That(marker.transform.position.z, Is.EqualTo(55.5f).Within(0.001f));
-        Assert.That(marker.transform.localScale.x, Is.EqualTo(10.72f).Within(0.001f));
-        Assert.That(marker.transform.localScale.z, Is.EqualTo(12.67f).Within(0.001f));
+        Assert.That(marker.transform.localScale.x, Is.EqualTo(8f).Within(0.001f));
+        Assert.That(marker.transform.localScale.z, Is.EqualTo(14f).Within(0.001f));
         Assert.That(marker.transform.eulerAngles.y, Is.EqualTo(90f).Within(0.001f));
     }
 

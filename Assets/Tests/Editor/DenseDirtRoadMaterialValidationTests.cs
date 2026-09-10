@@ -183,7 +183,10 @@ public sealed class DenseDirtRoadMaterialValidationTests
         }
         finally
         {
-            EditorSceneManager.RestoreSceneManagerSetup(setup);
+            if (setup.Length > 0 && System.Array.Exists(setup, scene => scene.isActive && !string.IsNullOrEmpty(scene.path)))
+                EditorSceneManager.RestoreSceneManagerSetup(setup);
+            else
+                EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         }
     }
 

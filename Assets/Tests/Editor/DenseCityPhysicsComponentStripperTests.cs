@@ -148,7 +148,10 @@ public sealed class DenseCityPhysicsComponentStripperTests
             Assert.That(instance.GetComponentsInChildren<Collider2D>(true), Is.Empty);
             Assert.That(instance.GetComponentsInChildren<Rigidbody>(true), Is.Empty);
             Assert.That(instance.GetComponentsInChildren<Rigidbody2D>(true), Is.Empty);
-            Assert.That(PrefabUtility.GetRemovedComponents(instance), Has.Count.EqualTo(4));
+            Assert.That(PrefabUtility.GetRemovedComponents(instance), Is.Empty,
+                "The resolved physics-free prefab should need no instance overrides.");
+            Assert.That(PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(instance),
+                Is.EqualTo(AssetDatabase.GetAssetPath(OperationMapPhysicsFreePrefabResolver.Resolve(prefab))));
 
             GameObject persisted = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
             Assert.That(persisted.GetComponentsInChildren<Collider>(true), Has.Length.EqualTo(1));

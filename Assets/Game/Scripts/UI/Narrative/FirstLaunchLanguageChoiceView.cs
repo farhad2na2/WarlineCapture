@@ -1,5 +1,4 @@
 using System;
-using Game.Configs;
 using Game.Narrative.Contracts;
 using RTLTMPro;
 using TMPro;
@@ -116,9 +115,9 @@ namespace Game.UI.Runtime
         private void ApplySelectedLanguage()
         {
             string localeCode = selectedLanguage == FirstLaunchNarrativeLanguage.Persian
-                ? GameLocalization.PersianLocaleCode
-                : GameLocalization.EnglishLocaleCode;
-            GameLocalization.SetLocale(localeCode, persist: false);
+                ? Game.UI.Contracts.UiLocaleCodes.Persian
+                : Game.UI.Contracts.UiLocaleCodes.English;
+            UiShellRuntimeGateway.Localization.SetLocale(localeCode, persist: false);
             CacheShellPresentationDefaults();
 
             int count = Mathf.Min(
@@ -126,8 +125,8 @@ namespace Game.UI.Runtime
                 Mathf.Min(
                     localizedShellTextKeys?.Length ?? 0,
                     localizedShellEnglishFallbacks?.Length ?? 0));
-            bool rightToLeft = GameLocalization.IsRightToLeft;
-            TMP_FontAsset localeFont = GameLocalization.CurrentFontAsset as TMP_FontAsset;
+            bool rightToLeft = UiShellRuntimeGateway.Localization.IsRightToLeft;
+            TMP_FontAsset localeFont = UiShellRuntimeGateway.Localization.CurrentFontAsset as TMP_FontAsset;
             for (int i = 0; i < count; i++)
             {
                 TMP_Text target = localizedShellTextTargets[i];
@@ -142,7 +141,7 @@ namespace Game.UI.Runtime
                     : defaultShellAlignments[i];
                 ApplyLocalizedText(
                     target,
-                    GameLocalization.Get(
+                    UiShellRuntimeGateway.Localization.Get(
                         localizedShellTextKeys[i],
                         localizedShellEnglishFallbacks[i]),
                     rightToLeft);

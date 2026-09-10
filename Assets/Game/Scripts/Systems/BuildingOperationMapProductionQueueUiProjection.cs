@@ -33,20 +33,25 @@ namespace Game.Runtime
                 ComponentType.ReadOnly<OperationMapBuildingUnitProductionRequest>(),
                 ComponentType.ReadOnly<Faction>(),
                 ComponentType.ReadOnly<UnitHealth>());
-            using NativeArray<Entity> producers = producerQuery.ToEntityArray(Allocator.Temp);
-            for (int producerIndex = 0; producerIndex < producers.Length; producerIndex++)
+            using NativeArray<ArchetypeChunk> producerQueryChunks = producerQuery.ToArchetypeChunkArray(Allocator.Temp);
+            var producersType = entityManager.GetEntityTypeHandle();
+            foreach(var sourceChunk in producerQueryChunks)
             {
-                Entity producer = producers[producerIndex];
-                if (!IsFriendlyLiveProducer(entityManager, producer))
-                    continue;
+                var producers = sourceChunk.GetNativeArray(producersType);
+                for (int producerIndex = 0; producerIndex < producers.Length; producerIndex++)
+                {
+                    Entity producer = producers[producerIndex];
+                    if (!IsFriendlyLiveProducer(entityManager, producer))
+                        continue;
 
-                AppendPendingRequests(
-                    context,
-                    productionContext,
-                    entityManager,
-                    producer,
-                    now,
-                    entries);
+                    AppendPendingRequests(
+                        context,
+                        productionContext,
+                        entityManager,
+                        producer,
+                        now,
+                        entries);
+                }
             }
         }
 

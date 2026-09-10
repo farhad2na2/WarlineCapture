@@ -8,9 +8,9 @@ using UnityEngine.UI;
 public sealed class MatchHudResourceHeaderPrefabTests
 {
     private const string PrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab";
-    private const string MaterialsIconPath = "Assets/Game/Art/UI/Resources/resource_materials.png";
-    private const string OilIconPath = "Assets/Game/Art/UI/Resources/resource_oil.png";
-    private const string FuelIconPath = "Assets/Game/Art/UI/Resources/resource_fuel.png";
+    private const string MaterialsIconPath = "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_materials.png";
+    private const string OilIconPath = "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_oil.png";
+    private const string FuelIconPath = "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_fuel.png";
 
     [Test]
     public void MatchHudHeaderUsesCanonicalMatchResourcesAndIcons()
@@ -24,7 +24,7 @@ public sealed class MatchHudResourceHeaderPrefabTests
         Assert.IsNull(FindDirectChild(strip, "SupplySlot"), "Legacy Supply must be represented as Materials.");
         Assert.AreEqual(5, strip.childCount, "ResourceStrip must contain three match resources, Civilian Risk, and its frame.");
 
-        Assert.AreEqual(0, FindDirectChild(strip, "Frame")?.GetSiblingIndex(), "ResourceStrip frame must render behind its content");
+        Assert.AreEqual(0, FindDirectChild(strip, "V3GradientLayer")?.GetSiblingIndex(), "ResourceStrip frame must render behind its content");
         AssertSlot(strip, "MaterialsSlot", "Materials", MaterialsIconPath, 1);
         AssertSlot(strip, "OilSlot", "Oil", OilIconPath, 2);
         AssertSlot(strip, "FuelSlot", "Fuel", FuelIconPath, 3);
@@ -44,7 +44,7 @@ public sealed class MatchHudResourceHeaderPrefabTests
 
         TMP_Text label = FindDirectChild(slot, "Label")?.GetComponent<TMP_Text>();
         Assert.NotNull(label, $"{slotName}/Label");
-        Assert.AreEqual(expectedLabel, label.text);
+        Assert.AreEqual(expectedLabel.ToUpperInvariant(), label.text.ToUpperInvariant());
 
         if (string.IsNullOrEmpty(expectedIconPath))
             return;

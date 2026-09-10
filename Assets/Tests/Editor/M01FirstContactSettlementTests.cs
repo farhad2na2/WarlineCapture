@@ -49,6 +49,19 @@ public sealed class M01FirstContactSettlementTests
 
     private Fixture _fixture;
 
+    [SetUp]
+    public void SetUp() => _fixture = new Fixture(Path.Combine(Path.GetTempPath(), "m01-settlement-" + Guid.NewGuid().ToString("N")));
+
+    [TearDown]
+    public void TearDown()
+    {
+        string root = _fixture?.RootPath;
+        _fixture?.Dispose();
+        _fixture = null;
+        if (root != null && Directory.Exists(root)) Directory.Delete(root, true);
+    }
+
+
     [Test]
     public void FirstClearGrantsConfiguredRewardsAndRevealsM02()
     {

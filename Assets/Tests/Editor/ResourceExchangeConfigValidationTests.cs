@@ -83,7 +83,7 @@ public sealed class ResourceExchangeConfigValidationTests
                     "exchange.convert_oil_materials.test",
                     ResourceExchangeRouteType.Export,
                     ResourceExchangeResourceKind.Oil,
-                    ResourceExchangeResourceKind.Oil)));
+                    ResourceExchangeResourceKind.Materials)));
 
         Assert.AreEqual(
             ResourceExchangeReason.None,
@@ -104,7 +104,7 @@ public sealed class ResourceExchangeConfigValidationTests
                 "exchange.convert_oil_materials.test",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Oil),
+                ResourceExchangeResourceKind.Materials),
             new ResourceExchangeRecipeConfigEntry(
                 "exchange.convert_oil_materials.test",
                 ResourceExchangeRouteType.Export,
@@ -126,7 +126,7 @@ public sealed class ResourceExchangeConfigValidationTests
                 string.Empty,
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Oil,
+                ResourceExchangeResourceKind.Materials,
                 100,
                 1000,
                 100,
@@ -143,7 +143,7 @@ public sealed class ResourceExchangeConfigValidationTests
                 "exchange.invalid.amount",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Oil,
+                ResourceExchangeResourceKind.Materials,
                 1000,
                 100,
                 100,
@@ -160,7 +160,7 @@ public sealed class ResourceExchangeConfigValidationTests
                 "exchange.invalid.step",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Oil,
+                ResourceExchangeResourceKind.Materials,
                 100,
                 950,
                 200,
@@ -177,7 +177,7 @@ public sealed class ResourceExchangeConfigValidationTests
                 "exchange.invalid.rate",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Oil,
+                ResourceExchangeResourceKind.Materials,
                 100,
                 1000,
                 100,
@@ -194,7 +194,7 @@ public sealed class ResourceExchangeConfigValidationTests
                 "exchange.invalid.duration",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Oil,
+                ResourceExchangeResourceKind.Materials,
                 100,
                 1000,
                 100,
@@ -211,7 +211,7 @@ public sealed class ResourceExchangeConfigValidationTests
                 "exchange.invalid.rush",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Oil,
+                ResourceExchangeResourceKind.Materials,
                 100,
                 1000,
                 100,
@@ -232,7 +232,7 @@ public sealed class ResourceExchangeConfigValidationTests
                 "exchange.invalid.amount_cap",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Oil,
+                ResourceExchangeResourceKind.Materials,
                 100,
                 ResourceExchangeRecipeConfigValidator.MaximumInputAmountPerExchange + 100,
                 100,
@@ -249,7 +249,7 @@ public sealed class ResourceExchangeConfigValidationTests
                 "exchange.invalid.rate_cap",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Oil,
+                ResourceExchangeResourceKind.Materials,
                 100,
                 1000,
                 100,
@@ -266,7 +266,7 @@ public sealed class ResourceExchangeConfigValidationTests
                 "exchange.invalid.fee_nan",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Oil,
+                ResourceExchangeResourceKind.Materials,
                 100,
                 1000,
                 100,
@@ -283,7 +283,7 @@ public sealed class ResourceExchangeConfigValidationTests
                 "exchange.invalid.instant",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Oil,
+                ResourceExchangeResourceKind.Materials,
                 100,
                 1000,
                 100,
@@ -300,7 +300,7 @@ public sealed class ResourceExchangeConfigValidationTests
                 "exchange.invalid.rush_cap",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Oil,
+                ResourceExchangeResourceKind.Materials,
                 100,
                 1000,
                 100,
@@ -369,7 +369,7 @@ public sealed class ResourceExchangeConfigValidationTests
                 "exchange.convert_oil_materials.mission_active",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Oil,
+                ResourceExchangeResourceKind.Materials,
                 missionTag: "mission.active"),
             new ResourceExchangeRecipeConfigEntry(
                 "exchange.import_fuel_credits.skirmish_quick",
@@ -417,7 +417,7 @@ public sealed class ResourceExchangeConfigValidationTests
                 "exchange.convert_oil_materials.blank_gate",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Oil)
+                ResourceExchangeResourceKind.Materials)
         };
 
         Assert.AreEqual(
@@ -430,7 +430,7 @@ public sealed class ResourceExchangeConfigValidationTests
                 "exchange.convert_oil_materials.unknown_gate",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Oil,
+                ResourceExchangeResourceKind.Materials,
                 missionTag: "mission.late")
         };
 
@@ -497,7 +497,7 @@ public sealed class ResourceExchangeConfigValidationTests
                 "exchange.convert_oil_materials.ai_enabled",
                 ResourceExchangeRouteType.Export,
                 ResourceExchangeResourceKind.Oil,
-                ResourceExchangeResourceKind.Oil,
+                ResourceExchangeResourceKind.Materials,
                 missionTag: "mission.ai_exchange_enabled")
         };
 

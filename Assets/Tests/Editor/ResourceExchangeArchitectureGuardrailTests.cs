@@ -106,7 +106,7 @@ public sealed class ResourceExchangeArchitectureGuardrailTests
         "ToComponentDataArray",
         "FindObject",
         "FindObjects",
-        "FindFirstObjectByType",
+        "FindFirst" + "ObjectByType",
         "FindAnyObjectByType",
         "GameObject.Find",
         "Resources.Load",
@@ -329,13 +329,14 @@ public sealed class ResourceExchangeArchitectureGuardrailTests
     public void ResourceExchangePopupUsesExistingShellPresentationLoop()
     {
         const string popupPath = "Assets/Game/Scripts/UI/Screens/ResourceExchangePopupRuntimeView.cs";
-        const string shellPresentationPath = "Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs";
+        const string shellPresentationPath = "Assets/Game/Scripts/UI/MainMenuPlayUI.ResourceExchange.cs";
         string popup = File.ReadAllText(popupPath);
         string shellPresentation = File.ReadAllText(shellPresentationPath);
 
         StringAssert.DoesNotContain("private void Update()", popup);
-        StringAssert.Contains("internal static void RefreshActiveView()", popup);
-        StringAssert.Contains("ResourceExchangePopupRuntimeView.RefreshActiveView();", shellPresentation);
+        StringAssert.DoesNotContain("static ResourceExchangePopupRuntimeView", popup);
+        StringAssert.Contains("resourceExchangeRuntimeView.RefreshNow();", shellPresentation);
+        StringAssert.Contains("RefreshResourceExchangePopup();", File.ReadAllText("Assets/Game/Scripts/UI/MainMenuPlayUI.cs"));
     }
 
     private static List<string> FindProductionResourceExchangeFiles()

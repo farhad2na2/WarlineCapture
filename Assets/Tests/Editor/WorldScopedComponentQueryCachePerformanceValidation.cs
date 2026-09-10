@@ -16,7 +16,7 @@ using Debug = UnityEngine.Debug;
 
 public sealed class WorldScopedComponentQueryCachePerformanceValidation
 {
-    private const int GovernedCombinationCount = 3;
+    private const int GovernedCombinationCount = 4;
     private const int WarmupOperations = 180;
     private const int MeasuredOperations = 300;
 
@@ -84,6 +84,10 @@ public sealed class WorldScopedComponentQueryCachePerformanceValidation
             nameof(ThreatWarningRuntimeStateComponent),
             readOnly: false,
             warningStateCache);
+        var defenseCache = GetConfiguredCache<CampaignMissionRootComponent>(
+            warningPresentation, "_defenseQuery", expectedReadOnly: true);
+        ValidateCombination(nameof(ThreatWarningPresentationState), nameof(CampaignMissionRootComponent),
+            readOnly: true, defenseCache);
         warningPresentation.Dispose();
     }
 
@@ -192,6 +196,7 @@ public sealed class WorldScopedComponentQueryCachePerformanceValidation
         int storageCount = 0;
         int moveOrderCount = 0;
         int warningStateCount = 0;
+        int defenseCount = 0;
         int unexpectedCount = 0;
 
         foreach (Type runtimeType in runtimeTypes)
@@ -228,6 +233,11 @@ public sealed class WorldScopedComponentQueryCachePerformanceValidation
                 {
                     warningStateCount++;
                 }
+                else if (runtimeType == typeof(ThreatWarningPresentationState) &&
+                         field.Name == "_defenseQuery" && componentType == typeof(CampaignMissionRootComponent))
+                {
+                    defenseCount++;
+                }
                 else
                 {
                     unexpectedCount++;
@@ -242,6 +252,7 @@ public sealed class WorldScopedComponentQueryCachePerformanceValidation
         Assert.AreEqual(1, storageCount, "The resource-storage cache consumer must exist exactly once.");
         Assert.AreEqual(1, moveOrderCount, "The move-order cache consumer must exist exactly once.");
         Assert.AreEqual(1, warningStateCount, "The threat-warning cache consumer must exist exactly once.");
+        Assert.AreEqual(1, defenseCount, "The mission defense warning cache must be covered exactly once.");
         Assert.AreEqual(0, unexpectedCount, "An undeclared WorldScopedComponentQueryCache consumer was found.");
     }
 

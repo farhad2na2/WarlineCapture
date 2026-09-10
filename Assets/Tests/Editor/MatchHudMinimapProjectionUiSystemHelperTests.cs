@@ -639,7 +639,7 @@ public sealed class MatchHudMinimapProjectionUiSystemHelperTests
 
             Vector2 focused = default;
             view.FocusRequested += value => focused = value;
-            MatchHudMinimapViewportDragRelay relay = viewportRect.GetComponent<MatchHudMinimapViewportDragRelay>();
+            MatchHudMinimapViewportDragRelayView relay = viewportRect.GetComponent<MatchHudMinimapViewportDragRelayView>();
             Assert.IsNotNull(relay);
             Assert.IsTrue(viewportImage.raycastTarget);
 
@@ -737,7 +737,7 @@ public sealed class MatchHudMinimapProjectionUiSystemHelperTests
             Graphic viewportGraphic = viewportRect.GetComponent<Graphic>();
             Assert.IsNotNull(viewportGraphic);
             Assert.IsTrue(viewportGraphic.raycastTarget);
-            Assert.IsNotNull(viewportRect.GetComponent<MatchHudMinimapViewportDragRelay>());
+            Assert.IsNotNull(viewportRect.GetComponent<MatchHudMinimapViewportDragRelayView>());
         }
         finally
         {
@@ -784,7 +784,7 @@ public sealed class MatchHudMinimapProjectionUiSystemHelperTests
                 allowMapFocus: true,
                 allowZoom: false,
                 openFullMapOnClick: false);
-            MatchHudMinimapViewportDragRelay relay = view.ViewportRect.GetComponent<MatchHudMinimapViewportDragRelay>();
+            MatchHudMinimapViewportDragRelayView relay = view.ViewportRect.GetComponent<MatchHudMinimapViewportDragRelayView>();
             Assert.IsNotNull(relay);
             Graphic viewportGraphic = view.ViewportRect.GetComponent<Graphic>();
             Assert.IsNotNull(viewportGraphic);

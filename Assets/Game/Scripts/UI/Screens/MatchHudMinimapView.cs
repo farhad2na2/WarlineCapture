@@ -6,7 +6,7 @@ using UnityEngine.UI;
 namespace Game.UI.Runtime
 {
     [DisallowMultipleComponent]
-    public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, IInitializePotentialDragHandler, IDragHandler, IPointerUpHandler, IPointerClickHandler
+    public sealed partial class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, IInitializePotentialDragHandler, IDragHandler, IPointerUpHandler, IPointerClickHandler
     {
         internal const float ViewportDragHitPadding = 18f;
 
@@ -483,42 +483,6 @@ namespace Game.UI.Runtime
 
             rect = Rect.MinMaxRect(min.x, min.y, max.x, max.y);
             return true;
-        }
-
-        private void EnsureZoomRelay(Button button, int direction)
-        {
-            if (button == null)
-                return;
-
-            MatchHudMinimapZoomPressRelay relay = button.GetComponent<MatchHudMinimapZoomPressRelay>();
-            if (relay == null)
-                relay = button.gameObject.AddComponent<MatchHudMinimapZoomPressRelay>();
-
-            relay.Configure(this, direction);
-        }
-
-        private void EnsureViewportDragRelay()
-        {
-            if (viewportRect == null)
-                return;
-
-            Graphic graphic = viewportRect.GetComponent<Graphic>();
-            if (graphic == null)
-            {
-                Image image = viewportRect.gameObject.AddComponent<Image>();
-                image.color = Color.clear;
-                image.type = Image.Type.Simple;
-                image.preserveAspect = false;
-                graphic = image;
-            }
-
-            graphic.raycastTarget = true;
-
-            MatchHudMinimapViewportDragRelay relay = viewportRect.GetComponent<MatchHudMinimapViewportDragRelay>();
-            if (relay == null)
-                relay = viewportRect.gameObject.AddComponent<MatchHudMinimapViewportDragRelay>();
-
-            relay.Configure(this);
         }
 
         internal void NotifyZoomHeld(int direction, bool held)

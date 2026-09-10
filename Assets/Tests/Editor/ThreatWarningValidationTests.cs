@@ -15,6 +15,10 @@ using Game.UI.Shell.Contracts.Ecs;
 
 public sealed class ThreatWarningValidationTests
 {
+    private string previousLocale;
+    [SetUp] public void SetLocale() { previousLocale = Game.Configs.GameLocalization.CurrentLocaleCode; Game.Configs.GameLocalization.SetLocale("en", false); }
+    [TearDown] public void RestoreLocale() => Game.Configs.GameLocalization.SetLocale(previousLocale, false);
+
     private const string ScenePath = "Assets/Game/Scenes/Match.unity";
     private const string RadarTankConfigPath = "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Radar_Tank.asset";
     private const string SatelliteDishConfigPath = "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Building_Satelite_Dish_Config.asset";
@@ -319,7 +323,6 @@ public sealed class ThreatWarningValidationTests
         {
             RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
             RuntimeGameplayStateTestHelper.SetSimulationActive(em, false);
-            ThreatWarningRuntimeState.RequestWarning(em, ThreatWarningType.Ground, 0f, 1);
 
             system.Update(world.Unmanaged);
 

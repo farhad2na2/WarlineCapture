@@ -860,8 +860,8 @@ namespace Game.Editor
                     UnityEngine.Object.DestroyImmediate(relay);
             }
 
-            MatchHudMinimapViewportDragRelay viewportRelay = minimapView != null && minimapView.ViewportRect != null
-                ? minimapView.ViewportRect.GetComponent<MatchHudMinimapViewportDragRelay>()
+            MatchHudMinimapViewportDragRelayView viewportRelay = minimapView != null && minimapView.ViewportRect != null
+                ? minimapView.ViewportRect.GetComponent<MatchHudMinimapViewportDragRelayView>()
                 : null;
             if (viewportRelay != null)
                 UnityEngine.Object.DestroyImmediate(viewportRelay);

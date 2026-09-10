@@ -1,4 +1,7 @@
 using System.IO;
+using System.Linq;
+using UnityEngine;
+using UnityEngine.UI;
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using NUnit.Framework;
 using UnityEditor;
@@ -40,8 +43,13 @@ public sealed class CanonicalResourceIconAlignmentTests
     [Test]
     public void MatchSurfaces_UseOnlyCanonicalMatchResourceIcons()
     {
-        AssertUses(MatchHudPrefab, MaterialsIcon, OilIcon, FuelIcon);
-        AssertDoesNotUse(MatchHudPrefab, CreditsIcon, CommandIcon);
+        AssertUses(MatchHudPrefab, V3MaterialsIcon, V3OilIcon, V3FuelIcon);
+        var hud=AssetDatabase.LoadAssetAtPath<GameObject>(MatchHudPrefab);
+        var header=hud.GetComponentsInChildren<Transform>(true).Single(item=>item.name=="ResourceStrip");
+        Assert.That(header, Is.Not.Null);
+        var sprites=header.GetComponentsInChildren<Image>(true).Select(image=>AssetDatabase.GetAssetPath(image.sprite)).ToArray();
+        Assert.That(sprites, Does.Not.Contain(CreditsIcon));
+        Assert.That(sprites, Does.Not.Contain(CommandIcon));
 
         AssertUses(BuildDrawerPrefab, V3MaterialsIcon, V3OilIcon, V3FuelIcon);
         AssertDoesNotUse(BuildDrawerPrefab, CreditsIcon, CommandIcon, MaterialsIcon, OilIcon, FuelIcon);

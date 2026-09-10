@@ -1135,66 +1135,31 @@ namespace Game.Runtime
             if (!reserved.IsCreated || entityManager.World == null || !entityManager.World.IsCreated)
                 return;
 
-            EntityQuery renderBoundsQuery = entityManager.CreateEntityQuery(new EntityQueryDesc
-            {
-                All = new[] { ComponentType.ReadOnly<Unity.Rendering.WorldRenderBounds>() },
-                None = new[]
-                {
-                    ComponentType.ReadOnly<Prefab>(),
-                    ComponentType.ReadOnly<Disabled>(),
-                    ComponentType.ReadOnly<UnitFootprint>()
-                }
-            });
-            NativeArray<Unity.Rendering.WorldRenderBounds> renderBounds =
-                renderBoundsQuery.ToComponentDataArray<Unity.Rendering.WorldRenderBounds>(Allocator.Temp);
+            var provider = Game.Rendering.Contracts.RenderBoundsGateway.Provider;
+            if (provider == null) return;
+            float safeCellSize = math.max(0.01f, grid.CellSize);
+            float maxExtent = HelicopterDropMaxStaticRenderExtentCells * safeCellSize;
+            int searchPadding = HelicopterDropSearchRadiusCells + HelicopterDropStaticRenderBufferCells;
+            int2 searchMin = preferredCell - new int2(searchPadding, searchPadding);
+            int2 searchMax = preferredCell + new int2(searchPadding + 1, searchPadding + 1);
+            var area = new Rect(grid.Origin.x + searchMin.x * safeCellSize,
+                grid.Origin.z + searchMin.y * safeCellSize,
+                (searchMax.x - searchMin.x) * safeCellSize, (searchMax.y - searchMin.y) * safeCellSize);
+            var renderBounds = new NativeList<Bounds>(Allocator.Temp);
             try
             {
-                float safeCellSize = math.max(0.01f, grid.CellSize);
-                float maxExtent = HelicopterDropMaxStaticRenderExtentCells * safeCellSize;
-                int searchPadding = HelicopterDropSearchRadiusCells + HelicopterDropStaticRenderBufferCells;
-                int2 searchMin = preferredCell - new int2(searchPadding, searchPadding);
-                int2 searchMax = preferredCell + new int2(searchPadding + 1, searchPadding + 1);
+                provider.CollectStaticBounds(entityManager, area, safeCellSize * 0.25f, maxExtent, ref renderBounds);
                 for (int index = 0; index < renderBounds.Length; index++)
                 {
-                    AABB bounds = renderBounds[index].Value;
-                    float2 horizontalExtents = new(bounds.Extents.x, bounds.Extents.z);
-                    float largestExtent = math.cmax(horizontalExtents);
-                    if (!math.all(math.isfinite(bounds.Center)) ||
-                        !math.all(math.isfinite(bounds.Extents)) ||
-                        largestExtent < safeCellSize * 0.25f ||
-                        largestExtent > maxExtent)
-                    {
-                        continue;
-                    }
-
-                    int2 minCell = GridUtils.WorldToCell(
-                        grid,
-                        bounds.Center - new float3(horizontalExtents.x, 0f, horizontalExtents.y));
-                    int2 maxCell = GridUtils.WorldToCell(
-                        grid,
-                        bounds.Center + new float3(horizontalExtents.x, 0f, horizontalExtents.y));
-                    if (maxCell.x < searchMin.x || maxCell.y < searchMin.y ||
-                        minCell.x >= searchMax.x || minCell.y >= searchMax.y)
-                    {
-                        continue;
-                    }
-
+                    Bounds bounds = renderBounds[index];
+                    int2 minCell = GridUtils.WorldToCell(grid, bounds.min);
+                    int2 maxCell = GridUtils.WorldToCell(grid, bounds.max);
                     int padding = HelicopterDropStaticRenderBufferCells;
-                    ReserveCellRect(
-                        ref reserved,
-                        grid,
-                        minCell.x - padding,
-                        minCell.y - padding,
-                        maxCell.x + padding + 1,
-                        maxCell.y + padding + 1);
+                    ReserveCellRect(ref reserved, grid, minCell.x - padding, minCell.y - padding,
+                        maxCell.x + padding + 1, maxCell.y + padding + 1);
                 }
             }
-            finally
-            {
-                if (renderBounds.IsCreated)
-                    renderBounds.Dispose();
-                renderBoundsQuery.Dispose();
-            }
+            finally { renderBounds.Dispose(); }
         }
 
         private static void ReserveRuntimeBuildingDropBuffers(Context context, ref NativeBitArray reserved, GridConfig grid, int extraRadius)

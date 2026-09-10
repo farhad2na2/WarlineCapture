@@ -7,6 +7,15 @@ using Unity.Entities;
 
 internal static class RuntimeGameplayStateTestHelper
 {
+    public static void SetVerboseAILogs(EntityManager em, bool enabled)
+    {
+        using var query = em.CreateEntityQuery(typeof(RuntimeDiagnosticsStateComponent));
+        Entity entity = query.IsEmptyIgnoreFilter ? em.CreateEntity(typeof(RuntimeDiagnosticsStateComponent)) : query.GetSingletonEntity();
+        var state = em.GetComponentData<RuntimeDiagnosticsStateComponent>(entity);
+        state.VerboseAILogs = enabled ? (byte)1 : (byte)0;
+        em.SetComponentData(entity, state);
+    }
+
     public static void SetVerboseAILogs(bool enabled)
     {
         var diagnostics = new RuntimeDiagnosticsSystem();

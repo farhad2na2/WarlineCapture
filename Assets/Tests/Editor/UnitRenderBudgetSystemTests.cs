@@ -43,6 +43,7 @@ public sealed partial class UnitRenderBudgetSystemTests
             tests.AirUnitDecisionForcesDetailedRootsWhenBudgetWouldUseLow();
             tests.SelectedVehicleForcesImmediateDetailedVisual();
             tests.StableBudgetDoesNotSkipSelectedUnitsAndSelectionChanges();
+            tests.StableUnselectedBudgetRechecksMovingActorsAtTheNextScheduledFrame();
             tests.CameraMotionBudgetRespectsThreeFrameThrottle();
             tests.SelectedVehicleReappliesDetailRootsWhenVisualStateAlreadyDetail();
             tests.MissingMeshLodInstanceKeepsDetailVisibleUntilReady();
@@ -64,7 +65,7 @@ public sealed partial class UnitRenderBudgetSystemTests
             tests.CharacterImpostorsScaleUpAtHighTacticalCameraHeight();
             tests.HighCameraCharacterImpostorsFaceCameraPlane();
             tests.SourceKeyPrefixChecksDoNotAllocate();
-            Debug.Log("[UnitRenderBudgetFocusedValidation] result=Passed tests=39");
+            Debug.Log("[UnitRenderBudgetFocusedValidation] result=Passed tests=40");
         }
         catch (System.Exception ex)
         {
@@ -1124,7 +1125,7 @@ public sealed partial class UnitRenderBudgetSystemTests
             cameraMotionActive: false,
             currentUnitCount: 12,
             currentSelectedUnitCount: 0,
-            currentSelectedUnitHash: 0));
+            currentSelectedUnitHash: 0, frame: 15));
         Assert.IsTrue(schedule.ShouldSkipUpdateFrame(
             cameraMotionActive: false,
             frame: 15,
@@ -1134,7 +1135,7 @@ public sealed partial class UnitRenderBudgetSystemTests
             cameraMotionActive: false,
             currentUnitCount: 12,
             currentSelectedUnitCount: 1,
-            currentSelectedUnitHash: 3075));
+            currentSelectedUnitHash: 3075, frame: 15));
         Assert.IsFalse(schedule.ShouldSkipUpdateFrame(
             cameraMotionActive: false,
             frame: 15,
@@ -1152,7 +1153,7 @@ public sealed partial class UnitRenderBudgetSystemTests
             cameraMotionActive: false,
             currentUnitCount: 12,
             currentSelectedUnitCount: 1,
-            currentSelectedUnitHash: 3075));
+            currentSelectedUnitHash: 3075, frame: 15));
         Assert.IsTrue(schedule.ShouldSkipUpdateFrame(
             cameraMotionActive: false,
             frame: 25,
@@ -1163,6 +1164,19 @@ public sealed partial class UnitRenderBudgetSystemTests
             frame: 25,
             currentSelectedUnitCount: 1,
             currentSelectedUnitHash: 4096));
+    }
+
+    [Test]
+    public void StableUnselectedBudgetRechecksMovingActorsAtTheNextScheduledFrame()
+    {
+        var schedule = new UnitRenderBudgetSchedule();
+        schedule.ScheduleNextUpdate(false, 100, 10);
+        schedule.RecordBudgetStability(700, 0, 0, true);
+        Assert.IsTrue(schedule.ShouldSkipStableBudget(false, 700, 0, 0, 109));
+        Assert.IsFalse(schedule.ShouldSkipStableBudget(false, 700, 0, 0, 110),
+            "Moving actors must leave static impostors even without a camera move or selection change.");
+        Assert.IsFalse(schedule.ShouldSkipUpdateFrame(false, 110, 0, 0));
+        Assert.IsFalse(schedule.ShouldSkipStableBudget(false, 700, 0, 0, 1000));
     }
 
     [Test]
@@ -1729,7 +1743,9 @@ public sealed partial class UnitRenderBudgetSystemTests
     public void CharacterImpostorsScaleUpAtHighTacticalCameraHeight()
     {
         Assert.AreEqual(1f, UnitImpostorVisualUtility.ResolveCharacterTacticalScale(80f), 0.001f);
-        Assert.AreEqual(16f, UnitImpostorVisualUtility.ResolveCharacterTacticalScale(200f), 0.001f);
+        Assert.That(UnitImpostorVisualUtility.ResolveCharacterTacticalScale(200f), Is.InRange(1f, 2.5f));
+        Assert.That(UnitImpostorVisualUtility.ResolveCharacterTacticalScale(400f), Is.InRange(1f, 2.5f),
+            "A distant marker must not turn an infantryman into a building-sized static sprite.");
     }
 
     [Test]

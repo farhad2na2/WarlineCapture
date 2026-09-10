@@ -21,7 +21,7 @@ public sealed class GameStringsTests
             config.Entries.Add(CreateEntry("confirm_destroy", "Are you sure you want to destroy {0}?"));
             GameStrings.Init(config);
 
-            string result = GameStrings.Format("confirm_destroy", "Soldier Tent");
+            string result = GameStrings.Format("confirm_destroy", new object[] { "Soldier Tent" });
 
             Assert.AreEqual("Are you sure you want to destroy Soldier Tent?", result);
         }

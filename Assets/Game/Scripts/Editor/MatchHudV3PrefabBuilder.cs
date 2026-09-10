@@ -1854,8 +1854,8 @@ namespace Game.Editor
                 ConfigureThreatAlertCaptureState(instance, canvasRect, showThreatRoutePreview);
             if (applyLocalization)
             {
-                foreach (V3LocalizedTextBinding binding in
-                         instance.GetComponentsInChildren<V3LocalizedTextBinding>(true))
+                foreach (V3LocalizedTextBindingView binding in
+                         instance.GetComponentsInChildren<V3LocalizedTextBindingView>(true))
                 {
                     binding.ApplyLocalization();
                 }

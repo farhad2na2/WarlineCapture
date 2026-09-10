@@ -1,3 +1,4 @@
+using Unity.Burst;
 using Game.Components;
 using Game.Missions.Contracts;
 using Unity.Entities;
@@ -6,10 +7,13 @@ namespace Game.Runtime
 {
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     [UpdateBefore(typeof(ThreatDetectionWarningSystem))]
+    [BurstCompile]
     public partial struct RadarPingRequestSystem : ISystem
     {
+        [BurstCompile]
         public void OnCreate(ref SystemState state) => state.RequireForUpdate<RadarPingState>();
 
+        [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
             if (!SystemAPI.TryGetSingletonEntity<CampaignMissionRootComponent>(out Entity root)) return;

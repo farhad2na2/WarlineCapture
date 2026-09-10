@@ -36,7 +36,7 @@ namespace Game.Editor
                 Complete(true,"normal camera tour; HUD en/fa 16:9 and 20:9; guide 12 topics and all 57 classes in both languages; at most one resident class; guide pauses simulation and closing resumes it");return;
             }
             var view=UnityEngine.Object.FindAnyObjectByType<MissionFieldGuideView>();if(view==null||!view.isActiveAndEnabled)return;
-            if(view.Guide==null||view.Guide.name!="M04_Airlift_FieldGuide"||view.Guide.Topics.Length!=12||view.Guide.Classes.Length!=57)
+            if(view.Guide==null||view.Guide.Name!="M04_Airlift_FieldGuide"||view.Guide.Topics.Length!=12||view.Guide.Classes.Length!=57)
                 throw new InvalidOperationException("M04 guide loaded the wrong mission or inventory");
             if(step==7)
             {
@@ -51,9 +51,9 @@ namespace Game.Editor
                 if(!text.isActiveAndEnabled)continue;text.ForceMeshUpdate();
                 if(text.isTextOverflowing||text.isTextTruncated)throw new InvalidOperationException("M04 guide text overflow: "+text.name+" page="+guidePage);
             }
-            foreach(var binding in view.GetComponentsInChildren<V3LocalizedTextBinding>())
+            foreach(var binding in view.GetComponentsInChildren<V3LocalizedTextBindingView>())
             {
-                string source=typeof(V3LocalizedTextBinding).GetField("runtimeSource",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance)?.GetValue(binding)as string??"";
+                string source=typeof(V3LocalizedTextBindingView).GetField("runtimeSource",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance)?.GetValue(binding)as string??"";
                 if(source.Contains("in M3")||source.Contains("مأموریت ۳"))
                     throw new InvalidOperationException("M04 guide retained M3-specific class copy");
             }

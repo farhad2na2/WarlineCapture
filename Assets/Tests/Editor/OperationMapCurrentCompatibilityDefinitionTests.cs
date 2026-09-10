@@ -94,7 +94,7 @@ public sealed class OperationMapCurrentCompatibilityDefinitionTests
         }
         Assert.That(definition.NavigationMetadata.AuthoredSubSceneGuid,
             Is.EqualTo(AssetDatabase.AssetPathToGUID(
-                "Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01_subscene.unity")));
+                "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity")));
         Assert.That(definition.NavigationMetadata.GridAuthoringLocalId, Is.EqualTo(146043441));
         Assert.That(definition.NavigationMetadata.StaticGridBlockerCount, Is.EqualTo(0));
         Assert.That(definition.NavigationMetadata.UsesSurfaceMovementMetadata, Is.True);

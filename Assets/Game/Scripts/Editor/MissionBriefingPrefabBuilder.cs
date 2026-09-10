@@ -93,7 +93,7 @@ namespace Game.Editor
         {
             if (prefab == null) return false;
             MissionBriefingScreenView view = prefab.GetComponent<MissionBriefingScreenView>();
-            if (view == null || prefab.GetComponent<CampaignMissionScreenBinder>() == null ||
+            if (view == null || prefab.GetComponent<CampaignMissionScreenBinderView>() == null ||
                 view.MissionArtImage == null || view.MissionArtImage.texture == null ||
                 view.MissionTitle == null || view.DeployOperationButton == null ||
                 view.MissionNumber == null || view.OperationCodename == null ||
@@ -211,7 +211,7 @@ namespace Game.Editor
             SetReference(serialized, "replayTutorialLabel", replayTutorialLabel);
             SetReference(serialized, "deployOperationButton", deploy);
             serialized.ApplyModifiedPropertiesWithoutUndo();
-            CampaignMissionScreenBinder binder = root.AddComponent<CampaignMissionScreenBinder>();
+            CampaignMissionScreenBinderView binder = root.AddComponent<CampaignMissionScreenBinderView>();
             binder.Configure(screen, "saga.ch01.m01.first_contact");
             return root;
         }

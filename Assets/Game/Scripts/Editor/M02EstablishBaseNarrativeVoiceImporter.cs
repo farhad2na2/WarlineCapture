@@ -47,9 +47,9 @@ namespace Game.Editor
 
         public static IEnumerable<M02NarrativeLocalizedLine> AllLines()
         {
-            foreach (M02NarrativeLocalizedLine line in M02EstablishBaseLocalizedText.Brief) yield return line;
-            foreach (M02NarrativeLocalizedLine line in M02EstablishBaseLocalizedText.Comms) yield return line;
-            foreach (M02NarrativeLocalizedLine line in M02EstablishBaseLocalizedText.Debrief) yield return line;
+            foreach (M02NarrativeLocalizedLine line in M02EstablishBaseTextCatalog.Brief) yield return line;
+            foreach (M02NarrativeLocalizedLine line in M02EstablishBaseTextCatalog.Comms) yield return line;
+            foreach (M02NarrativeLocalizedLine line in M02EstablishBaseTextCatalog.Debrief) yield return line;
         }
 
         private static string FileStem(string lineId) => lineId.Replace('-', '_').Replace('.', '_');

@@ -76,9 +76,9 @@ public sealed class AirMissileLauncherAuthoringTests
     [Test]
     public void AirLauncherBakerProjectsThreatDetectorsToAirDefenseSupportProviders()
     {
-        string source = System.IO.File.ReadAllText("Assets/Game/Scripts/Authorings/UnitGridAuthoring.cs");
+        string source = string.Join("\n", System.Array.ConvertAll(System.IO.Directory.GetFiles("Assets/Game/Scripts/Authorings", "UnitGridAuthoring*.cs"), System.IO.File.ReadAllText));
 
-        StringAssert.Contains("AddAirDefenseSupportProvider(entity, authoring.threatDetectionKind, authoring.threatDetectionRadiusCells)", source);
+        StringAssert.Contains("AddAirDefenseSupportProvider(entity, threatDetectionKind, threatDetectionRadiusCells)", source);
         StringAssert.Contains("AirDefenseSupportProviderKind.Satellite", source);
         StringAssert.Contains("AirDefenseSupportProviderKind.Radar", source);
     }

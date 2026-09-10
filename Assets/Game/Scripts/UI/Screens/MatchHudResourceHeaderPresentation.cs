@@ -1,4 +1,3 @@
-using Game.Configs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -264,18 +263,18 @@ namespace Game.UI.Runtime
         {
             SetLabelIfChanged(
                 _materialsSlotLabel,
-                GameLocalization.Get("ui.hud.materials", "Materials"));
+                UiShellRuntimeGateway.Localization.Get("ui.hud.materials", "Materials"));
             SetLabelIfChanged(
                 _oilSlotLabel,
-                GameLocalization.Get("ui.hud.oil", "Oil"));
+                UiShellRuntimeGateway.Localization.Get("ui.hud.oil", "Oil"));
             string fuelLabel = UiShellRuntimeGateway.TryReadMissionHudRestrictions(
                 out UiMissionHudRestrictionsModel restrictions) && restrictions.ShowMissionCredits
-                ? GameLocalization.Get("ui.hud.credits", "Credits")
-                : GameLocalization.Get("ui.hud.fuel", "Fuel");
+                ? UiShellRuntimeGateway.Localization.Get("ui.hud.credits", "Credits")
+                : UiShellRuntimeGateway.Localization.Get("ui.hud.fuel", "Fuel");
             SetLabelIfChanged(_fuelSlotLabel, fuelLabel);
             SetLabelIfChanged(
                 _civilianRiskSlotLabel,
-                GameLocalization.Get("ui.hud.civilian_risk", "Civilian Risk"));
+                UiShellRuntimeGateway.Localization.Get("ui.hud.civilian_risk", "Civilian Risk"));
             _labelsApplied = true;
         }
 
@@ -285,7 +284,7 @@ namespace Game.UI.Runtime
                 return;
             // Give the binding the source text. Writing directly to TMP races its locale
             // refresh and can leave raw Persian glyphs or stale authoring values on screen.
-            if (target.TryGetComponent(out V3LocalizedTextBinding binding))
+            if (target.TryGetComponent(out V3LocalizedTextBindingView binding))
                 binding.SetLocalizedValue(value);
             else if (target.text != value)
                 target.text = value;

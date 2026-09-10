@@ -20,7 +20,8 @@ namespace Game.Runtime
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            _ecbSingletonQuery = state.GetEntityQuery(ComponentType.ReadOnly<EndSimulationEntityCommandBufferSystem.Singleton>());
+            _ecbSingletonQuery = new EntityQueryBuilder(Allocator.Temp).WithAll<EndSimulationEntityCommandBufferSystem.Singleton>()
+                .WithOptions(EntityQueryOptions.IncludeSystems).Build(ref state);
             _diagnosticsLookup = state.GetComponentLookup<MapSurfaceDiagnosticsComponent>();
             state.RequireForUpdate(_ecbSingletonQuery);
         }

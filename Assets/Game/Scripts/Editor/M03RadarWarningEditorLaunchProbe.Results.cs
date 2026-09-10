@@ -90,7 +90,7 @@ namespace Game.Editor
                 if(EditorApplication.timeSinceStartup-finaleStarted>5) throw new InvalidOperationException("Finale failed to finish within its 3-second presentation budget.");
                 if(EditorApplication.timeSinceStartup-finaleStarted>1)
                 {
-                    if(UnityEngine.Object.FindObjectsByType<RectTransform>(FindObjectsSortMode.None)
+                    if(UnityEngine.Object.FindObjectsByType<RectTransform>(FindObjectsInactive.Exclude)
                         .Any(rect=>rect.name=="ThreatJumpPanel" && rect.gameObject.activeInHierarchy))
                         throw new InvalidOperationException("A stale warning overlaps the finale camera controls.");
                     CaptureUiBeforeAction("finale-post");

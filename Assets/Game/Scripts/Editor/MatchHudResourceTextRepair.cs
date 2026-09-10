@@ -36,10 +36,10 @@ namespace Game.Editor
                 foreach (var t in root.GetComponentsInChildren<TMP_Text>(true))
                 {
                     if(t.name=="Subtitle"&&t.transform.parent?.parent?.name=="SelectedSquadPanel")
-                        (t.GetComponent<V3LocalizedTextBinding>()??t.gameObject.AddComponent<V3LocalizedTextBinding>()).Configure("", "", true);
+                        (t.GetComponent<V3LocalizedTextBindingView>()??t.gameObject.AddComponent<V3LocalizedTextBindingView>()).Configure("", "", true);
                     if(t.name=="HealthText"&&t.transform.parent?.name=="HealthPanel")
                     {
-                        var binding=t.GetComponent<V3LocalizedTextBinding>()??t.gameObject.AddComponent<V3LocalizedTextBinding>();
+                        var binding=t.GetComponent<V3LocalizedTextBindingView>()??t.gameObject.AddComponent<V3LocalizedTextBindingView>();
                         binding.Configure("", "", true);
                         t.rectTransform.anchoredPosition=new Vector2(205,0);t.rectTransform.sizeDelta=new Vector2(145,31);
                         t.enableAutoSizing=true;t.fontSizeMin=12;t.fontSizeMax=18;

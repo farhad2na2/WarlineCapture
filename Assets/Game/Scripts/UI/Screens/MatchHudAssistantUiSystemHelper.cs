@@ -65,18 +65,19 @@ namespace Game.UI.Runtime
                 return;
 
             bool firstInstruction = _completedTutorialStep == 0 && _pendingTutorialStep == 1;
+            float stepDelay = _lastPanelModel.TutorialStepCount == 12 ? 0f : TutorialStepDelaySeconds;
             if (_tutorialCinematicSuspended)
             {
                 _tutorialCinematicSuspended = false;
                 _tutorialShowAtUnscaledTime = firstInstruction
                     ? unscaledTime
-                    : unscaledTime + TutorialStepDelaySeconds;
+                    : unscaledTime + stepDelay;
             }
             else if (_tutorialShowAtUnscaledTime < 0f)
             {
                 _tutorialShowAtUnscaledTime = firstInstruction
                     ? unscaledTime
-                    : unscaledTime + TutorialStepDelaySeconds;
+                    : unscaledTime + stepDelay;
             }
             if (unscaledTime < _tutorialShowAtUnscaledTime)
                 return;

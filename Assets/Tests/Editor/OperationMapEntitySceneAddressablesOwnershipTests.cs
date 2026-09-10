@@ -21,7 +21,7 @@ public sealed class OperationMapEntitySceneAddressablesOwnershipTests
             passed++;
             tests.CandidateDefinition_ReferencesOnlyEntitySceneRuntimeAssets();
             passed++;
-            tests.ProductionDefinition_RemainsStaticSceneChunksWhileCandidatePathIsSeparate();
+            tests.ProductionDefinition_UsesAcceptedEntitySceneWhileCandidatePathIsSeparate();
             passed++;
             tests.DenseCityPlanner_RequiresDistinctPathsAndExactlyFiveCoreRoles();
             passed++;
@@ -147,14 +147,14 @@ public sealed class OperationMapEntitySceneAddressablesOwnershipTests
     }
 
     [Test]
-    public void ProductionDefinition_RemainsStaticSceneChunksWhileCandidatePathIsSeparate()
+    public void ProductionDefinition_UsesAcceptedEntitySceneWhileCandidatePathIsSeparate()
     {
         OperationMapDefinition production = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
             OperationMapAddressablesLayoutBuilder.DefinitionPath);
         Assert.That(production, Is.Not.Null);
         Assert.That(
             production.PresentationKind,
-            Is.EqualTo(OperationMapPresentationKind.StaticSceneChunks));
+            Is.EqualTo(OperationMapPresentationKind.EntityScene));
 
         Assert.That(
             OperationMapEntitySceneCandidateAddressablesLayoutPlanner.CandidateDefinitionPath,

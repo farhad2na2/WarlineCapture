@@ -48,22 +48,30 @@ namespace Game.Runtime
                 ComponentType.ReadOnly<CampaignMissionUnitRoleComponent>(),
                 ComponentType.ReadOnly<Faction>(),
                 ComponentType.ReadOnly<UnitMove>());
-            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-            using NativeArray<CampaignMissionUnitRoleComponent> roles =
-                query.ToComponentDataArray<CampaignMissionUnitRoleComponent>(Allocator.Temp);
-            using NativeArray<Faction> factions = query.ToComponentDataArray<Faction>(Allocator.Temp);
-            for (int i = 0; i < entities.Length; i++)
-            {
-                if (!roles[i].SessionToken.Equals(representativeRole.SessionToken) ||
-                    !roles[i].UnitGroupId.Equals(representativeRole.UnitGroupId) ||
-                    !FactionIdentity.IsPlayerControlled(factions[i].Id) ||
-                    (em.HasComponent<UnitHealth>(entities[i]) &&
-                     em.GetComponentData<UnitHealth>(entities[i]).Current <= 0))
-                {
-                    continue;
-                }
+            using NativeArray<ArchetypeChunk> queryChunks = query.ToArchetypeChunkArray(Allocator.Temp);
+            var entitiesType = em.GetEntityTypeHandle();
+            var rolesType = em.GetComponentTypeHandle<CampaignMissionUnitRoleComponent>(true);
+            var factionsType = em.GetComponentTypeHandle<Faction>(true);
 
-                _missionSquadSelectionScratch.Add(entities[i]);
+
+            foreach(var sourceChunk in queryChunks)
+            {
+                var entities = sourceChunk.GetNativeArray(entitiesType);
+                var roles = sourceChunk.GetNativeArray(ref rolesType);
+                var factions = sourceChunk.GetNativeArray(ref factionsType);
+                for (int i = 0; i < entities.Length; i++)
+                {
+                    if (!roles[i].SessionToken.Equals(representativeRole.SessionToken) ||
+                        !roles[i].UnitGroupId.Equals(representativeRole.UnitGroupId) ||
+                        !FactionIdentity.IsPlayerControlled(factions[i].Id) ||
+                        (em.HasComponent<UnitHealth>(entities[i]) &&
+                         em.GetComponentData<UnitHealth>(entities[i]).Current <= 0))
+                    {
+                        continue;
+                    }
+
+                    _missionSquadSelectionScratch.Add(entities[i]);
+                }
             }
 
             if (_missionSquadSelectionScratch.Count == 0)

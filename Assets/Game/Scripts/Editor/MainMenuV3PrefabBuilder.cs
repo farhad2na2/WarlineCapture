@@ -100,6 +100,7 @@ namespace Game.Editor
             BuildFooter(footerSection);
             ConfigureRuntimeLayouts(headerSection, leftSection, middleSection, rightSection, footerSection);
 
+            MissionUiSerializedBindingsAuthoring.Apply(root);
             PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root);
             AssetDatabase.SaveAssets();
@@ -249,8 +250,7 @@ namespace Game.Editor
                 throw new InvalidOperationException("Enter Play Mode before opening Settings from the running Main Menu.");
 
             foreach (Button button in UnityEngine.Object.FindObjectsByType<Button>(
-                         FindObjectsInactive.Exclude,
-                         FindObjectsSortMode.None))
+                         FindObjectsInactive.Exclude))
             {
                 if (!string.Equals(button.name, "SettingsButton", StringComparison.Ordinal))
                     continue;
@@ -1021,8 +1021,8 @@ namespace Game.Editor
             // Editor capture instances do not consistently receive MonoBehaviour
             // OnEnable callbacks. Apply the active locale explicitly so the QA image
             // verifies the same localized text and font path used at runtime.
-            V3LocalizedTextBinding[] localizedTextBindings =
-                instance.GetComponentsInChildren<V3LocalizedTextBinding>(true);
+            V3LocalizedTextBindingView[] localizedTextBindings =
+                instance.GetComponentsInChildren<V3LocalizedTextBindingView>(true);
             for (int i = 0; i < localizedTextBindings.Length; i++)
                 localizedTextBindings[i].ApplyLocalization();
             Canvas.ForceUpdateCanvases();
@@ -1120,7 +1120,7 @@ namespace Game.Editor
             text.alignment = alignment;
             text.color = color;
             text.raycastTarget = false;
-            text.enableWordWrapping = false;
+            text.textWrappingMode = TMPro.TextWrappingModes.NoWrap;
             text.overflowMode = TextOverflowModes.Overflow;
             return text;
         }

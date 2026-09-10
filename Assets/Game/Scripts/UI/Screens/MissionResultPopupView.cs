@@ -19,6 +19,7 @@ namespace Game.UI.Runtime
         [SerializeField] private TMP_Text rewardsText;
         [SerializeField] private TMP_Text statisticsText;
         [SerializeField] private GameObject[] starRoots;
+        [SerializeField] private GameObject[] filledStars, outlinedStars;
         [SerializeField] private Button primaryButton;
         [SerializeField] private TMP_Text primaryButtonLabel;
         [SerializeField] private Button retryButton;
@@ -276,13 +277,13 @@ namespace Game.UI.Runtime
                         continue;
                     starRoot.SetActive(true);
                     bool filled = index < model.Stars;
-                    Transform filledRoot = starRoot.transform.Find("StarFilled");
-                    Transform outlineRoot = starRoot.transform.Find("StarOutline");
+                    GameObject filledRoot = filledStars != null && index < filledStars.Length ? filledStars[index] : null;
+                    GameObject outlineRoot = outlinedStars != null && index < outlinedStars.Length ? outlinedStars[index] : null;
                     if (filledRoot != null)
-                        filledRoot.gameObject.SetActive(filled);
+                        filledRoot.SetActive(filled);
                     if (outlineRoot != null)
                     {
-                        outlineRoot.gameObject.SetActive(!filled);
+                        outlineRoot.SetActive(!filled);
                         outlineRoot.GetComponent<V3StarGraphic>()?.SetState(
                             accent, true, new Color32(5, 13, 16, 255));
                     }

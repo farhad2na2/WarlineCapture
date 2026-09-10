@@ -1,3 +1,4 @@
+using Unity.Burst;
 using Game.Components;
 using Game.Missions.Contracts;
 using Unity.Entities;
@@ -6,16 +7,19 @@ namespace Game.Runtime
 {
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     [UpdateAfter(typeof(ThreatWarningResolveSystem))]
+    [BurstCompile]
     public partial struct MissionDefenseInteractionSystem : ISystem
     {
         private EntityQuery cameraQuery,snapshotQuery;
+        [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            cameraQuery=state.GetEntityQuery(typeof(RuntimeCameraFocusRequestComponent));
-            snapshotQuery=state.GetEntityQuery(typeof(RuntimeCameraSnapshotComponent));
+            cameraQuery=state.GetEntityQuery(ComponentType.ReadWrite<RuntimeCameraFocusRequestComponent>());
+            snapshotQuery=state.GetEntityQuery(ComponentType.ReadOnly<RuntimeCameraSnapshotComponent>());
             state.RequireForUpdate<MissionDefenseInteractionRequest>();
         }
 
+        [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
             if (!SystemAPI.TryGetSingletonEntity<CampaignMissionRootComponent>(out Entity root)) return;

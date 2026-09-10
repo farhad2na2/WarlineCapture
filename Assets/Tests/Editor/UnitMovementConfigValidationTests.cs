@@ -55,7 +55,7 @@ public sealed class UnitMovementConfigValidationTests
         { "Prefab_UnitGrid_Veh_Light_Armored_Car_Config.asset", new ExpectedMovement(13f, 13f, 1.35f) },
         { "Prefab_UnitGrid_Veh_Missle_Launcher_Air_Config.asset", new ExpectedMovement(7.5f, 7.5f, 1.3f) },
         { "Prefab_UnitGrid_Veh_Missle_Launcher_Ground_Config.asset", new ExpectedMovement(7.5f, 7.5f, 1.3f) },
-        { "Prefab_UnitGrid_Veh_Plane_Transport_Config.asset", new ExpectedMovement(30f, 30f, 1f, 12f, true) },
+        { "Prefab_UnitGrid_Veh_Plane_Transport_Config.asset", new ExpectedMovement(30f, 30f, 1f, 12f, true, 24) },
         { "Prefab_UnitGrid_Veh_Radar_Tank.asset", new ExpectedMovement(7f, 7f, 1.3f) },
         { "Prefab_UnitGrid_Veh_Tank_USA_Config.asset", new ExpectedMovement(8.5f, 8.5f, 1.3f) },
         { "Prefab_UnitGrid_Veh_Truck_Canopy.asset", new ExpectedMovement(8f, 8f, 1.35f, soldierCapacity: 10) },

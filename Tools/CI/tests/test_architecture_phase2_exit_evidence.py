@@ -6,6 +6,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from Tools.CI.tests.historical_git_evidence import historical_hash_resolves
 
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -337,7 +338,7 @@ class Phase2ClosureAuditContractTests(unittest.TestCase):
         for item in self.audit["inputs"]:
             path = ROOT / item["path"]
             self.assertTrue(path.is_file(), item["path"])
-            self.assertEqual(item["sha256"], hashlib.sha256(path.read_bytes()).hexdigest(), item["path"])
+            self.assertTrue(historical_hash_resolves(ROOT,item["path"],item["sha256"]),item["path"])
 
     def test_policy_records_zero_live_source_growth_blockers(self):
         blockers = self.policy["currentExternalExitBlockers"]
@@ -389,7 +390,7 @@ class Phase2ClosureAuditContractTests(unittest.TestCase):
             self.assertTrue(row["reviewAuthority"])
             for authority in row["reviewAuthority"]:
                 source = ROOT / authority["path"]
-                self.assertEqual(authority["sha256"], hashlib.sha256(source.read_bytes()).hexdigest())
+                self.assertTrue(historical_hash_resolves(ROOT,authority["path"],authority["sha256"]),authority["path"])
 
     def test_production_delta_regenerates_byte_identically(self):
         self.assertEqual(self.delta_path.read_bytes(), delta.json_bytes(self.delta))

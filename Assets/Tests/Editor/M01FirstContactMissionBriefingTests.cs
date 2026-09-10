@@ -260,7 +260,7 @@ public static class M01FirstContactMissionBriefingTests
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
         Assert.NotNull(prefab);
         Assert.NotNull(prefab.GetComponentInChildren<MissionBriefingScreenView>(true));
-        Assert.NotNull(prefab.GetComponentInChildren<CampaignMissionScreenBinder>(true));
+        Assert.NotNull(prefab.GetComponentInChildren<CampaignMissionScreenBinderView>(true));
         string allText = string.Join("\n", prefab.GetComponentsInChildren<TMP_Text>(true).Select(text => text.text));
         Assert.That(allText, Does.Not.Contain("BLACKOUT AT SAHRIN"));
         Assert.That(allText, Does.Not.Contain("RESTORE THE RELAY"));
@@ -272,9 +272,9 @@ public static class M01FirstContactMissionBriefingTests
 
     [Test] public static void BinderHasNoFramePollingOrDefinitionLoading()
     {
-        Assert.That(typeof(CampaignMissionScreenBinder).GetMethod(
+        Assert.That(typeof(CampaignMissionScreenBinderView).GetMethod(
             "Update", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic), Is.Null);
-        string binder = System.IO.File.ReadAllText("Assets/Game/Scripts/UI/Screens/CampaignMissionScreenBinder.cs");
+        string binder = System.IO.File.ReadAllText("Assets/Game/Scripts/UI/Screens/CampaignMissionScreenBinderView.cs");
         string view = System.IO.File.ReadAllText("Assets/Game/Scripts/UI/Screens/MissionBriefingScreenView.cs");
         Assert.That(binder + view, Does.Not.Contain("AssetDatabase"));
         Assert.That(binder + view, Does.Not.Contain("Resources.Load"));

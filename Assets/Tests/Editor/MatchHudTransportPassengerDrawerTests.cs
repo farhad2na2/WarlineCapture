@@ -17,6 +17,7 @@ public sealed class MatchHudTransportPassengerDrawerTests
 {
     private const string MatchHudPrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab";
     private GameObject _instance;
+    private MainMenuPlayUI runtimeUi;
 
     public static void RunBatchValidation()
     {
@@ -40,6 +41,7 @@ public sealed class MatchHudTransportPassengerDrawerTests
     [TearDown]
     public void TearDown()
     {
+        runtimeUi?.Dispose(); runtimeUi = null;
         if (_instance != null)
             Object.DestroyImmediate(_instance);
     }
@@ -77,6 +79,10 @@ public sealed class MatchHudTransportPassengerDrawerTests
         GameObject drawerRoot = GetReference<GameObject>(new SerializedObject(drawer), "drawerRoot");
         Transform threatJumpPanel = FindNamedChild(_instance.transform, "ThreatJumpPanel");
         Assert.NotNull(threatJumpPanel);
+        runtimeUi = new MainMenuPlayUI();
+        runtimeUi.BindMatchHudThreatJumpPanel(threatJumpPanel.parent.gameObject);
+        runtimeUi.BindMatchHudSelectionPanel(view);
+        Assert.IsTrue(runtimeUi.TryShowMatchHudThreatWarning("Incoming", 100));
         bool threatWasActive = threatJumpPanel.gameObject.activeSelf;
         SerializedObject drawerSerialized = new(drawer);
         RectTransform contentRoot = GetReference<RectTransform>(drawerSerialized, "contentRoot");
@@ -120,6 +126,7 @@ public sealed class MatchHudTransportPassengerDrawerTests
             true,
             passengers));
 
+        runtimeUi.TickMatchHudThreatWarning(0);
         Assert.IsTrue(drawerRoot.activeSelf);
         Assert.IsFalse(threatJumpPanel.gameObject.activeSelf,
             "The open passenger drawer must suppress the overlapping hostile-alert header.");
@@ -153,6 +160,7 @@ public sealed class MatchHudTransportPassengerDrawerTests
             8,
             true,
             passengers));
+        runtimeUi.TickMatchHudThreatWarning(0);
         Assert.AreEqual(threatWasActive, threatJumpPanel.gameObject.activeSelf,
             "Closing the passenger drawer must restore the header's exact prior visibility.");
     }

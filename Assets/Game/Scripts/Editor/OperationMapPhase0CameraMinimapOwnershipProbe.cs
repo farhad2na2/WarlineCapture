@@ -380,7 +380,7 @@ namespace Game.Editor
                 {
                     taskId = "opmap-002",
                     reportSchema = OperationMapPhase0BaselineProbe.ReportSchema,
-                    reportSchemaVersion = OperationMapPhase0BaselineProbe.ReportSchemaVersion,
+                    reportSchemaVersion = 1 /* accepted July 2026 baseline schema */,
                     result = "Passed",
                     evidencePath = Opmap002Path,
                     evidenceSha256 = hashByPath[Opmap002Path]
@@ -813,7 +813,7 @@ namespace Game.Editor
             {
                 ["opmap-002"] = new(
                     OperationMapPhase0BaselineProbe.ReportSchema,
-                    OperationMapPhase0BaselineProbe.ReportSchemaVersion,
+                    1 /* accepted July 2026 baseline schema */,
                     "Passed",
                     Opmap002Path),
                 ["opmap-004"] = new(

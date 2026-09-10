@@ -66,10 +66,12 @@ public static class M01FirstContactBurstAotArchitectureTests
     [Test]
     public static void RuntimeBurstReasonsUseUnmanagedConstants()
     {
-        string source = Read(RuntimePath);
+        string source = Read(RuntimePath) + "\n" + Read(Path.Combine(Path.GetDirectoryName(RuntimePath), "CampaignMissionResultProjectionSystem.cs"));
+        foreach (string partial in Directory.GetFiles(Path.GetDirectoryName(RuntimePath), "CampaignMissionRuntimeSystem.*.cs"))
+            source += "\n" + Read(partial);
         foreach (string literal in RuntimeBurstReasons)
         {
-            StringAssert.Contains($"= \"{literal}\";", source);
+            Assert.That(source, Does.Match(@"=\s*" + System.Text.RegularExpressions.Regex.Escape("\"" + literal + "\"") + @"\s*;"));
             StringAssert.DoesNotContain($"new FixedString64Bytes(\"{literal}\")", source);
         }
     }
@@ -78,6 +80,8 @@ public static class M01FirstContactBurstAotArchitectureTests
     public static void GuidanceBurstTextUsesUnmanagedConstants()
     {
         string source = Read(GuidancePath);
+        foreach (string partial in Directory.GetFiles(Path.GetDirectoryName(GuidancePath), "CampaignMissionGuidanceProjectionSystem.*.cs"))
+            source += "\n" + Read(partial);
         foreach (string literal in GuidanceLiterals)
             StringAssert.Contains($"= \"{literal}\";", source);
 

@@ -34,7 +34,8 @@
         "Unity.TextMeshPro",
         "Unity.Transforms",
         "UnityEngine.UI",
-        "sniveler-code.gpu-animation.Editor"
+        "sniveler-code.gpu-animation.Editor",
+        "Game.UI.ScenarioLab.Runtime"
     ],
     "includePlatforms": [
         "Editor"

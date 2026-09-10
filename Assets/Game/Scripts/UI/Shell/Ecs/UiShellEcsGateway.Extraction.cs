@@ -61,19 +61,10 @@ namespace Game.UI.Shell.Ecs
                 requests.Add(new CampaignMissionGuidanceAcknowledgementRequestElement {SessionToken=runtime.SessionToken,AttemptOrdinal=runtime.AttemptOrdinal,GuidanceId=55001});return true;
             }
             var extraction=em.GetComponentData<CampaignMissionExtractionState>(root);
-            float3 target=action==UiMissionExtractionAction.FocusDeparture || action==UiMissionExtractionAction.ShowLesson && model.Lesson>=11 ? extraction.DepartureCenter : extraction.LandingCenter;
-            if(action==UiMissionExtractionAction.FocusTeam || action==UiMissionExtractionAction.ShowLesson && model.Lesson<=5)
-            {
-                var catalog=em.GetComponentData<CampaignMissionCatalogComponent>(root);
-                if(!TryFindExtractionDefinition(in catalog,in runtime,out int index))return false;
-                using var map=em.CreateEntityQuery(ComponentType.ReadOnly<OperationMapMetadataComponent>());
-                if(map.CalculateEntityCount()!=1)return false;
-                var metadata=map.GetSingleton<OperationMapMetadataComponent>();
-                if(!TryFindExtractionAnchor(ref metadata.Blob.Value,catalog.Blob.Value.Missions[index].Extraction.RescueAnchorId,out var anchor))return false;
-                target=anchor.Position;
-            }
+            float3 target=ResolveExtractionCameraTarget(em,root,in extraction,action,model.Lesson);
             using var focus=em.CreateEntityQuery(typeof(RuntimeCameraFocusRequestComponent));if(focus.CalculateEntityCount()!=1)return false;
-            em.SetComponentData(focus.GetSingletonEntity(),new RuntimeCameraFocusRequestComponent {Requested=1,Smooth=1,SmoothTimeSeconds=.5f,World=target});return true;
+            em.SetComponentData(focus.GetSingletonEntity(),new RuntimeCameraFocusRequestComponent {Requested=1,Smooth=1,SmoothTimeSeconds=.5f,
+                UseExplicitPerspective=1,Perspective=new float4(target.y+48f,65f,0f,55f),World=target});return true;
         }
     }
 }

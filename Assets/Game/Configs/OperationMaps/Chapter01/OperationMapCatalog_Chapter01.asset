@@ -23,13 +23,13 @@ MonoBehaviour:
       contentPackId: opmap-pack.ch01.airlift_01
       deliveryKind: 0
       contentVersion: 1
-      contentHash: 38474d592b6cd91aace2f7b99cc08f13a727ece3a81d0d8e6e1341feaa5a42ee
+      contentHash: 16b73efcc8bbb01e171d9286729e12690904b2485d91e1d5578217f8730822be
   - definition: {fileID: 11400000, guid: cdac096ca74d84e84b2e0e1f93a29014, type: 2}
     contentPack:
       contentPackId: opmap-pack.ch01.convoy_approach_01
       deliveryKind: 0
       contentVersion: 1
-      contentHash: 5f42dea696ff43c9f73ea64c39bf188bd66a605bf329efafaac02ae0bb384942
+      contentHash: a15afcb5ea0b769f7388321763248374c951ad4a26bb619ffbdcbeb1ce85acc5
   - definition: {fileID: 11400000, guid: 8c19d5328fd5b7c43b9d5ecb0065df04, type: 2}
     contentPack:
       contentPackId: opmap-pack.ch01.district_edge_01

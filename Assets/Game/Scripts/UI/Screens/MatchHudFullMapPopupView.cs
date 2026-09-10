@@ -13,6 +13,9 @@ namespace Game.UI.Runtime
         [SerializeField] private Vector2 hqNormalizedPosition = new(0.5f, 0.5f);
 
         private Canvas _cachedCanvas;
+        private MatchHudFullMapFilterView filters;
+
+        public void RefreshMarkerFilters() => filters?.RefreshFilters();
 
         public GameObject PopupRoot => popupRoot != null ? popupRoot : gameObject;
         public MatchHudMinimapView Minimap => minimap;
@@ -24,6 +27,7 @@ namespace Game.UI.Runtime
 
         private void Awake()
         {
+            filters = GetComponent<MatchHudFullMapFilterView>();
             if (popupRoot == null)
                 popupRoot = gameObject;
         }

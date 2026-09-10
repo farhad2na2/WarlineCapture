@@ -2594,14 +2594,6 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
       "scope": "production-over-1000-growth"
     },
     {
-      "path": "Assets/Game/Scripts/UI/Components/MatchHudSelectionPanelView.cs",
-      "trackerTaskId": "APH-710",
-      "decisionId": "D-113",
-      "maxLines": 752,
-      "maxBytes": 31771,
-      "scope": "production-over-500-review"
-    },
-    {
       "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiResourceExchangeReadModelSystem.cs",
       "trackerTaskId": "APH-710",
       "decisionId": "D-116",

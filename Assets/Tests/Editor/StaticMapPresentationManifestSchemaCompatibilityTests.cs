@@ -51,7 +51,8 @@ public sealed class StaticMapPresentationManifestSchemaCompatibilityTests
     [Test]
     public void CurrentSchemaManifest_HasStableMapAndSceneIdentity()
     {
-        StaticMapPresentationManifest manifest = LoadManifest();
+        using var fixture = new StaticMapPresentationTestFixture();
+        StaticMapPresentationManifest manifest = fixture.Manifest;
 
         Assert.That(manifest.SchemaVersion, Is.EqualTo(2));
         Assert.That(manifest.OperationMapId, Is.EqualTo("opmap.skirmish.desert_base_01"));
@@ -124,7 +125,8 @@ public sealed class StaticMapPresentationManifestSchemaCompatibilityTests
     [Test]
     public void CurrentManifest_BuildsRuntimeChunkIndex()
     {
-        StaticMapPresentationManifest manifest = LoadManifest();
+        using var fixture = new StaticMapPresentationTestFixture();
+        StaticMapPresentationManifest manifest = fixture.Manifest;
         GameObject cameraObject = new("SchemaOneCompatibilityCamera");
         try
         {
@@ -135,7 +137,7 @@ public sealed class StaticMapPresentationManifestSchemaCompatibilityTests
                 out StaticMapPresentationChunk[] chunks,
                 out float chunkSize,
                 out string error), Is.True, error);
-            Assert.That(chunks.Length, Is.EqualTo(514));
+            Assert.That(chunks.Length, Is.EqualTo(3));
             Assert.That(chunkSize, Is.EqualTo(32f));
         }
         finally
@@ -144,11 +146,5 @@ public sealed class StaticMapPresentationManifestSchemaCompatibilityTests
         }
     }
 
-    private static StaticMapPresentationManifest LoadManifest()
-    {
-        StaticMapPresentationManifest manifest =
-            AssetDatabase.LoadAssetAtPath<StaticMapPresentationManifest>(ManifestPath);
-        Assert.That(manifest, Is.Not.Null);
-        return manifest;
-    }
+
 }

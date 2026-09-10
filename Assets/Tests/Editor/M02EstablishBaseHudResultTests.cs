@@ -122,7 +122,7 @@ public sealed class M02EstablishBaseHudResultTests
     public void FinalVictoryButtonReturnsToMenu()
     {
         string source = File.ReadAllText(
-            "Assets/Game/Scripts/UI/Screens/CampaignMissionHudResultBinder.cs");
+            "Assets/Game/Scripts/UI/Screens/CampaignMissionHudResultBinderView.cs");
         StringAssert.Contains("!activeModel.DebriefRequired", source);
     }
 

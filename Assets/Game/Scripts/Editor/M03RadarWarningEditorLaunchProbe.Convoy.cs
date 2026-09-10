@@ -66,7 +66,7 @@ namespace Game.Editor
                 if(!PerformanceActive) {M03RadarWarningRuntimeGridProbe.Capture(em, Output); ScreenCapture.CaptureScreenshot(Output + "/m03_ready_hud.png");}
                 capturedHud = true;
                 // Accelerates simulation only. This lane makes no real-time performance claim.
-                Time.timeScale = PerformanceActive || SessionState.GetBool(GuidanceJourneyKey,false) ? 1f : 3f;
+                Time.timeScale = PerformanceActive || MissionMotionEditorAudit.Active || SessionState.GetBool(GuidanceJourneyKey,false) ? 1f : 3f;
             }
             PlayConstructionDefense(em,root,in runtime,in facts);
             if (SessionState.GetBool(InspectKey, false) && facts.ElapsedMilliseconds >= 60000)

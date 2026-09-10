@@ -42,7 +42,7 @@ namespace Game.Editor
                         if(string.IsNullOrWhiteSpace(model.PrimaryActionLabel))throw new InvalidOperationException("Missing localized result action");
                         var view=instance.GetComponent<MissionResultPopupView>();view.Apply(in model);
                         for(int i=0;i<3;i++){foreach(var layout in instance.GetComponentsInChildren<MainMenuV3SectionLayoutView>())layout.RefreshLayout();Canvas.ForceUpdateCanvases();}
-                        view.Apply(in model);foreach(var binding in instance.GetComponentsInChildren<V3LocalizedTextBinding>())binding.ApplyLocalization();Canvas.ForceUpdateCanvases();
+                        view.Apply(in model);foreach(var binding in instance.GetComponentsInChildren<V3LocalizedTextBindingView>())binding.ApplyLocalization();Canvas.ForceUpdateCanvases();
                         foreach(var text in instance.GetComponentsInChildren<TMP_Text>())
                         {text.ForceMeshUpdate();if(text.isTextOverflowing||text.isTextTruncated)failures.Add(id+" "+text.transform.parent.name+"/"+text.name+" source="+text.text+" rect="+text.rectTransform.rect+" preferred="+text.preferredWidth+","+text.preferredHeight);}
                         camera.Render();RenderTexture.active=target;texture.ReadPixels(new Rect(0,0,width,1080),0,0);texture.Apply();File.WriteAllBytes(output+"/"+id+".png",texture.EncodeToPNG());captures++;

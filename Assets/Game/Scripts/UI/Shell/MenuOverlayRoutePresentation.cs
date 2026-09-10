@@ -89,7 +89,7 @@ namespace Game.UI.Runtime
                 ? body.GetComponentInChildren<CampaignOperationsScreenView>(true)
                 : null;
             view?.BindGameTextResolver(contentView.GameTextResolver);
-            body?.GetComponentInChildren<CampaignMissionScreenBinder>(true)?.Refresh();
+            body?.GetComponentInChildren<CampaignMissionScreenBinderView>(true)?.Refresh();
         }
 
         internal static void InstallMissionBriefingBody(this UIShellContentView contentView)
@@ -99,7 +99,7 @@ namespace Game.UI.Runtime
                 ? body.GetComponentInChildren<MissionBriefingScreenView>(true)
                 : null;
             view?.BindGameTextResolver(contentView.GameTextResolver);
-            body?.GetComponentInChildren<CampaignMissionScreenBinder>(true)?.Refresh();
+            body?.GetComponentInChildren<CampaignMissionScreenBinderView>(true)?.Refresh();
         }
 
         internal static void InstallLoadoutSquadPrepBody(this UIShellContentView contentView)

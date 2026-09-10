@@ -14,7 +14,8 @@ namespace Game.Editor
         public static readonly string[] Panels={"B01","B02","B03","C01","D01","D02","D03"};
         public static IEnumerable<M04NarrativeLine> Lines=>M04AirliftCopyCatalog.Brief.Concat(M04AirliftCopyCatalog.Comms)
             .Concat(M04AirliftCopyCatalog.Debrief);
-        public static AudioClip Voice(string id,bool persian)=>null;
+        public static string VoicePath(string id,bool persian)=>$"{VoiceRoot}/{(persian ? "fa" : "en")}/{id}.wav";
+        public static AudioClip Voice(string id,bool persian)=>AssetDatabase.LoadAssetAtPath<AudioClip>(VoicePath(id,persian));
         public static Sprite Panel(string id,bool wide)=>AssetDatabase.LoadAllAssetsAtPath($"{ArtRoot}/M04-{id}.png")
             .OfType<Sprite>().Single(s=>s.name==$"M04-{id}-{(wide ? "20x9" : "16x9")}");
         public static Sprite LailaPortrait()=>AssetDatabase.LoadAllAssetsAtPath(ArtRoot+"/M04-B01.png")
@@ -58,5 +59,29 @@ namespace Game.Editor
         private static string PanelIdentity(Sprite panel)
         {AssetDatabase.TryGetGUIDAndLocalFileIdentifier(panel,out string guid,out long id); return guid+":"+id;}
 
+        public static void ConfigureVoices()
+        {
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            foreach(var line in Lines) foreach(bool persian in new[]{false,true}) ConfigureVoice(VoicePath(line.Id,persian),persian);
+            for(int step=1;step<=12;step++) foreach(bool persian in new[]{false,true}) ConfigureVoice(VoicePath($"tutorial-m04-{step:00}",persian),persian);
+            AudioRuntimeConfigAssetBuilder.BuildDefaultAssets();
+            Debug.Log("[M04VoiceImports] result=Passed clips=38 locales=2 preload=0 runtimeNetworkTts=0");
+        }
+
+        private static void ConfigureVoice(string path,bool persian)
+        {
+            var importer=AssetImporter.GetAtPath(path) as AudioImporter;
+            if(importer==null) throw new InvalidOperationException("Missing final voice: "+path);
+            var settings=importer.defaultSampleSettings;
+            settings.loadType=AudioClipLoadType.CompressedInMemory; settings.compressionFormat=AudioCompressionFormat.Vorbis;
+            settings.sampleRateSetting=AudioSampleRateSetting.PreserveSampleRate; settings.sampleRateOverride=44100;
+            settings.quality=.7f; settings.preloadAudioData=false; importer.defaultSampleSettings=settings;
+            importer.forceToMono=true; importer.loadInBackground=true; importer.ambisonic=false;
+            importer.userData="status=ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE; provider=ElevenLabs; model=eleven_v3; locale="+
+                (persian ? "fa-IR" : "en-US")+"; manifest=m04_voice_manifest.json; runtimeNetworkTts=false";
+            importer.SaveAndReimport();
+            var clip=AssetDatabase.LoadAssetAtPath<AudioClip>(path);
+            if(clip==null || clip.length<.25f || clip.channels!=1) throw new InvalidOperationException("Invalid voice clip: "+path);
+        }
     }
 }

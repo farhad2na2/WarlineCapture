@@ -21,7 +21,7 @@ namespace Game.Composition
             NarrativeLocaleConfig locale = language == FirstLaunchNarrativeLanguage.Persian ? persianLocale : null;
             IGameTextResolver legacy = locale != null
                 ? new FirstLaunchNarrativeLocaleTextCompositionSystemHelper(baseTextResolver, locale) : baseTextResolver;
-            presentation.RefreshPresentation(new SharedLocalizationTextCompositionSystemHelper(legacy), locale, language != renderedLanguage);
+            presentation.RefreshPresentation(new FirstLaunchNarrativeCompositionSystemHelper.SharedLocaleCompositionSystemHelper(legacy), locale, language != renderedLanguage);
             renderedLanguage = language;
             renderedWide = wide;
         }

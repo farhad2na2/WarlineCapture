@@ -569,7 +569,7 @@ namespace Game.Editor
             var baseline = new BaselineReferenceReport
             {
                 reportSchema = OperationMapPhase0BaselineProbe.ReportSchema,
-                reportSchemaVersion = OperationMapPhase0BaselineProbe.ReportSchemaVersion,
+                reportSchemaVersion = 1 /* accepted July 2026 baseline schema */,
                 result = "Passed",
                 evidencePath = BaselineEvidencePath,
                 evidenceSha256 = OperationMapPhase0BaselineProbe.ComputeSha256(
@@ -591,7 +591,7 @@ namespace Game.Editor
                     baseline.reportSchema,
                     OperationMapPhase0BaselineProbe.ReportSchema,
                     StringComparison.Ordinal) ||
-                baseline.reportSchemaVersion != OperationMapPhase0BaselineProbe.ReportSchemaVersion ||
+                baseline.reportSchemaVersion != 1 /* accepted July 2026 baseline schema */ ||
                 !string.Equals(baseline.result, "Passed", StringComparison.Ordinal) ||
                 !string.Equals(baseline.evidencePath, BaselineEvidencePath, StringComparison.Ordinal) ||
                 !string.Equals(

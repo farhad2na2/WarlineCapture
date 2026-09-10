@@ -14,9 +14,13 @@ namespace Game.Rendering
             bool cameraMotionActive,
             int currentUnitCount,
             int currentSelectedUnitCount,
-            int currentSelectedUnitHash)
+            int currentSelectedUnitHash,
+            int frame)
         {
+            // A still camera does not imply still actors. Re-evaluate movement and visibility
+            // at the normal bounded cadence even when counts and selection are unchanged.
             return
+                frame < _nextUpdateFrame &&
                 !cameraMotionActive &&
                 currentSelectedUnitCount == 0 &&
                 currentSelectedUnitHash == _stableSelectedUnitHash &&

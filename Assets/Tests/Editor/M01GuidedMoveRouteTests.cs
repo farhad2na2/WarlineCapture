@@ -727,6 +727,13 @@ public sealed class M01GuidedMoveRouteTests
         Assert.That(CampaignMissionPatrolOrderSystem.ShouldRemovePreEngageTarget(commanded, 2), Is.True,
             "A hostile AI order must not be mistaken for the player's confirming attack input.");
 
+        foreach (string missionId in new[] { "saga.ch01.m03.radar_warning", "saga.ch01.m04.airlift" })
+        {
+            var otherMission = new CampaignMissionRuntimeComponent
+                { MissionId = new FixedString64Bytes(missionId), RunKind = Game.Missions.Contracts.MissionRunKind.FirstClear };
+            Assert.That(CampaignMissionSpawnSystem.ShouldUseTutorialFinale(in otherMission), Is.False,
+                "An ending cinematic must not activate M1's combat hold in another mission.");
+        }
         UnitCombat combat = new() { CanAttack = 1, AutoEngage = 0 };
         Assert.That(CampaignMissionPatrolOrderSystem.ShouldReleaseCombat(MissionPhaseKind.ConfirmThreat), Is.False);
         Assert.That(CampaignMissionPatrolOrderSystem.ShouldReleaseCombat(MissionPhaseKind.Engage), Is.True);
@@ -1033,7 +1040,7 @@ public sealed class M01GuidedMoveRouteTests
         GameObject appCanvas = AssetDatabase.LoadAssetAtPath<GameObject>(appCanvasPath);
 
         Assert.That(appCanvas, Is.Not.Null);
-        Assert.That(appCanvas.GetComponent<CampaignMissionHudResultBinder>(), Is.Not.Null,
+        Assert.That(appCanvas.GetComponent<CampaignMissionHudResultBinderView>(), Is.Not.Null,
             "The app canvas prefab must own the result binder instead of growing the guarded shell bridge.");
     }
 

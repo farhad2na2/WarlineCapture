@@ -23,11 +23,28 @@ namespace Game.Editor
     public static partial class M04AirliftEditorProbe
     {
         private const string Active="Warline.M04.EditorProbe",Full="Warline.M04.EditorProbe.Full",Both="Warline.M04.EditorProbe.Both";
-        private static string Output=>SessionState.GetString("Warline.M04.ReadinessOutput","Design/AgentReports/M04Airlift/EditorProbe");
+        private static string Output=>SessionState.GetString("Warline.M04.ReadinessOutput","/private/tmp/warline-m04-editor-probe");
         private static bool prepared,deployed,finished,uiPassed;private static int step,passenger,frame;private static double started,lastLog,lastClick,stepAt;
         private static string error,oldLocale;private static CampaignMissionProgressStore store;private static SaveService save;
         static M04AirliftEditorProbe(){if(SessionState.GetBool(Active,false)){EditorApplication.update+=Tick;Application.logMessageReceived+=Observe;}}
+        public static void RunIdleCombatValidation()
+        {
+            SessionState.SetBool("Warline.M04.IdleCombat",true);
+            SessionState.SetString("Warline.M04.ReadinessOutput","/private/tmp/warline-m04-idle-combat");
+            SessionState.SetBool(Both,false);SessionState.SetBool(Full,true);Run();
+        }
         public static void RunLaunch(){SessionState.SetBool(Both,false);SessionState.SetBool(Full,false);Run();}
+        public static void RunMotionAudit()
+        {
+            MissionMotionEditorAudit.Begin();
+            SessionState.SetString("Warline.M04.ReadinessOutput","/private/tmp/warline-m04-completion");
+            SessionState.SetBool(Both,false);SessionState.SetBool(Full,true);Run();
+        }
+        public static void RunVehicleReview()
+        {
+            SessionState.SetBool("Warline.M04.VehicleReview",true);
+            RunCommittedAcceptance();
+        }
         public static void RunFull(){M04AirliftPresentationBuilder.Build();SessionState.SetBool(Both,false);SessionState.SetBool(Full,true);Run();}
         public static void RunCommittedAcceptance()
         {
@@ -37,6 +54,8 @@ namespace Game.Editor
         public static void RunFinal(){SessionState.SetBool(Both,true);SessionState.SetBool(Full,true);Run();}
         private static void Run()
         {
+            playerCameraStage = -1; playerCameraCaptures = 0; lastIdlePursuitBucket = -1;
+            MissionCameraBoundsAuthoring.ValidateContentPacks();
             Directory.CreateDirectory(Output);SessionState.SetBool(Active,true);prepared=deployed=finished=uiPassed=recoveryActive=false;step=passenger=frame=0;error=null;
             started=EditorApplication.timeSinceStartup;oldLocale=GameLocalization.CurrentLocaleCode;
             MainMenuV3PrefabBuilder.SetGameViewResolution(1920,1080);
@@ -68,7 +87,19 @@ namespace Game.Editor
                     deployed=UiShellRuntimeGateway.TryEnqueueCampaignMissionAction(UiCampaignMissionActionKind.Deploy,M04AirliftConfigBuilder.MissionId);return;
                 }
                 var runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);var facts=em.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
+                MissionMotionEditorAudit.Sample(em,root,in runtime,in facts);
                 SkipNarrative();
+                if(SessionState.GetBool("Warline.M04.IdleCombat",false))
+                {
+                    if(runtime.Phase == MissionPhaseKind.Engage) Time.timeScale=4;
+                    RecordIdlePursuit(em,facts.ElapsedMilliseconds);
+                    if(runtime.Outcome != MissionOutcomeKind.None)
+                    {
+                        SessionState.SetBool("Warline.M04.IdleCombat",false); Time.timeScale=1;
+                        Complete(facts.ExtractionTimedOut==0,"Idle contact outcome="+runtime.Outcome+" elapsed="+facts.ElapsedMilliseconds+" losses="+facts.CivilianLossCount);
+                    }
+                    return;
+                }
                 if(recoveryActive){TickRecovery(em,root,runtime,facts);return;}
                 if(step==30 || step==31)
                 {
@@ -143,7 +174,10 @@ namespace Game.Editor
                 {
                     TickLaunchUi(facts);return;
                 }
-                CaptureMovingVehicle(em,step is 1 or 3?extraction.Carrier:extraction.Aircraft,step);
+                if(SessionState.GetBool("Warline.M04.VehicleReview",false))
+                    CaptureMovingVehicle(em,step is 1 or 3?extraction.Carrier:extraction.Aircraft,step);
+                if(SessionState.GetBool("Warline.M04.PlayerCamera",false))
+                    ReviewPlayerCamera(em,step is 1 or 3?extraction.Carrier:extraction.Aircraft,step);
                 if(Time.frameCount-frame<3)return;
                 using var members=em.GetBuffer<CampaignMissionExtractionMember>(root,true).ToNativeArray(Allocator.Temp);var team=new System.Collections.Generic.List<Entity>();
                 for(int i=0;i<members.Length;i++)if(members[i].Kind==1)team.Add(members[i].Entity);
@@ -195,15 +229,18 @@ namespace Game.Editor
             if(button==null||!button.isActiveAndEnabled||!button.interactable)return;button.onClick.Invoke();lastClick=EditorApplication.timeSinceStartup;
         }
         private static bool Visible(object owner,string field){var group=owner.GetType().GetField(field,BindingFlags.Instance|BindingFlags.NonPublic)?.GetValue(owner)as CanvasGroup;return group!=null&&group.alpha>.9f&&group.gameObject.activeInHierarchy;}
-        private static void Observe(string message,string stack,LogType type){if(type is LogType.Exception or LogType.Assert)error=message;}
+        private static void Observe(string message,string stack,LogType type)
+        {
+            if(type is LogType.Exception or LogType.Assert ||
+               type==LogType.Error && message.StartsWith("[CampaignMissionBootstrap]",StringComparison.Ordinal)) error=message;
+        }
         private static void Complete(bool pass,string detail)
         {
             if(finished)return;finished=true;SessionState.SetBool(Active,false);EditorApplication.update-=Tick;Application.logMessageReceived-=Observe;
+            SessionState.SetBool("Warline.M04.PlayerCamera",false);SessionState.SetBool("Warline.M04.VehicleReview",false);
             if(oldLocale!=null)GameLocalization.SetLocale(oldLocale,false);Time.timeScale=1;
             Debug.Log("[M04EditorProbe] result="+(pass?"Passed":"Failed")+" "+detail);File.AppendAllText(Output+"/state.txt","result="+(pass?"Passed":"Failed")+" "+detail+"\n");
-            void Exited(PlayModeStateChange state){if(state!=PlayModeStateChange.EnteredEditMode)return;EditorApplication.playModeStateChanged-=Exited;AssetDatabase.AllowAutoRefresh();double until=EditorApplication.timeSinceStartup+3;
-                void Exit(){if(EditorApplication.isCompiling||EditorApplication.isUpdating||EditorApplication.timeSinceStartup<until)return;EditorApplication.update-=Exit;EditorApplication.Exit(pass?0:1);}EditorApplication.update+=Exit;}
-            EditorApplication.playModeStateChanged+=Exited;EditorApplication.ExitPlaymode();
+            MissionEditorValidationExit.Complete(pass);
         }
     }
 }

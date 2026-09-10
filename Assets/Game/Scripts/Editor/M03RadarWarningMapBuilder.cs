@@ -82,8 +82,7 @@ namespace Game.Editor
                 SerializedProperty bounds = serialized.FindProperty("bounds");
                 Set(bounds.FindPropertyRelative("playableMin"), new Vector3(Window.xMin, source.Bounds.PlayableMin.y, Window.yMin));
                 Set(bounds.FindPropertyRelative("playableMax"), new Vector3(Window.xMax, source.Bounds.PlayableMax.y, Window.yMax));
-                Set(bounds.FindPropertyRelative("cameraMin"), new Vector3(Window.xMin,4,Window.yMin));
-                Set(bounds.FindPropertyRelative("cameraMax"), new Vector3(Window.xMax,source.Bounds.CameraMax.y,Window.yMax));
+                MissionCameraBoundsAuthoring.Apply(bounds);
                 SerializedProperty minimap = serialized.FindProperty("minimap");
                 Set(minimap.FindPropertyRelative("minimapId"), "minimap.ch01.m03.convoy");
                 Set(minimap.FindPropertyRelative("projectionOrigin"), new Vector3(Window.xMin,0,Window.yMin));
@@ -114,7 +113,7 @@ namespace Game.Editor
                     anchor.FindPropertyRelative("laneIndex").intValue = 0;
                     report.AppendLine($"| {seed.Name} | {cell.x}, {cell.y} | {sample.Height:F3} |");
                 }
-                string hash = Hash(source.ContentHash + report);
+                string hash = Hash(source.ContentHash + report + ":camera-padding-540-220-1280-640-v1");
                 Set(serialized.FindProperty("contentHash"), hash);
                 Set(serialized.FindProperty("generatedMetadataHash"), hash);
                 serialized.ApplyModifiedPropertiesWithoutUndo();

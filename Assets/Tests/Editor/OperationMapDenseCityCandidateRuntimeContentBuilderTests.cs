@@ -30,7 +30,7 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
             suite.MeasureEntityContent_ReportsMultipleArchivesForFailClosedCaller,
             suite.MeasureFrozenRollbackContent_SeparatesManifestAndChunkBytes,
             suite.MeasureFrozenRollbackContent_RejectsMissingManifest,
-            suite.MeasureFrozenRollbackContent_AcceptsCurrentFrozenPackage,
+            suite.MeasureFrozenRollbackContent_RejectsRetiredProductionPackage,
             suite.MeasureProductionStaticAddressables_ReportsLegacyBaseline,
             suite.MeasureProductionStaticAddressables_RejectsRetiredEntriesAfterCutover,
             suite.MeasureProductionStaticAddressables_AcceptsZeroEntriesAfterCutover,
@@ -375,18 +375,12 @@ public sealed class OperationMapDenseCityCandidateRuntimeContentBuilderTests
     }
 
     [Test]
-    public void MeasureFrozenRollbackContent_AcceptsCurrentFrozenPackage()
+    public void MeasureFrozenRollbackContent_RejectsRetiredProductionPackage()
     {
         string projectRoot = Path.GetDirectoryName(Application.dataPath);
-        Assert.That(projectRoot, Is.Not.Null.And.Not.Empty);
-
-        OperationMapDenseCityCandidateRuntimeContentBuilder.FrozenRollbackContentResult result =
-            OperationMapDenseCityCandidateRuntimeContentBuilder.MeasureFrozenRollbackContent(
-                projectRoot);
-
-        Assert.That(result.ManifestBytes, Is.EqualTo(10097753));
-        Assert.That(result.ChunkCount, Is.EqualTo(269));
-        Assert.That(result.ChunkBytes, Is.EqualTo(32381589));
+        var failure = Assert.Throws<InvalidOperationException>(() =>
+            OperationMapDenseCityCandidateRuntimeContentBuilder.MeasureFrozenRollbackContent(projectRoot));
+        Assert.That(failure.Message, Does.Contain("manifest is missing"));
     }
 
     [Test]

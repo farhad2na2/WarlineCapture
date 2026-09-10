@@ -20,11 +20,11 @@ namespace Game.Editor
     {
         public const string Path = "Assets/Game/Configs/Narrative/Chapter01/M04_Airlift_Narrative.asset";
         [MenuItem("Game/Campaign/M04/Build Final Narrative")]
-        public static void BuildAndInstall()=>Build(false);
+        public static void BuildAndInstall()=>Build(true);
         public static void BuildCaptionedArtAndInstall()=>Build(false);
         private static void Build(bool voices)
         {
-            M04AirliftMediaImporter.ConfigureArt();
+            M04AirliftMediaImporter.ConfigureArt(); if(voices) M04AirliftMediaImporter.ConfigureVoices();
             M04NarrativeLine[][] lines = {M04AirliftCopyCatalog.Brief,M04AirliftCopyCatalog.Comms,M04AirliftCopyCatalog.Debrief};
             string[] stages = {"brief","comms","debrief"};
             var basis = AssetDatabase.LoadAllAssetsAtPath(M02EstablishBaseNarrativeConfigBuilder.NarrativePath).OfType<NarrativeSequenceConfig>().ToArray();

@@ -1,4 +1,3 @@
-using Game.Configs;
 using Game.UI.Contracts;
 using UnityEngine;
 using UnityEngine.UI;
@@ -172,29 +171,29 @@ namespace Game.UI.Runtime
         {
             if (model.TargetKind == UiSurfaceTargetKind &&
                 model.RecommendationKind == BuildRecommendationKind)
-                return GameLocalization.Get("ui.guidance.open_build", "OPEN BUILD");
+                return UiShellRuntimeGateway.Localization.Get("ui.guidance.open_build", "OPEN BUILD");
             if (model.TargetKind == UiSurfaceTargetKind &&
                 model.RecommendationKind == SelectRecommendationKind)
-                return GameLocalization.Get("ui.guidance.select_barracks", "SELECT BARRACKS");
+                return UiShellRuntimeGateway.Localization.Get("ui.guidance.select_barracks", "SELECT BARRACKS");
             if (model.TargetKind == UiSurfaceTargetKind &&
                 model.RecommendationKind == ExplainRecommendationKind)
-                return GameLocalization.Get("ui.guidance.resource_spend", "RESOURCE SPEND");
+                return UiShellRuntimeGateway.Localization.Get("ui.guidance.resource_spend", "RESOURCE SPEND");
             if (model.TargetKind == UiSurfaceTargetKind &&
                 model.RecommendationKind == ProduceRecommendationKind)
-                return GameLocalization.Get("ui.guidance.queue_rifle", "QUEUE RIFLE");
+                return UiShellRuntimeGateway.Localization.Get("ui.guidance.queue_rifle", "QUEUE RIFLE");
             if (model.RecommendationKind == SelectRecommendationKind)
-                return GameLocalization.Get("ui.guidance.select_squad", "SELECT SQUAD");
+                return UiShellRuntimeGateway.Localization.Get("ui.guidance.select_squad", "SELECT SQUAD");
             if (model.RecommendationKind == MoveRecommendationKind)
                 return commandCue
-                    ? GameLocalization.Get("ui.aria.press_move", "PRESS MOVE")
-                    : GameLocalization.Get("ui.guidance.click_destination", "CLICK DESTINATION");
+                    ? UiShellRuntimeGateway.Localization.Get("ui.aria.press_move", "PRESS MOVE")
+                    : UiShellRuntimeGateway.Localization.Get("ui.guidance.click_destination", "CLICK DESTINATION");
             if (model.RecommendationKind == AttackRecommendationKind)
                 return commandCue
-                    ? GameLocalization.Get("ui.aria.press_attack", "PRESS ATTACK")
-                    : GameLocalization.Get("ui.guidance.click_enemy", "CLICK ENEMY");
+                    ? UiShellRuntimeGateway.Localization.Get("ui.aria.press_attack", "PRESS ATTACK")
+                    : UiShellRuntimeGateway.Localization.Get("ui.guidance.click_enemy", "CLICK ENEMY");
             if(model.TargetKind==UiSurfaceTargetKind && model.RecommendationKind is 6 or 8 or 10)
-                return GameLocalization.Get("mission.m03.guide.control."+model.RecommendationKind);
-            return GameLocalization.Get("ui.hud.aria_target", "ARIA TARGET");
+                return UiShellRuntimeGateway.Localization.Get("mission.m03.guide.control."+model.RecommendationKind);
+            return UiShellRuntimeGateway.Localization.Get("ui.hud.aria_target", "ARIA TARGET");
         }
 
         private void AcknowledgeBuildButton()

@@ -322,7 +322,7 @@ public sealed class OperationMapPhase0BaselineProbeTests
     }
 
     [Test]
-    public void Run_WritesOnlyExternalReportAndLeavesOwnedProjectFilesUnchanged()
+    public void RetiredStaticBaselineProbeFailsClosedWithoutChangingOwnedInputs()
     {
         string projectRoot = Directory.GetParent(Application.dataPath).FullName;
         string outputPath = Path.Combine(
@@ -338,6 +338,7 @@ public sealed class OperationMapPhase0BaselineProbeTests
             ManifestPath,
             IntegrityPath
         };
+        trackedProbeInputs = trackedProbeInputs.Where(File.Exists).ToArray();
         string[] beforeHashes = trackedProbeInputs
             .Select(path => OperationMapPhase0BaselineProbe.ComputeSha256(
                 File.ReadAllBytes(Path.Combine(projectRoot, path))))
@@ -349,12 +350,8 @@ public sealed class OperationMapPhase0BaselineProbeTests
             Environment.SetEnvironmentVariable(
                 OperationMapPhase0BaselineProbe.ReportPathEnvironmentVariable,
                 outputPath);
-            OperationMapPhase0BaselineProbe.Run();
-
-            Assert.That(File.Exists(outputPath), Is.True);
-            Assert.That(
-                OperationMapPhase0BaselineProbe.HasRequiredReportShape(File.ReadAllText(outputPath)),
-                Is.True);
+            Assert.Throws<FileNotFoundException>(() => OperationMapPhase0BaselineProbe.Run());
+            Assert.That(File.Exists(outputPath), Is.False);
             Assert.That(
                 trackedProbeInputs.Select(path => OperationMapPhase0BaselineProbe.ComputeSha256(
                     File.ReadAllBytes(Path.Combine(projectRoot, path)))),

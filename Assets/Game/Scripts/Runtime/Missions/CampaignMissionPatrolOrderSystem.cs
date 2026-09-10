@@ -83,7 +83,8 @@ namespace Game.Runtime
             }
             bool tutorialFinaleActive = false;
             byte tutorialFinaleStage = 0;
-            if (SystemAPI.TryGetSingleton(out CampaignMissionFinalePresentationComponent finaleState) &&
+            if (CampaignMissionSpawnSystem.ShouldUseTutorialFinale(in runtime) &&
+                SystemAPI.TryGetSingleton(out CampaignMissionFinalePresentationComponent finaleState) &&
                 finaleState.Required != 0 && finaleState.SessionToken.Equals(runtime.SessionToken))
             {
                 tutorialFinaleActive = true;
@@ -163,10 +164,10 @@ namespace Game.Runtime
 
                     if (current.InitialRtsOverviewRequested == 0)
                     {
-                        CampaignMissionSpawnSystem.QueueInitialRtsOverview(
+                        CampaignMissionSpawnSystem.QueueMissionOpeningOverview(
                             state.EntityManager,
                             focusEntity,
-                            current.FriendlyFocus);
+                            in current, definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0);
                         current.InitialRtsOverviewRequested = 1;
                         opening.ValueRW = current;
                         break;

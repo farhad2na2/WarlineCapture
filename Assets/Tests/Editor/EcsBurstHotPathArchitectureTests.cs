@@ -119,6 +119,10 @@ public sealed class EcsBurstHotPathArchitectureTests
 
     private static readonly Dictionary<string, string> ManagedUiShellNonBurstOnUpdateFiles = new(StringComparer.Ordinal)
     {
+        ["Assets/Game/Scripts/UI/Shell/Ecs/M03RadioReportProjectionSystem.cs"] = "localized radio presentation bridge; resolves managed catalog strings and routes voice event identifiers to the existing assistant speech queue.",
+        ["Assets/Game/Scripts/UI/Shell/Ecs/M04RadioReportProjectionSystem.cs"] = "localized extraction radio presentation bridge; formats managed captions for the assistant queue while mission facts remain ECS owned.",
+        ["Assets/Game/Scripts/UI/Shell/Ecs/MissionDefensePauseSystem.cs"] = "UI pause bridge; reconciles popup intent with managed Unity Time.timeScale and restores the captured simulation pause state on close or teardown.",
+        ["Assets/Game/Scripts/UI/Shell/Ecs/UiCampaignMissionProjectionSystem.cs"] = "campaign UI projection bridge; produces managed localized screen and result strings from ECS mission and settlement facts.",
         ["Assets/Game/Scripts/UI/Shell/Ecs/AssistantCommandIntentSystem.cs"] = "assistant UI command boundary; expands low-cardinality assistant intents into selection/camera request queues and creates missing command queue singletons.",
         ["Assets/Game/Scripts/UI/Shell/Ecs/AssistantCommandResultBridgeSystem.cs"] = "assistant command-result presentation boundary; correlates low-cardinality selection, move, attack, and camera results into terminal UI rows.",
         ["Assets/Game/Scripts/UI/Shell/Ecs/AssistantControlOwnerSystem.cs"] = "assistant takeover boundary; arbitrates shell route, player input, and assistant ownership before applying low-cardinality control state changes.",

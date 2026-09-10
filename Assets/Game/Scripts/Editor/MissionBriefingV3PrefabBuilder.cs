@@ -116,7 +116,7 @@ namespace Game.Editor
             SetBool(serialized, "v3TargetLayout", true);
             serialized.ApplyModifiedPropertiesWithoutUndo();
 
-            CampaignMissionScreenBinder binder = composition.gameObject.AddComponent<CampaignMissionScreenBinder>();
+            CampaignMissionScreenBinderView binder = composition.gameObject.AddComponent<CampaignMissionScreenBinderView>();
             binder.Configure(screen, "saga.ch01.m02.establish_base");
 
             ConfigureResponsiveLayout(
@@ -295,7 +295,7 @@ namespace Game.Editor
                 TextAlignmentOptions.TopLeft,
                 theme.TextPrimary);
             SetTopLeft(missionSummary.rectTransform, 26f, 294f, 320f, 130f);
-            missionSummary.enableWordWrapping = true;
+            missionSummary.textWrappingMode = TMPro.TextWrappingModes.Normal;
             missionSummary.overflowMode = TextOverflowModes.Overflow;
         }
 
@@ -529,7 +529,7 @@ namespace Game.Editor
             text.alignment = alignment;
             text.color = color;
             text.raycastTarget = false;
-            text.enableWordWrapping = false;
+            text.textWrappingMode = TMPro.TextWrappingModes.NoWrap;
             text.overflowMode = TextOverflowModes.Ellipsis;
             return text;
         }

@@ -2,7 +2,8 @@
     "name": "Game.Rendering.Contracts",
     "rootNamespace": "Game.Rendering.Contracts",
     "references": [
-        "Unity.Collections"
+        "Unity.Collections",
+        "Unity.Entities"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

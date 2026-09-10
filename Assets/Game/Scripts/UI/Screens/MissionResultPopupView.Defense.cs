@@ -1,4 +1,3 @@
-using Game.Configs;
 using Game.UI.Contracts;
 using TMPro;
 using UnityEngine;
@@ -34,19 +33,19 @@ namespace Game.UI.Runtime
             {
                 var settings=SettingsService.Load().Assistant;
                 if(settings.AssistanceLevel is UIAssistanceLevel.FullGuidance or UIAssistanceLevel.HintsOnly)
-                    reviewNarrated=UiShellRuntimeGateway.TryEnqueueTutorialNarration(12,12,UiTutorialNarrationPhase.PrimaryAction,GameText.Get("mission.m03.tutorial.12.body"));
+                    reviewNarrated=UiShellRuntimeGateway.TryEnqueueTutorialNarration(12,12,UiTutorialNarrationPhase.PrimaryAction,UiShellRuntimeGateway.Localization.Get("mission.m03.tutorial.12.body"));
             }
             bool victory=model.Outcome==UiMissionResultOutcome.Victory;
             SetDefenseText(missionStatusText,model.Title);
-            SetDefenseText(starCountText,GameText.Format("mission.m03.result.stars","",model.Stars));
+            SetDefenseText(starCountText,UiShellRuntimeGateway.Localization.Format("mission.m03.result.stars","",model.Stars));
             SetDefenseText(civilianLostText,model.Defense.CivilianLosses.ToString());
-            SetDefenseText(objectivePatrolStatusText,GameText.Get("mission.m03.result."+(victory ? "stopped" : "incomplete")));
-            SetDefenseText(objectiveSquadStatusText,GameText.Get("mission.m03.result."+(model.Defense.PostDestroyed ? "destroyed" : model.Defense.PostDamaged ? "damaged" : "undamaged")));
-            SetDefenseText(objectiveCivilianStatusText,GameText.Get("mission.m03.result."+(model.Defense.CivilianLosses==0 ? "safe" : "losses")));
+            SetDefenseText(objectivePatrolStatusText,UiShellRuntimeGateway.Localization.Get("mission.m03.result."+(victory ? "stopped" : "incomplete")));
+            SetDefenseText(objectiveSquadStatusText,UiShellRuntimeGateway.Localization.Get("mission.m03.result."+(model.Defense.PostDestroyed ? "destroyed" : model.Defense.PostDamaged ? "damaged" : "undamaged")));
+            SetDefenseText(objectiveCivilianStatusText,UiShellRuntimeGateway.Localization.Get("mission.m03.result."+(model.Defense.CivilianLosses==0 ? "safe" : "losses")));
             if(defenseLabels!=null) foreach(var label in defenseLabels)
             {
-                label.Text?.GetComponent<V3LocalizedTextBinding>()?.SetFontBounds(18,27);
-                SetDefenseText(label.Text,GameText.Get(label.Key));
+                label.Text?.GetComponent<V3LocalizedTextBindingView>()?.SetFontBounds(18,27);
+                SetDefenseText(label.Text,UiShellRuntimeGateway.Localization.Get(label.Key));
             }
             SetDefenseText(titleText,model.Title); SetDefenseText(missionNameText,model.Subtitle);
             SetDefenseText(missionIdentityText,BuildMissionIdentity(in model)); SetDefenseText(summaryText,model.SummaryBody);
@@ -57,12 +56,12 @@ namespace Game.UI.Runtime
             if(rewardsText!=null)
             {
                 rewardsText.lineSpacing=0;
-                rewardsText.GetComponent<V3LocalizedTextBinding>()?.SetFontBounds(17,22);
+                rewardsText.GetComponent<V3LocalizedTextBindingView>()?.SetFontBounds(17,22);
                 SetDefenseText(rewardsText,BuildRewardDisplay(model.RewardsText));
             }
             foreach(var status in new[]{objectivePatrolStatusText,objectiveSquadStatusText,objectiveCivilianStatusText})
-                status?.GetComponent<V3LocalizedTextBinding>()?.SetFontBounds(18,22);
-            missionIdentityText?.GetComponent<V3LocalizedTextBinding>()?.SetFontBounds(19,30);
+                status?.GetComponent<V3LocalizedTextBindingView>()?.SetFontBounds(18,22);
+            missionIdentityText?.GetComponent<V3LocalizedTextBindingView>()?.SetFontBounds(19,30);
             LayoutDefenseResult();
         }
         private void LayoutDefenseResult()
@@ -93,9 +92,9 @@ namespace Game.UI.Runtime
         private static void SetDefenseText(TMP_Text text,string value)
         {
             if(text==null) return;
-            var binding=text.GetComponent<V3LocalizedTextBinding>();
+            var binding=text.GetComponent<V3LocalizedTextBindingView>();
             if(binding!=null) binding.SetLocalizedValue(value);
-            else text.text=V3LocalizedTextBinding.ShapeForRendering(value);
+            else text.text=V3LocalizedTextBindingView.ShapeForRendering(value);
         }
     }
 }

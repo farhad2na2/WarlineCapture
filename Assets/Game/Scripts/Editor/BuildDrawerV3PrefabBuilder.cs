@@ -93,6 +93,7 @@ namespace Game.Editor
                 BindPresenter(presenter, view, presenterAssets);
                 BindClose(root, closeView, closeButtonView, closeButton);
 
+                MissionUiSerializedBindingsAuthoring.Apply(root);
                 PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             }
             finally

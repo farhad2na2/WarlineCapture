@@ -46,7 +46,7 @@ namespace Game.Composition
         private FixedString64Bytes completedCommsSession;
         private int completedCommsAttemptOrdinal = -1;
         private bool running, handoffPending, pauseOwned, configurationFailureLogged;
-        private readonly CampaignMissionNarrativePlaybackRuntime playback = new();
+        private readonly PlaybackPresentationSystemHelper playback = new();
 
         public void Initialize(MenuBootstrapView menuView, IGameTextResolver textResolver)
         {
@@ -108,7 +108,7 @@ namespace Game.Composition
                 ? new FirstLaunchNarrativeLocaleTextCompositionSystemHelper(baseTextResolver, locale)
                 : baseTextResolver;
             IGameTextResolver resolver =
-                new SharedLocalizationTextCompositionSystemHelper(legacyResolver);
+                new FirstLaunchNarrativeCompositionSystemHelper.SharedLocaleCompositionSystemHelper(legacyResolver);
             if (!presentation.Initialize(
                     config,
                     speakers,

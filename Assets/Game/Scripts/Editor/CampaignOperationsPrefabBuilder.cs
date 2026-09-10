@@ -75,7 +75,7 @@ namespace Game.Editor
             LoadStyleAssets();
             GameObject existing = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
             if (existing != null && existing.GetComponent<CampaignOperationsScreenView>() != null &&
-                existing.GetComponent<CampaignMissionScreenBinder>() == null)
+                existing.GetComponent<CampaignMissionScreenBinderView>() == null)
             {
                 AddMissingCampaignBinder();
                 existing = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
@@ -88,6 +88,7 @@ namespace Game.Editor
 
             GameObject root = BuildPrefabRoot();
             EnsureFolder("Assets/Game/Prefabs/UI/Shell/Content");
+            MissionUiSerializedBindingsAuthoring.Apply(root);
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root);
             if (prefab == null)
@@ -103,7 +104,7 @@ namespace Game.Editor
         {
             if (prefab == null) return false;
             CampaignOperationsScreenView view = prefab.GetComponent<CampaignOperationsScreenView>();
-            CampaignMissionScreenBinder binder = prefab.GetComponent<CampaignMissionScreenBinder>();
+            CampaignMissionScreenBinderView binder = prefab.GetComponent<CampaignMissionScreenBinderView>();
             return view != null && binder != null && view.BackRouteButton != null && view.ChapterRail != null &&
                    view.StrategicMap != null && view.MissionBriefing != null &&
                    view.ChapterCards is { Length: > 0 } && view.MissionNodes is { Length: > 0 } &&
@@ -125,8 +126,9 @@ namespace Game.Editor
                 CampaignOperationsScreenView view = root.GetComponent<CampaignOperationsScreenView>();
                 if (view == null)
                     throw new InvalidOperationException("Campaign prefab is missing its screen view.");
-                CampaignMissionScreenBinder binder = root.AddComponent<CampaignMissionScreenBinder>();
+                CampaignMissionScreenBinderView binder = root.AddComponent<CampaignMissionScreenBinderView>();
                 binder.Configure(view, "saga.ch01.m01.first_contact");
+                MissionUiSerializedBindingsAuthoring.Apply(root);
                 PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             }
             finally
@@ -226,7 +228,7 @@ namespace Game.Editor
             SetReference(serialized, "chapterIntelButton", intel);
             SetReference(serialized, "launchMissionButton", launch);
             serialized.ApplyModifiedPropertiesWithoutUndo();
-            CampaignMissionScreenBinder binder = root.AddComponent<CampaignMissionScreenBinder>();
+            CampaignMissionScreenBinderView binder = root.AddComponent<CampaignMissionScreenBinderView>();
             binder.Configure(screen, "saga.ch01.m01.first_contact");
             return root;
         }

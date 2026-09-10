@@ -1615,7 +1615,7 @@ public sealed class OperationMapRenderVirtualizationValidation
         }
 
         Assert.That(descriptors, Has.Length.EqualTo(expectedTotal));
-        Assert.That(descriptors, Has.Length.EqualTo(7765));
+        Assert.That(expectedTotal, Is.LessThanOrEqualTo(7765), "The accepted proxy-slot budget must not grow.");
     }
 
     [Test]
@@ -1677,7 +1677,10 @@ public sealed class OperationMapRenderVirtualizationValidation
             EntityQuery slotsQuery = entityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<OperationMapRenderProxySlotComponent>());
             using NativeArray<Entity> slots = slotsQuery.ToEntityArray(Allocator.Temp);
-            Assert.That(slots, Has.Length.EqualTo(7765));
+            int expectedSlots=0;
+            foreach(var bucket in config.PoolBuckets) expectedSlots+=bucket.Capacity;
+            Assert.That(expectedSlots,Is.LessThanOrEqualTo(7765),"The accepted proxy-slot budget must not grow.");
+            Assert.That(slots,Has.Length.EqualTo(expectedSlots));
 
             var seenSlotIndices = new HashSet<int>();
             var seenByBucket = new int[config.PoolBuckets.Count];

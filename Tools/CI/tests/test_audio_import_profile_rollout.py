@@ -58,14 +58,17 @@ class AudioImportProfileRolloutTests(unittest.TestCase):
             for path in PROFILES.load_catalog_clip_paths()
             if PROFILES.category_for(path) == "Voice"
         ]
-        self.assertEqual(163, len(voice_paths))
+        self.assertGreaterEqual(len(voice_paths), 163, "Preserve the historical rollout while validating every added mission voice.")
+        self.assertTrue(self.PILOT_PATHS.issubset({path.relative_to(ROOT).as_posix() for path in voice_paths}))
 
         expected = profiles["Voice"]
         for path in voice_paths:
             meta = Path(f"{path}.meta").read_text(encoding="utf-8")
             self.assertEqual(PROFILES.UNITY_LOAD_TYPES[expected["loadType"]], scalar(meta, "loadType", 4), path)
             self.assertEqual(0, scalar(meta, "preloadAudioData", 4), path)
-            self.assertEqual(0, scalar(meta, "preloadAudioData", 2), path)
+            # Unity 6000 serializes preload in defaultSettings; older metas also kept the obsolete root alias.
+            if re.search(r"^  preloadAudioData:", meta, re.MULTILINE):
+                self.assertEqual(0, scalar(meta, "preloadAudioData", 2), path)
             self.assertEqual(1, scalar(meta, "loadInBackground", 2), path)
             self.assertEqual(1, scalar(meta, "forceToMono", 2), path)
             self.assertEqual(44100, scalar(meta, "sampleRateOverride", 4), path)

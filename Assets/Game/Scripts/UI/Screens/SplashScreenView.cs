@@ -1,4 +1,3 @@
-using Game.Configs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -60,10 +59,10 @@ namespace Game.UI.Runtime
 
             string tip = loadingTips != null ? loadingTips.GetTip(index) : string.Empty;
             tipText.text = string.IsNullOrWhiteSpace(tip)
-                ? GameLocalization.Get(
+                ? UiShellRuntimeGateway.Localization.Get(
                     "ui.splash.default_tip",
                     "Prepare your squads before entering hostile districts.")
-                : GameLocalization.GetBySource(tip);
+                : UiShellRuntimeGateway.Localization.GetBySource(tip);
         }
 
         public bool CanLeaveSplash()

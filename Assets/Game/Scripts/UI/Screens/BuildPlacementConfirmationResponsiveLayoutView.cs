@@ -80,12 +80,7 @@ namespace Game.UI.Runtime
         private void Start() => RefreshLayout();
         private void OnRectTransformDimensionsChange() => RefreshLayout();
 
-        private void LateUpdate()
-        {
-            _root ??= transform as RectTransform;
-            if (_root != null && !Mathf.Approximately(_lastWidth, _root.rect.width))
-                RefreshLayout();
-        }
+
 
         private void CaptureBaseLayout()
         {

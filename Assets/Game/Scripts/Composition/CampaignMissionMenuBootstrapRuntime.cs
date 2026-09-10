@@ -10,7 +10,7 @@ using Unity.Entities;
 
 namespace Game.Composition
 {
-    internal sealed class CampaignMissionMenuBootstrapRuntime
+    internal sealed partial class CampaignMissionMenuBootstrapRuntime
     {
         private const uint CampaignMissionSourceVersion = 1;
         private readonly CampaignMissionDebriefCompositionSystemHelper debrief = new();

@@ -36,7 +36,7 @@ public sealed class M02EstablishBaseLaunchTests
         try
         {
             M02EstablishBaseLaunchTests tests = new();
-            tests.ChapterCatalogProjectsCanonicalM01M02AndM03();
+            tests.ChapterCatalogProjectsCanonicalM01ThroughM04();
             tests.CatalogEntryWithoutScenarioFailsClosed();
             tests.DuplicateCanonicalScenarioFailsClosed();
             tests.SameVersionCatalogContentChangeReprojects();
@@ -160,13 +160,14 @@ public sealed class M02EstablishBaseLaunchTests
     }
 
     [Test]
-    public void ChapterCatalogProjectsCanonicalM01M02AndM03()
+    public void ChapterCatalogProjectsCanonicalM01ThroughM04()
     {
         using World world = new("m02-chapter-catalog");
         Assert.IsTrue(ProjectChapter(world.EntityManager, 11, out Entity root, out string error), error);
         CampaignMissionCatalogComponent catalog =
             world.EntityManager.GetComponentData<CampaignMissionCatalogComponent>(root);
-        Assert.AreEqual(3, catalog.Blob.Value.Missions.Length);
+        Assert.AreEqual(4, catalog.Blob.Value.Missions.Length);
+        Assert.AreEqual("saga.ch01.m04.airlift", catalog.Blob.Value.Missions[3].MissionId.ToString());
         Assert.AreEqual("saga.ch01.m03.radar_warning",catalog.Blob.Value.Missions[2].MissionId.ToString());
         Assert.AreEqual(MissionDefinitionContractValidation.FirstContactMissionId,
             catalog.Blob.Value.Missions[0].MissionId.ToString());
@@ -377,7 +378,7 @@ public sealed class M02EstablishBaseLaunchTests
                 configuredCampaignMissionCatalog: missions);
             bootstrap.Update(view);
 
-            Assert.IsTrue(CampaignMissionOperationMapLaunchResolver.TryResolve(
+            Assert.IsTrue(MatchSceneView.OperationMapLaunchResolver.TryResolve(
                 fixture.World,
                 "skirmish",
                 "scenario.skirmish.desert_base_standard",
@@ -892,7 +893,8 @@ public sealed class M02EstablishBaseLaunchTests
         Assert.AreEqual(1, query.CalculateEntityCount());
         root = query.GetSingletonEntity();
         CampaignMissionCatalogComponent catalog = manager.GetComponentData<CampaignMissionCatalogComponent>(root);
-        Assert.AreEqual(3, catalog.Blob.Value.Missions.Length);
+        Assert.AreEqual(4, catalog.Blob.Value.Missions.Length);
+        Assert.AreEqual("saga.ch01.m04.airlift", catalog.Blob.Value.Missions[3].MissionId.ToString());
         Assert.AreEqual("saga.ch01.m01.first_contact",catalog.Blob.Value.Missions[0].MissionId.ToString());
         Assert.AreEqual("saga.ch01.m02.establish_base",catalog.Blob.Value.Missions[1].MissionId.ToString());
         Assert.AreEqual("saga.ch01.m03.radar_warning",catalog.Blob.Value.Missions[2].MissionId.ToString());

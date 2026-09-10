@@ -26,7 +26,7 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
         try
         {
             var tests = new StaticMapAndroidBuildSceneResolverTests();
-            tests.ResolveForCurrentProject_IncludesOnlyEnabledBaseScenesAfterValidatingManifestChunks();
+            tests.ResolveForCurrentProject_IncludesOnlyBaseScenesForAcceptedEntityScene();
             tests.BuildScript_UsesManifestResolverForBothAndroidBuildPipelinesOnly();
             tests.Resolve_CurrentSchemaWithoutMapIdentityFails();
             tests.Resolve_LegacySchemaOneWithoutMapIdentityRemainsReadable();
@@ -240,31 +240,15 @@ public sealed class StaticMapAndroidBuildSceneResolverTests
     }
 
     [Test]
-    public void ResolveForCurrentProject_IncludesOnlyEnabledBaseScenesAfterValidatingManifestChunks()
+    public void ResolveForCurrentProject_IncludesOnlyBaseScenesForAcceptedEntityScene()
     {
-        string[] enabledScenes = EditorBuildSettings.scenes
-            .Where(scene => scene.enabled)
-            .Select(scene => scene.path)
-            .ToArray();
-        StaticMapPresentationManifest manifest =
-            AssetDatabase.LoadAssetAtPath<StaticMapPresentationManifest>(
-                StaticMapPresentationBaker.ManifestPath);
-
-        Assert.NotNull(manifest, "Generated static-map presentation manifest is missing.");
-        string[] expectedBaseScenes = enabledScenes
-            .Where(path => !StaticMapPresentationOutputOwnership.IsOwnedScenePath(path))
-            .Distinct(StringComparer.Ordinal)
-            .ToArray();
-        string[] expectedChunks = manifest.Chunks.Select(chunk => chunk.ScenePath).ToArray();
-
+        string[] enabledScenes = EditorBuildSettings.scenes.Where(scene => scene.enabled).Select(scene => scene.path).ToArray();
+        var definition = AssetDatabase.LoadAssetAtPath<Game.Configs.OperationMapDefinition>(OperationMapAddressablesLayoutBuilder.DefinitionPath);
+        Assert.That(definition.PresentationKind, Is.EqualTo(Game.Configs.OperationMapPresentationKind.EntityScene));
+        Assert.That(definition.StaticPresentationManifestReference.RuntimeKeyIsValid(), Is.False);
+        string[] expected = enabledScenes.Where(path => !StaticMapPresentationOutputOwnership.IsOwnedScenePath(path)).Distinct(StringComparer.Ordinal).ToArray();
         string[] result = StaticMapAndroidBuildSceneResolver.ResolveForCurrentProject(enabledScenes);
-
-        CollectionAssert.AreEqual(expectedBaseScenes, result);
-        Assert.AreEqual(result.Length, result.Distinct(StringComparer.Ordinal).Count());
-        Assert.AreEqual(
-            CurrentMapChunkCount,
-            expectedChunks.Length,
-            "The audited current-map manifest must include all generated chunks.");
+        CollectionAssert.AreEqual(expected, result);
         Assert.That(result, Has.None.Matches<string>(StaticMapPresentationOutputOwnership.IsOwnedScenePath));
     }
 

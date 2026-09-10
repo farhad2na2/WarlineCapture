@@ -6,14 +6,14 @@ using Game.UI.Contracts;
 namespace Game.UI.Runtime
 {
     [DisallowMultipleComponent]
-    public sealed class UIShellEcsPresentationSystem : MonoBehaviour
+    public sealed partial class UIShellEcsPresentationSystem : MonoBehaviour
     {
         private static readonly ProfilerMarker TryGetBoundaryMarker = new("UIShellEcsPresentation.TryGetBoundary");
         private static readonly ProfilerMarker FlushCompletionMarker = new("UIShellEcsPresentation.FlushCompletion");
         private static readonly ProfilerMarker ReadCommandsMarker = new("UIShellEcsPresentation.ReadCommands");
 
         [SerializeField] private UIShellView shellView;
-        [SerializeField] private CampaignMissionHudResultBinder missionHudResultBinder;
+        [SerializeField] private CampaignMissionHudResultBinderView missionHudResultBinder;
 
         private readonly List<UiShellPresentationCommandModel> commandScratch = new();
         private bool isExecuting;
@@ -46,7 +46,7 @@ namespace Game.UI.Runtime
             if (shellView == null)
                 shellView = GetComponent<UIShellView>();
             if (missionHudResultBinder == null)
-                missionHudResultBinder = GetComponent<CampaignMissionHudResultBinder>();
+                missionHudResultBinder = GetComponent<CampaignMissionHudResultBinderView>();
         }
 
         private void Update()
@@ -70,7 +70,7 @@ namespace Game.UI.Runtime
             if (missionHudResultBinder != null)
                 missionHudResultBinder.RefreshPresentation();
 
-            ResourceExchangePopupRuntimeView.RefreshActiveView();
+            RefreshBoundMissionViews();
 
             if (isExecuting || shellView == null)
                 return;
@@ -135,7 +135,7 @@ namespace Game.UI.Runtime
         [System.Diagnostics.Conditional("DEVELOPMENT_BUILD")]
         private static void LogTransition(string stage, UiShellPresentationCommandModel command)
         {
-            Debug.Log(
+            Game.UI.Contracts.UiDiagnostics.Info(
                 $"[UiShellPresentation] stage={stage} sequence={command.SequenceId} kind={command.Kind} region={command.Region} route={command.Route}");
         }
 
@@ -143,7 +143,7 @@ namespace Game.UI.Runtime
         [System.Diagnostics.Conditional("DEVELOPMENT_BUILD")]
         private static void LogTransition(string stage, UiShellTransitionCompleteModel completion)
         {
-            Debug.Log(
+            Game.UI.Contracts.UiDiagnostics.Info(
                 $"[UiShellPresentation] stage={stage} sequence={completion.SequenceId} kind={completion.Kind} region={completion.Region}");
         }
     }

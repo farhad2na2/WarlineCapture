@@ -106,6 +106,10 @@ namespace Game.Runtime
             if (request.UseExplicitPerspective!=0)
             {
                 var p=request.Perspective;
+                // An authored mission pose owns this transition. A pending generic match intro
+                // must not restore its old height/pitch after the mission overview is applied.
+                camera.QueueSetMatchIntroZoomSettlePending(entityManager, false);
+                camera.QueueClearSmoothPerspectiveTarget(entityManager);
                 camera.QueueCompleteZoomTransition(entityManager);
                 if(request.Smooth!=0) camera.QueueSetSmoothPerspectiveTarget(entityManager,p.x,p.y,p.z,p.w,request.SmoothTimeSeconds,true);
                 else camera.QueueApplyPerspectiveModeInstant(entityManager,p.x,p.y,p.z,p.w);

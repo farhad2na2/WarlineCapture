@@ -372,6 +372,7 @@ namespace Game.UI.Runtime
             _mainMenuPlayUi?.PrepareToOpenLargeTacticalPopup(MatchHudLargeTacticalPopup.BuildDrawer);
             UnbindBuildDrawerPopupCloseButton();
             _buildDrawerPopupInstance = InstallRoot(buildDrawerPopupPrefab, UIShellRegionId.PopupLayer);
+            _buildDrawerPopupInstance?.GetComponent<BuildDrawerHudOcclusionView>()?.Configure(this);
             BindBuildDrawerPopupInputBlocker(_buildDrawerPopupInstance);
             BindBuildDrawerPopupCloseButton(_buildDrawerPopupInstance);
             BindBuildDrawerRuntimeCommands(_buildDrawerPopupInstance);

@@ -504,7 +504,7 @@ namespace Game.Editor
 
             if (phase == Phase.WaitingForResourceExchangePopup)
             {
-                ResourceExchangePopupView popup = UnityEngine.Object.FindFirstObjectByType<ResourceExchangePopupView>(
+                ResourceExchangePopupView popup = UnityEngine.Object.FindAnyObjectByType<ResourceExchangePopupView>(
                     FindObjectsInactive.Include);
                 if (popup != null && popup.IsOpen)
                 {
@@ -608,8 +608,7 @@ namespace Game.Editor
             status = "resourceExchangeHeaderPointerClick=Failed reason=ResourceStripMissing";
             Button resourceButton = null;
             foreach (Button candidate in UnityEngine.Object.FindObjectsByType<Button>(
-                         FindObjectsInactive.Exclude,
-                         FindObjectsSortMode.None))
+                         FindObjectsInactive.Exclude))
             {
                 if (candidate != null && candidate.gameObject.name == "ResourceStrip")
                 {
@@ -1301,7 +1300,7 @@ namespace Game.Editor
 
         private static string DescribeMatchSceneView()
         {
-            MatchSceneView matchView = UnityEngine.Object.FindFirstObjectByType<MatchSceneView>(
+            MatchSceneView matchView = UnityEngine.Object.FindAnyObjectByType<MatchSceneView>(
                 FindObjectsInactive.Include);
             if (matchView == null)
                 return "matchView=missing";

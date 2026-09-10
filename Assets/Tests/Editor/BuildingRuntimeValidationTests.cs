@@ -21,6 +21,7 @@ public sealed class BuildingRuntimeValidationTests
     private const string OilPumpPrefabPath = "Assets/Game/Prefabs/Buildings/Building_OilPump.prefab";
     private const string RegularSoldierPrefabGuid = "8ec7389d67b7543d0ac6050c06d26187";
 
+    private InitialUnitsSpawnerAuthoringConfig _initialSpawnFixture;
     private World _previousDefaultWorld;
     private World _world;
     private NativeArray<int> _blockerCounts;
@@ -44,7 +45,7 @@ public sealed class BuildingRuntimeValidationTests
             tests.TearDown();
             tests.RuntimeSpawnRequestCompletionRunsDuringStartupTick();
             tests.TearDown();
-            tests.Faction2InitialConfiguredBuildingSpawnsTentFromCurrentAssets();
+            tests.ExplicitFaction2StartupRecipeSpawnsTheConfiguredTent();
             tests.TearDown();
             tests.MapAuthoredFaction2PlacementsDoNotSpawnOilPumpOverInitialTent();
             tests.TearDown();
@@ -146,6 +147,20 @@ public sealed class BuildingRuntimeValidationTests
         if (_buildingConfig != null)
             Object.DestroyImmediate(_buildingConfig);
         _buildingConfig = null;
+        if (_initialSpawnFixture != null) Object.DestroyImmediate(_initialSpawnFixture);
+        _initialSpawnFixture = null;
+    }
+
+    private static void SeedRecruitmentMaterials(EntityManager em)
+    {
+        using var query=em.CreateEntityQuery(typeof(FactionEconomy));
+        using var owners=query.ToEntityArray(Allocator.Temp);
+        Entity owner=Entity.Null;
+        foreach(var entity in owners) if(em.GetComponentData<FactionEconomy>(entity).FactionId==1) {owner=entity;break;}
+        Assert.That(owner,Is.Not.EqualTo(Entity.Null),"Recruitment must use the composed economy owner.");
+        var materials=new FactionTacticalMaterialsComponent{FactionId=1,Current=1000,Capacity=1000};
+        if(em.HasComponent<FactionTacticalMaterialsComponent>(owner))em.SetComponentData(owner,materials);
+        else em.AddComponentData(owner,materials);
     }
 
     [Test]
@@ -258,6 +273,7 @@ public sealed class BuildingRuntimeValidationTests
         Assert.AreEqual(FactionIdentity.PlayerFactionId, runtimeBuilding.OwnerFactionId);
         Assert.IsFalse(runtimeBuilding.IsCityGenerated);
 
+        SeedRecruitmentMaterials(em);
         BuildingUiCommandSystemHelper.CampRequestFailure failure =
             _buildingGameplay.UiCommand.GetCampRequestFailure(
                 _buildingGameplay.UiCommandContext,
@@ -332,6 +348,7 @@ public sealed class BuildingRuntimeValidationTests
 
         Assert.IsTrue(foundPlayerTent, "Startup map placement must register at least one player-owned authored Tent_Regular before build-menu recruit checks.");
 
+        SeedRecruitmentMaterials(em);
         BuildingUiCommandSystemHelper.CampRequestFailure failure =
             _buildingGameplay.UiCommand.GetCampRequestFailure(
                 _buildingGameplay.UiCommandContext,
@@ -346,7 +363,7 @@ public sealed class BuildingRuntimeValidationTests
     }
 
     [Test]
-    public void Faction2InitialConfiguredBuildingSpawnsTentFromCurrentAssets()
+    public void ExplicitFaction2StartupRecipeSpawnsTheConfiguredTent()
     {
         BuildingPlacementSystemConfig placementConfig =
             AssetDatabase.LoadAssetAtPath<BuildingPlacementSystemConfig>(BuildingPlacementConfigPath);
@@ -360,25 +377,20 @@ public sealed class BuildingRuntimeValidationTests
         Assert.NotNull(tentPrefab, $"Missing tent prefab at {TentRegularPrefabPath}.");
         Assert.NotNull(oilPumpPrefab, $"Missing oil pump prefab at {OilPumpPrefabPath}.");
 
-        InitialUnitsSpawnerAuthoringConfig.FactionBuildingEntry faction2Building = null;
-        for (int factionIndex = 0; factionIndex < initialConfig.Factions.Count; factionIndex++)
+        _initialSpawnFixture = Object.Instantiate(initialConfig);
+        initialConfig = _initialSpawnFixture;
+        var factions = new List<InitialUnitsSpawnerAuthoringConfig.FactionEntry>();
+        for (int id=1; id<=2; id++)
         {
-            InitialUnitsSpawnerAuthoringConfig.FactionEntry faction = initialConfig.Factions[factionIndex];
-            if (faction == null || faction.FactionId != 2 || faction.Buildings == null)
-                continue;
-
-            for (int buildingIndex = 0; buildingIndex < faction.Buildings.Count; buildingIndex++)
-            {
-                InitialUnitsSpawnerAuthoringConfig.FactionBuildingEntry building = faction.Buildings[buildingIndex];
-                if (building?.Prefab == tentPrefab)
-                {
-                    faction2Building = building;
-                    break;
-                }
-            }
+            var faction = new InitialUnitsSpawnerAuthoringConfig.FactionEntry();
+            SetPrivateField(faction,"factionId",id);
+            SetPrivateField(faction,"spawnCell",new Vector2Int(id==1?64:360,64));
+            var building = new InitialUnitsSpawnerAuthoringConfig.FactionBuildingEntry();
+            SetPrivateField(building,"prefab",tentPrefab);
+            SetPrivateField(building,"originOffset",Vector2Int.zero);
+            faction.Buildings.Add(building); factions.Add(faction);
         }
-
-        Assert.NotNull(faction2Building, "Faction 2 initial spawn config must contain Tent_Regular.");
+        SetPrivateField(initialConfig,"factions",factions);
 
         _previousDefaultWorld = World.DefaultGameObjectInjectionWorld;
         _world = new World("Faction2InitialConfiguredBuildingAssetValidation");

@@ -27,6 +27,8 @@ namespace Game.UI.Runtime
         [SerializeField] private CommandWheelPanelView commandWheelPanel;
         [SerializeField] private MatchOverlayCommandTabGroupView commandTabGroup;
 
+        [SerializeField] private Button[] selectedStateButtons;
+        [SerializeField] private GameObject[] selectedStateVisuals;
         private Canvas _cachedCanvas;
         private bool _tutorialBuildRequested;
         private bool _tutorialBuildAvailable;
@@ -204,14 +206,15 @@ namespace Game.UI.Runtime
                    RectTransformUtility.RectangleContainsScreenPoint(rect, screenPosition, eventCamera);
         }
 
-        private static void SetV3Selected(Button button, bool selected)
+        private void SetV3Selected(Button button, bool selected)
         {
             if (button == null)
                 return;
 
-            Transform selectedVisual = button.transform.Find("V3SelectedState");
-            if (selectedVisual != null && selectedVisual.gameObject.activeSelf != selected)
-                selectedVisual.gameObject.SetActive(selected);
+            int index = System.Array.IndexOf(selectedStateButtons ?? System.Array.Empty<Button>(), button);
+            GameObject selectedVisual = index >= 0 && selectedStateVisuals != null && index < selectedStateVisuals.Length ? selectedStateVisuals[index] : null;
+            if (selectedVisual != null && selectedVisual.activeSelf != selected)
+                selectedVisual.SetActive(selected);
         }
 
         private Button FindCommandTabButton(string buttonName)

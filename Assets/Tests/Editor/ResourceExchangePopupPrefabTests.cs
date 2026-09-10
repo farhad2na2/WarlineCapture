@@ -45,12 +45,12 @@ public sealed class ResourceExchangePopupPrefabTests
                 test => test.ResourceExchangePopupRuntimeView_ButtonsEnqueueTypedResourceExchangeActions(),
                 ref passed);
             RunValidationStep(
-                nameof(ResourceExchangePopupRuntimeView_DisablingNewestOverlappingInstanceRefreshesPrevious),
-                test => test.ResourceExchangePopupRuntimeView_DisablingNewestOverlappingInstanceRefreshesPrevious(),
+                nameof(ResourceExchangePopupRuntimeView_ExplicitOwnerRestoresPreviousOverlappingInstance),
+                test => test.ResourceExchangePopupRuntimeView_ExplicitOwnerRestoresPreviousOverlappingInstance(),
                 ref passed);
             RunValidationStep(
-                nameof(ResourceExchangePopupRuntimeView_SubsystemResetClearsActiveViewChain),
-                test => test.ResourceExchangePopupRuntimeView_SubsystemResetClearsActiveViewChain(),
+                nameof(ResourceExchangePopupRuntimeView_ShellUnbindClearsRefreshTarget),
+                test => test.ResourceExchangePopupRuntimeView_ShellUnbindClearsRefreshTarget(),
                 ref passed);
 
             Debug.Log($"[ResourceExchangePopupPrefabValidation] result=Passed tests={passed}");
@@ -69,12 +69,12 @@ public sealed class ResourceExchangePopupPrefabTests
         try
         {
             RunValidationStep(
-                nameof(ResourceExchangePopupRuntimeView_DisablingNewestOverlappingInstanceRefreshesPrevious),
-                test => test.ResourceExchangePopupRuntimeView_DisablingNewestOverlappingInstanceRefreshesPrevious(),
+                nameof(ResourceExchangePopupRuntimeView_ExplicitOwnerRestoresPreviousOverlappingInstance),
+                test => test.ResourceExchangePopupRuntimeView_ExplicitOwnerRestoresPreviousOverlappingInstance(),
                 ref passed);
             RunValidationStep(
-                nameof(ResourceExchangePopupRuntimeView_SubsystemResetClearsActiveViewChain),
-                test => test.ResourceExchangePopupRuntimeView_SubsystemResetClearsActiveViewChain(),
+                nameof(ResourceExchangePopupRuntimeView_ShellUnbindClearsRefreshTarget),
+                test => test.ResourceExchangePopupRuntimeView_ShellUnbindClearsRefreshTarget(),
                 ref passed);
             Debug.Log($"[ResourceExchangePopupLifecycleValidation] result=Passed tests={passed}");
             ValidationExit.Exit(0);
@@ -94,7 +94,7 @@ public sealed class ResourceExchangePopupPrefabTests
     }
 
     [Test]
-    public void ResourceExchangePopupRuntimeView_SubsystemResetClearsActiveViewChain()
+    public void ResourceExchangePopupRuntimeView_ShellUnbindClearsRefreshTarget()
     {
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
         Assert.NotNull(prefab);
@@ -105,16 +105,13 @@ public sealed class ResourceExchangePopupPrefabTests
         try
         {
             instance.SetActive(true);
-            runtimeView.SendMessage("OnEnable");
-            Assert.IsTrue(ResourceExchangePopupRuntimeView.IsActiveViewForTests(runtimeView));
-
-            MethodInfo reset = typeof(ResourceExchangePopupRuntimeView).GetMethod(
-                "ResetActiveView",
-                BindingFlags.Static | BindingFlags.NonPublic);
-            Assert.NotNull(reset);
-            reset.Invoke(null, null);
-
-            Assert.IsFalse(ResourceExchangePopupRuntimeView.IsActiveViewForTests(runtimeView));
+            EditModeViewLifecycle.Invoke(runtimeView, "OnEnable");
+            var owner = new MainMenuPlayUI();
+            owner.BindResourceExchangePopup(runtimeView.View);
+            Assert.IsTrue(owner.OwnsResourceExchangePopup(runtimeView));
+            owner.BindResourceExchangePopup(null);
+            Assert.IsFalse(owner.OwnsResourceExchangePopup(runtimeView));
+            owner.RefreshResourceExchangePopup();
         }
         finally
         {
@@ -283,7 +280,7 @@ public sealed class ResourceExchangePopupPrefabTests
             Assert.NotNull(view);
             Assert.NotNull(runtimeView);
             runtimeView.ConfigureForTests(view);
-            runtimeView.SendMessage("OnEnable");
+            EditModeViewLifecycle.Invoke(runtimeView, "OnEnable");
 
             view.ExportTabButton.onClick.Invoke();
             AssertLastAction(gateway, UiActionKind.ResourceExchangeTab, (int)UiResourceExchangeTabKind.Export);
@@ -314,7 +311,7 @@ public sealed class ResourceExchangePopupPrefabTests
     }
 
     [Test]
-    public void ResourceExchangePopupRuntimeView_DisablingNewestOverlappingInstanceRefreshesPrevious()
+    public void ResourceExchangePopupRuntimeView_ExplicitOwnerRestoresPreviousOverlappingInstance()
     {
         var gateway = new RecordingGateway(CreateRuntimeButtonModel());
         UiShellRuntimeGateway.Register(gateway);
@@ -335,13 +332,13 @@ public sealed class ResourceExchangePopupPrefabTests
         try
         {
             firstObject.SetActive(true);
-            firstRuntimeView.SendMessage("OnEnable");
+            EditModeViewLifecycle.Invoke(firstRuntimeView, "OnEnable");
             secondObject.SetActive(true);
-            secondRuntimeView.SendMessage("OnEnable");
+            EditModeViewLifecycle.Invoke(secondRuntimeView, "OnEnable");
             firstRuntimeView.View.Show();
             secondRuntimeView.View.Show();
             secondObject.SetActive(false);
-            secondRuntimeView.SendMessage("OnDisable");
+            EditModeViewLifecycle.Invoke(secondRuntimeView, "OnDisable");
             Assert.IsTrue(firstRuntimeView.View.IsOpen, "The fallback popup fixture must be open.");
             int readsBeforeDirectRefresh = gateway.ResourceExchangeReadCount;
             firstRuntimeView.RefreshNow(force: true);
@@ -351,10 +348,15 @@ public sealed class ResourceExchangePopupPrefabTests
                 "The fallback popup fixture must be directly refreshable before routing is tested.");
             int readsBeforeRefresh = gateway.ResourceExchangeReadCount;
 
-            ResourceExchangePopupRuntimeView.RefreshActiveView();
+            var owner = new MainMenuPlayUI();
+            owner.BindResourceExchangePopup(secondRuntimeView.View);
+            owner.RefreshResourceExchangePopup();
+            Assert.AreEqual(readsBeforeRefresh, gateway.ResourceExchangeReadCount, "Disabled views must not receive refreshes.");
+            owner.BindResourceExchangePopup(firstRuntimeView.View);
+            owner.RefreshResourceExchangePopup();
 
             Assert.IsTrue(
-                ResourceExchangePopupRuntimeView.IsActiveViewForTests(firstRuntimeView),
+                owner.OwnsResourceExchangePopup(firstRuntimeView),
                 "Presentation refresh must restore the previous enabled popup as its active target.");
             Assert.IsTrue(firstRuntimeView.isActiveAndEnabled);
             Assert.AreEqual(
@@ -364,7 +366,7 @@ public sealed class ResourceExchangePopupPrefabTests
         }
         finally
         {
-            firstRuntimeView.SendMessage("OnDisable");
+            EditModeViewLifecycle.Invoke(firstRuntimeView, "OnDisable");
             UnityEngine.Object.DestroyImmediate(secondObject);
             UnityEngine.Object.DestroyImmediate(firstObject);
         }

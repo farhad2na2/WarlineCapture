@@ -44,7 +44,7 @@ namespace Game.Editor
                 new[] { "story_archive.seq.ch01.m02.brief" },
                 new[] { "story.m02.forward_post_civic_purpose" },
                 M02EstablishBaseNarrativeArtImporter.BriefPanelPath,
-                M02EstablishBaseLocalizedText.Brief);
+                M02EstablishBaseTextCatalog.Brief);
             Configure(
                 Sequence(CommsSequenceId, "M02_EstablishBase_Comms"),
                 CommsSequenceId,
@@ -62,7 +62,7 @@ namespace Game.Editor
                     "story.m02.access_list_stolen_before_attack"
                 },
                 M02EstablishBaseNarrativeArtImporter.CommsPanelPath,
-                M02EstablishBaseLocalizedText.Comms);
+                M02EstablishBaseTextCatalog.Comms);
             Configure(
                 Sequence(DebriefSequenceId, "M02_EstablishBase_Debrief"),
                 DebriefSequenceId,
@@ -82,7 +82,7 @@ namespace Game.Editor
                     "campaign.highlight." + M03MissionId
                 },
                 M02EstablishBaseNarrativeArtImporter.DebriefPanelPath,
-                M02EstablishBaseLocalizedText.Debrief);
+                M02EstablishBaseTextCatalog.Debrief);
             M02EstablishBaseNarrativeLocaleBuilder.BuildPersianLocale();
             AssetDatabase.SaveAssets();
         }

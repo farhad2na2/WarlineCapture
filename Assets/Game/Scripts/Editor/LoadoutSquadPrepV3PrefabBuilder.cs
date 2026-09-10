@@ -295,7 +295,7 @@ namespace Game.Editor
             CreateGradientPanel(card, new Color32(31, 39, 41, 255), new Color32(8, 15, 18, 255), new Color32(80, 91, 94, 255), 2f);
             TMP_Text title = CreateText("Title", card, name, 16f, boldFont, TextAlignmentOptions.Top, theme.TextPrimary);
             SetTopLeft(title.rectTransform, 6f, 10f, width - 12f, 52f);
-            title.enableWordWrapping = true;
+            title.textWrappingMode = TMPro.TextWrappingModes.Normal;
             Image icon = CreateImage("Icon", card, iconSprite, Color.white, false);
             SetTopLeft(icon.rectTransform, 4f, 48f, 120f, 142f);
             icon.preserveAspect = true;
@@ -410,7 +410,7 @@ namespace Game.Editor
 
         private static void AssignToOpenMenuScene(GameObject prefab)
         {
-            UIShellContentView content = UnityEngine.Object.FindFirstObjectByType<UIShellContentView>(FindObjectsInactive.Include);
+            UIShellContentView content = UnityEngine.Object.FindAnyObjectByType<UIShellContentView>(FindObjectsInactive.Include);
             if (content == null || content.gameObject.scene.path != "Assets/Game/Scenes/Menu.unity")
             {
                 Debug.LogWarning("[LoadoutSquadPrepV3PrefabBuilder] Menu scene is not open; prefab built but shell assignment was skipped.");
@@ -474,7 +474,7 @@ namespace Game.Editor
             text.alignment = alignment;
             text.color = color;
             text.raycastTarget = false;
-            text.enableWordWrapping = false;
+            text.textWrappingMode = TMPro.TextWrappingModes.NoWrap;
             text.overflowMode = TextOverflowModes.Ellipsis;
             return text;
         }

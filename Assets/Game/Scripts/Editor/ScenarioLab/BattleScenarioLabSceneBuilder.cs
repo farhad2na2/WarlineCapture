@@ -1,3 +1,4 @@
+using Game.UI.ScenarioLab.Runtime;
 using Game.Configs;
 using Game.Authoring;
 using Game.Runtime;
@@ -62,7 +63,7 @@ namespace Game.Editor
 
             GameObject root = new("BattleScenarioLabRoot");
             BattleScenarioLabSceneReferences references = root.AddComponent<BattleScenarioLabSceneReferences>();
-            BattleScenarioLabPlayBootstrap bootstrap = root.AddComponent<BattleScenarioLabPlayBootstrap>();
+            BattleScenarioLabPlayBootstrapView bootstrap = root.AddComponent<BattleScenarioLabPlayBootstrapView>();
             BattleScenarioLabVisualPlayback visualPlayback = root.AddComponent<BattleScenarioLabVisualPlayback>();
 
             Camera camera = CreateCamera();
@@ -389,7 +390,7 @@ namespace Game.Editor
             Transform parent,
             BattleScenarioDefinition definition,
             BattleScenarioDefinition[] definitions,
-            BattleScenarioLabPlayBootstrap bootstrap)
+            BattleScenarioLabPlayBootstrapView bootstrap)
         {
             GameObject canvasObject = new("ScenarioLabOverlay", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
             canvasObject.transform.SetParent(parent);

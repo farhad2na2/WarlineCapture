@@ -316,8 +316,8 @@ namespace Game.Editor
                 "FrameReference", rect, compatibilityFrame, Color.clear);
             SetTopLeft(frameReference.rectTransform, 0f, 0f, 1f, 1f);
             frameReference.raycastTarget = false;
-            ArmoryV3CategoryTabVisual visual =
-                rect.gameObject.AddComponent<ArmoryV3CategoryTabVisual>();
+            ArmoryV3CategoryTabVisualView visual =
+                rect.gameObject.AddComponent<ArmoryV3CategoryTabVisualView>();
             visual.Configure(panel, text, icon);
             visual.SetSelected(category == ArmoryCatalogCategory.Characters);
             bindings.Add(new NavigationBinding(category, button, frameReference));
@@ -354,7 +354,7 @@ namespace Game.Editor
             grid.childAlignment = TextAnchor.UpperLeft;
             grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
             grid.constraintCount = 4;
-            content.gameObject.AddComponent<ArmoryV3ResponsiveCatalogGrid>()
+            content.gameObject.AddComponent<ArmoryV3ResponsiveCatalogGridView>()
                 .Configure(4, 296f);
             ContentSizeFitter size = content.gameObject.AddComponent<ContentSizeFitter>();
             size.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
@@ -392,8 +392,8 @@ namespace Game.Editor
             V3GradientGraphic frame = card.gameObject.AddComponent<V3GradientGraphic>();
             frame.Configure(DarkTop, DarkBottom, Line, 3f);
             Button selection = AddButton(card.gameObject, frame);
-            ArmoryV3CatalogItemVisual visual =
-                card.gameObject.AddComponent<ArmoryV3CatalogItemVisual>();
+            ArmoryV3CatalogItemVisualView visual =
+                card.gameObject.AddComponent<ArmoryV3CatalogItemVisualView>();
             visual.Configure(frame);
 
             TMP_Text title = CreateText(card, "TitleText", 8f, 5f, 205f, 39f,
@@ -836,7 +836,7 @@ namespace Game.Editor
             text.alignment = alignment;
             text.color = color;
             text.text = value;
-            text.enableWordWrapping = false;
+            text.textWrappingMode = TMPro.TextWrappingModes.NoWrap;
             text.overflowMode = TextOverflowModes.Ellipsis;
             text.raycastTarget = false;
             return text;

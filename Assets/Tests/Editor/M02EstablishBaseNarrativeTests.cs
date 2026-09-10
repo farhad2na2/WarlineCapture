@@ -257,9 +257,9 @@ public static class M02EstablishBaseNarrativeTests
             "Assets/Game/Audio/Config/audio_event_catalog_v0_1.json");
         for (byte step = 2; step <= 8; step++)
         {
-            Assert.IsTrue(M02EstablishBaseLocalizedText.TryGetTutorial(
+            Assert.IsTrue(M02EstablishBaseTextCatalog.TryGetTutorial(
                 step, FirstLaunchNarrativeLanguage.English, out _, out string english));
-            Assert.IsTrue(M02EstablishBaseLocalizedText.TryGetTutorial(
+            Assert.IsTrue(M02EstablishBaseTextCatalog.TryGetTutorial(
                 step, FirstLaunchNarrativeLanguage.Persian, out _, out string persian));
             int index = step - 2;
             AssertManifestClip(

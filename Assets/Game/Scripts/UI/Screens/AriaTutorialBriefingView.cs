@@ -342,7 +342,7 @@ namespace Game.UI.Runtime
                 rtlTarget.text = display;
                 return;
             }
-            if (rtl) display = V3LocalizedTextBinding.ShapeForRendering(display);
+            if (rtl) display = V3LocalizedTextBindingView.ShapeForRendering(display);
             target.isRightToLeftText = rtl;
             if (target.text != display)
                 target.text = display;

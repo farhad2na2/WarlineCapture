@@ -81,7 +81,7 @@ public sealed class RewardUnlockV3PrefabTests
             Assert.NotNull(popup.CloseButton);
             Assert.AreEqual("ContinueButton", popup.CloseButton.name);
             instance.SetActive(true);
-            popup.SendMessage("Awake", SendMessageOptions.RequireReceiver);
+            EditModeViewLifecycle.Invoke(popup, "Awake");
             popup.CloseButton.onClick.Invoke();
             Assert.IsFalse(instance.activeSelf);
         }

@@ -18,9 +18,11 @@ MARKDOWN_REPORT = ROOT / "Design/AgentReports/2026-07-10_aph-509_package_usage_i
 JSON_REPORT = ROOT / "Design/AgentReports/2026-07-10_aph-509_package_usage_inventory.json"
 REPORT = MARKDOWN_REPORT
 ORIGIN_REF = "origin/main"
+# The current accepted manifest includes RTLTMPro (Farsi UI) and Unity Pipeline
+# (the repository's required Editor integration); neither is a removal candidate.
 EXPECTED_SUMMARY = {
-    "totalPackageCount": 68,
-    "manifestDeclaredCount": 47,
+    "totalPackageCount": 70,
+    "manifestDeclaredCount": 49,
     "embeddedDepthZeroManifestAbsentCount": 1,
     "lockOnlyTransitiveCount": 20,
     "candidateUnusedStaticOnlyCount": 15,

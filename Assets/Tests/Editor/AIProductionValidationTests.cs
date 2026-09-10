@@ -149,7 +149,8 @@ public sealed class AIProductionValidationTests
             rotateVertical: false,
             out _));
 
-        Entity economyEntity = em.CreateEntity(typeof(FactionEconomy), typeof(FactionEconomyPolicy));
+        Entity economyEntity = FindFactionEconomyEntity(em, 1);
+        em.SetComponentData(economyEntity, new FactionTacticalMaterialsComponent { FactionId = 1, Current = 100, Capacity = 100 });
         em.SetComponentData(economyEntity, new FactionEconomy { FactionId = 1, Money = 50000, LastLogTime = -999f });
         em.SetComponentData(economyEntity, new FactionEconomyPolicy { Enabled = 1, SellIntervalSeconds = 8f });
 
@@ -174,6 +175,7 @@ public sealed class AIProductionValidationTests
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         RuntimeGameplayStateTestHelper.PublishBuildingRuntimeState(em, TickBuildingRuntime);
         SystemHandle system = _world.CreateSystem<AIProductionSystem>();
+        RuntimeGameplayStateTestHelper.SetVerboseAILogs(em, true);
         SystemHandle logFlushSystem = _world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
         if (assertDiagnosticLog)
@@ -193,14 +195,24 @@ public sealed class AIProductionValidationTests
 
         RuntimeGameplayStateTestHelper.PublishBuildingRuntimeState(em, TickBuildingRuntime);
         FactionEconomy economy = em.GetComponentData<FactionEconomy>(economyEntity);
-        Assert.AreEqual(40000, economy.Money);
+        Assert.AreEqual(40000, economy.Money, "Production spends the configured credit cost alongside Materials.");
+        Assert.AreEqual(80, em.GetComponentData<FactionTacticalMaterialsComponent>(economyEntity).Current);
         Assert.AreEqual(1, RuntimeGameplayStateTestHelper.CountPendingProductionsForFaction(em, (byte)1, "Rifleman"));
 
         AIProductionPlan plan = em.GetComponentData<AIProductionPlan>(planEntity);
         Assert.AreEqual(1, plan.NextUnitIndex);
     }
 
-    private static void AssertQueuesAndProcessesAcceptedRequestFromBoundary()
+    [TestCase(50000, 100, false)]
+    [TestCase(50000, 100, true)]
+    [TestCase(50000, 10, false)]
+    [TestCase(5000, 100, false)]
+    public void AIProductionReservesBothResourcesAndRollsBackRejectedRequests(int credits, int materials, bool rejected)
+    {
+        AssertQueuesAndProcessesAcceptedRequestFromBoundary(credits, materials, rejected);
+    }
+
+    private static void AssertQueuesAndProcessesAcceptedRequestFromBoundary(int credits = 50000, int materials = 100, bool rejected = false)
     {
         using var world = new World("AIProductionFocusedValidation");
         EntityManager em = world.EntityManager;
@@ -211,7 +223,8 @@ public sealed class AIProductionValidationTests
         {
             UnitId = new FixedString128Bytes("Rifleman"),
             DisplayName = new FixedString128Bytes("Rifleman"),
-            Price = 10000,
+            Price = 20,
+            CreditsCost = 10000,
             CanRequest = 1
         });
         DynamicBuffer<BuildingRuntimeUnitProductionSummary> summaries = em.AddBuffer<BuildingRuntimeUnitProductionSummary>(boundaryEntity);
@@ -224,8 +237,9 @@ public sealed class AIProductionValidationTests
         });
         em.AddBuffer<BuildingFactionUnitProductionRequest>(boundaryEntity);
 
-        Entity economyEntity = em.CreateEntity(typeof(FactionEconomy));
-        em.SetComponentData(economyEntity, new FactionEconomy { FactionId = 1, Money = 50000, LastLogTime = -999f });
+        Entity economyEntity = em.CreateEntity(typeof(FactionEconomy), typeof(FactionTacticalMaterialsComponent));
+        em.SetComponentData(economyEntity, new FactionTacticalMaterialsComponent { FactionId = 1, Current = materials, Capacity = 100 });
+        em.SetComponentData(economyEntity, new FactionEconomy { FactionId = 1, Money = credits, LastLogTime = -999f });
 
         Entity controlEntity = em.CreateEntity(typeof(FactionControlConfigTag));
         DynamicBuffer<FactionControlEntry> controls = em.AddBuffer<FactionControlEntry>(controlEntity);
@@ -250,13 +264,22 @@ public sealed class AIProductionValidationTests
 
         system.Update(world.Unmanaged);
         DynamicBuffer<BuildingFactionUnitProductionRequest> requests = em.GetBuffer<BuildingFactionUnitProductionRequest>(boundaryEntity);
+        if (credits < 10000 || materials < 20)
+        {
+            Assert.AreEqual(0, requests.Length);
+            Assert.AreEqual(credits, em.GetComponentData<FactionEconomy>(economyEntity).Money);
+            Assert.AreEqual(materials, em.GetComponentData<FactionTacticalMaterialsComponent>(economyEntity).Current);
+            return;
+        }
+        Assert.AreEqual(credits - 10000, em.GetComponentData<FactionEconomy>(economyEntity).Money);
+        Assert.AreEqual(materials - 20, em.GetComponentData<FactionTacticalMaterialsComponent>(economyEntity).Current);
         Assert.AreEqual(1, requests.Length);
         Assert.AreEqual(BuildingFactionUnitProductionRequest.Pending, requests[0].Status);
         Assert.AreEqual((byte)1, requests[0].FactionId);
         Assert.IsTrue(requests[0].UnitId.Equals(new FixedString128Bytes("Rifleman")));
 
         BuildingFactionUnitProductionRequest accepted = requests[0];
-        accepted.Status = BuildingFactionUnitProductionRequest.Succeeded;
+        accepted.Status = rejected ? BuildingFactionUnitProductionRequest.Failed : BuildingFactionUnitProductionRequest.Succeeded;
         accepted.ProducerDisplayName = new FixedString128Bytes("Tent_Regular");
         accepted.UnitDisplayName = new FixedString128Bytes("Rifleman");
         accepted.Cost = 10000;
@@ -265,7 +288,8 @@ public sealed class AIProductionValidationTests
 
         system.Update(world.Unmanaged);
         FactionEconomy economy = em.GetComponentData<FactionEconomy>(economyEntity);
-        Assert.AreEqual(40000, economy.Money);
+        Assert.AreEqual(rejected ? credits : credits - 10000, economy.Money, "Production spends the configured credit cost alongside Materials.");
+        Assert.AreEqual(rejected ? materials : materials - 20, em.GetComponentData<FactionTacticalMaterialsComponent>(economyEntity).Current);
         Assert.AreEqual(0, requests.Length);
 
         AIProductionPlan plan = em.GetComponentData<AIProductionPlan>(planEntity);
@@ -283,7 +307,8 @@ public sealed class AIProductionValidationTests
         {
             UnitId = new FixedString128Bytes("Armor"),
             DisplayName = new FixedString128Bytes("Armor"),
-            Price = 10000,
+            Price = 20,
+            CreditsCost = 10000,
             CanRequest = 1,
             IsVehicle = 1
         });
@@ -314,7 +339,8 @@ public sealed class AIProductionValidationTests
         DynamicBuffer<BuildingFactionUnitProductionRequest> requests =
             em.AddBuffer<BuildingFactionUnitProductionRequest>(boundaryEntity);
 
-        Entity economyEntity = em.CreateEntity(typeof(FactionEconomy));
+        Entity economyEntity = em.CreateEntity(typeof(FactionEconomy), typeof(FactionTacticalMaterialsComponent));
+        em.SetComponentData(economyEntity, new FactionTacticalMaterialsComponent { FactionId = 1, Current = 100, Capacity = 100 });
         em.SetComponentData(economyEntity, new FactionEconomy
         {
             FactionId = FactionIdentity.EnemyFactionId,
@@ -360,8 +386,27 @@ public sealed class AIProductionValidationTests
         Assert.IsTrue(requests[0].UnitId.Equals(new FixedString128Bytes("Armor")));
     }
 
+    private static Entity FindFactionEconomyEntity(EntityManager entityManager, byte factionId)
+    {
+        using EntityQuery query = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<FactionEconomy>(),
+            ComponentType.ReadOnly<FactionEconomyPolicy>(),
+            ComponentType.ReadOnly<FactionTacticalMaterialsComponent>());
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < entities.Length; i++)
+        {
+            Entity entity = entities[i];
+            if (entityManager.GetComponentData<FactionEconomy>(entity).FactionId == factionId)
+                return entity;
+        }
+
+        Assert.Fail($"Missing canonical faction economy for faction {factionId}.");
+        return Entity.Null;
+    }
+
     private void TickBuildingRuntime()
     {
+        _world.SetTime(new Unity.Core.TimeData(_world.Time.ElapsedTime + 0.2, 0.2f));
         if (_buildingGameplayInitialized)
             _buildingGameplay.RuntimeUpdate.Update(_buildingGameplay.RuntimeUpdateContext);
     }

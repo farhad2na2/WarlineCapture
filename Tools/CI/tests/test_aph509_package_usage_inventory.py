@@ -164,7 +164,7 @@ class Aph509PackageUsageInventoryTests(unittest.TestCase):
         errors = summary_validation_errors(drifted)
 
         self.assertEqual(
-            ["summary-mismatch:manifestDeclaredCount:expected=47:actual=46"],
+            [f"summary-mismatch:manifestDeclaredCount:expected={EXPECTED_SUMMARY['manifestDeclaredCount']}:actual={drifted['manifestDeclaredCount']}"],
             errors,
         )
 

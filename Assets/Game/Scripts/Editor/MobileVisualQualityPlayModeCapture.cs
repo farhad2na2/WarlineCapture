@@ -206,8 +206,7 @@ namespace Game.Editor
         private static void CaptureDemoDirtRoadReference(Camera sourceCamera, string directory)
         {
             MeshFilter[] filters = UnityEngine.Object.FindObjectsByType<MeshFilter>(
-                FindObjectsInactive.Exclude,
-                FindObjectsSortMode.InstanceID);
+                FindObjectsInactive.Exclude);
             MeshFilter selected = null;
             float selectedDistance = float.MaxValue;
             for (int i = 0; i < filters.Length; i++)
@@ -1035,11 +1034,9 @@ namespace Game.Editor
                 $"{GetProfileLabel()}_{viewpoint}_grounding.txt"));
 
             MapSurfaceAuthoring[] surfaceAuthorings = UnityEngine.Object.FindObjectsByType<MapSurfaceAuthoring>(
-                FindObjectsInactive.Include,
-                FindObjectsSortMode.InstanceID);
+                FindObjectsInactive.Include);
             MapBakeGroupAuthoring[] bakeGroups = UnityEngine.Object.FindObjectsByType<MapBakeGroupAuthoring>(
-                FindObjectsInactive.Include,
-                FindObjectsSortMode.InstanceID);
+                FindObjectsInactive.Include);
             writer.WriteLine($"managedSurfaceAuthorings={surfaceAuthorings.Length} managedBakeGroups={bakeGroups.Length}");
 
             NativeArray<MapSurfaceSceneOverlay> overlays = default;
@@ -1284,7 +1281,7 @@ namespace Game.Editor
                 writer.WriteLine();
             }
 
-            Light[] lights = UnityEngine.Object.FindObjectsByType<Light>(FindObjectsInactive.Exclude, FindObjectsSortMode.InstanceID);
+            Light[] lights = UnityEngine.Object.FindObjectsByType<Light>(FindObjectsInactive.Exclude);
             for (int i = 0; i < lights.Length; i++)
             {
                 Light light = lights[i];
@@ -1293,7 +1290,7 @@ namespace Game.Editor
                     $"shadowStrength={light.shadowStrength:0.###} rotation={Format(light.transform.rotation.eulerAngles)}");
             }
 
-            MonoBehaviour[] behaviours = UnityEngine.Object.FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Exclude, FindObjectsSortMode.InstanceID);
+            MonoBehaviour[] behaviours = UnityEngine.Object.FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Exclude);
             for (int i = 0; i < behaviours.Length; i++)
             {
                 MonoBehaviour volume = behaviours[i];

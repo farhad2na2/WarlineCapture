@@ -13,6 +13,7 @@ public sealed class AriaCommandAssistantV3PrefabTests
     {
         AriaCommandAssistantPopupView view = RequireView();
         Assert.IsTrue(view.TryBindHierarchy());
+        Assert.IsTrue(view.TryBindHierarchy());
 
         Image portrait = FindNamed(view.transform, "AriaPortraitV3").GetComponent<Image>();
         Assert.AreEqual(
@@ -46,6 +47,7 @@ public sealed class AriaCommandAssistantV3PrefabTests
     public void Prefab_IsReadableTopRightResponsiveAndOnlyPanelConsumesInput()
     {
         AriaCommandAssistantPopupView view = RequireView();
+        Assert.IsTrue(view.TryBindHierarchy());
         RectTransform panel = view.CommandAssistantPanel;
         Assert.NotNull(panel);
         Assert.AreEqual(new Vector2(0f, 1f), panel.anchorMin);
@@ -68,6 +70,7 @@ public sealed class AriaCommandAssistantV3PrefabTests
     public void MatchHud_HostileAlertKeepsClearOfAssistantPanelAtReferenceRatio()
     {
         AriaCommandAssistantPopupView view = RequireView();
+        Assert.IsTrue(view.TryBindHierarchy());
         GameObject matchHud = AssetDatabase.LoadAssetAtPath<GameObject>(
             MatchHudV3PrefabBuilder.PrefabPath);
         Assert.NotNull(matchHud);
@@ -81,8 +84,11 @@ public sealed class AriaCommandAssistantV3PrefabTests
         Assert.NotNull(headerLayout);
         Assert.IsTrue(headerLayout.TryGetAuthoredBasePosition(threat, out Vector2 threatBase));
 
-        float clearGap = view.CommandAssistantPanel.anchoredPosition.x -
-                         (threatBase.x + threat.rect.width);
+        RectTransform embeddedAria = FindNamed(matchHud.transform, "AriaAssistantButton") as RectTransform;
+        Assert.NotNull(embeddedAria);
+        Assert.IsTrue(headerLayout.TryGetAuthoredBasePosition(embeddedAria, out Vector2 ariaBase));
+        float clearGap = ariaBase.x + embeddedAria.rect.xMin -
+                         (threatBase.x + threat.rect.xMax);
         Assert.That(clearGap, Is.GreaterThanOrEqualTo(20f),
             "The hostile alert and its jump target must not run under POP-13.");
     }
@@ -91,6 +97,7 @@ public sealed class AriaCommandAssistantV3PrefabTests
     public void Prefab_KeepsRuntimeBindingsAndV3TouchActions()
     {
         AriaCommandAssistantPopupView view = RequireView();
+        Assert.IsTrue(view.TryBindHierarchy());
         Assert.IsTrue(view.TryBindHierarchy());
         Assert.NotNull(FindNamed(view.transform, "GoalRow0"));
         Assert.NotNull(FindNamed(view.transform, "AlertRow2"));

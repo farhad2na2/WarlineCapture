@@ -14,7 +14,10 @@ namespace Game.Editor
             var guideButton=Button("M03ResultGuide",composition,32,680,420,54,"mission.m03.guide.open");
             guideButton.gameObject.SetActive(false);
             foreach(var text in root.GetComponentsInChildren<TMP_Text>(true))
-                Binding(text).Configure("",text.text,true);
+            {
+                var binding=Binding(text);
+                binding.Configure(binding.LocalizationKey,text.text,true);
+            }
             Binding(guideButton.GetComponentInChildren<TMP_Text>(true)).Configure("mission.m03.guide.open","Field guide",false);
             var data=new SerializedObject(root.GetComponent<MissionResultPopupView>());
             Ref(data,"defenseGuideButton",guideButton);

@@ -68,9 +68,9 @@ namespace Game.Editor
             if (bootstrap.ShellEcsPresentation == null || bootstrap.ShellView == null ||
                 !bootstrap.ShellView.TryGetRegion(UIShellRegionId.PopupLayer, out UIShellRegionView popupRegion))
                 throw new UnityException("Menu scene is missing its shell presentation or popup region.");
-            CampaignMissionHudResultBinder resultBinder =
-                bootstrap.ShellEcsPresentation.GetComponent<CampaignMissionHudResultBinder>() ??
-                bootstrap.ShellEcsPresentation.gameObject.AddComponent<CampaignMissionHudResultBinder>();
+            CampaignMissionHudResultBinderView resultBinder =
+                bootstrap.ShellEcsPresentation.GetComponent<CampaignMissionHudResultBinderView>() ??
+                bootstrap.ShellEcsPresentation.gameObject.AddComponent<CampaignMissionHudResultBinderView>();
             GameObject resultPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(
                 "Assets/Game/Prefabs/UI/Popups/MissionResultPopup.prefab");
             if (popupRegion.ContentRoot == null || resultPrefab == null)

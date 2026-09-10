@@ -329,7 +329,7 @@ public sealed class ResourceExchangeRequestValidationSystemTests
     {
         using World world = new(nameof(StartRequest_RejectsStorageFull));
         EntityManager em = world.EntityManager;
-        Entity exchange = CreateExchangeEntity(em, fuel: 990, fuelCapacity: 1000, credits: 1000);
+        Entity exchange = CreateExchangeEntity(em, oil: 1000, fuel: 990, fuelCapacity: 1000, credits: 1000);
         AddRecipe(em, exchange, ImportFuelRecipe());
 
         int requestId = ResourceExchangeRequestValidationSystem.EnqueueStartRequest(

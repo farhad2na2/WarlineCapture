@@ -135,7 +135,7 @@ public sealed class M01FirstContactCampaignUiTests
 
     [Test] public static void BinderHasNoFramePollingLoop()
     {
-        Assert.That(typeof(CampaignMissionScreenBinder).GetMethod(
+        Assert.That(typeof(CampaignMissionScreenBinderView).GetMethod(
             "Update", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic), Is.Null);
         Assert.That(typeof(CampaignOperationsScreenView).GetFields(
             BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public),
@@ -153,7 +153,7 @@ public sealed class M01FirstContactCampaignUiTests
             CampaignOperationsScreenView view =
                 instance.GetComponentInChildren<CampaignOperationsScreenView>(true);
             Assert.NotNull(view);
-            Assert.NotNull(instance.GetComponentInChildren<CampaignMissionScreenBinder>(true));
+            Assert.NotNull(instance.GetComponentInChildren<CampaignMissionScreenBinderView>(true));
             UiCampaignOperationsModel model = ToContract(Project(new[]
             {
                 new CampaignMissionProgressSaveData

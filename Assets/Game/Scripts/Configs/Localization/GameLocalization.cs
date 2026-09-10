@@ -18,16 +18,9 @@ namespace Game.Configs
         public const string CatalogResourcePath = "Localization/V3UiLocalizationCatalog";
         public const string LocalePreferenceKey = "Game.Localization.LocaleCode";
 
-        private static readonly Dictionary<string, string> SourceEntries =
-            new(StringComparer.Ordinal);
-        private static readonly Dictionary<string, string> CurrentEntries =
-            new(StringComparer.Ordinal);
-        private static readonly Dictionary<string, string> SourceKeysByValue =
-            new(StringComparer.Ordinal);
-        private static readonly Dictionary<string, string> CurrentKeysByValue =
-            new(StringComparer.Ordinal);
-        private static readonly List<SourceTemplate> SourceTemplates = new();
-        private static readonly List<SourceTemplate> CurrentTemplates = new();
+        private static LocaleLookupSnapshot sourceLookup = LocaleLookupSnapshot.Empty;
+        private static LocaleLookupSnapshot currentLookup = LocaleLookupSnapshot.Empty;
+
         private static readonly Regex FormatToken = new(
             @"\{(?<index>\d+)(?:,[^}:]+)?(?::[^}]+)?\}",
             RegexOptions.Compiled | RegexOptions.CultureInvariant);
@@ -140,12 +133,8 @@ namespace Game.Configs
             catalog = null;
             currentLocale = null;
             initialized = false;
-            SourceEntries.Clear();
-            CurrentEntries.Clear();
-            SourceKeysByValue.Clear();
-            CurrentKeysByValue.Clear();
-            SourceTemplates.Clear();
-            CurrentTemplates.Clear();
+            sourceLookup = LocaleLookupSnapshot.Empty;
+            currentLookup = LocaleLookupSnapshot.Empty;
             LocaleChanged = null;
         }
 
@@ -183,9 +172,9 @@ namespace Game.Configs
             EnsureInitialized();
             if (!string.IsNullOrWhiteSpace(key))
             {
-                if (CurrentEntries.TryGetValue(key, out string localized))
+                if (currentLookup.Entries.TryGetValue(key, out string localized))
                     return localized;
-                if (SourceEntries.TryGetValue(key, out string source))
+                if (sourceLookup.Entries.TryGetValue(key, out string source))
                     return source;
             }
 
@@ -195,9 +184,9 @@ namespace Game.Configs
         public static bool TryGet(string key, out string value)
         {
             EnsureInitialized();
-            if (!string.IsNullOrWhiteSpace(key) && CurrentEntries.TryGetValue(key, out value))
+            if (!string.IsNullOrWhiteSpace(key) && currentLookup.Entries.TryGetValue(key, out value))
                 return true;
-            if (!string.IsNullOrWhiteSpace(key) && SourceEntries.TryGetValue(key, out value))
+            if (!string.IsNullOrWhiteSpace(key) && sourceLookup.Entries.TryGetValue(key, out value))
                 return true;
 
             value = string.Empty;
@@ -208,7 +197,7 @@ namespace Game.Configs
         {
             EnsureInitialized();
             if (!string.IsNullOrEmpty(sourceText) &&
-                SourceKeysByValue.TryGetValue(sourceText, out key))
+                sourceLookup.KeysByValue.TryGetValue(sourceText, out key))
             {
                 localized = Get(key, sourceText);
                 return true;
@@ -216,9 +205,9 @@ namespace Game.Configs
 
             if (!string.IsNullOrEmpty(sourceText))
             {
-                for (int i = 0; i < SourceTemplates.Count; i++)
+                for (int i = 0; i < sourceLookup.Templates.Count; i++)
                 {
-                    SourceTemplate template = SourceTemplates[i];
+                    SourceTemplate template = sourceLookup.Templates[i];
                     Match match = template.Pattern.Match(sourceText);
                     if (!match.Success)
                         continue;
@@ -248,19 +237,19 @@ namespace Game.Configs
         {
             EnsureInitialized();
             if (!string.IsNullOrEmpty(localizedText) &&
-                CurrentKeysByValue.TryGetValue(localizedText, out key) &&
-                SourceEntries.TryGetValue(key, out sourceText))
+                currentLookup.KeysByValue.TryGetValue(localizedText, out key) &&
+                sourceLookup.Entries.TryGetValue(key, out sourceText))
             {
                 return true;
             }
 
             if (!string.IsNullOrEmpty(localizedText))
             {
-                for (int i = 0; i < CurrentTemplates.Count; i++)
+                for (int i = 0; i < currentLookup.Templates.Count; i++)
                 {
-                    SourceTemplate template = CurrentTemplates[i];
+                    SourceTemplate template = currentLookup.Templates[i];
                     Match match = template.Pattern.Match(localizedText);
-                    if (!match.Success || !SourceEntries.TryGetValue(template.Key, out string source))
+                    if (!match.Success || !sourceLookup.Entries.TryGetValue(template.Key, out string source))
                         continue;
 
                     key = template.Key;
@@ -320,49 +309,45 @@ namespace Game.Configs
                 StringComparison.OrdinalIgnoreCase);
         }
 
-        private static void RebuildSourceLookup()
-        {
-            SourceEntries.Clear();
-            SourceKeysByValue.Clear();
-            SourceTemplates.Clear();
-            GameLocaleTable source = catalog?.FindLocale(catalog.SourceLocaleCode);
-            CopyEntries(source, SourceEntries);
-            foreach (KeyValuePair<string, string> entry in SourceEntries)
-            {
-                if (!string.IsNullOrEmpty(entry.Value) && !SourceKeysByValue.ContainsKey(entry.Value))
-                    SourceKeysByValue.Add(entry.Value, entry.Key);
-                if (!string.IsNullOrEmpty(entry.Value) && IsSafeRuntimeTemplate(entry.Value))
-                {
-                    SourceTemplates.Add(new SourceTemplate(
-                        entry.Key,
-                        entry.Value,
-                        BuildTemplatePattern(entry.Value)));
-                }
-            }
-            SourceTemplates.Sort((left, right) =>
-                right.LiteralLength.CompareTo(left.LiteralLength));
-        }
+        private static void RebuildSourceLookup() =>
+            sourceLookup = LocaleLookupSnapshot.Create(catalog?.FindLocale(catalog.SourceLocaleCode));
 
-        private static void RebuildCurrentLookup()
+        private static void RebuildCurrentLookup() =>
+            currentLookup = LocaleLookupSnapshot.Create(currentLocale);
+
+        // Build privately, then publish an immutable lookup. A locale change never clears
+        // dictionaries that existing readers may still be using.
+        private sealed class LocaleLookupSnapshot
         {
-            CurrentEntries.Clear();
-            CurrentKeysByValue.Clear();
-            CurrentTemplates.Clear();
-            CopyEntries(currentLocale, CurrentEntries);
-            foreach (KeyValuePair<string, string> entry in CurrentEntries)
+            public static readonly LocaleLookupSnapshot Empty = Create(null);
+            public readonly System.Collections.ObjectModel.ReadOnlyDictionary<string, string> Entries;
+            public readonly System.Collections.ObjectModel.ReadOnlyDictionary<string, string> KeysByValue;
+            public readonly System.Collections.ObjectModel.ReadOnlyCollection<SourceTemplate> Templates;
+
+            private LocaleLookupSnapshot(Dictionary<string, string> entries,
+                Dictionary<string, string> keys, List<SourceTemplate> templates)
             {
-                if (!string.IsNullOrEmpty(entry.Value) && !CurrentKeysByValue.ContainsKey(entry.Value))
-                    CurrentKeysByValue.Add(entry.Value, entry.Key);
-                if (!string.IsNullOrEmpty(entry.Value) && IsSafeRuntimeTemplate(entry.Value))
-                {
-                    CurrentTemplates.Add(new SourceTemplate(
-                        entry.Key,
-                        entry.Value,
-                        BuildTemplatePattern(entry.Value)));
-                }
+                Entries = new(entries);
+                KeysByValue = new(keys);
+                Templates = templates.AsReadOnly();
             }
-            CurrentTemplates.Sort((left, right) =>
-                right.LiteralLength.CompareTo(left.LiteralLength));
+
+            public static LocaleLookupSnapshot Create(GameLocaleTable locale)
+            {
+                var entries = new Dictionary<string, string>(StringComparer.Ordinal);
+                var keys = new Dictionary<string, string>(StringComparer.Ordinal);
+                var templates = new List<SourceTemplate>();
+                CopyEntries(locale, entries);
+                foreach (var entry in entries)
+                {
+                    if (string.IsNullOrEmpty(entry.Value)) continue;
+                    if (!keys.ContainsKey(entry.Value)) keys.Add(entry.Value, entry.Key);
+                    if (IsSafeRuntimeTemplate(entry.Value))
+                        templates.Add(new SourceTemplate(entry.Key, entry.Value, BuildTemplatePattern(entry.Value)));
+                }
+                templates.Sort((left, right) => right.LiteralLength.CompareTo(left.LiteralLength));
+                return new LocaleLookupSnapshot(entries, keys, templates);
+            }
         }
 
         private static void CopyEntries(

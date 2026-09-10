@@ -277,6 +277,7 @@ public sealed class OperationMapRenderSlotApplyJobTests
             var job = new OperationMapRenderSlotApplyJob
             {
                 Database = _database,
+                DatabaseLookup = _world.GetOrCreateSystemManaged<SimulationSystemGroup>().GetComponentLookup<OperationMapRenderDatabaseComponent>(true),
                 SlotCommands = Commands,
                 ProxySlotType = EntityManager.GetComponentTypeHandle<
                     OperationMapRenderProxySlotComponent>(false),

@@ -138,7 +138,8 @@ public sealed class DenseCityCandidateAuthoringTransactionTests
                         root.GetComponentsInChildren<DenseCityGeneratedRootAuthoring>(true))
                     .Single();
             Assert.That(
-                mapRoot.GetComponentsInChildren<MapBakeGroupAuthoring>(true),
+                mapRoot.transform.Find("BakeSources").Cast<Transform>()
+                    .Select(child => child.GetComponent<MapBakeGroupAuthoring>()).Where(group => group != null).ToArray(),
                 Has.Length.EqualTo(5));
             Assert.That(
                 entityRoot.GetComponentsInChildren<MapBakeGroupAuthoring>(true),
@@ -666,7 +667,8 @@ public sealed class DenseCityCandidateAuthoringTransactionTests
             Assert.That(generated, Is.True);
             Assert.That(generationId, Is.EqualTo(mapRoot.GenerationId));
             Assert.That(
-                mapRoot.GetComponentsInChildren<MapBakeGroupAuthoring>(true),
+                mapRoot.transform.Find("BakeSources").Cast<Transform>()
+                    .Select(child => child.GetComponent<MapBakeGroupAuthoring>()).Where(group => group != null).ToArray(),
                 Has.Length.EqualTo(5));
         }
         finally

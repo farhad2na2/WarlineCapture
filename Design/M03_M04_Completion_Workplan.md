@@ -19,7 +19,7 @@ Starting point: `4522a97c8`, 10 September 2026. This continues the delivered mis
 - [x] Architecture checks: 139/139 passed
 - [ ] All required regression gates green (M4 voices remain missing)
 - [ ] Final integrated Editor QA and allocation checks
-- [ ] Documentation reconciled, committed and pushed
+- [x] Documentation reconciled, committed and pushed
 
 The prior readiness report remains historical evidence until superseded by recorded passing runs. No completion box is checked merely because implementation exists.
 
@@ -149,3 +149,5 @@ The D-113 selection-panel growth exception is retired from the active manifest: 
 
 - Full Editor run 04 exited **2**: **4,375 total, 4,370 passed, three failed, two existing opt-in probes skipped**. All **139** core architecture tests passed. Besides the known M4 voice requirement, it found an unlocalized runtime subtitle placeholder and a cache-dependent Edit Mode voice test.
 - The subtitle now starts empty until the selected-unit presentation supplies its live value. The voice test pumps the actual Addressables request using the existing Edit Mode helper, retaining the real Persian clip/path assertion and the original timeout. Targeted run 05 exited **2**, **46/47 passed**: both new failures are repaired; the sole failure is still M4 `m04-brief-01` missing its required clip. Localization coverage passed for 38 prefabs / 1,199 bindings / 1,885 keys per language. Four allocation evidence checks passed. Shipping correction commit: `6d5e916be8a09316274a002c017072f1dfeac537`. Full and supplemental XML, repository results and exact log/artifact hashes are archived in `Design/AgentReports/M03M04Completion`.
+
+- Delivery verified: implementation and QA evidence through `a2bdf4bdb` pushed successfully to `origin/codex/m03-radar-warning`. M4 voices and performance acceptance remain open; delivery does not mark those gates complete.

@@ -100,6 +100,7 @@ namespace Game.Editor
         private static readonly List<double> BaselineFrameTimesMs = new(BaselineMetricsFrameTarget + 16);
         private static double _baselineMetricsStartedAt;
         private static long _baselineMetricsAllocatedBytesAtStart;
+        private static bool _baselineAllocationCounterAvailable;
         private static int _baselineMetricsLastFrame = -1;
         private static bool _performanceFixtureSeeded;
         private static bool _performanceFixtureReady;
@@ -1681,6 +1682,10 @@ namespace Game.Editor
             if (_baselineMetricsStartedAt <= 0d)
             {
                 _baselineMetricsStartedAt = EditorApplication.timeSinceStartup;
+                long beforeControl = GC.GetAllocatedBytesForCurrentThread();
+                var allocationControl = new byte[8192];
+                GC.KeepAlive(allocationControl);
+                _baselineAllocationCounterAvailable = GC.GetAllocatedBytesForCurrentThread() - beforeControl >= 8192;
                 _baselineMetricsAllocatedBytesAtStart = GC.GetAllocatedBytesForCurrentThread();
             }
 
@@ -1700,9 +1705,9 @@ namespace Game.Editor
                 return false;
             }
 
-            long allocatedBytes = Math.Max(
+            long allocatedBytes = _baselineAllocationCounterAvailable ? Math.Max(
                 0,
-                GC.GetAllocatedBytesForCurrentThread() - _baselineMetricsAllocatedBytesAtStart);
+                GC.GetAllocatedBytesForCurrentThread() - _baselineMetricsAllocatedBytesAtStart) : -1;
             string reportStableStatus = string.IsNullOrEmpty(_performanceFixtureStatus)
                 ? stableStatus
                 : $"{stableStatus} {_performanceFixtureStatus}";
@@ -1794,6 +1799,12 @@ namespace Game.Editor
                     performanceBaselineStatus = acceptedStatus;
                 }
 
+                if (allocatedBytes < 0)
+                {
+                    status = "[MatchRuntimeBaselineMetrics] result=Failed current-thread allocation counter failed its 8192-byte positive control; allocation is unavailable, not zero.";
+                    return false;
+                }
+
                 status =
                     $"[MatchRuntimeBaselineMetrics] result=Passed report={BaselineMetricsReportPath} " +
                     $"frames={BaselineFrameTimesMs.Count} avg={averageMs:F2}ms p95={p95Ms:F2}ms " +
@@ -1834,6 +1845,7 @@ namespace Game.Editor
             AppendJson(builder, "p99FrameMs", p99Ms, trailingComma: true);
             AppendJson(builder, "maxFrameMs", maxMs, trailingComma: true);
             AppendJson(builder, "allocatedBytesCurrentThread", allocatedBytes, trailingComma: true);
+            AppendJson(builder, "currentThreadAllocationCounterAvailable", allocatedBytes >= 0, trailingComma: true);
             AppendJson(builder, "unitCount", counts.UnitCount, trailingComma: true);
             AppendJson(builder, "runtimeBuildingCount", counts.RuntimeBuildingCount, trailingComma: true);
             AppendJson(builder, "groundMissileProjectileCount", counts.GroundMissileProjectileCount, trailingComma: true);
@@ -1901,6 +1913,7 @@ namespace Game.Editor
             builder.AppendLine($"| P99 frame ms | {p99Ms.ToString("F2", CultureInfo.InvariantCulture)} |");
             builder.AppendLine($"| Max frame ms | {maxMs.ToString("F2", CultureInfo.InvariantCulture)} |");
             builder.AppendLine($"| Current-thread allocated bytes | {allocatedBytes.ToString(CultureInfo.InvariantCulture)} |");
+            builder.AppendLine($"| Current-thread counter available (8192-byte control) | {(allocatedBytes >= 0 ? "yes" : "no; -1 denotes unavailable")} |");
             builder.AppendLine($"| Current-thread allocation budget bytes | {acceptedBaseline.CurrentThreadAllocatedBytesBudget.ToString(CultureInfo.InvariantCulture)} |");
             builder.AppendLine($"| Units | {counts.UnitCount.ToString(CultureInfo.InvariantCulture)} |");
             builder.AppendLine($"| Minimum units | {acceptedBaseline.MinimumUnitCount.ToString(CultureInfo.InvariantCulture)} |");
@@ -2003,6 +2016,12 @@ namespace Game.Editor
             BaselineEntityCounts counts,
             out string status)
         {
+            if (allocatedBytes < 0)
+            {
+                status = "current-thread allocation counter failed its 8192-byte positive control; allocation is unavailable, not zero";
+                return false;
+            }
+
             if (p95Ms > acceptedBaseline.EditorP95FrameBudgetMs)
             {
                 status = $"p95={p95Ms:F2}ms budget={acceptedBaseline.EditorP95FrameBudgetMs:F2}ms";
@@ -2553,6 +2572,7 @@ namespace Game.Editor
             BaselineFrameTimesMs.Clear();
             _baselineMetricsStartedAt = 0d;
             _baselineMetricsAllocatedBytesAtStart = 0;
+            _baselineAllocationCounterAvailable = false;
             _baselineMetricsLastFrame = -1;
         }
 

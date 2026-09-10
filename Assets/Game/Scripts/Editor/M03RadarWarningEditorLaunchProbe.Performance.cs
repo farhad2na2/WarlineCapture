@@ -15,6 +15,7 @@ namespace Game.Editor
     public static partial class M03RadarWarningEditorLaunchProbe
     {
         private const string PerformanceKey="Warline.M03.Probe.Performance";
+        private const string FocusedPerformanceKey="Warline.M03.Probe.Performance.FocusedGameView";
         private static bool PerformanceActive=>SessionState.GetBool(PerformanceKey,false);
         private static readonly string[] performanceMarkers={
             "Default World Game.Runtime.UnitPathfindingSystem",
@@ -41,6 +42,13 @@ namespace Game.Editor
         private static long performanceAllocated;
         private static double performancePeakMemory,performancePeakMono;
         private static bool performanceStarted;
+        private static EditorWindow performanceGameView;
+        private static bool performanceOldMaximized;
+        public static void RunFocusedGameViewPerformanceValidation()
+        {
+            SessionState.SetBool(FocusedPerformanceKey,true);
+            RunPerformanceValidation();
+        }
         public static void RunPerformanceValidation()=>RunChecked(()=>
         {
             performancePhases=new[]{new PerformanceSamples("preparation"),new PerformanceSamples("vanguard active"),
@@ -58,6 +66,13 @@ namespace Game.Editor
             if(runtime.Phase!=MissionPhaseKind.Engage || facts.ElapsedMilliseconds<5000) return false;
             if(!performanceStarted)
             {
+                if(SessionState.GetBool(FocusedPerformanceKey,false))
+                {
+                    MainMenuV3PrefabBuilder.SetGameViewResolution(1920,1080);
+                    performanceGameView=EditorWindow.GetWindow(typeof(EditorWindow).Assembly.GetType("UnityEditor.GameView"));
+                    performanceOldMaximized=performanceGameView.maximized;
+                    performanceGameView.maximized=true;performanceGameView.Focus();
+                }
                 performanceRecorders=new ProfilerRecorder[performanceMarkers.Length];
                 for(int i=0;i<performanceMarkers.Length;i++) performanceRecorders[i]=ProfilerRecorder.StartNew(ProfilerCategory.Scripts,performanceMarkers[i]);
                 performanceGcRecorder=ProfilerRecorder.StartNew(ProfilerCategory.Memory,"GC Allocated In Frame");
@@ -97,7 +112,7 @@ namespace Game.Editor
         {
             public string scope,environment,allocationScope,unitScaleScope,utc;
             public float timeScale;
-            public bool frameBudgetsPassed,zeroAllocationTargetPassed,combatCompleted,currentThreadCounterAvailable,unityFrameGcCounterAvailable;
+            public bool frameBudgetsPassed,zeroAllocationTargetPassed,combatCompleted,currentThreadCounterAvailable,unityFrameGcCounterAvailable,gameViewMaximized;
             public int screenWidth,screenHeight,qualityLevel;
             public int elapsedMilliseconds,missionMembers,hostilesDefeated,unitEntities,missileProjectiles,minimapMarkers,activeUiBehaviours;
             public double peakUnityAllocatedMegabytes,peakMonoMegabytes;
@@ -125,7 +140,9 @@ namespace Game.Editor
                 unitScaleScope="Canonical M3 20-member roster; does not replace the separate 700-unit / 600-building regression fixture.",
                 utc=DateTime.UtcNow.ToString("O"),timeScale=Time.timeScale,limits=limits,
                 currentThreadCounterAvailable=performanceThreadCounterAvailable,unityFrameGcCounterAvailable=performanceGcRecorder.Valid,
-                screenWidth=Screen.width,screenHeight=Screen.height,qualityLevel=QualitySettings.GetQualityLevel(),
+                screenWidth=Camera.main!=null ? Camera.main.pixelWidth : Screen.width,
+                screenHeight=Camera.main!=null ? Camera.main.pixelHeight : Screen.height,
+                gameViewMaximized=performanceGameView!=null && performanceGameView.maximized,qualityLevel=QualitySettings.GetQualityLevel(),
                 elapsedMilliseconds=facts.ElapsedMilliseconds,missionMembers=em.GetBuffer<CampaignMissionDefenseMember>(root).Length,
                 hostilesDefeated=facts.HostileDefeatedCount,combatCompleted=facts.HostileDefeatedCount==7 && facts.CoreBreached==0 && facts.ForwardPostDestroyed==0 && runtime.Outcome!=MissionOutcomeKind.Defeat,
                 peakUnityAllocatedMegabytes=performancePeakMemory,peakMonoMegabytes=performancePeakMono};
@@ -153,6 +170,9 @@ namespace Game.Editor
             performanceRecorders=null;
             if(performanceGcRecorder.Valid) performanceGcRecorder.Dispose();
             performanceGcRecorder=default;
+            if(performanceGameView!=null) performanceGameView.maximized=performanceOldMaximized;
+            performanceGameView=null;
+            SessionState.SetBool(FocusedPerformanceKey,false);
         }
     }
 }

@@ -515,11 +515,14 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
             double deadline = EditorApplication.timeSinceStartup + 20;
             while (context.View.VoiceSource.clip == null && EditorApplication.timeSinceStartup < deadline)
             {
+                // Edit Mode has no ResourceManager player loop. Advance the real
+                // async panel request instead of depending on an already warm cache.
+                NarrativePanelAssetResidencyPresentationSystemHelperTests.TickAddressables();
                 context.Helper.Tick(0.05f);
                 yield return null;
             }
             AudioClip playingClip = context.View.VoiceSource.clip;
-            Assert.NotNull(playingClip);
+            Assert.NotNull(playingClip, $"state={sequence.CurrentStateIndex} playing={context.Helper.IsPlaying} panelReady={context.View.CurrentPanelSprite != null} dialogue={context.View.DialogueView.Phase}");
             StringAssert.Contains(
                 "/FirstLaunch/Voice/fa/",
                 AssetDatabase.GetAssetPath(playingClip),

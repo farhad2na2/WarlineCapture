@@ -49,7 +49,10 @@ namespace Game.Editor
                             (t.GetComponent<V3LocalizedTextBindingView>()??t.gameObject.AddComponent<V3LocalizedTextBindingView>()).Configure(label.Key,label.English,false);
                     }
                     if(t.name=="Subtitle"&&t.transform.parent?.parent?.name=="SelectedSquadPanel")
+                    {
                         (t.GetComponent<V3LocalizedTextBindingView>()??t.gameObject.AddComponent<V3LocalizedTextBindingView>()).Configure("", "", true);
+                        t.text=string.Empty;
+                    }
                     if(t.name=="HealthText"&&t.transform.parent?.name=="HealthPanel")
                     {
                         var binding=t.GetComponent<V3LocalizedTextBindingView>()??t.gameObject.AddComponent<V3LocalizedTextBindingView>();

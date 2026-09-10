@@ -42,6 +42,8 @@ public sealed class MatchHudResourceTextRepairTests
         World previous = World.DefaultGameObjectInjectionWorld;
         using var world = new World("HudResourceLocaleRepair");
         var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab");
+        var subtitle = prefab.transform.Find("V3Composition/LeftContent/SelectedSquadPanel/Frame/Subtitle").GetComponent<TMP_Text>();
+        Assert.IsEmpty(subtitle.text, "The selected-unit subtitle is supplied by runtime data and must not retain an unlocalized authoring placeholder.");
         var instance = UnityEngine.Object.Instantiate(prefab);
         try
         {

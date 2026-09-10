@@ -140,7 +140,7 @@ public sealed class NarrativePanelAssetResidencyPresentationSystemHelperTests
         Assert.AreEqual(0, residency.ResidentAssetCount);
     }
 
-    private static void TickAddressables()
+    internal static void TickAddressables()
     {
         typeof(UnityEngine.ResourceManagement.ResourceManager).GetMethod("Update",
             System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)

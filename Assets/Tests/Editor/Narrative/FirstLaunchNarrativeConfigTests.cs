@@ -223,10 +223,12 @@ public sealed class FirstLaunchNarrativeConfigTests
     {
         NarrativeSpeakerCatalog catalog = AssetDatabase.LoadAssetAtPath<NarrativeSpeakerCatalog>(FirstLaunchNarrativeConfigBuilder.SpeakerPath);
         Assert.NotNull(catalog);
-        Assert.AreEqual(5, catalog.Speakers.Count);
+        Assert.AreEqual(6, catalog.Speakers.Count);
         Dictionary<NarrativeSpeakerId, NarrativeSpeakerRecord> byId = new();
         foreach (NarrativeSpeakerRecord speaker in catalog.Speakers)
             Assert.IsTrue(byId.TryAdd(speaker.SpeakerId, speaker), speaker.SpeakerId.ToString());
+        Assert.NotNull(byId[NarrativeSpeakerId.Laila].IdentitySprite);
+        Assert.AreNotSame(byId[NarrativeSpeakerId.Samira].IdentitySprite, byId[NarrativeSpeakerId.Laila].IdentitySprite);
         Assert.AreNotSame(byId[NarrativeSpeakerId.Dalia].IdentitySprite, byId[NarrativeSpeakerId.Samira].IdentitySprite);
         Assert.AreEqual(FirstLaunchNarrativeDialogueAssetImporter.AriaPortraitPath,
             AssetDatabase.GetAssetPath(byId[NarrativeSpeakerId.Aria].IdentitySprite));

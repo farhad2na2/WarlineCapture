@@ -33,6 +33,12 @@ namespace Game.Editor
         public static bool Apply(GameObject root)
         {
             bool changed = false;
+            foreach(var view in root.GetComponentsInChildren<MissionFieldGuideView>(true))
+            {
+                var data=new SerializedObject(view);
+                Set(data,"extractionGuide",AssetDatabase.LoadAssetAtPath<Game.Configs.MissionFieldGuideConfig>(M04AirliftPresentationBuilder.GuidePath));
+                changed |= data.ApplyModifiedPropertiesWithoutUndo();
+            }
             if(root.name == "SCN03_CommanderProfileContent")
             {
                 var sections=root.GetComponent<UIShellContentSectionsView>();

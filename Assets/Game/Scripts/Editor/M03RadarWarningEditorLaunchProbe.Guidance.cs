@@ -54,7 +54,7 @@ namespace Game.Editor
             if(!SessionState.GetBool(GuidanceJourneyKey,false)) return false;
             if(runtime.Phase==MissionPhaseKind.ResultAfterDebrief && !guidanceJourneyVerified)
             {
-                if(!guidanceHeld || runtime.Outcome!=MissionOutcomeKind.Victory || em.GetComponentData<RadarPingState>(root).Charges!=2)
+                if(!guidanceHeld || !guidanceVisited.Contains(5) || runtime.Outcome!=MissionOutcomeKind.Victory || em.GetComponentData<RadarPingState>(root).Charges!=2)
                     throw new InvalidOperationException("Full Guidance did not complete through real defensive orders without optional Ping.");
                 AssertBudget(em,50000,100); guidanceJourneyVerified=true;
                 Debug.Log("[M03GuidanceJourney] result=Passed real Full Guidance buttons, optional choices declined, defensive Hold victory, full budget and two Ping charges retained; visited="+string.Join(",",guidanceVisited.OrderBy(x=>x)));

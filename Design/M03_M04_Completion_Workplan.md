@@ -13,8 +13,8 @@ Starting point: `4522a97c8`, 10 September 2026. This continues the delivered mis
 
 ## Progress
 
-- [ ] Movement/rendered animation acceptance
-- [ ] Camera subject/action acceptance
+- [x] Movement/rendered animation acceptance
+- [x] Camera subject/action acceptance
 - [ ] Mission UI, guidance, pacing and audio scope
 - [ ] Architecture and related regressions green
 - [ ] Final integrated Editor QA and allocation checks
@@ -84,3 +84,57 @@ The D-113 selection-panel growth exception is retired from the active manifest: 
 - Python tooling run 08: **435 tests, 433 passed, one failed, one error**. The failure was an outdated expected package-count error string; the error is an unavailable historical validation log. The package graph legitimately contains the already committed Unity Pipeline and RTLTMPro packages. No package was removed to satisfy an obsolete count.
 - Archived evidence retains its original hashes. Hash resolution now accepts the exact LF and CRLF checkout forms of reachable immutable Git blobs, fixing Windows-capture comparisons on macOS. Owner-map assertions verify their recorded baseline; current ownership remains governed by the separately executed C# architecture guards. The Python generic lifecycle check now counts the same anchor symbols as its canonical C# counterpart.
 - Final screenshots and recordings are directed to `/private/tmp` by default. No evidence images are included under Design.
+
+## Committed implementation and architecture checkpoint
+
+- Implementation checkpoint: `eba47c95f5a9309b2f9124b0594452fd2914fd1e`. Focused Editor run 09 passed **41/41**, including every source-growth test, AI production/rollback and the real footer Build interaction.
+- Correctly terminated checkpoint run 11 (`/private/tmp/warline-completion-architecture-checkpoint-11.log`) exited **0**, with **17/17** source-growth checks, **1/1** exact authorization check, no C# compiler errors, and no missing prefab bindings (`updated=0`). APH-700 now records 23 assemblies and 132 first-party dependency edges.
+- The current architecture log is compressed under `Design/AgentReports/ArchitectureMaturity/Logs/m03_m04_completion_source_growth_20260910.log.gz`. Its manifest pins the implementation commit, tree, validator and unchanged contract. The prior AMFR-017 metadata remains historical, with an explicit note that its ignored local logs were unavailable.
+- Checkpoint invocation 10 omitted `-quit` and timed out despite its test markers; it is rejected as acceptance evidence. Full-suite invocation 02 returned without an XML while that Editor remained open and is also rejected. Invocation 03 is the actual complete-suite rerun.
+- Complete Python run 11 passed **435/435** (`/private/tmp/warline-completion-python-tests-11.log`, 246.785 seconds). This includes the fresh compressed-log binding and all historical evidence, package, audio-import, source-ownership and wrapper-contract checks.
+
+## Full suite and final gameplay rerun — 10 September
+
+- Full Editor run 03 completed with **4,362 tests: 4,352 passed, 8 failed, 2 existing opt-in balance probes skipped** (`/private/tmp/warline-completion-editmode-all-03.xml`, wrapper exit 2). All nine core architecture fixtures passed. This remains a failing checkpoint.
+- Targeted regression run 04 passed **63/63**, wrapper exit 0. Regenerated the 26 missing M3 ARIA event constants/hashes; the importer contract now recognizes the existing `Narrative/<mission>/Voice` directory as Voice. The six-speaker catalog validates Laila separately; the squad tray validates the actual gradient hit target and decorative frame behavior.
+- M1/M2 scenario assets retain Unity's canonical serialized defaults and whitespace, restoring byte-stable regeneration without weakening the tests. Historical lifecycle ownership evidence remains unchanged; the two relocated Scenario Lab owners resolve by their preserved MonoScript GUID and current UI assembly.
+- The only known outstanding full-suite failure is M4's required local narrative voices, awaiting the separate prepared-payload approval. M3's approved 46 clips are installed. Final M3/M4 Play Mode runs and performance observations are underway.
+
+## Live M3 guidance checkpoint
+
+- `warline-completion-m03-final-guidance-03.log` exited 0. Real Full Guidance reached Victory at **212.236 simulated seconds**, retained the full optional budget and both Ping charges, then completed the finale, three debrief panels, bilingual results, guide return, durable first-clear rewards, M4 unlock, and actual Campaign return with the old actors removed. All six briefing/debrief panels passed both locales and both aspects (24 large-caption captures).
+- Motion observation (`/private/tmp/warline-completion-motion/20260910-123659`) recorded 1,090 samples and 499 visible moving-infantry observations: 486 Run at detail/mid tier, 11 RunAim, and two transient far-tier Run observations. All 1,988 visible mesh samples matched their resolved animation target; 497 distinct shader-frame values demonstrate advancing playback. No moving infantry sample used idle.
+- Visual review still found an optional-lesson row extending into ARIA and a truncated main-convoy contact estimate. Authoring now moves the row into the clear center column and allows the warning text to fit within its fixed banner. These improvements require visual retest.
+- Full Guidance skipped Move because the authored starting positions already met the spatial threshold. The mission still won, but this omitted teaching regrouping. Completion now also requires an accepted Move receipt after the current command baseline. A real ECS regression covers old/rejected receipts, accepted-but-travelling units, and completed arrival; the next live run must visit Move.
+
+- Guidance rerun 04 won combat at **195.634 simulated seconds** and rendered all 24 comic variants, but correctly failed acceptance because ARIA remained on Move. The selection UI drains its transient Move result synchronously. The correction now observes retained `UnitMoveOrderResultElement` receipts, including their request kind, and accepts only issued grouped-manual orders for the current mission's friendly actors. Existing Stop receipt handling is retained. Run 04 visually confirms the warning's full contact estimate and the centered control row; it is not a guidance acceptance pass.
+
+- Guidance/layout regression run 02: **29/30 passed**. The new bilingual 16:9/20:9 warning/ARIA non-overlap check passed, as did retained move-result completion. The sole failure was `UnitMoveOrderRequestSystem.cs` reaching 501 lines. Its pure receipt conversion now resides in `UnitMoveOrderRequestSystem.Results.cs`, keeping the same system owner and unchanged review threshold. The next full guidance replay is run 05.
+
+- Final guidance run 05 exited **0**: real regrouping Move -> Hold -> Stop -> restored Hold, Victory at **199.692 simulated seconds**, all 24 comic variants, finale, debrief, four localized/aspect results, guide return, Campaign return, old actor disposal, durable rewards and M4 availability passed. The inspected Farsi 20:9 result shows three stars, seven defeated enemies, one lost rifle, zero civilian losses and all four reward lines with an unobstructed Continue button.
+
+- M4 player-camera run 03 failed early because a fresh M3 guide rebuild cleared the shared prefab's M4 catalog. Canonical serialized-binding authoring now restores the extraction guide on every shared guide build. `warline-completion-guide-regeneration-01.xml` passed **50/50**, including the actual rebuild-order regression, move-order tests, both-language/aspect layout assertions and all 17 source-growth checks.
+- Visual review also found legacy squad shortcuts labeled APC / Tank / Helicopter while their callbacks select combat vehicles / helicopters / jets. Runtime and prefab fallbacks now match those groups, with explicit central English/Farsi bindings for Vehicles / Helicopter / Jet.
+
+- M4 player-camera run 04 exited **0** with fresh captures: both HUD languages/aspects, 12 topics and 57 classes per language, rescue/debrief/rewards/Campaign, actual Replay carrier-loss defeat, clean Retry, and normal-combat idle Defeat at **158.482 seconds**. Inspected APC road movement and helicopter departure show intact parts and subjects within the usable viewport.
+- M3 defeat run 06 exited **0**: normal rifle retreat caused core-breach Defeat at **117.979 seconds**, localized failure and guide return passed, and actual Retry restored all 20 members, resources and both Ping charges.
+- Final M3/M4 motion samples show Run/RunAim with advancing GPU frames. Every playback-index mismatch was a nonzero crossfade to a different target frame (112 M3 and 130 M4 mesh samples), matching the existing half-second transition implementation.
+
+- Sensor-loss run 06 exited **0**, winning at **185.384 seconds** through normal rifle commands after the deliberate sensor-only fault. Scout warning remained visible, Ping unavailable and both charges retained.
+- Visual inspection rejected defeat run 06 as complete presentation acceptance despite its interaction pass: the 20:9 result composition extended above/below the screen. `MainMenuV3SectionLayoutView` now detects root-canvas logical-size changes before rendering; fixed-size children may not receive a dimensions callback after CanvasScaler changes. Added a live composition-bounds assertion and a persistent-popup resize regression.
+- Allocation attribution now traces the actual `MissionDefenseHudView.Refresh` marker and requires every owner to have samples; missing markers cannot silently appear as zero allocations.
+
+- Result resize and source-growth regression run 01 passed **22/22** (wrapper exit 0). The live defeat replay now checks the entire result composition against actual screen bounds in both languages and both aspects; run 07 is underway.
+
+- Defeat resize run 07 was rejected because its new Editor-update assertion used Scene-view `Screen` dimensions, not the rendering canvas viewport. The assertion now uses `rootCanvas.pixelRect`. Run 08 was interrupted by the observed UnityEditor.Connect token-exchange exception before gameplay acceptance. Both remain failed runs. A narrow exact-message/Editor-stack classifier preserves that exception in the log separately and still fails game exceptions/assertions; a regression covers those boundaries. Run 09 is the next clean replay.
+
+- Defeat resize run 09 exited **0**. Both locales/aspects passed the rendering-canvas bounds checks and real Retry reset. The fresh Farsi 20:9 capture was inspected: header, failure explanation and Retry all fit. The observed Editor cloud-token exception was retained separately in this run; no game exception was suppressed.
+
+- Save recovery run 06 correctly failed the newly strengthened presentation check: English `PROGRESS NOT SAVED` was ellipsized in the result title. The real failed atomic write left profile progress unchanged. Result title auto-sizing now permits the full headline within its authored panel; four English/Farsi/aspect cases cover the delivered prefab. The write/retry journey still requires rerun after this fix.
+
+- Save headline / result resize / Editor-cloud classification / source-growth run 02 passed **27/27**, wrapper exit 0. Save recovery is rerunning as run 07 with all text and canvas bounds checked.
+
+- Save recovery run 07 exited **0**. Victory at **192.821 seconds**, real atomic-write failure, unchanged saved profile, four bilingual/aspect error screens with complete headings, actual Retry Save, duplicate rejection, exactly one durable reward grant, debrief, localized victory and guide return all passed. The Farsi 20:9 error screen was visually inspected.
+- M4 player-camera run 05 uses a fresh output folder and additionally checks/captures both victory and carrier-loss defeat at 20:9 in English and Farsi. The previous accepted run-04 captures are retained under `/private/tmp/warline-m04-readiness-final04`.
+
+- Final M4 player-camera run 05 exited **0**: complete bilingual/aspect HUD and guide inventory, actual rescue, debrief, exactly-once rewards, Campaign return, Replay carrier-loss defeat, clean Retry and normal-combat idle Defeat at **164.011 seconds**. Victory and defeat now pass canvas bounds at both aspects in both languages. Both wide victory images and the wide Farsi defeat image were visually reviewed; all headers, objectives, rewards/reasons and Continue/Retry controls fit.

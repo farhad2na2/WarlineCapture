@@ -1,4 +1,5 @@
 using Game.UI.Contracts;
+using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,6 +7,7 @@ namespace Game.UI.Runtime
 {
     public sealed class MissionDefenseHudView : MonoBehaviour
     {
+        private static readonly ProfilerMarker RefreshMarker = new("MissionDefenseHudView.Refresh");
         [SerializeField] private Button skipCameraTourButton;
         private bool cameraPreferencesApplied;
         [SerializeField] private GameObject actions;
@@ -58,6 +60,7 @@ namespace Game.UI.Runtime
         public void RefreshPresentation() => Refresh();
         private void Refresh()
         {
+            using var marker = RefreshMarker.Auto();
             bool active=UiShellRuntimeGateway.TryReadMissionDefense(out var model);
             if(actions!=null) actions.SetActive(active);
             if(showingDefense!=active || lastLocale!=UiShellRuntimeGateway.Localization.CurrentLocaleCode)

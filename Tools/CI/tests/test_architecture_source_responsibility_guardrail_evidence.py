@@ -256,7 +256,8 @@ class ArchitectureSourceResponsibilityGuardrailEvidenceTests(unittest.TestCase):
         self.assertEqual(validator["passedTests"], 17)
         self.assertEqual(validator["compilerErrors"], 0)
         log_path = ROOT / validator["log"]
-        log_text = log_path.read_text(encoding="utf-8")
+        log_text = (gzip.decompress(log_path.read_bytes()).decode("utf-8")
+                    if log_path.suffix == ".gz" else log_path.read_text(encoding="utf-8"))
         self.assertEqual(validator["logSha256"], sha256(log_path))
         self.assertEqual(log_text.count(validator["resultMarker"]), 1)
         self.assertNotIn("[ProductionSourceGrowthArchitectureValidation] result=Failed", log_text)

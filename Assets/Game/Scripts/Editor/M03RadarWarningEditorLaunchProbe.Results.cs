@@ -258,6 +258,21 @@ namespace Game.Editor
             var result=UnityEngine.Object.FindAnyObjectByType<MissionResultPopupView>();
             if(result==null || !result.isActiveAndEnabled) throw new InvalidOperationException("Result view did not appear.");
             Canvas.ForceUpdateCanvases();
+            var composition=result.GetComponentInChildren<MainMenuV3SectionLayoutView>();
+            if(composition==null) throw new InvalidOperationException("Result has no responsive composition.");
+            var corners=new Vector3[4];
+            ((RectTransform)composition.transform).GetWorldCorners(corners);
+            var canvas=result.GetComponentInParent<Canvas>().rootCanvas;
+            var camera=canvas.renderMode==RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
+            // Editor update callbacks can report the Scene view through Screen.width/height.
+            // The rendering canvas owns the actual Game-view viewport being captured.
+            var viewport=canvas.pixelRect;
+            foreach(var corner in corners)
+            {
+                var screen=RectTransformUtility.WorldToScreenPoint(camera,corner);
+                if(screen.x < viewport.xMin-1 || screen.y < viewport.yMin-1 || screen.x > viewport.xMax+1 || screen.y > viewport.yMax+1)
+                    throw new InvalidOperationException($"Result composition outside {viewport}: {screen}");
+            }
             foreach(var group in result.GetComponentsInParent<CanvasGroup>())
             {
                 if(group.alpha<.99f || !group.interactable || !group.blocksRaycasts)

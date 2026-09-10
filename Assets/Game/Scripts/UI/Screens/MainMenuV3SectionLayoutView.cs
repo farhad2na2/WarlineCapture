@@ -58,6 +58,7 @@ namespace Game.UI.Runtime
         [SerializeField, HideInInspector] private Vector2[] horizontalTargetBasePositions = Array.Empty<Vector2>();
         [SerializeField, HideInInspector] private Vector2[] horizontalTargetBaseSizes = Array.Empty<Vector2>();
         private Vector2 _lastCanvasSize;
+        private RectTransform _canvasRect;
         private DrivenRectTransformTracker _previewTracker;
         private bool _applying;
 
@@ -126,6 +127,7 @@ namespace Game.UI.Runtime
 
             Canvas canvas = GetComponentInParent<Canvas>();
             RectTransform canvasRect = canvas != null ? canvas.rootCanvas.transform as RectTransform : null;
+            _canvasRect = canvasRect;
             RectTransform parentRect = transform.parent as RectTransform;
             if (canvasRect == null || parentRect == null || canvasRect.rect.width <= 0f || canvasRect.rect.height <= 0f)
                 return;
@@ -182,6 +184,7 @@ namespace Game.UI.Runtime
 
         private void OnEnable()
         {
+            Canvas.willRenderCanvases += RefreshCanvasSize;
             if (rightTargetBasePositions.Length != rightAnchoredTargets.Length ||
                 centerTargetBasePositions.Length != centerAnchoredTargets.Length ||
                 widthTargetBaseSizes.Length != widthExpandedTargets.Length ||
@@ -195,7 +198,16 @@ namespace Game.UI.Runtime
 
         private void OnDisable()
         {
+            Canvas.willRenderCanvases -= RefreshCanvasSize;
             _previewTracker.Clear();
+        }
+
+        private void RefreshCanvasSize()
+        {
+            // A fixed-size composition need not receive a dimensions callback when
+            // CanvasScaler changes the root's logical size. Resolve that change before rendering.
+            if (_canvasRect != null && _canvasRect.rect.size != _lastCanvasSize)
+                RefreshLayout();
         }
 
         private void Start()

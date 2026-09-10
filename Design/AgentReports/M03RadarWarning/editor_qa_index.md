@@ -1,5 +1,7 @@
 # M3 Editor QA record
 
+> Current completion work and superseding results: [M3 / M4 Editor completion QA, 10 September](../M03_M04_Editor_Completion_2026-09-10.md). This older report retains its original checkpoint scope.
+
 Updated combined-build audit: [M3/M4 readiness](../M04Airlift/m03_m04_readiness_audit.md) reports **106/137 architecture tests passing and 31 failing**. This supersedes the older source-growth-only architecture scope below.
 
 Design-folder review images referenced here remain local and are excluded from Git at the user's request. Production game artwork under `Assets` is included.

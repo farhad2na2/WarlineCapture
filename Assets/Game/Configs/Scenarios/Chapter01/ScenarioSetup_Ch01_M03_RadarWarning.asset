@@ -420,3 +420,26 @@ MonoBehaviour:
       SmoothTimeSeconds: 0.65
       PostPerspective: {x: 55, y: 65, z: 0, w: 55}
       ApproachPerspective: {x: 50, y: 67, z: 0, w: 55}
+  extraction:
+    enabled: 0
+    passengerRoleId: 
+    carrierRoleId: 
+    aircraftRoleId: 
+    rescueAnchorId: 
+    landingAnchorId: 
+    departureAnchorId: 
+    requiredPassengers: 0
+    secureHoldMilliseconds: 0
+    deadlineMilliseconds: 0
+    landingRadius: 0
+    departureRadius: 0
+    vehiclesSelfSupplied: 0
+    authoredMapDefensesDormant: 0
+    cameraTour:
+      StartHoldMilliseconds: 0
+      PostHoldMilliseconds: 0
+      ApproachHoldMilliseconds: 0
+      ReturnHoldMilliseconds: 0
+      SmoothTimeSeconds: 0
+      PostPerspective: {x: 0, y: 0, z: 0, w: 0}
+      ApproachPerspective: {x: 0, y: 0, z: 0, w: 0}

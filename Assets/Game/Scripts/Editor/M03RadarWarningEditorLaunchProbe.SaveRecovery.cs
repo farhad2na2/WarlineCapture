@@ -56,6 +56,7 @@ namespace Game.Editor
                     saveRecoveryCaptured=true; return true;
                 }
                 if(!CaptureUiBeforeAction("save-failure-"+saveRecoveryStep)) return true;
+                ValidateResultText();
                 if(++saveRecoveryStep<4) {saveRecoveryCaptured=false; return true;}
                 Directory.Delete(saveRecoveryFaultPath,false);
                 var button=typeof(MissionResultPopupView).GetField("primaryButton",BindingFlags.Instance|BindingFlags.NonPublic)?.GetValue(view) as Button;

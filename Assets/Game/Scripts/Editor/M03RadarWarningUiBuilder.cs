@@ -102,7 +102,7 @@ namespace Game.Editor
                 Ref(data,"radio16x9",M03RadarWarningMediaImporter.Panel("C01",false)); Ref(data,"radio20x9",M03RadarWarningMediaImporter.Panel("C01",true));
                 Ref(data,"title",Binding(heading)); Ref(data,"body",Binding(body)); Ref(data,"example",Binding(example)); Ref(data,"mistake",Binding(mistake));
                 Ref(data,"diagram",Binding(diagram)); Ref(data,"page",Binding(page)); Ref(data,"filterLabel",filter.GetComponentInChildren<V3LocalizedTextBindingView>());
-                data.ApplyModifiedPropertiesWithoutUndo(); PrefabUtility.SaveAsPrefabAsset(root,GuidePath);
+                data.ApplyModifiedPropertiesWithoutUndo(); MissionUiSerializedBindingsAuthoring.Apply(root); PrefabUtility.SaveAsPrefabAsset(root,GuidePath);
             }
             finally {UnityEngine.Object.DestroyImmediate(root);}
         }
@@ -119,7 +119,9 @@ namespace Game.Editor
             var oldTour=composition.Find("SkipCameraTour"); if(oldTour!=null) UnityEngine.Object.DestroyImmediate(oldTour.gameObject);
             var skipTour=Button("SkipCameraTour",composition,765,94,360,54,"mission.m03.camera.skip");
             // Header coordinates share the existing responsive HUD reference space.
-            var actions=Rect("M03Actions",composition,750,181,540,95);
+            var actions=Rect("M03Actions",composition,660,181,540,95);
+            var warningTitle=Find(composition.Find("ThreatJumpPanel").gameObject,"Title").GetComponent<TMP_Text>();
+            warningTitle.enableAutoSizing=true; warningTitle.fontSizeMin=12; warningTitle.fontSizeMax=18;
             var guide=Button("FieldGuide",actions,0,0,172,42,"mission.m03.guide.open");
             var warning=Button("ReadWarning",actions,182,0,172,42,"mission.m03.action.warning");
             var skip=Button("SkipLesson",actions,364,0,176,42,"mission.m03.optional.skip");

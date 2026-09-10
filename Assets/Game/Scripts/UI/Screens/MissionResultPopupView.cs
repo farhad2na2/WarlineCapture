@@ -79,6 +79,7 @@ namespace Game.UI.Runtime
 
         public void Apply(in UiMissionResultPopupModel model)
         {
+            titleText?.GetComponent<V3LocalizedTextBindingView>()?.SetFontBounds(28,68);
             SetText(titleText, model.Title);
             SetText(missionNameText, model.Subtitle);
             SetText(missionIdentityText, BuildMissionIdentity(model));

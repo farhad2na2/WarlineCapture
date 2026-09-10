@@ -447,26 +447,6 @@ namespace Game.Runtime
             return result;
         }
 
-        private static UnitMoveOrderResultElement ToResult(
-            UnitMoveOrderRequestElement request,
-            UnitMoveOrderSystem.MoveOrderCommandResult commandResult)
-        {
-            return new UnitMoveOrderResultElement
-            {
-                RequestId = request.RequestId,
-                Entity = request.Entity,
-                Goal = request.Goal,
-                Issued = commandResult.Issued ? (byte)1 : (byte)0,
-                StructuralAdds = commandResult.StructuralAdds,
-                StructuralRemoves = commandResult.StructuralRemoves,
-                PathRequests = commandResult.PathRequests,
-                StaggeredPathRequests = commandResult.StaggeredPathRequests,
-                MaxStaggerDelayFrames = commandResult.MaxStaggerDelayFrames,
-                AirUnits = commandResult.AirUnits,
-                RejectionReasonCode = commandResult.RejectionReasonCode
-            };
-        }
-
         private static Entity EnsureCommandEntity(EntityManager em)
         {
             using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<UnitMoveOrderQueueComponent>());

@@ -1441,6 +1441,8 @@ namespace Game.Editor
         {
             if (!SessionState.GetBool(ActiveKey, false) || !EditorApplication.isPlaying)
                 return;
+            if (MissionEditorQaLogClassification.IsEditorCloudTokenFailure(condition, stackTrace, type))
+            { Debug.LogWarning("[MatchRuntimeShellSmokeValidation] Editor cloud token exception retained separately from local runtime validation."); return; }
 
             if (type != LogType.Error && type != LogType.Exception && type != LogType.Assert)
             {

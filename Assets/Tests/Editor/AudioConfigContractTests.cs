@@ -565,6 +565,12 @@ public sealed class AudioConfigContractTests
         Assert.AreEqual("Assets", parts[0], assetPath);
         Assert.AreEqual("Game", parts[1], assetPath);
         Assert.AreEqual("Audio", parts[2], assetPath);
+        if (parts[3] == "Narrative")
+        {
+            Assert.GreaterOrEqual(parts.Length, 7, assetPath);
+            Assert.AreEqual("Voice", parts[5], assetPath);
+            return "Voice";
+        }
         return parts[3];
     }
 

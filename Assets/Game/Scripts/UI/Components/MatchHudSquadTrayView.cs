@@ -32,9 +32,9 @@ namespace Game.UI.Runtime
         private static readonly string[] CardLabels =
         {
             "RIFLE SQUAD",
-            "APC",
-            "TANK",
+            "VEHICLES",
             "HELICOPTER",
+            "JET",
             "TRANSPORT"
         };
         private static readonly Color CardLabelColor = new(0.86f, 0.84f, 0.74f, 1f);

@@ -63,6 +63,8 @@ namespace Game.Editor
             ["EVENTS"] = "رویدادها",
             ["EXIT"] = "خروج",
             ["FRIENDLIES"] = "نیروهای خودی",
+            ["HELICOPTER"] = "بالگرد",
+            ["JET"] = "جت",
             ["FUEL"] = "بنزین",
             ["GAMEPLAY"] = "گیم‌پلی",
             ["HIGH"] = "زیاد",

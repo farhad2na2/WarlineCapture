@@ -62,6 +62,7 @@ namespace Game.Editor
             if(step==105){ScreenCapture.CaptureScreenshot(Output+"/defeat-fa-16x9.png");Next();return;}
             if(step==106)
             {
+                if(!CaptureWideResult("defeat"))return;
                 var view=UnityEngine.Object.FindAnyObjectByType<MissionResultPopupView>();
                 var button=typeof(MissionResultPopupView).GetField("retryButton",BindingFlags.NonPublic|BindingFlags.Instance)?.GetValue(view)as Button;
                 if(button==null||!button.isActiveAndEnabled||!button.interactable)return;
@@ -105,6 +106,7 @@ namespace Game.Editor
             var region=view.GetComponentInParent<UIShellRegionView>();
             if(region!=null&&(region.RegionRoot.localScale.x<.99f||region.RegionRoot.localScale.y<.99f))return ResultWait("Region scale="+region.RegionRoot.localScale);
             if(view.transform.localScale.x<.99f||view.transform.localScale.y<.99f)return ResultWait("Result scale="+view.transform.localScale);
+            ValidateResultViewport(view);
             foreach(var text in view.GetComponentsInChildren<TMPro.TMP_Text>())
             {text.ForceMeshUpdate();if(text.isTextOverflowing||text.isTextTruncated)throw new InvalidOperationException("M04 result text overflow: "+text.transform.parent.name+"/"+text.name+" "+text.text);}
             return true;

@@ -72,8 +72,10 @@ namespace Game.Components
         public float4 FocusReturnPerspective;
         public byte PingUsed;
         public int LastSelectionCommandRequestId;
+        public int LastMoveOrderRequestId;
         public byte SelectionCommandBaselineSet;
         public byte StopAccepted;
+        public byte MoveAccepted;
         public int ReinforcedRifleCount;
     }
 

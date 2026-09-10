@@ -13,12 +13,19 @@ namespace Game.Editor
     {
         public static void Build()
         {
+            var squadLabels=new[]
+            {
+                (Card:"SquadCard2",Key:"ui.hud.squad.vehicles",English:"VEHICLES",Persian:"خودروها"),
+                (Card:"SquadCard3",Key:"ui.hud.squad.helicopter",English:"HELICOPTER",Persian:"بالگرد"),
+                (Card:"SquadCard4",Key:"ui.hud.squad.jet",English:"JET",Persian:"جت")
+            };
             var catalog = AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(V3UiLocalizationCatalogBuilder.CatalogPath);
             var locales = catalog.Locales.Select(locale => new GameLocaleTable(locale.LocaleCode, locale.DisplayName,
                 locale.ShortLabel, locale.RightToLeft, locale.FontAsset,
-                locale.Entries.Select(entry => new GameLocalizedStringRecord(entry.Key,
+                locale.Entries.Where(entry=>!squadLabels.Any(label=>label.Key==entry.Key)).Select(entry => new GameLocalizedStringRecord(entry.Key,
                     locale.LocaleCode == "fa-IR" && (entry.Key == "ui.hud.fuel" || entry.Value == "سوخت") ? "بنزین" :
-                    locale.LocaleCode == "fa-IR" && entry.Key.StartsWith("ui.hud.", StringComparison.Ordinal) ? entry.Value.Replace("سوخت", "بنزین") : entry.Value)))).ToArray();
+                    locale.LocaleCode == "fa-IR" && entry.Key.StartsWith("ui.hud.", StringComparison.Ordinal) ? entry.Value.Replace("سوخت", "بنزین") : entry.Value))
+                    .Concat(squadLabels.Select(label=>new GameLocalizedStringRecord(label.Key,locale.LocaleCode=="fa-IR" ? label.Persian : label.English))))).ToArray();
             catalog.Configure(catalog.SourceLocaleCode, locales);
             EditorUtility.SetDirty(catalog);
             var root = PrefabUtility.LoadPrefabContents(MatchHudV3PrefabBuilder.PrefabPath);
@@ -35,6 +42,12 @@ namespace Game.Editor
                 // font needs the full button height to avoid TMP ellipsis hiding the label.
                 foreach (var t in root.GetComponentsInChildren<TMP_Text>(true))
                 {
+                    if(t.name=="Label" && t.transform.parent?.name=="NameStrip")
+                    {
+                        var label=squadLabels.FirstOrDefault(value=>value.Card==t.transform.parent.parent.name);
+                        if(label.Key!=null)
+                            (t.GetComponent<V3LocalizedTextBindingView>()??t.gameObject.AddComponent<V3LocalizedTextBindingView>()).Configure(label.Key,label.English,false);
+                    }
                     if(t.name=="Subtitle"&&t.transform.parent?.parent?.name=="SelectedSquadPanel")
                         (t.GetComponent<V3LocalizedTextBindingView>()??t.gameObject.AddComponent<V3LocalizedTextBindingView>()).Configure("", "", true);
                     if(t.name=="HealthText"&&t.transform.parent?.name=="HealthPanel")

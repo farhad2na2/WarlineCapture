@@ -1,5 +1,7 @@
 # M03 implementation evidence — in progress
 
+> Current completion work and superseding results: [M3 / M4 Editor completion QA, 10 September](../M03_M04_Editor_Completion_2026-09-10.md). This older report retains its original checkpoint scope.
+
 User scope: complete M3 implementation and QA in Unity Editor; Android/device QA excluded.
 
 Branch: `codex/m03-radar-warning`, based on `b6b8153d2`. Existing dirty Arabic and Oxanium font assets are unrelated and excluded from task commits.

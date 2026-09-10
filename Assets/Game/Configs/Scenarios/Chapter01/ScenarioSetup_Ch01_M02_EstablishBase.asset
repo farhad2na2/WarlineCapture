@@ -140,11 +140,11 @@ MonoBehaviour:
     enabled: 0
     vehiclesSelfSupplied: 0
     authoredMapDefensesDormant: 0
-    forwardPostStableId:
-    innerCoreAnchorId:
+    forwardPostStableId: 
+    innerCoreAnchorId: 
     innerCoreRadius: 0
-    sensorMissionRoleId:
-    initialProducerAnchorId:
+    sensorMissionRoleId: 
+    initialProducerAnchorId: 
     radarPingCharges: 0
     radarPingCooldownMilliseconds: 0
     convoyElements: []
@@ -159,12 +159,12 @@ MonoBehaviour:
       ApproachPerspective: {x: 0, y: 0, z: 0, w: 0}
   extraction:
     enabled: 0
-    passengerRoleId:
-    carrierRoleId:
-    aircraftRoleId:
-    rescueAnchorId:
-    landingAnchorId:
-    departureAnchorId:
+    passengerRoleId: 
+    carrierRoleId: 
+    aircraftRoleId: 
+    rescueAnchorId: 
+    landingAnchorId: 
+    departureAnchorId: 
     requiredPassengers: 0
     secureHoldMilliseconds: 0
     deadlineMilliseconds: 0

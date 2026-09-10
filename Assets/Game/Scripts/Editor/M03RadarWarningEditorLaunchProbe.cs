@@ -189,6 +189,8 @@ namespace Game.Editor
         }
         private static void ObserveError(string message,string stack,LogType type)
         {
+            if(MissionEditorQaLogClassification.IsEditorCloudTokenFailure(message,stack,type))
+            {Debug.LogWarning("[M03LaunchProbe] Editor cloud token exchange failed; original exception retained in log, separate from local mission QA.");return;}
             if(type==LogType.Exception || type==LogType.Assert) runtimeFailure=message;
         }
     }

@@ -33,6 +33,7 @@ namespace Game.Components
     public struct UnitMoveOrderResultElement : IBufferElementData
     {
         public int RequestId;
+        public UnitMoveOrderRequestKind Kind;
         public Entity Entity;
         public int2 Goal;
         public byte Issued;

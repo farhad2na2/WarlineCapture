@@ -55,6 +55,7 @@ namespace Game.Editor
         private static void Run()
         {
             playerCameraStage = -1; playerCameraCaptures = 0; lastIdlePursuitBucket = -1;
+            wideResultOwner=null;wideResultStage=0;
             MissionCameraBoundsAuthoring.ValidateContentPacks();
             Directory.CreateDirectory(Output);SessionState.SetBool(Active,true);prepared=deployed=finished=uiPassed=recoveryActive=false;step=passenger=frame=0;error=null;
             started=EditorApplication.timeSinceStartup;oldLocale=GameLocalization.CurrentLocaleCode;
@@ -155,6 +156,7 @@ namespace Game.Editor
                     if(step==23){ScreenCapture.CaptureScreenshot(Output+"/result-fa-16x9.png");Next();return;}
                     if(step==24)
                     {
+                        if(!CaptureWideResult("result"))return;
                         using(var victoryMembers=em.GetBuffer<CampaignMissionExtractionMember>(root).ToNativeArray(Allocator.Temp))previousAttemptMembers=victoryMembers.ToArray();
                         var view=UnityEngine.Object.FindAnyObjectByType<MissionResultPopupView>();
                         var button=typeof(MissionResultPopupView).GetField("primaryButton",BindingFlags.NonPublic|BindingFlags.Instance)?.GetValue(view)as Button;
@@ -231,6 +233,8 @@ namespace Game.Editor
         private static bool Visible(object owner,string field){var group=owner.GetType().GetField(field,BindingFlags.Instance|BindingFlags.NonPublic)?.GetValue(owner)as CanvasGroup;return group!=null&&group.alpha>.9f&&group.gameObject.activeInHierarchy;}
         private static void Observe(string message,string stack,LogType type)
         {
+            if(MissionEditorQaLogClassification.IsEditorCloudTokenFailure(message,stack,type))
+            {Debug.LogWarning("[M04EditorProbe] Editor cloud token exchange failed; original exception retained in log, separate from local mission QA.");return;}
             if(type is LogType.Exception or LogType.Assert ||
                type==LogType.Error && message.StartsWith("[CampaignMissionBootstrap]",StringComparison.Ordinal)) error=message;
         }

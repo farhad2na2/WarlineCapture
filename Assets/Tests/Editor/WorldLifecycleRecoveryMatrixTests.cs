@@ -6,6 +6,7 @@ using Game.Components;
 using Game.Runtime;
 using NUnit.Framework;
 using Unity.Entities;
+using UnityEditor;
 using UnityEngine;
 
 public sealed class WorldLifecycleRecoveryMatrixTests
@@ -38,7 +39,26 @@ public sealed class WorldLifecycleRecoveryMatrixTests
 
         Assert.Greater(paths.Count, 0);
         foreach (string relativePath in paths)
-            Assert.IsTrue(File.Exists(Path.Combine(root, relativePath)), relativePath);
+        {
+            // Preserve the accepted capture. These owners moved into the UI assembly
+            // with their original MonoScript GUIDs; resolve that identity, not a stale path.
+            string relocatedGuid = relativePath switch
+            {
+                "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabOverlayView.cs" => "b948f49969533411faee65440fac0f20",
+                "Assets/Game/Scripts/ScenarioLab/BattleScenarioLabPlayBootstrap.cs" => "d85e99f5abbb64503933187a231e11ec",
+                _ => null
+            };
+            string currentPath = relocatedGuid == null ? relativePath : AssetDatabase.GUIDToAssetPath(relocatedGuid);
+            Assert.IsFalse(string.IsNullOrEmpty(currentPath), relativePath);
+            Assert.IsTrue(File.Exists(Path.Combine(root, currentPath)), relativePath);
+            if (relocatedGuid != null)
+            {
+                StringAssert.StartsWith("Assets/Game/Scripts/UI/ScenarioLab/", currentPath);
+                MonoScript script = AssetDatabase.LoadAssetAtPath<MonoScript>(currentPath);
+                Assert.NotNull(script.GetClass(), currentPath);
+                Assert.AreEqual("Game.UI.ScenarioLab.Runtime", script.GetClass().Assembly.GetName().Name, currentPath);
+            }
+        }
     }
 
     [Test]

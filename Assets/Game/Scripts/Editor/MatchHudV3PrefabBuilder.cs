@@ -574,6 +574,9 @@ namespace Game.Editor
             ConfigureText(title, "HOSTILE CELL SPOTTED\nMarket quarter, 140m", 18f, boldFont, theme.TextPrimary, TextAlignmentOptions.MidlineLeft);
             title.textWrappingMode = TextWrappingModes.Normal;
             title.fontStyle = FontStyles.Normal;
+            title.enableAutoSizing = true;
+            title.fontSizeMin = 12f;
+            title.fontSizeMax = 18f;
             SetTopLeft(title.rectTransform, 76f, 6f, 350f, 67f);
             RectTransform jump = EnsureRect("V3ThreatJump", threatFrame);
             SetTopLeft(jump, 450f, 10f, 63f, 59f);
@@ -2363,9 +2366,9 @@ namespace Game.Editor
             return index switch
             {
                 1 => "RIFLE SQUAD",
-                2 => "APC",
-                3 => "TANK",
-                4 => "HELICOPTER",
+                2 => "VEHICLES",
+                3 => "HELICOPTER",
+                4 => "JET",
                 _ => "TRANSPORT"
             };
         }

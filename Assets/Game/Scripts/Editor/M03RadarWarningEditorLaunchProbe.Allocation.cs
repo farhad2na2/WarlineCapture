@@ -23,7 +23,7 @@ namespace Game.Editor
             "CampaignMissionGuidanceProjectionSystem","CampaignMissionPatrolOrderSystem","RadarPingRequestSystem",
             "MissionDefenseInteractionSystem","M03RadioReportProjectionSystem","UiCampaignMissionProjectionSystem",
             "CampaignMissionObjectiveProjectionSystem","CampaignMissionAttemptFactProjectionSystem",
-            "MissionDefenseHudView.Update"};
+            "MissionDefenseHudView.Refresh"};
         [Serializable] private sealed class AllocationOwner
         {public string name; public int samples,allocatedSamples,skippedNestedSamples; public long bytes,maxBytes; public List<string> allocationContexts=new();}
         [Serializable] private sealed class AllocationPhase
@@ -134,7 +134,7 @@ namespace Game.Editor
         {
             var report=new AllocationReport {
                 scope="Actual live main-thread Unity raw Profiler samples in four combat phases, 210 frames per window; no double system updates. Includes EditorOnly allocations; nested markers for the same owner are counted once. This is allocation attribution, not a timing benchmark. A real 8192-byte allocation inside a player-loop marker validates each window.",
-                valid=allocationPhases.Count==4 && allocationPhases.All(p=>p.frames>=180 && p.positiveControlBytes>=8192),
+                valid=allocationPhases.Count==4 && allocationPhases.All(p=>p.frames>=180 && p.positiveControlBytes>=8192 && p.owners.All(o=>o.samples>0)),
                 phases=allocationPhases.ToArray()};
             File.WriteAllText(Output+"/allocation-attribution.json",JsonUtility.ToJson(report,true));
             Complete(report.valid,"M3 raw allocation attribution captured; inspect each owner's measured bytes; zero allocation acceptance is separate");

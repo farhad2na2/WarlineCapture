@@ -1,5 +1,7 @@
 # M3 / M4 readiness audit
 
+> Current completion work and superseding results: [M3 / M4 Editor completion QA, 10 September](../M03_M04_Editor_Completion_2026-09-10.md). This older report retains its original checkpoint scope.
+
 Starting implementation: `60252791d6f9c3bebb759e4fe2aef27547d5dc6d` on `codex/m03-radar-warning`. The ending fixes described below are part of this audit's delivery. Editor only, as requested. Review images remain under `/private/tmp` and are not committed.
 
 **Both missions have playable implementations; full completion and an all-green architecture signoff are not established.** The prior M4 core acceptance is narrower than repository-wide architectural acceptance. This audit keeps those conclusions separate.

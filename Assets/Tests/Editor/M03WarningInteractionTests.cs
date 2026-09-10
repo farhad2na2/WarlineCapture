@@ -1,6 +1,7 @@
 using System;
 using Game.Components;
 using Game.Missions.Contracts;
+using Game.Narrative.Contracts;
 using Game.Runtime;
 using Game.UI.Contracts;
 using Game.UI.Shell.Contracts.Ecs;
@@ -9,6 +10,7 @@ using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEngine;
 
 public sealed class M03WarningInteractionTests
@@ -185,6 +187,49 @@ public sealed class M03WarningInteractionTests
         f.Observe(1,ThreatWarningSourceKind.ScoutReport,-1); f.Resolve();
         Assert.AreEqual(31000,f.Records[1].FirstReportedAtMilliseconds); Assert.AreEqual(0,f.Records[1].AttentionEscalated);
     }
+    [Test]
+    public void MoveLessonRequiresANewAcceptedMoveAndArrival()
+    {
+        using var f=new Fixture(guidance:true);
+        var runtime=f.Em.GetComponentData<CampaignMissionRuntimeComponent>(f.Root);
+        runtime.MissionId="saga.ch01.m03.radar_warning"; runtime.Guidance=NarrativeGuidanceMode.Full;
+        runtime.RunKind=MissionRunKind.FirstClear; f.Em.SetComponentData(f.Root,runtime);
+        var defense=f.Em.GetComponentData<CampaignMissionDefenseStateComponent>(f.Root);
+        defense.AcknowledgedGuidanceMask=15; f.Em.SetComponentData(f.Root,defense);
+        f.Observe(0,ThreatWarningSourceKind.ScoutReport,-1); f.Resolve();
+        Entity moving=Entity.Null;
+        for(int i=0;i<4;i++)
+        {
+            moving=f.Em.CreateEntity(typeof(CampaignMissionUnitRoleComponent),typeof(Faction),typeof(UnitHealth),
+                typeof(UnitAttack),typeof(LocalTransform),typeof(UnitCombat));
+            f.Em.SetComponentData(moving,new CampaignMissionUnitRoleComponent {SessionToken="session"});
+            f.Em.SetComponentData(moving,new Faction {Id=1});
+            f.Em.SetComponentData(moving,new UnitHealth {Current=100});
+            f.Em.SetComponentData(moving,new UnitAttack {Range=40});
+            f.Em.SetComponentData(moving,new UnitCombat {CanAttack=1});
+            f.Em.SetComponentData(moving,LocalTransform.Identity);
+        }
+        var results=f.Em.AddBuffer<UnitMoveOrderResultElement>(f.Root);
+        results.Add(new UnitMoveOrderResultElement {RequestId=1,Entity=moving,Kind=UnitMoveOrderRequestKind.GroupedManual,Issued=1});
+        var system=f.World.GetOrCreateSystem<CampaignMissionGuidanceProjectionSystem>();
+        system.Update(f.World.Unmanaged);
+        Assert.AreEqual(0,f.Em.GetComponentData<CampaignMissionDefenseStateComponent>(f.Root).AcknowledgedGuidanceMask&16u,
+            "Starting in range and old command receipts must not skip teaching Move.");
+        results=f.Em.GetBuffer<UnitMoveOrderResultElement>(f.Root);
+        results.Add(new UnitMoveOrderResultElement {RequestId=2,Entity=moving,Kind=UnitMoveOrderRequestKind.GroupedManual,Issued=0});
+        results.Add(new UnitMoveOrderResultElement {RequestId=3,Entity=moving,Kind=UnitMoveOrderRequestKind.TargetOnly,Issued=1});
+        system.Update(f.World.Unmanaged);
+        Assert.AreEqual(0,f.Em.GetComponentData<CampaignMissionDefenseStateComponent>(f.Root).MoveAccepted);
+        f.Em.AddComponent<UnitPathRequest>(moving);
+        results=f.Em.GetBuffer<UnitMoveOrderResultElement>(f.Root);
+        results.Add(new UnitMoveOrderResultElement {RequestId=4,Entity=moving,Kind=UnitMoveOrderRequestKind.GroupedManual,Issued=1});
+        system.Update(f.World.Unmanaged);
+        Assert.AreEqual(0,f.Em.GetComponentData<CampaignMissionDefenseStateComponent>(f.Root).AcknowledgedGuidanceMask&16u,
+            "An accepted order is not arrival.");
+        f.Em.RemoveComponent<UnitPathRequest>(moving); system.Update(f.World.Unmanaged);
+        Assert.AreEqual(16u,f.Em.GetComponentData<CampaignMissionDefenseStateComponent>(f.Root).AcknowledgedGuidanceMask&16u);
+    }
+
     private sealed class Fixture:IDisposable
     {
         public readonly World World=new("M3 warning interaction"); public EntityManager Em=>World.EntityManager;
@@ -192,7 +237,7 @@ public sealed class M03WarningInteractionTests
         private BlobAssetReference<CampaignMissionCatalogBlob> catalog; private BlobAssetReference<OperationMapBlob> map;
         public DynamicBuffer<ThreatWarningRecord> Records=>Em.GetBuffer<ThreatWarningRecord>(Root);
         public ThreatWarningLedgerState Ledger=>Em.GetComponentData<ThreatWarningLedgerState>(Root);
-        public Fixture()
+        public Fixture(bool guidance=false)
         {
             Root=Em.CreateEntity(typeof(CampaignMissionRootComponent),typeof(CampaignMissionRuntimeComponent),typeof(CampaignMissionAttemptFactsComponent),
                 typeof(CampaignMissionDefenseStateComponent),typeof(CampaignMissionGuidanceProjectionComponent),typeof(ThreatWarningLedgerState));
@@ -205,6 +250,13 @@ public sealed class M03WarningInteractionTests
             {
                 ref var data=ref builder.ConstructRoot<CampaignMissionCatalogBlob>(); var missions=builder.Allocate(ref data.Missions,1); missions[0].Defense.Enabled=1;
                 var authored=builder.Allocate(ref missions[0].Defense.Elements,2); authored[0].ContactAtMilliseconds=65000; authored[1].ContactAtMilliseconds=165000;
+                if(guidance)
+                {
+                    missions[0].MissionId="saga.ch01.m03.radar_warning";
+                    var steps=builder.Allocate(ref missions[0].Defense.GuidanceSteps,6);
+                    steps[4].Completion=MissionGuidanceCompletionKind.SquadPositioned;
+                    steps[4].Action=MissionGuidanceActionKind.Move;
+                }
                 catalog=builder.CreateBlobAssetReference<CampaignMissionCatalogBlob>(Allocator.Persistent);
             }
             using(var builder=new BlobBuilder(Allocator.Temp)) {builder.ConstructRoot<OperationMapBlob>(); map=builder.CreateBlobAssetReference<OperationMapBlob>(Allocator.Persistent);}

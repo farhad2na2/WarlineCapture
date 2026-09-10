@@ -38,7 +38,7 @@ public sealed class MatchHudSquadTrayQuickSelectTests
             Assert.NotNull(frameImage, $"SquadCard{i}/Frame must keep its frame image.");
             Assert.IsTrue(button.targetGraphic is V3GradientGraphic, $"SquadCard{i} must tint its V3 gradient interaction surface.");
             Assert.IsTrue(button.targetGraphic.raycastTarget);
-            Assert.IsTrue(frameImage.raycastTarget, $"SquadCard{i}/Frame image must receive pointer raycasts.");
+            Assert.IsFalse(frameImage.raycastTarget, $"SquadCard{i}/Frame is decorative; the V3 interaction surface receives pointer raycasts.");
         }
     }
 

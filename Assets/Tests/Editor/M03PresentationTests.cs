@@ -71,6 +71,88 @@ public sealed class M03PresentationTests
     }
 
     [Test]
+    public void RebuildingTheSharedDefenseGuidePreservesTheExtractionCatalog()
+    {
+        typeof(M03RadarWarningUiBuilder).GetMethod("BuildGuide",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static)
+            .Invoke(null,null);
+        var root=AssetDatabase.LoadAssetAtPath<GameObject>(M03RadarWarningUiBuilder.GuidePath);
+        var data=new SerializedObject(root.GetComponent<MissionFieldGuideView>());
+        Assert.AreSame(AssetDatabase.LoadAssetAtPath<MissionFieldGuideConfig>(M03RadarWarningGuideBuilder.Path),
+            data.FindProperty("guide").objectReferenceValue);
+        var extraction=AssetDatabase.LoadAssetAtPath<MissionFieldGuideConfig>(M04AirliftPresentationBuilder.GuidePath);
+        Assert.NotNull(extraction);
+        Assert.AreSame(extraction,data.FindProperty("extractionGuide").objectReferenceValue,
+            "Rebuilding M3 must preserve M4's guide route in the shared prefab.");
+    }
+
+    [Test]
+    public void WarningDetailsAndOptionalActionsFitTheHudAtBothAspects()
+    {
+        var canvasRoot=new GameObject("M3 HUD layout QA",typeof(RectTransform),typeof(Canvas));
+        canvasRoot.GetComponent<Canvas>().renderMode=RenderMode.WorldSpace;
+        string oldLocale=GameLocalization.CurrentLocaleCode;
+        try
+        {
+            var instance=UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(
+                "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab"),canvasRoot.transform);
+            var header=instance.transform.Find("V3Composition/HeaderContent");
+            var actions=(RectTransform)header.Find("M03Actions");
+            var aria=(RectTransform)header.Find("AriaAssistantButton");
+            var title=header.Find("ThreatJumpPanel").GetComponentsInChildren<TMP_Text>(true).Single(t=>t.name=="Title");
+            actions.gameObject.SetActive(true);
+            foreach(int width in new[]{1920,2400})
+            {
+                ((RectTransform)canvasRoot.transform).sizeDelta=new Vector2(width,1080);
+                foreach(var layout in instance.GetComponentsInChildren<MainMenuV3SectionLayoutView>(true)) layout.RefreshLayout();
+                var actionCorners=new Vector3[4]; var ariaCorners=new Vector3[4];
+                actions.GetWorldCorners(actionCorners); aria.GetWorldCorners(ariaCorners);
+                Assert.Less(actionCorners[2].x,ariaCorners[0].x,"Optional controls must leave ARIA's column clear at width "+width);
+                foreach(bool persian in new[]{false,true})
+                {
+                    GameLocalization.SetLocale(persian ? "fa-IR" : "en",false);
+                    string copy=persian
+                        ? "گزارش دیده‌بان · کاروان اصلی · جادهٔ غربی\nترکیب نیروها تأیید نشده · برآورد زمان تماس: 165 ثانیه"
+                        : "Scout report · Main convoy · western road\nComposition unconfirmed · Contact estimate: 165s";
+                    title.GetComponent<V3LocalizedTextBindingView>().SetLocalizedValue(copy);
+                    title.ForceMeshUpdate(true,true);
+                    Assert.IsFalse(title.isTextOverflowing || title.isTextTruncated,$"Contact details truncated: width={width} Persian={persian}");
+                }
+            }
+        }
+        finally {GameLocalization.SetLocale(oldLocale,false); UnityEngine.Object.DestroyImmediate(canvasRoot);}
+    }
+
+    [Test]
+    public void ResultCompositionFitsWhenCanvasLogicalSizeChangesWithoutRemounting()
+    {
+        var root=new GameObject("Result resize QA",typeof(RectTransform),typeof(Canvas));
+        root.GetComponent<Canvas>().renderMode=RenderMode.WorldSpace;
+        var canvasRect=(RectTransform)root.transform;
+        canvasRect.sizeDelta=new Vector2(1920,1080);
+        try
+        {
+            var instance=UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(
+                "Assets/Game/Prefabs/UI/Popups/MissionResultPopup.prefab"),root.transform);
+            var composition=(RectTransform)instance.GetComponentInChildren<MainMenuV3SectionLayoutView>().transform;
+            var corners=new Vector3[4];
+            // CanvasScaler changes logical height as well as width at a new aspect ratio.
+            foreach(var size in new[]{new Vector2(1920,1080),new Vector2(2146.625f,965.981f),new Vector2(1920,1080)})
+            {
+                canvasRect.sizeDelta=size;
+                Canvas.ForceUpdateCanvases();
+                composition.GetWorldCorners(corners);
+                foreach(var corner in corners)
+                {
+                    var local=canvasRect.InverseTransformPoint(corner);
+                    Assert.That(local.x,Is.InRange(canvasRect.rect.xMin-1,canvasRect.rect.xMax+1),"Result horizontal bounds after resize");
+                    Assert.That(local.y,Is.InRange(canvasRect.rect.yMin-1,canvasRect.rect.yMax+1),"Result vertical bounds after resize");
+                }
+            }
+        }
+        finally {UnityEngine.Object.DestroyImmediate(root);}
+    }
+
+    [Test]
     public void FinalComicCropsHaveStableMissionIdentityAndAspect()
     {
         foreach(string panel in new[]{"B01","B02","B03","C01","D01","D02","D03"})
@@ -82,5 +164,34 @@ public sealed class M03PresentationTests
             Assert.AreEqual(wide ? 20f/9f : 16f/9f,sprite.rect.width/sprite.rect.height,.005f);
             Assert.GreaterOrEqual(sprite.rect.height,700);
         }
+    }
+
+    [TestCase("en",1920)]
+    [TestCase("fa-IR",1920)]
+    [TestCase("en",2400)]
+    [TestCase("fa-IR",2400)]
+    public void SaveFailureHeadlineFitsTheDeliveredResultHeader(string locale,int width)
+    {
+        string oldLocale=GameLocalization.CurrentLocaleCode;
+        var root=new GameObject("Save result headline QA",typeof(RectTransform),typeof(Canvas));
+        root.GetComponent<Canvas>().renderMode=RenderMode.WorldSpace;
+        ((RectTransform)root.transform).sizeDelta=new Vector2(width,1080);
+        try
+        {
+            GameLocalization.SetLocale(locale,false);
+            var instance=UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(
+                "Assets/Game/Prefabs/UI/Popups/MissionResultPopup.prefab"),root.transform);
+            var view=instance.GetComponent<MissionResultPopupView>();
+            var model=new UiMissionResultPopupModel(1,"saga.ch01.m03.radar_warning",UiMissionResultOutcome.Victory,
+                GameText.Get("mission.m03.save.failed"),"Radar Warning",GameText.Get("mission.m03.save.body"),
+                3,"03:07","0","7/7",GameText.Get("mission.m03.save.pending"),GameText.Get("mission.m03.save.retry"),true,false,
+                defense:new UiMissionDefenseResultDetails(0,false,false,false,false),settlementFailed:true);
+            view.Apply(in model);Canvas.ForceUpdateCanvases();
+            var title=instance.transform.Find("V3Composition/OutcomeTitlePanel/TitleText").GetComponent<TMP_Text>();
+            title.ForceMeshUpdate(true,true);
+            Assert.IsFalse(title.isTextTruncated || title.isTextOverflowing,$"Save headline: {locale} {width}");
+            Assert.IsTrue(title.textInfo.characterInfo.Take(title.textInfo.characterCount).Any(c=>c.isVisible));
+        }
+        finally {GameLocalization.SetLocale(oldLocale,false);UnityEngine.Object.DestroyImmediate(root);}
     }
 }

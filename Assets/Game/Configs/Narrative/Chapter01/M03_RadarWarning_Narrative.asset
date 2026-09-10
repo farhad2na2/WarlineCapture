@@ -23,14 +23,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 8a9f584496ddc46e2b18b66aa384e0ad
       m_SubObjectName: M03-D01-16x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 8a9f584496ddc46e2b18b66aa384e0ad
       m_SubObjectName: M03-D01-20x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-debrief-clean
@@ -49,16 +49,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 10.28
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-debrief.clean-1
@@ -68,14 +68,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 4cc09a704f6cd43e28197c8aede8dea5
       m_SubObjectName: M03-D02-16x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 4cc09a704f6cd43e28197c8aede8dea5
       m_SubObjectName: M03-D02-20x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-debrief-02
@@ -95,16 +95,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 12.28
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-debrief.clean-2
@@ -114,14 +114,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: b64e2e511d6a948ee9f728fc6f59563b
       m_SubObjectName: M03-D03-16x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: b64e2e511d6a948ee9f728fc6f59563b
       m_SubObjectName: M03-D03-20x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-debrief-03
@@ -140,16 +140,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 9.88
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-debrief.clean-complete
@@ -157,27 +157,27 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines: []
-    continueStateId:
-    skipStateId:
+    continueStateId: 
+    skipStateId: 
     reducedMotionSupported: 1
     durationSeconds: 0
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
@@ -209,14 +209,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 8a9f584496ddc46e2b18b66aa384e0ad
       m_SubObjectName: M03-D01-16x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 8a9f584496ddc46e2b18b66aa384e0ad
       m_SubObjectName: M03-D01-20x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-debrief-mixed
@@ -235,16 +235,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 12.6
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-debrief.mixed-1
@@ -254,14 +254,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 4cc09a704f6cd43e28197c8aede8dea5
       m_SubObjectName: M03-D02-16x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 4cc09a704f6cd43e28197c8aede8dea5
       m_SubObjectName: M03-D02-20x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-debrief-02
@@ -281,16 +281,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 12.28
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-debrief.mixed-2
@@ -300,14 +300,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: b64e2e511d6a948ee9f728fc6f59563b
       m_SubObjectName: M03-D03-16x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: b64e2e511d6a948ee9f728fc6f59563b
       m_SubObjectName: M03-D03-20x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-debrief-03
@@ -326,16 +326,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 9.88
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-debrief.mixed-complete
@@ -343,27 +343,27 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines: []
-    continueStateId:
-    skipStateId:
+    continueStateId: 
+    skipStateId: 
     reducedMotionSupported: 1
     durationSeconds: 0
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
@@ -395,14 +395,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: eddc7e8ce8d4d4817a5a8ceb1c554cde
       m_SubObjectName: M03-C01-16x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: eddc7e8ce8d4d4817a5a8ceb1c554cde
       m_SubObjectName: M03-C01-20x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-comms-01
@@ -422,16 +422,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 15.4
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-comms-complete
@@ -439,27 +439,27 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines: []
-    continueStateId:
-    skipStateId:
+    continueStateId: 
+    skipStateId: 
     reducedMotionSupported: 1
     durationSeconds: 0
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
@@ -491,14 +491,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 0f000af5086ec458f9fa30b1191960d6
       m_SubObjectName: M03-B01-16x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 0f000af5086ec458f9fa30b1191960d6
       m_SubObjectName: M03-B01-20x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-brief-01
@@ -518,16 +518,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 15.24
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-brief-1
@@ -537,14 +537,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 2686a20211ec94f4bb6a95e7ae00d7d3
       m_SubObjectName: M03-B02-16x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 2686a20211ec94f4bb6a95e7ae00d7d3
       m_SubObjectName: M03-B02-20x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-brief-02
@@ -564,16 +564,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 13.4
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-brief-2
@@ -583,14 +583,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: d7639c78644fa44a5ab20e88abe4b3c7
       m_SubObjectName: M03-B03-16x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: d7639c78644fa44a5ab20e88abe4b3c7
       m_SubObjectName: M03-B03-20x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-brief-03
@@ -610,16 +610,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 15.8
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-brief-complete
@@ -627,27 +627,27 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines: []
-    continueStateId:
-    skipStateId:
+    continueStateId: 
+    skipStateId: 
     reducedMotionSupported: 1
     durationSeconds: 0
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
@@ -679,14 +679,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 8a9f584496ddc46e2b18b66aa384e0ad
       m_SubObjectName: M03-D01-16x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 8a9f584496ddc46e2b18b66aa384e0ad
       m_SubObjectName: M03-D01-20x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-debrief-civilian-loss
@@ -705,16 +705,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 11.72
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-debrief.civilian-loss-1
@@ -724,14 +724,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 4cc09a704f6cd43e28197c8aede8dea5
       m_SubObjectName: M03-D02-16x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 4cc09a704f6cd43e28197c8aede8dea5
       m_SubObjectName: M03-D02-20x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-debrief-02
@@ -751,16 +751,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 12.28
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-debrief.civilian-loss-2
@@ -770,14 +770,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: b64e2e511d6a948ee9f728fc6f59563b
       m_SubObjectName: M03-D03-16x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: b64e2e511d6a948ee9f728fc6f59563b
       m_SubObjectName: M03-D03-20x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-debrief-03
@@ -796,16 +796,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 9.88
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-debrief.civilian-loss-complete
@@ -813,27 +813,27 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines: []
-    continueStateId:
-    skipStateId:
+    continueStateId: 
+    skipStateId: 
     reducedMotionSupported: 1
     durationSeconds: 0
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
@@ -865,14 +865,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 8a9f584496ddc46e2b18b66aa384e0ad
       m_SubObjectName: M03-D01-16x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 8a9f584496ddc46e2b18b66aa384e0ad
       m_SubObjectName: M03-D01-20x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-debrief-damaged
@@ -891,16 +891,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 11.16
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-debrief.damaged-1
@@ -910,14 +910,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 4cc09a704f6cd43e28197c8aede8dea5
       m_SubObjectName: M03-D02-16x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 4cc09a704f6cd43e28197c8aede8dea5
       m_SubObjectName: M03-D02-20x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-debrief-02
@@ -937,16 +937,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 12.28
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-debrief.damaged-2
@@ -956,14 +956,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: b64e2e511d6a948ee9f728fc6f59563b
       m_SubObjectName: M03-D03-16x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: b64e2e511d6a948ee9f728fc6f59563b
       m_SubObjectName: M03-D03-20x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-debrief-03
@@ -982,16 +982,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 9.88
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-debrief.damaged-complete
@@ -999,27 +999,27 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines: []
-    continueStateId:
-    skipStateId:
+    continueStateId: 
+    skipStateId: 
     reducedMotionSupported: 1
     durationSeconds: 0
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
@@ -1051,14 +1051,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 8a9f584496ddc46e2b18b66aa384e0ad
       m_SubObjectName: M03-D01-16x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 8a9f584496ddc46e2b18b66aa384e0ad
       m_SubObjectName: M03-D01-20x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-debrief-01
@@ -1077,16 +1077,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 10.36
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-debrief-1
@@ -1096,14 +1096,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: 4cc09a704f6cd43e28197c8aede8dea5
       m_SubObjectName: M03-D02-16x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: 4cc09a704f6cd43e28197c8aede8dea5
       m_SubObjectName: M03-D02-20x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-debrief-02
@@ -1123,16 +1123,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 12.28
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-debrief-2
@@ -1142,14 +1142,14 @@ MonoBehaviour:
     panel16x9Reference:
       m_AssetGUID: b64e2e511d6a948ee9f728fc6f59563b
       m_SubObjectName: M03-D03-16x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
       m_AssetGUID: b64e2e511d6a948ee9f728fc6f59563b
       m_SubObjectName: M03-D03-20x9
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines:
     - lineId: m03-debrief-03
@@ -1168,16 +1168,16 @@ MonoBehaviour:
     reducedMotionSupported: 1
     durationSeconds: 9.88
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 3
     routeRole: 0
-    completionPayloadId:
+    completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []
   - stateId: M03-debrief-complete
@@ -1185,27 +1185,27 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID:
-      m_SubObjectName:
-      m_SubObjectType:
-      m_SubObjectGUID:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines: []
-    continueStateId:
-    skipStateId:
+    continueStateId: 
+    skipStateId: 
     reducedMotionSupported: 1
     durationSeconds: 0
     motionPreset: 0
-    locationTitleKey:
-    locationTitleFallback:
-    locationSubtitleKey:
-    locationSubtitleFallback:
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
     musicCue: 0
     ambienceCue: 0
     vehicleCue: 0

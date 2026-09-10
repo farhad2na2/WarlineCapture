@@ -16,8 +16,8 @@ MonoBehaviour:
   schemaVersion: 1
   contentVersion: 1
   sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
-  contentHash: a15afcb5ea0b769f7388321763248374c951ad4a26bb619ffbdcbeb1ce85acc5
-  generatedMetadataHash: a15afcb5ea0b769f7388321763248374c951ad4a26bb619ffbdcbeb1ce85acc5
+  contentHash: 9ec43e2eee89dad7f06eef51426abbc0ed78dfa36efd9a0d77ee904a3f07cda6
+  generatedMetadataHash: 9ec43e2eee89dad7f06eef51426abbc0ed78dfa36efd9a0d77ee904a3f07cda6
   sourceBinding:
     sourceOperationMapId: opmap.skirmish.desert_base_01
     sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
@@ -338,43 +338,43 @@ MonoBehaviour:
   renderResidencyMode: 1
   sourceSceneReference:
     m_AssetGUID: dad0bd13fb20943dfb2f881cbe225f05
-    m_SubObjectName:
-    m_SubObjectType:
-    m_SubObjectGUID:
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   optionalHeavyMetadataReference:
-    m_AssetGUID:
-    m_SubObjectName:
-    m_SubObjectType:
-    m_SubObjectGUID:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   staticPresentationManifestReference:
-    m_AssetGUID:
-    m_SubObjectName:
-    m_SubObjectType:
-    m_SubObjectGUID:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   mapSurfaceDataReference:
     m_AssetGUID: 12f517deb32ab49698acbfdaf7c3eac7
-    m_SubObjectName:
-    m_SubObjectType:
-    m_SubObjectGUID:
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   minimapRasterReference:
     m_AssetGUID: 3b1a8dbd670bf4e94863c00acbc3a3a7
-    m_SubObjectName:
-    m_SubObjectType:
-    m_SubObjectGUID:
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   buildingPlacementsReference:
-    m_AssetGUID:
-    m_SubObjectName:
-    m_SubObjectType:
-    m_SubObjectGUID:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   vehiclePlacementsReference:
-    m_AssetGUID:
-    m_SubObjectName:
-    m_SubObjectType:
-    m_SubObjectGUID:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
     m_EditorAssetChanged: 0

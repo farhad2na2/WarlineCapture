@@ -60,32 +60,33 @@
     "growthAuthorizationCount": 4
   },
   "featureReadinessRevalidation": {
-    "taskId": "AMFR-017",
+    "taskId": "M03-M04-COMPLETION",
     "result": "Passed",
-    "commit": "98d98a47f6b68d94acf3421f195dd9431931d9b7",
-    "tree": "14805bdd73fdc3e5e3dd2c735eff6c31028a4c61",
+    "commit": "eba47c95f5a9309b2f9124b0594452fd2914fd1e",
+    "tree": "9d5b39ba9f72f8e9cf27b75f3d305c3091f43e12",
     "contract": {
       "path": "Design/Architecture/post_hardening_source_responsibility_guardrails.json",
-      "sha256": "12b92a5785324722f07a985241e8086da713bc024fb4820d961d28793a53d743",
+      "sha256": "bd9f233aef06e5635dec61bbb1b87c2938632b2b39e1953d23206f4855325155",
       "guardedSourceCount": 4,
       "growthAuthorizationCount": 114
     },
     "canonicalValidator": {
       "path": "Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs",
-      "sha256": "ef7eb14af2ded966fe51e11caba98709777dd5442b95e65b1cf3c1c2a446469e",
+      "sha256": "a87e3c8ed4708240caf4edf05e049ee9b0760acb10d05998c07460cd6b43e019",
       "passedTests": 17,
       "compilerErrors": 0,
-      "log": "Build/Logs/amfr017-source-growth-owner-ratchet.log",
-      "logSha256": "97a7b738be30aa7d5ac812ffaadf52113f80edbe1d1de5830641712ffbe36f33",
+      "log": "Design/AgentReports/ArchitectureMaturity/Logs/m03_m04_completion_source_growth_20260910.log.gz",
+      "logSha256": "b98426bac4e04c03ef331395ac8d8a7c62dc1f5d9d0a8315ac81eaf24b96f1aa",
       "resultMarker": "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17"
     },
     "authorizationValidation": {
       "passedTests": 1,
       "compilerErrors": 0,
-      "log": "Build/Logs/amfr017-source-authorization-owner-ratchet.log",
-      "logSha256": "0c9a6a6746adc7a93d5e52765348c35351aa807d7eec5c1513dd7429a6914439"
+      "log": "Design/AgentReports/ArchitectureMaturity/Logs/m03_m04_completion_source_growth_20260910.log.gz",
+      "logSha256": "b98426bac4e04c03ef331395ac8d8a7c62dc1f5d9d0a8315ac81eaf24b96f1aa",
+      "resultMarker": "[PostHardeningSourceAuthorizationValidation] result=Passed tests=1"
     },
-    "scope": "Supersedes only the active contract/validator/result binding. The original AM-016 evidence remains immutable historical acceptance evidence."
+    "scope": "Fresh Editor validation of the unchanged architecture ceilings at the committed M3/M4 implementation checkpoint. The archived AM-016 and AMFR-017 records remain historical; this does not claim full mission or performance QA."
   },
   "guardedSources": [
     {
@@ -120,5 +121,36 @@
   "validatorAuthority": {
     "path": "Tools/CI/tests/test_architecture_source_responsibility_guardrail_evidence.py",
     "sha256": "998261891046656c141fc91ce770a9e67642670c2c938acb98673e8d29ca749d"
-  }
+  },
+  "featureReadinessRevalidationHistory": [
+    {
+      "taskId": "AMFR-017",
+      "result": "Passed",
+      "commit": "98d98a47f6b68d94acf3421f195dd9431931d9b7",
+      "tree": "14805bdd73fdc3e5e3dd2c735eff6c31028a4c61",
+      "contract": {
+        "path": "Design/Architecture/post_hardening_source_responsibility_guardrails.json",
+        "sha256": "12b92a5785324722f07a985241e8086da713bc024fb4820d961d28793a53d743",
+        "guardedSourceCount": 4,
+        "growthAuthorizationCount": 114
+      },
+      "canonicalValidator": {
+        "path": "Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs",
+        "sha256": "ef7eb14af2ded966fe51e11caba98709777dd5442b95e65b1cf3c1c2a446469e",
+        "passedTests": 17,
+        "compilerErrors": 0,
+        "log": "Build/Logs/amfr017-source-growth-owner-ratchet.log",
+        "logSha256": "97a7b738be30aa7d5ac812ffaadf52113f80edbe1d1de5830641712ffbe36f33",
+        "resultMarker": "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17"
+      },
+      "authorizationValidation": {
+        "passedTests": 1,
+        "compilerErrors": 0,
+        "log": "Build/Logs/amfr017-source-authorization-owner-ratchet.log",
+        "logSha256": "0c9a6a6746adc7a93d5e52765348c35351aa807d7eec5c1513dd7429a6914439"
+      },
+      "scope": "Supersedes only the active contract/validator/result binding. The original AM-016 evidence remains immutable historical acceptance evidence.",
+      "availabilityNote": "The two ignored Build/Logs paths were absent on this checkout. The original metadata is retained for history; current acceptance uses the fresh committed-source capture below."
+    }
+  ]
 }

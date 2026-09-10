@@ -98,7 +98,7 @@ namespace Game.Runtime
                     MissionGuidanceCompletionKind.WarningRead=>(defense.AcknowledgedGuidanceMask&1)!=0,
                     MissionGuidanceCompletionKind.RouteInspected=>defense.PlayerRequestedFocus!=0,
                     MissionGuidanceCompletionKind.DefenseBuilt=>built,
-                    MissionGuidanceCompletionKind.SquadPositioned=>positioned,
+                    MissionGuidanceCompletionKind.SquadPositioned=>positioned && defense.MoveAccepted!=0,
                     MissionGuidanceCompletionKind.Holding=>holding,
                     MissionGuidanceCompletionKind.StopAccepted=>defense.StopAccepted!=0,
                     MissionGuidanceCompletionKind.PingAccepted=>defense.PingUsed!=0,
@@ -153,6 +153,20 @@ namespace Game.Runtime
                     defense.LastSelectionCommandRequestId=result.RequestId;
                     if(defense.SelectionCommandBaselineSet!=0 && result.Accepted!=0 && result.HasCommandResult!=0 &&
                         result.Kind==RtsSelectionCommandIntentKind.Stop) defense.StopAccepted=1;
+                }
+            // UI move results are drained synchronously by the presentation owner.
+            // The movement authority retains its receipts across that boundary.
+            EntityManager em=state.EntityManager;
+            foreach(var results in SystemAPI.Query<DynamicBuffer<UnitMoveOrderResultElement>>())
+                for(int i=0;i<results.Length;i++)
+                {
+                    var result=results[i];
+                    if(result.RequestId<=defense.LastMoveOrderRequestId) continue;
+                    defense.LastMoveOrderRequestId=result.RequestId;
+                    if(defense.SelectionCommandBaselineSet==0 || result.Issued==0 || result.Kind!=UnitMoveOrderRequestKind.GroupedManual ||
+                        !em.HasComponent<CampaignMissionUnitRoleComponent>(result.Entity) || !em.HasComponent<Faction>(result.Entity)) continue;
+                    if(em.GetComponentData<CampaignMissionUnitRoleComponent>(result.Entity).SessionToken.Equals(defense.SessionToken) &&
+                        em.GetComponentData<Faction>(result.Entity).Id==1) defense.MoveAccepted=1;
                 }
             defense.SelectionCommandBaselineSet=1;
         }

@@ -196,5 +196,83 @@ namespace Game.Configs
         public const string VOARIATutorialM02DefendPostFa = "VO.ARIA.Tutorial.M02.DefendPost.Fa";
         public const uint VOARIATutorialM02DefendPostFaHash = 443030635u;
 
+        public const string VoAriaM03Comms01En = "vo.aria.m03.comms.01.en";
+        public const uint VoAriaM03Comms01EnHash = 1257066760u;
+
+        public const string VoAriaM03Comms01Fa = "vo.aria.m03.comms.01.fa";
+        public const uint VoAriaM03Comms01FaHash = 569037286u;
+
+        public const string VoAriaTutorialM0301En = "vo.aria.tutorial.m03.01.en";
+        public const uint VoAriaTutorialM0301EnHash = 39446705u;
+
+        public const string VoAriaTutorialM0301Fa = "vo.aria.tutorial.m03.01.fa";
+        public const uint VoAriaTutorialM0301FaHash = 190003991u;
+
+        public const string VoAriaTutorialM0302En = "vo.aria.tutorial.m03.02.en";
+        public const uint VoAriaTutorialM0302EnHash = 500172002u;
+
+        public const string VoAriaTutorialM0302Fa = "vo.aria.tutorial.m03.02.fa";
+        public const uint VoAriaTutorialM0302FaHash = 282504240u;
+
+        public const string VoAriaTutorialM0303En = "vo.aria.tutorial.m03.03.en";
+        public const uint VoAriaTutorialM0303EnHash = 2498737043u;
+
+        public const string VoAriaTutorialM0303Fa = "vo.aria.tutorial.m03.03.fa";
+        public const uint VoAriaTutorialM0303FaHash = 2314433497u;
+
+        public const string VoAriaTutorialM0304En = "vo.aria.tutorial.m03.04.en";
+        public const uint VoAriaTutorialM0304EnHash = 2960742268u;
+
+        public const string VoAriaTutorialM0304Fa = "vo.aria.tutorial.m03.04.fa";
+        public const uint VoAriaTutorialM0304FaHash = 2406933746u;
+
+        public const string VoAriaTutorialM0305En = "vo.aria.tutorial.m03.05.en";
+        public const uint VoAriaTutorialM0305EnHash = 2356709981u;
+
+        public const string VoAriaTutorialM0305Fa = "vo.aria.tutorial.m03.05.fa";
+        public const uint VoAriaTutorialM0305FaHash = 2372943147u;
+
+        public const string VoAriaTutorialM0306En = "vo.aria.tutorial.m03.06.en";
+        public const uint VoAriaTutorialM0306EnHash = 2937551294u;
+
+        public const string VoAriaTutorialM0306Fa = "vo.aria.tutorial.m03.06.fa";
+        public const uint VoAriaTutorialM0306FaHash = 3659533364u;
+
+        public const string VoAriaTutorialM0307En = "vo.aria.tutorial.m03.07.en";
+        public const uint VoAriaTutorialM0307EnHash = 2870402815u;
+
+        public const string VoAriaTutorialM0307Fa = "vo.aria.tutorial.m03.07.fa";
+        public const uint VoAriaTutorialM0307FaHash = 3625542765u;
+
+        public const string VoAriaTutorialM0308En = "vo.aria.tutorial.m03.08.en";
+        public const uint VoAriaTutorialM0308EnHash = 64709528u;
+
+        public const string VoAriaTutorialM0308Fa = "vo.aria.tutorial.m03.08.fa";
+        public const uint VoAriaTutorialM0308FaHash = 450447670u;
+
+        public const string VoAriaTutorialM0309En = "vo.aria.tutorial.m03.09.en";
+        public const uint VoAriaTutorialM0309EnHash = 537004713u;
+
+        public const string VoAriaTutorialM0309Fa = "vo.aria.tutorial.m03.09.fa";
+        public const uint VoAriaTutorialM0309FaHash = 4177203583u;
+
+        public const string VoAriaTutorialM0310En = "vo.aria.tutorial.m03.10.en";
+        public const uint VoAriaTutorialM0310EnHash = 1383018087u;
+
+        public const string VoAriaTutorialM0310Fa = "vo.aria.tutorial.m03.10.fa";
+        public const uint VoAriaTutorialM0310FaHash = 795948517u;
+
+        public const string VoAriaTutorialM0311En = "vo.aria.tutorial.m03.11.en";
+        public const uint VoAriaTutorialM0311EnHash = 913385926u;
+
+        public const string VoAriaTutorialM0311Fa = "vo.aria.tutorial.m03.11.fa";
+        public const uint VoAriaTutorialM0311FaHash = 829939116u;
+
+        public const string VoAriaTutorialM0312En = "vo.aria.tutorial.m03.12.en";
+        public const uint VoAriaTutorialM0312EnHash = 997327173u;
+
+        public const string VoAriaTutorialM0312Fa = "vo.aria.tutorial.m03.12.fa";
+        public const uint VoAriaTutorialM0312FaHash = 1282002243u;
+
     }
 }

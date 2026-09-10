@@ -18,6 +18,7 @@ namespace Game.Editor
         private static double playerCameraStarted, playerCameraCaptureAt;
         public static void RunPlayerCameraAcceptance()
         {
+            MissionMotionEditorAudit.Begin();
             SessionState.SetBool("Warline.M04.PlayerCamera", true);
             RunCommittedAcceptance();
         }

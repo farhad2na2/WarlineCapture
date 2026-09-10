@@ -141,6 +141,15 @@ public sealed class M02EstablishBasePlacementTests
     }
 
     [Test]
+    public void CanonicalLotHasExactlyOneLegalBarracksSearchOrigin()
+    {
+        using Fixture fixture = new();
+        Assert.IsTrue(fixture.TryResolveOriginBounds(CanonicalBarracksFootprint, out RectInt origins));
+        Assert.AreEqual(new RectInt(1006, 330, 1, 1), origins);
+        Assert.IsFalse(fixture.TryResolveOriginBounds(new Vector2Int(40, 28), out _));
+    }
+
+    [Test]
     public void BarracksCrossingAnyCanonicalLotEdgeIsRejected()
     {
         using Fixture fixture = new();
@@ -356,6 +365,10 @@ public sealed class M02EstablishBasePlacementTests
                 _building,
                 footprint,
                 out origin);
+
+        internal bool TryResolveOriginBounds(Vector2Int footprint, out RectInt origins) =>
+            CampaignMissionBuildingPlacementPolicy.TryResolveOriginBounds(
+                _world.EntityManager, _queries, _building, footprint, out origins);
 
         public void Dispose()
         {

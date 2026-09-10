@@ -57,13 +57,8 @@ namespace Game.Runtime
 
             BuildingRuntimeSpawnCompositionSystemHelper.Context context = source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateSpawnContext(
                 createContext(source, interactionContext, markerPropertyBlock));
-            origin = CampaignMissionBuildingPlacementPolicy.ResolvePreferredOrigin(
-                source, definition, context.GetPlacementFootprint, origin);
-            return source.BuildingRuntimeSpawnCompositionSystemHelper.TryResolveInitialPlacementOrigin(
-                       context,
-                       definition,
-                       origin,
-                       out resolved);
+            return CampaignMissionBuildingPlacementPolicy.TryResolveInitialPlacementOrigin(
+                source, context, definition, origin, out resolved);
         }
 
         public Vector2Int GetCenterScreenPlacementOrigin(

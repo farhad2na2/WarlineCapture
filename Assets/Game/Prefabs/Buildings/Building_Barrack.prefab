@@ -386,7 +386,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4602542948734572325}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0.19999981, y: 0, z: 6}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
@@ -594,9 +594,21 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: role
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: price
+      value: 40000
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
       propertyPath: config
       value: 
       objectReference: {fileID: 11400000, guid: b3010000000000000000000000000005, type: 2}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: maxHealth
+      value: 1200
+      objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
       propertyPath: Description
       value: Produces soldiers near the base and blocks its grid footprint until
@@ -607,9 +619,21 @@ PrefabInstance:
       value: Soldier Base
       objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
-      propertyPath: displayName
-      value: Barrack
+      propertyPath: description
+      value: Military housing and training facility used to support infantry operations.
       objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: displayName
+      value: Barracks
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: materialsCost
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: portraitSprite
+      value:
+      objectReference: {fileID: 21300000, guid: e516a6ebde0441afb7884943519409b8, type: 3}
     - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
       propertyPath: footprintCells.x
       value: 40
@@ -619,8 +643,28 @@ PrefabInstance:
       value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: portraitCardSprite
+      value:
+      objectReference: {fileID: 21300000, guid: 94511c40b67240f2a1e24191786fa562, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: portraitActionSprite
+      value:
+      objectReference: {fileID: 21300000, guid: be90410793f74c698476e6f9a0fc0769, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: destroyedVisualPrefab
+      value:
+      objectReference: {fileID: 9083467568423483946, guid: 81a72a361a4ec4f20b4327e0dfe7a61a, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
       propertyPath: Productions.Array.size
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: productions.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: productions.Array.data[0].quantity
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
       propertyPath: Productions.Array.data[0].ButtonText
@@ -634,6 +678,10 @@ PrefabInstance:
       propertyPath: Productions.Array.data[0].SpawnUnitPrefab
       value: 
       objectReference: {fileID: 536355820102763692, guid: ff73c8b7cbf844778916da330e9cd3e3, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: productions.Array.data[0].spawnUnitPrefab
+      value:
+      objectReference: {fileID: 3282182154612916099, guid: ff73c8b7cbf844778916da330e9cd3e3, type: 3}
     - target: {fileID: 9112959322384211678, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
       propertyPath: m_Name
       value: Building_Barrack
@@ -642,7 +690,7 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 2674124398502211660, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
-      insertIndex: 0
+      insertIndex: -1
       addedObject: {fileID: 4596091819886649951}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}

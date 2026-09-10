@@ -288,6 +288,7 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
         using World world = new("BuildingUiPlacementCommandMissingActivePlacementTest");
         var commandSystem = new BuildingPlacementCommandRequestCompositionSystemHelper();
         BuildingPlacementCommandRequestCompositionSystemHelper.Context context = CreatePlacementCommandContext(
+            world.EntityManager,
             new BuildingPlacementSessionCompositionSystemHelper());
 
         int requestId = commandSystem.EnqueueConfirmBuildingPlacement(world.EntityManager);
@@ -308,6 +309,7 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
         using World world = new("BuildingUiPlacementCommandBlockedPlacementTest");
         var commandSystem = new BuildingPlacementCommandRequestCompositionSystemHelper();
         BuildingPlacementCommandRequestCompositionSystemHelper.Context context = CreateActivePlacementCommandContext(
+            world.EntityManager,
             out _,
             out GameObject prefab,
             out GameObject root,
@@ -352,6 +354,7 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
         using World world = new("BuildingUiPlacementCommandInvalidPlacementTest");
         var commandSystem = new BuildingPlacementCommandRequestCompositionSystemHelper();
         BuildingPlacementCommandRequestCompositionSystemHelper.Context context = CreateActivePlacementCommandContext(
+            world.EntityManager,
             out _,
             out GameObject prefab,
             out GameObject root,
@@ -391,6 +394,7 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
         using World world = new("BuildingUiPlacementCommandNotEnoughMoneyTest");
         var commandSystem = new BuildingPlacementCommandRequestCompositionSystemHelper();
         BuildingPlacementCommandRequestCompositionSystemHelper.Context context = CreateActivePlacementCommandContext(
+            world.EntityManager,
             out _,
             out GameObject prefab,
             out GameObject root,
@@ -437,6 +441,7 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
         var commandSystem = new BuildingPlacementCommandRequestCompositionSystemHelper();
         int commitCount = 0;
         BuildingPlacementCommandRequestCompositionSystemHelper.Context context = CreateActivePlacementCommandContext(
+            world.EntityManager,
             out BuildingPlacementLifecycleCompositionSystemHelper lifecycleSystem,
             out GameObject prefab,
             out GameObject root,
@@ -479,6 +484,7 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
         var commandSystem = new BuildingPlacementCommandRequestCompositionSystemHelper();
         bool commandModeCleared = false;
         BuildingPlacementCommandRequestCompositionSystemHelper.Context context = CreatePlacementCommandContext(
+            world.EntityManager,
             new BuildingPlacementSessionCompositionSystemHelper(),
             clearCommandMode: () => commandModeCleared = true);
 
@@ -507,6 +513,7 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
         var commandSystem = new BuildingPlacementCommandRequestCompositionSystemHelper();
         int updateCount = 0;
         BuildingPlacementCommandRequestCompositionSystemHelper.Context context = CreateActivePlacementCommandContext(
+            world.EntityManager,
             out BuildingPlacementLifecycleCompositionSystemHelper lifecycleSystem,
             out GameObject prefab,
             out GameObject root,
@@ -553,6 +560,7 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
         var commandSystem = new BuildingPlacementCommandRequestCompositionSystemHelper();
         int clearSelectionCount = 0;
         BuildingPlacementCommandRequestCompositionSystemHelper.Context context = CreatePlacementCommandContext(
+            world.EntityManager,
             new BuildingPlacementSessionCompositionSystemHelper(),
             clearSelectedBuilding: _ => clearSelectionCount++);
 
@@ -590,6 +598,7 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
         var commandSystem = new BuildingPlacementCommandRequestCompositionSystemHelper();
         var definitionSystem = new BuildingDefinitionPrefabSystemHelper();
         BuildingPlacementCommandRequestCompositionSystemHelper.Context context = CreateActivePlacementCommandContext(
+            world.EntityManager,
             out BuildingPlacementLifecycleCompositionSystemHelper lifecycleSystem,
             out GameObject prefab,
             out GameObject root,
@@ -627,6 +636,7 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
         using World world = new("BuildingUiPlacementCommandBeginConfiguredMissingConfigTest");
         var commandSystem = new BuildingPlacementCommandRequestCompositionSystemHelper();
         BuildingPlacementCommandRequestCompositionSystemHelper.Context context = CreatePlacementCommandContext(
+            world.EntityManager,
             new BuildingPlacementSessionCompositionSystemHelper());
 
         int requestId = commandSystem.EnqueueBeginConfiguredPlacement(world.EntityManager, "missing-building");
@@ -652,6 +662,7 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
         using World world = new("BuildingPlacementInputTickQueuedPlacementCommandTest");
         var commandSystem = new BuildingPlacementCommandRequestCompositionSystemHelper();
         BuildingPlacementCommandRequestCompositionSystemHelper.Context commandContext = CreatePlacementCommandContext(
+            world.EntityManager,
             new BuildingPlacementSessionCompositionSystemHelper());
         int requestId = commandSystem.EnqueueCancelBuildingPlacement(world.EntityManager);
 
@@ -665,7 +676,7 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
             isBuildModeActive: () => false,
             placementPreviewSystem: null,
             hasActiveBuilding: () => false,
-            runtimeGameplayStateSystem: new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager),
+            runtimeGameplayStateSystem: new RuntimeGameplayStateSystem(world.EntityManager),
             getMainMenu: () => null,
             selectionClickSystem: null,
             selectionClickContext: default,
@@ -930,6 +941,7 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
     }
 
     private static BuildingPlacementCommandRequestCompositionSystemHelper.Context CreateActivePlacementCommandContext(
+        EntityManager entityManager,
         out BuildingPlacementLifecycleCompositionSystemHelper lifecycleSystem,
         out GameObject prefab,
         out GameObject root,
@@ -940,7 +952,7 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
         Func<int, bool> trySpendCost = null,
         BuildingDefinitionPrefabSystemHelper definitionSystem = null)
     {
-        var runtimeStateSystem = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager);
+        var runtimeStateSystem = new RuntimeGameplayStateSystem(entityManager);
         lifecycleSystem = new BuildingPlacementLifecycleCompositionSystemHelper();
         var sessionSystem = new BuildingPlacementSessionCompositionSystemHelper();
         prefab = new GameObject("PlacementCommandTestPrefab");
@@ -1022,11 +1034,12 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
     }
 
     private static BuildingPlacementCommandRequestCompositionSystemHelper.Context CreatePlacementCommandContext(
+        EntityManager entityManager,
         BuildingPlacementSessionCompositionSystemHelper sessionSystem,
         Action<string> clearSelectedBuilding = null,
         Action clearCommandMode = null)
     {
-        var runtimeStateSystem = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager);
+        var runtimeStateSystem = new RuntimeGameplayStateSystem(entityManager);
         var lifecycleSystem = new BuildingPlacementLifecycleCompositionSystemHelper();
         BuildingPlacementSessionCompositionSystemHelper.Context sessionContext = new(
             runtimeStateSystem,

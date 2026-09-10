@@ -9,6 +9,26 @@ namespace Game.Runtime
 {
     internal static class CampaignMissionBuildingPlacementPolicy
     {
+        internal static bool TryResolveInitialPlacementOrigin(BuildingGameplaySourceCompositionSystemHelper source,
+            BuildingRuntimeSpawnCompositionSystemHelper.Context context, BuildingDefinition definition,
+            Vector2Int origin, out Vector2Int resolved)
+        {
+            RectInt missionOrigins = default;
+            Vector2Int footprint = context.GetPlacementFootprint(definition, false);
+            bool hasMissionOrigins = source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out EntityManager em) &&
+                CampaignMissionBuildingPlacementPolicy.TryResolveOriginBounds(em,
+                    source.BuildingGameplayEcsQueryCompositionSystemHelper, definition, footprint, out missionOrigins);
+            if (hasMissionOrigins)
+                origin = new Vector2Int(missionOrigins.xMin + (missionOrigins.width - 1) / 2,
+                    missionOrigins.yMin + (missionOrigins.height - 1) / 2);
+            bool found = source.BuildingRuntimeSpawnCompositionSystemHelper.TryResolveInitialPlacementOrigin(
+                context, definition, origin, out resolved, hasMissionOrigins ? missionOrigins : null);
+            // Resolve the mission's preview position even while its lot is occupied.
+            // Preview and confirmation validation still reject the blocked footprint.
+            if (!found && hasMissionOrigins) resolved = origin;
+            return found || hasMissionOrigins;
+        }
+
         internal static bool IsAllowed(
             BuildingGameplaySourceCompositionSystemHelper source,
             BuildingDefinition building,
@@ -101,6 +121,21 @@ namespace Game.Runtime
             out Vector2Int origin)
         {
             origin = default;
+            if (!TryResolveOriginBounds(entityManager, queries, building, footprint, out RectInt origins))
+                return false;
+            origin = new Vector2Int(origins.xMin + (origins.width - 1) / 2,
+                origins.yMin + (origins.height - 1) / 2);
+            return true;
+        }
+
+        internal static bool TryResolveOriginBounds(
+            EntityManager entityManager,
+            BuildingGameplayEcsQueryCompositionSystemHelper queries,
+            BuildingDefinition building,
+            Vector2Int footprint,
+            out RectInt origins)
+        {
+            origins = default;
             if (footprint.x <= 0 || footprint.y <= 0)
                 return false;
 
@@ -139,9 +174,8 @@ namespace Game.Runtime
                     return false;
                 }
 
-                origin = new Vector2Int(
-                    zone.xMin + ((zone.width - footprint.x) / 2),
-                    zone.yMin + ((zone.height - footprint.y) / 2));
+                origins = new RectInt(zone.xMin, zone.yMin,
+                    zone.width - footprint.x + 1, zone.height - footprint.y + 1);
                 return true;
             }
 

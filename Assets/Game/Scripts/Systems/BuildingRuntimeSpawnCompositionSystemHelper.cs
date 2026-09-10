@@ -394,7 +394,8 @@ namespace Game.Runtime
             Context context,
             BuildingDefinition definition,
             Vector2Int preferredOrigin,
-            out Vector2Int resolvedOrigin)
+            out Vector2Int resolvedOrigin,
+            RectInt? allowedOrigins = null)
         {
             resolvedOrigin = preferredOrigin;
             if (definition == null || context.GetPlacementFootprint == null || context.IsPlacementValid == null)
@@ -402,54 +403,20 @@ namespace Game.Runtime
             if (context.TryGetGridData == null || !context.TryGetGridData(out _, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData))
                 return false;
 
-            const bool rotateVertical = false;
-            Vector2Int footprint = context.GetPlacementFootprint(definition, rotateVertical);
-            Vector2Int clampedPreferred = new(
-                Mathf.Clamp(preferredOrigin.x, 0, Mathf.Max(0, grid.Width - footprint.x)),
-                Mathf.Clamp(preferredOrigin.y, 0, Mathf.Max(0, grid.Height - footprint.y)));
-
-            if (context.IsPlacementValid(definition, clampedPreferred, footprint, rotateVertical, grid, roads, blockerData))
+            Vector2Int footprint = context.GetPlacementFootprint(definition, false);
+            if (footprint.x <= 0 || footprint.y <= 0 || footprint.x > grid.Width || footprint.y > grid.Height)
+                return false;
+            RectInt bounds = new(0, 0, grid.Width - footprint.x + 1, grid.Height - footprint.y + 1);
+            if (allowedOrigins.HasValue)
             {
-                resolvedOrigin = clampedPreferred;
-                return true;
+                RectInt requested = allowedOrigins.Value;
+                int minX = Mathf.Max(bounds.xMin, requested.xMin), minY = Mathf.Max(bounds.yMin, requested.yMin);
+                bounds = new RectInt(minX, minY, Mathf.Min(bounds.xMax, requested.xMax) - minX,
+                    Mathf.Min(bounds.yMax, requested.yMax) - minY);
             }
-
-            int maxRadius = Mathf.Max(grid.Width, grid.Height);
-            for (int radius = 1; radius <= maxRadius; radius++)
-            {
-                for (int dy = -radius; dy <= radius; dy++)
-                {
-                    for (int dx = -radius; dx <= radius; dx++)
-                    {
-                        if (Mathf.Abs(dx) != radius && Mathf.Abs(dy) != radius)
-                            continue;
-
-                        Vector2Int candidate = clampedPreferred + new Vector2Int(dx, dy);
-                        candidate.x = Mathf.Clamp(candidate.x, 0, Mathf.Max(0, grid.Width - footprint.x));
-                        candidate.y = Mathf.Clamp(candidate.y, 0, Mathf.Max(0, grid.Height - footprint.y));
-                        if (!context.IsPlacementValid(definition, candidate, footprint, rotateVertical, grid, roads, blockerData))
-                            continue;
-
-                        resolvedOrigin = candidate;
-                        return true;
-                    }
-                }
-            }
-
-            for (int y = 0; y <= Mathf.Max(0, grid.Height - footprint.y); y++)
-            {
-                for (int x = 0; x <= Mathf.Max(0, grid.Width - footprint.x); x++)
-                {
-                    Vector2Int candidate = new(x, y);
-                    if (!context.IsPlacementValid(definition, candidate, footprint, rotateVertical, grid, roads, blockerData))
-                        continue;
-
-                    resolvedOrigin = candidate;
-                    return true;
-                }
-            }
-
-            return false;
+            return BuildingPlacementOriginSearch.TryFind(bounds, preferredOrigin,
+                candidate => context.IsPlacementValid(definition, candidate, footprint, false, grid, roads, blockerData),
+                out resolvedOrigin);
         }
 
         public static BuildingDefinition CloneDefinitionWithFootprint(BuildingDefinition definition, Vector2Int footprintCells)

@@ -1,0 +1,198 @@
+{
+  "scope": "Editor-only M3/M4 completion checkpoint; no device claim and no images committed",
+  "implementationCommit": "6d5e916be8a09316274a002c017072f1dfeac537",
+  "editorSuite": {
+    "result": "Failed(Child)",
+    "total": 4375,
+    "passed": 4370,
+    "failed": 3,
+    "skipped": 2,
+    "inconclusive": 0,
+    "durationSeconds": 1334.5512251,
+    "startUtc": "2026-09-10 14:29:54Z",
+    "endUtc": "2026-09-10 14:52:08Z",
+    "archive": "Design/AgentReports/M03M04Completion/editor-tests-20260910.xml.gz",
+    "sha256": "4a1af3085785568a5db233791aac53841532f71086c5d6ed29596721f60ceeef",
+    "failures": [
+      {
+        "name": "FirstLaunchNarrativeMenuIntegrationTests.ActivePersianLocale_UsesPersianVoiceWhenProfileLanguageIsStale",
+        "message": "  Expected: not null\n  But was:  null\n"
+      },
+      {
+        "name": "FirstLaunchNarrativeMenuIntegrationTests.MenuScene_HasTopLevelNarrativeLayerAndExactConfigs",
+        "message": "  m04-brief-01\n  Expected: not null\n  But was:  null\n"
+      },
+      {
+        "name": "GameLocalizationCatalogTests.EveryV3UiPrefab_HasSharedEnglishAndPersianCoverage",
+        "message": "System.InvalidOperationException : V3 localization validation failed with 1 issue(s).\nAssets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab:SCN08_MatchHudContent/V3Composition/LeftContent/SelectedSquadPanel/Frame/Subtitle missing EN key"
+      }
+    ],
+    "skips": [
+      {
+        "name": "QuickCustomBalanceProbeTests.QuickCustom_Default_Medium_ProducesBalanceReport",
+        "reason": "Opt-in balance probe. Produces a report and is intentionally excluded from normal Jenkins/build validation."
+      },
+      {
+        "name": "QuickCustomBalanceProbeTests.QuickCustom_Hard_Swarm_ProducesBalanceReport",
+        "reason": "Opt-in balance probe. Produces a report and is intentionally excluded from normal Jenkins/build validation."
+      }
+    ],
+    "implementationCommit": "ae88ed74af37f57197f0a1719f95be5e0be26bd6"
+  },
+  "architectureFixtures": [
+    {
+      "fixture": "ProductionSourceGrowthArchitectureTests",
+      "total": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "fixture": "ScriptArchitectureAlignmentContractTests",
+      "total": 59,
+      "passed": 59,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "fixture": "EcsBurstHotPathArchitectureTests",
+      "total": 12,
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "fixture": "NonUiSystemBaseMigrationArchitectureTests",
+      "total": 20,
+      "passed": 20,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "fixture": "NonEcsSystemConversionArchitectureTests",
+      "total": 9,
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "fixture": "ResourceExchangeArchitectureGuardrailTests",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "fixture": "TacticalResourceOwnershipArchitectureTests",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "fixture": "M01FirstContactBurstAotArchitectureTests",
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "fixture": "FirstLaunchArchitectureAlignmentTests",
+      "total": 10,
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "repositorySuite": {
+    "passed": 435,
+    "failed": 0,
+    "archive": "Design/AgentReports/M03M04Completion/repository-tests-20260910.txt",
+    "sha256": "aeca5c124dd9c88bb0fa63ea07afe70eccff34d398ae589d64bd738b288cb833",
+    "implementationCommit": "ae88ed74af37f57197f0a1719f95be5e0be26bd6"
+  },
+  "liveEditorJourneys": [
+    {
+      "localLog": "/private/tmp/warline-completion-m03-final-guidance-05.log",
+      "logSha256": "1361749906c9b66fb49fa3834ebdeb3558a2a273c9b53bf68325b9878997fcb4",
+      "passMarker": "[M03RadarWarningEditorLaunchProbe] result=Passed real M3 victory; camera finale without stale warning; 3 debrief panels; bilingual visible results and guide return; actual Continue to visible Campaign screen; all prior actors removed; first-clear receipt and M4 availability persisted; rewards unchanged on return",
+      "wrapperExitCode": 0
+    },
+    {
+      "localLog": "/private/tmp/warline-completion-m03-sensor-06.log",
+      "logSha256": "8378b45d9dc97294d00c1b3dfa180451c3dd5387215382d9edc3a78688e467f3",
+      "passMarker": "[M03RadarWarningEditorLaunchProbe] result=Passed strategy=rifle defense with player commands outcome=Victory elapsed=185384 defeated=7/7 core=0 postDestroyed=0; simulation speed=3",
+      "wrapperExitCode": 0
+    },
+    {
+      "localLog": "/private/tmp/warline-completion-m03-defeat-resize-09.log",
+      "logSha256": "b160f680535963325ea355faa9f90b4989172fcea7026d78c620085191d6aee4",
+      "passMarker": "[M03RadarWarningEditorLaunchProbe] result=Passed real rifle-retreat core-breach defeat -> localized failure result -> guide return -> actual Retry; same session, isolated next attempt, 20 members, fresh 2 Ping uses and full budget",
+      "wrapperExitCode": 0
+    },
+    {
+      "localLog": "/private/tmp/warline-completion-m03-save-recovery-07.log",
+      "logSha256": "ce8d82f8c17a5794cf84d30823ccac6c68960a00764dac5d11fa3e58dea59513",
+      "passMarker": "[M03RadarWarningEditorLaunchProbe] result=Passed real rifle victory -> 3-second finale (clock frozen) -> 3 final M3 debrief panels -> localized Victory; result guide returns; stars=3; civiliansLost=0",
+      "wrapperExitCode": 0
+    },
+    {
+      "localLog": "/private/tmp/warline-completion-m04-player-camera-05.log",
+      "logSha256": "3cd44d879efed1e6f2740a0c3c675d6c928188209021ba44d526c9a782133a73",
+      "passMarker": "[M04EditorProbe] result=Passed HUD en/fa 16:9 and 20:9; 12 guide topics and 57 classes in both languages; real APC/helicopter rescue; debrief; saved unlocks; visible bilingual result; campaign return; real Replay carrier-loss defeat and clean Retry; idle failure under normal combat at 4x simulation; no duplicate rewards",
+      "wrapperExitCode": 0
+    }
+  ],
+  "performanceArtifacts": [
+    {
+      "path": "Design/AgentReports/M03RadarWarning/LaunchProbe/allocation-attribution-completion-20260910.json",
+      "sha256": "397cad13e1cb7fa2c3050cb925f04bfa57bb93a15d86bc3d949dab3ea6f5ab6a"
+    },
+    {
+      "path": "Design/AgentReports/M03RadarWarning/LaunchProbe/editor-performance-completion-20260910.json",
+      "sha256": "13317a912c8b3e161b093ff14b81feda902e8de68c4b9b62ad3dec9af18d7b8b"
+    },
+    {
+      "path": "Design/AgentReports/M03RadarWarning/LaunchProbe/editor-performance-focused-completion-20260910.json",
+      "sha256": "87d75f48679c8144de510a879744d9ad36dcb08f70d89cc6bfcb013b175f2909"
+    },
+    {
+      "path": "Design/AgentReports/M03RadarWarning/LaunchProbe/editor-performance-focus-attempt-20260910.json",
+      "sha256": "6f6113f341c04c9ed81541b52af2b29238b6a8344885091c3419e191f03d74cb"
+    },
+    {
+      "path": "Design/AgentReports/performance_regression_match_completion_20260910.json",
+      "sha256": "22ad184481f7d10da3f64dcc957566bace81d425b3e522a55c61639f670ebb16"
+    },
+    {
+      "path": "Design/AgentReports/performance_regression_match_completion_20260910.md",
+      "sha256": "5aa1110bfcbaf7b9034fda2f2f50e5134123f0814fc1f23b3f534bbab1147d93"
+    }
+  ],
+  "remaining": [
+    "M4 prepared 38-clip voice payload awaits separate approval; generation/import/M4-specific ARIA routing and voice validation incomplete",
+    "Editor P95 frame budget exceeded; .NET current-thread allocation counter unavailable; valid raw allocation attribution is not a zero-allocation pass"
+  ],
+  "architectureCheckpointCommit": "ae88ed74af37f57197f0a1719f95be5e0be26bd6",
+  "supplementalEditorSuite": {
+    "implementationCommit": "6d5e916be8a09316274a002c017072f1dfeac537",
+    "result": "Failed(Child)",
+    "total": 47,
+    "passed": 46,
+    "failed": 1,
+    "skipped": 0,
+    "durationSeconds": 8.172268,
+    "archive": "Design/AgentReports/M03M04Completion/editor-regressions-20260910.xml.gz",
+    "sha256": "df5a6c34653581e6286225aa68097ad3b21c1d3439d56b5af9ddbe149a3d12c1",
+    "failures": [
+      {
+        "name": "FirstLaunchNarrativeMenuIntegrationTests.MenuScene_HasTopLevelNarrativeLayerAndExactConfigs",
+        "message": "  m04-brief-01\n  Expected: not null\n  But was:  null\n"
+      }
+    ],
+    "repairedFullSuiteFailures": [
+      "FirstLaunchNarrativeMenuIntegrationTests.ActivePersianLocale_UsesPersianVoiceWhenProfileLanguageIsStale",
+      "GameLocalizationCatalogTests.EveryV3UiPrefab_HasSharedEnglishAndPersianCoverage"
+    ]
+  }
+}

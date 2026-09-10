@@ -3,18 +3,18 @@
   "taskId": "APH-700",
   "scope": "Direct dependencies and source-level cross-domain type references for first-party asmdefs under Assets/Game, Assets/Tests, and Assets/Editor.",
   "determinismContract": "Explicit evidence identity, no timestamp, ordinal path ordering, normalized LF output, and a content-derived source fingerprint.",
-  "exactCommit": "eba47c95f5a9309b2f9124b0594452fd2914fd1e",
+  "exactCommit": "ae88ed74af37f57197f0a1719f95be5e0be26bd6",
   "environmentIdentitySha256": "1750156ad389d4f28a392531d19339a96140da898d5c2dfd1920c38d6486239e",
   "dirty": true,
-  "sourceFingerprintSha256": "05b89630f39a954a702b7b29a0c80977fc4362586d7946ef65730446de9115f0",
+  "sourceFingerprintSha256": "3d92b0a2988d551e74c05bdcb703cb24a2b94cfcd5b75401ba79e88ad30b5d93",
   "summary": {
     "assemblyCount": 23,
     "firstPartyEdgeCount": 132,
     "externalReferenceCount": 122,
-    "sourceFileCount": 2277,
-    "declaredTypeCount": 3889,
-    "resolvedCrossDomainTypeOccurrenceCount": 50722,
-    "distinctCrossDomainTypeReferenceCount": 4386,
+    "sourceFileCount": 2282,
+    "declaredTypeCount": 3892,
+    "resolvedCrossDomainTypeOccurrenceCount": 50772,
+    "distinctCrossDomainTypeReferenceCount": 4391,
     "ambiguousTypeTokenOccurrenceCount": 112,
     "unownedScopedSourceFileCount": 0
   },
@@ -68,8 +68,8 @@
       "name": "Game.Editor",
       "asmdefPath": "Assets/Game/Scripts/Editor/Game.Editor.asmdef",
       "asmdefGuid": "f904b4f32c8634430b43f82380f2405f",
-      "sourceFileCount": 340,
-      "declaredTypeCount": 463,
+      "sourceFileCount": 342,
+      "declaredTypeCount": 464,
       "firstPartyDependencyCount": 19,
       "externalDependencyCount": 20
     },
@@ -122,7 +122,7 @@
       "name": "Game.Runtime",
       "asmdefPath": "Assets/Game/Scripts/Game.Runtime.asmdef",
       "asmdefGuid": "361d0433287ed4a42bf3fd161956446a",
-      "sourceFileCount": 671,
+      "sourceFileCount": 672,
       "declaredTypeCount": 1200,
       "firstPartyDependencyCount": 10,
       "externalDependencyCount": 10
@@ -158,8 +158,8 @@
       "name": "Game.Tests.Editor",
       "asmdefPath": "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
       "asmdefGuid": "75d949434cfb844baba7f313bdfe96db",
-      "sourceFileCount": 515,
-      "declaredTypeCount": 527,
+      "sourceFileCount": 517,
+      "declaredTypeCount": 529,
       "firstPartyDependencyCount": 20,
       "externalDependencyCount": 14
     },
@@ -3030,9 +3030,9 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Editor/Game.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Configs/Game.Configs.asmdef",
       "declaredReference": "Game.Configs",
-      "resolvedTypeOccurrenceCount": 979,
+      "resolvedTypeOccurrenceCount": 981,
       "distinctResolvedTypeCount": 87,
-      "referencingSourceFileCount": 114,
+      "referencingSourceFileCount": 115,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Editor",
@@ -3802,9 +3802,9 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Editor/Game.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/UI/Game.UI.Runtime.asmdef",
       "declaredReference": "Game.UI.Runtime",
-      "resolvedTypeOccurrenceCount": 1859,
+      "resolvedTypeOccurrenceCount": 1865,
       "distinctResolvedTypeCount": 136,
-      "referencingSourceFileCount": 92,
+      "referencingSourceFileCount": 93,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Editor",
@@ -3831,8 +3831,8 @@
           "targetAssembly": "Game.UI.Runtime",
           "fullTypeName": "Game.UI.Runtime.MainMenuV3SectionLayoutView",
           "typeName": "MainMenuV3SectionLayoutView",
-          "occurrenceCount": 162,
-          "sourceFileCount": 34,
+          "occurrenceCount": 164,
+          "sourceFileCount": 36,
           "sourceFiles": [
             "Assets/Game/Scripts/Editor/AbilityUpgradeDetailV3PrefabBuilder.cs",
             "Assets/Game/Scripts/Editor/AriaCommandAssistantV3PrefabBuilder.cs",
@@ -4604,9 +4604,9 @@
       "sourceAsmdefPath": "Assets/Game/Scripts/Game.Runtime.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Components/Game.Components.asmdef",
       "declaredReference": "Game.Components",
-      "resolvedTypeOccurrenceCount": 12337,
+      "resolvedTypeOccurrenceCount": 12342,
       "distinctResolvedTypeCount": 525,
-      "referencingSourceFileCount": 468,
+      "referencingSourceFileCount": 469,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Runtime",
@@ -4653,7 +4653,7 @@
           "targetAssembly": "Game.Components",
           "fullTypeName": "Game.Components.Faction",
           "typeName": "Faction",
-          "occurrenceCount": 382,
+          "occurrenceCount": 384,
           "sourceFileCount": 101,
           "sourceFiles": [
             "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs",
@@ -5834,7 +5834,7 @@
       "sourceAsmdefPath": "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Components/Game.Components.asmdef",
       "declaredReference": "Game.Components",
-      "resolvedTypeOccurrenceCount": 14276,
+      "resolvedTypeOccurrenceCount": 14301,
       "distinctResolvedTypeCount": 511,
       "referencingSourceFileCount": 250,
       "topTypeReferences": [
@@ -5863,8 +5863,8 @@
           "targetAssembly": "Game.Components",
           "fullTypeName": "Game.Components.Faction",
           "typeName": "Faction",
-          "occurrenceCount": 460,
-          "sourceFileCount": 69,
+          "occurrenceCount": 462,
+          "sourceFileCount": 70,
           "sourceFiles": [
             "Assets/Tests/Editor/AICombatOrderValidationTests.cs",
             "Assets/Tests/Editor/AIControlModeValidationTests.cs",
@@ -5883,8 +5883,8 @@
           "targetAssembly": "Game.Components",
           "fullTypeName": "Game.Components.UnitHealth",
           "typeName": "UnitHealth",
-          "occurrenceCount": 370,
-          "sourceFileCount": 62,
+          "occurrenceCount": 372,
+          "sourceFileCount": 63,
           "sourceFiles": [
             "Assets/Tests/Editor/AICombatOrderValidationTests.cs",
             "Assets/Tests/Editor/AIEndToEndValidationTests.cs",
@@ -6019,7 +6019,7 @@
           "targetAssembly": "Game.Components",
           "fullTypeName": "Game.Components.CampaignMissionRuntimeComponent",
           "typeName": "CampaignMissionRuntimeComponent",
-          "occurrenceCount": 206,
+          "occurrenceCount": 207,
           "sourceFileCount": 36,
           "sourceFiles": [
             "Assets/Tests/Editor/AssistantCommandIntentSystemTests.cs",
@@ -6189,9 +6189,9 @@
       "sourceAsmdefPath": "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Configs/Game.Configs.asmdef",
       "declaredReference": "Game.Configs",
-      "resolvedTypeOccurrenceCount": 1637,
-      "distinctResolvedTypeCount": 123,
-      "referencingSourceFileCount": 126,
+      "resolvedTypeOccurrenceCount": 1639,
+      "distinctResolvedTypeCount": 124,
+      "referencingSourceFileCount": 127,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Tests.Editor",
@@ -6384,9 +6384,9 @@
       "sourceAsmdefPath": "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Editor/Game.Editor.asmdef",
       "declaredReference": "Game.Editor",
-      "resolvedTypeOccurrenceCount": 770,
-      "distinctResolvedTypeCount": 128,
-      "referencingSourceFileCount": 69,
+      "resolvedTypeOccurrenceCount": 772,
+      "distinctResolvedTypeCount": 130,
+      "referencingSourceFileCount": 71,
       "topTypeReferences": [
         {
           "sourceAssembly": "Game.Tests.Editor",
@@ -7041,7 +7041,7 @@
       "sourceAsmdefPath": "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/Game.Runtime.asmdef",
       "declaredReference": "Game.Runtime",
-      "resolvedTypeOccurrenceCount": 3660,
+      "resolvedTypeOccurrenceCount": 3661,
       "distinctResolvedTypeCount": 458,
       "referencingSourceFileCount": 203,
       "topTypeReferences": [
@@ -7365,8 +7365,8 @@
       "sourceAsmdefPath": "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/UI/Contracts/Game.UI.Contracts.asmdef",
       "declaredReference": "Game.UI.Contracts",
-      "resolvedTypeOccurrenceCount": 484,
-      "distinctResolvedTypeCount": 87,
+      "resolvedTypeOccurrenceCount": 486,
+      "distinctResolvedTypeCount": 88,
       "referencingSourceFileCount": 57,
       "topTypeReferences": [
         {
@@ -7403,6 +7403,25 @@
             "Assets/Tests/Editor/ResourceExchangePopupPrefabTests.cs",
             "Assets/Tests/Editor/ResourceExchangeShellPopupPerformanceValidation.cs",
             "Assets/Tests/Editor/UiShellEcsGatewayResourceHeaderTests.cs"
+          ]
+        },
+        {
+          "sourceAssembly": "Game.Tests.Editor",
+          "targetAssembly": "Game.UI.Contracts",
+          "fullTypeName": "Game.UI.Contracts.UiMissionResultPopupModel",
+          "typeName": "UiMissionResultPopupModel",
+          "occurrenceCount": 18,
+          "sourceFileCount": 9,
+          "sourceFiles": [
+            "Assets/Tests/Editor/LoadoutSquadPrepV3PrefabTests.cs",
+            "Assets/Tests/Editor/M01FirstContactHudResultTests.cs",
+            "Assets/Tests/Editor/M01M02PlayableButtonQaTests.cs",
+            "Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs",
+            "Assets/Tests/Editor/M03PresentationTests.cs",
+            "Assets/Tests/Editor/MatchHudAssistantUiSystemHelperTests.cs",
+            "Assets/Tests/Editor/ResourceExchangeHeaderRoutingTests.cs",
+            "Assets/Tests/Editor/ResourceExchangePopupPrefabTests.cs",
+            "Assets/Tests/Editor/ResourceExchangeShellPopupPerformanceValidation.cs"
           ]
         },
         {
@@ -7450,24 +7469,6 @@
             "Assets/Tests/Editor/M02EstablishBaseDoItTests.cs",
             "Assets/Tests/Editor/M02EstablishBaseGuidanceTests.cs",
             "Assets/Tests/Editor/M03PresentationTests.cs",
-            "Assets/Tests/Editor/MatchHudAssistantUiSystemHelperTests.cs",
-            "Assets/Tests/Editor/ResourceExchangeHeaderRoutingTests.cs",
-            "Assets/Tests/Editor/ResourceExchangePopupPrefabTests.cs",
-            "Assets/Tests/Editor/ResourceExchangeShellPopupPerformanceValidation.cs"
-          ]
-        },
-        {
-          "sourceAssembly": "Game.Tests.Editor",
-          "targetAssembly": "Game.UI.Contracts",
-          "fullTypeName": "Game.UI.Contracts.UiMissionResultPopupModel",
-          "typeName": "UiMissionResultPopupModel",
-          "occurrenceCount": 17,
-          "sourceFileCount": 8,
-          "sourceFiles": [
-            "Assets/Tests/Editor/LoadoutSquadPrepV3PrefabTests.cs",
-            "Assets/Tests/Editor/M01FirstContactHudResultTests.cs",
-            "Assets/Tests/Editor/M01M02PlayableButtonQaTests.cs",
-            "Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs",
             "Assets/Tests/Editor/MatchHudAssistantUiSystemHelperTests.cs",
             "Assets/Tests/Editor/ResourceExchangeHeaderRoutingTests.cs",
             "Assets/Tests/Editor/ResourceExchangePopupPrefabTests.cs",
@@ -7546,8 +7547,8 @@
       "sourceAsmdefPath": "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
       "targetAsmdefPath": "Assets/Game/Scripts/UI/Game.UI.Runtime.asmdef",
       "declaredReference": "Game.UI.Runtime",
-      "resolvedTypeOccurrenceCount": 1406,
-      "distinctResolvedTypeCount": 139,
+      "resolvedTypeOccurrenceCount": 1411,
+      "distinctResolvedTypeCount": 140,
       "referencingSourceFileCount": 73,
       "topTypeReferences": [
         {
@@ -7662,8 +7663,8 @@
           "targetAssembly": "Game.UI.Runtime",
           "fullTypeName": "Game.UI.Runtime.MainMenuV3SectionLayoutView",
           "typeName": "MainMenuV3SectionLayoutView",
-          "occurrenceCount": 44,
-          "sourceFileCount": 22,
+          "occurrenceCount": 46,
+          "sourceFileCount": 23,
           "sourceFiles": [
             "Assets/Tests/Editor/AbilityUpgradeDetailV3PrefabTests.cs",
             "Assets/Tests/Editor/AriaCommandAssistantV3PrefabTests.cs",
@@ -11440,8 +11441,8 @@
       "targetAssembly": "Game.Components",
       "fullTypeName": "Game.Components.Faction",
       "typeName": "Faction",
-      "occurrenceCount": 460,
-      "sourceFileCount": 69,
+      "occurrenceCount": 462,
+      "sourceFileCount": 70,
       "sourceFiles": [
         "Assets/Tests/Editor/AICombatOrderValidationTests.cs",
         "Assets/Tests/Editor/AIControlModeValidationTests.cs",
@@ -11480,7 +11481,7 @@
       "targetAssembly": "Game.Components",
       "fullTypeName": "Game.Components.Faction",
       "typeName": "Faction",
-      "occurrenceCount": 382,
+      "occurrenceCount": 384,
       "sourceFileCount": 101,
       "sourceFiles": [
         "Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs",
@@ -11500,8 +11501,8 @@
       "targetAssembly": "Game.Components",
       "fullTypeName": "Game.Components.UnitHealth",
       "typeName": "UnitHealth",
-      "occurrenceCount": 370,
-      "sourceFileCount": 62,
+      "occurrenceCount": 372,
+      "sourceFileCount": 63,
       "sourceFiles": [
         "Assets/Tests/Editor/AICombatOrderValidationTests.cs",
         "Assets/Tests/Editor/AIEndToEndValidationTests.cs",
@@ -11736,7 +11737,7 @@
       "targetAssembly": "Game.Components",
       "fullTypeName": "Game.Components.CampaignMissionRuntimeComponent",
       "typeName": "CampaignMissionRuntimeComponent",
-      "occurrenceCount": 206,
+      "occurrenceCount": 207,
       "sourceFileCount": 36,
       "sourceFiles": [
         "Assets/Tests/Editor/AssistantCommandIntentSystemTests.cs",
@@ -11976,8 +11977,8 @@
       "targetAssembly": "Game.UI.Runtime",
       "fullTypeName": "Game.UI.Runtime.MainMenuV3SectionLayoutView",
       "typeName": "MainMenuV3SectionLayoutView",
-      "occurrenceCount": 162,
-      "sourceFileCount": 34,
+      "occurrenceCount": 164,
+      "sourceFileCount": 36,
       "sourceFiles": [
         "Assets/Game/Scripts/Editor/AbilityUpgradeDetailV3PrefabBuilder.cs",
         "Assets/Game/Scripts/Editor/AriaCommandAssistantV3PrefabBuilder.cs",
@@ -12136,8 +12137,8 @@
       "targetAssembly": "Game.Components",
       "fullTypeName": "Game.Components.UnitPathRequest",
       "typeName": "UnitPathRequest",
-      "occurrenceCount": 145,
-      "sourceFileCount": 23,
+      "occurrenceCount": 147,
+      "sourceFileCount": 24,
       "sourceFiles": [
         "Assets/Tests/Editor/AICombatOrderValidationTests.cs",
         "Assets/Tests/Editor/AIControlModeValidationTests.cs",
@@ -12291,6 +12292,26 @@
     {
       "sourceAssembly": "Game.Tests.Editor",
       "targetAssembly": "Game.Components",
+      "fullTypeName": "Game.Components.UnitCombat",
+      "typeName": "UnitCombat",
+      "occurrenceCount": 131,
+      "sourceFileCount": 29,
+      "sourceFiles": [
+        "Assets/Tests/Editor/AICombatOrderValidationTests.cs",
+        "Assets/Tests/Editor/AIEndToEndValidationTests.cs",
+        "Assets/Tests/Editor/AISteadyStatePerformanceValidation.cs",
+        "Assets/Tests/Editor/AITargetingValidationTests.cs",
+        "Assets/Tests/Editor/AirAttackGateBypassTests.cs",
+        "Assets/Tests/Editor/AlertObjectiveAudioFeedbackTests.cs",
+        "Assets/Tests/Editor/AutomaticCombatFactionTargetingTests.cs",
+        "Assets/Tests/Editor/BaseBreachValidationTests.cs",
+        "Assets/Tests/Editor/CitizenVisibleUnitPresentationSystemHelperTests.cs",
+        "Assets/Tests/Editor/CombatDamageObservationTelemetryTests.cs"
+      ]
+    },
+    {
+      "sourceAssembly": "Game.Tests.Editor",
+      "targetAssembly": "Game.Components",
       "fullTypeName": "Game.Components.UnitMovementBehavior",
       "typeName": "UnitMovementBehavior",
       "occurrenceCount": 130,
@@ -12366,26 +12387,6 @@
         "Assets/Tests/Editor/BuildingAudioFeedbackTests.cs",
         "Assets/Tests/Editor/BuildingDefenseAttackSystemTests.cs",
         "Assets/Tests/Editor/CombatAudioEventUtilityTests.cs"
-      ]
-    },
-    {
-      "sourceAssembly": "Game.Tests.Editor",
-      "targetAssembly": "Game.Components",
-      "fullTypeName": "Game.Components.UnitCombat",
-      "typeName": "UnitCombat",
-      "occurrenceCount": 129,
-      "sourceFileCount": 28,
-      "sourceFiles": [
-        "Assets/Tests/Editor/AICombatOrderValidationTests.cs",
-        "Assets/Tests/Editor/AIEndToEndValidationTests.cs",
-        "Assets/Tests/Editor/AISteadyStatePerformanceValidation.cs",
-        "Assets/Tests/Editor/AITargetingValidationTests.cs",
-        "Assets/Tests/Editor/AirAttackGateBypassTests.cs",
-        "Assets/Tests/Editor/AlertObjectiveAudioFeedbackTests.cs",
-        "Assets/Tests/Editor/AutomaticCombatFactionTargetingTests.cs",
-        "Assets/Tests/Editor/BaseBreachValidationTests.cs",
-        "Assets/Tests/Editor/CitizenVisibleUnitPresentationSystemHelperTests.cs",
-        "Assets/Tests/Editor/CombatDamageObservationTelemetryTests.cs"
       ]
     }
   ],

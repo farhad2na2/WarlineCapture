@@ -16,7 +16,8 @@ Starting point: `4522a97c8`, 10 September 2026. This continues the delivered mis
 - [x] Movement/rendered animation acceptance
 - [x] Camera subject/action acceptance
 - [ ] Mission UI, guidance, pacing and audio scope
-- [ ] Architecture and related regressions green
+- [x] Architecture checks: 139/139 passed
+- [ ] All required regression gates green (M4 voices remain missing)
 - [ ] Final integrated Editor QA and allocation checks
 - [ ] Documentation reconciled, committed and pushed
 
@@ -138,3 +139,13 @@ The D-113 selection-panel growth exception is retired from the active manifest: 
 - M4 player-camera run 05 uses a fresh output folder and additionally checks/captures both victory and carrier-loss defeat at 20:9 in English and Farsi. The previous accepted run-04 captures are retained under `/private/tmp/warline-m04-readiness-final04`.
 
 - Final M4 player-camera run 05 exited **0**: complete bilingual/aspect HUD and guide inventory, actual rescue, debrief, exactly-once rewards, Campaign return, Replay carrier-loss defeat, clean Retry and normal-combat idle Defeat at **164.011 seconds**. Victory and defeat now pass canvas bounds at both aspects in both languages. Both wide victory images and the wide Farsi defeat image were visually reviewed; all headers, objectives, rewards/reasons and Continue/Retry controls fit.
+
+- Implementation and functional QA checkpoint **720b161af6fbcecebdc7eaa5de8353c81efc2a90** is pushed. Allocation run 06 exited **0** with valid positive controls and samples for all eleven owners: mission systems 48 B total (one Mono.JIT sample), HUD 25,930 B across 31 changed-text calls; unchanged HUD windows 0 B. This does not pass an inclusive Editor zero-allocation target.
+
+- Normal M3 performance run 06 failed the unchanged 20 ms P95 budget (43.9–51.5 ms across phases). Attempt 07 improved to 16.8–29.1 ms P95, but reported `gameViewMaximized=false`; it does not prove focused-view performance. Run 08 applies maximization after the mission has entered Play Mode. Both completed combat. The .NET current-thread allocation counter failed its 8192-byte positive control; the older large-match benchmark now also rejects this unavailable counter instead of accepting a false zero. Four regression cases preserve the allocation and frame thresholds.
+
+- Final source/authorization checkpoint 12 exited **0** at `ae88ed74af37f57197f0a1719f95be5e0be26bd6`: all **18** checks passed; regenerated inventory covers 23 first-party assemblies and 132 dependency edges. The previous compressed source-growth evidence remains immutable history. Final Python run 12 passed **435/435**, exit 0 (319.615 seconds).
+- The verified maximized M3 run 08 completed combat but still failed frame P95 (23.9/36.5/50.5/46.2 ms by phase). Large-match run 12 exited **1**, recording 23.092 ms P95 and explicitly unavailable allocation data after the positive control failed. Fresh results are retained separately; historical accepted baseline files were restored byte-for-byte. These gates remain unaccepted.
+
+- Full Editor run 04 exited **2**: **4,375 total, 4,370 passed, three failed, two existing opt-in probes skipped**. All **139** core architecture tests passed. Besides the known M4 voice requirement, it found an unlocalized runtime subtitle placeholder and a cache-dependent Edit Mode voice test.
+- The subtitle now starts empty until the selected-unit presentation supplies its live value. The voice test pumps the actual Addressables request using the existing Edit Mode helper, retaining the real Persian clip/path assertion and the original timeout. Targeted run 05 exited **2**, **46/47 passed**: both new failures are repaired; the sole failure is still M4 `m04-brief-01` missing its required clip. Localization coverage passed for 38 prefabs / 1,199 bindings / 1,885 keys per language. Four allocation evidence checks passed. Shipping correction commit: `6d5e916be8a09316274a002c017072f1dfeac537`. Full and supplemental XML, repository results and exact log/artifact hashes are archived in `Design/AgentReports/M03M04Completion`.

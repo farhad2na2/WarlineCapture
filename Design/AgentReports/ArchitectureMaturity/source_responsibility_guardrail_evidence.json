@@ -62,8 +62,8 @@
   "featureReadinessRevalidation": {
     "taskId": "M03-M04-COMPLETION",
     "result": "Passed",
-    "commit": "eba47c95f5a9309b2f9124b0594452fd2914fd1e",
-    "tree": "9d5b39ba9f72f8e9cf27b75f3d305c3091f43e12",
+    "commit": "ae88ed74af37f57197f0a1719f95be5e0be26bd6",
+    "tree": "dfff52874d29ce19d4b4c30a1b18242b07d0da7e",
     "contract": {
       "path": "Design/Architecture/post_hardening_source_responsibility_guardrails.json",
       "sha256": "bd9f233aef06e5635dec61bbb1b87c2938632b2b39e1953d23206f4855325155",
@@ -75,15 +75,15 @@
       "sha256": "a87e3c8ed4708240caf4edf05e049ee9b0760acb10d05998c07460cd6b43e019",
       "passedTests": 17,
       "compilerErrors": 0,
-      "log": "Design/AgentReports/ArchitectureMaturity/Logs/m03_m04_completion_source_growth_20260910.log.gz",
-      "logSha256": "b98426bac4e04c03ef331395ac8d8a7c62dc1f5d9d0a8315ac81eaf24b96f1aa",
+      "log": "Design/AgentReports/ArchitectureMaturity/Logs/m03_m04_completion_source_growth_20260910_final.log.gz",
+      "logSha256": "4f485269a4e0259a458a11eb07321b925b56f1cf188ebff8a8645c9f4a28c06c",
       "resultMarker": "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17"
     },
     "authorizationValidation": {
       "passedTests": 1,
       "compilerErrors": 0,
-      "log": "Design/AgentReports/ArchitectureMaturity/Logs/m03_m04_completion_source_growth_20260910.log.gz",
-      "logSha256": "b98426bac4e04c03ef331395ac8d8a7c62dc1f5d9d0a8315ac81eaf24b96f1aa",
+      "log": "Design/AgentReports/ArchitectureMaturity/Logs/m03_m04_completion_source_growth_20260910_final.log.gz",
+      "logSha256": "4f485269a4e0259a458a11eb07321b925b56f1cf188ebff8a8645c9f4a28c06c",
       "resultMarker": "[PostHardeningSourceAuthorizationValidation] result=Passed tests=1"
     },
     "scope": "Fresh Editor validation of the unchanged architecture ceilings at the committed M3/M4 implementation checkpoint. The archived AM-016 and AMFR-017 records remain historical; this does not claim full mission or performance QA."
@@ -151,6 +151,36 @@
       },
       "scope": "Supersedes only the active contract/validator/result binding. The original AM-016 evidence remains immutable historical acceptance evidence.",
       "availabilityNote": "The two ignored Build/Logs paths were absent on this checkout. The original metadata is retained for history; current acceptance uses the fresh committed-source capture below."
+    },
+    {
+      "taskId": "M03-M04-COMPLETION",
+      "result": "Passed",
+      "commit": "eba47c95f5a9309b2f9124b0594452fd2914fd1e",
+      "tree": "9d5b39ba9f72f8e9cf27b75f3d305c3091f43e12",
+      "contract": {
+        "path": "Design/Architecture/post_hardening_source_responsibility_guardrails.json",
+        "sha256": "bd9f233aef06e5635dec61bbb1b87c2938632b2b39e1953d23206f4855325155",
+        "guardedSourceCount": 4,
+        "growthAuthorizationCount": 114
+      },
+      "canonicalValidator": {
+        "path": "Assets/Tests/Editor/ProductionSourceGrowthArchitectureTests.cs",
+        "sha256": "a87e3c8ed4708240caf4edf05e049ee9b0760acb10d05998c07460cd6b43e019",
+        "passedTests": 17,
+        "compilerErrors": 0,
+        "log": "Design/AgentReports/ArchitectureMaturity/Logs/m03_m04_completion_source_growth_20260910.log.gz",
+        "logSha256": "b98426bac4e04c03ef331395ac8d8a7c62dc1f5d9d0a8315ac81eaf24b96f1aa",
+        "resultMarker": "[ProductionSourceGrowthArchitectureValidation] result=Passed tests=17"
+      },
+      "authorizationValidation": {
+        "passedTests": 1,
+        "compilerErrors": 0,
+        "log": "Design/AgentReports/ArchitectureMaturity/Logs/m03_m04_completion_source_growth_20260910.log.gz",
+        "logSha256": "b98426bac4e04c03ef331395ac8d8a7c62dc1f5d9d0a8315ac81eaf24b96f1aa",
+        "resultMarker": "[PostHardeningSourceAuthorizationValidation] result=Passed tests=1"
+      },
+      "scope": "Fresh Editor validation of the unchanged architecture ceilings at the committed M3/M4 implementation checkpoint. The archived AM-016 and AMFR-017 records remain historical; this does not claim full mission or performance QA.",
+      "availabilityNote": "Superseded valid checkpoint retained with its original compressed log and hashes. Current acceptance below revalidates the later committed implementation."
     }
   ]
 }

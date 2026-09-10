@@ -1,0 +1,255 @@
+{
+    "scope": "Real M3 rifle defense, normal Editor rendering, 180-frame / 15-second warmup; capture and probe diagnostics disabled while sampling",
+    "environment": "6000.5.2f1 / Mac OS X 26.6.2 / Apple M5",
+    "allocationScope": "Inclusive Editor main-thread allocations between rendered frames, including the game and probe. These cannot be attributed to M3 alone.",
+    "unitScaleScope": "Canonical M3 20-member roster; does not replace the separate 700-unit / 600-building regression fixture.",
+    "utc": "2026-09-10T14:15:32.9778720Z",
+    "timeScale": 1.0,
+    "frameBudgetsPassed": false,
+    "zeroAllocationTargetPassed": false,
+    "combatCompleted": true,
+    "currentThreadCounterAvailable": false,
+    "unityFrameGcCounterAvailable": true,
+    "gameViewMaximized": false,
+    "screenWidth": 1920,
+    "screenHeight": 1080,
+    "qualityLevel": 1,
+    "elapsedMilliseconds": 191112,
+    "missionMembers": 20,
+    "hostilesDefeated": 7,
+    "unitEntities": 4995,
+    "missileProjectiles": 0,
+    "minimapMarkers": 11,
+    "activeUiBehaviours": 466,
+    "peakUnityAllocatedMegabytes": 4515.703392028809,
+    "peakMonoMegabytes": 1979.6640625,
+    "limits": {
+        "editorP95FrameBudgetMs": 20.0,
+        "minimumFrameCount": 180,
+        "currentThreadAllocatedBytesBudget": 0
+    },
+    "phases": [
+        {
+            "name": "preparation",
+            "frameMilliseconds": {
+                "count": 2340,
+                "total": 30041.657699272037,
+                "average": 12.838315256099162,
+                "p95": 16.755875200033189,
+                "p99": 36.20670363306999,
+                "max": 60.109954327344897
+            },
+            "currentThreadAllocatedBytes": {
+                "count": 0,
+                "total": 0.0,
+                "average": 0.0,
+                "p95": 0.0,
+                "p99": 0.0,
+                "max": 0.0
+            },
+            "unityFrameAllocatedBytes": {
+                "count": 2340,
+                "total": 238722308.0,
+                "average": 102018.08034188034,
+                "p95": 166475.0,
+                "p99": 174437.0,
+                "max": 1451887.0
+            },
+            "frameBudgetPassed": true
+        },
+        {
+            "name": "vanguard active",
+            "frameMilliseconds": {
+                "count": 3084,
+                "total": 54938.773705624044,
+                "average": 17.814128957725047,
+                "p95": 22.74325303733349,
+                "p99": 47.52999544143677,
+                "max": 118.30300092697144
+            },
+            "currentThreadAllocatedBytes": {
+                "count": 0,
+                "total": 0.0,
+                "average": 0.0,
+                "p95": 0.0,
+                "p99": 0.0,
+                "max": 0.0
+            },
+            "unityFrameAllocatedBytes": {
+                "count": 3084,
+                "total": 274334132.0,
+                "average": 88953.99870298314,
+                "p95": 167431.0,
+                "p99": 186717.0,
+                "max": 1440289.0
+            },
+            "frameBudgetPassed": false
+        },
+        {
+            "name": "main warning",
+            "frameMilliseconds": {
+                "count": 2311,
+                "total": 42573.084936942905,
+                "average": 18.42193203675591,
+                "p95": 29.11791391670704,
+                "p99": 53.528834134340289,
+                "max": 2866.3299083709717
+            },
+            "currentThreadAllocatedBytes": {
+                "count": 0,
+                "total": 0.0,
+                "average": 0.0,
+                "p95": 0.0,
+                "p99": 0.0,
+                "max": 0.0
+            },
+            "unityFrameAllocatedBytes": {
+                "count": 2311,
+                "total": 260644823.0,
+                "average": 112784.43228039809,
+                "p95": 167091.0,
+                "p99": 188193.0,
+                "max": 12255920.0
+            },
+            "frameBudgetPassed": false
+        },
+        {
+            "name": "main active",
+            "frameMilliseconds": {
+                "count": 3041,
+                "total": 51114.46171812713,
+                "average": 16.808438578798794,
+                "p95": 25.652125477790834,
+                "p99": 51.821500062942508,
+                "max": 186.32203340530396
+            },
+            "currentThreadAllocatedBytes": {
+                "count": 0,
+                "total": 0.0,
+                "average": 0.0,
+                "p95": 0.0,
+                "p99": 0.0,
+                "max": 0.0
+            },
+            "unityFrameAllocatedBytes": {
+                "count": 3041,
+                "total": 327517057.0,
+                "average": 107700.44623479119,
+                "p95": 168299.0,
+                "p99": 184323.0,
+                "max": 1528531.0
+            },
+            "frameBudgetPassed": false
+        }
+    ],
+    "systems": [
+        {
+            "name": "Default World Game.Runtime.UnitPathfindingSystem",
+            "available": true,
+            "milliseconds": {
+                "count": 10776,
+                "total": 223.6547229999999,
+                "average": 0.020754892631774305,
+                "p95": 0.00975,
+                "p99": 0.5685,
+                "max": 13.069333
+            }
+        },
+        {
+            "name": "Default World Game.Runtime.ThreatDetectionWarningSystem",
+            "available": true,
+            "milliseconds": {
+                "count": 10776,
+                "total": 251.8995280000005,
+                "average": 0.023375976985894627,
+                "p95": 0.1355,
+                "p99": 0.20575,
+                "max": 13.63725
+            }
+        },
+        {
+            "name": "Default World Game.Runtime.ThreatWarningResolveSystem",
+            "available": true,
+            "milliseconds": {
+                "count": 10776,
+                "total": 0.0,
+                "average": 0.0,
+                "p95": 0.0,
+                "p99": 0.0,
+                "max": 0.0
+            }
+        },
+        {
+            "name": "Default World Game.Runtime.CampaignMissionGuidanceProjectionSystem",
+            "available": true,
+            "milliseconds": {
+                "count": 10776,
+                "total": 0.0,
+                "average": 0.0,
+                "p95": 0.0,
+                "p99": 0.0,
+                "max": 0.0
+            }
+        },
+        {
+            "name": "Default World Game.Runtime.CampaignMissionPatrolOrderSystem",
+            "available": true,
+            "milliseconds": {
+                "count": 10776,
+                "total": 536.9325090000041,
+                "average": 0.049826699053452497,
+                "p95": 0.075,
+                "p99": 0.096791,
+                "max": 10.086417
+            }
+        },
+        {
+            "name": "Default World Game.Runtime.RadarPingRequestSystem",
+            "available": true,
+            "milliseconds": {
+                "count": 10776,
+                "total": 0.0,
+                "average": 0.0,
+                "p95": 0.0,
+                "p99": 0.0,
+                "max": 0.0
+            }
+        },
+        {
+            "name": "MainMenuPlayUI.MinimapUpdate",
+            "available": true,
+            "milliseconds": {
+                "count": 10776,
+                "total": 6286.883502999998,
+                "average": 0.5834153213622864,
+                "p95": 0.121208,
+                "p99": 27.212708,
+                "max": 54.976666
+            }
+        },
+        {
+            "name": "BuildingDefenseAttackSystem.TargetSelection",
+            "available": true,
+            "milliseconds": {
+                "count": 10776,
+                "total": 0.0,
+                "average": 0.0,
+                "p95": 0.0,
+                "p99": 0.0,
+                "max": 0.0
+            }
+        },
+        {
+            "name": "Default World Unity.Entities.SimulationSystemGroup",
+            "available": true,
+            "milliseconds": {
+                "count": 10776,
+                "total": 46469.520851999965,
+                "average": 4.312316337416478,
+                "p95": 6.002,
+                "p99": 7.716083,
+                "max": 64.050542
+            }
+        }
+    ]
+}

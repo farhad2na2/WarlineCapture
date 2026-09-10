@@ -15,13 +15,14 @@ namespace Game.Runtime
                 TryFindDefinition(in catalog, in runtime, out int index))
             {
                 ref CampaignMissionDefinitionBlob definition = ref catalog.Blob.Value.Missions[index];
-                dormant = definition.Defense.Enabled != 0 && definition.Defense.AuthoredMapDefensesDormant != 0 ||
+                dormant = IsPeacefulEstablishBase(ref definition) ||
+                    definition.Defense.Enabled != 0 && definition.Defense.AuthoredMapDefensesDormant != 0 ||
                     definition.Extraction.Enabled != 0 && definition.Extraction.AuthoredMapDefensesDormant != 0;
             }
             EntityCommandBuffer changes = new(Allocator.Temp);
             if (dormant)
             {
-                // Authored parked vehicles belong to the shared map, not M3's finite roster.
+                // Authored parked vehicles belong to the shared map, not the mission roster.
                 // Disable only their gameplay root; the authored static presentation stays put.
                 foreach (var (_, entity) in SystemAPI.Query<RefRO<OperationMapAuthoredVehiclePresentation>>()
                     .WithAll<UnitGrid, UnitMove>().WithNone<CampaignMissionUnitRoleComponent, CampaignMissionDormantMapUnitTag>().WithEntityAccess())
@@ -46,6 +47,17 @@ namespace Game.Runtime
             }
             changes.Playback(state.EntityManager);
             changes.Dispose();
+        }
+
+        private static bool IsPeacefulEstablishBase(ref CampaignMissionDefinitionBlob definition)
+        {
+            if (!definition.MissionId.Equals(EstablishBaseMissionId)) return false;
+            // M2 teaches building and production. Its reserved combat remains opt-in,
+            // under the same explicit Defend objective that permits the hostile wave.
+            for (int i = 0; i < definition.Objectives.Length; i++)
+                if (definition.Objectives[i].Rule == Game.Missions.Contracts.MissionObjectiveRuleKind.DefendMissionRole)
+                    return false;
+            return true;
         }
     }
 }

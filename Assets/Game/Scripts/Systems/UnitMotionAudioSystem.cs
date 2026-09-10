@@ -141,9 +141,8 @@ namespace Game.Runtime
 
         private static bool IsGroundVehicle(EntityManager em, Entity entity)
         {
-            if (em.HasComponent<UnitVehicleMovement>(entity))
-                return true;
-
+            // The baker adds UnitVehicleMovement tuning to infantry as well. Only
+            // the authoritative movement behavior identifies an actual vehicle.
             return em.HasComponent<UnitMovementBehavior>(entity) &&
                    em.GetComponentData<UnitMovementBehavior>(entity).UsesVehicleMotion != 0;
         }

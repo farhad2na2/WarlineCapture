@@ -11,7 +11,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-public sealed class BuildingDefenseAttackSystemTests
+public sealed partial class BuildingDefenseAttackSystemTests
 {
     private const int AllocationTowerCount = 32;
     private const int AllocationCandidateCount = 740;

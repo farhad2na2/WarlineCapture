@@ -19,6 +19,12 @@ public sealed class CombatMotionAudioSystemTests
             CombatMotionAudioSystemTests tests = new();
             tests.UnitMotionAudioSystem_MovingVehicleEnqueuesEngineSfx();
             passed++;
+            tests.UnitMotionAudioSystem_SharedVehicleTuningDoesNotGiveInfantryAnEngine();
+            passed++;
+            tests.UnitMotionAudioSystem_VehicleTuningWithoutMovementClassificationIsSilent();
+            passed++;
+            tests.UnitMotionAudioSystem_StationaryVehicleIsSilent();
+            passed++;
             tests.UnitMotionAudioSystem_ActiveAircraftEnqueuesAircraftSfx();
             passed++;
             tests.UnitMotionAudioSystem_FixedWingFlightDoesNotRepeatEverySecond();
@@ -60,6 +66,49 @@ public sealed class CombatMotionAudioSystemTests
             AudioEventIds.GameplayUnitEngineVehicleMoveHash,
             vehicle,
             new float3(4f, 0f, 7f));
+    }
+
+    [Test]
+    public void UnitMotionAudioSystem_SharedVehicleTuningDoesNotGiveInfantryAnEngine()
+    {
+        using World world = new("Infantry must not emit vehicle audio");
+        EntityManager em = world.EntityManager;
+        Entity soldier = CreateMotionUnit(em, float3.zero, vehicle: false, aircraft: false);
+        // Match UnitGridAuthoring: soldiers carry tuning data but do not use vehicle motion.
+        em.AddComponentData(soldier, new UnitVehicleMovement { TurnSpeedDegrees = 720f });
+        var system = world.CreateSystem<UnitMotionAudioSystem>();
+        world.SetTime(new TimeData(2d, .1f));
+        system.Update(world.Unmanaged);
+        world.SetTime(new TimeData(3d, .1f));
+        system.Update(world.Unmanaged);
+        Assert.AreEqual(0, GetAudioRequests(em).Length);
+        Assert.IsFalse(em.HasComponent<UnitMotionAudioState>(soldier));
+    }
+
+    [Test]
+    public void UnitMotionAudioSystem_VehicleTuningWithoutMovementClassificationIsSilent()
+    {
+        using World world = new("Unclassified tuning must not emit engine audio");
+        EntityManager em = world.EntityManager;
+        Entity unit = CreateMotionUnit(em, float3.zero, vehicle: false, aircraft: false);
+        em.RemoveComponent<UnitMovementBehavior>(unit);
+        em.AddComponent<UnitVehicleMovement>(unit);
+        world.SetTime(new TimeData(2d, .1f));
+        world.CreateSystem<UnitMotionAudioSystem>().Update(world.Unmanaged);
+        Assert.AreEqual(0, GetAudioRequests(em).Length);
+    }
+
+    [Test]
+    public void UnitMotionAudioSystem_StationaryVehicleIsSilent()
+    {
+        using World world = new("Parked vehicles must not emit driving audio");
+        EntityManager em = world.EntityManager;
+        Entity vehicle = CreateMotionUnit(em, float3.zero, vehicle: true, aircraft: false);
+        em.AddComponent<UnitVehicleMovement>(vehicle);
+        em.SetComponentData(vehicle, new UnitMoveVisualComponent { IsMoving = 0 });
+        world.SetTime(new TimeData(2d, .1f));
+        world.CreateSystem<UnitMotionAudioSystem>().Update(world.Unmanaged);
+        Assert.AreEqual(0, GetAudioRequests(em).Length);
     }
 
     [Test]

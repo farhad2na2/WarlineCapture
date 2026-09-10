@@ -52,7 +52,7 @@ namespace Game.Editor
                 Ref(data,"m03MissionArt",art); data.ApplyModifiedPropertiesWithoutUndo();
             });
         }
-        private static void BuildGuide()
+        internal static void BuildGuide()
         {
             var root=new GameObject("M03_FieldGuide",typeof(RectTransform));
             try
@@ -102,11 +102,11 @@ namespace Game.Editor
                 Ref(data,"radio16x9",M03RadarWarningMediaImporter.Panel("C01",false)); Ref(data,"radio20x9",M03RadarWarningMediaImporter.Panel("C01",true));
                 Ref(data,"title",Binding(heading)); Ref(data,"body",Binding(body)); Ref(data,"example",Binding(example)); Ref(data,"mistake",Binding(mistake));
                 Ref(data,"diagram",Binding(diagram)); Ref(data,"page",Binding(page)); Ref(data,"filterLabel",filter.GetComponentInChildren<V3LocalizedTextBindingView>());
-                data.ApplyModifiedPropertiesWithoutUndo(); MissionUiSerializedBindingsAuthoring.Apply(root); PrefabUtility.SaveAsPrefabAsset(root,GuidePath);
+                data.ApplyModifiedPropertiesWithoutUndo(); MissionSupportUiStyle.Guide(root); MissionUiSerializedBindingsAuthoring.Apply(root); PrefabUtility.SaveAsPrefabAsset(root,GuidePath);
             }
             finally {UnityEngine.Object.DestroyImmediate(root);}
         }
-        private static void BuildHud()=>Edit(HudPath,root=>
+        internal static void BuildHud()=>Edit(HudPath,root=>
         {
             var tutorial=root.GetComponentInChildren<AriaTutorialBriefingView>(true);
             var tutorialData=new SerializedObject(tutorial);
@@ -141,7 +141,7 @@ namespace Game.Editor
             data=new SerializedObject(supportView);
             Ref(data,"supportButton",support.GetComponent<Button>()); Ref(data,"supportLabel",Binding(supportText));
             Ref(data,"supportIcon",Find(support.gameObject,"Icon").GetComponent<Image>()); Ref(data,"radarIcon",Find(scan.gameObject,"Icon").GetComponent<Image>().sprite);
-            data.ApplyModifiedPropertiesWithoutUndo(); actions.gameObject.SetActive(false);
+            data.ApplyModifiedPropertiesWithoutUndo(); MissionSupportUiStyle.Defense(root); actions.gameObject.SetActive(false);
         });
         internal static void ConfigureThreat(GameObject root)
         {

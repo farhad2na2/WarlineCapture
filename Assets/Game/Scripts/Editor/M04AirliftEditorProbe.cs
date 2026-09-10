@@ -176,6 +176,7 @@ namespace Game.Editor
                 {
                     TickLaunchUi(facts);return;
                 }
+                if(SessionState.GetBool("Warline.M04.GroundContact",false))ReviewGroundContact(em,root,extraction.Carrier,step);
                 if(SessionState.GetBool("Warline.M04.VehicleReview",false))
                     CaptureMovingVehicle(em,step is 1 or 3?extraction.Carrier:extraction.Aircraft,step);
                 if(SessionState.GetBool("Warline.M04.PlayerCamera",false))
@@ -241,7 +242,7 @@ namespace Game.Editor
         private static void Complete(bool pass,string detail)
         {
             if(finished)return;finished=true;SessionState.SetBool(Active,false);EditorApplication.update-=Tick;Application.logMessageReceived-=Observe;
-            SessionState.SetBool("Warline.M04.PlayerCamera",false);SessionState.SetBool("Warline.M04.VehicleReview",false);
+            SessionState.SetBool("Warline.M04.PlayerCamera",false);SessionState.SetBool("Warline.M04.VehicleReview",false);SessionState.SetBool("Warline.M04.GroundContact",false);
             if(oldLocale!=null)GameLocalization.SetLocale(oldLocale,false);Time.timeScale=1;
             Debug.Log("[M04EditorProbe] result="+(pass?"Passed":"Failed")+" "+detail);File.AppendAllText(Output+"/state.txt","result="+(pass?"Passed":"Failed")+" "+detail+"\n");
             MissionEditorValidationExit.Complete(pass);

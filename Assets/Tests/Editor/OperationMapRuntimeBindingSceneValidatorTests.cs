@@ -327,6 +327,11 @@ public sealed class OperationMapRuntimeBindingSceneValidatorTests
                 Assert.That(actual[index].MovementMask, Is.EqualTo(expected[index].MovementMask));
                 Assert.That(actual[index].Flags, Is.EqualTo(expected[index].Flags));
                 Assert.That(actual[index].LayerId, Is.EqualTo(expected[index].LayerId));
+                Assert.That(actual[index].Geometry, Is.Not.Null, "Exact road contact geometry must survive scene reload.");
+                Assert.That(actual[index].Geometry.Triangles.Length, Is.GreaterThan(0));
+                Assert.That(AssetDatabase.GetAssetPath(actual[index].Geometry),
+                    Is.EqualTo(AssetDatabase.GetAssetPath(expected[index].Geometry)), "Road instances must retain shared baked geometry.");
+                Assert.That(actual[index].WorldToMesh, Is.EqualTo(expected[index].WorldToMesh));
             }
         }
         finally

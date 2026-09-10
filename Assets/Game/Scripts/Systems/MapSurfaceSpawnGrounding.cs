@@ -17,7 +17,7 @@ namespace Game.Runtime
             float groundOffset = 0f)
         {
             sample = default;
-            if (!TryGetSurface(entityManager, out MapSurfaceComponent surface) ||
+            if (!TryGetSurface(entityManager, out MapSurfaceComponent surface, out Entity surfaceEntity) ||
                 !TryGetSample(surface, cell, out sample))
             {
                 return false;
@@ -30,6 +30,22 @@ namespace Game.Runtime
                 sample = supportSample;
             }
 
+            if(entityManager.HasBuffer<MapSurfaceSceneOverlay>(surfaceEntity))
+            {
+                var overlays=entityManager.GetBuffer<MapSurfaceSceneOverlay>(surfaceEntity,true);
+                var triangles=entityManager.HasBuffer<MapSurfaceMeshTriangle>(surfaceEntity)?entityManager.GetBuffer<MapSurfaceMeshTriangle>(surfaceEntity,true).AsNativeArray():default;
+                var instances=entityManager.HasBuffer<MapSurfaceMeshInstance>(surfaceEntity)?entityManager.GetBuffer<MapSurfaceMeshInstance>(surfaceEntity,true).AsNativeArray():default;
+                float bestHeight=float.NegativeInfinity;
+                for(int i=0;i<overlays.Length;i++)
+                {
+                    var overlay=overlays[i];
+                    if((overlay.MovementMask & MapSurfaceMovementMask.AllGroundUnits)==0 ||
+                        !MapSurfaceSceneOverlaySampling.TrySample(overlay,worldPosition,triangles,instances,out float height,out float3 normal) || height<=bestHeight)continue;
+                    bestHeight=height;sample.Height=height;sample.Normal=normal;
+                    sample.LayerId=overlay.LayerId;sample.SurfaceType=overlay.SurfaceType;
+                    sample.Flags=overlay.Flags;sample.MovementMask=overlay.MovementMask;
+                }
+            }
             worldPosition.y = sample.Height + groundOffset;
             return true;
         }
@@ -46,14 +62,15 @@ namespace Game.Runtime
             return TryGroundCellCenter(entityManager, grid, cell, ref worldPosition, out sample, groundOffset);
         }
 
-        private bool TryGetSurface(EntityManager entityManager, out MapSurfaceComponent surface)
+        private bool TryGetSurface(EntityManager entityManager, out MapSurfaceComponent surface, out Entity surfaceEntity)
         {
-            surface = default;
+            surface = default; surfaceEntity=Entity.Null;
 
             using EntityQuery surfaceQuery = entityManager.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
             if (surfaceQuery.IsEmptyIgnoreFilter)
                 return false;
 
+            surfaceEntity=surfaceQuery.GetSingletonEntity();
             surface = surfaceQuery.GetSingleton<MapSurfaceComponent>();
             return surface.HasSurfaceData != 0 && surface.SurfaceBlob.IsCreated;
         }

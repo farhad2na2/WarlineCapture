@@ -173,33 +173,17 @@ namespace Game.Editor
                 throw new ArgumentNullException(nameof(surface));
             overlays ??= Array.Empty<MapSurfaceSceneOverlayAuthoringData>();
 
-            var surfaceData = new SerializedObject(surface);
-            SerializedProperty sceneOverlays = surfaceData.FindProperty("sceneOverlays");
-            if (sceneOverlays == null)
-                throw new InvalidOperationException("MapSurfaceAuthoring scene-overlays field is missing.");
-
-            sceneOverlays.arraySize = overlays.Length;
-            for (int index = 0; index < overlays.Length; index++)
-            {
-                MapSurfaceSceneOverlayAuthoringData overlay = overlays[index];
-                SerializedProperty element = sceneOverlays.GetArrayElementAtIndex(index);
-                element.FindPropertyRelative("Center").vector3Value = overlay.Center;
-                element.FindPropertyRelative("Rotation").quaternionValue = overlay.Rotation;
-                element.FindPropertyRelative("HalfExtents").vector2Value = overlay.HalfExtents;
-                element.FindPropertyRelative("Height").floatValue = overlay.Height;
-                element.FindPropertyRelative("Normal").vector3Value = overlay.Normal;
-                element.FindPropertyRelative("SurfaceType").intValue = (int)overlay.SurfaceType;
-                element.FindPropertyRelative("MovementMask").intValue = (int)overlay.MovementMask;
-                element.FindPropertyRelative("Flags").intValue = (int)overlay.Flags;
-                element.FindPropertyRelative("LayerId").intValue = overlay.LayerId;
-            }
-            surfaceData.ApplyModifiedPropertiesWithoutUndo();
+            // Assign the typed array once. Per-element SerializedProperty traversal is
+            // quadratic for detailed road-face data and can stall an Editor bake.
+            MapSurfaceMeshGeometryAssetBuilder.Persist(overlays);
+            surface.ConfigureSceneOverlays(overlays);
             EditorUtility.SetDirty(surface);
         }
 
         internal static MapSurfaceSceneOverlayAuthoringData[] CaptureSurfaceSceneOverlays(
             string sourceScenePath)
         {
+            MapSurfaceMeshOverlayBuilder.ClearCachedGeometry();
             Scene sourceScene = EditorSceneManager.OpenScene(sourceScenePath, OpenSceneMode.Single);
             try
             {
@@ -212,10 +196,9 @@ namespace Game.Editor
                         surfaceData);
                 MapSurfaceSceneOverlayAuthoringData[] virtualizedOverlays =
                     CaptureVirtualizedRoadSurfaceOverlays(surfaceData);
-                return CombineSurfaceSceneOverlays(
-                    authoredOverlays,
-                    virtualizedOverlays,
-                    sourceScenePath);
+                var combined=CombineSurfaceSceneOverlays(authoredOverlays,virtualizedOverlays,sourceScenePath);
+                MapSurfaceMeshGeometryAssetBuilder.Persist(combined);
+                return combined;
             }
             finally
             {
@@ -281,21 +264,9 @@ namespace Game.Editor
                     if (!IntersectsSurfaceBounds(worldBounds, surfaceData))
                         continue;
 
-                    overlays.Add(new MapSurfaceSceneOverlayAuthoringData
-                    {
-                        Center = worldBounds.center,
-                        Rotation = Quaternion.identity,
-                        HalfExtents = new Vector2(
-                            worldBounds.extents.x + 0.1f,
-                            worldBounds.extents.z + 0.1f),
-                        Height = worldBounds.max.y,
-                        Normal = Vector3.up,
-                        SurfaceType = surfaceType,
-                        MovementMask = MapSurfaceMovementMask.AllGroundUnits |
-                                       MapSurfaceMovementMask.AirGrounded,
-                        Flags = MapSurfaceFlags.Road,
-                        LayerId = 0
-                    });
+                    MapSurfaceMeshOverlayBuilder.Append(overlays,mesh,worldMatrix,surfaceType,
+                        MapSurfaceMovementMask.AllGroundUnits | MapSurfaceMovementMask.AirGrounded,
+                        MapSurfaceFlags.Road,0,part.SubMeshIndex,part.LocalBounds);
                 }
             }
 

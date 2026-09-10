@@ -35,10 +35,19 @@ namespace Game.Components
     public struct MapSurfaceSceneOverlay : IBufferElementData
     {
         public float3 Center;
-        public quaternion Rotation;
+        // Surface footprints rotate only around Y. Keeping one angle leaves room for exact
+        // triangle support inside the existing 80-byte per-overlay architecture budget.
+        public float YawRadians;
+        public quaternion Rotation
+        {
+            get => quaternion.RotateY(YawRadians);
+            set { float3 forward=math.mul(value,new float3(0,0,1)); YawRadians=math.atan2(forward.x,forward.z); }
+        }
         public float2 HalfExtents;
         public float Height;
         public float3 Normal;
+        public float2 TriangleA, TriangleB, TriangleC;
+        public int GeometryInstanceIndex;
         public MapSurfaceType SurfaceType;
         public MapSurfaceMovementMask MovementMask;
         public MapSurfaceFlags Flags;
@@ -194,7 +203,9 @@ namespace Game.Components
         Highway = 1 << 2,
         Ramp = 1 << 3,
         Layered = 1 << 4,
-        Reserved = 1 << 5
+        Reserved = 1 << 5,
+        ExactTriangle = 1 << 6,
+        ExactMesh = 1 << 7
     }
 
     public enum MapSurfaceConnectionType : byte

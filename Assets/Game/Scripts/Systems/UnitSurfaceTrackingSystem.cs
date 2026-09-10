@@ -13,17 +13,8 @@ namespace Game.Runtime
     {
         private const float MaxInfantryInterpolatedHeightSpan = 0.75f;
         private const float MaxInfantrySupportLift = 1.5f;
-        private const int SceneOverlayBinCellSize = 32;
         private EntityQuery _surfaceQuery;
         private EntityQuery _runtimeSurfaceOverlayQuery;
-        private NativeArray<MapSurfaceSceneOverlay> _sceneSurfaceOverlayCache;
-        private NativeParallelMultiHashMap<int, int> _sceneSurfaceOverlayBins;
-        private int _sceneSurfaceOverlayCacheLength;
-        private int2 _sceneSurfaceOverlayBinDimensions;
-        private int2 _sceneSurfaceOverlaySurfaceDimensions;
-        private float _sceneSurfaceOverlayCellSize;
-        private float3 _sceneSurfaceOverlayGridOrigin;
-        private uint _sceneSurfaceOverlayRevision;
 
         public void OnCreate(ref SystemState state)
         {
@@ -37,7 +28,7 @@ namespace Game.Runtime
 
         public void OnDestroy(ref SystemState state)
         {
-            DisposeSceneOverlayCache();
+            DisposeSceneOverlayCache();_meshCache.Dispose();
         }
 
         public void OnUpdate(ref SystemState state)
@@ -58,6 +49,7 @@ namespace Game.Runtime
             uint sceneOverlayRevision = state.EntityManager.HasComponent<MapSurfaceSceneOverlayRevision>(surfaceEntity)
                 ? state.EntityManager.GetComponentData<MapSurfaceSceneOverlayRevision>(surfaceEntity).Value
                 : 0;
+            _meshCache.Update(state.EntityManager,surfaceEntity,sceneOverlayRevision,state.Dependency);
             EnsureSceneOverlayCache(
                 ref state,
                 surface,
@@ -81,6 +73,7 @@ namespace Game.Runtime
             var job = new TrackUnitSurfacesJob
             {
                 Surface = surface,
+                MeshTriangles=_meshCache.Triangles,MeshInstances=_meshCache.Instances,
                 SceneSurfaceOverlays = _sceneSurfaceOverlayCache,
                 SceneSurfaceOverlayBins = _sceneSurfaceOverlayBins.IsCreated
                     ? _sceneSurfaceOverlayBins.AsReadOnly()
@@ -93,138 +86,13 @@ namespace Game.Runtime
             state.Dependency = runtimeSurfaceOverlays.Dispose(state.Dependency);
         }
 
-        private void EnsureSceneOverlayCache(
-            ref SystemState state,
-            MapSurfaceComponent surface,
-            DynamicBuffer<MapSurfaceSceneOverlay> overlays,
-            uint revision)
-        {
-            int overlayCount = overlays.IsCreated ? overlays.Length : 0;
-            bool mustRebuild =
-                !_sceneSurfaceOverlayCache.IsCreated ||
-                !_sceneSurfaceOverlayBins.IsCreated ||
-                _sceneSurfaceOverlayCacheLength != overlayCount ||
-                _sceneSurfaceOverlayRevision != revision ||
-                !_sceneSurfaceOverlaySurfaceDimensions.Equals(surface.Dimensions) ||
-                math.abs(_sceneSurfaceOverlayCellSize - surface.CellSize) > 0.0001f ||
-                !MathApproximately(_sceneSurfaceOverlayGridOrigin, surface.GridOrigin);
-            if (!mustRebuild)
-                return;
-
-            state.Dependency.Complete();
-            DisposeSceneOverlayCache();
-            _sceneSurfaceOverlayCacheLength = overlayCount;
-            _sceneSurfaceOverlaySurfaceDimensions = surface.Dimensions;
-            _sceneSurfaceOverlayCellSize = surface.CellSize;
-            _sceneSurfaceOverlayGridOrigin = surface.GridOrigin;
-            _sceneSurfaceOverlayRevision = revision;
-            _sceneSurfaceOverlayBinDimensions = new int2(
-                math.max(1, (surface.Dimensions.x + SceneOverlayBinCellSize - 1) / SceneOverlayBinCellSize),
-                math.max(1, (surface.Dimensions.y + SceneOverlayBinCellSize - 1) / SceneOverlayBinCellSize));
-
-            if (overlayCount <= 0)
-            {
-                _sceneSurfaceOverlayCache = new NativeArray<MapSurfaceSceneOverlay>(0, Allocator.Persistent);
-                _sceneSurfaceOverlayBins = new NativeParallelMultiHashMap<int, int>(0, Allocator.Persistent);
-                return;
-            }
-
-            _sceneSurfaceOverlayCache = new NativeArray<MapSurfaceSceneOverlay>(overlayCount, Allocator.Persistent);
-            int binEntries = 0;
-            for (int i = 0; i < overlayCount; i++)
-                binEntries += CountSceneOverlayBins(surface, overlays[i]);
-
-            _sceneSurfaceOverlayBins = new NativeParallelMultiHashMap<int, int>(
-                math.max(overlayCount, binEntries),
-                Allocator.Persistent);
-            for (int i = 0; i < overlayCount; i++)
-            {
-                MapSurfaceSceneOverlay overlay = overlays[i];
-                _sceneSurfaceOverlayCache[i] = overlay;
-                AddSceneOverlayBins(surface, overlay, i);
-            }
-        }
-
-        private int CountSceneOverlayBins(MapSurfaceComponent surface, MapSurfaceSceneOverlay overlay)
-        {
-            if (!TryResolveSceneOverlayBinRange(surface, overlay, out int2 minBin, out int2 maxBin))
-                return 0;
-            int2 span = maxBin - minBin + 1;
-            return span.x * span.y;
-        }
-
-        private void AddSceneOverlayBins(MapSurfaceComponent surface, MapSurfaceSceneOverlay overlay, int overlayIndex)
-        {
-            if (!TryResolveSceneOverlayBinRange(surface, overlay, out int2 minBin, out int2 maxBin))
-                return;
-
-            for (int y = minBin.y; y <= maxBin.y; y++)
-            {
-                for (int x = minBin.x; x <= maxBin.x; x++)
-                {
-                    int key = x + y * _sceneSurfaceOverlayBinDimensions.x;
-                    _sceneSurfaceOverlayBins.Add(key, overlayIndex);
-                }
-            }
-        }
-
-        private static bool TryResolveSceneOverlayBinRange(
-            MapSurfaceComponent surface,
-            MapSurfaceSceneOverlay overlay,
-            out int2 minBin,
-            out int2 maxBin)
-        {
-            float2 minWorld = new(overlay.Center.x - overlay.HalfExtents.x, overlay.Center.z - overlay.HalfExtents.y);
-            float2 maxWorld = new(overlay.Center.x + overlay.HalfExtents.x, overlay.Center.z + overlay.HalfExtents.y);
-            float2 surfaceMin = new(surface.GridOrigin.x, surface.GridOrigin.z);
-            float2 surfaceMax = surfaceMin + new float2(surface.Dimensions) * surface.CellSize;
-            if (maxWorld.x <= surfaceMin.x || maxWorld.y <= surfaceMin.y ||
-                minWorld.x >= surfaceMax.x || minWorld.y >= surfaceMax.y)
-            {
-                minBin = default;
-                maxBin = default;
-                return false;
-            }
-
-            int2 minCell = new(
-                (int)math.floor((minWorld.x - surface.GridOrigin.x) / surface.CellSize),
-                (int)math.floor((minWorld.y - surface.GridOrigin.z) / surface.CellSize));
-            int2 maxCell = new(
-                (int)math.floor((maxWorld.x - surface.GridOrigin.x) / surface.CellSize),
-                (int)math.floor((maxWorld.y - surface.GridOrigin.z) / surface.CellSize));
-            minCell = math.clamp(minCell, int2.zero, surface.Dimensions - 1);
-            maxCell = math.clamp(maxCell, int2.zero, surface.Dimensions - 1);
-            minBin = minCell / SceneOverlayBinCellSize;
-            maxBin = maxCell / SceneOverlayBinCellSize;
-            return true;
-        }
-
-        private void DisposeSceneOverlayCache()
-        {
-            if (_sceneSurfaceOverlayCache.IsCreated)
-                _sceneSurfaceOverlayCache.Dispose();
-            if (_sceneSurfaceOverlayBins.IsCreated)
-                _sceneSurfaceOverlayBins.Dispose();
-            _sceneSurfaceOverlayCache = default;
-            _sceneSurfaceOverlayBins = default;
-            _sceneSurfaceOverlayCacheLength = 0;
-            _sceneSurfaceOverlayBinDimensions = default;
-            _sceneSurfaceOverlaySurfaceDimensions = default;
-            _sceneSurfaceOverlayCellSize = 0f;
-            _sceneSurfaceOverlayGridOrigin = default;
-            _sceneSurfaceOverlayRevision = 0;
-        }
-
-        private static bool MathApproximately(float3 lhs, float3 rhs)
-        {
-            return math.lengthsq(lhs - rhs) <= 0.000001f;
-        }
-
         [BurstCompile]
         [WithNone(typeof(UnitAirMovement))]
         private partial struct TrackUnitSurfacesJob : IJobEntity
         {
             [ReadOnly] public MapSurfaceComponent Surface;
+            [ReadOnly] public NativeArray<MapSurfaceMeshTriangle> MeshTriangles;
+            [ReadOnly] public NativeArray<MapSurfaceMeshInstance> MeshInstances;
             [ReadOnly] public NativeArray<MapSurfaceSceneOverlay> SceneSurfaceOverlays;
             [ReadOnly] public NativeParallelMultiHashMap<int, int>.ReadOnly SceneSurfaceOverlayBins;
             [ReadOnly] public int2 SceneSurfaceOverlayBinDimensions;
@@ -511,8 +379,9 @@ namespace Game.Runtime
                     MapSurfaceSceneOverlay candidate = SceneSurfaceOverlays[overlayIndex];
                     if ((candidate.MovementMask & movementMask) == 0)
                         continue;
-                    if (!Contains(candidate, worldPosition))
+                    if (!MapSurfaceSceneOverlaySampling.TrySample(candidate, worldPosition, MeshTriangles, MeshInstances, out float contactHeight, out float3 contactNormal))
                         continue;
+                    candidate.Height = contactHeight;candidate.Normal=contactNormal;
                     if (found && candidate.Height <= bestHeight)
                         continue;
 
@@ -543,14 +412,6 @@ namespace Game.Runtime
                        surfaceType == MapSurfaceType.BridgeDeck ||
                        surfaceType == MapSurfaceType.Ramp ||
                        (flags & MapSurfaceFlags.Road) != 0;
-            }
-
-            private static bool Contains(MapSurfaceSceneOverlay overlay, float3 worldPosition)
-            {
-                quaternion inverseRotation = math.inverse(overlay.Rotation);
-                float3 local = math.mul(inverseRotation, worldPosition - overlay.Center);
-                return math.abs(local.x) <= overlay.HalfExtents.x &&
-                       math.abs(local.z) <= overlay.HalfExtents.y;
             }
 
             private bool TryResolveRuntimeSurfaceOverlay(

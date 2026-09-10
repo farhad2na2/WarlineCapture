@@ -350,7 +350,7 @@ namespace Game.Authoring
                         AlignmentWeight = 0f
                     });
                 }
-                AddComponent(entity, new UnitGroundOffsetComponent { Value = authoring.ConfiguredGroundOffset });
+                AddGroundContact(entity, authoring);
                 int soldierCapacity = math.max(0, authoring.SoldierTransportCapacity);
                 int vehicleCapacity = math.max(0, authoring.VehicleTransportCapacity);
                 int cargoWeightCapacity = math.max(0, authoring.CargoWeightCapacity);

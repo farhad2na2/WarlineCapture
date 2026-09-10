@@ -64,6 +64,66 @@ PrefabInstance:
       propertyPath: portraitActionSprite
       value: 
       objectReference: {fileID: 21300000, guid: 146c11d34f484734ad6c37ed49737266, type: 3}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: animationGroundOffsets.Array.size
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: 'animationGroundOffsets.Array.data[1]'
+      value: -0.021871764
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: 'animationGroundOffsets.Array.data[2]'
+      value: -0.023253264
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: 'animationGroundOffsets.Array.data[3]'
+      value: -0.021686036
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: 'animationGroundOffsets.Array.data[4]'
+      value: -0.0100481445
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: 'animationGroundOffsets.Array.data[5]'
+      value: -0.012641877
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: 'animationGroundOffsets.Array.data[6]'
+      value: 0.019745653
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: 'animationGroundOffsets.Array.data[7]'
+      value: 0.0099384235
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: 'animationGroundOffsets.Array.data[8]'
+      value: 0.015331219
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: 'animationGroundOffsets.Array.data[9]'
+      value: -0.011894575
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: 'animationGroundOffsets.Array.data[10]'
+      value: -0.010662385
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: 'animationGroundOffsets.Array.data[11]'
+      value: -0.01961089
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: 'animationGroundOffsets.Array.data[12]'
+      value: 0.07714371
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: 'animationGroundOffsets.Array.data[13]'
+      value: 0.03483689
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: 'animationGroundOffsets.Array.data[14]'
+      value: 0.055435125
+      objectReference: {fileID: 0}
     - target: {fileID: 2254344950327853479, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
       propertyPath: m_Name
       value: Unit_Chr_Soldier_Male_02_Alt_02

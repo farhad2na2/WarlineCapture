@@ -17,6 +17,10 @@ namespace Game.Authoring
         public Vector2 HalfExtents;
         public float Height;
         public Vector3 Normal;
+        public Vector2 TriangleA, TriangleB, TriangleC;
+        public MapSurfaceMeshGeometryAsset Geometry;
+        [NonSerialized] public string GeometryAssetPath;
+        public Matrix4x4 WorldToMesh;
         public MapSurfaceType SurfaceType;
         public MapSurfaceMovementMask MovementMask;
         public MapSurfaceFlags Flags;
@@ -31,6 +35,7 @@ namespace Game.Authoring
                 HalfExtents = HalfExtents,
                 Height = Height,
                 Normal = Normal,
+                TriangleA = TriangleA, TriangleB = TriangleB, TriangleC = TriangleC,
                 SurfaceType = SurfaceType,
                 MovementMask = MovementMask,
                 Flags = Flags,
@@ -60,6 +65,9 @@ namespace Game.Authoring
         public float MaxBuildingSlopeDegrees => maxBuildingSlopeDegrees;
         public float MaxInfantrySlopeDegrees => maxInfantrySlopeDegrees;
         public float MaxVehicleSlopeDegrees => maxVehicleSlopeDegrees;
+        public void ConfigureSceneOverlays(MapSurfaceSceneOverlayAuthoringData[] overlays)
+        { sceneOverlays=overlays ?? Array.Empty<MapSurfaceSceneOverlayAuthoringData>(); }
+
         public MapSurfaceSceneOverlayAuthoringData[] SceneOverlays =>
             sceneOverlays ?? Array.Empty<MapSurfaceSceneOverlayAuthoringData>();
 

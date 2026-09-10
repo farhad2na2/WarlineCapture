@@ -14,7 +14,7 @@ using Unity.Transforms;
 using UnityEngine;
 using Stopwatch = System.Diagnostics.Stopwatch;
 
-public sealed class MapSurfaceLayeredGridFocusedTests
+public sealed partial class MapSurfaceLayeredGridFocusedTests
 {
     public static void RunFocusedValidation()
     {

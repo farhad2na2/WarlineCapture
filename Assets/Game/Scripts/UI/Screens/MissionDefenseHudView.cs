@@ -23,7 +23,7 @@ namespace Game.UI.Runtime
         private bool warningAttention;
         public bool IsCameraTourControl(Selectable control)=>control==skipCameraTourButton;
         private void Awake()
-        {if(warningButton!=null && warningButton.image!=null) warningDefaultColor=warningButton.image.color; originalIcon=supportIcon!=null ? supportIcon.sprite : null; originalLabel=supportLabel!=null ? supportLabel.EnglishFallback : "";}
+        {if(warningButton!=null && warningButton.targetGraphic!=null) warningDefaultColor=warningButton.targetGraphic.color; originalIcon=supportIcon!=null ? supportIcon.sprite : null; originalLabel=supportLabel!=null ? supportLabel.EnglishFallback : "";}
         private void OnEnable()
         {
             cameraPreferencesApplied=false;
@@ -73,8 +73,8 @@ namespace Game.UI.Runtime
             if(warningAttention!=attention)
             {
                 warningAttention=attention;
-                if(warningButton!=null && warningButton.image!=null)
-                    warningButton.image.color=attention ? new Color(.62f,.32f,.04f,1f) : warningDefaultColor;
+                if(warningButton!=null && warningButton.targetGraphic!=null)
+                    warningButton.targetGraphic.color=attention ? new Color(.62f,.32f,.04f,1f) : warningDefaultColor;
             }
             if(!active) {lastLocale=UiShellRuntimeGateway.Localization.CurrentLocaleCode; return;}
             if(supportButton!=null) supportButton.interactable=model.CanPing;

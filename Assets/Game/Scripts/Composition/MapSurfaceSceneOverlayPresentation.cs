@@ -10,7 +10,6 @@ namespace Game.Composition
 {
     public static class MapSurfaceSceneOverlayPresentation
     {
-        private const float SceneOverlayPadding = 0.1f;
 
         public static void Publish(
             MapSurfaceAuthoring authoring,
@@ -30,8 +29,11 @@ namespace Game.Composition
             if (authoredOverlays.Length == 0)
                 authoredOverlays = Capture(authoring);
 
+            MapSurfaceMeshGeometryPresentation.Publish(entityManager,surfaceEntity,authoredOverlays);
+            // Adding buffers can move the entity, so reacquire this buffer after publication.
+            overlays=entityManager.GetBuffer<MapSurfaceSceneOverlay>(surfaceEntity);
             for (int i = 0; i < authoredOverlays.Length; i++)
-                overlays.Add(authoredOverlays[i].ToRuntimeOverlay());
+            {var overlay=authoredOverlays[i].ToRuntimeOverlay();overlay.GeometryInstanceIndex=i;overlays.Add(overlay);}
 
             uint revision = 1;
             if (entityManager.HasComponent<MapSurfaceSceneOverlayRevision>(surfaceEntity))
@@ -108,20 +110,8 @@ namespace Game.Composition
                 if (bounds.extents.x <= 0.01f || bounds.extents.z <= 0.01f)
                     continue;
 
-                overlays.Add(new MapSurfaceSceneOverlayAuthoringData
-                {
-                    Center = bounds.center,
-                    Rotation = Quaternion.identity,
-                    HalfExtents = new Vector2(
-                        bounds.extents.x + SceneOverlayPadding,
-                        bounds.extents.z + SceneOverlayPadding),
-                    Height = bounds.max.y,
-                    Normal = Vector3.up,
-                    SurfaceType = type,
-                    MovementMask = mask,
-                    Flags = flags,
-                    LayerId = layerId
-                });
+                MapSurfaceMeshOverlayBuilder.Append(overlays,filter.sharedMesh,filter.transform.localToWorldMatrix,
+                    type,mask,flags,layerId);
             }
         }
 

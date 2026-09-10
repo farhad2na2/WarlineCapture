@@ -65,7 +65,7 @@ namespace Game.Editor
                     if (t.transform.parent == null || !new[] { "FieldGuide", "ReadWarning", "SkipLesson", "ReturnWarningCamera" }.Contains(t.transform.parent.name)) continue;
                     var r = t.rectTransform;
                     r.anchorMin = Vector2.zero; r.anchorMax = Vector2.one;
-                    r.offsetMin = new Vector2(6, 2); r.offsetMax = new Vector2(-6, -2);
+                    r.offsetMin = new Vector2(t.transform.parent.Find("MissionIcon") != null ? 48 : 6, 2); r.offsetMax = new Vector2(-6, -2);
                     t.enableAutoSizing = true; t.fontSizeMin = 12; t.fontSizeMax = 18;
                 }
                 PrefabUtility.SaveAsPrefabAsset(root, MatchHudV3PrefabBuilder.PrefabPath);

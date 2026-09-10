@@ -107,6 +107,19 @@ public sealed class M03PresentationTests
                 var actionCorners=new Vector3[4]; var ariaCorners=new Vector3[4];
                 actions.GetWorldCorners(actionCorners); aria.GetWorldCorners(ariaCorners);
                 Assert.Less(actionCorners[2].x,ariaCorners[0].x,"Optional controls must leave ARIA's column clear at width "+width);
+                var warningCorners=new Vector3[4];
+                ((RectTransform)header.Find("ThreatJumpPanel")).GetWorldCorners(warningCorners);
+                Assert.Less(actionCorners[1].y,warningCorners[0].y,
+                    "Mission controls must leave the warning strip fully visible at width "+width);
+                var resourceCorners=new Vector3[4];
+                ((RectTransform)header.Find("ResourceStrip")).GetWorldCorners(resourceCorners);
+                foreach(string panelName in new[]{"M03Actions","M04Actions"})
+                {
+                    var panelCorners=new Vector3[4];
+                    ((RectTransform)header.Find(panelName)).GetWorldCorners(panelCorners);
+                    Assert.That(panelCorners[0].x,Is.EqualTo(resourceCorners[0].x).Within(.1f),
+                        panelName+" must follow the resource header at width "+width);
+                }
                 foreach(bool persian in new[]{false,true})
                 {
                     GameLocalization.SetLocale(persian ? "fa-IR" : "en",false);

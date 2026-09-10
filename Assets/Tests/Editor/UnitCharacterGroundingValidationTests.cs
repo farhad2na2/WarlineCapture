@@ -9,7 +9,7 @@ using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
 
-public sealed class UnitCharacterGroundingValidationTests
+public sealed partial class UnitCharacterGroundingValidationTests
 {
     private const float FootAlignmentTolerance = 0.035f;
     private const float GpuAnimationFootAlignmentTolerance = 0.005f;

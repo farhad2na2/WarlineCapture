@@ -9,7 +9,7 @@ namespace Game.Runtime
 {
     [BurstCompile]
     [UpdateAfter(typeof(UnitSurfaceTrackingSystem))]
-    [UpdateBefore(typeof(UnitMoveVisualStateSystem))]
+    [UpdateAfter(typeof(UnitAnimationIndexSystem))]
     public partial struct UnitGroundingSystem : ISystem
     {
         [BurstCompile]
@@ -23,6 +23,8 @@ namespace Game.Runtime
         {
             var job = new GroundUnitsJob
             {
+                AnimationOffsets=SystemAPI.GetBufferLookup<UnitAnimationGroundOffset>(true),
+                AnimationIndices=SystemAPI.GetComponentLookup<UnitResolvedAnimationIndex>(true),
                 GroundOffsetLookup = SystemAPI.GetComponentLookup<UnitGroundOffsetComponent>(true)
             };
             state.Dependency = job.ScheduleParallel(state.Dependency);
@@ -32,6 +34,8 @@ namespace Game.Runtime
         [WithNone(typeof(UnitAirMovement))]
         private partial struct GroundUnitsJob : IJobEntity
         {
+            [ReadOnly] public BufferLookup<UnitAnimationGroundOffset> AnimationOffsets;
+            [ReadOnly] public ComponentLookup<UnitResolvedAnimationIndex> AnimationIndices;
             [ReadOnly] public ComponentLookup<UnitGroundOffsetComponent> GroundOffsetLookup;
 
             public void Execute(
@@ -46,6 +50,11 @@ namespace Game.Runtime
                     ? GroundOffsetLookup[entity].Value
                     : 0f;
 
+                if(AnimationOffsets.HasBuffer(entity) && AnimationIndices.HasComponent(entity))
+                {
+                    var offsets=AnimationOffsets[entity];int index=AnimationIndices[entity].Value;
+                    if((uint)index<(uint)offsets.Length)offset=offsets[index].Value*transform.Scale;
+                }
                 float3 position = transform.Position;
                 position.y = unitSurface.LastSampledHeight + offset;
                 transform.Position = position;

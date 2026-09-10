@@ -24,7 +24,7 @@ namespace Game.Editor
             Edit(MissionResultV3PrefabBuilder.PrefabPath,root=>{var data=new SerializedObject(root.GetComponent<MissionResultPopupView>());Ref(data,"m04ResultBackdrop",AssetDatabase.LoadAssetAtPath<Texture>(M04AirliftMediaImporter.ArtRoot+"/M04-B01.png"));data.ApplyModifiedPropertiesWithoutUndo();});
             MatchHudResourceTextRepair.Build();AssetDatabase.SaveAssets();Debug.Log("[M04AirliftPresentation] result=Passed locales=2 lessons=12 guideClasses=57 hud=bound speaker=Laila");
         }
-        private static void ImportCopy()
+        internal static void ImportCopy()
         {
             var catalog=AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(V3UiLocalizationCatalogBuilder.CatalogPath);var tables=new List<GameLocaleTable>();
             foreach(var locale in catalog.Locales)
@@ -55,7 +55,7 @@ namespace Game.Editor
             var guide=AssetDatabase.LoadAssetAtPath<MissionFieldGuideConfig>(GuidePath);if(guide==null){guide=ScriptableObject.CreateInstance<MissionFieldGuideConfig>();AssetDatabase.CreateAsset(guide,GuidePath);}guide.Configure(topics,classes);EditorUtility.SetDirty(guide);
         }
         private static string Key(int i,string field)=>"mission.m04.tutorial."+i+"."+field;
-        private static void BuildHud()=>Edit("Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab",root=>
+        internal static void BuildHud()=>Edit("Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab",root=>
         {
             var parent=root.GetComponentsInChildren<Transform>(true).First(x=>x.name=="HeaderContent");var old=parent.Find("M04Actions");if(old!=null)UnityEngine.Object.DestroyImmediate(old.gameObject);
             var actions=Rect("M04Actions",parent,520,181,640,126);
@@ -63,7 +63,7 @@ namespace Game.Editor
             var guide=Button("Guide",actions,0,172,"mission.m03.guide.open");var team=Button("Team",actions,182,110,"mission.m04.focus.team");var landing=Button("Landing",actions,302,172,"mission.m04.focus.landing");var departure=Button("Departure",actions,484,130,"mission.m04.focus.departure");
             var status=Text("ExtractionStatus",actions,0,47,614,76,19,"");
             var view=parent.GetComponent<MissionExtractionHudView>()??parent.gameObject.AddComponent<MissionExtractionHudView>();var data=new SerializedObject(view);
-            Ref(data,"actions",actions.gameObject);Ref(data,"guide",guide);Ref(data,"team",team);Ref(data,"landing",landing);Ref(data,"departure",departure);Ref(data,"status",status.GetComponent<V3LocalizedTextBindingView>());data.ApplyModifiedPropertiesWithoutUndo();actions.gameObject.SetActive(false);
+            Ref(data,"actions",actions.gameObject);Ref(data,"guide",guide);Ref(data,"team",team);Ref(data,"landing",landing);Ref(data,"departure",departure);Ref(data,"status",status.GetComponent<V3LocalizedTextBindingView>());data.ApplyModifiedPropertiesWithoutUndo();MissionSupportUiStyle.Extraction(root); actions.gameObject.SetActive(false);
         });
         private static void InstallSpeaker()
         {

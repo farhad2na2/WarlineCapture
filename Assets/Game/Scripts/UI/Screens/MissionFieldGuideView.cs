@@ -21,6 +21,8 @@ namespace Game.UI.Runtime
         [SerializeField] private TMP_InputField search;
         [SerializeField] private Image portrait;
         [SerializeField] private ScrollRect scroll;
+        [SerializeField] private RectTransform exampleCard,mistakeCard,diagramCard;
+        [SerializeField] private GameObject topicsSelected,classesSelected;
         [SerializeField] private V3LocalizedTextBindingView title,body,example,mistake,diagram,page,filterLabel;
         private readonly List<int> matches=new(57);
         private bool classes;
@@ -92,15 +94,9 @@ namespace Game.UI.Runtime
         public void Refresh()
         {
             if(content==null) return;
-            if(scroll!=null)
-            {
-                scroll.content.sizeDelta=new Vector2(scroll.content.sizeDelta.x,largeText ? classes ? 1060 : 850 : classes ? 925 : 715);
-                var bodyRect=body.GetComponent<RectTransform>(); bodyRect.sizeDelta=new Vector2(1040,classes ? largeText ? 420 : 350 : largeText ? 200 : 140);
-                SetTop(example,classes ? largeText ? 550 : 480 : largeText ? 330 : 270);
-                SetTop(mistake,classes ? largeText ? 736 : 646 : largeText ? 516 : 436);
-                SetTop(diagram,classes ? largeText ? 945 : 815 : largeText ? 735 : 600);
-                scroll.StopMovement(); scroll.verticalNormalizedPosition=1;
-            }
+            LayoutReadingPage();
+            if(topicsSelected!=null)topicsSelected.SetActive(!classes && !radio);
+            if(classesSelected!=null)classesSelected.SetActive(classes);
             search.gameObject.SetActive(classes); filterButton.gameObject.SetActive(classes);
             if(radioButton!=null) {radioButton.gameObject.SetActive(!classes && !extractionContext); radioButton.interactable=UiShellRuntimeGateway.TryReadMissionRadioArchive();}
             if(radioPanel!=null) radioPanel.gameObject.SetActive(radio);
@@ -113,7 +109,7 @@ namespace Game.UI.Runtime
                 scroll.content.sizeDelta=new Vector2(scroll.content.sizeDelta.x,810);
                 body.GetComponent<RectTransform>().sizeDelta=new Vector2(1280,190);
                 if(radioPanel!=null) radioPanel.sprite=Screen.width/(float)Mathf.Max(1,Screen.height)>2 ? radio20x9 : radio16x9;
-                return;
+                RefreshCards(); return;
             }
             int count=classes ? matches.Count : content.Topics.Length;
             index=Mathf.Clamp(index,0,Mathf.Max(0,count-1));
@@ -127,7 +123,7 @@ namespace Game.UI.Runtime
                 Set(title,topic.TitleKey); Set(body,topic.BodyKey);
                 example.SetLocalizedValue(UiShellRuntimeGateway.Localization.Get("mission.m03.guide.example")+"\n"+UiShellRuntimeGateway.Localization.Get(topic.ExampleKey));
                 mistake.SetLocalizedValue(UiShellRuntimeGateway.Localization.Get("mission.m03.guide.mistake")+"\n"+UiShellRuntimeGateway.Localization.Get(topic.MistakeKey));
-                Set(diagram,topic.DiagramKey); return;
+                Set(diagram,topic.DiagramKey); FitReadingCopy(); return;
             }
             if(count==0) {ReleaseUnit(); Set(title,"mission.m03.guide.no_match"); body.SetLocalizedValue(""); example.SetLocalizedValue(""); mistake.SetLocalizedValue(""); diagram.SetLocalizedValue(""); return;}
             var card=content.Classes[matches[index]];
@@ -146,7 +142,59 @@ namespace Game.UI.Runtime
             example.SetLocalizedValue(unit==null ? "" : UiShellRuntimeGateway.Localization.Get(roleKey+role));
             Set(mistake,extractionContext?"mission.m04.guide.notice":"mission.m03.guide.reference_notice");
             diagram.SetLocalizedValue(card.Id);
+            FitReadingCopy();
             if(unit!=null) {portrait.sprite=unit.PortraitCardSprite!=null ? unit.PortraitCardSprite : unit.PortraitSprite; portrait.gameObject.SetActive(portrait.sprite!=null);}
+        }
+        private void LayoutReadingPage()
+        {
+            if(scroll==null)return;
+            // Lessons read as a single tactical briefing; longer class dossiers retain scrolling.
+            float contentHeight=classes ? (largeText ? 1080 : 940) : (largeText ? 690 : 528);
+            scroll.content.sizeDelta=new Vector2(scroll.content.sizeDelta.x,contentHeight);
+            LayoutText(title,18,8,1280,76);
+            LayoutText(body,18,96,classes ? 1000 : 1280,classes ? (largeText ? 420 : 350) : (largeText ? 210 : 136));
+            if(classes)
+            {
+                LayoutText(example,34,largeText ? 550 : 478,1250,142);
+                LayoutText(mistake,34,largeText ? 736 : 650,1250,142);
+                LayoutText(diagram,34,largeText ? 940 : 824,1250,80);
+            }
+            else
+            {
+                float cardsTop=largeText ? 338 : 262;
+                float cardsHeight=largeText ? 198 : 132;
+                bool rtl=UiShellRuntimeGateway.Localization.IsRightToLeft;
+                LayoutText(example,rtl?692:34,cardsTop,596,cardsHeight);
+                LayoutText(mistake,rtl?34:692,cardsTop,596,cardsHeight);
+                LayoutText(diagram,34,largeText ? 588 : 444,1250,62);
+            }
+            RefreshCards();scroll.StopMovement();scroll.verticalNormalizedPosition=1;
+        }
+        private void FitReadingCopy()
+        {
+            float bodyHeight=FitText(body);
+            float cardsTop=body.GetComponent<RectTransform>().anchoredPosition.y*-1+bodyHeight+42;
+            SetTop(example,cardsTop);float exampleHeight=FitText(example);
+            SetTop(mistake,classes?cardsTop+exampleHeight+42:cardsTop);float mistakeHeight=FitText(mistake);
+            float diagramTop=classes?cardsTop+exampleHeight+mistakeHeight+84:cardsTop+Mathf.Max(exampleHeight,mistakeHeight)+42;
+            SetTop(diagram,diagramTop);float diagramHeight=FitText(diagram);
+            scroll.content.sizeDelta=new Vector2(scroll.content.sizeDelta.x,Mathf.Max(scroll.viewport.rect.height,diagramTop+diagramHeight+20));
+            RefreshCards();
+        }
+        private static float FitText(V3LocalizedTextBindingView binding)
+        {
+            var text=binding.GetComponent<TMP_Text>();text.ForceMeshUpdate(true,true);
+            var rect=text.rectTransform;float height=Mathf.Max(rect.sizeDelta.y,text.GetPreferredValues(text.text,rect.rect.width,float.PositiveInfinity).y+6);
+            rect.sizeDelta=new Vector2(rect.sizeDelta.x,height);return height;
+        }
+        private static void LayoutText(V3LocalizedTextBindingView binding,float x,float y,float width,float height)
+        {var rect=binding.GetComponent<RectTransform>();rect.anchoredPosition=new Vector2(x,-y);rect.sizeDelta=new Vector2(width,height);}
+        private void RefreshCards()
+        {FitCard(exampleCard,example);FitCard(mistakeCard,mistake);FitCard(diagramCard,diagram);}
+        private void FitCard(RectTransform card,V3LocalizedTextBindingView binding)
+        {
+            if(card==null)return;card.gameObject.SetActive(!radio);
+            var text=binding.GetComponent<RectTransform>();card.anchoredPosition=text.anchoredPosition+new Vector2(-16,14);card.sizeDelta=text.sizeDelta+new Vector2(32,28);
         }
         private static void SetTop(V3LocalizedTextBindingView binding,float top)
         {var rect=binding.GetComponent<RectTransform>(); rect.anchoredPosition=new Vector2(rect.anchoredPosition.x,-top);}

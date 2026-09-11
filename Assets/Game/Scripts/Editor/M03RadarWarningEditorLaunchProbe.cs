@@ -116,6 +116,7 @@ namespace Game.Editor
                 }
                 if(runtime.Outcome!=MissionOutcomeKind.None && !ConvoyProbeActive) throw new InvalidOperationException("Mission settled during opening: "+runtime.Outcome);
                 if(!SessionState.GetBool(ComicKey,false) && (!PerformanceActive || runtime.Phase<MissionPhaseKind.Engage) && (!SessionState.GetBool(ResultKey,false) || runtime.Phase<MissionPhaseKind.SecureCorridor)) SkipNarrative();
+                if(AdvanceVehicleVisualValidation(em,root,in runtime,in facts)) return;
                 if(AdvanceEveryEntryValidation(em,root,in runtime,in facts)) return;
                 if(AdvanceHudRoadValidation(em,root,in runtime,in facts)) return;
                 if(AdvanceComicValidation(em)) return;
@@ -184,6 +185,7 @@ namespace Game.Editor
             SessionState.SetBool(RifleKey, false);
             SessionState.SetBool(ConstructionKey,false);
             SessionState.SetBool(CameraKey,false);
+            SessionState.SetBool(VehicleVisualKey,false);
             SessionState.SetBool(ResultKey,false);
             SessionState.SetBool(LifecycleKey,false);
             SessionState.SetBool(RecoveryKey,false);

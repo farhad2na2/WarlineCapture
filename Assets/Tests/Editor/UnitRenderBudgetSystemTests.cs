@@ -793,6 +793,7 @@ public sealed partial class UnitRenderBudgetSystemTests
             new UnitRenderBudgetVisualPlan.Request
             {
                 Unit = TestEntity(1),
+                IsCharacter = true,
                 IsEnemyUnit = true,
                 IsSelectedUnit = false,
                 DistanceSq = 29f * 29f,

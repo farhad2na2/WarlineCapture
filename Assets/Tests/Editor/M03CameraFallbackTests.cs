@@ -27,7 +27,7 @@ public sealed class M03CameraFallbackTests
         Assert.AreEqual(squad,start);
         Assert.AreEqual(anchors[1].Position,post);Assert.AreEqual(anchors[2].Position,approach);
         var camera=CampaignMissionSpawnSystem.CreateDefenseCommandView(start);
-        Assert.AreEqual(squad,camera.World);Assert.AreEqual(85f,camera.Perspective.x-squad.y);
+        Assert.AreEqual(squad,camera.World);Assert.AreEqual(55f,camera.Perspective.x-squad.y);
     }
 
     public static void RunFocusedValidation()

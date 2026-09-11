@@ -90,7 +90,7 @@ namespace Game.Editor
                     if(oil==null || !oil.gameObject.activeInHierarchy)throw new InvalidOperationException("Oil slot is hidden.");
                     using(var cameras=em.CreateEntityQuery(typeof(RuntimeCameraSnapshotComponent)))
                     {
-                        if(!CampaignMissionPatrolOrderSystem.TryCaptureTourStart(cameras.GetSingleton<RuntimeCameraSnapshotComponent>(),0,out var focus,out var pose) || pose.x>100)
+                        if(!CampaignMissionPatrolOrderSystem.TryCaptureTourStart(cameras.GetSingleton<RuntimeCameraSnapshotComponent>(),0,out var focus,out var pose) || pose.x>60)
                             throw new InvalidOperationException("M3 command camera is too high.");
                         var tour=em.GetComponentData<CampaignMissionCameraTourState>(root);
                         if(math.distance(focus,tour.StartFocus)>.2f)throw new InvalidOperationException("Tour did not return to squad command view.");

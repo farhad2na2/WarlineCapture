@@ -72,7 +72,8 @@ namespace Game.Runtime
                             defense.FocusReturnAvailable=1;
                         }
                         em.SetComponentData(camera, new RuntimeCameraFocusRequestComponent
-                        { Requested = 1, Smooth = smooth ? (byte)1 : (byte)0, SmoothTimeSeconds = 0.8f, World = warning.FocusPosition });
+                        { Requested = 1, Smooth = smooth ? (byte)1 : (byte)0, SmoothTimeSeconds = 0.8f, World = warning.FocusPosition,
+                            UseExplicitPerspective = 1, Perspective = new Unity.Mathematics.float4(warning.FocusPosition.y + 40f, 60f, 0f, 50f) });
                         defense.PlayerRequestedFocus = 1;
                         defense.AcknowledgedGuidanceMask |= 2u;
                         break;

@@ -26,7 +26,7 @@ namespace Game.Runtime
         internal static RuntimeCameraFocusRequestComponent CreateDefenseCommandView(float3 squad) => new()
         {
             Requested = 1, UseExplicitPerspective = 1, World = squad,
-            Perspective = new float4(squad.y + 85f, 60f, 0f, 50f)
+            Perspective = new float4(squad.y + 55f, 60f, 0f, 50f)
         };
 
         internal static RuntimeCameraFocusRequestComponent CreateMissionOverviewRequest(

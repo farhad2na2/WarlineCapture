@@ -71,6 +71,9 @@ public sealed class M03WarningInteractionTests
         f.Em.SetComponentData(f.Root,new CampaignMissionGuidanceProjectionComponent {GuidanceId=45004,Prompt=CampaignMissionGuidancePromptKind.RadarBuildOption,Active=1});
         f.Interact(MissionDefenseInteractionKind.FocusWarning,45004); f.Interaction.Update(f.World.Unmanaged);
         Assert.AreEqual(new float3(12,0,24),f.Em.GetComponentData<RuntimeCameraFocusRequestComponent>(camera).World);
+        var focusRequest=f.Em.GetComponentData<RuntimeCameraFocusRequestComponent>(camera);
+        Assert.AreEqual(1,focusRequest.UseExplicitPerspective);
+        Assert.AreEqual(40f,focusRequest.Perspective.x-focusRequest.World.y);
         Assert.AreEqual(3u,f.Em.GetComponentData<CampaignMissionDefenseStateComponent>(f.Root).AcknowledgedGuidanceMask);
         f.Interact(MissionDefenseInteractionKind.SkipOptional,45003); f.Interaction.Update(f.World.Unmanaged);
         Assert.AreEqual(3u,f.Em.GetComponentData<CampaignMissionDefenseStateComponent>(f.Root).AcknowledgedGuidanceMask);

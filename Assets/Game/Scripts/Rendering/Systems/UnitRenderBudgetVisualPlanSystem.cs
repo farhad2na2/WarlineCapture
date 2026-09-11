@@ -144,7 +144,8 @@ namespace Game.Rendering
                 request.HasLowLodInstance &&
                 request.LowBand;
             bool shouldShowFar = !shouldShowDetail && !shouldShowMid && !shouldShowLow;
-            if (request.IsAirUnit || request.ForceDetailedVisual)
+            // Vehicles retain their complete model, including moving wheels/turrets, at every distance.
+            if (!request.IsCharacter || request.IsAirUnit || request.ForceDetailedVisual)
             {
                 return new Result(
                     shouldShowDetail: true,

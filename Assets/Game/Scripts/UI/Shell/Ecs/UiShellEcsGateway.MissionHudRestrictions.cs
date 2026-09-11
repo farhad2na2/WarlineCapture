@@ -44,6 +44,7 @@ namespace Game.UI.Shell.Ecs
                 if (!definition.MissionId.Equals(runtime.MissionId))
                     continue;
 
+                bool radar = runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes("saga.ch01.m03.radar_warning"));
                 restrictions = new UiMissionHudRestrictionsModel(
                     runtime.MissionId.ToString(),
                     definition.BuildingDisabled != 0,
@@ -52,9 +53,9 @@ namespace Game.UI.Shell.Ecs
                     definition.TransportDisabled != 0,
                     definition.AirDisabled != 0,
                     cinematicInteractionLocked,
+                    definition.MissionRuntimeEnabled != 0 && !radar,
                     definition.MissionRuntimeEnabled != 0,
-                    definition.MissionRuntimeEnabled != 0,
-                    definition.MissionRuntimeEnabled != 0);
+                    definition.MissionRuntimeEnabled != 0 && !radar);
                 return true;
             }
 

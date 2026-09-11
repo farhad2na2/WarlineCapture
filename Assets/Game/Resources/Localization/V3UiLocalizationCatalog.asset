@@ -182,6 +182,9 @@ MonoBehaviour:
       value: SKIP OPTIONAL STEP
     - key: mission.m03.action.warning
       value: Read warning
+    - key: mission.m03.camera.opening
+      value: "MISSION OVERVIEW\nTouring the post and approach. ARIA\u2019s tutorial
+        starts when the camera returns."
     - key: mission.m03.camera.return
       value: RETURN VIEW
     - key: mission.m03.camera.skip
@@ -1812,6 +1815,12 @@ MonoBehaviour:
       value: PASSENGERS {0}/{1} | SOLDIERS {2}/{3}
     - key: ui.hud.passengers_soldiers_vehicles_capacity
       value: PASSENGERS {0}/{1} | SOLDIERS {2}/{3} | VEHICLES {4}/{5}
+    - key: ui.hud.squad.helicopter
+      value: HELICOPTER
+    - key: ui.hud.squad.jet
+      value: JET
+    - key: ui.hud.squad.vehicles
+      value: VEHICLES
     - key: ui.hud.tap_rifle_squad
       value: SELECT SQUAD
     - key: ui.inbox.from
@@ -4068,12 +4077,6 @@ MonoBehaviour:
       value: '{0} - ETA {1}s'
     - key: warning_ground_attack_type
       value: Ground vehicle attack detected
-    - key: ui.hud.squad.vehicles
-      value: VEHICLES
-    - key: ui.hud.squad.helicopter
-      value: HELICOPTER
-    - key: ui.hud.squad.jet
-      value: JET
   - localeCode: fa-IR
     displayName: "\u0641\u0627\u0631\u0633\u06CC"
     shortLabel: FA
@@ -4323,6 +4326,13 @@ MonoBehaviour:
         \u0627\u062E\u062A\u06CC\u0627\u0631\u06CC"
     - key: mission.m03.action.warning
       value: "\u062E\u0648\u0627\u0646\u062F\u0646 \u0647\u0634\u062F\u0627\u0631"
+    - key: mission.m03.camera.opening
+      value: "\u0645\u0631\u0648\u0631 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A\n\u062F\u0648\u0631\u0628\u06CC\u0646
+        \u067E\u0627\u0633\u06AF\u0627\u0647 \u0648 \u0645\u0633\u06CC\u0631 \u0648\u0631\u0648\u062F\u06CC
+        \u0631\u0627 \u0646\u0634\u0627\u0646 \u0645\u06CC\u200C\u062F\u0647\u062F.
+        \u0622\u0645\u0648\u0632\u0634 \u0622\u0631\u06CC\u0627 \u067E\u0633 \u0627\u0632
+        \u0628\u0627\u0632\u06AF\u0634\u062A \u062F\u0648\u0631\u0628\u06CC\u0646
+        \u0622\u063A\u0627\u0632 \u0645\u06CC\u200C\u0634\u0648\u062F."
     - key: mission.m03.camera.return
       value: "\u0628\u0627\u0632\u06AF\u0634\u062A \u062F\u0648\u0631\u0628\u06CC\u0646"
     - key: mission.m03.camera.skip
@@ -6884,6 +6894,12 @@ MonoBehaviour:
     - key: ui.hud.passengers_soldiers_vehicles_capacity
       value: "\u0645\u0633\u0627\u0641\u0631\u0627\u0646 {0}/{1} | \u0633\u0631\u0628\u0627\u0632\u0627\u0646
         {2}/{3} | \u062E\u0648\u062F\u0631\u0648\u0647\u0627 {4}/{5}"
+    - key: ui.hud.squad.helicopter
+      value: "\u0628\u0627\u0644\u06AF\u0631\u062F"
+    - key: ui.hud.squad.jet
+      value: "\u062C\u062A"
+    - key: ui.hud.squad.vehicles
+      value: "\u062E\u0648\u062F\u0631\u0648\u0647\u0627"
     - key: ui.hud.tap_rifle_squad
       value: "\u06AF\u0631\u0648\u0647 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
         \u06A9\u0646\u06CC\u062F"
@@ -9469,9 +9485,3 @@ MonoBehaviour:
       value: "\u062D\u0645\u0644\u0647 \u062E\u0648\u062F\u0631\u0648\u0647\u0627\u06CC
         \u0632\u0645\u06CC\u0646\u06CC \u0634\u0646\u0627\u0633\u0627\u06CC\u06CC
         \u0634\u062F"
-    - key: ui.hud.squad.vehicles
-      value: "\u062E\u0648\u062F\u0631\u0648\u0647\u0627"
-    - key: ui.hud.squad.helicopter
-      value: "\u0628\u0627\u0644\u06AF\u0631\u062F"
-    - key: ui.hud.squad.jet
-      value: "\u062C\u062A"

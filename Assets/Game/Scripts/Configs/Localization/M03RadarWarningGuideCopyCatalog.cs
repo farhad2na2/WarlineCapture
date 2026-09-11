@@ -4,6 +4,7 @@ namespace Game.Configs
     {
         public static readonly (string Key, string English, string Persian)[] Entries =
         {
+            ("mission.m03.camera.opening", "MISSION OVERVIEW\nTouring the post and approach. ARIA’s tutorial starts when the camera returns.", "مرور مأموریت\nدوربین پاسگاه و مسیر ورودی را نشان می‌دهد. آموزش آریا پس از بازگشت دوربین آغاز می‌شود."),
             ("mission.m03.camera.skip", "Return to command view", "بازگشت به نمای فرماندهی"),
             ("mission.m03.guide.radio", "RADIO ARCHIVE", "بایگانی پیام رادیویی"),
             ("mission.m03.guide.control.6", "RADAR PING", "پالس رادار"),

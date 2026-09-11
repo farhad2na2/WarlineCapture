@@ -167,7 +167,7 @@ namespace Game.Runtime
                         CampaignMissionSpawnSystem.QueueMissionOpeningOverview(
                             state.EntityManager,
                             focusEntity,
-                            in current, definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0);
+                            in current, definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0, definition.Defense.Enabled != 0);
                         current.InitialRtsOverviewRequested = 1;
                         opening.ValueRW = current;
                         break;

@@ -11,6 +11,31 @@ using UnityEngine;
 
 public sealed class M03PresentationTests
 {
+    [Test]
+    public void DeliveredHudBindsAriaWithOpeningInstructionsInstalled()
+    {
+        var instance=UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(
+            "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab"));
+        var popupLayer=new GameObject("Popup layer",typeof(RectTransform));
+        var helperType=typeof(AriaTutorialBriefingView).Assembly.GetType("Game.UI.Runtime.MatchHudAssistantUiSystemHelper");
+        var helper=Activator.CreateInstance(helperType,true);
+        try
+        {
+            var aria=instance.GetComponentInChildren<AriaTutorialBriefingView>(true);
+            Assert.NotNull(aria.transform.Find("OpeningInstruction/OpeningHint"));
+            var header=aria.transform.parent.gameObject;
+            var popup=AssetDatabase.LoadAssetAtPath<GameObject>(AriaCommandAssistantV3PrefabBuilder.PrefabPath);
+            helperType.GetMethod("Bind").Invoke(helper,new object[]{header,popupLayer.transform,popup,null,null,null});
+            Assert.IsTrue((bool)helperType.GetProperty("IsBound").GetValue(helper),
+                "A valid tutorial projection is useless if the delivered HUD cannot bind ARIA.");
+        }
+        finally
+        {
+            helperType.GetMethod("Unbind").Invoke(helper,null);
+            UnityEngine.Object.DestroyImmediate(instance);UnityEngine.Object.DestroyImmediate(popupLayer);
+        }
+    }
+
     public static void RunFocusedValidation()
     {
         try

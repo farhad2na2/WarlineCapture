@@ -31,8 +31,7 @@ namespace Game.Runtime
             ref var definition=ref catalog.Blob.Value.Missions[index];
             var defense=em.GetComponentData<CampaignMissionDefenseStateComponent>(root);
             if(!defense.SessionToken.Equals(runtime.SessionToken) || defense.AttemptOrdinal!=runtime.AttemptOrdinal || defense.SourceVersion!=runtime.SourceVersion || runtime.Phase!=MissionPhaseKind.Engage ||
-                runtime.Outcome!=MissionOutcomeKind.None || runtime.Guidance==NarrativeGuidanceMode.Minimal ||
-                runtime.RunKind!=MissionRunKind.FirstClear && runtime.ReplayTutorialEnabled==0)
+                runtime.Outcome!=MissionOutcomeKind.None)
             { ClearDefenseGuidance(em,root,in current); return true; }
             if(!SystemAPI.TryGetSingleton(out RuntimeGameplayStateComponent gameplay) || gameplay.SimulationActive==0) return true;
             bool positioned=false,holding=false,built=false,main=false,selectedFriendly=false;
@@ -112,10 +111,10 @@ namespace Game.Runtime
             }
             int selected=-1;
             for(int i=0;i<definition.Defense.GuidanceSteps.Length-1;i++)
-                if((defense.AcknowledgedGuidanceMask&(1u<<i))==0 && !(runtime.Guidance==NarrativeGuidanceMode.Contextual && i is 2 or 3 or 6 or 8)) { selected=i; break; }
+                if((defense.AcknowledgedGuidanceMask&(1u<<i))==0) { selected=i; break; }
             if(oldMask!=defense.AcknowledgedGuidanceMask && current.Active!=0 && current.Prompt>=CampaignMissionGuidancePromptKind.RadarReadWarning &&
                 (defense.AcknowledgedGuidanceMask&(1u<<((int)current.Prompt-13)))!=0)
-                defense.NextGuidanceAtMilliseconds=facts.ElapsedMilliseconds+3000;
+                defense.NextGuidanceAtMilliseconds=facts.ElapsedMilliseconds;
             em.SetComponentData(root,defense);
             if(selected<0 || ledger.Active==0 || facts.ElapsedMilliseconds<defense.NextGuidanceAtMilliseconds)
             { ClearDefenseGuidance(em,root,in current); return true; }
@@ -126,7 +125,7 @@ namespace Game.Runtime
             var next=new CampaignMissionGuidanceProjectionComponent
             {
                 GuidanceId=45001+selected,Version=Next(current.Version),MissionSourceVersion=runtime.Version,
-                Prompt=(CampaignMissionGuidancePromptKind)(13+selected),GuidanceMode=runtime.Guidance,Active=1,
+                Prompt=(CampaignMissionGuidancePromptKind)(13+selected),GuidanceMode=NarrativeGuidanceMode.Full,Active=1,
                 RecommendationKind=AssistantRecommendationKind.Explain,TargetKind=AssistantTargetKind.UiSurface,
                 TargetId=chosen.StepId,Title=chosen.TitleKey,Body=chosen.BodyKey,
                 ActionLabel=chosen.Action==MissionGuidanceActionKind.Explain || chosen.Action==MissionGuidanceActionKind.InspectContact ? RadarContinue : RadarAct,

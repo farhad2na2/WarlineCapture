@@ -6,10 +6,30 @@ using NUnit.Framework;
 using Unity.Collections;
 using Unity.Core;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 
 public sealed class M03CameraFallbackTests
 {
+    [Test]
+    public void CommandViewCentersOnTheSquadRatherThanTheOldWideOverviewAnchor()
+    {
+        using var builder=new BlobBuilder(Allocator.Temp);
+        ref var map=ref builder.ConstructRoot<OperationMapBlob>();
+        var anchors=builder.Allocate(ref map.Anchors,3);
+        anchors[0]=new OperationMapAnchorBlob {Id="anchor.ch01.m03.return_rts",Position=new float3(930,0,402)};
+        anchors[1]=new OperationMapAnchorBlob {Id="anchor.ch01.m03.forward_post",Position=new float3(900,0,400)};
+        anchors[2]=new OperationMapAnchorBlob {Id="anchor.ch01.m03.fork",Position=new float3(930,0,450)};
+        using var blob=builder.CreateBlobAssetReference<OperationMapBlob>(Allocator.Temp);
+        var squad=new float3(850,0,350);
+        CampaignMissionSpawnSystem.ResolveOpeningPresentationFocus(new FixedString64Bytes("saga.ch01.m03.radar_warning"),
+            ref blob.Value,squad,float3.zero,out var start,out var approach,out var post);
+        Assert.AreEqual(squad,start);
+        Assert.AreEqual(anchors[1].Position,post);Assert.AreEqual(anchors[2].Position,approach);
+        var camera=CampaignMissionSpawnSystem.CreateDefenseCommandView(start);
+        Assert.AreEqual(squad,camera.World);Assert.AreEqual(85f,camera.Perspective.x-squad.y);
+    }
+
     public static void RunFocusedValidation()
     {
         try

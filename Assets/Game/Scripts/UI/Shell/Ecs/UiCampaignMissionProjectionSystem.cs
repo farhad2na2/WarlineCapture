@@ -13,6 +13,7 @@ namespace Game.UI.Shell.Ecs
     public partial struct UiCampaignMissionProjectionSystem : ISystem
     {
         public const string M01MissionId = "saga.ch01.m01.first_contact";
+        private const string M03MissionId = "saga.ch01.m03.radar_warning";
         public const string M02MissionId = "saga.ch01.m02.establish_base";
 
         private EntityQuery _uiRootQuery;
@@ -203,7 +204,7 @@ namespace Game.UI.Shell.Ecs
         {
             bool replay = operations.FirstClearCompleted != 0;
             FixedString64Bytes m01MissionId = new(M01MissionId);
-            bool tutorialRequired = definition.MissionId.Equals(m01MissionId) || definition.MissionId.Equals(new FixedString64Bytes(M02MissionId));
+            bool tutorialRequired = definition.MissionId.Equals(m01MissionId) || definition.MissionId.Equals(new FixedString64Bytes(M02MissionId)) || definition.MissionId.Equals(new FixedString64Bytes(M03MissionId));
             UiMissionBriefingComponent next = new()
             {
                 MissionId = definition.MissionId,
@@ -333,7 +334,7 @@ namespace Game.UI.Shell.Ecs
             MissionRunKind runKind = operations.PendingResume != 0
                 ? MissionRunKind.Retry
                 : operations.FirstClearCompleted != 0 ? MissionRunKind.Replay : MissionRunKind.FirstClear;
-            bool requiresTutorialGuidance = definition.MissionId.Equals(new FixedString64Bytes(M02MissionId));
+            bool requiresTutorialGuidance = definition.MissionId.Equals(new FixedString64Bytes(M02MissionId)) || definition.MissionId.Equals(new FixedString64Bytes(M03MissionId));
             NarrativeGuidanceMode guidance = requiresTutorialGuidance
                 ? NarrativeGuidanceMode.Full
                 : ResolveGuidance(entityManager);

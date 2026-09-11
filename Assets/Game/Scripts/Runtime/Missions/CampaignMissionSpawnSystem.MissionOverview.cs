@@ -7,8 +7,13 @@ namespace Game.Runtime
     public partial struct CampaignMissionSpawnSystem
     {
         internal static void QueueMissionOpeningOverview(EntityManager em, Entity camera,
-            in CampaignMissionOpeningPresentationComponent opening, bool frameMissionSubjects)
+            in CampaignMissionOpeningPresentationComponent opening, bool frameMissionSubjects, bool defenseCommandView = false)
         {
+            if (defenseCommandView)
+            {
+                em.SetComponentData(camera, CreateDefenseCommandView(opening.FriendlyFocus));
+                return;
+            }
             if (!frameMissionSubjects)
             {
                 QueueInitialRtsOverview(em, camera, opening.FriendlyFocus);
@@ -17,6 +22,12 @@ namespace Game.Runtime
             em.SetComponentData(camera, CreateMissionOverviewRequest(opening.FriendlyFocus,
                 opening.EstablishingFocus, opening.HostileFocus));
         }
+
+        internal static RuntimeCameraFocusRequestComponent CreateDefenseCommandView(float3 squad) => new()
+        {
+            Requested = 1, UseExplicitPerspective = 1, World = squad,
+            Perspective = new float4(squad.y + 85f, 60f, 0f, 50f)
+        };
 
         internal static RuntimeCameraFocusRequestComponent CreateMissionOverviewRequest(
             float3 commandArea, float3 firstSubject, float3 secondSubject)

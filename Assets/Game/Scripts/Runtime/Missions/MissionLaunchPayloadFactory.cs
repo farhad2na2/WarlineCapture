@@ -23,6 +23,8 @@ namespace Game.Runtime
             int deterministicSeed)
         {
             ValidateGuidance(guidance);
+            if (string.Equals(missionId, "saga.ch01.m03.radar_warning", StringComparison.Ordinal))
+            { guidance = NarrativeGuidanceMode.Full; replayTutorialEnabled = true; }
             replayTutorialEnabled |= string.Equals(
                 missionId,
                 AlwaysGuidedMissionId,

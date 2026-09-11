@@ -8,6 +8,7 @@ namespace Game.Runtime
     [UpdateInGroup(typeof(InitializationSystemGroup))]
     public partial struct CampaignMissionLaunchSystem : ISystem
     {
+        private static readonly FixedString64Bytes RadarTutorialMission = "saga.ch01.m03.radar_warning";
         public void OnCreate(ref SystemState state) => state.RequireForUpdate<CampaignMissionRootComponent>();
 
         public void OnUpdate(ref SystemState state)
@@ -324,11 +325,11 @@ namespace Game.Runtime
             MissionId = request.MissionId, ScenarioId = request.ScenarioId,
             OperationMapId = request.OperationMapId, SessionToken = request.SessionToken,
             Phase = MissionPhaseKind.Preparing, Outcome = MissionOutcomeKind.None,
-            LaunchOrigin = request.LaunchOrigin, RunKind = request.RunKind, Guidance = request.Guidance,
+            LaunchOrigin = request.LaunchOrigin, RunKind = request.RunKind, Guidance = request.MissionId.Equals(RadarTutorialMission) ? Game.Narrative.Contracts.NarrativeGuidanceMode.Full : request.Guidance,
             ReturnDestination = MissionReturnDestinationKind.None, TransitionToken = request.TransitionToken,
             Version = 1, SourceVersion = sourceVersion, AttemptOrdinal = request.AttemptOrdinal,
             DeterministicSeed = request.DeterministicSeed, RequiredReadiness = readiness.RequiredFlags,
-            ReadyReadiness = readiness.ReadyFlags, ReplayTutorialEnabled = request.ReplayTutorialEnabled
+            ReadyReadiness = readiness.ReadyFlags, ReplayTutorialEnabled = request.MissionId.Equals(RadarTutorialMission) ? (byte)1 : request.ReplayTutorialEnabled
         };
 
         private static bool Reject(string code, out FixedString64Bytes reason)

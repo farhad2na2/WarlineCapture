@@ -111,7 +111,7 @@ namespace Game.Runtime
                 QueueMissionOpeningOverview(
                     em,
                     _cameraFocusQuery.GetSingletonEntity(),
-                    in opening, definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0);
+                    in opening, definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0, definition.Defense.Enabled != 0);
                 opening.InitialRtsOverviewRequested = 1;
             }
             SetOrAdd(em, root, opening);

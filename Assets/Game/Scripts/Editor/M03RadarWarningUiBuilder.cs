@@ -113,6 +113,7 @@ namespace Game.Editor
         }
         public static void RepairHud()
         {
+            M03RadarWarningLocalizationBuilder.Import();
             BuildGuide(); BuildHud(); M04AirliftPresentationBuilder.BuildHud(); AssetDatabase.SaveAssets();
             Debug.Log("[M03HudRepair] result=Passed controls=integratedAria warning=singleOwner");
         }
@@ -125,7 +126,7 @@ namespace Game.Editor
             Ref(tutorialData,"missionTelemetry",Find(tutorial.gameObject,"V3Telemetry").gameObject);
             tutorialData.ApplyModifiedPropertiesWithoutUndo();
             var composition=Find(root,"HeaderContent");
-            foreach(string name in new[]{"M03Actions","SkipCameraTour","ReturnWarningCamera","ReadWarning","RadarStatus"})
+            foreach(string name in new[]{"M03Actions","SkipCameraTour","ReturnWarningCamera","ReadWarning","RadarStatus","OpeningHint","OpeningInstruction"})
                 foreach(var old in root.GetComponentsInChildren<Transform>(true).Where(t=>t.name==name).ToArray())
                     UnityEngine.Object.DestroyImmediate(old.gameObject);
             var threat=composition.Find("ThreatJumpPanel");
@@ -145,6 +146,10 @@ namespace Game.Editor
             var obsolete=root.GetComponent<MissionDefenseHudView>(); if(obsolete!=null) UnityEngine.Object.DestroyImmediate(obsolete);
             var view=composition.GetComponent<MissionDefenseHudView>() ?? composition.gameObject.AddComponent<MissionDefenseHudView>();
             var data=new SerializedObject(view);
+            // Keep mission copy inside its own layout; ARIA's direct text children are its access-state contract.
+            var hintLayout=Rect("OpeningInstruction",Find(root,"AriaAssistantButton"),22,242,356,168);
+            var hint=Text("OpeningHint",hintLayout,0,0,356,168,22,"mission.m03.camera.opening");
+            hint.gameObject.SetActive(false);Ref(data,"openingHint",hint.gameObject);
             Ref(data,"skipCameraTourButton",skipTour);
             Ref(data,"returnCameraButton",returnCamera);
             Ref(data,"actions",actions.gameObject); Ref(data,"guideButton",guide); Ref(data,"warningButton",warning); Ref(data,"skipButton",skip);

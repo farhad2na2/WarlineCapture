@@ -207,6 +207,7 @@ namespace Game.UI.Runtime
                 UiShellRuntimeGateway.TryReadMissionHudRestrictions(
                     out UiMissionHudRestrictionsModel restrictions) &&
                 restrictions.EconomyDisabled;
+            showOil |= restrictions.IsActive && restrictions.MissionId == "saga.ch01.m03.radar_warning";
             bool hideLogisticsResources = restrictions.IsActive && restrictions.HideLogisticsResources;
             bool showMissionCredits = restrictions.IsActive && restrictions.ShowMissionCredits;
             if (_resourceVisibilityApplied && _lastShowOil == showOil &&

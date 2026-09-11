@@ -187,6 +187,22 @@ public sealed class M03WarningInteractionTests
         f.Observe(1,ThreatWarningSourceKind.ScoutReport,-1); f.Resolve();
         Assert.AreEqual(31000,f.Records[1].FirstReportedAtMilliseconds); Assert.AreEqual(0,f.Records[1].AttentionEscalated);
     }
+    [TestCase(MissionRunKind.FirstClear, NarrativeGuidanceMode.Minimal)]
+    [TestCase(MissionRunKind.Replay, NarrativeGuidanceMode.Minimal)]
+    [TestCase(MissionRunKind.Retry, NarrativeGuidanceMode.Contextual)]
+    public void EveryM3AttemptPublishesTheFirstLessonDespiteSavedGuidance(MissionRunKind kind, NarrativeGuidanceMode mode)
+    {
+        using var f=new Fixture(guidance:true);
+        var runtime=f.Em.GetComponentData<CampaignMissionRuntimeComponent>(f.Root);
+        runtime.MissionId="saga.ch01.m03.radar_warning"; runtime.Guidance=mode;
+        runtime.RunKind=kind; runtime.ReplayTutorialEnabled=0;f.Em.SetComponentData(f.Root,runtime);
+        f.Observe(0,ThreatWarningSourceKind.ScoutReport,-1);f.Resolve();
+        f.World.GetOrCreateSystem<CampaignMissionGuidanceProjectionSystem>().Update(f.World.Unmanaged);
+        var guidance=f.Em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(f.Root);
+        Assert.AreEqual(1,guidance.Active);Assert.AreEqual(45001,guidance.GuidanceId);
+        Assert.AreEqual(NarrativeGuidanceMode.Full,guidance.GuidanceMode);
+    }
+
     [Test]
     public void MoveLessonRequiresANewAcceptedMoveAndArrival()
     {

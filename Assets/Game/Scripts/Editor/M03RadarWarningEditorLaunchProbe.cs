@@ -88,11 +88,13 @@ namespace Game.Editor
                     var store=new CampaignMissionProgressStore(new SaveService(new JsonSaveRepository(savePath)));
                     store.EnsureAvailable(M03RadarWarningConfigBuilder.MissionId);
                     em.GetComponentObject<CampaignMissionProgressStoreReferenceComponent>(root).Store=store;
+                    PrepareEveryEntryStore(store);
                     prepared=true; return;
                 }
                 if(AdvanceCrossMissionIsolation(em,root)) return;
                 if(!deployed)
                 {
+                    if(PrepareEveryEntryCampaign()) return;
                     if(!UiShellRuntimeGateway.TryReadCampaignOperations(out UiCampaignOperationsModel campaign) || !campaign.IsValid) return;
                     if(campaign.SelectedMission.MissionId!=M03RadarWarningConfigBuilder.MissionId)
                     { UiShellRuntimeGateway.TryEnqueueCampaignMissionAction(UiCampaignMissionActionKind.Select,M03RadarWarningConfigBuilder.MissionId); return; }
@@ -114,6 +116,7 @@ namespace Game.Editor
                 }
                 if(runtime.Outcome!=MissionOutcomeKind.None && !ConvoyProbeActive) throw new InvalidOperationException("Mission settled during opening: "+runtime.Outcome);
                 if(!SessionState.GetBool(ComicKey,false) && (!PerformanceActive || runtime.Phase<MissionPhaseKind.Engage) && (!SessionState.GetBool(ResultKey,false) || runtime.Phase<MissionPhaseKind.SecureCorridor)) SkipNarrative();
+                if(AdvanceEveryEntryValidation(em,root,in runtime,in facts)) return;
                 if(AdvanceHudRoadValidation(em,root,in runtime,in facts)) return;
                 if(AdvanceComicValidation(em)) return;
                 if(AdvanceSaveRecoveryValidation(em,root,in runtime,in facts)) return;
@@ -172,6 +175,7 @@ namespace Game.Editor
             SessionState.SetBool(CommandsKey,false);
             if(probeRootWorld!=null && probeRootWorld.IsCreated) probeRoots.Dispose(); probeRootWorld=null;
             Time.timeScale=1f;
+            RestoreEveryEntrySettings();
             RestoreUiSettings();
             if(SessionState.GetBool(UiKey,false) && originalLocale!=null) Game.Configs.GameLocalization.SetLocale(originalLocale,false);
             SessionState.SetBool(UiKey,false);

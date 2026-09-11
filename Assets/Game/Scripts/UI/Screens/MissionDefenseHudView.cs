@@ -10,6 +10,7 @@ namespace Game.UI.Runtime
         private static readonly ProfilerMarker RefreshMarker = new("MissionDefenseHudView.Refresh");
         [SerializeField] private Button skipCameraTourButton;
         private bool cameraPreferencesApplied;
+        [SerializeField] private GameObject openingHint;
         [SerializeField] private GameObject actions;
         [SerializeField] private MissionHudTouchLayoutView touchLayout;
         [SerializeField] private Button guideButton,warningButton,skipButton,supportButton;
@@ -49,6 +50,7 @@ namespace Game.UI.Runtime
             if(skipCameraTourButton!=null)
             {
                 bool touring=UiShellRuntimeGateway.TryReadMissionCameraTour();
+                if(openingHint!=null) openingHint.SetActive(touring && UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var restrictions) && restrictions.MissionId=="saga.ch01.m03.radar_warning");
                 if(skipCameraTourButton.gameObject.activeSelf!=touring) skipCameraTourButton.gameObject.SetActive(touring);
                 if(touring && !cameraPreferencesApplied)
                 {
@@ -63,7 +65,8 @@ namespace Game.UI.Runtime
             using var marker = RefreshMarker.Auto();
             bool active=UiShellRuntimeGateway.TryReadMissionDefense(out var model);
             if(actions!=null) actions.SetActive(active);
-            if(touchLayout!=null) touchLayout.Apply(active);
+            bool touring=UiShellRuntimeGateway.TryReadMissionCameraTour() && UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var restriction) && restriction.MissionId=="saga.ch01.m03.radar_warning";
+            if(touchLayout!=null) touchLayout.Apply(active || touring);
             if(showingDefense!=active || lastLocale!=UiShellRuntimeGateway.Localization.CurrentLocaleCode)
             {
                 if(supportLabel!=null) supportLabel.SetLocalizedValue(active ? UiShellRuntimeGateway.Localization.Get("mission.m03.ping.label","Radar Ping") : UiShellRuntimeGateway.Localization.Get("",originalLabel));

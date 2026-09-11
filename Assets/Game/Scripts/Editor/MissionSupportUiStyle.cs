@@ -47,14 +47,15 @@ namespace Game.Editor
             warning.GetComponent<Image>().color=Color.clear;
             warning.GetComponent<Button>().transition=Selectable.Transition.None;
             var restore=Find(root,"ReturnWarningCamera");restore.SetParent(Find(root,"HeaderContent"),false);
-            Place(restore,414,98,225,72);StyleButton(restore.GetComponent<Button>(),true);
+            Place(restore,414,98,225,72);GuideButton(restore.GetComponent<Button>(),false);
             ButtonIcon(restore,V3UiFoundationBuilder.MatchReturnIconPath);FollowHeaderLayout((RectTransform)restore);
             var status=Find(root,"RadarStatus");status.SetParent(Find(root,"SupportCommand"),false);
             Place(status,95,6,48,26);
             var text=status.GetComponent<TMP_Text>();text.font=Bold;text.fontSizeMax=19;text.fontSizeMin=14;
             text.alignment=TextAlignmentOptions.Center;text.color=new Color32(255,196,67,255);
             Place(Find(root,"SkipCameraTour"),765,94,360,72);
-            StyleButton(Find(root,"SkipCameraTour").GetComponent<Button>(),false);
+            GuideButton(Find(root,"SkipCameraTour").GetComponent<Button>(),false);
+            ButtonIcon(Find(root,"SkipCameraTour"),V3UiFoundationBuilder.MatchReturnIconPath);
             foreach(var button in actions.GetComponentsInChildren<Button>(true))
             {
                 var label=button.GetComponentInChildren<TMP_Text>(true);label.fontSizeMax=21;label.fontSizeMin=18;

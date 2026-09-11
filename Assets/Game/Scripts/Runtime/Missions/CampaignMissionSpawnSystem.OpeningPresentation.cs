@@ -16,7 +16,6 @@ namespace Game.Runtime
             "anchor.ch01.m02.build_lot";
         internal const float EstablishBaseFocusTowardBuildLot = 0.56f;
         private static readonly FixedString64Bytes RadarWarningMissionId = "saga.ch01.m03.radar_warning";
-        private static readonly FixedString64Bytes RadarOverview = "anchor.ch01.m03.return_rts";
         private static readonly FixedString64Bytes RadarPost = "anchor.ch01.m03.forward_post";
         private static readonly FixedString64Bytes RadarFork = "anchor.ch01.m03.fork";
 
@@ -33,11 +32,10 @@ namespace Game.Runtime
             openingEndFocus = hostileFocus;
             establishingFocus = math.lerp(playerFocus, hostileFocus, 0.40f);
             if (missionId.Equals(RadarWarningMissionId) &&
-                TryFindAnchor(ref map, RadarOverview, out OperationMapAnchorBlob overview) &&
                 TryFindAnchor(ref map, RadarPost, out OperationMapAnchorBlob post) &&
                 TryFindAnchor(ref map, RadarFork, out OperationMapAnchorBlob approach))
             {
-                openingStartFocus = overview.Position;
+                openingStartFocus = playerFocus;
                 openingEndFocus = approach.Position;
                 establishingFocus = post.Position;
                 return;

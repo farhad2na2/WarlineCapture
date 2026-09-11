@@ -33,6 +33,21 @@ public sealed class M03CampaignEntryTests
         }
         catch(Exception error) {Debug.LogException(error); Debug.LogError("[M03CampaignEntryValidation] result=Failed"); ValidationExit.Failed();}
     }
+    [TestCase(MissionRunKind.FirstClear)] [TestCase(MissionRunKind.Replay)] [TestCase(MissionRunKind.Retry)]
+    public void M3LaunchAndRetryAlwaysRequireFullTutorial(MissionRunKind runKind)
+    {
+        foreach(Game.Narrative.Contracts.NarrativeGuidanceMode mode in Enum.GetValues(typeof(Game.Narrative.Contracts.NarrativeGuidanceMode)))
+        {
+            var launch=MissionLaunchPayloadFactory.Create(M3,"scenario.ch01.m03.radar_warning","opmap.ch01.convoy_approach_01",
+                MissionLaunchOriginKind.CampaignOperations,runKind,mode,false,1,"tutorial-entry",1,42);
+            Assert.AreEqual(Game.Narrative.Contracts.NarrativeGuidanceMode.Full,launch.Guidance);
+            Assert.IsTrue(launch.ReplayTutorialEnabled);
+            var retry=MissionLaunchPayloadFactory.CreateRetry(launch,2);
+            Assert.AreEqual(Game.Narrative.Contracts.NarrativeGuidanceMode.Full,retry.Guidance);
+            Assert.IsTrue(retry.ReplayTutorialEnabled);
+        }
+    }
+
     [Test] public void LockedM3CannotSelectOrDeploy()
     {
         using var f=new Fixture(false); f.Project();

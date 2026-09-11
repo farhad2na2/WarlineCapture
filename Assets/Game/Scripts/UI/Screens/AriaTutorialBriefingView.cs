@@ -253,6 +253,7 @@ namespace Game.UI.Runtime
 
         private void ApplyProgress(UiTutorialNarrationPhase narrationPhase)
         {
+            if (progressText != null) progressText.gameObject.SetActive(_tutorialStepCount > 0);
             int step = Mathf.Max(1, _tutorialStep);
             if (_tutorialStepCount!=12 && _tutorialStep == 2 && narrationPhase == UiTutorialNarrationPhase.WorldTarget)
                 step = 3;

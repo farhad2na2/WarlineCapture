@@ -33,6 +33,9 @@ namespace Game.Editor
         private static (Entity Entity,float3 Position,int Health)[] frozenMembers;
         public static void RunUiValidation()=>RunChecked(()=>StartUiValidation(false));
         public static void RunUiLargeValidation()=>RunChecked(()=>StartUiValidation(true));
+        public static void RepairGuideAndRunUiValidation()=>RunChecked(()=>
+        {M03RadarWarningUiBuilder.RepairGuide();StartUiValidation(false,false);});
+        public static void RunDeliveredUiLargeValidation()=>RunChecked(()=>StartUiValidation(true,false));
         public static void RunDeliveredUiValidation()=>RunChecked(()=>StartUiValidation(false,false));
         public static void RepairAndRunUiValidation()=>RunChecked(()=>
         {M03RadarWarningUiBuilder.RepairHud();StartUiValidation(false,false);});
@@ -153,8 +156,26 @@ namespace Game.Editor
                     UiShellRuntimeGateway.TryRequestMissionDefenseAction(UiMissionDefenseAction.CloseGuide); NextUi(); break;
                 case 16:
                     if(guide!=null || UnityEngine.Object.FindAnyObjectByType<PauseOptionsV3PopupView>()==null || Time.timeScale!=0) return true;
+                    UiShellRuntimeGateway.TryRequestMissionDefenseAction(UiMissionDefenseAction.OpenGuide); NextUi(); break;
+                case 17:
+                    if(guide==null) return true;
+                    // The UI fixture reaches Engage before the 45-second radio clue unlocks.
+                    // Stage that established archive state after the real pause checks above.
+                    var archiveFacts=facts;archiveFacts.ElapsedMilliseconds=Math.Max(archiveFacts.ElapsedMilliseconds,45000);
+                    em.SetComponentData(root,archiveFacts); guide.Refresh();
+                    ClickLive("Classes"); ClickLive("RadioArchive"); NextUi(); break;
+                case 18:
+                    ValidateGuideText(guide);
+                    if(!CaptureUiBeforeAction("guide-radio-en")) return true;
+                    GameLocalization.SetLocale("fa-IR",false); NextUi(); break;
+                case 19:
+                    ValidateGuideText(guide);
+                    if(!CaptureUiBeforeAction("guide-radio-fa")) return true;
+                    ClickLive("Close"); NextUi(); break;
+                case 20:
+                    if(guide!=null || UnityEngine.Object.FindAnyObjectByType<PauseOptionsV3PopupView>()==null || Time.timeScale!=0) return true;
                     if(originalLocale!=null) GameLocalization.SetLocale(originalLocale,false);
-                    Complete(true,"Editor UI: real warning/guide/return/Jump; selection preserved; guide freezes clock, position and health; 12 topics + 57 classes x 2 locales; Persian digits ordered; search and filters; 1 resident class; return to Pause; both locales at 16:9 and 20:9; scroll bottom; largeText="+SessionState.GetBool(UiLargeKey,false)); break;
+                    Complete(true,"Editor UI: real warning/guide/return/Jump; selection preserved; guide freezes clock, position and health; 12 topics + 57 classes x 2 locales; Persian digits ordered; search and filters; 1 resident class; return to Pause; both locales at 16:9 and 20:9; scroll bottom; left-tab radio navigation and square X return to Pause; largeText="+SessionState.GetBool(UiLargeKey,false)); break;
             }
             return true;
         }

@@ -60,7 +60,7 @@ namespace Game.Editor
                 var rootRect=(RectTransform)root.transform; rootRect.anchorMin=Vector2.zero; rootRect.anchorMax=Vector2.one; rootRect.sizeDelta=Vector2.zero;
                 var composition=Rect("Composition",root.transform,0,0,1672,941); composition.anchorMin=composition.anchorMax=composition.pivot=new Vector2(.5f,.5f); composition.anchoredPosition=Vector2.zero;
                 var scrim=Panel("Scrim",composition,0,0,1672,941,new Color(0,0,0,.82f));
-                var surface=Panel("Guide",composition,146,55,1380,830,Ink);
+                var surface=Panel("Guide",composition,112,16,1448,909,Ink);
                 var responsive=composition.gameObject.AddComponent<MainMenuV3SectionLayoutView>();
                 responsive.Configure(new Vector2(1672,941),MainMenuV3SectionAlignment.Center,shouldExpandToCanvasWidth:true,
                     targetsAnchoredToCenter:new[]{surface},targetsExpandedAcrossWidth:new[]{scrim});
@@ -105,6 +105,11 @@ namespace Game.Editor
                 data.ApplyModifiedPropertiesWithoutUndo(); MissionSupportUiStyle.Guide(root); MissionUiSerializedBindingsAuthoring.Apply(root); PrefabUtility.SaveAsPrefabAsset(root,GuidePath);
             }
             finally {UnityEngine.Object.DestroyImmediate(root);}
+        }
+        public static void RepairGuide()
+        {
+            BuildGuide(); AssetDatabase.SaveAssets();
+            Debug.Log("[MissionGuideRepair] result=Passed style=BuildDrawer tabs=left close=squareX");
         }
         public static void RepairHud()
         {

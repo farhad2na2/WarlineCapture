@@ -29,50 +29,6 @@ namespace Game.Editor
             Debug.Log("[MissionSupportUiStyle] result=Passed sharedGuide=true missionHud=M3,M4");
         }
 
-        internal static void Guide(GameObject root)
-        {
-            var surface = Find(root,"Guide");
-            Frame(surface, Raised, Ink, Cyan, 2);
-            Box("HeaderBand",surface,2,2,1376,118,new Color32(15,35,45,255),Ink,Line,1).SetAsFirstSibling();
-            Icon(surface,"MissionGuideIcon",V3UiFoundationBuilder.MatchInfoIconPath,30,29,48,Cyan);
-            Place(Find(root,"Title"),96,8,1000,70); Find(root,"Title").GetComponent<TMP_Text>().font=Bold;
-            Find(root,"Title").GetComponent<TMP_Text>().color=Cyan;
-            Place(Find(root,"Paused"),96,78,980,40);
-            Find(root,"Paused").GetComponent<TMP_Text>().color=new Color32(175,195,201,255);
-            foreach(var button in root.GetComponentsInChildren<Button>(true))
-            {
-                StyleButton(button,button.name=="Next"||button.name=="Close");
-                var rect=(RectTransform)button.transform;rect.sizeDelta=new Vector2(rect.sizeDelta.x,Mathf.Max(72,rect.sizeDelta.y));
-                var label=button.GetComponentInChildren<TMP_Text>(true).rectTransform;label.anchorMin=Vector2.zero;label.anchorMax=Vector2.one;
-                label.offsetMin=new Vector2(8,6);label.offsetMax=new Vector2(-8,-6);
-            }
-            Place(Find(root,"Search"),986,132,362,72);Frame(Find(root,"Search"),Ink,Raised,Line,1);
-            var viewport=Find(root,"ReadingViewport");Place(viewport,30,215,1318,518);
-            Box("ReadingFrame",surface,28,213,1322,522,Ink,Ink,Line,1).SetSiblingIndex(viewport.GetSiblingIndex());
-            var track=Box("ReadingScrollbar",surface,1356,215,8,518,Ink,Ink,Line,1);
-            var handle=Box("Handle",track,1,1,6,530,Cyan,Cyan,Cyan,0);
-            handle.anchorMin=Vector2.zero;handle.anchorMax=Vector2.one;handle.offsetMin=Vector2.one;handle.offsetMax=-Vector2.one;
-            var scrollbar=track.gameObject.AddComponent<Scrollbar>();scrollbar.handleRect=handle;scrollbar.targetGraphic=handle.GetComponent<V3GradientGraphic>();scrollbar.direction=Scrollbar.Direction.BottomToTop;
-            viewport.GetComponent<ScrollRect>().verticalScrollbar=scrollbar;viewport.GetComponent<ScrollRect>().verticalScrollbarVisibility=ScrollRect.ScrollbarVisibility.AutoHide;
-            Find(root,"PageTitle").GetComponent<TMP_Text>().font=Bold;
-            Find(root,"PageTitle").GetComponent<TMP_Text>().color=Cyan;
-            Find(root,"ScrollHint").gameObject.SetActive(false);
-            Place(Find(root,"PageNumber"),530,751,320,52);
-            Box("PageBadge",surface,530,751,320,52,Raised,Ink,Line,1).SetAsFirstSibling();
-            var data=new SerializedObject(root.GetComponent<MissionFieldGuideView>());
-            foreach(string name in new[]{"Example","Mistake","Diagram"})
-            {
-                var text=Find(root,name);
-                var card=Box(name+"Card",text.parent,0,0,100,100,Raised,Ink,name=="Mistake"?new Color32(169,121,49,255):Line,1);
-                card.SetAsFirstSibling();
-                data.FindProperty(char.ToLowerInvariant(name[0])+name.Substring(1)+"Card").objectReferenceValue=card;
-            }
-            var topics=Find(root,"Topics");var classes=Find(root,"Classes");
-            data.FindProperty("topicsSelected").objectReferenceValue=Box("Selected",topics,4,57,220,3,Cyan,Cyan,Cyan,0).gameObject;
-            data.FindProperty("classesSelected").objectReferenceValue=Box("Selected",classes,4,57,220,3,Cyan,Cyan,Cyan,0).gameObject;
-            data.ApplyModifiedPropertiesWithoutUndo();
-        }
-
         internal static void Defense(GameObject root)
         {
             var actions=Find(root,"M03Actions");

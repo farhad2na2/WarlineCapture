@@ -22,7 +22,7 @@ namespace Game.UI.Runtime
         [SerializeField] private Image portrait;
         [SerializeField] private ScrollRect scroll;
         [SerializeField] private RectTransform exampleCard,mistakeCard,diagramCard;
-        [SerializeField] private GameObject topicsSelected,classesSelected;
+        [SerializeField] private GameObject topicsSelected,classesSelected,radioSelected;
         [SerializeField] private V3LocalizedTextBindingView title,body,example,mistake,diagram,page,filterLabel;
         private readonly List<int> matches=new(57);
         private bool classes;
@@ -97,8 +97,10 @@ namespace Game.UI.Runtime
             LayoutReadingPage();
             if(topicsSelected!=null)topicsSelected.SetActive(!classes && !radio);
             if(classesSelected!=null)classesSelected.SetActive(classes);
+            if(radioSelected!=null)radioSelected.SetActive(radio);
             search.gameObject.SetActive(classes); filterButton.gameObject.SetActive(classes);
-            if(radioButton!=null) {radioButton.gameObject.SetActive(!classes && !extractionContext); radioButton.interactable=UiShellRuntimeGateway.TryReadMissionRadioArchive();}
+            if(radioButton!=null) {radioButton.gameObject.SetActive(!extractionContext); radioButton.interactable=UiShellRuntimeGateway.TryReadMissionRadioArchive();}
+            SetTabState(topicsButton,!classes&&!radio);SetTabState(classesButton,classes);SetTabState(radioButton,radio);
             if(radioPanel!=null) radioPanel.gameObject.SetActive(radio);
             portrait.gameObject.SetActive(false);
             if(radio)
@@ -106,8 +108,10 @@ namespace Game.UI.Runtime
                 ReleaseUnit(); previousButton.interactable=nextButton.interactable=false;
                 Set(title,"mission.m03.guide.radio"); body.SetLocalizedValue(UiShellRuntimeGateway.Localization.Get(content.RadioTextKey));
                 example.SetLocalizedValue(""); mistake.SetLocalizedValue(""); diagram.SetLocalizedValue(""); page.SetLocalizedValue("1 / 1");
-                scroll.content.sizeDelta=new Vector2(scroll.content.sizeDelta.x,810);
-                body.GetComponent<RectTransform>().sizeDelta=new Vector2(1280,190);
+                float radioTop=96+FitText(body)+32;
+                var radioRect=radioPanel.rectTransform; radioRect.anchoredPosition=new Vector2(18,-radioTop);
+                radioRect.sizeDelta=new Vector2(scroll.viewport.rect.width-36,(scroll.viewport.rect.width-36)*.45f);
+                scroll.content.sizeDelta=new Vector2(scroll.content.sizeDelta.x,radioTop+radioRect.sizeDelta.y+24);
                 if(radioPanel!=null) radioPanel.sprite=Screen.width/(float)Mathf.Max(1,Screen.height)>2 ? radio20x9 : radio16x9;
                 RefreshCards(); return;
             }
@@ -145,28 +149,42 @@ namespace Game.UI.Runtime
             FitReadingCopy();
             if(unit!=null) {portrait.sprite=unit.PortraitCardSprite!=null ? unit.PortraitCardSprite : unit.PortraitSprite; portrait.gameObject.SetActive(portrait.sprite!=null);}
         }
+        private static void SetTabState(Button button,bool selected)
+        {
+            if(button==null)return;
+            var group=button.GetComponent<CanvasGroup>();if(group!=null)group.alpha=button.interactable?1:.45f;
+            var icon=button.GetComponentInChildren<Image>(true);
+            if(icon!=null)icon.color=selected?new Color32(255,194,17,255):new Color32(170,180,182,255);
+        }
         private void LayoutReadingPage()
         {
             if(scroll==null)return;
-            // Lessons read as a single tactical briefing; longer class dossiers retain scrolling.
-            float contentHeight=classes ? (largeText ? 1080 : 940) : (largeText ? 690 : 528);
-            scroll.content.sizeDelta=new Vector2(scroll.content.sizeDelta.x,contentHeight);
-            LayoutText(title,18,8,1280,76);
-            LayoutText(body,18,96,classes ? 1000 : 1280,classes ? (largeText ? 420 : 350) : (largeText ? 210 : 136));
+            float top=classes?208:110;
+            scroll.viewport.anchoredPosition=new Vector2(236,-top);
+            scroll.viewport.sizeDelta=new Vector2(1162,796-top);
+            if(scroll.verticalScrollbar!=null)
+            {
+                var track=(RectTransform)scroll.verticalScrollbar.transform;
+                track.anchoredPosition=new Vector2(1406,-top);track.sizeDelta=new Vector2(32,796-top);
+            }
+            float width=scroll.viewport.rect.width;
+            float copyWidth=width-36, cardWidth=width-68;
+            LayoutText(title,18,8,copyWidth,76);
+            LayoutText(body,18,96,classes?copyWidth-256:copyWidth,classes?(largeText?420:350):136);
+            portrait.rectTransform.anchoredPosition=new Vector2(width-238,-110);
             if(classes)
             {
-                LayoutText(example,34,largeText ? 550 : 478,1250,142);
-                LayoutText(mistake,34,largeText ? 736 : 650,1250,142);
-                LayoutText(diagram,34,largeText ? 940 : 824,1250,80);
+                LayoutText(example,34,478,cardWidth,142);
+                LayoutText(mistake,34,650,cardWidth,142);
+                LayoutText(diagram,34,824,cardWidth,80);
             }
             else
             {
-                float cardsTop=largeText ? 338 : 262;
-                float cardsHeight=largeText ? 198 : 132;
+                float half=(width-104)/2;
                 bool rtl=UiShellRuntimeGateway.Localization.IsRightToLeft;
-                LayoutText(example,rtl?692:34,cardsTop,596,cardsHeight);
-                LayoutText(mistake,rtl?34:692,cardsTop,596,cardsHeight);
-                LayoutText(diagram,34,largeText ? 588 : 444,1250,62);
+                LayoutText(example,rtl?70+half:34,262,half,132);
+                LayoutText(mistake,rtl?34:70+half,262,half,132);
+                LayoutText(diagram,34,444,cardWidth,62);
             }
             RefreshCards();scroll.StopMovement();scroll.verticalNormalizedPosition=1;
         }

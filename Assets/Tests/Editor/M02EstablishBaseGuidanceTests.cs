@@ -20,7 +20,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-public sealed class M02EstablishBaseGuidanceTests
+public sealed partial class M02EstablishBaseGuidanceTests
 {
     private const string FocusedMarker =
         "[M02EstablishBaseGuidanceValidation] result=Passed tests=42";
@@ -1036,17 +1036,20 @@ public sealed class M02EstablishBaseGuidanceTests
                     "_tabBindings"),
                 catalog.SelectCategoryForTests);
 
-            Assert.IsFalse(catalog.TryInvokeRifleProductionFromGuidance(),
-                "The first update must switch and rebuild the Soldiers catalog only.");
+            Assert.IsTrue(catalog.TryInvokeRifleProductionFromGuidance(out bool acceptedTab),
+                "One click switches the Soldiers tab without scheduling another action.");
+            Assert.IsFalse(acceptedTab);
             Assert.AreEqual(0, command.ProductionRequests);
             Assert.AreEqual(BuildDrawerCategory.Soldiers,
                 GetPrivateField<BuildDrawerCategory>(catalog, "_activeCategory"));
             SetPrivateField(catalog, "_hasSelectedItem", false);
-            Assert.IsFalse(catalog.TryInvokeRifleProductionFromGuidance(),
-                "The explicit M2 selection update must select the typed rifle item only.");
+            Assert.IsTrue(catalog.TryInvokeRifleProductionFromGuidance(out bool acceptedItem),
+                "The next click selects the typed rifle item only.");
+            Assert.IsFalse(acceptedItem);
             Assert.AreEqual(0, command.ProductionRequests);
-            Assert.IsTrue(catalog.TryInvokeRifleProductionFromGuidance(),
-                "A later update may recruit only after the typed rifle item is selected.");
+            Assert.IsTrue(catalog.TryInvokeRifleProductionFromGuidance(out bool acceptedProduction),
+                "Only the final click may recruit the selected rifle item.");
+            Assert.IsTrue(acceptedProduction);
             Assert.AreEqual(1, command.ProductionRequests);
         }
         finally
@@ -1441,6 +1444,7 @@ public sealed class M02EstablishBaseGuidanceTests
         public int PlaceRequests { get; private set; }
         public int ConfirmRequests { get; private set; }
         public int ProductionRequests { get; private set; }
+        public BuildingUiCommandFailure ProductionFailure;
 
         public BuildingUiCommandFailure GetCampRequestFailure(
             GameObject prefab,
@@ -1466,6 +1470,7 @@ public sealed class M02EstablishBaseGuidanceTests
             else
             {
                 ProductionRequests++;
+                return ProductionFailure;
             }
             return BuildingUiCommandFailure.None;
         }

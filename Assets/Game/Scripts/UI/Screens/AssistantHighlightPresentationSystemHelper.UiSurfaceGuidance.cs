@@ -51,6 +51,8 @@ namespace Game.UI.Runtime
         {
             if (targetKind != UiSurfaceTargetKind)
                 return false;
+            if (_buildDrawerView != null && _buildDrawerView.IsOpen)
+                _buildDrawerOpenRequested = false;
             if (recommendationKind == ExplainRecommendationKind)
             {
                 if (_resourceGuidanceTarget == null || !_resourceGuidanceTarget.gameObject.activeInHierarchy)
@@ -60,21 +62,25 @@ namespace Game.UI.Runtime
             }
             if (recommendationKind == ProduceRecommendationKind)
             {
-                if (!EnsureBuildDrawerOpen())
-                    return false;
+                if (_buildDrawerView == null || !_buildDrawerView.IsOpen)
+                    return TryClickBuildDrawerOpen();
 
                 if (_buildDrawerCatalogRuntimeView == null ||
-                    !_buildDrawerCatalogRuntimeView.TryInvokeRifleProductionFromGuidance())
+                    !_buildDrawerCatalogRuntimeView.TryInvokeRifleProductionFromGuidance(out bool productionAccepted))
                 {
                     return false;
                 }
 
-                ClearUiSurfaceCue();
-                _uiSurfaceAcknowledged?.Invoke(ProduceRecommendationKind);
+                if (productionAccepted)
+                {
+                    ClearUiSurfaceCue();
+                    _uiSurfaceAcknowledged?.Invoke(ProduceRecommendationKind);
+                }
                 return true;
             }
-            if (recommendationKind == SelectRecommendationKind && !EnsureBuildDrawerOpen())
-                return false;
+            if (recommendationKind == SelectRecommendationKind &&
+                (_buildDrawerView == null || !_buildDrawerView.IsOpen))
+                return TryClickBuildDrawerOpen();
             Button target = recommendationKind switch
             {
                 BuildRecommendationKind => _buildGuidanceButton,
@@ -84,6 +90,18 @@ namespace Game.UI.Runtime
             if (target == null || !target.IsActive() || !target.IsInteractable())
                 return false;
             target.onClick.Invoke();
+            return true;
+        }
+
+        private bool TryClickBuildDrawerOpen()
+        {
+            if (_buildGuidanceButton == null || !_buildGuidanceButton.IsActive() ||
+                !_buildGuidanceButton.IsInteractable() || _buildDrawerOpenRequested)
+                return false;
+
+            _buildGuidanceButton.onClick.Invoke();
+            _buildDrawerOpenRequested = _buildDrawerView == null || !_buildDrawerView.IsOpen;
+            // Opening is the entire action, even if the drawer is installed synchronously.
             return true;
         }
 

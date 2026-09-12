@@ -1287,8 +1287,9 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
         Assert.IsFalse(mainMenu.IsPointerOverAnyGameplayUi(drawerCenter, out _));
     }
 
-    [Test]
-    public void BuildDrawerPopup_HidesDuplicateMatchHudChromeAndRestoresItOnClose()
+    [TestCase(false)]
+    [TestCase(true)]
+    public void BuildDrawerPopup_HidesDuplicateMatchHudChromeAndRestoresItOnClose(bool preserveTutorial = false)
     {
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(BuildDrawerPrefabPath);
         Assert.NotNull(prefab);
@@ -1312,6 +1313,14 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
             regions[i].Configure(ids[i], (RectTransform)section.transform, (RectTransform)section.transform, section.GetComponent<CanvasGroup>(), Vector2.zero);
         }
 
+        GameObject ariaObject = new("ARIA", typeof(RectTransform), typeof(AriaTutorialBriefingView));
+        ariaObject.transform.SetParent(sections[0].transform, false);
+        GameObject resourceStrip = new("Resources", typeof(RectTransform));
+        resourceStrip.transform.SetParent(sections[0].transform, false);
+        var headerRect = (RectTransform)sections[0].transform;
+        headerRect.anchorMin = Vector2.zero; headerRect.anchorMax = Vector2.one; headerRect.sizeDelta = Vector2.zero;
+        var ariaRect = (RectTransform)ariaObject.transform;
+        ariaRect.anchorMin = new Vector2(.8f, 0f); ariaRect.anchorMax = Vector2.one; ariaRect.sizeDelta = Vector2.zero;
         GameObject instance = UnityEngine.Object.Instantiate(prefab, canvasObject.transform, false);
         _createdObjects.Add(instance);
         BuildDrawerHudOcclusionView occlusion =
@@ -1321,10 +1330,19 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
         var content = canvasObject.AddComponent<UIShellContentView>();
         shell.Configure(null, regions, content);
         content.Configure(shell, null, null, null, null, null);
-        occlusion.Configure(content);
+        occlusion.Configure(content, preserveTutorial);
 
         for (int i = 0; i < sections.Count; i++)
-            Assert.IsFalse(sections[i].activeSelf, $"{sections[i].name} must be hidden behind the V3 drawer.");
+            Assert.AreEqual(preserveTutorial && i == 0, sections[i].activeSelf);
+        Assert.AreEqual(preserveTutorial, ariaObject.activeInHierarchy);
+        if (preserveTutorial)
+        {
+            Assert.IsFalse(resourceStrip.activeSelf);
+            Assert.IsTrue(ariaObject.GetComponent<Canvas>().overrideSorting);
+            Assert.NotNull(ariaObject.GetComponent<GraphicRaycaster>());
+            Assert.IsFalse(instance.GetComponentInChildren<MainMenuV3SectionLayoutView>().enabled);
+            Assert.Less(((RectTransform)instance.GetComponent<BuildDrawerView>().DrawerRoot.transform).anchorMax.x, .9f);
+        }
 
         instance.SetActive(false);
         // Edit-mode executeMethod validation does not dispatch ordinary runtime
@@ -1333,6 +1351,10 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
         occlusion.RestoreOcclusion();
         for (int i = 0; i < sections.Count; i++)
             Assert.IsTrue(sections[i].activeSelf, $"{sections[i].name} must be restored when the drawer closes.");
+        Assert.IsTrue(instance.GetComponentInChildren<MainMenuV3SectionLayoutView>(true).enabled);
+        Assert.IsTrue(resourceStrip.activeSelf);
+        Assert.IsNull(ariaObject.GetComponent<Canvas>());
+        Assert.IsNull(ariaObject.GetComponent<GraphicRaycaster>());
     }
 
     [Test]

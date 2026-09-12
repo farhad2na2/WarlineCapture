@@ -32,7 +32,7 @@ public sealed class M02EstablishBaseDoItTests
                 9, UiCampaignGuidanceTargetKind.ResourceStrip), ref passed);
             Run(() => tests.EverySuccessfulM02UiActionMapsToAuthoritativeAcknowledgement(
                 5, UiCampaignGuidanceTargetKind.RifleProduction), ref passed);
-            Run(tests.BarracksDoItReopensTheDrawerAndSelectsTheRenderedItem, ref passed);
+            Run(tests.BarracksDoItOpensAndSelectsWithSeparateClicks, ref passed);
             Run(tests.OneDoItRequestRetriesUntilTheBarracksControlIsReady, ref passed);
             Run(tests.LateAssistantBindRestoresTheAlreadyOpenBuildDrawer, ref passed);
             Run(tests.RifleDoItKeepsBuildDrawerOpenWhileTheStagedActionRetries, ref passed);
@@ -82,7 +82,7 @@ public sealed class M02EstablishBaseDoItTests
     }
 
     [Test]
-    public void BarracksDoItReopensTheDrawerAndSelectsTheRenderedItem()
+    public void BarracksDoItOpensAndSelectsWithSeparateClicks()
     {
         GameObject buildObject = new("Build", typeof(RectTransform), typeof(Image), typeof(Button));
         GameObject drawerObject = new("Build Drawer", typeof(RectTransform));
@@ -130,7 +130,7 @@ public sealed class M02EstablishBaseDoItTests
 
             Assert.That(helper.TryExecuteUiSurface(
                 (byte)AssistantRecommendationKind.Select,
-                (byte)AssistantTargetKind.UiSurface), Is.False);
+                (byte)AssistantTargetKind.UiSurface), Is.True);
             Assert.That(buildClicks, Is.EqualTo(1));
             Assert.That(barracksClicks, Is.Zero);
 
@@ -144,7 +144,7 @@ public sealed class M02EstablishBaseDoItTests
             drawerObject.SetActive(false);
             Assert.That(helper.TryExecuteUiSurface(
                 (byte)AssistantRecommendationKind.Select,
-                (byte)AssistantTargetKind.UiSurface), Is.False);
+                (byte)AssistantTargetKind.UiSurface), Is.True);
             Assert.That(buildClicks, Is.EqualTo(2));
         }
         finally

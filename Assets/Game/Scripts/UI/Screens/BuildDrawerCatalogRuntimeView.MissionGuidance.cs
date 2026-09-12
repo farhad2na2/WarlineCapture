@@ -129,8 +129,10 @@ namespace Game.UI.Runtime
             return null;
         }
 
-        internal bool TryInvokeRifleProductionFromGuidance()
+        // True means one visible control was clicked, not that the whole lesson finished.
+        internal bool TryInvokeRifleProductionFromGuidance(out bool productionAccepted)
         {
+            productionAccepted = false;
             if (view == null || !view.IsOpen)
                 return false;
 
@@ -141,10 +143,11 @@ namespace Game.UI.Runtime
                 // rebuild complete before selecting the requested item.
                 Refresh();
                 Button soldiersTab = ResolveCategoryButton(BuildDrawerCategory.Soldiers);
-                if (soldiersTab == null || !soldiersTab.IsActive())
+                if (soldiersTab == null || !soldiersTab.IsActive() || !soldiersTab.IsInteractable())
                     return false;
                 soldiersTab.onClick.Invoke();
-                return false;
+                ClearSelection();
+                return true;
             }
 
             if (!_hasSelectedItem || _selectedItem.Category != BuildDrawerCategory.Soldiers)
@@ -155,7 +158,7 @@ namespace Game.UI.Runtime
                 if (itemButton == null || !itemButton.IsActive() || !itemButton.IsInteractable())
                     return false;
                 itemButton.onClick.Invoke();
-                return false;
+                return true;
             }
 
             if (!_hasSelectedItem || _selectedItem.Category != BuildDrawerCategory.Soldiers ||
@@ -175,7 +178,8 @@ namespace Game.UI.Runtime
             {
                 _guidedProductionInvocation = false;
             }
-            return _lastPrimaryActionAccepted;
+            productionAccepted = _lastPrimaryActionAccepted;
+            return true;
         }
 
         private void AcceptUnit()

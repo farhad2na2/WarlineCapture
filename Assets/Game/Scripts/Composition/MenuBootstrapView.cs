@@ -135,7 +135,9 @@ namespace Game.Composition
         {
             if (uiCanvas != null)
             {
-                if (uiCanvas.transform.localScale != Vector3.one)
+                // Screen-space scale belongs to Unity's Canvas/CanvasScaler. Overwriting
+                // it moves hit targets between input updates and the rendered frame.
+                if (uiCanvas.renderMode == RenderMode.WorldSpace && uiCanvas.transform.localScale != Vector3.one)
                     uiCanvas.transform.localScale = Vector3.one;
 
                 if (!uiCanvas.gameObject.activeSelf)

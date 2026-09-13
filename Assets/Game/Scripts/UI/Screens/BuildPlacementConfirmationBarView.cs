@@ -230,8 +230,8 @@ namespace Game.UI.Runtime
             SplitPlacementStatus(rawStatus, out string title, out string status);
             string buildingTitle = string.IsNullOrWhiteSpace(title)
                 ? _gameTextResolver.Get("build.placement.title.default", "BUILDING")
-                : title.ToUpperInvariant();
-            SetText(titleText, $"BUILD {buildingTitle}");
+                : UiLocalizedText.CatalogLabel(title);
+            SetText(titleText, _gameTextResolver.Format("ui.build.title", "BUILD {0}", buildingTitle));
             SetText(costText, FormatResource(_commandSystem.ActivePlacementCost));
             SetText(oilCostText, FormatResource(_commandSystem.ActivePlacementCreditsCost));
             if (fuelCostText != null && string.IsNullOrWhiteSpace(fuelCostText.text))
@@ -250,7 +250,7 @@ namespace Game.UI.Runtime
             _validityPanel?.ApplyValidityState(true, canConfirm);
             SetText(statusText, string.IsNullOrWhiteSpace(status)
                 ? _gameTextResolver.Get("build.placement.status.drag_to_position", "DRAG TO POSITION")
-                : status.ToUpperInvariant());
+                : UiLocalizedText.PlacementStatus(status));
             if (statusText != null)
                 SetTextColor(statusText, canConfirm
                     ? new Color(0.62f, 0.98f, 0.35f)
@@ -374,8 +374,7 @@ namespace Game.UI.Runtime
                 return;
 
             value ??= string.Empty;
-            if (text.text != value)
-                text.text = value;
+            UiLocalizedText.Set(text, value);
         }
 
         private static void SetTextColor(TMP_Text text, Color color)

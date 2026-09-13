@@ -115,7 +115,8 @@ namespace Game.UI.Runtime
             if (!hasLastStatus || resolvedStatus != lastStatus)
             {
                 if (statusText != null)
-                    statusText.text = resolvedStatus;
+                    UiLocalizedText.Set(statusText, resolvedStatus.StartsWith("Map unload failed:", System.StringComparison.Ordinal)
+                        ? "Unable to close the operation map. Please try again." : resolvedStatus);
 
                 lastStatus = resolvedStatus;
                 hasLastStatus = true;

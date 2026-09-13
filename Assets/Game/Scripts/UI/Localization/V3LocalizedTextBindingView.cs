@@ -41,6 +41,9 @@ namespace Game.UI.Runtime
             localizationKey = key ?? string.Empty;
             englishFallback = fallback ?? string.Empty;
             observeRuntimeSourceChanges = observeRuntimeChanges;
+            runtimeSource = null;
+            hasRuntimeSource = false;
+            lastApplied = null;
             // Prefab builders configure bindings in edit mode. Never rewrite authored TMP text from
             // the Editor's current PlayerPrefs locale while saving a prefab.
             if (Application.isPlaying && isActiveAndEnabled)
@@ -122,7 +125,7 @@ namespace Game.UI.Runtime
             bool rightToLeft = UiShellRuntimeGateway.Localization.IsRightToLeft;
             bool containsRightToLeftText = rightToLeft && ContainsArabicScript(localized);
             TMP_FontAsset localeFont = UiShellRuntimeGateway.Localization.CurrentFontAsset as TMP_FontAsset;
-            target.font = containsRightToLeftText && localeFont != null ? localeFont : sourceFont;
+            target.font = localeFont != null && (containsRightToLeftText || !rightToLeft) ? localeFont : sourceFont;
             target.alignment = rightToLeft ? Mirror(sourceAlignment) : sourceAlignment;
             ApplyLocaleSizing(containsRightToLeftText);
 
@@ -164,6 +167,8 @@ namespace Game.UI.Runtime
         public void SetLocalizedValue(string value)
         {
             string source = value ?? string.Empty;
+            if (UiShellRuntimeGateway.Localization.TryGetSourceByLocalized(source, out _, out string authoredSource))
+                source = authoredSource;
             if (hasRuntimeSource && runtimeSource == source &&
                 string.Equals(ReadAuthoredText(), lastApplied, System.StringComparison.Ordinal))
                 return; // LocaleChanged owns reapplication when the language changes.

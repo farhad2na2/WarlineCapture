@@ -253,7 +253,7 @@ namespace Game.UI.Runtime
             if (!model.Visible)
                 return;
 
-            SetText(titleText, model.Title);
+            SetText(titleText, UiLocalizedText.SelectionLabel(model.Title));
             SetText(subtitleText, model.Subtitle);
             SetText(currentOrderText, model.CurrentOrder);
             SetText(healthText, model.HealthText);
@@ -523,8 +523,7 @@ namespace Game.UI.Runtime
         private static void SetRawText(TMP_Text text, string value)
         {
             value ??= string.Empty;
-            if (text.text != value)
-                text.text = value;
+            UiLocalizedText.Set(text, value);
         }
 
         private static void SetImageSprite(Image image, Sprite sprite)

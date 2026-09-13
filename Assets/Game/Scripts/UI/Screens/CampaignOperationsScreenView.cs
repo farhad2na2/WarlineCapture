@@ -204,7 +204,7 @@ namespace Game.UI.Runtime
         private static void Set(TMP_Text target, string value)
         {
             if (target != null)
-                target.text = value ?? string.Empty;
+                UiLocalizedText.Set(target, value);
         }
     }
 

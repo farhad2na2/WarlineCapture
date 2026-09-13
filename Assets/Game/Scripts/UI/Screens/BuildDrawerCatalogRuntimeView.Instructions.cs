@@ -40,7 +40,7 @@ namespace Game.UI.Runtime
                     bool canConfirm = _uiCommandSystem.CanConfirmBuildingPlacement;
                     ApplyInstruction(
                         canConfirm
-                            ? _gameTextResolver.Format("build.drawer.instruction.place_pending_confirm", "Place {0}: drag to position, then confirm.", _selectedItem.DisplayName)
+                            ? _gameTextResolver.Format("build.drawer.instruction.place_pending_confirm", "Place {0}: drag to position, then confirm.", UiLocalizedText.CatalogLabel(_selectedItem.DisplayName))
                             : _gameTextResolver.Format("build.drawer.instruction.cannot_place_here", "Cannot place here: {0}.", BuildDrawerCatalogPresentationSystemHelper.FormatPlacementStatus(_gameTextResolver, status)),
                         canConfirm ? BuildDrawerInstructionSeverity.Ready : BuildDrawerInstructionSeverity.Error);
                     return;

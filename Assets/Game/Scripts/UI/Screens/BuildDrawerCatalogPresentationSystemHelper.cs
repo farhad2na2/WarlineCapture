@@ -186,10 +186,10 @@ namespace Game.UI.Runtime
                 BuildingUiCommandFailure.InsufficientMaterials => textResolver.Get("build.drawer.failure.short.insufficient_materials", "Insufficient materials."),
                 BuildingUiCommandFailure.InsufficientCreditsAndMaterials => textResolver.Get("build.drawer.failure.short.insufficient_credits_and_materials", "Insufficient credits and materials."),
                 BuildingUiCommandFailure.MissingProducerBuilding when !string.IsNullOrWhiteSpace(requiredBuildingDisplayName) =>
-                    textResolver.Format("build.drawer.failure.short.requires_named", "Requires {0}.", requiredBuildingDisplayName),
+                    textResolver.Format("build.drawer.failure.short.requires_named", "Requires {0}.", UiLocalizedText.CatalogLabel(requiredBuildingDisplayName)),
                 BuildingUiCommandFailure.MissingProducerBuilding => textResolver.Get("build.drawer.failure.short.missing_producer", "Required producer is missing."),
                 BuildingUiCommandFailure.ProductionQueueFull when !string.IsNullOrWhiteSpace(requiredBuildingDisplayName) =>
-                    textResolver.Format("build.drawer.failure.short.queue_full_named", "{0} production slots are full.", requiredBuildingDisplayName),
+                    textResolver.Format("build.drawer.failure.short.queue_full_named", "{0} production slots are full.", UiLocalizedText.CatalogLabel(requiredBuildingDisplayName)),
                 BuildingUiCommandFailure.ProductionQueueFull => textResolver.Get("build.drawer.failure.short.queue_full", "All compatible production slots are full."),
                 BuildingUiCommandFailure.GlobalProductionQueueFull => textResolver.Format("build.drawer.failure.short.global_queue_full", "Production queue limit reached ({0} max).", maxQueuedUnitProductions),
                 BuildingUiCommandFailure.InvalidSelection => textResolver.Get("build.drawer.failure.invalid_selection", "Select a build drawer item first."),
@@ -206,7 +206,7 @@ namespace Game.UI.Runtime
             int maxQueuedUnitProductions)
         {
             string itemName = hasSelectedItem
-                ? selectedItem.DisplayName
+                ? UiLocalizedText.CatalogLabel(selectedItem.DisplayName)
                 : textResolver.Get("build.drawer.item.fallback_name", "item");
             string verb = FormatActionVerb(textResolver, selectedItem.Category).ToLowerInvariant();
             return failure switch
@@ -220,11 +220,11 @@ namespace Game.UI.Runtime
                 BuildingUiCommandFailure.InsufficientCreditsAndMaterials =>
                     textResolver.Format("build.drawer.failure.insufficient_credits_and_materials", "Cannot {0} {1}: insufficient credits and materials.", verb, itemName),
                 BuildingUiCommandFailure.MissingProducerBuilding when !string.IsNullOrWhiteSpace(requiredBuildingDisplayName) =>
-                    textResolver.Format("build.drawer.failure.missing_producer_named", "Cannot {0} {1}: requires {2}.", verb, itemName, requiredBuildingDisplayName),
+                    textResolver.Format("build.drawer.failure.missing_producer_named", "Cannot {0} {1}: requires {2}.", verb, itemName, UiLocalizedText.CatalogLabel(requiredBuildingDisplayName)),
                 BuildingUiCommandFailure.MissingProducerBuilding =>
                     textResolver.Format("build.drawer.failure.missing_producer", "Cannot {0} {1}: {2}.", verb, itemName, FormatMissingProducerFallback(textResolver, selectedItem.Category)),
                 BuildingUiCommandFailure.ProductionQueueFull when !string.IsNullOrWhiteSpace(requiredBuildingDisplayName) =>
-                    textResolver.Format("build.drawer.failure.queue_full_named", "Cannot {0} {1}: all {2} production slots are full.", verb, itemName, requiredBuildingDisplayName),
+                    textResolver.Format("build.drawer.failure.queue_full_named", "Cannot {0} {1}: all {2} production slots are full.", verb, itemName, UiLocalizedText.CatalogLabel(requiredBuildingDisplayName)),
                 BuildingUiCommandFailure.ProductionQueueFull =>
                     textResolver.Format("build.drawer.failure.queue_full", "Cannot {0} {1}: all compatible production slots are full.", verb, itemName),
                 BuildingUiCommandFailure.GlobalProductionQueueFull =>
@@ -238,19 +238,19 @@ namespace Game.UI.Runtime
         {
             return model.Category switch
             {
-                BuildDrawerCategory.Buildings => textResolver.Format("build.drawer.ready.buildings", "PLACE: choose a location for {0}.", model.DisplayName),
-                BuildDrawerCategory.Vehicles => textResolver.Format("build.drawer.ready.vehicles", "PRODUCE: add {0} to the vehicle queue.", model.DisplayName),
-                BuildDrawerCategory.Aircrafts => textResolver.Format("build.drawer.ready.aircraft", "PRODUCE: add {0} to the aircraft queue.", model.DisplayName),
-                BuildDrawerCategory.Soldiers => textResolver.Format("build.drawer.ready.soldiers", "RECRUIT: add {0} to the training queue.", model.DisplayName),
-                _ => textResolver.Format("build.drawer.ready.default", "Select {0}.", model.DisplayName)
+                BuildDrawerCategory.Buildings => textResolver.Format("build.drawer.ready.buildings", "PLACE: choose a location for {0}.", UiLocalizedText.CatalogLabel(model.DisplayName)),
+                BuildDrawerCategory.Vehicles => textResolver.Format("build.drawer.ready.vehicles", "PRODUCE: add {0} to the vehicle queue.", UiLocalizedText.CatalogLabel(model.DisplayName)),
+                BuildDrawerCategory.Aircrafts => textResolver.Format("build.drawer.ready.aircraft", "PRODUCE: add {0} to the aircraft queue.", UiLocalizedText.CatalogLabel(model.DisplayName)),
+                BuildDrawerCategory.Soldiers => textResolver.Format("build.drawer.ready.soldiers", "RECRUIT: add {0} to the training queue.", UiLocalizedText.CatalogLabel(model.DisplayName)),
+                _ => textResolver.Format("build.drawer.ready.default", "Select {0}.", UiLocalizedText.CatalogLabel(model.DisplayName))
             };
         }
 
         internal static string FormatPrimarySuccessInstruction(IGameTextResolver textResolver, BuildDrawerCatalogItem model)
         {
             return model.Category == BuildDrawerCategory.Soldiers
-                ? textResolver.Format("build.drawer.success.recruitment_queued", "{0} added to recruitment queue.", model.DisplayName)
-                : textResolver.Format("build.drawer.success.production_queued", "{0} added to production queue.", model.DisplayName);
+                ? textResolver.Format("build.drawer.success.recruitment_queued", "{0} added to recruitment queue.", UiLocalizedText.CatalogLabel(model.DisplayName))
+                : textResolver.Format("build.drawer.success.production_queued", "{0} added to production queue.", UiLocalizedText.CatalogLabel(model.DisplayName));
         }
 
         internal static string FormatEmptyCategoryInstruction(IGameTextResolver textResolver, BuildDrawerCategory category)
@@ -269,7 +269,7 @@ namespace Game.UI.Runtime
         {
             return string.IsNullOrWhiteSpace(status)
                 ? textResolver.Get("build.drawer.placement.invalid", "invalid placement")
-                : status;
+                : UiLocalizedText.PlacementStatus(status);
         }
 
         private static int[] CountCategories(Context context)

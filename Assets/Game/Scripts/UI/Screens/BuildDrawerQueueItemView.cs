@@ -52,7 +52,7 @@ namespace Game.UI.Runtime
         private static void SetText(TMP_Text text, string value)
         {
             if (text != null)
-                text.text = value ?? string.Empty;
+                UiLocalizedText.Set(text, value);
         }
     }
 }

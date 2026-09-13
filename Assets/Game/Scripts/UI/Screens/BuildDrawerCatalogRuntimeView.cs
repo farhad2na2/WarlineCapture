@@ -177,13 +177,13 @@ namespace Game.UI.Runtime
                 false);
             if (failure != BuildingUiCommandFailure.None)
             {
-                ApplyBuildDrawerCommandResult(failure, requiredBuildingDisplayName);
+                ApplyBuildDrawerCommandResult(failure, UiLocalizedText.CatalogLabel(requiredBuildingDisplayName));
                 return;
             }
 
             if (_selectedItem.Category == BuildDrawerCategory.Buildings)
             {
-                ApplyInstruction(_gameTextResolver.Format("build.drawer.action.place_choose_footprint", "Place {0}: choose a valid footprint.", _selectedItem.DisplayName), BuildDrawerInstructionSeverity.Ready);
+                ApplyInstruction(_gameTextResolver.Format("build.drawer.action.place_choose_footprint", "Place {0}: choose a valid footprint.", UiLocalizedText.CatalogLabel(_selectedItem.DisplayName)), BuildDrawerInstructionSeverity.Ready);
                 BattleHudRuntimeFeedbackUiSystemHelper.ApplyStickyCommandMode(_runtimeFeedbackView, TacticalCommandMode.Build, _gameTextResolver);
                 BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Success(_gameTextResolver.Get("build.feedback.place_building", "PLACE BUILDING")), _gameTextResolver);
                 _closeDrawer?.Invoke();
@@ -192,7 +192,7 @@ namespace Game.UI.Runtime
 
             ApplyInstruction(BuildDrawerCatalogPresentationSystemHelper.FormatPrimarySuccessInstruction(_gameTextResolver, _selectedItem), BuildDrawerInstructionSeverity.Ready);
             BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Success(
-                _gameTextResolver.Format("build.feedback.production_requested", "{0}: {1}", _selectedItem.ActionLabel, _selectedItem.DisplayName)), _gameTextResolver);
+                _gameTextResolver.Format("build.feedback.production_requested", "{0}: {1}", UiLocalizedText.CatalogLabel(_selectedItem.ActionLabel), UiLocalizedText.CatalogLabel(_selectedItem.DisplayName))), _gameTextResolver);
             AcceptUnit();
         }
 
@@ -214,7 +214,7 @@ namespace Game.UI.Runtime
             }
 
             ApplyInstruction(cancelled
-                    ? _gameTextResolver.Format("build.feedback.production_cancelled_named", "Cancelled {0}.", BuildDrawerProductionQueueUiSystemHelper.ResolveDisplayName(context, active))
+                    ? _gameTextResolver.Format("build.feedback.production_cancelled_named", "Cancelled {0}.", UiLocalizedText.CatalogLabel(BuildDrawerProductionQueueUiSystemHelper.ResolveDisplayName(context, active)))
                     : _gameTextResolver.Get("build.feedback.production_cancel_unavailable", "Production cancel unavailable."),
                 cancelled ? BuildDrawerInstructionSeverity.Warning : BuildDrawerInstructionSeverity.Error);
             BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, cancelled

@@ -117,8 +117,7 @@ namespace Game.UI.Runtime
                 return;
 
             string resolved = value ?? string.Empty;
-            if (target.text != resolved)
-                target.text = resolved;
+            UiLocalizedText.Set(target, resolved);
             if (target.gameObject.activeSelf != (resolved.Length > 0))
                 target.gameObject.SetActive(resolved.Length > 0);
         }

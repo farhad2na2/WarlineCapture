@@ -253,7 +253,7 @@ namespace Game.UI.Runtime
         public void ApplyInstruction(string text, BuildDrawerInstructionSeverity severity)
         {
             if (instructionText != null)
-                instructionText.text = text ?? string.Empty;
+                UiLocalizedText.Set(instructionText, text);
 
             if (instructionIcon != null)
             {
@@ -277,7 +277,7 @@ namespace Game.UI.Runtime
         private static void SetText(TMP_Text text, string value)
         {
             if (text != null)
-                text.text = value ?? string.Empty;
+                UiLocalizedText.Set(text, value);
         }
 
         private static void SetCost(TMP_Text text, string value)

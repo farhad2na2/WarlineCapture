@@ -1127,6 +1127,7 @@ namespace Game.Editor
             SetArray(sequence, "localizedTextTargets", targets);
             SetStringArray(sequence, "localizedTextKeys", keys);
             SetStringArray(sequence, "localizedTextEnglishFallbacks", fallbacks);
+            V3UiLocalizationCatalogBuilder.ExtendConfiguredNarrativeBindings(sequence);
         }
 
         private static void CaptureReview(int width, int height, string suffix)

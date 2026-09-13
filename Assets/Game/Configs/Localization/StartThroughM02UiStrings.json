@@ -1,0 +1,1254 @@
+{
+  "entries": [
+    {
+      "key": "ui.identity.instruction",
+      "source": "Your commander leads every operation. Choose your identity.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرماندهٔ شما هدایت همهٔ عملیات‌ها را بر عهده دارد. هویت خود را انتخاب کنید."
+        }
+      ]
+    },
+    {
+      "key": "ui.identity.callsign_rules",
+      "source": "3 - 12 characters, letters, numbers, hyphens only",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "۳ تا ۱۲ نویسه؛ فقط حروف، اعداد و خط تیره"
+        }
+      ]
+    },
+    {
+      "key": "ui.identity.selected",
+      "source": "SELECTED PROFILE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پروفایل انتخاب‌شده"
+        }
+      ]
+    },
+    {
+      "key": "ui.identity.description",
+      "source": "Balanced leader with strong operational control.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرمانده‌ای متعادل با توانایی بالای هدایت عملیات."
+        }
+      ]
+    },
+    {
+      "key": "ui.identity.previous",
+      "source": "‹   PREV",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "‹   قبلی"
+        }
+      ]
+    },
+    {
+      "key": "ui.commander.role.recon",
+      "source": "RECON SPECIALIST",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "متخصص شناسایی"
+        }
+      ]
+    },
+    {
+      "key": "ui.commander.role.assault",
+      "source": "ASSAULT LEADER",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرمانده تهاجم"
+        }
+      ]
+    },
+    {
+      "key": "ui.commander.role.intel",
+      "source": "INTEL OFFICER",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "افسر اطلاعات"
+        }
+      ]
+    },
+    {
+      "key": "ui.commander.role.field",
+      "source": "FIELD COMMANDER",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرمانده میدانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.commander.role.operations",
+      "source": "OPERATIONS LEAD",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "مسئول عملیات"
+        }
+      ]
+    },
+    {
+      "key": "ui.commander.role.support",
+      "source": "SUPPORT COMMANDER",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرمانده پشتیبانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.commander.name.mira",
+      "source": "MIRA ALAVI",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "میرا علوی"
+        }
+      ]
+    },
+    {
+      "key": "ui.commander.name.jalil",
+      "source": "JALIL OKAFOR",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "جلیل اوکافور"
+        }
+      ]
+    },
+    {
+      "key": "ui.commander.name.samira",
+      "source": "SAMIRA KHALID",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سمیرا خالد"
+        }
+      ]
+    },
+    {
+      "key": "ui.commander.name.dalia",
+      "source": "DALIA RAHIM",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "دالیا رحیم"
+        }
+      ]
+    },
+    {
+      "key": "ui.commander.name.kenji",
+      "source": "KENJI SATO",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کنجی ساتو"
+        }
+      ]
+    },
+    {
+      "key": "ui.commander.name.irina",
+      "source": "IRINA PETROVA",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "ایرینا پترووا"
+        }
+      ]
+    },
+    {
+      "key": "ui.guidance.setup",
+      "source": "FIRST-LAUNCH SETUP",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "تنظیمات شروع بازی"
+        }
+      ]
+    },
+    {
+      "key": "ui.guidance.full_description",
+      "source": "Complete support for\nnew commanders.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پشتیبانی کامل برای\nفرماندهان تازه‌کار."
+        }
+      ]
+    },
+    {
+      "key": "ui.guidance.contextual_description",
+      "source": "Helpful tips in key\nsituations.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "راهنمایی کاربردی در\nموقعیت‌های مهم."
+        }
+      ]
+    },
+    {
+      "key": "ui.guidance.minimal_description",
+      "source": "Only essential alerts.\nMaximum challenge.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فقط هشدارهای ضروری.\nبیشترین چالش."
+        }
+      ]
+    },
+    {
+      "key": "ui.guidance.support_level",
+      "source": "SUPPORT LEVEL",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "میزان پشتیبانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.guidance.high",
+      "source": "HIGH",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "زیاد"
+        }
+      ]
+    },
+    {
+      "key": "ui.guidance.medium",
+      "source": "MEDIUM",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "متوسط"
+        }
+      ]
+    },
+    {
+      "key": "ui.guidance.low",
+      "source": "LOW",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کم"
+        }
+      ]
+    },
+    {
+      "key": "ui.guidance.subtitles",
+      "source": "SUBTITLES",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "زیرنویس"
+        }
+      ]
+    },
+    {
+      "key": "ui.guidance.subtitles_description",
+      "source": "Show dialogue subtitles.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نمایش زیرنویس گفتگوها."
+        }
+      ]
+    },
+    {
+      "key": "ui.guidance.motion",
+      "source": "REDUCED MOTION",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کاهش حرکت"
+        }
+      ]
+    },
+    {
+      "key": "ui.guidance.motion_description",
+      "source": "Minimize camera movement.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کاهش حرکت دوربین."
+        }
+      ]
+    },
+    {
+      "key": "ui.guidance.on",
+      "source": "ON",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "روشن"
+        }
+      ]
+    },
+    {
+      "key": "ui.guidance.off",
+      "source": "OFF",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "خاموش"
+        }
+      ]
+    },
+    {
+      "key": "ui.guidance.previous",
+      "source": "‹       PREV",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "‹       قبلی"
+        }
+      ]
+    },
+    {
+      "key": "ui.loading.preparing_command_interface",
+      "source": "Preparing command interface",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "آماده‌سازی رابط فرماندهی"
+        }
+      ]
+    },
+    {
+      "key": "ui.loading.loading_command_shell",
+      "source": "Loading command shell",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بارگذاری محیط فرماندهی"
+        }
+      ]
+    },
+    {
+      "key": "ui.loading.command_shell_ready",
+      "source": "Command shell ready",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "محیط فرماندهی آماده است"
+        }
+      ]
+    },
+    {
+      "key": "ui.loading.preparing_match_load",
+      "source": "Preparing match load",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "آماده‌سازی بارگذاری نبرد"
+        }
+      ]
+    },
+    {
+      "key": "ui.loading.loading_operation_interface",
+      "source": "Loading operation interface",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بارگذاری رابط عملیات"
+        }
+      ]
+    },
+    {
+      "key": "ui.loading.loading_match",
+      "source": "Loading match",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بارگذاری نبرد"
+        }
+      ]
+    },
+    {
+      "key": "ui.loading.loading_map_presentation",
+      "source": "Loading map presentation",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بارگذاری نمای نقشه"
+        }
+      ]
+    },
+    {
+      "key": "ui.loading.preparing_match",
+      "source": "Preparing match",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "آماده‌سازی نبرد"
+        }
+      ]
+    },
+    {
+      "key": "ui.loading.preparing_gameplay_runtime",
+      "source": "Preparing gameplay runtime",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "آماده‌سازی محیط بازی"
+        }
+      ]
+    },
+    {
+      "key": "ui.loading.resetting_match_state",
+      "source": "Resetting match state",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بازنشانی وضعیت نبرد"
+        }
+      ]
+    },
+    {
+      "key": "ui.loading.preparing_map_data",
+      "source": "Preparing map data",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "آماده‌سازی اطلاعات نقشه"
+        }
+      ]
+    },
+    {
+      "key": "ui.loading.preparing_unit_prefabs",
+      "source": "Preparing unit prefabs",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "آماده‌سازی نیروها"
+        }
+      ]
+    },
+    {
+      "key": "ui.loading.preparing_ai_factions",
+      "source": "Preparing AI factions",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "آماده‌سازی جناح‌های هوش مصنوعی"
+        }
+      ]
+    },
+    {
+      "key": "ui.loading.preparing_resource_exchange",
+      "source": "Preparing resource exchange",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "آماده‌سازی مبادلهٔ منابع"
+        }
+      ]
+    },
+    {
+      "key": "ui.loading.binding_match_hud",
+      "source": "Binding match HUD",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "آماده‌سازی رابط نبرد"
+        }
+      ]
+    },
+    {
+      "key": "ui.loading.starting_gameplay_systems",
+      "source": "Starting gameplay systems",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "راه‌اندازی سامانه‌های بازی"
+        }
+      ]
+    },
+    {
+      "key": "ui.loading.validating_scenario_recovery",
+      "source": "Validating scenario recovery",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بررسی بازیابی سناریو"
+        }
+      ]
+    },
+    {
+      "key": "ui.loading.waiting_for_scenario_catalog",
+      "source": "Waiting for scenario catalog",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "در انتظار اطلاعات سناریو"
+        }
+      ]
+    },
+    {
+      "key": "ui.loading.focusing_camera",
+      "source": "Focusing camera",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "تنظیم دوربین"
+        }
+      ]
+    },
+    {
+      "key": "ui.loading.spawning_world",
+      "source": "Spawning world",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "ایجاد محیط نبرد"
+        }
+      ]
+    },
+    {
+      "key": "ui.loading.starting_match",
+      "source": "Starting match",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "آغاز نبرد"
+        }
+      ]
+    },
+    {
+      "key": "ui.loading.match_ready",
+      "source": "Match ready",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نبرد آماده است"
+        }
+      ]
+    },
+    {
+      "key": "ui.loading.unloading_map_presentation",
+      "source": "Unloading map presentation",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بستن نمای نقشه"
+        }
+      ]
+    },
+    {
+      "key": "ui.loading.unloading_operation_map",
+      "source": "Unloading operation map",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بستن نقشهٔ عملیات"
+        }
+      ]
+    },
+    {
+      "key": "ui.loading.unloading_match",
+      "source": "Unloading match",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "خروج از نبرد"
+        }
+      ]
+    },
+    {
+      "key": "ui.loading.preparing_opening_briefing",
+      "source": "Preparing opening briefing",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "آماده‌سازی توجیه آغازین"
+        }
+      ]
+    },
+    {
+      "key": "ui.loading.loading",
+      "source": "Loading",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "در حال بارگذاری"
+        }
+      ]
+    },
+    {
+      "key": "ui.loading.map_unload_failed",
+      "source": "Unable to close the operation map. Please try again.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بستن نقشهٔ عملیات ممکن نشد. دوباره تلاش کنید."
+        }
+      ]
+    },
+    {
+      "key": "ui.commander.profile.subtitle",
+      "source": "VICTORY IS PLANNED",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پیروزی با برنامه‌ریزی به دست می‌آید"
+        }
+      ]
+    },
+    {
+      "key": "ui.chapter.samira",
+      "source": "SAMIRA",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سمیرا"
+        }
+      ]
+    },
+    {
+      "key": "ui.chapter.dalia",
+      "source": "DALIA",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "دالیا"
+        }
+      ]
+    },
+    {
+      "key": "ui.aria.name",
+      "source": "ARIA",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "آریا"
+        }
+      ]
+    },
+    {
+      "key": "mission.m01.summary",
+      "source": "Secure the Old Market corridor and protect the civilian route.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گذرگاه بازار قدیمی را امن کنید و از مسیر عبور غیرنظامیان محافظت کنید."
+        }
+      ]
+    },
+    {
+      "key": "mission.m02.summary",
+      "source": "Reopen an abandoned forward post before a second hostile cell reaches it.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پیش از رسیدن دومین گروه دشمن، پایگاه متروکهٔ خط مقدم را دوباره فعال کنید."
+        }
+      ]
+    },
+    {
+      "key": "mission.m01.reward.card",
+      "source": "260 XP  |  1,200 CREDITS",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "۲۶۰ تجربه  |  ۱٬۲۰۰ اعتبار"
+        }
+      ]
+    },
+    {
+      "key": "mission.m02.reward.card",
+      "source": "320 XP  |  1,500 CREDITS  |  BARRACKS UNLOCK",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "۳۲۰ تجربه  |  ۱٬۵۰۰ اعتبار  |  بازشدن سربازخانه"
+        }
+      ]
+    },
+    {
+      "key": "mission.m01.goal.civilians",
+      "source": "PROTECT CIVILIANS",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "از غیرنظامیان محافظت کنید"
+        }
+      ]
+    },
+    {
+      "key": "mission.m01.goal.squad",
+      "source": "KEEP SQUAD SAFE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گروه را سالم نگه دارید"
+        }
+      ]
+    },
+    {
+      "key": "mission.m01.objective.protect_squad",
+      "source": "KEEP THE COMMAND SQUAD ALIVE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گروه فرماندهی را زنده نگه دارید"
+        }
+      ]
+    },
+    {
+      "key": "mission.m02.briefing.summary",
+      "source": "Reopen the abandoned JRC forward post before the Ash Line reaches it. Establish a foothold and prepare for incoming threats.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پیش از رسیدن خط خاکستر، پایگاه متروکهٔ خط مقدم JRC را دوباره فعال کنید. جای پایی ایجاد کنید و برای تهدیدهای پیش رو آماده شوید."
+        }
+      ]
+    },
+    {
+      "key": "ui.aria.player_control",
+      "source": "PLAYER CONTROL",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کنترل بازیکن"
+        }
+      ]
+    },
+    {
+      "key": "ui.aria.aria_control",
+      "source": "ARIA CONTROL",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کنترل آریا"
+        }
+      ]
+    },
+    {
+      "key": "ui.aria.preview",
+      "source": "PREVIEW",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پیش‌نمایش"
+        }
+      ]
+    },
+    {
+      "key": "ui.aria.guided",
+      "source": "GUIDED",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدایت‌شده"
+        }
+      ]
+    },
+    {
+      "key": "ui.aria.player_override",
+      "source": "PLAYER OVERRIDE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بازپس‌گیری کنترل"
+        }
+      ]
+    },
+    {
+      "key": "ui.catalog.barracks",
+      "source": "Barracks",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سربازخانه"
+        }
+      ]
+    },
+    {
+      "key": "ui.catalog.structure",
+      "source": "STRUCTURE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سازه"
+        }
+      ]
+    },
+    {
+      "key": "ui.build.empty",
+      "source": "No requestable items.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هیچ موردی برای ساخت در دسترس نیست."
+        }
+      ]
+    },
+    {
+      "key": "ui.build.recruit",
+      "source": "RECRUIT",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "آموزش"
+        }
+      ]
+    },
+    {
+      "key": "ui.build.produce",
+      "source": "PRODUCE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "تولید"
+        }
+      ]
+    },
+    {
+      "key": "build.drawer.failure.short.insufficient_materials",
+      "source": "Insufficient materials.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "مصالح کافی نیست."
+        }
+      ]
+    },
+    {
+      "key": "build.drawer.failure.short.insufficient_credits_and_materials",
+      "source": "Insufficient credits and materials.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "اعتبار و مصالح کافی نیست."
+        }
+      ]
+    },
+    {
+      "key": "build.drawer.failure.insufficient_credits",
+      "source": "Cannot {0} {1}: insufficient credits.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "{0} {1} ممکن نیست: اعتبار کافی نیست."
+        }
+      ]
+    },
+    {
+      "key": "build.drawer.failure.insufficient_materials",
+      "source": "Cannot {0} {1}: insufficient materials.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "{0} {1} ممکن نیست: مصالح کافی نیست."
+        }
+      ]
+    },
+    {
+      "key": "build.drawer.failure.insufficient_credits_and_materials",
+      "source": "Cannot {0} {1}: insufficient credits and materials.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "{0} {1} ممکن نیست: اعتبار و مصالح کافی نیست."
+        }
+      ]
+    },
+    {
+      "key": "ui.build.title",
+      "source": "BUILD {0}",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "ساخت {0}"
+        }
+      ]
+    },
+    {
+      "key": "ui.build.valid_footprint",
+      "source": "Valid placement ({0},{1}) {2}x{3}",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "محل ساخت معتبر ({0}،{1}) {2}×{3}"
+        }
+      ]
+    },
+    {
+      "key": "ui.build.blocked_footprint",
+      "source": "Blocked by road or blocker ({0},{1}) {2}x{3}",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "مسدود به‌دلیل جاده یا مانع ({0}،{1}) {2}×{3}"
+        }
+      ]
+    },
+    {
+      "key": "mission.m01.result.victory",
+      "source": "Hostile patrol neutralized. The Old Market corridor is secure.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گشت دشمن از پا درآمد. گذرگاه بازار قدیمی امن است."
+        }
+      ]
+    },
+    {
+      "key": "mission.m02.result.identity",
+      "source": "M02 ESTABLISH THE BASE\nFORWARD POST",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "M02 پایگاه را بنا کنید\nپایگاه خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "mission.m02.result.subtitle",
+      "source": "ESTABLISH THE BASE • FORWARD POST",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه را بنا کنید • پایگاه خط مقدم"
+        }
+      ]
+    },
+    {
+      "key": "mission.m02.result.first_clear",
+      "source": "Forward post operational. Dalia Rahim accepts field-lead duty. The clinic-route warning sector has gone dark.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه خط مقدم فعال شد. دالیا رحیم فرماندهی میدانی را بر عهده گرفت. بخش هشدار مسیر درمانگاه از دسترس خارج شده است."
+        }
+      ]
+    },
+    {
+      "key": "mission.m02.reward.barracks_unlock",
+      "source": "BARRACKS UNLOCK",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بازشدن سربازخانه"
+        }
+      ]
+    },
+    {
+      "key": "mission.m02.result.replay",
+      "source": "Forward post defended. The clinic route remains under coalition control.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "از پایگاه خط مقدم دفاع شد. مسیر درمانگاه همچنان در کنترل ائتلاف است."
+        }
+      ]
+    },
+    {
+      "key": "ui.result.command_squad_lost",
+      "source": "COMMAND SQUAD LOST",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گروه فرماندهی از دست رفت"
+        }
+      ]
+    },
+    {
+      "key": "ui.result.failed",
+      "source": "FAILED",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "ناموفق"
+        }
+      ]
+    },
+    {
+      "key": "ui.result.at_risk",
+      "source": "AT RISK",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "در خطر"
+        }
+      ]
+    },
+    {
+      "key": "mission.m01.result.defeat",
+      "source": "The command squad was lost. Regroup and redeploy.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گروه فرماندهی از دست رفت. نیروها را دوباره سازمان‌دهی و اعزام کنید."
+        }
+      ]
+    },
+    {
+      "key": "mission.m02.result.defeat",
+      "source": "The forward post fell before the defense was secured. Rebuild and redeploy.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه خط مقدم پیش از تکمیل دفاع سقوط کرد. آن را بازسازی و نیروها را دوباره اعزام کنید."
+        }
+      ]
+    },
+    {
+      "key": "ui.catalog.barracks.upper",
+      "source": "BARRACKS",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سربازخانه"
+        }
+      ]
+    },
+    {
+      "key": "ui.build.valid_footprint.upper",
+      "source": "VALID PLACEMENT ({0},{1}) {2}X{3}",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "محل ساخت معتبر ({0}،{1}) {2}×{3}"
+        }
+      ]
+    },
+    {
+      "key": "ui.build.blocked_footprint.upper",
+      "source": "BLOCKED BY ROAD OR BLOCKER ({0},{1}) {2}X{3}",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "مسدود به‌دلیل جاده یا مانع ({0}،{1}) {2}×{3}"
+        }
+      ]
+    },
+    {
+      "key": "ui.chapter.aria_protocol",
+      "source": "ARIA PROTOCOL",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پروتکل آریا"
+        }
+      ]
+    },
+    {
+      "key": "ui.catalog.rifleman_male_iv",
+      "source": "Rifleman Male IV",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "تفنگدار مرد ۴"
+        }
+      ]
+    },
+    {
+      "key": "build.drawer.failure.short.insufficient_credits",
+      "source": "Insufficient credits.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "اعتبار کافی نیست."
+        }
+      ]
+    },
+    {
+      "key": "build.drawer.failure.short.not_enough_money",
+      "source": "Insufficient credits.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "اعتبار کافی نیست."
+        }
+      ]
+    },
+    {
+      "key": "ui.aria.step",
+      "source": "STEP {0}/{1}",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "مرحله {0}/{1}"
+        }
+      ]
+    },
+    {
+      "key": "ui.v3.tutorial_1_3.956f57814e",
+      "source": "TUTORIAL 1/3",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "آموزش 1/3"
+        }
+      ]
+    },
+    {
+      "key": "ui.aria.do_it",
+      "source": "DO IT",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "انجامش بده"
+        }
+      ]
+    },
+    {
+      "key": "ui.aria.attack_button_body",
+      "source": "Tap ATTACK to select the attack command.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "برای انتخاب دستور حمله، روی «حمله» بزنید."
+        }
+      ]
+    },
+    {
+      "key": "ui.aria.attack_issued",
+      "source": "ATTACK ORDER ISSUED",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "دستور حمله صادر شد"
+        }
+      ]
+    },
+    {
+      "key": "ui.aria.attack_target_body",
+      "source": "Tap the highlighted enemy to issue the attack.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "برای صدور دستور حمله، روی دشمن علامت‌گذاری‌شده بزنید."
+        }
+      ]
+    },
+    {
+      "key": "ui.aria.attacking_body",
+      "source": "Your squad is engaging the highlighted enemy.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گروه شما در حال درگیری با دشمن علامت‌گذاری‌شده است."
+        }
+      ]
+    },
+    {
+      "key": "ui.aria.choose_destination",
+      "source": "CHOOSE DESTINATION",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "مقصد را انتخاب کنید"
+        }
+      ]
+    },
+    {
+      "key": "ui.aria.choose_enemy",
+      "source": "CHOOSE ENEMY",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "دشمن را انتخاب کنید"
+        }
+      ]
+    },
+    {
+      "key": "ui.aria.move_button_body",
+      "source": "Tap MOVE to select the move command.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "برای انتخاب دستور حرکت، روی «حرکت» بزنید."
+        }
+      ]
+    },
+    {
+      "key": "ui.aria.move_target_body",
+      "source": "Tap the highlighted destination to move your squad.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "برای حرکت گروه، روی مقصد علامت‌گذاری‌شده بزنید."
+        }
+      ]
+    },
+    {
+      "key": "ui.aria.moving_body",
+      "source": "Your squad is moving to the marked cover position.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گروه شما در حال حرکت به موقعیت پوشش علامت‌گذاری‌شده است."
+        }
+      ]
+    },
+    {
+      "key": "ui.aria.moving_to_cover",
+      "source": "MOVING TO COVER",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "در حال حرکت به پوشش"
+        }
+      ]
+    },
+    {
+      "key": "ui.aria.press_attack",
+      "source": "PRESS ATTACK",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "حمله را بزنید"
+        }
+      ]
+    },
+    {
+      "key": "ui.aria.press_move",
+      "source": "PRESS MOVE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "حرکت را بزنید"
+        }
+      ]
+    },
+    {
+      "key": "ui.aria.select_rifle_squad",
+      "source": "Select the Rifle Squad",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گروه تفنگدار را انتخاب کنید"
+        }
+      ]
+    },
+    {
+      "key": "ui.aria.select_rifle_squad.body",
+      "source": "Tap the <color=#00D1F3>Rifle Squad</color> unit card to select.\nThen tap <color=#00D1F3>MOVE</color> to send them to the marker.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "برای انتخاب، روی کارت <color=#00D1F3>گروه تفنگدار</color> بزنید.\nسپس برای حرکت به نشانگر، <color=#00D1F3>حرکت</color> را بزنید."
+        }
+      ]
+    }
+  ]
+}

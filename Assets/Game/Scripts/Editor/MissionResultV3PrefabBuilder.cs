@@ -381,6 +381,32 @@ namespace Game.Editor
                 new[] { titleIcon, patrol.Icon, squad.Icon, civilians.Icon });
         }
 
+        public static void RepairLocalizedObjectiveSpacing()
+        {
+            var root = PrefabUtility.LoadPrefabContents(PrefabPath);
+            try
+            {
+                foreach (var layout in root.GetComponentsInChildren<MainMenuV3SectionLayoutView>(true))
+                {
+                    var serialized = new SerializedObject(layout);
+                    var rules = serialized.FindProperty("horizontalResponsiveTargets");
+                    var sizes = serialized.FindProperty("horizontalTargetBaseSizes");
+                    for (int i = 0; i < rules.arraySize; i++)
+                    {
+                        var rect = rules.GetArrayElementAtIndex(i).FindPropertyRelative("target").objectReferenceValue as RectTransform;
+                        if (rect == null || rect.name != "Label" || !rect.parent.name.StartsWith("Objective_", StringComparison.Ordinal)) continue;
+                        var size = sizes.GetArrayElementAtIndex(i).vector2Value;
+                        size.x = 374f;
+                        sizes.GetArrayElementAtIndex(i).vector2Value = size;
+                        rect.sizeDelta = size;
+                    }
+                    serialized.ApplyModifiedPropertiesWithoutUndo();
+                }
+                PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
+            }
+            finally { PrefabUtility.UnloadPrefabContents(root); }
+        }
+
         private static ObjectiveRow BuildObjectiveRow(
             Transform parent, string name, float y, Sprite iconSprite, string label, string status, Color accent)
         {
@@ -388,7 +414,7 @@ namespace Game.Editor
             CreateSeparator(row, 0f);
             Image icon = CreateImage("Icon", row, iconSprite, accent);
             SetTopLeft(icon.rectTransform, 24f, 21f, 46f, 46f);
-            CreateText(row, "Label", 92f, 11f, 405f, 64f, label, 23f, theme.TextPrimary, TextAlignmentOptions.MidlineLeft, true);
+            CreateText(row, "Label", 92f, 11f, 374f, 64f, label, 23f, theme.TextPrimary, TextAlignmentOptions.MidlineLeft, true);
             TMP_Text state = CreateText(row, "Status", 494f, 11f, 150f, 64f, status, 22f, accent, TextAlignmentOptions.MidlineRight, true);
             return new ObjectiveRow(state, icon);
         }

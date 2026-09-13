@@ -59,6 +59,8 @@ public sealed class M03PresentationTests
         canvasRoot.GetComponent<Canvas>().renderMode=RenderMode.WorldSpace;
         ((RectTransform)canvasRoot.transform).sizeDelta=new Vector2(1920,1080);
         var instance=UnityEngine.Object.Instantiate(prefab,canvasRoot.transform);
+        var previousLocale=GameLocalization.CurrentLocaleCode;
+        GameLocalization.Initialize(AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(V3UiLocalizationCatalogBuilder.CatalogPath),previousLocale,false);
         try
         {
             var view=instance.GetComponentInChildren<AriaTutorialBriefingView>(true);
@@ -71,6 +73,7 @@ public sealed class M03PresentationTests
             foreach(bool large in new[]{false,true})
             for(byte step=1;step<=12;step++)
             {
+                GameLocalization.SetLocale(persian ? "fa-IR" : "en", false);
                 var copy=M03RadarWarningTutorialCopyCatalog.Steps[step-1];
                 var model=new UiAssistantPanelModel(1,true,0,UiAssistantGoalRowModel.Empty,UiAssistantGoalRowModel.Empty,UiAssistantGoalRowModel.Empty,
                     UiAssistantMessageRowModel.Empty,UiAssistantMessageRowModel.Empty,UiAssistantMessageRowModel.Empty,
@@ -98,11 +101,12 @@ public sealed class M03PresentationTests
                 Assert.Less(utilityCorners[1].y,corners[0].y,"Guide controls must sit below ARIA's primary actions.");
                 Assert.IsTrue(view.FirstStepGuideRoot==null || !view.FirstStepGuideRoot.gameObject.activeSelf,"M3 must not display M1's selection-only diagram.");
             }
+            GameLocalization.SetLocale(previousLocale, false);
             view.Apply(AriaTutorialBriefingPrefabBuilder.CreateTargetLockPreviewModel());
             Assert.AreEqual(originalSize,view.BriefingLayout.sizeDelta,"M1 card size must restore after M3.");
             Assert.AreEqual(originalPosition,view.BriefingLayout.anchoredPosition,"M1 card position must restore after M3.");
         }
-        finally {UnityEngine.Object.DestroyImmediate(canvasRoot);}
+        finally {UnityEngine.Object.DestroyImmediate(canvasRoot);GameLocalization.SetLocale(previousLocale,false);}
     }
 
     [Test]

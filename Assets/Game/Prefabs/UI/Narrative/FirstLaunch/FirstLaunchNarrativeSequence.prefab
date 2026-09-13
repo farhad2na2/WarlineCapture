@@ -29517,6 +29517,45 @@ MonoBehaviour:
   - {fileID: 2376457077593023775}
   - {fileID: 846064371903734686}
   - {fileID: 3039139247427377035}
+  - {fileID: 4341244457739545355}
+  - {fileID: 3561186676257542562}
+  - {fileID: 3606470946074008676}
+  - {fileID: 1389777032617408283}
+  - {fileID: 3046799618348023286}
+  - {fileID: 621013113007589526}
+  - {fileID: 1421982373136224020}
+  - {fileID: 5569568937852092619}
+  - {fileID: 3039329849833668407}
+  - {fileID: 3879503419808240309}
+  - {fileID: 7933090080920382751}
+  - {fileID: 5677084607729184595}
+  - {fileID: 1761071657818104403}
+  - {fileID: 5173506026657836431}
+  - {fileID: 1803607114502455350}
+  - {fileID: 9084774067572088631}
+  - {fileID: 5261275476935490958}
+  - {fileID: 6417075571915260300}
+  - {fileID: 7637625310565576772}
+  - {fileID: 7140276788612617541}
+  - {fileID: 6290391013636801564}
+  - {fileID: 2794331500569104170}
+  - {fileID: 6921290505235473216}
+  - {fileID: 1742566324224439901}
+  - {fileID: 8603381741483040060}
+  - {fileID: 5421185047178401561}
+  - {fileID: 3780869119138034957}
+  - {fileID: 695813161551612570}
+  - {fileID: 7505233051883832761}
+  - {fileID: 8382226600402965447}
+  - {fileID: 8517258040675060283}
+  - {fileID: 4842753587052983264}
+  - {fileID: 8846029807748815772}
+  - {fileID: 7486325270132485750}
+  - {fileID: 1628828530198361595}
+  - {fileID: 2172896690768851046}
+  - {fileID: 2226387692506433124}
+  - {fileID: 4838875658530706908}
+  - {fileID: 8338002653288763338}
   localizedTextKeys:
   - ui.common.pause
   - ui.common.subtitles
@@ -29536,6 +29575,45 @@ MonoBehaviour:
   - narrative.first_launch.skip.body
   - narrative.first_launch.control.cancel_skip
   - narrative.first_launch.control.confirm_skip
+  - ui.commander.name.dalia
+  - ui.identity.instruction
+  - ui.commander.name.mira
+  - ui.commander.role.recon
+  - ui.commander.name.jalil
+  - ui.commander.role.assault
+  - ui.commander.name.samira
+  - ui.commander.role.intel
+  - ui.commander.name.dalia
+  - ui.commander.role.field
+  - ui.commander.name.kenji
+  - ui.commander.role.operations
+  - ui.commander.name.irina
+  - ui.commander.role.support
+  - ui.identity.callsign_rules
+  - ui.identity.selected
+  - ui.commander.name.dalia
+  - ui.commander.role.field
+  - ui.identity.description
+  - ui.identity.previous
+  - ui.guidance.setup
+  - ui.guidance.full_description
+  - ui.guidance.support_level
+  - ui.guidance.high
+  - ui.guidance.contextual_description
+  - ui.guidance.support_level
+  - ui.guidance.medium
+  - ui.guidance.minimal_description
+  - ui.guidance.support_level
+  - ui.guidance.low
+  - ui.guidance.subtitles
+  - ui.guidance.subtitles_description
+  - ui.guidance.on
+  - ui.guidance.motion
+  - ui.guidance.motion_description
+  - ui.guidance.on
+  - ui.guidance.previous
+  - ui.guidance.motion
+  - ui.guidance.subtitles
   localizedTextEnglishFallbacks:
   - PAUSE
   - SUBTITLES
@@ -29556,6 +29634,51 @@ MonoBehaviour:
     change both later.
   - KEEP WATCHING
   - SKIP INTRO
+  - DALIA RAHIM
+  - Your commander leads every operation. Choose your identity.
+  - MIRA ALAVI
+  - RECON SPECIALIST
+  - JALIL OKAFOR
+  - ASSAULT LEADER
+  - SAMIRA KHALID
+  - INTEL OFFICER
+  - DALIA RAHIM
+  - FIELD COMMANDER
+  - KENJI SATO
+  - OPERATIONS LEAD
+  - IRINA PETROVA
+  - SUPPORT COMMANDER
+  - 3 - 12 characters, letters, numbers, hyphens only
+  - SELECTED PROFILE
+  - DALIA RAHIM
+  - FIELD COMMANDER
+  - Balanced leader with strong operational control.
+  - "\u2039   PREV"
+  - FIRST-LAUNCH SETUP
+  - 'Complete support for
+
+    new commanders.'
+  - SUPPORT LEVEL
+  - HIGH
+  - 'Helpful tips in key
+
+    situations.'
+  - SUPPORT LEVEL
+  - MEDIUM
+  - 'Only essential alerts.
+
+    Maximum challenge.'
+  - SUPPORT LEVEL
+  - LOW
+  - SUBTITLES
+  - Show dialogue subtitles.
+  - ON
+  - REDUCED MOTION
+  - Minimize camera movement.
+  - ON
+  - "\u2039       PREV"
+  - REDUCED MOTION
+  - SUBTITLES
 --- !u!82 &4344105608919758842
 AudioSource:
   m_ObjectHideFlags: 0

@@ -15,7 +15,7 @@ using UnityEngine;
 
 namespace Game.Editor
 {
-    public static class V3UiLocalizationCatalogBuilder
+    public static partial class V3UiLocalizationCatalogBuilder
     {
         public const string CatalogPath =
             "Assets/Game/Resources/Localization/V3UiLocalizationCatalog.asset";
@@ -144,6 +144,7 @@ namespace Game.Editor
             // Common translations can now resolve the stable auto keys introduced by the prefab pass.
             ImportCommonPersian(persian, keysByEnglish);
             int seededPersian = V3PersianUiTranslationSeeder.FillMissing(english, persian);
+            ImportUiStringConfigs(english, persian, keysByEnglish);
             GameLocalizationCatalog catalog = BuildCatalog(english, persian);
             RebuildAndPersistPersianFontCoverage(
                 catalog.FindLocale(GameLocalization.PersianLocaleCode)?.FontAsset as TMP_FontAsset,
@@ -216,6 +217,9 @@ namespace Game.Editor
             if (catalog == null)
                 throw new InvalidOperationException($"Missing localization catalog: {CatalogPath}");
 
+            ValidateAllLocaleTables(catalog);
+            ValidateConfiguredCatalogEntries(catalog);
+            ValidateFirstLaunchStaticBindings();
             GameLocaleTable english = catalog.FindLocale(GameLocalization.EnglishLocaleCode);
             GameLocaleTable persian = catalog.FindLocale(GameLocalization.PersianLocaleCode);
             if (english == null || persian == null || !persian.RightToLeft || persian.FontAsset == null)
@@ -514,10 +518,19 @@ namespace Game.Editor
                 {
                     continue;
                 }
-                localeTables.Add(existing);
+                var values = ToDictionary(existing);
+                foreach (var entry in ReadUiStringConfigs())
+                {
+                    var translation = entry.translations?.FirstOrDefault(t => t.locale == existing.LocaleCode);
+                    if (translation == null) throw new InvalidOperationException($"Missing translation: {existing.LocaleCode}/{entry.key}");
+                    foreach (string key in english.Where(e => e.Value == entry.source).Select(e => e.Key)) values[key] = translation.value;
+                }
+                localeTables.Add(new GameLocaleTable(existing.LocaleCode, existing.DisplayName, existing.ShortLabel,
+                    existing.RightToLeft, existing.FontAsset, ToRecords(values)));
             }
 
             catalog.Configure(GameLocalization.EnglishLocaleCode, localeTables);
+            ValidateAllLocaleTables(catalog);
             return catalog;
         }
 

@@ -435,7 +435,7 @@ namespace Game.UI.Runtime
                 string ownership = string.IsNullOrWhiteSpace(_lastPanelModel.OwnershipText)
                     ? "PLAYER CONTROL"
                     : _lastPanelModel.OwnershipText;
-                _accessStateText.text = ownership;
+                UiLocalizedText.Set(_accessStateText, ownership);
                 _accessStateText.gameObject.SetActive(true);
             }
             if (_accessCueText != null)

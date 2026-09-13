@@ -305,7 +305,7 @@ namespace Game.UI.Runtime
             if (parts.Length < 2)
                 return subtitle;
             string missionNumber = model.MissionId.Contains("m04") ? "M04" : model.MissionId.Contains("m03") ? "M03" : model.MissionId.Contains("m02") ? "M02" : "M01";
-            return $"{missionNumber} {parts[0]}\n{parts[1]}";
+            return $"{missionNumber} {UiLocalizedText.CatalogLabel(parts[0])}\n{UiLocalizedText.CatalogLabel(parts[1])}";
         }
 
         private static string BuildRewardDisplay(string value)
@@ -322,7 +322,7 @@ namespace Game.UI.Runtime
                 if (separator <= 0 || !char.IsDigit(reward[0]))
                     continue;
                 string amount = reward.Substring(0, separator);
-                string label = reward.Substring(separator + 1).Trim();
+                string label = UiLocalizedText.CatalogLabel(reward.Substring(separator + 1).Trim());
                 rewards[index] = $"{label}     +{amount}";
             }
             return string.Join("\n", rewards);
@@ -330,7 +330,7 @@ namespace Game.UI.Runtime
 
         private static void SetText(TMP_Text target, string value)
         {
-            if (target != null && target.text != value) target.text = value;
+            UiLocalizedText.Set(target, value);
         }
     }
 }

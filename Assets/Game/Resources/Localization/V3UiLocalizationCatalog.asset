@@ -40,6 +40,12 @@ MonoBehaviour:
       value: Build drawer is still connecting. Try again in a moment.
     - key: build.drawer.failure.global_queue_full
       value: 'Cannot {0} {1}: production queue limit reached ({2} max).'
+    - key: build.drawer.failure.insufficient_credits
+      value: 'Cannot {0} {1}: insufficient credits.'
+    - key: build.drawer.failure.insufficient_credits_and_materials
+      value: 'Cannot {0} {1}: insufficient credits and materials.'
+    - key: build.drawer.failure.insufficient_materials
+      value: 'Cannot {0} {1}: insufficient materials.'
     - key: build.drawer.failure.invalid_selection
       value: Select a build drawer item first.
     - key: build.drawer.failure.missing_producer
@@ -54,6 +60,12 @@ MonoBehaviour:
       value: 'Cannot {0} {1}: all {2} production slots are full.'
     - key: build.drawer.failure.short.global_queue_full
       value: Production queue limit reached ({0} max).
+    - key: build.drawer.failure.short.insufficient_credits
+      value: Insufficient credits.
+    - key: build.drawer.failure.short.insufficient_credits_and_materials
+      value: Insufficient credits and materials.
+    - key: build.drawer.failure.short.insufficient_materials
+      value: Insufficient materials.
     - key: build.drawer.failure.short.missing_producer
       value: Required producer is missing.
     - key: build.drawer.failure.short.not_enough_money
@@ -172,6 +184,43 @@ MonoBehaviour:
       value: 'Blocked: civilian zone'
     - key: match.feedback.tactical_map_not_ready
       value: Tactical map is not ready.
+    - key: mission.m01.goal.civilians
+      value: PROTECT CIVILIANS
+    - key: mission.m01.goal.squad
+      value: KEEP SQUAD SAFE
+    - key: mission.m01.objective.protect_squad
+      value: KEEP THE COMMAND SQUAD ALIVE
+    - key: mission.m01.result.defeat
+      value: The command squad was lost. Regroup and redeploy.
+    - key: mission.m01.result.victory
+      value: Hostile patrol neutralized. The Old Market corridor is secure.
+    - key: mission.m01.reward.card
+      value: 260 XP  |  1,200 CREDITS
+    - key: mission.m01.summary
+      value: Secure the Old Market corridor and protect the civilian route.
+    - key: mission.m02.briefing.summary
+      value: Reopen the abandoned JRC forward post before the Ash Line reaches it.
+        Establish a foothold and prepare for incoming threats.
+    - key: mission.m02.result.defeat
+      value: The forward post fell before the defense was secured. Rebuild and redeploy.
+    - key: mission.m02.result.first_clear
+      value: Forward post operational. Dalia Rahim accepts field-lead duty. The clinic-route
+        warning sector has gone dark.
+    - key: mission.m02.result.identity
+      value: 'M02 ESTABLISH THE BASE
+
+        FORWARD POST'
+    - key: mission.m02.result.replay
+      value: Forward post defended. The clinic route remains under coalition control.
+    - key: mission.m02.result.subtitle
+      value: "ESTABLISH THE BASE \u2022 FORWARD POST"
+    - key: mission.m02.reward.barracks_unlock
+      value: BARRACKS UNLOCK
+    - key: mission.m02.reward.card
+      value: 320 XP  |  1,500 CREDITS  |  BARRACKS UNLOCK
+    - key: mission.m02.summary
+      value: Reopen an abandoned forward post before a second hostile cell reaches
+        it.
     - key: mission.m03.access
       value: "Two rifle squads \xB7 Ground Radar Tank"
     - key: mission.m03.action.continue
@@ -1540,6 +1589,8 @@ MonoBehaviour:
       value: '{0} units returning to base.'
     - key: tactical.transport.attack_payload_missing
       value: Transport has no weapons or attack-capable passengers.
+    - key: ui.aria.aria_control
+      value: ARIA CONTROL
     - key: ui.aria.attack_button_body
       value: Tap ATTACK to select the attack command.
     - key: ui.aria.attack_issued
@@ -1560,6 +1611,8 @@ MonoBehaviour:
       value: 'ELAPSED: {0}:{1:00}:{2:00}'
     - key: ui.aria.elapsed_ms
       value: 'ELAPSED: {0:00}:{1:00}'
+    - key: ui.aria.guided
+      value: GUIDED
     - key: ui.aria.move_button_body
       value: Tap MOVE to select the move command.
     - key: ui.aria.move_target_body
@@ -1572,10 +1625,14 @@ MonoBehaviour:
       value: ARIA
     - key: ui.aria.player_control
       value: PLAYER CONTROL
+    - key: ui.aria.player_override
+      value: PLAYER OVERRIDE
     - key: ui.aria.press_attack
       value: PRESS ATTACK
     - key: ui.aria.press_move
       value: PRESS MOVE
+    - key: ui.aria.preview
+      value: PREVIEW
     - key: ui.aria.primary_state
       value: PRIMARY / {0}
     - key: ui.aria.priority_age.critical_active
@@ -1602,6 +1659,13 @@ MonoBehaviour:
       value: NORMAL / EXPIRING
     - key: ui.aria.priority_age.normal_new
       value: NORMAL / NEW
+    - key: ui.aria.select_rifle_squad
+      value: Select the Rifle Squad
+    - key: ui.aria.select_rifle_squad.body
+      value: 'Tap the <color=#00D1F3>Rifle Squad</color> unit card to select.
+
+        Then
+        tap <color=#00D1F3>MOVE</color> to send them to the marker.'
     - key: ui.aria.state.control
       value: CTRL
     - key: ui.aria.state.idle
@@ -1628,10 +1692,24 @@ MonoBehaviour:
       value: 'LOCATION: {0}'
     - key: ui.briefing.starting_resources
       value: '{0} CR / {1} MAT'
+    - key: ui.build.blocked_footprint
+      value: Blocked by road or blocker ({0},{1}) {2}x{3}
+    - key: ui.build.blocked_footprint.upper
+      value: BLOCKED BY ROAD OR BLOCKER ({0},{1}) {2}X{3}
     - key: ui.build.cost
       value: '{0} CR / {1} MAT'
+    - key: ui.build.empty
+      value: No requestable items.
+    - key: ui.build.produce
+      value: PRODUCE
+    - key: ui.build.recruit
+      value: RECRUIT
     - key: ui.build.title
       value: BUILD {0}
+    - key: ui.build.valid_footprint
+      value: Valid placement ({0},{1}) {2}x{3}
+    - key: ui.build.valid_footprint.upper
+      value: VALID PLACEMENT ({0},{1}) {2}X{3}
     - key: ui.campaign.best_time
       value: '|  BEST {0}:{1}'
     - key: ui.campaign.build_barrack
@@ -1654,6 +1732,46 @@ MonoBehaviour:
       value: START BRIEFING
     - key: ui.campaign.title
       value: CAMPAIGN
+    - key: ui.catalog.barracks
+      value: Barracks
+    - key: ui.catalog.barracks.upper
+      value: BARRACKS
+    - key: ui.catalog.rifleman_male_iv
+      value: Rifleman Male IV
+    - key: ui.catalog.structure
+      value: STRUCTURE
+    - key: ui.chapter.aria_protocol
+      value: ARIA PROTOCOL
+    - key: ui.chapter.dalia
+      value: DALIA
+    - key: ui.chapter.samira
+      value: SAMIRA
+    - key: ui.commander.name.dalia
+      value: DALIA RAHIM
+    - key: ui.commander.name.irina
+      value: IRINA PETROVA
+    - key: ui.commander.name.jalil
+      value: JALIL OKAFOR
+    - key: ui.commander.name.kenji
+      value: KENJI SATO
+    - key: ui.commander.name.mira
+      value: MIRA ALAVI
+    - key: ui.commander.name.samira
+      value: SAMIRA KHALID
+    - key: ui.commander.profile.subtitle
+      value: VICTORY IS PLANNED
+    - key: ui.commander.role.assault
+      value: ASSAULT LEADER
+    - key: ui.commander.role.field
+      value: FIELD COMMANDER
+    - key: ui.commander.role.intel
+      value: INTEL OFFICER
+    - key: ui.commander.role.operations
+      value: OPERATIONS LEAD
+    - key: ui.commander.role.recon
+      value: RECON SPECIALIST
+    - key: ui.commander.role.support
+      value: SUPPORT COMMANDER
     - key: ui.common.alerts
       value: ALERTS
     - key: ui.common.filters
@@ -1762,8 +1880,36 @@ MonoBehaviour:
       value: CLICK DESTINATION
     - key: ui.guidance.click_enemy
       value: CLICK ENEMY
+    - key: ui.guidance.contextual_description
+      value: 'Helpful tips in key
+
+        situations.'
+    - key: ui.guidance.full_description
+      value: 'Complete support for
+
+        new commanders.'
+    - key: ui.guidance.high
+      value: HIGH
+    - key: ui.guidance.low
+      value: LOW
+    - key: ui.guidance.medium
+      value: MEDIUM
+    - key: ui.guidance.minimal_description
+      value: 'Only essential alerts.
+
+        Maximum challenge.'
+    - key: ui.guidance.motion
+      value: REDUCED MOTION
+    - key: ui.guidance.motion_description
+      value: Minimize camera movement.
+    - key: ui.guidance.off
+      value: OFF
+    - key: ui.guidance.on
+      value: ON
     - key: ui.guidance.open_build
       value: OPEN BUILD
+    - key: ui.guidance.previous
+      value: "\u2039       PREV"
     - key: ui.guidance.queue_rifle
       value: QUEUE RIFLE
     - key: ui.guidance.resource_spend
@@ -1772,6 +1918,14 @@ MonoBehaviour:
       value: SELECT BARRACKS
     - key: ui.guidance.select_squad
       value: SELECT SQUAD
+    - key: ui.guidance.setup
+      value: FIRST-LAUNCH SETUP
+    - key: ui.guidance.subtitles
+      value: SUBTITLES
+    - key: ui.guidance.subtitles_description
+      value: Show dialogue subtitles.
+    - key: ui.guidance.support_level
+      value: SUPPORT LEVEL
     - key: ui.hud.aria_target
       value: ARIA TARGET
     - key: ui.hud.cargo_capacity
@@ -1823,12 +1977,78 @@ MonoBehaviour:
       value: VEHICLES
     - key: ui.hud.tap_rifle_squad
       value: SELECT SQUAD
+    - key: ui.identity.callsign_rules
+      value: 3 - 12 characters, letters, numbers, hyphens only
+    - key: ui.identity.description
+      value: Balanced leader with strong operational control.
+    - key: ui.identity.instruction
+      value: Your commander leads every operation. Choose your identity.
+    - key: ui.identity.previous
+      value: "\u2039   PREV"
+    - key: ui.identity.selected
+      value: SELECTED PROFILE
     - key: ui.inbox.from
       value: 'From: {0}'
     - key: ui.inbox.from_highlight
       value: 'From: <color=#77B936>{0}</color>'
     - key: ui.inbox.open_via_intel
       value: OPEN VIA INTEL
+    - key: ui.loading.binding_match_hud
+      value: Binding match HUD
+    - key: ui.loading.command_shell_ready
+      value: Command shell ready
+    - key: ui.loading.focusing_camera
+      value: Focusing camera
+    - key: ui.loading.loading
+      value: Loading
+    - key: ui.loading.loading_command_shell
+      value: Loading command shell
+    - key: ui.loading.loading_map_presentation
+      value: Loading map presentation
+    - key: ui.loading.loading_match
+      value: Loading match
+    - key: ui.loading.loading_operation_interface
+      value: Loading operation interface
+    - key: ui.loading.map_unload_failed
+      value: Unable to close the operation map. Please try again.
+    - key: ui.loading.match_ready
+      value: Match ready
+    - key: ui.loading.preparing_ai_factions
+      value: Preparing AI factions
+    - key: ui.loading.preparing_command_interface
+      value: Preparing command interface
+    - key: ui.loading.preparing_gameplay_runtime
+      value: Preparing gameplay runtime
+    - key: ui.loading.preparing_map_data
+      value: Preparing map data
+    - key: ui.loading.preparing_match
+      value: Preparing match
+    - key: ui.loading.preparing_match_load
+      value: Preparing match load
+    - key: ui.loading.preparing_opening_briefing
+      value: Preparing opening briefing
+    - key: ui.loading.preparing_resource_exchange
+      value: Preparing resource exchange
+    - key: ui.loading.preparing_unit_prefabs
+      value: Preparing unit prefabs
+    - key: ui.loading.resetting_match_state
+      value: Resetting match state
+    - key: ui.loading.spawning_world
+      value: Spawning world
+    - key: ui.loading.starting_gameplay_systems
+      value: Starting gameplay systems
+    - key: ui.loading.starting_match
+      value: Starting match
+    - key: ui.loading.unloading_map_presentation
+      value: Unloading map presentation
+    - key: ui.loading.unloading_match
+      value: Unloading match
+    - key: ui.loading.unloading_operation_map
+      value: Unloading operation map
+    - key: ui.loading.validating_scenario_recovery
+      value: Validating scenario recovery
+    - key: ui.loading.waiting_for_scenario_catalog
+      value: Waiting for scenario catalog
     - key: ui.narrative.confirm_skip_accessible
       value: Confirm skip to gameplay
     - key: ui.narrative.pause
@@ -1841,8 +2061,14 @@ MonoBehaviour:
       value: CAPTIONS OFF
     - key: ui.narrative.subtitles_on
       value: CAPTIONS ON
+    - key: ui.result.at_risk
+      value: AT RISK
     - key: ui.result.combat_summary
       value: "SQUAD LOSSES  {0}     \u2022     ENEMIES DEFEATED  {1}"
+    - key: ui.result.command_squad_lost
+      value: COMMAND SQUAD LOST
+    - key: ui.result.failed
+      value: FAILED
     - key: ui.result.reward_amount
       value: '{0}     +{1}'
     - key: ui.result.star_count
@@ -4120,6 +4346,15 @@ MonoBehaviour:
     - key: build.drawer.failure.global_queue_full
       value: "\u0627\u0645\u06A9\u0627\u0646 {0} {1} \u0648\u062C\u0648\u062F \u0646\u062F\u0627\u0631\u062F\u061B
         \u0633\u0642\u0641 \u0635\u0641 \u062A\u0648\u0644\u06CC\u062F {2} \u0627\u0633\u062A."
+    - key: build.drawer.failure.insufficient_credits
+      value: "{0} {1} \u0645\u0645\u06A9\u0646 \u0646\u06CC\u0633\u062A: \u0627\u0639\u062A\u0628\u0627\u0631
+        \u06A9\u0627\u0641\u06CC \u0646\u06CC\u0633\u062A."
+    - key: build.drawer.failure.insufficient_credits_and_materials
+      value: "{0} {1} \u0645\u0645\u06A9\u0646 \u0646\u06CC\u0633\u062A: \u0627\u0639\u062A\u0628\u0627\u0631
+        \u0648 \u0645\u0635\u0627\u0644\u062D \u06A9\u0627\u0641\u06CC \u0646\u06CC\u0633\u062A."
+    - key: build.drawer.failure.insufficient_materials
+      value: "{0} {1} \u0645\u0645\u06A9\u0646 \u0646\u06CC\u0633\u062A: \u0645\u0635\u0627\u0644\u062D
+        \u06A9\u0627\u0641\u06CC \u0646\u06CC\u0633\u062A."
     - key: build.drawer.failure.invalid_selection
       value: "\u0627\u0628\u062A\u062F\u0627 \u06CC\u06A9 \u0645\u0648\u0631\u062F
         \u0627\u0632 \u0645\u0646\u0648\u06CC \u0633\u0627\u062E\u062A \u0627\u0646\u062A\u062E\u0627\u0628
@@ -4146,6 +4381,13 @@ MonoBehaviour:
       value: "\u0633\u0642\u0641 \u0635\u0641 \u062A\u0648\u0644\u06CC\u062F \u062A\u06A9\u0645\u06CC\u0644
         \u0634\u062F\u0647 \u0627\u0633\u062A\u061B \u062D\u062F\u0627\u06A9\u062B\u0631
         {0}."
+    - key: build.drawer.failure.short.insufficient_credits
+      value: "\u0627\u0639\u062A\u0628\u0627\u0631 \u06A9\u0627\u0641\u06CC \u0646\u06CC\u0633\u062A."
+    - key: build.drawer.failure.short.insufficient_credits_and_materials
+      value: "\u0627\u0639\u062A\u0628\u0627\u0631 \u0648 \u0645\u0635\u0627\u0644\u062D
+        \u06A9\u0627\u0641\u06CC \u0646\u06CC\u0633\u062A."
+    - key: build.drawer.failure.short.insufficient_materials
+      value: "\u0645\u0635\u0627\u0644\u062D \u06A9\u0627\u0641\u06CC \u0646\u06CC\u0633\u062A."
     - key: build.drawer.failure.short.missing_producer
       value: "\u0633\u0627\u062E\u062A\u0645\u0627\u0646 \u062A\u0648\u0644\u06CC\u062F\u06A9\u0646\u0646\u062F\u0647
         \u0645\u0648\u0631\u062F \u0646\u06CC\u0627\u0632 \u0648\u062C\u0648\u062F
@@ -4313,6 +4555,79 @@ MonoBehaviour:
     - key: match.feedback.tactical_map_not_ready
       value: "\u0646\u0642\u0634\u0647 \u062A\u0627\u06A9\u062A\u06CC\u06A9\u06CC
         \u0622\u0645\u0627\u062F\u0647 \u0646\u06CC\u0633\u062A."
+    - key: mission.m01.goal.civilians
+      value: "\u0627\u0632 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC\u0627\u0646
+        \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646\u06CC\u062F"
+    - key: mission.m01.goal.squad
+      value: "\u06AF\u0631\u0648\u0647 \u0631\u0627 \u0633\u0627\u0644\u0645 \u0646\u06AF\u0647
+        \u062F\u0627\u0631\u06CC\u062F"
+    - key: mission.m01.objective.protect_squad
+      value: "\u06AF\u0631\u0648\u0647 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC
+        \u0631\u0627 \u0632\u0646\u062F\u0647 \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F"
+    - key: mission.m01.result.defeat
+      value: "\u06AF\u0631\u0648\u0647 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A. \u0646\u06CC\u0631\u0648\u0647\u0627
+        \u0631\u0627 \u062F\u0648\u0628\u0627\u0631\u0647 \u0633\u0627\u0632\u0645\u0627\u0646\u200C\u062F\u0647\u06CC
+        \u0648 \u0627\u0639\u0632\u0627\u0645 \u06A9\u0646\u06CC\u062F."
+    - key: mission.m01.result.victory
+      value: "\u06AF\u0634\u062A \u062F\u0634\u0645\u0646 \u0627\u0632 \u067E\u0627
+        \u062F\u0631\u0622\u0645\u062F. \u06AF\u0630\u0631\u06AF\u0627\u0647 \u0628\u0627\u0632\u0627\u0631
+        \u0642\u062F\u06CC\u0645\u06CC \u0627\u0645\u0646 \u0627\u0633\u062A."
+    - key: mission.m01.reward.card
+      value: "\u06F2\u06F6\u06F0 \u062A\u062C\u0631\u0628\u0647  |  \u06F1\u066C\u06F2\u06F0\u06F0
+        \u0627\u0639\u062A\u0628\u0627\u0631"
+    - key: mission.m01.summary
+      value: "\u06AF\u0630\u0631\u06AF\u0627\u0647 \u0628\u0627\u0632\u0627\u0631
+        \u0642\u062F\u06CC\u0645\u06CC \u0631\u0627 \u0627\u0645\u0646 \u06A9\u0646\u06CC\u062F
+        \u0648 \u0627\u0632 \u0645\u0633\u06CC\u0631 \u0639\u0628\u0648\u0631 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC\u0627\u0646
+        \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646\u06CC\u062F."
+    - key: mission.m02.briefing.summary
+      value: "\u067E\u06CC\u0634 \u0627\u0632 \u0631\u0633\u06CC\u062F\u0646 \u062E\u0637
+        \u062E\u0627\u06A9\u0633\u062A\u0631\u060C \u067E\u0627\u06CC\u06AF\u0627\u0647
+        \u0645\u062A\u0631\u0648\u06A9\u0647\u0654 \u062E\u0637 \u0645\u0642\u062F\u0645
+        JRC \u0631\u0627 \u062F\u0648\u0628\u0627\u0631\u0647 \u0641\u0639\u0627\u0644
+        \u06A9\u0646\u06CC\u062F. \u062C\u0627\u06CC \u067E\u0627\u06CC\u06CC \u0627\u06CC\u062C\u0627\u062F
+        \u06A9\u0646\u06CC\u062F \u0648 \u0628\u0631\u0627\u06CC \u062A\u0647\u062F\u06CC\u062F\u0647\u0627\u06CC
+        \u067E\u06CC\u0634 \u0631\u0648 \u0622\u0645\u0627\u062F\u0647 \u0634\u0648\u06CC\u062F."
+    - key: mission.m02.result.defeat
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u062E\u0637 \u0645\u0642\u062F\u0645
+        \u067E\u06CC\u0634 \u0627\u0632 \u062A\u06A9\u0645\u06CC\u0644 \u062F\u0641\u0627\u0639
+        \u0633\u0642\u0648\u0637 \u06A9\u0631\u062F. \u0622\u0646 \u0631\u0627 \u0628\u0627\u0632\u0633\u0627\u0632\u06CC
+        \u0648 \u0646\u06CC\u0631\u0648\u0647\u0627 \u0631\u0627 \u062F\u0648\u0628\u0627\u0631\u0647
+        \u0627\u0639\u0632\u0627\u0645 \u06A9\u0646\u06CC\u062F."
+    - key: mission.m02.result.first_clear
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u062E\u0637 \u0645\u0642\u062F\u0645
+        \u0641\u0639\u0627\u0644 \u0634\u062F. \u062F\u0627\u0644\u06CC\u0627 \u0631\u062D\u06CC\u0645
+        \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC \u0645\u06CC\u062F\u0627\u0646\u06CC
+        \u0631\u0627 \u0628\u0631 \u0639\u0647\u062F\u0647 \u06AF\u0631\u0641\u062A.
+        \u0628\u062E\u0634 \u0647\u0634\u062F\u0627\u0631 \u0645\u0633\u06CC\u0631
+        \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647 \u0627\u0632 \u062F\u0633\u062A\u0631\u0633
+        \u062E\u0627\u0631\u062C \u0634\u062F\u0647 \u0627\u0633\u062A."
+    - key: mission.m02.result.identity
+      value: "M02 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0631\u0627 \u0628\u0646\u0627
+        \u06A9\u0646\u06CC\u062F\n\u067E\u0627\u06CC\u06AF\u0627\u0647 \u062E\u0637
+        \u0645\u0642\u062F\u0645"
+    - key: mission.m02.result.replay
+      value: "\u0627\u0632 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062E\u0637 \u0645\u0642\u062F\u0645
+        \u062F\u0641\u0627\u0639 \u0634\u062F. \u0645\u0633\u06CC\u0631 \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647
+        \u0647\u0645\u0686\u0646\u0627\u0646 \u062F\u0631 \u06A9\u0646\u062A\u0631\u0644
+        \u0627\u0626\u062A\u0644\u0627\u0641 \u0627\u0633\u062A."
+    - key: mission.m02.result.subtitle
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u0631\u0627 \u0628\u0646\u0627
+        \u06A9\u0646\u06CC\u062F \u2022 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062E\u0637
+        \u0645\u0642\u062F\u0645"
+    - key: mission.m02.reward.barracks_unlock
+      value: "\u0628\u0627\u0632\u0634\u062F\u0646 \u0633\u0631\u0628\u0627\u0632\u062E\u0627\u0646\u0647"
+    - key: mission.m02.reward.card
+      value: "\u06F3\u06F2\u06F0 \u062A\u062C\u0631\u0628\u0647  |  \u06F1\u066C\u06F5\u06F0\u06F0
+        \u0627\u0639\u062A\u0628\u0627\u0631  |  \u0628\u0627\u0632\u0634\u062F\u0646
+        \u0633\u0631\u0628\u0627\u0632\u062E\u0627\u0646\u0647"
+    - key: mission.m02.summary
+      value: "\u067E\u06CC\u0634 \u0627\u0632 \u0631\u0633\u06CC\u062F\u0646 \u062F\u0648\u0645\u06CC\u0646
+        \u06AF\u0631\u0648\u0647 \u062F\u0634\u0645\u0646\u060C \u067E\u0627\u06CC\u06AF\u0627\u0647
+        \u0645\u062A\u0631\u0648\u06A9\u0647\u0654 \u062E\u0637 \u0645\u0642\u062F\u0645
+        \u0631\u0627 \u062F\u0648\u0628\u0627\u0631\u0647 \u0641\u0639\u0627\u0644
+        \u06A9\u0646\u06CC\u062F."
     - key: mission.m03.access
       value: "\u062F\u0648 \u06AF\u0631\u0648\u0647 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631
         \xB7 \u062E\u0648\u062F\u0631\u0648\u06CC \u0631\u0627\u062F\u0627\u0631
@@ -6584,6 +6899,8 @@ MonoBehaviour:
       value: "\u0648\u0633\u06CC\u0644\u0647 \u062D\u0645\u0644\u200C\u0648\u0646\u0642\u0644
         \u0633\u0644\u0627\u062D \u06CC\u0627 \u0633\u0631\u0646\u0634\u06CC\u0646
         \u0622\u0645\u0627\u062F\u0647 \u062D\u0645\u0644\u0647 \u0646\u062F\u0627\u0631\u062F."
+    - key: ui.aria.aria_control
+      value: "\u06A9\u0646\u062A\u0631\u0644 \u0622\u0631\u06CC\u0627"
     - key: ui.aria.attack_button_body
       value: "\u0628\u0631\u0627\u06CC \u0627\u0646\u062A\u062E\u0627\u0628 \u062F\u0633\u062A\u0648\u0631
         \u062D\u0645\u0644\u0647\u060C \u0631\u0648\u06CC \xAB\u062D\u0645\u0644\u0647\xBB
@@ -6615,6 +6932,8 @@ MonoBehaviour:
       value: "\u0633\u067E\u0631\u06CC\u200C\u0634\u062F\u0647: {0}:{1:00}:{2:00}"
     - key: ui.aria.elapsed_ms
       value: "\u0633\u067E\u0631\u06CC\u200C\u0634\u062F\u0647: {0:00}:{1:00}"
+    - key: ui.aria.guided
+      value: "\u0647\u062F\u0627\u06CC\u062A\u200C\u0634\u062F\u0647"
     - key: ui.aria.move_button_body
       value: "\u0628\u0631\u0627\u06CC \u0627\u0646\u062A\u062E\u0627\u0628 \u062F\u0633\u062A\u0648\u0631
         \u062D\u0631\u06A9\u062A\u060C \u0631\u0648\u06CC \xAB\u062D\u0631\u06A9\u062A\xBB
@@ -6635,10 +6954,14 @@ MonoBehaviour:
       value: "\u0622\u0631\u06CC\u0627"
     - key: ui.aria.player_control
       value: "\u06A9\u0646\u062A\u0631\u0644 \u0628\u0627\u0632\u06CC\u06A9\u0646"
+    - key: ui.aria.player_override
+      value: "\u0628\u0627\u0632\u067E\u0633\u200C\u06AF\u06CC\u0631\u06CC \u06A9\u0646\u062A\u0631\u0644"
     - key: ui.aria.press_attack
       value: "\u062D\u0645\u0644\u0647 \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F"
     - key: ui.aria.press_move
       value: "\u062D\u0631\u06A9\u062A \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F"
+    - key: ui.aria.preview
+      value: "\u067E\u06CC\u0634\u200C\u0646\u0645\u0627\u06CC\u0634"
     - key: ui.aria.primary_state
       value: "\u0627\u0635\u0644\u06CC / {0}"
     - key: ui.aria.priority_age.critical_active
@@ -6665,6 +6988,15 @@ MonoBehaviour:
       value: "\u0639\u0627\u062F\u06CC / \u0631\u0648 \u0628\u0647 \u067E\u0627\u06CC\u0627\u0646"
     - key: ui.aria.priority_age.normal_new
       value: "\u0639\u0627\u062F\u06CC / \u062C\u062F\u06CC\u062F"
+    - key: ui.aria.select_rifle_squad
+      value: "\u06AF\u0631\u0648\u0647 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631
+        \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u062F"
+    - key: ui.aria.select_rifle_squad.body
+      value: "\u0628\u0631\u0627\u06CC \u0627\u0646\u062A\u062E\u0627\u0628\u060C
+        \u0631\u0648\u06CC \u06A9\u0627\u0631\u062A <color=#00D1F3>\u06AF\u0631\u0648\u0647
+        \u062A\u0641\u0646\u06AF\u062F\u0627\u0631</color> \u0628\u0632\u0646\u06CC\u062F.\n\u0633\u067E\u0633
+        \u0628\u0631\u0627\u06CC \u062D\u0631\u06A9\u062A \u0628\u0647 \u0646\u0634\u0627\u0646\u06AF\u0631\u060C
+        <color=#00D1F3>\u062D\u0631\u06A9\u062A</color> \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F."
     - key: ui.aria.state.control
       value: "\u06A9\u0646\u062A\u0631\u0644"
     - key: ui.aria.state.idle
@@ -6692,10 +7024,31 @@ MonoBehaviour:
       value: "\u0645\u0648\u0642\u0639\u06CC\u062A: {0}"
     - key: ui.briefing.starting_resources
       value: "{0} \u0627\u0639\u062A\u0628\u0627\u0631 / {1} \u0645\u0635\u0627\u0644\u062D"
+    - key: ui.build.blocked_footprint
+      value: "\u0645\u0633\u062F\u0648\u062F \u0628\u0647\u200C\u062F\u0644\u06CC\u0644
+        \u062C\u0627\u062F\u0647 \u06CC\u0627 \u0645\u0627\u0646\u0639 ({0}\u060C{1})
+        {2}\xD7{3}"
+    - key: ui.build.blocked_footprint.upper
+      value: "\u0645\u0633\u062F\u0648\u062F \u0628\u0647\u200C\u062F\u0644\u06CC\u0644
+        \u062C\u0627\u062F\u0647 \u06CC\u0627 \u0645\u0627\u0646\u0639 ({0}\u060C{1})
+        {2}\xD7{3}"
     - key: ui.build.cost
       value: "{0} \u0627\u0639\u062A\u0628\u0627\u0631 / {1} \u0645\u0635\u0627\u0644\u062D"
+    - key: ui.build.empty
+      value: "\u0647\u06CC\u0686 \u0645\u0648\u0631\u062F\u06CC \u0628\u0631\u0627\u06CC
+        \u0633\u0627\u062E\u062A \u062F\u0631 \u062F\u0633\u062A\u0631\u0633 \u0646\u06CC\u0633\u062A."
+    - key: ui.build.produce
+      value: "\u062A\u0648\u0644\u06CC\u062F"
+    - key: ui.build.recruit
+      value: "\u0622\u0645\u0648\u0632\u0634"
     - key: ui.build.title
       value: "\u0633\u0627\u062E\u062A {0}"
+    - key: ui.build.valid_footprint
+      value: "\u0645\u062D\u0644 \u0633\u0627\u062E\u062A \u0645\u0639\u062A\u0628\u0631
+        ({0}\u060C{1}) {2}\xD7{3}"
+    - key: ui.build.valid_footprint.upper
+      value: "\u0645\u062D\u0644 \u0633\u0627\u062E\u062A \u0645\u0639\u062A\u0628\u0631
+        ({0}\u060C{1}) {2}\xD7{3}"
     - key: ui.campaign.best_time
       value: "  |  \u0628\u0647\u062A\u0631\u06CC\u0646 {0}:{1}"
     - key: ui.campaign.build_barrack
@@ -6716,6 +7069,47 @@ MonoBehaviour:
       value: "\u0634\u0631\u0648\u0639 \u062A\u0648\u062C\u06CC\u0647"
     - key: ui.campaign.title
       value: "\u06A9\u0627\u0631\u0632\u0627\u0631"
+    - key: ui.catalog.barracks
+      value: "\u0633\u0631\u0628\u0627\u0632\u062E\u0627\u0646\u0647"
+    - key: ui.catalog.barracks.upper
+      value: "\u0633\u0631\u0628\u0627\u0632\u062E\u0627\u0646\u0647"
+    - key: ui.catalog.rifleman_male_iv
+      value: "\u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \u0645\u0631\u062F \u06F4"
+    - key: ui.catalog.structure
+      value: "\u0633\u0627\u0632\u0647"
+    - key: ui.chapter.aria_protocol
+      value: "\u067E\u0631\u0648\u062A\u06A9\u0644 \u0622\u0631\u06CC\u0627"
+    - key: ui.chapter.dalia
+      value: "\u062F\u0627\u0644\u06CC\u0627"
+    - key: ui.chapter.samira
+      value: "\u0633\u0645\u06CC\u0631\u0627"
+    - key: ui.commander.name.dalia
+      value: "\u062F\u0627\u0644\u06CC\u0627 \u0631\u062D\u06CC\u0645"
+    - key: ui.commander.name.irina
+      value: "\u0627\u06CC\u0631\u06CC\u0646\u0627 \u067E\u062A\u0631\u0648\u0648\u0627"
+    - key: ui.commander.name.jalil
+      value: "\u062C\u0644\u06CC\u0644 \u0627\u0648\u06A9\u0627\u0641\u0648\u0631"
+    - key: ui.commander.name.kenji
+      value: "\u06A9\u0646\u062C\u06CC \u0633\u0627\u062A\u0648"
+    - key: ui.commander.name.mira
+      value: "\u0645\u06CC\u0631\u0627 \u0639\u0644\u0648\u06CC"
+    - key: ui.commander.name.samira
+      value: "\u0633\u0645\u06CC\u0631\u0627 \u062E\u0627\u0644\u062F"
+    - key: ui.commander.profile.subtitle
+      value: "\u067E\u06CC\u0631\u0648\u0632\u06CC \u0628\u0627 \u0628\u0631\u0646\u0627\u0645\u0647\u200C\u0631\u06CC\u0632\u06CC
+        \u0628\u0647 \u062F\u0633\u062A \u0645\u06CC\u200C\u0622\u06CC\u062F"
+    - key: ui.commander.role.assault
+      value: "\u0641\u0631\u0645\u0627\u0646\u062F\u0647 \u062A\u0647\u0627\u062C\u0645"
+    - key: ui.commander.role.field
+      value: "\u0641\u0631\u0645\u0627\u0646\u062F\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.commander.role.intel
+      value: "\u0627\u0641\u0633\u0631 \u0627\u0637\u0644\u0627\u0639\u0627\u062A"
+    - key: ui.commander.role.operations
+      value: "\u0645\u0633\u0626\u0648\u0644 \u0639\u0645\u0644\u06CC\u0627\u062A"
+    - key: ui.commander.role.recon
+      value: "\u0645\u062A\u062E\u0635\u0635 \u0634\u0646\u0627\u0633\u0627\u06CC\u06CC"
+    - key: ui.commander.role.support
+      value: "\u0641\u0631\u0645\u0627\u0646\u062F\u0647 \u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC"
     - key: ui.common.alerts
       value: "\u0647\u0634\u062F\u0627\u0631\u0647\u0627"
     - key: ui.common.filters
@@ -6838,8 +7232,36 @@ MonoBehaviour:
     - key: ui.guidance.click_enemy
       value: "\u062F\u0634\u0645\u0646 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
         \u06A9\u0646\u06CC\u062F"
+    - key: ui.guidance.contextual_description
+      value: "\u0631\u0627\u0647\u0646\u0645\u0627\u06CC\u06CC \u06A9\u0627\u0631\u0628\u0631\u062F\u06CC
+        \u062F\u0631\n\u0645\u0648\u0642\u0639\u06CC\u062A\u200C\u0647\u0627\u06CC
+        \u0645\u0647\u0645."
+    - key: ui.guidance.full_description
+      value: "\u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC \u06A9\u0627\u0645\u0644
+        \u0628\u0631\u0627\u06CC\n\u0641\u0631\u0645\u0627\u0646\u062F\u0647\u0627\u0646
+        \u062A\u0627\u0632\u0647\u200C\u06A9\u0627\u0631."
+    - key: ui.guidance.high
+      value: "\u0632\u06CC\u0627\u062F"
+    - key: ui.guidance.low
+      value: "\u06A9\u0645"
+    - key: ui.guidance.medium
+      value: "\u0645\u062A\u0648\u0633\u0637"
+    - key: ui.guidance.minimal_description
+      value: "\u0641\u0642\u0637 \u0647\u0634\u062F\u0627\u0631\u0647\u0627\u06CC
+        \u0636\u0631\u0648\u0631\u06CC.\n\u0628\u06CC\u0634\u062A\u0631\u06CC\u0646
+        \u0686\u0627\u0644\u0634."
+    - key: ui.guidance.motion
+      value: "\u06A9\u0627\u0647\u0634 \u062D\u0631\u06A9\u062A"
+    - key: ui.guidance.motion_description
+      value: "\u06A9\u0627\u0647\u0634 \u062D\u0631\u06A9\u062A \u062F\u0648\u0631\u0628\u06CC\u0646."
+    - key: ui.guidance.off
+      value: "\u062E\u0627\u0645\u0648\u0634"
+    - key: ui.guidance.on
+      value: "\u0631\u0648\u0634\u0646"
     - key: ui.guidance.open_build
       value: "\u0633\u0627\u062E\u062A \u0631\u0627 \u0628\u0627\u0632 \u06A9\u0646\u06CC\u062F"
+    - key: ui.guidance.previous
+      value: "\u2039       \u0642\u0628\u0644\u06CC"
     - key: ui.guidance.queue_rifle
       value: "\u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \u0631\u0627 \u062F\u0631
         \u0635\u0641 \u0628\u06AF\u0630\u0627\u0631\u06CC\u062F"
@@ -6851,6 +7273,16 @@ MonoBehaviour:
     - key: ui.guidance.select_squad
       value: "\u06AF\u0631\u0648\u0647 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
         \u06A9\u0646\u06CC\u062F"
+    - key: ui.guidance.setup
+      value: "\u062A\u0646\u0638\u06CC\u0645\u0627\u062A \u0634\u0631\u0648\u0639
+        \u0628\u0627\u0632\u06CC"
+    - key: ui.guidance.subtitles
+      value: "\u0632\u06CC\u0631\u0646\u0648\u06CC\u0633"
+    - key: ui.guidance.subtitles_description
+      value: "\u0646\u0645\u0627\u06CC\u0634 \u0632\u06CC\u0631\u0646\u0648\u06CC\u0633
+        \u06AF\u0641\u062A\u06AF\u0648\u0647\u0627."
+    - key: ui.guidance.support_level
+      value: "\u0645\u06CC\u0632\u0627\u0646 \u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC"
     - key: ui.hud.aria_target
       value: "\u0647\u062F\u0641 \u0622\u0631\u06CC\u0627"
     - key: ui.hud.cargo_capacity
@@ -6903,6 +7335,24 @@ MonoBehaviour:
     - key: ui.hud.tap_rifle_squad
       value: "\u06AF\u0631\u0648\u0647 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
         \u06A9\u0646\u06CC\u062F"
+    - key: ui.identity.callsign_rules
+      value: "\u06F3 \u062A\u0627 \u06F1\u06F2 \u0646\u0648\u06CC\u0633\u0647\u061B
+        \u0641\u0642\u0637 \u062D\u0631\u0648\u0641\u060C \u0627\u0639\u062F\u0627\u062F
+        \u0648 \u062E\u0637 \u062A\u06CC\u0631\u0647"
+    - key: ui.identity.description
+      value: "\u0641\u0631\u0645\u0627\u0646\u062F\u0647\u200C\u0627\u06CC \u0645\u062A\u0639\u0627\u062F\u0644
+        \u0628\u0627 \u062A\u0648\u0627\u0646\u0627\u06CC\u06CC \u0628\u0627\u0644\u0627\u06CC
+        \u0647\u062F\u0627\u06CC\u062A \u0639\u0645\u0644\u06CC\u0627\u062A."
+    - key: ui.identity.instruction
+      value: "\u0641\u0631\u0645\u0627\u0646\u062F\u0647\u0654 \u0634\u0645\u0627
+        \u0647\u062F\u0627\u06CC\u062A \u0647\u0645\u0647\u0654 \u0639\u0645\u0644\u06CC\u0627\u062A\u200C\u0647\u0627
+        \u0631\u0627 \u0628\u0631 \u0639\u0647\u062F\u0647 \u062F\u0627\u0631\u062F.
+        \u0647\u0648\u06CC\u062A \u062E\u0648\u062F \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u06CC\u062F."
+    - key: ui.identity.previous
+      value: "\u2039   \u0642\u0628\u0644\u06CC"
+    - key: ui.identity.selected
+      value: "\u067E\u0631\u0648\u0641\u0627\u06CC\u0644 \u0627\u0646\u062A\u062E\u0627\u0628\u200C\u0634\u062F\u0647"
     - key: ui.inbox.from
       value: "\u0627\u0632: {0}"
     - key: ui.inbox.from_highlight
@@ -6910,6 +7360,80 @@ MonoBehaviour:
     - key: ui.inbox.open_via_intel
       value: "\u0628\u0627\u0632\u06A9\u0631\u062F\u0646 \u0627\u0632 \u0628\u062E\u0634
         \u0627\u0637\u0644\u0627\u0639\u0627\u062A"
+    - key: ui.loading.binding_match_hud
+      value: "\u0622\u0645\u0627\u062F\u0647\u200C\u0633\u0627\u0632\u06CC \u0631\u0627\u0628\u0637
+        \u0646\u0628\u0631\u062F"
+    - key: ui.loading.command_shell_ready
+      value: "\u0645\u062D\u06CC\u0637 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC
+        \u0622\u0645\u0627\u062F\u0647 \u0627\u0633\u062A"
+    - key: ui.loading.focusing_camera
+      value: "\u062A\u0646\u0638\u06CC\u0645 \u062F\u0648\u0631\u0628\u06CC\u0646"
+    - key: ui.loading.loading
+      value: "\u062F\u0631 \u062D\u0627\u0644 \u0628\u0627\u0631\u06AF\u0630\u0627\u0631\u06CC"
+    - key: ui.loading.loading_command_shell
+      value: "\u0628\u0627\u0631\u06AF\u0630\u0627\u0631\u06CC \u0645\u062D\u06CC\u0637
+        \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
+    - key: ui.loading.loading_map_presentation
+      value: "\u0628\u0627\u0631\u06AF\u0630\u0627\u0631\u06CC \u0646\u0645\u0627\u06CC
+        \u0646\u0642\u0634\u0647"
+    - key: ui.loading.loading_match
+      value: "\u0628\u0627\u0631\u06AF\u0630\u0627\u0631\u06CC \u0646\u0628\u0631\u062F"
+    - key: ui.loading.loading_operation_interface
+      value: "\u0628\u0627\u0631\u06AF\u0630\u0627\u0631\u06CC \u0631\u0627\u0628\u0637
+        \u0639\u0645\u0644\u06CC\u0627\u062A"
+    - key: ui.loading.map_unload_failed
+      value: "\u0628\u0633\u062A\u0646 \u0646\u0642\u0634\u0647\u0654 \u0639\u0645\u0644\u06CC\u0627\u062A
+        \u0645\u0645\u06A9\u0646 \u0646\u0634\u062F. \u062F\u0648\u0628\u0627\u0631\u0647
+        \u062A\u0644\u0627\u0634 \u06A9\u0646\u06CC\u062F."
+    - key: ui.loading.match_ready
+      value: "\u0646\u0628\u0631\u062F \u0622\u0645\u0627\u062F\u0647 \u0627\u0633\u062A"
+    - key: ui.loading.preparing_ai_factions
+      value: "\u0622\u0645\u0627\u062F\u0647\u200C\u0633\u0627\u0632\u06CC \u062C\u0646\u0627\u062D\u200C\u0647\u0627\u06CC
+        \u0647\u0648\u0634 \u0645\u0635\u0646\u0648\u0639\u06CC"
+    - key: ui.loading.preparing_command_interface
+      value: "\u0622\u0645\u0627\u062F\u0647\u200C\u0633\u0627\u0632\u06CC \u0631\u0627\u0628\u0637
+        \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
+    - key: ui.loading.preparing_gameplay_runtime
+      value: "\u0622\u0645\u0627\u062F\u0647\u200C\u0633\u0627\u0632\u06CC \u0645\u062D\u06CC\u0637
+        \u0628\u0627\u0632\u06CC"
+    - key: ui.loading.preparing_map_data
+      value: "\u0622\u0645\u0627\u062F\u0647\u200C\u0633\u0627\u0632\u06CC \u0627\u0637\u0644\u0627\u0639\u0627\u062A
+        \u0646\u0642\u0634\u0647"
+    - key: ui.loading.preparing_match
+      value: "\u0622\u0645\u0627\u062F\u0647\u200C\u0633\u0627\u0632\u06CC \u0646\u0628\u0631\u062F"
+    - key: ui.loading.preparing_match_load
+      value: "\u0622\u0645\u0627\u062F\u0647\u200C\u0633\u0627\u0632\u06CC \u0628\u0627\u0631\u06AF\u0630\u0627\u0631\u06CC
+        \u0646\u0628\u0631\u062F"
+    - key: ui.loading.preparing_opening_briefing
+      value: "\u0622\u0645\u0627\u062F\u0647\u200C\u0633\u0627\u0632\u06CC \u062A\u0648\u062C\u06CC\u0647
+        \u0622\u063A\u0627\u0632\u06CC\u0646"
+    - key: ui.loading.preparing_resource_exchange
+      value: "\u0622\u0645\u0627\u062F\u0647\u200C\u0633\u0627\u0632\u06CC \u0645\u0628\u0627\u062F\u0644\u0647\u0654
+        \u0645\u0646\u0627\u0628\u0639"
+    - key: ui.loading.preparing_unit_prefabs
+      value: "\u0622\u0645\u0627\u062F\u0647\u200C\u0633\u0627\u0632\u06CC \u0646\u06CC\u0631\u0648\u0647\u0627"
+    - key: ui.loading.resetting_match_state
+      value: "\u0628\u0627\u0632\u0646\u0634\u0627\u0646\u06CC \u0648\u0636\u0639\u06CC\u062A
+        \u0646\u0628\u0631\u062F"
+    - key: ui.loading.spawning_world
+      value: "\u0627\u06CC\u062C\u0627\u062F \u0645\u062D\u06CC\u0637 \u0646\u0628\u0631\u062F"
+    - key: ui.loading.starting_gameplay_systems
+      value: "\u0631\u0627\u0647\u200C\u0627\u0646\u062F\u0627\u0632\u06CC \u0633\u0627\u0645\u0627\u0646\u0647\u200C\u0647\u0627\u06CC
+        \u0628\u0627\u0632\u06CC"
+    - key: ui.loading.starting_match
+      value: "\u0622\u063A\u0627\u0632 \u0646\u0628\u0631\u062F"
+    - key: ui.loading.unloading_map_presentation
+      value: "\u0628\u0633\u062A\u0646 \u0646\u0645\u0627\u06CC \u0646\u0642\u0634\u0647"
+    - key: ui.loading.unloading_match
+      value: "\u062E\u0631\u0648\u062C \u0627\u0632 \u0646\u0628\u0631\u062F"
+    - key: ui.loading.unloading_operation_map
+      value: "\u0628\u0633\u062A\u0646 \u0646\u0642\u0634\u0647\u0654 \u0639\u0645\u0644\u06CC\u0627\u062A"
+    - key: ui.loading.validating_scenario_recovery
+      value: "\u0628\u0631\u0631\u0633\u06CC \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u0633\u0646\u0627\u0631\u06CC\u0648"
+    - key: ui.loading.waiting_for_scenario_catalog
+      value: "\u062F\u0631 \u0627\u0646\u062A\u0638\u0627\u0631 \u0627\u0637\u0644\u0627\u0639\u0627\u062A
+        \u0633\u0646\u0627\u0631\u06CC\u0648"
     - key: ui.narrative.confirm_skip_accessible
       value: "\u0631\u0641\u062A\u0646 \u0645\u0633\u062A\u0642\u06CC\u0645 \u0628\u0647
         \u0628\u0627\u0632\u06CC \u0631\u0627 \u062A\u0623\u06CC\u06CC\u062F \u06A9\u0646\u06CC\u062F"
@@ -6923,10 +7447,17 @@ MonoBehaviour:
       value: "\u0632\u06CC\u0631\u0646\u0648\u06CC\u0633 \u062E\u0627\u0645\u0648\u0634"
     - key: ui.narrative.subtitles_on
       value: "\u0632\u06CC\u0631\u0646\u0648\u06CC\u0633 \u0631\u0648\u0634\u0646"
+    - key: ui.result.at_risk
+      value: "\u062F\u0631 \u062E\u0637\u0631"
     - key: ui.result.combat_summary
       value: "\u062A\u0644\u0641\u0627\u062A \u06AF\u0631\u0648\u0647  {0}     \u2022    
         \u062F\u0634\u0645\u0646\u0627\u0646 \u0634\u06A9\u0633\u062A\u200C\u062E\u0648\u0631\u062F\u0647 
         {1}"
+    - key: ui.result.command_squad_lost
+      value: "\u06AF\u0631\u0648\u0647 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A"
+    - key: ui.result.failed
+      value: "\u0646\u0627\u0645\u0648\u0641\u0642"
     - key: ui.result.reward_amount
       value: '{0}     +{1}'
     - key: ui.result.star_count
@@ -7305,7 +7836,7 @@ MonoBehaviour:
         \u0639\u0645\u0644\u06CC\u0627\u062A\u06CC \u0631\u0627 \u062D\u0641\u0638
         \u06A9\u0646\u06CC\u062F."
     - key: ui.v3.aria_protocol.a3f06a2c52
-      value: "ARIA \u067E\u0631\u0648\u062A\u06A9\u0644"
+      value: "\u067E\u0631\u0648\u062A\u06A9\u0644 \u0622\u0631\u06CC\u0627"
     - key: ui.v3.aria_report.0def337b3c
       value: "\u06AF\u0632\u0627\u0631\u0634 \u0622\u0631\u06CC\u0627"
     - key: ui.v3.aria_review_pdf.25531fd100
@@ -7373,7 +7904,7 @@ MonoBehaviour:
     - key: ui.v3.barrack.a497ff430d
       value: "\u0633\u0631\u0628\u0627\u0632\u062E\u0627\u0646\u0647"
     - key: ui.v3.barracks.28166f7964
-      value: "\u0633\u0631\u0628\u0627\u0632\u062E\u0627\u0646\u0647\u200C\u0647\u0627"
+      value: "\u0633\u0631\u0628\u0627\u0632\u062E\u0627\u0646\u0647"
     - key: ui.v3.base_banner_badge.708bcf6493
       value: "\u067E\u0631\u0686\u0645 \u0648 \u0646\u0634\u0627\u0646 \u067E\u0627\u06CC\u06AF\u0627\u0647"
     - key: ui.v3.base_builder_pack.4f701b6d9a
@@ -7723,7 +8254,7 @@ MonoBehaviour:
     - key: ui.v3.daily_report.1da6792fe5
       value: "\u06AF\u0632\u0627\u0631\u0634 \u0631\u0648\u0632\u0627\u0646\u0647"
     - key: ui.v3.dalia.d96b9125f3
-      value: DALIA
+      value: "\u062F\u0627\u0644\u06CC\u0627"
     - key: ui.v3.damage.9d040969bb
       value: "\u0622\u0633\u06CC\u0628"
     - key: ui.v3.damage_resistance.d0a0d81160
@@ -9016,7 +9547,7 @@ MonoBehaviour:
     - key: ui.v3.sahrin_theater.c2fcd1a05c
       value: "\u0635\u062D\u0646\u0647 \u0646\u0628\u0631\u062F \u0633\u0647\u0631\u06CC\u0646"
     - key: ui.v3.samira.7a806e0882
-      value: SAMIRA
+      value: "\u0633\u0645\u06CC\u0631\u0627"
     - key: ui.v3.sandbox.b4e9b09039
       value: "\u0622\u0632\u0627\u062F"
     - key: ui.v3.save_continue.0bf264b99a

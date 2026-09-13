@@ -92,7 +92,7 @@ namespace Game.UI.Runtime
             string summaryFallback = v3TargetLayout && m02
                 ? "Reopen the abandoned JRC forward post before the Ash Line reaches it. Establish a foothold and prepare for incoming threats."
                 : SummaryFallback(model.MissionId);
-            string summary = _gameTextResolver.Get(model.DisplaySummaryKey, summaryFallback);
+            string summary = _gameTextResolver.Get(v3TargetLayout && m02 ? "mission.m02.briefing.summary" : model.DisplaySummaryKey, summaryFallback);
             Set(missionSummary, v3TargetLayout ? summary : $"BRIEFING: {summary}");
             Set(locationLabel, $"LOCATION: {_gameTextResolver.Get(model.LocationNameKey, LocationFallback(model.MissionId))}");
             for (int index = 0; index < (objectiveLabels?.Length ?? 0); index++)
@@ -302,7 +302,7 @@ namespace Game.UI.Runtime
         }
         private static void Set(TMP_Text target, string value)
         {
-            if (target != null) target.text = value ?? string.Empty;
+            if (target != null) UiLocalizedText.Set(target, value);
         }
     }
 }

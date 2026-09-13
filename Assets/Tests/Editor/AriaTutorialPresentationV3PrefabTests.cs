@@ -1,4 +1,5 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
+using Game.Configs;
 using Game.Editor;
 using Game.UI.Runtime;
 using NUnit.Framework;
@@ -55,6 +56,8 @@ public sealed class AriaTutorialPresentationV3PrefabTests
     [Test]
     public void EnglishAndFarsi_ReuseTheSameFixedPanelFootprint()
     {
+        string previousLocale = GameLocalization.CurrentLocaleCode;
+        GameLocalization.Initialize(AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(V3UiLocalizationCatalogBuilder.CatalogPath), previousLocale, false);
         GameObject instance = Object.Instantiate(RequirePrefab(MatchHudPath));
         try
         {
@@ -65,8 +68,10 @@ public sealed class AriaTutorialPresentationV3PrefabTests
             Vector2 panelSize = aria.sizeDelta;
             Vector2 guidanceSize = view.BriefingLayout.sizeDelta;
 
+            GameLocalization.SetLocale("en", false);
             view.Apply(AriaTutorialBriefingPrefabBuilder.CreateTargetLockPreviewModel());
             view.SetPresentationVisible(true);
+            GameLocalization.SetLocale("fa-IR", false);
             view.Apply(AriaTutorialBriefingPrefabBuilder.CreateTargetLockPreviewModel(true));
 
             Assert.AreEqual(panelSize, aria.sizeDelta);
@@ -78,6 +83,7 @@ public sealed class AriaTutorialPresentationV3PrefabTests
         finally
         {
             Object.DestroyImmediate(instance);
+            GameLocalization.SetLocale(previousLocale, false);
         }
     }
 

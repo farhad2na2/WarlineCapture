@@ -106,7 +106,7 @@ namespace Game.UI.Runtime
             _tutorialStepCount = model.TutorialStepCount;
             ApplyMissionLayout(_tutorialStepCount==12,model.LargeTextEnabled);
             _recommendationKind = model.RecommendationKind;
-            _rightToLeft = model.TutorialRightToLeft;
+            _rightToLeft = UiShellRuntimeGateway.Localization.IsRightToLeft;
             ApplyLanguagePresentation();
             _defaultTitle = _rightToLeft
                 ? model.RecommendationTitle ?? string.Empty
@@ -115,8 +115,8 @@ namespace Game.UI.Runtime
             ApplyInteractionState(TacticalCommandMode.None, worldTargetCompleted: false);
             showMeButton.interactable = model.CanShow;
             doItButton.interactable = model.CanExecute;
-            SetLocalizedText(showMeButtonLabel, _rightToLeft ? "نشانم بده" : "SHOW ME");
-            SetLocalizedText(doItButtonLabel, _tutorialStepCount==12 ? model.RecommendationActionLabel : _rightToLeft ? "انجامش بده" : "DO IT");
+            SetLocalizedText(showMeButtonLabel, "SHOW ME");
+            SetLocalizedText(doItButtonLabel, _tutorialStepCount==12 ? model.RecommendationActionLabel : "DO IT");
             if (closeButton != null)
                 closeButton.gameObject.SetActive(true);
             if (firstStepGuideRoot != null)
@@ -138,26 +138,18 @@ namespace Game.UI.Runtime
                 if (worldTargetCompleted)
                 {
                     ApplyInstruction(
-                        _rightToLeft ? "در حال حرکت به پوشش" : "MOVING TO COVER",
-                        _rightToLeft
-                            ? "گروه شما در حال حرکت به موقعیت پوشش علامت‌گذاری‌شده است."
-                            : "Your squad is moving to the marked cover position.",
+                        "MOVING TO COVER",
+                        "Your squad is moving to the marked cover position.",
                         UiTutorialNarrationPhase.WorldTarget);
                     return;
                 }
 
                 bool choosingDestination = mode == TacticalCommandMode.Move;
                 ApplyInstruction(
-                    _rightToLeft
-                        ? choosingDestination ? "مقصد را انتخاب کنید" : "حرکت را بزنید"
-                        : choosingDestination ? "CHOOSE DESTINATION" : "PRESS MOVE",
+                    choosingDestination ? "CHOOSE DESTINATION" : "PRESS MOVE",
                     choosingDestination
-                        ? _rightToLeft
-                            ? "برای حرکت گروه، روی مقصد علامت‌گذاری‌شده بزنید."
-                            : "Tap the highlighted destination to move your squad."
-                        : _rightToLeft
-                            ? "برای انتخاب دستور حرکت، روی «حرکت» بزنید."
-                            : "Tap MOVE to select the move command.",
+                        ? "Tap the highlighted destination to move your squad."
+                        : "Tap MOVE to select the move command.",
                     choosingDestination
                         ? UiTutorialNarrationPhase.WorldTarget
                         : UiTutorialNarrationPhase.PrimaryAction);
@@ -169,26 +161,18 @@ namespace Game.UI.Runtime
                 if (worldTargetCompleted)
                 {
                     ApplyInstruction(
-                        _rightToLeft ? "دستور حمله صادر شد" : "ATTACK ORDER ISSUED",
-                        _rightToLeft
-                            ? "گروه شما در حال درگیری با دشمن علامت‌گذاری‌شده است."
-                            : "Your squad is engaging the highlighted enemy.",
+                        "ATTACK ORDER ISSUED",
+                        "Your squad is engaging the highlighted enemy.",
                         UiTutorialNarrationPhase.WorldTarget);
                     return;
                 }
 
                 bool choosingEnemy = mode == TacticalCommandMode.Attack;
                 ApplyInstruction(
-                    _rightToLeft
-                        ? choosingEnemy ? "دشمن را انتخاب کنید" : "حمله را بزنید"
-                        : choosingEnemy ? "CHOOSE ENEMY" : "PRESS ATTACK",
+                    choosingEnemy ? "CHOOSE ENEMY" : "PRESS ATTACK",
                     choosingEnemy
-                        ? _rightToLeft
-                            ? "برای صدور دستور حمله، روی دشمن علامت‌گذاری‌شده بزنید."
-                            : "Tap the highlighted enemy to issue the attack."
-                        : _rightToLeft
-                            ? "برای انتخاب دستور حمله، روی «حمله» بزنید."
-                            : "Tap ATTACK to select the attack command.",
+                        ? "Tap the highlighted enemy to issue the attack."
+                        : "Tap ATTACK to select the attack command.",
                     choosingEnemy
                         ? UiTutorialNarrationPhase.WorldTarget
                         : UiTutorialNarrationPhase.PrimaryAction);
@@ -230,6 +214,16 @@ namespace Game.UI.Runtime
             return RectTransformUtility.RectangleContainsScreenPoint(briefingLayout, screenPosition, eventCamera);
         }
 
+        private void OnEnable()
+        {
+            if (!TryBindHierarchy()) return;
+            _rightToLeft = UiShellRuntimeGateway.Localization.IsRightToLeft;
+            ApplyLanguagePresentation();
+            // This shared header can render before the first tutorial read model arrives.
+            foreach (var target in _localizedTextTargets)
+                SetLocalizedText(target, target is RTLTextMeshPro rtl ? rtl.OriginalText : target.text);
+        }
+
         private void OnDestroy()
         {
             UnbindActions();
@@ -244,7 +238,7 @@ namespace Game.UI.Runtime
             string body,
             UiTutorialNarrationPhase narrationPhase)
         {
-            _currentInstructionBody = body ?? string.Empty;
+            _currentInstructionBody = UiLocalizedText.CatalogLabel(body);
             _currentNarrationPhase = narrationPhase;
             SetLocalizedText(titleText, title);
             SetLocalizedText(bodyText, _currentInstructionBody);
@@ -263,7 +257,7 @@ namespace Game.UI.Runtime
             int count = Mathf.Max(step, _tutorialStepCount);
             SetLocalizedText(
                 progressText,
-                _rightToLeft ? $"مرحله {step}/{count}" : $"STEP {step}/{count}");
+                UiShellRuntimeGateway.Localization.Format("ui.aria.step", "STEP {0}/{1}", step, count));
         }
 
         private void ApplyLanguagePresentation()
@@ -286,9 +280,8 @@ namespace Game.UI.Runtime
             for (int i = 0; i < _localizedTextTargets.Length; i++)
             {
                 TMP_Text target = _localizedTextTargets[i];
-                target.font = _rightToLeft && persianFont != null
-                    ? persianFont
-                    : _defaultFonts[i];
+                target.font = UiShellRuntimeGateway.Localization.CurrentFontAsset as TMP_FontAsset
+                    ?? (_rightToLeft && persianFont != null ? persianFont : _defaultFonts[i]);
                 target.alignment = _rightToLeft
                     ? ToRightAligned(_defaultAlignments[i])
                     : _defaultAlignments[i];
@@ -330,7 +323,7 @@ namespace Game.UI.Runtime
 
         private void SetLocalizedText(TMP_Text target, string value)
         {
-            string display = value ?? string.Empty;
+            string display = UiLocalizedText.CatalogLabel(value);
             bool hasArabic = false;
             foreach (char c in display)
                 if (c is >= '\u0600' and <= '\u06ff') { hasArabic = true; break; }

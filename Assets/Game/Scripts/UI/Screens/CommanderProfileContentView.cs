@@ -25,7 +25,7 @@ namespace Game.UI.Runtime
                 commanderNameLabel.text = profile.Name.Trim().ToUpperInvariant();
 
             if (commanderSubtitleLabel != null && !string.IsNullOrWhiteSpace(profile.Subtitle))
-                commanderSubtitleLabel.text = profile.Subtitle.Trim().ToUpperInvariant();
+                UiLocalizedText.Set(commanderSubtitleLabel, profile.Subtitle.Trim().ToUpperInvariant());
         }
     }
 }

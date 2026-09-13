@@ -74,7 +74,8 @@ namespace Game.Editor
                 RectTransform drawerRoot = CreateTopLeft("BuildDrawerRoot", root.transform, 0f, 0f, Reference.x, Reference.y);
                 Stretch(drawerRoot);
                 Image scrim = drawerRoot.gameObject.AddComponent<Image>();
-                scrim.color = new Color(0f, .012f, .018f, .58f);
+                // Block battlefield clicks without drawing an edge outside the popup.
+                scrim.color = Color.clear;
                 scrim.raycastTarget = true;
 
                 RectTransform frame = CreateTopLeft("DrawerFrame", drawerRoot, 0f, 0f, Reference.x, Reference.y);
@@ -133,6 +134,9 @@ namespace Game.Editor
             MainMenuV3SectionLayoutView layout = prefab.GetComponentInChildren<MainMenuV3SectionLayoutView>(true);
             if (view == null || presenter == null || occlusion == null || close == null)
                 throw new MissingReferenceException("Build Drawer runtime bindings are incomplete.");
+            Image backdrop = view.DrawerRoot != null ? view.DrawerRoot.GetComponent<Image>() : null;
+            if (backdrop == null || backdrop.color.a != 0f || !backdrop.raycastTarget)
+                throw new InvalidOperationException("Build Drawer backdrop must be invisible and still block battlefield clicks.");
             if (layout == null || layout.ReferenceResolution != Reference)
                 throw new InvalidOperationException("Build Drawer must use the centered 1672x941 composition.");
             if (prefab.transform.Find("BuildDrawerRoot/DrawerFrame/CloseButton")?.GetComponent<Button>() == null)

@@ -4,7 +4,7 @@ using Game.Components;
 
 namespace Game.Runtime
 {
-    internal sealed class BuildingPlacementInputUiSystemHelper
+    internal sealed partial class BuildingPlacementInputUiSystemHelper
     {
         private readonly List<Vector2Int> _wallPlacementOriginsScratch = new();
         private readonly List<Vector2Int> _allWallPlacementOriginsScratch = new();
@@ -35,6 +35,7 @@ namespace Game.Runtime
             DragFirstAxis DragFirstAxis { get; set; }
             bool HideCurrentWallPreview { get; set; }
             bool IsValid { get; }
+            bool AutoRotateVertical { get; }
             float LastPointerMovedAt { get; set; }
             Vector2 LastPointerScreenPosition { get; set; }
             List<WallRun> CommittedWallRuns { get; set; }
@@ -157,7 +158,7 @@ namespace Game.Runtime
                 centerCellToOrigin != null &&
                 tryGetGridCell(pointerPosition, grid, out Vector2Int clickedCell))
             {
-                Vector2Int clickedOrigin = centerCellToOrigin(clickedCell, placement.Definition.FootprintCells);
+                Vector2Int clickedOrigin = centerCellToOrigin(clickedCell, PointerFootprint(placement));
                 placement.OriginCell = clickedOrigin;
                 placement.CommittedOriginCell = clickedOrigin;
                 placement.DragStartOriginCell = clickedOrigin;
@@ -216,7 +217,7 @@ namespace Game.Runtime
                     centerCellToOrigin != null &&
                     tryGetGridCell(screenPosition, grid, out Vector2Int hoveredCell))
                 {
-                    Vector2Int newOrigin = centerCellToOrigin(hoveredCell, placement.Definition.FootprintCells);
+                    Vector2Int newOrigin = centerCellToOrigin(hoveredCell, PointerFootprint(placement));
                     placement.OriginCell = newOrigin;
                     placement.CommittedOriginCell = placement.OriginCell;
                     placement.DragCurrentOriginCell = placement.OriginCell;
@@ -227,22 +228,6 @@ namespace Game.Runtime
             return false; // Placement never requests camera follow, including a paused finger.
         }
 
-        public bool IsPointerOverPlacement(
-            IPlacementState placement,
-            Vector2 screenPosition,
-            GridConfig grid,
-            TryGetGridCellDelegate tryGetGridCell)
-        {
-            if (placement == null || tryGetGridCell == null || !tryGetGridCell(screenPosition, grid, out Vector2Int cell))
-                return false;
-
-            Vector2Int origin = placement.OriginCell;
-            Vector2Int size = placement.Definition.FootprintCells;
-            return cell.x >= origin.x &&
-                   cell.y >= origin.y &&
-                   cell.x < origin.x + size.x &&
-                   cell.y < origin.y + size.y;
-        }
 
         public bool IsWallPlacementVertical(IPlacementState placement)
         {

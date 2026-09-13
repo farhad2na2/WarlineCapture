@@ -8,7 +8,7 @@ using Game.Components;
 
 namespace Game.Runtime
 {
-    public sealed class BuildingPlacementValidationUtilitySystemHelper
+    public sealed partial class BuildingPlacementValidationUtilitySystemHelper
     {
         internal delegate Vector2Int GetWallSegmentFootprintDelegate(BuildingDefinition definition, bool vertical);
 
@@ -107,36 +107,6 @@ namespace Game.Runtime
             hasInvalidPrefix = true;
         }
 
-        public static bool IsPlacementRectValid(
-            RectInt placementRect,
-            GridConfig grid,
-            DynamicBuffer<GridRoad> roads,
-            DynamicBlockerComponent blockerData,
-            bool hasInvalidPrefix,
-            int[] invalidPrefix,
-            int prefixWidth,
-            int prefixHeight,
-            Func<int, int, int, int, bool> isRuntimeBlockerCell,
-            Func<GridConfig, Vector2Int, Vector2Int, bool> hasRoadInFootprint,
-            Func<RectInt, bool> overlapsRuntimeBuilding)
-        {
-            var origin = placementRect.position;
-            var size = placementRect.size;
-            if (!IsFootprintInsideGrid(origin, size, grid))
-                return false;
-
-            // Check terrain first.
-            if (hasInvalidPrefix)
-            {
-                if (HasCachedInvalidCellInFootprint(invalidPrefix, prefixWidth, prefixHeight, origin, size))
-                    return false;
-            }
-            else if (HasBlockedCell(origin, size, grid, roads, blockerData, isRuntimeBlockerCell) ||
-                     hasRoadInFootprint != null && hasRoadInFootprint(grid, origin, size))
-                return false;
-
-            return overlapsRuntimeBuilding == null || !overlapsRuntimeBuilding(placementRect);
-        }
 
         public static bool IsWallFootprintValid(
             Vector2Int originCell,
@@ -326,30 +296,6 @@ namespace Game.Runtime
                 context.HasRoadInFootprint);
         }
 
-        private static bool HasBlockedCell(
-            Vector2Int originCell,
-            Vector2Int footprintCells,
-            GridConfig grid,
-            DynamicBuffer<GridRoad> roads,
-            DynamicBlockerComponent blockerData,
-            Func<int, int, int, int, bool> isRuntimeBlockerCell)
-        {
-            for (int y = originCell.y; y < originCell.y + footprintCells.y; y++)
-            {
-                for (int x = originCell.x; x < originCell.x + footprintCells.x; x++)
-                {
-                    int index = GridUtils.CellToIndex(new int2(x, y), grid.Width);
-                    if (roads[index].Value != 0)
-                        return true;
-                    if (blockerData.Blocked.IsCreated &&
-                        blockerData.Blocked.IsSet(index) &&
-                        !IsRuntimeBlockerCell(isRuntimeBlockerCell, x, y, grid.Width, grid.Height))
-                        return true;
-                }
-            }
-
-            return false;
-        }
 
         private static bool IsRuntimeBlockerCell(
             Func<int, int, int, int, bool> isRuntimeBlockerCell,

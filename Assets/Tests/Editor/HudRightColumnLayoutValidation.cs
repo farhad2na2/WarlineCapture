@@ -46,7 +46,7 @@ public sealed class HudRightColumnLayoutValidation
                 var build=instance.GetComponentInChildren<MatchOverlayCommandControlsView>(true).BuildButton;
                 var mapBounds=RectBounds(dock.transform,dock.Minimap);
                 var buildBounds=RectBounds(dock.transform,(RectTransform)build.transform);
-                Assert.That(mapBounds.min.y-buildBounds.max.y,Is.EqualTo(12).Within(.2));
+                Assert.That(mapBounds.min.y-buildBounds.max.y,Is.EqualTo(8).Within(.2));
                 Assert.That(((RectTransform)dock.transform).rect.xMax-mapBounds.max.x,Is.EqualTo(15).Within(.2));
                 aria.TitleText.text="";aria.BodyText.text="";aria.SetPresentationVisible(true);aria.RefreshContentLayout();
                 Assert.That(aria.BriefingLayout.gameObject.activeSelf,Is.False,"Empty instruction area must disappear.");

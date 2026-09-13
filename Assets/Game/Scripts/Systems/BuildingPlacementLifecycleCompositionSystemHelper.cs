@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Game.Runtime
 {
-    internal sealed class BuildingPlacementLifecycleCompositionSystemHelper
+    internal sealed partial class BuildingPlacementLifecycleCompositionSystemHelper
     {
         public sealed class PlacementState : BuildingPlacementInputUiSystemHelper.IPlacementState
         {
@@ -17,6 +17,9 @@ namespace Game.Runtime
             public Vector2Int DragCurrentOriginCell { get; set; }
             public BuildingPlacementInputUiSystemHelper.DragFirstAxis DragFirstAxis { get; set; }
             public bool AutoRotateVertical { get; set; }
+            public bool ManualRotation { get; set; }
+            public Vector2Int? LastRoadAlignmentOrigin { get; set; }
+            public Vector2Int? LastRoadSampleOrigin { get; set; }
             public List<BuildingPlacementInputUiSystemHelper.WallRun> CommittedWallRuns { get; set; }
             public bool HideCurrentWallPreview { get; set; }
             public bool IsValid { get; set; }
@@ -219,16 +222,6 @@ namespace Game.Runtime
             out ConfirmFailureReason failureReason)
             => _transaction.Confirm(ActivePlacement, transactionId, context, out failureReason);
 
-        public bool Rotate(RotateContext context)
-        {
-            PlacementState placement = ActivePlacement;
-            if (placement?.Definition == null)
-                return false;
-
-            placement.AutoRotateVertical = !placement.AutoRotateVertical;
-            context.UpdatePlacementVisual?.Invoke(placement, false, default);
-            return true;
-        }
 
         public void ReleasePreviewOwnership(PlacementState placement)
         {

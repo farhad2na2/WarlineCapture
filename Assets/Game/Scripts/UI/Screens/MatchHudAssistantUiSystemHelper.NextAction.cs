@@ -13,8 +13,7 @@ namespace Game.UI.Runtime
 
         private void TickNextTutorialAction()
         {
-            bool managed = _lastPanelModel.TutorialStepCount == 12 ||
-                _lastPanelModel.TutorialStepCount == 9 && _lastPanelModel.TutorialStep is 3 or 4 or 5 or 6;
+            bool managed = UsesNextTutorialAction;
             bool placing = _activeCommandMode==TacticalCommandMode.Build && !_highlightPresentationSystem.IsBuildDrawerOpen;
             if (!managed || _embeddedTutorialView == null || (!_embeddedTutorialView.IsPresentationVisible && !placing) ||
                 !_lastPanelModel.HasRecommendation || _tutorialCinematicSuspended)
@@ -44,7 +43,7 @@ namespace Game.UI.Runtime
                     ShowSelectionOrControl(resume ? _commandControlsView?.HoldButton : _commandControlsView?.StopButton,
                         resume ? "mission.m03.guide.control.8" : "mission.m03.guide.control.10"); break;
                 case 8: Cue(_commandControlsView?.SupportButton,"mission.m03.guide.control.6"); break;
-                case 10: case 11: _highlightPresentationSystem.ClearDirectTutorialCue(); break;
+                case 10: case 11: Cue(_embeddedTutorialView.DoItButton,"tutorial.next.continue"); break;
                 default: Cue(_embeddedTutorialView.DoItButton,"tutorial.next.continue"); break;
             }
         }
@@ -75,7 +74,7 @@ namespace Game.UI.Runtime
         {
             if(_activeCommandMode is not (TacticalCommandMode.None or TacticalCommandMode.Select))
                 Cue(_commandControlsView?.SelectButton,"ui.guidance.select_squad");
-            else _highlightPresentationSystem.ShowTutorialWorld(position);
+            else ShowTutorialWorld(position,true);
         }
 
         private void ShowSelectionOrControl(Button button,string key)
@@ -87,7 +86,7 @@ namespace Game.UI.Runtime
             { _highlightPresentationSystem.ClearDirectTutorialCue(); return; }
             if(target.NeedsSelection) { ShowSelectionTarget(target.Selection); return; }
             if(target.Moving) { _highlightPresentationSystem.ClearDirectTutorialCue(); return; }
-            if(_activeCommandMode==mode) _highlightPresentationSystem.ShowTutorialWorld(target.Destination);
+            if(_activeCommandMode==mode) ShowTutorialWorld(target.Destination,false);
             else Cue(button,mode==TacticalCommandMode.Board
                 ? (_commandControlsView?.CommandWheelPanel?.IsOpen == true ? "tutorial.next.board" : "ui.v3.commands.92e37c53d8")
                 : "ui.aria.press_move");

@@ -26,10 +26,12 @@ namespace Game.Editor
             if(placement==null || !ReadGrid(source,out _,out var grid,out var roads,out var blockers))
                 throw new InvalidOperationException("Missing live placement for pointer QA.");
             var camera=source.BuildingPlacementStartupSystemHelper.WorldCamera;
+            bool roadGate=SessionState.GetBool("Warline.M03.Probe.RoadGateTutorial",false);
             double now=EditorApplication.timeSinceStartup;
             if(placementDragPhase==0)
             {
-                Vector2Int initial=placement.OriginCell, footprint=placement.Definition.FootprintCells;
+                Vector2Int initial=placement.OriginCell, footprint=source.BuildingPlacementGridCameraSystemHelper.GetPlacementFootprint(placement.Definition,roadGate);
+                if(roadGate && placement.Definition.Prefab.name!="Building_Road_Barrier") throw new InvalidOperationException("Tutorial did not select Road Barrier.");
                 bool found=false;
                 for(int radius=8;radius<=180 && !found;radius++)
                     for(int y=initial.y-radius;y<=initial.y+radius && !found;y++)
@@ -41,11 +43,18 @@ namespace Game.Editor
                             center+=new Vector3(grid.CellSize*.25f,0,grid.CellSize*.25f);
                             Vector3 screen=camera.WorldToViewportPoint(center);
                             if(screen.z<=0 || screen.x<.12f || screen.x>.68f || screen.y<.30f || screen.y>.85f) continue;
-                            if(!source.BuildingPlacementAdapterCompositionSystemHelper.IsPlacementValid(source,placement.Definition,origin,footprint,false,grid,roads,blockers,EffectiveRect,OverlapsOccupant)) continue;
+                            if(roadGate && !IsHorizontalRoadGateTarget(source,grid,roads,origin,footprint)) continue;
+                            if(!source.BuildingPlacementAdapterCompositionSystemHelper.IsPlacementValid(source,placement.Definition,origin,footprint,roadGate,grid,roads,blockers,EffectiveRect,OverlapsOccupant)) continue;
                             placementDragTo=camera.WorldToScreenPoint(center); placementDragExpected=origin; found=true; break;
                         }
-                if(!found) throw new InvalidOperationException("No visible valid plot reachable by dragging.");
-                placementDragFrom=camera.WorldToScreenPoint(source.BuildingPlacementGridCameraSystemHelper.GetFootprintCenter(initial,footprint,grid,source.BuildingPlacementStartupSystemHelper.BuildPlaneY));
+                if(!found)
+                {
+                    if(roadGate) DumpRoadGateCandidates(source,placement,grid,roads,blockers,camera);
+                    throw new InvalidOperationException("No visible valid plot reachable by dragging.");
+                }
+                var initialFootprint=source.BuildingPlacementGridCameraSystemHelper.GetPlacementFootprint(placement.Definition,placement.AutoRotateVertical);
+                placementDragFrom=camera.WorldToScreenPoint(source.BuildingPlacementGridCameraSystemHelper.GetFootprintCenter(initial,initialFootprint,grid,source.BuildingPlacementStartupSystemHelper.BuildPlaneY));
+                Debug.Log("[M03PlacementDrag] start="+initial+" size="+initialFootprint+" pointer="+placementDragFrom+" target="+placementDragTo);
                 placementDragMouse=InputSystem.AddDevice<Mouse>("PlacementQaMouse");
                 QueuePlacementPointer(placementDragFrom,true);
                 placementDragPhase=1; placementDragAt=now; return false;
@@ -75,6 +84,7 @@ namespace Game.Editor
                 throw new InvalidOperationException("Pointer did not move preview to intended plot: "+placement.OriginCell+" expected "+placementDragExpected);
             if(!placement.IsValid || !bootstrap.BuildingUiCommandContext.CanConfirmBuildingPlacement())
                 throw new InvalidOperationException("Pointer drag did not end on a confirmable green footprint.");
+            if(roadGate) AssertRoadGatePlacement(source,placement,grid,roads,blockers);
             Debug.Log("[M03PlacementDrag] result=Passed real pointer drag + 1.5s hold + release; camera stable; green footprint confirmable.");
             InputSystem.RemoveDevice(placementDragMouse); placementDragMouse=null;
             return true;

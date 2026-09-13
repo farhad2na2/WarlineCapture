@@ -5,6 +5,7 @@ namespace Game.UI.Runtime
     /// <summary>Independent minimap dock and mobile-sized mission actions.</summary>
     public sealed class MissionHudTouchLayoutView : MonoBehaviour
     {
+        private const float DockGap = 8f;
         [SerializeField] private RectTransform minimap;
         [SerializeField] private RectTransform[] primaryActions;
         private MatchOverlayCommandControlsView commands;
@@ -33,9 +34,9 @@ namespace Game.UI.Runtime
             if(placement==null) placement=transform.root.GetComponentInChildren<BuildPlacementConfirmationBarView>(true);
             float bottom=175;
             if(commands!=null && commands.BuildButton!=null)
-                bottom=TopInHeader((RectTransform)commands.BuildButton.transform)-header.rect.yMin+12;
-            if(placement!=null && placement.Root.gameObject.activeInHierarchy)
-                bottom=Mathf.Max(bottom,TopInHeader(placement.Root)-header.rect.yMin+12);
+                bottom=TopInHeader((RectTransform)commands.BuildButton.transform)-header.rect.yMin+DockGap;
+            if(placement!=null && placement.HasPendingPlacement && placement.Root.gameObject.activeInHierarchy)
+                bottom=Mathf.Max(bottom,TopInHeader(placement.Root)-header.rect.yMin+DockGap);
             minimap.anchorMin=minimap.anchorMax=new Vector2(1,0);
             minimap.pivot=new Vector2(1,0);
             minimap.anchoredPosition=new Vector2(-15,bottom);

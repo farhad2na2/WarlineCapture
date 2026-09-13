@@ -1091,6 +1091,7 @@ public sealed class BuildingPlacementValidationUtilitySystemHelperTests
         public BuildingPlacementInputUiSystemHelper.DragFirstAxis DragFirstAxis { get; set; }
         public bool HideCurrentWallPreview { get; set; }
         public bool IsValid { get; set; } = true;
+        public bool AutoRotateVertical { get; set; }
         public float LastPointerMovedAt { get; set; }
         public Vector2 LastPointerScreenPosition { get; set; }
         public List<BuildingPlacementInputUiSystemHelper.WallRun> CommittedWallRuns { get; set; }

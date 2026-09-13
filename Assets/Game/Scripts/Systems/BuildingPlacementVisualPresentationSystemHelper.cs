@@ -173,11 +173,6 @@ namespace Game.Runtime
             if (instance == null)
                 return;
 
-            if (!rotateVertical &&
-                shouldAlignGateToNearbyWall != null &&
-                shouldAlignGateToNearbyWall(originCell, definition, out bool gateVertical))
-                rotateVertical = gateVertical;
-
             Vector2Int footprintCells = getPlacementFootprint != null
                 ? getPlacementFootprint(definition, rotateVertical)
                 : Vector2Int.one;

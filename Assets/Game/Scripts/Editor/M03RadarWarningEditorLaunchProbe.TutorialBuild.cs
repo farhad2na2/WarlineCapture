@@ -29,7 +29,7 @@ namespace Game.Editor
             var guidance=em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root);
             if(guidance.GuidanceId==45005 && tutorialBuildClick>=4)
             {
-                SessionState.SetBool(TutorialBuildKey,false);
+                SessionState.SetBool(TutorialBuildKey,false); SessionState.SetBool("Warline.M03.Probe.RoadGateTutorial",false);
                 Complete(true,"M3 tutorial: Build -> defense card -> Place -> Confirm; pointer drag stayed fixed, valid placement advanced to squad movement."); return true;
             }
             if(guidance.GuidanceId!=45004) return false;

@@ -16,7 +16,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
 
-public sealed class MatchHudAssistantUiSystemHelperTests
+public sealed partial class MatchHudAssistantUiSystemHelperTests
 {
     private const string PopupPrefabPath =
         "Assets/Game/Prefabs/UI/Shell/Popups/POP13_ARIACommandAssistantPopup.prefab";
@@ -827,7 +827,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         Assert.AreSame(prefabButton, button, "Binding must reuse the prefab-owned button instance.");
         Assert.NotNull(popup);
         Assert.IsTrue(objectives.gameObject.activeSelf, "ARIA must augment the HUD without hiding objectives.");
-        Assert.AreEqual(new Vector2(400f, 683f), button.sizeDelta);
+        Assert.AreEqual(400f, button.sizeDelta.x);
+        Assert.LessOrEqual(button.sizeDelta.y, 260f, "Empty ARIA text must collapse instead of retaining the old minimap-sized rail.");
         Assert.IsFalse(popup.gameObject.activeSelf, "ARIA starts closed.");
 
         button.GetComponent<Button>().onClick.Invoke();
@@ -1725,7 +1726,7 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         public bool RequestCancelActiveCommandMode() => true;
     }
 
-    private sealed class FakeAssistantPanelGateway : IUiShellRuntimeGateway, IUiAssistantPanelStateGateway,
+    private sealed partial class FakeAssistantPanelGateway : IUiShellRuntimeGateway, IUiAssistantPanelStateGateway,
         IUiTutorialNarrationGateway,
         IUiMissionHudRestrictionsGateway
     {

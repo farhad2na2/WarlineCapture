@@ -6,6 +6,9 @@ namespace Game.UI.Runtime
 {
     internal sealed partial class AssistantHighlightPresentationSystemHelper
     {
+        internal bool HasDirectTutorialTarget => _directTutorialCue &&
+            (_directTutorialTarget != null && _commandCueActive && _directTutorialTarget.gameObject.activeInHierarchy ||
+             _directTutorialTarget == null && _worldRingRoot != null && _worldRingRoot.activeSelf);
         private bool _directTutorialCue;
         private RectTransform _directTutorialTarget;
         private string _directCaptionKey, _directCaptionLocale;

@@ -10,7 +10,7 @@ namespace Game.Runtime
 {
     using PlacementState = BuildingPlacementLifecycleCompositionSystemHelper.PlacementState;
 
-    internal sealed class BuildingBarrierUtilitySystemHelper
+    internal sealed partial class BuildingBarrierUtilitySystemHelper
     {
         public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
         public delegate bool TryGetGridDataDelegate(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData);
@@ -527,26 +527,6 @@ namespace Game.Runtime
             }
 
             return found;
-        }
-
-        public bool ShouldAlignGateToNearbyWall(Context context, Vector2Int originCell, BuildingDefinition definition, out bool vertical)
-        {
-            vertical = false;
-            return IsWallGateDefinition(definition) && TryResolveNearbyWallVertical(context, originCell, definition, out vertical);
-        }
-
-        public bool ResolvePlacementRotateVertical(Context context, BuildingPlacementInputUiSystemHelper inputSystem, PlacementState placement)
-        {
-            if (placement?.Definition == null)
-                return false;
-
-            if (IsLinearWallDefinition(placement.Definition))
-                return inputSystem != null && inputSystem.IsWallPlacementVertical(placement);
-
-            if (ShouldAlignGateToNearbyWall(context, placement.OriginCell, placement.Definition, out bool gateVertical))
-                return gateVertical;
-
-            return placement.AutoRotateVertical;
         }
 
         public static bool IsLinearWallDefinition(BuildingDefinition definition)

@@ -262,14 +262,6 @@ namespace Game.UI.Runtime
                 finalStep: false);
         }
 
-        public void TickHighlight(float unscaledTime)
-        {
-            _highlightPresentationSystem.Tick();
-            TickPendingM02DoIt(unscaledTime);
-            TickTutorialPresentation(unscaledTime);
-            TickNextTutorialAction();
-        }
-
         public bool TryClosePanel()
         {
             if (!IsPanelOpen)

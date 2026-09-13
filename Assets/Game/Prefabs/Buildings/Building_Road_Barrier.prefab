@@ -321,9 +321,17 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: price
+      value: 6000
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
       propertyPath: config
       value: 
       objectReference: {fileID: 11400000, guid: 67f484f6942ed4d4db8c1a2d494a69f5, type: 2}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: maxHealth
+      value: 800
+      objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
       propertyPath: Description
       value: A large industrial building that can deploy APC vehicles for the player.
@@ -333,9 +341,21 @@ PrefabInstance:
       value: Factory
       objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
-      propertyPath: displayName
-      value: Helipad
+      propertyPath: description
+      value: Defensive road obstacle used to block routes and slow enemy movement.
       objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: displayName
+      value: Road Barrier
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: materialsCost
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: portraitSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: d81ba656b9a045a89a8c14761b6f00c7, type: 3}
     - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
       propertyPath: FootprintCells.x
       value: 30
@@ -343,6 +363,26 @@ PrefabInstance:
     - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
       propertyPath: FootprintCells.y
       value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: footprintCells.x
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: footprintCells.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: portraitCardSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: a9a7fdbc00414248a25c693533176a25, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: portraitActionSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 9daf7fb0e8b8464a8387eb357714a46d, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: destroyedVisualPrefab
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
       propertyPath: Productions.Array.size
@@ -408,7 +448,7 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 2674124398502211660, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
-      insertIndex: 0
+      insertIndex: -1
       addedObject: {fileID: 2416115233265231510}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}

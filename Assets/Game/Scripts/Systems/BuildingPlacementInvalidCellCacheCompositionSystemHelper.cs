@@ -4,7 +4,7 @@ using Game.Components;
 
 namespace Game.Runtime
 {
-    internal sealed class BuildingPlacementInvalidCellCacheCompositionSystemHelper
+    internal sealed partial class BuildingPlacementInvalidCellCacheCompositionSystemHelper
     {
         internal delegate RectInt GetEffectivePlacementRectDelegate(
             BuildingDefinition definition,
@@ -51,37 +51,6 @@ namespace Game.Runtime
                 out _hasPlacementInvalidPrefix);
         }
 
-        internal bool IsPlacementValid(
-            BuildingDefinition definition,
-            Vector2Int originCell,
-            Vector2Int footprintCells,
-            bool rotateVertical,
-            GridConfig grid,
-            DynamicBuffer<GridRoad> roads,
-            DynamicBlockerComponent blockerData,
-            BuildingGameplayDependencyCompositionSystemHelper dependencySystem,
-            BuildingPlacementStartupSystemHelper startupSystem,
-            GetEffectivePlacementRectDelegate getEffectivePlacementRect,
-            System.Func<RectInt, bool> overlapsRuntimeBuilding)
-        {
-            RectInt placementRect = definition != null && getEffectivePlacementRect != null
-                ? getEffectivePlacementRect(definition, originCell, grid, rotateVertical)
-                : new RectInt(originCell, footprintCells);
-
-            return !RoadSurfaces.Overlaps(grid,placementRect.position,placementRect.size) &&
-                BuildingPlacementValidationUtilitySystemHelper.IsPlacementRectValid(
-                placementRect,
-                grid,
-                roads,
-                blockerData,
-                _hasPlacementInvalidPrefix,
-                _placementInvalidPrefix,
-                _placementInvalidPrefixWidth,
-                _placementInvalidPrefixHeight,
-                dependencySystem.IsRuntimeBlockerCell,
-                (queryGrid, queryOrigin, queryFootprint) => HasRoadInFootprint(startupSystem, queryGrid, queryOrigin, queryFootprint),
-                overlapsRuntimeBuilding);
-        }
 
         internal bool HasCachedInvalidCellInFootprint(Vector2Int originCell, Vector2Int footprintCells)
         {

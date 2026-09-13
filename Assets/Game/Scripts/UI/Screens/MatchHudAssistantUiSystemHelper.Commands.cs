@@ -10,13 +10,13 @@ namespace Game.UI.Runtime
         private void ShowRecommendation()
         {
             CaptureUiOnly();
+            if (IsPanelOpen) ClosePanelWithoutInputCapture();
             TryShowRecommendation();
         }
 
         private bool TryShowRecommendation(bool preferPanelRecommendation = false)
         {
-            if (UiShellRuntimeGateway.TryReadMissionExtraction(out _)) return UiShellRuntimeGateway.TryRequestExtractionAction(UiMissionExtractionAction.ShowLesson);
-            if (_lastPanelModel.TutorialStepCount==12) return ShowDefenseGuidance();
+            if (UsesNextTutorialAction) return ShowNextTutorialAction();
             if (!UiShellRuntimeGateway.TryEnqueueAssistantCommandIntent(UiAssistantCommandIntentKind.ShowRecommendation))
                 return false;
 

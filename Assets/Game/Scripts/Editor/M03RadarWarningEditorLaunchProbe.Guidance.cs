@@ -53,6 +53,9 @@ namespace Game.Editor
             in CampaignMissionAttemptFactsComponent facts)
         {
             if(!SessionState.GetBool(GuidanceJourneyKey,false)) return false;
+            if(SessionState.GetBool("Warline.M03.Probe.ShowMe",false) && runtime.Phase==MissionPhaseKind.Engage &&
+                em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root).GuidanceId==45005)
+                return AdvanceShowMeValidation();
             if(SessionState.GetBool(TutorialBuildKey,false) && AdvanceTutorialBuild(em,root,in runtime)) return false;
             if(runtime.Phase==MissionPhaseKind.ResultAfterDebrief && !guidanceJourneyVerified)
             {
@@ -127,7 +130,7 @@ namespace Game.Editor
             switch(step)
             {
                 case 1:
-                    ClickCommand(view.ShowMeButton); break;
+                    ClickCommand(view.DoItButton); break;
                 case 2:
                     ClickCommand(view.DoItButton); break;
                 case 3:
@@ -139,6 +142,7 @@ namespace Game.Editor
                 case 10: case 11: case 12:
                     break; // Wait for real combat; never manufacture a tutorial completion.
                 case 4: case 9:
+                    if(SessionState.GetBool("Warline.M03.Probe.ShowMe",false)) {ClickGuidanceSkipWhenReady();break;}
                     if(guidanceSubstep==0) {ClickCommand(view.DoItButton); guidanceSubstep=1; break;}
                     if(!ClickGuidanceSkipWhenReady()) return false; break;
                 case 5: case 6: case 7:

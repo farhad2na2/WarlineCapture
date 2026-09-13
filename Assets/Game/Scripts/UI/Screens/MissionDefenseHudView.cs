@@ -52,10 +52,10 @@ namespace Game.UI.Runtime
                 bool touring=UiShellRuntimeGateway.TryReadMissionCameraTour();
                 if(openingHint!=null)
                 {
-                    bool visible=touring && UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var restrictions) && restrictions.MissionId is "saga.ch01.m03.radar_warning" or "saga.ch01.m04.airlift";
+                    bool visible=touring && UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var restrictions) && restrictions.MissionId is "saga.ch01.m03.radar_warning" or "saga.ch01.m04.airlift" or "saga.ch01.m05.breach_assault";
                     openingHint.SetActive(visible);
                     if(visible && UiShellRuntimeGateway.TryReadMissionHudRestrictions(out restrictions))
-                        openingHint.GetComponent<V3LocalizedTextBindingView>()?.SetLocalizedValue(UiShellRuntimeGateway.Localization.Get((restrictions.MissionId=="saga.ch01.m04.airlift" ? "mission.m04" : "mission.m03")+(restrictions.OpeningCinematic ? ".camera.opening" : ".camera.victory")));
+                        openingHint.GetComponent<V3LocalizedTextBindingView>()?.SetLocalizedValue(UiShellRuntimeGateway.Localization.Get((restrictions.MissionId=="saga.ch01.m05.breach_assault" ? "mission.m05" : restrictions.MissionId=="saga.ch01.m04.airlift" ? "mission.m04" : "mission.m03")+(restrictions.OpeningCinematic ? ".camera.opening" : ".camera.victory")));
                 }
                 if(skipCameraTourButton.gameObject.activeSelf!=touring) skipCameraTourButton.gameObject.SetActive(touring);
                 if(touring && !cameraPreferencesApplied)
@@ -70,7 +70,10 @@ namespace Game.UI.Runtime
         {
             using var marker = RefreshMarker.Auto();
             bool active=UiShellRuntimeGateway.TryReadMissionDefense(out var model);
-            if(actions!=null) actions.SetActive(active);
+            bool breach=UiShellRuntimeGateway.IsBreachGuideContext() && !UiShellRuntimeGateway.TryReadMissionCameraTour();
+            if(actions!=null) actions.SetActive(active || breach);
+            if(warningButton!=null) warningButton.gameObject.SetActive(active);
+            if(skipButton!=null && !active) skipButton.gameObject.SetActive(false);
             bool touring=UiShellRuntimeGateway.TryReadMissionCameraTour() && UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var restriction) && restriction.MissionId=="saga.ch01.m03.radar_warning";
             if(touchLayout!=null) touchLayout.Apply(active || touring || UiShellRuntimeGateway.TryReadMissionExtraction(out _));
             if(showingDefense!=active || lastLocale!=UiShellRuntimeGateway.Localization.CurrentLocaleCode)

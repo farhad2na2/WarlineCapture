@@ -6,6 +6,22 @@ namespace Game.UI.Runtime
     {
         private sealed partial class Binding
         {
+            private void OnSelectButtonClicked()
+            {
+                CaptureCommandUiClick();
+                bool enterSelectionMode = !IsCommandModePresented(TacticalCommandMode.Select);
+                bool queued = _selectionUiCommandSystem != null &&
+                    (enterSelectionMode
+                        ? _selectionUiCommandSystem.RequestEnterSelectionMode()
+                        : _selectionUiCommandSystem.RequestExitSelectionMode());
+
+                if (queued) _commandModeQueued?.Invoke(enterSelectionMode ? TacticalCommandMode.Select : TacticalCommandMode.None);
+                if (!queued)
+                    ApplyCommandResult(TacticalCommandResult.Rejected(
+                        TacticalCommandReasonCode.CommandUnavailable,
+                        "Selection command unavailable."));
+            }
+
             private void OnMoveButtonClicked()
             {
                 CaptureCommandUiClick();

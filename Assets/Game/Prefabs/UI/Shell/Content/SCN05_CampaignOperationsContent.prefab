@@ -11447,6 +11447,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.CampaignOperationsScreenView
   m04MissionPreview: {fileID: 2800000, guid: 2a3df06fb843e4b19a65c408ea7aecf6, type: 3}
+  m05MissionPreview: {fileID: 2800000, guid: 6fac5173b42724e0da3626d90eba0590, type: 3}
   objectiveCards:
   - {fileID: 1538010805240694327}
   - {fileID: 6257482535165810950}

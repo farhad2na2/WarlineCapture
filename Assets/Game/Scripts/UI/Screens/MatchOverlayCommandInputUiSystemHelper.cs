@@ -202,21 +202,6 @@ namespace Game.UI.Runtime
                 UnbindCommandTabRuntimeFallbacks();
             }
 
-            private void OnSelectButtonClicked()
-            {
-                CaptureCommandUiClick();
-                bool enterSelectionMode = !IsCommandModePresented(TacticalCommandMode.Select);
-                bool queued = _selectionUiCommandSystem != null &&
-                    (enterSelectionMode
-                        ? _selectionUiCommandSystem.RequestEnterSelectionMode()
-                        : _selectionUiCommandSystem.RequestExitSelectionMode());
-
-                if (!queued)
-                    ApplyCommandResult(TacticalCommandResult.Rejected(
-                        TacticalCommandReasonCode.CommandUnavailable,
-                        "Selection command unavailable."));
-            }
-
             private void OnBuildButtonClicked()
             {
                 CaptureCommandUiClick();

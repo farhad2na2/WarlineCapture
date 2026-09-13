@@ -23,11 +23,13 @@ namespace Game.UI.Shell.Ecs
             UiTutorialNarrationPhase phase,
             string text)
         {
+            bool m05Step = tutorialStepCount==8 && tutorialStep is >=1 and <=8 && IsBreachGuideContext();
+            if(m05Step) text=GameText.Get("mission.m05.tutorial."+tutorialStep+".body");
             bool m01Step = tutorialStepCount == 5 && tutorialStep is >= 1 and <= 5;
             bool m02Step = tutorialStepCount == 9 && tutorialStep is >= 2 and <= 8;
             bool extraction=IsExtractionGuideContext();
             bool m03Step = tutorialStepCount == 12 && tutorialStep is >= 1 and <= 12;
-            if ((!m01Step && !m02Step && !m03Step) || string.IsNullOrWhiteSpace(text) ||
+            if ((!m01Step && !m02Step && !m03Step && !m05Step) || string.IsNullOrWhiteSpace(text) ||
                 !TryGetBoundary(out EntityManager entityManager, out Entity boundary) ||
                 !UiShellActionAdapter.IsAssistantRuntimeActive(entityManager, boundary) ||
                 !entityManager.HasBuffer<AssistantMessageElement>(boundary))
@@ -49,7 +51,7 @@ namespace Game.UI.Shell.Ecs
 
             int sequence = NextTutorialNarrationSequence();
             int messageId = TutorialMessageBaseId + sequence;
-            FixedString64Bytes suppressionKey = extraction ? new FixedString64Bytes("assistant.tutorial.m04.") : m03Step ? new FixedString64Bytes("assistant.tutorial.m03.") : tutorialStepCount == 9
+            FixedString64Bytes suppressionKey = m05Step ? new FixedString64Bytes("assistant.tutorial.m05.") : extraction ? new FixedString64Bytes("assistant.tutorial.m04.") : m03Step ? new FixedString64Bytes("assistant.tutorial.m03.") : tutorialStepCount == 9
                 ? new FixedString64Bytes("assistant.tutorial.m02.")
                 : new FixedString64Bytes("assistant.tutorial.m01.");
             suppressionKey.Append(sequence);
@@ -104,6 +106,8 @@ namespace Game.UI.Shell.Ecs
             FirstLaunchNarrativeLanguage language)
         {
             bool persian = language == FirstLaunchNarrativeLanguage.Persian;
+            if(tutorialStepCount==8 && tutorialStep is >=1 and <=8)
+                return new FixedString64Bytes("vo.aria.tutorial.m05."+tutorialStep.ToString("00")+(persian ? ".fa" : ".en"));
             if(tutorialStepCount==12 && tutorialStep is >=1 and <=12)
                 return new FixedString64Bytes("vo.aria.tutorial.m03."+tutorialStep.ToString("00")+(persian ? ".fa" : ".en"));
             if (tutorialStepCount == 9)

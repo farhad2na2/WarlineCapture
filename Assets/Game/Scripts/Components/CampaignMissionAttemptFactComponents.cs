@@ -6,6 +6,8 @@ namespace Game.Components
     public struct CampaignMissionAttemptFactsComponent : IComponentData
     {
         public int ElapsedMilliseconds;
+        public byte BreachGateDestroyed, BreachCoreDestroyed, BreachArchiveSecured, BreachSupportLost, BreachTimedOut;
+        public int BreachSecureMilliseconds;
         public int SquadLossCount;
         public int HostileTotalCount;
         public int HostileDefeatedCount;

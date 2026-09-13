@@ -103,6 +103,7 @@ namespace Game.Runtime
         private float3 FinaleSubject(ref SystemState state,in CampaignMissionRuntimeComponent runtime)
         {
             var em=state.EntityManager;
+            if(SystemAPI.TryGetSingleton(out CampaignMissionBreachState breach) && breach.SessionToken.Equals(runtime.SessionToken)) return breach.ArchiveCenter;
             if(SystemAPI.TryGetSingleton(out CampaignMissionExtractionState rescue) && rescue.SessionToken.Equals(runtime.SessionToken) && em.HasComponent<LocalTransform>(rescue.Aircraft))
                 return em.GetComponentData<LocalTransform>(rescue.Aircraft).Position;
             float3 center=default;int count=0;

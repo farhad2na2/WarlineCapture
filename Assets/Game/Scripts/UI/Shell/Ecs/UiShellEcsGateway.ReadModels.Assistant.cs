@@ -170,10 +170,11 @@ namespace Game.UI.Shell.Ecs
                 ? topRecommendation.Reason.ToString()
                 : string.Empty;
             bool tutorialRightToLeft = false;
-            if (topRecommendation.TutorialStepCount==12)
+            if (topRecommendation.TutorialStepCount is 8 or 12)
             {
                 recommendationTitle=GameText.Get(recommendationTitle,recommendationTitle);
                 recommendationBody=GameText.Get(recommendationBody,recommendationBody);
+                if(topRecommendation.TutorialStepCount==8) recommendationBody=AppendBreachStatus(recommendationBody);
                 tutorialRightToLeft=GameLocalization.CurrentLocaleCode=="fa-IR";
             }
             if (topRecommendation.RecommendationId != 0 &&

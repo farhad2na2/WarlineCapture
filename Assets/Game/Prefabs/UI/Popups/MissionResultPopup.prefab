@@ -1209,6 +1209,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9919792ac99ab94cb32a84790f4c6a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.MissionResultPopupView
+  m05ResultBackdrop: {fileID: 2800000, guid: c763203e008a3441fa441395042d854d, type: 3}
   defenseLabels:
   - Text: {fileID: 110705637376275036}
     Key: mission.m03.result.objectives

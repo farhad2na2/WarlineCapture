@@ -129,6 +129,7 @@ namespace Game.UI.Shell.Ecs
 
         internal static byte TutorialStepFor(CampaignMissionGuidancePromptKind prompt) => prompt switch
         {
+            >= CampaignMissionGuidancePromptKind.BreachPlan and <= CampaignMissionGuidancePromptKind.BreachHold => (byte)((int)prompt-36),
             >= CampaignMissionGuidancePromptKind.AirliftPlan and <= CampaignMissionGuidancePromptKind.AirliftResult => (byte)((int)prompt-24),
             >= CampaignMissionGuidancePromptKind.RadarReadWarning and <= CampaignMissionGuidancePromptKind.RadarResult => (byte)((int)prompt-12),
             CampaignMissionGuidancePromptKind.EstablishBaseOpenBuild => 2,
@@ -142,6 +143,7 @@ namespace Game.UI.Shell.Ecs
         };
 
         internal static byte TutorialStepCountFor(CampaignMissionGuidancePromptKind prompt) =>
+            prompt is >= CampaignMissionGuidancePromptKind.BreachPlan and <= CampaignMissionGuidancePromptKind.BreachHold ? (byte)8 :
             prompt is >= CampaignMissionGuidancePromptKind.RadarReadWarning and <= CampaignMissionGuidancePromptKind.AirliftResult ? (byte)12 :
             prompt is CampaignMissionGuidancePromptKind.EstablishBaseOpenBuild or
                 CampaignMissionGuidancePromptKind.EstablishBaseSelectBarracks or

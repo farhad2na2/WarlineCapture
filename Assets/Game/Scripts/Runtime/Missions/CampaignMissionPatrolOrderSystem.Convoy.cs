@@ -29,9 +29,14 @@ namespace Game.Runtime
                     !TryFindRoute(ref definition, current.RouteId, out int routeIndex)) continue;
                 // Pursuers retain autonomous combat along the route. A manual move suppresses
                 // acquisition and would make them walk past the stranded specialists.
-                if (definition.Extraction.Enabled != 0 && state.EntityManager.HasComponent<EngageTarget>(entity)) continue;
+                if ((definition.Extraction.Enabled != 0 || definition.Breach.Enabled != 0) && state.EntityManager.HasComponent<EngageTarget>(entity)) continue;
                 ref CampaignMissionPatrolRouteBlob route = ref definition.PatrolRoutes[routeIndex];
                 int releaseAt=route.StartDelayMilliseconds;
+                if(definition.Breach.Enabled!=0 && current.MissionRoleId.Equals(definition.Breach.CounterattackRoleId))
+                {
+                    if(!SystemAPI.TryGetSingleton(out CampaignMissionBreachState breach) || breach.CounterattackReleaseAtMilliseconds==0) continue;
+                    releaseAt=breach.CounterattackReleaseAtMilliseconds;
+                }
                 if(definition.Extraction.Enabled!=0 && SystemAPI.TryGetSingleton(out CampaignMissionExtractionState extraction) && extraction.PatrolReleaseAtMilliseconds>0)
                     releaseAt=math.min(releaseAt,extraction.PatrolReleaseAtMilliseconds);
                 if (facts.ElapsedMilliseconds < releaseAt || current.RouteIndex >= route.AnchorIds.Length) continue;
@@ -65,7 +70,7 @@ namespace Game.Runtime
             }
             for (int i = 0; i < targets.Length; i++)
                 UnitMoveOrderRequestSystem.EnqueueMoveOrder(state.EntityManager, targets[i], cells[i],
-                    definition.Extraction.Enabled != 0 ? UnitMoveOrderRequestKind.TargetPathOnly : UnitMoveOrderRequestKind.Immediate,
+                    (definition.Extraction.Enabled != 0 || definition.Breach.Enabled != 0) ? UnitMoveOrderRequestKind.TargetPathOnly : UnitMoveOrderRequestKind.Immediate,
                     true, false, 0, 0, _convoyMoveOrderQueueQuery);
             targets.Dispose();
             cells.Dispose();

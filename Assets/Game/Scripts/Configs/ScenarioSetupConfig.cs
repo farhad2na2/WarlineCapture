@@ -176,6 +176,7 @@ namespace Game.Configs
         [SerializeField] private ScenarioMissionRuntimeConfig missionRuntime;
         [SerializeField] private MissionDefenseDefinitionConfig defense;
         [SerializeField] private MissionExtractionDefinitionConfig extraction;
+        [SerializeField] private MissionBreachDefinitionConfig breach;
 
         public string ScenarioId => scenarioId;
         public string OperationMapId => operationMapId;
@@ -189,6 +190,7 @@ namespace Game.Configs
         public ScenarioMissionRuntimeConfig MissionRuntime => missionRuntime;
         public MissionDefenseDefinitionConfig Defense => defense;
         public MissionExtractionDefinitionConfig Extraction => extraction;
+        public MissionBreachDefinitionConfig Breach => breach;
 
         public bool TryValidateIdentity(out string error)
         {
@@ -255,7 +257,8 @@ namespace Game.Configs
             if (!TryValidateUnitGroups(out error) || !TryValidatePatrolRoutes(out error) ||
                 !TryValidateAmbientPresentations(out error) ||
                 !ScenarioMissionRuntimeContractValidation.TryValidate(this, out error) ||
-                !MissionExtractionDefinitionValidation.TryValidate(this, out error))
+                !MissionExtractionDefinitionValidation.TryValidate(this, out error) ||
+                !MissionBreachDefinitionValidation.TryValidate(this, out error))
                 return false;
 
             error = null;

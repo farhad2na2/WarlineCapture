@@ -157,6 +157,7 @@ namespace Game.Composition
             definition.MissionId = new FixedString64Bytes(mission.MissionId);
             ProjectDefense(ref builder, ref definition, scenario);
             definition.Extraction = ProjectExtraction(scenario.Extraction);
+            definition.Breach = ProjectBreach(scenario.Breach);
             definition.ScenarioId = new FixedString64Bytes(scenario.ScenarioId);
             definition.OperationMapId = new FixedString64Bytes(mission.OperationMapId);
             definition.DisplayNameKey = new FixedString64Bytes(mission.DisplayNameKey);

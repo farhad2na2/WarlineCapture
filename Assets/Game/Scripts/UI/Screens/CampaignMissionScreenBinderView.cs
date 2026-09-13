@@ -40,6 +40,7 @@ namespace Game.UI.Runtime
                 BindMissionNode(1, SelectM02);
                 BindMissionNode(2, SelectM03);
                 BindMissionNode(3, SelectM04);
+                BindMissionNode(4, SelectM05);
             }
             if (missionBriefingView != null)
             {
@@ -61,6 +62,7 @@ namespace Game.UI.Runtime
                 UnbindMissionNode(1, SelectM02);
                 UnbindMissionNode(2, SelectM03);
                 UnbindMissionNode(3, SelectM04);
+                UnbindMissionNode(4, SelectM05);
             }
             if (missionBriefingView != null)
             {
@@ -120,6 +122,7 @@ namespace Game.UI.Runtime
         private void SelectM01() => SelectMission(UiCampaignMissionProjectionIds.M01);
         private void SelectM02() => SelectMission(UiCampaignMissionProjectionIds.M02);
         private void SelectM03() => SelectMission(UiCampaignMissionProjectionIds.M03);
+        private void SelectM05() => SelectMission("saga.ch01.m05.breach_assault");
         private void SelectM04() => SelectMission("saga.ch01.m04.airlift");
 
         private void SelectMission(string selectedMissionId)

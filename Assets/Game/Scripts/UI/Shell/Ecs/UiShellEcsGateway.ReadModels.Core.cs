@@ -185,7 +185,7 @@ namespace Game.UI.Shell.Ecs
                 : victory
                     ? "Hostile patrol neutralized. The Old Market corridor is secure."
                     : "The command squad was lost. Regroup and redeploy.";
-            bool debriefRequired = (establishBase || runtime.MissionId.Equals(RadarResultMissionId) || runtime.MissionId.Equals(AirliftId)) && victory &&
+            bool debriefRequired = (establishBase || runtime.MissionId.Equals(RadarResultMissionId) || runtime.MissionId.Equals(AirliftId) || runtime.MissionId.Equals(BreachId)) && victory &&
                                    runtime.Phase != MissionPhaseKind.ResultAfterDebrief;
             if (debriefRequired)
                 return false;
@@ -208,6 +208,7 @@ namespace Game.UI.Shell.Ecs
                 debriefRequired);
             if(runtime.MissionId.Equals(RadarResultMissionId)) result=LocalizeDefenseResult(in result,in facts,in runtime);
             if(runtime.MissionId.Equals(AirliftId)) result=LocalizeExtractionResult(in result,in facts);
+            if(runtime.MissionId.Equals(BreachId)) result=LocalizeBreachResult(in result,in facts);
             cachedMissionResultLocale=Game.Configs.GameLocalization.CurrentLocaleCode;
             cachedMissionResultVersion = projection.SourceVersion;
             cachedMissionSettlementAccepted = settlementAccepted;

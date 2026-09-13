@@ -62,6 +62,7 @@ namespace Game.Runtime
             SystemAPI.TryGetSingleton(out settings);
             EntityManager em = state.EntityManager;
             CampaignMissionGuidanceProjectionComponent current = em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root);
+            if (TryUpdateBreachGuidance(ref state, root, in runtime, in facts, in settings, in current)) return;
             if (TryUpdateExtractionGuidance(ref state, root, in runtime, in facts, in settings, in current)) return;
             if (TryUpdateDefenseGuidance(ref state, root, in runtime, in facts, in settings, in current)) return;
             DynamicBuffer<CampaignMissionGuidanceAcknowledgementRequestElement> acknowledgements = em.GetBuffer<CampaignMissionGuidanceAcknowledgementRequestElement>(root);

@@ -200,6 +200,9 @@ namespace Game.Configs
                 case MissionObjectiveRuleKind.ProtectMissionRole:
                 case MissionObjectiveRuleKind.DefendMissionRole:
                 case MissionObjectiveRuleKind.PreventCoreBreach:
+                case MissionObjectiveRuleKind.BreachGate:
+                case MissionObjectiveRuleKind.DestroyBreachCore:
+                case MissionObjectiveRuleKind.SecureBreachArchive:
                 case MissionObjectiveRuleKind.ExtractPassengers:
                 case MissionObjectiveRuleKind.ProtectExtractionTransport:
                 case MissionObjectiveRuleKind.SecureLandingZone:

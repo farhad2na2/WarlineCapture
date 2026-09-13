@@ -94,6 +94,12 @@ namespace Game.Runtime
                 if (TryFindAnchor(ref metadata.Blob.Value, definition.Extraction.LandingAnchorId, out var landing)) openingEndFocus = landing.Position;
                 if (TryFindAnchor(ref metadata.Blob.Value, definition.BaseAnchorId, out var start)) openingStartFocus = start.Position;
             }
+            if (definition.Breach.Enabled != 0)
+            {
+                if (TryFindAnchor(ref metadata.Blob.Value, definition.Breach.GateAnchorId, out var gate)) establishingFocus = gate.Position;
+                if (TryFindAnchor(ref metadata.Blob.Value, definition.Breach.CoreAnchorId, out var core)) openingEndFocus = core.Position;
+                openingStartFocus = playerFocus;
+            }
             CampaignMissionOpeningPresentationComponent opening = new()
             {
                 SessionToken = rootRuntime.SessionToken,
@@ -111,11 +117,11 @@ namespace Game.Runtime
                 QueueMissionOpeningOverview(
                     em,
                     _cameraFocusQuery.GetSingletonEntity(),
-                    in opening, definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0, definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0);
+                    in opening, definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0 || definition.Breach.Enabled != 0, definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0 || definition.Breach.Enabled != 0);
                 opening.InitialRtsOverviewRequested = 1;
             }
             SetOrAdd(em, root, opening);
-            bool finaleRequired = definition.Extraction.Enabled != 0 || definition.Defense.Enabled != 0 || rootRuntime.MissionId.Equals(FirstContactMissionId) &&
+            bool finaleRequired = definition.Breach.Enabled != 0 || definition.Extraction.Enabled != 0 || definition.Defense.Enabled != 0 || rootRuntime.MissionId.Equals(FirstContactMissionId) &&
                                   (rootRuntime.RunKind == Game.Missions.Contracts.MissionRunKind.FirstClear ||
                                    rootRuntime.ReplayTutorialEnabled != 0);
             SetOrAdd(em, root, new CampaignMissionFinalePresentationComponent
@@ -159,7 +165,7 @@ namespace Game.Runtime
                 }
             }
             int hostileCount = CountHostiles(ref definition);
-            return definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0
+            return definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0 || definition.Breach.Enabled != 0
                 ? total <= 64 && total > hostileCount && hostileCount > 0
                 : total == (hostileCount == 0 ? 4 : 7) && hostileCount is 0 or 3;
         }
@@ -173,6 +179,7 @@ namespace Game.Runtime
         {
             InitializeDefenseAttempt(em, root, ref definition, ref map, in runtime);
             InitializeExtractionAttempt(em, root, ref definition, ref map, in runtime);
+            InitializeBreachAttempt(em, root, ref definition, ref map, in runtime);
             int ordinal = 0;
             float3 playerPositionSum = float3.zero;
             float3 hostilePositionSum = float3.zero;
@@ -208,6 +215,7 @@ namespace Game.Runtime
                         SetOrAdd(em, instance, new Faction { Id = group.FactionId });
                         RegisterDefenseMember(em, root, instance, ref definition, ref group, in unit);
                         RegisterExtractionMember(em, root, instance, ref definition, ref group, in unit);
+                        RegisterBreachMember(em, root, instance, ref definition, ref group, in unit);
                         if (runtime.MissionId.Equals(FirstContactMissionId))
                             ApplyFirstContactHostileCombatPolicy(em, instance, group.FactionId);
                         SetOrAdd(em, instance,
@@ -350,6 +358,8 @@ namespace Game.Runtime
 
         internal static bool HasRequiredRestrictions(ref CampaignMissionDefinitionBlob definition)
         {
+            if (definition.Breach.Enabled != 0)
+                return definition.MissionRuntimeEnabled == 0 && definition.EconomyDisabled != 0 && definition.AirDisabled != 0;
             if (definition.Extraction.Enabled != 0)
                 return definition.MissionRuntimeEnabled == 0 && definition.BuildingDisabled != 0 && definition.ProductionDisabled != 0 &&
                     definition.EconomyDisabled != 0 && definition.TransportDisabled == 0 && definition.AirDisabled == 0;

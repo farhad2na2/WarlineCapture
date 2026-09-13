@@ -104,7 +104,7 @@ namespace Game.UI.Runtime
             }
             ApplyV3Outcome(model);
             ApplyDefenseOutcome(in model);
-            ApplyExtractionOutcome(in model);
+            ApplyExtractionOutcome(in model); ApplyBreachOutcome(in model);
             if (hiddenLegacyRoots != null)
                 for (int index = 0; index < hiddenLegacyRoots.Length; index++)
                     if (hiddenLegacyRoots[index] != null) hiddenLegacyRoots[index].SetActive(false);
@@ -304,7 +304,7 @@ namespace Game.UI.Runtime
             string[] parts = subtitle.Split(new[] { " • " }, StringSplitOptions.None);
             if (parts.Length < 2)
                 return subtitle;
-            string missionNumber = model.MissionId.Contains("m04") ? "M04" : model.MissionId.Contains("m03") ? "M03" : model.MissionId.Contains("m02") ? "M02" : "M01";
+            string missionNumber = model.MissionId.Contains("m05") ? "M05" : model.MissionId.Contains("m04") ? "M04" : model.MissionId.Contains("m03") ? "M03" : model.MissionId.Contains("m02") ? "M02" : "M01";
             return $"{missionNumber} {UiLocalizedText.CatalogLabel(parts[0])}\n{UiLocalizedText.CatalogLabel(parts[1])}";
         }
 

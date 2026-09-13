@@ -69,7 +69,10 @@ namespace Game.Missions.Contracts
         PreventCoreBreach = 6,
         ExtractPassengers = 7,
         ProtectExtractionTransport = 8,
-        SecureLandingZone = 9
+        SecureLandingZone = 9,
+        BreachGate = 10,
+        DestroyBreachCore = 11,
+        SecureBreachArchive = 12
     }
 
     public enum MissionStarRuleKind : byte
@@ -79,7 +82,8 @@ namespace Game.Missions.Contracts
         NoSquadLoss = 2,
         CompleteUnderMilliseconds = 3,
         NoCivilianLoss = 4,
-        NoPostDamage = 5
+        NoPostDamage = 5,
+        BreachSupportSurvives = 6
     }
 
     public enum MissionRewardKind : byte

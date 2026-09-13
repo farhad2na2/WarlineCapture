@@ -583,10 +583,8 @@ namespace Game.Runtime
 
             Ecb.RemoveComponent<UnitPathFollow>(sortKey, entity);
             Ecb.RemoveComponent<UnitPathRange>(sortKey, entity);
-            if (UnitTargetLookup.HasComponent(entity))
-                Ecb.SetComponent(sortKey, entity, new UnitTarget { Cell = bestGoal });
-            else
-                Ecb.AddComponent(sortKey, entity, new UnitTarget { Cell = bestGoal });
+            // Path cleanup can remove the target before this deferred command plays back.
+            Ecb.AddComponent(sortKey, entity, new UnitTarget { Cell = bestGoal });
 
             Ecb.AddComponent(sortKey, entity, new UnitPathRequest { Goal = bestGoal });
             Ecb.AddComponent<ManualMoveOrderTag>(sortKey, entity);

@@ -190,6 +190,8 @@ MonoBehaviour:
       value: 'Blocked: civilian zone'
     - key: match.feedback.tactical_map_not_ready
       value: Tactical map is not ready.
+    - key: mission.guide.lesson_count
+      value: '{0} lessons'
     - key: mission.m01.goal.civilians
       value: PROTECT CIVILIANS
     - key: mission.m01.goal.squad
@@ -1115,6 +1117,177 @@ MonoBehaviour:
         complete the mission.
     - key: mission.m04.tutorial.9.title
       value: Transfer the specialists
+    - key: mission.m05.access
+      value: "8 rifles \xB7 heavy APC"
+    - key: mission.m05.camera.opening
+      value: "ASSAULT ROUTE \xB7 Gate \u2192 transmitter \u2192 archive"
+    - key: mission.m05.camera.victory
+      value: "ARCHIVE RECOVERED \xB7 Protocol Fragment One secured"
+    - key: mission.m05.enemy_intel
+      value: Garrison infantry; reinforcements respond 15 seconds after the gate
+        takes damage.
+    - key: mission.m05.guide.availability.0
+      value: Friendly in M5
+    - key: mission.m05.guide.availability.1
+      value: Hostile in M5
+    - key: mission.m05.guide.availability.2
+      value: Protected civilian in M5
+    - key: mission.m05.guide.availability.3
+      value: "Reference only \xB7 unavailable in M5"
+    - key: mission.m05.guide.title
+      value: "FIELD GUIDE \xB7 BREACH ASSAULT"
+    - key: mission.m05.hud.counterattack
+      value: Enemy reinforcements in {0}s
+    - key: mission.m05.hud.status
+      value: "Archive {0}/{3}s \xB7 Guards {1} \xB7 {2} remaining"
+    - key: mission.m05.location
+      value: "Eastern district \xB7 fortified relay"
+    - key: mission.m05.name
+      value: BREACH ASSAULT
+    - key: mission.m05.objective.archive
+      value: Secure the archive for 20 seconds
+    - key: mission.m05.objective.archive.body
+      value: Defeat all guards and hold the marked area for 20 seconds.
+    - key: mission.m05.objective.core
+      value: Disable the transmitter
+    - key: mission.m05.objective.core.body
+      value: After the breach, destroy the marked satellite transmitter.
+    - key: mission.m05.objective.gate
+      value: Destroy the road gate
+    - key: mission.m05.objective.gate.body
+      value: Attack the marked gate to open the road.
+    - key: mission.m05.options
+      value: Breach together; preserve the armor; recover the records
+    - key: mission.m05.resources
+      value: Mission-supplied heavy APC; no construction required
+    - key: mission.m05.result.chapter
+      value: CHAPTER ONE COMPLETE
+    - key: mission.m05.result.defeat
+      value: ASSAULT FAILED
+    - key: mission.m05.result.loss
+      value: The assault force was lost. Retry with the rifles supporting the APC.
+    - key: mission.m05.result.lost
+      value: LOST
+    - key: mission.m05.result.setup
+      value: The assault could not be prepared. Retry the mission.
+    - key: mission.m05.result.success
+      value: The relay is silent. Protocol Fragment One is secured.
+    - key: mission.m05.result.support
+      value: HEAVY APC
+    - key: mission.m05.result.survived
+      value: SURVIVED
+    - key: mission.m05.result.timeout
+      value: The archive was erased. Retry and reach the relay before twelve minutes.
+    - key: mission.m05.result.unit_losses
+      value: ASSAULT UNITS LOST
+    - key: mission.m05.result.victory
+      value: FIRST RESPONSE COMPLETE
+    - key: mission.m05.reward.armor
+      value: APC armor parts
+    - key: mission.m05.reward.card
+      value: 750 XP | 4,000 CREDITS | RECON | 35 ARMOR PARTS
+    - key: mission.m05.reward.ghillie
+      value: Ghillie reconnaissance team
+    - key: mission.m05.star.1
+      value: Recover the archive
+    - key: mission.m05.star.2
+      value: Heavy APC survives
+    - key: mission.m05.star.3
+      value: Finish under 9 minutes
+    - key: mission.m05.summary
+      value: Breach the relay gate, silence its transmitter, and recover the archive.
+    - key: mission.m05.tutorial.1.body
+      value: Break the gate, destroy the transmitter, then secure the archive for
+        20 seconds. You have 12 minutes. Keep the APC alive and finish under 9 minutes
+        for bonus stars.
+    - key: mission.m05.tutorial.1.diagram
+      value: "GATE \u2192 TRANSMITTER \u2192 ARCHIVE"
+    - key: mission.m05.tutorial.1.example
+      value: Press Continue when ready.
+    - key: mission.m05.tutorial.1.mistake
+      value: The APC is a bonus objective, not your only way to win.
+    - key: mission.m05.tutorial.1.title
+      value: Read the assault plan
+    - key: mission.m05.tutorial.2.body
+      value: Select the heavy APC. If it is lost, use a surviving rifle squad. Show
+        Me marks the unit to select.
+    - key: mission.m05.tutorial.2.diagram
+      value: "GATE \u2192 TRANSMITTER \u2192 ARCHIVE"
+    - key: mission.m05.tutorial.2.example
+      value: Tap the marked unit.
+    - key: mission.m05.tutorial.2.mistake
+      value: Orders require a selected friendly unit.
+    - key: mission.m05.tutorial.2.title
+      value: Select your assault unit
+    - key: mission.m05.tutorial.3.body
+      value: Press Attack, then tap the marked enemy gate. Wait for it to fall. Show
+        Me follows your next required click.
+    - key: mission.m05.tutorial.3.diagram
+      value: "GATE \u2192 TRANSMITTER \u2192 ARCHIVE"
+    - key: mission.m05.tutorial.3.example
+      value: Keep the APC supported by the rifles.
+    - key: mission.m05.tutorial.3.mistake
+      value: Move orders do not attack the gate.
+    - key: mission.m05.tutorial.3.title
+      value: Breach the road gate
+    - key: mission.m05.tutorial.4.body
+      value: Select your rifles, press Move, and tap the marked approach beyond the
+        gate. Keep the team together; enemy reinforcements are responding.
+    - key: mission.m05.tutorial.4.diagram
+      value: "GATE \u2192 TRANSMITTER \u2192 ARCHIVE"
+    - key: mission.m05.tutorial.4.example
+      value: Move into the open area by the relay.
+    - key: mission.m05.tutorial.4.fallback
+      value: Your rifles are lost. Select the surviving APC, press Move, then tap
+        the marked approach beyond the gate.
+    - key: mission.m05.tutorial.4.mistake
+      value: Do not leave the rifles behind while armor fights alone.
+    - key: mission.m05.tutorial.4.title
+      value: Bring the team through
+    - key: mission.m05.tutorial.5.body
+      value: Select a friendly unit, press Attack, then tap the marked satellite
+        transmitter. Destroying it opens the archive objective.
+    - key: mission.m05.tutorial.5.diagram
+      value: "GATE \u2192 TRANSMITTER \u2192 ARCHIVE"
+    - key: mission.m05.tutorial.5.example
+      value: Concentrate fire on the marked transmitter.
+    - key: mission.m05.tutorial.5.mistake
+      value: Unrelated airport buildings are not objectives.
+    - key: mission.m05.tutorial.5.title
+      value: Silence the transmitter
+    - key: mission.m05.tutorial.6.body
+      value: Attack the remaining guards. Show Me marks a live enemy. You must defeat
+        the garrison and its reinforcements before securing the archive.
+    - key: mission.m05.tutorial.6.diagram
+      value: "GATE \u2192 TRANSMITTER \u2192 ARCHIVE"
+    - key: mission.m05.tutorial.6.example
+      value: Use the APC and rifles together.
+    - key: mission.m05.tutorial.6.mistake
+      value: The archive cannot be secured while the guard is still active.
+    - key: mission.m05.tutorial.6.title
+      value: Stop the counterattack
+    - key: mission.m05.tutorial.7.body
+      value: Select a surviving unit, press Move, then tap the marked archive area.
+        Keep at least one unit there while the records are recovered.
+    - key: mission.m05.tutorial.7.diagram
+      value: "GATE \u2192 TRANSMITTER \u2192 ARCHIVE"
+    - key: mission.m05.tutorial.7.example
+      value: The secure timer starts when the area is clear.
+    - key: mission.m05.tutorial.7.mistake
+      value: Leaving the area resets the twenty-second hold.
+    - key: mission.m05.tutorial.7.title
+      value: Reach the archive
+    - key: mission.m05.tutorial.8.body
+      value: Hold the archive area for 20 uninterrupted seconds. Keep a survivor
+        in the marked area until ARIA confirms recovery.
+    - key: mission.m05.tutorial.8.diagram
+      value: "GATE \u2192 TRANSMITTER \u2192 ARCHIVE"
+    - key: mission.m05.tutorial.8.example
+      value: Wait for the recovery confirmation.
+    - key: mission.m05.tutorial.8.mistake
+      value: A destroyed transmitter alone does not complete the mission.
+    - key: mission.m05.tutorial.8.title
+      value: Protect the recovered records
     - key: mission.reward.commander_xp
       value: COMMANDER XP
     - key: mission.reward.credits
@@ -1323,6 +1496,33 @@ MonoBehaviour:
       value: 'Extraction confirmed. Captain Nasser is on the roster. Next objective:
         assess that communications node. First, let the medical team get back to
         work.'
+    - key: narrative.m05.brief.01
+      value: The engineers traced the outages to this fortified relay. Break the
+        road gate, disable its transmitter, and secure the archive. Those records
+        can tell us who ordered the attacks.
+    - key: narrative.m05.brief.02
+      value: Two rifle squads and a heavy APC are yours. Use the armor to open the
+        gate, then bring the rifles through together. Preserve the APC if you can;
+        losing it does not end the assault.
+    - key: narrative.m05.brief.03
+      value: The relay will erase its archive in twelve minutes. Stop the transmitter,
+        defeat the responding guard, and hold the marked archive area for twenty
+        clear seconds. I will guide each action.
+    - key: narrative.m05.comms.01
+      value: The archive is intact. I have recovered Protocol Fragment One. Its authorization
+        record includes a credential issued to me, then revoked before these attacks.
+    - key: narrative.m05.debrief.01
+      value: The relay is silent and the records are safe. We have evidence now,
+        not another rumor. Take care of the wounded; the city needs everyone we can
+        bring home.
+    - key: narrative.m05.debrief.02
+      value: "The credential was revoked. Someone used its signature anyway. One
+        encrypted message survived: \u201CQassem. The first node is lost.\u201D I
+        cannot yet identify the sender."
+    - key: narrative.m05.debrief.03
+      value: First Response is complete. The reconnaissance team and armor parts
+        are assigned to your roster. Review your results, then return to the campaign
+        map. We will follow the evidence.
     - key: narrative.speaker.laila.name
       value: Captain Laila Nasser
     - key: narrative.speaker.laila.role
@@ -2060,12 +2260,6 @@ MonoBehaviour:
       value: PASSENGERS {0}/{1} | SOLDIERS {2}/{3}
     - key: ui.hud.passengers_soldiers_vehicles_capacity
       value: PASSENGERS {0}/{1} | SOLDIERS {2}/{3} | VEHICLES {4}/{5}
-    - key: ui.hud.squad.helicopter
-      value: HELICOPTER
-    - key: ui.hud.squad.jet
-      value: JET
-    - key: ui.hud.squad.vehicles
-      value: VEHICLES
     - key: ui.hud.tap_rifle_squad
       value: SELECT SQUAD
     - key: ui.identity.callsign_rules
@@ -4415,6 +4609,12 @@ MonoBehaviour:
       value: '{0} - ETA {1}s'
     - key: warning_ground_attack_type
       value: Ground vehicle attack detected
+    - key: ui.hud.squad.vehicles
+      value: VEHICLES
+    - key: ui.hud.squad.helicopter
+      value: HELICOPTER
+    - key: ui.hud.squad.jet
+      value: JET
   - localeCode: fa-IR
     displayName: "\u0641\u0627\u0631\u0633\u06CC"
     shortLabel: FA
@@ -4673,6 +4873,8 @@ MonoBehaviour:
     - key: match.feedback.tactical_map_not_ready
       value: "\u0646\u0642\u0634\u0647 \u062A\u0627\u06A9\u062A\u06CC\u06A9\u06CC
         \u0622\u0645\u0627\u062F\u0647 \u0646\u06CC\u0633\u062A."
+    - key: mission.guide.lesson_count
+      value: "{0} \u062F\u0631\u0633"
     - key: mission.m01.goal.civilians
       value: "\u0627\u0632 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC\u0627\u0646
         \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646\u06CC\u062F"
@@ -6238,6 +6440,323 @@ MonoBehaviour:
     - key: mission.m04.tutorial.9.title
       value: "\u0645\u062A\u062E\u0635\u0635\u0627\u0646 \u0631\u0627 \u0645\u0646\u062A\u0642\u0644
         \u06A9\u0646\u06CC\u062F"
+    - key: mission.m05.access
+      value: "\u06F8 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \xB7 \u0646\u0641\u0631\u0628\u0631
+        \u0633\u0646\u06AF\u06CC\u0646"
+    - key: mission.m05.camera.opening
+      value: "\u0645\u0633\u06CC\u0631 \u062D\u0645\u0644\u0647 \xB7 \u062F\u0631\u0648\u0627\u0632\u0647
+        \u2190 \u0641\u0631\u0633\u062A\u0646\u062F\u0647 \u2190 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC"
+    - key: mission.m05.camera.victory
+      value: "\u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u0634\u062F \xB7 \u0642\u0637\u0639\u0647\u0654 \u0627\u0648\u0644 \u067E\u0631\u0648\u062A\u06A9\u0644
+        \u062F\u0631 \u0627\u0645\u0627\u0646 \u0627\u0633\u062A"
+    - key: mission.m05.enemy_intel
+      value: "\u067E\u0627\u062F\u06AF\u0627\u0646 \u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645\u061B
+        \u0646\u06CC\u0631\u0648\u06CC \u06A9\u0645\u06A9\u06CC \u06F1\u06F5 \u062B\u0627\u0646\u06CC\u0647
+        \u067E\u0633 \u0627\u0632 \u0622\u0633\u06CC\u0628 \u0628\u0647 \u062F\u0631\u0648\u0627\u0632\u0647
+        \u0648\u0627\u06A9\u0646\u0634 \u0646\u0634\u0627\u0646 \u0645\u06CC\u200C\u062F\u0647\u062F."
+    - key: mission.m05.guide.availability.0
+      value: "\u062E\u0648\u062F\u06CC \u062F\u0631 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A
+        \u067E\u0646\u062C\u0645"
+    - key: mission.m05.guide.availability.1
+      value: "\u062F\u0634\u0645\u0646 \u062F\u0631 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A
+        \u067E\u0646\u062C\u0645"
+    - key: mission.m05.guide.availability.2
+      value: "\u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC \u0645\u062D\u0627\u0641\u0638\u062A\u200C\u0634\u062F\u0647
+        \u062F\u0631 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u067E\u0646\u062C\u0645"
+    - key: mission.m05.guide.availability.3
+      value: "\u0641\u0642\u0637 \u0628\u0631\u0627\u06CC \u0622\u0634\u0646\u0627\u06CC\u06CC
+        \xB7 \u062F\u0631 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u067E\u0646\u062C\u0645
+        \u062F\u0631 \u062F\u0633\u062A\u0631\u0633 \u0646\u06CC\u0633\u062A"
+    - key: mission.m05.guide.title
+      value: "\u0631\u0627\u0647\u0646\u0645\u0627\u06CC \u0645\u06CC\u062F\u0627\u0646\u06CC
+        \xB7 \u062A\u0647\u0627\u062C\u0645 \u0646\u0641\u0648\u0630\u06CC"
+    - key: mission.m05.hud.counterattack
+      value: "\u0646\u06CC\u0631\u0648\u06CC \u06A9\u0645\u06A9\u06CC \u062F\u0634\u0645\u0646:
+        {0} \u062B\u0627\u0646\u06CC\u0647 \u062F\u06CC\u06AF\u0631"
+    - key: mission.m05.hud.status
+      value: "\u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC: {0} \u0627\u0632 {3} \u062B\u0627\u0646\u06CC\u0647
+        \xB7 \u0646\u06AF\u0647\u0628\u0627\u0646\u200C\u0647\u0627: {1} \xB7 \u0632\u0645\u0627\u0646:
+        {2}"
+    - key: mission.m05.location
+      value: "\u0628\u062E\u0634 \u0634\u0631\u0642\u06CC \xB7 \u0645\u0631\u06A9\u0632
+        \u0627\u0631\u062A\u0628\u0627\u0637\u06CC \u0645\u0633\u062A\u062D\u06A9\u0645"
+    - key: mission.m05.name
+      value: "\u062A\u0647\u0627\u062C\u0645 \u0646\u0641\u0648\u0630\u06CC"
+    - key: mission.m05.objective.archive
+      value: "\u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u0631\u0627 \u06F2\u06F0
+        \u062B\u0627\u0646\u06CC\u0647 \u0627\u0645\u0646 \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F"
+    - key: mission.m05.objective.archive.body
+      value: "\u0647\u0645\u0647\u0654 \u0646\u06AF\u0647\u0628\u0627\u0646\u200C\u0647\u0627
+        \u0631\u0627 \u0634\u06A9\u0633\u062A \u062F\u0647\u06CC\u062F \u0648 \u0645\u062D\u062F\u0648\u062F\u0647\u0654
+        \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647 \u0631\u0627 \u06F2\u06F0
+        \u062B\u0627\u0646\u06CC\u0647 \u062D\u0641\u0638 \u06A9\u0646\u06CC\u062F."
+    - key: mission.m05.objective.core
+      value: "\u0641\u0631\u0633\u062A\u0646\u062F\u0647 \u0631\u0627 \u0627\u0632
+        \u06A9\u0627\u0631 \u0628\u06CC\u0646\u062F\u0627\u0632\u06CC\u062F"
+    - key: mission.m05.objective.core.body
+      value: "\u067E\u0633 \u0627\u0632 \u0646\u0641\u0648\u0630\u060C \u0641\u0631\u0633\u062A\u0646\u062F\u0647\u0654
+        \u0645\u0627\u0647\u0648\u0627\u0631\u0647\u200C\u0627\u06CC \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647
+        \u0631\u0627 \u0646\u0627\u0628\u0648\u062F \u06A9\u0646\u06CC\u062F."
+    - key: mission.m05.objective.gate
+      value: "\u062F\u0631\u0648\u0627\u0632\u0647\u0654 \u062C\u0627\u062F\u0647
+        \u0631\u0627 \u0646\u0627\u0628\u0648\u062F \u06A9\u0646\u06CC\u062F"
+    - key: mission.m05.objective.gate.body
+      value: "\u0628\u0647 \u062F\u0631\u0648\u0627\u0632\u0647\u0654 \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647
+        \u062D\u0645\u0644\u0647 \u06A9\u0646\u06CC\u062F \u062A\u0627 \u062C\u0627\u062F\u0647
+        \u0628\u0627\u0632 \u0634\u0648\u062F."
+    - key: mission.m05.options
+      value: "\u0628\u0627 \u0647\u0645 \u0646\u0641\u0648\u0630 \u06A9\u0646\u06CC\u062F\u061B
+        \u0632\u0631\u0647\u200C\u067E\u0648\u0634 \u0631\u0627 \u062D\u0641\u0638
+        \u06A9\u0646\u06CC\u062F\u061B \u0627\u0633\u0646\u0627\u062F \u0631\u0627
+        \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u06A9\u0646\u06CC\u062F"
+    - key: mission.m05.resources
+      value: "\u0646\u0641\u0631\u0628\u0631 \u0633\u0646\u06AF\u06CC\u0646 \u0628\u0627
+        \u0630\u062E\u06CC\u0631\u0647\u0654 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A\u061B
+        \u0633\u0627\u062E\u062A\u200C\u0648\u0633\u0627\u0632 \u0644\u0627\u0632\u0645
+        \u0646\u06CC\u0633\u062A"
+    - key: mission.m05.result.chapter
+      value: "\u0641\u0635\u0644 \u0627\u0648\u0644 \u06A9\u0627\u0645\u0644 \u0634\u062F"
+    - key: mission.m05.result.defeat
+      value: "\u062D\u0645\u0644\u0647 \u0646\u0627\u0645\u0648\u0641\u0642 \u0628\u0648\u062F"
+    - key: mission.m05.result.loss
+      value: "\u0646\u06CC\u0631\u0648\u06CC \u062D\u0645\u0644\u0647 \u0627\u0632
+        \u062F\u0633\u062A \u0631\u0641\u062A. \u062F\u0648\u0628\u0627\u0631\u0647
+        \u062A\u0644\u0627\u0634 \u06A9\u0646\u06CC\u062F \u0648 \u0628\u0627 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627
+        \u0627\u0632 \u0646\u0641\u0631\u0628\u0631 \u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC
+        \u06A9\u0646\u06CC\u062F."
+    - key: mission.m05.result.lost
+      value: "\u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A"
+    - key: mission.m05.result.setup
+      value: "\u0622\u0645\u0627\u062F\u0647\u200C\u0633\u0627\u0632\u06CC \u062D\u0645\u0644\u0647
+        \u06A9\u0627\u0645\u0644 \u0646\u0634\u062F. \u0645\u0623\u0645\u0648\u0631\u06CC\u062A
+        \u0631\u0627 \u062F\u0648\u0628\u0627\u0631\u0647 \u0622\u063A\u0627\u0632
+        \u06A9\u0646\u06CC\u062F."
+    - key: mission.m05.result.success
+      value: "\u0645\u0631\u06A9\u0632 \u0627\u0631\u062A\u0628\u0627\u0637\u06CC
+        \u062E\u0627\u0645\u0648\u0634 \u0627\u0633\u062A. \u0642\u0637\u0639\u0647\u0654
+        \u0627\u0648\u0644 \u067E\u0631\u0648\u062A\u06A9\u0644 \u062F\u0631 \u0627\u0645\u0627\u0646
+        \u0627\u0633\u062A."
+    - key: mission.m05.result.support
+      value: "\u0646\u0641\u0631\u0628\u0631 \u0633\u0646\u06AF\u06CC\u0646"
+    - key: mission.m05.result.survived
+      value: "\u0633\u0627\u0644\u0645"
+    - key: mission.m05.result.timeout
+      value: "\u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u067E\u0627\u06A9 \u0634\u062F.
+        \u062F\u0648\u0628\u0627\u0631\u0647 \u062A\u0644\u0627\u0634 \u06A9\u0646\u06CC\u062F
+        \u0648 \u067E\u06CC\u0634 \u0627\u0632 \u062F\u0648\u0627\u0632\u062F\u0647
+        \u062F\u0642\u06CC\u0642\u0647 \u0628\u0647 \u0645\u0631\u06A9\u0632 \u0628\u0631\u0633\u06CC\u062F."
+    - key: mission.m05.result.unit_losses
+      value: "\u0646\u06CC\u0631\u0648\u0647\u0627\u06CC \u0627\u0632\u062F\u0633\u062A\u200C\u0631\u0641\u062A\u0647"
+    - key: mission.m05.result.victory
+      value: "\u0648\u0627\u06A9\u0646\u0634 \u0646\u062E\u0633\u062A \u06A9\u0627\u0645\u0644
+        \u0634\u062F"
+    - key: mission.m05.reward.armor
+      value: "\u0642\u0637\u0639\u0627\u062A \u0632\u0631\u0647 \u0646\u0641\u0631\u0628\u0631"
+    - key: mission.m05.reward.card
+      value: "\u06F7\u06F5\u06F0 \u062A\u062C\u0631\u0628\u0647 | \u06F4\u06F0\u06F0\u06F0
+        \u0627\u0639\u062A\u0628\u0627\u0631 | \u0634\u0646\u0627\u0633\u0627\u06CC\u06CC
+        | \u06F3\u06F5 \u0642\u0637\u0639\u0647\u0654 \u0632\u0631\u0647"
+    - key: mission.m05.reward.ghillie
+      value: "\u062A\u06CC\u0645 \u0634\u0646\u0627\u0633\u0627\u06CC\u06CC \u0627\u0633\u062A\u062A\u0627\u0631\u06CC"
+    - key: mission.m05.star.1
+      value: "\u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u0631\u0627 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u06A9\u0646\u06CC\u062F"
+    - key: mission.m05.star.2
+      value: "\u0646\u0641\u0631\u0628\u0631 \u0633\u0646\u06AF\u06CC\u0646 \u0632\u0646\u062F\u0647
+        \u0628\u0645\u0627\u0646\u062F"
+    - key: mission.m05.star.3
+      value: "\u067E\u0627\u06CC\u0627\u0646 \u062F\u0631 \u06A9\u0645\u062A\u0631
+        \u0627\u0632 \u06F9 \u062F\u0642\u06CC\u0642\u0647"
+    - key: mission.m05.summary
+      value: "\u062F\u0631\u0648\u0627\u0632\u0647\u0654 \u0645\u0631\u06A9\u0632
+        \u0627\u0631\u062A\u0628\u0627\u0637\u06CC \u0631\u0627 \u0628\u0634\u06A9\u0646\u06CC\u062F\u060C
+        \u0641\u0631\u0633\u062A\u0646\u062F\u0647 \u0631\u0627 \u062E\u0627\u0645\u0648\u0634
+        \u06A9\u0646\u06CC\u062F \u0648 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC
+        \u0631\u0627 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u06A9\u0646\u06CC\u062F."
+    - key: mission.m05.tutorial.1.body
+      value: "\u062F\u0631\u0648\u0627\u0632\u0647 \u0631\u0627 \u0628\u0634\u06A9\u0646\u06CC\u062F\u060C
+        \u0641\u0631\u0633\u062A\u0646\u062F\u0647 \u0631\u0627 \u0646\u0627\u0628\u0648\u062F
+        \u06A9\u0646\u06CC\u062F \u0648 \u0633\u067E\u0633 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC
+        \u0631\u0627 \u06F2\u06F0 \u062B\u0627\u0646\u06CC\u0647 \u0627\u0645\u0646
+        \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F. \u06F1\u06F2 \u062F\u0642\u06CC\u0642\u0647
+        \u0641\u0631\u0635\u062A \u062F\u0627\u0631\u06CC\u062F. \u062D\u0641\u0638
+        \u0646\u0641\u0631\u0628\u0631 \u0648 \u067E\u0627\u06CC\u0627\u0646 \u062F\u0631
+        \u06A9\u0645\u062A\u0631 \u0627\u0632 \u06F9 \u062F\u0642\u06CC\u0642\u0647
+        \u0633\u062A\u0627\u0631\u0647\u0654 \u0627\u0636\u0627\u0641\u06CC \u062F\u0627\u0631\u0646\u062F."
+    - key: mission.m05.tutorial.1.diagram
+      value: "\u062F\u0631\u0648\u0627\u0632\u0647 \u2190 \u0641\u0631\u0633\u062A\u0646\u062F\u0647
+        \u2190 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC"
+    - key: mission.m05.tutorial.1.example
+      value: "\u0648\u0642\u062A\u06CC \u0622\u0645\u0627\u062F\u0647\u200C\u0627\u06CC\u062F
+        \u0627\u062F\u0627\u0645\u0647 \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F."
+    - key: mission.m05.tutorial.1.mistake
+      value: "\u0646\u0641\u0631\u0628\u0631 \u0647\u062F\u0641 \u0627\u0645\u062A\u06CC\u0627\u0632\u06CC
+        \u0627\u0633\u062A\u060C \u0646\u0647 \u062A\u0646\u0647\u0627 \u0631\u0627\u0647
+        \u067E\u06CC\u0631\u0648\u0632\u06CC."
+    - key: mission.m05.tutorial.1.title
+      value: "\u0637\u0631\u062D \u062D\u0645\u0644\u0647 \u0631\u0627 \u0628\u062E\u0648\u0627\u0646\u06CC\u062F"
+    - key: mission.m05.tutorial.2.body
+      value: "\u0646\u0641\u0631\u0628\u0631 \u0633\u0646\u06AF\u06CC\u0646 \u0631\u0627
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u062F. \u0627\u06AF\u0631
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A\u0647\u060C \u0627\u0632
+        \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627\u06CC \u0628\u0627\u0642\u06CC\u200C\u0645\u0627\u0646\u062F\u0647
+        \u0627\u0633\u062A\u0641\u0627\u062F\u0647 \u06A9\u0646\u06CC\u062F. \u0646\u0634\u0627\u0646\u0645
+        \u0628\u062F\u0647\u060C \u0646\u06CC\u0631\u0648\u06CC \u0645\u0648\u0631\u062F
+        \u0646\u0638\u0631 \u0631\u0627 \u0645\u0634\u062E\u0635 \u0645\u06CC\u200C\u06A9\u0646\u062F."
+    - key: mission.m05.tutorial.2.diagram
+      value: "\u062F\u0631\u0648\u0627\u0632\u0647 \u2190 \u0641\u0631\u0633\u062A\u0646\u062F\u0647
+        \u2190 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC"
+    - key: mission.m05.tutorial.2.example
+      value: "\u0631\u0648\u06CC \u0646\u06CC\u0631\u0648\u06CC \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647
+        \u0628\u0632\u0646\u06CC\u062F."
+    - key: mission.m05.tutorial.2.mistake
+      value: "\u0628\u0631\u0627\u06CC \u0635\u062F\u0648\u0631 \u0641\u0631\u0645\u0627\u0646
+        \u0628\u0627\u06CC\u062F \u0646\u06CC\u0631\u0648\u06CC \u062E\u0648\u062F\u06CC
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u0634\u062F\u0647 \u0628\u0627\u0634\u062F."
+    - key: mission.m05.tutorial.2.title
+      value: "\u0646\u06CC\u0631\u0648\u06CC \u062D\u0645\u0644\u0647 \u0631\u0627
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u062F"
+    - key: mission.m05.tutorial.3.body
+      value: "\u062D\u0645\u0644\u0647 \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F
+        \u0648 \u0633\u067E\u0633 \u062F\u0631\u0648\u0627\u0632\u0647\u0654 \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647\u0654
+        \u062F\u0634\u0645\u0646 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u06CC\u062F. \u0635\u0628\u0631 \u06A9\u0646\u06CC\u062F \u062A\u0627
+        \u0646\u0627\u0628\u0648\u062F \u0634\u0648\u062F. \u0646\u0634\u0627\u0646\u0645
+        \u0628\u062F\u0647\u060C \u06A9\u0644\u06CC\u06A9 \u0628\u0639\u062F\u06CC
+        \u0631\u0627 \u0645\u0634\u062E\u0635 \u0645\u06CC\u200C\u06A9\u0646\u062F."
+    - key: mission.m05.tutorial.3.diagram
+      value: "\u062F\u0631\u0648\u0627\u0632\u0647 \u2190 \u0641\u0631\u0633\u062A\u0646\u062F\u0647
+        \u2190 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC"
+    - key: mission.m05.tutorial.3.example
+      value: "\u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627 \u0627\u0632
+        \u0646\u0641\u0631\u0628\u0631 \u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC
+        \u06A9\u0646\u0646\u062F."
+    - key: mission.m05.tutorial.3.mistake
+      value: "\u0641\u0631\u0645\u0627\u0646 \u062D\u0631\u06A9\u062A \u0628\u0647
+        \u062F\u0631\u0648\u0627\u0632\u0647 \u062D\u0645\u0644\u0647 \u0646\u0645\u06CC\u200C\u06A9\u0646\u062F."
+    - key: mission.m05.tutorial.3.title
+      value: "\u062F\u0631\u0648\u0627\u0632\u0647\u0654 \u062C\u0627\u062F\u0647
+        \u0631\u0627 \u0628\u0634\u06A9\u0646\u06CC\u062F"
+    - key: mission.m05.tutorial.4.body
+      value: "\u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627 \u0631\u0627
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u062F\u060C \u062D\u0631\u06A9\u062A
+        \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F \u0648 \u0645\u0642\u0635\u062F
+        \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647 \u062F\u0631 \u0622\u0646
+        \u0633\u0648\u06CC \u062F\u0631\u0648\u0627\u0632\u0647 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u06CC\u062F. \u062A\u06CC\u0645 \u0631\u0627 \u06A9\u0646\u0627\u0631
+        \u0647\u0645 \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F\u061B \u0646\u06CC\u0631\u0648\u06CC
+        \u06A9\u0645\u06A9\u06CC \u062F\u0634\u0645\u0646 \u062F\u0631 \u0631\u0627\u0647
+        \u0627\u0633\u062A."
+    - key: mission.m05.tutorial.4.diagram
+      value: "\u062F\u0631\u0648\u0627\u0632\u0647 \u2190 \u0641\u0631\u0633\u062A\u0646\u062F\u0647
+        \u2190 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC"
+    - key: mission.m05.tutorial.4.example
+      value: "\u0628\u0647 \u0641\u0636\u0627\u06CC \u0628\u0627\u0632 \u06A9\u0646\u0627\u0631
+        \u0645\u0631\u06A9\u0632 \u0627\u0631\u062A\u0628\u0627\u0637\u06CC \u0628\u0631\u0648\u06CC\u062F."
+    - key: mission.m05.tutorial.4.fallback
+      value: "\u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627 \u0627\u0632
+        \u062F\u0633\u062A \u0631\u0641\u062A\u0647\u200C\u0627\u0646\u062F. \u0646\u0641\u0631\u0628\u0631
+        \u0632\u0646\u062F\u0647 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u06CC\u062F\u060C \u062D\u0631\u06A9\u062A \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F
+        \u0648 \u0645\u0642\u0635\u062F \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647
+        \u067E\u0634\u062A \u062F\u0631\u0648\u0627\u0632\u0647 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u06CC\u062F."
+    - key: mission.m05.tutorial.4.mistake
+      value: "\u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627 \u0631\u0627
+        \u0639\u0642\u0628 \u0646\u06AF\u0630\u0627\u0631\u06CC\u062F \u062A\u0627
+        \u0632\u0631\u0647\u200C\u067E\u0648\u0634 \u062A\u0646\u0647\u0627 \u0628\u062C\u0646\u06AF\u062F."
+    - key: mission.m05.tutorial.4.title
+      value: "\u062A\u06CC\u0645 \u0631\u0627 \u0627\u0632 \u062F\u0631\u0648\u0627\u0632\u0647
+        \u0639\u0628\u0648\u0631 \u062F\u0647\u06CC\u062F"
+    - key: mission.m05.tutorial.5.body
+      value: "\u06CC\u06A9 \u0646\u06CC\u0631\u0648\u06CC \u062E\u0648\u062F\u06CC
+        \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u062F\u060C
+        \u062D\u0645\u0644\u0647 \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F \u0648
+        \u0641\u0631\u0633\u062A\u0646\u062F\u0647\u0654 \u0645\u0627\u0647\u0648\u0627\u0631\u0647\u200C\u0627\u06CC
+        \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u06CC\u062F. \u0646\u0627\u0628\u0648\u062F\u06CC \u0622\u0646
+        \u0647\u062F\u0641 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u0631\u0627
+        \u0628\u0627\u0632 \u0645\u06CC\u200C\u06A9\u0646\u062F."
+    - key: mission.m05.tutorial.5.diagram
+      value: "\u062F\u0631\u0648\u0627\u0632\u0647 \u2190 \u0641\u0631\u0633\u062A\u0646\u062F\u0647
+        \u2190 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC"
+    - key: mission.m05.tutorial.5.example
+      value: "\u0622\u062A\u0634 \u0631\u0627 \u0631\u0648\u06CC \u0641\u0631\u0633\u062A\u0646\u062F\u0647\u0654
+        \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647 \u0645\u062A\u0645\u0631\u06A9\u0632
+        \u06A9\u0646\u06CC\u062F."
+    - key: mission.m05.tutorial.5.mistake
+      value: "\u0633\u0627\u062E\u062A\u0645\u0627\u0646\u200C\u0647\u0627\u06CC
+        \u062F\u06CC\u06AF\u0631 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u0647\u062F\u0641
+        \u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0646\u06CC\u0633\u062A\u0646\u062F."
+    - key: mission.m05.tutorial.5.title
+      value: "\u0641\u0631\u0633\u062A\u0646\u062F\u0647 \u0631\u0627 \u062E\u0627\u0645\u0648\u0634
+        \u06A9\u0646\u06CC\u062F"
+    - key: mission.m05.tutorial.6.body
+      value: "\u0628\u0647 \u0646\u06AF\u0647\u0628\u0627\u0646\u200C\u0647\u0627\u06CC
+        \u0628\u0627\u0642\u06CC\u200C\u0645\u0627\u0646\u062F\u0647 \u062D\u0645\u0644\u0647
+        \u06A9\u0646\u06CC\u062F. \u0646\u0634\u0627\u0646\u0645 \u0628\u062F\u0647\u060C
+        \u062F\u0634\u0645\u0646 \u0632\u0646\u062F\u0647 \u0631\u0627 \u0645\u0634\u062E\u0635
+        \u0645\u06CC\u200C\u06A9\u0646\u062F. \u067E\u06CC\u0634 \u0627\u0632 \u0627\u0645\u0646\u200C\u06A9\u0631\u062F\u0646
+        \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u0628\u0627\u06CC\u062F \u067E\u0627\u062F\u06AF\u0627\u0646
+        \u0648 \u0646\u06CC\u0631\u0648\u06CC \u06A9\u0645\u06A9\u06CC \u0631\u0627
+        \u0634\u06A9\u0633\u062A \u062F\u0647\u06CC\u062F."
+    - key: mission.m05.tutorial.6.diagram
+      value: "\u062F\u0631\u0648\u0627\u0632\u0647 \u2190 \u0641\u0631\u0633\u062A\u0646\u062F\u0647
+        \u2190 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC"
+    - key: mission.m05.tutorial.6.example
+      value: "\u0627\u0632 \u0646\u0641\u0631\u0628\u0631 \u0648 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627
+        \u0628\u0627 \u0647\u0645 \u0627\u0633\u062A\u0641\u0627\u062F\u0647 \u06A9\u0646\u06CC\u062F."
+    - key: mission.m05.tutorial.6.mistake
+      value: "\u062A\u0627 \u0648\u0642\u062A\u06CC \u0646\u06AF\u0647\u0628\u0627\u0646\u200C\u0647\u0627
+        \u0641\u0639\u0627\u0644\u200C\u0627\u0646\u062F\u060C \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC
+        \u0627\u0645\u0646 \u0646\u0645\u06CC\u200C\u0634\u0648\u062F."
+    - key: mission.m05.tutorial.6.title
+      value: "\u0636\u062F\u062D\u0645\u0644\u0647 \u0631\u0627 \u0645\u062A\u0648\u0642\u0641
+        \u06A9\u0646\u06CC\u062F"
+    - key: mission.m05.tutorial.7.body
+      value: "\u06CC\u06A9 \u0646\u06CC\u0631\u0648\u06CC \u0628\u0627\u0642\u06CC\u200C\u0645\u0627\u0646\u062F\u0647
+        \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u062F\u060C
+        \u062D\u0631\u06A9\u062A \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F \u0648
+        \u0645\u062D\u062F\u0648\u062F\u0647\u0654 \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647\u0654
+        \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u06CC\u062F. \u0647\u0646\u06AF\u0627\u0645 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u0627\u0633\u0646\u0627\u062F \u062F\u0633\u062A\u200C\u06A9\u0645 \u06CC\u06A9
+        \u0646\u06CC\u0631\u0648 \u062F\u0631 \u0622\u0646\u062C\u0627 \u0646\u06AF\u0647
+        \u062F\u0627\u0631\u06CC\u062F."
+    - key: mission.m05.tutorial.7.diagram
+      value: "\u062F\u0631\u0648\u0627\u0632\u0647 \u2190 \u0641\u0631\u0633\u062A\u0646\u062F\u0647
+        \u2190 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC"
+    - key: mission.m05.tutorial.7.example
+      value: "\u0632\u0645\u0627\u0646\u200C\u0633\u0646\u062C \u0627\u0645\u0646\u06CC\u062A
+        \u067E\u0633 \u0627\u0632 \u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC
+        \u0645\u062D\u0644 \u0622\u063A\u0627\u0632 \u0645\u06CC\u200C\u0634\u0648\u062F."
+    - key: mission.m05.tutorial.7.mistake
+      value: "\u062E\u0631\u0648\u062C \u0627\u0632 \u0645\u062D\u062F\u0648\u062F\u0647
+        \u0634\u0645\u0627\u0631\u0634 \u0628\u06CC\u0633\u062A\u200C\u062B\u0627\u0646\u06CC\u0647\u200C\u0627\u06CC
+        \u0631\u0627 \u0627\u0632 \u0646\u0648 \u0622\u063A\u0627\u0632 \u0645\u06CC\u200C\u06A9\u0646\u062F."
+    - key: mission.m05.tutorial.7.title
+      value: "\u0628\u0647 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u0628\u0631\u0633\u06CC\u062F"
+    - key: mission.m05.tutorial.8.body
+      value: "\u0645\u062D\u062F\u0648\u062F\u0647\u0654 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC
+        \u0631\u0627 \u06F2\u06F0 \u062B\u0627\u0646\u06CC\u0647\u0654 \u067E\u06CC\u0648\u0633\u062A\u0647
+        \u062D\u0641\u0638 \u06A9\u0646\u06CC\u062F. \u062A\u0627 \u062A\u0623\u06CC\u06CC\u062F
+        \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u062A\u0648\u0633\u0637 \u0622\u0631\u06CC\u0627\u060C
+        \u06CC\u06A9 \u0646\u06CC\u0631\u0648\u06CC \u0632\u0646\u062F\u0647 \u062F\u0631
+        \u0645\u062D\u0644 \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F."
+    - key: mission.m05.tutorial.8.diagram
+      value: "\u062F\u0631\u0648\u0627\u0632\u0647 \u2190 \u0641\u0631\u0633\u062A\u0646\u062F\u0647
+        \u2190 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC"
+    - key: mission.m05.tutorial.8.example
+      value: "\u0645\u0646\u062A\u0638\u0631 \u062A\u0623\u06CC\u06CC\u062F \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u0628\u0645\u0627\u0646\u06CC\u062F."
+    - key: mission.m05.tutorial.8.mistake
+      value: "\u0646\u0627\u0628\u0648\u062F\u06CC \u0641\u0631\u0633\u062A\u0646\u062F\u0647
+        \u0628\u0647\u200C\u062A\u0646\u0647\u0627\u06CC\u06CC \u0645\u0623\u0645\u0648\u0631\u06CC\u062A
+        \u0631\u0627 \u06A9\u0627\u0645\u0644 \u0646\u0645\u06CC\u200C\u06A9\u0646\u062F."
+    - key: mission.m05.tutorial.8.title
+      value: "\u0627\u0632 \u0627\u0633\u0646\u0627\u062F \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC\u200C\u0634\u062F\u0647
+        \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646\u06CC\u062F"
     - key: mission.reward.commander_xp
       value: "\u062A\u062C\u0631\u0628\u0647\u0654 \u0641\u0631\u0645\u0627\u0646\u062F\u0647"
     - key: mission.reward.credits
@@ -6662,6 +7181,80 @@ MonoBehaviour:
         \u0627\u0628\u062A\u062F\u0627 \u0628\u06AF\u0630\u0627\u0631\u06CC\u062F
         \u062A\u06CC\u0645 \u067E\u0632\u0634\u06A9\u06CC \u0628\u0647 \u06A9\u0627\u0631\u0634
         \u0628\u0631\u06AF\u0631\u062F\u062F."
+    - key: narrative.m05.brief.01
+      value: "\u0645\u0647\u0646\u062F\u0633\u0627\u0646 \u0645\u0646\u0634\u0623
+        \u0642\u0637\u0639\u06CC\u200C\u0647\u0627 \u0631\u0627 \u062F\u0631 \u0627\u06CC\u0646
+        \u0645\u0631\u06A9\u0632 \u0627\u0631\u062A\u0628\u0627\u0637\u06CC \u0645\u0633\u062A\u062D\u06A9\u0645
+        \u067E\u06CC\u062F\u0627 \u06A9\u0631\u062F\u0646\u062F. \u062F\u0631\u0648\u0627\u0632\u0647\u0654
+        \u062C\u0627\u062F\u0647 \u0631\u0627 \u0628\u0634\u06A9\u0646\u06CC\u062F\u060C
+        \u0641\u0631\u0633\u062A\u0646\u062F\u0647 \u0631\u0627 \u0627\u0632 \u06A9\u0627\u0631
+        \u0628\u06CC\u0646\u062F\u0627\u0632\u06CC\u062F \u0648 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC
+        \u0631\u0627 \u0627\u0645\u0646 \u06A9\u0646\u06CC\u062F. \u0627\u06CC\u0646
+        \u0627\u0633\u0646\u0627\u062F \u0645\u06CC\u200C\u062A\u0648\u0627\u0646\u0646\u062F
+        \u0622\u0645\u0631 \u062D\u0645\u0644\u0647\u200C\u0647\u0627 \u0631\u0627
+        \u0645\u0634\u062E\u0635 \u06A9\u0646\u0646\u062F."
+    - key: narrative.m05.brief.02
+      value: "\u062F\u0648 \u06AF\u0631\u0648\u0647 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631
+        \u0648 \u06CC\u06A9 \u0646\u0641\u0631\u0628\u0631 \u0633\u0646\u06AF\u06CC\u0646
+        \u062F\u0631 \u0627\u062E\u062A\u06CC\u0627\u0631 \u0634\u0645\u0627\u0633\u062A.
+        \u0628\u0627 \u0632\u0631\u0647\u200C\u067E\u0648\u0634 \u062F\u0631\u0648\u0627\u0632\u0647
+        \u0631\u0627 \u0628\u0627\u0632 \u06A9\u0646\u06CC\u062F\u060C \u0633\u067E\u0633
+        \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627 \u0631\u0627 \u0628\u0627
+        \u0647\u0645 \u0639\u0628\u0648\u0631 \u062F\u0647\u06CC\u062F. \u0627\u06AF\u0631
+        \u0645\u06CC\u200C\u062A\u0648\u0627\u0646\u06CC\u062F \u0646\u0641\u0631\u0628\u0631
+        \u0631\u0627 \u062D\u0641\u0638 \u06A9\u0646\u06CC\u062F\u061B \u0627\u0632
+        \u062F\u0633\u062A \u062F\u0627\u062F\u0646 \u0622\u0646 \u0628\u0647 \u0645\u0639\u0646\u0627\u06CC
+        \u067E\u0627\u06CC\u0627\u0646 \u062D\u0645\u0644\u0647 \u0646\u06CC\u0633\u062A."
+    - key: narrative.m05.brief.03
+      value: "\u0627\u06CC\u0646 \u0645\u0631\u06A9\u0632 \u062A\u0627 \u062F\u0648\u0627\u0632\u062F\u0647
+        \u062F\u0642\u06CC\u0642\u0647\u0654 \u062F\u06CC\u06AF\u0631 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC
+        \u0631\u0627 \u067E\u0627\u06A9 \u0645\u06CC\u200C\u06A9\u0646\u062F. \u0641\u0631\u0633\u062A\u0646\u062F\u0647
+        \u0631\u0627 \u0645\u062A\u0648\u0642\u0641 \u06A9\u0646\u06CC\u062F\u060C
+        \u0646\u06CC\u0631\u0648\u06CC \u0648\u0627\u06A9\u0646\u0634 \u062F\u0634\u0645\u0646
+        \u0631\u0627 \u0634\u06A9\u0633\u062A \u062F\u0647\u06CC\u062F \u0648 \u0645\u062D\u062F\u0648\u062F\u0647\u0654
+        \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647 \u0631\u0627 \u0628\u06CC\u0633\u062A
+        \u062B\u0627\u0646\u06CC\u0647 \u0627\u0645\u0646 \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F.
+        \u0647\u0631 \u062D\u0631\u06A9\u062A \u0631\u0627 \u0631\u0627\u0647\u0646\u0645\u0627\u06CC\u06CC
+        \u0645\u06CC\u200C\u06A9\u0646\u0645."
+    - key: narrative.m05.comms.01
+      value: "\u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u0633\u0627\u0644\u0645
+        \u0627\u0633\u062A. \u0642\u0637\u0639\u0647\u0654 \u0627\u0648\u0644 \u067E\u0631\u0648\u062A\u06A9\u0644
+        \u0631\u0627 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u06A9\u0631\u062F\u0645.
+        \u062F\u0631 \u0633\u0627\u0628\u0642\u0647\u0654 \u0645\u062C\u0648\u0632
+        \u0622\u0646\u060C \u0627\u0639\u062A\u0628\u0627\u0631\u0646\u0627\u0645\u0647\u200C\u0627\u06CC
+        \u0628\u0647 \u0646\u0627\u0645 \u0645\u0646 \u062B\u0628\u062A \u0634\u062F\u0647
+        \u06A9\u0647 \u067E\u06CC\u0634 \u0627\u0632 \u0627\u06CC\u0646 \u062D\u0645\u0644\u0647\u200C\u0647\u0627
+        \u0644\u063A\u0648 \u0634\u062F\u0647 \u0628\u0648\u062F."
+    - key: narrative.m05.debrief.01
+      value: "\u0645\u0631\u06A9\u0632 \u0627\u0631\u062A\u0628\u0627\u0637\u06CC
+        \u062E\u0627\u0645\u0648\u0634 \u0634\u062F\u0647 \u0648 \u0627\u0633\u0646\u0627\u062F
+        \u062F\u0631 \u0627\u0645\u0627\u0646\u200C\u0627\u0646\u062F. \u062D\u0627\u0644\u0627
+        \u0645\u062F\u0631\u06A9 \u062F\u0627\u0631\u06CC\u0645\u060C \u0646\u0647
+        \u0634\u0627\u06CC\u0639\u0647\u200C\u0627\u06CC \u062F\u06CC\u06AF\u0631.
+        \u0628\u0647 \u0632\u062E\u0645\u06CC\u200C\u0647\u0627 \u0631\u0633\u06CC\u062F\u06AF\u06CC
+        \u06A9\u0646\u06CC\u062F\u061B \u0634\u0647\u0631 \u0628\u0647 \u0647\u0645\u0647\u0654
+        \u06A9\u0633\u0627\u0646\u06CC \u06A9\u0647 \u0633\u0627\u0644\u0645 \u0628\u0631\u0645\u06CC\u200C\u06AF\u0631\u062F\u0627\u0646\u06CC\u0645
+        \u0646\u06CC\u0627\u0632 \u062F\u0627\u0631\u062F."
+    - key: narrative.m05.debrief.02
+      value: "\u0627\u0639\u062A\u0628\u0627\u0631\u0646\u0627\u0645\u0647 \u0644\u063A\u0648
+        \u0634\u062F\u0647 \u0628\u0648\u062F\u060C \u0627\u0645\u0627 \u06A9\u0633\u06CC
+        \u0628\u0627\u0632 \u0647\u0645 \u0627\u0632 \u0627\u0645\u0636\u0627\u06CC
+        \u0622\u0646 \u0627\u0633\u062A\u0641\u0627\u062F\u0647 \u06A9\u0631\u062F\u0647
+        \u0627\u0633\u062A. \u06CC\u06A9 \u067E\u06CC\u0627\u0645 \u0631\u0645\u0632\u06AF\u0630\u0627\u0631\u06CC\u200C\u0634\u062F\u0647
+        \u0628\u0627\u0642\u06CC \u0645\u0627\u0646\u062F\u0647: \xAB\u0642\u0627\u0633\u0645.
+        \u06AF\u0631\u0647\u0654 \u0627\u0648\u0644 \u0627\u0632 \u062F\u0633\u062A
+        \u0631\u0641\u062A.\xBB \u0647\u0646\u0648\u0632 \u0646\u0645\u06CC\u200C\u062A\u0648\u0627\u0646\u0645
+        \u0641\u0631\u0633\u062A\u0646\u062F\u0647 \u0631\u0627 \u0634\u0646\u0627\u0633\u0627\u06CC\u06CC
+        \u06A9\u0646\u0645."
+    - key: narrative.m05.debrief.03
+      value: "\u0641\u0635\u0644 \u0648\u0627\u06A9\u0646\u0634 \u0646\u062E\u0633\u062A
+        \u06A9\u0627\u0645\u0644 \u0634\u062F. \u062A\u06CC\u0645 \u0634\u0646\u0627\u0633\u0627\u06CC\u06CC
+        \u0648 \u0642\u0637\u0639\u0627\u062A \u0632\u0631\u0647 \u0628\u0647 \u062A\u062C\u0647\u06CC\u0632\u0627\u062A
+        \u0634\u0645\u0627 \u0627\u0636\u0627\u0641\u0647 \u0634\u062F\u0646\u062F.
+        \u0646\u062A\u06CC\u062C\u0647 \u0631\u0627 \u0645\u0631\u0648\u0631 \u06A9\u0646\u06CC\u062F
+        \u0648 \u0628\u0647 \u0646\u0642\u0634\u0647\u0654 \u06A9\u0627\u0631\u0632\u0627\u0631
+        \u0628\u0631\u06AF\u0631\u062F\u06CC\u062F. \u0645\u0633\u06CC\u0631 \u0634\u0648\u0627\u0647\u062F
+        \u0631\u0627 \u062F\u0646\u0628\u0627\u0644 \u0645\u06CC\u200C\u06A9\u0646\u06CC\u0645."
     - key: narrative.speaker.laila.name
       value: "\u0633\u0631\u0648\u0627\u0646 \u0644\u06CC\u0644\u0627 \u0646\u0627\u0635\u0631"
     - key: narrative.speaker.laila.role
@@ -7558,12 +8151,6 @@ MonoBehaviour:
     - key: ui.hud.passengers_soldiers_vehicles_capacity
       value: "\u0645\u0633\u0627\u0641\u0631\u0627\u0646 {0}/{1} | \u0633\u0631\u0628\u0627\u0632\u0627\u0646
         {2}/{3} | \u062E\u0648\u062F\u0631\u0648\u0647\u0627 {4}/{5}"
-    - key: ui.hud.squad.helicopter
-      value: "\u0628\u0627\u0644\u06AF\u0631\u062F"
-    - key: ui.hud.squad.jet
-      value: "\u062C\u062A"
-    - key: ui.hud.squad.vehicles
-      value: "\u062E\u0648\u062F\u0631\u0648\u0647\u0627"
     - key: ui.hud.tap_rifle_squad
       value: "\u06AF\u0631\u0648\u0647 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
         \u06A9\u0646\u06CC\u062F"
@@ -10276,3 +10863,9 @@ MonoBehaviour:
       value: "\u062D\u0645\u0644\u0647 \u062E\u0648\u062F\u0631\u0648\u0647\u0627\u06CC
         \u0632\u0645\u06CC\u0646\u06CC \u0634\u0646\u0627\u0633\u0627\u06CC\u06CC
         \u0634\u062F"
+    - key: ui.hud.squad.vehicles
+      value: "\u062E\u0648\u062F\u0631\u0648\u0647\u0627"
+    - key: ui.hud.squad.helicopter
+      value: "\u0628\u0627\u0644\u06AF\u0631\u062F"
+    - key: ui.hud.squad.jet
+      value: "\u062C\u062A"

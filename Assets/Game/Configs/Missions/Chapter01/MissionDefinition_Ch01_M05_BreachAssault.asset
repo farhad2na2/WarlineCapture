@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 976d0e40bd07865479ff5de27cefdbb8, type: 3}
+  m_Name: MissionDefinition_Ch01_M02_EstablishBase
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.MissionDefinitionConfig
+  missionId: saga.ch01.m05.breach_assault
+  schemaVersion: 1
+  displayNameKey: mission.m05.name
+  displaySummaryKey: mission.m05.summary
+  locationNameKey: mission.m05.location
+  scenarioId: scenario.ch01.m05.breach_assault
+  operationMapId: opmap.ch01.breach_assault_01
+  briefingSequenceId: seq.ch01.m05.brief
+  commsSequenceId: seq.ch01.m05.comms
+  debriefSequenceId: seq.ch01.m05.debrief
+  objectives:
+  - objectiveId: obj.ch01.m05.gate
+    displayTextKey: mission.m05.objective.gate
+    rule: 10
+    missionRoleId: role.m05.gate
+    targetConfigId: 
+    requiredCount: 1
+    failureOnRuleBreak: 0
+  - objectiveId: obj.ch01.m05.core
+    displayTextKey: mission.m05.objective.core
+    rule: 11
+    missionRoleId: role.m05.core
+    targetConfigId: 
+    requiredCount: 1
+    failureOnRuleBreak: 0
+  - objectiveId: obj.ch01.m05.archive
+    displayTextKey: mission.m05.objective.archive
+    rule: 12
+    missionRoleId: role.m05.archive
+    targetConfigId: 
+    requiredCount: 1
+    failureOnRuleBreak: 0
+  stars:
+  - starIndex: 1
+    rule: 1
+    displayTextKey: mission.m05.star.1
+    threshold: 0
+  - starIndex: 2
+    rule: 6
+    displayTextKey: mission.m05.star.2
+    threshold: 0
+  - starIndex: 3
+    rule: 3
+    displayTextKey: mission.m05.star.3
+    threshold: 540000
+  firstClearRewards:
+  - kind: 0
+    rewardConfigId: reward.commander_xp
+    displayTextKey: mission.reward.commander_xp
+    amount: 750
+  - kind: 1
+    rewardConfigId: 
+    displayTextKey: mission.reward.credits
+    amount: 4000
+  - kind: 0
+    rewardConfigId: reward.ch01.m05.ghillie_unlock
+    displayTextKey: mission.m05.reward.ghillie
+    amount: 1
+  - kind: 0
+    rewardConfigId: reward.ch01.m05.apc_armor_parts
+    displayTextKey: mission.m05.reward.armor
+    amount: 35
+  replayRewards:
+  - kind: 1
+    rewardConfigId: 
+    displayTextKey: mission.reward.credits
+    amount: 300
+  commandPolicy:
+    allowedCommands: 010000000200000003000000040000000500000006000000
+  replayAllowed: 1
+  replayTutorialDefaultEnabled: 0
+  requireOperationMapReady: 1
+  requireGridReady: 1
+  requireUnitCatalogReady: 1
+  requiredFeatureIds:
+  - feature.operation_map
+  - feature.unit_catalog
+  - feature.tactical_commands

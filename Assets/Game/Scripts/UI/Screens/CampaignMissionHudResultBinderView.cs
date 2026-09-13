@@ -33,7 +33,7 @@ namespace Game.UI.Runtime
             }
             // The shell owns this shared modal region while the guide is open. Recreating
             // the result after InstallRoot clears it would cover the guide on the next frame.
-            if((model.Defense.Applicable || model.Extraction.Applicable) && UiShellRuntimeGateway.IsMissionFieldGuidePresenting())
+            if((model.Defense.Applicable || model.Extraction.Applicable || model.Breach.Applicable) && UiShellRuntimeGateway.IsMissionFieldGuidePresenting())
             {Close(); return;}
             if (activeView == null && !Open())
                 return;

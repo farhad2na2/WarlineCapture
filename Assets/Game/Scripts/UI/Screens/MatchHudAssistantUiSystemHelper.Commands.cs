@@ -44,6 +44,7 @@ namespace Game.UI.Runtime
         private void ExecuteRecommendation()
         {
             CaptureUiOnly();
+            if (_lastPanelModel.TutorialStepCount==8) {ExecuteBreachGuidance();return;}
             if (UiShellRuntimeGateway.TryReadMissionExtraction(out _)) { ExecuteExtractionGuidance(); return; }
             if (_lastPanelModel.TutorialStepCount==12) { ExecuteDefenseGuidance(); return; }
             if (IsM02DoItStep(in _lastPanelModel))

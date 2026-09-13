@@ -14,6 +14,7 @@ namespace Game.UI.Shell.Ecs
             bool changed=store.EnsureAvailableAfterFirstClear(M01MissionId,M02MissionId);
             changed|=store.EnsureAvailableAfterFirstClear(M02MissionId,"saga.ch01.m03.radar_warning");
             changed|=store.EnsureAvailableAfterFirstClear("saga.ch01.m03.radar_warning","saga.ch01.m04.airlift");
+            changed|=store.EnsureAvailableAfterFirstClear("saga.ch01.m04.airlift","saga.ch01.m05.breach_assault");
             return changed;
         }
         private static int FindDefinitionIndex(
@@ -57,10 +58,11 @@ namespace Game.UI.Shell.Ecs
             bool m01 = definition.MissionId.Equals(new FixedString64Bytes(M01MissionId));
             bool m03 = definition.Defense.Enabled != 0;
             bool m04 = definition.Extraction.Enabled != 0;
-            FixedString64Bytes displayName = m04 ? new FixedString64Bytes("M04 - AIRLIFT") : m03 ? new FixedString64Bytes("M03 - RADAR WARNING") : m01
+            bool m05 = definition.Breach.Enabled != 0;
+            FixedString64Bytes displayName = m05 ? new FixedString64Bytes("M05 - BREACH ASSAULT") : m04 ? new FixedString64Bytes("M04 - AIRLIFT") : m03 ? new FixedString64Bytes("M03 - RADAR WARNING") : m01
                 ? new FixedString64Bytes("M01 - FIRST CONTACT")
                 : new FixedString64Bytes("M02 - ESTABLISH THE BASE");
-            FixedString64Bytes nextMissionId = m04 ? default : m01
+            FixedString64Bytes nextMissionId = m05 ? default : m04 ? new FixedString64Bytes("saga.ch01.m05.breach_assault") : m01
                 ? new FixedString64Bytes(M02MissionId)
                 : new FixedString64Bytes(m03 ? "saga.ch01.m04.airlift" : "saga.ch01.m03.radar_warning");
             return ProjectMission(
@@ -79,7 +81,8 @@ namespace Game.UI.Shell.Ecs
                 int index = mission.MissionId.Equals(new FixedString64Bytes(M01MissionId)) ? 0 :
                     mission.MissionId.Equals(new FixedString64Bytes(M02MissionId)) ? 1 :
                     mission.MissionId.Equals(new FixedString64Bytes("saga.ch01.m03.radar_warning")) ? 2 :
-                    mission.MissionId.Equals(new FixedString64Bytes("saga.ch01.m04.airlift")) ? 3 : -1;
+                    mission.MissionId.Equals(new FixedString64Bytes("saga.ch01.m04.airlift")) ? 3 :
+                    mission.MissionId.Equals(new FixedString64Bytes("saga.ch01.m05.breach_assault")) ? 4 : -1;
                 if (index >= 0) mask |= (byte)(1 << index);
             }
             return mask;
@@ -88,7 +91,7 @@ namespace Game.UI.Shell.Ecs
         private static byte CompletedMissionMask(CampaignMissionProgressSaveData[] progress)
         {
             byte mask = 0;
-            string[] ids = { M01MissionId, M02MissionId, "saga.ch01.m03.radar_warning", "saga.ch01.m04.airlift" };
+            string[] ids = { M01MissionId, M02MissionId, "saga.ch01.m03.radar_warning", "saga.ch01.m04.airlift", "saga.ch01.m05.breach_assault" };
             for (int i = 0; i < ids.Length; i++)
                 if (Find(progress, new FixedString64Bytes(ids[i]))?.firstClearCompleted == true)
                     mask |= (byte)(1 << i);

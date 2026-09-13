@@ -204,7 +204,7 @@ namespace Game.UI.Shell.Ecs
         {
             bool replay = operations.FirstClearCompleted != 0;
             FixedString64Bytes m01MissionId = new(M01MissionId);
-            bool tutorialRequired = definition.MissionId.Equals(m01MissionId) || definition.MissionId.Equals(new FixedString64Bytes(M02MissionId)) || definition.MissionId.Equals(new FixedString64Bytes(M03MissionId));
+            bool tutorialRequired = definition.Breach.Enabled != 0 || definition.MissionId.Equals(m01MissionId) || definition.MissionId.Equals(new FixedString64Bytes(M02MissionId)) || definition.MissionId.Equals(new FixedString64Bytes(M03MissionId));
             UiMissionBriefingComponent next = new()
             {
                 MissionId = definition.MissionId,

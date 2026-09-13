@@ -76,7 +76,7 @@ namespace Game.Runtime
                 facts.CivilianLossCount > facts.CivilianTotalCount ||
                 !FactsMatchOutcome(runtime.Outcome, in facts, ref definition) || !TryEvaluateStars(
                     runtime.Outcome, facts.ElapsedMilliseconds, facts.SquadLossCount, facts.CivilianLossCount,
-                    facts.ForwardPostDamaged, ref definition.StarRules, out byte stars))
+                    facts.ForwardPostDamaged, ref definition.StarRules, out byte stars, facts.BreachSupportLost))
                 return false;
 
             result = new CampaignMissionResultComponent
@@ -108,7 +108,7 @@ namespace Game.Runtime
 
         internal static bool TryEvaluateStars(
             MissionOutcomeKind outcome, int elapsedMilliseconds, int squadLossCount, int civilianLossCount,
-            byte postDamaged, ref BlobArray<CampaignMissionStarRuleBlob> rules, out byte stars)
+            byte postDamaged, ref BlobArray<CampaignMissionStarRuleBlob> rules, out byte stars, byte supportLost = 0)
         {
             stars = 0;
             if (rules.Length is < 1 or > 3 || elapsedMilliseconds < 0 || squadLossCount < 0 ||
@@ -130,6 +130,7 @@ namespace Game.Runtime
                     MissionStarRuleKind.NoSquadLoss => outcome == MissionOutcomeKind.Victory && squadLossCount == 0,
                     MissionStarRuleKind.NoCivilianLoss =>
                         outcome == MissionOutcomeKind.Victory && civilianLossCount == 0,
+                    MissionStarRuleKind.BreachSupportSurvives => outcome == MissionOutcomeKind.Victory && supportLost == 0,
                     MissionStarRuleKind.NoPostDamage => outcome == MissionOutcomeKind.Victory && postDamaged == 0,
                     MissionStarRuleKind.CompleteUnderMilliseconds =>
                         outcome == MissionOutcomeKind.Victory && elapsedMilliseconds < rule.Threshold,
@@ -145,6 +146,8 @@ namespace Game.Runtime
             in CampaignMissionAttemptFactsComponent facts,
             ref CampaignMissionDefinitionBlob definition)
         {
+            if (definition.Breach.Enabled != 0)
+                return outcome == MissionOutcomeKind.Victory ? CampaignMissionBreachRuleUtility.IsVictory(in facts) : CampaignMissionBreachRuleUtility.IsFailure(in facts);
             if (definition.Extraction.Enabled != 0)
                 return outcome == MissionOutcomeKind.Victory
                     ? CampaignMissionExtractionRuleUtility.IsVictory(in facts, definition.Extraction.RequiredPassengers)

@@ -20,6 +20,11 @@ namespace Game.UI.Shell.Ecs
             if(guidance.Active==0) return false;
             if(runtime.MissionId.Equals(AirliftId) && em.HasComponent<CampaignMissionExtractionState>(root))
                 return ResolveExtractionTutorialTarget(em,root,guidance.GuidanceId-55000,out target);
+            if(runtime.MissionId.Equals(BreachId) && em.Exists(guidance.SourceEntity) && em.HasComponent<LocalTransform>(guidance.SourceEntity))
+            {
+                target=new UiMissionTutorialTarget(em.GetComponentData<LocalTransform>(guidance.SourceEntity).Position,guidance.WorldPosition,
+                    !em.HasComponent<SelectedUnitTag>(guidance.SourceEntity),IsTutorialActorMoving(em,guidance.SourceEntity));return true;
+            }
             if(guidance.GuidanceId<45001 || guidance.GuidanceId>45012 || !em.Exists(guidance.SourceEntity) ||
                 !em.HasComponent<LocalTransform>(guidance.SourceEntity)) return false;
             var actor=guidance.SourceEntity;

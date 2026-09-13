@@ -1,0 +1,520 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-1376750674297732137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: M05_BreachAssault_debrief
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch01.m05.debrief
+  entryStateId: M05-debrief-0
+  defaultSkipDestinationId: M05-debrief-complete
+  states:
+  - stateId: M05-debrief-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 243d1a909f54e465180168a05bdf79c4
+      m_SubObjectName: M05-C01-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 243d1a909f54e465180168a05bdf79c4
+      m_SubObjectName: M05-C01-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: m05-comms-01
+      textKey: narrative.m05.comms.01
+      englishFallback: The archive is intact. I have recovered Protocol Fragment
+        One. Its authorization record includes a credential issued to me, then revoked
+        before these attacks.
+      speaker: 3
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 11.285714
+      essentialCaption: 1
+    continueStateId: M05-debrief-1
+    skipStateId: M05-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 11.285714
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: M05-debrief-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: caca93fbd2f8b4ce68f8ddfff17910e2
+      m_SubObjectName: M05-D01-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: caca93fbd2f8b4ce68f8ddfff17910e2
+      m_SubObjectName: M05-D01-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: m05-debrief-01
+      textKey: narrative.m05.debrief.01
+      englishFallback: The relay is silent and the records are safe. We have evidence
+        now, not another rumor. Take care of the wounded; the city needs everyone
+        we can bring home.
+      speaker: 2
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 11.071428
+      essentialCaption: 1
+    continueStateId: M05-debrief-2
+    skipStateId: M05-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 11.071428
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: M05-debrief-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 2b86266159f1d462b896830d937d595f
+      m_SubObjectName: M05-D02-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 2b86266159f1d462b896830d937d595f
+      m_SubObjectName: M05-D02-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: m05-debrief-02
+      textKey: narrative.m05.debrief.02
+      englishFallback: "The credential was revoked. Someone used its signature anyway.
+        One encrypted message survived: \u201CQassem. The first node is lost.\u201D
+        I cannot yet identify the sender."
+      speaker: 3
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 12.071428
+      essentialCaption: 1
+    continueStateId: M05-debrief-3
+    skipStateId: M05-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 12.071428
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: M05-debrief-3
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: c763203e008a3441fa441395042d854d
+      m_SubObjectName: M05-D03-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: c763203e008a3441fa441395042d854d
+      m_SubObjectName: M05-D03-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: m05-debrief-03
+      textKey: narrative.m05.debrief.03
+      englishFallback: First Response is complete. The reconnaissance team and armor
+        parts are assigned to your roster. Review your results, then return to the
+        campaign map. We will follow the evidence.
+      speaker: 1
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 12.785714
+      essentialCaption: 1
+    continueStateId: M05-debrief-complete
+    skipStateId: M05-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 12.785714
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: M05-debrief-complete
+    kind: 5
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 4
+    completionPayloadId: request.m05.debrief.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: M05_BreachAssault_brief
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch01.m05.brief
+  entryStateId: M05-brief-0
+  defaultSkipDestinationId: M05-brief-complete
+  states:
+  - stateId: M05-brief-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 6fac5173b42724e0da3626d90eba0590
+      m_SubObjectName: M05-B01-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 6fac5173b42724e0da3626d90eba0590
+      m_SubObjectName: M05-B01-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: m05-brief-01
+      textKey: narrative.m05.brief.01
+      englishFallback: The engineers traced the outages to this fortified relay.
+        Break the road gate, disable its transmitter, and secure the archive. Those
+        records can tell us who ordered the attacks.
+      speaker: 2
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 13
+      essentialCaption: 1
+    continueStateId: M05-brief-1
+    skipStateId: M05-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 13
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: M05-brief-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 73382e00725e340f6bd9098d960e4308
+      m_SubObjectName: M05-B02-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 73382e00725e340f6bd9098d960e4308
+      m_SubObjectName: M05-B02-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: m05-brief-02
+      textKey: narrative.m05.brief.02
+      englishFallback: Two rifle squads and a heavy APC are yours. Use the armor
+        to open the gate, then bring the rifles through together. Preserve the APC
+        if you can; losing it does not end the assault.
+      speaker: 1
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 13.428572
+      essentialCaption: 1
+    continueStateId: M05-brief-2
+    skipStateId: M05-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 13.428572
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: M05-brief-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 8608a2d831b064a92a17c78915fe0528
+      m_SubObjectName: M05-B03-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 8608a2d831b064a92a17c78915fe0528
+      m_SubObjectName: M05-B03-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: m05-brief-03
+      textKey: narrative.m05.brief.03
+      englishFallback: The relay will erase its archive in twelve minutes. Stop the
+        transmitter, defeat the responding guard, and hold the marked archive area
+        for twenty clear seconds. I will guide each action.
+      speaker: 3
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 13.357142
+      essentialCaption: 1
+    continueStateId: M05-brief-complete
+    skipStateId: M05-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 13.357142
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: M05-brief-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.m05.interactive_brief.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &7865212811310894603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: M05_BreachAssault_comms
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch01.m05.comms
+  entryStateId: M05-comms-0
+  defaultSkipDestinationId: M05-comms-complete
+  states:
+  - stateId: M05-comms-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 243d1a909f54e465180168a05bdf79c4
+      m_SubObjectName: M05-C01-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 243d1a909f54e465180168a05bdf79c4
+      m_SubObjectName: M05-C01-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: m05-comms-01
+      textKey: narrative.m05.comms.01
+      englishFallback: The archive is intact. I have recovered Protocol Fragment
+        One. Its authorization record includes a credential issued to me, then revoked
+        before these attacks.
+      speaker: 3
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 11.285714
+      essentialCaption: 1
+    continueStateId: M05-comms-complete
+    skipStateId: M05-comms-complete
+    reducedMotionSupported: 1
+    durationSeconds: 11.285714
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: M05-comms-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.m05.comms.complete
+    evidenceIds: []
+    missionContextFlags: []

@@ -159,7 +159,7 @@ namespace Game.UI.Runtime
             launchMissionButton.interactable = mission.Available;
             ApplyMissionNodes(mission.MissionId, model.NextMissionRevealed, model.AvailableMissionMask, model.CompletedMissionMask);
             ApplyRadarWarning(mission);
-            ApplyAirlift(mission);
+            ApplyAirlift(mission); ApplyBreach(mission);
             ApplyMissionGoals(mission.MissionId);
             for (int index = 0; index < progressNodes.Length; index++)
                 progressNodes[index].gameObject.SetActive(index < mission.BestStars);
@@ -196,7 +196,7 @@ namespace Game.UI.Runtime
                 GameObject lockIcon = missionLockIcons != null && index < missionLockIcons.Length ? missionLockIcons[index] : null;
                 if (lockIcon != null)
                     lockIcon.SetActive(!available);
-                bool selected = selectedMissionId == (index == 0 ? UiCampaignMissionProjectionIds.M01 : index == 1 ? UiCampaignMissionProjectionIds.M02 : index == 2 ? UiCampaignMissionProjectionIds.M03 : "saga.ch01.m04.airlift") && index < 4;
+                bool selected = selectedMissionId == (index == 0 ? UiCampaignMissionProjectionIds.M01 : index == 1 ? UiCampaignMissionProjectionIds.M02 : index == 2 ? UiCampaignMissionProjectionIds.M03 : index==3 ? "saga.ch01.m04.airlift" : "saga.ch01.m05.breach_assault") && index < 5;
                 ApplyNodeAppearance(index, available, (completedMask & (1 << index)) != 0, selected);
             }
         }

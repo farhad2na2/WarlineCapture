@@ -65,7 +65,7 @@ namespace Game.UI.Runtime
                 return;
 
             bool firstInstruction = _completedTutorialStep == 0 && _pendingTutorialStep == 1;
-            float stepDelay = _lastPanelModel.TutorialStepCount == 12 ? 0f : TutorialStepDelaySeconds;
+            float stepDelay = _lastPanelModel.TutorialStepCount is 8 or 12 ? 0f : TutorialStepDelaySeconds;
             if (_tutorialCinematicSuspended)
             {
                 _tutorialCinematicSuspended = false;
@@ -85,7 +85,7 @@ namespace Game.UI.Runtime
             _displayedTutorialStep = _pendingTutorialStep;
             _displayedTutorialPhase = _pendingTutorialPhase;
             ShowEmbeddedTutorial();
-            if (_lastPanelModel.TutorialStepCount!=12 && !WasTutorialCueAutoShown(_displayedTutorialStep, _displayedTutorialPhase) &&
+            if (_lastPanelModel.TutorialStepCount is not (8 or 12) && !WasTutorialCueAutoShown(_displayedTutorialStep, _displayedTutorialPhase) &&
                 TryShowRecommendation(
                     preferPanelRecommendation:
                     _displayedTutorialPhase == UiTutorialNarrationPhase.PrimaryAction))
@@ -93,7 +93,7 @@ namespace Game.UI.Runtime
                 MarkTutorialCueAutoShown(_displayedTutorialStep, _displayedTutorialPhase);
             }
             if (CanUseTutorialNarration(_lastPanelModel.TutorialStepCount) &&
-                (_lastPanelModel.TutorialStepCount is 9 or 12 ||
+                (_lastPanelModel.TutorialStepCount is 8 or 9 or 12 ||
                  _lastPanelModel.RecommendationTargetKind != 4) &&
                 !WasTutorialCueNarrated(
                     _displayedTutorialStep,
@@ -117,7 +117,7 @@ namespace Game.UI.Runtime
 
         private void HandleSquadSelectionAcknowledged()
         {
-            if (_lastPanelModel.TutorialStep == 1 && _lastPanelModel.TutorialStepCount!=12)
+            if (_lastPanelModel.TutorialStep == 1 && _lastPanelModel.TutorialStepCount is not (8 or 12))
                 CompleteTutorialStep(1, finalStep: false);
         }
 
@@ -187,13 +187,6 @@ namespace Game.UI.Runtime
             int bit = TutorialCueBit(step, phase);
             if (bit >= 0)
                 _autoShownTutorialCues |= (1u << bit);
-        }
-
-        private static int TutorialCueBit(byte step, UiTutorialNarrationPhase phase)
-        {
-            if (step is < 1 or > 12 || phase > UiTutorialNarrationPhase.WorldTarget)
-                return -1;
-            return ((step - 1) * 2) + (int)phase;
         }
 
         internal static bool CanUseTutorialNarration(byte tutorialStepCount) =>

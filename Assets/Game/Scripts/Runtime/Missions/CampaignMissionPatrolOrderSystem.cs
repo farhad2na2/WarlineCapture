@@ -67,7 +67,7 @@ namespace Game.Runtime
                 return;
             ref CampaignMissionDefinitionBlob definition = ref catalog.Blob.Value.Missions[definitionIndex];
             int routeElapsedMilliseconds = facts.ElapsedMilliseconds;
-            if (definition.Defense.Enabled == 0 && definition.Extraction.Enabled == 0)
+            if (definition.Defense.Enabled == 0 && definition.Extraction.Enabled == 0 && definition.Breach.Enabled == 0)
             foreach (RefRO<CampaignMissionOpeningPresentationComponent> opening in
                      SystemAPI.Query<RefRO<CampaignMissionOpeningPresentationComponent>>())
             {
@@ -121,9 +121,10 @@ namespace Game.Runtime
                         if (!role.ValueRO.SessionToken.Equals(runtime.SessionToken))
                             continue;
                         UnitCombat current = combat.ValueRO;
-                        ApplyTutorialCombatPolicy(ref current, releaseCombat);
+                        bool releaseUnit=releaseCombat && CanReleaseBreachCombat(ref state,ref definition,role.ValueRO.MissionRoleId);
+                        ApplyTutorialCombatPolicy(ref current, releaseUnit);
                         combat.ValueRW = current;
-                        if (holdCombat && state.EntityManager.HasComponent<EngageTarget>(entity) &&
+                        if (!releaseUnit && state.EntityManager.HasComponent<EngageTarget>(entity) &&
                             ShouldRemovePreEngageTarget(
                                 state.EntityManager.GetComponentData<EngageTarget>(entity),
                                 faction.ValueRO.Id))
@@ -142,6 +143,7 @@ namespace Game.Runtime
                 }
             }
             if (definition.Defense.Enabled != 0) AdvanceDefenseCameraFallbacks(ref state,in runtime,ref definition.Defense.CameraTour);
+            if (definition.Breach.Enabled != 0) AdvanceDefenseCameraFallbacks(ref state,in runtime,ref definition.Breach.CameraTour);
             if (definition.Extraction.Enabled != 0) AdvanceDefenseCameraFallbacks(ref state,in runtime,ref definition.Extraction.CameraTour);
             if (_cameraFocusQuery.CalculateEntityCount() == 1)
             {
@@ -167,7 +169,7 @@ namespace Game.Runtime
                         CampaignMissionSpawnSystem.QueueMissionOpeningOverview(
                             state.EntityManager,
                             focusEntity,
-                            in current, definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0, definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0);
+                            in current, definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0 || definition.Breach.Enabled != 0, definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0 || definition.Breach.Enabled != 0);
                         current.InitialRtsOverviewRequested = 1;
                         opening.ValueRW = current;
                         break;
@@ -175,11 +177,16 @@ namespace Game.Runtime
 
                     bool useEstablishBaseOpening = ShouldUseEstablishBaseOpening(runtime.MissionId);
                     bool openingCanAdvance = (!useEstablishBaseOpening || CanAdvanceEstablishBaseOpening(runtime.Phase)) &&
-                        ((definition.Defense.Enabled == 0 && definition.Extraction.Enabled == 0) || runtime.Phase >= MissionPhaseKind.FindSquad);
+                        ((definition.Defense.Enabled == 0 && definition.Extraction.Enabled == 0 && definition.Breach.Enabled == 0) || runtime.Phase >= MissionPhaseKind.FindSquad);
                     if (current.Stage <= 5 && focus.Requested == 0 && openingCanAdvance &&
                         IsOpeningVisible(state.EntityManager))
                         current.ElapsedMilliseconds = SaturatingAddMilliseconds(
                             current.ElapsedMilliseconds, SystemAPI.Time.DeltaTime);
+                    if(definition.Breach.Enabled!=0 && openingCanAdvance)
+                    {
+                        AdvanceDefenseCamera(ref state,focusEntity,in focus,ref current,ref definition.Breach.CameraTour,metadata);
+                        opening.ValueRW=current; break;
+                    }
                     if(definition.Extraction.Enabled!=0 && openingCanAdvance)
                     {
                         AdvanceDefenseCamera(ref state,focusEntity,in focus,ref current,ref definition.Extraction.CameraTour,metadata);
@@ -262,6 +269,11 @@ namespace Game.Runtime
                     if (current.Required == 0 || !current.SessionToken.Equals(runtime.SessionToken) ||
                         current.Stage >= 4)
                         continue;
+                    if (definition.Breach.Enabled != 0)
+                    {
+                        AdvanceDefenseFinale(ref state, focusEntity, in runtime, ref current, ref definition.Breach.CameraTour);
+                        finale.ValueRW = current; continue;
+                    }
                     if (definition.Extraction.Enabled != 0)
                     {
                         AdvanceDefenseFinale(ref state, focusEntity, in runtime, ref current, ref definition.Extraction.CameraTour);
@@ -388,7 +400,7 @@ namespace Game.Runtime
                     (float)SystemAPI.Time.ElapsedTime,
                     cooldownSeconds: 20f);
             }
-            if (definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0)
+            if (definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0 || definition.Breach.Enabled != 0)
             {
                 AdvanceConvoyRoutes(ref state, in runtime, in facts, ref definition, ref metadata.Blob.Value);
                 return;
@@ -454,16 +466,6 @@ namespace Game.Runtime
             // advances the mission into Engage. Removing that commanded target here deadlocks
             // the tutorial before CampaignMissionRuntimeSystem can observe it.
             return !FactionIdentity.IsPlayerControlled(sourceFactionId) || target.IsCommanded == 0;
-        }
-
-        private static bool TryFindRoute(
-            ref CampaignMissionDefinitionBlob definition,
-            Unity.Collections.FixedString64Bytes id, out int index)
-        {
-            for (int i = 0; i < definition.PatrolRoutes.Length; i++)
-                if (definition.PatrolRoutes[i].RouteId.Equals(id)) { index = i; return true; }
-            index = -1;
-            return false;
         }
 
         private static int SaturatingAddMilliseconds(int current, float deltaSeconds)

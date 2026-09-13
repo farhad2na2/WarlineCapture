@@ -229,7 +229,9 @@ namespace Game.Components
         RadarReinforce = 21, RadarPriority = 22, RadarAdapt = 23, RadarResult = 24,
         AirliftPlan = 25, AirliftSelectCarrier = 26, AirliftReachTeam = 27, AirliftSelectTeam = 28,
         AirliftBoardCarrier = 29, AirliftEscort = 30, AirliftUnload = 31, AirliftSelectAircraft = 32,
-        AirliftBoardAircraft = 33, AirliftSecure = 34, AirliftDepart = 35, AirliftResult = 36
+        AirliftBoardAircraft = 33, AirliftSecure = 34, AirliftDepart = 35, AirliftResult = 36,
+        BreachPlan = 37, BreachSelect = 38, BreachGate = 39, BreachAdvance = 40,
+        BreachCore = 41, BreachCounterattack = 42, BreachArchive = 43, BreachHold = 44
     }
 
     public struct CampaignMissionGuidanceProjectionComponent : IComponentData
@@ -292,6 +294,7 @@ namespace Game.Components
         public CampaignMissionBuildZoneBlob BuildZone;
         public CampaignMissionDefenseDefinitionBlob Defense;
         public CampaignMissionExtractionDefinitionBlob Extraction;
+        public CampaignMissionBreachDefinitionBlob Breach;
         public BlobArray<CampaignMissionBuildEntryBlob> BuildCatalog;
         public BlobArray<CampaignMissionObjectiveBlob> Objectives;
         public BlobArray<CampaignMissionForceGroupBlob> ForceGroups;

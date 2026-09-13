@@ -101,7 +101,7 @@ namespace Game.UI.Runtime
         {
             _tutorialStep = model.TutorialStep;
             _tutorialStepCount = model.TutorialStepCount;
-            ApplyMissionLayout(_tutorialStepCount is 9 or 12,model.LargeTextEnabled);
+            ApplyMissionLayout(_tutorialStepCount is 8 or 9 or 12,model.LargeTextEnabled);
             _recommendationKind = model.RecommendationKind;
             _rightToLeft = UiShellRuntimeGateway.Localization.IsRightToLeft;
             ApplyLanguagePresentation();
@@ -113,11 +113,11 @@ namespace Game.UI.Runtime
             showMeButton.interactable = model.CanShow;
             doItButton.interactable = model.CanExecute;
             SetLocalizedText(showMeButtonLabel, "SHOW ME");
-            SetLocalizedText(doItButtonLabel, _tutorialStepCount==12 ? model.RecommendationActionLabel : "DO IT");
+            SetLocalizedText(doItButtonLabel, _tutorialStepCount is 8 or 12 ? model.RecommendationActionLabel : "DO IT");
             if (closeButton != null)
                 closeButton.gameObject.SetActive(true);
             if (firstStepGuideRoot != null)
-                firstStepGuideRoot.gameObject.SetActive(_tutorialStep == 1 && _tutorialStepCount!=12);
+                firstStepGuideRoot.gameObject.SetActive(_tutorialStep == 1 && _tutorialStepCount is not (8 or 12));
         }
 
         public void SetPresentationVisible(bool visible)
@@ -131,7 +131,7 @@ namespace Game.UI.Runtime
             TacticalCommandMode mode,
             bool worldTargetCompleted)
         {
-            if (_tutorialStepCount!=12 && _tutorialStep == 2 && _recommendationKind == 2)
+            if (_tutorialStepCount is not (8 or 12) && _tutorialStep == 2 && _recommendationKind == 2)
             {
                 if (worldTargetCompleted)
                 {
@@ -154,7 +154,7 @@ namespace Game.UI.Runtime
                 return;
             }
 
-            if (_tutorialStepCount!=12 && _tutorialStep is 3 or 4 && _recommendationKind == 3)
+            if (_tutorialStepCount is not (8 or 12) && _tutorialStep is 3 or 4 && _recommendationKind == 3)
             {
                 if (worldTargetCompleted)
                 {
@@ -185,12 +185,12 @@ namespace Game.UI.Runtime
 
         public void ApplyAccessibility(bool largeTextEnabled, bool highContrastEnabled)
         {
-            ApplyMissionLayout(_tutorialStepCount is 9 or 12,largeTextEnabled);
+            ApplyMissionLayout(_tutorialStepCount is 8 or 9 or 12,largeTextEnabled);
             float scale = largeTextEnabled ? 1.08f : 1f;
             titleText.fontSize = 29f * scale;
             bodyText.fontSize = 21f * scale;
             progressText.fontSize = 17f * scale;
-            if(_tutorialStepCount is 9 or 12)
+            if(_tutorialStepCount is 8 or 9 or 12)
             {
                 bodyText.textWrappingMode = TextWrappingModes.Normal;
                 titleText.fontSizeMin=largeTextEnabled ? 19 : 17; titleText.fontSizeMax=largeTextEnabled ? 22 : 20;
@@ -251,9 +251,9 @@ namespace Game.UI.Runtime
         {
             if (progressText != null) progressText.gameObject.SetActive(_tutorialStepCount > 0);
             int step = Mathf.Max(1, _tutorialStep);
-            if (_tutorialStepCount!=12 && _tutorialStep == 2 && narrationPhase == UiTutorialNarrationPhase.WorldTarget)
+            if (_tutorialStepCount is not (8 or 12) && _tutorialStep == 2 && narrationPhase == UiTutorialNarrationPhase.WorldTarget)
                 step = 3;
-            else if (_tutorialStepCount!=12 && _tutorialStep is 3 or 4)
+            else if (_tutorialStepCount is not (8 or 12) && _tutorialStep is 3 or 4)
                 step = narrationPhase == UiTutorialNarrationPhase.WorldTarget ? 5 : 4;
 
             int count = Mathf.Max(step, _tutorialStepCount);

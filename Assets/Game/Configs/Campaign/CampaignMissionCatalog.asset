@@ -25,3 +25,6 @@ MonoBehaviour:
   - missionId: saga.ch01.m04.airlift
     definition: {fileID: 11400000, guid: c6c2702feade047f2b6e34780c4fa602, type: 2}
     scenario: {fileID: 11400000, guid: edb66fda0082f4bfc863b2287814f053, type: 2}
+  - missionId: saga.ch01.m05.breach_assault
+    definition: {fileID: 11400000, guid: 47f1daa5377c64b9bb4b74c64f8cce1d, type: 2}
+    scenario: {fileID: 11400000, guid: dd5f9a0127b984e29a0ce44bbfd52af9, type: 2}

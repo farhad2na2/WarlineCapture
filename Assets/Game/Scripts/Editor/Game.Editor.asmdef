@@ -40,7 +40,8 @@
         "Game.Narrative.Runtime",
         "Game.Runtime.Combat",
         "Unity.InputSystem",
-        "Game.UI.ScenarioLab.Runtime"
+        "Game.UI.ScenarioLab.Runtime",
+        "Unity.2D.Sprite.Editor"
     ],
     "includePlatforms": [
         "Editor"

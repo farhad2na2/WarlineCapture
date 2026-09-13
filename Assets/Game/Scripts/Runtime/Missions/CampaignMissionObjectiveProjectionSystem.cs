@@ -135,6 +135,11 @@ namespace Game.Runtime
                             !objective.MissionRoleId.Equals(definition.BaseMissionRoleId))
                             return false;
                         break;
+                    case MissionObjectiveRuleKind.BreachGate:
+                    case MissionObjectiveRuleKind.DestroyBreachCore:
+                    case MissionObjectiveRuleKind.SecureBreachArchive:
+                        if (definition.Breach.Enabled == 0 || objective.MissionRoleId.IsEmpty || !objective.TargetConfigId.IsEmpty) return false;
+                        break;
                     case MissionObjectiveRuleKind.ExtractPassengers:
                     case MissionObjectiveRuleKind.ProtectExtractionTransport:
                     case MissionObjectiveRuleKind.SecureLandingZone:
@@ -219,7 +224,7 @@ namespace Game.Runtime
                 State = objectiveState,
                 Priority = (byte)math.min(byte.MaxValue, index + 2),
                 IsPrimary = index == 0 ? (byte)1 : (byte)0,
-                Title = definition.Defense.Enabled!=0 || definition.Extraction.Enabled!=0 ? objective.DisplayTextKey : ResolveTitle(objective.Rule),
+                Title = definition.Defense.Enabled!=0 || definition.Extraction.Enabled!=0 || definition.Breach.Enabled!=0 ? objective.DisplayTextKey : ResolveTitle(objective.Rule),
                 Body = ResolveBody(in objective, objectiveState, in facts),
                 ProtectsTarget = objective.Rule is MissionObjectiveRuleKind.ProtectMissionRole or
                     MissionObjectiveRuleKind.DefendMissionRole ? (byte)1 : (byte)0
@@ -255,6 +260,9 @@ namespace Game.Runtime
                     : facts.ForwardPostDestroyed != 0
                     ? MatchObjectiveState.Failed
                     : facts.ForwardPostDamaged != 0 ? MatchObjectiveState.Warning : MatchObjectiveState.Active,
+                MissionObjectiveRuleKind.BreachGate => facts.BreachGateDestroyed != 0 ? MatchObjectiveState.Complete : MatchObjectiveState.Active,
+                MissionObjectiveRuleKind.DestroyBreachCore => facts.BreachCoreDestroyed != 0 ? MatchObjectiveState.Complete : facts.BreachGateDestroyed == 0 ? MatchObjectiveState.Blocked : MatchObjectiveState.Active,
+                MissionObjectiveRuleKind.SecureBreachArchive => facts.BreachArchiveSecured != 0 ? MatchObjectiveState.Complete : facts.BreachCoreDestroyed == 0 ? MatchObjectiveState.Blocked : MatchObjectiveState.Active,
                 MissionObjectiveRuleKind.ExtractPassengers => facts.CivilianLossCount > 0 ? MatchObjectiveState.Failed :
                     facts.ExtractionPassengersDelivered >= objective.RequiredCount ? MatchObjectiveState.Complete : MatchObjectiveState.Active,
                 MissionObjectiveRuleKind.ProtectExtractionTransport => facts.ExtractionCarrierLost != 0 || facts.ExtractionAircraftLost != 0 ? MatchObjectiveState.Failed : MatchObjectiveState.Active,
@@ -272,6 +280,9 @@ namespace Game.Runtime
         {
             return objective.Rule switch
             {
+                MissionObjectiveRuleKind.BreachGate => definition.Breach.GateAnchorId,
+                MissionObjectiveRuleKind.DestroyBreachCore => definition.Breach.CoreAnchorId,
+                MissionObjectiveRuleKind.SecureBreachArchive => definition.Breach.ArchiveAnchorId,
                 MissionObjectiveRuleKind.ExtractPassengers => definition.Extraction.RescueAnchorId,
                 MissionObjectiveRuleKind.ProtectExtractionTransport or MissionObjectiveRuleKind.SecureLandingZone => definition.Extraction.LandingAnchorId,
                 MissionObjectiveRuleKind.PreventCoreBreach => definition.Defense.InnerCoreAnchorId,
@@ -305,6 +316,9 @@ namespace Game.Runtime
         {
             switch (objective.Rule)
             {
+                case MissionObjectiveRuleKind.BreachGate: return new FixedString128Bytes("mission.m05.objective.gate.body");
+                case MissionObjectiveRuleKind.DestroyBreachCore: return new FixedString128Bytes("mission.m05.objective.core.body");
+                case MissionObjectiveRuleKind.SecureBreachArchive: return new FixedString128Bytes("mission.m05.objective.archive.body");
                 case MissionObjectiveRuleKind.PreventCoreBreach:
                     return facts.CoreBreached != 0 ? new FixedString128Bytes("Inner defense line breached")
                         : new FixedString128Bytes("Keep the convoy outside the inner defense line");

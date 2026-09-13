@@ -42,6 +42,7 @@ namespace Game.Runtime
             if (!SystemAPI.TryGetSingleton(out CampaignMissionRuntimeComponent activeRuntime) ||
                 !SystemAPI.TryGetSingleton(out CampaignMissionAttemptFactsComponent _))
                 return;
+            if (TryAdvanceBreach(ref state, root, in activeRuntime)) return;
             if (TryAdvanceExtraction(ref state, root, in activeRuntime)) return;
             if (TryAdvanceDefense(ref state, root, in activeRuntime)) return;
 

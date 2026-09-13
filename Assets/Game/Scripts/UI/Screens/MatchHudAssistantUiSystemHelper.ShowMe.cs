@@ -15,7 +15,7 @@ namespace Game.UI.Runtime
         }
 
         private bool _focusNextTutorialWorld;
-        private bool UsesNextTutorialAction => _lastPanelModel.TutorialStepCount == 12 ||
+        private bool UsesNextTutorialAction => _lastPanelModel.TutorialStepCount is 8 or 12 ||
             _lastPanelModel.TutorialStepCount == 9 && _lastPanelModel.TutorialStep is 3 or 4 or 5 or 6;
 
         private bool ShowNextTutorialAction()

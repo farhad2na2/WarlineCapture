@@ -3263,6 +3263,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.MissionFieldGuideView
   guide: {fileID: 11400000, guid: a28c98badf27947258c8a27a5ead231a, type: 2}
   extractionGuide: {fileID: 11400000, guid: 58bfee5a1f0894229802070ae554f471, type: 2}
+  breachGuide: {fileID: 11400000, guid: 58cda0c8de2344b7eb2a2a89550fd624, type: 2}
   topicsButton: {fileID: 6178553223766020603}
   classesButton: {fileID: 2093645630736046819}
   previousButton: {fileID: 9033275931593746121}

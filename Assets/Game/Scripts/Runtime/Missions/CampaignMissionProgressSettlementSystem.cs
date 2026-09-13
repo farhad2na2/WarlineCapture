@@ -143,6 +143,7 @@ namespace Game.Runtime
                 return M03MissionId;
             if (missionId.Equals(new FixedString64Bytes(M03MissionId)))
                 return "saga.ch01.m04.airlift";
+            if (missionId.Equals(new FixedString64Bytes("saga.ch01.m04.airlift"))) return "saga.ch01.m05.breach_assault";
             return string.Empty;
         }
 

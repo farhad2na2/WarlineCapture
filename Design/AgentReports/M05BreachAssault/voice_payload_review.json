@@ -1,0 +1,112 @@
+{
+  "mission": "saga.ch01.m05.breach_assault",
+  "service": "api.elevenlabs.io",
+  "clips": 30,
+  "entries": [
+    [
+      "narrative",
+      "m05-brief-01",
+      "SAMIRA",
+      "The engineers traced the outages to this fortified relay. Break the road gate, disable its transmitter, and secure the archive. Those records can tell us who ordered the attacks.",
+      "مهندسان منشأ قطعی‌ها را در این مرکز ارتباطی مستحکم پیدا کردند. دروازهٔ جاده را بشکنید، فرستنده را از کار بیندازید و بایگانی را امن کنید. این اسناد می‌توانند آمر حمله‌ها را مشخص کنند."
+    ],
+    [
+      "narrative",
+      "m05-brief-02",
+      "DALIA",
+      "Two rifle squads and a heavy APC are yours. Use the armor to open the gate, then bring the rifles through together. Preserve the APC if you can; losing it does not end the assault.",
+      "دو گروه تفنگدار و یک نفربر سنگین در اختیار شماست. با زره‌پوش دروازه را باز کنید، سپس تفنگدارها را با هم عبور دهید. اگر می‌توانید نفربر را حفظ کنید؛ از دست دادن آن به معنای پایان حمله نیست."
+    ],
+    [
+      "narrative",
+      "m05-brief-03",
+      "ARIA",
+      "The relay will erase its archive in twelve minutes. Stop the transmitter, defeat the responding guard, and hold the marked archive area for twenty clear seconds. I will guide each action.",
+      "این مرکز تا دوازده دقیقهٔ دیگر بایگانی را پاک می‌کند. فرستنده را متوقف کنید، نیروی واکنش دشمن را شکست دهید و محدودهٔ مشخص‌شده را بیست ثانیه امن نگه دارید. هر حرکت را راهنمایی می‌کنم."
+    ],
+    [
+      "narrative",
+      "m05-comms-01",
+      "ARIA",
+      "The archive is intact. I have recovered Protocol Fragment One. Its authorization record includes a credential issued to me, then revoked before these attacks.",
+      "بایگانی سالم است. قطعهٔ اول پروتکل را بازیابی کردم. در سابقهٔ مجوز آن، اعتبارنامه‌ای به نام من ثبت شده که پیش از این حمله‌ها لغو شده بود."
+    ],
+    [
+      "narrative",
+      "m05-debrief-01",
+      "SAMIRA",
+      "The relay is silent and the records are safe. We have evidence now, not another rumor. Take care of the wounded; the city needs everyone we can bring home.",
+      "مرکز ارتباطی خاموش شده و اسناد در امان‌اند. حالا مدرک داریم، نه شایعه‌ای دیگر. به زخمی‌ها رسیدگی کنید؛ شهر به همهٔ کسانی که سالم برمی‌گردانیم نیاز دارد."
+    ],
+    [
+      "narrative",
+      "m05-debrief-02",
+      "ARIA",
+      "The credential was revoked. Someone used its signature anyway. One encrypted message survived: “Qassem. The first node is lost.” I cannot yet identify the sender.",
+      "اعتبارنامه لغو شده بود، اما کسی باز هم از امضای آن استفاده کرده است. یک پیام رمزگذاری‌شده باقی مانده: «قاسم. گرهٔ اول از دست رفت.» هنوز نمی‌توانم فرستنده را شناسایی کنم."
+    ],
+    [
+      "narrative",
+      "m05-debrief-03",
+      "DALIA",
+      "First Response is complete. The reconnaissance team and armor parts are assigned to your roster. Review your results, then return to the campaign map. We will follow the evidence.",
+      "فصل واکنش نخست کامل شد. تیم شناسایی و قطعات زره به تجهیزات شما اضافه شدند. نتیجه را مرور کنید و به نقشهٔ کارزار برگردید. مسیر شواهد را دنبال می‌کنیم."
+    ],
+    [
+      "tutorial",
+      "tutorial-m05-01",
+      "ARIA",
+      "Break the gate, destroy the transmitter, then secure the archive for 20 seconds. You have 12 minutes. Keep the APC alive and finish under 9 minutes for bonus stars.",
+      "دروازه را بشکنید، فرستنده را نابود کنید و سپس بایگانی را ۲۰ ثانیه امن نگه دارید. ۱۲ دقیقه فرصت دارید. حفظ نفربر و پایان در کمتر از ۹ دقیقه ستارهٔ اضافی دارند."
+    ],
+    [
+      "tutorial",
+      "tutorial-m05-02",
+      "ARIA",
+      "Select the heavy APC. If it is lost, use a surviving rifle squad. Show Me marks the unit to select.",
+      "نفربر سنگین را انتخاب کنید. اگر از دست رفته، از تفنگدارهای باقی‌مانده استفاده کنید. نشانم بده، نیروی مورد نظر را مشخص می‌کند."
+    ],
+    [
+      "tutorial",
+      "tutorial-m05-03",
+      "ARIA",
+      "Press Attack, then tap the marked enemy gate. Wait for it to fall. Show Me follows your next required click.",
+      "حمله را بزنید و سپس دروازهٔ مشخص‌شدهٔ دشمن را انتخاب کنید. صبر کنید تا نابود شود. نشانم بده، کلیک بعدی را مشخص می‌کند."
+    ],
+    [
+      "tutorial",
+      "tutorial-m05-04",
+      "ARIA",
+      "Select your rifles, press Move, and tap the marked approach beyond the gate. Keep the team together; enemy reinforcements are responding.",
+      "تفنگدارها را انتخاب کنید، حرکت را بزنید و مقصد مشخص‌شده در آن سوی دروازه را انتخاب کنید. تیم را کنار هم نگه دارید؛ نیروی کمکی دشمن در راه است."
+    ],
+    [
+      "tutorial",
+      "tutorial-m05-05",
+      "ARIA",
+      "Select a friendly unit, press Attack, then tap the marked satellite transmitter. Destroying it opens the archive objective.",
+      "یک نیروی خودی را انتخاب کنید، حمله را بزنید و فرستندهٔ ماهواره‌ای مشخص‌شده را انتخاب کنید. نابودی آن هدف بایگانی را باز می‌کند."
+    ],
+    [
+      "tutorial",
+      "tutorial-m05-06",
+      "ARIA",
+      "Attack the remaining guards. Show Me marks a live enemy. You must defeat the garrison and its reinforcements before securing the archive.",
+      "به نگهبان‌های باقی‌مانده حمله کنید. نشانم بده، دشمن زنده را مشخص می‌کند. پیش از امن‌کردن بایگانی باید پادگان و نیروی کمکی را شکست دهید."
+    ],
+    [
+      "tutorial",
+      "tutorial-m05-07",
+      "ARIA",
+      "Select a surviving unit, press Move, then tap the marked archive area. Keep at least one unit there while the records are recovered.",
+      "یک نیروی باقی‌مانده را انتخاب کنید، حرکت را بزنید و محدودهٔ مشخص‌شدهٔ بایگانی را انتخاب کنید. هنگام بازیابی اسناد دست‌کم یک نیرو در آنجا نگه دارید."
+    ],
+    [
+      "tutorial",
+      "tutorial-m05-08",
+      "ARIA",
+      "Hold the archive area for 20 uninterrupted seconds. Keep a survivor in the marked area until ARIA confirms recovery.",
+      "محدودهٔ بایگانی را ۲۰ ثانیهٔ پیوسته حفظ کنید. تا تأیید بازیابی توسط آریا، یک نیروی زنده در محل نگه دارید."
+    ]
+  ]
+}

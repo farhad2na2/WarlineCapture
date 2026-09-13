@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: M05 Narrative
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: M05 Narrative
+  m_GUID: c55178870bf9949a4862f63cff2dbc9f
+  m_SerializeEntries:
+  - m_GUID: 243d1a909f54e465180168a05bdf79c4
+    m_Address: narrative.m05.C01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2b86266159f1d462b896830d937d595f
+    m_Address: narrative.m05.D02
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6fac5173b42724e0da3626d90eba0590
+    m_Address: narrative.m05.B01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 73382e00725e340f6bd9098d960e4308
+    m_Address: narrative.m05.B02
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8608a2d831b064a92a17c78915fe0528
+    m_Address: narrative.m05.B03
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c763203e008a3441fa441395042d854d
+    m_Address: narrative.m05.D03
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: caca93fbd2f8b4ce68f8ddfff17910e2
+    m_Address: narrative.m05.D01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: d6786f5b1e1b3491ab7f1f020f1abc0a, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: cc4b0534d428145cfaecfa5701056412, type: 2}
+    - {fileID: 11400000, guid: 05d31d218f718437c81691c972514b45, type: 2}

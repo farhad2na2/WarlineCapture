@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Configs::Game.Configs.OperationMapCatalogConfig
   definitions:
   - {fileID: 11400000, guid: 1a2923aa685514516b10e057261fd960, type: 2}
+  - {fileID: 11400000, guid: 0a2117ca560a44d4099b1fb448c92c0c, type: 2}
   - {fileID: 11400000, guid: cdac096ca74d84e84b2e0e1f93a29014, type: 2}
   - {fileID: 11400000, guid: 8c19d5328fd5b7c43b9d5ecb0065df04, type: 2}
   - {fileID: 11400000, guid: 30ded13be441a44b588827ac6aee0e2d, type: 2}
@@ -24,6 +25,12 @@ MonoBehaviour:
       deliveryKind: 0
       contentVersion: 1
       contentHash: 3ec8d7c3b871218a5478cb1b2d1648b4cfa522f6aba4e7c70ceab89e25791814
+  - definition: {fileID: 11400000, guid: 0a2117ca560a44d4099b1fb448c92c0c, type: 2}
+    contentPack:
+      contentPackId: opmap-pack.ch01.breach_assault_01
+      deliveryKind: 0
+      contentVersion: 1
+      contentHash: 73b8222b5ff614e034d81b1eadac81c990397a804a72d4dbb855392aa3f57817
   - definition: {fileID: 11400000, guid: cdac096ca74d84e84b2e0e1f93a29014, type: 2}
     contentPack:
       contentPackId: opmap-pack.ch01.convoy_approach_01

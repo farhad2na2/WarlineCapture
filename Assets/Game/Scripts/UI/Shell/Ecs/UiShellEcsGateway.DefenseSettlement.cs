@@ -13,7 +13,7 @@ namespace Game.UI.Shell.Ecs
         private static bool HasDefenseSettlementFailure(EntityManager em,Entity root,
             in CampaignMissionRuntimeComponent runtime,in CampaignMissionResultComponent result)
         {
-            if(!runtime.MissionId.Equals(RadarResultMissionId) && !runtime.MissionId.Equals(AirliftId) || runtime.Phase!=MissionPhaseKind.Result ||
+            if(!runtime.MissionId.Equals(RadarResultMissionId) && !runtime.MissionId.Equals(AirliftId) && !runtime.MissionId.Equals(BreachId) || runtime.Phase!=MissionPhaseKind.Result ||
                 runtime.Outcome!=MissionOutcomeKind.Victory || result.Outcome!=MissionOutcomeKind.Victory ||
                 result.SourceVersion==0 || !result.SessionToken.Equals(runtime.SessionToken) ||
                 !result.MissionId.Equals(runtime.MissionId) || result.AttemptOrdinal!=runtime.AttemptOrdinal ||
@@ -36,7 +36,7 @@ namespace Game.UI.Shell.Ecs
             int seconds=result.ElapsedMilliseconds/1000;
             bool canRetry=em.HasBuffer<CampaignMissionSettlementRequestElement>(root) && em.GetBuffer<CampaignMissionSettlementRequestElement>(root,true).Length==0;
             model=new UiMissionResultPopupModel(result.SourceVersion,result.MissionId.ToString(),UiMissionResultOutcome.Victory,
-                GameText.Get("mission.m03.save.failed"),GameText.Get(runtime.MissionId.Equals(AirliftId)?"mission.m04.name":"mission.m03.name"),GameText.Get("mission.m03.save.body"),
+                GameText.Get("mission.m03.save.failed"),GameText.Get(runtime.MissionId.Equals(BreachId)?"mission.m05.name":runtime.MissionId.Equals(AirliftId)?"mission.m04.name":"mission.m03.name"),GameText.Get("mission.m03.save.body"),
                 result.Stars,$"{seconds/60:00}:{seconds%60:00}",result.SquadLossCount.ToString(),
                 $"{facts.HostileDefeatedCount}/{facts.HostileTotalCount}",GameText.Get("mission.m03.save.pending"),
                 GameText.Get("mission.m03.save.retry"),canRetry,false,false,true,
@@ -46,6 +46,9 @@ namespace Game.UI.Shell.Ecs
                 model.Stars,model.ElapsedText,model.SquadLossText,model.EnemiesDefeatedText,model.RewardsText,model.PrimaryActionLabel,model.PrimaryActionEnabled,
                 false,false,true,default,true,new UiMissionExtractionResultDetails(facts.ExtractionPassengersDelivered,facts.CivilianLossCount,facts.ExtractionCarrierLegCount,
                     facts.ExtractionCarrierLost!=0,facts.ExtractionAircraftLost!=0,facts.ExtractionTimedOut!=0));
+            if(runtime.MissionId.Equals(BreachId)) model=new UiMissionResultPopupModel(model.Version,model.MissionId,model.Outcome,model.Title,model.Subtitle,model.SummaryBody,
+                model.Stars,model.ElapsedText,model.SquadLossText,model.EnemiesDefeatedText,model.RewardsText,model.PrimaryActionLabel,model.PrimaryActionEnabled,
+                false,false,true,default,true,default,new UiMissionBreachResultDetails(facts.BreachSupportLost!=0,facts.ElapsedMilliseconds));
             return true;
         }
         internal static bool TryRetryDefenseSettlement()

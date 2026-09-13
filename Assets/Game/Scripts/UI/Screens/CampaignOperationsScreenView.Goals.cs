@@ -10,10 +10,11 @@ namespace Game.UI.Runtime
         {
             bool m3 = missionId == "saga.ch01.m03.radar_warning";
             bool m4 = missionId == "saga.ch01.m04.airlift";
-            if(m3 || m4)
+            bool m5 = missionId == "saga.ch01.m05.breach_assault";
+            if(m3 || m4 || m5)
             {
-                string prefix = m3 ? "mission.m03." : "mission.m04.";
-                string[] objectives = m3 ? new[] { "stop_convoy", "protect_post", "prevent_breach" } : new[] { "extract", "transport", "landing" };
+                string prefix = m5 ? "mission.m05." : m3 ? "mission.m03." : "mission.m04.";
+                string[] objectives = m5 ? new[] { "gate", "core", "archive" } : m3 ? new[] { "stop_convoy", "protect_post", "prevent_breach" } : new[] { "extract", "transport", "landing" };
                 string[] stars = m3 ? new[] { "complete", "civilians_safe", "post_undamaged" } : new[] { "1", "2", "3" };
                 for(int i = 0; i < 3; i++)
                 {

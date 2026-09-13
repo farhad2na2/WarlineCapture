@@ -15,10 +15,11 @@ namespace Game.UI.Runtime
         {
             bool managed = UsesNextTutorialAction;
             bool placing = _activeCommandMode==TacticalCommandMode.Build && !_highlightPresentationSystem.IsBuildDrawerOpen;
-            if (!managed || _embeddedTutorialView == null || (!_embeddedTutorialView.IsPresentationVisible && !placing) ||
+            if (UiShellRuntimeGateway.IsMissionFieldGuidePresenting() || !managed || _embeddedTutorialView == null || (!_embeddedTutorialView.IsPresentationVisible && !placing) ||
                 !_lastPanelModel.HasRecommendation || _tutorialCinematicSuspended)
             { _highlightPresentationSystem.ClearDirectTutorialCue(); return; }
             int step=_lastPanelModel.TutorialStep;
+            if(_lastPanelModel.TutorialStepCount==8) {ShowBreachNextAction(step);return;}
             if(_lastPanelModel.TutorialStepCount==9)
             {
                 if(step==6) ShowProductionCue();

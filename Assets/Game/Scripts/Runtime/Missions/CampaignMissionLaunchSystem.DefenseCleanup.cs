@@ -9,6 +9,8 @@ namespace Game.Runtime
         private static void ResetDefenseAttemptState(EntityManager em, Entity root)
         {
             ClearBufferIfPresent<CampaignMissionDefenseMember>(em, root);
+            ClearBufferIfPresent<CampaignMissionBreachMember>(em, root);
+            ResetComponentIfPresent<CampaignMissionBreachState>(em, root);
             ClearBufferIfPresent<CampaignMissionExtractionMember>(em, root);
             ResetComponentIfPresent<CampaignMissionExtractionState>(em, root);
             ClearBufferIfPresent<CampaignMissionConvoyElementState>(em, root);
@@ -25,6 +27,7 @@ namespace Game.Runtime
         private static bool TryQueueDefenseAttemptCleanup(EntityManager em,ref EntityCommandBuffer cleanup,Entity root,
             in CampaignMissionCatalogComponent catalog,in CampaignMissionRuntimeComponent runtime)
         {
+            if(TryQueueBreachCleanup(em,root,in runtime)) return true;
             if(!CampaignMissionSpawnSystem.TryFindDefinition(in catalog,in runtime,out int index) || catalog.Blob.Value.Missions[index].Defense.Enabled==0)
                 return false;
             if(!em.HasComponent<CampaignMissionDefenseStateComponent>(root)) return true;

@@ -2,6 +2,7 @@ using Game.Components;
 using Game.Missions.Contracts;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Transforms;
 
 namespace Game.Runtime
 {
@@ -82,21 +83,33 @@ namespace Game.Runtime
             var tour=defenseTourQuery.CalculateEntityCount()==1 ? defenseTourQuery.GetSingleton<CampaignMissionCameraTourState>() : default;
             if(finale.Stage==0)
             {
-                // Reuse the opening's protected-post anchor, never move or repair an actor for the shot.
-                var opening=SystemAPI.GetSingleton<CampaignMissionOpeningPresentationComponent>();
+                float3 target=FinaleSubject(ref state,in runtime);
                 if(focusEntity!=Entity.Null && tour.ReducedMotion==0 && tour.FinaleSkipRequested==0)
-                    {
-                        var target=opening.EstablishingFocus;
-                        if(SystemAPI.TryGetSingleton(out CampaignMissionExtractionState extraction) && extraction.SessionToken.Equals(runtime.SessionToken)) target=extraction.DepartureCenter;
-                        QueueTourCamera(state.EntityManager,focusEntity,target,config.PostPerspective,.4f);
-                    }
+                    QueueTourCamera(state.EntityManager,focusEntity,target,new float4(target.y+48,60,0,50),.4f);
                 finale.Stage=1; finale.ElapsedMilliseconds=0;
+            }
+            if(finale.Stage==1 && focusEntity!=Entity.Null && tour.ReducedMotion==0 && tour.FinaleSkipRequested==0 &&
+                SystemAPI.TryGetSingleton(out CampaignMissionExtractionState rescue) && rescue.SessionToken.Equals(runtime.SessionToken))
+            {
+                float3 target=FinaleSubject(ref state,in runtime);
+                QueueTourCamera(state.EntityManager,focusEntity,target,new float4(target.y+48,60,0,50),.25f);
             }
             finale.ElapsedMilliseconds=SaturatingAddMilliseconds(finale.ElapsedMilliseconds,SystemAPI.Time.DeltaTime);
             if(finale.ElapsedMilliseconds<3000 && tour.FinaleSkipRequested==0) return;
             finale.Stage=4;
             var facts=SystemAPI.GetSingletonRW<CampaignMissionAttemptFactsComponent>();
             facts.ValueRW.FinalePresentationComplete=1;
+        }
+        private float3 FinaleSubject(ref SystemState state,in CampaignMissionRuntimeComponent runtime)
+        {
+            var em=state.EntityManager;
+            if(SystemAPI.TryGetSingleton(out CampaignMissionExtractionState rescue) && rescue.SessionToken.Equals(runtime.SessionToken) && em.HasComponent<LocalTransform>(rescue.Aircraft))
+                return em.GetComponentData<LocalTransform>(rescue.Aircraft).Position;
+            float3 center=default;int count=0;
+            foreach(var (role,faction,health,combat,pose) in SystemAPI.Query<RefRO<CampaignMissionUnitRoleComponent>,RefRO<Faction>,RefRO<UnitHealth>,RefRO<UnitCombat>,RefRO<LocalTransform>>())
+                if(role.ValueRO.SessionToken.Equals(runtime.SessionToken) && faction.ValueRO.Id==FactionIdentity.PlayerFactionId && health.ValueRO.Current>0 && combat.ValueRO.CanAttack!=0)
+                {center+=pose.ValueRO.Position;count++;}
+            return count>0?center/count:SystemAPI.GetSingleton<CampaignMissionOpeningPresentationComponent>().EstablishingFocus;
         }
         private void AdvanceDefenseCameraFallbacks(ref SystemState state,in CampaignMissionRuntimeComponent runtime,ref MissionCameraTourBlob config)
         {

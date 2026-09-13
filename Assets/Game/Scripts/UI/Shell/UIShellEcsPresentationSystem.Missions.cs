@@ -34,6 +34,8 @@ namespace Game.UI.Runtime
             }
             foreach(var view in defenseViews)
                 if(view != null && view.isActiveAndEnabled) view.RefreshCameraTour();
+            foreach(var view in extractionViews)
+                if(view != null && view.isActiveAndEnabled) view.RefreshCinematicVisibility();
             if(Time.unscaledTime < nextMissionProjectionRefresh) return;
             nextMissionProjectionRefresh = Time.unscaledTime + .25f;
             foreach(var view in defenseViews)

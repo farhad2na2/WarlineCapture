@@ -19,7 +19,7 @@ namespace Game.Runtime
         private static readonly FixedString64Bytes OpenBuildTitle = "Open Build";
         private static readonly FixedString64Bytes SelectBarracksTitle = "Select Barracks";
         private static readonly FixedString64Bytes PlaceBarracksTitle = "Place the Barracks";
-        private static readonly FixedString64Bytes ReviewResourceSpendTitle = "Review resource spend";
+        private static readonly FixedString64Bytes ReviewResourceSpendTitle = "Plan your Materials";
         private static readonly FixedString64Bytes QueueRifleTitle = "Queue a rifle squad";
         private static readonly FixedString64Bytes IncomingPatrolTitle = "Incoming patrol";
         private static readonly FixedString64Bytes DefendPostTitle = "Defend the forward post";
@@ -31,7 +31,7 @@ namespace Game.Runtime
         private static readonly FixedString128Bytes OpenBuildBody = "Open Build to restore the forward post.";
         private static readonly FixedString128Bytes SelectBarracksBody = "Select Barracks from the building catalog.";
         private static readonly FixedString128Bytes PlaceBarracksBody = "Place the Barracks inside the green footprint. The confirmation bar shows its exact cost.";
-        private static readonly FixedString128Bytes ReviewResourceSpendBody = "Credits and Materials were spent by the real construction order. Check the resource bar.";
+        private static readonly FixedString128Bytes ReviewResourceSpendBody = "Barracks used 90 of 120 Materials. You have 30 left. Save 20 for your rifle squad.";
         private static readonly FixedString128Bytes QueueRifleBody = "Open production, select Soldiers, and recruit the required rifle squad.";
         private static readonly FixedString128Bytes IncomingPatrolBody = "Hostile patrol approaching the marked defense lane. Prepare your squad before contact.";
         private static readonly FixedString128Bytes DefendPostBody = "Hold the defense lane and protect the forward post. Tactical decisions are yours.";

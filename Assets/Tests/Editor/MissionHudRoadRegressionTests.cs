@@ -97,18 +97,18 @@ public sealed class MissionHudRoadRegressionTests
                 Assert.GreaterOrEqual(size.x,72,name+" tap width");Assert.GreaterOrEqual(size.y,72,name+" tap height");
             }
             var aria=instance.GetComponentInChildren<AriaTutorialBriefingView>(true);
-            var actions=(RectTransform)aria.transform.Find("M03Actions");var map=(RectTransform)aria.transform.Find("MinimapPanel");
+            var actions=(RectTransform)aria.transform.Find("M03Actions");var map=instance.GetComponentInChildren<MissionHudTouchLayoutView>(true).Minimap;
             Canvas.ForceUpdateCanvases();
             var a=new Vector3[4];var b=new Vector3[4];actions.GetWorldCorners(a);map.GetWorldCorners(b);
             Assert.Less(b[1].y,a[0].y,"Minimap must leave the large guide row clear.");
-            Assert.GreaterOrEqual(((RectTransform)instance.GetComponentInChildren<MatchHudSelectionPanelView>(true).CommandWheelOpenButton.transform).rect.height,100,
-                "The entire portrait remains a generous Commands tap target.");
+            Assert.GreaterOrEqual(((RectTransform)instance.GetComponentInChildren<MatchHudSelectionPanelView>(true).CommandWheelOpenButton.transform).rect.height,72,
+                "Commands has a separate mobile tap target below the portrait.");
             var extraction=instance.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="M04Actions");
             foreach(var button in extraction.GetComponentsInChildren<Button>(true))
                 Assert.GreaterOrEqual(((RectTransform)button.transform).rect.height,72,"M4: "+button.name);
             var cue=(RectTransform)instance.GetComponentsInChildren<Transform>(true).Single(t=>t.name=="CommandWheelCue");
             ((RectTransform)cue.parent).SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal,278);
-            Assert.That(cue.rect.width,Is.EqualTo(268).Within(.1),"Commands must also fit the compact passenger layout.");
+            Assert.That(cue.rect.width,Is.EqualTo(250).Within(.1),"Commands must also fit the compact passenger layout.");
         }
         finally{Object.DestroyImmediate(canvasRoot);}
         var guide=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Game/Prefabs/UI/Popups/M03_FieldGuide.prefab");

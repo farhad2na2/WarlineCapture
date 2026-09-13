@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace Game.UI.Runtime
 {
-    internal static class BuildDrawerCatalogPresentationSystemHelper
+    internal static partial class BuildDrawerCatalogPresentationSystemHelper
     {
         internal delegate BuildingUiCommandFailure GetCampRequestFailureDelegate(
             BuildDrawerCatalogItem item,
@@ -142,7 +142,7 @@ namespace Game.UI.Runtime
                 string.Empty,
                 string.Empty,
                 string.Empty,
-                "No requestable items.",
+                "Select an item to place, produce, or recruit.",
                 null,
                 null,
                 string.Empty,
@@ -342,7 +342,7 @@ namespace Game.UI.Runtime
                 model.TypeLabel,
                 model.Description,
                 FormatPrice(model.MaterialsCost),
-                model.FuelCost > 0 ? FormatPrice(model.FuelCost) : "",
+                model.CreditsCost > 0 ? FormatPrice(model.CreditsCost) : "",
                 FormatDuration(model),
                 FormatRequirements(context.TextResolver, model));
             item.BindThumbnail(model.CardPortrait);
@@ -357,24 +357,6 @@ namespace Game.UI.Runtime
             UnityAction action = () => context.SelectItem(item, model);
             button.onClick.AddListener(action);
             context.ItemBindings.Add(new ButtonBinding(button, action));
-        }
-
-        private static void BindDetail(Context context, BuildDrawerCatalogItem model)
-        {
-            BuildingUiCommandFailure failure = context.GetCampRequestFailure(model, out _);
-            context.View.BindDetail(
-                model.DisplayName,
-                model.TypeLabel,
-                model.Description,
-                FormatPrice(model.MaterialsCost),
-                model.FuelCost > 0 ? FormatPrice(model.FuelCost) : "",
-                FormatDuration(model),
-                FormatPlacement(model),
-                FormatRequirements(context.TextResolver, model),
-                model.ActionPortrait,
-                model.CardPortrait,
-                model.ActionLabel,
-                failure == BuildingUiCommandFailure.None);
         }
 
         private static void HideStaticPlaceholderItems(BuildDrawerView view)

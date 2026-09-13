@@ -344,7 +344,7 @@ public sealed partial class M02EstablishBaseGuidanceTests
         Assert.AreEqual(AssistantTargetKind.UiSurface, resource.TargetKind);
         Assert.AreEqual("ui.match.resources", resource.TargetId.ToString());
         Assert.AreEqual("CONTINUE", resource.ActionLabel.ToString());
-        Assert.That(resource.Body.ToString(), Does.Contain("Credits and Materials"));
+        Assert.That(resource.Body.ToString(), Does.Contain("30 left"));
     }
 
     [Test]

@@ -10,19 +10,23 @@ namespace Game.UI.Runtime
     public sealed partial class MatchHudSelectionPanelView
     {
         [SerializeField] private RectTransform passengerChipIcon;
+        private MatchHudTransportPassengersModel _latestPassengerModel;
         public bool IsPassengerDrawerOpen => _passengerDrawerOpen;
         public void ToggleTransportPassengerDrawer()
         {
             _passengerDrawerOpen = !_passengerDrawerOpen;
+            ApplyTransportPassengers(_latestPassengerModel);
         }
 
         public void CloseTransportPassengerDrawer()
         {
             _passengerDrawerOpen = false;
+            ApplyTransportPassengers(_latestPassengerModel);
         }
 
         public void ApplyTransportPassengers(MatchHudTransportPassengersModel model)
         {
+            _latestPassengerModel = model;
             bool isPassengerModel = model.StorageKind == MatchHudStorageChipKind.Passengers;
             if (!model.Visible || (isPassengerModel && model.Transport.IsNull))
             {

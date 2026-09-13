@@ -137,7 +137,7 @@ namespace Game.Runtime
                 return;
             }
 
-            bool shouldFollowCamera = context.InputSystem.ApplyPointerHover(
+            context.InputSystem.ApplyPointerHover(
                 placement,
                 updateCellFromPointer,
                 screenPosition,
@@ -148,7 +148,7 @@ namespace Game.Runtime
 
             if (BuildingBarrierUtilitySystemHelper.IsLinearWallDefinition(placement.Definition))
             {
-                UpdateWallPlacementVisual(context, placement, grid, roads, blockerData, shouldFollowCamera);
+                UpdateWallPlacementVisual(context, placement, grid, roads, blockerData);
                 return;
             }
 
@@ -166,8 +166,6 @@ namespace Game.Runtime
                 placement.Definition,
                 placement.IsValid,
                 (origin, footprint, gridData) => context.GetFootprintCenter(origin, footprint, gridData));
-            if (shouldFollowCamera)
-                context.DependencySystem.FollowCameraGroundCenterTo(context.GetFootprintCenter(placement.OriginCell, placementFootprint, grid));
         }
 
         internal Vector3 ResolveCurrentPlacementFocusWorldPosition(Context context, PlacementState placement, GridConfig grid)
@@ -223,8 +221,7 @@ namespace Game.Runtime
             PlacementState placement,
             GridConfig grid,
             DynamicBuffer<GridRoad> roads,
-            DynamicBlockerComponent blockerData,
-            bool shouldFollowCamera)
+            DynamicBlockerComponent blockerData)
         {
             IReadOnlyList<Vector2Int> wallOrigins = placement.HideCurrentWallPreview
                 ? context.InputSystem.ClearWallPlacementOriginsScratch()
@@ -268,17 +265,7 @@ namespace Game.Runtime
                 placement.Definition,
                 placement.IsValid,
                 (origin, footprint, gridData) => context.GetFootprintCenter(origin, footprint, gridData));
-            if (shouldFollowCamera)
-            {
-                IReadOnlyList<Vector2Int> allOrigins = context.InputSystem.GetAllWallPlacementOriginsScratch(placement, wallOrigins);
-                context.DependencySystem.FollowCameraGroundCenterTo(
-                    context.GridSystem.ResolvePlacementFocusWorldPosition(
-                        placement,
-                        allOrigins,
-                        grid,
-                        wallFootprint,
-                        context.StartupSystem.BuildPlaneY));
-            }
+
         }
     }
 }

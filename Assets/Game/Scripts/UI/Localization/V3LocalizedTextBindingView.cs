@@ -32,6 +32,7 @@ namespace Game.UI.Runtime
         private bool specializedOwner;
         private float presentationScale=1f;
         private float minimumPresentationSize,maximumPresentationSize;
+        private bool meshRefreshQueued;
 
         public string LocalizationKey => localizationKey;
         public string EnglishFallback => englishFallback;
@@ -61,10 +62,13 @@ namespace Game.UI.Runtime
             UiShellRuntimeGateway.Localization.LocaleChanged += ApplyLocalization;
             if(target is Graphic graphic) graphic.RegisterDirtyVerticesCallback(ObserveRuntimeSource);
             ApplyLocalization();
+            QueueMeshRefresh();
         }
 
         private void OnDisable()
         {
+            Canvas.preWillRenderCanvases -= RefreshLocalizedMesh;
+            meshRefreshQueued = false;
             UiShellRuntimeGateway.Localization.LocaleChanged -= ApplyLocalization;
             if(target is Graphic graphic) graphic.UnregisterDirtyVerticesCallback(ObserveRuntimeSource);
         }
@@ -125,7 +129,15 @@ namespace Game.UI.Runtime
             bool rightToLeft = UiShellRuntimeGateway.Localization.IsRightToLeft;
             bool containsRightToLeftText = rightToLeft && ContainsArabicScript(localized);
             TMP_FontAsset localeFont = UiShellRuntimeGateway.Localization.CurrentFontAsset as TMP_FontAsset;
-            target.font = localeFont != null && (containsRightToLeftText || !rightToLeft) ? localeFont : sourceFont;
+            TMP_FontAsset nextFont = localeFont != null && (containsRightToLeftText || !rightToLeft) ? localeFont : sourceFont;
+            if (target.font != nextFont)
+                QueueMeshRefresh();
+            target.font = nextFont;
+            // A serialized material from the previous font can leave correctly shaped
+            // Farsi characters sampling the Latin atlas after an authored popup rebuild.
+            if(target.font!=null && target.font.material!=null && target.fontSharedMaterial!=null &&
+                target.fontSharedMaterial.mainTexture!=target.font.material.mainTexture)
+                target.fontSharedMaterial=target.font.material;
             target.alignment = rightToLeft ? Mirror(sourceAlignment) : sourceAlignment;
             ApplyLocaleSizing(containsRightToLeftText);
 
@@ -162,6 +174,23 @@ namespace Game.UI.Runtime
             hasPresentationDefaults = true;
             if (string.IsNullOrEmpty(englishFallback))
                 englishFallback = ReadAuthoredText();
+        }
+
+        private void QueueMeshRefresh()
+        {
+            if (meshRefreshQueued || !isActiveAndEnabled) return;
+            meshRefreshQueued = true;
+            Canvas.preWillRenderCanvases += RefreshLocalizedMesh;
+        }
+
+        private void RefreshLocalizedMesh()
+        {
+            Canvas.preWillRenderCanvases -= RefreshLocalizedMesh;
+            meshRefreshQueued = false;
+            // A popup can localize before TMP finishes its first activation. Rebuild once,
+            // after activation, so glyph UVs and the renderer use the same locale atlas.
+            if (target != null && target.isActiveAndEnabled && !specializedOwner)
+                target.ForceMeshUpdate();
         }
 
         public void SetLocalizedValue(string value)

@@ -30,7 +30,10 @@ namespace Game.UI.Runtime
                 _screenTargetIndicator.gameObject.SetActive(
                     _screenTargetActive || _commandCueActive);
                 if (_screenTargetLabel != null)
+                {
                     _screenTargetLabel.text = ResolveIndicatorText(model, _commandCueActive);
+                    _directCaptionKey = null;
+                }
             }
             if (_screenTargetActive || _commandCueActive)
                 Tick();
@@ -90,7 +93,7 @@ namespace Game.UI.Runtime
             captionRect.anchorMax = new Vector2(0.5f, 1f);
             captionRect.pivot = new Vector2(0.5f, 0.5f);
             captionRect.anchoredPosition = Vector2.zero;
-            captionRect.sizeDelta = new Vector2(288f, 64f);
+            captionRect.sizeDelta = new Vector2(576f, 96f);
             V3GradientGraphic captionBackground = caption.GetComponent<V3GradientGraphic>();
             captionBackground.ConfigureCorners(
                 V3GuidancePanelTop,
@@ -110,12 +113,13 @@ namespace Game.UI.Runtime
             labelRect.offsetMin = new Vector2(12f, 4f);
             labelRect.offsetMax = new Vector2(-12f, -4f);
             _screenTargetLabel = labelObject.GetComponent<TextMeshProUGUI>();
+            _directCaptionKey = null;
             _screenTargetLabel.text = UiShellRuntimeGateway.Localization.Get("ui.hud.aria_target", "ARIA TARGET");
             _screenTargetLabel.fontStyle = FontStyles.Bold;
-            _screenTargetLabel.fontSize = 36f;
+            _screenTargetLabel.fontSize = 52f;
             _screenTargetLabel.enableAutoSizing = true;
-            _screenTargetLabel.fontSizeMin = 24f;
-            _screenTargetLabel.fontSizeMax = 36f;
+            _screenTargetLabel.fontSizeMin = 36f;
+            _screenTargetLabel.fontSizeMax = 52f;
             _screenTargetLabel.color = V3GuidanceYellow;
             _screenTargetLabel.alignment = TextAlignmentOptions.Center;
             _screenTargetLabel.textWrappingMode = TextWrappingModes.NoWrap;
@@ -187,7 +191,7 @@ namespace Game.UI.Runtime
 
         private void ApplyWorldRing(UiAssistantHighlightModel model, bool visible)
         {
-            if (!model.Active || !visible)
+            if (!model.Active || !visible || model.TargetKind == UiSurfaceTargetKind)
             {
                 if (_worldRingRoot != null)
                     _worldRingRoot.SetActive(false);

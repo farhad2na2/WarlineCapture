@@ -11,6 +11,8 @@ namespace Game.UI.Runtime
 {
     public sealed partial class BuildDrawerCatalogRuntimeView
     {
+        private string FormatNoSelectionInstruction()=>_items.Count>0 ? _gameTextResolver.Get("build.drawer.empty.select_item","Select an item to place, produce, or recruit.") :
+            BuildDrawerCatalogPresentationSystemHelper.FormatEmptyCategoryInstruction(_gameTextResolver,_activeCategory);
         private void ApplyInstructionForCurrentSelection()
         {
             if (view == null)
@@ -18,7 +20,7 @@ namespace Game.UI.Runtime
 
             if (!_hasSelectedItem || _selectedItem.Prefab == null)
             {
-                ApplyInstruction(BuildDrawerCatalogPresentationSystemHelper.FormatEmptyCategoryInstruction(_gameTextResolver, _activeCategory), BuildDrawerInstructionSeverity.Warning);
+                ApplyInstruction(FormatNoSelectionInstruction(), BuildDrawerInstructionSeverity.Warning);
                 return;
             }
 
@@ -79,6 +81,16 @@ namespace Game.UI.Runtime
         }
 
         private void ApplyInstruction(string text, BuildDrawerInstructionSeverity severity) => view?.ApplyInstruction(text, severity);
+
+        private void ClearSelection()
+        {
+            _selectedItemView = null;
+            _hasSelectedItem = false;
+            BuildDrawerCatalogPresentationSystemHelper.ClearDetail(view);
+            ApplyInstruction(
+                FormatNoSelectionInstruction(),
+                BuildDrawerInstructionSeverity.Warning);
+        }
 
     }
 }

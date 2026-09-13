@@ -9,7 +9,12 @@ namespace Game.UI.Runtime
             {
                 case 1: UiShellRuntimeGateway.TryRequestExtractionAction(UiMissionExtractionAction.ContinuePlan); break;
                 case 3: case 6: case 11: InvokeAvailable(_commandControlsView?.MoveButton); break;
-                case 5: case 9: InvokeAvailable(_commandControlsView?.BoardButton); break;
+                case 7:
+                    if (_commandControlsView != null)
+                        foreach (var selection in _commandControlsView.transform.root.GetComponentsInChildren<MatchHudSelectionPanelView>())
+                            if (selection.ResolvePassengerTutorialButton() is {} next) { InvokeAvailable(next); break; }
+                    break;
+                case 5: case 9: InvokeAvailable(_commandControlsView?.CommandWheelPanel?.NextBoardButton); break;
                 case 2: case 4: case 8: InvokeAvailable(_commandControlsView?.SelectButton); break;
                 default: UiShellRuntimeGateway.TryRequestMissionDefenseAction(UiMissionDefenseAction.OpenGuide); break;
             }

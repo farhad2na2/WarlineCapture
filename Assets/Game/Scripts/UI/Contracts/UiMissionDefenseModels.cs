@@ -5,14 +5,14 @@ namespace Game.UI.Contracts
     public readonly struct UiMissionDefenseModel
     {
         public readonly bool IsActive, HasWarning, CanFocus, CanPing;
-        public readonly bool CanReturnCamera, WarningNeedsAttention;
+        public readonly bool CanReturnCamera, WarningNeedsAttention, RequiresHoldResume;
         public readonly string WarningText, PingText;
         public readonly int Charges, CooldownSeconds, WarningElementIndex, GuidanceId;
         public readonly uint Version;
         public UiMissionDefenseModel(bool active, bool warning, bool focus, bool ping, string warningText, string pingText,
-            int charges, int cooldown, int element, int guidanceId, uint version,bool canReturnCamera=false,bool warningNeedsAttention=false)
+            int charges, int cooldown, int element, int guidanceId, uint version,bool canReturnCamera=false,bool warningNeedsAttention=false,bool requiresHoldResume=false)
         { IsActive=active; HasWarning=warning; CanFocus=focus; CanPing=ping; WarningText=warningText; PingText=pingText;
-          Charges=charges; CooldownSeconds=cooldown; WarningElementIndex=element; GuidanceId=guidanceId; Version=version; CanReturnCamera=canReturnCamera; WarningNeedsAttention=warningNeedsAttention; }
+          Charges=charges; CooldownSeconds=cooldown; WarningElementIndex=element; GuidanceId=guidanceId; Version=version; CanReturnCamera=canReturnCamera; WarningNeedsAttention=warningNeedsAttention; RequiresHoldResume=requiresHoldResume; }
     }
 
     public interface IUiMissionDefenseGateway

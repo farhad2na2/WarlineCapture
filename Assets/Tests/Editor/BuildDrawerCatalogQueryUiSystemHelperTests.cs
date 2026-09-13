@@ -21,6 +21,14 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
     private readonly List<UnityEngine.Object> _createdObjects = new();
     private readonly List<BuildDrawerCatalogItem> _results = new();
     private readonly BuildDrawerCatalogQueryUiSystemHelper _query = new();
+    private string originalLocale;
+
+    [SetUp]
+    public void SetUp()
+    {
+        originalLocale = GameLocalization.CurrentLocaleCode;
+        GameLocalization.SetLocale("en", false);
+    }
 
     public BuildDrawerCatalogQueryUiSystemHelperTests()
     {
@@ -182,6 +190,7 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
         var tests = new BuildDrawerCatalogQueryUiSystemHelperTests();
         try
         {
+            tests.SetUp();
             action(tests);
             passed++;
             Debug.Log($"[BuildDrawerCatalogQueryValidation] step={name} result=Passed");
@@ -203,6 +212,7 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
 
         _createdObjects.Clear();
         _results.Clear();
+        if (originalLocale != null) GameLocalization.SetLocale(originalLocale, false);
     }
 
     [Test]
@@ -494,17 +504,17 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
         TMP_Text detailNameText = GetSerializedReference<TMP_Text>(new SerializedObject(view), "nameText");
         TMP_Text actionLabelText = GetSerializedReference<TMP_Text>(new SerializedObject(view), "primaryActionLabelText");
         TMP_Text materialsCostText = GetSerializedReference<TMP_Text>(new SerializedObject(view), "materialsCostText");
-        TMP_Text fuelCostText = GetSerializedReference<TMP_Text>(new SerializedObject(view), "fuelCostText");
+        TMP_Text creditCostText = GetSerializedReference<TMP_Text>(new SerializedObject(view), "creditPrice");
         Assert.NotNull(detailNameText, "Build drawer detail panel must serialize the selected item name text.");
         Assert.NotNull(actionLabelText, "Build drawer detail panel must serialize the primary action label text.");
         Assert.NotNull(materialsCostText, "Build drawer detail panel must serialize its materials cost text.");
-        Assert.NotNull(fuelCostText, "Build drawer detail panel must serialize its fuel cost text.");
+        Assert.NotNull(creditCostText, "Build drawer detail panel must serialize its credit cost text.");
         Assert.AreEqual(_results[0].DisplayName, detailNameText.text);
         Assert.AreEqual("PRODUCE", actionLabelText.text);
         Assert.AreEqual(_results[0].MaterialsCost.ToString("N0"), materialsCostText.text);
         Assert.AreEqual(
-            _results[0].FuelCost > 0 ? _results[0].FuelCost.ToString("N0") : string.Empty,
-            fuelCostText.text);
+            _results[0].CreditsCost > 0 ? _results[0].CreditsCost.ToString("N0") : string.Empty,
+            creditCostText.text);
         Assert.IsTrue(view.PrimaryActionButton != null && view.PrimaryActionButton.interactable);
         if (view.BuildButton != null && view.OrderButton != null)
         {
@@ -523,6 +533,10 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
             Assert.AreSame(view.SelectedItemFrameSprite, activeRows[1].FrameImage.sprite);
             Assert.AreEqual(1, CountSelectedRows(activeRows, view.SelectedItemFrameSprite));
             Assert.AreEqual(_results[1].DisplayName, detailNameText.text);
+            ConfigureCatalogMetadataResolvers(presenter);
+            Assert.AreEqual(_results[1].DisplayName, detailNameText.text,
+                "Refreshing metadata must retain the player's selected purchase.");
+            Assert.IsTrue(view.PrimaryActionButton.interactable);
         }
     }
 

@@ -26,6 +26,7 @@ namespace Game.Components
         public FixedString64Bytes SensorMissionRoleId;
         public FixedString64Bytes InitialProducerAnchorId;
         public FixedString128Bytes InitialProducerConfigId;
+        public FixedString128Bytes ReinforcementUnitConfigId;
         public int RadarPingCharges;
         public int RadarPingCooldownMilliseconds;
         public BlobArray<CampaignMissionConvoyElementBlob> Elements;
@@ -76,7 +77,10 @@ namespace Game.Components
         public byte SelectionCommandBaselineSet;
         public byte StopAccepted;
         public byte MoveAccepted;
+        public byte PositionCameraAligned;
         public int ReinforcedRifleCount;
+        public int TutorialDefenseOwnedBaseline;
+        public byte TutorialDefenseBaselineSet;
     }
 
     [InternalBufferCapacity(4)]

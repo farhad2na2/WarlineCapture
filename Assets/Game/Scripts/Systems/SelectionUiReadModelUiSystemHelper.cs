@@ -7,7 +7,7 @@ using Game.Components;
 
 namespace Game.Runtime
 {
-    public sealed class SelectionUiReadModelUiSystemHelper : ISelectionUiReadModel
+    public sealed partial class SelectionUiReadModelUiSystemHelper : ISelectionUiReadModel
     {
         public readonly struct TransportPassengerUiInfo
         {
@@ -71,7 +71,7 @@ namespace Game.Runtime
                 ? model.Label.ToString()
                 : "Unit";
 
-        public bool CanDestroyFocusedUnit => FocusedUnitOwnedByPlayer;
+        public bool CanDestroyFocusedUnit => TryReadFocusedUnitUiModel(out FocusedUnitUiReadModelComponent model) && model.OwnedByPlayer!=0 && model.MissionProtected==0;
 
         public bool FocusedUnitOwnedByPlayer =>
             TryReadFocusedUnitUiModel(out FocusedUnitUiReadModelComponent model) &&
@@ -243,27 +243,5 @@ namespace Game.Runtime
             return true;
         }
 
-        private static FocusedUnitUiStatus ToFocusedUnitUiStatus(int status)
-        {
-            return (SelectionUiReadModelLookup.FocusedUnitUiStatus)status switch
-            {
-                SelectionUiReadModelLookup.FocusedUnitUiStatus.Moving => FocusedUnitUiStatus.Moving,
-                SelectionUiReadModelLookup.FocusedUnitUiStatus.Engaged => FocusedUnitUiStatus.Engaged,
-                SelectionUiReadModelLookup.FocusedUnitUiStatus.ReturningToBase => FocusedUnitUiStatus.ReturningToBase,
-                SelectionUiReadModelLookup.FocusedUnitUiStatus.MissileLaunched => FocusedUnitUiStatus.MissileLaunched,
-                SelectionUiReadModelLookup.FocusedUnitUiStatus.AirspaceClear => FocusedUnitUiStatus.AirspaceClear,
-                SelectionUiReadModelLookup.FocusedUnitUiStatus.TrackingAirTarget => FocusedUnitUiStatus.TrackingAirTarget,
-                SelectionUiReadModelLookup.FocusedUnitUiStatus.InterceptingMissile => FocusedUnitUiStatus.InterceptingMissile,
-                SelectionUiReadModelLookup.FocusedUnitUiStatus.AirDefenseReloading => FocusedUnitUiStatus.AirDefenseReloading,
-                _ => FocusedUnitUiStatus.Idle
-            };
-        }
-
-        private static TacticalCommandReasonCode ToReasonCode(int reason)
-        {
-            return System.Enum.IsDefined(typeof(TacticalCommandReasonCode), reason)
-                ? (TacticalCommandReasonCode)reason
-                : TacticalCommandReasonCode.CommandUnavailable;
-        }
     }
 }

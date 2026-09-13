@@ -9,7 +9,7 @@ using Game.Components;
 
 namespace Game.Runtime
 {
-    public sealed class FocusedUnitUiReadModelUiSystemHelper
+    public sealed partial class FocusedUnitUiReadModelUiSystemHelper
     {
         private World _queryWorld;
         private EntityQuery _readModelQuery;
@@ -44,6 +44,7 @@ namespace Game.Runtime
             {
                 FocusedUnit = focusedUnit,
                 HasFocusedUnit = 1,
+                MissionProtected = em.HasComponent<CampaignMissionUnitRoleComponent>(focusedUnit) ? (byte)1 : (byte)0,
                 OwnedByPlayer = selectionUiReadModelLookup.IsOwnedByPlayer(em, focusedUnit) ? (byte)1 : (byte)0,
                 IsVehicle = selectionUiReadModelLookup.IsVehicleUnit(em, focusedUnit) ? (byte)1 : (byte)0,
                 CanAttack = selectionUiReadModelLookup.CanAttack(em, focusedUnit) ? (byte)1 : (byte)0,
@@ -52,7 +53,7 @@ namespace Game.Runtime
                     : ToFixed64(selectionUiReadModelLookup.ResolveFocusedUnitName(em, focusedUnit)),
                 Description = sameFocusedUnit
                     ? previousModel.Description
-                    : ToFixed128(selectionUiReadModelLookup.ResolveFocusedUnitDescription(em, focusedUnit)),
+                    : ToFixed128(GameLocalization.GetBySource(selectionUiReadModelLookup.ResolveFocusedUnitDescription(em, focusedUnit))),
                 Status = (int)selectionUiReadModelLookup.GetFocusedUnitUiStatus(em, focusedUnit)
             };
 
@@ -272,37 +273,10 @@ namespace Game.Runtime
             return next == 0u ? 1u : next;
         }
 
-        private static FixedString32Bytes ToFixed32(string value)
-        {
-            FixedString32Bytes result = default;
-            result.Append(Trim(value, 29));
-            return result;
-        }
-
         private static FixedString32Bytes ToHealthFixed32(int current, int max)
         {
-            return ToFixed32(GameText.Format("selection.health.value", "Health: {0}/{1}", current, max));
+            return ToFixed32($"{current}/{max}");
         }
 
-        private static FixedString64Bytes ToFixed64(string value)
-        {
-            FixedString64Bytes result = default;
-            result.Append(Trim(value, 61));
-            return result;
-        }
-
-        private static FixedString128Bytes ToFixed128(string value)
-        {
-            FixedString128Bytes result = default;
-            result.Append(Trim(value, 125));
-            return result;
-        }
-
-        private static string Trim(string value, int maxLength)
-        {
-            if (string.IsNullOrEmpty(value))
-                return string.Empty;
-            return value.Length <= maxLength ? value : value.Substring(0, maxLength);
-        }
     }
 }

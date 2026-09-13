@@ -185,14 +185,6 @@ namespace Game.UI.Runtime
             ClosePanelWithoutInputCapture();
         }
 
-        public void SuspendForCinematic()
-        {
-            _tutorialCinematicSuspended = true;
-            _tutorialShowAtUnscaledTime = -1f;
-            HideEmbeddedTutorial();
-            ClosePanelWithoutInputCapture();
-        }
-
         public void BindSquadTray(MatchHudSquadTrayView squadTrayView)
         {
             _highlightPresentationSystem.BindSquadTray(squadTrayView);
@@ -267,7 +259,7 @@ namespace Game.UI.Runtime
             _tutorialWorldTargetCompleted = true;
             CompleteTutorialStep(
                 _lastPanelModel.TutorialStep,
-                finalStep: mode == TacticalCommandMode.Attack);
+                finalStep: false);
         }
 
         public void TickHighlight(float unscaledTime)
@@ -275,6 +267,7 @@ namespace Game.UI.Runtime
             _highlightPresentationSystem.Tick();
             TickPendingM02DoIt(unscaledTime);
             TickTutorialPresentation(unscaledTime);
+            TickNextTutorialAction();
         }
 
         public bool TryClosePanel()

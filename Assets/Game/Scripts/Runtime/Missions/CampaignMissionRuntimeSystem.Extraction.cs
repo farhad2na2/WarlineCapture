@@ -40,7 +40,19 @@ namespace Game.Runtime
             }
             em.SetComponentData(root, facts);
             if (CampaignMissionExtractionRuleUtility.TryAdvance(in runtime, in facts, ready, openingComplete,
-                    definition.Extraction.RequiredPassengers, out var next)) em.SetComponentData(root, next);
+                    definition.Extraction.RequiredPassengers, out var next))
+            {
+                if(next.Phase==MissionPhaseKind.SecureCorridor && runtime.Phase!=next.Phase &&
+                    em.HasComponent<CampaignMissionExtractionState>(root) && SystemAPI.TryGetSingleton(out OperationMapMetadataComponent map) && map.Blob.IsCreated && SystemAPI.TryGetSingletonEntity<UnitMoveOrderQueueComponent>(out var moveQueue))
+                {
+                    var rescue=em.GetComponentData<CampaignMissionExtractionState>(root);
+                    float3 direction=math.normalizesafe(rescue.DepartureCenter-rescue.LandingCenter,new float3(1,0,0));
+                    float3 exit=rescue.DepartureCenter+direction*180f;
+                    UnitMoveOrderRequestSystem.EnqueueExisting(em,moveQueue,rescue.Aircraft,
+                        CampaignMissionSpawnSystem.ToGridCell(exit,map.Blob.Value.Grid),UnitMoveOrderRequestKind.GroupedManual,true,false,0,0);
+                }
+                em.SetComponentData(root, next);
+            }
             return true;
         }
 
@@ -89,6 +101,7 @@ namespace Game.Runtime
             if (passengers != definition.RequiredPassengers) facts.HostileRosterIntegrityFault = 1;
             facts.ExtractionPassengerTotal = passengers; facts.CivilianTotalCount = passengers; facts.CivilianLossCount = lost;
             facts.ExtractionPassengersAboard = aboard; facts.ExtractionCarrierLegCount = rode;
+            if(rode==definition.RequiredPassengers && state.PatrolReleaseAtMilliseconds==0) state.PatrolReleaseAtMilliseconds=facts.ElapsedMilliseconds+15000;
             facts.CommandSquadAlive = escortAlive > 0 ? (byte)1 : (byte)0; facts.SquadLossCount = escortLost;
             facts.HostileDefeatedCount = hostileDead;
             facts.ExtractionAircraftLost = aircraftDead ? (byte)1 : (byte)0;

@@ -10,7 +10,7 @@ using Game.Components;
 
 namespace Game.Runtime
 {
-    public sealed class SelectionHudFeedbackUiSystemHelper
+    public sealed partial class SelectionHudFeedbackUiSystemHelper
     {
         public delegate bool TryGetEntityManagerDelegate(out EntityManager em);
         public delegate Sprite ResolveSelectionPortraitSpriteDelegate(EntityManager em, Entity entity);
@@ -721,7 +721,7 @@ namespace Game.Runtime
                 for (int i = 0; i < entities.Length; i++)
                 {
                     Entity entity = entities[i];
-                    if (!em.Exists(entity))
+                    if (!em.Exists(entity) || em.HasComponent<UnitHealth>(entity) && em.GetComponentData<UnitHealth>(entity).Current<=0)
                         continue;
 
                     unitCount++;
@@ -849,7 +849,7 @@ namespace Game.Runtime
                 for (int i = 0; i < entities.Length; i++)
                 {
                     Entity entity = entities[i];
-                    if (!em.Exists(entity))
+                    if (!em.Exists(entity) || em.HasComponent<UnitHealth>(entity) && em.GetComponentData<UnitHealth>(entity).Current<=0)
                         continue;
 
                     unitCount++;
@@ -1068,43 +1068,6 @@ namespace Game.Runtime
             return string.IsNullOrEmpty(value)
                 ? 0
                 : System.StringComparer.Ordinal.GetHashCode(value);
-        }
-
-        private MatchHudSelectionPanelModel BuildFocusedUnitPanelModel(
-            Context context,
-            EntityManager em,
-            Entity entity,
-            bool hasAttackModeOrderSnapshot,
-            string attackModeOrderText,
-            bool boardAvailable)
-        {
-            Sprite portraitSprite = context.ResolveSelectionPortraitSprite?.Invoke(em, entity);
-            portraitSprite ??= _matchHudSelectionPanelView.ResolveFallbackPortraitSprite(SelectionSummaryPortraitKind.GenericSquad);
-            bool owned = context.SelectionUiReadModelLookup.IsOwnedByPlayer(em, entity);
-            bool movable = em.HasComponent<UnitMove>(entity);
-            bool vehicle = context.SelectionUiReadModelLookup.IsVehicleForVisibleSelection(em, entity);
-            TryGetHealthModel(context, em, entity, out string healthLabel, out float health01);
-            string orderText = ResolveFocusedUnitOrderText(em, entity, context.SelectionUiReadModelLookup);
-            string focusedName = context.SelectionUiReadModelLookup.ResolveFocusedUnitName(em, entity);
-            string focusedDescription = context.SelectionUiReadModelLookup.ResolveFocusedUnitDescription(em, entity);
-            if (hasAttackModeOrderSnapshot)
-            {
-                orderText = attackModeOrderText;
-            }
-
-            return new MatchHudSelectionPanelModel(
-                true,
-                focusedName,
-                focusedDescription,
-                orderText,
-                healthLabel,
-                health01,
-                portraitSprite,
-                !vehicle,
-                null,
-                owned && movable && !em.HasComponent<UnitTransportPassenger>(entity),
-                owned,
-                boardAvailable);
         }
 
         private MatchHudTransportPassengersModel BuildTransportPassengersPanelModel(
@@ -1349,6 +1312,7 @@ namespace Game.Runtime
 
         private string ResolvePassengerRoleText(Context context, EntityManager em, Entity passenger)
         {
+            if (SelectionUiReadModelLookup.IsRescueSpecialist(em,passenger)) return Text("mission.m04.specialist.role","Rescue passenger");
             if (!em.Exists(passenger))
                 return Text("selection.feedback.unit_singular", "UNIT");
 
@@ -1396,7 +1360,7 @@ namespace Game.Runtime
                 false,
                 null,
                 selectedCount > 0,
-                selectedCount > 0,
+                CanDestroySelectedUnits(em),
                 hasSelectedBoardAction != null && hasSelectedBoardAction(em));
         }
 
@@ -2048,7 +2012,7 @@ namespace Game.Runtime
                 return;
             }
 
-            healthLabel = FormatText("selection.health.value", "Health: {0}/{1}", math.max(0, current), max);
+            healthLabel = $"{math.max(0, current)}/{max}";
             health01 = math.saturate((float)current / max);
         }
 

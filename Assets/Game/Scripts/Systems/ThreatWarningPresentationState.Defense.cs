@@ -13,7 +13,8 @@ namespace Game.Runtime
         private string _defenseText, _defenseLocale;
         private ThreatWarningRecord _defenseDisplayRecord;
         private FixedString64Bytes _defenseSession;
-        private int _defenseAttempt;
+        private int _defenseAttempt,_defenseLosses;
+        private bool _defensePreparing;
         private uint _defenseSource;
 
         private bool TryPresentDefense(EntityManager em, IMatchRuntimeUi matchUi, float now)
@@ -31,6 +32,8 @@ namespace Game.Runtime
                 _defenseVisible = false;
                 return true;
             }
+            bool preparing=em.HasComponent<CampaignMissionDefenseStateComponent>(root) && (em.GetComponentData<CampaignMissionDefenseStateComponent>(root).AcknowledgedGuidanceMask&0x1FFu)!=0x1FFu;
+            int losses=em.GetComponentData<CampaignMissionAttemptFactsComponent>(root).SquadLossCount;
             var records = em.GetBuffer<ThreatWarningRecord>(root, true);
             for (int i = 0; i < records.Length; i++)
             {
@@ -38,8 +41,11 @@ namespace Game.Runtime
                 if (record.ElementIndex != ledger.FocusElementIndex || record.Resolved != 0) continue;
                 string locale = GameLocalization.CurrentLocaleCode;
                 if (_defenseVisible && _defenseSession.Equals(runtime.SessionToken) && _defenseAttempt==runtime.AttemptOrdinal &&
-                    _defenseSource==runtime.SourceVersion && SameDisplay(record,_defenseDisplayRecord) && locale == _defenseLocale) return true;
+                    _defenseSource==runtime.SourceVersion && SameDisplay(record,_defenseDisplayRecord) && locale == _defenseLocale && preparing==_defensePreparing && losses==_defenseLosses) return true;
                 _defenseText = ThreatWarningDisplayText.Build(in record);
+                if(preparing) _defenseText=GameText.Get("mission.m03.prepare.short")+"\n"+GameText.Get("mission.m03.prepare.progress");
+                else if(losses>0) _defenseText=GameText.Format("mission.m03.casualties","",losses)+"\n"+_defenseText.Substring(_defenseText.IndexOf('\n')+1);
+                _defensePreparing=preparing;_defenseLosses=losses;
                 if (!matchUi.TryShowMatchHudThreatWarning(_defenseText, float.PositiveInfinity)) return true;
                 _defenseDisplayRecord=record; _defenseSession=runtime.SessionToken; _defenseAttempt=runtime.AttemptOrdinal;
                 _defenseSource=runtime.SourceVersion; _defenseLocale = locale; _defenseVisible = true;

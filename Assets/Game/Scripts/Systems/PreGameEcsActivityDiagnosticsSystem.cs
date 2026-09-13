@@ -25,10 +25,12 @@ namespace Game.Runtime
 
         public void OnCreate(ref SystemState state)
         {
-#if !(UNITY_EDITOR || DEVELOPMENT_BUILD)
+            // Opt in when investigating menu ECS activity; retained AI plans are normal
+            // and must not produce periodic console output during ordinary play.
+#if !WARLINE_PREGAME_ECS_DIAGNOSTICS || !(UNITY_EDITOR || DEVELOPMENT_BUILD)
             state.Enabled = false;
             return;
-#endif
+#else
             _unitQuery = state.GetEntityQuery(ComponentType.ReadOnly<UnitGrid>(), ComponentType.ReadOnly<Faction>());
             _modelReferenceQuery = state.GetEntityQuery(ComponentType.ReadOnly<UnitModelInstanceReference>());
             _healthBarQuery = state.GetEntityQuery(ComponentType.ReadOnly<HealthBarFill>());
@@ -44,10 +46,14 @@ namespace Game.Runtime
                 ComponentType.ReadOnly<InitialUnitsSpawnConfig>(),
                 ComponentType.ReadOnly<InitialUnitsSpawnInitialized>());
             state.RequireForUpdate<RuntimeGameplayStateComponent>();
+#endif
         }
 
         public void OnUpdate(ref SystemState state)
         {
+            if (PerformanceDiagnosticsCapturePolicy.SuppressLogging)
+                return;
+
             if (SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().PlayRequested != 0)
                 return;
 

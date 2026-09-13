@@ -10,7 +10,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-public sealed class M04AirliftIntegrationTests
+public sealed partial class M04AirliftIntegrationTests
 {
     public static void RunFocusedValidation()
     {
@@ -18,6 +18,8 @@ public sealed class M04AirliftIntegrationTests
         {
             var tests=new M04AirliftIntegrationTests();
             tests.BoardedDisabledPassengersSurviveProjectionAndRequireRealDeparture();
+            tests.FullBoardingStartsPatrolWarningOnlyOnce();
+            tests.SelectionLessonRequiresAllFourSpecialists();
             tests.HostilesResetClearanceAndCarrierLossOnlyFailsBeforeTransfer();
             tests.MissingMemberAndUninitializedHealthFailDifferently();
             tests.NamedUnlocksSettleOnceAndReplayImprovesStars();
@@ -25,7 +27,7 @@ public sealed class M04AirliftIntegrationTests
             tests.OrdinaryHelicopterMovePublishesAirborneState();
             tests.FailedSavePreservesProfileAndSameAttemptCanRetry();
             tests.CleanupRemovesBoardedMissionPassengersAndPreservesUnrelatedUnits();
-            Debug.Log("[M04AirliftIntegration] result=Passed tests=8"); ValidationExit.Passed();
+            Debug.Log("[M04AirliftIntegration] result=Passed tests=10"); ValidationExit.Passed();
         }
         catch(Exception e){Debug.LogException(e);Debug.LogError("[M04AirliftIntegration] result=Failed");ValidationExit.Failed();}
     }
@@ -68,6 +70,32 @@ public sealed class M04AirliftIntegrationTests
         }
         public void Project(float seconds=0)=>CampaignMissionRuntimeSystem.ProjectExtractionRoster(Em,Root,ref State,ref Config,in Runtime,ref Facts,seconds);
         public void Dispose()=>World.Dispose();
+    }
+    [Test] public void SelectionLessonRequiresAllFourSpecialists()
+    {
+        using var r=new Roster();
+        r.Runtime.Guidance=Game.Narrative.Contracts.NarrativeGuidanceMode.Full;
+        r.Runtime.RunKind=Game.Missions.Contracts.MissionRunKind.FirstClear;
+        r.State.SessionToken=r.Runtime.SessionToken;r.State.AttemptOrdinal=r.Runtime.AttemptOrdinal;
+        r.State.SourceVersion=r.Runtime.SourceVersion;r.State.GuidanceCompletedMask=7;
+        r.Em.AddComponent<CampaignMissionRootComponent>(r.Root);
+        r.Em.AddComponentData(r.Root,r.Runtime);r.Em.AddComponentData(r.Root,r.Facts);r.Em.AddComponentData(r.Root,r.State);
+        r.Em.AddComponent<CampaignMissionGuidanceProjectionComponent>(r.Root);
+        r.Em.AddBuffer<CampaignMissionGuidanceAcknowledgementRequestElement>(r.Root);
+        var gameplay=r.Em.CreateEntity();r.Em.AddComponentData(gameplay,new RuntimeGameplayStateComponent{SimulationActive=1});
+        var projection=r.World.CreateSystem<CampaignMissionGuidanceProjectionSystem>();
+        r.Em.AddComponent<SelectedUnitTag>(r.People[0]);projection.Update(r.World.Unmanaged);
+        Assert.AreEqual(55004,r.Em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(r.Root).GuidanceId,"One specialist must not complete the four-person selection lesson.");
+        for(int i=1;i<4;i++)r.Em.AddComponent<SelectedUnitTag>(r.People[i]);
+        projection.Update(r.World.Unmanaged);
+        Assert.AreEqual(55005,r.Em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(r.Root).GuidanceId);
+    }
+    [Test] public void FullBoardingStartsPatrolWarningOnlyOnce()
+    {
+        using var r=new Roster();r.Facts.ElapsedMilliseconds=20000;r.Project();
+        Assert.AreEqual(0,r.State.PatrolReleaseAtMilliseconds);
+        r.Board(r.State.Carrier);r.Project();Assert.AreEqual(35000,r.State.PatrolReleaseAtMilliseconds);
+        r.Facts.ElapsedMilliseconds=25000;r.Project();Assert.AreEqual(35000,r.State.PatrolReleaseAtMilliseconds,"Repeated projection must not postpone the patrol.");
     }
     [Test] public void BoardedDisabledPassengersSurviveProjectionAndRequireRealDeparture()
     {

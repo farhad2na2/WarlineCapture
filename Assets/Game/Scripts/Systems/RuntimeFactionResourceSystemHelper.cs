@@ -11,7 +11,7 @@ namespace Game.Runtime
         private int _pendingInitialDollars;
         private bool _isConfigured;
 
-        public int CurrentDollars => TryGetControlledFactionEconomy(out FactionEconomy economy) ? economy.Money : 0;
+        public int CurrentDollars => TryGetControlledFactionEconomy(out var economy) ? economy.Money : 0;
 
         public int CurrentMaterials => TryGetControlledFactionResources(out _, out FactionTacticalMaterialsComponent materials)
             ? materials.Current : 0;
@@ -19,9 +19,10 @@ namespace Game.Runtime
         public void SetInitialDollars(int dollars)
         {
             _pendingInitialDollars = Mathf.Max(0, dollars);
-            if (!TryGetControlledFactionEconomy(out FactionEconomy economy))
+            if (!TryGetControlledFactionEconomy(out var economy))
                 return;
 
+            economy.MaterialsOnlyConstruction = 0;
             economy.Money = _pendingInitialDollars;
             _entityManager.SetComponentData(_controlledFactionResourceEntity, economy);
         }

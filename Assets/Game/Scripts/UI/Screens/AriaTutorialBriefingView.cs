@@ -10,7 +10,7 @@ using RTLTMPro;
 namespace Game.UI.Runtime
 {
     [DisallowMultipleComponent]
-    public sealed class AriaTutorialBriefingView : MonoBehaviour
+    public sealed partial class AriaTutorialBriefingView : MonoBehaviour
     {
         [SerializeField] private RectTransform briefingLayout;
         [SerializeField] private Image portraitImage;
@@ -27,10 +27,7 @@ namespace Game.UI.Runtime
         [SerializeField] private RectTransform missionPortraitClip;
         [SerializeField] private RectTransform missionPortraitStage;
         [SerializeField] private GameObject missionTelemetry;
-        private bool _missionLayoutCaptured, _missionLayoutActive, _missionLayoutLarge;
-        private Vector2 _guidePosition, _guideSize, _titleSize, _bodyPosition, _bodySize, _actionsPosition, _clipSize, _stageSize;
-        private AspectRatioFitter _missionPortraitFitter;
-        private AspectRatioFitter.AspectMode _portraitAspectMode;
+        private bool _missionLayoutActive, _missionLayoutLarge;
 
         private Action _closeRequested;
         private Action _showRecommendationRequested;
@@ -104,7 +101,7 @@ namespace Game.UI.Runtime
         {
             _tutorialStep = model.TutorialStep;
             _tutorialStepCount = model.TutorialStepCount;
-            ApplyMissionLayout(_tutorialStepCount==12,model.LargeTextEnabled);
+            ApplyMissionLayout(_tutorialStepCount is 9 or 12,model.LargeTextEnabled);
             _recommendationKind = model.RecommendationKind;
             _rightToLeft = UiShellRuntimeGateway.Localization.IsRightToLeft;
             ApplyLanguagePresentation();
@@ -127,6 +124,7 @@ namespace Game.UI.Runtime
         {
             if (briefingLayout != null && briefingLayout.gameObject.activeSelf != visible)
                 briefingLayout.gameObject.SetActive(visible);
+            RefreshContentLayout();
         }
 
         public void ApplyInteractionState(
@@ -187,19 +185,21 @@ namespace Game.UI.Runtime
 
         public void ApplyAccessibility(bool largeTextEnabled, bool highContrastEnabled)
         {
-            ApplyMissionLayout(_tutorialStepCount==12,largeTextEnabled);
+            ApplyMissionLayout(_tutorialStepCount is 9 or 12,largeTextEnabled);
             float scale = largeTextEnabled ? 1.08f : 1f;
             titleText.fontSize = 29f * scale;
             bodyText.fontSize = 21f * scale;
             progressText.fontSize = 17f * scale;
-            if(_tutorialStepCount==12)
+            if(_tutorialStepCount is 9 or 12)
             {
+                bodyText.textWrappingMode = TextWrappingModes.Normal;
                 titleText.fontSizeMin=largeTextEnabled ? 19 : 17; titleText.fontSizeMax=largeTextEnabled ? 22 : 20;
                 bodyText.fontSizeMin=largeTextEnabled ? 17 : 15; bodyText.fontSizeMax=largeTextEnabled ? 19 : 17;
             }
             Color primary = highContrastEnabled ? Color.white : new Color(0.95f, 0.92f, 0.82f, 1f);
             titleText.color = primary;
             bodyText.color = primary;
+            _layoutDirty=true; RefreshContentLayout();
         }
 
         public bool ContainsScreenPoint(Vector2 screenPosition)
@@ -216,6 +216,7 @@ namespace Game.UI.Runtime
 
         private void OnEnable()
         {
+            Canvas.willRenderCanvases += RefreshContentLayout;
             if (!TryBindHierarchy()) return;
             _rightToLeft = UiShellRuntimeGateway.Localization.IsRightToLeft;
             ApplyLanguagePresentation();
@@ -243,6 +244,7 @@ namespace Game.UI.Runtime
             SetLocalizedText(titleText, title);
             SetLocalizedText(bodyText, _currentInstructionBody);
             ApplyProgress(narrationPhase);
+            RefreshContentLayout();
         }
 
         private void ApplyProgress(UiTutorialNarrationPhase narrationPhase)
@@ -285,39 +287,6 @@ namespace Game.UI.Runtime
                 target.alignment = _rightToLeft
                     ? ToRightAligned(_defaultAlignments[i])
                     : _defaultAlignments[i];
-            }
-        }
-
-        private void ApplyMissionLayout(bool active,bool large=false)
-        {
-            if(missionPortraitClip==null || missionPortraitStage==null || briefingLayout==null) return;
-            var actions=(RectTransform)showMeButton.transform.parent;
-            if(!_missionLayoutCaptured)
-            {
-                _guidePosition=briefingLayout.anchoredPosition; _guideSize=briefingLayout.sizeDelta;
-                _titleSize=titleText.rectTransform.sizeDelta; _bodyPosition=bodyText.rectTransform.anchoredPosition;
-                _bodySize=bodyText.rectTransform.sizeDelta; _actionsPosition=actions.anchoredPosition;
-                _clipSize=missionPortraitClip.sizeDelta; _stageSize=missionPortraitStage.sizeDelta;
-                _missionPortraitFitter=portraitImage.GetComponent<AspectRatioFitter>();
-                if(_missionPortraitFitter!=null) _portraitAspectMode=_missionPortraitFitter.aspectMode;
-                _missionLayoutCaptured=true;
-            }
-            if(_missionLayoutActive==active && _missionLayoutLarge==large) return;
-            _missionLayoutActive=active; _missionLayoutLarge=large;
-            briefingLayout.anchoredPosition=active ? new Vector2(_guidePosition.x,large ? -90 : -130) : _guidePosition;
-            briefingLayout.sizeDelta=active ? new Vector2(_guideSize.x,large ? 278 : 238) : _guideSize;
-            titleText.rectTransform.sizeDelta=active ? new Vector2(_titleSize.x,44) : _titleSize;
-            bodyText.rectTransform.anchoredPosition=active ? new Vector2(_bodyPosition.x,-48) : _bodyPosition;
-            bodyText.rectTransform.sizeDelta=active ? new Vector2(_bodySize.x,large ? 168 : 128) : _bodySize;
-            actions.anchoredPosition=active ? new Vector2(_actionsPosition.x,large ? -221 : -181) : _actionsPosition;
-            missionPortraitClip.sizeDelta=active ? new Vector2(_clipSize.x,large ? 62 : 102) : _clipSize;
-            missionPortraitStage.sizeDelta=active ? new Vector2(_stageSize.x,large ? 78 : 114) : _stageSize;
-            if(_missionPortraitFitter!=null) _missionPortraitFitter.aspectMode=active ? AspectRatioFitter.AspectMode.FitInParent : _portraitAspectMode;
-            if(missionTelemetry!=null) missionTelemetry.SetActive(!active);
-            if(!active)
-            {
-                titleText.fontSizeMin=14; titleText.fontSizeMax=18;
-                bodyText.fontSizeMin=12; bodyText.fontSizeMax=15;
             }
         }
 

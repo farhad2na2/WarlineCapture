@@ -94,24 +94,24 @@
       "id": "5",
       "speaker": "ARIA",
       "locale": "en-US",
-      "text": "Check the resource bar. The Barracks cost 40,000 Credits and 90 Materials.",
+      "text": "You started with 120 Materials. The Barracks used 90, leaving 30. Save 20 to train your rifle squad.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m02_check_cost_aria.wav",
-      "durationSeconds": 5.84,
-      "sha256": "ffdd226d7141c493d6ce65d5be5eeac9156750cb35f8b2c8e7967c998af12ce7"
+      "durationSeconds": 9.2,
+      "sha256": "f36ea25b61a0a4dee5319bbb5aa6e8a887ece0359f448f4c17688892010e6458"
     },
     {
       "kind": "tutorial",
       "id": "5",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "نوار منابع را بررسی کنید. سربازخانه ۴۰ هزار اعتبار و ۹۰ واحد مصالح هزینه دارد.",
+      "text": "با ۱۲۰ واحد مصالح شروع کردید. سربازخانه ۹۰ واحد مصرف کرد و ۳۰ واحد مانده است. ۲۰ واحد برای آموزش گروه تفنگدار نگه دارید.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_check_cost_aria_fa.wav",
-      "durationSeconds": 8.08,
-      "sha256": "5ad8742eb8c318427708eebd0157076afbeadef7382f2e0ab93c397b94f138c9"
+      "durationSeconds": 11.28,
+      "sha256": "5b2b9b0defb5283daf1e9978ab37a27d1c87bcb9446cc83448404de8a651ff98"
     },
     {
       "kind": "tutorial",

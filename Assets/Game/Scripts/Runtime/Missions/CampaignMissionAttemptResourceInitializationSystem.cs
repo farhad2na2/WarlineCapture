@@ -89,6 +89,9 @@ namespace Game.Runtime
                     out FactionTacticalMaterialsComponent nextMaterials))
                 return;
 
+            nextEconomy.MaterialsOnlyConstruction = (byte)(runtime.MissionId.Equals(
+                new Unity.Collections.FixedString64Bytes("saga.ch01.m02.establish_base")) ? 1 : 0);
+            if (nextEconomy.MaterialsOnlyConstruction != 0) nextEconomy.Money = 0;
             entityManager.SetComponentData(playerResources, nextEconomy);
             entityManager.SetComponentData(playerResources, nextMaterials);
             MarkApplied(entityManager, root, in runtime);

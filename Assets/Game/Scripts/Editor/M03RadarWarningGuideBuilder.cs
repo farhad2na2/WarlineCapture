@@ -40,6 +40,8 @@ namespace Game.Editor
             }).ToArray();
             var topics=Enumerable.Range(1,12).Select(i=>new MissionGuideTopic {TitleKey=Key(i,"title"),BodyKey=Key(i,"body"),
                 ExampleKey=Key(i,"example"),MistakeKey=Key(i,"mistake"),DiagramKey=Key(i,"diagram")}).ToArray();
+            topics[3].BodyKey="mission.m03.tactics.build";
+            topics[7].ExampleKey="mission.m03.tactics.visual";
             var guide=AssetDatabase.LoadAssetAtPath<MissionFieldGuideConfig>(Path);
             if(guide==null) {guide=ScriptableObject.CreateInstance<MissionFieldGuideConfig>(); AssetDatabase.CreateAsset(guide,Path);}
             guide.Configure(topics,classes); EditorUtility.SetDirty(guide); AssetDatabase.SaveAssets();

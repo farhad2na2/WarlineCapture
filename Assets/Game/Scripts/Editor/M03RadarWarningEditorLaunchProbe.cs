@@ -164,6 +164,7 @@ namespace Game.Editor
         }
         private static void Complete(bool passed,string detail)
         {
+            SessionState.SetBool(TutorialBuildKey,false);
             SessionState.SetBool(HudRoadKey,false);
             SessionState.SetBool(CrossMissionKey,false);
             StopComicValidation();

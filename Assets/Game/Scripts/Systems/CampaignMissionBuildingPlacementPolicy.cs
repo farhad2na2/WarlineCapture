@@ -23,6 +23,9 @@ namespace Game.Runtime
                     missionOrigins.yMin + (missionOrigins.height - 1) / 2);
             bool found = source.BuildingRuntimeSpawnCompositionSystemHelper.TryResolveInitialPlacementOrigin(
                 context, definition, origin, out resolved, hasMissionOrigins ? missionOrigins : null);
+            if (!found && hasMissionOrigins && context.TryGetGridData(out _, out var grid, out var roads, out var blockers))
+                found = BuildingPlacementOriginSearch.TryFindAcrossBounds(missionOrigins, origin,
+                    candidate => context.IsPlacementValid(definition, candidate, footprint, false, grid, roads, blockers), out resolved);
             // Resolve the mission's preview position even while its lot is occupied.
             // Preview and confirmation validation still reject the blocked footprint.
             if (!found && hasMissionOrigins) resolved = origin;

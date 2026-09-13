@@ -7,8 +7,7 @@ namespace Game.Runtime
     {
         internal static bool IsFailure(in CampaignMissionAttemptFactsComponent facts) =>
             facts.ExtractionAircraftLost != 0 || facts.ExtractionCarrierLost != 0 || facts.CivilianLossCount > 0 ||
-            facts.HostileRosterIntegrityFault != 0 || facts.ExtractionTimedOut != 0 ||
-            facts.CommandSquadSpawned != 0 && facts.CommandSquadAlive == 0;
+            facts.HostileRosterIntegrityFault != 0 || facts.ExtractionTimedOut != 0;
 
         internal static bool IsVictory(in CampaignMissionAttemptFactsComponent facts, int required) =>
             !IsFailure(in facts) && required > 0 && facts.ExtractionPassengerTotal == required &&

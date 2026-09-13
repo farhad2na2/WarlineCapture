@@ -31,7 +31,7 @@ namespace Game.Editor
         }
         private static void TickRecovery(EntityManager em,Entity root,CampaignMissionRuntimeComponent runtime,CampaignMissionAttemptFactsComponent facts)
         {
-            if(EditorApplication.timeSinceStartup-stepAt>(step==108?210:90))throw new TimeoutException("M04 recovery step timed out: "+step+" phase="+runtime.Phase);
+            if(EditorApplication.timeSinceStartup-stepAt>(step is 102 or 108?210:90))throw new TimeoutException("M04 recovery step timed out: "+step+" phase="+runtime.Phase);
             if(Time.frameCount-frame<10)return;
             var extraction=em.GetComponentData<CampaignMissionExtractionState>(root);
             if(step==100)
@@ -51,9 +51,16 @@ namespace Game.Editor
             }
             if(step==102)
             {
+                if(EditorApplication.timeSinceStartup-stepAt<1)
+                {
+                    if(facts.ExtractionCarrierLost!=0 || !em.Exists(extraction.Carrier) || em.GetComponentData<UnitHealth>(extraction.Carrier).Current<=0)
+                        throw new InvalidOperationException("Protected APC accepted self-destruction.");
+                    return;
+                }
+                Time.timeScale=4;
                 if(runtime.Outcome!=MissionOutcomeKind.Defeat)return;
-                if(facts.ExtractionCarrierLost==0)throw new InvalidOperationException("Destroying the APC did not produce the carrier-loss failure");
-                if(!UiShellRuntimeGateway.TryReadMissionResult(out var result)||!result.Extraction.CarrierLost||!result.RetryVisible)return;
+                Time.timeScale=1;
+                if(!UiShellRuntimeGateway.TryReadMissionResult(out var result)||!result.RetryVisible)return;
                 if(!ResultVisible())return;
                 GameLocalization.SetLocale("en",false);Next();return;
             }
@@ -87,7 +94,7 @@ namespace Game.Editor
                 if(facts.ExtractionTimedOut != 0) throw new InvalidOperationException("Idle rescue failed only at the deadline; pursuers never made contact.");
                 var profile=save.LoadProfile();if(profile.credits!=settledCredits||profile.commanderXp!=settledXp)throw new InvalidOperationException("Idle defeat changed settled rewards");
                 Debug.Log("[M04EditorProbe] Idle retry defeated at ms="+facts.ElapsedMilliseconds+" passengerLosses="+facts.CivilianLossCount+" escorts="+facts.SquadLossCount+" timeout="+facts.ExtractionTimedOut);
-                Complete(true,"HUD en/fa 16:9 and 20:9; 12 guide topics and 57 classes in both languages; real APC/helicopter rescue; debrief; saved unlocks; visible bilingual result; campaign return; real Replay carrier-loss defeat and clean Retry; idle failure under normal combat at 4x simulation; no duplicate rewards");
+                Complete(true,"HUD en/fa 16:9 and 20:9; 12 guide topics and 57 classes in both languages; real APC/helicopter rescue; debrief; saved unlocks; visible bilingual result; campaign return; protected self-destruct rejection and real Replay combat defeat and clean Retry; idle failure under normal combat at 4x simulation; no duplicate rewards");
             }
         }
         private static bool ResultVisible()

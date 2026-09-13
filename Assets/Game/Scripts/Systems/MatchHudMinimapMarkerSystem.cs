@@ -35,6 +35,8 @@ namespace Game.Runtime
             bool defenseIntel = SystemAPI.TryGetSingleton(out ThreatWarningLedgerState ledger) &&
                                 SystemAPI.TryGetSingleton(out CampaignMissionRuntimeComponent mission) &&
                                 ThreatWarningResolveSystem.Matches(in ledger, in mission);
+            bool missionRoster=defenseIntel || SystemAPI.TryGetSingleton(out CampaignMissionExtractionState extraction) && extraction.Initialized!=0 &&
+                SystemAPI.TryGetSingleton(out CampaignMissionRuntimeComponent extractionMission) && extraction.SessionToken.Equals(extractionMission.SessionToken) && extraction.AttemptOrdinal==extractionMission.AttemptOrdinal;
             var produced=new NativeParallelHashSet<Entity>(MaxMarkers,Allocator.TempJob);
             if(defenseIntel)
                 foreach(var units in SystemAPI.Query<DynamicBuffer<BuildingProducedUnitReadModel>>())
@@ -44,7 +46,7 @@ namespace Game.Runtime
             {
                 MaxMarkers = MaxMarkers,
                 CollectMode = CollectPlayerMarkers,
-                DefenseRoster = defenseIntel,
+                DefenseRoster = missionRoster,
                 ProducedUnits = produced,
                 RuntimeBuildingLookup = SystemAPI.GetComponentLookup<RuntimeBuildingCombatInfo>(true),
                 MapBuildingLookup = SystemAPI.GetComponentLookup<OperationMapBuildingComponent>(true),
@@ -57,7 +59,7 @@ namespace Game.Runtime
             {
                 MaxMarkers = MaxMarkers,
                 CollectMode = CollectEnemyMarkers,
-                DefenseRoster = defenseIntel,
+                DefenseRoster = missionRoster,
                 ProducedUnits = produced,
                 RuntimeBuildingLookup = SystemAPI.GetComponentLookup<RuntimeBuildingCombatInfo>(true),
                 MapBuildingLookup = SystemAPI.GetComponentLookup<OperationMapBuildingComponent>(true),

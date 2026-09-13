@@ -65,6 +65,7 @@ namespace Game.Runtime
                 }
 
                 ecb.Playback(em);
+                if(!holdPosition && issuedCount>0) RecordDefenseStop(em);
             }
             finally
             {
@@ -72,6 +73,19 @@ namespace Game.Runtime
             }
 
             return issuedCount;
+        }
+
+        private static void RecordDefenseStop(EntityManager em)
+        {
+            using var query=em.CreateEntityQuery(ComponentType.ReadWrite<CampaignMissionDefenseStateComponent>(),ComponentType.ReadOnly<CampaignMissionRuntimeComponent>());
+            if(query.CalculateEntityCount()!=1) return;
+            var root=query.GetSingletonEntity();
+            {
+                var runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);
+                var defense=em.GetComponentData<CampaignMissionDefenseStateComponent>(root);
+                if(runtime.Phase!=Game.Missions.Contracts.MissionPhaseKind.Engage || !defense.SessionToken.Equals(runtime.SessionToken)) return;
+                defense.StopAccepted=1; em.SetComponentData(root,defense);
+            }
         }
 
         private static void ClearImmediateOrderComponents(

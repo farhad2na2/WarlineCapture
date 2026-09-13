@@ -1249,6 +1249,126 @@
           "value": "برای انتخاب، روی کارت <color=#00D1F3>گروه تفنگدار</color> بزنید.\nسپس برای حرکت به نشانگر، <color=#00D1F3>حرکت</color> را بزنید."
         }
       ]
+    },
+    {
+      "key": "tutorial.m02.materials.title",
+      "source": "Plan your Materials",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "مصالح را مدیریت کنید"
+        }
+      ]
+    },
+    {
+      "key": "tutorial.m02.materials.body",
+      "source": "You started with 120 Materials. The Barracks used 90, leaving 30. Save 20 to train your rifle squad.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "با ۱۲۰ واحد مصالح شروع کردید. سربازخانه ۹۰ واحد مصرف کرد و ۳۰ واحد مانده است. ۲۰ واحد برای آموزش گروه تفنگدار نگه دارید."
+        }
+      ]
+    },
+    {
+      "key": "tutorial.next.buildings",
+      "source": "OPEN BUILDINGS",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "ساختمان‌ها را باز کنید"
+        }
+      ]
+    },
+    {
+      "key": "tutorial.next.place",
+      "source": "CHOOSE LOCATION",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "انتخاب محل ساخت"
+        }
+      ]
+    },
+    {
+      "key": "tutorial.next.defense",
+      "source": "SELECT A DEFENSE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "انتخاب سازهٔ دفاعی"
+        }
+      ]
+    },
+    {
+      "key": "tutorial.next.soldiers",
+      "source": "OPEN SOLDIERS",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سربازان را باز کنید"
+        }
+      ]
+    },
+    {
+      "key": "tutorial.next.rifle",
+      "source": "SELECT RIFLE SQUAD",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "انتخاب گروه تفنگدار"
+        }
+      ]
+    },
+    {
+      "key": "tutorial.next.produce",
+      "source": "TRAIN SQUAD",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "آموزش گروه"
+        }
+      ]
+    },
+    {
+      "key": "tutorial.next.confirm",
+      "source": "CONFIRM PLACEMENT",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "تأیید محل ساخت"
+        }
+      ]
+    },
+    {
+      "key": "tutorial.next.continue",
+      "source": "CONTINUE LESSON",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "ادامهٔ درس"
+        }
+      ]
+    },
+    {
+      "key": "tutorial.next.board",
+      "source": "BOARD TRANSPORT",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سوار شدن"
+        }
+      ]
+    },
+    {
+      "key": "tutorial.next.unload",
+      "source": "UNLOAD TEAM",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پیاده کردن گروه"
+        }
+      ]
     }
   ]
 }

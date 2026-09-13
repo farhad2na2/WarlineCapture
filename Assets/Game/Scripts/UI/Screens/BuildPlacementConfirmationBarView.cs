@@ -233,8 +233,10 @@ namespace Game.UI.Runtime
                 : UiLocalizedText.CatalogLabel(title);
             SetText(titleText, _gameTextResolver.Format("ui.build.title", "BUILD {0}", buildingTitle));
             SetText(costText, FormatResource(_commandSystem.ActivePlacementCost));
-            SetText(oilCostText, FormatResource(_commandSystem.ActivePlacementCreditsCost));
-            if (fuelCostText != null && string.IsNullOrWhiteSpace(fuelCostText.text))
+            bool materialsOnly = UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var restrictions) &&
+                restrictions.UsesMaterialsOnlyConstruction;
+            SetText(oilCostText, FormatResource(materialsOnly ? 0 : _commandSystem.ActivePlacementCreditsCost));
+            if (fuelCostText != null && (materialsOnly || string.IsNullOrWhiteSpace(fuelCostText.text)))
                 SetText(fuelCostText, "0");
             if (footprintText != null && string.IsNullOrWhiteSpace(footprintText.text))
                 SetText(footprintText, "3x3");

@@ -18,6 +18,7 @@ namespace Game.UI.Runtime
         private void OnEnable()
         {
             _nextQueueRefreshTime = 0f;
+            _lastPrimaryActionAccepted = false;
             BuildDrawerCatalogPresentationSystemHelper.WireTabs(view, _tabBindings, SelectCategory);
             WirePrimaryAction();
             WireQueueControls();
@@ -42,7 +43,11 @@ namespace Game.UI.Runtime
                 _activeCategory);
             if (hasItems)
             {
-                if (RequiresExplicitMissionSelection())
+                if (RestoreSelectedCatalogItem())
+                {
+                    // Rebinding metadata must not erase a purchase the player just selected.
+                }
+                else if (RequiresExplicitMissionSelection() || UiShellRuntimeGateway.TryReadMissionDefense(out var defense) && defense.IsActive)
                 {
                     ClearSelection();
                     ApplyInstruction(
@@ -58,6 +63,20 @@ namespace Game.UI.Runtime
                 ClearSelection();
 
             RefreshQueue();
+            view.RefreshResources();
+        }
+
+        private bool RestoreSelectedCatalogItem()
+        {
+            if (!_hasSelectedItem || _selectedItem.Category != _activeCategory) return false;
+            for (int i = 0; i < _items.Count; i++)
+            {
+                if (_items[i].Prefab != _selectedItem.Prefab) continue;
+                var item = i == 0 ? view.ItemTemplate : _runtimeItems[i - 1];
+                SelectItem(item, _items[i]);
+                return true;
+            }
+            return false;
         }
 
         private void SelectItem(BuildDrawerItemView item, BuildDrawerCatalogItem model)
@@ -70,7 +89,8 @@ namespace Game.UI.Runtime
             _selectedItem = model;
             _hasSelectedItem = true;
             ApplyInstructionForCurrentSelection();
-            if (model.Category == BuildDrawerCategory.Buildings)
+            if (model.Category == BuildDrawerCategory.Buildings && model.Prefab != null &&
+                model.Prefab.name == BarracksPrefabName)
             {
                 UiShellRuntimeGateway.TryAcknowledgeCampaignGuidanceTarget(
                     UiCampaignGuidanceTargetKind.BarracksCatalogItem);
@@ -107,8 +127,9 @@ namespace Game.UI.Runtime
 
         internal Button ResolveBarracksGuidanceButton()
         {
-            if (view == null || !view.IsOpen || _activeCategory != BuildDrawerCategory.Buildings)
-                return null;
+            if (view == null || !view.IsOpen) return null;
+            if (_activeCategory != BuildDrawerCategory.Buildings)
+                return ResolveCategoryButton(BuildDrawerCategory.Buildings);
 
             for (int index = 0; index < _items.Count; index++)
             {
@@ -194,6 +215,7 @@ namespace Game.UI.Runtime
 
         internal RectTransform ResolveRifleProductionGuidanceTarget()
         {
+            if (_lastPrimaryActionAccepted || _pendingProductions.Count > 0) return null;
             if (view == null || !view.IsOpen)
                 return null;
             if (_activeCategory != BuildDrawerCategory.Soldiers)

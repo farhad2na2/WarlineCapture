@@ -58,7 +58,7 @@ TUTORIAL = (
     (2, "open_build", "Open the Build menu.", "منوی ساخت را باز کنید."),
     (3, "select_barracks", "Select Barracks from the building list.", "سربازخانه را از فهرست ساختمان‌ها انتخاب کنید."),
     (4, "place_barracks", "Place the Barracks inside the green area, then confirm construction.", "سربازخانه را داخل محدوده سبز قرار دهید و ساخت را تأیید کنید."),
-    (5, "check_cost", "Check the resource bar. The Barracks cost 40,000 Credits and 90 Materials.", "نوار منابع را بررسی کنید. سربازخانه ۴۰ هزار اعتبار و ۹۰ واحد مصالح هزینه دارد."),
+    (5, "check_cost", "You started with 120 Materials. The Barracks used 90, leaving 30. Save 20 to train your rifle squad.", "با ۱۲۰ واحد مصالح شروع کردید. سربازخانه ۹۰ واحد مصرف کرد و ۳۰ واحد مانده است. ۲۰ واحد برای آموزش گروه تفنگدار نگه دارید."),
     (6, "train_rifle_squad", "Open production and recruit one rifle squad.", "بخش تولید را باز کنید و یک گروه تفنگدار آموزش دهید."),
     (7, "incoming_patrol", "An enemy patrol is approaching from the west. Prepare your squad at the marked lane.", "یک گشت دشمن از غرب نزدیک می‌شود. گروه خود را در مسیر علامت‌گذاری‌شده آماده کنید."),
     (8, "defend_post", "Hold the marked lane and protect the forward post.", "مسیر علامت‌گذاری‌شده را حفظ کنید و از پاسگاه دفاع کنید."),

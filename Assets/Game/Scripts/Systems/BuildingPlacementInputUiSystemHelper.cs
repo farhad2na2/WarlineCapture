@@ -122,6 +122,9 @@ namespace Game.Runtime
                     context.CenterCellToOrigin);
             }
 
+            // Consume the release position before ending the drag and validating/committing walls.
+            context.UpdatePlacementFromPointer?.Invoke(pointerPosition);
+
             if (pointer.WasReleasedThisFrame)
             {
                 HandlePointerRelease(
@@ -132,8 +135,6 @@ namespace Game.Runtime
 
             if (!pointer.IsPressed)
                 HandlePointerNotPressed();
-
-            context.UpdatePlacementFromPointer?.Invoke(pointerPosition);
         }
 
         public void TryBeginDrag(
@@ -151,7 +152,6 @@ namespace Game.Runtime
 
             bool canStartDrag = hasGrid && IsPointerOverPlacement(placement, pointerPosition, grid, tryGetGridCell);
             if (!canStartDrag &&
-                isLinearWall &&
                 hasGrid &&
                 tryGetGridCell != null &&
                 centerCellToOrigin != null &&
@@ -170,6 +170,8 @@ namespace Game.Runtime
             if (!canStartDrag)
                 return;
 
+            placement.LastPointerScreenPosition = pointerPosition;
+            placement.LastPointerMovedAt = UnityEngine.Time.time;
             IsDraggingPlacement = true;
             placement.CommittedOriginCell = placement.OriginCell;
             placement.DragStartOriginCell = placement.OriginCell;
@@ -210,15 +212,7 @@ namespace Game.Runtime
 
             if (updateCellFromPointer)
             {
-                if ((screenPosition - placement.LastPointerScreenPosition).sqrMagnitude > 1f)
-                {
-                    placement.LastPointerMovedAt = currentTime;
-                    placement.LastPointerScreenPosition = screenPosition;
-                }
-
-                bool pointerIdle = currentTime - placement.LastPointerMovedAt >= 1f;
-                if (!pointerIdle &&
-                    tryGetGridCell != null &&
+                if (tryGetGridCell != null &&
                     centerCellToOrigin != null &&
                     tryGetGridCell(screenPosition, grid, out Vector2Int hoveredCell))
                 {
@@ -230,7 +224,7 @@ namespace Game.Runtime
                 }
             }
 
-            return currentTime - placement.LastPointerMovedAt >= 1f;
+            return false; // Placement never requests camera follow, including a paused finger.
         }
 
         public bool IsPointerOverPlacement(

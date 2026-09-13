@@ -67,6 +67,7 @@ namespace Game.UI.Contracts
 
     public readonly struct UiUnitCatalogMetadata
     {
+        public readonly int CreditsCost;
         public readonly string DisplayName;
         public readonly string Description;
         public readonly bool CanRequest;
@@ -106,7 +107,8 @@ namespace Game.UI.Contracts
             int attackDamage,
             float attackRange,
             float speed,
-            int maxHealth)
+            int maxHealth,
+            int creditsCost = 0)
         {
             DisplayName = displayName;
             Description = description;
@@ -125,6 +127,7 @@ namespace Game.UI.Contracts
             CanAttack = canAttack;
             AttackDamage = Mathf.Max(0, attackDamage);
             AttackRange = Mathf.Max(0f, attackRange);
+            CreditsCost = Mathf.Max(0, creditsCost);
             Speed = Mathf.Max(0f, speed);
             MaxHealth = Mathf.Max(0, maxHealth);
         }

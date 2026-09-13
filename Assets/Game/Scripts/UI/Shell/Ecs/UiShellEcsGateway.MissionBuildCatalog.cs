@@ -35,6 +35,15 @@ namespace Game.UI.Shell.Ecs
                 entityManager.HasComponent<CampaignMissionAttemptFactsComponent>(root) &&
                 entityManager.GetComponentData<CampaignMissionAttemptFactsComponent>(root)
                     .RequiredBuildingCompletedCount > 0;
+            // Defense reinforcement is optional, so it has no ProduceUnit objective.
+            // Expose the configured rifle from the supplied producer instead of an empty tab.
+            if (definition.Defense.Enabled != 0)
+            {
+                requiredUnitConfigId = definition.Defense.ReinforcementUnitConfigId.ToString();
+                produceObjectiveCount = string.IsNullOrEmpty(requiredUnitConfigId) ? 0 : 1;
+                requiredProducerCompleted = entityManager.HasComponent<CampaignMissionDefenseStateComponent>(root) &&
+                    entityManager.GetComponentData<CampaignMissionDefenseStateComponent>(root).InitialProducerReady != 0;
+            }
             catalog = new UiMissionBuildCatalogModel(
                 runtime.MissionId.ToString(),
                 definition.BuildCatalog.Length,

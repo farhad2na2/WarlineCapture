@@ -19,6 +19,8 @@ namespace Game.UI.Shell.Ecs
         private (World World,Entity Root,FixedString64Bytes Session,int Attempt,uint Source) defenseAttemptKey;
         private (uint Ledger,uint Ping,int Cooldown,bool Active,bool Sensor,int Guidance,bool Return) defenseReadKey;
         private string defenseReadLocale;
+        private bool defenseReadResume,defenseReadPreparing;
+        private int defenseReadLosses;
         private UiMissionDefenseModel defenseReadModel;
         private bool hasDefenseReadModel;
         private EntityQuery GetDefenseGameplayQuery(EntityManager em)
@@ -54,7 +56,9 @@ namespace Game.UI.Shell.Ecs
             var attemptKey=(em.World,root,runtime.SessionToken,runtime.AttemptOrdinal,runtime.SourceVersion);
             var key=(ledger.Version,ping.Version,cooldown,active,sensor,guidance,canReturn);
             string locale=GameLocalization.CurrentLocaleCode;
-            if(hasDefenseReadModel && defenseAttemptKey.Equals(attemptKey) && defenseReadKey.Equals(key) && defenseReadLocale==locale)
+            bool preparing=(em.GetComponentData<CampaignMissionDefenseStateComponent>(root).AcknowledgedGuidanceMask&0x1FFu)!=0x1FFu;
+            bool resume=guidance==45007 && em.GetComponentData<CampaignMissionDefenseStateComponent>(root).StopAccepted!=0;
+            if(hasDefenseReadModel && defenseAttemptKey.Equals(attemptKey) && defenseReadKey.Equals(key) && defenseReadLocale==locale && defenseReadResume==resume && defenseReadPreparing==preparing && defenseReadLosses==facts.SquadLossCount)
             {model=defenseReadModel; return true;}
             string status=!active ? GameText.Get("mission.m03.ping.paused","Paused") :
                 !sensor ? GameText.Get("mission.m03.ping.no_sensor","Ground sensor unavailable") :
@@ -66,9 +70,11 @@ namespace Game.UI.Shell.Ecs
             for(int i=0;i<records.Length;i++)
                 if(ledger.Active!=0 && records[i].ElementIndex==ledger.FocusElementIndex && records[i].Resolved==0)
                 { warning=ThreatWarningDisplayText.Build(records[i]); hasWarning=true; focus=active && records[i].HasFocus!=0; attention=records[i].AttentionEscalated!=0 && records[i].ReadByPlayer==0; break; }
-            model=new UiMissionDefenseModel(true,hasWarning,focus,canPing,warning,status,ping.Charges,cooldown,ledger.FocusElementIndex,guidance,ledger.Version+ping.Version,canReturn,attention);
+            if(preparing) warning=GameText.Get("mission.m03.prepare")+"\n"+warning;
+            if(facts.SquadLossCount>0) warning+= "\n"+GameText.Format("mission.m03.casualties","",facts.SquadLossCount);
+            model=new UiMissionDefenseModel(true,hasWarning,focus,canPing,warning,status,ping.Charges,cooldown,ledger.FocusElementIndex,guidance,ledger.Version+ping.Version,canReturn,attention,resume);
             defenseAttemptKey=attemptKey; defenseReadKey=key; defenseReadLocale=locale;
-            defenseReadModel=model; hasDefenseReadModel=true;
+            defenseReadModel=model; defenseReadResume=resume;defenseReadPreparing=preparing;defenseReadLosses=facts.SquadLossCount; hasDefenseReadModel=true;
             return true;
         }
 

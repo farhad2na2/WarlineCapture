@@ -456,22 +456,6 @@ namespace Game.UI.Runtime
             _cameraRequested?.Invoke();
         }
 
-        private void SetHealthFill(float health01)
-        {
-            if (healthFillImage == null)
-                return;
-
-            if (healthFillImage.type != Image.Type.Filled)
-                healthFillImage.type = Image.Type.Filled;
-            if (healthFillImage.fillMethod != Image.FillMethod.Horizontal)
-                healthFillImage.fillMethod = Image.FillMethod.Horizontal;
-            if (healthFillImage.fillOrigin != 0)
-                healthFillImage.fillOrigin = 0;
-            float fillAmount = Mathf.Clamp01(health01);
-            if (!Mathf.Approximately(healthFillImage.fillAmount, fillAmount))
-                healthFillImage.fillAmount = fillAmount;
-        }
-
         private void SetBadge(bool visible, Sprite sprite)
         {
             if (badgeRoot != null && badgeRoot.activeSelf != visible)

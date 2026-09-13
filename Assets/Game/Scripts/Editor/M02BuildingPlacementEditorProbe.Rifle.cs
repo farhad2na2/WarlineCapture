@@ -67,6 +67,8 @@ namespace Game.Editor
             var aria = UnityEngine.Object.FindAnyObjectByType<AriaTutorialBriefingView>();
             if (panel.TutorialStep == 5)
             {
+                ValidateMaterialsBudget(em, 30);
+                ScreenCapture.CaptureScreenshot(Output + "/materials-lesson.png");
                 if (Click(aria?.DoItButton)) nextAction = EditorApplication.timeSinceStartup + 2;
                 return;
             }
@@ -83,6 +85,15 @@ namespace Game.Editor
             }
             if (rifleClicks > 0)
             {
+                var close = rifleDrawer != null ? rifleDrawer.CloseButton : null;
+                if (close != null && aria != null)
+                {
+                    var corners = new Vector3[4]; var rail = new Vector3[4];
+                    ((RectTransform)close.transform).GetWorldCorners(corners);
+                    ((RectTransform)aria.transform).GetWorldCorners(rail);
+                    if (corners[2].x >= rail[0].x)
+                        throw new InvalidOperationException("Build close button overlaps the guided ARIA rail.");
+                }
                 // Check again after multiple rendered frames, before issuing another user click.
                 for (int control = 0; control < 4; control++)
                     if (rifleControlClicks[control] != (control < rifleClicks ? 1 : 0))
@@ -97,7 +108,8 @@ namespace Game.Editor
             if (rifleClicks == 4)
             {
                 if (facts.RequiredUnitProducedCount == 0) return;
-                Complete(true, "M2 ARIA: four explicit Do It clicks = open Build / Soldiers / rifle / Produce; no automatic clicks between actions; actual rifle delivered.");
+                ValidateMaterialsBudget(em, 10);
+                Complete(true, "M2 Materials-only budget 120 -> 30 -> 10 with zero Credits. M2 ARIA: four explicit Do It clicks = open Build / Soldiers / rifle / Produce; no automatic clicks between actions; actual rifle delivered.");
                 return;
             }
             if (panel.TutorialStep != 6 || aria == null || !aria.DoItButton.isActiveAndEnabled) return;
@@ -114,6 +126,22 @@ namespace Game.Editor
             nextAction = EditorApplication.timeSinceStartup + 3;
         }
 
+        private static void ValidateMaterialsBudget(EntityManager em, int expected)
+        {
+            using var query = em.CreateEntityQuery(typeof(FactionEconomy), typeof(FactionTacticalMaterialsComponent));
+            using var entities = query.ToEntityArray(Unity.Collections.Allocator.Temp);
+            foreach (var entity in entities)
+            {
+                var economy = em.GetComponentData<FactionEconomy>(entity);
+                if (!FactionIdentity.IsPlayerControlled(economy.FactionId)) continue;
+                int actual = em.GetComponentData<FactionTacticalMaterialsComponent>(entity).Current;
+                if (economy.Money != 0 || economy.MaterialsOnlyConstruction != 1 || actual != expected)
+                    throw new InvalidOperationException($"M2 budget: Materials={actual}, expected={expected}, legacyMoney={economy.Money}");
+                return;
+            }
+            throw new InvalidOperationException("Missing M2 faction budget.");
+        }
+
         private static bool IsTouchable(Button button)
         {
             if (!button.IsInteractable()) return false;
@@ -127,6 +155,7 @@ namespace Game.Editor
             bool touchable = hits.Count > 0 && hits[0].gameObject.GetComponentInParent<Button>() == button;
             if (!touchable && EditorApplication.timeSinceStartup >= nextAction)
             {
+                ScreenCapture.CaptureScreenshot(Output + "/blocked-aria.png");
                 Log($"ARIA pointer waiting: position={point} screen={Screen.width}x{Screen.height} raycaster={raycaster.name} camera={camera?.name} blocker={(hits.Count > 0 ? hits[0].gameObject.name : "none")}");
                 nextAction = EditorApplication.timeSinceStartup + 1;
             }

@@ -16,6 +16,7 @@ public sealed class M04AirliftRuleTests
             tests.FailureWinsOverSimultaneousDeparture();
             tests.OpeningMustFinishBeforeMissionStarts();
             tests.VictoryWaitsForFinale();
+            tests.EscortLossIsABonusCriterion();
             Debug.Log("[M04AirliftRules] result=Passed cases=15"); ValidationExit.Passed();
         }
         catch (Exception error) { Debug.LogException(error); ValidationExit.Failed(); }
@@ -40,16 +41,21 @@ public sealed class M04AirliftRuleTests
     }
     [Test] public void FailureWinsOverSimultaneousDeparture()
     {
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < 5; i++)
         {
             var facts = Success();
             switch (i) { case 0: facts.ExtractionAircraftLost = 1; break; case 1: facts.ExtractionCarrierLost = 1; break;
                 case 2: facts.CivilianLossCount = 1; break; case 3: facts.HostileRosterIntegrityFault = 1; break;
-                case 4: facts.ExtractionTimedOut = 1; break; case 5: facts.CommandSquadAlive = 0; break; }
+                case 4: facts.ExtractionTimedOut = 1; break; }
             Assert.IsFalse(CampaignMissionExtractionRuleUtility.IsVictory(facts, 4));
             Assert.IsTrue(CampaignMissionExtractionRuleUtility.TryAdvance(Runtime(MissionPhaseKind.Engage), facts, true, true, 4, out var next));
             Assert.AreEqual(MissionOutcomeKind.Defeat, next.Outcome);
         }
+    }
+    [Test] public void EscortLossIsABonusCriterion()
+    {
+        var facts=Success();facts.CommandSquadAlive=0;facts.SquadLossCount=8;
+        Assert.IsTrue(CampaignMissionExtractionRuleUtility.IsVictory(facts,4),"Rescued specialists still win when escorts are lost.");
     }
     [Test] public void OpeningMustFinishBeforeMissionStarts()
     {

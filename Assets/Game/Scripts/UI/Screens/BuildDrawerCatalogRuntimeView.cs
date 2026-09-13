@@ -65,6 +65,7 @@ namespace Game.UI.Runtime
 
             _nextQueueRefreshTime = Time.unscaledTime + QueueRefreshIntervalSeconds;
             RefreshQueue();
+            view.RefreshResources();
         }
 
         private void OnDisable()
@@ -138,18 +139,6 @@ namespace Game.UI.Runtime
 
             _activeCategory = category;
             Refresh();
-        }
-
-        private void ClearSelection()
-        {
-            _selectedItemView = null;
-            _hasSelectedItem = false;
-            BuildDrawerCatalogPresentationSystemHelper.ClearDetail(view);
-            ApplyInstruction(
-                BuildDrawerCatalogPresentationSystemHelper.FormatEmptyCategoryInstruction(
-                    _gameTextResolver,
-                    _activeCategory),
-                BuildDrawerInstructionSeverity.Warning);
         }
 
         private void OnPrimaryActionClicked()

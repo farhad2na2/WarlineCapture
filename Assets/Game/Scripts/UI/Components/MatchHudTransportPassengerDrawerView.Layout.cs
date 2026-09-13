@@ -9,6 +9,7 @@ namespace Game.UI.Runtime
 {
     public sealed partial class MatchHudTransportPassengerDrawerView
     {
+        internal UnityEngine.UI.Button ExitAllButton => exitAllButton;
         private void ApplyCapacitySlots(int occupiedCount, int capacity)
         {
             if (capacitySlotsRoot == null)
@@ -89,7 +90,7 @@ namespace Game.UI.Runtime
             _orderLabel.sizeDelta = new Vector2(272f, _wideOrderSize.y);
             _playerControl.sizeDelta = new Vector2(272f, _widePlayerControlSize.y);
             _playerControl.gameObject.SetActive(false);
-            _passengerChip.anchoredPosition = new Vector2(_widePassengerChipPosition.x, -337f);
+            _passengerChip.anchoredPosition = new Vector2(_widePassengerChipPosition.x, -490f);
             _passengerChip.sizeDelta = new Vector2(272f, 78f);
             _commandButtons.anchoredPosition = new Vector2(_wideCommandButtonsPosition.x, -427f);
             _commandButtons.sizeDelta = new Vector2(272f, 179f);

@@ -27,7 +27,7 @@ public sealed class MatchHudResourceTextRepairTests
             int count = 0;
             foreach (var method in resources.GetType().GetMethods().Where(m => m.GetCustomAttributes(typeof(TestAttribute), true).Length > 0))
             { method.Invoke(resources, null); count++; }
-            new M02EstablishBaseResourceTests().M02HudShowsCreditsAndMaterialsWhileHidingLogistics();
+            new M02EstablishBaseResourceTests().M02HudShowsMaterialsOilFuelWithoutCredits();
             new M03PresentationTests().AllTwelveAriaLessonsFitBothLanguagesAndTextSizes();
             Debug.Log($"[MatchHudResourceTextRepair] result=Passed bindingLocales=3 headerTests={count} m02Credits=1 ariaLayouts=48");
             ValidationExit.Passed();

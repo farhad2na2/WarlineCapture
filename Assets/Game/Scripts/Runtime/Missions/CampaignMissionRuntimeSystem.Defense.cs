@@ -32,7 +32,7 @@ namespace Game.Runtime
                 controlsReady = defense.OpeningComplete != 0 && defense.InitialProducerReady != 0;
                 if (facts.CommandSquadSpawned != 0)
                     ProjectDefenseRoster(em, root, in runtime, in defense, ref definition, ref facts);
-                if (controlsReady && runtime.Phase == MissionPhaseKind.Engage)
+                if (controlsReady && runtime.Phase == MissionPhaseKind.Engage && (defense.AcknowledgedGuidanceMask & 0x1FFu)==0x1FFu)
                     facts.ElapsedMilliseconds = SaturatingAddMilliseconds(facts.ElapsedMilliseconds, SystemAPI.Time.DeltaTime);
                 em.SetComponentData(root, defense);
             }

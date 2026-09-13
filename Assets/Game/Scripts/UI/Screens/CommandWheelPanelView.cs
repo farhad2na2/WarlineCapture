@@ -5,7 +5,7 @@ using Game.UI.Contracts;
 
 namespace Game.UI.Runtime
 {
-    public sealed class CommandWheelPanelView : MonoBehaviour
+    public sealed partial class CommandWheelPanelView : MonoBehaviour
     {
         [SerializeField] private GameObject wheelRoot;
         [SerializeField] private Button openButton;
@@ -51,6 +51,8 @@ namespace Game.UI.Runtime
                 runtimeFeedbackView = GetComponent<BattleHudRuntimeFeedbackView>();
 
             BindListeners();
+            Canvas.willRenderCanvases -= RefreshOpenSelection;
+            Canvas.willRenderCanvases += RefreshOpenSelection;
             Close();
         }
 
@@ -60,6 +62,7 @@ namespace Game.UI.Runtime
                 openButton.onClick.RemoveListener(Open);
 
             openButton = runtimeOpenButton;
+            _selection = openButton != null ? openButton.GetComponentInParent<MatchHudSelectionPanelView>() : null;
             threatRoot = runtimeThreatRoot;
 
             if (_listenersBound && openButton != null)
@@ -72,6 +75,7 @@ namespace Game.UI.Runtime
                 return;
 
             _listenersBound = true;
+            BindSelectionWheelActions();
             if (openButton != null)
                 openButton.onClick.AddListener(Open);
 
@@ -93,6 +97,7 @@ namespace Game.UI.Runtime
 
         private void OnDestroy()
         {
+            Canvas.willRenderCanvases -= RefreshOpenSelection;
             if (openButton != null)
                 openButton.onClick.RemoveListener(Open);
 
@@ -113,6 +118,7 @@ namespace Game.UI.Runtime
 
         public void Open()
         {
+            if (selectionActions.Length > 0 && !RefreshSelection()) return;
             if (!_hasFeedbackVisibilitySnapshot && feedbackRoot != null)
             {
                 _feedbackWasVisibleBeforeOpen = feedbackRoot.activeSelf;

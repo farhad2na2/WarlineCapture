@@ -68,27 +68,36 @@ namespace Game.Editor
 
         internal static void Extraction(GameObject root)
         {
-            var actions=Find(root,"M04Actions");Place(actions,414,164,774,182);Frame(actions,Raised,Ink,Line,1);
+            var actions=Find(root,"M04Actions");Place(actions,414,94,774,96);Frame(actions,Raised,Ink,Line,2);
             FollowHeaderLayout((RectTransform)actions);
             var data=new SerializedObject(actions.parent.GetComponent<MissionExtractionHudView>());
             string[] names={"Aboard","Carrier","Secure","Remaining"};
             string[] keys={"aboard","carrier","secure","remaining"};
             for(int i=0;i<4;i++)
             {
-                float x=10+i*191;
-                Box(names[i]+"Metric",actions,x,8,181,62,Ink,Ink,i==3?Cyan:Line,1);
-                var caption=Text(names[i]+"Caption",actions,x+6,11,169,24,14,"mission.m04.hud."+keys[i]);caption.color=new Color32(170,193,202,255);
-                var value=Text(names[i]+"Value",actions,x+6,34,169,32,25,"");value.font=Bold;value.color=i==3?new Color32(255,196,67,255):Color.white;
+                float x=8+i*191;
+                Box(names[i]+"Metric",actions,x,6,183,84,Ink,Ink,Line,1);
+                var caption=Text(names[i]+"Caption",actions,x+6,9,171,42,19,"mission.m04.hud."+keys[i]);
+                caption.fontSizeMin=18;caption.fontSizeMax=19;caption.textWrappingMode=TextWrappingModes.Normal;
+                caption.color=new Color32(190,199,201,255);
+                var value=Text(names[i]+"Value",actions,x+6,50,171,35,27,"");value.font=Bold;
+                value.color=i==3?new Color32(255,196,67,255):Color.white;
                 data.FindProperty(keys[i]).objectReferenceValue=value.GetComponent<V3LocalizedTextBindingView>();
             }
+            var aria=Find(root,"AriaAssistantButton");var old=aria.Find("M04Navigation");
+            if(old!=null)Object.DestroyImmediate(old.gameObject);
+            var navigation=new GameObject("M04Navigation",typeof(RectTransform)).transform;navigation.SetParent(aria,false);Place(navigation,20,392,360,72);
+            data.FindProperty("navigation").objectReferenceValue=navigation.gameObject;
             string[] buttons={"Guide","Team","Landing","Departure"};
             string[] icons={V3UiFoundationBuilder.MatchInfoIconPath,V3UiFoundationBuilder.MatchPlayerIconPath,V3UiFoundationBuilder.MatchJumpIconPath,V3UiFoundationBuilder.MatchAirTransportIconPath};
             for(int i=0;i<4;i++)
             {
-                var button=actions.Find(buttons[i]);Place(button,10+i*191,78,181,72);StyleButton(button.GetComponent<Button>(),true);ButtonIcon(button,icons[i]);
+                var button=actions.Find(buttons[i]);button.SetParent(navigation,false);Place(button,i==0?0:182,0,i==0?172:178,72);
+                GuideButton(button.GetComponent<Button>(),i!=0);ButtonIcon(button,icons[i]);
             }
-            var status=Find(root,"ExtractionStatus");Place(status,18,154,738,24);status.GetComponent<TMP_Text>().fontSizeMax=15;status.GetComponent<TMP_Text>().color=Cyan;
-            data.ApplyModifiedPropertiesWithoutUndo();
+            var patrol=Find(root,"ExtractionStatus");Place(patrol,8,98,758,40);patrol.gameObject.SetActive(true);
+            Box("PatrolBackground",actions,8,98,758,40,Raised,Ink,Line,1).SetAsFirstSibling();var patrolText=patrol.GetComponent<TMP_Text>();patrolText.fontSizeMin=19;patrolText.fontSizeMax=21;
+            data.ApplyModifiedPropertiesWithoutUndo();navigation.gameObject.SetActive(false);
         }
 
         private static void FollowHeaderLayout(RectTransform actions)

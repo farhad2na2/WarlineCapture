@@ -38,11 +38,7 @@ namespace Game.UI.Runtime
 
         public bool ShowMissionRifleProduction()
         {
-            if(!EnsureBuildDrawerOpen() || _buildDrawerCatalogRuntimeView==null) return false;
-            var target=_buildDrawerCatalogRuntimeView.ResolveRifleProductionGuidanceTarget();
-            // Navigate the tab/item only. The player confirms the displayed transaction separately.
-            if(target!=null && target.GetComponent<Button>()!=_buildDrawerView.PrimaryActionButton)
-                target.GetComponent<Button>()?.onClick.Invoke();
+            if (_buildGuidanceButton == null) return false;
             BeginPendingShowMe(ProduceRecommendationKind,UiSurfaceTargetKind);
             return true;
         }
@@ -181,7 +177,8 @@ namespace Game.UI.Runtime
 
             _barracksGuidanceButton?.onClick.RemoveListener(AcknowledgeBarracksSelection);
             _barracksGuidanceButton = resolved;
-            _barracksGuidanceButton?.onClick.AddListener(AcknowledgeBarracksSelection);
+            if (_barracksGuidanceButton != null && _barracksGuidanceButton.GetComponent<BuildDrawerItemView>() != null)
+                _barracksGuidanceButton.onClick.AddListener(AcknowledgeBarracksSelection);
             return resolved;
         }
 

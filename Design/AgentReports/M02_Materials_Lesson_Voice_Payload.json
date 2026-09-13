@@ -1,0 +1,16 @@
+{
+  "provider": "ElevenLabs",
+  "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+  "clips": [
+    {
+      "locale": "en-US",
+      "text": "You started with 120 Materials. The Barracks used 90, leaving 30. Save 20 to train your rifle squad.",
+      "path": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m02_check_cost_aria.wav"
+    },
+    {
+      "locale": "fa-IR",
+      "text": "با ۱۲۰ واحد مصالح شروع کردید. سربازخانه ۹۰ واحد مصرف کرد و ۳۰ واحد مانده است. ۲۰ واحد برای آموزش گروه تفنگدار نگه دارید.",
+      "path": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_check_cost_aria_fa.wav"
+    }
+  ]
+}

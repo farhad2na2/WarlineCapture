@@ -25,7 +25,7 @@ namespace Game.UI.Shell.Ecs
         {
             bool m01Step = tutorialStepCount == 5 && tutorialStep is >= 1 and <= 5;
             bool m02Step = tutorialStepCount == 9 && tutorialStep is >= 2 and <= 8;
-            if (IsExtractionGuideContext()) return false; // M04 captions stay visible; no unrelated M03 voice is played.
+            bool extraction=IsExtractionGuideContext();
             bool m03Step = tutorialStepCount == 12 && tutorialStep is >= 1 and <= 12;
             if ((!m01Step && !m02Step && !m03Step) || string.IsNullOrWhiteSpace(text) ||
                 !TryGetBoundary(out EntityManager entityManager, out Entity boundary) ||
@@ -40,12 +40,16 @@ namespace Game.UI.Shell.Ecs
                 tutorialStepCount,
                 phase,
                 ResolveTutorialNarrationLanguage());
+            bool persian=ResolveTutorialNarrationLanguage()==FirstLaunchNarrativeLanguage.Persian;
+            if(m03Step && extraction) audioEventId=new FixedString64Bytes("vo.aria.tutorial.m04."+tutorialStep.ToString("00")+(persian?".fa":".en"));
+            else if(m03Step && tutorialStep==7 && TryReadMissionDefense(out var defense) && defense.RequiresHoldResume)
+                audioEventId=new FixedString64Bytes("vo.aria.tutorial.m03.06"+(persian?".fa":".en"));
             if (audioEventId.Length == 0)
                 return false;
 
             int sequence = NextTutorialNarrationSequence();
             int messageId = TutorialMessageBaseId + sequence;
-            FixedString64Bytes suppressionKey = m03Step ? new FixedString64Bytes("assistant.tutorial.m03.") : tutorialStepCount == 9
+            FixedString64Bytes suppressionKey = extraction ? new FixedString64Bytes("assistant.tutorial.m04.") : m03Step ? new FixedString64Bytes("assistant.tutorial.m03.") : tutorialStepCount == 9
                 ? new FixedString64Bytes("assistant.tutorial.m02.")
                 : new FixedString64Bytes("assistant.tutorial.m01.");
             suppressionKey.Append(sequence);
@@ -199,11 +203,18 @@ namespace Game.UI.Shell.Ecs
             out bool rightToLeft)
         {
             rightToLeft = language == FirstLaunchNarrativeLanguage.Persian;
-            return M02EstablishBaseTextCatalog.TryGetTutorial(
+            bool found = M02EstablishBaseTextCatalog.TryGetTutorial(
                 recommendation.TutorialStep,
                 language,
                 out title,
                 out body);
+            if (recommendation.TutorialStep == 5)
+            {
+                title = GameLocalization.Get("tutorial.m02.materials.title", title);
+                body = GameLocalization.Get("tutorial.m02.materials.body", body);
+                rightToLeft = GameLocalization.IsRightToLeft;
+            }
+            return found;
         }
 
         public static FirstLaunchNarrativeLanguage ResolveTutorialNarrationLanguage() =>

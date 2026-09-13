@@ -15,6 +15,8 @@ namespace Game.UI.Shell.Ecs
             if (action == UiMissionExtractionAction.FocusLanding) return extraction.LandingCenter;
             if (action == UiMissionExtractionAction.ShowLesson)
             {
+                if (lesson==6 || lesson==7 || lesson==10) return extraction.LandingCenter;
+                if (lesson==11 || lesson==12) return extraction.DepartureCenter;
                 Entity subject = lesson is 2 or 5 or 6 or 7 ? extraction.Carrier :
                     lesson is 8 or 9 or 11 or 12 ? extraction.Aircraft : Entity.Null;
                 if (TryGetLiveExtractionPosition(em, subject, out float3 position)) return position;

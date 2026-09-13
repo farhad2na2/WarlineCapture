@@ -13,10 +13,16 @@ namespace Game.UI.Shell.Ecs
         {
             bool victory=model.Outcome==UiMissionResultOutcome.Victory;
             string reason=victory ? "victory_body" : facts.ForwardPostDestroyed!=0 ? "post_lost" : facts.CoreBreached!=0 ? "breach" : "integrity";
+            string summary=GameText.Get("mission.m03.result."+reason);
+            if(victory && TryGetMissionRoot(out var em,out var root) && em.HasComponent<CampaignMissionDefenseStateComponent>(root))
+            {
+                var defense=em.GetComponentData<CampaignMissionDefenseStateComponent>(root);
+                if(defense.SessionToken.Equals(runtime.SessionToken)) summary=GameText.Get(defense.PingUsed!=0?"mission.m03.result.radar_used":"mission.m03.result.radar_saved");
+            }
             return new UiMissionResultPopupModel(model.Version,model.MissionId,model.Outcome,
                 GameText.Get("mission.m03.result."+(victory ? "victory" : "defeat")),
                 GameText.Get("mission.m03.name")+" • "+GameText.Get("mission.m03.location"),
-                GameText.Get("mission.m03.result."+reason),model.Stars,model.ElapsedText,model.SquadLossText,model.EnemiesDefeatedText,
+                summary,model.Stars,model.ElapsedText,model.SquadLossText,model.EnemiesDefeatedText,
                 victory ? model.RewardsText : GameText.Get("mission.m03.result.no_reward"),
                 GameText.Get(victory ? "mission.m03.action.continue" : "mission.m03.result.retry"),
                 model.PrimaryActionEnabled,model.RetryVisible,model.FirstClear,model.DebriefRequired,

@@ -18,6 +18,8 @@ namespace Game.Runtime
         private static readonly FixedString128Bytes RadarBarrier="Building_Road_Barrier";
         private static readonly FixedString128Bytes RadarRifle="Unit_Chr_Soldier_Male_02_Alt_04";
 
+        private static readonly FixedString64Bytes ResumeTitle="mission.m03.tutorial.resume.title",ResumeAction="mission.m03.action.restore_hold",GuideAction="mission.m03.guide.open",WaitAction="mission.m03.action.wait";
+        private static readonly FixedString128Bytes ResumeBody="mission.m03.tutorial.resume.body";
         private bool TryUpdateDefenseGuidance(ref SystemState state, Entity root, in CampaignMissionRuntimeComponent runtime,
             in CampaignMissionAttemptFactsComponent facts, in AssistantSettingsComponent settings,
             in CampaignMissionGuidanceProjectionComponent current)
@@ -39,17 +41,17 @@ namespace Game.Runtime
             float3 fork=defense.InnerCoreCenter;
             if(SystemAPI.TryGetSingleton(out OperationMapMetadataComponent metadata) && metadata.Blob.IsCreated &&
                 CampaignMissionSpawnSystem.TryFindAnchor(ref metadata.Blob.Value,RadarFork,out var anchor)) fork=anchor.Position;
-            int positionedCount=0;
+            int positionedCount=0,selectedCount=0,heldCount=0; float3 defenseCenter=default;
             foreach(var (role,faction,health,attack,pose,e) in SystemAPI.Query<RefRO<CampaignMissionUnitRoleComponent>,RefRO<Faction>,
                         RefRO<UnitHealth>,RefRO<UnitAttack>,RefRO<LocalTransform>>().WithEntityAccess())
             {
                 if(!role.ValueRO.SessionToken.Equals(runtime.SessionToken) || faction.ValueRO.Id!=1 || health.ValueRO.Current<=0) continue;
                 if(!em.HasComponent<UnitCombat>(e) || em.GetComponentData<UnitCombat>(e).CanAttack==0) continue;
                 if(friendly==Entity.Null) friendly=e;
-                if(em.HasComponent<SelectedUnitTag>(e)) {selectedFriendly=true; friendly=e;}
+                if(em.HasComponent<SelectedUnitTag>(e)) {selectedFriendly=true; friendly=e; selectedCount++; if(em.HasComponent<HoldPositionOrderTag>(e)) heldCount++;}
                 float range=math.max(10,attack.ValueRO.Range-10);
-                if(!em.HasComponent<UnitPathRequest>(e) && !em.HasComponent<UnitPathFollow>(e) &&
-                    math.distancesq(pose.ValueRO.Position.xz,fork.xz)<=range*range) positionedCount++;
+                if(em.HasComponent<SelectedUnitTag>(e) && !em.HasComponent<UnitPathRequest>(e) && !em.HasComponent<UnitPathFollow>(e) &&
+                    math.all(math.isfinite(pose.ValueRO.Position))) {positionedCount++; defenseCenter+=pose.ValueRO.Position;}
                 holding|=em.HasComponent<HoldPositionOrderTag>(e);
             }
             int producedCount=0;
@@ -64,15 +66,16 @@ namespace Game.Runtime
                         var unit=produced[i]; Entity e=unit.Unit;
                         if(unit.HasOwnerFaction==0 || unit.OwnerFactionId!=1 || !em.Exists(e) || em.HasComponent<CampaignMissionUnitRoleComponent>(e) ||
                             !em.HasComponent<UnitHealth>(e) || em.GetComponentData<UnitHealth>(e).Current<=0 || !em.HasComponent<UnitAttack>(e) || !em.HasComponent<LocalTransform>(e)) continue;
-                        if(em.HasComponent<SelectedUnitTag>(e)) {selectedFriendly=true; friendly=e;}
+                        if(em.HasComponent<SelectedUnitTag>(e)) {selectedFriendly=true; friendly=e; selectedCount++; if(em.HasComponent<HoldPositionOrderTag>(e)) heldCount++;}
                         float range=math.max(10,em.GetComponentData<UnitAttack>(e).Range-10);
-                        if(!em.HasComponent<UnitPathRequest>(e) && !em.HasComponent<UnitPathFollow>(e) && math.distancesq(em.GetComponentData<LocalTransform>(e).Position.xz,fork.xz)<=range*range) positionedCount++;
+                        if(em.HasComponent<SelectedUnitTag>(e) && !em.HasComponent<UnitPathRequest>(e) && !em.HasComponent<UnitPathFollow>(e) && math.all(math.isfinite(em.GetComponentData<LocalTransform>(e).Position))) {positionedCount++; defenseCenter+=em.GetComponentData<LocalTransform>(e).Position;}
                         holding|=em.HasComponent<HoldPositionOrderTag>(e);
                     }
                 }
             }
             defense.ReinforcedRifleCount=math.max(defense.ReinforcedRifleCount,producedCount);
-            positioned=positionedCount>=math.min(4,math.max(1,8-facts.SquadLossCount+producedCount));
+            positioned=selectedCount>0 && positionedCount==selectedCount;
+            holding=selectedCount>0 && heldCount==selectedCount;
             foreach(var requests in SystemAPI.Query<DynamicBuffer<BuildingRuntimeSpawnRequest>>())
                 for(int i=0;i<requests.Length;i++)
                 {
@@ -80,6 +83,7 @@ namespace Game.Runtime
                     built|=r.RequestId>defense.InitialProducerRequestId && r.Status==BuildingRuntimeSpawnRequest.Succeeded &&
                         r.HasOwnerFaction!=0 && r.FactionId==1 && (r.BuildingId.Equals(RadarTower) || r.BuildingId.Equals(RadarBarrier));
                 }
+            built |= ObservePlayerBuiltDefense(ref state,ref defense);
             ObserveDefenseCommandResults(ref state,ref defense);
             var elements=em.GetBuffer<CampaignMissionConvoyElementState>(root,true);
             main=elements.Length>1 && elements[1].Activated!=0;
@@ -99,7 +103,7 @@ namespace Game.Runtime
                     MissionGuidanceCompletionKind.DefenseBuilt=>built,
                     MissionGuidanceCompletionKind.SquadPositioned=>positioned && defense.MoveAccepted!=0,
                     MissionGuidanceCompletionKind.Holding=>holding,
-                    MissionGuidanceCompletionKind.StopAccepted=>defense.StopAccepted!=0,
+                    MissionGuidanceCompletionKind.StopAccepted=>defense.StopAccepted!=0 && holding,
                     MissionGuidanceCompletionKind.PingAccepted=>defense.PingUsed!=0,
                     MissionGuidanceCompletionKind.ReinforcementProduced=>defense.ReinforcedRifleCount>=4,
                     MissionGuidanceCompletionKind.HostileDefeated=>facts.HostileDefeatedCount>0,
@@ -107,14 +111,23 @@ namespace Game.Runtime
                     MissionGuidanceCompletionKind.ResultSettled=>runtime.Outcome!=MissionOutcomeKind.None,
                     _=>false
                 };
-                if(done || imminent && (step.Optional!=0 || i==2)) defense.AcknowledgedGuidanceMask|=1u<<i;
+                if(done) defense.AcknowledgedGuidanceMask|=1u<<i;
             }
             int selected=-1;
-            for(int i=0;i<definition.Defense.GuidanceSteps.Length-1;i++)
+            for(int i=0;i<definition.Defense.GuidanceSteps.Length;i++)
                 if((defense.AcknowledgedGuidanceMask&(1u<<i))==0) { selected=i; break; }
             if(oldMask!=defense.AcknowledgedGuidanceMask && current.Active!=0 && current.Prompt>=CampaignMissionGuidancePromptKind.RadarReadWarning &&
                 (defense.AcknowledgedGuidanceMask&(1u<<((int)current.Prompt-13)))!=0)
                 defense.NextGuidanceAtMilliseconds=facts.ElapsedMilliseconds;
+            if(positioned && defense.MoveAccepted!=0 && defense.PositionCameraAligned==0)
+            {
+                if(SystemAPI.TryGetSingletonEntity<RuntimeCameraFocusRequestComponent>(out var cameraEntity))
+                {
+                    var focus=CampaignMissionSpawnSystem.CreateDefenseCommandView(defenseCenter/positionedCount);
+                    focus.Smooth=1; focus.SmoothTimeSeconds=.8f; em.SetComponentData(cameraEntity,focus);
+                    defense.PositionCameraAligned=1;
+                }
+            }
             em.SetComponentData(root,defense);
             if(selected<0 || ledger.Active==0 || facts.ElapsedMilliseconds<defense.NextGuidanceAtMilliseconds)
             { ClearDefenseGuidance(em,root,in current); return true; }
@@ -122,13 +135,16 @@ namespace Game.Runtime
             bool canExecute=chosen.Action is not (MissionGuidanceActionKind.Move or MissionGuidanceActionKind.Hold or MissionGuidanceActionKind.Stop) || selectedFriendly;
             if(chosen.Action==MissionGuidanceActionKind.RadarPing)
             {var ping=em.GetComponentData<RadarPingState>(root); canExecute=ping.Charges>0 && ping.PendingRequestId==0 && ping.ReadyAtMilliseconds<=facts.ElapsedMilliseconds && RadarPingRequestSystem.FindSensor(em,root)!=Entity.Null;}
+            bool resumeHold=selected==6 && defense.StopAccepted!=0;
+            if(selected is 9 or 10) canExecute=false; // These lessons stay until their real combat milestone.
             var next=new CampaignMissionGuidanceProjectionComponent
             {
                 GuidanceId=45001+selected,Version=Next(current.Version),MissionSourceVersion=runtime.Version,
                 Prompt=(CampaignMissionGuidancePromptKind)(13+selected),GuidanceMode=NarrativeGuidanceMode.Full,Active=1,
                 RecommendationKind=AssistantRecommendationKind.Explain,TargetKind=AssistantTargetKind.UiSurface,
-                TargetId=chosen.StepId,Title=chosen.TitleKey,Body=chosen.BodyKey,
-                ActionLabel=chosen.Action==MissionGuidanceActionKind.Explain || chosen.Action==MissionGuidanceActionKind.InspectContact ? RadarContinue : RadarAct,
+                TargetId=chosen.StepId,Title=resumeHold ? ResumeTitle : chosen.TitleKey,
+                Body=resumeHold ? ResumeBody : chosen.BodyKey,
+                ActionLabel=selected is 9 or 10 ? WaitAction : selected==11 ? GuideAction : resumeHold ? ResumeAction : chosen.Action==MissionGuidanceActionKind.Explain ? RadarContinue : RadarAct,
                 Priority=imminent ? AssistantMessagePriority.Critical : AssistantMessagePriority.High,
                 SourceEntity=friendly,CanShow=1,CanExecute=canExecute ? (byte)1 : (byte)0,WorldPosition=fork,HasWorldPosition=1,
                 SubtitlesEnabled=settings.SubtitlesEnabled,LargeTextEnabled=settings.LargeTextEnabled,HighContrastEnabled=settings.HighContrastEnabled

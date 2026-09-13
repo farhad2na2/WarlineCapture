@@ -85,6 +85,7 @@ namespace Game.UI.Runtime
 
         public void Unbind()
         {
+            ClearDirectTutorialCue();
             DetachSquadGuidanceButton();
             DetachCommandGuidanceButtons();
             DetachBuildGuidanceButton();
@@ -131,6 +132,7 @@ namespace Game.UI.Runtime
 
         public void ResetForMissionAttempt()
         {
+            ClearDirectTutorialCue();
             _squadTrayView?.ClearAssistantGuidance();
             _buildDrawerOpenRequested = false;
             _screenTargetActive = false;
@@ -279,7 +281,7 @@ namespace Game.UI.Runtime
                 return;
             if (model.Active &&
                 model.RecommendationKind == SelectRecommendationKind &&
-                _selectSquadCompleted)
+                model.TargetKind != UiSurfaceTargetKind && _selectSquadCompleted)
             {
                 return;
             }
@@ -353,7 +355,7 @@ namespace Game.UI.Runtime
 
         private void TickCommandCue()
         {
-            RectTransform buttonRect = ResolveGuidedCommandButton(LastAppliedModel);
+            RectTransform buttonRect = _directTutorialCue ? _directTutorialTarget : ResolveGuidedCommandButton(LastAppliedModel);
             if (buttonRect == null || !buttonRect.gameObject.activeInHierarchy ||
                 !(_screenTargetCanvas.transform is RectTransform canvasRect))
             {
@@ -391,7 +393,7 @@ namespace Game.UI.Runtime
                 ? _screenTargetLabel.transform.parent as RectTransform
                 : null;
             if (caption != null)
-                caption.sizeDelta = new Vector2(Mathf.Clamp(size.x - 20f, 240f, 440f), 64f);
+                caption.sizeDelta = new Vector2(Mathf.Clamp(size.x - 20f, 480f, 880f), 96f);
 
             Vector2 localPoint = (bottomLeft + topRight) * 0.5f;
             Vector2 half = size * 0.5f;
@@ -400,7 +402,7 @@ namespace Game.UI.Runtime
             localPoint.y = Mathf.Clamp(
                 localPoint.y,
                 bounds.yMin + half.y,
-                bounds.yMax - half.y - 24f);
+                bounds.yMax - half.y - 48f);
             SetAnchorsIfChanged(_screenTargetIndicator, new Vector2(0.5f, 0.5f));
             SetAnchoredPositionIfChanged(_screenTargetIndicator, localPoint);
             _screenTargetIndicator.localScale = Vector3.one;

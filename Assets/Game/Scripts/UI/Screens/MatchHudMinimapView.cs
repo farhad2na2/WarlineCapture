@@ -55,18 +55,6 @@ namespace Game.UI.Runtime
         public event Action<int, bool> ZoomHeldChanged;
         public event Action FullMapOpenRequested;
 
-        public bool ContainsScreenPoint(Vector2 screenPosition)
-        {
-            Camera eventCamera = ResolveEventCamera();
-            RectTransform rect = MapRect;
-            if (rect != null && RectTransformUtility.RectangleContainsScreenPoint(rect, screenPosition, eventCamera))
-                return true;
-
-            return _allowZoom &&
-                   (ContainsButton(zoomInButton, screenPosition, eventCamera) ||
-                    ContainsButton(zoomOutButton, screenPosition, eventCamera));
-        }
-
         private void Awake()
         {
             MatchHudCanvasBatchingUtility.EnsureLocalCanvas(gameObject, needsRaycaster: true);

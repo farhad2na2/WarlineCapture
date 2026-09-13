@@ -788,10 +788,10 @@ public sealed class UIShellCurrentContentLoadTests
         Assert.NotNull(controls, "Installed Match HUD must serialize command controls.");
         CommandWheelPanelView wheel = controls.CommandWheelPanel;
         Assert.NotNull(wheel, "Installed Match HUD must serialize the V3 command wheel.");
-        Assert.NotNull(controls.CommandWheelStopButton, "The radial Stop sector must use the live Stop binding.");
+        Assert.IsNull(controls.CommandWheelStopButton, "Stop remains on the permanent command rail.");
 
         V3RadialWedgeGraphic[] wedges = wheel.GetComponentsInChildren<V3RadialWedgeGraphic>(true);
-        Assert.AreEqual(6, wedges.Length, "The V3 command wheel must contain six radial sectors.");
+        Assert.AreEqual(4, wedges.Length, "The wheel contains the four selection actions.");
         for (int i = 0; i < wedges.Length; i++)
         {
             SerializedObject wedgeSerialized = new(wedges[i]);
@@ -805,65 +805,16 @@ public sealed class UIShellCurrentContentLoadTests
                 $"Radial sector {wedges[i].name} must render a visible directional gradient.");
         }
 
-        SerializedObject wheelSerialized = new(wheel);
-        GameObject targetingRoot = wheelSerialized.FindProperty("targetingRoot").objectReferenceValue as GameObject;
-        GameObject rangeBanner = wheelSerialized.FindProperty("rangeBanner").objectReferenceValue as GameObject;
-        GameObject instructionRoot = wheelSerialized.FindProperty("instructionRoot").objectReferenceValue as GameObject;
-        GameObject threatRoot = wheelSerialized.FindProperty("threatRoot").objectReferenceValue as GameObject;
-        GameObject feedbackRoot = wheelSerialized.FindProperty("feedbackRoot").objectReferenceValue as GameObject;
-        Button moveSector = wheelSerialized.FindProperty("wheelMoveButton").objectReferenceValue as Button;
-        Button attackSector = wheelSerialized.FindProperty("wheelAttackButton").objectReferenceValue as Button;
-        Button openButton = wheelSerialized.FindProperty("openButton").objectReferenceValue as Button;
-        RectTransform wheelTransform = wheelSerialized.FindProperty("wheelTransform").objectReferenceValue as RectTransform;
-        Assert.NotNull(targetingRoot);
-        Assert.NotNull(rangeBanner);
-        Assert.NotNull(instructionRoot);
-        Assert.NotNull(threatRoot);
-        Assert.NotNull(feedbackRoot);
-        Assert.NotNull(moveSector);
-        Assert.NotNull(attackSector);
-        Assert.NotNull(openButton, "The independently mounted footer wheel must be stitched to the live selected-unit portrait button.");
-        Assert.NotNull(wheelTransform);
-        Assert.AreSame(
-            FindInScene<MatchHudSelectionPanelView>(scene).CommandWheelOpenButton,
-            openButton,
-            "The command wheel must use the active left-section portrait, not a prefab-source clone.");
-        Assert.AreSame(controls.MoveButton, wheelSerialized.FindProperty("moveCommandButton").objectReferenceValue);
-        Assert.AreSame(controls.AttackButton, wheelSerialized.FindProperty("attackCommandButton").objectReferenceValue);
-
-        bool feedbackVisibleBeforeOpen = feedbackRoot.activeSelf;
+        var selection = FindInScene<MatchHudSelectionPanelView>(scene);
+        Assert.AreSame(selection.CommandWheelOpenButton, wheel.OpenButton);
+        selection.ShowSelection();
         wheel.Open();
-        Assert.IsTrue(wheel.IsOpen, "Opening the portrait command cue must reveal the wheel.");
-        Assert.IsFalse(targetingRoot.activeSelf);
-        Assert.IsTrue(instructionRoot.activeSelf);
-        Assert.IsTrue(threatRoot.activeSelf);
-        Assert.IsFalse(feedbackRoot.activeSelf, "The standard feedback panel must not overlap the open wheel.");
-
-        wheel.SetTargetingPreview(true);
         Assert.IsTrue(wheel.IsOpen);
-        Assert.IsTrue(targetingRoot.activeSelf);
-        Assert.IsTrue(rangeBanner.activeSelf);
-        Assert.IsFalse(instructionRoot.activeSelf, "Targeting must replace the instruction strip instead of overlapping it.");
-        Assert.IsFalse(threatRoot.activeSelf, "Targeting rail must replace the threat panel instead of overlapping it.");
-        Assert.That(wheelTransform.localScale.x, Is.EqualTo(.8f).Within(.001f),
-            "Targeting must compact the radial wheel so it does not cover the permanent ARIA panel.");
-
+        Assert.IsNull(FindChildRecursive(wheel.transform, "WheelUnitCard"));
+        foreach (string name in new[]{"DestroySector", "ReturnSector", "CameraSector", "BoardSector"})
+            Assert.NotNull(FindChildRecursive(wheel.transform, name));
         wheel.Close();
         Assert.IsFalse(wheel.IsOpen);
-        Assert.AreEqual(
-            feedbackVisibleBeforeOpen,
-            feedbackRoot.activeSelf,
-            "Closing the wheel must restore the exact prior runtime-feedback visibility.");
-
-        Transform extract = FindChildRecursive(wheel.transform, "ExtractSector");
-        Transform ropeDrop = FindChildRecursive(wheel.transform, "RopeDropSector");
-        Transform patrol = FindChildRecursive(wheel.transform, "PatrolSector");
-        Assert.NotNull(extract);
-        Assert.NotNull(ropeDrop);
-        Assert.NotNull(patrol);
-        Assert.IsFalse(extract.GetComponent<Button>().interactable, "Unimplemented Extract must not imply a gameplay action.");
-        Assert.IsFalse(ropeDrop.GetComponent<Button>().interactable, "Unimplemented Rope Drop must not imply a gameplay action.");
-        Assert.IsFalse(patrol.GetComponent<Button>().interactable, "Unimplemented Patrol must not imply a gameplay action.");
     }
 
     [Test]

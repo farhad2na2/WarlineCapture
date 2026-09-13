@@ -308,9 +308,10 @@ namespace Game.Editor
             RectTransform buildIcon = CreateTopLeft("BuildIcon", header, 18f, 12f, 61f, 59f);
             BuildCraneMark(buildIcon, Amber);
             CreateText(header, "Title", 91f, 5f, 370f, 72f, "BUILD", 54f, theme.TextPrimary, TextAlignmentOptions.MidlineLeft, true);
-            BuildResource(header, "Materials", 494f, "MATERIALS", "12,450", materialsIcon, theme.TextPrimary);
-            BuildResource(header, "Oil", 698f, "OIL", "3,280", oilIcon, theme.Amber);
-            BuildResource(header, "Fuel", 902f, "FUEL", "6,750", fuelIcon, theme.OrangeRed);
+            BuildResource(header, "Materials", 494f, "MATERIALS", "—", materialsIcon, theme.TextPrimary);
+            BuildResource(header, "Oil", 698f, "OIL", "—", oilIcon, theme.Amber);
+            BuildResource(header, "Fuel", 902f, "FUEL", "—", fuelIcon, theme.OrangeRed);
+            BuildResource(header, "Credits", 1106f, "CREDITS", "—", catalog.CreditsIcon, theme.Amber);
 
             RectTransform closeRect = CreatePanel("CloseButton", frame, 1464f, 30f, 72f, 72f, RaisedTop, DarkBottom, Line, 3f);
             closeButton = closeRect.gameObject.AddComponent<Button>();
@@ -453,7 +454,7 @@ namespace Game.Editor
             RectTransform cost = CreateTopLeft("CostPanel", card, 3f, 289f, 401f, 48f);
             CreateSolid("CostShade", cost, 0f, 0f, 401f, 48f, new Color(0f, .02f, .025f, .9f));
             TMP_Text materials = BuildTinyCost(cost, "MaterialsTinyCost", 8f, materialsIcon, materialCost, theme.TextPrimary);
-            TMP_Text fuel = BuildTinyCost(cost, "FuelTinyCost", 139f, fuelIcon, fuelCost, theme.OrangeRed);
+            TMP_Text fuel = BuildTinyCost(cost, "FuelTinyCost", 139f, catalog.CreditsIcon, fuelCost, theme.OrangeRed);
             TMP_Text timeTextValue = BuildTinyCost(cost, "TimeTinyCost", 270f, timeIcon, time, Amber);
 
             TMP_Text role = CreateText(card, "Role", 12f, 45f, 160f, 24f, "MILITARY STRUCTURE", 14f, Amber, TextAlignmentOptions.MidlineLeft, true);
@@ -527,7 +528,7 @@ namespace Game.Editor
             RectTransform stats = CreateTopLeft("Stats", detail, 12f, 250f, 344f, 156f);
             TMP_Text placement = BuildDetailRow(stats, "Footprint", 0f, "FOOTPRINT", "3x3", footprintIcon, Amber);
             TMP_Text materials = BuildDetailRow(stats, "MaterialsCost", 39f, "MATERIALS", "900", materialsIcon, theme.TextPrimary);
-            TMP_Text fuel = BuildDetailRow(stats, "FuelCost", 78f, "FUEL", "200", fuelIcon, theme.OrangeRed);
+            TMP_Text fuel = BuildDetailRow(stats, "FuelCost", 78f, "CREDITS", "—", catalog.CreditsIcon, theme.Amber);
             TMP_Text production = BuildDetailRow(stats, "BuildTime", 117f, "BUILD TIME", "00:30", timeIcon, Amber);
             TMP_Text requirements = CreateText(detail, "Requirements", 16f, 411f, 336f, 31f, "REQUIRES  •  COMMAND CENTER LEVEL 1", 13f, theme.TextMuted, TextAlignmentOptions.MidlineLeft, false);
             TMP_Text description = CreateText(detail, "Description", 14f, 76f, 334f, 40f, string.Empty, 14f, theme.TextMuted, TextAlignmentOptions.TopLeft, false);
@@ -693,7 +694,14 @@ namespace Game.Editor
             Set(serialized, "roleText", detail.Role);
             Set(serialized, "descriptionText", detail.Description);
             Set(serialized, "materialsCostText", detail.MaterialsCost);
-            Set(serialized, "fuelCostText", detail.FuelCost);
+            Set(serialized, "fuelCostText", null);
+            Set(serialized, "creditPrice", detail.FuelCost);
+            foreach(string resource in new[]{"Materials","Oil","Fuel","Credits"})
+            {
+                var value=drawerRoot.GetComponentsInChildren<TMP_Text>(true);
+                TMP_Text balance=System.Array.Find(value,t=>t.name=="Value" && t.transform.parent.name==resource+"Resource");
+                Set(serialized,char.ToLowerInvariant(resource[0])+resource.Substring(1)+"Balance",balance);
+            }
             Set(serialized, "productionTimeText", detail.Time);
             Set(serialized, "placementText", detail.Placement);
             Set(serialized, "requirementsText", detail.Requirements);
@@ -932,7 +940,7 @@ namespace Game.Editor
         private static TMP_Text CreateText(Transform parent, string name, float x, float y, float width, float height, string value, float size, Color color, TextAlignmentOptions alignment, bool bold)
         {
             RectTransform rect = CreateTopLeft(name, parent, x, y, width, height);
-            TextMeshProUGUI text = rect.gameObject.AddComponent<TextMeshProUGUI>();
+            TMP_Text text = rect.gameObject.AddComponent<RTLTMPro.RTLTextMeshPro>();
             text.text = value;
             text.font = bold ? boldFont : mediumFont;
             text.fontSize = size;

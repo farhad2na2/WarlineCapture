@@ -72,7 +72,7 @@ namespace Game.UI.Runtime
             else
                 CompleteTutorialStep(
                     _lastPanelModel.TutorialStep,
-                    finalStep: _lastPanelModel.RecommendationKind == 3);
+                    finalStep: false);
         }
 
         private bool TryAdvanceTutorialCommandSubstep()

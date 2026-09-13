@@ -21,6 +21,7 @@ namespace Game.Composition
                 !Matches(projected.SensorMissionRoleId, source.SensorMissionRoleId) ||
                 !Matches(projected.InitialProducerAnchorId, source.InitialProducerAnchorId) ||
                 !projected.InitialProducerConfigId.Equals(new FixedString128Bytes(scenario.MissionRuntime.RequiredProducerConfigId)) ||
+                !projected.ReinforcementUnitConfigId.Equals(new FixedString128Bytes(scenario.MissionRuntime.RequiredUnitConfigId)) ||
                 projected.RadarPingCharges != source.RadarPingCharges ||
                 projected.RadarPingCooldownMilliseconds != source.RadarPingCooldownMilliseconds ||
                 projected.Elements.Length != source.ConvoyElements.Length || projected.GuidanceSteps.Length != source.GuidanceSteps.Length) return false;
@@ -58,6 +59,7 @@ namespace Game.Composition
             definition.Defense.SensorMissionRoleId = new FixedString64Bytes(source.SensorMissionRoleId);
             definition.Defense.InitialProducerAnchorId = new FixedString64Bytes(source.InitialProducerAnchorId);
             definition.Defense.InitialProducerConfigId = new FixedString128Bytes(scenario.MissionRuntime.RequiredProducerConfigId);
+            definition.Defense.ReinforcementUnitConfigId = new FixedString128Bytes(scenario.MissionRuntime.RequiredUnitConfigId);
             definition.Defense.RadarPingCharges = source.RadarPingCharges;
             definition.Defense.RadarPingCooldownMilliseconds = source.RadarPingCooldownMilliseconds;
             var steps=builder.Allocate(ref definition.Defense.GuidanceSteps,source.GuidanceSteps.Length);

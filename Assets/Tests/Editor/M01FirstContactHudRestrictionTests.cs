@@ -57,6 +57,8 @@ public sealed class M01FirstContactHudRestrictionTests
             Assert.That(restrictions.BuildingDisabled, Is.True);
             Assert.That(restrictions.ProductionDisabled, Is.True);
             Assert.That(restrictions.EconomyDisabled, Is.True);
+            Assert.That(restrictions.ShowMissionCredits, Is.False);
+            Assert.That(restrictions.UsesMaterialsOnlyConstruction, Is.True);
             Assert.That(restrictions.TransportDisabled, Is.True);
             Assert.That(restrictions.AirDisabled, Is.True);
             Assert.That(restrictions.CinematicInteractionLocked, Is.False);

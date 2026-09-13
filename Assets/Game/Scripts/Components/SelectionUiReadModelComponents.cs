@@ -9,6 +9,7 @@ namespace Game.Components
         public Entity FocusedUnit;
         public byte HasFocusedUnit;
         public byte OwnedByPlayer;
+        public byte MissionProtected;
         public byte IsVehicle;
         public byte CanAttack;
         public byte CanHold;

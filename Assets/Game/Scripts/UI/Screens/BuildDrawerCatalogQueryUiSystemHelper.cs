@@ -12,6 +12,7 @@ namespace Game.UI.Runtime
         public readonly string DisplayName;
         public readonly string TypeLabel;
         public readonly string Description;
+        public readonly int CreditsCost;
         public readonly int MaterialsCost;
         public readonly int FuelCost;
         public readonly float ProductionDurationSeconds;
@@ -32,13 +33,15 @@ namespace Game.UI.Runtime
             Vector2Int footprintCells,
             Sprite portrait,
             Sprite cardPortrait,
-            Sprite actionPortrait)
+            Sprite actionPortrait,
+            int creditsCost = 0)
         {
             Category = category;
             Prefab = prefab;
             DisplayName = string.IsNullOrWhiteSpace(displayName) ? "Item" : displayName;
             TypeLabel = string.IsNullOrWhiteSpace(typeLabel) ? BuildDrawerCategoryFormatter.Format(category) : typeLabel;
             Description = description ?? string.Empty;
+            CreditsCost = Mathf.Max(0, creditsCost);
             MaterialsCost = Mathf.Max(0, materialsCost);
             FuelCost = Mathf.Max(0, fuelCost);
             ProductionDurationSeconds = Mathf.Max(0f, productionDurationSeconds);
@@ -78,7 +81,7 @@ namespace Game.UI.Runtime
         }
     }
 
-    public sealed class BuildDrawerCatalogQueryUiSystemHelper
+    public sealed partial class BuildDrawerCatalogQueryUiSystemHelper
     {
         private TryResolveUiBuildingCatalogMetadata _tryResolveBuildingMetadata;
         private TryResolveUiUnitCatalogMetadata _tryResolveUnitMetadata;
@@ -185,23 +188,6 @@ namespace Game.UI.Runtime
             }
         }
 
-        private static BuildDrawerCatalogItem BuildBuildingItem(GameObject prefab, UiBuildingCatalogMetadata metadata)
-        {
-            return new BuildDrawerCatalogItem(
-                BuildDrawerCategory.Buildings,
-                prefab,
-                string.IsNullOrWhiteSpace(metadata.DisplayName) ? prefab.name : metadata.DisplayName,
-                ResolveBuildingTypeLabel(metadata),
-                ResolveBuildingDescription(metadata),
-                metadata.MaterialsCost,
-                0,
-                metadata.ProductionDurationSeconds,
-                metadata.FootprintCells,
-                metadata.Portrait,
-                metadata.CardPortrait,
-                metadata.ActionPortrait);
-        }
-
         private void CollectUnits(
             ICatalogPrefabSource unitPrefabSource,
             BuildDrawerCategory category,
@@ -262,28 +248,6 @@ namespace Game.UI.Runtime
                 BuildDrawerCategory category = ResolveUnitCategory(isAir, isVehicle);
                 results.Add(BuildUnitItem(prefab, metadata, category, isVehicle, isAir));
             }
-        }
-
-        private static BuildDrawerCatalogItem BuildUnitItem(
-            GameObject prefab,
-            UiUnitCatalogMetadata metadata,
-            BuildDrawerCategory category,
-            bool isVehicle,
-            bool isAir)
-        {
-            return new BuildDrawerCatalogItem(
-                category,
-                prefab,
-                ResolveUnitDisplayName(prefab, metadata),
-                ResolveUnitTypeLabel(prefab, metadata, isVehicle, isAir),
-                ResolveUnitDescription(prefab, metadata),
-                metadata.MaterialsCost,
-                0,
-                metadata.ProductionDurationSeconds,
-                metadata.FootprintCells,
-                metadata.Portrait,
-                metadata.CardPortrait,
-                metadata.ActionPortrait);
         }
 
         private static BuildDrawerCategory ResolveUnitCategory(bool isAir, bool isVehicle)

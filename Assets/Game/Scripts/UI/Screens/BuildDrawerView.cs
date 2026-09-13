@@ -7,7 +7,7 @@ using Game.UI.Contracts;
 namespace Game.UI.Runtime
 {
     [DisallowMultipleComponent]
-    public sealed class BuildDrawerView : MonoBehaviour
+    public sealed partial class BuildDrawerView : MonoBehaviour
     {
         [Header("Root")]
         [SerializeField] private GameObject drawerRoot;

@@ -42,7 +42,7 @@ public sealed class M02EstablishBaseResourceTests
             tests.RetryLaunchRearmsInitializerAndRestoresResources();
             tests.DisabledMissionRuntimeLeavesResourcesUntouched();
             tests.AmbiguousPlayerResourceOwnerFailsClosed();
-            tests.M02HudShowsCreditsAndMaterialsWhileHidingLogistics();
+            tests.M02HudShowsMaterialsOilFuelWithoutCredits();
             tests.M02KeepsUnavailableSquadControlsVisibleAndStaticBlue();
             tests.AttemptInitializerDoesNotReferencePersistence();
             Debug.Log(Marker);
@@ -91,7 +91,8 @@ public sealed class M02EstablishBaseResourceTests
             FactionEconomy economy = world.EntityManager.GetComponentData<FactionEconomy>(resources);
             FactionTacticalMaterialsComponent materials =
                 world.EntityManager.GetComponentData<FactionTacticalMaterialsComponent>(resources);
-            Assert.AreEqual(StartingCredits, economy.Money);
+            Assert.AreEqual(0, economy.Money);
+            Assert.AreEqual(1, economy.MaterialsOnlyConstruction);
             Assert.AreEqual(0f, economy.Oil);
             Assert.AreEqual(0f, economy.Fuel);
             Assert.AreEqual(StartingMaterials, materials.Current);
@@ -179,7 +180,7 @@ public sealed class M02EstablishBaseResourceTests
             Assert.AreEqual(1, pending.AttemptOrdinal);
             entityManager.SetComponentData(root, new CampaignMissionAttemptFactsComponent { CommandSquadSpawned = 1 });
             UpdateResources(world);
-            Assert.AreEqual(StartingCredits, entityManager.GetComponentData<FactionEconomy>(resources).Money);
+            Assert.AreEqual(0, entityManager.GetComponentData<FactionEconomy>(resources).Money);
             Assert.AreEqual(StartingMaterials, entityManager.GetComponentData<
                 FactionTacticalMaterialsComponent>(resources).Current);
         }
@@ -229,7 +230,7 @@ public sealed class M02EstablishBaseResourceTests
     }
 
     [Test]
-    public void M02HudShowsCreditsAndMaterialsWhileHidingLogistics()
+    public void M02HudShowsMaterialsOilFuelWithoutCredits()
     {
         World previous = World.DefaultGameObjectInjectionWorld;
         GameLocalizationCatalog localizationCatalog =
@@ -262,12 +263,13 @@ public sealed class M02EstablishBaseResourceTests
                 creditsLabel, creditsValue, civilianLabel, civilianValue, 0f);
 
             Assert.IsTrue(materials.activeSelf);
-            Assert.IsFalse(oil.activeSelf);
+            Assert.IsTrue(oil.activeSelf);
             Assert.IsTrue(credits.activeSelf);
             Assert.AreEqual("Materials", materialsLabel.text);
             Assert.AreEqual("120/120", materialsValue.text);
-            Assert.AreEqual("Credits", creditsLabel.text);
-            Assert.AreEqual("55K", creditsValue.text);
+            Assert.AreEqual("Oil", oilLabel.text);
+            Assert.AreEqual("Fuel", creditsLabel.text);
+            Assert.AreEqual("0", creditsValue.text);
             Assert.AreEqual("120/120", world.EntityManager.GetComponentData<
                 UiMatchHudHeaderComponent>(boundary).MaterialsText.ToString());
         }

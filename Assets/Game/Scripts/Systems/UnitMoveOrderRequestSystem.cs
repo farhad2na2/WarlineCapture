@@ -216,6 +216,13 @@ namespace Game.Runtime
             EntityQuery query)
         {
             Entity queueEntity = EnsureCommandEntity(em, query);
+            return EnqueueExisting(em,queueEntity,entity,goal,kind,issueGroundPathNow,useGroundPathRetryCooldown,resumeFrame,currentFrame);
+        }
+
+        // Burst callers resolve the existing boundary with SystemAPI; the queue owner remains here.
+        internal static int EnqueueExisting(EntityManager em,Entity queueEntity,Entity entity,int2 goal,UnitMoveOrderRequestKind kind,
+            bool issueGroundPathNow,bool useGroundPathRetryCooldown,int resumeFrame,int currentFrame)
+        {
             UnitMoveOrderQueueComponent queue = em.GetComponentData<UnitMoveOrderQueueComponent>(queueEntity);
             queue.LastRequestId++;
             em.SetComponentData(queueEntity, queue);

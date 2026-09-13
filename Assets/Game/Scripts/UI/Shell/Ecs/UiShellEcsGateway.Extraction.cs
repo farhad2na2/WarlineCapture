@@ -42,9 +42,12 @@ namespace Game.UI.Shell.Ecs
             if(!TryFindExtractionDefinition(in catalog,in runtime,out int index)) return false;
             ref var config=ref catalog.Blob.Value.Missions[index].Extraction;
             int lesson=em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root).GuidanceId-55000;
+            using var cameraQuery=em.CreateEntityQuery(ComponentType.ReadOnly<RuntimeCameraSnapshotComponent>());
+            var cameraSnapshot=cameraQuery.CalculateEntityCount()==1 ? cameraQuery.GetSingleton<RuntimeCameraSnapshotComponent>() : default;
+            var rotation=cameraSnapshot.IsValid!=0 ? cameraSnapshot.Rotation : Unity.Mathematics.quaternion.EulerXYZ(math.radians(new float3(60,0,0)));
             model=new UiMissionExtractionModel(facts.ExtractionPassengersAboard,facts.ExtractionPassengersDelivered,config.RequiredPassengers,facts.ExtractionCarrierLegCount,
                 facts.ExtractionSecureMilliseconds/1000,math.max(0,(config.DeadlineMilliseconds-facts.ElapsedMilliseconds+999)/1000),lesson,
-                facts.ExtractionContested!=0,extraction.DepartureCleared!=0);return true;
+                facts.ExtractionContested!=0,extraction.DepartureCleared!=0,extraction.LandingCenter,extraction.DepartureCenter,config.LandingRadius,config.DepartureRadius,math.max(0,((extraction.PatrolReleaseAtMilliseconds>0?math.min(120000,extraction.PatrolReleaseAtMilliseconds):120000)-facts.ElapsedMilliseconds+999)/1000),rotation);return true;
         }
         public bool TryRequestExtractionAction(UiMissionExtractionAction action)
         {

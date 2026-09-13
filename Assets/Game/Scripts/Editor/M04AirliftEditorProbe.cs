@@ -57,7 +57,7 @@ namespace Game.Editor
             playerCameraStage = -1; playerCameraCaptures = 0; lastIdlePursuitBucket = -1;
             wideResultOwner=null;wideResultStage=0;
             MissionCameraBoundsAuthoring.ValidateContentPacks();
-            Directory.CreateDirectory(Output);SessionState.SetBool(Active,true);prepared=deployed=finished=uiPassed=recoveryActive=false;step=passenger=frame=0;error=null;
+            Directory.CreateDirectory(Output);SessionState.SetBool(Active,true);prepared=deployed=finished=uiPassed=recoveryActive=false;mobileSix=mobileEleven=mobileJet=false;mobileUnload=0;step=passenger=frame=0;error=null;
             started=EditorApplication.timeSinceStartup;oldLocale=GameLocalization.CurrentLocaleCode;
             MainMenuV3PrefabBuilder.SetGameViewResolution(1920,1080);
             EditorSceneManager.OpenScene(M02EstablishBaseNarrativeConfigBuilder.MenuScenePath,OpenSceneMode.Single);
@@ -146,6 +146,7 @@ namespace Game.Editor
                     if(!ResultVisible())return;
                     if(step==20)
                     {
+                        Debug.Log("[M04MobileActions] rescue quality: enemies stopped="+facts.HostileDefeatedCount+" escort losses="+facts.SquadLossCount+" time="+facts.ElapsedMilliseconds);
                         var profile=save.LoadProfile();foreach(string id in new[]{"Unit_Chr_Pilot_Female_01","Unit_Veh_APC_Fast","Unit_Veh_Helicopter_Transport"})
                             if(profile.ownedUnitUnlocks.Count(x=>x==id)!=1)throw new InvalidOperationException("Missing/duplicate reward "+id);
                         if(!store.ReadAll().Single(x=>x.missionId==M04AirliftConfigBuilder.MissionId).firstClearRewardSettled)throw new InvalidOperationException("Missing settled receipt");
@@ -181,6 +182,7 @@ namespace Game.Editor
                     CaptureMovingVehicle(em,step is 1 or 3?extraction.Carrier:extraction.Aircraft,step);
                 if(SessionState.GetBool("Warline.M04.PlayerCamera",false))
                     ReviewPlayerCamera(em,step is 1 or 3?extraction.Carrier:extraction.Aircraft,step);
+                ReviewMobileDestinations(em,extraction);
                 if(Time.frameCount-frame<3)return;
                 using var members=em.GetBuffer<CampaignMissionExtractionMember>(root,true).ToNativeArray(Allocator.Temp);var team=new System.Collections.Generic.List<Entity>();
                 for(int i=0;i<members.Length;i++)if(members[i].Kind==1)team.Add(members[i].Entity);
@@ -200,7 +202,7 @@ namespace Game.Editor
                         ScreenCapture.CaptureScreenshot(Output+"/apc-loaded.png");Move(em,extraction.Carrier,new int2(1046,428));Next();break;
                     case 3:
                         if(!Near(em,extraction.Carrier,new float3(1046,0,428),7))return;
-                        Transport(em,new RtsSelectionCommandIntentRequestElement{Kind=RtsSelectionCommandIntentKind.DisembarkTransport,TargetEntity=extraction.Carrier,HasTargetEntity=1});Next();break;
+                        if(!UnloadThroughTutorial(em,extraction))return;Next();break;
                     case 4:
                         if(facts.ExtractionPassengersAboard!=0)return;
                         passenger=0;ScreenCapture.CaptureScreenshot(Output+"/transfer.png");Next();break;

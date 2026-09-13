@@ -26,10 +26,9 @@ namespace Game.Runtime
                              !ContainsAny(lower, "civilian", "contractor", "pilot");
             bool isHelicopter = isAir && ContainsAny(lower, "helicopter", "heli");
             bool isJet = isAir && ContainsAny(lower, "jet", "plane") && !isTransport;
-            bool isAttackHelicopter = isHelicopter && !isTransport;
+            bool isAttackHelicopter = isHelicopter;
             bool isCombatVehicle = usesVehicleMotion &&
                                    !isAir &&
-                                   !isTransport &&
                                    !ContainsAny(lower, "truck", "tanker", "hauler") &&
                                    ContainsAny(lower, "veh", "tank", "armored", "launcher", "radar");
 

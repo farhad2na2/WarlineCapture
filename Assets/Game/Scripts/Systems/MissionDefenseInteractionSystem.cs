@@ -84,8 +84,8 @@ namespace Game.Runtime
                     var guidance = em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root);
                     int step = (int)guidance.Prompt - 12;
                     if (guidance.Active == 0 || guidance.GuidanceId != request.GuidanceId || step < 1 || step > 12) continue;
-                    bool explain = step is 3 or 10 or 11 or 12;
-                    bool optional = step is 4 or 7 or 8 or 9;
+                    bool explain = step == 3;
+                    bool optional = step is 4 or 8 or 9 || step==7 && defense.StopAccepted==0;
                     if ((request.Kind == MissionDefenseInteractionKind.ContinueExplanation && explain) ||
                         (request.Kind == MissionDefenseInteractionKind.SkipOptional && optional))
                         defense.AcknowledgedGuidanceMask |= 1u << (step - 1);

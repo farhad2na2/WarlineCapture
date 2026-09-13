@@ -41,5 +41,19 @@ namespace Game.UI.Runtime
             relay.Configure(this);
         }
 
+        public bool ContainsScreenPoint(Vector2 screenPosition)
+        {
+            Camera eventCamera = ResolveEventCamera();
+            if (GetComponent<RectMask2D>() != null &&
+                !RectTransformUtility.RectangleContainsScreenPoint((RectTransform)transform, screenPosition, eventCamera)) return false;
+            RectTransform rect = MapRect;
+            if (rect != null && RectTransformUtility.RectangleContainsScreenPoint(rect, screenPosition, eventCamera))
+                return true;
+
+            return _allowZoom &&
+                   (ContainsButton(zoomInButton, screenPosition, eventCamera) ||
+                    ContainsButton(zoomOutButton, screenPosition, eventCamera));
+        }
+
     }
 }

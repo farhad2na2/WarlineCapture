@@ -15,6 +15,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 using SettingsService = Game.UI.Runtime.SettingsService;
 
 namespace Game.Editor
@@ -43,7 +44,7 @@ namespace Game.Editor
             guidanceOriginalLocale=GameLocalization.CurrentLocaleCode; GameLocalization.SetLocale("en",false);
             guidanceVisited.Clear(); guidancePrompt=guidanceSubstep=0; guidanceNext=0; guidanceDiagnosticAt=0;
             guidanceHeld=guidanceVerifyHold=guidanceRestoreHold=guidanceJourneyVerified=false;
-            SessionState.SetBool(GuidanceJourneyKey,true); StartResultValidation(false);
+            SessionState.SetBool(GuidanceJourneyKey,true); StartResultValidation(false,false);
             // This journey uses the real tutorial and defensive Hold. The separate rifle
             // driver is disabled so it cannot move or aim on the learner's behalf.
             SessionState.SetBool(RifleKey,false);
@@ -52,6 +53,7 @@ namespace Game.Editor
             in CampaignMissionAttemptFactsComponent facts)
         {
             if(!SessionState.GetBool(GuidanceJourneyKey,false)) return false;
+            if(SessionState.GetBool(TutorialBuildKey,false) && AdvanceTutorialBuild(em,root,in runtime)) return false;
             if(runtime.Phase==MissionPhaseKind.ResultAfterDebrief && !guidanceJourneyVerified)
             {
                 if(!guidanceHeld || !guidanceVisited.Contains(5) || runtime.Outcome!=MissionOutcomeKind.Victory || em.GetComponentData<RadarPingState>(root).Charges!=2)
@@ -60,7 +62,7 @@ namespace Game.Editor
                 Debug.Log("[M03GuidanceJourney] result=Passed real Full Guidance buttons, optional choices declined, defensive Hold victory, full budget and two Ping charges retained; visited="+string.Join(",",guidanceVisited.OrderBy(x=>x)));
                 return false;
             }
-            if(runtime.Phase!=MissionPhaseKind.Engage || facts.ElapsedMilliseconds<1500) return false;
+            if(runtime.Phase!=MissionPhaseKind.Engage) return false;
             if(runtime.Guidance!=NarrativeGuidanceMode.Full) throw new InvalidOperationException("Full Guidance preference was not used by the real campaign launch.");
             if(facts.ElapsedMilliseconds>=guidanceDiagnosticAt)
             {
@@ -85,12 +87,14 @@ namespace Game.Editor
             if(guidanceRestoreHold)
             {
                 VerifyGuidanceOrders(em, false);
-                ClickCommand(controls.HoldButton); guidanceVerifyHold=true; guidanceRestoreHold=false; guidanceNext=EditorApplication.timeSinceStartup+.3;
+                var restoreView=UnityEngine.Object.FindAnyObjectByType<AriaTutorialBriefingView>();
+                if(!UiShellRuntimeGateway.TryReadMissionDefense(out var restore) || !restore.RequiresHoldResume || restoreView==null || !restoreView.DoItButton.interactable) return false;
+                ClickCommand(restoreView.DoItButton); guidanceVerifyHold=true; guidanceRestoreHold=false; guidanceNext=EditorApplication.timeSinceStartup+.3;
                 return false;
             }
             // Opening a real drawer intentionally hides ARIA. Finish the owned
             // drawer interaction before waiting for the next visible tutorial card.
-            if(guidancePrompt is 4 or 9 && guidanceSubstep==1)
+            if(guidancePrompt is 4 or 9 && guidanceSubstep is 1 or 10)
             {
                 var drawer=UnityEngine.Object.FindAnyObjectByType<BuildDrawerView>();
                 if(drawer==null || !drawer.IsOpen)
@@ -98,6 +102,13 @@ namespace Game.Editor
                 AssertBudget(em,50000,100);
                 if(match.MatchBootstrap.BuildingUiCommandContract.HasPendingBuildingPlacement)
                     throw new InvalidOperationException("SHOW ME started a paid placement without player choice.");
+                if(guidanceSubstep==1)
+                {
+                    if(guidancePrompt==9 && (drawer.ItemTemplate==null || !drawer.ItemTemplate.gameObject.activeInHierarchy))
+                        throw new InvalidOperationException("M3 optional reinforcement opened an empty Soldiers catalog.");
+                    ScreenCapture.CaptureScreenshot(Output+"/optional-drawer-"+guidancePrompt+".png");
+                    guidanceSubstep=10;guidanceNext=EditorApplication.timeSinceStartup+.3;return false;
+                }
                 ClickCommand(drawer.CloseButton); guidanceSubstep=2;
                 guidanceNext=EditorApplication.timeSinceStartup+.5; return false;
             }
@@ -110,7 +121,7 @@ namespace Game.Editor
             var view=UnityEngine.Object.FindAnyObjectByType<AriaTutorialBriefingView>();
             if(view==null || !view.IsPresentationVisible || !UiShellRuntimeGateway.TryReadMatchHudAssistantPanel(out var panel) || panel.TutorialStep!=step ||
                 (byte)typeof(AriaTutorialBriefingView).GetField("_tutorialStep",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(view)!=step) return false;
-            if(!view.ShowMeButton.isActiveAndEnabled || !view.DoItButton.isActiveAndEnabled) return false;
+            if(!view.ShowMeButton.isActiveAndEnabled) return false;
             if(step!=guidancePrompt) {guidancePrompt=step; guidanceSubstep=0; guidanceVisited.Add(step); Debug.Log($"[M03GuidanceJourney] step={step} at={facts.ElapsedMilliseconds} canExecute={panel.CanExecute}");}
             guidanceNext=EditorApplication.timeSinceStartup+.35;
             switch(step)
@@ -125,11 +136,11 @@ namespace Game.Editor
                     using(var camera=em.CreateEntityQuery(typeof(RtsCameraStateComponent)))
                         if(camera.GetSingleton<RtsCameraStateComponent>().HasSmoothFocusTarget!=0 || camera.GetSingleton<RtsCameraStateComponent>().HasSmoothPerspectiveTarget!=0) return false;
                     ClickCommand(view.DoItButton); break;
-                case 10: case 11:
-                    ClickCommand(view.DoItButton); break;
+                case 10: case 11: case 12:
+                    break; // Wait for real combat; never manufacture a tutorial completion.
                 case 4: case 9:
-                    if(guidanceSubstep==0) {ClickCommand(view.ShowMeButton); guidanceSubstep=1; break;}
-                    ClickLive("SkipLesson"); break;
+                    if(guidanceSubstep==0) {ClickCommand(view.DoItButton); guidanceSubstep=1; break;}
+                    if(!ClickGuidanceSkipWhenReady()) return false; break;
                 case 5: case 6: case 7:
                     if(guidanceSubstep==0)
                     {if(!commands.RequestSelectAllSoldiers()) throw new InvalidOperationException("Normal rifle selection failed."); guidanceSubstep=1; break;}
@@ -156,8 +167,17 @@ namespace Game.Editor
                     }
                     break;
                 case 8:
-                    ClickLive("SkipLesson"); break;
+                    if(!ClickGuidanceSkipWhenReady()) return false; break;
             }
+            return false;
+        }
+        private static bool ClickGuidanceSkipWhenReady()
+        {
+            // The lesson projection can precede the throttled HUD refresh. Wait for
+            // the actual button; the journey timeout still rejects a missing control.
+            foreach(var button in UnityEngine.Object.FindObjectsByType<Button>(FindObjectsInactive.Exclude,FindObjectsSortMode.None))
+                if(button.name=="SkipLesson" && button.isActiveAndEnabled && button.interactable)
+                {ClickCommand(button);return true;}
             return false;
         }
         private static void VerifyGuidanceOrders(EntityManager em, bool hold)

@@ -6,18 +6,20 @@ namespace Game.UI.Runtime
 {
     public sealed partial class BuildDrawerHudOcclusionView
     {
-        private Canvas guidedCanvas;
+        private Canvas guidedCanvas, popupSortingCanvas;
         private GraphicRaycaster guidedRaycaster;
         private bool addedCanvas, addedRaycaster, previousOverrideSorting;
-        private int previousSortingOrder;
-        private RectTransform guidedDrawer;
+        private int previousSortingOrder, previousSortingLayer;
+        private RectTransform guidedDrawer, guidedAria;
+        private readonly Vector3[] guideCorners = new Vector3[4];
         private Vector2 previousAnchorMax;
         private MainMenuV3SectionLayoutView guidedLayout;
         private bool previousLayoutEnabled;
 
         internal static bool RequiresTutorialAccess(UiAssistantPanelModel panel) =>
-            panel.HasRecommendation && panel.TutorialStepCount == 9 &&
-            panel.TutorialStep is 2 or 3 or 4 or 6;
+            panel.HasRecommendation &&
+            (panel.TutorialStepCount == 9 && panel.TutorialStep is 2 or 3 or 4 or 6 ||
+             panel.TutorialStepCount == 12 && panel.TutorialStep is 4 or 9);
 
         private void PreserveTutorial(AriaTutorialBriefingView aria)
         {
@@ -26,9 +28,11 @@ namespace Game.UI.Runtime
             if (addedCanvas) guidedCanvas = aria.gameObject.AddComponent<Canvas>();
             previousOverrideSorting = guidedCanvas.overrideSorting;
             previousSortingOrder = guidedCanvas.sortingOrder;
-            var popupCanvas = GetComponentInParent<Canvas>();
-            guidedCanvas.overrideSorting = true;
-            guidedCanvas.sortingOrder = (popupCanvas != null ? popupCanvas.sortingOrder : 0) + 1;
+            previousSortingLayer = guidedCanvas.sortingLayerID;
+            popupSortingCanvas = GetComponentInParent<Canvas>();
+            while (popupSortingCanvas != null && !popupSortingCanvas.overrideSorting && !popupSortingCanvas.isRootCanvas)
+                popupSortingCanvas = popupSortingCanvas.transform.parent?.GetComponentInParent<Canvas>();
+            RaiseTutorialAbovePopup();
             guidedRaycaster = aria.GetComponent<GraphicRaycaster>();
             addedRaycaster = guidedRaycaster == null;
             if (addedRaycaster) guidedRaycaster = aria.gameObject.AddComponent<GraphicRaycaster>();
@@ -37,13 +41,8 @@ namespace Game.UI.Runtime
             // The section layout scales its authored contents into the available width.
             guidedDrawer = GetComponent<BuildDrawerView>()?.DrawerRoot?.transform as RectTransform;
             if (guidedDrawer != null) previousAnchorMax = guidedDrawer.anchorMax;
-            var parent = guidedDrawer != null ? guidedDrawer.parent as RectTransform : null;
-            if (parent == null || parent.rect.width <= 0f) return;
-            var corners = new Vector3[4];
-            ((RectTransform)aria.transform).GetWorldCorners(corners);
-            float left = parent.InverseTransformPoint(corners[0]).x;
-            float rightEdge = Mathf.Clamp((left - parent.rect.xMin - 16f) / parent.rect.width, .6f, .85f);
-            guidedDrawer.anchorMax = new Vector2(rightEdge, previousAnchorMax.y);
+            if (guidedDrawer == null) return;
+            guidedAria = (RectTransform)aria.transform;
             guidedLayout = guidedDrawer.GetComponentInChildren<MainMenuV3SectionLayoutView>();
             if (guidedLayout != null)
             {
@@ -53,11 +52,31 @@ namespace Game.UI.Runtime
             }
         }
 
-        private void LateUpdate() => FitGuidedDrawer();
+        private void LateUpdate()
+        {
+            RaiseTutorialAbovePopup();
+            FitGuidedDrawer();
+        }
+
+        private void RaiseTutorialAbovePopup()
+        {
+            if (guidedCanvas == null) return;
+            // Local batching canvases inherit this sorting owner.
+            guidedCanvas.overrideSorting = true;
+            if (popupSortingCanvas != null) guidedCanvas.sortingLayerID = popupSortingCanvas.sortingLayerID;
+            guidedCanvas.sortingOrder = (popupSortingCanvas != null ? popupSortingCanvas.sortingOrder : 0) + 1;
+        }
 
         private void FitGuidedDrawer()
         {
-            if (guidedDrawer == null || guidedLayout == null) return;
+            if (guidedDrawer == null || guidedLayout == null || guidedAria == null) return;
+            // Opening motion changes the parent's transform after Configure; fit to the settled rail each frame.
+            var parent = guidedDrawer.parent as RectTransform;
+            if (parent == null || parent.rect.width <= 0f) return;
+            guidedAria.GetWorldCorners(guideCorners);
+            float left = parent.InverseTransformPoint(guideCorners[0]).x;
+            float edge = Mathf.Clamp((left - parent.rect.xMin - 16f) / parent.rect.width, .6f, .85f);
+            guidedDrawer.anchorMax = new Vector2(edge, previousAnchorMax.y);
             var frame = (RectTransform)guidedLayout.transform;
             var size = guidedDrawer.rect.size;
             var reference = guidedLayout.ReferenceResolution;
@@ -70,6 +89,7 @@ namespace Game.UI.Runtime
         {
             if (guidedDrawer != null) guidedDrawer.anchorMax = previousAnchorMax;
             guidedDrawer = null;
+            guidedAria = null;
             if (guidedLayout != null)
             {
                 guidedLayout.enabled = previousLayoutEnabled;
@@ -85,10 +105,12 @@ namespace Game.UI.Runtime
                 {
                     guidedCanvas.overrideSorting = previousOverrideSorting;
                     guidedCanvas.sortingOrder = previousSortingOrder;
+                    guidedCanvas.sortingLayerID = previousSortingLayer;
                 }
             }
             guidedRaycaster = null;
             guidedCanvas = null;
+            popupSortingCanvas = null;
         }
 
         private void HideOtherHeaderChildren(Transform parent, Transform aria)

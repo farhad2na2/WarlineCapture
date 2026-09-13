@@ -1,0 +1,302 @@
+{
+  "destination": "https://api.elevenlabs.io",
+  "purpose": "Fix M3/M4 audit narration and caption parity",
+  "provider": "ElevenLabs",
+  "account": "Existing paid project account; configured project voices",
+  "clips": [
+    {
+      "id": "tutorial-m03-07",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Stop cancels orders and stops automatic firing. Try it, then press Hold again when ARIA asks. You can skip this lesson to keep defending.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M03RadarWarning/Voice/en/tutorial-m03-07.wav"
+    },
+    {
+      "id": "tutorial-m03-07",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "توقف، فرمان‌ها و شلیک خودکار را قطع می‌کند. آن را امتحان کنید؛ سپس با راهنمایی آریا دوباره حفظ را بزنید. برای ادامهٔ دفاع می‌توانید این درس را رد کنید.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-07.wav"
+    },
+    {
+      "id": "tutorial-m03-12",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Stop every enemy vehicle. Keep rifles on Hold and cover the core. Protect civilians and the post for bonus stars.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M03RadarWarning/Voice/en/tutorial-m03-12.wav"
+    },
+    {
+      "id": "tutorial-m03-12",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "همهٔ خودروهای دشمن را متوقف کنید. تفنگداران را در حالت حفظ نگه دارید. سلامت مردم و پاسگاه ستارهٔ اضافی دارد.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-12.wav"
+    },
+    {
+      "id": "m04-brief-01",
+      "speaker": "LAILA",
+      "locale": "en-US",
+      "text": "Captain Laila Nasser. My helicopter is ready at the eastern landing area. Bring the four specialists to me in the APC; I can keep this extraction window open for ten minutes.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/en/m04-brief-01.wav"
+    },
+    {
+      "id": "m04-brief-01",
+      "speaker": "LAILA",
+      "locale": "fa-IR",
+      "text": "سروان لیلا ناصر هستم. بالگردم در محل فرود شرقی آماده است. چهار متخصص را با نفربر به من برسانید؛ فرصت تخلیه را ده دقیقه باز نگه می‌دارم.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-brief-01.wav"
+    },
+    {
+      "id": "m04-brief-02",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "Two medics and two engineers are stranded by the western road. They are the people who can reopen the clinics and restore the network. Bring every one of them home.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/en/m04-brief-02.wav"
+    },
+    {
+      "id": "m04-brief-02",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "دو امدادگر و دو مهندس کنار جادهٔ غربی گرفتار شده‌اند. آن‌ها می‌توانند درمانگاه‌ها را باز کنند و شبکه را بازگردانند. همه را سالم برگردانید.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-brief-02.wav"
+    },
+    {
+      "id": "m04-brief-03",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "Rifles cover the road; the APC carries the team. Unload beside Laila, board the helicopter, hold the area clear for twenty seconds, then fly to the marked departure zone.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/en/m04-brief-03.wav"
+    },
+    {
+      "id": "m04-brief-03",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "تفنگدارها جاده را پوشش می‌دهند؛ نفربر تیم را منتقل می‌کند. کنار لیلا پیاده شوید، سوار بالگرد شوید، بیست ثانیه محل را امن نگه دارید و سپس به محدودهٔ خروج پرواز کنید.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-brief-03.wav"
+    },
+    {
+      "id": "m04-comms-01",
+      "speaker": "LAILA",
+      "locale": "en-US",
+      "text": "All four are aboard. The landing area is clear and departure is authorized. Fly to the marked exit; I will take the team from there.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/en/m04-comms-01.wav"
+    },
+    {
+      "id": "m04-comms-01",
+      "speaker": "LAILA",
+      "locale": "fa-IR",
+      "text": "هر چهار نفر سوار شده‌اند. محل فرود امن است و اجازهٔ خروج داریم. به محل خروج مشخص‌شده پرواز کنید؛ از آنجا تیم را منتقل می‌کنم.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-comms-01.wav"
+    },
+    {
+      "id": "m04-debrief-01",
+      "speaker": "LAILA",
+      "locale": "en-US",
+      "text": "Four passengers accounted for. Your escort gave us the time we needed. I am joining this operation; you will have an airlift pilot when the next team needs a way out.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/en/m04-debrief-01.wav"
+    },
+    {
+      "id": "m04-debrief-01",
+      "speaker": "LAILA",
+      "locale": "fa-IR",
+      "text": "هر چهار مسافر حاضرند. پوشش شما زمان لازم را فراهم کرد. به این عملیات می‌پیوندم؛ از این پس برای نجات تیم بعدی یک خلبان ترابری هوایی خواهید داشت.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-debrief-01.wav"
+    },
+    {
+      "id": "m04-debrief-02",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "The engineers brought their repair records. Several outages lead back to the same fortified communications node. We finally have a place to investigate.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/en/m04-debrief-02.wav"
+    },
+    {
+      "id": "m04-debrief-02",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "مهندسان سوابق تعمیر را آورده‌اند. چند قطعی به یک گرهٔ ارتباطی مستحکم برمی‌گردد. سرانجام محلی برای بررسی داریم.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-debrief-02.wav"
+    },
+    {
+      "id": "m04-debrief-03",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Extraction confirmed. Captain Nasser is on the roster. Next objective: assess that communications node. First, let the medical team get back to work.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/en/m04-debrief-03.wav"
+    },
+    {
+      "id": "m04-debrief-03",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "تخلیه تأیید شد. سروان ناصر به گروه پیوست. هدف بعدی: بررسی آن گرهٔ ارتباطی. ابتدا بگذارید تیم پزشکی به کارش برگردد.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-debrief-03.wav"
+    },
+    {
+      "id": "tutorial-m04-01",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Rescue all four specialists: APC first, helicopter second. You have ten minutes. Enemy kills are optional; keep the escort alive for a bonus star.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/en/tutorial-m04-01.wav"
+    },
+    {
+      "id": "tutorial-m04-01",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "هر چهار متخصص را نجات دهید: ابتدا نفربر، سپس بالگرد. ده دقیقه فرصت دارید. کشتن دشمن الزامی نیست؛ سالم نگه‌داشتن محافظان یک ستارهٔ اضافی دارد.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-01.wav"
+    },
+    {
+      "id": "tutorial-m04-02",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Select the wheeled APC beside your rifles. Keep its four seats free for the specialists. Show Me locates the APC.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/en/tutorial-m04-02.wav"
+    },
+    {
+      "id": "tutorial-m04-02",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "نفربر چرخ‌دار کنار تفنگدارها را انتخاب کنید. چهار صندلی آن را برای متخصصان خالی نگه دارید. نشانم بده، محل نفربر را نشان می‌دهد.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-02.wav"
+    },
+    {
+      "id": "tutorial-m04-03",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Press Move, then tap beside the four specialists on the western road. Show Me locates them. Send the rifles forward to cover the pickup.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/en/tutorial-m04-03.wav"
+    },
+    {
+      "id": "tutorial-m04-03",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "حرکت را بزنید و کنار چهار متخصص در جادهٔ غربی مقصد بدهید. نشانم بده، محل آن‌ها را نشان می‌دهد. تفنگدارها را برای پوشش به جلو بفرستید.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-03.wav"
+    },
+    {
+      "id": "tutorial-m04-04",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Select all four specialists beside the road. Keep armed escorts outside the selection. This step completes when all four are selected.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/en/tutorial-m04-04.wav"
+    },
+    {
+      "id": "tutorial-m04-04",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "هر چهار متخصص کنار جاده را انتخاب کنید. محافظان مسلح را وارد انتخاب نکنید. با انتخاب هر چهار نفر این مرحله تمام می‌شود.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-04.wav"
+    },
+    {
+      "id": "tutorial-m04-05",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Press Board, then tap the APC. Wait until its passenger list shows all four specialists before moving.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/en/tutorial-m04-05.wav"
+    },
+    {
+      "id": "tutorial-m04-05",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "سوارشدن را بزنید و سپس نفربر را انتخاب کنید. پیش از حرکت صبر کنید فهرست مسافران، هر چهار متخصص را نشان دهد.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-05.wav"
+    },
+    {
+      "id": "tutorial-m04-06",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Move the loaded APC east to the marked landing area. Show Me locates Laila. Keep the rifles covering the approaching patrol.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/en/tutorial-m04-06.wav"
+    },
+    {
+      "id": "tutorial-m04-06",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "نفربر پر را به محدودهٔ فرود مشخص‌شده در شرق ببرید. نشانم بده، محل لیلا را نشان می‌دهد. تفنگدارها مسیر گشتی دشمن را پوشش دهند.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-06.wav"
+    },
+    {
+      "id": "tutorial-m04-07",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Open the APC passenger panel, then tap Unload. Wait until all four specialists stand beside the helicopter. Move into open ground if unloading is blocked.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/en/tutorial-m04-07.wav"
+    },
+    {
+      "id": "tutorial-m04-07",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "بخش مسافران نفربر را باز کنید و پیاده‌شدن را بزنید. صبر کنید هر چهار متخصص کنار بالگرد بایستند. اگر محل بسته است، نفربر را به فضای باز ببرید.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-07.wav"
+    },
+    {
+      "id": "tutorial-m04-08",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Select Laila’s helicopter. Keep it landed beside the specialists until all four have boarded.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/en/tutorial-m04-08.wav"
+    },
+    {
+      "id": "tutorial-m04-08",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "بالگرد لیلا را انتخاب کنید. آن را کنار متخصصان روی زمین نگه دارید تا هر چهار نفر سوار شوند.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-08.wav"
+    },
+    {
+      "id": "tutorial-m04-09",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Select all four specialists, press Board, then tap the landed helicopter. Check that its passenger list shows four people.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/en/tutorial-m04-09.wav"
+    },
+    {
+      "id": "tutorial-m04-09",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "هر چهار متخصص را انتخاب کنید، سوارشدن را بزنید و بالگرد فرودآمده را انتخاب کنید. فهرست مسافران باید چهار نفر را نشان دهد.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-09.wav"
+    },
+    {
+      "id": "tutorial-m04-10",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Keep the loaded helicopter inside the marked landing area for twenty clear seconds. Use the rifles to stop threats entering the ring. Leaving or enemy entry resets the count.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/en/tutorial-m04-10.wav"
+    },
+    {
+      "id": "tutorial-m04-10",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "بالگرد پر را بیست ثانیه در محدودهٔ امن فرود نگه دارید. تفنگدارها مانع ورود دشمن به حلقه شوند. خروج بالگرد یا ورود دشمن زمان را از نو آغاز می‌کند.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-10.wav"
+    },
+    {
+      "id": "tutorial-m04-11",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Select the helicopter, press Move, then tap the marked exit. Show Me locates the exit. Keep all four specialists aboard until extraction is confirmed.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/en/tutorial-m04-11.wav"
+    },
+    {
+      "id": "tutorial-m04-11",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "بالگرد را انتخاب کنید، حرکت را بزنید و به خروج مشخص‌شده مقصد بدهید. نشانم بده، خروج را نشان می‌دهد. تا تأیید نجات، هر چهار متخصص سوار بمانند.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-11.wav"
+    },
+    {
+      "id": "tutorial-m04-12",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Extraction is being confirmed. Keep the passengers aboard and protect the helicopter until the result appears.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/en/tutorial-m04-12.wav"
+    },
+    {
+      "id": "tutorial-m04-12",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "نجات در حال تأیید است. تا نمایش نتیجه، مسافران را سوار نگه دارید و از بالگرد محافظت کنید.",
+      "output": "/Users/farhad/Projects/WarlineCapture/Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-12.wav"
+    }
+  ]
+}

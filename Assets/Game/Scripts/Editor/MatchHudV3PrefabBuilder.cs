@@ -16,7 +16,7 @@ using UnityEngine.UI;
 
 namespace Game.Editor
 {
-    public static class MatchHudV3PrefabBuilder
+    public static partial class MatchHudV3PrefabBuilder
     {
         internal const string PrefabPath =
             "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab";
@@ -268,10 +268,10 @@ namespace Game.Editor
                 throw new MissingReferenceException("Match HUD V3 runtime bindings are incomplete.");
             MatchOverlayCommandControlsView controls = prefab.GetComponentInChildren<MatchOverlayCommandControlsView>(true);
             CommandWheelPanelView wheel = prefab.GetComponentInChildren<CommandWheelPanelView>(true);
-            if (controls == null || controls.CommandWheelPanel != wheel || controls.CommandWheelStopButton == null)
+            if (controls == null || controls.CommandWheelPanel != wheel)
                 throw new MissingReferenceException("Unit Command Wheel runtime bindings are incomplete.");
-            if (wheel.GetComponentsInChildren<V3RadialWedgeGraphic>(true).Length != 6)
-                throw new InvalidOperationException("Unit Command Wheel must contain exactly six procedural radial sectors.");
+            if (wheel.GetComponentsInChildren<V3RadialWedgeGraphic>(true).Length != 4)
+                throw new InvalidOperationException("Unit Command Wheel must contain exactly four selection action sectors.");
 
             Transform rail = FindDeepChild(prefab.transform, "CommandRail");
             Transform railFrame = rail != null ? FindDirectChild(rail, "Frame") : null;
@@ -458,7 +458,6 @@ namespace Game.Editor
                 new[] { RequireRect(controller, "TargetingRail") },
                 new[]
                 {
-                    RequireRect(controller, "WheelUnitCard"),
                     RequireRect(controller, "Wheel"),
                     RequireRect(controller, "InstructionStrip"),
                     RequireRect(controller, "RangeBanner")
@@ -700,8 +699,10 @@ namespace Game.Editor
             guidance.gameObject.SetActive(false);
 
             RectTransform minimap = RequireRect(header.parent, "MinimapPanel");
-            minimap.SetParent(aria, false);
-            SetTopLeft(minimap, 10f, 375f, 380f, 300f);
+            minimap.SetParent(header, false);
+            minimap.anchorMin = minimap.anchorMax = minimap.pivot = new Vector2(1, 0);
+            minimap.anchoredPosition = new Vector2(-15, 175);
+            minimap.sizeDelta = new Vector2(320, 220);
             StyleMinimap(minimap);
         }
 
@@ -1435,7 +1436,8 @@ namespace Game.Editor
                 3f,
                 openButton);
             openButton.targetGraphic = portraitTarget;
-            RectTransform commandChip = EnsureRect("CommandWheelCue", portraitFrame);
+            RectTransform commandChip = FindDeepChild(root, "CommandWheelCue") as RectTransform ?? EnsureRect("CommandWheelCue", portraitFrame);
+            commandChip.SetParent(portraitFrame, false);
             SetTopLeft(commandChip, 5f, 94f, 348f, 64f);
             EnsureGradient(commandChip, CyanTop, CyanBottom, theme.Cyan, 2f);
             TMP_Text commandChipText = EnsureText(commandChip, "Label");
@@ -1483,6 +1485,7 @@ namespace Game.Editor
             controlsSerialized.FindProperty("commandWheelPanel").objectReferenceValue = controller;
             controlsSerialized.ApplyModifiedPropertiesWithoutUndo();
 
+            ApplySelectionWheel(root.gameObject);
             overlay.gameObject.SetActive(false);
         }
 
@@ -1844,6 +1847,7 @@ namespace Game.Editor
             ConfigureCaptureState(instance, showTransportPassengers);
             if (showM02RestrictedControls)
                 ConfigureM02RestrictedControlsCaptureState(instance);
+            instance.GetComponentInChildren<MissionHudTouchLayoutView>(true)?.RefreshLayout();
             if (showTacticalFeedback)
                 ConfigureTacticalFeedbackCaptureState(instance);
             if (showBuildPlacement)
@@ -1869,12 +1873,14 @@ namespace Game.Editor
                 CommandWheelPanelView wheel = instance.GetComponentInChildren<CommandWheelPanelView>(true);
                 if (wheel == null)
                     throw new MissingReferenceException("Missing Unit Command Wheel for capture.");
+                wheel.BindRuntimeSectionReferences(instance.GetComponentInChildren<MatchHudSelectionPanelView>(true).CommandWheelOpenButton, null);
                 wheel.Open();
                 wheel.SetTargetingPreview(showTargetingState);
             }
             Canvas.ForceUpdateCanvases();
             foreach (MainMenuV3SectionLayoutView layout in instance.GetComponentsInChildren<MainMenuV3SectionLayoutView>(true))
                 layout.RefreshLayout();
+            instance.GetComponentInChildren<MissionHudTouchLayoutView>(true)?.RefreshLayout();
             if (showTacticalFeedback)
                 ConfigureTacticalFeedbackCaptureState(instance);
             if (showBuildPlacement)

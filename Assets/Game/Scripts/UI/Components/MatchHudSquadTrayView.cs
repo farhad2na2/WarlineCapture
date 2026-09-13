@@ -123,8 +123,11 @@ namespace Game.UI.Runtime
             }
         }
 
+        private int lastMissionSquadMask=-1;
+
         internal void RefreshMissionRestrictions()
         {
+            int mask=-1;
             bool combatVehiclesDisabled = false;
             bool airDisabled = false;
             bool transportDisabled = false;
@@ -135,22 +138,28 @@ namespace Game.UI.Runtime
                 airDisabled = restrictions.AirDisabled;
                 transportDisabled = restrictions.TransportDisabled;
                 hideUnrelatedControls = restrictions.HideUnrelatedControls;
+                mask=restrictions.AvailableSquadMask;
             }
 
-            if (_restrictionStateInitialized &&
+            if (_restrictionStateInitialized && lastMissionSquadMask==mask &&
                 _lastCombatVehiclesDisabled == combatVehiclesDisabled &&
                 _lastAirDisabled == airDisabled &&
                 _lastTransportDisabled == transportDisabled &&
                 _lastHideUnrelatedControls == hideUnrelatedControls)
                 return;
 
+            lastMissionSquadMask=mask;
             _restrictionStateInitialized = true;
             _lastCombatVehiclesDisabled = combatVehiclesDisabled;
             _lastAirDisabled = airDisabled;
             _lastTransportDisabled = transportDisabled;
             _lastHideUnrelatedControls = hideUnrelatedControls;
 
-            ApplyMissionRestrictionVisibility(
+            if(mask>=0)
+            {
+                for(int i=0;i<5;i++) SetCardDisabled(i,(mask&(1<<i))==0,false);
+            }
+            else ApplyMissionRestrictionVisibility(
                 combatVehiclesDisabled, airDisabled, transportDisabled, hideUnrelatedControls);
         }
 

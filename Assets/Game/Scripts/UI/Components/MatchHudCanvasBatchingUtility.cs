@@ -12,9 +12,10 @@ namespace Game.UI.Runtime
 
             Canvas canvas = root.GetComponent<Canvas>();
             if (canvas == null)
+            {
                 canvas = root.AddComponent<Canvas>();
-
-            canvas.overrideSorting = false;
+                canvas.overrideSorting = false;
+            }
             canvas.pixelPerfect = false;
 
             if (!needsRaycaster)

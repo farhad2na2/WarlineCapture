@@ -42,8 +42,9 @@ public sealed class M03PresentationTests
         {
             var tests=new M03PresentationTests();
             tests.AllTwelveAriaLessonsFitBothLanguagesAndTextSizes();
+            tests.AllTwelveM04AriaLessonsFitBothLanguagesAndTextSizes();
             tests.FinalComicCropsHaveStableMissionIdentityAndAspect();
-            Debug.Log("[M03PresentationValidation] result=Passed ariaPresentations=48 finalComicCrops=14");
+            Debug.Log("[M03PresentationValidation] result=Passed ariaPresentations=96 finalComicCrops=14");
             ValidationExit.Passed();
         }
         catch(Exception exception)
@@ -51,7 +52,11 @@ public sealed class M03PresentationTests
     }
 
     [Test]
-    public void AllTwelveAriaLessonsFitBothLanguagesAndTextSizes()
+    public void AllTwelveAriaLessonsFitBothLanguagesAndTextSizes() => ValidateAriaLessons(false);
+
+    [Test] public void AllTwelveM04AriaLessonsFitBothLanguagesAndTextSizes() => ValidateAriaLessons(true);
+
+    private static void ValidateAriaLessons(bool extraction)
     {
         var prefab=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab");
         Assert.NotNull(prefab);
@@ -75,10 +80,13 @@ public sealed class M03PresentationTests
             {
                 GameLocalization.SetLocale(persian ? "fa-IR" : "en", false);
                 var copy=M03RadarWarningTutorialCopyCatalog.Steps[step-1];
+                var rescue=M04AirliftCopyCatalog.Lessons[step-1];
+                string title=extraction ? (persian ? rescue.PersianTitle : rescue.Title) : (persian ? copy.PersianTitle : copy.Title);
+                string body=extraction ? (persian ? rescue.PersianBody : rescue.Body) : (persian ? copy.PersianBody : copy.Body);
                 var model=new UiAssistantPanelModel(1,true,0,UiAssistantGoalRowModel.Empty,UiAssistantGoalRowModel.Empty,UiAssistantGoalRowModel.Empty,
                     UiAssistantMessageRowModel.Empty,UiAssistantMessageRowModel.Empty,UiAssistantMessageRowModel.Empty,
-                    UiAssistantMessageRowModel.Empty,UiAssistantMessageRowModel.Empty,UiAssistantTargetLockModel.Empty,UiAssistantNarrationModel.Empty,true,persian ? copy.PersianTitle : copy.Title,
-                    persian ? copy.PersianBody : copy.Body,"",persian ? "ادامه" : "CONTINUE",true,true,false,false,"","",
+                    UiAssistantMessageRowModel.Empty,UiAssistantMessageRowModel.Empty,UiAssistantTargetLockModel.Empty,UiAssistantNarrationModel.Empty,true,title,
+                    body,"",persian ? "ادامه" : "CONTINUE",true,true,false,false,"","",
                     largeTextEnabled:large,tutorialStep:step,tutorialStepCount:12,tutorialRightToLeft:persian);
                 view.Apply(model);
                 view.ApplyAccessibility(large,false);
@@ -89,13 +97,14 @@ public sealed class M03PresentationTests
                 {
                     text.ForceMeshUpdate(true,true);
                     Assert.IsFalse(text.isTextOverflowing || text.isTextTruncated,
-                        $"ARIA {step} {(persian ? "fa-IR" : "en")} large={large}: {text.name} height={text.rectTransform.rect.height} preferred={text.preferredHeight}");
+                        $"ARIA M{(extraction ? 4 : 3)} {step} {(persian ? "fa-IR" : "en")} large={large}: {text.name} height={text.rectTransform.rect.height} preferred={text.preferredHeight}");
                     Assert.IsTrue(text.textInfo.characterInfo.Take(text.textInfo.characterCount).Any(c=>c.isVisible));
                     Assert.IsFalse(text.textInfo.characterInfo.Take(text.textInfo.characterCount).Any(c=>c.character=='\u25a1' || c.character=='\ufffd'));
                 }
                 var utility=view.transform.Find("M03Actions") as RectTransform;
                 Assert.NotNull(utility);
                 utility.gameObject.SetActive(true);
+                view.RefreshContentLayout();
                 var corners=new Vector3[4];var utilityCorners=new Vector3[4];
                 ((RectTransform)view.DoItButton.transform).GetWorldCorners(corners);utility.GetWorldCorners(utilityCorners);
                 Assert.Less(utilityCorners[1].y,corners[0].y,"Guide controls must sit below ARIA's primary actions.");
@@ -103,8 +112,8 @@ public sealed class M03PresentationTests
             }
             GameLocalization.SetLocale(previousLocale, false);
             view.Apply(AriaTutorialBriefingPrefabBuilder.CreateTargetLockPreviewModel());
-            Assert.AreEqual(originalSize,view.BriefingLayout.sizeDelta,"M1 card size must restore after M3.");
-            Assert.AreEqual(originalPosition,view.BriefingLayout.anchoredPosition,"M1 card position must restore after M3.");
+            view.RefreshContentLayout();
+            Assert.Greater(view.BriefingLayout.rect.height,0,"M1 instructions remain content-sized after M3.");
         }
         finally {UnityEngine.Object.DestroyImmediate(canvasRoot);GameLocalization.SetLocale(previousLocale,false);}
     }

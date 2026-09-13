@@ -29,7 +29,7 @@ MonoBehaviour:
     MistakeKey: mission.m03.guide.topic.3.mistake
     DiagramKey: mission.m03.guide.topic.3.diagram
   - TitleKey: mission.m03.guide.topic.4.title
-    BodyKey: mission.m03.guide.topic.4.body
+    BodyKey: mission.m03.tactics.build
     ExampleKey: mission.m03.guide.topic.4.example
     MistakeKey: mission.m03.guide.topic.4.mistake
     DiagramKey: mission.m03.guide.topic.4.diagram
@@ -50,7 +50,7 @@ MonoBehaviour:
     DiagramKey: mission.m03.guide.topic.7.diagram
   - TitleKey: mission.m03.guide.topic.8.title
     BodyKey: mission.m03.guide.topic.8.body
-    ExampleKey: mission.m03.guide.topic.8.example
+    ExampleKey: mission.m03.tactics.visual
     MistakeKey: mission.m03.guide.topic.8.mistake
     DiagramKey: mission.m03.guide.topic.8.diagram
   - TitleKey: mission.m03.guide.topic.9.title

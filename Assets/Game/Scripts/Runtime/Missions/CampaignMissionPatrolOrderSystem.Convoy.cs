@@ -31,7 +31,10 @@ namespace Game.Runtime
                 // acquisition and would make them walk past the stranded specialists.
                 if (definition.Extraction.Enabled != 0 && state.EntityManager.HasComponent<EngageTarget>(entity)) continue;
                 ref CampaignMissionPatrolRouteBlob route = ref definition.PatrolRoutes[routeIndex];
-                if (facts.ElapsedMilliseconds < route.StartDelayMilliseconds || current.RouteIndex >= route.AnchorIds.Length) continue;
+                int releaseAt=route.StartDelayMilliseconds;
+                if(definition.Extraction.Enabled!=0 && SystemAPI.TryGetSingleton(out CampaignMissionExtractionState extraction) && extraction.PatrolReleaseAtMilliseconds>0)
+                    releaseAt=math.min(releaseAt,extraction.PatrolReleaseAtMilliseconds);
+                if (facts.ElapsedMilliseconds < releaseAt || current.RouteIndex >= route.AnchorIds.Length) continue;
                 var progress = progressRef.ValueRO;
                 if (math.distancesq(progress.LastProgressPosition, transform.ValueRO.Position.xz) >= 1f)
                 {

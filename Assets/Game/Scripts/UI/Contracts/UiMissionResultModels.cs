@@ -9,9 +9,9 @@ namespace Game.UI.Contracts
     }
     public readonly struct UiMissionExtractionResultDetails
     {
-        public readonly bool Applicable,CarrierLost,AircraftLost,TimedOut;public readonly int Delivered,Losses,CarrierLeg;
-        public UiMissionExtractionResultDetails(int delivered,int losses,int carrierLeg,bool carrierLost,bool aircraftLost,bool timedOut)
-        {Applicable=true;Delivered=delivered;Losses=losses;CarrierLeg=carrierLeg;CarrierLost=carrierLost;AircraftLost=aircraftLost;TimedOut=timedOut;}
+        public readonly bool Applicable,CarrierLost,AircraftLost,TimedOut;public readonly int Delivered,Losses,CarrierLeg,EscortLosses,ElapsedMilliseconds;
+        public UiMissionExtractionResultDetails(int delivered,int losses,int carrierLeg,bool carrierLost,bool aircraftLost,bool timedOut,int escortLosses=0,int elapsedMilliseconds=0)
+        {Applicable=true;Delivered=delivered;Losses=losses;CarrierLeg=carrierLeg;CarrierLost=carrierLost;AircraftLost=aircraftLost;TimedOut=timedOut;EscortLosses=escortLosses;ElapsedMilliseconds=elapsedMilliseconds;}
     }
     public enum UiMissionResultOutcome : byte
     {

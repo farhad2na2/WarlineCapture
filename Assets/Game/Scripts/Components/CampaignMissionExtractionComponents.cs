@@ -24,6 +24,7 @@ namespace Game.Components
         public float3 LandingCenter, DepartureCenter;
         public Entity Carrier, Aircraft;
         public int SecureHoldMilliseconds;
+        public int PatrolReleaseAtMilliseconds;
         public byte Initialized, Ready, DepartureCleared, CarrierTransferComplete;
     }
 

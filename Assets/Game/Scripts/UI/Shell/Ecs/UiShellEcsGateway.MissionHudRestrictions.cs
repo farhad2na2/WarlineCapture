@@ -45,6 +45,7 @@ namespace Game.UI.Shell.Ecs
                     continue;
 
                 bool radar = runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes("saga.ch01.m03.radar_warning"));
+                bool introductory = runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes("saga.ch01.m02.establish_base"));
                 restrictions = new UiMissionHudRestrictionsModel(
                     runtime.MissionId.ToString(),
                     definition.BuildingDisabled != 0,
@@ -53,9 +54,11 @@ namespace Game.UI.Shell.Ecs
                     definition.TransportDisabled != 0,
                     definition.AirDisabled != 0,
                     cinematicInteractionLocked,
-                    definition.MissionRuntimeEnabled != 0 && !radar,
+                    definition.MissionRuntimeEnabled != 0 && !radar && !introductory,
                     definition.MissionRuntimeEnabled != 0,
-                    definition.MissionRuntimeEnabled != 0 && !radar);
+                    definition.MissionRuntimeEnabled != 0 && !radar && !introductory,
+                    ReadExtractionSquadMask(entityManager,root),
+                    IsOpeningCinematicActive(entityManager,root,in runtime));
                 return true;
             }
 
@@ -65,6 +68,18 @@ namespace Game.UI.Shell.Ecs
             restrictions = new UiMissionHudRestrictionsModel(
                 runtime.MissionId.ToString(), false, false, false, false, false, true);
             return true;
+        }
+
+        private static int ReadExtractionSquadMask(EntityManager em,Entity root)
+        {
+            if(!em.HasBuffer<CampaignMissionExtractionMember>(root) || !em.HasComponent<CampaignMissionExtractionState>(root) || em.GetComponentData<CampaignMissionExtractionState>(root).Initialized==0) return -1;
+            int mask=0;
+            foreach(var member in em.GetBuffer<CampaignMissionExtractionMember>(root,true))
+            {
+                if(!em.HasComponent<UnitHealth>(member.Entity) || em.GetComponentData<UnitHealth>(member.Entity).Current<=0) continue;
+                mask|=member.Kind switch {0=>1,2=>2|16,3=>4|16,_=>0};
+            }
+            return mask;
         }
 
         private static bool IsOpeningCinematicActive(

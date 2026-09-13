@@ -96,6 +96,8 @@ MonoBehaviour:
       value: no compatible vehicle producer is available
     - key: build.drawer.placement.invalid
       value: invalid placement
+    - key: build.drawer.price.credits
+      value: '{0} credits'
     - key: build.drawer.production.fallback_name
       value: Production
     - key: build.drawer.production.title
@@ -174,6 +176,10 @@ MonoBehaviour:
       value: BUILDING
     - key: build.placement.title.named
       value: PLACE {0}
+    - key: catalog.building.guard_tower
+      value: Guard Tower
+    - key: catalog.building.road_barrier
+      value: Road Barrier
     - key: confirm_destroy
       value: Are you sure you want to destroy {0}?
     - key: create_first
@@ -227,8 +233,12 @@ MonoBehaviour:
       value: CONTINUE
     - key: mission.m03.action.do_it
       value: DO IT
+    - key: mission.m03.action.restore_hold
+      value: Hold position
     - key: mission.m03.action.skip
       value: SKIP OPTIONAL STEP
+    - key: mission.m03.action.wait
+      value: "Defending\u2026"
     - key: mission.m03.action.warning
       value: Read warning
     - key: mission.m03.camera.opening
@@ -238,6 +248,12 @@ MonoBehaviour:
       value: RETURN VIEW
     - key: mission.m03.camera.skip
       value: Return to command view
+    - key: mission.m03.camera.victory
+      value: 'POST SECURED
+
+        Both convoy elements stopped. Your defense held.'
+    - key: mission.m03.casualties
+      value: "SQUAD LOSSES: {0} \xB7 Reinforce from your Barracks"
     - key: mission.m03.class.Unit_Chr_Bombsuit_Male_01
       value: Bomb Suit Specialist
     - key: mission.m03.class.Unit_Chr_Civilian_Female_01
@@ -621,6 +637,13 @@ MonoBehaviour:
       value: Paused
     - key: mission.m03.ping.ready
       value: "Radar Ping \xB7 {0} uses"
+    - key: mission.m03.prepare
+      value: "PREPARATION \xB7 Convoy starts after lesson 9. Optional lessons can
+        be skipped."
+    - key: mission.m03.prepare.progress
+      value: "Complete lessons 1\u20139 \xB7 Skip optional lessons if ready"
+    - key: mission.m03.prepare.short
+      value: "PREPARATION \xB7 Enemy advance is paused"
     - key: mission.m03.resources
       value: "50,000 Credits \xB7 100 Materials"
     - key: mission.m03.result.breach
@@ -656,6 +679,11 @@ MonoBehaviour:
     - key: mission.m03.result.post_lost
       value: The forward post was destroyed. Cover its approach and keep a reserve
         for the next attempt.
+    - key: mission.m03.result.radar_saved
+      value: Post secured without radar. Tools are optional; stars reward protection.
+    - key: mission.m03.result.radar_used
+      value: Post secured. Radar revealed the approach early. Stars reward civilian
+        and post protection.
     - key: mission.m03.result.retry
       value: RETRY
     - key: mission.m03.result.rewards
@@ -699,6 +727,15 @@ MonoBehaviour:
     - key: mission.m03.summary
       value: Hold the forward post against two convoy elements. Position your squads,
         read the warnings, and choose how to reinforce the defense.
+    - key: mission.m03.tactics.build
+      value: A tower adds fixed defensive fire; a barrier blocks a road. Spend materials
+        to cover an approach, or save them for rifle reinforcements.
+    - key: mission.m03.tactics.radar
+      value: Radar confirmed the approach early. Your remaining charges can be saved
+        for the next wave.
+    - key: mission.m03.tactics.visual
+      value: Visual contact confirms nearby threats for free. Radar trades a limited
+        charge for earlier information.
     - key: mission.m03.tutorial.1.body
       value: Check the source, route and contact estimate. A scout report does not
         confirm the convoy's size.
@@ -715,10 +752,10 @@ MonoBehaviour:
     - key: mission.m03.tutorial.11.title
       value: Adapt to the main convoy
     - key: mission.m03.tutorial.12.body
-      value: Victory requires stopping both elements and keeping the post and core
-        safe. Civilian losses and post damage affect separate bonus stars.
+      value: Stop every enemy vehicle. Keep rifles on Hold and cover the core. Protect
+        civilians and the post for bonus stars.
     - key: mission.m03.tutorial.12.title
-      value: Review the result
+      value: Defend the post
     - key: mission.m03.tutorial.2.body
       value: Jump to the reported road. This moves the camera and keeps your squads
         and orders unchanged.
@@ -745,8 +782,8 @@ MonoBehaviour:
     - key: mission.m03.tutorial.6.title
       value: Hold the line
     - key: mission.m03.tutorial.7.body
-      value: Stop cancels the selected units' current orders. It does not pause the
-        battle. Skip if you want to keep your current defense.
+      value: Stop cancels orders and stops automatic firing. Try it, then press Hold
+        again when ARIA asks. You can skip this lesson to keep defending.
     - key: mission.m03.tutorial.7.title
       value: 'Optional: cancel an order'
     - key: mission.m03.tutorial.8.body
@@ -759,6 +796,11 @@ MonoBehaviour:
         cost for a four-person squad. Construction and production remain your choice.
     - key: mission.m03.tutorial.9.title
       value: 'Optional: reinforce'
+    - key: mission.m03.tutorial.resume.body
+      value: Stop disabled automatic fire. Keep the squad selected and press Hold
+        to defend again. This lesson finishes after Hold is active.
+    - key: mission.m03.tutorial.resume.title
+      value: Restore your defense
     - key: mission.m03.warning.eta
       value: 'Contact estimate: {0}s'
     - key: mission.m03.warning.jump
@@ -789,8 +831,19 @@ MonoBehaviour:
       value: Contact window open
     - key: mission.m04.access
       value: "8 rifles \xB7 APC \xB7 helicopter \xB7 4 specialists"
+    - key: mission.m04.action.passengers
+      value: Open passengers
+    - key: mission.m04.camera.opening
+      value: 'RESCUE ROUTE
+
+        Reviewing the pickup and landing areas. ARIA
+        starts when the camera returns.'
+    - key: mission.m04.camera.victory
+      value: 'AIRLIFT COMPLETE
+
+        All four specialists are safe. Laila is departing.'
     - key: mission.m04.enemy_intel
-      value: A finite patrol approaches from the west after two minutes.
+      value: A western patrol moves 15 seconds after boarding, or after two minutes.
     - key: mission.m04.focus.departure
       value: DEPARTURE
     - key: mission.m04.focus.landing
@@ -806,9 +859,8 @@ MonoBehaviour:
     - key: mission.m04.guide.availability.3
       value: "Reference only \xB7 unavailable in M4"
     - key: mission.m04.guide.notice
-      value: These values come from the class configuration. M4 supplies its escort,
-        APC and helicopter; production is disabled. Reference classes cannot be deployed
-        here.
+      value: Use the supplied escorts, APC and helicopter. Reinforcements are unavailable
+        in this mission.
     - key: mission.m04.guide.reference
       value: "Reference only \xB7 unavailable in M4"
     - key: mission.m04.guide.role.protected
@@ -855,6 +907,10 @@ MonoBehaviour:
       value: Keep the APC until transfer and the helicopter through departure.
     - key: mission.m04.options
       value: Cover the approach, board safely, leave together
+    - key: mission.m04.patrol.active
+      value: "Enemy patrol advancing \xB7 Protect the team"
+    - key: mission.m04.patrol.warning
+      value: Enemy patrol moves in {0}s
     - key: mission.m04.resources
       value: Mission-supplied APC and helicopter
     - key: mission.m04.result.aircraft_lost
@@ -864,6 +920,8 @@ MonoBehaviour:
       value: The APC was lost before the team completed the transfer.
     - key: mission.m04.result.defeat
       value: EXTRACTION FAILED
+    - key: mission.m04.result.earned
+      value: EARNED
     - key: mission.m04.result.escort_lost
       value: The escort was lost. Keep at least one rifle soldier alive until departure.
     - key: mission.m04.result.extract
@@ -874,10 +932,22 @@ MonoBehaviour:
       value: The rescue roster could not be verified. Retry the operation.
     - key: mission.m04.result.landing
       value: 20-second LZ clearance
+    - key: mission.m04.result.missed
+      value: NOT EARNED
     - key: mission.m04.result.objectives
       value: RESCUE OBJECTIVES
     - key: mission.m04.result.passenger_lost
       value: A specialist was lost. Keep all four protected during boarding and transfer.
+    - key: mission.m04.result.rescued_stat
+      value: SPECIALISTS RESCUED
+    - key: mission.m04.result.star.complete
+      value: Rescue all four
+    - key: mission.m04.result.star.escort
+      value: No escort losses
+    - key: mission.m04.result.star.time
+      value: Under 7 minutes
+    - key: mission.m04.result.star_objectives
+      value: STAR OBJECTIVES
     - key: mission.m04.result.subtitle
       value: "AIRLIFT \xB7 MEDICAL LANDING ZONE"
     - key: mission.m04.result.success
@@ -895,6 +965,12 @@ MonoBehaviour:
       value: Captain Laila Nasser joins
     - key: mission.m04.reward.transport
       value: Transport access
+    - key: mission.m04.specialist.description
+      value: Rescue passenger. Keep all four specialists safe.
+    - key: mission.m04.specialist.name
+      value: Specialist
+    - key: mission.m04.specialist.role
+      value: Rescue passenger
     - key: mission.m04.star.1
       value: All four extracted
     - key: mission.m04.star.2
@@ -904,9 +980,9 @@ MonoBehaviour:
     - key: mission.m04.summary
       value: Rescue four specialists by APC, then escort their helicopter out.
     - key: mission.m04.tutorial.1.body
-      value: 'Save all four specialists: APC first, helicopter second. You have ten
-        minutes after the camera returns. Enemy kills are optional. Both vehicles
-        carry their own mission supply.'
+      value: 'Rescue all four specialists: APC first, helicopter second. You have
+        ten minutes. Enemy kills are optional; keep the escort alive for a bonus
+        star.'
     - key: mission.m04.tutorial.1.diagram
       value: "TEAM \u2192 APC \u2192 LANDING AREA \u2192 HELICOPTER \u2192 EXIT"
     - key: mission.m04.tutorial.1.example
@@ -916,9 +992,9 @@ MonoBehaviour:
     - key: mission.m04.tutorial.1.title
       value: A rescue, in two stages
     - key: mission.m04.tutorial.10.body
-      value: Keep the loaded helicopter at the landing area for twenty uninterrupted
-        seconds. Any active hostile inside the marked radius resets the countdown.
-        Hold the approach with your rifles.
+      value: Keep the loaded helicopter inside the marked landing area for twenty
+        clear seconds. Use the rifles to stop threats entering the ring. Leaving
+        or enemy entry resets the count.
     - key: mission.m04.tutorial.10.diagram
       value: "TEAM \u2192 APC \u2192 LANDING AREA \u2192 HELICOPTER \u2192 EXIT"
     - key: mission.m04.tutorial.10.example
@@ -928,9 +1004,8 @@ MonoBehaviour:
     - key: mission.m04.tutorial.10.title
       value: Hold the landing area clear
     - key: mission.m04.tutorial.11.body
-      value: Select the helicopter, choose Move, and fly to the marked departure
-        zone northeast of the landing area. Keep every specialist aboard and alive.
-        Show Me locates the exit.
+      value: Select the helicopter, press Move, then tap the marked exit. Show Me
+        locates the exit. Keep all four specialists aboard until extraction is confirmed.
     - key: mission.m04.tutorial.11.diagram
       value: "TEAM \u2192 APC \u2192 LANDING AREA \u2192 HELICOPTER \u2192 EXIT"
     - key: mission.m04.tutorial.11.example
@@ -940,9 +1015,8 @@ MonoBehaviour:
     - key: mission.m04.tutorial.11.title
       value: Fly to the departure zone
     - key: mission.m04.tutorial.12.body
-      value: Earn one star for extraction, one for keeping every escort alive, and
-        one for finishing within seven minutes. First-clear rewards are paid once.
-        Replays can improve your stars.
+      value: Extraction is being confirmed. Keep the passengers aboard and protect
+        the helicopter until the result appears.
     - key: mission.m04.tutorial.12.diagram
       value: "TEAM \u2192 APC \u2192 LANDING AREA \u2192 HELICOPTER \u2192 EXIT"
     - key: mission.m04.tutorial.12.example
@@ -952,9 +1026,8 @@ MonoBehaviour:
     - key: mission.m04.tutorial.12.title
       value: Review your rescue
     - key: mission.m04.tutorial.2.body
-      value: Tap the wheeled APC near your rifle squads. Its passenger list shows
-        the real seats. Keep escort soldiers outside so all four specialists can
-        board.
+      value: Select the wheeled APC beside your rifles. Keep its four seats free
+        for the specialists. Show Me locates the APC.
     - key: mission.m04.tutorial.2.diagram
       value: "TEAM \u2192 APC \u2192 LANDING AREA \u2192 HELICOPTER \u2192 EXIT"
     - key: mission.m04.tutorial.2.example
@@ -964,9 +1037,8 @@ MonoBehaviour:
     - key: mission.m04.tutorial.2.title
       value: Select the APC
     - key: mission.m04.tutorial.3.body
-      value: Select Move and send the APC west along the road to the four specialists.
-        Keep the rifles between them and the approaching patrol. Show Me locates
-        the team.
+      value: Press Move, then tap beside the four specialists on the western road.
+        Show Me locates them. Send the rifles forward to cover the pickup.
     - key: mission.m04.tutorial.3.diagram
       value: "TEAM \u2192 APC \u2192 LANDING AREA \u2192 HELICOPTER \u2192 EXIT"
     - key: mission.m04.tutorial.3.example
@@ -976,9 +1048,8 @@ MonoBehaviour:
     - key: mission.m04.tutorial.3.title
       value: Reach the stranded team
     - key: mission.m04.tutorial.4.body
-      value: Select the four unarmed specialists beside the road. They belong to
-        your rescue team and accept movement and boarding commands. Their survival
-        is mandatory.
+      value: Select all four specialists beside the road. Keep armed escorts outside
+        the selection. This step completes when all four are selected.
     - key: mission.m04.tutorial.4.diagram
       value: "TEAM \u2192 APC \u2192 LANDING AREA \u2192 HELICOPTER \u2192 EXIT"
     - key: mission.m04.tutorial.4.example
@@ -988,9 +1059,8 @@ MonoBehaviour:
     - key: mission.m04.tutorial.4.title
       value: Select the specialists
     - key: mission.m04.tutorial.5.body
-      value: With the specialists selected, press Board and choose the APC. Wait
-        for all four to appear in its passenger list. A boarding order is not a completed
-        rescue.
+      value: Press Board, then tap the APC. Wait until its passenger list shows all
+        four specialists before moving.
     - key: mission.m04.tutorial.5.diagram
       value: "TEAM \u2192 APC \u2192 LANDING AREA \u2192 HELICOPTER \u2192 EXIT"
     - key: mission.m04.tutorial.5.example
@@ -1000,21 +1070,19 @@ MonoBehaviour:
     - key: mission.m04.tutorial.5.title
       value: Board all four into the APC
     - key: mission.m04.tutorial.6.body
-      value: "Move the loaded APC east to the landing area. The rifles can cover
-        the road or hold the approach. Oil is \u0646\u0641\u062A; Fuel is \u0628\u0646\u0632\u06CC\u0646.
-        These loaned vehicles do not require a new fuel network here."
+      value: Move the loaded APC east to the marked landing area. Show Me locates
+        Laila. Keep the rifles covering the approaching patrol.
     - key: mission.m04.tutorial.6.diagram
       value: "TEAM \u2192 APC \u2192 LANDING AREA \u2192 HELICOPTER \u2192 EXIT"
     - key: mission.m04.tutorial.6.example
       value: Keep the passenger count at four during the trip.
     - key: mission.m04.tutorial.6.mistake
-      value: Do not confuse the global fuel header with a passenger counter.
+      value: Do not leave the escort behind the convoy.
     - key: mission.m04.tutorial.6.title
       value: Escort the APC to Laila
     - key: mission.m04.tutorial.7.body
-      value: Select the APC at the landing area and use its passenger panel to unload.
-        All four must leave the APC before they can board the helicopter. If no safe
-        cell exists, move the APC into open ground and retry.
+      value: Open the APC passenger panel, then tap Unload. Wait until all four specialists
+        stand beside the helicopter. Move into open ground if unloading is blocked.
     - key: mission.m04.tutorial.7.diagram
       value: "TEAM \u2192 APC \u2192 LANDING AREA \u2192 HELICOPTER \u2192 EXIT"
     - key: mission.m04.tutorial.7.example
@@ -1025,9 +1093,8 @@ MonoBehaviour:
     - key: mission.m04.tutorial.7.title
       value: Unload beside the helicopter
     - key: mission.m04.tutorial.8.body
-      value: Select Laila's helicopter. Boarding requires it to be landed and close
-        to the passengers. Its seats, health and movement are real transport state,
-        not a cinematic shortcut.
+      value: "Select Laila\u2019s helicopter. Keep it landed beside the specialists
+        until all four have boarded."
     - key: mission.m04.tutorial.8.diagram
       value: "TEAM \u2192 APC \u2192 LANDING AREA \u2192 HELICOPTER \u2192 EXIT"
     - key: mission.m04.tutorial.8.example
@@ -1035,11 +1102,10 @@ MonoBehaviour:
     - key: mission.m04.tutorial.8.mistake
       value: An airborne helicopter cannot instantly collect a passenger.
     - key: mission.m04.tutorial.8.title
-      value: Inspect the transport helicopter
+      value: Inspect the helicopter
     - key: mission.m04.tutorial.9.body
-      value: Select the unloaded specialists, press Board, and choose the helicopter.
-        Verify four passengers in its manifest. Every specialist must have completed
-        the APC leg first.
+      value: Select all four specialists, press Board, then tap the landed helicopter.
+        Check that its passenger list shows four people.
     - key: mission.m04.tutorial.9.diagram
       value: "TEAM \u2192 APC \u2192 LANDING AREA \u2192 HELICOPTER \u2192 EXIT"
     - key: mission.m04.tutorial.9.example
@@ -1589,6 +1655,31 @@ MonoBehaviour:
       value: '{0} units returning to base.'
     - key: tactical.transport.attack_payload_missing
       value: Transport has no weapons or attack-capable passengers.
+    - key: tutorial.m02.materials.body
+      value: You started with 120 Materials. The Barracks used 90, leaving 30. Save
+        20 to train your rifle squad.
+    - key: tutorial.m02.materials.title
+      value: Plan your Materials
+    - key: tutorial.next.board
+      value: BOARD TRANSPORT
+    - key: tutorial.next.buildings
+      value: OPEN BUILDINGS
+    - key: tutorial.next.confirm
+      value: CONFIRM PLACEMENT
+    - key: tutorial.next.continue
+      value: CONTINUE LESSON
+    - key: tutorial.next.defense
+      value: SELECT A DEFENSE
+    - key: tutorial.next.place
+      value: CHOOSE LOCATION
+    - key: tutorial.next.produce
+      value: TRAIN SQUAD
+    - key: tutorial.next.rifle
+      value: SELECT RIFLE SQUAD
+    - key: tutorial.next.soldiers
+      value: OPEN SOLDIERS
+    - key: tutorial.next.unload
+      value: UNLOAD TEAM
     - key: ui.aria.aria_control
       value: ARIA CONTROL
     - key: ui.aria.attack_button_body
@@ -4290,6 +4381,27 @@ MonoBehaviour:
     - key: unit.apc.fast.description
       value: Fast armored personnel carrier for quickly transporting infantry across
         the battlefield.
+    - key: unit.description.soldier.0
+      value: Regular soldier armed with a rifle. Reliable frontline infantry for
+        patrols, defense, and direct engagements.
+    - key: unit.description.soldier.1
+      value: Regular soldier armed with a sniper rifle. Reliable frontline infantry
+        for patrols, defense, and direct engagements.
+    - key: unit.description.soldier.2
+      value: Regular soldier armed with a SMG. Reliable frontline infantry for patrols,
+        defense, and direct engagements.
+    - key: unit.description.soldier.3
+      value: Regular soldier armed with a machine gun. Reliable frontline infantry
+        for patrols, defense, and direct engagements.
+    - key: unit.description.soldier.4
+      value: Regular soldier armed with an advanced rifle. Reliable frontline infantry
+        for patrols, defense, and direct engagements.
+    - key: unit.description.soldier.5
+      value: Regular soldier armed with a pistol. Reliable frontline infantry for
+        patrols, defense, and direct engagements.
+    - key: unit.description.soldier.6
+      value: Regular soldier armed with a metal pistol. Reliable frontline infantry
+        for patrols, defense, and direct engagements.
     - key: unit.helicopter.transport.description
       value: Transport helicopter that lands for boarding and deploys soldiers by
         rope while airborne.
@@ -4437,6 +4549,8 @@ MonoBehaviour:
     - key: build.drawer.placement.invalid
       value: "\u0645\u062D\u0644 \u0627\u0633\u062A\u0642\u0631\u0627\u0631 \u0646\u0627\u0645\u0639\u062A\u0628\u0631
         \u0627\u0633\u062A"
+    - key: build.drawer.price.credits
+      value: "{0} \u0627\u0639\u062A\u0628\u0627\u0631"
     - key: build.drawer.production.fallback_name
       value: "\u062A\u0648\u0644\u06CC\u062F"
     - key: build.drawer.production.title
@@ -4541,6 +4655,10 @@ MonoBehaviour:
       value: "\u0633\u0627\u062E\u062A\u0645\u0627\u0646"
     - key: build.placement.title.named
       value: "\u0627\u0633\u062A\u0642\u0631\u0627\u0631 {0}"
+    - key: catalog.building.guard_tower
+      value: "\u0628\u0631\u062C \u0646\u06AF\u0647\u0628\u0627\u0646\u06CC"
+    - key: catalog.building.road_barrier
+      value: "\u0645\u0627\u0646\u0639 \u062C\u0627\u062F\u0647"
     - key: confirm_destroy
       value: "\u0622\u06CC\u0627 \u0627\u0632 \u0646\u0627\u0628\u0648\u062F \u06A9\u0631\u062F\u0646
         {0} \u0645\u0637\u0645\u0626\u0646 \u0647\u0633\u062A\u06CC\u062F\u061F"
@@ -4636,9 +4754,13 @@ MonoBehaviour:
       value: "\u0627\u062F\u0627\u0645\u0647"
     - key: mission.m03.action.do_it
       value: "\u0627\u0646\u062C\u0627\u0645\u0634 \u0628\u062F\u0647"
+    - key: mission.m03.action.restore_hold
+      value: "\u062D\u0641\u0638 \u0645\u0648\u0636\u0639"
     - key: mission.m03.action.skip
       value: "\u0639\u0628\u0648\u0631 \u0627\u0632 \u0645\u0631\u062D\u0644\u0647\u0654
         \u0627\u062E\u062A\u06CC\u0627\u0631\u06CC"
+    - key: mission.m03.action.wait
+      value: "\u062F\u0631 \u062D\u0627\u0644 \u062F\u0641\u0627\u0639\u2026"
     - key: mission.m03.action.warning
       value: "\u062E\u0648\u0627\u0646\u062F\u0646 \u0647\u0634\u062F\u0627\u0631"
     - key: mission.m03.camera.opening
@@ -4653,6 +4775,15 @@ MonoBehaviour:
     - key: mission.m03.camera.skip
       value: "\u0628\u0627\u0632\u06AF\u0634\u062A \u0628\u0647 \u0646\u0645\u0627\u06CC
         \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
+    - key: mission.m03.camera.victory
+      value: "\u067E\u0627\u0633\u06AF\u0627\u0647 \u0627\u0645\u0646 \u0634\u062F\n\u0647\u0631
+        \u062F\u0648 \u0628\u062E\u0634 \u06A9\u0627\u0631\u0648\u0627\u0646 \u0645\u062A\u0648\u0642\u0641
+        \u0634\u062F\u0646\u062F. \u0645\u062F\u0627\u0641\u0639\u0627\u0646 \u067E\u06CC\u0631\u0648\u0632
+        \u0634\u062F\u0646\u062F."
+    - key: mission.m03.casualties
+      value: "\u062A\u0644\u0641\u0627\u062A \u06AF\u0631\u0648\u0647: {0} \xB7 \u0627\u0632
+        \u0633\u0631\u0628\u0627\u0632\u062E\u0627\u0646\u0647 \u0646\u06CC\u0631\u0648\u06CC
+        \u06A9\u0645\u06A9\u06CC \u0628\u0633\u0627\u0632\u06CC\u062F"
     - key: mission.m03.class.Unit_Chr_Bombsuit_Male_01
       value: "\u0645\u062A\u062E\u0635\u0635 \u062E\u0646\u062B\u06CC\u200C\u0633\u0627\u0632\u06CC
         \u0628\u0645\u0628"
@@ -5259,6 +5390,20 @@ MonoBehaviour:
       value: "\u0645\u06A9\u062B"
     - key: mission.m03.ping.ready
       value: "\u067E\u0627\u0644\u0633 \u0631\u0627\u062F\u0627\u0631 \xB7 {0} \u0646\u0648\u0628\u062A"
+    - key: mission.m03.prepare
+      value: "\u0622\u0645\u0627\u062F\u0647\u200C\u0633\u0627\u0632\u06CC \xB7 \u06A9\u0627\u0631\u0648\u0627\u0646
+        \u067E\u0633 \u0627\u0632 \u062F\u0631\u0633 \u06F9 \u062D\u0631\u06A9\u062A
+        \u0645\u06CC\u200C\u06A9\u0646\u062F. \u062F\u0631\u0633 \u0627\u062E\u062A\u06CC\u0627\u0631\u06CC
+        \u0631\u0627 \u0645\u06CC\u200C\u062A\u0648\u0627\u0646\u06CC\u062F \u0631\u062F
+        \u06A9\u0646\u06CC\u062F."
+    - key: mission.m03.prepare.progress
+      value: "\u062F\u0631\u0633\u200C\u0647\u0627\u06CC \u06F1 \u062A\u0627 \u06F9
+        \u0631\u0627 \u0627\u0646\u062C\u0627\u0645 \u062F\u0647\u06CC\u062F \xB7
+        \u062F\u0631\u0633 \u0627\u062E\u062A\u06CC\u0627\u0631\u06CC \u0642\u0627\u0628\u0644
+        \u0631\u062F \u06A9\u0631\u062F\u0646 \u0627\u0633\u062A"
+    - key: mission.m03.prepare.short
+      value: "\u0622\u0645\u0627\u062F\u0647\u200C\u0633\u0627\u0632\u06CC \xB7 \u067E\u06CC\u0634\u0631\u0648\u06CC
+        \u062F\u0634\u0645\u0646 \u0645\u062A\u0648\u0642\u0641 \u0627\u0633\u062A"
     - key: mission.m03.resources
       value: "\u06F5\u06F0\u066C\u06F0\u06F0\u06F0 \u0627\u0639\u062A\u0628\u0627\u0631
         \xB7 \u06F1\u06F0\u06F0 \u0645\u0635\u0627\u0644\u062D"
@@ -5308,6 +5453,18 @@ MonoBehaviour:
         \u0645\u0633\u06CC\u0631 \u0622\u0646 \u0631\u0627 \u067E\u0648\u0634\u0634
         \u062F\u0647\u06CC\u062F \u0648 \u0646\u06CC\u0631\u0648\u06CC \u0630\u062E\u06CC\u0631\u0647
         \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F."
+    - key: mission.m03.result.radar_saved
+      value: "\u067E\u0627\u0633\u06AF\u0627\u0647 \u0628\u062F\u0648\u0646 \u0631\u0627\u062F\u0627\u0631
+        \u062D\u0641\u0638 \u0634\u062F. \u0627\u0628\u0632\u0627\u0631\u0647\u0627
+        \u0627\u062E\u062A\u06CC\u0627\u0631\u06CC\u200C\u0627\u0646\u062F\u061B
+        \u0633\u062A\u0627\u0631\u0647 \u067E\u0627\u062F\u0627\u0634 \u062D\u0641\u0627\u0638\u062A
+        \u0627\u0633\u062A."
+    - key: mission.m03.result.radar_used
+      value: "\u067E\u0627\u0633\u06AF\u0627\u0647 \u0627\u0645\u0646 \u0634\u062F.
+        \u0631\u0627\u062F\u0627\u0631 \u0632\u0648\u062F\u062A\u0631 \u0627\u0637\u0644\u0627\u0639\u0627\u062A
+        \u062A\u0645\u0627\u0633 \u062F\u0627\u062F. \u0633\u0644\u0627\u0645\u062A
+        \u0645\u0631\u062F\u0645 \u0648 \u067E\u0627\u0633\u06AF\u0627\u0647 \u0633\u062A\u0627\u0631\u0647\u0654
+        \u0627\u0636\u0627\u0641\u06CC \u062F\u0627\u0631\u062F."
     - key: mission.m03.result.retry
       value: "\u062A\u0644\u0627\u0634 \u062F\u0648\u0628\u0627\u0631\u0647"
     - key: mission.m03.result.rewards
@@ -5373,6 +5530,26 @@ MonoBehaviour:
         \u0631\u0627 \u0628\u062E\u0648\u0627\u0646\u06CC\u062F \u0648 \u0634\u06CC\u0648\u0647\u0654
         \u062A\u0642\u0648\u06CC\u062A \u062F\u0641\u0627\u0639 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
         \u06A9\u0646\u06CC\u062F."
+    - key: mission.m03.tactics.build
+      value: "\u0628\u0631\u062C \u0622\u062A\u0634 \u062F\u0641\u0627\u0639\u06CC
+        \u062B\u0627\u0628\u062A \u0645\u06CC\u200C\u062F\u0647\u062F\u061B \u0645\u0627\u0646\u0639\u060C
+        \u062C\u0627\u062F\u0647 \u0631\u0627 \u0645\u06CC\u200C\u0628\u0646\u062F\u062F.
+        \u0645\u0635\u0627\u0644\u062D \u0631\u0627 \u0628\u0631\u0627\u06CC \u067E\u0648\u0634\u0634
+        \u0645\u0633\u06CC\u0631 \u062E\u0631\u062C \u06A9\u0646\u06CC\u062F \u06CC\u0627
+        \u0628\u0631\u0627\u06CC \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0627\u0646
+        \u06A9\u0645\u06A9\u06CC \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F."
+    - key: mission.m03.tactics.radar
+      value: "\u0631\u0627\u062F\u0627\u0631 \u0645\u0633\u06CC\u0631 \u0631\u0627
+        \u0632\u0648\u062F\u062A\u0631 \u062A\u0623\u06CC\u06CC\u062F \u06A9\u0631\u062F.
+        \u067E\u0627\u0644\u0633 \u0628\u0627\u0642\u06CC\u200C\u0645\u0627\u0646\u062F\u0647
+        \u0631\u0627 \u0628\u0631\u0627\u06CC \u0645\u0648\u062C \u0628\u0639\u062F
+        \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F."
+    - key: mission.m03.tactics.visual
+      value: "\u062F\u06CC\u062F \u0645\u0633\u062A\u0642\u06CC\u0645 \u062A\u0647\u062F\u06CC\u062F
+        \u0646\u0632\u062F\u06CC\u06A9 \u0631\u0627 \u0631\u0627\u06CC\u06AF\u0627\u0646
+        \u062A\u0623\u06CC\u06CC\u062F \u0645\u06CC\u200C\u06A9\u0646\u062F. \u0631\u0627\u062F\u0627\u0631
+        \u0628\u0627 \u0645\u0635\u0631\u0641 \u06CC\u06A9 \u067E\u0627\u0644\u0633
+        \u0632\u0648\u062F\u062A\u0631 \u062E\u0628\u0631 \u0645\u06CC\u200C\u062F\u0647\u062F."
     - key: mission.m03.tutorial.1.body
       value: "\u0645\u0646\u0628\u0639\u060C \u0645\u0633\u06CC\u0631 \u0648 \u0632\u0645\u0627\u0646
         \u062A\u0642\u0631\u06CC\u0628\u06CC \u062A\u0645\u0627\u0633 \u0631\u0627
@@ -5404,16 +5581,14 @@ MonoBehaviour:
       value: "\u0628\u0627 \u06A9\u0627\u0631\u0648\u0627\u0646 \u0627\u0635\u0644\u06CC
         \u0633\u0627\u0632\u06AF\u0627\u0631 \u0634\u0648\u06CC\u062F"
     - key: mission.m03.tutorial.12.body
-      value: "\u0628\u0631\u0627\u06CC \u067E\u06CC\u0631\u0648\u0632\u06CC \u0647\u0631
-        \u062F\u0648 \u0628\u062E\u0634 \u06A9\u0627\u0631\u0648\u0627\u0646 \u0631\u0627
-        \u0645\u062A\u0648\u0642\u0641 \u0648 \u067E\u0627\u0633\u06AF\u0627\u0647
-        \u0648 \u0645\u0631\u06A9\u0632 \u0631\u0627 \u062D\u0641\u0638 \u06A9\u0646\u06CC\u062F.
-        \u062A\u0644\u0641\u0627\u062A \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
-        \u0648 \u0622\u0633\u06CC\u0628 \u067E\u0627\u0633\u06AF\u0627\u0647\u060C
-        \u0633\u062A\u0627\u0631\u0647\u200C\u0647\u0627\u06CC \u0627\u0645\u062A\u06CC\u0627\u0632\u06CC
-        \u062C\u062F\u0627\u06AF\u0627\u0646\u0647 \u0631\u0627 \u06A9\u0645 \u0645\u06CC\u200C\u06A9\u0646\u0646\u062F."
+      value: "\u0647\u0645\u0647\u0654 \u062E\u0648\u062F\u0631\u0648\u0647\u0627\u06CC
+        \u062F\u0634\u0645\u0646 \u0631\u0627 \u0645\u062A\u0648\u0642\u0641 \u06A9\u0646\u06CC\u062F.
+        \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0627\u0646 \u0631\u0627 \u062F\u0631
+        \u062D\u0627\u0644\u062A \u062D\u0641\u0638 \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F.
+        \u0633\u0644\u0627\u0645\u062A \u0645\u0631\u062F\u0645 \u0648 \u067E\u0627\u0633\u06AF\u0627\u0647
+        \u0633\u062A\u0627\u0631\u0647\u0654 \u0627\u0636\u0627\u0641\u06CC \u062F\u0627\u0631\u062F."
     - key: mission.m03.tutorial.12.title
-      value: "\u0646\u062A\u06CC\u062C\u0647 \u0631\u0627 \u0628\u0631\u0631\u0633\u06CC
+      value: "\u0627\u0632 \u067E\u0627\u0633\u06AF\u0627\u0647 \u062F\u0641\u0627\u0639
         \u06A9\u0646\u06CC\u062F"
     - key: mission.m03.tutorial.2.body
       value: "\u0628\u0647 \u062C\u0627\u062F\u0647\u0654 \u06AF\u0632\u0627\u0631\u0634\u200C\u0634\u062F\u0647
@@ -5466,13 +5641,15 @@ MonoBehaviour:
     - key: mission.m03.tutorial.6.title
       value: "\u0645\u0648\u0636\u0639 \u0631\u0627 \u062D\u0641\u0638 \u06A9\u0646\u06CC\u062F"
     - key: mission.m03.tutorial.7.body
-      value: "\u062A\u0648\u0642\u0641\u060C \u062F\u0633\u062A\u0648\u0631 \u0641\u0639\u0644\u06CC
-        \u0648\u0627\u062D\u062F\u0647\u0627\u06CC \u0627\u0646\u062A\u062E\u0627\u0628\u200C\u0634\u062F\u0647
-        \u0631\u0627 \u0644\u063A\u0648 \u0645\u06CC\u200C\u06A9\u0646\u062F\u061B
-        \u0646\u0628\u0631\u062F \u0645\u062A\u0648\u0642\u0641 \u0646\u0645\u06CC\u200C\u0634\u0648\u062F.
-        \u0628\u0631\u0627\u06CC \u062D\u0641\u0638 \u0622\u0631\u0627\u06CC\u0634
-        \u0641\u0639\u0644\u06CC \u0645\u06CC\u200C\u062A\u0648\u0627\u0646\u06CC\u062F
-        \u0627\u0632 \u0627\u06CC\u0646 \u0645\u0631\u062D\u0644\u0647 \u0628\u06AF\u0630\u0631\u06CC\u062F."
+      value: "\u062A\u0648\u0642\u0641\u060C \u0641\u0631\u0645\u0627\u0646\u200C\u0647\u0627
+        \u0648 \u0634\u0644\u06CC\u06A9 \u062E\u0648\u062F\u06A9\u0627\u0631 \u0631\u0627
+        \u0642\u0637\u0639 \u0645\u06CC\u200C\u06A9\u0646\u062F. \u0622\u0646 \u0631\u0627
+        \u0627\u0645\u062A\u062D\u0627\u0646 \u06A9\u0646\u06CC\u062F\u061B \u0633\u067E\u0633
+        \u0628\u0627 \u0631\u0627\u0647\u0646\u0645\u0627\u06CC\u06CC \u0622\u0631\u06CC\u0627
+        \u062F\u0648\u0628\u0627\u0631\u0647 \u062D\u0641\u0638 \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F.
+        \u0628\u0631\u0627\u06CC \u0627\u062F\u0627\u0645\u0647\u0654 \u062F\u0641\u0627\u0639
+        \u0645\u06CC\u200C\u062A\u0648\u0627\u0646\u06CC\u062F \u0627\u06CC\u0646
+        \u062F\u0631\u0633 \u0631\u0627 \u0631\u062F \u06A9\u0646\u06CC\u062F."
     - key: mission.m03.tutorial.7.title
       value: "\u0627\u062E\u062A\u06CC\u0627\u0631\u06CC: \u0644\u063A\u0648 \u062F\u0633\u062A\u0648\u0631"
     - key: mission.m03.tutorial.8.body
@@ -5499,6 +5676,17 @@ MonoBehaviour:
     - key: mission.m03.tutorial.9.title
       value: "\u0627\u062E\u062A\u06CC\u0627\u0631\u06CC: \u0646\u06CC\u0631\u0648\u06CC
         \u06A9\u0645\u06A9\u06CC"
+    - key: mission.m03.tutorial.resume.body
+      value: "\u062A\u0648\u0642\u0641\u060C \u0634\u0644\u06CC\u06A9 \u062E\u0648\u062F\u06A9\u0627\u0631
+        \u0631\u0627 \u0642\u0637\u0639 \u06A9\u0631\u062F. \u06AF\u0631\u0648\u0647
+        \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628\u200C\u0634\u062F\u0647
+        \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F \u0648 \u062D\u0641\u0638
+        \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F \u062A\u0627 \u062F\u0641\u0627\u0639
+        \u0627\u062F\u0627\u0645\u0647 \u06CC\u0627\u0628\u062F. \u0628\u0627 \u0641\u0639\u0627\u0644\u200C\u0634\u062F\u0646
+        \u062D\u0641\u0638\u060C \u0627\u06CC\u0646 \u062F\u0631\u0633 \u062A\u0645\u0627\u0645
+        \u0645\u06CC\u200C\u0634\u0648\u062F."
+    - key: mission.m03.tutorial.resume.title
+      value: "\u062F\u0641\u0627\u0639 \u0631\u0627 \u0627\u0632 \u0633\u0631 \u0628\u06AF\u06CC\u0631\u06CC\u062F"
     - key: mission.m03.warning.eta
       value: "\u0628\u0631\u0622\u0648\u0631\u062F \u0632\u0645\u0627\u0646 \u062A\u0645\u0627\u0633:
         {0} \u062B\u0627\u0646\u06CC\u0647"
@@ -5539,10 +5727,25 @@ MonoBehaviour:
     - key: mission.m04.access
       value: "\u06F8 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \xB7 \u0646\u0641\u0631\u0628\u0631
         \xB7 \u0628\u0627\u0644\u06AF\u0631\u062F \xB7 \u06F4 \u0645\u062A\u062E\u0635\u0635"
+    - key: mission.m04.action.passengers
+      value: "\u0628\u0627\u0632 \u06A9\u0631\u062F\u0646 \u0645\u0633\u0627\u0641\u0631\u0627\u0646"
+    - key: mission.m04.camera.opening
+      value: "\u0645\u0633\u06CC\u0631 \u0646\u062C\u0627\u062A\n\u062F\u0648\u0631\u0628\u06CC\u0646
+        \u0645\u062D\u0644 \u0633\u0648\u0627\u0631\u0634\u062F\u0646 \u0648 \u0641\u0631\u0648\u062F
+        \u0631\u0627 \u0646\u0634\u0627\u0646 \u0645\u06CC\u200C\u062F\u0647\u062F.
+        \u0622\u0645\u0648\u0632\u0634 \u0622\u0631\u06CC\u0627 \u067E\u0633 \u0627\u0632
+        \u0628\u0627\u0632\u06AF\u0634\u062A \u062F\u0648\u0631\u0628\u06CC\u0646
+        \u0622\u063A\u0627\u0632 \u0645\u06CC\u200C\u0634\u0648\u062F."
+    - key: mission.m04.camera.victory
+      value: "\u0646\u062C\u0627\u062A \u06A9\u0627\u0645\u0644 \u0634\u062F\n\u0647\u0631
+        \u0686\u0647\u0627\u0631 \u0645\u062A\u062E\u0635\u0635 \u0633\u0627\u0644\u0645\u200C\u0627\u0646\u062F.
+        \u0644\u06CC\u0644\u0627 \u062F\u0631 \u062D\u0627\u0644 \u062E\u0631\u0648\u062C
+        \u0627\u0633\u062A."
     - key: mission.m04.enemy_intel
-      value: "\u06CC\u06A9 \u06AF\u0634\u062A\u06CC \u0645\u062D\u062F\u0648\u062F
-        \u067E\u0633 \u0627\u0632 \u062F\u0648 \u062F\u0642\u06CC\u0642\u0647 \u0627\u0632
-        \u063A\u0631\u0628 \u0646\u0632\u062F\u06CC\u06A9 \u0645\u06CC\u200C\u0634\u0648\u062F."
+      value: "\u06AF\u0634\u062A \u063A\u0631\u0628\u06CC \u06F1\u06F5 \u062B\u0627\u0646\u06CC\u0647
+        \u067E\u0633 \u0627\u0632 \u0633\u0648\u0627\u0631 \u0634\u062F\u0646 \u062A\u06CC\u0645\u060C
+        \u06CC\u0627 \u067E\u0633 \u0627\u0632 \u062F\u0648 \u062F\u0642\u06CC\u0642\u0647
+        \u062D\u0631\u06A9\u062A \u0645\u06CC\u200C\u06A9\u0646\u062F."
     - key: mission.m04.focus.departure
       value: "\u062E\u0631\u0648\u062C"
     - key: mission.m04.focus.landing
@@ -5563,16 +5766,11 @@ MonoBehaviour:
         \xB7 \u062F\u0631 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u06F4 \u062F\u0631
         \u062F\u0633\u062A\u0631\u0633 \u0646\u06CC\u0633\u062A"
     - key: mission.m04.guide.notice
-      value: "\u0627\u06CC\u0646 \u0627\u0639\u062F\u0627\u062F \u0627\u0632 \u067E\u06CC\u06A9\u0631\u0628\u0646\u062F\u06CC
-        \u06A9\u0644\u0627\u0633 \u062E\u0648\u0627\u0646\u062F\u0647 \u0645\u06CC\u200C\u0634\u0648\u0646\u062F.
-        \u0645\u062D\u0627\u0641\u0638\u0627\u0646\u060C \u0646\u0641\u0631\u0628\u0631
-        \u0648 \u0628\u0627\u0644\u06AF\u0631\u062F \u0628\u0631\u0627\u06CC \u0645\u0623\u0645\u0648\u0631\u06CC\u062A
-        \u06F4 \u0641\u0631\u0627\u0647\u0645 \u0634\u062F\u0647\u200C\u0627\u0646\u062F
-        \u0648 \u062A\u0648\u0644\u06CC\u062F \u063A\u06CC\u0631\u0641\u0639\u0627\u0644
-        \u0627\u0633\u062A. \u06A9\u0644\u0627\u0633\u200C\u0647\u0627\u06CC \u0645\u0631\u062C\u0639
-        \u0631\u0627 \u0646\u0645\u06CC\u200C\u062A\u0648\u0627\u0646 \u062F\u0631
-        \u0627\u06CC\u0646 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0645\u0633\u062A\u0642\u0631
-        \u06A9\u0631\u062F."
+      value: "\u0627\u0632 \u0645\u062D\u0627\u0641\u0638\u0627\u0646\u060C \u0646\u0641\u0631\u0628\u0631
+        \u0648 \u0628\u0627\u0644\u06AF\u0631\u062F \u0645\u0648\u062C\u0648\u062F
+        \u0627\u0633\u062A\u0641\u0627\u062F\u0647 \u06A9\u0646\u06CC\u062F. \u062F\u0631
+        \u0627\u06CC\u0646 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0646\u06CC\u0631\u0648\u06CC
+        \u06A9\u0645\u06A9\u06CC \u062F\u0631 \u062F\u0633\u062A\u0631\u0633 \u0646\u06CC\u0633\u062A."
     - key: mission.m04.guide.reference
       value: "\u0641\u0642\u0637 \u0628\u0631\u0627\u06CC \u0622\u0634\u0646\u0627\u06CC\u06CC
         \xB7 \u062F\u0631 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u06F4 \u062F\u0631
@@ -5653,6 +5851,13 @@ MonoBehaviour:
       value: "\u0645\u0633\u06CC\u0631 \u0631\u0627 \u067E\u0648\u0634\u0634 \u062F\u0647\u06CC\u062F\u060C
         \u0627\u0645\u0646 \u0633\u0648\u0627\u0631 \u0634\u0648\u06CC\u062F\u060C
         \u0628\u0627 \u0647\u0645 \u062E\u0627\u0631\u062C \u0634\u0648\u06CC\u062F"
+    - key: mission.m04.patrol.active
+      value: "\u06AF\u0634\u062A \u062F\u0634\u0645\u0646 \u062F\u0631 \u062D\u0627\u0644
+        \u067E\u06CC\u0634\u0631\u0648\u06CC \u0627\u0633\u062A \xB7 \u0627\u0632
+        \u062A\u06CC\u0645 \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646\u06CC\u062F"
+    - key: mission.m04.patrol.warning
+      value: "\u062D\u0631\u06A9\u062A \u06AF\u0634\u062A \u062F\u0634\u0645\u0646:
+        {0} \u062B\u0627\u0646\u06CC\u0647 \u062F\u06CC\u06AF\u0631"
     - key: mission.m04.resources
       value: "\u0646\u0641\u0631\u0628\u0631 \u0648 \u0628\u0627\u0644\u06AF\u0631\u062F
         \u0628\u0627 \u0630\u062E\u06CC\u0631\u0647\u0654 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A"
@@ -5668,6 +5873,8 @@ MonoBehaviour:
     - key: mission.m04.result.defeat
       value: "\u062A\u062E\u0644\u06CC\u0647 \u0646\u0627\u0645\u0648\u0641\u0642
         \u0628\u0648\u062F"
+    - key: mission.m04.result.earned
+      value: "\u062F\u0631\u06CC\u0627\u0641\u062A \u0634\u062F"
     - key: mission.m04.result.escort_lost
       value: "\u0645\u062D\u0627\u0641\u0638\u0627\u0646 \u0627\u0632 \u062F\u0633\u062A
         \u0631\u0641\u062A\u0646\u062F. \u062F\u0633\u062A\u200C\u06A9\u0645 \u06CC\u06A9
@@ -5689,6 +5896,8 @@ MonoBehaviour:
     - key: mission.m04.result.landing
       value: "\u06F2\u06F0 \u062B\u0627\u0646\u06CC\u0647 \u0627\u0645\u0646\u06CC\u062A
         \u0645\u062D\u0644 \u0641\u0631\u0648\u062F"
+    - key: mission.m04.result.missed
+      value: "\u062F\u0631\u06CC\u0627\u0641\u062A \u0646\u0634\u062F"
     - key: mission.m04.result.objectives
       value: "\u0647\u062F\u0641\u200C\u0647\u0627\u06CC \u0646\u062C\u0627\u062A"
     - key: mission.m04.result.passenger_lost
@@ -5696,6 +5905,16 @@ MonoBehaviour:
         \u0631\u0641\u062A. \u0647\u0646\u06AF\u0627\u0645 \u0633\u0648\u0627\u0631\u0634\u062F\u0646
         \u0648 \u0627\u0646\u062A\u0642\u0627\u0644 \u0627\u0632 \u0647\u0631 \u0686\u0647\u0627\u0631
         \u0646\u0641\u0631 \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646\u06CC\u062F."
+    - key: mission.m04.result.rescued_stat
+      value: "\u0645\u062A\u062E\u0635\u0635\u0627\u0646 \u0646\u062C\u0627\u062A\u200C\u06CC\u0627\u0641\u062A\u0647"
+    - key: mission.m04.result.star.complete
+      value: "\u0646\u062C\u0627\u062A \u0647\u0631 \u0686\u0647\u0627\u0631 \u0646\u0641\u0631"
+    - key: mission.m04.result.star.escort
+      value: "\u0628\u062F\u0648\u0646 \u062A\u0644\u0641\u0627\u062A \u0645\u062D\u0627\u0641\u0638\u0627\u0646"
+    - key: mission.m04.result.star.time
+      value: "\u06A9\u0645\u062A\u0631 \u0627\u0632 \u06F7 \u062F\u0642\u06CC\u0642\u0647"
+    - key: mission.m04.result.star_objectives
+      value: "\u0627\u0647\u062F\u0627\u0641 \u0633\u062A\u0627\u0631\u0647\u200C\u0647\u0627"
     - key: mission.m04.result.subtitle
       value: "\u062A\u062E\u0644\u06CC\u0647 \u0647\u0648\u0627\u06CC\u06CC \xB7
         \u0645\u062D\u0644 \u0641\u0631\u0648\u062F \u0627\u0645\u062F\u0627\u062F\u06CC"
@@ -5721,6 +5940,14 @@ MonoBehaviour:
         \u0644\u06CC\u0644\u0627 \u0646\u0627\u0635\u0631"
     - key: mission.m04.reward.transport
       value: "\u062F\u0633\u062A\u0631\u0633\u06CC \u0628\u0647 \u062A\u0631\u0627\u0628\u0631\u06CC"
+    - key: mission.m04.specialist.description
+      value: "\u0645\u0633\u0627\u0641\u0631 \u0646\u062C\u0627\u062A\u061B \u0647\u0631
+        \u0686\u0647\u0627\u0631 \u0645\u062A\u062E\u0635\u0635 \u0631\u0627 \u0633\u0627\u0644\u0645
+        \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F."
+    - key: mission.m04.specialist.name
+      value: "\u0645\u062A\u062E\u0635\u0635"
+    - key: mission.m04.specialist.role
+      value: "\u0645\u0633\u0627\u0641\u0631 \u0646\u062C\u0627\u062A"
     - key: mission.m04.star.1
       value: "\u0647\u0631 \u0686\u0647\u0627\u0631 \u0646\u0641\u0631 \u062A\u062E\u0644\u06CC\u0647
         \u0634\u062F\u0646\u062F"
@@ -5738,12 +5965,11 @@ MonoBehaviour:
       value: "\u0647\u0631 \u0686\u0647\u0627\u0631 \u0645\u062A\u062E\u0635\u0635
         \u0631\u0627 \u0646\u062C\u0627\u062A \u062F\u0647\u06CC\u062F: \u0627\u0628\u062A\u062F\u0627
         \u0646\u0641\u0631\u0628\u0631\u060C \u0633\u067E\u0633 \u0628\u0627\u0644\u06AF\u0631\u062F.
-        \u067E\u0633 \u0627\u0632 \u0628\u0627\u0632\u06AF\u0634\u062A \u062F\u0648\u0631\u0628\u06CC\u0646
         \u062F\u0647 \u062F\u0642\u06CC\u0642\u0647 \u0641\u0631\u0635\u062A \u062F\u0627\u0631\u06CC\u062F.
         \u06A9\u0634\u062A\u0646 \u062F\u0634\u0645\u0646 \u0627\u0644\u0632\u0627\u0645\u06CC
-        \u0646\u06CC\u0633\u062A. \u0647\u0631 \u062F\u0648 \u0648\u0633\u06CC\u0644\u0647
-        \u0630\u062E\u06CC\u0631\u0647\u0654 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A
-        \u062E\u0648\u062F \u0631\u0627 \u062F\u0627\u0631\u0646\u062F."
+        \u0646\u06CC\u0633\u062A\u061B \u0633\u0627\u0644\u0645 \u0646\u06AF\u0647\u200C\u062F\u0627\u0634\u062A\u0646
+        \u0645\u062D\u0627\u0641\u0638\u0627\u0646 \u06CC\u06A9 \u0633\u062A\u0627\u0631\u0647\u0654
+        \u0627\u0636\u0627\u0641\u06CC \u062F\u0627\u0631\u062F."
     - key: mission.m04.tutorial.1.diagram
       value: "\u062A\u06CC\u0645 \u2190 \u0646\u0641\u0631\u0628\u0631 \u2190 \u0645\u062D\u0644
         \u0641\u0631\u0648\u062F \u2190 \u0628\u0627\u0644\u06AF\u0631\u062F \u2190
@@ -5758,15 +5984,13 @@ MonoBehaviour:
       value: "\u0646\u062C\u0627\u062A \u062F\u0631 \u062F\u0648 \u0645\u0631\u062D\u0644\u0647"
     - key: mission.m04.tutorial.10.body
       value: "\u0628\u0627\u0644\u06AF\u0631\u062F \u067E\u0631 \u0631\u0627 \u0628\u06CC\u0633\u062A
-        \u062B\u0627\u0646\u06CC\u0647\u0654 \u067E\u06CC\u0648\u0633\u062A\u0647
-        \u062F\u0631 \u0645\u062D\u0644 \u0641\u0631\u0648\u062F \u0646\u06AF\u0647
-        \u062F\u0627\u0631\u06CC\u062F. \u0648\u0631\u0648\u062F \u0647\u0631 \u062F\u0634\u0645\u0646
-        \u0641\u0639\u0627\u0644 \u0628\u0647 \u0645\u062D\u062F\u0648\u062F\u0647\u0654
-        \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647 \u0632\u0645\u0627\u0646\u200C\u0633\u0646\u062C
-        \u0631\u0627 \u0627\u0632 \u0646\u0648 \u0622\u063A\u0627\u0632 \u0645\u06CC\u200C\u06A9\u0646\u062F.
-        \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627 \u0645\u0633\u06CC\u0631
-        \u0646\u0632\u062F\u06CC\u06A9\u200C\u0634\u062F\u0646 \u0631\u0627 \u067E\u0648\u0634\u0634
-        \u062F\u0647\u0646\u062F."
+        \u062B\u0627\u0646\u06CC\u0647 \u062F\u0631 \u0645\u062D\u062F\u0648\u062F\u0647\u0654
+        \u0627\u0645\u0646 \u0641\u0631\u0648\u062F \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F.
+        \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627 \u0645\u0627\u0646\u0639
+        \u0648\u0631\u0648\u062F \u062F\u0634\u0645\u0646 \u0628\u0647 \u062D\u0644\u0642\u0647
+        \u0634\u0648\u0646\u062F. \u062E\u0631\u0648\u062C \u0628\u0627\u0644\u06AF\u0631\u062F
+        \u06CC\u0627 \u0648\u0631\u0648\u062F \u062F\u0634\u0645\u0646 \u0632\u0645\u0627\u0646
+        \u0631\u0627 \u0627\u0632 \u0646\u0648 \u0622\u063A\u0627\u0632 \u0645\u06CC\u200C\u06A9\u0646\u062F."
     - key: mission.m04.tutorial.10.diagram
       value: "\u062A\u06CC\u0645 \u2190 \u0646\u0641\u0631\u0628\u0631 \u2190 \u0645\u062D\u0644
         \u0641\u0631\u0648\u062F \u2190 \u0628\u0627\u0644\u06AF\u0631\u062F \u2190
@@ -5784,13 +6008,12 @@ MonoBehaviour:
     - key: mission.m04.tutorial.11.body
       value: "\u0628\u0627\u0644\u06AF\u0631\u062F \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
         \u06A9\u0646\u06CC\u062F\u060C \u062D\u0631\u06A9\u062A \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F
-        \u0648 \u0628\u0647 \u0645\u062D\u062F\u0648\u062F\u0647\u0654 \u062E\u0631\u0648\u062C
-        \u062F\u0631 \u0634\u0645\u0627\u0644\u200C\u0634\u0631\u0642 \u0645\u062D\u0644
-        \u0641\u0631\u0648\u062F \u067E\u0631\u0648\u0627\u0632 \u06A9\u0646\u06CC\u062F.
-        \u0647\u0645\u0647\u0654 \u0645\u062A\u062E\u0635\u0635\u0627\u0646 \u0628\u0627\u06CC\u062F
-        \u0633\u0648\u0627\u0631 \u0648 \u0632\u0646\u062F\u0647 \u0628\u0627\u0634\u0646\u062F.
-        \u0646\u0645\u0627\u06CC\u0634 \u0645\u062D\u0644\u060C \u062E\u0631\u0648\u062C
-        \u0631\u0627 \u067E\u06CC\u062F\u0627 \u0645\u06CC\u200C\u06A9\u0646\u062F."
+        \u0648 \u0628\u0647 \u062E\u0631\u0648\u062C \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647
+        \u0645\u0642\u0635\u062F \u0628\u062F\u0647\u06CC\u062F. \u0646\u0634\u0627\u0646\u0645
+        \u0628\u062F\u0647\u060C \u062E\u0631\u0648\u062C \u0631\u0627 \u0646\u0634\u0627\u0646
+        \u0645\u06CC\u200C\u062F\u0647\u062F. \u062A\u0627 \u062A\u0623\u06CC\u06CC\u062F
+        \u0646\u062C\u0627\u062A\u060C \u0647\u0631 \u0686\u0647\u0627\u0631 \u0645\u062A\u062E\u0635\u0635
+        \u0633\u0648\u0627\u0631 \u0628\u0645\u0627\u0646\u0646\u062F."
     - key: mission.m04.tutorial.11.diagram
       value: "\u062A\u06CC\u0645 \u2190 \u0646\u0641\u0631\u0628\u0631 \u2190 \u0645\u062D\u0644
         \u0641\u0631\u0648\u062F \u2190 \u0628\u0627\u0644\u06AF\u0631\u062F \u2190
@@ -5807,17 +6030,11 @@ MonoBehaviour:
       value: "\u0628\u0647 \u0645\u062D\u062F\u0648\u062F\u0647\u0654 \u062E\u0631\u0648\u062C
         \u067E\u0631\u0648\u0627\u0632 \u06A9\u0646\u06CC\u062F"
     - key: mission.m04.tutorial.12.body
-      value: "\u0628\u0631\u0627\u06CC \u062A\u062E\u0644\u06CC\u0647 \u06CC\u06A9
-        \u0633\u062A\u0627\u0631\u0647\u060C \u0628\u0631\u0627\u06CC \u0632\u0646\u062F\u0647\u200C\u0645\u0627\u0646\u062F\u0646
-        \u0647\u0645\u0647\u0654 \u0645\u062D\u0627\u0641\u0638\u0627\u0646 \u06CC\u06A9
-        \u0633\u062A\u0627\u0631\u0647 \u0648 \u0628\u0631\u0627\u06CC \u067E\u0627\u06CC\u0627\u0646
-        \u062F\u0631 \u0647\u0641\u062A \u062F\u0642\u06CC\u0642\u0647 \u06CC\u06A9
-        \u0633\u062A\u0627\u0631\u0647 \u0645\u06CC\u200C\u06AF\u06CC\u0631\u06CC\u062F.
-        \u067E\u0627\u062F\u0627\u0634 \u0646\u062E\u0633\u062A\u06CC\u0646 \u067E\u06CC\u0631\u0648\u0632\u06CC
-        \u06CC\u06A9\u200C\u0628\u0627\u0631 \u067E\u0631\u062F\u0627\u062E\u062A
-        \u0645\u06CC\u200C\u0634\u0648\u062F. \u062A\u06A9\u0631\u0627\u0631 \u0645\u06CC\u200C\u062A\u0648\u0627\u0646\u062F
-        \u0633\u062A\u0627\u0631\u0647\u200C\u0647\u0627 \u0631\u0627 \u0628\u0647\u062A\u0631
-        \u06A9\u0646\u062F."
+      value: "\u0646\u062C\u0627\u062A \u062F\u0631 \u062D\u0627\u0644 \u062A\u0623\u06CC\u06CC\u062F
+        \u0627\u0633\u062A. \u062A\u0627 \u0646\u0645\u0627\u06CC\u0634 \u0646\u062A\u06CC\u062C\u0647\u060C
+        \u0645\u0633\u0627\u0641\u0631\u0627\u0646 \u0631\u0627 \u0633\u0648\u0627\u0631
+        \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F \u0648 \u0627\u0632 \u0628\u0627\u0644\u06AF\u0631\u062F
+        \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646\u06CC\u062F."
     - key: mission.m04.tutorial.12.diagram
       value: "\u062A\u06CC\u0645 \u2190 \u0646\u0641\u0631\u0628\u0631 \u2190 \u0645\u062D\u0644
         \u0641\u0631\u0648\u062F \u2190 \u0628\u0627\u0644\u06AF\u0631\u062F \u2190
@@ -5836,13 +6053,11 @@ MonoBehaviour:
       value: "\u0646\u0641\u0631\u0628\u0631 \u0686\u0631\u062E\u200C\u062F\u0627\u0631
         \u06A9\u0646\u0627\u0631 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627
         \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u062F.
-        \u0641\u0647\u0631\u0633\u062A \u0645\u0633\u0627\u0641\u0631\u0627\u0646
-        \u0638\u0631\u0641\u06CC\u062A \u0648\u0627\u0642\u0639\u06CC \u0631\u0627
-        \u0646\u0634\u0627\u0646 \u0645\u06CC\u200C\u062F\u0647\u062F. \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC
-        \u0645\u062D\u0627\u0641\u0638 \u0631\u0627 \u0628\u06CC\u0631\u0648\u0646
-        \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F \u062A\u0627 \u0647\u0631
-        \u0686\u0647\u0627\u0631 \u0645\u062A\u062E\u0635\u0635 \u0633\u0648\u0627\u0631
-        \u0634\u0648\u0646\u062F."
+        \u0686\u0647\u0627\u0631 \u0635\u0646\u062F\u0644\u06CC \u0622\u0646 \u0631\u0627
+        \u0628\u0631\u0627\u06CC \u0645\u062A\u062E\u0635\u0635\u0627\u0646 \u062E\u0627\u0644\u06CC
+        \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F. \u0646\u0634\u0627\u0646\u0645
+        \u0628\u062F\u0647\u060C \u0645\u062D\u0644 \u0646\u0641\u0631\u0628\u0631
+        \u0631\u0627 \u0646\u0634\u0627\u0646 \u0645\u06CC\u200C\u062F\u0647\u062F."
     - key: mission.m04.tutorial.2.diagram
       value: "\u062A\u06CC\u0645 \u2190 \u0646\u0641\u0631\u0628\u0631 \u2190 \u0645\u062D\u0644
         \u0641\u0631\u0648\u062F \u2190 \u0628\u0627\u0644\u06AF\u0631\u062F \u2190
@@ -5859,15 +6074,14 @@ MonoBehaviour:
       value: "\u0646\u0641\u0631\u0628\u0631 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
         \u06A9\u0646\u06CC\u062F"
     - key: mission.m04.tutorial.3.body
-      value: "\u062D\u0631\u06A9\u062A \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
-        \u06A9\u0646\u06CC\u062F \u0648 \u0646\u0641\u0631\u0628\u0631 \u0631\u0627
-        \u0627\u0632 \u062C\u0627\u062F\u0647 \u0628\u0647 \u0633\u0645\u062A \u063A\u0631\u0628
-        \u0648 \u0686\u0647\u0627\u0631 \u0645\u062A\u062E\u0635\u0635 \u0628\u0641\u0631\u0633\u062A\u06CC\u062F.
-        \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627 \u0631\u0627 \u0645\u06CC\u0627\u0646
-        \u062A\u06CC\u0645 \u0648 \u06AF\u0634\u062A\u06CC \u062F\u0631 \u062D\u0627\u0644
-        \u0646\u0632\u062F\u06CC\u06A9\u200C\u0634\u062F\u0646 \u0646\u06AF\u0647
-        \u062F\u0627\u0631\u06CC\u062F. \u0646\u0645\u0627\u06CC\u0634 \u0645\u062D\u0644\u060C
-        \u062A\u06CC\u0645 \u0631\u0627 \u067E\u06CC\u062F\u0627 \u0645\u06CC\u200C\u06A9\u0646\u062F."
+      value: "\u062D\u0631\u06A9\u062A \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F
+        \u0648 \u06A9\u0646\u0627\u0631 \u0686\u0647\u0627\u0631 \u0645\u062A\u062E\u0635\u0635
+        \u062F\u0631 \u062C\u0627\u062F\u0647\u0654 \u063A\u0631\u0628\u06CC \u0645\u0642\u0635\u062F
+        \u0628\u062F\u0647\u06CC\u062F. \u0646\u0634\u0627\u0646\u0645 \u0628\u062F\u0647\u060C
+        \u0645\u062D\u0644 \u0622\u0646\u200C\u0647\u0627 \u0631\u0627 \u0646\u0634\u0627\u0646
+        \u0645\u06CC\u200C\u062F\u0647\u062F. \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627
+        \u0631\u0627 \u0628\u0631\u0627\u06CC \u067E\u0648\u0634\u0634 \u0628\u0647
+        \u062C\u0644\u0648 \u0628\u0641\u0631\u0633\u062A\u06CC\u062F."
     - key: mission.m04.tutorial.3.diagram
       value: "\u062A\u06CC\u0645 \u2190 \u0646\u0641\u0631\u0628\u0631 \u2190 \u0645\u062D\u0644
         \u0641\u0631\u0648\u062F \u2190 \u0628\u0627\u0644\u06AF\u0631\u062F \u2190
@@ -5884,13 +6098,13 @@ MonoBehaviour:
       value: "\u0628\u0647 \u062A\u06CC\u0645 \u06AF\u0631\u0641\u062A\u0627\u0631
         \u0628\u0631\u0633\u06CC\u062F"
     - key: mission.m04.tutorial.4.body
-      value: "\u0686\u0647\u0627\u0631 \u0645\u062A\u062E\u0635\u0635 \u0628\u06CC\u200C\u0633\u0644\u0627\u062D
+      value: "\u0647\u0631 \u0686\u0647\u0627\u0631 \u0645\u062A\u062E\u0635\u0635
         \u06A9\u0646\u0627\u0631 \u062C\u0627\u062F\u0647 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
-        \u06A9\u0646\u06CC\u062F. \u0622\u0646\u200C\u0647\u0627 \u0639\u0636\u0648
-        \u062A\u06CC\u0645 \u0646\u062C\u0627\u062A \u0634\u0645\u0627 \u0647\u0633\u062A\u0646\u062F
-        \u0648 \u0641\u0631\u0645\u0627\u0646 \u062D\u0631\u06A9\u062A \u0648 \u0633\u0648\u0627\u0631\u0634\u062F\u0646
-        \u0645\u06CC\u200C\u067E\u0630\u06CC\u0631\u0646\u062F. \u0632\u0646\u062F\u0647\u200C\u0645\u0627\u0646\u062F\u0646
-        \u0647\u0645\u0647 \u0627\u0644\u0632\u0627\u0645\u06CC \u0627\u0633\u062A."
+        \u06A9\u0646\u06CC\u062F. \u0645\u062D\u0627\u0641\u0638\u0627\u0646 \u0645\u0633\u0644\u062D
+        \u0631\u0627 \u0648\u0627\u0631\u062F \u0627\u0646\u062A\u062E\u0627\u0628
+        \u0646\u06A9\u0646\u06CC\u062F. \u0628\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u0647\u0631 \u0686\u0647\u0627\u0631 \u0646\u0641\u0631 \u0627\u06CC\u0646
+        \u0645\u0631\u062D\u0644\u0647 \u062A\u0645\u0627\u0645 \u0645\u06CC\u200C\u0634\u0648\u062F."
     - key: mission.m04.tutorial.4.diagram
       value: "\u062A\u06CC\u0645 \u2190 \u0646\u0641\u0631\u0628\u0631 \u2190 \u0645\u062D\u0644
         \u0641\u0631\u0648\u062F \u2190 \u0628\u0627\u0644\u06AF\u0631\u062F \u2190
@@ -5907,15 +6121,12 @@ MonoBehaviour:
       value: "\u0645\u062A\u062E\u0635\u0635\u0627\u0646 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
         \u06A9\u0646\u06CC\u062F"
     - key: mission.m04.tutorial.5.body
-      value: "\u0628\u0627 \u0627\u0646\u062A\u062E\u0627\u0628 \u0645\u062A\u062E\u0635\u0635\u0627\u0646\u060C
-        \u0633\u0648\u0627\u0631\u0634\u062F\u0646 \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F
-        \u0648 \u0646\u0641\u0631\u0628\u0631 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
-        \u06A9\u0646\u06CC\u062F. \u0635\u0628\u0631 \u06A9\u0646\u06CC\u062F \u0647\u0631
-        \u0686\u0647\u0627\u0631 \u0646\u0641\u0631 \u062F\u0631 \u0641\u0647\u0631\u0633\u062A
-        \u0645\u0633\u0627\u0641\u0631\u0627\u0646 \u0622\u0646 \u0638\u0627\u0647\u0631
-        \u0634\u0648\u0646\u062F. \u0641\u0631\u0645\u0627\u0646 \u0633\u0648\u0627\u0631\u0634\u062F\u0646
-        \u0628\u0647 \u0645\u0639\u0646\u06CC \u067E\u0627\u06CC\u0627\u0646 \u0646\u062C\u0627\u062A
-        \u0646\u06CC\u0633\u062A."
+      value: "\u0633\u0648\u0627\u0631\u0634\u062F\u0646 \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F
+        \u0648 \u0633\u067E\u0633 \u0646\u0641\u0631\u0628\u0631 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u06CC\u062F. \u067E\u06CC\u0634 \u0627\u0632 \u062D\u0631\u06A9\u062A
+        \u0635\u0628\u0631 \u06A9\u0646\u06CC\u062F \u0641\u0647\u0631\u0633\u062A
+        \u0645\u0633\u0627\u0641\u0631\u0627\u0646\u060C \u0647\u0631 \u0686\u0647\u0627\u0631
+        \u0645\u062A\u062E\u0635\u0635 \u0631\u0627 \u0646\u0634\u0627\u0646 \u062F\u0647\u062F."
     - key: mission.m04.tutorial.5.diagram
       value: "\u062A\u06CC\u0645 \u2190 \u0646\u0641\u0631\u0628\u0631 \u2190 \u0645\u062D\u0644
         \u0641\u0631\u0648\u062F \u2190 \u0628\u0627\u0644\u06AF\u0631\u062F \u2190
@@ -5933,16 +6144,12 @@ MonoBehaviour:
         \u0633\u0648\u0627\u0631 \u0646\u0641\u0631\u0628\u0631 \u06A9\u0646\u06CC\u062F"
     - key: mission.m04.tutorial.6.body
       value: "\u0646\u0641\u0631\u0628\u0631 \u067E\u0631 \u0631\u0627 \u0628\u0647
-        \u0633\u0645\u062A \u0634\u0631\u0642 \u0648 \u0645\u062D\u0644 \u0641\u0631\u0648\u062F
-        \u0628\u0628\u0631\u06CC\u062F. \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627
-        \u0645\u06CC\u200C\u062A\u0648\u0627\u0646\u0646\u062F \u062C\u0627\u062F\u0647
-        \u06CC\u0627 \u0645\u0633\u06CC\u0631 \u0646\u0632\u062F\u06CC\u06A9\u200C\u0634\u062F\u0646
-        \u062F\u0634\u0645\u0646 \u0631\u0627 \u067E\u0648\u0634\u0634 \u062F\u0647\u0646\u062F.
-        \u0646\u0641\u062A \u0628\u0627 \u0628\u0646\u0632\u06CC\u0646 \u0641\u0631\u0642
-        \u062F\u0627\u0631\u062F. \u0627\u06CC\u0646 \u0648\u0633\u0627\u06CC\u0644
-        \u0627\u0645\u0627\u0646\u06CC \u062F\u0631 \u0627\u06CC\u0646 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A
-        \u0628\u0647 \u0634\u0628\u06A9\u0647\u0654 \u0633\u0648\u062E\u062A \u062A\u0627\u0632\u0647
-        \u0646\u06CC\u0627\u0632 \u0646\u062F\u0627\u0631\u0646\u062F."
+        \u0645\u062D\u062F\u0648\u062F\u0647\u0654 \u0641\u0631\u0648\u062F \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647
+        \u062F\u0631 \u0634\u0631\u0642 \u0628\u0628\u0631\u06CC\u062F. \u0646\u0634\u0627\u0646\u0645
+        \u0628\u062F\u0647\u060C \u0645\u062D\u0644 \u0644\u06CC\u0644\u0627 \u0631\u0627
+        \u0646\u0634\u0627\u0646 \u0645\u06CC\u200C\u062F\u0647\u062F. \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627
+        \u0645\u0633\u06CC\u0631 \u06AF\u0634\u062A\u06CC \u062F\u0634\u0645\u0646
+        \u0631\u0627 \u067E\u0648\u0634\u0634 \u062F\u0647\u0646\u062F."
     - key: mission.m04.tutorial.6.diagram
       value: "\u062A\u06CC\u0645 \u2190 \u0646\u0641\u0631\u0628\u0631 \u2190 \u0645\u062D\u0644
         \u0641\u0631\u0648\u062F \u2190 \u0628\u0627\u0644\u06AF\u0631\u062F \u2190
@@ -5952,25 +6159,20 @@ MonoBehaviour:
         \u0645\u0633\u0627\u0641\u0631\u0627\u0646 \u0631\u0627 \u0631\u0648\u06CC
         \u0686\u0647\u0627\u0631 \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F."
     - key: mission.m04.tutorial.6.mistake
-      value: "\u0646\u0645\u0627\u06CC\u0634 \u0628\u0646\u0632\u06CC\u0646 \u062F\u0631
-        \u0646\u0648\u0627\u0631 \u0628\u0627\u0644\u0627 \u0634\u0645\u0627\u0631\u0646\u062F\u0647\u0654
-        \u0645\u0633\u0627\u0641\u0631 \u0646\u06CC\u0633\u062A."
+      value: "\u0645\u062D\u0627\u0641\u0638\u0627\u0646 \u0631\u0627 \u067E\u0634\u062A
+        \u06A9\u0627\u0631\u0648\u0627\u0646 \u062C\u0627 \u0646\u06AF\u0630\u0627\u0631\u06CC\u062F."
     - key: mission.m04.tutorial.6.title
       value: "\u0646\u0641\u0631\u0628\u0631 \u0631\u0627 \u062A\u0627 \u0644\u06CC\u0644\u0627
         \u0647\u0645\u0631\u0627\u0647\u06CC \u06A9\u0646\u06CC\u062F"
     - key: mission.m04.tutorial.7.body
-      value: "\u0646\u0641\u0631\u0628\u0631 \u0631\u0627 \u062F\u0631 \u0645\u062D\u0644
-        \u0641\u0631\u0648\u062F \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u062F
-        \u0648 \u0627\u0632 \u0628\u062E\u0634 \u0645\u0633\u0627\u0641\u0631\u0627\u0646
-        \u067E\u06CC\u0627\u062F\u0647\u200C\u0634\u062F\u0646 \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F.
-        \u0647\u0631 \u0686\u0647\u0627\u0631 \u0646\u0641\u0631 \u0628\u0627\u06CC\u062F
-        \u067E\u06CC\u0634 \u0627\u0632 \u0633\u0648\u0627\u0631\u0634\u062F\u0646
-        \u0628\u0647 \u0628\u0627\u0644\u06AF\u0631\u062F \u0627\u0632 \u0646\u0641\u0631\u0628\u0631
-        \u062E\u0627\u0631\u062C \u0634\u0648\u0646\u062F. \u0627\u06AF\u0631 \u062C\u0627\u06CC
-        \u0627\u0645\u0646 \u0646\u06CC\u0633\u062A\u060C \u0646\u0641\u0631\u0628\u0631
-        \u0631\u0627 \u0628\u0647 \u0641\u0636\u0627\u06CC \u0628\u0627\u0632 \u0628\u0628\u0631\u06CC\u062F
-        \u0648 \u062F\u0648\u0628\u0627\u0631\u0647 \u0627\u0645\u062A\u062D\u0627\u0646
-        \u06A9\u0646\u06CC\u062F."
+      value: "\u0628\u062E\u0634 \u0645\u0633\u0627\u0641\u0631\u0627\u0646 \u0646\u0641\u0631\u0628\u0631
+        \u0631\u0627 \u0628\u0627\u0632 \u06A9\u0646\u06CC\u062F \u0648 \u067E\u06CC\u0627\u062F\u0647\u200C\u0634\u062F\u0646
+        \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F. \u0635\u0628\u0631 \u06A9\u0646\u06CC\u062F
+        \u0647\u0631 \u0686\u0647\u0627\u0631 \u0645\u062A\u062E\u0635\u0635 \u06A9\u0646\u0627\u0631
+        \u0628\u0627\u0644\u06AF\u0631\u062F \u0628\u0627\u06CC\u0633\u062A\u0646\u062F.
+        \u0627\u06AF\u0631 \u0645\u062D\u0644 \u0628\u0633\u062A\u0647 \u0627\u0633\u062A\u060C
+        \u0646\u0641\u0631\u0628\u0631 \u0631\u0627 \u0628\u0647 \u0641\u0636\u0627\u06CC
+        \u0628\u0627\u0632 \u0628\u0628\u0631\u06CC\u062F."
     - key: mission.m04.tutorial.7.diagram
       value: "\u062A\u06CC\u0645 \u2190 \u0646\u0641\u0631\u0628\u0631 \u2190 \u0645\u062D\u0644
         \u0641\u0631\u0648\u062F \u2190 \u0628\u0627\u0644\u06AF\u0631\u062F \u2190
@@ -5989,13 +6191,11 @@ MonoBehaviour:
         \u0634\u0648\u06CC\u062F"
     - key: mission.m04.tutorial.8.body
       value: "\u0628\u0627\u0644\u06AF\u0631\u062F \u0644\u06CC\u0644\u0627 \u0631\u0627
-        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u062F. \u0628\u0631\u0627\u06CC
-        \u0633\u0648\u0627\u0631\u0634\u062F\u0646 \u0628\u0627\u06CC\u062F \u0641\u0631\u0648\u062F
-        \u0622\u0645\u062F\u0647 \u0648 \u0646\u0632\u062F\u06CC\u06A9 \u0645\u0633\u0627\u0641\u0631\u0627\u0646
-        \u0628\u0627\u0634\u062F. \u0638\u0631\u0641\u06CC\u062A\u060C \u0633\u0644\u0627\u0645\u062A
-        \u0648 \u062D\u0631\u06A9\u062A \u0622\u0646 \u0648\u0627\u0642\u0639\u06CC
-        \u0627\u0633\u062A \u0648 \u0645\u06CC\u0627\u0646\u200C\u0628\u0631 \u0633\u06CC\u0646\u0645\u0627\u06CC\u06CC
-        \u0646\u06CC\u0633\u062A."
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u062F. \u0622\u0646
+        \u0631\u0627 \u06A9\u0646\u0627\u0631 \u0645\u062A\u062E\u0635\u0635\u0627\u0646
+        \u0631\u0648\u06CC \u0632\u0645\u06CC\u0646 \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F
+        \u062A\u0627 \u0647\u0631 \u0686\u0647\u0627\u0631 \u0646\u0641\u0631 \u0633\u0648\u0627\u0631
+        \u0634\u0648\u0646\u062F."
     - key: mission.m04.tutorial.8.diagram
       value: "\u062A\u06CC\u0645 \u2190 \u0646\u0641\u0631\u0628\u0631 \u2190 \u0645\u062D\u0644
         \u0641\u0631\u0648\u062F \u2190 \u0628\u0627\u0644\u06AF\u0631\u062F \u2190
@@ -6010,19 +6210,17 @@ MonoBehaviour:
         \u0645\u0633\u0627\u0641\u0631 \u0631\u0627 \u0641\u0648\u0631\u06CC \u0633\u0648\u0627\u0631
         \u06A9\u0646\u062F."
     - key: mission.m04.tutorial.8.title
-      value: "\u0628\u0627\u0644\u06AF\u0631\u062F \u062A\u0631\u0627\u0628\u0631\u06CC
-        \u0631\u0627 \u0628\u0631\u0631\u0633\u06CC \u06A9\u0646\u06CC\u062F"
+      value: "\u0628\u0627\u0644\u06AF\u0631\u062F \u0631\u0627 \u0628\u0631\u0631\u0633\u06CC
+        \u06A9\u0646\u06CC\u062F"
     - key: mission.m04.tutorial.9.body
-      value: "\u0645\u062A\u062E\u0635\u0635\u0627\u0646 \u067E\u06CC\u0627\u062F\u0647\u200C\u0634\u062F\u0647
+      value: "\u0647\u0631 \u0686\u0647\u0627\u0631 \u0645\u062A\u062E\u0635\u0635
         \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u062F\u060C
         \u0633\u0648\u0627\u0631\u0634\u062F\u0646 \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F
-        \u0648 \u0628\u0627\u0644\u06AF\u0631\u062F \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
-        \u06A9\u0646\u06CC\u062F. \u0648\u062C\u0648\u062F \u0686\u0647\u0627\u0631
-        \u0645\u0633\u0627\u0641\u0631 \u0631\u0627 \u062F\u0631 \u0641\u0647\u0631\u0633\u062A
-        \u0628\u0631\u0631\u0633\u06CC \u06A9\u0646\u06CC\u062F. \u0647\u0631 \u0645\u062A\u062E\u0635\u0635
-        \u0628\u0627\u06CC\u062F \u0642\u0628\u0644\u0627\u064B \u0645\u0633\u06CC\u0631
-        \u0646\u0641\u0631\u0628\u0631 \u0631\u0627 \u0637\u06CC \u06A9\u0631\u062F\u0647
-        \u0628\u0627\u0634\u062F."
+        \u0648 \u0628\u0627\u0644\u06AF\u0631\u062F \u0641\u0631\u0648\u062F\u0622\u0645\u062F\u0647
+        \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u062F.
+        \u0641\u0647\u0631\u0633\u062A \u0645\u0633\u0627\u0641\u0631\u0627\u0646
+        \u0628\u0627\u06CC\u062F \u0686\u0647\u0627\u0631 \u0646\u0641\u0631 \u0631\u0627
+        \u0646\u0634\u0627\u0646 \u062F\u0647\u062F."
     - key: mission.m04.tutorial.9.diagram
       value: "\u062A\u06CC\u0645 \u2190 \u0646\u0641\u0631\u0628\u0631 \u2190 \u0645\u062D\u0644
         \u0641\u0631\u0648\u062F \u2190 \u0628\u0627\u0644\u06AF\u0631\u062F \u2190
@@ -6899,6 +7097,40 @@ MonoBehaviour:
       value: "\u0648\u0633\u06CC\u0644\u0647 \u062D\u0645\u0644\u200C\u0648\u0646\u0642\u0644
         \u0633\u0644\u0627\u062D \u06CC\u0627 \u0633\u0631\u0646\u0634\u06CC\u0646
         \u0622\u0645\u0627\u062F\u0647 \u062D\u0645\u0644\u0647 \u0646\u062F\u0627\u0631\u062F."
+    - key: tutorial.m02.materials.body
+      value: "\u0628\u0627 \u06F1\u06F2\u06F0 \u0648\u0627\u062D\u062F \u0645\u0635\u0627\u0644\u062D
+        \u0634\u0631\u0648\u0639 \u06A9\u0631\u062F\u06CC\u062F. \u0633\u0631\u0628\u0627\u0632\u062E\u0627\u0646\u0647
+        \u06F9\u06F0 \u0648\u0627\u062D\u062F \u0645\u0635\u0631\u0641 \u06A9\u0631\u062F
+        \u0648 \u06F3\u06F0 \u0648\u0627\u062D\u062F \u0645\u0627\u0646\u062F\u0647
+        \u0627\u0633\u062A. \u06F2\u06F0 \u0648\u0627\u062D\u062F \u0628\u0631\u0627\u06CC
+        \u0622\u0645\u0648\u0632\u0634 \u06AF\u0631\u0648\u0647 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631
+        \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F."
+    - key: tutorial.m02.materials.title
+      value: "\u0645\u0635\u0627\u0644\u062D \u0631\u0627 \u0645\u062F\u06CC\u0631\u06CC\u062A
+        \u06A9\u0646\u06CC\u062F"
+    - key: tutorial.next.board
+      value: "\u0633\u0648\u0627\u0631 \u0634\u062F\u0646"
+    - key: tutorial.next.buildings
+      value: "\u0633\u0627\u062E\u062A\u0645\u0627\u0646\u200C\u0647\u0627 \u0631\u0627
+        \u0628\u0627\u0632 \u06A9\u0646\u06CC\u062F"
+    - key: tutorial.next.confirm
+      value: "\u062A\u0623\u06CC\u06CC\u062F \u0645\u062D\u0644 \u0633\u0627\u062E\u062A"
+    - key: tutorial.next.continue
+      value: "\u0627\u062F\u0627\u0645\u0647\u0654 \u062F\u0631\u0633"
+    - key: tutorial.next.defense
+      value: "\u0627\u0646\u062A\u062E\u0627\u0628 \u0633\u0627\u0632\u0647\u0654
+        \u062F\u0641\u0627\u0639\u06CC"
+    - key: tutorial.next.place
+      value: "\u0627\u0646\u062A\u062E\u0627\u0628 \u0645\u062D\u0644 \u0633\u0627\u062E\u062A"
+    - key: tutorial.next.produce
+      value: "\u0622\u0645\u0648\u0632\u0634 \u06AF\u0631\u0648\u0647"
+    - key: tutorial.next.rifle
+      value: "\u0627\u0646\u062A\u062E\u0627\u0628 \u06AF\u0631\u0648\u0647 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631"
+    - key: tutorial.next.soldiers
+      value: "\u0633\u0631\u0628\u0627\u0632\u0627\u0646 \u0631\u0627 \u0628\u0627\u0632
+        \u06A9\u0646\u06CC\u062F"
+    - key: tutorial.next.unload
+      value: "\u067E\u06CC\u0627\u062F\u0647 \u06A9\u0631\u062F\u0646 \u06AF\u0631\u0648\u0647"
     - key: ui.aria.aria_control
       value: "\u06A9\u0646\u062A\u0631\u0644 \u0622\u0631\u06CC\u0627"
     - key: ui.aria.attack_button_body
@@ -9996,6 +10228,34 @@ MonoBehaviour:
         \u0628\u0631\u0627\u06CC \u062C\u0627\u0628\u0647\u200C\u062C\u0627\u06CC\u06CC
         \u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645 \u062F\u0631
         \u0645\u06CC\u062F\u0627\u0646 \u0646\u0628\u0631\u062F."
+    - key: unit.description.soldier.0
+      value: "\u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645 \u0645\u062C\u0647\u0632
+        \u0628\u0647 \u062A\u0641\u0646\u06AF\u061B \u0628\u0631\u0627\u06CC \u06AF\u0634\u062A
+        \u0648 \u062F\u0641\u0627\u0639."
+    - key: unit.description.soldier.1
+      value: "\u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645 \u0645\u062C\u0647\u0632
+        \u0628\u0647 \u062A\u0641\u0646\u06AF \u062A\u06A9\u200C\u062A\u06CC\u0631\u0627\u0646\u062F\u0627\u0632\u061B
+        \u0628\u0631\u0627\u06CC \u06AF\u0634\u062A \u0648 \u062F\u0641\u0627\u0639."
+    - key: unit.description.soldier.2
+      value: "\u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645 \u0645\u062C\u0647\u0632
+        \u0628\u0647 \u0645\u0633\u0644\u0633\u0644 \u0633\u0628\u06A9\u061B \u0628\u0631\u0627\u06CC
+        \u06AF\u0634\u062A \u0648 \u062F\u0641\u0627\u0639."
+    - key: unit.description.soldier.3
+      value: "\u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645 \u0645\u062C\u0647\u0632
+        \u0628\u0647 \u062A\u06CC\u0631\u0628\u0627\u0631\u061B \u0628\u0631\u0627\u06CC
+        \u06AF\u0634\u062A \u0648 \u062F\u0641\u0627\u0639."
+    - key: unit.description.soldier.4
+      value: "\u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645 \u0645\u062C\u0647\u0632
+        \u0628\u0647 \u062A\u0641\u0646\u06AF \u067E\u06CC\u0634\u0631\u0641\u062A\u0647\u061B
+        \u0628\u0631\u0627\u06CC \u06AF\u0634\u062A \u0648 \u062F\u0641\u0627\u0639."
+    - key: unit.description.soldier.5
+      value: "\u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645 \u0645\u062C\u0647\u0632
+        \u0628\u0647 \u062A\u067E\u0627\u0646\u0686\u0647\u061B \u0628\u0631\u0627\u06CC
+        \u06AF\u0634\u062A \u0648 \u062F\u0641\u0627\u0639."
+    - key: unit.description.soldier.6
+      value: "\u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645 \u0645\u062C\u0647\u0632
+        \u0628\u0647 \u062A\u067E\u0627\u0646\u0686\u0647\u061B \u0628\u0631\u0627\u06CC
+        \u06AF\u0634\u062A \u0648 \u062F\u0641\u0627\u0639."
     - key: unit.helicopter.transport.description
       value: "\u0628\u0627\u0644\u06AF\u0631\u062F \u062A\u0631\u0627\u0628\u0631\u06CC
         \u0628\u0631\u0627\u06CC \u0633\u0648\u0627\u0631 \u06A9\u0631\u062F\u0646

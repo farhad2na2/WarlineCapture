@@ -444,8 +444,8 @@ public sealed class MatchHudAssistantUiSystemHelperTests
             tutorialStep: 4, tutorialStepCount: 5);
         helper.ApplyReadModel(gateway.AssistantPanel);
         helper.TickHighlight(float.MaxValue);
-        Assert.IsFalse(tutorial.IsPresentationVisible,
-            "Final combat suppresses all later tutorial briefing projections.");
+        Assert.IsTrue(tutorial.IsPresentationVisible,
+            "An attack click must not suppress later mission objectives.");
 
         helper.ResetForMissionAttempt();
         gateway.AssistantPanel = CreateStructuredModel(
@@ -454,9 +454,9 @@ public sealed class MatchHudAssistantUiSystemHelperTests
         helper.ApplyReadModel(gateway.AssistantPanel);
         helper.TickHighlight(0f);
         Assert.IsTrue(tutorial.IsPresentationVisible, "A new mission attempt must present step one again.");
-        Assert.AreEqual(6, gateway.TutorialNarrationSteps.Count,
-            "A replay must narrate the first tutorial step again.");
-        Assert.AreEqual(1, gateway.TutorialNarrationSteps[5]);
+        Assert.AreEqual(7, gateway.TutorialNarrationSteps.Count,
+            "A replay must narrate the first tutorial step again after the later combat lesson.");
+        Assert.AreEqual(1, gateway.TutorialNarrationSteps[6]);
         ui.Dispose();
     }
 

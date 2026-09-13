@@ -74,7 +74,7 @@ namespace Game.UI.Shell.Ecs
                 health01,
                 component.IsVehicle == 0,
                 owned,
-                owned,
+                owned && component.MissionProtected == 0,
                 ResolveBoardEnabled(world.EntityManager, component.FocusedUnit));
             return true;
         }
@@ -99,9 +99,17 @@ namespace Game.UI.Shell.Ecs
                 summary.Health01,
                 false,
                 true,
-                true,
+                CanDestroySelectedMissionUnits(entityManager),
                 ResolveSelectedBoardEnabled(entityManager));
             return true;
+        }
+
+        private static bool CanDestroySelectedMissionUnits(EntityManager em)
+        {
+            using var selected = selectedUnitsQuery.ToEntityArray(Allocator.Temp);
+            foreach (var entity in selected)
+                if (em.HasComponent<CampaignMissionUnitRoleComponent>(entity)) return false;
+            return selected.Length > 0;
         }
 
         private static SelectedGroupSummary BuildSelectedGroupSummary(EntityManager entityManager)

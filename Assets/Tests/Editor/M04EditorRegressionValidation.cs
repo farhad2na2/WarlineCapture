@@ -53,7 +53,7 @@ public static class M04EditorRegressionValidation
             {GameLocalization.SetLocale(language,false);RunSuite(TransportBoardingScenarioLabTests.RunFocusedValidation);passed++;}
             Debug.Log("[M04EditorRegression] result=Passed suites="+passed);ValidationExit.Passed();
         }
-        catch(Exception e){Debug.LogException(e);Debug.LogError("[M04EditorRegression] result=Failed passedSuites="+passed);EditorApplication.Exit(1);}
+        catch(Exception e){Debug.LogException(e);Debug.LogError("[M04EditorRegression] result=Failed passedSuites="+passed);ValidationExit.Failed();}
         finally{GameLocalization.SetLocale(locale,false);}
     }
     private static void RunSuite(Action action)

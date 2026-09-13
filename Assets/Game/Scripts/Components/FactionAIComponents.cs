@@ -13,6 +13,8 @@ namespace Game.Components
     {
         public byte FactionId;
         public int Money;
+        // Staged tactical economy migration; legacy balances remain serialized for other modes.
+        public byte MaterialsOnlyConstruction;
         public float Oil;
         public float Fuel;
         public float OilIncomeRate;

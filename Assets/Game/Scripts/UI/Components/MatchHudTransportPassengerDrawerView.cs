@@ -72,10 +72,12 @@ namespace Game.UI.Runtime
         private RectTransform _cameraButton;
         private bool _selectionLayoutCached;
 
+        private bool _presentationApplied;
+
         private void Awake()
         {
             BindUnityEvents();
-            SetVisible(false);
+            if (!_presentationApplied) SetVisible(false);
         }
 
         private void OnDestroy()
@@ -103,6 +105,7 @@ namespace Game.UI.Runtime
 
         public void Apply(MatchHudTransportPassengersModel model)
         {
+            _presentationApplied = true;
             SetVisible(model.Visible && model.DrawerOpen);
             if (!model.Visible || !model.DrawerOpen)
                 return;

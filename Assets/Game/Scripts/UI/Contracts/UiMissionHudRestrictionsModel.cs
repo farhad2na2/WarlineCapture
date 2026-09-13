@@ -14,7 +14,9 @@ namespace Game.UI.Contracts
             bool cinematicInteractionLocked = false,
             bool hideLogisticsResources = false,
             bool hideUnrelatedControls = false,
-            bool showMissionCredits = false)
+            bool showMissionCredits = false,
+            int availableSquadMask = -1,
+            bool openingCinematic = false)
         {
             IsActive = true;
             MissionId = missionId ?? string.Empty;
@@ -27,8 +29,11 @@ namespace Game.UI.Contracts
             HideLogisticsResources = hideLogisticsResources;
             HideUnrelatedControls = hideUnrelatedControls;
             ShowMissionCredits = showMissionCredits;
+            AvailableSquadMask=availableSquadMask;OpeningCinematic=openingCinematic;
         }
 
+        public int AvailableSquadMask { get; }
+        public bool OpeningCinematic { get; }
         public bool IsActive { get; }
         public string MissionId { get; }
         public bool BuildingDisabled { get; }
@@ -40,6 +45,8 @@ namespace Game.UI.Contracts
         public bool HideLogisticsResources { get; }
         public bool HideUnrelatedControls { get; }
         public bool ShowMissionCredits { get; }
+        public bool UsesMaterialsOnlyConstruction => IsActive &&
+            (MissionId == "saga.ch01.m01.first_contact" || MissionId == "saga.ch01.m02.establish_base");
     }
 
     public interface IUiMissionHudRestrictionsGateway

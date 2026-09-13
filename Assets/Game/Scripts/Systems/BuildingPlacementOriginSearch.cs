@@ -47,5 +47,26 @@ namespace Game.Runtime
             resolved = candidate;
             return isValid(candidate);
         }
+
+        // If the nearby lot is crowded, sample the authored mission zone without a map-wide scan.
+        // At most 169 checks; select the closest valid sample to keep the entry camera move short.
+        internal static bool TryFindAcrossBounds(RectInt origins, Vector2Int preferred,
+            Func<Vector2Int, bool> isValid, out Vector2Int resolved)
+        {
+            resolved=preferred;
+            if(origins.width<=0 || origins.height<=0 || isValid==null) return false;
+            bool found=false; long nearest=long.MaxValue;
+            int columns=Mathf.Min(12,origins.width-1), rows=Mathf.Min(12,origins.height-1);
+            for(int y=0;y<=rows;y++)
+                for(int x=0;x<=columns;x++)
+                {
+                    var candidate=new Vector2Int(origins.xMin+(columns==0?0:x*(origins.width-1)/columns),
+                        origins.yMin+(rows==0?0:y*(origins.height-1)/rows));
+                    long dx=candidate.x-preferred.x,dy=candidate.y-preferred.y,distance=dx*dx+dy*dy;
+                    if(distance>=nearest || !isValid(candidate)) continue;
+                    resolved=candidate;nearest=distance;found=true;
+                }
+            return found;
+        }
     }
 }

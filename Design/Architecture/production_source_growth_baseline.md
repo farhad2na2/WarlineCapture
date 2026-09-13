@@ -2738,14 +2738,6 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
       "scope": "system-helper-growth"
     },
     {
-      "path": "Assets/Game/Scripts/Systems/BuildingPlacementVisualUpdateCompositionSystemHelper.cs",
-      "trackerTaskId": "APH-806",
-      "decisionId": "D-134",
-      "maxLines": 284,
-      "maxBytes": 16135,
-      "scope": "system-helper-growth"
-    },
-    {
       "path": "Assets/Game/Scripts/Systems/BuildingProductionCompositionSystemHelper.cs",
       "trackerTaskId": "APH-710",
       "decisionId": "D-135",

@@ -16,6 +16,7 @@ namespace Game.Runtime
         private static readonly FixedString32Bytes ExtractionBodySuffix = ".body";
         private static readonly FixedString64Bytes ExtractionTargetPrefix = "tutorial.ch01.m04.";
         private static readonly FixedString64Bytes ExtractionGuideAction = "mission.m03.guide.open";
+        private static readonly FixedString64Bytes ExtractionPassengerAction="mission.m04.action.passengers";
         private bool TryUpdateExtractionGuidance(ref SystemState state,Entity root,in CampaignMissionRuntimeComponent runtime,
             in CampaignMissionAttemptFactsComponent facts,in AssistantSettingsComponent settings,in CampaignMissionGuidanceProjectionComponent current)
         {
@@ -33,11 +34,11 @@ namespace Game.Runtime
             acks.Clear();
             bool selectedCarrier=em.Exists(extraction.Carrier)&&em.HasComponent<SelectedUnitTag>(extraction.Carrier);
             bool selectedAircraft=em.Exists(extraction.Aircraft)&&em.HasComponent<SelectedUnitTag>(extraction.Aircraft);
-            bool selectedTeam=false; int inAircraft=0,groundAtLanding=0;float3 team=default;int teamCount=0;
+            int inAircraft=0,groundAtLanding=0;float3 team=default;int selectedTeamCount=0; int teamCount=0;
             var members=em.GetBuffer<CampaignMissionExtractionMember>(root,true);
             for(int i=0;i<members.Length;i++) if(members[i].Kind==1 && em.Exists(members[i].Entity))
             {
-                var e=members[i].Entity;selectedTeam|=em.HasComponent<SelectedUnitTag>(e);
+                var e=members[i].Entity;if(em.HasComponent<SelectedUnitTag>(e)) selectedTeamCount++;
                 if(em.HasComponent<LocalTransform>(e)){var pos=em.GetComponentData<LocalTransform>(e).Position;team+=pos;teamCount++;
                     if(!em.HasComponent<UnitTransportPassenger>(e)&&math.distancesq(pos.xz,extraction.LandingCenter.xz)<=25*25)groundAtLanding++;}
                 if(em.HasComponent<UnitTransportPassenger>(e)&&em.GetComponentData<UnitTransportPassenger>(e).Transport==extraction.Aircraft)inAircraft++;
@@ -50,7 +51,7 @@ namespace Game.Runtime
             if(runtime.Guidance==NarrativeGuidanceMode.Contextual)extraction.GuidanceCompletedMask|=1u|2u|8u|128u;
             for(int step=1;step<=12;step++)
             {
-                bool done=step switch {2=>selectedCarrier,3=>nearTeam||facts.ExtractionCarrierLegCount>0,4=>selectedTeam||facts.ExtractionCarrierLegCount>0,
+                bool done=step switch {2=>selectedCarrier,3=>nearTeam||facts.ExtractionCarrierLegCount>0,4=>selectedTeamCount==4||facts.ExtractionCarrierLegCount==4,
                     5=>facts.ExtractionCarrierLegCount==4,6=>atLanding&&facts.ExtractionCarrierLegCount==4,7=>extraction.UnloadedAtLanding!=0||inAircraft==4,
                     8=>selectedAircraft||inAircraft>0,9=>inAircraft==4,10=>extraction.DepartureCleared!=0,11=>facts.ExtractionDeparted!=0,12=>runtime.Outcome!=MissionOutcomeKind.None,_=>false};
                 if(done)extraction.GuidanceCompletedMask|=1u<<(step-1);
@@ -66,9 +67,9 @@ namespace Game.Runtime
                 RecommendationKind=AssistantRecommendationKind.Explain,TargetKind=AssistantTargetKind.UiSurface,
                 TargetId=targetId,
                 Title=title,Body=body,
-                ActionLabel=chosen==1?RadarContinue:chosen is 7 or 10 or 12?ExtractionGuideAction:RadarAct,
+                ActionLabel=chosen==7 ? ExtractionPassengerAction : chosen==1?RadarContinue:chosen is 10 or 12?ExtractionGuideAction:RadarAct,
                 Priority=facts.ElapsedMilliseconds>=480000?AssistantMessagePriority.Critical:AssistantMessagePriority.High,
-                CanShow=1,CanExecute=1,WorldPosition=chosen<=5?team:chosen>=11?extraction.DepartureCenter:extraction.LandingCenter,HasWorldPosition=1,
+                CanShow=1,CanExecute=chosen==7 && !selectedCarrier ? (byte)0 : (byte)1,WorldPosition=chosen<=5?team:chosen>=11?extraction.DepartureCenter:extraction.LandingCenter,HasWorldPosition=1,
                 SubtitlesEnabled=settings.SubtitlesEnabled,LargeTextEnabled=settings.LargeTextEnabled,HighContrastEnabled=settings.HighContrastEnabled};
             if(!ProjectionEquals(in current,in next)||current.MissionSourceVersion!=next.MissionSourceVersion||!current.Title.Equals(next.Title)||current.Priority!=next.Priority)em.SetComponentData(root,next);
             return true;

@@ -140,12 +140,20 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: price
+      value: 7000
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
       propertyPath: config
       value: 
       objectReference: {fileID: 11400000, guid: 75f9e9ece64274b898e6d3036ce920c7, type: 2}
     - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: isWall
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
       propertyPath: maxHealth
-      value: 5000
+      value: 1800
       objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
       propertyPath: Description
@@ -156,9 +164,22 @@ PrefabInstance:
       value: Factory
       objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
-      propertyPath: displayName
-      value: Helipad
+      propertyPath: description
+      value: Fence barrier segment used to shape access routes and protect controlled
+        areas.
       objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: displayName
+      value: Fence Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: materialsCost
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: portraitSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: da0c4d76bfa94887a97477ebc3b2e55b, type: 3}
     - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
       propertyPath: FootprintCells.x
       value: 30
@@ -167,6 +188,26 @@ PrefabInstance:
       propertyPath: FootprintCells.y
       value: 40
       objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: footprintCells.x
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: footprintCells.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: portraitCardSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 7bd3754539804e2b94c8570a330aeb3a, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: portraitActionSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 9da3ee488af324969b1a5d1e15c05fc1, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: destroyedVisualPrefab
+      value: 
+      objectReference: {fileID: 2490435404810739185, guid: 7e8f741ce4cb54f959347f921225f8b2, type: 3}
     - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
       propertyPath: Productions.Array.size
       value: 3
@@ -231,11 +272,8 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 2674124398502211660, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
-      insertIndex: 0
+      insertIndex: -1
       addedObject: {fileID: 1234500591689881050}
-    - targetCorrespondingSourceObject: {fileID: 2674124398502211660, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
-      insertIndex: 1
-      addedObject: {fileID: 2613294175857914706}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
 --- !u!4 &7518949722567986763 stripped

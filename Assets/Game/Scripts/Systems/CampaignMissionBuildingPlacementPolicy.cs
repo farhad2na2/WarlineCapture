@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Game.Runtime
 {
-    internal static class CampaignMissionBuildingPlacementPolicy
+    internal static partial class CampaignMissionBuildingPlacementPolicy
     {
         internal static bool TryResolveInitialPlacementOrigin(BuildingGameplaySourceCompositionSystemHelper source,
             BuildingRuntimeSpawnCompositionSystemHelper.Context context, BuildingDefinition definition,
@@ -21,6 +21,7 @@ namespace Game.Runtime
             if (hasMissionOrigins)
                 origin = new Vector2Int(missionOrigins.xMin + (missionOrigins.width - 1) / 2,
                     missionOrigins.yMin + (missionOrigins.height - 1) / 2);
+            origin = DefenseOrigin(source, context, definition, footprint, origin);
             bool found = source.BuildingRuntimeSpawnCompositionSystemHelper.TryResolveInitialPlacementOrigin(
                 context, definition, origin, out resolved, hasMissionOrigins ? missionOrigins : null);
             if (!found && hasMissionOrigins && context.TryGetGridData(out _, out var grid, out var roads, out var blockers))

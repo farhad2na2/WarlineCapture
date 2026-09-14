@@ -3570,30 +3570,80 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: price
+      value: 140000
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
       propertyPath: config
       value: 
       objectReference: {fileID: 11400000, guid: 8baf16eeba5dd4bdfa37a69237a67241, type: 2}
     - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
-      propertyPath: displayName
-      value: Helipad
+      propertyPath: maxHealth
+      value: 2200
       objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: description
+      value: High-capacity refinery for large-scale fuel production and resource
+        processing.
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: displayName
+      value: Large Oil Refinery
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: materialsCost
+      value: 260
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: portraitSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 14e4ebdcc7b245209d01a3265e89a5e3, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: footprintCells.x
+      value: 53
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: footprintCells.y
+      value: 38
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: fuelBarrelsPerDay
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: oilStorageCapacity
+      value: 10000
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: portraitCardSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: ae05ba6fa6384a7c800e5054cce506f5, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: fuelStorageCapacity
+      value: 10000
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: portraitActionSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: e736cacc966046628bf2dbce96aa59af, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: destroyedVisualPrefab
+      value: 
+      objectReference: {fileID: 8037977459368749625, guid: 229dd2415c4b4400d8892a916e022cf5, type: 3}
     - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
       propertyPath: productions.Array.size
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9112959322384211678, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
       propertyPath: m_Name
-      value: Building_GasTower_Big
+      value: Building_Refinery_Big
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 2674124398502211660, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
-      insertIndex: 0
+      insertIndex: -1
       addedObject: {fileID: 3755602177365449185}
-    - targetCorrespondingSourceObject: {fileID: 2674124398502211660, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
-      insertIndex: 1
-      addedObject: {fileID: 9052550398895897987}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
 --- !u!4 &3734063830265505149 stripped

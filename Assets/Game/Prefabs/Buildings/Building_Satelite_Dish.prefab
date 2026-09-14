@@ -321,6 +321,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: price
+      value: 20000
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
       propertyPath: config
       value: 
       objectReference: {fileID: 11400000, guid: 2b70db4780979459fab85ddbb4e401df, type: 2}
@@ -334,12 +338,45 @@ PrefabInstance:
       value: Soldier Base
       objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
-      propertyPath: displayName
-      value: Satelite Dish
+      propertyPath: description
+      value: Air surveillance dish that detects hostile aircraft approaching the
+        base but cannot attack.
       objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: displayName
+      value: Satellite Dish
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: materialsCost
+      value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: portraitSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: bc4e95d4062f46cab616b6ecbe76c99e, type: 3}
     - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
       propertyPath: FootprintCells.y
       value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: footprintCells.x
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: portraitCardSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 6601f38c00374c339a924f677f473f6c, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: threatDetectionKind
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: portraitActionSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 50be5331c2714fd5a01d12d7f5242197, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: destroyedVisualPrefab
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
       propertyPath: Productions.Array.size
@@ -348,6 +385,10 @@ PrefabInstance:
     - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
       propertyPath: productions.Array.size
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
+      propertyPath: threatDetectionRadiusCells
+      value: 240
       objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
       propertyPath: Productions.Array.data[0].ButtonText
@@ -369,7 +410,7 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 2674124398502211660, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
-      insertIndex: 0
+      insertIndex: -1
       addedObject: {fileID: 1949873674203316042}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}

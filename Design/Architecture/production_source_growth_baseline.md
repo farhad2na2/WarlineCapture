@@ -2786,22 +2786,6 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
       "scope": "system-helper-growth"
     },
     {
-      "path": "Assets/Game/Scripts/Systems/BuildingUiCommandSystemHelper.cs",
-      "trackerTaskId": "APH-710",
-      "decisionId": "D-141",
-      "maxLines": 240,
-      "maxBytes": 10267,
-      "scope": "system-helper-growth"
-    },
-    {
-      "path": "Assets/Game/Scripts/Systems/BuildingUiContextCompositionSystemHelper.cs",
-      "trackerTaskId": "APH-710",
-      "decisionId": "D-142",
-      "maxLines": 303,
-      "maxBytes": 16560,
-      "scope": "system-helper-growth"
-    },
-    {
       "path": "Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogQueryUiSystemHelper.cs",
       "trackerTaskId": "APH-710",
       "decisionId": "D-143",

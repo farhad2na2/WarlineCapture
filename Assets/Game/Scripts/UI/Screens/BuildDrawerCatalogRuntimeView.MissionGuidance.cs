@@ -22,6 +22,8 @@ namespace Game.UI.Runtime
             BuildDrawerCatalogPresentationSystemHelper.WireTabs(view, _tabBindings, SelectCategory);
             WirePrimaryAction();
             WireQueueControls();
+            if (UiShellRuntimeGateway.TryReadMissionDefense(out var defense) && defense.GuidanceId == 45003)
+                UiShellRuntimeGateway.TryRequestMissionDefenseAction(UiMissionDefenseAction.ContinueExplanation);
             Refresh();
             UiShellRuntimeGateway.TryAcknowledgeCampaignGuidanceTarget(
                 UiCampaignGuidanceTargetKind.BuildButton);
@@ -50,11 +52,7 @@ namespace Game.UI.Runtime
                 else if (RequiresExplicitMissionSelection() || UiShellRuntimeGateway.TryReadMissionDefense(out var defense) && defense.IsActive)
                 {
                     ClearSelection();
-                    ApplyInstruction(
-                        _gameTextResolver.Get(
-                            "build.drawer.failure.invalid_selection",
-                            "Select a build drawer item first."),
-                        BuildDrawerInstructionSeverity.Neutral);
+                    ApplyInstruction(FormatNoSelectionInstruction(), BuildDrawerInstructionSeverity.Neutral);
                 }
                 else
                     SelectItem(view.ItemTemplate, _items[0]);

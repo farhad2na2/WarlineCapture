@@ -579,13 +579,69 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: price
+      value: 8000
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
       propertyPath: config
       value: 
       objectReference: {fileID: 11400000, guid: 72d9657d8f35543578cf29178a95ac25, type: 2}
     - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
-      propertyPath: displayName
-      value: Tent_Contractor
+      propertyPath: maxHealth
+      value: 350
       objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: description
+      value: Field tent for contractors, workers, and temporary support staff.
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: displayName
+      value: Contractor Tent
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: materialsCost
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: portraitSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: a80e774ed94447bf8f085dab571caa11, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: footprintCells.x
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: footprintCells.y
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: portraitCardSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: a55ecaddfcef4267a122fcf05817dd9b, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: portraitActionSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: be587edee206f4511b64dddd5f1b212b, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: destroyedVisualPrefab
+      value: 
+      objectReference: {fileID: 8743816168242733730, guid: 606422127bfd24812a4f079967e8b066, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: productions.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: productions.Array.data[0].spawnUnitPrefab
+      value: 
+      objectReference: {fileID: 3282182154612916099, guid: f7fab5771a1744644b5f6b8efff8b6ec, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: productions.Array.data[1].spawnUnitPrefab
+      value: 
+      objectReference: {fileID: 3282182154612916099, guid: 058513b35b4a14b9cb012570502d1259, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: productions.Array.data[2].spawnUnitPrefab
+      value: 
+      objectReference: {fileID: 3282182154612916099, guid: 45e248593e3114d24a968047f55ca26e, type: 3}
     - target: {fileID: 9098659505652251755, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.25999928
@@ -602,7 +658,7 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 2674124398502211660, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
-      insertIndex: 0
+      insertIndex: -1
       addedObject: {fileID: 966856368686105116}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2e5a8684acff547e298ae30fae289270, type: 3}

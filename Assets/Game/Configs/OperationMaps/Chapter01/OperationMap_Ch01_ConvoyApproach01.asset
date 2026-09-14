@@ -16,8 +16,8 @@ MonoBehaviour:
   schemaVersion: 1
   contentVersion: 1
   sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
-  contentHash: 9ec43e2eee89dad7f06eef51426abbc0ed78dfa36efd9a0d77ee904a3f07cda6
-  generatedMetadataHash: 9ec43e2eee89dad7f06eef51426abbc0ed78dfa36efd9a0d77ee904a3f07cda6
+  contentHash: 58d30c88c8151e501c04f8b05fcc1d165fc0f624619f71b9f4c1013bb2692c50
+  generatedMetadataHash: 58d30c88c8151e501c04f8b05fcc1d165fc0f624619f71b9f4c1013bb2692c50
   sourceBinding:
     sourceOperationMapId: opmap.skirmish.desert_base_01
     sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
@@ -287,47 +287,75 @@ MonoBehaviour:
     laneIndex: 0
   - anchorId: anchor.ch01.m03.convoy_path_014
     kind: 11
-    position: {x: 1005, y: 0.009179778, z: 395}
+    position: {x: 1004, y: 0.44917977, z: 427}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 3
     factionId: 0
     laneIndex: 0
   - anchorId: anchor.ch01.m03.convoy_path_015
     kind: 11
-    position: {x: 1004, y: 0.009179778, z: 367}
+    position: {x: 1036, y: 0.44917977, z: 427}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 3
     factionId: 0
     laneIndex: 0
   - anchorId: anchor.ch01.m03.convoy_path_016
     kind: 11
-    position: {x: 1003, y: 0.009179778, z: 366}
+    position: {x: 1039, y: 0.44917977, z: 427}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 3
     factionId: 0
     laneIndex: 0
   - anchorId: anchor.ch01.m03.convoy_path_017
     kind: 11
-    position: {x: 998, y: 0.009179778, z: 346}
+    position: {x: 1039, y: 0.009179778, z: 395}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 3
     factionId: 0
     laneIndex: 0
   - anchorId: anchor.ch01.m03.convoy_path_018
     kind: 11
-    position: {x: 985, y: 0.009179778, z: 346}
+    position: {x: 1039, y: 0.009179778, z: 363}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 3
     factionId: 0
     laneIndex: 0
   - anchorId: anchor.ch01.m03.convoy_path_019
     kind: 11
-    position: {x: 954, y: 0.029179778, z: 342}
+    position: {x: 1039, y: 0.009179778, z: 346}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 3
     factionId: 0
     laneIndex: 0
   - anchorId: anchor.ch01.m03.convoy_path_020
+    kind: 11
+    position: {x: 1007, y: 0.009179778, z: 346}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 3
+    factionId: 0
+    laneIndex: 0
+  - anchorId: anchor.ch01.m03.convoy_path_021
+    kind: 11
+    position: {x: 1002, y: 0.009179778, z: 346}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 3
+    factionId: 0
+    laneIndex: 0
+  - anchorId: anchor.ch01.m03.convoy_path_022
+    kind: 11
+    position: {x: 1002, y: -0.23082021, z: 342}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 3
+    factionId: 0
+    laneIndex: 0
+  - anchorId: anchor.ch01.m03.convoy_path_023
+    kind: 11
+    position: {x: 970, y: 0.059179775, z: 342}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 3
+    factionId: 0
+    laneIndex: 0
+  - anchorId: anchor.ch01.m03.convoy_path_024
     kind: 11
     position: {x: 942, y: -0.12082022, z: 342}
     eulerAngles: {x: 0, y: 0, z: 0}

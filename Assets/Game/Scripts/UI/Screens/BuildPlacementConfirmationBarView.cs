@@ -238,8 +238,8 @@ namespace Game.UI.Runtime
             SetText(oilCostText, FormatResource(materialsOnly ? 0 : _commandSystem.ActivePlacementCreditsCost));
             if (fuelCostText != null && (materialsOnly || string.IsNullOrWhiteSpace(fuelCostText.text)))
                 SetText(fuelCostText, "0");
-            if (footprintText != null && string.IsNullOrWhiteSpace(footprintText.text))
-                SetText(footprintText, "3x3");
+            var cells = (_commandSystem as IBuildingPlacementFootprintQuery)?.ActivePlacementFootprint ?? Vector2Int.zero;
+            SetText(footprintText, cells.x > 0 && cells.y > 0 ? $"{cells.x}×{cells.y}" : "—");
             SetText(durationText, FormatDuration(_commandSystem.ActivePlacementDurationSeconds));
             SetText(instructionText, _gameTextResolver.Get("build.placement.instruction.confirm", "DRAG TO POSITION, CONFIRM TO BUILD"));
 

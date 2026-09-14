@@ -32,6 +32,17 @@ namespace Game.Editor
             GridConfig grid,DynamicBuffer<GridRoad> roads,DynamicBlockerComponent blockers,Camera camera)
         {
             var footprint=source.BuildingPlacementGridCameraSystemHelper.GetPlacementFootprint(placement.Definition,true);
+            if(source.BuildingEntityManagerAccessSystem.TryGetEntityManager(out var em))
+            {
+                using var q=em.CreateEntityQuery(typeof(RuntimeBuildingCombatInfo),typeof(OperationMapBuildingComponent));
+                using var entities=q.ToEntityArray(Unity.Collections.Allocator.Temp);
+                foreach(var entity in entities)
+                {
+                    var b=em.GetComponentData<RuntimeBuildingCombatInfo>(entity);
+                    if(new RectInt(b.OriginCell.x,b.OriginCell.y,b.FootprintCells.x,b.FootprintCells.y).Overlaps(new RectInt(870,422,120,8)))
+                        Debug.Log("[RoadGateMapOccupant] entity="+entity+" origin="+b.OriginCell+" size="+b.FootprintCells+" identity="+em.GetComponentData<OperationMapBuildingComponent>(entity).StableId);
+                }
+            }
             Debug.Log("[RoadGateModel] grid="+grid.CellSize+" bounds="+placement.PreviewInstance.GetComponentInChildren<Renderer>().bounds);
             for(int x=935;x<=980;x+=5)
             {

@@ -16,8 +16,15 @@ namespace Game.Editor
         private static int tutorialBuildClick;
         private static double tutorialBuildNext;
         private static bool tutorialBuildCaptured, tutorialPlotStaged;
+        private static bool completeBuildingJourney;
+        private static string tutorialBuildLocale="fa-IR";
+        private static int tutorialMaterialsSpent, tutorialCreditsSpent;
+        public static void RebuildAndRunBuildingJourneyEnglish() {M03RadarWarningConfigBuilder.Build(); RunBuildingJourneyEnglish();}
+        public static void RunBuildingJourneyEnglish() { RunTutorialBuildClicks(); completeBuildingJourney=true; SessionState.SetBool("Warline.M03.Probe.RoadGateTutorial",true); tutorialBuildLocale="en"; Game.Configs.GameLocalization.SetLocale("en",false); }
+        public static void RunBuildingJourneyPersian() { RunTutorialBuildClicks(); completeBuildingJourney=true; SessionState.SetBool("Warline.M03.Probe.RoadGateTutorial",true); }
         public static void RunTutorialBuildClicks()
         {
+            completeBuildingJourney=false; tutorialBuildLocale="fa-IR"; tutorialMaterialsSpent=tutorialCreditsSpent=0;
             RunFullGuidanceJourney();
             Game.Configs.GameLocalization.SetLocale("fa-IR",false);
             placementDragPhase=0;
@@ -30,18 +37,23 @@ namespace Game.Editor
             if(guidance.GuidanceId==45005 && tutorialBuildClick>=4)
             {
                 SessionState.SetBool(TutorialBuildKey,false); SessionState.SetBool("Warline.M03.Probe.RoadGateTutorial",false);
+                if (completeBuildingJourney) { Debug.Log("[M03BuildingJourney] one real defense placed; continuing through combat and results."); return false; }
                 Complete(true,"M3 tutorial: Build -> defense card -> Place -> Confirm; pointer drag stayed fixed, valid placement advanced to squad movement."); return true;
             }
             if(guidance.GuidanceId!=45004) return false;
             if(EditorApplication.timeSinceStartup<tutorialBuildNext) return true;
             var aria=UnityEngine.Object.FindAnyObjectByType<AriaTutorialBriefingView>();
-            if(tutorialBuildClick<3 && (aria==null || !aria.IsPresentationVisible ||
+            var drawer=UnityEngine.Object.FindAnyObjectByType<BuildDrawerView>();
+            if(tutorialBuildClick<3 && (drawer==null || !drawer.IsOpen) && (aria==null || !aria.IsPresentationVisible ||
                 !UiShellRuntimeGateway.TryReadMatchHudAssistantPanel(out var panel) || panel.TutorialStep!=4 ||
                 (byte)typeof(AriaTutorialBriefingView).GetField("_tutorialStep",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(aria)!=4))
                 return true;
-            var drawer=UnityEngine.Object.FindAnyObjectByType<BuildDrawerView>();
             if(tutorialBuildClick==0)
-            { ClickCommand(aria.DoItButton); tutorialBuildClick++; tutorialBuildNext=EditorApplication.timeSinceStartup+2; return true; }
+            {
+                if (drawer == null || !drawer.IsOpen)
+                    ClickCommand(UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>().BuildButton);
+                tutorialBuildClick++; tutorialBuildNext=EditorApplication.timeSinceStartup+2; return true;
+            }
             Button button;
             if(tutorialBuildClick is 1 or 2)
             {
@@ -76,6 +88,11 @@ namespace Game.Editor
                 }
             }
             else return true;
+            if (tutorialBuildClick==3)
+            {
+                var command=UnityEngine.Object.FindAnyObjectByType<MatchSceneView>().MatchBootstrap.BuildingUiCommandContract;
+                tutorialMaterialsSpent=command.ActivePlacementCost; tutorialCreditsSpent=command.ActivePlacementCreditsCost;
+            }
             ClickCommand(button); tutorialBuildCaptured=false; tutorialBuildClick++; tutorialBuildNext=EditorApplication.timeSinceStartup+1; return true;
         }
     }

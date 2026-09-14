@@ -123,6 +123,9 @@ namespace Game.Editor
                             nextAction = EditorApplication.timeSinceStartup + 1; return;
                         }
                         var confirmation = UnityEngine.Object.FindAnyObjectByType<BuildPlacementConfirmationBarView>();
+                        if (command is not Game.UI.Contracts.IBuildingPlacementFootprintQuery footprint ||
+                            footprint.ActivePlacementFootprint != new Vector2Int(28,15) || confirmation.FootprintText.text != "28×15")
+                            throw new InvalidOperationException("M2 preview must show and reserve its actual 28×15 footprint.");
                         if (!Click(confirmation?.ConfirmButton)) return;
                         if (command.HasPendingBuildingPlacement) throw new InvalidOperationException("Confirm did not commit the building.");
                         Next(); break;

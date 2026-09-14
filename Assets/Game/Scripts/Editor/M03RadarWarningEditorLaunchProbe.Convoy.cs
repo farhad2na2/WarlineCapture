@@ -48,8 +48,8 @@ namespace Game.Editor
                 owners++;
                 FactionTacticalMaterialsComponent materials = em.GetComponentData<FactionTacticalMaterialsComponent>(entity);
                 Debug.Log($"[M03LaunchProbe] actual budget credits={economy.Money} materials={materials.Current}/{materials.Capacity}");
-                if (economy.Money != 50000 || materials.Current != 100 || materials.Capacity != 100)
-                    throw new InvalidOperationException("The real M3 starting budget was overwritten or charged for its initial producer.");
+                if (economy.Money != 50000-tutorialCreditsSpent || materials.Current != 100-tutorialMaterialsSpent || materials.Capacity != 100)
+                    throw new InvalidOperationException("The real M3 budget does not match its starting resources minus confirmed tutorial construction.");
             }
             if (owners != 1) throw new InvalidOperationException("Expected one player resource owner.");
         }

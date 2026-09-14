@@ -29,7 +29,7 @@ namespace Game.Editor
                 BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetBuildingDefinitionMetadata,
                 BuildingDefinitionAuthoringMetadataPrefabSystemHelper.TryGetUnitDefinitionMetadata);
             var definition = definitions.CreateRuntimeBuildingDefinition(prefab, "Barracks", "", Vector2Int.one, 1, new BuildingRunwaySystem());
-            if (definition.FootprintCells != new Vector2Int(40, 20) || definition.LocalBounds.size.x > 40 || definition.LocalBounds.size.z > 20)
+            if (definition.FootprintCells != BuildingModelBounds.EnclosingCells(definition.LocalBounds) || definition.LocalBounds.size.x > 40 || definition.LocalBounds.size.z > 20)
                 throw new InvalidOperationException($"Barracks still exceeds the mission lot: footprint={definition.FootprintCells} bounds={definition.LocalBounds}");
             Debug.Log($"[M02BarracksPlacementAssetRepair] result=Passed footprint={definition.FootprintCells} bounds={definition.LocalBounds}");
         }

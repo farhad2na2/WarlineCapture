@@ -11,7 +11,9 @@ namespace Game.UI.Runtime
 {
     public sealed partial class BuildDrawerCatalogRuntimeView
     {
-        private string FormatNoSelectionInstruction()=>_items.Count>0 ? _gameTextResolver.Get("build.drawer.empty.select_item","Select an item to place, produce, or recruit.") :
+        private string FormatNoSelectionInstruction()=>
+            UiShellRuntimeGateway.TryReadMissionDefense(out var defense) && defense.GuidanceId is 45003 or 45004
+                ? _gameTextResolver.Get("mission.m03.build.choose_one", "Choose ONE defense: a Road Barrier across the road, or a Guard Tower beside it.") : _items.Count>0 ? _gameTextResolver.Get("build.drawer.empty.select_item","Select an item to place, produce, or recruit.") :
             BuildDrawerCatalogPresentationSystemHelper.FormatEmptyCategoryInstruction(_gameTextResolver,_activeCategory);
         private void ApplyInstructionForCurrentSelection()
         {

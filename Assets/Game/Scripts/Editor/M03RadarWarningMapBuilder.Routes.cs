@@ -16,8 +16,10 @@ namespace Game.Editor
             new(590,426), new(622,426), new(654,426), new(673,427), new(705,427),
             new(737,427), new(769,427), new(801,427), new(830,426), new(862,426),
             new(876,426), new(908,426), new(940,426), new(972,426), new(1004,426),
-            new(1005,395), new(1004,367), new(1003,366), new(998,346), new(985,346),
-            new(954,342), new(942,342)
+            // The measured airport/helipad footprint closes the old (1005,395) shortcut.
+            // Follow the clear eastern edge, surveyed against the rebaked five-cell vehicle mask.
+            new(1004,427), new(1039,427), new(1039,395), new(1039,363), new(1039,346),
+            new(1007,346), new(1002,346), new(1002,342), new(970,342), new(942,342)
         };
 
         private static bool Clear(ref MapSurfaceBlob surface, int2 cell, int halfWidth)

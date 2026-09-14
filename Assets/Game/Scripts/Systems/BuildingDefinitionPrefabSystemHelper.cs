@@ -384,8 +384,9 @@ namespace Game.Runtime
                 DestroyedVisualPrefab = metadata.HasDefinitionMetadata ? metadata.DefinitionMetadata.DestroyedVisualPrefab : null,
                 SelectionPortraitSprite = metadata.HasDefinitionMetadata ? metadata.DefinitionMetadata.SelectionPortraitSprite : null,
                 CardPortraitSprite = metadata.HasDefinitionMetadata ? metadata.DefinitionMetadata.CardPortraitSprite : null,
-                FootprintCells = Vector2Int.Max(metadata.HasVisualFootprint ? metadata.VisualFootprint : Vector2Int.one,
-                    metadata.HasDefinitionMetadata ? NormalizeFootprint(metadata.DefinitionMetadata.FootprintCells) : fallbackFootprint),
+                FootprintCells = metadata.HasVisualFootprint && prefab.name != "Building_Road_Barrier"
+                    ? metadata.VisualFootprint : Vector2Int.Max(metadata.HasVisualFootprint ? metadata.VisualFootprint : Vector2Int.one,
+                        metadata.HasDefinitionMetadata ? NormalizeFootprint(metadata.DefinitionMetadata.FootprintCells) : fallbackFootprint),
                 Role = metadata.HasDefinitionMetadata ? metadata.DefinitionMetadata.Role : BuildingRole.None,
                 IsWall = metadata.HasDefinitionMetadata && metadata.DefinitionMetadata.IsWall,
                 CreditsCost = metadata.HasDefinitionMetadata ? Mathf.Max(0, metadata.DefinitionMetadata.Price) : 0,
@@ -474,7 +475,8 @@ namespace Game.Runtime
                 DestroyedVisualPrefab = hasMetadata ? metadata.DestroyedVisualPrefab : null,
                 SelectionPortraitSprite = hasMetadata ? metadata.SelectionPortraitSprite : null,
                 CardPortraitSprite = hasMetadata ? metadata.CardPortraitSprite : null,
-                FootprintCells = Vector2Int.Max(hasVisualFootprint ? visualFootprint : Vector2Int.one, configuredFootprint),
+                FootprintCells = hasVisualFootprint && prefab.name != "Building_Road_Barrier" ? visualFootprint :
+                    Vector2Int.Max(hasVisualFootprint ? visualFootprint : Vector2Int.one, configuredFootprint),
                 Role = hasMetadata ? metadata.Role : BuildingRole.None,
                 IsWall = hasMetadata && metadata.IsWall,
                 CreditsCost = hasMetadata ? Mathf.Max(0, metadata.Price) : 0,
@@ -943,53 +945,12 @@ namespace Game.Runtime
             if (!TryGetPrefabLocalBounds(prefab, out Bounds localBounds))
                 return false;
 
-            int width = Mathf.Max(1, Mathf.CeilToInt(Mathf.Abs(localBounds.size.x)));
-            int height = Mathf.Max(1, Mathf.CeilToInt(Mathf.Abs(localBounds.size.z)));
-            footprint = new Vector2Int(width, height);
+            footprint = BuildingModelBounds.EnclosingCells(localBounds);
             return true;
         }
 
-        private static bool TryGetLocalBounds(GameObject target, out Bounds bounds)
-        {
-            bounds = default;
-            if (target == null)
-                return false;
-
-            var renderers = target.GetComponentsInChildren<Renderer>(true);
-            bool hasBounds = false;
-            Matrix4x4 worldToLocal = target.transform.worldToLocalMatrix;
-            foreach (Renderer renderer in renderers)
-            {
-                Bounds rendererBounds = renderer.bounds;
-                Vector3 min = rendererBounds.min;
-                Vector3 max = rendererBounds.max;
-                for (int x = 0; x < 2; x++)
-                {
-                    for (int y = 0; y < 2; y++)
-                    {
-                        for (int z = 0; z < 2; z++)
-                        {
-                            Vector3 corner = new(
-                                x == 0 ? min.x : max.x,
-                                y == 0 ? min.y : max.y,
-                                z == 0 ? min.z : max.z);
-                            Vector3 localCorner = worldToLocal.MultiplyPoint3x4(corner);
-                            if (!hasBounds)
-                            {
-                                bounds = new Bounds(localCorner, Vector3.zero);
-                                hasBounds = true;
-                            }
-                            else
-                            {
-                                bounds.Encapsulate(localCorner);
-                            }
-                        }
-                    }
-                }
-            }
-
-            return hasBounds;
-        }
+        private static bool TryGetLocalBounds(GameObject target, out Bounds bounds) =>
+            BuildingModelBounds.TryMeasure(target, out bounds);
 
     }
 }

@@ -235,8 +235,8 @@ namespace Game.Authoring
             return true;
         }
 
-        [BakingVersion("WarlineCapture", 1)]
-        private sealed class OperationMapBuildingBaker : Baker<OperationMapBuildingAuthoring>
+        [BakingVersion("WarlineCapture", 3)]
+        private sealed partial class OperationMapBuildingBaker : Baker<OperationMapBuildingAuthoring>
         {
             public override void Bake(OperationMapBuildingAuthoring authoring)
             {
@@ -249,6 +249,7 @@ namespace Game.Authoring
                 Vector2Int footprint = authoring.FootprintCells;
                 int2 footprintCells = new(math.max(1, footprint.x), math.max(1, footprint.y));
                 int2 origin = new(authoring.originCell.x, authoring.originCell.y);
+                ResolveAuthoredFootprint(authoring, ref origin, ref footprintCells);
                 int runtimeBuildingId = authoring.placementIndex + 1;
                 int maxHealth = authoring.MaxHealth;
 

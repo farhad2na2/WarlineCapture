@@ -69,6 +69,7 @@ namespace Game.Editor
                     string log=$"step={step} phase={runtime.Phase} ready={runtime.ReadyReadiness}/{runtime.RequiredReadiness} spawned={facts.CommandSquadSpawned} breachReady={breach.Ready} gate={breach.Gate} hp={Hp(em,breach.Gate)} core={breach.Core} hp={Hp(em,breach.Core)} clock={facts.ElapsedMilliseconds} hostiles={facts.HostileDefeatedCount}/{facts.HostileTotalCount} hold={breach.SecureHoldMilliseconds} integrity={facts.HostileRosterIntegrityFault} gateRequest={breach.GateRequestId} coreRequest={breach.CoreRequestId}";
                     Debug.Log("[M05EditorProbe] "+log);File.AppendAllText(Output+"/state.txt",log+"\n");
                 }
+                if (InspectRadarFootprint(em, breach)) return;
                 if(SessionState.GetBool("Warline.M05.RetryProbe",false)){TickRetry(em,root,runtime,facts,breach);return;}
                 if(recoveryStage!=0) {TickReturn(em,root,runtime,breach);return;}
                 if(runtime.Outcome==MissionOutcomeKind.Defeat) throw new InvalidOperationException("M5 defeat: timeout="+facts.BreachTimedOut+" integrity="+facts.HostileRosterIntegrityFault+" losses="+facts.SquadLossCount);

@@ -80,7 +80,7 @@ public sealed class NonEcsSystemConversionArchitectureTests
         "Assets/Game/Scripts/Components/MapSurfaceComponents.cs|MapSurfaceCell",
         "Assets/Game/Scripts/Composition/MatchIntroEcsStateQuery.cs|MatchIntroEcsStateQuery",
         "Assets/Game/Scripts/Composition/GameTextResolverAdapter.cs|GameTextResolverAdapter",
-        "Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs|BuildingUiCommandAdapter",
+        "Assets/Game/Scripts/Composition/BuildingUiCommandAdapter.cs|BuildingUiCommandAdapter",
         "Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs|BuildingUiQueryAdapter",
         "Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs|MatchHudCameraControlAdapter",
         "Assets/Game/Scripts/Composition/MatchHudMinimapDataSourceAdapter.cs|MatchHudMinimapDataSourceAdapter",
@@ -94,6 +94,7 @@ public sealed class NonEcsSystemConversionArchitectureTests
         "Assets/Game/Scripts/UI/Contracts/IGameTextResolver.cs|IGameTextResolver",
         "Assets/Game/Scripts/UI/Contracts/IMatchIntroStateQuery.cs|IMatchIntroStateQuery",
         "Assets/Game/Scripts/UI/Contracts/UiRuntimeContracts.cs|IBuildingUiQuery",
+        "Assets/Game/Scripts/UI/Contracts/IBuildingPlacementFootprintQuery.cs|IBuildingPlacementFootprintQuery",
         "Assets/Game/Scripts/UI/Settings/SettingsPopupView.cs|SettingsPopupContext",
         "Assets/Game/Scripts/UI/Settings/SettingsService.cs|SettingsService"
     };

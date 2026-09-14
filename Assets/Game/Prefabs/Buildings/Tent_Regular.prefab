@@ -530,6 +530,14 @@ PrefabInstance:
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: footprintCells.x
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: footprintCells.y
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
       propertyPath: Productions.Array.size
       value: 0
       objectReference: {fileID: 0}
@@ -577,7 +585,7 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 2674124398502211660, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
-      insertIndex: 0
+      insertIndex: -1
       addedObject: {fileID: 2388849206023763901}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2e5a8684acff547e298ae30fae289270, type: 3}

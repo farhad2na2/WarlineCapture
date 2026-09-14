@@ -63,9 +63,13 @@ namespace Game.Editor
         private static void Tick()
         {
             if(finished) return;
+            if(completeBuildingJourney && EditorApplication.isPlaying && !insideBuildingGameFrame)
+            {EnsureBuildingGameFrame(); return;}
             try
             {
                 if(!EditorApplication.isPlaying) return;
+                if(completeBuildingJourney && !resultEnglishRequested && Game.Configs.GameLocalization.CurrentLocaleCode!=tutorialBuildLocale)
+                    Game.Configs.GameLocalization.SetLocale(tutorialBuildLocale,false);
                 if(runtimeFailure!=null) { Complete(false,runtimeFailure); return; }
                 if(started==0) started=EditorApplication.timeSinceStartup;
                 if(EditorApplication.timeSinceStartup-started>ProbeTimeoutSeconds) throw new TimeoutException("M03 Editor probe exceeded its deadline.");

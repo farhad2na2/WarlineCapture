@@ -230,9 +230,17 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: price
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
       propertyPath: config
       value: 
       objectReference: {fileID: 11400000, guid: 94b5da74dd649408cbde12adfa4a3997, type: 2}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: maxHealth
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
       propertyPath: Description
       value: A support structure that blocks its grid footprint until destroyed.
@@ -242,6 +250,23 @@ PrefabInstance:
       value: Soldier Tent
       objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: description
+      value: Field sanitation unit that supports camps, work crews, and temporary
+        bases.
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: displayName
+      value: Portable Toilet
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: materialsCost
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: portraitSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 15b0c7725bf34a2fb540f476d1ab7fec, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
       propertyPath: FootprintCells.x
       value: 20
       objectReference: {fileID: 0}
@@ -249,6 +274,26 @@ PrefabInstance:
       propertyPath: FootprintCells.y
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: footprintCells.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: footprintCells.y
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: portraitCardSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 3c6358a607b549119ca1bcadc4b84d4b, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: portraitActionSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 4e9f6294d47b4325886e1bde19dd06b5, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: destroyedVisualPrefab
+      value: 
+      objectReference: {fileID: 7576954688546254826, guid: a6092ee3a9f44411b83aea6c8974a18c, type: 3}
     - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
       propertyPath: Productions.Array.size
       value: 0
@@ -295,18 +340,15 @@ PrefabInstance:
       objectReference: {fileID: 8969431421773950753, guid: 12aa3f1b102194c0f87c119f847ebaf7, type: 3}
     - target: {fileID: 9112959322384211678, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
       propertyPath: m_Name
-      value: Tent_Portaloo
+      value: Portaloo
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 9099545104419466911, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 2674124398502211660, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
-      insertIndex: 0
+      insertIndex: -1
       addedObject: {fileID: 555800978873696609}
-    - targetCorrespondingSourceObject: {fileID: 2674124398502211660, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
-      insertIndex: 1
-      addedObject: {fileID: 7049258247974123835}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
 --- !u!4 &8552261840762838656 stripped

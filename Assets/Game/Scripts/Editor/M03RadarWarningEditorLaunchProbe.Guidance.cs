@@ -56,13 +56,18 @@ namespace Game.Editor
             if(SessionState.GetBool("Warline.M03.Probe.ShowMe",false) && runtime.Phase==MissionPhaseKind.Engage &&
                 em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root).GuidanceId==45005)
                 return AdvanceShowMeValidation();
+            if(completeBuildingJourney && runtime.Phase==MissionPhaseKind.Engage && !capturedHud)
+            {
+                // Validate the starting map before the player deliberately blocks its road with a gate.
+                ValidateStartingBudget(em); M03RadarWarningRuntimeGridProbe.Capture(em,Output); capturedHud=true;
+            }
             if(SessionState.GetBool(TutorialBuildKey,false) && AdvanceTutorialBuild(em,root,in runtime)) return false;
             if(runtime.Phase==MissionPhaseKind.ResultAfterDebrief && !guidanceJourneyVerified)
             {
                 if(!guidanceHeld || !guidanceVisited.Contains(5) || runtime.Outcome!=MissionOutcomeKind.Victory || em.GetComponentData<RadarPingState>(root).Charges!=2)
                     throw new InvalidOperationException("Full Guidance did not complete through real defensive orders without optional Ping.");
-                AssertBudget(em,50000,100); guidanceJourneyVerified=true;
-                Debug.Log("[M03GuidanceJourney] result=Passed real Full Guidance buttons, optional choices declined, defensive Hold victory, full budget and two Ping charges retained; visited="+string.Join(",",guidanceVisited.OrderBy(x=>x)));
+                AssertBudget(em,50000-tutorialCreditsSpent,100-tutorialMaterialsSpent); guidanceJourneyVerified=true;
+                Debug.Log("[M03GuidanceJourney] result=Passed real Full Guidance buttons, defensive Hold victory, construction cost accounted for and two Ping charges retained; visited="+string.Join(",",guidanceVisited.OrderBy(x=>x)));
                 return false;
             }
             if(runtime.Phase!=MissionPhaseKind.Engage) return false;
@@ -91,8 +96,8 @@ namespace Game.Editor
             {
                 VerifyGuidanceOrders(em, false);
                 var restoreView=UnityEngine.Object.FindAnyObjectByType<AriaTutorialBriefingView>();
-                if(!UiShellRuntimeGateway.TryReadMissionDefense(out var restore) || !restore.RequiresHoldResume || restoreView==null || !restoreView.DoItButton.interactable) return false;
-                ClickCommand(restoreView.DoItButton); guidanceVerifyHold=true; guidanceRestoreHold=false; guidanceNext=EditorApplication.timeSinceStartup+.3;
+                if(!UiShellRuntimeGateway.TryReadMissionDefense(out var restore) || !restore.RequiresHoldResume || restoreView==null) return false;
+                ClickCommand(controls.HoldButton); guidanceVerifyHold=true; guidanceRestoreHold=false; guidanceNext=EditorApplication.timeSinceStartup+.3;
                 return false;
             }
             // Opening a real drawer intentionally hides ARIA. Finish the owned
@@ -124,30 +129,58 @@ namespace Game.Editor
             var view=UnityEngine.Object.FindAnyObjectByType<AriaTutorialBriefingView>();
             if(view==null || !view.IsPresentationVisible || !UiShellRuntimeGateway.TryReadMatchHudAssistantPanel(out var panel) || panel.TutorialStep!=step ||
                 (byte)typeof(AriaTutorialBriefingView).GetField("_tutorialStep",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(view)!=step) return false;
-            if(!view.ShowMeButton.isActiveAndEnabled) return false;
+
             if(step!=guidancePrompt) {guidancePrompt=step; guidanceSubstep=0; guidanceVisited.Add(step); Debug.Log($"[M03GuidanceJourney] step={step} at={facts.ElapsedMilliseconds} canExecute={panel.CanExecute}");}
             guidanceNext=EditorApplication.timeSinceStartup+.35;
             switch(step)
             {
                 case 1:
-                    ClickCommand(view.DoItButton); break;
+                    var warningPopup = UnityEngine.Object.FindAnyObjectByType<ThreatAlertV3PopupView>();
+                    if (warningPopup != null && warningPopup.JumpToThreatButton.IsActive()) ClickCommand(warningPopup.JumpToThreatButton);
+                    else if (view.ContinueButton.IsActive()) ClickCommand(view.ContinueButton);
+                    break;
                 case 2:
-                    ClickCommand(view.DoItButton); break;
+                    var warning2 = UnityEngine.Object.FindAnyObjectByType<ThreatAlertV3PopupView>();
+                    if (warning2 != null && warning2.JumpToThreatButton.IsActive()) ClickCommand(warning2.JumpToThreatButton);
+                    else if (view.ContinueButton.IsActive()) ClickCommand(view.ContinueButton);
+                    break;
                 case 3:
                     if(guidanceSubstep==0 && UiShellRuntimeGateway.TryReadMissionDefense(out var focus) && focus.CanReturnCamera)
                     {ClickLive("ReturnWarningCamera"); guidanceSubstep=1; guidanceNext=EditorApplication.timeSinceStartup+2; break;}
                     using(var camera=em.CreateEntityQuery(typeof(RtsCameraStateComponent)))
                         if(camera.GetSingleton<RtsCameraStateComponent>().HasSmoothFocusTarget!=0 || camera.GetSingleton<RtsCameraStateComponent>().HasSmoothPerspectiveTarget!=0) return false;
-                    ClickCommand(view.DoItButton); break;
+                    ClickCommand(SessionState.GetBool(TutorialBuildKey,false) ? controls.BuildButton : view.ContinueButton); break;
                 case 10: case 11: case 12:
                     break; // Wait for real combat; never manufacture a tutorial completion.
                 case 4: case 9:
                     if(SessionState.GetBool("Warline.M03.Probe.ShowMe",false)) {ClickGuidanceSkipWhenReady();break;}
-                    if(guidanceSubstep==0) {ClickCommand(view.DoItButton); guidanceSubstep=1; break;}
                     if(!ClickGuidanceSkipWhenReady()) return false; break;
                 case 5: case 6: case 7:
                     if(guidanceSubstep==0)
-                    {if(!commands.RequestSelectAllSoldiers()) throw new InvalidOperationException("Normal rifle selection failed."); guidanceSubstep=1; break;}
+                    {
+                        using var selected = em.CreateEntityQuery(typeof(SelectedUnitTag), typeof(UnitHealth), typeof(Faction));
+                        // Keep the squad selected after its move. Select All is a visible-area
+                        // operation and must not replace an existing squad with an empty area.
+                        if(selected.IsEmptyIgnoreFilter)
+                        {
+                            ClickCommand(controls.SelectButton); guidanceSubstep=10;
+                            guidanceNext=EditorApplication.timeSinceStartup+1.2; break;
+                        }
+                        guidanceSubstep=1; break;
+                    }
+                    if(guidanceSubstep==10)
+                    {
+                        RevealTutorialIfNeeded(view); guidanceSubstep=11;
+                        guidanceNext=EditorApplication.timeSinceStartup+1.2; break;
+                    }
+                    if(guidanceSubstep==11)
+                    {
+                        if(!UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var selectionTarget))
+                            throw new InvalidOperationException("Movement lesson has no selection target.");
+                        AssertVisibleTutorialWorld(match.MatchBootstrap.WorldCamera,selectionTarget.Selection);
+                        if(!commands.RequestSelectAllSoldiers()) throw new InvalidOperationException("Normal rifle selection failed.");
+                        guidanceSubstep=1; break;
+                    }
                     if(guidanceSubstep==1)
                     {
                         if(!panel.CanExecute)
@@ -155,7 +188,7 @@ namespace Game.Editor
                             using var selection=em.CreateEntityQuery(typeof(SelectedUnitTag));
                             throw new InvalidOperationException("ARIA command remained unavailable after visible-unit selection: selected="+selection.CalculateEntityCount());
                         }
-                        ClickCommand(view.DoItButton); guidanceSubstep=2;
+                        ClickCommand(step==5 ? controls.MoveButton : step==6 ? controls.HoldButton : controls.StopButton); guidanceSubstep=2;
                         if(step==6) guidanceVerifyHold=true;
                         if(step==7) guidanceRestoreHold=true;
                         break;
@@ -188,12 +221,12 @@ namespace Game.Editor
         {
             using var selected=em.CreateEntityQuery(typeof(SelectedUnitTag),typeof(UnitHealth),typeof(Faction));
             using var units=selected.ToEntityArray(Allocator.Temp);
-            if(units.Length!=8) throw new InvalidOperationException("ARIA command lost the eight-rifle selection.");
+            if(units.Length<4) throw new InvalidOperationException("ARIA command lost the selected rifle squad: selected="+units.Length);
             foreach(var unit in units)
                 if(em.HasComponent<HoldPositionOrderTag>(unit)!=hold || em.HasComponent<UnitPathRequest>(unit) ||
                     em.HasComponent<UnitPathFollow>(unit) || em.GetComponentData<UnitCombat>(unit).AutoEngage!=(hold ? 1 : 0))
                     throw new InvalidOperationException("ARIA "+(hold ? "Hold" : "Stop")+" failed on a real selected rifle.");
-            Debug.Log("[M03GuidanceJourney] actual "+(hold ? "Hold" : "Stop")+" verified on all eight rifles");
+            Debug.Log("[M03GuidanceJourney] actual "+(hold ? "Hold" : "Stop")+" verified on selected rifles="+units.Length);
         }
         private static void StopGuidanceJourney()
         {

@@ -41,13 +41,16 @@ namespace Game.UI.Runtime
             if (!_restricted)
                 return;
 
+            bool defenseLesson = UiShellRuntimeGateway.TryReadMissionDefense(out var defense) &&
+                defense.GuidanceId is 45003 or 45004;
             for (int index = 0; index < catalog.EntryCount; index++)
             {
                 if (UiShellRuntimeGateway.TryReadMissionBuildCatalogEntry(
                         index, out UiMissionBuildCatalogEntryModel entry) &&
                     !string.IsNullOrWhiteSpace(entry.BuildingConfigId))
                 {
-                    _allowedBuildingConfigIds.Add(entry.BuildingConfigId);
+                    if (!defenseLesson || entry.BuildingConfigId is "Building_Road_Barrier" or "Building_GuardTower")
+                        _allowedBuildingConfigIds.Add(entry.BuildingConfigId);
                 }
             }
 

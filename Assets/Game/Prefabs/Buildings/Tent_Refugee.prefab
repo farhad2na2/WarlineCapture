@@ -143,9 +143,17 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: price
+      value: 6000
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
       propertyPath: config
       value: 
       objectReference: {fileID: 11400000, guid: a70979031bb0a433fb328a31bc49fc7e, type: 2}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: maxHealth
+      value: 300
+      objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
       propertyPath: Description
       value: A support structure that blocks its grid footprint until destroyed.
@@ -154,6 +162,22 @@ PrefabInstance:
       propertyPath: DisplayName
       value: Soldier Tent
       objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: description
+      value: Emergency shelter for displaced civilians after their homes are destroyed.
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: displayName
+      value: Refugee Tent
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: materialsCost
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: portraitSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 6fc6c135e302460cac2cfe371374cba9, type: 3}
     - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
       propertyPath: refugeeCapacity
       value: 10
@@ -167,12 +191,32 @@ PrefabInstance:
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: footprintCells.x
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: footprintCells.y
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: portraitCardSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 040900a7100e4ef1a4bfab962c1b7729, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: portraitActionSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: e7c5026fac1bf43178053187eb80ed8a, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: destroyedVisualPrefab
+      value: 
+      objectReference: {fileID: 7252160269453291655, guid: 09d44fe22e65544a995d7c55f5e1b8b4, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
       propertyPath: Productions.Array.size
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
       propertyPath: productions.Array.size
-      value: 0
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
       propertyPath: refugeeUpkeepPerCitizenPerDay
@@ -214,6 +258,22 @@ PrefabInstance:
       propertyPath: Productions.Array.data[2].SpawnUnitPrefab
       value: 
       objectReference: {fileID: 8969431421773950753, guid: 12aa3f1b102194c0f87c119f847ebaf7, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: productions.Array.data[0].spawnUnitPrefab
+      value: 
+      objectReference: {fileID: 3282182154612916099, guid: a3873f0cb8f24494eb79c31a4c12ec31, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: productions.Array.data[1].spawnUnitPrefab
+      value: 
+      objectReference: {fileID: 3282182154612916099, guid: e9380ca06e23346a48a8d1d09416e955, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: productions.Array.data[2].spawnUnitPrefab
+      value: 
+      objectReference: {fileID: 3282182154612916099, guid: 7c722f33fbe75427289f93b6f35e7e04, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: productions.Array.data[3].spawnUnitPrefab
+      value: 
+      objectReference: {fileID: 3282182154612916099, guid: de10bdd428c9d4ff2b2f2507809dea42, type: 3}
     - target: {fileID: 9112959322384211678, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
       propertyPath: m_Name
       value: Tent_Refugee
@@ -223,11 +283,8 @@ PrefabInstance:
     - {fileID: 9099545104419466911, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 2674124398502211660, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
-      insertIndex: 0
+      insertIndex: -1
       addedObject: {fileID: 7732482873721048664}
-    - targetCorrespondingSourceObject: {fileID: 2674124398502211660, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
-      insertIndex: 1
-      addedObject: {fileID: 3999487484134300591}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
 --- !u!4 &8552261840762838656 stripped

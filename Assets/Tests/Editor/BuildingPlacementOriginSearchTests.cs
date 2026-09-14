@@ -77,6 +77,18 @@ public sealed class BuildingPlacementOriginSearchTests
             context, new BuildingDefinition(), Vector2Int.zero, out _, new RectInt(1006, 330, 0, 0)));
     }
 
+    [Test]
+    public void CompactRuntimeBuildingStillFindsClearLandBeyondOccupiedCompound()
+    {
+        var preferred = new Vector2Int(100,100);
+        var clear = preferred + new Vector2Int(60,0);
+        var context = Context(new Vector2Int(10,10), (_, origin, _, _, _, _, _) => origin == clear);
+        var search = new BuildingRuntimeSpawnCompositionSystemHelper();
+        Assert.IsTrue(search.TryFindValidInitialBuildingOrigin(context, new BuildingDefinition(), preferred, false,
+            new GridConfig { Width=2048, Height=1024, CellSize=1 }, default, default, out var actual));
+        Assert.AreEqual(clear, actual);
+    }
+
     private static BuildingRuntimeSpawnCompositionSystemHelper.Context Context(Vector2Int footprint,
         BuildingRuntimeSpawnCompositionSystemHelper.IsPlacementValidDelegate validate)
     {

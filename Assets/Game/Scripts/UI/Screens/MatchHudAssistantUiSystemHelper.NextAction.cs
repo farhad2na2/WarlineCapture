@@ -19,7 +19,7 @@ namespace Game.UI.Runtime
             if(managed && UiShellRuntimeGateway.TryReadMatchHudCommandState(out var commandState))
                 _activeCommandMode=commandState.ActiveCommandMode;
             bool placing = _activeCommandMode==TacticalCommandMode.Build && !_highlightPresentationSystem.IsBuildDrawerOpen;
-            if (UiShellRuntimeGateway.IsMissionFieldGuidePresenting() || !managed || _embeddedTutorialView == null || (!_embeddedTutorialView.IsPresentationVisible && !placing) ||
+            if (UiShellRuntimeGateway.IsMissionFieldGuidePresenting() || !managed || _embeddedTutorialView == null || (!_embeddedTutorialView.IsPresentationVisible && !placing && !_highlightPresentationSystem.IsBuildDrawerOpen) ||
                 !_lastPanelModel.HasRecommendation || _tutorialCinematicSuspended)
             { _highlightPresentationSystem.ClearDirectTutorialCue(); return; }
             int step=_lastPanelModel.TutorialStep;

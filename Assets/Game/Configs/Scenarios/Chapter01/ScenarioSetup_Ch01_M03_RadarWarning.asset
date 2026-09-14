@@ -89,6 +89,14 @@ MonoBehaviour:
     kind: 11
   - anchorId: anchor.ch01.m03.convoy_path_020
     kind: 11
+  - anchorId: anchor.ch01.m03.convoy_path_021
+    kind: 11
+  - anchorId: anchor.ch01.m03.convoy_path_022
+    kind: 11
+  - anchorId: anchor.ch01.m03.convoy_path_023
+    kind: 11
+  - anchorId: anchor.ch01.m03.convoy_path_024
+    kind: 11
   deterministicSeed: 3003001
   encounterStartMilliseconds: 45000
   unitGroups:
@@ -255,6 +263,10 @@ MonoBehaviour:
     - anchor.ch01.m03.convoy_path_018
     - anchor.ch01.m03.convoy_path_019
     - anchor.ch01.m03.convoy_path_020
+    - anchor.ch01.m03.convoy_path_021
+    - anchor.ch01.m03.convoy_path_022
+    - anchor.ch01.m03.convoy_path_023
+    - anchor.ch01.m03.convoy_path_024
     startDelayMilliseconds: 45000
   - routeId: route.ch01.m03.main_body
     unitGroupId: group.ch01.m03.main_body
@@ -280,6 +292,10 @@ MonoBehaviour:
     - anchor.ch01.m03.convoy_path_018
     - anchor.ch01.m03.convoy_path_019
     - anchor.ch01.m03.convoy_path_020
+    - anchor.ch01.m03.convoy_path_021
+    - anchor.ch01.m03.convoy_path_022
+    - anchor.ch01.m03.convoy_path_023
+    - anchor.ch01.m03.convoy_path_024
     startDelayMilliseconds: 140000
   restrictions:
     buildingDisabled: 0
@@ -435,6 +451,30 @@ MonoBehaviour:
     departureRadius: 0
     vehiclesSelfSupplied: 0
     authoredMapDefensesDormant: 0
+    cameraTour:
+      StartHoldMilliseconds: 0
+      PostHoldMilliseconds: 0
+      ApproachHoldMilliseconds: 0
+      ReturnHoldMilliseconds: 0
+      SmoothTimeSeconds: 0
+      PostPerspective: {x: 0, y: 0, z: 0, w: 0}
+      ApproachPerspective: {x: 0, y: 0, z: 0, w: 0}
+  breach:
+    enabled: 0
+    gateBuildingId: 
+    coreBuildingId: 
+    approachAnchorId: 
+    gateAnchorId: 
+    coreAnchorId: 
+    archiveAnchorId: 
+    supportRoleId: 
+    counterattackRoleId: 
+    gateHealth: 0
+    coreHealth: 0
+    secureHoldMilliseconds: 0
+    deadlineMilliseconds: 0
+    counterattackWarningMilliseconds: 0
+    archiveRadius: 0
     cameraTour:
       StartHoldMilliseconds: 0
       PostHoldMilliseconds: 0

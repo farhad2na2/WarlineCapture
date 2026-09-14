@@ -28,8 +28,9 @@ namespace Game.Runtime
 
             RectInt preferredPlacementRect = context.GetEffectivePlacementRect(definition, clampedPreferred, grid, rotateVertical);
             int footprintSearchRadius = Mathf.Max(placementFootprint.x, placementFootprint.y) * 4;
+            // Spawn relocation must not lose its reach when an oversized model reservation is corrected.
             int maxSearchRadius = Mathf.Max(
-                24,
+                80,
                 Mathf.Min(
                     160,
                     Mathf.Max(

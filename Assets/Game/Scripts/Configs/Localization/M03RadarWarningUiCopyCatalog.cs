@@ -4,6 +4,7 @@ namespace Game.Configs
     {
         public static readonly (string Key, string English, string Persian)[] Entries =
         {
+            ("mission.m03.build.choose_one", "Choose ONE defense: a Road Barrier across the road, or a Guard Tower beside it.", "فقط یک سازهٔ دفاعی انتخاب کنید: مانع در عرض جاده، یا برج نگهبانی کنار جاده."),
             ("mission.m03.save.failed", "PROGRESS NOT SAVED", "پیشرفت ذخیره نشد"),
             ("mission.m03.save.body", "Defense complete. Progress and rewards could not be saved. Retry saving before leaving this mission.", "دفاع کامل شد، اما پیشرفت و پاداش‌ها ذخیره نشدند. پیش از خروج از مأموریت، ذخیره‌سازی را دوباره امتحان کنید."),
             ("mission.m03.save.pending", "Rewards pending save", "پاداش‌ها در انتظار ذخیره‌سازی"),

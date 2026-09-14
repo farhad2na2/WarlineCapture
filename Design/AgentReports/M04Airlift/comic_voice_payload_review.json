@@ -1,0 +1,57 @@
+{
+  "mission": "saga.ch01.m04.airlift",
+  "service": "api.elevenlabs.io",
+  "clips": 14,
+  "scope": "Seven comic/story lines in English and Persian; existing paid account and configured character voices",
+  "entries": [
+    [
+      "narrative",
+      "m04-brief-01",
+      "LAILA",
+      "Captain Laila Nasser. My helicopter is ready at the eastern landing area. Bring the four specialists to me in the APC; I can keep this extraction window open for ten minutes.",
+      "سروان لیلا ناصر هستم. بالگردم در محل فرود شرقی آماده است. چهار متخصص را با نفربر به من برسانید؛ فرصت تخلیه را ده دقیقه باز نگه می‌دارم."
+    ],
+    [
+      "narrative",
+      "m04-brief-02",
+      "SAMIRA",
+      "Two medics and two engineers are stranded by the western road. They are the people who can reopen the clinics and restore the network. Bring every one of them home.",
+      "دو امدادگر و دو مهندس کنار جادهٔ غربی گرفتار شده‌اند. آن‌ها می‌توانند درمانگاه‌ها را باز کنند و شبکه را بازگردانند. همه را سالم برگردانید."
+    ],
+    [
+      "narrative",
+      "m04-brief-03",
+      "DALIA",
+      "Rifles cover the road; the APC carries the team. Unload beside Laila, board the helicopter, hold the area clear for twenty seconds, then fly to the marked departure zone.",
+      "تفنگدارها جاده را پوشش می‌دهند؛ نفربر تیم را منتقل می‌کند. کنار لیلا پیاده شوید، سوار بالگرد شوید، بیست ثانیه محل را امن نگه دارید و سپس به محدودهٔ خروج پرواز کنید."
+    ],
+    [
+      "narrative",
+      "m04-comms-01",
+      "LAILA",
+      "All four are aboard. The landing area is clear and departure is authorized. Fly to the marked exit; I will take the team from there.",
+      "هر چهار نفر سوار شده‌اند. محل فرود امن است و اجازهٔ خروج داریم. به محل خروج مشخص‌شده پرواز کنید؛ از آنجا تیم را منتقل می‌کنم."
+    ],
+    [
+      "narrative",
+      "m04-debrief-01",
+      "LAILA",
+      "Four passengers accounted for. Your escort gave us the time we needed. I am joining this operation; you will have an airlift pilot when the next team needs a way out.",
+      "هر چهار مسافر حاضرند. پوشش شما زمان لازم را فراهم کرد. به این عملیات می‌پیوندم؛ از این پس برای نجات تیم بعدی یک خلبان ترابری هوایی خواهید داشت."
+    ],
+    [
+      "narrative",
+      "m04-debrief-02",
+      "SAMIRA",
+      "The engineers brought their repair records. Several outages lead back to the same fortified communications node. We finally have a place to investigate.",
+      "مهندسان سوابق تعمیر را آورده‌اند. چند قطعی به یک گرهٔ ارتباطی مستحکم برمی‌گردد. سرانجام محلی برای بررسی داریم."
+    ],
+    [
+      "narrative",
+      "m04-debrief-03",
+      "ARIA",
+      "Extraction confirmed. Captain Nasser is on the roster. Next objective: assess that communications node. First, let the medical team get back to work.",
+      "تخلیه تأیید شد. سروان ناصر به گروه پیوست. هدف بعدی: بررسی آن گرهٔ ارتباطی. ابتدا بگذارید تیم پزشکی به کارش برگردد."
+    ]
+  ]
+}

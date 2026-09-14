@@ -37,15 +37,21 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--force", action="store_true")
+    parser.add_argument("--narrative-only", action="store_true", help="Generate only the 14 approved comic recordings; preserve tutorial events.")
     args = parser.parse_args()
     entries = list(lines())
     audio.VOICE_IDS["LAILA"] = "EXAVITQu4vr4xnSDxMaL"
     audio.VOICE_NAMES["LAILA"] = "Sarah - Mature, Reassuring, Confident (Captain Laila Nasser)"
-    review = json.loads((ROOT / "Design/AgentReports/M04Airlift/voice_payload_review.json").read_text())
+    if args.narrative_only:
+        entries = [entry for entry in entries if entry[0] == "narrative"]
+    payload = "comic_voice_payload_review.json" if args.narrative_only else "voice_payload_review.json"
+    review = json.loads((ROOT / "Design/AgentReports/M04Airlift" / payload).read_text())
     if [list(entry) for entry in entries] != review["entries"]:
         raise RuntimeError("Canonical M4 copy differs from the prepared approval payload.")
+    narrative_count = sum(entry[0] == "narrative" for entry in entries)
+    tutorial_count = len(entries) - narrative_count
     if args.dry_run:
-        print(f"[M04VoiceCopy] result=Passed narrative=7 tutorial=12 locales=2 characters={sum(len(e[3])+len(e[4]) for e in entries)}")
+        print(f"[M04VoiceCopy] result=Passed narrative={narrative_count} tutorial={tutorial_count} locales=2 characters={sum(len(e[3])+len(e[4]) for e in entries)}")
         return
     key = audio.read_api_key(ROOT / ".local/secrets/elevenlabs_api_key")
     subscription = audio.request_json(key, "/v1/user/subscription")
@@ -58,6 +64,8 @@ def main():
         "license": audio.RIGHTS, "model": audio.MODEL, "runtimeNetworkTts": False,
         "subscription": {"tier": subscription.get("tier"), "status": subscription.get("status")},
         "processing": {"sampleRateHz": 44100, "channels": 1, "sourceEncoding": "PCM_S16LE", "loudnessLUFS": -18}, "clips": []}
+    selected_ids = {entry[1] for entry in entries}
+    manifest["clips"] = [clip for clip in previous["clips"] if clip["id"] not in selected_ids]
     MANIFEST.parent.mkdir(parents=True, exist_ok=True)
     for index, (kind, identity, speaker, english, persian) in enumerate(entries):
         for language, locale, text in (("en", "en-US", english), ("fa", "fa-IR", persian)):
@@ -71,8 +79,9 @@ def main():
             manifest["clips"].append(clip)
             MANIFEST.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
             print(f"[M04Voice] {kind} {identity} {locale} duration={clip['durationSeconds']:.2f}s", flush=True)
-    register_events(manifest["clips"])
-    print("[M04BilingualVoiceGeneration] result=Passed narrative=14 tutorial=24 locales=2")
+    if not args.narrative_only:
+        register_events(manifest["clips"])
+    print(f"[M04BilingualVoiceGeneration] result=Passed narrative={narrative_count*2} tutorial={tutorial_count*2} locales=2")
 
 def register_events(clips):
     path=ROOT / "Assets/Game/Audio/Config/audio_event_catalog_v0_1.json"

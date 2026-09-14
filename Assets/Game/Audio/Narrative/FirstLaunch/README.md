@@ -36,7 +36,7 @@ The District Dispatch lines use narrow-band command-radio processing. Dalia uses
 scene-specific urgent performance direction with expressive field-comms processing;
 Samira uses lighter field-comms processing. ARIA and the Commander remain clean.
 The presentation prefab also layers the dedicated
-`first_launch_radio_emergency_event_01.wav` carrier and squelch cue over the
+`Assets/Game/Audio/Narrative/Shared/narrative_radio_squelch_01.wav` speech-free carrier and squelch cue over the
 dispatch-radio state.
 
 ```powershell
@@ -103,3 +103,5 @@ gameplay explosion and battlefield assets previously used by the narrative proto
 - Evidence: `first_launch_environment_generation_manifest.json` records prompts,
   subscription snapshot, duration, loudness, clipping, silence, crest, and the selected
   candidate for all eight mapped assets.
+
+The original generated radio emergency effect is retained for provenance only. It contained unintended English speech and was removed from the presentation mapping on 2026-09-14. The replacement is deterministic filtered noise, generated locally without speech sources.

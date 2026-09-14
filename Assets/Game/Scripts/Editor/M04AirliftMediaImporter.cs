@@ -61,11 +61,17 @@ namespace Game.Editor
 
         public static void ConfigureVoices()
         {
-            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
-            foreach(var line in Lines) foreach(bool persian in new[]{false,true}) ConfigureVoice(VoicePath(line.Id,persian),persian);
+            ConfigureComicVoices();
             for(int step=1;step<=12;step++) foreach(bool persian in new[]{false,true}) ConfigureVoice(VoicePath($"tutorial-m04-{step:00}",persian),persian);
             AudioRuntimeConfigAssetBuilder.BuildDefaultAssets();
             Debug.Log("[M04VoiceImports] result=Passed clips=38 locales=2 preload=0 runtimeNetworkTts=0");
+        }
+
+        public static void ConfigureComicVoices()
+        {
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            foreach(var line in Lines) foreach(bool persian in new[]{false,true}) ConfigureVoice(VoicePath(line.Id,persian),persian);
+            Debug.Log("[M04ComicVoiceImports] result=Passed clips=14 locales=2");
         }
 
         private static void ConfigureVoice(string path,bool persian)

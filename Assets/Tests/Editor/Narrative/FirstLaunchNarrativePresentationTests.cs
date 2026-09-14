@@ -339,7 +339,7 @@ public sealed class FirstLaunchNarrativePresentationTests
         Assert.AreNotSame(prefab.GetComponent<NarrativeSequenceView>().VoiceSource, audio.VehicleSource);
         Assert.AreNotSame(prefab.GetComponent<NarrativeSequenceView>().VoiceSource, audio.EventSource);
         Assert.AreEqual(
-            "first_launch_radio_emergency_event_01",
+            "narrative_radio_squelch_01",
             audio.RadioCue.name,
             "The authored emergency dispatch cue must remain separate from narration voice playback.");
 

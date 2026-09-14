@@ -74,7 +74,7 @@ namespace Game.Editor
             SetObject(sequenceAudioView, "vehicleEngine", RequireAsset<AudioClip>(environment + "first_launch_convoy_interior_loop_01.wav"));
             SetObject(sequenceAudioView, "attackCue", RequireAsset<AudioClip>(environment + "first_launch_distant_attack_event_01.wav"));
             SetObject(sequenceAudioView, "smallArmsCue", null);
-            SetObject(sequenceAudioView, "radioCue", RequireAsset<AudioClip>(environment + "first_launch_radio_emergency_event_01.wav"));
+            SetObject(sequenceAudioView, "radioCue", RequireAsset<AudioClip>("Assets/Game/Audio/Narrative/Shared/narrative_radio_squelch_01.wav"));
             SetObject(sequenceAudioView, "blackoutCue", null);
             SetObject(sequenceAudioView, "ariaBootCue", RequireAsset<AudioClip>("Assets/Game/Audio/Gameplay/game_command_scan_targeting_01.wav"));
             SetObject(sequenceAudioView, "transitionCue", null);

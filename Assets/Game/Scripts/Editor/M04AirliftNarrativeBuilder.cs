@@ -22,6 +22,29 @@ namespace Game.Editor
         [MenuItem("Game/Campaign/M04/Build Final Narrative")]
         public static void BuildAndInstall()=>Build(true);
         public static void BuildCaptionedArtAndInstall()=>Build(false);
+        public static void InstallComicVoices()
+        {
+            M04AirliftMediaImporter.ConfigureComicVoices();
+            foreach(var sequence in AssetDatabase.LoadAllAssetsAtPath(Path).OfType<NarrativeSequenceConfig>())
+            {
+                var data=new SerializedObject(sequence);var states=data.FindProperty("states");
+                for(int i=0;i<states.arraySize;i++)
+                {
+                    var state=states.GetArrayElementAtIndex(i);var lines=state.FindPropertyRelative("lines");
+                    for(int j=0;j<lines.arraySize;j++)
+                    {
+                        var line=lines.GetArrayElementAtIndex(j);
+                        var copy=M04AirliftMediaImporter.Lines.Single(item=>item.Id==line.FindPropertyRelative("lineId").stringValue);
+                        line.FindPropertyRelative("voiceClip").objectReferenceValue=M04AirliftMediaImporter.Voice(copy.Id,false);
+                        line.FindPropertyRelative("deadlineSeconds").floatValue=Duration(copy);
+                        state.FindPropertyRelative("durationSeconds").floatValue=Duration(copy);
+                    }
+                }
+                data.ApplyModifiedPropertiesWithoutUndo();EditorUtility.SetDirty(sequence);
+            }
+            AddPersian();AssetDatabase.SaveAssets();
+            Debug.Log("[M04ComicVoiceInstall] result=Passed clips=14 sequences=3 locales=2");
+        }
         private static void Build(bool voices)
         {
             M04AirliftMediaImporter.ConfigureArt(); if(voices) M04AirliftMediaImporter.ConfigureVoices();

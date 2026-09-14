@@ -120,13 +120,21 @@ public sealed class M03PresentationTests
                 var bodyBounds=BoundsIn(view.transform,(RectTransform)view.BodyText.transform.parent);
                 var rail=((RectTransform)view.transform).rect;
                 Assert.LessOrEqual(utilities.max.y,actions.min.y-11.99f,"Utility row must stay below primary actions.");
-                Assert.LessOrEqual(actions.max.y,bodyBounds.min.y-15.99f,"Buttons must not cut instruction text.");
+                Assert.LessOrEqual(actions.max.y,bodyBounds.min.y-43.99f,"Buttons must not cut instruction text.");
                 Assert.GreaterOrEqual(utilities.min.y,rail.yMin+11.99f,"Utility row must fit inside ARIA.");
                 Assert.GreaterOrEqual(utilities.min.x,rail.xMin+19.99f);
                 Assert.LessOrEqual(utilities.max.x,rail.xMax-19.99f);
                 Assert.GreaterOrEqual(rail.yMin,BoundsIn(view.transform,dock.Minimap).max.y+11.99f,"ARIA must clear the minimap.");
                 foreach(var button in utility.GetComponentsInChildren<UnityEngine.UI.Button>())
-                    Assert.GreaterOrEqual(((RectTransform)button.transform).rect.height,72,"Keep utility touch targets large.");
+                {
+                    var rect=(RectTransform)button.transform;
+                    Assert.GreaterOrEqual(rect.rect.height,72,"Keep utility touch targets large.");
+                    var primary=button.transform.GetSiblingIndex()==0 ? view.DoItButton : view.ShowMeButton;
+                    var buttonBounds=BoundsIn(view.transform,rect);
+                    var primaryBounds=BoundsIn(view.transform,(RectTransform)primary.transform);
+                    Assert.That(buttonBounds.min.x,Is.EqualTo(primaryBounds.min.x).Within(.01f),"Button columns must align.");
+                    Assert.That(buttonBounds.size.x,Is.EqualTo(primaryBounds.size.x).Within(.01f),"Button columns must have identical widths.");
+                }
                 Assert.IsTrue(view.FirstStepGuideRoot==null || !view.FirstStepGuideRoot.gameObject.activeSelf,"M3 must not display M1's selection-only diagram.");
             }
             GameLocalization.SetLocale(previousLocale, false);

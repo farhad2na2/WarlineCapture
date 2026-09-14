@@ -34,7 +34,8 @@ public sealed class TutorialCueOverlayTests
             var label=(TMPro.TMP_Text)typeof(AssistantHighlightPresentationSystemHelper)
                 .GetField("_screenTargetLabel",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(helper);
             Assert.That(cue.gameObject.activeSelf,Is.True,"Keep ARIA's next-click outline.");
-            Assert.That(label.transform.parent.gameObject.activeSelf,Is.False,"Do not overlay a duplicate banner on ARIA's text or buttons.");
+            Assert.That(label.transform.parent.gameObject.activeSelf,Is.True,"ARIA must retain the localized next-click caption.");
+            Assert.That(((RectTransform)label.transform.parent).rect.width,Is.LessThan(cue.rect.width),"Caption must stay within the highlighted button column.");
             button.transform.SetParent(popup.transform,false);
             helper.ShowTutorialControl(target,"tutorial.next.place");
             Assert.That(label.transform.parent.gameObject.activeSelf,Is.True,"Restore captions for battlefield/build controls.");

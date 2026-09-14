@@ -49,6 +49,20 @@ namespace Game.UI.Runtime
             TickCommandCue();
         }
 
+        private void ConfigureControlCaption(RectTransform caption,RectTransform button,Vector2 frameSize)
+        {
+            bool aria=button.GetComponentInParent<AriaTutorialBriefingView>()!=null;
+            float scale=(frameSize.y-20)/Mathf.Max(1,button.rect.height);
+            caption.gameObject.SetActive(true);
+            // Compact ARIA captions sit on the button's top edge, inside the reserved gap.
+            // Other controls retain their existing, larger battlefield/build captions.
+            caption.anchoredPosition=aria?new Vector2(0,-10):Vector2.zero;
+            caption.sizeDelta=aria ? new Vector2(frameSize.x-20,32*scale) :
+                new Vector2(Mathf.Clamp(frameSize.x-20,480,880),96);
+            _screenTargetLabel.fontSizeMin=aria?12*scale:36;
+            _screenTargetLabel.fontSizeMax=aria?17*scale:52;
+        }
+
         internal void ShowTutorialWorld(Vector3 target)
         {
             _directTutorialCue = true;

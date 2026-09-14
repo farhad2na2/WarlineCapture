@@ -28,6 +28,13 @@ namespace Game.Editor
             utility.GetWorldCorners(utilityCorners);((RectTransform)aria.transform).GetWorldCorners(railCorners);
             if(actionCorners[1].y>=bodyCorners[0].y || utilityCorners[1].y>=actionCorners[0].y || utilityCorners[0].y<=railCorners[0].y)
                 throw new InvalidOperationException("M4 ARIA instructions, actions and utilities overlap or overflow the rail.");
+            foreach(var text in aria.GetComponentInParent<Canvas>().rootCanvas.GetComponentsInChildren<TMP_Text>())
+                if(text.transform.parent.name=="TopBorderCaption")
+                {
+                    text.ForceMeshUpdate();
+                    if(text.isTextOverflowing || text.isTextTruncated)
+                        throw new InvalidOperationException("M4 next-click caption does not fit: "+text.text+" rect="+text.rectTransform.rect+" preferred="+text.preferredWidth+","+text.preferredHeight+" font="+text.fontSize);
+                }
             Debug.Log("[M04AriaRows] result=Passed locale="+GameLocalization.CurrentLocaleCode+" screen="+Screen.width+"x"+Screen.height);
         }
         private static void TickLaunchUi(CampaignMissionAttemptFactsComponent facts)

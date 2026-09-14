@@ -392,11 +392,7 @@ namespace Game.UI.Runtime
             RectTransform caption = _screenTargetLabel != null
                 ? _screenTargetLabel.transform.parent as RectTransform
                 : null;
-            if (caption != null)
-            {
-                caption.gameObject.SetActive(buttonRect.GetComponentInParent<AriaTutorialBriefingView>() == null);
-                caption.sizeDelta = new Vector2(Mathf.Clamp(size.x - 20f, 480f, 880f), 96f);
-            }
+            if (caption != null) ConfigureControlCaption(caption,buttonRect,size);
 
             Vector2 localPoint = (bottomLeft + topRight) * 0.5f;
             Vector2 half = size * 0.5f;

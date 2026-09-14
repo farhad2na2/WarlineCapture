@@ -14,6 +14,8 @@ namespace Game.UI.Runtime
         private void TickNextTutorialAction()
         {
             bool managed = UsesNextTutorialAction;
+            if(managed && UiShellRuntimeGateway.TryReadMatchHudCommandState(out var commandState))
+                _activeCommandMode=commandState.ActiveCommandMode;
             bool placing = _activeCommandMode==TacticalCommandMode.Build && !_highlightPresentationSystem.IsBuildDrawerOpen;
             if (UiShellRuntimeGateway.IsMissionFieldGuidePresenting() || !managed || _embeddedTutorialView == null || (!_embeddedTutorialView.IsPresentationVisible && !placing) ||
                 !_lastPanelModel.HasRecommendation || _tutorialCinematicSuspended)
@@ -68,12 +70,12 @@ namespace Game.UI.Runtime
         {
             if(!UiShellRuntimeGateway.TryReadMissionTutorialTarget(out target)) return false;
             if(!target.NeedsSelection) return false;
-            ShowSelectionTarget(target.Selection); return true;
+            ShowSelectionTarget(target.Selection,target.RequiredSelectionCount>1); return true;
         }
 
-        private void ShowSelectionTarget(Vector3 position)
+        private void ShowSelectionTarget(Vector3 position,bool group=false)
         {
-            if(_activeCommandMode is not (TacticalCommandMode.None or TacticalCommandMode.Select))
+            if(_activeCommandMode!=TacticalCommandMode.Select && (group || _activeCommandMode!=TacticalCommandMode.None))
                 Cue(_commandControlsView?.SelectButton,"ui.guidance.select_squad");
             else ShowTutorialWorld(position,true);
         }
@@ -85,7 +87,7 @@ namespace Game.UI.Runtime
         {
             if(!UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var target))
             { _highlightPresentationSystem.ClearDirectTutorialCue(); return; }
-            if(target.NeedsSelection) { ShowSelectionTarget(target.Selection); return; }
+            if(target.NeedsSelection) { ShowSelectionTarget(target.Selection,target.RequiredSelectionCount>1); return; }
             if(target.Moving) { _highlightPresentationSystem.ClearDirectTutorialCue(); return; }
             if(_activeCommandMode==mode) ShowTutorialWorld(target.Destination,false);
             else Cue(button,mode==TacticalCommandMode.Board
@@ -98,8 +100,9 @@ namespace Game.UI.Runtime
             switch(step)
             {
                 case 2: case 4: case 8:
-                    if(UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var target))
-                        ShowSelectionTarget(target.Selection);
+                    if(UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var target) && target.NeedsSelection)
+                        ShowSelectionTarget(target.Selection,target.RequiredSelectionCount>1);
+                    else _highlightPresentationSystem.ClearDirectTutorialCue();
                     break;
                 case 3: case 6: case 11: ShowCommandOrDestination(_commandControlsView?.MoveButton,TacticalCommandMode.Move); break;
                 case 5: case 9: ShowCommandOrDestination(_commandControlsView?.CommandWheelPanel?.NextBoardButton,TacticalCommandMode.Board); break;

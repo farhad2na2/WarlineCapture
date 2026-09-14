@@ -40,11 +40,14 @@ namespace Game.UI.Runtime
             bool opening=openingCopy!=null && openingCopy.gameObject.activeInHierarchy && HasText(openingCopy);
             bool alert=!tutorial && !opening && alertCopy!=null && alertCopy.gameObject.activeSelf && HasText(alertCopy);
             bool hasText=tutorial || opening || alert;
+            bool hasActions=showMeButton.gameObject.activeSelf || doItButton.gameObject.activeSelf;
+            float actionSpacing=hasActions?128:12;
+            contentActions.gameObject.SetActive(hasActions);
             if(mapDock==null) mapDock=GetComponentInParent<MissionHudTouchLayoutView>();
             float available=900;
             if(mapDock!=null && mapDock.Minimap!=null)
             {mapDock.Minimap.GetWorldCorners(mapCorners);available=-rail.InverseTransformPoint(mapCorners[1]).y-12;}
-            int state=(tutorial?1:0)|(opening?2:0)|(alert?4:0)|(_missionLayoutLarge?8:0)|
+            int state=(hasActions?64:0)|(tutorial?1:0)|(opening?2:0)|(alert?4:0)|(_missionLayoutLarge?8:0)|
                 (utilityActions!=null && utilityActions.gameObject.activeSelf?16:0)|(extractionActions!=null && extractionActions.gameObject.activeSelf?32:0);
             if(!_layoutDirty && Mathf.Abs(measuredAvailable-available)<.1f && measuredState==state && measuredWidth==rail.rect.width && measuredFont==bodyText.font &&
                 measuredTitle==titleText.text && measuredBody==bodyText.text && measuredAlert==alertCopy?.text && measuredOpening==openingCopy?.text) return;
@@ -54,7 +57,7 @@ namespace Game.UI.Runtime
             float titleHeight=tutorial ? Measure(titleText,width,_missionLayoutLarge?22:20) : 0;
             float bodyHeight=tutorial ? Measure(bodyText,width,_missionLayoutLarge?19:17) : 0;
             float utilityHeight=(utilityActions!=null && utilityActions.gameObject.activeSelf ? 84 : 0)+(extractionActions!=null && extractionActions.gameObject.activeSelf ? 84 : 0);
-            float required=20+titleHeight+bodyHeight+(titleHeight>0 && bodyHeight>0?8:0)+(tutorial?128:0)+utilityHeight;
+            float required=20+titleHeight+bodyHeight+(titleHeight>0 && bodyHeight>0?8:0)+(tutorial?actionSpacing:0)+utilityHeight;
             float portraitHeight=hasText ? Mathf.Clamp(available-required,62,114) : 230;
             missionPortraitStage.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,portraitHeight);
             missionPortraitClip.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,portraitHeight-12);
@@ -64,7 +67,7 @@ namespace Game.UI.Runtime
             float y=8+portraitHeight+12;
             if(tutorial)
             {
-                float visibleBody=Mathf.Min(bodyHeight,Mathf.Max(56,available-y-titleHeight-(titleHeight>0?8:0)-128-utilityHeight));
+                float visibleBody=Mathf.Min(bodyHeight,Mathf.Max(56,available-y-titleHeight-(titleHeight>0?8:0)-actionSpacing-utilityHeight));
                 EnsureBodyViewport();
                 Place(titleText.rectTransform,0,0,width,titleHeight);
                 Place(bodyViewport,0,titleHeight+(titleHeight>0?8:0),width,visibleBody);
@@ -77,8 +80,8 @@ namespace Game.UI.Runtime
                 float columnWidth=(width-20)/2;
                 Place((RectTransform)doItButton.transform,0,0,columnWidth,72);
                 Place((RectTransform)showMeButton.transform,columnWidth+20,0,columnWidth,72);
-                Place(briefingLayout,20,y,width,textHeight+116);
-                y+=textHeight+128;
+                Place(briefingLayout,20,y,width,textHeight+(hasActions?116:0));
+                y+=textHeight+actionSpacing;
             }
             else
             {

@@ -173,6 +173,7 @@ namespace Game.Editor
                     if(tour.OpeningWatchdogMilliseconds>=30000)throw new InvalidOperationException("Normal M04 tour relied on the watchdog fallback");
                 }
                 if(extraction.Ready==0||facts.ExtractionPassengerTotal!=4||em.GetBuffer<CampaignMissionExtractionMember>(root).Length!=18)throw new InvalidOperationException("M04 canonical manifest mismatch");
+                if(SessionState.GetBool(PlayerGuidanceKey,false)) {TickPlayerGuidance(em,root,extraction);return;}
                 if(!SessionState.GetBool(Full,false) || SessionState.GetBool(Both,false)&&!uiPassed)
                 {
                     TickLaunchUi(facts);return;
@@ -245,6 +246,8 @@ namespace Game.Editor
         {
             if(finished)return;finished=true;SessionState.SetBool(Active,false);EditorApplication.update-=Tick;Application.logMessageReceived-=Observe;
             SessionState.SetBool("Warline.M04.PlayerCamera",false);SessionState.SetBool("Warline.M04.VehicleReview",false);SessionState.SetBool("Warline.M04.GroundContact",false);
+            if(SessionState.GetBool(PlayerGuidanceKey,false)) Debug.Log("[M04PlayerRoute] result="+(pass?"Passed":"Failed")+" shows="+playerShows+" partialStage="+playerPartialStage);
+            SessionState.SetBool(PlayerGuidanceKey,false);
             if(oldLocale!=null)GameLocalization.SetLocale(oldLocale,false);Time.timeScale=1;
             Debug.Log("[M04EditorProbe] result="+(pass?"Passed":"Failed")+" "+detail);File.AppendAllText(Output+"/state.txt","result="+(pass?"Passed":"Failed")+" "+detail+"\n");
             MissionEditorValidationExit.Complete(pass);

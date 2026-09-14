@@ -127,6 +127,8 @@ namespace Game.UI.Shell.Ecs
                         continue;
 
                     summary.SelectedCount++;
+                    if (SelectionUiReadModelLookup.IsRescueSpecialist(entityManager, entity))
+                        summary.SpecialistCount++;
                     bool vehicle = IsVehicleUnit(entityManager, entity);
                     bool aircraft = entityManager.HasComponent<UnitAirComponent>(entity) ||
                                     entityManager.HasComponent<UnitAirMovement>(entity);
@@ -166,7 +168,12 @@ namespace Game.UI.Shell.Ecs
                 summary.HealthText = GameText.Get("selection.health.summary_empty", "HEALTH -");
             }
 
-            if (summary.SelectedCount == summary.SoldierCount)
+            if (summary.SelectedCount == summary.SpecialistCount)
+            {
+                summary.Title = GameText.Format("mission.m04.specialist.group", "{0} SPECIALISTS", summary.SelectedCount);
+                summary.Subtitle = GameText.Get("mission.m04.specialist.role", "Rescue passenger");
+            }
+            else if (summary.SelectedCount == summary.SoldierCount)
             {
                 summary.Title = summary.SelectedCount == 1
                     ? GameText.Get("selection.shell.title.soldier", "SOLDIER")
@@ -309,6 +316,7 @@ namespace Game.UI.Shell.Ecs
         {
             public int SelectedCount;
             public int SoldierCount;
+            public int SpecialistCount;
             public int VehicleCount;
             public int AircraftCount;
             public int HealthCurrent;

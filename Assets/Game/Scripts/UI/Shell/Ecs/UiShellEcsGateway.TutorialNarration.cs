@@ -29,6 +29,7 @@ namespace Game.UI.Shell.Ecs
             bool m02Step = tutorialStepCount == 9 && tutorialStep is >= 2 and <= 8;
             bool extraction=IsExtractionGuideContext();
             bool m03Step = tutorialStepCount == 12 && tutorialStep is >= 1 and <= 12;
+            if(m03Step && extraction) text=GameText.Get("mission.m04.tutorial."+tutorialStep+".body");
             if ((!m01Step && !m02Step && !m03Step && !m05Step) || string.IsNullOrWhiteSpace(text) ||
                 !TryGetBoundary(out EntityManager entityManager, out Entity boundary) ||
                 !UiShellActionAdapter.IsAssistantRuntimeActive(entityManager, boundary) ||

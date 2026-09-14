@@ -140,7 +140,9 @@ namespace Game.UI.Shell.Ecs
             bool narrationPulse = narrationState.LastPresentedAt > 0f &&
                                   Time.time - narrationState.LastPresentedAt <= 0.8f;
 
+            int extractionSelectionCount=ReadExtractionSelectionCount(recommendations.Length>0?recommendations[0].TutorialStep:(byte)0);
             if (hasCachedAssistantPanel && cachedAssistantTextLocale==GameLocalization.CurrentLocaleCode &&
+                cachedExtractionSelectionCount==extractionSelectionCount &&
                 cachedAssistantPanelWorld == entityManager.World &&
                 cachedAssistantPanelBoundary == boundary &&
                 cachedAssistantPanelSourceVersion == assistantState.SourceVersion &&
@@ -175,6 +177,8 @@ namespace Game.UI.Shell.Ecs
                 recommendationTitle=GameText.Get(recommendationTitle,recommendationTitle);
                 recommendationBody=GameText.Get(recommendationBody,recommendationBody);
                 if(topRecommendation.TutorialStepCount==8) recommendationBody=AppendBreachStatus(recommendationBody);
+                if(extractionSelectionCount>=0 && extractionSelectionCount<4)
+                    recommendationBody=GameText.Format("mission.m04.tutorial.selection_progress", "Specialists selected: {0}/4", extractionSelectionCount);
                 tutorialRightToLeft=GameLocalization.CurrentLocaleCode=="fa-IR";
             }
             if (topRecommendation.RecommendationId != 0 &&
@@ -274,6 +278,7 @@ namespace Game.UI.Shell.Ecs
             cachedAssistantPanelMessageCount = messages.Length;
             cachedAssistantPanelRecommendationCount = recommendations.Length;
             cachedAssistantPanelControlState = assistantState.ControlState;
+            cachedExtractionSelectionCount=extractionSelectionCount;
             cachedAssistantPanel = assistantPanel;
             return true;
         }

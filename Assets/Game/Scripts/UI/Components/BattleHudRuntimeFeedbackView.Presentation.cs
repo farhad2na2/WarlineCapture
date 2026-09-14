@@ -8,6 +8,22 @@ namespace Game.UI.Runtime
 {
     public sealed partial class BattleHudRuntimeFeedbackView
     {
+        private static void SetText(TMP_Text label, string text)
+        {
+            text ??= string.Empty;
+            if(label.TryGetComponent<V3LocalizedTextBindingView>(out var binding))
+            {
+                // Update the binding before an inactive feedback panel is shown again.
+                // Otherwise OnEnable restores the prefab's authoring/example message.
+                if(UiShellRuntimeGateway.Localization.TryGetSourceByLocalized(text,out var key,out var source))
+                    binding.Configure(key,source);
+                else binding.Configure(string.Empty,text);
+                binding.ApplyLocalization();
+                return;
+            }
+            if(label.text!=text) label.text=text;
+        }
+
         private void ApplyFeedbackVisuals(MatchHudCommandFeedbackModel model)
         {
             if (feedbackText != null)

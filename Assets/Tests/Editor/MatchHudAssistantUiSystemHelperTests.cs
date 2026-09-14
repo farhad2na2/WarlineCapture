@@ -1468,6 +1468,8 @@ public sealed partial class MatchHudAssistantUiSystemHelperTests
         root.transform.SetParent(parent, false);
         RectTransform rootRect = root.GetComponent<RectTransform>();
         rootRect.sizeDelta = new Vector2(900f, 180f);
+        Button select = CreateCommandButton("SelectCommandButton", rootRect, new Vector2(-360f, 0f));
+        SetPrivateField(root.GetComponent<MatchOverlayCommandControlsView>(), "selectButton", select);
         Button move = CreateCommandButton("MoveCommandButton", rootRect, new Vector2(-180f, 0f));
         Button attack = CreateCommandButton("AttackCommandButton", rootRect, new Vector2(180f, 0f));
         SetPrivateField(root.GetComponent<MatchOverlayCommandControlsView>(), "moveButton", move);
@@ -1795,7 +1797,7 @@ public sealed partial class MatchHudAssistantUiSystemHelperTests
         public bool TryReadMainMenuResources(out UiShellMainMenuResourcesModel resources) { resources = default; return false; }
         public bool TryReadMissionResult(out UiMissionResultPopupModel result) { result = default; return false; }
         public bool TryReadMatchHudSelection(out UiMatchHudSelectionPanelModel selection) { selection = UiMatchHudSelectionPanelModel.Hidden; return false; }
-        public bool TryReadMatchHudCommandState(out UiMatchHudCommandStateModel commandState) { commandState = default; return false; }
+        public bool TryReadMatchHudCommandState(out UiMatchHudCommandStateModel commandState) { commandState = new UiMatchHudCommandStateModel(CommandMode,false); return HasCommandState; }
         public bool TryReadMatchHudHeader(out UiMatchHudHeaderModel header) { header = UiMatchHudHeaderModel.Default; return false; }
         public bool TryReadMatchHudStatusSurfaces(out UiMatchHudStatusSurfacesModel statusSurfaces) { statusSurfaces = UiMatchHudStatusSurfacesModel.Default; return false; }
         public bool TryReadMatchHudAssistantPanel(out UiAssistantPanelModel assistantPanel) { assistantPanel = AssistantPanel; return true; }

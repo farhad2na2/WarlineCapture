@@ -37,7 +37,8 @@ namespace Game.UI.Shell.Ecs
         {
             target=default;
             var extraction=em.GetComponentData<CampaignMissionExtractionState>(root);
-            float3 team=default; int count=0,selected=0; bool moving=false;
+            Entity actor=step is 8 or 9 or 11 or 12 ? extraction.Aircraft : extraction.Carrier;
+            float3 team=default,missing=default; int count=0,selected=0; bool moving=false;
             var members=em.GetBuffer<CampaignMissionExtractionMember>(root,true);
             foreach(var member in members)
             {
@@ -45,22 +46,39 @@ namespace Game.UI.Shell.Ecs
                 if(em.HasComponent<UnitTransportPassenger>(member.Entity) &&
                     TryGetLiveExtractionPosition(em,em.GetComponentData<UnitTransportPassenger>(member.Entity).Transport,out var aboard)) position=aboard;
                 team+=position; count++;
-                if(em.HasComponent<SelectedUnitTag>(member.Entity)) selected++;
+                if(IsExtractionSelectionSatisfied(em,member.Entity,actor,step)) selected++; else missing=position;
                 moving|=IsTutorialActorMoving(em,member.Entity);
             }
             if(count==0) return false;
             team/=count;
             bool teamStep=step is 4 or 5 or 9;
-            Entity actor=step is 8 or 9 or 11 or 12 ? extraction.Aircraft : extraction.Carrier;
             if(!TryGetLiveExtractionPosition(em,actor,out var actorPosition)) return false;
             float3 destination=step is 6 or 7 or 10 ? extraction.LandingCenter : step>=11 ? extraction.DepartureCenter : team;
+            if(step==3) destination=team+new float3(12,0,0); // Stop beside the pickup group, not on top of it.
             if(step==5) destination=actorPosition;
             if(step==9 && !TryGetLiveExtractionPosition(em,extraction.Aircraft,out destination)) return false;
-            target=new UiMissionTutorialTarget(teamStep ? team : actorPosition,destination,
+            target=new UiMissionTutorialTarget(teamStep ? (selected>0 && selected<count ? missing : team) : actorPosition,destination,
                 teamStep ? selected!=count : !em.HasComponent<SelectedUnitTag>(actor),
-                teamStep ? moving : IsTutorialActorMoving(em,actor));
+                teamStep ? moving : IsTutorialActorMoving(em,actor),teamStep?count:1);
             return true;
         }
+
+        private static int ReadExtractionSelectionCount(byte step)
+        {
+            if(step is not (4 or 5 or 9) || !TryGetMissionRoot(out var em,out var root) ||
+                !em.GetComponentData<CampaignMissionRuntimeComponent>(root).MissionId.Equals(AirliftId) ||
+                !em.HasBuffer<CampaignMissionExtractionMember>(root)) return -1;
+            var extraction=em.GetComponentData<CampaignMissionExtractionState>(root);
+            Entity actor=step==9 ? extraction.Aircraft : extraction.Carrier;
+            int count=0;
+            foreach(var member in em.GetBuffer<CampaignMissionExtractionMember>(root,true))
+                if(member.Kind==1 && IsExtractionSelectionSatisfied(em,member.Entity,actor,step)) count++;
+            return count;
+        }
+        private static bool IsExtractionSelectionSatisfied(EntityManager em,Entity person,Entity actor,int step) =>
+            em.HasComponent<SelectedUnitTag>(person) || (step is 5 or 9 &&
+            em.HasComponent<UnitTransportPassenger>(person) && em.GetComponentData<UnitTransportPassenger>(person).Transport==actor);
+        private static int cachedExtractionSelectionCount=-1;
 
         private static bool IsTutorialActorMoving(EntityManager em,Entity actor) =>
             em.HasComponent<UnitPathRequest>(actor) || em.HasComponent<UnitPathFollow>(actor);

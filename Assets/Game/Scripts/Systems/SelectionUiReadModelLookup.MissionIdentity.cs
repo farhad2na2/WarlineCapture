@@ -13,9 +13,77 @@ namespace Game.Runtime
     public sealed partial class SelectionUiReadModelLookup
     {
         private static readonly FixedString64Bytes RescueSpecialistRole = "role.friendly.specialist";
-        internal static bool IsRescueSpecialist(EntityManager em,Entity entity) =>
+        public static bool IsRescueSpecialist(EntityManager em,Entity entity) =>
             em.HasComponent<CampaignMissionUnitRoleComponent>(entity) &&
             em.GetComponentData<CampaignMissionUnitRoleComponent>(entity).MissionRoleId.Equals(RescueSpecialistRole);
+        internal static string ResolveGroupTitle(
+            int unitCount,
+            int soldierCount,
+            int vehicleCount,
+            int aircraftCount,
+            int transportCount,
+            int buildingCount, int specialistCount)
+        {
+            if (unitCount <= 0)
+                return buildingCount == 1 ? GameText.Get("selection.title.one_structure", "1 STRUCTURE") : GameText.Get("selection.title.no_selection", "NO SELECTION");
+            if (buildingCount > 0)
+                return GameText.Get("selection.title.mixed_selection", "MIXED SELECTION");
+            if (specialistCount == unitCount)
+                return GameText.Format("mission.m04.specialist.group", "{0} SPECIALISTS", unitCount);
+            if (soldierCount == unitCount)
+                return unitCount == 1
+                    ? GameText.Get("selection.title.one_soldier", "1 SOLDIER")
+                    : GameText.Format("selection.title.soldiers", "{0} SOLDIERS", unitCount);
+            if (transportCount == unitCount)
+                return unitCount == 1
+                    ? GameText.Get("selection.title.one_transport", "1 TRANSPORT")
+                    : GameText.Format("selection.title.transports", "{0} TRANSPORTS", unitCount);
+            if (aircraftCount == unitCount)
+                return unitCount == 1
+                    ? GameText.Get("selection.title.one_aircraft", "1 AIRCRAFT")
+                    : GameText.Format("selection.title.aircraft", "{0} AIRCRAFT", unitCount);
+            if (vehicleCount == unitCount)
+                return unitCount == 1
+                    ? GameText.Get("selection.title.one_vehicle", "1 VEHICLE")
+                    : GameText.Format("selection.title.vehicles", "{0} VEHICLES", unitCount);
+            if (aircraftCount > 0 && soldierCount + vehicleCount + transportCount > 0)
+                return GameText.Get("selection.title.mixed_force", "MIXED FORCE");
+
+            return GameText.Get("selection.title.mixed_squad", "MIXED SQUAD");
+        }
+
+        internal static string ResolveGroupSubtitle(
+            int unitCount,
+            int soldierCount,
+            int vehicleCount,
+            int aircraftCount,
+            int transportCount,
+            int buildingCount, int specialistCount)
+        {
+            if (unitCount <= 0)
+                return buildingCount > 0 ? GameText.Get("selection.subtitle.building_group", "Building Group") : string.Empty;
+            if (buildingCount > 0)
+                return GameText.Format("selection.subtitle.units_structures", "{0} Units / {1} Structure", unitCount, buildingCount);
+            if (specialistCount == unitCount)
+                return GameText.Get("mission.m04.specialist.role", "Rescue passenger");
+            if (soldierCount == unitCount)
+                return GameText.Get("selection.subtitle.infantry_squad", "Infantry Squad");
+            if (transportCount == unitCount)
+                return GameText.Get("selection.subtitle.transport_group", "Transport Group");
+            if (aircraftCount == unitCount)
+                return GameText.Get("selection.subtitle.air_wing", "Air Wing");
+            if (vehicleCount == unitCount)
+                return GameText.Get("selection.subtitle.vehicle_squad", "Vehicle Squad");
+
+            int groundCount = soldierCount + vehicleCount + transportCount;
+            if (aircraftCount > 0 && groundCount > 0)
+                return GameText.Format("selection.subtitle.ground_air", "{0} Ground / {1} Air", groundCount, aircraftCount);
+            if (soldierCount > 0 && vehicleCount + transportCount > 0)
+                return GameText.Format("selection.subtitle.infantry_vehicles", "{0} Infantry / {1} Vehicles", soldierCount, vehicleCount + transportCount);
+
+            return GameText.Format("selection.subtitle.selected_units", "{0} Selected Units", unitCount);
+        }
+
         public string ResolveFocusedUnitName(EntityManager entityManager, Entity entity)
         {
             if (IsRescueSpecialist(entityManager,entity)) return Game.Configs.GameText.Get("mission.m04.specialist.name","Specialist");

@@ -13,7 +13,9 @@ public sealed partial class MatchHudAssistantUiSystemHelperTests
         RunCase(test => test.ShowMeFollowsSelectionCommandAndDestination(true));
         RunCase(test => test.EveryEnabledMissionShowMeHasATarget(false));
         RunCase(test => test.EveryEnabledMissionShowMeHasATarget(true));
-        Debug.Log("[MissionShowMe] result=Passed tests=4 M3,M4=selection,command,destination,waiting,all-lessons");
+        RunCase(test => test.M4UsesLiveSelectionModeAndHidesShowMeForVisibleIndicators());
+        RunCase(test => test.M4DoItRecoversSelectionBeforeBoardingOrMoving());
+        Debug.Log("[MissionShowMe] result=Passed tests=6 M3,M4=selection,command,destination,waiting,all-lessons");
     }
 
     [TestCase(false)] [TestCase(true)]
@@ -77,13 +79,85 @@ public sealed partial class MatchHudAssistantUiSystemHelperTests
         ui.Dispose();
     }
 
+    [Test]
+    public void M4UsesLiveSelectionModeAndHidesShowMeForVisibleIndicators()
+    {
+        CreateHudHarness(true,out var overlay,out var header,out _);
+        var model=CreateStructuredModel(1,recommendationKind:9,recommendationTargetKind:4,tutorialStep:4,tutorialStepCount:12);
+        var gateway=new FakeAssistantPanelGateway(model,UiAssistantHighlightModel.Empty) {HasTutorialTarget=true,Extraction=true,
+            HasCommandState=true,CommandMode=TacticalCommandMode.Move,TutorialTarget=new UiMissionTutorialTarget(Vector3.zero,Vector3.right*10,true,false,4)};
+        UiShellRuntimeGateway.Register(gateway);
+        var cameraObject=new GameObject("Tutorial visibility camera",typeof(Camera));var camera=cameraObject.GetComponent<Camera>();
+        camera.orthographic=true;camera.orthographicSize=20;camera.transform.position=new Vector3(0,100,0);camera.transform.LookAt(Vector3.zero);gateway.FocusCamera=camera;
+        var ui=new MainMenuPlayUI();ui.Init(null,new FakeMatchRuntimeState());
+        try
+        {
+            ui.BindMatchHudAssistant(header.gameObject,overlay,LoadPopupPrefab());
+            var controls=CreateCommandControls(overlay);ui.BindMatchHudCommandControls(controls);
+            var helper=GetPrivateField<MatchHudAssistantUiSystemHelper>(ui,"_matchHudAssistantUiSystem");helper.BindWorldCamera(camera);
+            var view=header.Find("AriaAssistantButton").GetComponent<AriaTutorialBriefingView>();
+            var highlight=GetPrivateField<AssistantHighlightPresentationSystemHelper>(helper,"_highlightPresentationSystem");
+            helper.ApplyReadModel(model);helper.TickHighlight(1);
+            Assert.AreSame(controls.SelectButton.transform,GetPrivateField<RectTransform>(highlight,"_directTutorialTarget"));
+            Assert.IsFalse(view.ShowMeButton.gameObject.activeSelf,"An already visible Select cue must hide Show Me.");
+            gateway.CommandMode=TacticalCommandMode.Select;helper.TickHighlight(2);
+            Assert.IsNull(GetPrivateField<RectTransform>(highlight,"_directTutorialTarget"),"Accepted Select must replace its stale UI cue with a world target.");
+            Assert.IsTrue(highlight.HasVisibleDirectTutorialTarget);
+            Assert.AreEqual((int)UnityEngine.Rendering.CompareFunction.Always,GetPrivateField<Material>(highlight,"_worldRingMaterial").GetInt("_ZTest"));
+            Assert.IsFalse(view.ShowMeButton.gameObject.activeSelf);
+            Assert.IsFalse(view.DoItButton.gameObject.activeSelf,"Do It must not toggle Select off while waiting for a drag gesture.");
+            camera.transform.position+=Vector3.right*1000;helper.TickHighlight(3);
+            Assert.IsTrue(view.ShowMeButton.gameObject.activeSelf,"Offscreen world target is a useful Show Me action.");
+            gateway.FocusCamera=null; // Accepted camera request completes on a later frame.
+            view.ShowMeButton.onClick.Invoke();
+            Assert.IsFalse(view.ShowMeButton.gameObject.activeSelf,"Hide immediately while the accepted camera move is in flight.");
+            camera.transform.position-=Vector3.right*1000;helper.TickHighlight(4);
+            Assert.IsFalse(view.ShowMeButton.gameObject.activeSelf,"Show Me disappears after revealing its target.");
+            gateway.TutorialTarget=new UiMissionTutorialTarget(Vector3.zero,Vector3.right*10,false,false,4);helper.TickHighlight(5);
+            Assert.IsFalse(highlight.HasDirectTutorialTarget,"A completed selection must clear its cue while the next lesson is projected.");
+            Assert.AreEqual((int)UnityEngine.Rendering.CompareFunction.LessEqual,GetPrivateField<Material>(highlight,"_worldRingMaterial").GetInt("_ZTest"));
+        }
+        finally {ui.Dispose();UnityEngine.Object.DestroyImmediate(cameraObject);}
+    }
+
+    [Test]
+    public void M4DoItRecoversSelectionBeforeBoardingOrMoving()
+    {
+        CreateHudHarness(true,out var overlay,out var header,out _);
+        var model=CreateStructuredModel(1,recommendationKind:9,recommendationTargetKind:4,tutorialStep:9,tutorialStepCount:12);
+        var gateway=new FakeAssistantPanelGateway(model,UiAssistantHighlightModel.Empty){HasTutorialTarget=true,Extraction=true,
+            HasCommandState=true,CommandMode=TacticalCommandMode.Move,TutorialTarget=new UiMissionTutorialTarget(Vector3.zero,Vector3.one,true,false,4)};
+        UiShellRuntimeGateway.Register(gateway);
+        var ui=new MainMenuPlayUI();ui.Init(null,new FakeMatchRuntimeState());
+        try
+        {
+            ui.BindMatchHudAssistant(header.gameObject,overlay,LoadPopupPrefab());
+            var controls=CreateCommandControls(overlay);ui.BindMatchHudCommandControls(controls);
+            int selections=0,moves=0;
+            controls.SelectButton.onClick.AddListener(()=>selections++);
+            controls.MoveButton.onClick.AddListener(()=>moves++);
+            var helper=GetPrivateField<MatchHudAssistantUiSystemHelper>(ui,"_matchHudAssistantUiSystem");
+            var view=header.Find("AriaAssistantButton").GetComponent<AriaTutorialBriefingView>();
+            helper.ApplyReadModel(model);helper.TickHighlight(1);
+            Assert.IsTrue(view.DoItButton.gameObject.activeInHierarchy);
+            view.DoItButton.onClick.Invoke();
+            Assert.AreEqual(1,selections,"One Do It click must activate selection before a boarding order.");
+            Assert.AreEqual(0,moves);
+            gateway.CommandMode=TacticalCommandMode.Select;helper.TickHighlight(2);
+            Assert.IsFalse(view.DoItButton.gameObject.activeSelf,"Dragging is the next action; Do It must not toggle selection off.");
+        }
+        finally {ui.Dispose();}
+    }
+
     private sealed partial class FakeAssistantPanelGateway : IUiMissionTutorialTargetGateway,IUiMissionTutorialFocusGateway,IUiMissionExtractionGateway
     {
-        public bool HasTutorialTarget, Extraction;
+        public bool HasTutorialTarget, Extraction, HasCommandState;
+        public TacticalCommandMode CommandMode;
+        public Camera FocusCamera;
         public UiMissionTutorialTarget TutorialTarget;
         public Vector3 LastTutorialFocus;
         public bool TryReadMissionTutorialTarget(out UiMissionTutorialTarget target) {target=TutorialTarget;return HasTutorialTarget;}
-        public bool TryFocusMissionTutorialTarget(bool selection) {LastTutorialFocus=selection?TutorialTarget.Selection:TutorialTarget.Destination;return HasTutorialTarget;}
+        public bool TryFocusMissionTutorialTarget(bool selection) {LastTutorialFocus=selection?TutorialTarget.Selection:TutorialTarget.Destination;if(FocusCamera!=null){FocusCamera.transform.position=LastTutorialFocus+Vector3.up*100;FocusCamera.transform.LookAt(LastTutorialFocus);}return HasTutorialTarget;}
         public bool TryReadMissionExtraction(out UiMissionExtractionModel model) {model=default;return Extraction;}
         public bool TryRequestExtractionAction(UiMissionExtractionAction action) => Extraction;
         public bool IsExtractionGuideContext() => Extraction;

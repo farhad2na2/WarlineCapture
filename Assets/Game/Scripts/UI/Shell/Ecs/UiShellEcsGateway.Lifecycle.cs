@@ -4,6 +4,8 @@ namespace Game.UI.Shell.Ecs
 {
     public sealed partial class UiShellEcsGateway
     {
+        private static EntityQuery selectionModeQuery;
+
         private static void ResetWorldBoundQueries(World nextWorld)
         {
             if (cachedWorld != null && cachedWorld.IsCreated)
@@ -11,7 +13,7 @@ namespace Game.UI.Shell.Ecs
                 if (hasBoundaryQuery) boundaryQuery.Dispose();
                 if (hasMissionBriefingQuery) missionBriefingQuery.Dispose();
                 if (hasFocusedSelectionQuery) focusedSelectionQuery.Dispose();
-                if (hasSelectionInputQuery) selectionInputQuery.Dispose();
+                if (hasSelectionInputQuery) { selectionInputQuery.Dispose(); selectionModeQuery.Dispose(); }
                 if (hasSelectedUnitsQuery) selectedUnitsQuery.Dispose();
                 if (hasMinimapMarkerQuery) minimapMarkerQuery.Dispose();
                 if (hasGridConfigQuery) gridConfigQuery.Dispose();
@@ -26,6 +28,7 @@ namespace Game.UI.Shell.Ecs
             missionBriefingQuery = default;
             focusedSelectionQuery = default;
             selectionInputQuery = default;
+            selectionModeQuery = default;
             selectedUnitsQuery = default;
             minimapMarkerQuery = default;
             gridConfigQuery = default;

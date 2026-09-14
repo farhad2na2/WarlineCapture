@@ -9,6 +9,18 @@ namespace Game.UI.Runtime
         internal bool HasDirectTutorialTarget => _directTutorialCue &&
             (_directTutorialTarget != null && _commandCueActive && _directTutorialTarget.gameObject.activeInHierarchy ||
              _directTutorialTarget == null && _worldRingRoot != null && _worldRingRoot.activeSelf);
+        internal bool HasDirectTutorialControlTarget => HasDirectTutorialTarget && _directTutorialTarget!=null;
+        internal bool HasVisibleDirectTutorialTarget
+        {
+            get
+            {
+                if(!HasDirectTutorialTarget) return false;
+                if(_directTutorialTarget!=null) return _screenTargetIndicator!=null && _screenTargetIndicator.gameObject.activeInHierarchy;
+                if(_worldCamera==null || _worldRingRenderer==null) return false;
+                var point=_worldCamera.WorldToViewportPoint(_worldRingRenderer.bounds.center);
+                return point.z>0 && point.x>.18f && point.x<.72f && point.y>.27f && point.y<.86f;
+            }
+        }
         private bool _directTutorialCue;
         private RectTransform _directTutorialTarget;
         private string _directCaptionKey, _directCaptionLocale;
@@ -70,12 +82,16 @@ namespace Game.UI.Runtime
             _commandCueActive = false;
             if (_screenTargetIndicator != null) _screenTargetIndicator.gameObject.SetActive(false);
             ApplyWorldRing(new UiAssistantHighlightModel(0,true,0,0,0,3,target.x,target.y,target.z,1), true);
+            if(_worldRingRenderer!=null) _worldRingRenderer.startColor=_worldRingRenderer.endColor=V3GuidanceYellow;
+            // A guidance target must remain visible when a transport or prop occludes the person.
+            if(_worldRingMaterial!=null) _worldRingMaterial.SetInt("_ZTest",(int)UnityEngine.Rendering.CompareFunction.Always);
         }
 
         internal void ClearDirectTutorialCue()
         {
             if (!_directTutorialCue) return;
             _directTutorialCue = false;
+            if(_worldRingMaterial!=null) _worldRingMaterial.SetInt("_ZTest",(int)UnityEngine.Rendering.CompareFunction.LessEqual);
             _directTutorialTarget = null;
             _commandCueActive = false;
             if (_screenTargetIndicator != null) _screenTargetIndicator.gameObject.SetActive(false);

@@ -31,6 +31,7 @@ namespace Game.UI.Shell.Ecs
                 {
                     selectionInputQuery =
                         world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<RtsSelectionInputStateComponent>());
+                    selectionModeQuery = world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<RuntimeGameplayStateComponent>());
                     hasSelectionInputQuery = true;
                 }
 
@@ -41,6 +42,11 @@ namespace Game.UI.Shell.Ecs
                     activeCommandMode = (TacticalCommandMode)inputState.ActiveCommandMode;
                 }
             }
+
+            // Select is a persistent interaction mode, stored separately from one-shot orders.
+            if (hasSelectionInputQuery && !selectionModeQuery.IsEmptyIgnoreFilter &&
+                selectionModeQuery.GetSingleton<RuntimeGameplayStateComponent>().SelectionModeActive != 0)
+                activeCommandMode = TacticalCommandMode.Select;
 
             bool buildDrawerVisible = false;
             if (entityManager.HasComponent<UiShellActivePopupComponent>(boundary))

@@ -5,6 +5,12 @@ namespace Game.UI.Runtime
     {
         private void ExecuteExtractionGuidance()
         {
+            if(UiShellRuntimeGateway.TryReadMatchHudCommandState(out var commandState)) _activeCommandMode=commandState.ActiveCommandMode;
+            if(_lastPanelModel.TutorialStep!=1 && UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var target) && target.NeedsSelection)
+            {
+                if(_activeCommandMode!=Game.Tactical.Contracts.TacticalCommandMode.Select) InvokeAvailable(_commandControlsView?.SelectButton);
+                return;
+            }
             switch(_lastPanelModel.TutorialStep)
             {
                 case 1: UiShellRuntimeGateway.TryRequestExtractionAction(UiMissionExtractionAction.ContinuePlan); break;
@@ -15,7 +21,7 @@ namespace Game.UI.Runtime
                             if (selection.ResolvePassengerTutorialButton() is {} next) { InvokeAvailable(next); break; }
                     break;
                 case 5: case 9: InvokeAvailable(_commandControlsView?.CommandWheelPanel?.NextBoardButton); break;
-                case 2: case 4: case 8: InvokeAvailable(_commandControlsView?.SelectButton); break;
+                case 2: case 4: case 8: if(_activeCommandMode!=Game.Tactical.Contracts.TacticalCommandMode.Select) InvokeAvailable(_commandControlsView?.SelectButton); break;
                 default: UiShellRuntimeGateway.TryRequestMissionDefenseAction(UiMissionDefenseAction.OpenGuide); break;
             }
         }

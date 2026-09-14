@@ -704,6 +704,7 @@ namespace Game.Runtime
 
             int unitCount = 0;
             int soldierCount = 0;
+            int specialistCount = 0;
             int vehicleCount = 0;
             int aircraftCount = 0;
             int transportCount = 0;
@@ -725,6 +726,7 @@ namespace Game.Runtime
                         continue;
 
                     unitCount++;
+                    if (SelectionUiReadModelLookup.IsRescueSpecialist(em, entity)) specialistCount++;
                     UnitCategory category = ResolveCategory(em, entity);
                     soldierCount += category == UnitCategory.Soldier ? 1 : 0;
                     vehicleCount += category == UnitCategory.Vehicle ? 1 : 0;
@@ -764,8 +766,8 @@ namespace Game.Runtime
                 aircraftCount,
                 transportCount,
                 buildingCount,
-                ResolveTitle(unitCount, soldierCount, vehicleCount, aircraftCount, transportCount, buildingCount),
-                ResolveSubtitle(unitCount, soldierCount, vehicleCount, aircraftCount, transportCount, buildingCount),
+                SelectionUiReadModelLookup.ResolveGroupTitle(unitCount, soldierCount, vehicleCount, aircraftCount, transportCount, buildingCount, specialistCount),
+                SelectionUiReadModelLookup.ResolveGroupSubtitle(unitCount, soldierCount, vehicleCount, aircraftCount, transportCount, buildingCount, specialistCount),
                 orderText,
                 healthText,
                 health01,
@@ -1410,70 +1412,6 @@ namespace Game.Runtime
                 SelectionUiReadModelLookup.FocusedUnitUiStatus.Moving => Text("selection.order.moving", "Moving"),
                 _ => Text("selection.order.idle", "Idle")
             };
-        }
-
-        private static string ResolveTitle(
-            int unitCount,
-            int soldierCount,
-            int vehicleCount,
-            int aircraftCount,
-            int transportCount,
-            int buildingCount)
-        {
-            if (unitCount <= 0)
-                return buildingCount == 1 ? Text("selection.title.one_structure", "1 STRUCTURE") : Text("selection.title.no_selection", "NO SELECTION");
-            if (buildingCount > 0)
-                return Text("selection.title.mixed_selection", "MIXED SELECTION");
-            if (soldierCount == unitCount)
-                return unitCount == 1
-                    ? Text("selection.title.one_soldier", "1 SOLDIER")
-                    : FormatText("selection.title.soldiers", "{0} SOLDIERS", unitCount);
-            if (transportCount == unitCount)
-                return unitCount == 1
-                    ? Text("selection.title.one_transport", "1 TRANSPORT")
-                    : FormatText("selection.title.transports", "{0} TRANSPORTS", unitCount);
-            if (aircraftCount == unitCount)
-                return unitCount == 1
-                    ? Text("selection.title.one_aircraft", "1 AIRCRAFT")
-                    : FormatText("selection.title.aircraft", "{0} AIRCRAFT", unitCount);
-            if (vehicleCount == unitCount)
-                return unitCount == 1
-                    ? Text("selection.title.one_vehicle", "1 VEHICLE")
-                    : FormatText("selection.title.vehicles", "{0} VEHICLES", unitCount);
-            if (aircraftCount > 0 && soldierCount + vehicleCount + transportCount > 0)
-                return Text("selection.title.mixed_force", "MIXED FORCE");
-
-            return Text("selection.title.mixed_squad", "MIXED SQUAD");
-        }
-
-        private static string ResolveSubtitle(
-            int unitCount,
-            int soldierCount,
-            int vehicleCount,
-            int aircraftCount,
-            int transportCount,
-            int buildingCount)
-        {
-            if (unitCount <= 0)
-                return buildingCount > 0 ? Text("selection.subtitle.building_group", "Building Group") : string.Empty;
-            if (buildingCount > 0)
-                return FormatText("selection.subtitle.units_structures", "{0} Units / {1} Structure", unitCount, buildingCount);
-            if (soldierCount == unitCount)
-                return Text("selection.subtitle.infantry_squad", "Infantry Squad");
-            if (transportCount == unitCount)
-                return Text("selection.subtitle.transport_group", "Transport Group");
-            if (aircraftCount == unitCount)
-                return Text("selection.subtitle.air_wing", "Air Wing");
-            if (vehicleCount == unitCount)
-                return Text("selection.subtitle.vehicle_squad", "Vehicle Squad");
-
-            int groundCount = soldierCount + vehicleCount + transportCount;
-            if (aircraftCount > 0 && groundCount > 0)
-                return FormatText("selection.subtitle.ground_air", "{0} Ground / {1} Air", groundCount, aircraftCount);
-            if (soldierCount > 0 && vehicleCount + transportCount > 0)
-                return FormatText("selection.subtitle.infantry_vehicles", "{0} Infantry / {1} Vehicles", soldierCount, vehicleCount + transportCount);
-
-            return FormatText("selection.subtitle.selected_units", "{0} Selected Units", unitCount);
         }
 
         private static SelectionSummaryPortraitKind ResolvePortraitKind(

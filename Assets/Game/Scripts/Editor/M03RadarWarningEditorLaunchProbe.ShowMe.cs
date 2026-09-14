@@ -30,20 +30,23 @@ namespace Game.Editor
             {
                 case 0:
                     if(!target.NeedsSelection) throw new InvalidOperationException("Expected unselected squad after the optional defense lesson.");
-                    ClickCommand(view.ShowMeButton); break;
+                    if(UiShellRuntimeGateway.TryReadMatchHudCommandState(out var state) &&
+                        state.ActiveCommandMode is not (Game.Tactical.Contracts.TacticalCommandMode.None or Game.Tactical.Contracts.TacticalCommandMode.Select))
+                    {ClickCommand(controls.SelectButton);showMeNext=EditorApplication.timeSinceStartup+1.2;return true;}
+                    RevealTutorialIfNeeded(view); break;
                 case 1:
                     AssertVisibleTutorialWorld(match.MatchBootstrap.WorldCamera,target.Selection);
                     ScreenCapture.CaptureScreenshot(Output+"/show-me-select-squad.png"); break;
                 case 2:
                     if(!match.MatchBootstrap.SelectionUiCommand.RequestSelectAllSoldiers()) throw new InvalidOperationException("Squad selection rejected.");
                     break;
-                case 3: ClickCommand(view.ShowMeButton); break;
+                case 3: RevealTutorialIfNeeded(view); break;
                 case 4:
                     var indicator=GameObject.Find("AriaAssistantTargetIndicatorRuntime");
                     if(indicator==null || !indicator.activeInHierarchy) throw new InvalidOperationException("Move button cue missing.");
                     ScreenCapture.CaptureScreenshot(Output+"/show-me-move-button.png"); break;
                 case 5: ClickCommand(controls.MoveButton); break;
-                case 6: ClickCommand(view.ShowMeButton); break;
+                case 6: RevealTutorialIfNeeded(view); break;
                 case 7:
                     AssertVisibleTutorialWorld(match.MatchBootstrap.WorldCamera,target.Destination);
                     ScreenCapture.CaptureScreenshot(Output+"/show-me-destination.png"); break;
@@ -54,6 +57,15 @@ namespace Game.Editor
                     Complete(true,"SHOW ME: selection ring/camera -> Move button -> destination ring/camera, through the actual M3 tutorial flow."); return true;
             }
             showMePhase++; showMeNext=EditorApplication.timeSinceStartup+1.2; return true;
+        }
+
+        private static void RevealTutorialIfNeeded(AriaTutorialBriefingView view)
+        {
+            if(view.ShowMeButton.gameObject.activeInHierarchy) {ClickCommand(view.ShowMeButton);return;}
+            var indicator=GameObject.Find("AriaAssistantTargetIndicatorRuntime");
+            var world=GameObject.Find("AriaAssistantPreviewHighlightRuntime");
+            if((indicator==null || !indicator.activeInHierarchy) && (world==null || !world.activeInHierarchy))
+                throw new InvalidOperationException("No visible guidance and no Show Me recovery.");
         }
 
         private static void AssertVisibleTutorialWorld(Camera camera,Vector3 expected)

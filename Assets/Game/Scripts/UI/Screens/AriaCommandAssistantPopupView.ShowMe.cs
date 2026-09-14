@@ -4,7 +4,7 @@ namespace Game.UI.Runtime
     {
         internal void SetShowMeAvailable(bool available)
         {
-            if (_showMeButton != null) _showMeButton.interactable = available;
+            if (_showMeButton != null) { _showMeButton.interactable = available; _showMeButton.gameObject.SetActive(available); }
         }
     }
 }

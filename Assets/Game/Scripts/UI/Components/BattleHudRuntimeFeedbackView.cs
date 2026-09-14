@@ -388,13 +388,6 @@ namespace Game.UI.Runtime
                 SetText(label, string.IsNullOrWhiteSpace(text) ? string.Empty : text);
         }
 
-        private static void SetText(TMP_Text label, string text)
-        {
-            text ??= string.Empty;
-            if (label.text != text)
-                label.text = text;
-        }
-
         private static void BindButton(Button button, ref Button boundButton, UnityEngine.Events.UnityAction action)
         {
             if (boundButton == button)

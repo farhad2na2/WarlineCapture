@@ -290,245 +290,72 @@ public sealed partial class MatchHudAssistantUiSystemHelperTests
     [Test]
     public void TutorialBriefing_RemainsVisibleThroughEachInstructionAndResetsForReplay()
     {
-        CreateHudHarness(true, out RectTransform overlay, out RectTransform header, out _);
-        var gateway = new FakeAssistantPanelGateway(
-            CreateStructuredModel(801u, recommendationKind: 1, recommendationTargetKind: 6,
-                tutorialStep: 1, tutorialStepCount: 5),
-            UiAssistantHighlightModel.Empty)
-        {
-            CinematicInteractionLocked = true
-        };
+        CreateHudHarness(true,out var overlay,out var header,out _);
+        var first=CreateStructuredModel(801,recommendationKind:1,recommendationTargetKind:6,tutorialStep:1,tutorialStepCount:5);
+        var gateway=new FakeAssistantPanelGateway(first,UiAssistantHighlightModel.Empty) {CinematicInteractionLocked=true,
+            HasTutorialTarget=true,TutorialTarget=new UiMissionTutorialTarget(Vector3.zero,Vector3.right*10,true,false)};
         UiShellRuntimeGateway.Register(gateway);
-        var ui = new MainMenuPlayUI();
-        ui.Init(null, new FakeMatchRuntimeState());
-        ui.BindMatchHudAssistant(header.gameObject, overlay, LoadPopupPrefab());
-
-        ui.Update();
-        AriaCommandAssistantPopupView popup =
-            overlay.GetComponentInChildren<AriaCommandAssistantPopupView>(true);
-        AriaTutorialBriefingView tutorial =
-            header.Find("AriaAssistantButton").GetComponent<AriaTutorialBriefingView>();
-        Assert.IsFalse(popup.IsOpen, "The tutorial briefing must wait for the opening cinematic lock.");
-        Assert.IsFalse(tutorial.IsPresentationVisible);
-
-        gateway.CinematicInteractionLocked = false;
-        SetPrivateField(ui, "_nextAssistantPanelRefreshTime", 0f);
-        ui.Update();
-        Assert.IsFalse(popup.IsOpen, "Tutorial steps must not open a second POP-13 surface.");
-        Assert.AreEqual(1, gateway.TutorialNarrationSteps.Count);
-        Assert.AreEqual(1, gateway.TutorialNarrationSteps[0]);
-        Assert.AreEqual("Preview the verified hostile source before dispatch.", gateway.TutorialNarrationTexts[0]);
-        Assert.IsTrue(tutorial.IsPresentationVisible);
-        Assert.IsNull(tutorial.CloseButton, "The embedded tutorial has no SKIP action.");
-        Assert.AreEqual("FOCUS HOSTILE ARMOR", tutorial.TitleText.text);
-        Assert.AreEqual("STEP 1/5", tutorial.ProgressText.text);
-        Assert.AreEqual(1, gateway.AssistantIntentRequestCount,
-            "Opening the first tutorial instruction must automatically issue SHOW ME.");
-        Assert.AreEqual(UiAssistantCommandIntentKind.ShowRecommendation, gateway.LastAssistantIntentKind);
-
-        gateway.AssistantPanel = CreateStructuredModel(
-            802u, recommendationKind: 1, recommendationTargetKind: 6,
-            tutorialStep: 1, tutorialStepCount: 5);
-        SetPrivateField(ui, "_nextAssistantPanelRefreshTime", 0f);
-        ui.Update();
-        Assert.IsTrue(tutorial.IsPresentationVisible, "The active tutorial instruction must remain visible.");
-
-        gateway.AssistantPanel = CreateStructuredModel(
-            803u, recommendationKind: 2, recommendationTargetKind: 1,
-            tutorialStep: 2, tutorialStepCount: 5,
-            recommendationBody: "Move the squad to the marked cover position.");
-        SetPrivateField(ui, "_nextAssistantPanelRefreshTime", 0f);
-        ui.Update();
-        Assert.IsFalse(tutorial.IsPresentationVisible,
-            "Completing one instruction must remove ARIA before the next instruction appears.");
-
-        MatchHudAssistantUiSystemHelper helper =
-            GetPrivateField<MatchHudAssistantUiSystemHelper>(ui, "_matchHudAssistantUiSystem");
-        float stepTwoDeadline = GetPrivateField<float>(helper, "_tutorialShowAtUnscaledTime");
-        helper.TickHighlight(stepTwoDeadline - 0.01f);
-        Assert.IsFalse(tutorial.IsPresentationVisible, "The next tutorial instruction must wait for two seconds.");
-        Assert.AreEqual(1, gateway.TutorialNarrationSteps.Count,
-            "A hidden pending instruction must not start narration.");
-        helper.TickHighlight(stepTwoDeadline);
-        Assert.IsTrue(tutorial.IsPresentationVisible, "The next tutorial instruction must appear after two seconds.");
-        Assert.AreEqual(2, gateway.TutorialNarrationSteps.Count);
-        Assert.AreEqual(2, gateway.TutorialNarrationSteps[1]);
-        Assert.AreEqual(UiTutorialNarrationPhase.PrimaryAction, gateway.TutorialNarrationPhases[1]);
-        Assert.AreEqual("Tap MOVE to select the move command.", gateway.TutorialNarrationTexts[1]);
-        Assert.AreEqual("STEP 2/5", tutorial.ProgressText.text);
-        Assert.AreEqual("PRESS MOVE", tutorial.TitleText.text);
-        Assert.AreEqual("Tap MOVE to select the move command.", tutorial.BodyText.text);
-        Assert.AreEqual(2, gateway.AssistantIntentRequestCount,
-            "Opening the MOVE instruction must automatically reveal its command button.");
-
-        MatchOverlayCommandControlsView commandControls = CreateCommandControls(overlay);
-        ui.BindMatchHudCommandControls(commandControls);
-        commandControls.MoveButton.onClick.Invoke();
-        Assert.IsFalse(tutorial.IsPresentationVisible,
-            "Pressing MOVE must remove the completed command-button instruction.");
-        float moveTargetDeadline = GetPrivateField<float>(helper, "_tutorialShowAtUnscaledTime");
-        helper.TickHighlight(moveTargetDeadline - 0.01f);
-        Assert.IsFalse(tutorial.IsPresentationVisible, "The destination instruction must honor the two-second delay.");
-        gateway.TutorialNarrationFailuresRemaining = 1;
-        helper.TickHighlight(moveTargetDeadline);
-        Assert.IsTrue(tutorial.IsPresentationVisible, "ARIA must return to teach the destination substep.");
-        Assert.AreEqual(3, gateway.AssistantIntentRequestCount,
-            "Opening the destination substep must automatically reveal its world target once.");
-        Assert.AreEqual(UiAssistantCommandIntentKind.ShowRecommendation, gateway.LastAssistantIntentKind);
-        Assert.IsFalse(gateway.LastAssistantIntentFromTakeover);
-        Assert.AreEqual(2, gateway.TutorialNarrationSteps.Count,
-            "A rejected narration request must remain pending rather than being marked complete.");
-        helper.TickHighlight(moveTargetDeadline + 0.01f);
-        Assert.AreEqual(3, gateway.AssistantIntentRequestCount,
-            "Narration retries must not repeat an accepted automatic target reveal.");
-        Assert.AreEqual(3, gateway.TutorialNarrationSteps.Count,
-            "The destination narration must retry after a transient gateway rejection.");
-        Assert.AreEqual(2, gateway.TutorialNarrationSteps[2]);
-        Assert.AreEqual(UiTutorialNarrationPhase.WorldTarget, gateway.TutorialNarrationPhases[2]);
-        Assert.AreEqual(
-            "Tap the highlighted destination to move your squad.",
-            gateway.TutorialNarrationTexts[2]);
-        Assert.AreEqual("STEP 3/5", tutorial.ProgressText.text);
-        Assert.AreEqual("CHOOSE DESTINATION", tutorial.TitleText.text);
-        Assert.AreEqual("Tap the highlighted destination to move your squad.", tutorial.BodyText.text);
-
-        helper.CompleteWorldTarget(TacticalCommandMode.Move);
-        helper.ApplyCommandMode(TacticalCommandMode.None);
-        Assert.IsFalse(tutorial.IsPresentationVisible, "Accepting the destination must remove the completed instruction.");
-        helper.ApplyReadModel(gateway.AssistantPanel);
-        helper.TickHighlight(float.MaxValue);
-        Assert.IsFalse(tutorial.IsPresentationVisible,
-            "A stale projection must not reopen a completed tutorial instruction.");
-
-        gateway.AssistantPanel = CreateStructuredModel(
-            804u, recommendationKind: 3, recommendationTargetKind: 6,
-            tutorialStep: 3, tutorialStepCount: 5,
-            recommendationBody: "Inspect the armed patrol near the civilians.");
-        helper.ApplyReadModel(gateway.AssistantPanel);
-        helper.TickHighlight(100f);
-        helper.TickHighlight(102f);
-        Assert.IsTrue(tutorial.IsPresentationVisible);
-        Assert.AreEqual(4, gateway.TutorialNarrationSteps.Count);
-        Assert.AreEqual(3, gateway.TutorialNarrationSteps[3]);
-        Assert.AreEqual(UiTutorialNarrationPhase.PrimaryAction, gateway.TutorialNarrationPhases[3]);
-        Assert.AreEqual("Tap ATTACK to select the attack command.", gateway.TutorialNarrationTexts[3]);
-        Assert.AreEqual("STEP 4/5", tutorial.ProgressText.text);
-        Assert.AreEqual("Tap ATTACK to select the attack command.", tutorial.BodyText.text);
-        Assert.AreEqual(4, gateway.AssistantIntentRequestCount,
-            "Opening the ATTACK instruction must automatically reveal its command button.");
-        commandControls.AttackButton.onClick.Invoke();
-        Assert.IsFalse(tutorial.IsPresentationVisible,
-            "Pressing ATTACK must remove the completed command-button instruction.");
-        float attackTargetDeadline = GetPrivateField<float>(helper, "_tutorialShowAtUnscaledTime");
-        helper.TickHighlight(attackTargetDeadline);
-        Assert.IsTrue(tutorial.IsPresentationVisible, "ARIA must return to teach the enemy-target substep.");
-        Assert.AreEqual(5, gateway.AssistantIntentRequestCount,
-            "Opening the enemy-target substep must automatically reveal its world target once.");
-        helper.TickHighlight(attackTargetDeadline + 0.01f);
-        Assert.AreEqual(5, gateway.AssistantIntentRequestCount,
-            "An open enemy-target substep must not enqueue duplicate automatic reveals.");
-        Assert.AreEqual(5, gateway.TutorialNarrationSteps.Count);
-        Assert.AreEqual(3, gateway.TutorialNarrationSteps[4]);
-        Assert.AreEqual(UiTutorialNarrationPhase.WorldTarget, gateway.TutorialNarrationPhases[4]);
-        Assert.AreEqual(
-            "Tap the highlighted enemy to issue the attack.",
-            gateway.TutorialNarrationTexts[4]);
-        Assert.AreEqual("STEP 5/5", tutorial.ProgressText.text);
-        Assert.AreEqual("CHOOSE ENEMY", tutorial.TitleText.text);
-        Assert.AreEqual("Tap the highlighted enemy to issue the attack.", tutorial.BodyText.text);
-        helper.CompleteWorldTarget(TacticalCommandMode.Attack);
-        Assert.IsFalse(tutorial.IsPresentationVisible, "The final attack must hide ARIA immediately.");
-
-        gateway.AssistantPanel = CreateStructuredModel(
-            805u, recommendationKind: 3, recommendationTargetKind: 6,
-            tutorialStep: 4, tutorialStepCount: 5);
-        helper.ApplyReadModel(gateway.AssistantPanel);
-        helper.TickHighlight(float.MaxValue);
-        Assert.IsTrue(tutorial.IsPresentationVisible,
-            "An attack click must not suppress later mission objectives.");
-
-        helper.ResetForMissionAttempt();
-        gateway.AssistantPanel = CreateStructuredModel(
-            806u, recommendationKind: 1, recommendationTargetKind: 6,
-            tutorialStep: 1, tutorialStepCount: 5);
-        helper.ApplyReadModel(gateway.AssistantPanel);
-        helper.TickHighlight(0f);
-        Assert.IsTrue(tutorial.IsPresentationVisible, "A new mission attempt must present step one again.");
-        Assert.AreEqual(7, gateway.TutorialNarrationSteps.Count,
-            "A replay must narrate the first tutorial step again after the later combat lesson.");
-        Assert.AreEqual(1, gateway.TutorialNarrationSteps[6]);
+        var ui=new MainMenuPlayUI();ui.Init(null,new FakeMatchRuntimeState());
+        ui.BindMatchHudAssistant(header.gameObject,overlay,LoadPopupPrefab());
+        ui.BindMatchHudSquadTray(CreateSquadTray(overlay));
+        var controls=CreateCommandControls(overlay);ui.BindMatchHudCommandControls(controls);
+        var helper=GetPrivateField<MatchHudAssistantUiSystemHelper>(ui,"_matchHudAssistantUiSystem");
+        var tutorial=header.Find("AriaAssistantButton").GetComponent<AriaTutorialBriefingView>();
+        helper.ApplyReadModel(first);helper.TickHighlight(1);Assert.IsFalse(tutorial.IsPresentationVisible);
+        gateway.CinematicInteractionLocked=false;helper.TickHighlight(2);
+        Assert.IsTrue(tutorial.IsPresentationVisible);Assert.AreEqual(1,gateway.TutorialNarrationSteps.Count);
+        Assert.IsFalse(tutorial.ShowMeButton.gameObject.activeSelf,"The visible next-click indicator already provides guidance.");
+        gateway.TutorialTarget=new UiMissionTutorialTarget(Vector3.zero,Vector3.right*10,false,false);
+        var move=CreateStructuredModel(802,recommendationKind:2,recommendationTargetKind:1,tutorialStep:2,tutorialStepCount:5);
+        helper.ApplyReadModel(move);helper.TickHighlight(3);
+        Assert.IsTrue(tutorial.IsPresentationVisible,"The next instruction appears immediately.");
+        Assert.AreEqual("PRESS MOVE",tutorial.TitleText.text);
+        Assert.AreEqual(2,gateway.TutorialNarrationSteps.Count);
+        controls.MoveButton.onClick.Invoke();
+        gateway.TutorialNarrationFailuresRemaining=1;helper.TickHighlight(4);
+        Assert.IsTrue(tutorial.IsPresentationVisible,"Keep ARIA visible as the next action becomes the destination.");
+        Assert.AreEqual("CHOOSE DESTINATION",tutorial.TitleText.text);
+        Assert.AreEqual(2,gateway.TutorialNarrationSteps.Count);
+        helper.TickHighlight(4.1f);Assert.AreEqual(3,gateway.TutorialNarrationSteps.Count);
+        Assert.AreEqual(UiTutorialNarrationPhase.WorldTarget,gateway.TutorialNarrationPhases[2]);
+        helper.CompleteWorldTarget(TacticalCommandMode.Move);helper.TickHighlight(5);
+        Assert.IsTrue(tutorial.IsPresentationVisible,"A click alone must not complete the mission objective.");
+        gateway.TutorialTarget=new UiMissionTutorialTarget(Vector3.zero,Vector3.right*10,false,true);helper.TickHighlight(6);
+        Assert.AreEqual("MOVING TO COVER",tutorial.TitleText.text);
+        Assert.IsFalse(tutorial.ShowMeButton.gameObject.activeSelf);
+        Assert.IsFalse(tutorial.DoItButton.gameObject.activeSelf);
+        helper.ResetForMissionAttempt();gateway.TutorialTarget=new UiMissionTutorialTarget(Vector3.zero,Vector3.right*10,true,false);
+        helper.ApplyReadModel(first);helper.TickHighlight(7);
+        Assert.IsTrue(tutorial.IsPresentationVisible);Assert.AreEqual(1,gateway.TutorialNarrationSteps[^1]);
         ui.Dispose();
     }
 
     [Test]
     public void TutorialBriefing_AutoShowsVisibleIndicatorForEveryInstruction()
     {
-        CreateHudHarness(true, out RectTransform overlay, out RectTransform header, out _);
-        var gateway = new FakeAssistantPanelGateway(
-            CreateStructuredModel(821u, recommendationKind: 1, recommendationTargetKind: 6,
-                tutorialStep: 1, tutorialStepCount: 5),
-            UiAssistantHighlightModel.Empty);
+        CreateHudHarness(true,out var overlay,out var header,out _);
+        var model=CreateStructuredModel(821,recommendationKind:1,recommendationTargetKind:6,tutorialStep:1,tutorialStepCount:5);
+        var gateway=new FakeAssistantPanelGateway(model,UiAssistantHighlightModel.Empty) {HasTutorialTarget=true,
+            TutorialTarget=new UiMissionTutorialTarget(Vector3.zero,new Vector3(12,3,9),true,false)};
         UiShellRuntimeGateway.Register(gateway);
-        var ui = new MainMenuPlayUI();
-        ui.Init(null, new FakeMatchRuntimeState());
-        ui.BindMatchHudAssistant(header.gameObject, overlay, LoadPopupPrefab());
-        MatchHudSquadTrayView squadTray = CreateSquadTray(overlay);
-        ui.BindMatchHudSquadTray(squadTray);
-        MatchOverlayCommandControlsView commandControls = CreateCommandControls(overlay);
-        ui.BindMatchHudCommandControls(commandControls);
-
-        ui.Update();
-        GameObject indicator = FindLoadedObject("AriaAssistantTargetIndicatorRuntime");
-        AssertVisibleIndicator(indicator, "SELECT SQUAD");
-        Assert.AreEqual(1, gateway.AssistantIntentRequestCount);
-
-        gateway.AssistantPanel = CreateStructuredModel(
-            822u, recommendationKind: 2, recommendationTargetKind: 1,
-            tutorialStep: 2, tutorialStepCount: 5);
-        MatchHudAssistantUiSystemHelper helper =
-            GetPrivateField<MatchHudAssistantUiSystemHelper>(ui, "_matchHudAssistantUiSystem");
-        helper.ApplyReadModel(gateway.AssistantPanel);
-        helper.TickHighlight(10f);
-        helper.TickHighlight(12f);
-        AssertVisibleIndicator(indicator, "PRESS MOVE");
-        Assert.AreEqual(2, gateway.AssistantIntentRequestCount);
-
-        commandControls.MoveButton.onClick.Invoke();
-        float moveTargetDeadline = GetPrivateField<float>(helper, "_tutorialShowAtUnscaledTime");
-        helper.TickHighlight(moveTargetDeadline);
-        Assert.IsFalse(indicator.activeInHierarchy,
-            "An unresolved destination must stay hidden instead of pointing at a local placeholder.");
-        gateway.AssistantHighlight = CreateHighlightModel(824u, recommendationKind: 2);
-        helper.ApplyHighlightReadModel(gateway.AssistantHighlight);
-        helper.TickHighlight(moveTargetDeadline + 0.01f);
-        Assert.IsFalse(indicator.activeInHierarchy,
-            "World-space destination guidance must remain behind the HUD instead of projecting over it.");
-        AssertWorldRingCenteredAt(new Vector3(12f, 3.28f, 9f));
-        Assert.AreEqual(3, gateway.AssistantIntentRequestCount);
-
-        helper.CompleteWorldTarget(TacticalCommandMode.Move);
-        helper.ApplyCommandMode(TacticalCommandMode.None);
-        gateway.AssistantPanel = CreateStructuredModel(
-            825u, recommendationKind: 3, recommendationTargetKind: 6,
-            tutorialStep: 3, tutorialStepCount: 5);
-        helper.ApplyReadModel(gateway.AssistantPanel);
-        helper.TickHighlight(20f);
-        helper.TickHighlight(22f);
-        AssertVisibleIndicator(indicator, "PRESS ATTACK");
-        Assert.AreEqual(4, gateway.AssistantIntentRequestCount);
-
-        commandControls.AttackButton.onClick.Invoke();
-        float attackTargetDeadline = GetPrivateField<float>(helper, "_tutorialShowAtUnscaledTime");
-        helper.TickHighlight(attackTargetDeadline);
-        Assert.IsFalse(indicator.activeInHierarchy,
-            "An unresolved enemy must stay hidden instead of reusing the previous destination.");
-        gateway.AssistantHighlight = CreateHighlightModel(827u, recommendationKind: 3, targetKind: 6);
-        helper.ApplyHighlightReadModel(gateway.AssistantHighlight);
-        helper.TickHighlight(attackTargetDeadline + 0.01f);
-        Assert.IsFalse(indicator.activeInHierarchy,
-            "World-space enemy guidance must remain behind the HUD instead of projecting over it.");
-        AssertWorldRingCenteredAt(new Vector3(12f, 3.28f, 9f));
-        Assert.AreEqual(5, gateway.AssistantIntentRequestCount);
+        var ui=new MainMenuPlayUI();ui.Init(null,new FakeMatchRuntimeState());
+        ui.BindMatchHudAssistant(header.gameObject,overlay,LoadPopupPrefab());ui.BindMatchHudSquadTray(CreateSquadTray(overlay));
+        var controls=CreateCommandControls(overlay);ui.BindMatchHudCommandControls(controls);
+        var helper=GetPrivateField<MatchHudAssistantUiSystemHelper>(ui,"_matchHudAssistantUiSystem");
+        helper.ApplyReadModel(model);helper.TickHighlight(1);
+        var indicator=FindLoadedObject("AriaAssistantTargetIndicatorRuntime");AssertVisibleIndicator(indicator,"SELECT SQUAD");
+        gateway.TutorialTarget=new UiMissionTutorialTarget(Vector3.zero,new Vector3(12,3,9),false,false);
+        for(byte step=2;step<=4;step++)
+        {
+            helper.ApplyCommandMode(TacticalCommandMode.None);
+            helper.ApplyReadModel(CreateStructuredModel((uint)(830+step),recommendationKind:(byte)(step==2?2:3),
+                recommendationTargetKind:1,tutorialStep:step,tutorialStepCount:5));helper.TickHighlight(step*10);
+            AssertVisibleIndicator(indicator,step==2?"PRESS MOVE":"PRESS ATTACK");
+            (step==2?controls.MoveButton:controls.AttackButton).onClick.Invoke();helper.TickHighlight(step*10+1);
+            Assert.IsFalse(indicator.activeInHierarchy,"A command click replaces the button cue with a world target.");
+            AssertWorldRingCenteredAt(new Vector3(12,3.28f,9));
+        }
+        Assert.AreEqual(0,gateway.AssistantIntentRequestCount,"Live cues do not enqueue stale generic previews.");
         ui.Dispose();
     }
 
@@ -732,61 +559,23 @@ public sealed partial class MatchHudAssistantUiSystemHelperTests
     [Test]
     public void TutorialDoIt_SelectsCommandModeBeforeExecutingWorldOrder()
     {
-        CreateHudHarness(true, out RectTransform overlay, out RectTransform header, out _);
-        var gateway = new FakeAssistantPanelGateway(
-            CreateStructuredModel(
-                902u,
-                recommendationKind: 3,
-                recommendationTargetKind: 6,
-                tutorialStep: 4,
-                tutorialStepCount: 5,
-                recommendationBody: "Attack the confirmed hostile patrol."),
-            CreateHighlightModel(902u, recommendationKind: 3, targetKind: 6));
+        CreateHudHarness(true,out var overlay,out var header,out _);
+        var model=CreateStructuredModel(902,recommendationKind:3,recommendationTargetKind:6,tutorialStep:4,tutorialStepCount:5);
+        var gateway=new FakeAssistantPanelGateway(model,UiAssistantHighlightModel.Empty) {HasTutorialTarget=true,
+            TutorialTarget=new UiMissionTutorialTarget(Vector3.zero,Vector3.right*10,false,false)};
         UiShellRuntimeGateway.Register(gateway);
-        var ui = new MainMenuPlayUI();
-        ui.Init(null, new FakeMatchRuntimeState());
-        ui.BindMatchHudAssistant(header.gameObject, overlay, LoadPopupPrefab());
-
-        MatchOverlayCommandControlsView commandControls = CreateCommandControls(overlay);
-        var commandInput = new MatchOverlayCommandInputUiSystemHelper();
-        commandInput.Bind(
-            commandControls,
-            new AcceptedSelectionUiCommand(),
-            commandModeQueued: ui.AcknowledgeMatchHudGuidedCommandMode);
-        ui.BindMatchHudCommandControls(commandControls);
-        ui.Update();
-
-        MatchHudAssistantUiSystemHelper helper =
-            GetPrivateField<MatchHudAssistantUiSystemHelper>(ui, "_matchHudAssistantUiSystem");
-        helper.TickHighlight(float.MaxValue);
-        AriaTutorialBriefingView tutorial = overlay
-            .GetComponentInChildren<AriaTutorialBriefingView>(true);
-        Assert.IsTrue(tutorial.IsPresentationVisible);
-        Assert.AreEqual("PRESS ATTACK", tutorial.TitleText.text);
-        Assert.AreEqual("Tap ATTACK to select the attack command.", tutorial.BodyText.text);
-        Assert.AreEqual("STEP 4/5", tutorial.ProgressText.text);
-
-        tutorial.DoItButton.onClick.Invoke();
-
-        Assert.AreEqual(1, gateway.AssistantIntentRequestCount,
-            "The first tutorial DO IT must only add the automatic ATTACK reveal, not issue the world order.");
-        Assert.IsFalse(tutorial.IsPresentationVisible);
-        float targetInstructionDeadline = GetPrivateField<float>(helper, "_tutorialShowAtUnscaledTime");
-        helper.TickHighlight(targetInstructionDeadline);
-        Assert.IsTrue(tutorial.IsPresentationVisible);
-        Assert.AreEqual("CHOOSE ENEMY", tutorial.TitleText.text);
-        Assert.AreEqual("Tap the highlighted enemy to issue the attack.", tutorial.BodyText.text);
-        Assert.AreEqual("STEP 5/5", tutorial.ProgressText.text);
-        Assert.AreEqual(2, gateway.AssistantIntentRequestCount,
-            "Opening the target instruction must automatically issue SHOW ME.");
-        Assert.AreEqual(UiAssistantCommandIntentKind.ShowRecommendation, gateway.LastAssistantIntentKind);
-        Assert.IsFalse(gateway.LastAssistantIntentFromTakeover);
-
-        tutorial.DoItButton.onClick.Invoke();
-
-        Assert.AreEqual(3, gateway.AssistantIntentRequestCount);
-        Assert.AreEqual(UiAssistantCommandIntentKind.ExecuteRecommendation, gateway.LastAssistantIntentKind);
-        Assert.IsTrue(gateway.LastAssistantIntentFromTakeover);
+        var ui=new MainMenuPlayUI();ui.Init(null,new FakeMatchRuntimeState());
+        ui.BindMatchHudAssistant(header.gameObject,overlay,LoadPopupPrefab());
+        var controls=CreateCommandControls(overlay);var input=new MatchOverlayCommandInputUiSystemHelper();
+        input.Bind(controls,new AcceptedSelectionUiCommand(),commandModeQueued:ui.AcknowledgeMatchHudGuidedCommandMode);
+        ui.BindMatchHudCommandControls(controls);
+        var helper=GetPrivateField<MatchHudAssistantUiSystemHelper>(ui,"_matchHudAssistantUiSystem");
+        helper.ApplyReadModel(model);helper.TickHighlight(1);
+        var tutorial=header.Find("AriaAssistantButton").GetComponent<AriaTutorialBriefingView>();
+        Assert.AreEqual("PRESS ATTACK",tutorial.TitleText.text);tutorial.DoItButton.onClick.Invoke();helper.TickHighlight(2);
+        Assert.AreEqual(0,gateway.AssistantIntentRequestCount,"Do It clicks Attack once and does not also issue a world order.");
+        Assert.IsTrue(tutorial.IsPresentationVisible);Assert.AreEqual("CHOOSE ENEMY",tutorial.TitleText.text);
+        Assert.IsFalse(tutorial.DoItButton.gameObject.activeSelf,"The next action is the player's world-target tap.");
         ui.Dispose();
     }
 

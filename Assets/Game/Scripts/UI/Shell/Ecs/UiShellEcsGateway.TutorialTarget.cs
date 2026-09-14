@@ -14,10 +14,12 @@ namespace Game.UI.Shell.Ecs
             target=default;
             if (!TryGetMissionRoot(out var em,out var root)) return false;
             var runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);
-            if(runtime.Phase!=MissionPhaseKind.Engage || runtime.Outcome!=MissionOutcomeKind.None ||
+            if(runtime.Outcome!=MissionOutcomeKind.None ||
                 !em.HasComponent<CampaignMissionGuidanceProjectionComponent>(root)) return false;
             var guidance=em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root);
             if(guidance.Active==0) return false;
+            if (TryResolveEarlyMissionTutorialTarget(em, root, runtime, guidance, out target)) return true;
+            if (runtime.Phase != MissionPhaseKind.Engage) return false;
             if(runtime.MissionId.Equals(AirliftId) && em.HasComponent<CampaignMissionExtractionState>(root))
                 return ResolveExtractionTutorialTarget(em,root,guidance.GuidanceId-55000,out target);
             if(runtime.MissionId.Equals(BreachId) && em.Exists(guidance.SourceEntity) && em.HasComponent<LocalTransform>(guidance.SourceEntity))
@@ -30,6 +32,44 @@ namespace Game.UI.Shell.Ecs
             var actor=guidance.SourceEntity;
             target=new UiMissionTutorialTarget(em.GetComponentData<LocalTransform>(actor).Position,guidance.WorldPosition,
                 !em.HasComponent<SelectedUnitTag>(actor),IsTutorialActorMoving(em,actor));
+            return true;
+        }
+
+        private static bool TryResolveEarlyMissionTutorialTarget(EntityManager em, Entity root,
+            CampaignMissionRuntimeComponent runtime, CampaignMissionGuidanceProjectionComponent guidance,
+            out UiMissionTutorialTarget target)
+        {
+            target = default;
+            if (!runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes("saga.ch01.m01.first_contact")) &&
+                !runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes("saga.ch01.m02.establish_base"))) return false;
+            Entity actor = guidance.SourceEntity, hostile = guidance.TargetEntity;
+            using var query = em.CreateEntityQuery(typeof(CampaignMissionUnitRoleComponent), typeof(Faction), typeof(LocalTransform));
+            using var units = query.ToEntityArray(Unity.Collections.Allocator.Temp);
+            foreach (var unit in units)
+            {
+                if (!em.GetComponentData<CampaignMissionUnitRoleComponent>(unit).SessionToken.Equals(runtime.SessionToken) ||
+                    em.HasComponent<UnitHealth>(unit) && em.GetComponentData<UnitHealth>(unit).Current <= 0) continue;
+                if (FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(unit).Id))
+                { if (!em.Exists(actor)) actor = unit; }
+                else if (!em.Exists(hostile)) hostile = unit;
+            }
+            if (!em.Exists(actor) || !em.HasComponent<LocalTransform>(actor)) return false;
+            float3 position = em.GetComponentData<LocalTransform>(actor).Position;
+            float3 destination = guidance.HasWorldPosition != 0 ? guidance.WorldPosition : position;
+            if (guidance.RecommendationKind is AssistantRecommendationKind.Attack or AssistantRecommendationKind.DefensiveAlert &&
+                em.Exists(hostile) && em.HasComponent<LocalTransform>(hostile))
+                destination = em.GetComponentData<LocalTransform>(hostile).Position;
+            if (guidance.RecommendationKind == AssistantRecommendationKind.DefensiveAlert && !em.Exists(hostile))
+            {
+                using var maps = em.CreateEntityQuery(typeof(OperationMapMetadataComponent));
+                if (maps.CalculateEntityCount() != 1) return false;
+                var map = maps.GetSingleton<OperationMapMetadataComponent>();
+                if (!map.Blob.IsCreated || !TryFindExtractionAnchor(
+                    ref map.Blob.Value, guidance.TargetId, out var anchor)) return false;
+                destination = anchor.Position;
+            }
+            target = new UiMissionTutorialTarget(position, destination,
+                !em.HasComponent<SelectedUnitTag>(actor), IsTutorialActorMoving(em, actor));
             return true;
         }
 

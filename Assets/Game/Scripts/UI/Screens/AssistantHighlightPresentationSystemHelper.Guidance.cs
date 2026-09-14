@@ -404,6 +404,7 @@ namespace Game.UI.Runtime
                 bounds.yMax - half.y - 48f);
             SetAnchorsIfChanged(_screenTargetIndicator, new Vector2(0.5f, 0.5f));
             SetAnchoredPositionIfChanged(_screenTargetIndicator, localPoint);
+            ClampCaptionToCanvas(caption, localPoint, bounds);
             _screenTargetIndicator.localScale = Vector3.one;
             if (!_screenTargetIndicator.gameObject.activeSelf)
                 _screenTargetIndicator.gameObject.SetActive(true);

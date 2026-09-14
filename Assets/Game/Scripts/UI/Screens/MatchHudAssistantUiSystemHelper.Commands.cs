@@ -70,7 +70,7 @@ namespace Game.UI.Runtime
 
             if (_lastPanelModel.TutorialStep == 0)
                 SetPanelOpen(false);
-            else
+            else if (!UsesNextTutorialAction)
                 CompleteTutorialStep(
                     _lastPanelModel.TutorialStep,
                     finalStep: false);

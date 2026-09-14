@@ -24,7 +24,17 @@ namespace Game.UI.Runtime
         private bool _directTutorialCue;
         private RectTransform _directTutorialTarget;
         private string _directCaptionKey, _directCaptionLocale;
+        internal Button ResolveSquadTutorialControl() => _squadGuidanceButton;
         internal bool IsBuildDrawerOpen => _buildDrawerView != null && _buildDrawerView.IsOpen;
+
+        internal void TickAttention(float time)
+        {
+            TutorialAttentionPulseView.Present(_screenTargetIndicator, time,
+                _commandCueActive, _directTutorialTarget != null ? _directTutorialTarget.GetEntityId().GetHashCode() : 0, 0f);
+            if (_worldRingRenderer != null && _worldRingRoot.activeSelf)
+                _worldRingRenderer.widthMultiplier = WorldRingWidth * (1f + .5f *
+                    TutorialAttentionPulseView.Opacity(time, 0, SettingsService.LoadReducedMotionPreference()));
+        }
 
         internal void ShowTutorialControl(Button button, string captionKey)
         {
@@ -48,8 +58,9 @@ namespace Game.UI.Runtime
             string locale=UiShellRuntimeGateway.Localization.CurrentLocaleCode;
             if(_directCaptionKey!=captionKey || _directCaptionLocale!=locale)
             {
-                _screenTargetLabel.GetComponent<V3LocalizedTextBindingView>().Configure(captionKey,
-                    UiShellRuntimeGateway.Localization.Get(captionKey));
+                var binding = _screenTargetLabel.GetComponent<V3LocalizedTextBindingView>();
+                binding.Configure(captionKey, UiShellRuntimeGateway.Localization.Get(captionKey));
+                binding.ApplyLocalization();
                 _directCaptionKey=captionKey; _directCaptionLocale=locale;
             }
             var canvas = button.GetComponentInParent<Canvas>();
@@ -59,6 +70,17 @@ namespace Game.UI.Runtime
             cueCanvas.sortingLayerID = canvas != null ? canvas.sortingLayerID : _screenTargetCanvas.sortingLayerID;
             cueCanvas.sortingOrder = Mathf.Max(_screenTargetCanvas.sortingOrder + 50, (canvas != null ? canvas.sortingOrder : 0) + 2);
             TickCommandCue();
+        }
+
+        internal static void ClampCaptionToCanvas(RectTransform caption, Vector2 cueCenter, Rect bounds)
+        {
+            if (caption == null) return;
+            caption.sizeDelta = new Vector2(Mathf.Min(caption.sizeDelta.x, bounds.width - 16f), caption.sizeDelta.y);
+            float halfWidth = caption.rect.width * .5f;
+            var position = caption.anchoredPosition;
+            position.x = Mathf.Clamp(cueCenter.x, bounds.xMin + halfWidth + 8f,
+                bounds.xMax - halfWidth - 8f) - cueCenter.x;
+            caption.anchoredPosition = position;
         }
 
         private void ConfigureControlCaption(RectTransform caption,RectTransform button,Vector2 frameSize)

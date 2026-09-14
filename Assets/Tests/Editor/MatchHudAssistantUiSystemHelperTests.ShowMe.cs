@@ -15,7 +15,50 @@ public sealed partial class MatchHudAssistantUiSystemHelperTests
         RunCase(test => test.EveryEnabledMissionShowMeHasATarget(true));
         RunCase(test => test.M4UsesLiveSelectionModeAndHidesShowMeForVisibleIndicators());
         RunCase(test => test.M4DoItRecoversSelectionBeforeBoardingOrMoving());
-        Debug.Log("[MissionShowMe] result=Passed tests=6 M3,M4=selection,command,destination,waiting,all-lessons");
+        foreach (byte count in new byte[] { 5, 9, 12, 8 })
+            RunCase(test => test.CampaignActionsFollowLiveModeAndArrival(count));
+        Debug.Log("[MissionShowMe] result=Passed tests=10 M1-M5=selection,command,destination,waiting");
+    }
+
+    [TestCase((byte)5)] [TestCase((byte)9)] [TestCase((byte)12)] [TestCase((byte)8)]
+    public void CampaignActionsFollowLiveModeAndArrival(byte count)
+    {
+        CreateHudHarness(true,out var overlay,out var header,out _);
+        byte step = count == 5 ? (byte)2 : count == 9 ? (byte)8 : count == 8 ? (byte)4 : (byte)5;
+        var required = count == 9 ? TacticalCommandMode.Attack : TacticalCommandMode.Move;
+        var model = CreateStructuredModel(1, recommendationKind:(byte)(count == 9 ? 3 : 2),
+            recommendationTargetKind:1, tutorialStep:step, tutorialStepCount:count);
+        var gateway = new FakeAssistantPanelGateway(model, UiAssistantHighlightModel.Empty) {
+            HasTutorialTarget = true, HasCommandState = true, CommandMode = TacticalCommandMode.Select,
+            TutorialTarget = new UiMissionTutorialTarget(Vector3.zero, Vector3.right * 10, true, false) };
+        UiShellRuntimeGateway.Register(gateway);
+        var ui = new MainMenuPlayUI(); ui.Init(null,new FakeMatchRuntimeState());
+        try
+        {
+            ui.BindMatchHudAssistant(header.gameObject,overlay,LoadPopupPrefab());
+            var controls = CreateCommandControls(overlay); ui.BindMatchHudCommandControls(controls);
+            var helper = GetPrivateField<MatchHudAssistantUiSystemHelper>(ui,"_matchHudAssistantUiSystem");
+            var view = header.Find("AriaAssistantButton").GetComponent<AriaTutorialBriefingView>();
+            var highlight = GetPrivateField<AssistantHighlightPresentationSystemHelper>(helper,"_highlightPresentationSystem");
+            helper.ApplyReadModel(model); helper.TickHighlight(10);
+            Assert.IsNull(GetPrivateField<RectTransform>(highlight,"_directTutorialTarget"), "Select already accepted: indicate the unit instead.");
+            Assert.IsTrue(highlight.HasDirectTutorialTarget);
+            gateway.TutorialTarget = new UiMissionTutorialTarget(Vector3.zero,Vector3.right*10,false,false);
+            helper.TickHighlight(11);
+            Assert.AreSame((required == TacticalCommandMode.Move ? controls.MoveButton : controls.AttackButton).transform,
+                GetPrivateField<RectTransform>(highlight,"_directTutorialTarget"));
+            Assert.IsFalse(view.ShowMeButton.gameObject.activeSelf, "A visible cue replaces Show Me.");
+            gateway.CommandMode = required; helper.TickHighlight(12);
+            Assert.IsNull(GetPrivateField<RectTransform>(highlight,"_directTutorialTarget"), "Accepted command points to its destination.");
+            Assert.IsTrue(highlight.HasDirectTutorialTarget);
+            gateway.TutorialTarget = new UiMissionTutorialTarget(Vector3.zero,Vector3.right*10,false,true);
+            helper.TickHighlight(13);
+            Assert.IsFalse(highlight.HasDirectTutorialTarget, "Wait for real arrival without asking for the command again.");
+            Assert.IsFalse(view.ShowMeButton.gameObject.activeSelf);
+            gateway.HasTutorialTarget = false; helper.TickHighlight(14);
+            Assert.IsFalse(view.ShowMeButton.gameObject.activeSelf, "Missing targets cannot produce a clickable no-op.");
+        }
+        finally { ui.Dispose(); }
     }
 
     [TestCase(false)] [TestCase(true)]

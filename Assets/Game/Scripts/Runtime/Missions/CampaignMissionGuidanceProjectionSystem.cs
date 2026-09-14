@@ -11,6 +11,7 @@ namespace Game.Runtime
     [BurstCompile, UpdateInGroup(typeof(SimulationSystemGroup)), UpdateAfter(typeof(CampaignMissionObjectiveProjectionSystem))]
     public partial struct CampaignMissionGuidanceProjectionSystem : ISystem
     {
+        private static readonly FixedString64Bytes FirstContactMissionId = "saga.ch01.m01.first_contact";
         private static readonly FixedString64Bytes FindSquadTitle = "Find your squad";
         private static readonly FixedString64Bytes MoveToCoverTitle = "Move to cover";
         private static readonly FixedString64Bytes ConfirmThreatTitle = "Confirm the threat";
@@ -58,6 +59,9 @@ namespace Game.Runtime
             if (!SystemAPI.TryGetSingletonEntity<CampaignMissionRootComponent>(out Entity root) ||
                 !SystemAPI.TryGetSingleton(out CampaignMissionRuntimeComponent runtime) ||
                 !SystemAPI.TryGetSingleton(out CampaignMissionAttemptFactsComponent facts)) return;
+            if (runtime.MissionId.Equals(FirstContactMissionId) ||
+                runtime.MissionId.Equals(EstablishBaseMissionId))
+            { runtime.Guidance = NarrativeGuidanceMode.Full; runtime.ReplayTutorialEnabled = 1; }
             AssistantSettingsComponent settings = default;
             SystemAPI.TryGetSingleton(out settings);
             EntityManager em = state.EntityManager;

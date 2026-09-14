@@ -11,14 +11,15 @@ namespace Game.UI.Runtime
             return ((step - 1) * 2) + (int)phase;
         }
 
-        private void RefreshBreachInputMode() {if(UiShellRuntimeGateway.TryReadBreachInputMode(out int mode))_activeCommandMode=(TacticalCommandMode)mode;}
+        private void RefreshBreachInputMode() {if(UiShellRuntimeGateway.TryReadMatchHudCommandState(out var state))_activeCommandMode=state.ActiveCommandMode;}
         private void ShowBreachNextAction(int step)
         {
             RefreshBreachInputMode();
             if(step==1) {Cue(_embeddedTutorialView.DoItButton,"tutorial.next.continue");return;}
-            if(step==8 && !_lastPanelModel.CanExecute) {_highlightPresentationSystem.ClearDirectTutorialCue();return;}
+            if(!_lastPanelModel.CanShow) {_highlightPresentationSystem.ClearDirectTutorialCue();return;}
             if(!UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var target)) {_highlightPresentationSystem.ClearDirectTutorialCue();return;}
-            if(step==2 || target.NeedsSelection) {ShowSelectionTarget(target.Selection);return;}
+            if(target.NeedsSelection) {ShowSelectionTarget(target.Selection,target.RequiredSelectionCount>1);return;}
+            if(step==2 || target.Moving) {WaitForTutorialArrival();return;}
             bool attack=step is 3 or 5 or 6;
             var mode=attack?TacticalCommandMode.Attack:TacticalCommandMode.Move;
             if(_activeCommandMode==mode) ShowTutorialWorld(target.Destination,false);

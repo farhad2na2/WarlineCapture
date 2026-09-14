@@ -18,6 +18,7 @@ namespace Game.UI.Runtime
         private MissionHudTouchLayoutView mapDock;
         private RectTransform bodyViewport;
         private ScrollRect bodyScroll;
+        private Scrollbar bodyScrollbar;
         private readonly Vector3[] mapCorners=new Vector3[4];
         private float measuredAvailable;
 
@@ -51,6 +52,8 @@ namespace Game.UI.Runtime
                 (utilityActions!=null && utilityActions.gameObject.activeSelf?16:0)|(extractionActions!=null && extractionActions.gameObject.activeSelf?32:0);
             if(!_layoutDirty && Mathf.Abs(measuredAvailable-available)<.1f && measuredState==state && measuredWidth==rail.rect.width && measuredFont==bodyText.font &&
                 measuredTitle==titleText.text && measuredBody==bodyText.text && measuredAlert==alertCopy?.text && measuredOpening==openingCopy?.text) return;
+            bool newInstruction=measuredTitle!=titleText.text;
+            float scrollPosition=bodyScroll!=null && !newInstruction ? bodyScroll.verticalNormalizedPosition : 1f;
             _layoutDirty=false; measuredAvailable=available; measuredState=state; measuredWidth=rail.rect.width; measuredFont=bodyText.font;
             measuredTitle=titleText.text; measuredBody=bodyText.text; measuredAlert=alertCopy?.text; measuredOpening=openingCopy?.text;
             float width=rail.rect.width-40;
@@ -72,7 +75,10 @@ namespace Game.UI.Runtime
                 Place(titleText.rectTransform,0,0,width,titleHeight);
                 Place(bodyViewport,0,titleHeight+(titleHeight>0?8:0),width,visibleBody);
                 Place(bodyText.rectTransform,0,0,width,bodyHeight);
-                bodyScroll.vertical=visibleBody<bodyHeight; bodyScroll.verticalNormalizedPosition=1;
+                bodyScroll.vertical=visibleBody<bodyHeight;
+                Place((RectTransform)bodyScrollbar.transform,width+2,titleHeight+(titleHeight>0?8:0),12,visibleBody);
+                bodyScrollbar.gameObject.SetActive(bodyScroll.vertical);
+                bodyScroll.verticalNormalizedPosition=bodyScroll.vertical ? scrollPosition : 1f;
                 bodyViewport.GetComponent<Image>().raycastTarget=bodyScroll.vertical;
                 titleText.gameObject.SetActive(titleHeight>0); bodyText.gameObject.SetActive(bodyHeight>0);
                 float textHeight=titleHeight+visibleBody+(titleHeight>0 && bodyHeight>0?8:0);
@@ -117,6 +123,17 @@ namespace Game.UI.Runtime
             bodyText.rectTransform.SetParent(bodyViewport,false);
             bodyScroll=go.GetComponent<ScrollRect>();bodyScroll.viewport=bodyViewport;bodyScroll.content=bodyText.rectTransform;
             bodyScroll.horizontal=false;bodyScroll.movementType=ScrollRect.MovementType.Clamped;
+            // The full text area accepts swipes; this narrow rail is a non-interactive overflow cue.
+            var track=new GameObject("InstructionScrollIndicator",typeof(RectTransform),typeof(Image),typeof(Scrollbar));
+            track.transform.SetParent(briefingLayout,false);
+            var trackImage=track.GetComponent<Image>();trackImage.color=new Color(.3f,.4f,.42f,.5f);trackImage.raycastTarget=false;
+            var handle=new GameObject("Thumb",typeof(RectTransform),typeof(Image));
+            handle.transform.SetParent(track.transform,false);
+            var thumb=handle.GetComponent<Image>();thumb.color=new Color(0,.8f,.95f,1);thumb.raycastTarget=false;
+            bodyScrollbar=track.GetComponent<Scrollbar>();bodyScrollbar.handleRect=(RectTransform)handle.transform;
+            bodyScrollbar.targetGraphic=thumb;bodyScrollbar.direction=Scrollbar.Direction.BottomToTop;
+            bodyScrollbar.interactable=false;bodyScrollbar.transition=Selectable.Transition.None;
+            bodyScroll.verticalScrollbar=bodyScrollbar;
         }
 
         private static bool HasText(TMP_Text text) => text!=null && !string.IsNullOrWhiteSpace(text is RTLTMPro.RTLTextMeshPro rtl ? rtl.OriginalText : text.text);

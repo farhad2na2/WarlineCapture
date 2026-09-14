@@ -12,13 +12,17 @@ namespace Game.UI.Runtime
             TickTutorialPresentation(unscaledTime);
             TickNextTutorialAction();
             RefreshShowMeAvailability();
+            _highlightPresentationSystem.TickAttention(unscaledTime);
+            var showMe = _embeddedTutorialView?.ShowMeButton;
+            TutorialAttentionPulseView.Present(showMe?.transform as RectTransform, unscaledTime,
+                !_tutorialCinematicSuspended && showMe != null && showMe.IsActive() && showMe.IsInteractable(),
+                _lastPanelModel.TutorialStep * 100 + (int)_activeCommandMode, 4f);
         }
 
         private bool _focusNextTutorialWorld;
         private float _tutorialFocusPendingUntil;
         private int _tutorialFocusPendingStep;
-        private bool UsesNextTutorialAction => _lastPanelModel.TutorialStepCount is 8 or 12 ||
-            _lastPanelModel.TutorialStepCount == 9 && _lastPanelModel.TutorialStep is 3 or 4 or 5 or 6;
+        private bool UsesNextTutorialAction => _lastPanelModel.TutorialStepCount is 5 or 8 or 9 or 12;
 
         private bool ShowNextTutorialAction()
         {
@@ -50,8 +54,8 @@ namespace Game.UI.Runtime
                 _highlightPresentationSystem.HasDirectTutorialTarget && !_highlightPresentationSystem.HasVisibleDirectTutorialTarget && !_tutorialCinematicSuspended && !focusing;
             _embeddedTutorialView.ShowMeButton.gameObject.SetActive(_embeddedTutorialView.ShowMeButton.interactable);
             // World selection/dragging and targeting are the player's next gesture, not another mode-button click.
-            _embeddedTutorialView.DoItButton.gameObject.SetActive(!_highlightPresentationSystem.HasDirectTutorialTarget ||
-                _highlightPresentationSystem.HasDirectTutorialControlTarget);
+            _embeddedTutorialView.DoItButton.gameObject.SetActive(!_waitingForTutorialAction && _lastPanelModel.CanExecute &&
+                (!_highlightPresentationSystem.HasDirectTutorialTarget || _highlightPresentationSystem.HasDirectTutorialControlTarget));
             _embeddedTutorialView.RefreshContentLayout();
             _popupView?.SetShowMeAvailable(_embeddedTutorialView.ShowMeButton.interactable);
         }

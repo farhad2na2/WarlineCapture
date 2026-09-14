@@ -16,10 +16,10 @@ public sealed class AriaInstructionViewportTests
             var test = new AriaInstructionViewportTests();
             foreach (float width in new[]{1920f,2400f})
             foreach (bool persian in new[]{false,true})
-                test.HiddenPlacementDoesNotClipTheMovementLesson(width,persian);
+                { test.HiddenPlacementDoesNotClipTheMovementLesson(width,persian); test.BreachStatusFits(width,persian); }
             new HudRightColumnLayoutValidation().MinimapDockAndContentHeightFollowActualControlsAndCopy();
             new ProductionSourceGrowthArchitectureTests().AllBaselinedPathsRespectRatchetedLineAndByteCeilings();
-            Debug.Log("[AriaInstructionViewport] result=Passed cases=4 hidden-placement,full-copy,buttons,dock");
+            Debug.Log("[AriaInstructionViewport] result=Passed cases=8 hidden-placement,full-copy,breach-status,buttons,dock");
         }
         catch(Exception error) { Debug.LogException(error); EditorApplication.Exit(1); }
     }
@@ -27,6 +27,13 @@ public sealed class AriaInstructionViewportTests
     [TestCase(1920f,false)] [TestCase(1920f,true)]
     [TestCase(2400f,false)] [TestCase(2400f,true)]
     public void HiddenPlacementDoesNotClipTheMovementLesson(float width,bool persian)
+        => CheckInstruction(width,persian,false);
+
+    [TestCase(1920f,false)] [TestCase(1920f,true)]
+    [TestCase(2400f,false)] [TestCase(2400f,true)]
+    public void BreachStatusFits(float width,bool persian) => CheckInstruction(width,persian,true);
+
+    private static void CheckInstruction(float width,bool persian,bool breach)
     {
         var previousLocale=GameLocalization.CurrentLocaleCode;
         var canvas=new GameObject("ARIA viewport QA",typeof(RectTransform),typeof(Canvas));
@@ -46,15 +53,37 @@ public sealed class AriaInstructionViewportTests
             var view=hud.GetComponentInChildren<AriaTutorialBriefingView>(true);
             var copy=M03RadarWarningTutorialCopyCatalog.Steps[4];
             view.transform.Find("M03Actions").gameObject.SetActive(true);
+            string title=persian?copy.PersianTitle:copy.Title, body=persian?copy.PersianBody:copy.Body;
+            if(breach)
+            {
+                title=GameLocalization.Get("mission.m05.tutorial.2.title");
+                body=GameLocalization.Get("mission.m05.tutorial.2.body")+"\n\n"+
+                    string.Format(GameLocalization.Get("mission.m05.hud.status"),0,8,"11:59",20);
+            }
             view.Apply(new UiAssistantPanelModel(1,true,0,UiAssistantGoalRowModel.Empty,UiAssistantGoalRowModel.Empty,UiAssistantGoalRowModel.Empty,
                 UiAssistantMessageRowModel.Empty,UiAssistantMessageRowModel.Empty,UiAssistantMessageRowModel.Empty,
                 UiAssistantMessageRowModel.Empty,UiAssistantMessageRowModel.Empty,UiAssistantTargetLockModel.Empty,UiAssistantNarrationModel.Empty,true,
-                persian?copy.PersianTitle:copy.Title,persian?copy.PersianBody:copy.Body,"","CONTINUE",true,true,false,false,"","",
-                tutorialStep:5,tutorialStepCount:12,tutorialRightToLeft:persian));
+                title,body,"","CONTINUE",true,true,false,false,"","",
+                tutorialStep:breach?(byte)2:(byte)5,tutorialStepCount:breach?(byte)8:(byte)12,tutorialRightToLeft:persian));
             view.SetPresentationVisible(true); view.ApplyAccessibility(false,false); Canvas.ForceUpdateCanvases(); view.RefreshContentLayout();
             view.BodyText.ForceMeshUpdate(true,true);
             var viewport=(RectTransform)view.BodyText.transform.parent;
-            Assert.That(viewport.rect.height,Is.GreaterThanOrEqualTo(view.BodyText.preferredHeight),"The entire movement instruction must fit above the action buttons.");
+            if(breach) Assert.IsFalse(view.BodyText.isTextOverflowing,"M5 status, including the clock, must fit.");
+            if(!breach) Assert.That(viewport.rect.height,Is.GreaterThanOrEqualTo(view.BodyText.preferredHeight),"The entire movement instruction must fit above the action buttons.");
+            else
+            {
+                var scroll=viewport.GetComponent<UnityEngine.UI.ScrollRect>();
+                Assert.That(view.BodyText.rectTransform.rect.height,Is.GreaterThanOrEqualTo(view.BodyText.preferredHeight));
+                if(scroll.vertical)
+                {
+                    Assert.IsTrue(scroll.verticalScrollbar.gameObject.activeInHierarchy,"Long instructions must visibly advertise scrolling.");
+                    scroll.verticalNormalizedPosition=.35f;
+                    var rtl=view.BodyText as RTLTMPro.RTLTextMeshPro;
+                    view.BodyText.text=(rtl!=null?rtl.OriginalText:view.BodyText.text).Replace("11:59","11:58");
+                    view.RefreshContentLayout();
+                    Assert.That(scroll.verticalNormalizedPosition,Is.EqualTo(.35f).Within(.01f),"A ticking status must not snap the reader back to the top.");
+                }
+            }
             var bodyBounds=BoundsIn(view.transform,viewport);
             var buttonBounds=BoundsIn(view.transform,(RectTransform)view.ShowMeButton.transform);
             Assert.That(bodyBounds.min.y-buttonBounds.max.y,Is.GreaterThanOrEqualTo(15.9f));

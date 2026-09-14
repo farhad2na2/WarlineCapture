@@ -7,12 +7,14 @@ namespace Game.UI.Runtime
 {
     internal sealed partial class MatchHudAssistantUiSystemHelper
     {
+        private bool _waitingForTutorialAction;
         private BuildPlacementConfirmationBarView _tutorialPlacement;
         private MatchHudSelectionPanelView _tutorialSelection;
         private ThreatAlertV3PopupView _tutorialWarning;
 
         private void TickNextTutorialAction()
         {
+            _waitingForTutorialAction = false;
             bool managed = UsesNextTutorialAction;
             if(managed && UiShellRuntimeGateway.TryReadMatchHudCommandState(out var commandState))
                 _activeCommandMode=commandState.ActiveCommandMode;
@@ -21,10 +23,12 @@ namespace Game.UI.Runtime
                 !_lastPanelModel.HasRecommendation || _tutorialCinematicSuspended)
             { _highlightPresentationSystem.ClearDirectTutorialCue(); return; }
             int step=_lastPanelModel.TutorialStep;
+            if(_lastPanelModel.TutorialStepCount==5) { ShowFirstContactNextAction(step); return; }
             if(_lastPanelModel.TutorialStepCount==8) {ShowBreachNextAction(step);return;}
             if(_lastPanelModel.TutorialStepCount==9)
             {
-                if(step==6) ShowProductionCue();
+                if(step>=7) ShowEarlyMissionThreat();
+                else if(step==6) ShowProductionCue();
                 else if(step==5) Cue(_embeddedTutorialView.DoItButton,"tutorial.next.continue");
                 else ShowConstructionCue(false,step==4);
                 return;
@@ -49,6 +53,38 @@ namespace Game.UI.Runtime
                 case 10: case 11: Cue(_embeddedTutorialView.DoItButton,"tutorial.next.continue"); break;
                 default: Cue(_embeddedTutorialView.DoItButton,"tutorial.next.continue"); break;
             }
+        }
+
+        private void WaitForTutorialArrival()
+        {
+            _waitingForTutorialAction = true;
+            _highlightPresentationSystem.ClearDirectTutorialCue();
+            _embeddedTutorialView?.ApplyInteractionState(_activeCommandMode, true);
+        }
+
+        private void ShowFirstContactNextAction(int step)
+        {
+            if (step == 1)
+            {
+                if (UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var target) && !target.NeedsSelection)
+                    _highlightPresentationSystem.ClearDirectTutorialCue();
+                else Cue(_highlightPresentationSystem.ResolveSquadTutorialControl(), "ui.guidance.select_squad");
+            }
+            else if (step == 2) ShowCommandOrDestination(_commandControlsView?.MoveButton, TacticalCommandMode.Move);
+            else if (step is 3 or 4) ShowEarlyMissionThreat();
+            else WaitForTutorialArrival(); // The mission finale owns this transition.
+        }
+
+        private void ShowEarlyMissionThreat()
+        {
+            if (!UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var target))
+            { _highlightPresentationSystem.ClearDirectTutorialCue(); return; }
+            if (_lastPanelModel.TutorialStepCount == 9 && _lastPanelModel.TutorialStep == 7)
+            { ShowTutorialWorld(target.Destination, false); return; }
+            if (target.NeedsSelection) { ShowSelectionTarget(target.Selection); return; }
+            if (target.Moving) { WaitForTutorialArrival(); return; }
+            if (_activeCommandMode == TacticalCommandMode.Attack) ShowTutorialWorld(target.Destination, false);
+            else Cue(_commandControlsView?.AttackButton, "ui.aria.press_attack");
         }
 
         private void ShowConstructionCue(bool defense,bool placement)
@@ -88,7 +124,7 @@ namespace Game.UI.Runtime
             if(!UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var target))
             { _highlightPresentationSystem.ClearDirectTutorialCue(); return; }
             if(target.NeedsSelection) { ShowSelectionTarget(target.Selection,target.RequiredSelectionCount>1); return; }
-            if(target.Moving) { _highlightPresentationSystem.ClearDirectTutorialCue(); return; }
+            if(target.Moving) { WaitForTutorialArrival(); return; }
             if(_activeCommandMode==mode) ShowTutorialWorld(target.Destination,false);
             else Cue(button,mode==TacticalCommandMode.Board
                 ? (_commandControlsView?.CommandWheelPanel?.IsOpen == true ? "tutorial.next.board" : "ui.v3.commands.92e37c53d8")

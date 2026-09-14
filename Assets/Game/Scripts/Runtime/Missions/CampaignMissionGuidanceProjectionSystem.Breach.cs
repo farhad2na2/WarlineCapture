@@ -1,3 +1,4 @@
+using Game.Narrative.Contracts;
 using Game.Components;
 using Game.Missions.Contracts;
 using Unity.Collections;
@@ -57,7 +58,7 @@ namespace Game.Runtime
             var title=BreachTitlePrefix; title.Append(step);title.Append(ExtractionTitleSuffix);
             var body=BreachBodyPrefix; body.Append(step);body.Append(step==4 && rifle==Entity.Null ? BreachFallbackSuffix : ExtractionBodySuffix);
             var next=new CampaignMissionGuidanceProjectionComponent {GuidanceId=65000+step,Version=Next(current.Version),MissionSourceVersion=runtime.Version,
-                Prompt=(CampaignMissionGuidancePromptKind)(36+step),GuidanceMode=runtime.Guidance,Active=1,Priority=AssistantMessagePriority.High,
+                Prompt=(CampaignMissionGuidancePromptKind)(36+step),GuidanceMode=NarrativeGuidanceMode.Full,Active=1,Priority=AssistantMessagePriority.High,
                 RecommendationKind=step is 3 or 5 or 6?AssistantRecommendationKind.Attack:(step is 4 or 7 || step==8 && !atArchive)?AssistantRecommendationKind.Move:step==2?AssistantRecommendationKind.Select:AssistantRecommendationKind.Explain,
                 TargetKind=step==2?AssistantTargetKind.Squad:target!=Entity.Null?AssistantTargetKind.Entity:AssistantTargetKind.WorldPosition,
                 SourceEntity=actor,TargetEntity=step==2?actor:target,WorldPosition=destination,HasWorldPosition=1,Title=title,Body=body,

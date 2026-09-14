@@ -249,7 +249,7 @@ namespace Game.UI.Runtime
         {
             _highlightPresentationSystem.CompleteWorldTarget(mode);
             // M3/M4 completion is projected from mission facts, never inferred from a legacy click.
-            if (_lastPanelModel.TutorialStepCount != 5) return;
+            if (UsesNextTutorialAction || _lastPanelModel.TutorialStepCount != 5) return;
             bool completesTutorialTarget =
                 (_lastPanelModel.TutorialStep == 2 && mode == TacticalCommandMode.Move) ||
                 (_lastPanelModel.TutorialStep is 3 or 4 && mode == TacticalCommandMode.Attack);

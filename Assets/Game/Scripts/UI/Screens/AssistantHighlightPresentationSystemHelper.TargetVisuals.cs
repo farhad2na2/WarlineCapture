@@ -126,6 +126,7 @@ namespace Game.UI.Runtime
             _screenTargetLabel.raycastTarget = false;
             V3LocalizedTextBindingView localizedLabel = labelObject.AddComponent<V3LocalizedTextBindingView>();
             localizedLabel.Configure("ui.hud.aria_target", "ARIA TARGET");
+            TutorialTapPointerView.BindCaption(_screenTargetIndicator, captionRect);
             indicator.SetActive(false);
         }
 

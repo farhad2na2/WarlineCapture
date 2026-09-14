@@ -355,11 +355,14 @@ public sealed partial class M02EstablishBaseGuidanceTests
         Assert.IsTrue(TryProject(ProjectPlacementStep(), facts, out CampaignMissionGuidanceProjectionComponent resource));
         resource.AcknowledgedGuidanceId = resource.GuidanceId;
 
-        Assert.IsFalse(TryProject(resource, facts, out _),
-            "Acknowledging cost review must not expose production before the Barracks completes.");
+        Assert.IsTrue(TryProject(resource, facts, out var waiting), "Continue must visibly transition while construction finishes.");
+        Assert.AreEqual(0, waiting.CanExecute); Assert.AreEqual(0, waiting.CanShow);
+        Assert.AreEqual("tutorial.m02.construction_wait.body", waiting.Body.ToString());
+        Assert.AreNotEqual(waiting.GuidanceId, waiting.AcknowledgedGuidanceId);
+        Assert.IsFalse(TryProject(waiting, facts, out _), "The wait must be stable and must not repeat Continue.");
 
         facts.RequiredBuildingCompletedCount = 1;
-        Assert.IsTrue(TryProject(resource, facts, out CampaignMissionGuidanceProjectionComponent queue));
+        Assert.IsTrue(TryProject(waiting, facts, out CampaignMissionGuidanceProjectionComponent queue));
         Assert.AreEqual(CampaignMissionGuidancePromptKind.EstablishBaseQueueRifle, queue.Prompt);
     }
 

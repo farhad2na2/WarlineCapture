@@ -401,7 +401,7 @@ namespace Game.UI.Runtime
             localPoint.y = Mathf.Clamp(
                 localPoint.y,
                 bounds.yMin + half.y,
-                bounds.yMax - half.y - 48f);
+                bounds.yMax - half.y);
             SetAnchorsIfChanged(_screenTargetIndicator, new Vector2(0.5f, 0.5f));
             SetAnchoredPositionIfChanged(_screenTargetIndicator, localPoint);
             ClampCaptionToCanvas(caption, localPoint, bounds);

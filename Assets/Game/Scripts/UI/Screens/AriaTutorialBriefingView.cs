@@ -74,6 +74,7 @@ namespace Game.UI.Runtime
             Action executeRecommendationRequested)
         {
             UnbindActions();
+            continueConsumed = false;
             _closeRequested = closeRequested;
             _showRecommendationRequested = showRecommendationRequested;
             _executeRecommendationRequested = executeRecommendationRequested;
@@ -99,6 +100,8 @@ namespace Game.UI.Runtime
 
         public void Apply(UiAssistantPanelModel model)
         {
+            if (_tutorialStep != model.TutorialStep || _tutorialStepCount != model.TutorialStepCount ||
+                _defaultBody != (model.RecommendationBody ?? string.Empty)) continueConsumed = false;
             _tutorialStep = model.TutorialStep;
             _tutorialStepCount = model.TutorialStepCount;
             ApplyMissionLayout(_tutorialStepCount is 8 or 9 or 12,model.LargeTextEnabled);

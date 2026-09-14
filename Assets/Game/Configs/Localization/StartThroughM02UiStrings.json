@@ -1369,6 +1369,26 @@
           "value": "پیاده کردن گروه"
         }
       ]
+    },
+    {
+      "key": "tutorial.m02.construction_wait.title",
+      "source": "Barracks under construction",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سربازخانه در حال ساخت است"
+        }
+      ]
+    },
+    {
+      "key": "tutorial.m02.construction_wait.body",
+      "source": "Wait for construction to finish. ARIA will then guide you to train a rifle squad.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "منتظر بمانید تا ساخت سربازخانه تمام شود. سپس آریا شما را برای آموزش یک گروه تفنگدار راهنمایی می‌کند."
+        }
+      ]
     }
   ]
 }

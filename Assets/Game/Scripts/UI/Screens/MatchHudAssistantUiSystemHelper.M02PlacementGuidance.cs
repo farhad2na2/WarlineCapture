@@ -129,6 +129,8 @@ namespace Game.UI.Runtime
 
         private bool TryExecuteM02DoIt(in UiAssistantPanelModel model)
         {
+            if (model.TutorialStep == 5)
+                return UiShellRuntimeGateway.TryAcknowledgeCampaignGuidanceTarget(UiCampaignGuidanceTargetKind.ResourceStrip);
             if (model.TutorialStep == 4)
                 return _executeBuildingPlacementStep?.Invoke() == true;
             return _highlightPresentationSystem.TryExecuteUiSurface(

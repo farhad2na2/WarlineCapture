@@ -215,8 +215,9 @@ namespace Game.UI.Shell.Ecs
                 out body);
             if (recommendation.TutorialStep == 5)
             {
-                title = GameLocalization.Get("tutorial.m02.materials.title", title);
-                body = GameLocalization.Get("tutorial.m02.materials.body", body);
+                bool waiting = recommendation.CanExecute == 0 && recommendation.ActionLabel.Equals(new FixedString64Bytes("mission.m03.action.wait"));
+                title = GameLocalization.Get(waiting ? "tutorial.m02.construction_wait.title" : "tutorial.m02.materials.title", title);
+                body = GameLocalization.Get(waiting ? "tutorial.m02.construction_wait.body" : "tutorial.m02.materials.body", body);
                 rightToLeft = GameLocalization.IsRightToLeft;
             }
             return found;

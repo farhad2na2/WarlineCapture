@@ -371,3 +371,9 @@ Completion criteria:
 - Authored VFX quality is preserved unless the user approved an art change.
 - No MonoBehaviour ticking introduced.
 - Managed presentation exceptions are explicit and countable.
+
+## 2026-09-14: authored vehicle render ownership
+
+Added `OperationMapVehicleVisualOwnershipSystem` as an `ISystem` presentation boundary for the M2 helipad duplicate-mesh defect. It caches a query of unrepaired authored vehicles, including dormant roots, and marks each repaired root so steady-state units leave the query. Managed Unity `Mesh` identity comparison is confined to this one-time presentation repair. It transfers faction tint and removes coincident render copies without activating gameplay or removing unrelated attachments.
+
+Regenerated the inventory: 230 ECS declarations, 205 `ISystem`, 25 existing `SystemBase` exceptions; 204 non-UI and 26 UI declarations. Updated the exact inventory-count assertions and documented the managed Mesh boundary in the Burst classification. No extra managed `SystemBase` exception, MonoBehaviour update loop, or gameplay policy is introduced.

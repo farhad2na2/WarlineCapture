@@ -93,6 +93,7 @@ namespace Game.UI.Runtime
                 MarkTutorialCueAutoShown(_displayedTutorialStep, _displayedTutorialPhase);
             }
             if (CanUseTutorialNarration(_lastPanelModel.TutorialStepCount) &&
+                !(_lastPanelModel.TutorialStepCount == 9 && _lastPanelModel.TutorialStep == 5 && !_lastPanelModel.CanExecute) &&
                 (_lastPanelModel.TutorialStepCount is 8 or 9 or 12 ||
                  _lastPanelModel.RecommendationTargetKind != 4) &&
                 !WasTutorialCueNarrated(

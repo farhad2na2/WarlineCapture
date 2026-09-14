@@ -49,7 +49,7 @@ namespace Game.Editor
         private static void Tick()
         {
             if (!EditorApplication.isPlaying) return;
-            if (SessionState.GetBool(RifleSingleClickMode, false) && !insideRifleGameFrame)
+            if ((SessionState.GetBool(RifleSingleClickMode, false) || SessionState.GetBool(ContinueMode, false)) && !insideRifleGameFrame)
             {
                 EnsureRifleGameFrame();
                 return;
@@ -57,6 +57,8 @@ namespace Game.Editor
             try
             {
                 if (error != null) throw new InvalidOperationException(error);
+                if (SessionState.GetBool(ContinueMode, false) && Game.Configs.GameLocalization.CurrentLocaleCode != continueLocale)
+                    Game.Configs.GameLocalization.SetLocale(continueLocale, false);
                 double deadline = SessionState.GetBool(RifleSingleClickMode, false) ? 200 : 480;
                 if (EditorApplication.timeSinceStartup - started > deadline) throw new TimeoutException("M2 placement/production deadline, step=" + step);
                 var world = World.DefaultGameObjectInjectionWorld;
@@ -125,6 +127,7 @@ namespace Game.Editor
                         if (command.HasPendingBuildingPlacement) throw new InvalidOperationException("Confirm did not commit the building.");
                         Next(); break;
                     case 4:
+                        if (SessionState.GetBool(ContinueMode, false)) { AdvanceContinue(em, root, facts); break; }
                         if (SessionState.GetBool(RifleSingleClickMode, false))
                         {
                             AdvanceRifleSingleClick(em, root, facts, controls);
@@ -227,6 +230,7 @@ namespace Game.Editor
             EditorApplication.update -= Tick; Application.logMessageReceived -= ObserveError;
             SessionState.SetBool(Active, false);
             SessionState.SetBool(RifleSingleClickMode, false);
+            SessionState.SetBool(ContinueMode, false);
             Log("result=" + (passed ? "Passed " : "Failed ") + detail);
             MissionEditorValidationExit.Complete(passed);
         }

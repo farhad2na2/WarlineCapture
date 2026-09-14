@@ -7,6 +7,7 @@ namespace Game.UI.Runtime
     public sealed class TutorialAttentionPulseView : MonoBehaviour
     {
         private V3GradientGraphic _border;
+        private V3GradientGraphic _contrast;
         private int _progress;
         private float _startedAt = -1f;
 
@@ -44,8 +45,21 @@ namespace Game.UI.Runtime
                 _border.raycastTarget = false;
             }
             _border.gameObject.SetActive(opacity > 0);
+            if (_contrast == null)
+            {
+                var go = new GameObject("AttentionContrast", typeof(RectTransform), typeof(V3GradientGraphic));
+                go.layer = gameObject.layer;
+                var rect = (RectTransform)go.transform; rect.SetParent(transform, false); rect.SetAsFirstSibling();
+                rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one;
+                rect.offsetMin = new Vector2(-7, -7); rect.offsetMax = new Vector2(7, 7);
+                _contrast = go.GetComponent<V3GradientGraphic>(); _contrast.raycastTarget = false;
+                _contrast.ConfigureCorners(Color.clear, Color.clear, Color.clear, Color.clear,
+                    new Color(.025f, .035f, .04f, 1), 16);
+            }
+            _contrast.gameObject.SetActive(opacity > 0);
             _border.ConfigureCorners(Color.clear, Color.clear, Color.clear, Color.clear,
-                new Color(1f, .72f, .02f, opacity), 4f);
+                new Color(1f, .85f, .02f, .85f + .15f * opacity), 8f + 4f * opacity);
+            TutorialTapPointerView.Present((RectTransform)transform, time - _startedAt, opacity > 0);
         }
 
         private void OnDisable() => ResetPulse();
@@ -53,6 +67,8 @@ namespace Game.UI.Runtime
         {
             _startedAt = -1;
             if (_border != null) _border.gameObject.SetActive(false);
+            if (_contrast != null) _contrast.gameObject.SetActive(false);
+            TutorialTapPointerView.Present((RectTransform)transform, 0, false);
         }
     }
 }

@@ -95,6 +95,7 @@ public sealed class EcsBurstHotPathArchitectureTests
 
     private static readonly Dictionary<string, string> ManagedPresentationNonBurstOnUpdateFiles = new(StringComparer.Ordinal)
     {
+        ["Assets/Game/Scripts/Rendering/Systems/OperationMapVehicleVisualOwnershipSystem.cs"] = "one-time render ownership boundary; compares managed Unity Mesh identities from RenderMeshArray to retire coincident authored vehicle copies and transfer faction tint. Cached query excludes repaired units; no gameplay decisions or recurring simulation loop.",
         ["Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs"] = "audio presentation request boundary; recurring queue/state systems share managed World caching and one-time audio singleton creation before presentation consumes requests.",
         ["Assets/Game/Scripts/Systems/MissileFlightAudioSystem.cs"] = "spatial audio presentation bridge; missile-flight ticks route configured managed-string event identifiers through the shared audio request singleton.",
         ["Assets/Game/Scripts/Rendering/Systems/RuntimeCameraReferenceSystem.cs"] = "camera presentation bridge; tracks managed Unity camera references for ECS consumers.",

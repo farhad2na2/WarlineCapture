@@ -109,6 +109,17 @@ namespace Game.Runtime
                      (int)runtime.Guidance * 100 + (int)prompt * 10 + strength;
             bool same = current.Active != 0 && current.GuidanceId == id && current.MissionSourceVersion == runtime.Version &&
                         current.GuidanceMode == runtime.Guidance;
+            if (establishBase && prompt == CampaignMissionGuidancePromptKind.EstablishBaseObserveResourceSpend &&
+                facts.RequiredBuildingCompletedCount == 0 &&
+                (current.GuidanceId != 0 && current.AcknowledgedGuidanceId == current.GuidanceId || current.ActionLabel.Equals(WaitAction)))
+            {
+                next = Build(prompt, 35999, in current, in runtime, in facts, in settings, friendly, hostile, move, patrol, build);
+                next.Title = "tutorial.m02.construction_wait.title";
+                next.Body = "tutorial.m02.construction_wait.body";
+                next.ActionLabel = WaitAction;
+                next.CanExecute = next.CanShow = 0;
+                return !ProjectionEquals(in current, in next);
+            }
             if (same && current.AcknowledgedGuidanceId == id) return false;
             next = Build(prompt, id, in current, in runtime, in facts, in settings, friendly, hostile, move, patrol, build);
             return !same || !ProjectionEquals(in current, in next);
@@ -256,7 +267,7 @@ namespace Game.Runtime
                 if (current.Prompt == CampaignMissionGuidancePromptKind.EstablishBaseQueueRifle)
                     return CampaignMissionGuidancePromptKind.EstablishBaseQueueRifle;
                 if (current.Prompt == CampaignMissionGuidancePromptKind.EstablishBaseObserveResourceSpend &&
-                    current.GuidanceId != 0 && current.AcknowledgedGuidanceId == current.GuidanceId)
+                    current.GuidanceId != 0 && (current.AcknowledgedGuidanceId == current.GuidanceId || current.ActionLabel.Equals(WaitAction)))
                 {
                     return facts.RequiredBuildingCompletedCount > 0
                         ? CampaignMissionGuidancePromptKind.EstablishBaseQueueRifle

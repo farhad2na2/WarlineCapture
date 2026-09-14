@@ -6,6 +6,7 @@ namespace Game.UI.Runtime
     public sealed partial class AriaTutorialBriefingView
     {
         private Button continueButton;
+        private bool continueConsumed;
         public Button ContinueButton
         {
             get
@@ -16,7 +17,11 @@ namespace Game.UI.Runtime
                 continueButton.onClick = new Button.ButtonClickedEvent();
                 continueButton.onClick.AddListener(() =>
                 {
-                    if (continueButton.IsActive() && continueButton.IsInteractable()) RequestExecuteRecommendation();
+                    if (!continueButton.IsActive() || !continueButton.IsInteractable() || continueConsumed) return;
+                    continueConsumed = true;
+                    continueButton.interactable = false;
+                    continueButton.gameObject.SetActive(false);
+                    RequestExecuteRecommendation();
                 });
                 var label = continueButton.GetComponentInChildren<TMPro.TMP_Text>(true);
                 UiLocalizedText.Set(label, "CONTINUE");
@@ -27,6 +32,7 @@ namespace Game.UI.Runtime
 
         public void SetContinueAvailable(bool available)
         {
+            available &= !continueConsumed;
             doItButton.gameObject.SetActive(false);
             doItButton.interactable = false;
             var button = ContinueButton;

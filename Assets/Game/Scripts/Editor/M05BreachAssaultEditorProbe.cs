@@ -59,7 +59,7 @@ namespace Game.Editor
                     if(campaign.SelectedMission.MissionId!=M05BreachAssaultConfigBuilder.MissionId){UiShellRuntimeGateway.TryEnqueueCampaignMissionAction(UiCampaignMissionActionKind.Select,M05BreachAssaultConfigBuilder.MissionId);return;}
                     deployed=UiShellRuntimeGateway.TryEnqueueCampaignMissionAction(UiCampaignMissionActionKind.Deploy,M05BreachAssaultConfigBuilder.MissionId);return;
                 }
-                SkipNarrative();
+                SampleVoices();SkipNarrative();
                 var runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);var facts=em.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
                 MissionMotionEditorAudit.Sample(em,root,in runtime,in facts);
                 var breach=em.HasComponent<CampaignMissionBreachState>(root)?em.GetComponentData<CampaignMissionBreachState>(root):default;
@@ -135,7 +135,7 @@ namespace Game.Editor
         }
         private static void Complete(bool pass,string detail)
         {
-            if(finished)return;finished=true;SessionState.SetBool(Active,false);EditorApplication.update-=Tick;Application.logMessageReceived-=Observe;Time.timeScale=1;
+            if(finished)return;if(pass)ValidatePlayedVoices();finished=true;SessionState.SetBool(Active,false);EditorApplication.update-=Tick;Application.logMessageReceived-=Observe;Time.timeScale=1;
             Debug.Log("[M05EditorProbe] result="+(pass?"Passed":"Failed")+" "+detail);MissionEditorValidationExit.Complete(pass);
         }
     }

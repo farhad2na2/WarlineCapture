@@ -8935,6 +8935,390 @@
           "weight": 1
         }
       ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.m05.01.en",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/en/tutorial-m05-01.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.m05.01.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-01.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.m05.02.en",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/en/tutorial-m05-02.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.m05.02.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-02.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.m05.03.en",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/en/tutorial-m05-03.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.m05.03.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-03.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.m05.04.en",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/en/tutorial-m05-04.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.m05.04.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-04.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.m05.05.en",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/en/tutorial-m05-05.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.m05.05.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-05.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.m05.06.en",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/en/tutorial-m05-06.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.m05.06.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-06.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.m05.07.en",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/en/tutorial-m05-07.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.m05.07.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-07.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.m05.08.en",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/en/tutorial-m05-08.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.m05.08.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-08.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
     }
   ]
 }

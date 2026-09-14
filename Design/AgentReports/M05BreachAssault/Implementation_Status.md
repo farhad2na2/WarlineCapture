@@ -1,6 +1,6 @@
 # M05 implementation and acceptance record
 
-Status: **captioned M5 implemented and accepted in Editor in English and Persian; new paid narration pending approval**.
+Status: **M5 implemented and accepted in Editor in English and Persian, including all 30 approved voice recordings (2026-09-14)**.
 
 The preceding M1–M4/UI changes were committed and pushed as `2c84bdc53` on `codex/m03-radar-warning` before M5 began.
 
@@ -21,6 +21,10 @@ All evidence below is Editor-only, in isolated copies and disposable profiles. N
 
 | Check | Result / evidence |
 | --- | --- |
+| Final voiced production | Passed `m05-voice-build.log`: 30 imported local clips, seven story lines in each language, 16 tutorial events, updated narrative timing. |
+| Final voiced journey | Passed `m05-voiced-journey.log`: guided English first clear (1:12 active combat), Persian replay (0:57), localized voice playback, both victories, correct rewards and campaign return. |
+| Final voice regressions | Passed ten suites in `m05-voice-regression.log`, including all 16 M5 lesson routes and the narration enablement gate. |
+| Final voice architecture | Passed 139 tests in nine fixtures, zero failures, in `m05-voice-architecture.log`. |
 | Captioned production build and focused regressions | Passed ten suites in `m05-release-regression.log`: APC displacement, M5 rules/integration, M1–M4 mission rules, settlement, attempt cleanup and M2 resources. |
 | Shared camera/transport/UI regressions | Passed fourteen suites in `m05-shared-regressions.log`, including ten M4 integration cases and fifteen boarding scenarios in each language. |
 | Architecture | Passed **139 tests across nine fixtures**, zero failures, in `m05-architecture-release.log`. Existing size and architecture baselines were retained. |
@@ -45,12 +49,12 @@ Bugs found and corrected during this implementation:
 
 The automated guided time is a lower bound with immediate actions, not a measured human session. The production plan now distinguishes a 3–6 minute first-play target including story/reading from active combat duration. No human playtest or Android validation is claimed.
 
-## Media provenance and remaining voice work
+## Media provenance and voice integration
 
 Seven panels were generated with the built-in ImageGen tool using the established M3 comic references, keeping Samira's mustard headscarf, Dalia's headset/sunglasses and ARIA's cyan projection consistent. Final assets are in `Assets/Game/Art/Narrative/M05BreachAssault/Final/`. No text is baked into the images; captions remain in localization/narrative data.
 
-The prepared ElevenLabs payload contains 15 English/Persian pairs (seven story lines and eight lessons), or 30 clips. New paid M5 generation is awaiting the previously requested user approval. The generator's dry run validates the exact canonical text and reports 4,431 characters. The code includes M5 audio routing and an import validator, but new tutorial narration remains disabled until clips are generated and validated. Captioned acceptance is not voice acceptance.
+On 2026-09-14 the user explicitly approved sending the prepared scripts to api.elevenlabs.io using the existing paid account. All 30 clips were generated: 14 story recordings and 16 ARIA lessons, totaling 350.40 seconds. The manifest records script text, speaker, locale, provenance and SHA-256 hashes. The exact canonical payload passed validation (4,431 characters). All WAVs passed mono/44.1 kHz, non-silence and unclipped-sample checks. The final Editor builder imported every clip with deferred loading and installed story references and all 16 tutorial events. M5 tutorial narration is now enabled; runtime playback uses local assets with no network TTS. The voice-enabled journey passed in `m05-voiced-journey.log`: actual advancing AudioSources were observed for all 14 story recordings and eight tutorial recordings across the two locales (22 distinct clips); no wrong-language playback was detected. Lessons whose objectives were already completed correctly skipped ahead, so the journey does not claim natural playback of all 16 tutorial recordings. The catalog and routing regressions cover all 16. Narrative panel durations accommodate the longer of the English and Persian clips, with a one-second margin. The replay probe allows 180 seconds for loading, the voiced briefing and opening tour.
 
 ## Delivery boundary
 
-The captioned build is playable from the campaign after M4 first clear. New M5 paid voice generation remains deliberately unperformed while approval is pending. No Android or human playtest is claimed. The two preliminary movement-preflight launches failed/timed out after a new test compile error and project contention; the error was fixed, their wrapper-owned processes timed out, and the corrected ten-suite preflight and final real-play run both passed. The user's Editor and Hub were not terminated.
+The voiced build is playable from the campaign after M4 first clear. No voice-generation approval or media integration remains outstanding. No Android or human playtest is claimed. The two preliminary movement-preflight launches failed/timed out after a new test compile error and project contention; the error was fixed, their wrapper-owned processes timed out, and the corrected ten-suite preflight and final real-play run both passed. The user's Editor and Hub were not terminated.

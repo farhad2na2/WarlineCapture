@@ -14,7 +14,7 @@ public sealed class M05BreachAssaultIntegrationTests
 {
     public static void RunFocusedValidation()
     {
-        try {var t=new M05BreachAssaultIntegrationTests();t.AuthoredMissionHasBilingualPlayableContract();t.FirstClearAndReplayPersistWithoutDuplicateUnlocks();t.TargetIdentityExcludesAuthoredScenery();Debug.Log("[M05BreachIntegration] result=Passed tests=3");ValidationExit.Passed();}
+        try {var t=new M05BreachAssaultIntegrationTests();t.AuthoredMissionHasBilingualPlayableContract();t.FirstClearAndReplayPersistWithoutDuplicateUnlocks();t.TargetIdentityExcludesAuthoredScenery();t.VoicesCoverEveryLessonInBothLanguages();Debug.Log("[M05BreachIntegration] result=Passed tests=4");ValidationExit.Passed();}
         catch(Exception e){Debug.LogException(e);ValidationExit.Failed();}
     }
     [Test] public void AuthoredMissionHasBilingualPlayableContract()
@@ -59,6 +59,18 @@ public sealed class M05BreachAssaultIntegrationTests
             Assert.Throws<ArgumentException>(()=>store.SettleWithRewards("saga.ch01.m04.airlift","foreign",1,true,3,100,null,grants));
         }
         finally {if(Directory.Exists(path))Directory.Delete(path,true);}
+    }
+    [Test] public void VoicesCoverEveryLessonInBothLanguages()
+    {
+        Assert.IsTrue(Game.UI.Runtime.MatchHudAssistantUiSystemHelper.CanUseTutorialNarration(8));
+        M05BreachAssaultEditorProbe.ValidateVoiceCatalog();
+        foreach(var language in new[]{Game.Narrative.Contracts.FirstLaunchNarrativeLanguage.English,Game.Narrative.Contracts.FirstLaunchNarrativeLanguage.Persian})
+            for(byte step=1;step<=8;step++)
+            {
+                string expected=$"vo.aria.tutorial.m05.{step:00}."+(language==Game.Narrative.Contracts.FirstLaunchNarrativeLanguage.Persian?"fa":"en");
+                var actual=Game.UI.Shell.Ecs.UiShellEcsGateway.ResolveTutorialAudioEventId(step,8,Game.UI.Contracts.UiTutorialNarrationPhase.PrimaryAction,language);
+                Assert.AreEqual(expected,actual.ToString());
+            }
     }
     [Test] public void TargetIdentityExcludesAuthoredScenery()
     {

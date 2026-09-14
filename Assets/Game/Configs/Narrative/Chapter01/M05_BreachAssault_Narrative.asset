@@ -39,16 +39,16 @@ MonoBehaviour:
         One. Its authorization record includes a credential issued to me, then revoked
         before these attacks.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: d6fd38cb7335c49bc96a85c95421d355, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 11.285714
+      deadlineSeconds: 12.92
       essentialCaption: 1
     continueStateId: M05-debrief-1
     skipStateId: M05-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 11.285714
+    durationSeconds: 12.92
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -85,16 +85,16 @@ MonoBehaviour:
         now, not another rumor. Take care of the wounded; the city needs everyone
         we can bring home.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 8243febc819c7472282eb3d84a411247, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 11.071428
+      deadlineSeconds: 14.36
       essentialCaption: 1
     continueStateId: M05-debrief-2
     skipStateId: M05-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 11.071428
+    durationSeconds: 14.36
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -131,16 +131,16 @@ MonoBehaviour:
         One encrypted message survived: \u201CQassem. The first node is lost.\u201D
         I cannot yet identify the sender."
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: d376730830cb94978a6ed55a0052b270, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 12.071428
+      deadlineSeconds: 17.16
       essentialCaption: 1
     continueStateId: M05-debrief-3
     skipStateId: M05-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 12.071428
+    durationSeconds: 17.16
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -177,16 +177,16 @@ MonoBehaviour:
         parts are assigned to your roster. Review your results, then return to the
         campaign map. We will follow the evidence.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 5da2bde47396640e3aad21bac179cffa, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 12.785714
+      deadlineSeconds: 15.96
       essentialCaption: 1
     continueStateId: M05-debrief-complete
     skipStateId: M05-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 12.785714
+    durationSeconds: 15.96
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -273,16 +273,16 @@ MonoBehaviour:
         Break the road gate, disable its transmitter, and secure the archive. Those
         records can tell us who ordered the attacks.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 33f74c8f2a50e45b79ee3f81f8db2561, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 13
+      deadlineSeconds: 17.48
       essentialCaption: 1
     continueStateId: M05-brief-1
     skipStateId: M05-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 13
+    durationSeconds: 17.48
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -319,16 +319,16 @@ MonoBehaviour:
         to open the gate, then bring the rifles through together. Preserve the APC
         if you can; losing it does not end the assault.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: f84516bee75c04ae5a2993d1d54376fe, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 13.428572
+      deadlineSeconds: 17.88
       essentialCaption: 1
     continueStateId: M05-brief-2
     skipStateId: M05-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 13.428572
+    durationSeconds: 17.88
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -365,16 +365,16 @@ MonoBehaviour:
         transmitter, defeat the responding guard, and hold the marked archive area
         for twenty clear seconds. I will guide each action.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: d9a6f1293c68645cc905268a5db5af2a, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 13.357142
+      deadlineSeconds: 16.68
       essentialCaption: 1
     continueStateId: M05-brief-complete
     skipStateId: M05-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 13.357142
+    durationSeconds: 16.68
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -461,16 +461,16 @@ MonoBehaviour:
         One. Its authorization record includes a credential issued to me, then revoked
         before these attacks.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: d6fd38cb7335c49bc96a85c95421d355, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 11.285714
+      deadlineSeconds: 12.92
       essentialCaption: 1
     continueStateId: M05-comms-complete
     skipStateId: M05-comms-complete
     reducedMotionSupported: 1
-    durationSeconds: 11.285714
+    durationSeconds: 12.92
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 

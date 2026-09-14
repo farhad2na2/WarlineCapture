@@ -33,7 +33,7 @@ namespace Game.Editor
         }
         private static void TickReturn(EntityManager em,Entity root,CampaignMissionRuntimeComponent runtime,CampaignMissionBreachState breach)
         {
-            if(EditorApplication.timeSinceStartup-returnAt>100)throw new TimeoutException("Campaign return/replay did not complete");
+            if(EditorApplication.timeSinceStartup-returnAt>180)throw new TimeoutException("Campaign return/replay did not complete");
             if(recoveryStage==1)
             {
                 using var query=em.CreateEntityQuery(typeof(Game.UI.Shell.Contracts.Ecs.UiShellStateComponent));

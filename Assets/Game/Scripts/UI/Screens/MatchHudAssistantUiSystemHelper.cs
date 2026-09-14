@@ -190,6 +190,6 @@ namespace Game.UI.Runtime
         }
 
         internal static bool CanUseTutorialNarration(byte tutorialStepCount) =>
-            tutorialStepCount is 5 or 9 or 12;
+            tutorialStepCount is 5 or 8 or 9 or 12;
     }
 }

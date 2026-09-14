@@ -670,30 +670,30 @@ MonoBehaviour:
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: m05-brief-01
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 8d712a70c500d40bd9df878dca152f74, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: m05-brief-02
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: c27e4834eb4164dd9a987a233754e704, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: m05-brief-03
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: d6c8bf6eb20e4423ba39ef6286e13e89, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: m05-comms-01
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: b60635aa28f654815b104cf8bae730f8, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: m05-debrief-01
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 8c54598fb97404e75a8a1ba3c162e231, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: m05-debrief-02
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 9f0fbed4294cb44b88eb5a1a0c1c796b, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: m05-debrief-03
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 24de92d0a71ce4c38971ae28cbfc41ec, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}

@@ -111,7 +111,15 @@ namespace Game.UI.Runtime
                     if(_tutorialSelection==null && _buttonRoot!=null)
                         _tutorialSelection=_buttonRoot.root.GetComponentInChildren<MatchHudSelectionPanelView>(true);
                     Cue(_tutorialSelection?.ResolvePassengerTutorialButton(),"tutorial.next.unload"); break;
-                case 10: case 12: _highlightPresentationSystem.ClearDirectTutorialCue(); break;
+                case 10:
+                    if(UiShellRuntimeGateway.TryReadMissionExtraction(out var extraction))
+                    {
+                        if(!extraction.AircraftAtLanding) ShowCommandOrDestination(_commandControlsView?.MoveButton,TacticalCommandMode.Move);
+                        else ShowTutorialWorld(extraction.LandingCenter,false);
+                    }
+                    else _highlightPresentationSystem.ClearDirectTutorialCue();
+                    break;
+                case 12: _highlightPresentationSystem.ClearDirectTutorialCue(); break;
                 default: Cue(_embeddedTutorialView.DoItButton,"tutorial.next.continue"); break;
             }
         }

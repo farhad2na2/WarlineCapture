@@ -16,6 +16,28 @@ namespace Game.Runtime
         public static bool IsRescueSpecialist(EntityManager em,Entity entity) =>
             em.HasComponent<CampaignMissionUnitRoleComponent>(entity) &&
             em.GetComponentData<CampaignMissionUnitRoleComponent>(entity).MissionRoleId.Equals(RescueSpecialistRole);
+        public int CollectRectangle(EntityManager em,Camera camera,VisibleUnitSelectionCameraSystemHelper visible,
+            Rect rectangle,VisibleUnitSelectionCameraSystemHelper.Filter filter,List<Entity> selected)
+        {
+            int count=visible.CollectVisiblePlayerUnits(em,camera,this,rectangle,filter,selected);
+            return filter==VisibleUnitSelectionCameraSystemHelper.Filter.All ? PreferTutorialRescuePassengers(em,selected) : count;
+        }
+
+        public static int PreferTutorialRescuePassengers(EntityManager em,System.Collections.Generic.List<Entity> selected)
+        {
+            using var query=em.CreateEntityQuery(typeof(CampaignMissionRuntimeComponent),typeof(CampaignMissionGuidanceProjectionComponent),typeof(CampaignMissionExtractionState));
+            if(query.CalculateEntityCount()!=1) return selected.Count;
+            var root=query.GetSingletonEntity();
+            var runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);
+            int lesson=em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root).GuidanceId-55000;
+            if(runtime.Phase!=Game.Missions.Contracts.MissionPhaseKind.Engage || !runtime.MissionId.Equals(new FixedString64Bytes("saga.ch01.m04.airlift")) || lesson is not (4 or 5 or 9)) return selected.Count;
+            bool hasPassenger=false;
+            foreach(var entity in selected) if(IsRescueSpecialist(em,entity)) {hasPassenger=true;break;}
+            if(hasPassenger)
+                for(int i=selected.Count-1;i>=0;i--) if(!IsRescueSpecialist(em,selected[i])) selected.RemoveAt(i);
+            return selected.Count;
+        }
+
         internal static string ResolveGroupTitle(
             int unitCount,
             int soldierCount,

@@ -14,7 +14,7 @@ namespace Game.UI.Runtime
             switch(_lastPanelModel.TutorialStep)
             {
                 case 1: UiShellRuntimeGateway.TryRequestExtractionAction(UiMissionExtractionAction.ContinuePlan); break;
-                case 3: case 6: case 11: InvokeAvailable(_commandControlsView?.MoveButton); break;
+                case 3: case 6: case 10: case 11: InvokeAvailable(_commandControlsView?.MoveButton); break;
                 case 7:
                     if (_commandControlsView != null)
                         foreach (var selection in _commandControlsView.transform.root.GetComponentsInChildren<MatchHudSelectionPanelView>())

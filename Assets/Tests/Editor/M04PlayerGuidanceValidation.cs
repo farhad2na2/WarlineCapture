@@ -63,6 +63,8 @@ public static class M04PlayerGuidanceValidation
                 if(ValidationExit.LastExitCode!=0) throw new Exception("M4 integration failed");
             }
             FeedbackBindingKeepsRuntimeInstruction();
+            new M04AirliftIntegrationTests().RescueSelectionExcludesOverlappingVehiclesOnlyDuringPassengerLessons();
+            new M04AirliftIntegrationTests().LandingHoldInstructionDistinguishesCountdownContestedAndReturn();
             new M04AirliftIntegrationTests().BilingualGuidanceCopyFitsNarrationMessages();
             new M04AirliftIntegrationTests().CommandStateReportsPersistentSelectionModeAndClearsAfterExit();
             new M04AirliftIntegrationTests().TutorialTargetsFollowSelectionTransportAndDestinationForEveryActionLesson();

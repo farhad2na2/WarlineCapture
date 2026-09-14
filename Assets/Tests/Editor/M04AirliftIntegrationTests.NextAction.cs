@@ -20,9 +20,41 @@ public sealed partial class M04AirliftIntegrationTests
             foreach(var text in new[]{lesson.Body,lesson.PersianBody})
                 Assert.DoesNotThrow(()=>{var message=new Unity.Collections.FixedString512Bytes(text);},"Recorded lesson copy must fit in both languages.");
         foreach(var entry in Game.Configs.M04AirliftCopyCatalog.Ui)
-            if(entry.Key=="mission.m04.tutorial.selection_progress")
+            if(entry.Key=="mission.m04.tutorial.selection_progress" || entry.Key.StartsWith("mission.m04.tutorial.hold."))
                 foreach(var text in new[]{entry.English,entry.Persian})
                     Assert.DoesNotThrow(()=>{var message=new Unity.Collections.FixedString512Bytes(string.Format(text,3));});
+    }
+
+    [Test]
+    public void RescueSelectionExcludesOverlappingVehiclesOnlyDuringPassengerLessons()
+    {
+        using var r=new Roster();
+        r.Em.AddComponentData(r.Root,r.Runtime);r.Em.AddComponentData(r.Root,r.State);
+        r.Em.AddComponentData(r.Root,new CampaignMissionGuidanceProjectionComponent{GuidanceId=55009});
+        foreach(var person in r.People) r.Em.AddComponentData(person,new CampaignMissionUnitRoleComponent{MissionRoleId="role.friendly.specialist"});
+        foreach(int lesson in new[]{4,5,9,8,10})
+        {
+            r.Em.SetComponentData(r.Root,new CampaignMissionGuidanceProjectionComponent{GuidanceId=55000+lesson});
+            var selection=new System.Collections.Generic.List<Unity.Entities.Entity>(r.People){r.State.Aircraft,r.State.Carrier,r.Escort};
+            int count=Game.Runtime.SelectionUiReadModelLookup.PreferTutorialRescuePassengers(r.Em,selection);
+            Assert.AreEqual(lesson is 4 or 5 or 9 ? 4 : 7,count);
+        }
+        r.Em.SetComponentData(r.Root,new CampaignMissionGuidanceProjectionComponent{GuidanceId=55009});
+        var vehicles=new System.Collections.Generic.List<Unity.Entities.Entity>{r.State.Aircraft,r.State.Carrier};
+        Assert.AreEqual(2,Game.Runtime.SelectionUiReadModelLookup.PreferTutorialRescuePassengers(r.Em,vehicles),"An intentional vehicle-only selection stays available.");
+    }
+
+    [Test]
+    public void LandingHoldInstructionDistinguishesCountdownContestedAndReturn()
+    {
+        using var r=new Roster();
+        var resolve=typeof(UiShellEcsGateway).GetMethod("ResolveLandingHoldStatus",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic);
+        int Read()=>(int)resolve.Invoke(null,new object[]{r.Em,r.State,r.Facts,18f,20000});
+        r.Facts.ExtractionSecureMilliseconds=10000;Assert.AreEqual(10,Read());
+        r.Facts.ExtractionContested=1;Assert.AreEqual(-1,Read());
+        r.Em.SetComponentData(r.State.Aircraft,LocalTransform.FromPosition(new float3(50,0,0)));Assert.AreEqual(-2,Read());
+        r.Facts.ExtractionContested=0;r.Facts.ExtractionSecureMilliseconds=20000;
+        r.Em.SetComponentData(r.State.Aircraft,LocalTransform.Identity);Assert.AreEqual(0,Read());
     }
 
     [Test]
@@ -63,11 +95,11 @@ public sealed partial class M04AirliftIntegrationTests
         r.Em.AddComponentData(r.Root,r.State);
         r.Em.SetComponentData(r.State.Carrier,LocalTransform.FromPosition(new float3(20,0,10)));
         r.Em.SetComponentData(r.State.Aircraft,LocalTransform.FromPosition(new float3(110,0,20)));
-        foreach(int step in new[]{2,3,4,5,6,7,8,9,11})
+        foreach(int step in new[]{2,3,4,5,6,7,8,9,10,11})
         {
             Assert.That(ReadTutorialTarget(r.Em,r.Root,step,out var target),Is.True);
             Assert.That(target.NeedsSelection,Is.True,$"Step {step} must recover missing selection.");
-            if(step is 6 or 7) Assert.That((float3)target.Destination,Is.EqualTo(r.State.LandingCenter));
+            if(step is 6 or 7 or 10) Assert.That((float3)target.Destination,Is.EqualTo(r.State.LandingCenter));
             if(step==11) Assert.That((float3)target.Destination,Is.EqualTo(r.State.DepartureCenter));
             if(step==5) Assert.That(target.Destination.x,Is.EqualTo(20));
             if(step==9) Assert.That(target.Destination.x,Is.EqualTo(110));

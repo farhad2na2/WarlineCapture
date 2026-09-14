@@ -98,10 +98,10 @@ namespace Game.Runtime
             Action clearSelectedBuilding,
             TrySelectBuildingInRectAction trySelectBuildingInRect)
         {
-            int selectedCount = visibleUnitSelectionSystem.CollectVisiblePlayerUnits(
+            int selectedCount = selectionUiReadModelLookup.CollectRectangle(
                 em,
                 worldCamera,
-                selectionUiReadModelLookup,
+                visibleUnitSelectionSystem,
                 screenRect,
                 filter,
                 selectedScratch);

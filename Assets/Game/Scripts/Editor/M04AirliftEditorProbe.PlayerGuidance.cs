@@ -72,7 +72,14 @@ namespace Game.Editor
                     throw new InvalidOperationException("Select highlight persisted after Select was accepted.");
             }
             if(lesson==1){PlayerClick(aria.DoItButton);return;}
-            if(lesson is 10 or 12)
+            if(lesson==10)
+            {
+                if(aria.DoItButton.gameObject.activeSelf) throw new InvalidOperationException("Waiting lesson must not repeat the field-guide action.");
+                if(!worldCue && !aria.ShowMeButton.gameObject.activeSelf) throw new InvalidOperationException("Landing hold must mark the zone or offer Show Me.");
+                if(!panel.RecommendationBody.Contains(GameLocalization.CurrentLocaleCode=="fa-IR"?"ثانیه":"seconds")) throw new InvalidOperationException("Landing hold needs an explicit wait/countdown instruction.");
+                ScreenCapture.CaptureScreenshot(Output+"/landing-hold.png");PlayerWait();return;
+            }
+            if(lesson==12)
             {if(uiCue || worldCue || aria.ShowMeButton.gameObject.activeSelf)throw new InvalidOperationException("Waiting lesson retains misleading guidance.");PlayerWait();return;}
             if(!UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var target))throw new InvalidOperationException("Action lesson has no target: "+lesson);
             if(lesson==4 && playerPartialStage==1)
@@ -122,6 +129,8 @@ namespace Game.Editor
             if((mode==TacticalCommandMode.Board || mode==TacticalCommandMode.Move) && !worldCue){PlayerWait();return;}
             if(lesson is 5 or 9)
             {
+                if(lesson==9 && (em.HasComponent<SelectedUnitTag>(extraction.Aircraft) || em.HasComponent<SelectedUnitTag>(extraction.Carrier)))
+                    throw new InvalidOperationException("Passenger selection must exclude overlapping transports.");
                 if(mode!=TacticalCommandMode.Board){PlayerClick(controls.CommandWheelPanel.NextBoardButton);return;}
                 foreach(var feedback in UnityEngine.Object.FindObjectsByType<BattleHudRuntimeFeedbackView>(FindObjectsSortMode.None))
                     if(feedback.BoardAllButton!=null && feedback.BoardAllButton.gameObject.activeInHierarchy ||
@@ -148,6 +157,16 @@ namespace Game.Editor
                 .Select(m=>(Vector2)camera.WorldToScreenPoint((Vector3)em.GetComponentData<LocalToWorld>(m.Entity).Position)).ToArray();
             var min=points.Aggregate(Vector2.Min);var max=points.Aggregate(Vector2.Max);
             var rect=Rect.MinMaxRect(min.x-3,min.y-3,max.x+3,max.y+3);
+            if(!partial && playerLesson==9)
+            {
+                var state=em.GetComponentData<CampaignMissionExtractionState>(root);
+                foreach(var vehicle in new[]{state.Aircraft,state.Carrier})
+                {
+                    var point=camera.WorldToScreenPoint((Vector3)em.GetComponentData<LocalTransform>(vehicle).Position);
+                    rect=Rect.MinMaxRect(Mathf.Min(rect.xMin,point.x-30),Mathf.Min(rect.yMin,point.y-30),Mathf.Max(rect.xMax,point.x+30),Mathf.Max(rect.yMax,point.y+30));
+                }
+                Debug.Log("[M04PlayerRoute] helicopter-selection includes both vehicles; expecting only four specialists");
+            }
             if(partial)
             {
                 var sorted=points.OrderBy(p=>p.x).ToArray();

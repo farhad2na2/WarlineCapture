@@ -47,8 +47,35 @@ namespace Game.UI.Shell.Ecs
             var rotation=cameraSnapshot.IsValid!=0 ? cameraSnapshot.Rotation : Unity.Mathematics.quaternion.EulerXYZ(math.radians(new float3(60,0,0)));
             model=new UiMissionExtractionModel(facts.ExtractionPassengersAboard,facts.ExtractionPassengersDelivered,config.RequiredPassengers,facts.ExtractionCarrierLegCount,
                 facts.ExtractionSecureMilliseconds/1000,math.max(0,(config.DeadlineMilliseconds-facts.ElapsedMilliseconds+999)/1000),lesson,
-                facts.ExtractionContested!=0,extraction.DepartureCleared!=0,extraction.LandingCenter,extraction.DepartureCenter,config.LandingRadius,config.DepartureRadius,math.max(0,((extraction.PatrolReleaseAtMilliseconds>0?math.min(120000,extraction.PatrolReleaseAtMilliseconds):120000)-facts.ElapsedMilliseconds+999)/1000),rotation);return true;
+                facts.ExtractionContested!=0,extraction.DepartureCleared!=0,extraction.LandingCenter,extraction.DepartureCenter,config.LandingRadius,config.DepartureRadius,math.max(0,((extraction.PatrolReleaseAtMilliseconds>0?math.min(120000,extraction.PatrolReleaseAtMilliseconds):120000)-facts.ElapsedMilliseconds+999)/1000),rotation,(config.SecureHoldMilliseconds+999)/1000,IsAircraftAtLanding(em,in extraction,config.LandingRadius));return true;
         }
+        private static int cachedExtractionHoldStatus=int.MinValue;
+        internal static bool IsAircraftAtLanding(EntityManager em,in CampaignMissionExtractionState state,float radius) =>
+            TryGetLiveExtractionPosition(em,state.Aircraft,out var position) &&
+            math.distancesq(position.xz,state.LandingCenter.xz)<=radius*radius;
+        internal static int ResolveExtractionHoldStatus(EntityManager em,Entity root)
+        {
+            var state=em.GetComponentData<CampaignMissionExtractionState>(root);
+            var runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);
+            var catalog=em.GetComponentData<CampaignMissionCatalogComponent>(root);
+            if(!TryFindExtractionDefinition(in catalog,in runtime,out var index)) return int.MinValue;
+            ref var config=ref catalog.Blob.Value.Missions[index].Extraction;
+            var facts=em.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
+            return ResolveLandingHoldStatus(em,state,facts,config.LandingRadius,config.SecureHoldMilliseconds);
+        }
+        internal static int ResolveLandingHoldStatus(EntityManager em,CampaignMissionExtractionState state,CampaignMissionAttemptFactsComponent facts,float radius,int requiredMilliseconds)
+        {
+            if(!IsAircraftAtLanding(em,in state,radius)) return -2;
+            if(facts.ExtractionContested!=0) return -1;
+            return math.max(0,(requiredMilliseconds-facts.ExtractionSecureMilliseconds+999)/1000);
+        }
+        private static int ReadExtractionHoldStatus(byte step) => step==10 && TryGetMissionRoot(out var em,out var root) &&
+            em.HasComponent<CampaignMissionExtractionState>(root) && em.GetComponentData<CampaignMissionRuntimeComponent>(root).MissionId.Equals(AirliftId)
+            ? ResolveExtractionHoldStatus(em,root) : int.MinValue;
+        private static string ExtractionHoldCopy(int status) => Game.Configs.GameText.Format(
+            status==-2 ? "mission.m04.tutorial.hold.return" : status==-1 ? "mission.m04.tutorial.hold.contested" : "mission.m04.tutorial.hold.wait",
+            "Keep the helicopter in the landing zone. {0} seconds remaining.",status);
+
         public bool TryRequestExtractionAction(UiMissionExtractionAction action)
         {
             if(!TryReadMissionExtraction(out var model) || !TryGetMissionRoot(out var em,out var root)) return false;

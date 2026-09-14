@@ -37,7 +37,7 @@ namespace Game.UI.Shell.Ecs
         {
             target=default;
             var extraction=em.GetComponentData<CampaignMissionExtractionState>(root);
-            Entity actor=step is 8 or 9 or 11 or 12 ? extraction.Aircraft : extraction.Carrier;
+            Entity actor=step is 8 or 9 or 10 or 11 or 12 ? extraction.Aircraft : extraction.Carrier;
             float3 team=default,missing=default; int count=0,selected=0; bool moving=false;
             var members=em.GetBuffer<CampaignMissionExtractionMember>(root,true);
             foreach(var member in members)

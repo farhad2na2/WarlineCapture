@@ -19,6 +19,7 @@ namespace Game.UI.Runtime
         [NonSerialized] public Material OriginalMaterial;
         [NonSerialized] public Color OriginalColor;
         [NonSerialized] public UiDisabledVisualReason Reasons;
+        [NonSerialized] public bool PreserveAuthoredVisual;
     }
 
     [DisallowMultipleComponent]
@@ -91,6 +92,10 @@ namespace Game.UI.Runtime
                 return;
 
             UiDisabledMaterialStateView state = graphic.GetComponent<UiDisabledMaterialStateView>();
+            // A mission's static color overlay already communicates unavailability. A
+            // cinematic input lock must not grayscale it and compete with the card style.
+            if (state != null && state.PreserveAuthoredVisual)
+                return;
             if (state == null)
             {
                 if (!disabled)

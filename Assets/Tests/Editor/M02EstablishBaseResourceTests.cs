@@ -345,6 +345,24 @@ public sealed class M02EstablishBaseResourceTests
                     Assert.AreEqual(sharedBlueWash.Value, washColor,
                         $"M02 squad card {index} must match every other unavailable card.");
                 sharedBlueWash = washColor;
+                var wash = washTransform.GetComponent<Image>();
+                var originalShader = wash.material.shader;
+                // Reproduce competing cinematic and mission passes, including repeated
+                // updates and lock removal. The attack-helicopter card is index 2.
+                for (int frame = 0; frame < 12; frame++)
+                {
+                    UiDisabledMaterialUtility.SetDisabled(cards[index].Button.gameObject,
+                        UiDisabledVisualReason.CinematicInteractionLock, frame % 3 != 2);
+                    Assert.AreEqual(originalShader, wash.material.shader,
+                        $"Card {index}: cinematic pass must not recolor the blue wash.");
+                    Assert.AreEqual(washColor, wash.color);
+                    tray.SetSelectedSlot(MatchHudSquadTraySlot.Soldiers);
+                    tray.FlashDisabled(MatchHudSquadTraySlot.AttackHelicopter);
+                    Assert.AreEqual(originalShader, wash.material.shader);
+                    Assert.AreEqual(washColor, wash.color);
+                    Assert.IsTrue(wash.gameObject.activeSelf);
+                    Assert.IsFalse(cards[index].Button.interactable);
+                }
             }
 
             GameObject matchHudPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(

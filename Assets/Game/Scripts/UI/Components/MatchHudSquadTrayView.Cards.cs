@@ -135,6 +135,9 @@ namespace Game.UI.Runtime
             rect.offsetMin = Vector2.zero;
             rect.offsetMax = Vector2.zero;
             Image wash = washObject.GetComponent<Image>();
+            var visualState = wash.GetComponent<UiDisabledMaterialStateView>() ??
+                wash.gameObject.AddComponent<UiDisabledMaterialStateView>();
+            visualState.PreserveAuthoredVisual = true;
             wash.material = null;
             wash.color = V3MissionDisabledWashColor;
             wash.raycastTarget = false;

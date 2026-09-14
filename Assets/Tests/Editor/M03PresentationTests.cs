@@ -106,16 +106,18 @@ public sealed class M03PresentationTests
                 view.SetPresentationVisible(true);
                 if(!persian) StringAssert.Contains("STEP "+step+"/12",view.ProgressText.text);
                 Canvas.ForceUpdateCanvases();
-                foreach(var text in new[]{view.TitleText,view.BodyText,view.ProgressText,view.ShowMeButton.GetComponentInChildren<TMP_Text>(),view.DoItButton.GetComponentInChildren<TMP_Text>()})
+                foreach(var text in new[]{view.TitleText,view.BodyText,view.ProgressText,view.ShowMeButton.GetComponentInChildren<TMP_Text>(),view.ContinueButton.GetComponentInChildren<TMP_Text>()})
                 {
+                    if(text==null || !text.gameObject.activeInHierarchy) continue;
                     text.ForceMeshUpdate(true,true);
                     Assert.IsFalse(text.isTextOverflowing || text.isTextTruncated,
                         $"ARIA M{(extraction ? 4 : 3)} {step} {(persian ? "fa-IR" : "en")} large={large}: {text.name} height={text.rectTransform.rect.height} preferred={text.preferredHeight}");
-                    Assert.IsTrue(text.textInfo.characterInfo.Take(text.textInfo.characterCount).Any(c=>c.isVisible));
+                    Assert.IsTrue(text.textInfo.characterInfo.Take(text.textInfo.characterCount).Any(c=>c.isVisible),$"Visible text missing: {text.name}, step={step}, fa={persian}, text={text.text}");
                     Assert.IsFalse(text.textInfo.characterInfo.Take(text.textInfo.characterCount).Any(c=>c.character=='\u25a1' || c.character=='\ufffd'));
                 }
                 view.RefreshContentLayout();
-                var actions=BoundsIn(view.transform,(RectTransform)view.DoItButton.transform);
+                Assert.IsFalse(view.DoItButton.gameObject.activeSelf,"Do It stays hidden; only reading acknowledgements retain Continue.");
+                var actions=BoundsIn(view.transform,(RectTransform)view.ContinueButton.transform);
                 var utilities=BoundsIn(view.transform,utility);
                 var bodyBounds=BoundsIn(view.transform,(RectTransform)view.BodyText.transform.parent);
                 var rail=((RectTransform)view.transform).rect;
@@ -125,15 +127,18 @@ public sealed class M03PresentationTests
                 Assert.GreaterOrEqual(utilities.min.x,rail.xMin+19.99f);
                 Assert.LessOrEqual(utilities.max.x,rail.xMax-19.99f);
                 Assert.GreaterOrEqual(rail.yMin,BoundsIn(view.transform,dock.Minimap).max.y+11.99f,"ARIA must clear the minimap.");
+                float previousBottom=utilities.max.y+12;
                 foreach(var button in utility.GetComponentsInChildren<UnityEngine.UI.Button>())
                 {
                     var rect=(RectTransform)button.transform;
                     Assert.GreaterOrEqual(rect.rect.height,72,"Keep utility touch targets large.");
-                    var primary=button.transform.GetSiblingIndex()==0 ? view.DoItButton : view.ShowMeButton;
+                    var primary=view.ContinueButton;
                     var buttonBounds=BoundsIn(view.transform,rect);
                     var primaryBounds=BoundsIn(view.transform,(RectTransform)primary.transform);
-                    Assert.That(buttonBounds.min.x,Is.EqualTo(primaryBounds.min.x).Within(.01f),"Button columns must align.");
-                    Assert.That(buttonBounds.size.x,Is.EqualTo(primaryBounds.size.x).Within(.01f),"Button columns must have identical widths.");
+                    Assert.That(buttonBounds.max.y,Is.LessThanOrEqualTo(previousBottom-11.99f),"Buttons must stack with a touch-safe gap.");
+                    previousBottom=buttonBounds.min.y;
+                    Assert.That(buttonBounds.min.x,Is.EqualTo(primaryBounds.min.x).Within(.01f),"All buttons must share the full-width left edge.");
+                    Assert.That(buttonBounds.size.x,Is.EqualTo(primaryBounds.size.x).Within(.01f),"All buttons must span the same panel width.");
                 }
                 Assert.IsTrue(view.FirstStepGuideRoot==null || !view.FirstStepGuideRoot.gameObject.activeSelf,"M3 must not display M1's selection-only diagram.");
             }

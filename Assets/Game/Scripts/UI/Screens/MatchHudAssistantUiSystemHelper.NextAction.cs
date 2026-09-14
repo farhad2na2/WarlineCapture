@@ -7,14 +7,14 @@ namespace Game.UI.Runtime
 {
     internal sealed partial class MatchHudAssistantUiSystemHelper
     {
-        private bool _waitingForTutorialAction;
+        private bool _waitingForTutorialAction, _continueTutorialAction;
         private BuildPlacementConfirmationBarView _tutorialPlacement;
         private MatchHudSelectionPanelView _tutorialSelection;
         private ThreatAlertV3PopupView _tutorialWarning;
 
         private void TickNextTutorialAction()
         {
-            _waitingForTutorialAction = false;
+            _waitingForTutorialAction = false; _continueTutorialAction = false;
             bool managed = UsesNextTutorialAction;
             if(managed && UiShellRuntimeGateway.TryReadMatchHudCommandState(out var commandState))
                 _activeCommandMode=commandState.ActiveCommandMode;
@@ -29,7 +29,7 @@ namespace Game.UI.Runtime
             {
                 if(step>=7) ShowEarlyMissionThreat();
                 else if(step==6) ShowProductionCue();
-                else if(step==5) Cue(_embeddedTutorialView.DoItButton,"tutorial.next.continue");
+                else if(step==5) Cue(_embeddedTutorialView.ContinueButton,"tutorial.next.continue");
                 else ShowConstructionCue(false,step==4);
                 return;
             }
@@ -40,7 +40,8 @@ namespace Game.UI.Runtime
                     if(_tutorialWarning==null && _buttonRoot!=null)
                         _tutorialWarning=_buttonRoot.root.GetComponentInChildren<ThreatAlertV3PopupView>(true);
                     var jump=_tutorialWarning?.JumpToThreatButton;
-                    Cue(jump!=null && jump.IsActive() ? jump : _embeddedTutorialView.DoItButton,"tutorial.next.continue"); break;
+                    Cue(jump!=null && jump.IsActive() ? jump : _embeddedTutorialView.ContinueButton,"tutorial.next.continue"); break;
+                case 3: ShowConstructionCue(true,false); break;
                 case 4: ShowConstructionCue(true,true); break;
                 case 9: ShowProductionCue(); break;
                 case 5: ShowCommandOrDestination(_commandControlsView?.MoveButton,TacticalCommandMode.Move); break;
@@ -50,8 +51,9 @@ namespace Game.UI.Runtime
                     ShowSelectionOrControl(resume ? _commandControlsView?.HoldButton : _commandControlsView?.StopButton,
                         resume ? "mission.m03.guide.control.8" : "mission.m03.guide.control.10"); break;
                 case 8: Cue(_commandControlsView?.SupportButton,"mission.m03.guide.control.6"); break;
-                case 10: case 11: Cue(_embeddedTutorialView.DoItButton,"tutorial.next.continue"); break;
-                default: Cue(_embeddedTutorialView.DoItButton,"tutorial.next.continue"); break;
+                case 10: case 11: Cue(_embeddedTutorialView.ContinueButton,"tutorial.next.continue"); break;
+                case 12: Cue(_buttonRoot?.root.GetComponentInChildren<MissionDefenseHudView>(true)?.GuideButton,"mission.m03.guide.title"); break;
+                default: _highlightPresentationSystem.ClearDirectTutorialCue(); break;
             }
         }
 
@@ -100,7 +102,12 @@ namespace Game.UI.Runtime
         }
 
         private void ShowProductionCue() => Cue(_highlightPresentationSystem.ResolveProductionTutorialControl(out var key),key);
-        private void Cue(Button button,string key) => _highlightPresentationSystem.ShowTutorialControl(button,key);
+        private void Cue(Button button,string key)
+        {
+            if(button!=null && button==_embeddedTutorialView?.ContinueButton)
+            { _continueTutorialAction=true; _embeddedTutorialView.SetContinueAvailable(_lastPanelModel.CanExecute); }
+            _highlightPresentationSystem.ShowTutorialControl(button,key);
+        }
 
         private bool ShowMissingSelection(out UiMissionTutorialTarget target)
         {
@@ -156,7 +163,7 @@ namespace Game.UI.Runtime
                     else _highlightPresentationSystem.ClearDirectTutorialCue();
                     break;
                 case 12: _highlightPresentationSystem.ClearDirectTutorialCue(); break;
-                default: Cue(_embeddedTutorialView.DoItButton,"tutorial.next.continue"); break;
+                default: Cue(_embeddedTutorialView.ContinueButton,"tutorial.next.continue"); break;
             }
         }
     }

@@ -41,15 +41,19 @@ namespace Game.UI.Runtime
             bool opening=openingCopy!=null && openingCopy.gameObject.activeInHierarchy && HasText(openingCopy);
             bool alert=!tutorial && !opening && alertCopy!=null && alertCopy.gameObject.activeSelf && HasText(alertCopy);
             bool hasText=tutorial || opening || alert;
-            bool hasActions=showMeButton.gameObject.activeSelf || doItButton.gameObject.activeSelf;
-            float actionSpacing=hasActions?128:12;
+            doItButton.gameObject.SetActive(false);
+            int actionCount=(showMeButton.gameObject.activeSelf?1:0)+(ContinueButton.gameObject.activeSelf?1:0);
+            bool hasActions=actionCount>0;
+            float actionGap=ContinueButton.gameObject.activeSelf?44:16;
+            float actionSpacing=hasActions?actionGap+actionCount*84:12;
+            int utilityCount=ActiveButtonCount(utilityActions), extractionCount=ActiveButtonCount(extractionActions);
             contentActions.gameObject.SetActive(hasActions);
             if(mapDock==null) mapDock=GetComponentInParent<MissionHudTouchLayoutView>();
             float available=900;
             if(mapDock!=null && mapDock.Minimap!=null)
             {mapDock.Minimap.GetWorldCorners(mapCorners);available=-rail.InverseTransformPoint(mapCorners[1]).y-12;}
             int state=(hasActions?64:0)|(tutorial?1:0)|(opening?2:0)|(alert?4:0)|(_missionLayoutLarge?8:0)|
-                (utilityActions!=null && utilityActions.gameObject.activeSelf?16:0)|(extractionActions!=null && extractionActions.gameObject.activeSelf?32:0);
+                (utilityCount<<8)|(extractionCount<<12)|(actionCount<<16)|(ContinueButton.gameObject.activeSelf?32:0);
             if(!_layoutDirty && Mathf.Abs(measuredAvailable-available)<.1f && measuredState==state && measuredWidth==rail.rect.width && measuredFont==bodyText.font &&
                 measuredTitle==titleText.text && measuredBody==bodyText.text && measuredAlert==alertCopy?.text && measuredOpening==openingCopy?.text) return;
             bool newInstruction=measuredTitle!=titleText.text;
@@ -59,7 +63,7 @@ namespace Game.UI.Runtime
             float width=rail.rect.width-40;
             float titleHeight=tutorial ? Measure(titleText,width,_missionLayoutLarge?22:20) : 0;
             float bodyHeight=tutorial ? Measure(bodyText,width,_missionLayoutLarge?19:17) : 0;
-            float utilityHeight=(utilityActions!=null && utilityActions.gameObject.activeSelf ? 84 : 0)+(extractionActions!=null && extractionActions.gameObject.activeSelf ? 84 : 0);
+            float utilityHeight=(utilityCount+extractionCount)*84;
             float required=20+titleHeight+bodyHeight+(titleHeight>0 && bodyHeight>0?8:0)+(tutorial?actionSpacing:0)+utilityHeight;
             float portraitHeight=hasText ? Mathf.Clamp(available-required,62,114) : 230;
             missionPortraitStage.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,portraitHeight);
@@ -82,11 +86,11 @@ namespace Game.UI.Runtime
                 bodyViewport.GetComponent<Image>().raycastTarget=bodyScroll.vertical;
                 titleText.gameObject.SetActive(titleHeight>0); bodyText.gameObject.SetActive(bodyHeight>0);
                 float textHeight=titleHeight+visibleBody+(titleHeight>0 && bodyHeight>0?8:0);
-                Place(contentActions,0,textHeight+44,width,72);
-                float columnWidth=(width-20)/2;
-                Place((RectTransform)doItButton.transform,0,0,columnWidth,72);
-                Place((RectTransform)showMeButton.transform,columnWidth+20,0,columnWidth,72);
-                Place(briefingLayout,20,y,width,textHeight+(hasActions?116:0));
+                Place(contentActions,0,textHeight+actionGap,width,Mathf.Max(0,actionCount*84-12));
+                float actionY=0;
+                if(ContinueButton.gameObject.activeSelf) {Place((RectTransform)ContinueButton.transform,0,actionY,width,72);actionY+=84;}
+                Place((RectTransform)showMeButton.transform,0,actionY,width,72);
+                Place(briefingLayout,20,y,width,textHeight+(hasActions?actionSpacing-12:0));
                 y+=textHeight+actionSpacing;
             }
             else
@@ -97,21 +101,28 @@ namespace Game.UI.Runtime
                 else if(alert) {float h=Measure(alertCopy,width,_missionLayoutLarge?19:17);Place(alertCopy.rectTransform,20,y,width,h);y+=h+12;}
             }
             if(utilityActions!=null && utilityActions.gameObject.activeSelf)
-            {PlaceUtilityRow(utilityActions,y,width);y+=84;}
+            {PlaceUtilityRow(utilityActions,y,width);y+=utilityCount*84;}
             if(extractionActions!=null && extractionActions.gameObject.activeSelf)
-            {PlaceUtilityRow(extractionActions,y,width);y+=84;}
+            {PlaceUtilityRow(extractionActions,y,width);y+=extractionCount*84;}
             rail.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,y);
+        }
+
+        private static int ActiveButtonCount(RectTransform row)
+        {
+            if(row==null || !row.gameObject.activeSelf) return 0;
+            int count=0;
+            foreach(Transform child in row)
+                if(child.gameObject.activeSelf && child.TryGetComponent<Button>(out _)) count++;
+            return count;
         }
 
         private static void PlaceUtilityRow(RectTransform row,float y,float width)
         {
-            Place(row,20,y,width,72);
-            float columnWidth=(width-20)/2;
-            int column=0;
-            // Team, Landing and Departure share the second column; only one is visible.
+            Place(row,20,y,width,Mathf.Max(0,ActiveButtonCount(row)*84-12));
+            float offset=0;
             foreach(Transform child in row)
-                if(child.TryGetComponent<Button>(out _))
-                    Place((RectTransform)child,column++==0?0:columnWidth+20,0,columnWidth,72);
+                if(child.gameObject.activeSelf && child.TryGetComponent<Button>(out _))
+                {Place((RectTransform)child,0,offset,width,72);offset+=84;}
         }
 
         private void EnsureBodyViewport()

@@ -111,7 +111,8 @@ namespace Game.UI.Runtime
             _defaultBody = model.RecommendationBody ?? string.Empty;
             ApplyInteractionState(TacticalCommandMode.None, worldTargetCompleted: false);
             showMeButton.interactable = model.CanShow;
-            doItButton.interactable = model.CanExecute;
+            showMeButton.gameObject.SetActive(model.CanShow);
+            SetContinueAvailable(model.CanExecute && IsContinueLabel(model.RecommendationActionLabel));
             SetLocalizedText(showMeButtonLabel, "SHOW ME");
             SetLocalizedText(doItButtonLabel, _tutorialStepCount is 8 or 12 ? model.RecommendationActionLabel : "DO IT");
             if (closeButton != null)

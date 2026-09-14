@@ -14,7 +14,7 @@ public sealed partial class MatchHudAssistantUiSystemHelperTests
         RunCase(test => test.EveryEnabledMissionShowMeHasATarget(false));
         RunCase(test => test.EveryEnabledMissionShowMeHasATarget(true));
         RunCase(test => test.M4UsesLiveSelectionModeAndHidesShowMeForVisibleIndicators());
-        RunCase(test => test.M4DoItRecoversSelectionBeforeBoardingOrMoving());
+        RunCase(test => test.M4GuidesRealSelectionBeforeBoardingOrMoving());
         foreach (byte count in new byte[] { 5, 9, 12, 8 })
             RunCase(test => test.CampaignActionsFollowLiveModeAndArrival(count));
         Debug.Log("[MissionShowMe] result=Passed tests=10 M1-M5=selection,command,destination,waiting");
@@ -164,7 +164,7 @@ public sealed partial class MatchHudAssistantUiSystemHelperTests
     }
 
     [Test]
-    public void M4DoItRecoversSelectionBeforeBoardingOrMoving()
+    public void M4GuidesRealSelectionBeforeBoardingOrMoving()
     {
         CreateHudHarness(true,out var overlay,out var header,out _);
         var model=CreateStructuredModel(1,recommendationKind:9,recommendationTargetKind:4,tutorialStep:9,tutorialStepCount:12);
@@ -182,9 +182,9 @@ public sealed partial class MatchHudAssistantUiSystemHelperTests
             var helper=GetPrivateField<MatchHudAssistantUiSystemHelper>(ui,"_matchHudAssistantUiSystem");
             var view=header.Find("AriaAssistantButton").GetComponent<AriaTutorialBriefingView>();
             helper.ApplyReadModel(model);helper.TickHighlight(1);
-            Assert.IsTrue(view.DoItButton.gameObject.activeInHierarchy);
-            view.DoItButton.onClick.Invoke();
-            Assert.AreEqual(1,selections,"One Do It click must activate selection before a boarding order.");
+            Assert.IsFalse(view.DoItButton.gameObject.activeInHierarchy);
+            controls.SelectButton.onClick.Invoke();
+            Assert.AreEqual(1,selections,"The highlighted Select control activates selection before a boarding order.");
             Assert.AreEqual(0,moves);
             gateway.CommandMode=TacticalCommandMode.Select;helper.TickHighlight(2);
             Assert.IsFalse(view.DoItButton.gameObject.activeSelf,"Dragging is the next action; Do It must not toggle selection off.");

@@ -69,8 +69,8 @@ public sealed class AriaInstructionViewportTests
             view.BodyText.ForceMeshUpdate(true,true);
             var viewport=(RectTransform)view.BodyText.transform.parent;
             if(breach) Assert.IsFalse(view.BodyText.isTextOverflowing,"M5 status, including the clock, must fit.");
-            if(!breach) Assert.That(viewport.rect.height,Is.GreaterThanOrEqualTo(view.BodyText.preferredHeight),"The entire movement instruction must fit above the action buttons.");
-            else
+            // Full-width stacked controls may require scrolling; the content must remain
+            // complete, visibly scrollable, and stable while mission status changes.
             {
                 var scroll=viewport.GetComponent<UnityEngine.UI.ScrollRect>();
                 Assert.That(view.BodyText.rectTransform.rect.height,Is.GreaterThanOrEqualTo(view.BodyText.preferredHeight));

@@ -55,7 +55,7 @@ public sealed partial class MatchHudAssistantUiSystemHelperTests
             passed++;
             RunCase(test => test.TutorialBriefing_PersianUsesRtlFontAndLocalizedSubsteps());
             passed++;
-            RunCase(test => test.TutorialDoIt_SelectsCommandModeBeforeExecutingWorldOrder());
+            RunCase(test => test.TutorialGuidesRealCommandBeforeExecutingWorldOrder());
             passed++;
             RunCase(test => test.MatchHudPrefab_ContainsEditableAssistantButton());
             passed++;
@@ -557,7 +557,7 @@ public sealed partial class MatchHudAssistantUiSystemHelperTests
     }
 
     [Test]
-    public void TutorialDoIt_SelectsCommandModeBeforeExecutingWorldOrder()
+    public void TutorialGuidesRealCommandBeforeExecutingWorldOrder()
     {
         CreateHudHarness(true,out var overlay,out var header,out _);
         var model=CreateStructuredModel(902,recommendationKind:3,recommendationTargetKind:6,tutorialStep:4,tutorialStepCount:5);
@@ -572,8 +572,10 @@ public sealed partial class MatchHudAssistantUiSystemHelperTests
         var helper=GetPrivateField<MatchHudAssistantUiSystemHelper>(ui,"_matchHudAssistantUiSystem");
         helper.ApplyReadModel(model);helper.TickHighlight(1);
         var tutorial=header.Find("AriaAssistantButton").GetComponent<AriaTutorialBriefingView>();
-        Assert.AreEqual("PRESS ATTACK",tutorial.TitleText.text);tutorial.DoItButton.onClick.Invoke();helper.TickHighlight(2);
-        Assert.AreEqual(0,gateway.AssistantIntentRequestCount,"Do It clicks Attack once and does not also issue a world order.");
+        Assert.AreEqual("PRESS ATTACK",tutorial.TitleText.text);
+        Assert.IsFalse(tutorial.DoItButton.gameObject.activeSelf);
+        controls.AttackButton.onClick.Invoke();helper.TickHighlight(2);
+        Assert.AreEqual(0,gateway.AssistantIntentRequestCount,"Clicking Attack selects the mode without also issuing a world order.");
         Assert.IsTrue(tutorial.IsPresentationVisible);Assert.AreEqual("CHOOSE ENEMY",tutorial.TitleText.text);
         Assert.IsFalse(tutorial.DoItButton.gameObject.activeSelf,"The next action is the player's world-target tap.");
         ui.Dispose();

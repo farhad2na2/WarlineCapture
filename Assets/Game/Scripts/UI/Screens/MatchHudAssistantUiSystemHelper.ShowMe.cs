@@ -46,7 +46,7 @@ namespace Game.UI.Runtime
         private void RefreshShowMeAvailability()
         {
             if (_embeddedTutorialView?.ShowMeButton == null) return;
-            if (!UsesNextTutorialAction) { _embeddedTutorialView.ShowMeButton.gameObject.SetActive(true); _embeddedTutorialView.DoItButton.gameObject.SetActive(true); return; }
+            if (!UsesNextTutorialAction) { _embeddedTutorialView.ShowMeButton.gameObject.SetActive(true); _embeddedTutorialView.SetContinueAvailable(false); return; }
             if(_highlightPresentationSystem.HasVisibleDirectTutorialTarget) _tutorialFocusPendingUntil=0;
             bool focusing=_tutorialFocusPendingStep==_lastPanelModel.TutorialStep && Time.unscaledTime<_tutorialFocusPendingUntil;
             // A wait, missing target or disabled placement is not an actionable Show Me step.
@@ -54,8 +54,8 @@ namespace Game.UI.Runtime
                 _highlightPresentationSystem.HasDirectTutorialTarget && !_highlightPresentationSystem.HasVisibleDirectTutorialTarget && !_tutorialCinematicSuspended && !focusing;
             _embeddedTutorialView.ShowMeButton.gameObject.SetActive(_embeddedTutorialView.ShowMeButton.interactable);
             // World selection/dragging and targeting are the player's next gesture, not another mode-button click.
-            _embeddedTutorialView.DoItButton.gameObject.SetActive(!_waitingForTutorialAction && _lastPanelModel.CanExecute &&
-                (!_highlightPresentationSystem.HasDirectTutorialTarget || _highlightPresentationSystem.HasDirectTutorialControlTarget));
+            _embeddedTutorialView.SetContinueAvailable(_continueTutorialAction && !_waitingForTutorialAction &&
+                _lastPanelModel.CanExecute && !_tutorialCinematicSuspended);
             _embeddedTutorialView.RefreshContentLayout();
             _popupView?.SetShowMeAvailable(_embeddedTutorialView.ShowMeButton.interactable);
         }

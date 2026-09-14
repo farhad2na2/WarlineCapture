@@ -14,6 +14,7 @@ namespace Game.UI.Runtime
         [SerializeField] private GameObject actions;
         [SerializeField] private MissionHudTouchLayoutView touchLayout;
         [SerializeField] private Button guideButton,warningButton,skipButton,supportButton;
+        public Button GuideButton => guideButton;
         [SerializeField] private Button returnCameraButton;
         [SerializeField] private V3LocalizedTextBindingView status,supportLabel;
         [SerializeField] private Image supportIcon;

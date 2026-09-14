@@ -15,7 +15,7 @@ namespace Game.UI.Runtime
         private void ShowBreachNextAction(int step)
         {
             RefreshBreachInputMode();
-            if(step==1) {Cue(_embeddedTutorialView.DoItButton,"tutorial.next.continue");return;}
+            if(step==1) {Cue(_embeddedTutorialView.ContinueButton,"tutorial.next.continue");return;}
             if(!_lastPanelModel.CanShow) {_highlightPresentationSystem.ClearDirectTutorialCue();return;}
             if(!UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var target)) {_highlightPresentationSystem.ClearDirectTutorialCue();return;}
             if(target.NeedsSelection) {ShowSelectionTarget(target.Selection,target.RequiredSelectionCount>1);return;}

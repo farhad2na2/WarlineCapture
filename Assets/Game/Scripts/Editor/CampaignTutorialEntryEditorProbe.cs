@@ -118,8 +118,18 @@ namespace Game.Editor
                     // Verify the actionable opening in M1, M2, M4 and M5, then inspect its next instruction.
                     if (entry % 5 != 2 && panel.TutorialStep == firstStep)
                     {
-                        if (aria.DoItButton.IsActive() && aria.DoItButton.IsInteractable())
-                        { aria.DoItButton.onClick.Invoke(); waitUntil = now + 1; }
+                        if (aria.DoItButton.gameObject.activeInHierarchy)
+                            throw new InvalidOperationException("Do It must stay hidden.");
+                        Button next = aria.ContinueButton;
+                        if (entry % 5 == 0)
+                        {
+                            var tray = UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
+                            var cards = typeof(MatchHudSquadTrayView).GetField("cards", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(tray) as MatchHudSquadTrayView.Card[];
+                            next = cards?[0].Button;
+                        }
+                        else if (entry % 5 == 1) next = UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>()?.BuildButton;
+                        if (next != null && next.IsActive() && next.IsInteractable())
+                        { next.onClick.Invoke(); waitUntil = now + 1; }
                         return;
                     }
                     if (entry % 5 == 4 && attentionStage < 2)

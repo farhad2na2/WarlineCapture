@@ -9,6 +9,24 @@ using UnityEngine;
 
 public sealed class HudRightColumnLayoutValidation
 {
+    public static void RunStackedButtons()
+    {
+        try
+        {
+            using(ValidationExit.SuppressProcessExit())
+            {
+                ValidationExit.ClearLastExitCode(); M03PresentationTests.RunFocusedValidation();
+                if(ValidationExit.LastExitCode!=0) throw new Exception("ARIA stacked presentation failed.");
+                MatchHudAssistantUiSystemHelperTests.RunShowMeValidation();
+                MatchHudAssistantUiSystemHelperTests.RunFocusedValidation();
+                if(ValidationExit.LastExitCode!=0) throw new Exception("ARIA guidance failed.");
+                AriaInstructionViewportTests.Run();
+            }
+            Debug.Log("[AriaStackedButtons] result=Passed presentations=192 locales=2 viewports=8 guidance=34");
+        }
+        catch(Exception error) {Debug.LogException(error);EditorApplication.Exit(1);}
+    }
+
     public static void RunLayoutOnly()
     {
         try

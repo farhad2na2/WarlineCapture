@@ -123,6 +123,11 @@ namespace Game.Editor
             if(lesson is 5 or 9)
             {
                 if(mode!=TacticalCommandMode.Board){PlayerClick(controls.CommandWheelPanel.NextBoardButton);return;}
+                foreach(var feedback in UnityEngine.Object.FindObjectsByType<BattleHudRuntimeFeedbackView>(FindObjectsSortMode.None))
+                    if(feedback.BoardAllButton!=null && feedback.BoardAllButton.gameObject.activeInHierarchy ||
+                       feedback.CancelButton!=null && feedback.CancelButton.gameObject.activeInHierarchy)
+                        throw new InvalidOperationException("Legacy boarding footer actions must stay hidden.");
+                ScreenCapture.CaptureScreenshot(Output+"/boarding-"+lesson+".png");
                 if(!input.QueueBoardTransportCommandRequest(camera.WorldToScreenPoint(target.Destination+Vector3.up),Time.frameCount))
                     throw new InvalidOperationException("Normal boarding tap rejected.");
             }

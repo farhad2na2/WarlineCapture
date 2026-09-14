@@ -20,12 +20,12 @@ public sealed class MatchHudCommandFeedbackPanelTests
             RunValidationStep(nameof(RuntimeFeedbackSystem_AppliesCommandFeedbackSeverityIcons), tests => tests.RuntimeFeedbackSystem_AppliesCommandFeedbackSeverityIcons());
             RunValidationStep(nameof(RuntimeFeedbackSystem_HoldStopAndScanUseClearCommandPrompts), tests => tests.RuntimeFeedbackSystem_HoldStopAndScanUseClearCommandPrompts());
             RunValidationStep(nameof(MatchHudContentPrefab_HasCommandFeedbackReferencesAssigned), tests => tests.MatchHudContentPrefab_HasCommandFeedbackReferencesAssigned());
-            RunValidationStep(nameof(RuntimeFeedbackSystem_AppliesBoardFeedbackActions), tests => tests.RuntimeFeedbackSystem_AppliesBoardFeedbackActions());
+            RunValidationStep(nameof(RuntimeFeedbackSystem_BoardingKeepsLegacyActionsHidden), tests => tests.RuntimeFeedbackSystem_BoardingKeepsLegacyActionsHidden());
             RunValidationStep(nameof(RuntimeFeedbackSystem_CommandModePromptDoesNotAutoHide), tests => tests.RuntimeFeedbackSystem_CommandModePromptDoesNotAutoHide());
             RunValidationStep(nameof(RuntimeFeedbackSystem_HoldStopPromptsClearAndResultsAutoHide), tests => tests.RuntimeFeedbackSystem_HoldStopPromptsClearAndResultsAutoHide());
             RunValidationStep(nameof(RuntimeFeedbackSystem_SuccessResultAutoHidesAfterDuration), tests => tests.RuntimeFeedbackSystem_SuccessResultAutoHidesAfterDuration());
             RunValidationStep(nameof(RuntimeFeedbackSystem_RejectedResultAutoHidesAfterErrorDuration), tests => tests.RuntimeFeedbackSystem_RejectedResultAutoHidesAfterErrorDuration());
-            RunValidationStep(nameof(RuntimeFeedbackSystem_BoardErrorRestoresBoardPromptAndActions), tests => tests.RuntimeFeedbackSystem_BoardErrorRestoresBoardPromptAndActions());
+            RunValidationStep(nameof(RuntimeFeedbackSystem_BoardErrorRestoresPromptWithoutLegacyActions), tests => tests.RuntimeFeedbackSystem_BoardErrorRestoresPromptWithoutLegacyActions());
             RunValidationStep(nameof(RuntimeFeedbackSystem_BoardSuccessClearsPromptFallbackAndAutoHides), tests => tests.RuntimeFeedbackSystem_BoardSuccessClearsPromptFallbackAndAutoHides());
             RunValidationStep(nameof(SelectButtonClick_QueuesRequestAndFeedbackClearsBoardActions), tests => tests.SelectButtonClick_QueuesRequestAndFeedbackClearsBoardActions());
             RunValidationStep(nameof(CommandButtons_EmitPrimaryClickAudio), tests => tests.CommandButtons_EmitPrimaryClickAudio());
@@ -174,7 +174,7 @@ public sealed class MatchHudCommandFeedbackPanelTests
     }
 
     [Test]
-    public void RuntimeFeedbackSystem_AppliesBoardFeedbackActions()
+    public void RuntimeFeedbackSystem_BoardingKeepsLegacyActionsHidden()
     {
         _root = new GameObject("FeedbackView");
         var panel = new GameObject("FeedbackPanel");
@@ -213,24 +213,20 @@ public sealed class MatchHudCommandFeedbackPanelTests
             boardAllInteractable: true);
 
         Assert.IsTrue(panel.activeSelf);
-        Assert.IsTrue(actions.activeSelf);
-        Assert.AreEqual("Select units to board or use BOARD ALL.", text.text);
-        Assert.IsTrue(boardAll.gameObject.activeSelf);
-        Assert.IsTrue(boardAll.interactable);
-        Assert.AreEqual("BOARD ALL", boardAllLabel.text);
-        Assert.IsTrue(cancel.gameObject.activeSelf);
-        Assert.IsTrue(cancel.interactable);
-        Assert.AreEqual("CANCEL", cancelLabel.text);
+        Assert.IsFalse(actions.activeSelf);
+        Assert.AreEqual("Select units to board.", text.text);
+        Assert.IsFalse(boardAll.gameObject.activeSelf);
+        Assert.IsFalse(cancel.gameObject.activeSelf);
 
         BattleHudRuntimeFeedbackUiSystemHelper.ApplyBoardCommandMode(
             view,
             UiBoardCommandModeDirection.PassengerToTransport,
             boardAllInteractable: false);
 
-        Assert.IsTrue(actions.activeSelf);
+        Assert.IsFalse(actions.activeSelf);
         Assert.AreEqual("Select a transport.", text.text);
         Assert.IsFalse(boardAll.gameObject.activeSelf);
-        Assert.IsTrue(cancel.gameObject.activeSelf);
+        Assert.IsFalse(cancel.gameObject.activeSelf);
 
         BattleHudRuntimeFeedbackUiSystemHelper.ClearCommandMode(view);
         Assert.IsFalse(actions.activeSelf);
@@ -322,7 +318,7 @@ public sealed class MatchHudCommandFeedbackPanelTests
     }
 
     [Test]
-    public void RuntimeFeedbackSystem_BoardErrorRestoresBoardPromptAndActions()
+    public void RuntimeFeedbackSystem_BoardErrorRestoresPromptWithoutLegacyActions()
     {
         BattleHudRuntimeFeedbackView view = CreateBoardFeedbackView(
             out GameObject actions,
@@ -335,7 +331,7 @@ public sealed class MatchHudCommandFeedbackPanelTests
             view,
             UiBoardCommandModeDirection.TransportToPassenger,
             boardAllInteractable: true);
-        Assert.IsTrue(actions.activeSelf);
+        Assert.IsFalse(actions.activeSelf);
 
         BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(
             view,
@@ -345,10 +341,10 @@ public sealed class MatchHudCommandFeedbackPanelTests
 
         BattleHudRuntimeFeedbackUiSystemHelper.TickFeedbackLifetime(view, now + BattleHudRuntimeFeedbackUiSystemHelper.ErrorFeedbackDurationSeconds + 1f);
 
-        Assert.AreEqual("Select units to board or use BOARD ALL.", text.text);
-        Assert.IsTrue(actions.activeSelf);
-        Assert.IsTrue(boardAll.gameObject.activeSelf);
-        Assert.IsTrue(cancel.gameObject.activeSelf);
+        Assert.AreEqual("Select units to board.", text.text);
+        Assert.IsFalse(actions.activeSelf);
+        Assert.IsFalse(boardAll.gameObject.activeSelf);
+        Assert.IsFalse(cancel.gameObject.activeSelf);
     }
 
     [Test]
@@ -416,7 +412,7 @@ public sealed class MatchHudCommandFeedbackPanelTests
             feedbackView,
             UiBoardCommandModeDirection.TransportToPassenger,
             boardAllInteractable: true);
-        Assert.IsTrue(actions.activeSelf, "Test setup must start with Board feedback actions visible.");
+        Assert.IsFalse(actions.activeSelf, "Board mode must not expose legacy footer actions.");
 
         var commandSink = new RecordingSelectionUiCommand();
         var inputSystem = new MatchOverlayCommandInputUiSystemHelper();
@@ -425,7 +421,7 @@ public sealed class MatchHudCommandFeedbackPanelTests
         selectButton.onClick.Invoke();
 
         Assert.AreEqual(1, commandSink.EnterSelectionModeRequests);
-        Assert.IsTrue(actions.activeSelf, "Input click must queue an ECS request without directly clearing Board presentation.");
+        Assert.IsFalse(actions.activeSelf, "Selecting another command must not restore legacy footer actions.");
 
         BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandMode(feedbackView, TacticalCommandMode.Select);
 

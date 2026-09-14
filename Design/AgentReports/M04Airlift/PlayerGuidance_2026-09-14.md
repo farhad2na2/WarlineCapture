@@ -44,3 +44,9 @@ This is Editor validation, not Android hardware validation or synthesized operat
 The original stale Select behavior was reproduced by the first live player-route attempt, despite the isolated fake-gateway tests passing. The real-state regression now exercises both persistent selection state and one-shot order state. The Farsi pass also caught and resolved a too-long concatenated progress message. Those failed intermediate attempts were not counted as successful QA.
 
 This report covers the reported guidance flow and the exercised M4 rescue route; it is not a claim that every possible gameplay path is bug-free.
+
+## Follow-up: legacy boarding buttons
+
+Removed the legacy Board All and Cancel footer actions from both boarding directions. The transport-to-passenger prompt now reuses the existing English/Farsi “Select units to board” localization entry. The command wheel and world-target boarding remain available.
+
+All 15 feedback checks passed, including error-message expiry and command switching without restoring the retired buttons. The Farsi 2400×1080 M4 player route passed through APC boarding, unloading, helicopter boarding, extraction, results and campaign return, with live assertions that both legacy buttons remain hidden during boarding. APC and helicopter boarding screenshots were inspected outside Design. Evidence: `/private/tmp/warline-m04-legacy-boarding-removal.log`.

@@ -61,12 +61,10 @@ namespace Game.UI.Runtime
                 textResolver));
 
             MatchHudCommandFeedbackModel commandFeedback = direction == UiBoardCommandModeDirection.TransportToPassenger
-                ? MatchHudCommandFeedbackModel.Show(textResolver.Get("tactical.command.board.prompt_transport_to_passenger", "Select units to board or use BOARD ALL."), CommandFeedbackSeverity.Ready)
+                ? MatchHudCommandFeedbackModel.Show(textResolver.Get("tactical.banner.mode.board.description_transport_to_passenger", "Select units to board."), CommandFeedbackSeverity.Ready)
                 : MatchHudCommandFeedbackModel.Show(textResolver.Get("tactical.command.board.prompt_passenger_to_transport", "Select a transport."), CommandFeedbackSeverity.Ready);
-            MatchHudCommandFeedbackActionsModel actions = direction == UiBoardCommandModeDirection.TransportToPassenger
-                ? MatchHudCommandFeedbackActionsModel.BoardPassengerSelection(boardAllInteractable)
-                : MatchHudCommandFeedbackActionsModel.CancelOnly;
-            view.ApplyPersistentCommandFeedback(commandFeedback, actions);
+            // Boarding uses the command wheel and world targets; the old footer actions are retired.
+            view.ApplyPersistentCommandFeedback(commandFeedback, MatchHudCommandFeedbackActionsModel.Hidden);
 
             view.ShowCommandMode(ResolveCommandModeText(TacticalCommandMode.Board, textResolver));
         }

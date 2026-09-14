@@ -13,6 +13,7 @@ namespace Game.Editor
             {
                 var data=new SerializedObject(aria);
                 data.FindProperty("utilityActions").objectReferenceValue=aria.transform.Find("M03Actions") as RectTransform;
+                data.FindProperty("extractionActions").objectReferenceValue=aria.transform.Find("M04Navigation") as RectTransform;
                 data.FindProperty("openingLayout").objectReferenceValue=aria.transform.Find("OpeningInstruction") as RectTransform;
                 data.FindProperty("alertCopy").objectReferenceValue=aria.transform.Find("AlertCue")?.GetComponent<TMPro.TMP_Text>();
                 data.ApplyModifiedPropertiesWithoutUndo();

@@ -44,7 +44,7 @@ public sealed class M03PresentationTests
             tests.AllTwelveAriaLessonsFitBothLanguagesAndTextSizes();
             tests.AllTwelveM04AriaLessonsFitBothLanguagesAndTextSizes();
             tests.FinalComicCropsHaveStableMissionIdentityAndAspect();
-            Debug.Log("[M03PresentationValidation] result=Passed ariaPresentations=96 finalComicCrops=14");
+            Debug.Log("[M03PresentationValidation] result=Passed ariaPresentations=192 finalComicCrops=14");
             ValidationExit.Passed();
         }
         catch(Exception exception)
@@ -72,13 +72,26 @@ public sealed class M03PresentationTests
             instance.GetComponentInChildren<MissionHudTouchLayoutView>(true).Apply(true);
             Assert.NotNull(view);
             Assert.IsTrue(view.TryBindHierarchy());
-            var originalSize=view.BriefingLayout.sizeDelta;
-            var originalPosition=view.BriefingLayout.anchoredPosition;
+            var utility=(RectTransform)view.transform.Find(extraction ? "M04Navigation" : "M03Actions");
+            Assert.NotNull(utility);
+            view.transform.Find(extraction ? "M03Actions" : "M04Navigation").gameObject.SetActive(false);
+            utility.gameObject.SetActive(true);
+            foreach(int width in new[]{1920,2400})
             foreach(bool persian in new[]{false,true})
             foreach(bool large in new[]{false,true})
             for(byte step=1;step<=12;step++)
             {
+                ((RectTransform)canvasRoot.transform).sizeDelta=new Vector2(width,1080);
+                foreach(var layout in instance.GetComponentsInChildren<MainMenuV3SectionLayoutView>(true)) layout.RefreshLayout();
+                var dock=instance.GetComponentInChildren<MissionHudTouchLayoutView>(true);dock.RefreshLayout();
                 GameLocalization.SetLocale(persian ? "fa-IR" : "en", false);
+                utility.gameObject.SetActive(true);
+                if(extraction)
+                {
+                    utility.Find("Team").gameObject.SetActive(step<=5);
+                    utility.Find("Landing").gameObject.SetActive(step>5 && step<=10);
+                    utility.Find("Departure").gameObject.SetActive(step>10);
+                }
                 var copy=M03RadarWarningTutorialCopyCatalog.Steps[step-1];
                 var rescue=M04AirliftCopyCatalog.Lessons[step-1];
                 string title=extraction ? (persian ? rescue.PersianTitle : rescue.Title) : (persian ? copy.PersianTitle : copy.Title);
@@ -101,13 +114,19 @@ public sealed class M03PresentationTests
                     Assert.IsTrue(text.textInfo.characterInfo.Take(text.textInfo.characterCount).Any(c=>c.isVisible));
                     Assert.IsFalse(text.textInfo.characterInfo.Take(text.textInfo.characterCount).Any(c=>c.character=='\u25a1' || c.character=='\ufffd'));
                 }
-                var utility=view.transform.Find("M03Actions") as RectTransform;
-                Assert.NotNull(utility);
-                utility.gameObject.SetActive(true);
                 view.RefreshContentLayout();
-                var corners=new Vector3[4];var utilityCorners=new Vector3[4];
-                ((RectTransform)view.DoItButton.transform).GetWorldCorners(corners);utility.GetWorldCorners(utilityCorners);
-                Assert.Less(utilityCorners[1].y,corners[0].y,"Guide controls must sit below ARIA's primary actions.");
+                var actions=BoundsIn(view.transform,(RectTransform)view.DoItButton.transform);
+                var utilities=BoundsIn(view.transform,utility);
+                var bodyBounds=BoundsIn(view.transform,(RectTransform)view.BodyText.transform.parent);
+                var rail=((RectTransform)view.transform).rect;
+                Assert.LessOrEqual(utilities.max.y,actions.min.y-11.99f,"Utility row must stay below primary actions.");
+                Assert.LessOrEqual(actions.max.y,bodyBounds.min.y-15.99f,"Buttons must not cut instruction text.");
+                Assert.GreaterOrEqual(utilities.min.y,rail.yMin+11.99f,"Utility row must fit inside ARIA.");
+                Assert.GreaterOrEqual(utilities.min.x,rail.xMin+19.99f);
+                Assert.LessOrEqual(utilities.max.x,rail.xMax-19.99f);
+                Assert.GreaterOrEqual(rail.yMin,BoundsIn(view.transform,dock.Minimap).max.y+11.99f,"ARIA must clear the minimap.");
+                foreach(var button in utility.GetComponentsInChildren<UnityEngine.UI.Button>())
+                    Assert.GreaterOrEqual(((RectTransform)button.transform).rect.height,72,"Keep utility touch targets large.");
                 Assert.IsTrue(view.FirstStepGuideRoot==null || !view.FirstStepGuideRoot.gameObject.activeSelf,"M3 must not display M1's selection-only diagram.");
             }
             GameLocalization.SetLocale(previousLocale, false);
@@ -116,6 +135,14 @@ public sealed class M03PresentationTests
             Assert.Greater(view.BriefingLayout.rect.height,0,"M1 instructions remain content-sized after M3.");
         }
         finally {UnityEngine.Object.DestroyImmediate(canvasRoot);GameLocalization.SetLocale(previousLocale,false);}
+    }
+
+    private static Bounds BoundsIn(Transform parent,RectTransform rect)
+    {
+        var corners=new Vector3[4];rect.GetWorldCorners(corners);
+        var bounds=new Bounds(parent.InverseTransformPoint(corners[0]),Vector3.zero);
+        for(int i=1;i<4;i++) bounds.Encapsulate(parent.InverseTransformPoint(corners[i]));
+        return bounds;
     }
 
     [Test]

@@ -98,6 +98,7 @@ namespace Game.Editor
             var patrol=Find(root,"ExtractionStatus");Place(patrol,8,98,758,40);patrol.gameObject.SetActive(true);
             Box("PatrolBackground",actions,8,98,758,40,Raised,Ink,Line,1).SetAsFirstSibling();var patrolText=patrol.GetComponent<TMP_Text>();patrolText.fontSizeMin=19;patrolText.fontSizeMax=21;
             data.ApplyModifiedPropertiesWithoutUndo();navigation.gameObject.SetActive(false);
+            HudRightColumnLayoutBuilder.BindLayoutReferences(root);
         }
 
         private static void FollowHeaderLayout(RectTransform actions)

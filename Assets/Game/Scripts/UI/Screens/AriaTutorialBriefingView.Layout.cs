@@ -7,7 +7,7 @@ namespace Game.UI.Runtime
     public sealed partial class AriaTutorialBriefingView
     {
         private RectTransform contentActions;
-        [SerializeField] private RectTransform utilityActions, openingLayout;
+        [SerializeField] private RectTransform utilityActions, extractionActions, openingLayout;
         [SerializeField] private TMP_Text alertCopy;
         private TMP_Text openingCopy;
         private string measuredTitle, measuredBody, measuredAlert, measuredOpening;
@@ -45,7 +45,7 @@ namespace Game.UI.Runtime
             if(mapDock!=null && mapDock.Minimap!=null)
             {mapDock.Minimap.GetWorldCorners(mapCorners);available=-rail.InverseTransformPoint(mapCorners[1]).y-12;}
             int state=(tutorial?1:0)|(opening?2:0)|(alert?4:0)|(_missionLayoutLarge?8:0)|
-                (utilityActions!=null && utilityActions.gameObject.activeSelf?16:0);
+                (utilityActions!=null && utilityActions.gameObject.activeSelf?16:0)|(extractionActions!=null && extractionActions.gameObject.activeSelf?32:0);
             if(!_layoutDirty && Mathf.Abs(measuredAvailable-available)<.1f && measuredState==state && measuredWidth==rail.rect.width && measuredFont==bodyText.font &&
                 measuredTitle==titleText.text && measuredBody==bodyText.text && measuredAlert==alertCopy?.text && measuredOpening==openingCopy?.text) return;
             _layoutDirty=false; measuredAvailable=available; measuredState=state; measuredWidth=rail.rect.width; measuredFont=bodyText.font;
@@ -53,7 +53,7 @@ namespace Game.UI.Runtime
             float width=rail.rect.width-40;
             float titleHeight=tutorial ? Measure(titleText,width,_missionLayoutLarge?22:20) : 0;
             float bodyHeight=tutorial ? Measure(bodyText,width,_missionLayoutLarge?19:17) : 0;
-            float utilityHeight=utilityActions!=null && utilityActions.gameObject.activeSelf ? 84 : 0;
+            float utilityHeight=(utilityActions!=null && utilityActions.gameObject.activeSelf ? 84 : 0)+(extractionActions!=null && extractionActions.gameObject.activeSelf ? 84 : 0);
             float required=20+titleHeight+bodyHeight+(titleHeight>0 && bodyHeight>0?8:0)+(tutorial?100:0)+utilityHeight;
             float portraitHeight=hasText ? Mathf.Clamp(available-required,62,114) : 230;
             missionPortraitStage.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,portraitHeight);
@@ -88,6 +88,8 @@ namespace Game.UI.Runtime
             }
             if(utilityActions!=null && utilityActions.gameObject.activeSelf)
             {Place(utilityActions,20,y,width,72);y+=84;}
+            if(extractionActions!=null && extractionActions.gameObject.activeSelf)
+            {Place(extractionActions,20,y,width,72);y+=84;}
             rail.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,y);
         }
 

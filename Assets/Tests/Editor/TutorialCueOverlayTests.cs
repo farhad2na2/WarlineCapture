@@ -27,6 +27,17 @@ public sealed class TutorialCueOverlayTests
             Assert.That(cue.GetComponent<CanvasGroup>().blocksRaycasts,Is.False);
             foreach(var graphic in cue.GetComponentsInChildren<Graphic>()) Assert.That(graphic.raycastTarget,Is.False);
             target.onClick.Invoke(); Assert.That(clicks,Is.EqualTo(1));
+            var aria=new GameObject("ARIA",typeof(RectTransform),typeof(AriaTutorialBriefingView));
+            aria.transform.SetParent(root.transform,false);
+            button.transform.SetParent(aria.transform,false);
+            helper.ShowTutorialControl(target,"tutorial.next.place");
+            var label=(TMPro.TMP_Text)typeof(AssistantHighlightPresentationSystemHelper)
+                .GetField("_screenTargetLabel",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(helper);
+            Assert.That(cue.gameObject.activeSelf,Is.True,"Keep ARIA's next-click outline.");
+            Assert.That(label.transform.parent.gameObject.activeSelf,Is.False,"Do not overlay a duplicate banner on ARIA's text or buttons.");
+            button.transform.SetParent(popup.transform,false);
+            helper.ShowTutorialControl(target,"tutorial.next.place");
+            Assert.That(label.transform.parent.gameObject.activeSelf,Is.True,"Restore captions for battlefield/build controls.");
             target.interactable=false;helper.ShowTutorialControl(target,"tutorial.next.place");
             Assert.That(cue.gameObject.activeSelf,Is.False,"Never direct the player to an unavailable control.");
             helper.ShowTutorialWorld(new Vector3(120,0,30));

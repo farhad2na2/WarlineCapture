@@ -9,6 +9,23 @@ using UnityEngine;
 
 public sealed class HudRightColumnLayoutValidation
 {
+    public static void RunLayoutOnly()
+    {
+        try
+        {
+            HudRightColumnLayoutBuilder.Apply();
+            new HudRightColumnLayoutValidation().MinimapDockAndContentHeightFollowActualControlsAndCopy();
+            new TutorialCueOverlayTests().NextClickFrameIsAbovePopupAndNeverBlocksItsButton();
+            using(ValidationExit.SuppressProcessExit())
+            {
+                ValidationExit.ClearLastExitCode();M03PresentationTests.RunFocusedValidation();
+                if(ValidationExit.LastExitCode!=0) throw new Exception("ARIA language/layout regression failed.");
+            }
+            Debug.Log("[AriaUtilityLayout] result=Passed presentations=192 languages=EN,FA aspects=16:9,20:9 textSizes=normal,large captions=nonoverlapping");
+        }
+        catch(Exception error) {Debug.LogException(error);EditorApplication.Exit(1);}
+    }
+
     public static void Run()
     {
         try

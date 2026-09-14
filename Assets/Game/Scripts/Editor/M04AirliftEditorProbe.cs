@@ -79,6 +79,7 @@ namespace Game.Editor
                     if(!em.HasComponent<CampaignMissionProgressStoreReferenceComponent>(root))return;
                     string path=Path.Combine(Path.GetTempPath(),"warline-m04-editor-probe",Guid.NewGuid().ToString("N"));
                     save=new SaveService(new JsonSaveRepository(path));store=new CampaignMissionProgressStore(save);store.EnsureAvailable(M04AirliftConfigBuilder.MissionId);
+                    PrepareReplayOpeningProfile(em);
                     em.GetComponentObject<CampaignMissionProgressStoreReferenceComponent>(root).Store=store;prepared=true;return;
                 }
                 if(!deployed)

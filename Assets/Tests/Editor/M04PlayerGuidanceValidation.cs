@@ -5,6 +5,23 @@ using UnityEditor;
 using UnityEngine;
 public static class M04PlayerGuidanceValidation
 {
+    public static void RunReplayOpeningFa() { Run(); Game.Editor.M04AirliftEditorProbe.RunReplayOpeningFa(); }
+    public static void RunReplayOpeningEn() { Run(); Game.Editor.M04AirliftEditorProbe.RunReplayOpeningEn(); }
+
+    public static void RunReplayFinalEn()
+    {
+        try
+        {
+            using(ValidationExit.SuppressProcessExit())
+            {
+                ValidationExit.ClearLastExitCode();RunRegression();
+                if(ValidationExit.LastExitCode!=0) throw new Exception("Replay entry regression failed");
+            }
+            Game.Editor.M04AirliftEditorProbe.RunReplayOpeningEn();
+        }
+        catch(Exception error){Debug.LogException(error);EditorApplication.Exit(1);}
+    }
+
     public static void RunVisualFinal()
     { Run(); Game.Editor.M04AirliftEditorProbe.RunPlayerGuidanceVisualFa(); }
 
@@ -63,6 +80,7 @@ public static class M04PlayerGuidanceValidation
                 if(ValidationExit.LastExitCode!=0) throw new Exception("M4 integration failed");
             }
             FeedbackBindingKeepsRuntimeInstruction();
+            new M04AirliftIntegrationTests().EveryEntryStartsFullTutorialDespiteSavedGuidanceAndReplayToggle();
             new M04AirliftIntegrationTests().RescueSelectionExcludesOverlappingVehiclesOnlyDuringPassengerLessons();
             new M04AirliftIntegrationTests().LandingHoldInstructionDistinguishesCountdownContestedAndReturn();
             new M04AirliftIntegrationTests().BilingualGuidanceCopyFitsNarrationMessages();

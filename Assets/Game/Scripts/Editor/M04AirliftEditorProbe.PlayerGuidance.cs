@@ -21,6 +21,19 @@ namespace Game.Editor
         private const string PlayerVisualKey="Warline.M04.PlayerVisualOnly";
         private const string PlayerGuidanceKey="Warline.M04.PlayerGuidance";
         private static int playerLesson,playerPartialStage,playerQueuedLesson,playerShows;
+        private const string ReplayOpeningKey="Warline.M04.ReplayOpening";
+        private static int replayOpeningStage;
+        public static void RunReplayOpeningFa(){RunPlayerGuidance("fa-IR");SessionState.SetBool(ReplayOpeningKey,true);}
+        public static void RunReplayOpeningEn(){RunPlayerGuidance("en");SessionState.SetBool(ReplayOpeningKey,true);}
+        private static void PrepareReplayOpeningProfile(EntityManager em)
+        {
+            if(!SessionState.GetBool(ReplayOpeningKey,false))return;
+            store.Settle(M04AirliftConfigBuilder.MissionId,"completed-profile",1,true,3,120000,string.Empty);
+            using var settings=em.CreateEntityQuery(typeof(AssistantSettingsComponent));
+            if(settings.CalculateEntityCount()!=1)throw new InvalidOperationException("Opening QA requires the normal assistant settings owner.");
+            var value=settings.GetSingleton<AssistantSettingsComponent>();value.GuidanceLevel=AssistantGuidanceLevel.Off;
+            em.SetComponentData(settings.GetSingletonEntity(),value);
+        }
         private static double playerNext,playerLessonAt;
         public static void RunPlayerGuidanceFa()=>RunPlayerGuidance("fa-IR");
         public static void RunPlayerGuidanceEn()=>RunPlayerGuidance("en");
@@ -30,6 +43,7 @@ namespace Game.Editor
         {RunPlayerGuidance("fa-IR");MainMenuV3PrefabBuilder.SetGameViewResolution(2400,1080);}
         private static void RunPlayerGuidance(string locale)
         {
+            SessionState.SetBool(ReplayOpeningKey,false);replayOpeningStage=0;
             SessionState.SetBool(PlayerVisualKey,false);
             SessionState.SetString("Warline.M04.PlayerLocale",locale);SessionState.SetBool(PlayerGuidanceKey,true);
             SessionState.SetString("Warline.M04.ReadinessOutput","/private/tmp/warline-m04-guidance-"+locale);
@@ -70,6 +84,19 @@ namespace Game.Editor
                 var cue=(RectTransform)indicator.transform;var button=(RectTransform)controls.SelectButton.transform;
                 if(Vector2.Distance(RectTransformUtility.WorldToScreenPoint(null,cue.position),RectTransformUtility.WorldToScreenPoint(null,button.position))<20)
                     throw new InvalidOperationException("Select highlight persisted after Select was accepted.");
+            }
+            if(SessionState.GetBool(ReplayOpeningKey,false) && lesson is 1 or 2)
+            {
+                if(em.GetComponentData<CampaignMissionRuntimeComponent>(root).RunKind!=Game.Missions.Contracts.MissionRunKind.Replay)
+                    throw new InvalidOperationException("Replay opening QA accidentally used a first-clear profile.");
+                if(!aria.BodyText.gameObject.activeInHierarchy || string.IsNullOrWhiteSpace(aria.BodyText.text) || !aria.TitleText.gameObject.activeInHierarchy || string.IsNullOrWhiteSpace(aria.TitleText.text))
+                    throw new InvalidOperationException("M4 entry has no visible tutorial text.");
+                if(lesson==1 && (!uiCue || !aria.DoItButton.isActiveAndEnabled || !aria.DoItButton.interactable))
+                    throw new InvalidOperationException("M4 opening needs a visible Continue cue and usable button.");
+                if(lesson==2 && !uiCue && !worldCue && !aria.ShowMeButton.gameObject.activeSelf)
+                    throw new InvalidOperationException("Continuing the opening must reveal the next action.");
+                if(replayOpeningStage<lesson){replayOpeningStage=lesson;ScreenCapture.CaptureScreenshot(Output+"/replay-opening-"+lesson+".png");PlayerWait(1);return;}
+                if(lesson==2){SessionState.SetBool(ReplayOpeningKey,false);Complete(true,"Completed M4 profile with assistant Off: cinematic -> visible lesson one and Continue highlight -> lesson two next-action cue.");return;}
             }
             if(lesson==1){PlayerClick(aria.DoItButton);return;}
             if(lesson==10)

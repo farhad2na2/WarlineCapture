@@ -25,8 +25,7 @@ namespace Game.Runtime
             if(!em.HasComponent<CampaignMissionExtractionState>(root)) {ClearDefenseGuidance(em,root,in current);return true;}
             var extraction=em.GetComponentData<CampaignMissionExtractionState>(root);
             if(!extraction.SessionToken.Equals(runtime.SessionToken) || extraction.AttemptOrdinal!=runtime.AttemptOrdinal || extraction.SourceVersion!=runtime.SourceVersion ||
-                runtime.Phase!=MissionPhaseKind.Engage || runtime.Outcome!=MissionOutcomeKind.None || runtime.Guidance==NarrativeGuidanceMode.Minimal ||
-                runtime.RunKind!=MissionRunKind.FirstClear && runtime.ReplayTutorialEnabled==0)
+                runtime.Phase!=MissionPhaseKind.Engage || runtime.Outcome!=MissionOutcomeKind.None)
             {ClearDefenseGuidance(em,root,in current);return true;}
             if(!SystemAPI.TryGetSingleton(out RuntimeGameplayStateComponent gameplay) || gameplay.SimulationActive==0)return true;
             var acks=em.GetBuffer<CampaignMissionGuidanceAcknowledgementRequestElement>(root);
@@ -48,7 +47,7 @@ namespace Game.Runtime
             bool nearTeam=math.distancesq(carrier.xz,team.xz)<=20*20;
             bool atLanding=math.distancesq(carrier.xz,extraction.LandingCenter.xz)<=20*20;
             if(groundAtLanding==4 && facts.ExtractionCarrierLegCount==4)extraction.UnloadedAtLanding=1;
-            if(runtime.Guidance==NarrativeGuidanceMode.Contextual)extraction.GuidanceCompletedMask|=1u|2u|8u|128u;
+            // M4 teaches the rescue workflow on every entry, including older replay/retry payloads.
             for(int step=1;step<=12;step++)
             {
                 bool done=step switch {2=>selectedCarrier,3=>nearTeam||facts.ExtractionCarrierLegCount>0,4=>selectedTeamCount==4||facts.ExtractionCarrierLegCount==4,
@@ -63,7 +62,7 @@ namespace Game.Runtime
             var body=ExtractionBodyPrefix;body.Append(chosen);body.Append(ExtractionBodySuffix);
             var targetId=ExtractionTargetPrefix;targetId.Append(chosen);
             var next=new CampaignMissionGuidanceProjectionComponent {GuidanceId=55000+chosen,Version=Next(current.Version),MissionSourceVersion=runtime.Version,
-                Prompt=(CampaignMissionGuidancePromptKind)(24+chosen),GuidanceMode=runtime.Guidance,Active=1,
+                Prompt=(CampaignMissionGuidancePromptKind)(24+chosen),GuidanceMode=NarrativeGuidanceMode.Full,Active=1,
                 RecommendationKind=AssistantRecommendationKind.Explain,TargetKind=AssistantTargetKind.UiSurface,
                 TargetId=targetId,
                 Title=title,Body=body,

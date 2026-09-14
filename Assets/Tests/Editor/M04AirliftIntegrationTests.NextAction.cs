@@ -3,6 +3,7 @@ using Game.UI.Shell.Ecs;
 using NUnit.Framework;
 using Unity.Mathematics;
 using Unity.Transforms;
+using Unity.Entities;
 public sealed partial class M04AirliftIntegrationTests
 {
     private static bool ReadTutorialTarget(Unity.Entities.EntityManager em,Unity.Entities.Entity root,int step,
@@ -11,6 +12,33 @@ public sealed partial class M04AirliftIntegrationTests
         var method=typeof(UiShellEcsGateway).GetMethod("ResolveExtractionTutorialTarget",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static);
         object[] args={em,root,step,null}; bool result=(bool)method.Invoke(null,args);
         target=(Game.UI.Contracts.UiMissionTutorialTarget)args[3]; return result;
+    }
+
+    [Test]
+    public void EveryEntryStartsFullTutorialDespiteSavedGuidanceAndReplayToggle()
+    {
+        foreach(Game.Missions.Contracts.MissionRunKind kind in new[]{Game.Missions.Contracts.MissionRunKind.FirstClear,Game.Missions.Contracts.MissionRunKind.Replay,Game.Missions.Contracts.MissionRunKind.Retry})
+        foreach(Game.Narrative.Contracts.NarrativeGuidanceMode mode in System.Enum.GetValues(typeof(Game.Narrative.Contracts.NarrativeGuidanceMode)))
+        {
+            using var r=new Roster();
+            var launch=Game.Runtime.MissionLaunchPayloadFactory.Create(r.Runtime.MissionId.ToString(),r.Runtime.ScenarioId.ToString(),r.Runtime.OperationMapId.ToString(),
+                Game.Missions.Contracts.MissionLaunchOriginKind.CampaignOperations,kind,mode,false,1,"m4-entry",1,42);
+            Assert.AreEqual(Game.Narrative.Contracts.NarrativeGuidanceMode.Full,launch.Guidance);Assert.IsTrue(launch.ReplayTutorialEnabled);
+            var retry=Game.Runtime.MissionLaunchPayloadFactory.CreateRetry(launch,2);
+            Assert.AreEqual(Game.Narrative.Contracts.NarrativeGuidanceMode.Full,retry.Guidance);Assert.IsTrue(retry.ReplayTutorialEnabled);
+            // Also exercise pre-fix payloads already in memory, without normalizing their saved settings.
+            r.Runtime.Guidance=mode;r.Runtime.RunKind=kind;r.Runtime.ReplayTutorialEnabled=0;
+            r.State.SessionToken=r.Runtime.SessionToken;r.State.AttemptOrdinal=r.Runtime.AttemptOrdinal;r.State.SourceVersion=r.Runtime.SourceVersion;
+            r.Em.AddComponent<CampaignMissionRootComponent>(r.Root);r.Em.AddComponentData(r.Root,r.Runtime);r.Em.AddComponentData(r.Root,r.Facts);r.Em.AddComponentData(r.Root,r.State);
+            r.Em.AddComponent<CampaignMissionGuidanceProjectionComponent>(r.Root);r.Em.AddBuffer<CampaignMissionGuidanceAcknowledgementRequestElement>(r.Root);
+            r.Em.AddComponentData(r.Em.CreateEntity(),new RuntimeGameplayStateComponent{SimulationActive=1});
+            r.Em.AddComponentData(r.Em.CreateEntity(),new AssistantSettingsComponent{GuidanceLevel=AssistantGuidanceLevel.Off});
+            r.World.CreateSystem<Game.Runtime.CampaignMissionGuidanceProjectionSystem>().Update(r.World.Unmanaged);
+            var guidance=r.Em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(r.Root);
+            Assert.AreEqual(55001,guidance.GuidanceId,$"{kind}/{mode} must start at lesson one.");
+            Assert.AreEqual(1,guidance.Active);Assert.AreEqual(Game.Narrative.Contracts.NarrativeGuidanceMode.Full,guidance.GuidanceMode);
+            Assert.IsFalse(guidance.Title.IsEmpty);Assert.IsFalse(guidance.Body.IsEmpty);Assert.AreEqual(1,guidance.CanExecute);
+        }
     }
 
     [Test]

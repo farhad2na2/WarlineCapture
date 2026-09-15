@@ -24,7 +24,7 @@ namespace Game.Editor
     {
         private const string GuidanceJourneyKey="Warline.M03.Probe.GuidanceJourney";
         private static readonly HashSet<int> guidanceVisited=new();
-        private static int guidancePrompt,guidanceSubstep;
+        private static int guidancePrompt,guidanceSubstep,groupSelectionCaptureStep;
         private static double guidanceNext;
         private static int guidanceDiagnosticAt;
         private static bool guidanceHeld,guidanceVerifyHold,guidanceRestoreHold,guidanceJourneyVerified;
@@ -42,7 +42,7 @@ namespace Game.Editor
             var settings=SettingsService.Load(); guidanceOriginalMode=settings.Assistant.AssistanceLevel;
             settings.Assistant.AssistanceLevel=UIAssistanceLevel.FullGuidance; SettingsService.Save(settings);
             guidanceOriginalLocale=GameLocalization.CurrentLocaleCode; GameLocalization.SetLocale("en",false);
-            guidanceVisited.Clear(); guidancePrompt=guidanceSubstep=0; guidanceNext=0; guidanceDiagnosticAt=0;
+            guidanceVisited.Clear(); guidancePrompt=guidanceSubstep=groupSelectionCaptureStep=0; guidanceNext=0; guidanceDiagnosticAt=0;
             guidanceHeld=guidanceVerifyHold=guidanceRestoreHold=guidanceJourneyVerified=false;
             SessionState.SetBool(GuidanceJourneyKey,true); StartResultValidation(false,false);
             // This journey uses the real tutorial and defensive Hold. The separate rifle
@@ -53,6 +53,8 @@ namespace Game.Editor
             in CampaignMissionAttemptFactsComponent facts)
         {
             if(!SessionState.GetBool(GuidanceJourneyKey,false)) return false;
+            if(runtime.Phase==MissionPhaseKind.Engage) ObserveBattleClarity(em,root);
+            if(runtime.Phase==MissionPhaseKind.Engage && ObserveRadarToolbar(em,root)) return false;
             if(SessionState.GetBool("Warline.M03.Probe.ShowMe",false) && runtime.Phase==MissionPhaseKind.Engage &&
                 em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root).GuidanceId==45005)
                 return AdvanceShowMeValidation();
@@ -62,12 +64,14 @@ namespace Game.Editor
                 ValidateStartingBudget(em); M03RadarWarningRuntimeGridProbe.Capture(em,Output); capturedHud=true;
             }
             if(SessionState.GetBool(TutorialBuildKey,false) && AdvanceTutorialBuild(em,root,in runtime)) return false;
+            if(AdvanceOptionalReinforcement(em,root,in runtime)) return false;
             if(runtime.Phase==MissionPhaseKind.ResultAfterDebrief && !guidanceJourneyVerified)
             {
-                if(!guidanceHeld || !guidanceVisited.Contains(5) || runtime.Outcome!=MissionOutcomeKind.Victory || em.GetComponentData<RadarPingState>(root).Charges!=2)
-                    throw new InvalidOperationException("Full Guidance did not complete through real defensive orders without optional Ping.");
+                if(!guidanceHeld || !guidanceVisited.Contains(5) || runtime.Outcome!=MissionOutcomeKind.Victory || em.GetComponentData<RadarPingState>(root).Charges!=(battleClarityAudit ? 1 : 2))
+                    throw new InvalidOperationException("Full Guidance did not complete through real defensive orders with the expected optional Ping budget.");
+                VerifyBattleClarity();
                 AssertBudget(em,50000-tutorialCreditsSpent,100-tutorialMaterialsSpent); guidanceJourneyVerified=true;
-                Debug.Log("[M03GuidanceJourney] result=Passed real Full Guidance buttons, defensive Hold victory, construction cost accounted for and two Ping charges retained; visited="+string.Join(",",guidanceVisited.OrderBy(x=>x)));
+                Debug.Log("[M03GuidanceJourney] result=Passed real Full Guidance buttons, defensive Hold victory, construction cost accounted for; Ping charges="+em.GetComponentData<RadarPingState>(root).Charges+"; visited="+string.Join(",",guidanceVisited.OrderBy(x=>x)));
                 return false;
             }
             if(runtime.Phase!=MissionPhaseKind.Engage) return false;
@@ -126,10 +130,12 @@ namespace Game.Editor
             var projection=em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root);
             if(projection.Active==0) return false;
             int step=(int)projection.Prompt-12;
+            if(step==7) throw new InvalidOperationException("Retired Stop lesson interrupted the defensive Hold.");
             var view=UnityEngine.Object.FindAnyObjectByType<AriaTutorialBriefingView>();
             if(view==null || !view.IsPresentationVisible || !UiShellRuntimeGateway.TryReadMatchHudAssistantPanel(out var panel) || panel.TutorialStep!=step ||
                 (byte)typeof(AriaTutorialBriefingView).GetField("_tutorialStep",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(view)!=step) return false;
 
+            if(ObserveIndicator(view)) return false;
             if(step!=guidancePrompt) {guidancePrompt=step; guidanceSubstep=0; guidanceVisited.Add(step); Debug.Log($"[M03GuidanceJourney] step={step} at={facts.ElapsedMilliseconds} canExecute={panel.CanExecute}");}
             guidanceNext=EditorApplication.timeSinceStartup+.35;
             switch(step)
@@ -149,7 +155,7 @@ namespace Game.Editor
                     {ClickLive("ReturnWarningCamera"); guidanceSubstep=1; guidanceNext=EditorApplication.timeSinceStartup+2; break;}
                     using(var camera=em.CreateEntityQuery(typeof(RtsCameraStateComponent)))
                         if(camera.GetSingleton<RtsCameraStateComponent>().HasSmoothFocusTarget!=0 || camera.GetSingleton<RtsCameraStateComponent>().HasSmoothPerspectiveTarget!=0) return false;
-                    ClickCommand(SessionState.GetBool(TutorialBuildKey,false) ? controls.BuildButton : view.ContinueButton); break;
+                    ClickCommand(controls.BuildButton); break;
                 case 10: case 11: case 12:
                     break; // Wait for real combat; never manufacture a tutorial completion.
                 case 4: case 9:
@@ -158,28 +164,16 @@ namespace Game.Editor
                 case 5: case 6: case 7:
                     if(guidanceSubstep==0)
                     {
-                        using var selected = em.CreateEntityQuery(typeof(SelectedUnitTag), typeof(UnitHealth), typeof(Faction));
-                        // Keep the squad selected after its move. Select All is a visible-area
-                        // operation and must not replace an existing squad with an empty area.
-                        if(selected.IsEmptyIgnoreFilter)
+                        if(UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var target) && target.NeedsSelection)
                         {
-                            ClickCommand(controls.SelectButton); guidanceSubstep=10;
-                            guidanceNext=EditorApplication.timeSinceStartup+1.2; break;
+                            if(view.SelectionButton==null || !view.SelectionButton.IsActive()) return false;
+                            AssertOptionalClickFrame(view.SelectionButton);
+                            if(groupSelectionCaptureStep!=step)
+                            {ScreenCapture.CaptureScreenshot(Output+"/group-selection-"+GameLocalization.CurrentLocaleCode+".png");groupSelectionCaptureStep=step;guidanceNext=EditorApplication.timeSinceStartup+.5;break;}
+                            ClickTutorialButton(view.SelectionButton);
+                            guidanceNext=EditorApplication.timeSinceStartup+.5;break;
                         }
-                        guidanceSubstep=1; break;
-                    }
-                    if(guidanceSubstep==10)
-                    {
-                        RevealTutorialIfNeeded(view); guidanceSubstep=11;
-                        guidanceNext=EditorApplication.timeSinceStartup+1.2; break;
-                    }
-                    if(guidanceSubstep==11)
-                    {
-                        if(!UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var selectionTarget))
-                            throw new InvalidOperationException("Movement lesson has no selection target.");
-                        AssertVisibleTutorialWorld(match.MatchBootstrap.WorldCamera,selectionTarget.Selection);
-                        if(!commands.RequestSelectAllSoldiers()) throw new InvalidOperationException("Normal rifle selection failed.");
-                        guidanceSubstep=1; break;
+                        guidanceSubstep=1;break;
                     }
                     if(guidanceSubstep==1)
                     {
@@ -204,6 +198,7 @@ namespace Game.Editor
                     }
                     break;
                 case 8:
+                    if(battleClarityAudit) {if(controls.SupportButton.IsInteractable()) ClickCommand(controls.SupportButton); break;}
                     if(!ClickGuidanceSkipWhenReady()) return false; break;
             }
             return false;
@@ -221,7 +216,7 @@ namespace Game.Editor
         {
             using var selected=em.CreateEntityQuery(typeof(SelectedUnitTag),typeof(UnitHealth),typeof(Faction));
             using var units=selected.ToEntityArray(Allocator.Temp);
-            if(units.Length<4) throw new InvalidOperationException("ARIA command lost the selected rifle squad: selected="+units.Length);
+            if(units.Length!=8) throw new InvalidOperationException("Select defenders must select both four-person squads: selected="+units.Length);
             foreach(var unit in units)
                 if(em.HasComponent<HoldPositionOrderTag>(unit)!=hold || em.HasComponent<UnitPathRequest>(unit) ||
                     em.HasComponent<UnitPathFollow>(unit) || em.GetComponentData<UnitCombat>(unit).AutoEngage!=(hold ? 1 : 0))

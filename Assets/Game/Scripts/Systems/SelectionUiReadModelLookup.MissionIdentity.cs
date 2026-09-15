@@ -144,7 +144,7 @@ namespace Game.Runtime
             {
                 string configuredDescription = entityManager.GetComponentData<UnitDisplayInfo>(entity).Description.ToString();
                 if (!string.IsNullOrWhiteSpace(configuredDescription))
-                    return configuredDescription;
+                    return GameLocalization.GetBySource(GameText.Get(configuredDescription, configuredDescription));
             }
 
             byte factionId = entityManager.HasComponent<Faction>(entity)

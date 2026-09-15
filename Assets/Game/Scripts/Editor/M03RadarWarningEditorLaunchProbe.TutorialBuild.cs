@@ -37,6 +37,7 @@ namespace Game.Editor
             if(guidance.GuidanceId==45005 && tutorialBuildClick>=4)
             {
                 SessionState.SetBool(TutorialBuildKey,false); SessionState.SetBool("Warline.M03.Probe.RoadGateTutorial",false);
+                if (placementIndicatorAudit && placementIndicatorVerified && !optionalJourney) { Complete(true,"Placement indicator aligned and animated; real confirm advanced to squad movement."); return true; }
                 if (completeBuildingJourney) { Debug.Log("[M03BuildingJourney] one real defense placed; continuing through combat and results."); return false; }
                 Complete(true,"M3 tutorial: Build -> defense card -> Place -> Confirm; pointer drag stayed fixed, valid placement advanced to squad movement."); return true;
             }
@@ -76,11 +77,14 @@ namespace Game.Editor
             {
                 if(!tutorialPlotStaged)
                 {
-                    if (!AdvancePlacementPointerDrag(UnityEngine.Object.FindAnyObjectByType<MatchSceneView>().MatchBootstrap)) return true;
+                    var bootstrap=UnityEngine.Object.FindAnyObjectByType<MatchSceneView>().MatchBootstrap;
+                    if (placementIndicatorAudit) StageLegalPlacementPreview(bootstrap);
+                    else if (!AdvancePlacementPointerDrag(bootstrap)) return true;
                     tutorialPlotStaged=true; tutorialBuildNext=EditorApplication.timeSinceStartup+1; return true;
                 }
                 var bar=UnityEngine.Object.FindAnyObjectByType<BuildPlacementConfirmationBarView>();
                 button=bar?.ConfirmButton; if(button==null || !button.interactable) return true;
+                if(ObservePlacementIndicator(button)) return true;
                 if(!tutorialBuildCaptured)
                 {
                     ScreenCapture.CaptureScreenshot(Output+"/tutorial-build-confirm.png");
@@ -93,7 +97,7 @@ namespace Game.Editor
                 var command=UnityEngine.Object.FindAnyObjectByType<MatchSceneView>().MatchBootstrap.BuildingUiCommandContract;
                 tutorialMaterialsSpent=command.ActivePlacementCost; tutorialCreditsSpent=command.ActivePlacementCreditsCost;
             }
-            ClickCommand(button); tutorialBuildCaptured=false; tutorialBuildClick++; tutorialBuildNext=EditorApplication.timeSinceStartup+1; return true;
+            ClickTutorialButton(button); tutorialBuildCaptured=false; tutorialBuildClick++; tutorialBuildNext=EditorApplication.timeSinceStartup+(placementIndicatorAudit && tutorialBuildClick==3 ? 3 : 1); return true;
         }
     }
 }

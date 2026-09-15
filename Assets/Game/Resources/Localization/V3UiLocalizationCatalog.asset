@@ -259,6 +259,44 @@ MonoBehaviour:
         Both convoy elements stopped. Your defense held.'
     - key: mission.m03.casualties
       value: "SQUAD LOSSES: {0} \xB7 Reinforce from your Barracks"
+    - key: mission.m03.clarity.brief
+      value: 'Your mission: stop BOTH enemy convoys before they reach the post. Keep
+        the post standing. First prepare your rifles; the convoy waits while you
+        learn. Read the warning, then Continue.'
+    - key: mission.m03.clarity.engage
+      value: 'Enemy vehicles are approaching. Keep rifles on Hold at the yellow ring:
+        they fire automatically when enemies enter range. Stop every vehicle before
+        the post. Another radar ping is not required.'
+    - key: mission.m03.clarity.hold
+      value: Press Hold now. Your rifles will fire automatically at vehicles in range
+        without chasing them. Protect the road to the post; Stop would disable their
+        automatic fire.
+    - key: mission.m03.clarity.main
+      value: Stop the remaining convoy
+    - key: mission.m03.clarity.move
+      value: Press Move, then tap the marked position beside the road. Your rifles
+        must cover the convoy route, not wait at the barracks.
+    - key: mission.m03.clarity.moving
+      value: Your rifles are moving to the defensive line. Wait for their arrival;
+        then press Hold. The yellow ring marks the destination. Radar recharge does
+        not stop the mission.
+    - key: mission.m03.clarity.prepare
+      value: First prepare a defensive line beside the marked road. Open Build to
+        see your options. In the next lesson, choose ONE tower or road barrier, or
+        skip building. You do not need all three buildings.
+    - key: mission.m03.clarity.radar
+      value: 'Optional intelligence: Radar Ping reveals vehicles near your radar.
+        It does not attack. Tap it once, or skip this lesson. You have two uses,
+        60 seconds apart; never wait for recharge to defend the road.'
+    - key: mission.m03.clarity.select
+      value: Tap Select defenders in ARIA. Your goal is to stop both convoys before
+        they reach the post. Radar recharge is optional; keep defending.
+    - key: mission.m03.clarity.vanguard
+      value: Stop the first convoy
+    - key: mission.m03.clarity.wait
+      value: Defense is ready. Keep your rifles here on Hold and wait for the convoy;
+        no extra click is needed. The yellow ring marks the road to defend. The warning
+        estimates enemy arrival; Radar Ping has a separate, optional recharge timer.
     - key: mission.m03.class.Unit_Chr_Bombsuit_Male_01
       value: Bomb Suit Specialist
     - key: mission.m03.class.Unit_Chr_Civilian_Female_01
@@ -630,6 +668,8 @@ MonoBehaviour:
       value: Skip optional lesson
     - key: mission.m03.options
       value: Tower, Barrier or rifle reinforcements
+    - key: mission.m03.order.holding
+      value: Holding position
     - key: mission.m03.ping.cooldown
       value: Ready in {0}s
     - key: mission.m03.ping.empty
@@ -642,6 +682,12 @@ MonoBehaviour:
       value: Paused
     - key: mission.m03.ping.ready
       value: "Radar Ping \xB7 {0} uses"
+    - key: mission.m03.ping.recharging_label
+      value: Radar recharge
+    - key: mission.m03.ping.requested
+      value: Radar sweep requested.
+    - key: mission.m03.ping.spent_label
+      value: Radar used up
     - key: mission.m03.prepare
       value: "PREPARATION \xB7 Convoy starts after lesson 9. Optional lessons can
         be skipped."
@@ -649,6 +695,9 @@ MonoBehaviour:
       value: "Complete lessons 1\u20139 \xB7 Skip optional lessons if ready"
     - key: mission.m03.prepare.short
       value: "PREPARATION \xB7 Enemy advance is paused"
+    - key: mission.m03.radar.description
+      value: Ground radar vehicle that detects approaching enemy ground vehicles
+        but cannot attack.
     - key: mission.m03.resources
       value: "50,000 Credits \xB7 100 Materials"
     - key: mission.m03.result.breach
@@ -1061,7 +1110,7 @@ MonoBehaviour:
     - key: mission.m04.tutorial.4.diagram
       value: "TEAM \u2192 APC \u2192 LANDING AREA \u2192 HELICOPTER \u2192 EXIT"
     - key: mission.m04.tutorial.4.example
-      value: Use a selection box around the four people.
+      value: Tap Select all specialists in ARIA.
     - key: mission.m04.tutorial.4.mistake
       value: Keep armed escorts out of this selection.
     - key: mission.m04.tutorial.4.title
@@ -1136,9 +1185,9 @@ MonoBehaviour:
         needed. Keep the helicopter inside the yellow landing ring. The next lesson
         will guide you to the exit.
     - key: mission.m04.tutorial.selection_progress
-      value: 'Specialists selected: {0}/4. Press Select, then drag a selection box
-        around all four unarmed specialists. The box prioritizes specialists over
-        nearby vehicles and armed escorts.'
+      value: 'Specialists selected: {0}/4. Tap Select all specialists to select the
+        rescue team together. Once all four are selected, follow the next highlighted
+        action.'
     - key: mission.m05.access
       value: "8 rifles \xB7 heavy APC"
     - key: mission.m05.camera.opening
@@ -1941,6 +1990,11 @@ MonoBehaviour:
       value: MOVING TO COVER
     - key: ui.aria.name
       value: ARIA
+    - key: ui.aria.placement.body
+      value: Move the preview onto a green footprint; rotate if needed, then tap
+        Place Building. Cancel returns to the lesson.
+    - key: ui.aria.placement.title
+      value: Confirm this position
     - key: ui.aria.player_control
       value: PLAYER CONTROL
     - key: ui.aria.player_override
@@ -1977,6 +2031,25 @@ MonoBehaviour:
       value: NORMAL / EXPIRING
     - key: ui.aria.priority_age.normal_new
       value: NORMAL / NEW
+    - key: ui.aria.production_wait.body
+      value: Your rifle squad is queued. Wait for training to finish; no further
+        click is needed. Keep your defenders on Hold. This lesson advances when the
+        squad arrives.
+    - key: ui.aria.production_wait.title
+      value: Reinforcements are training
+    - key: ui.aria.select_carrier
+      value: Select rescue APC
+    - key: ui.aria.select_defenders
+      value: Select defenders
+    - key: ui.aria.select_group
+      value: Select mission group
+    - key: ui.aria.select_group.body
+      value: Tap {0} below. It selects the units needed for this lesson together.
+        Then follow the next highlighted action.
+    - key: ui.aria.select_group.title
+      value: Select your units
+    - key: ui.aria.select_helicopter
+      value: Select helicopter
     - key: ui.aria.select_rifle_squad
       value: Select the Rifle Squad
     - key: ui.aria.select_rifle_squad.body
@@ -1984,6 +2057,8 @@ MonoBehaviour:
 
         Then
         tap <color=#00D1F3>MOVE</color> to send them to the marker.'
+    - key: ui.aria.select_specialists
+      value: Select all specialists
     - key: ui.aria.state.control
       value: CTRL
     - key: ui.aria.state.idle
@@ -5019,6 +5094,113 @@ MonoBehaviour:
       value: "\u062A\u0644\u0641\u0627\u062A \u06AF\u0631\u0648\u0647: {0} \xB7 \u0627\u0632
         \u0633\u0631\u0628\u0627\u0632\u062E\u0627\u0646\u0647 \u0646\u06CC\u0631\u0648\u06CC
         \u06A9\u0645\u06A9\u06CC \u0628\u0633\u0627\u0632\u06CC\u062F"
+    - key: mission.m03.clarity.brief
+      value: "\u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0634\u0645\u0627: \u0647\u0631
+        \u062F\u0648 \u06A9\u0627\u0631\u0648\u0627\u0646 \u062F\u0634\u0645\u0646
+        \u0631\u0627 \u067E\u06CC\u0634 \u0627\u0632 \u0631\u0633\u06CC\u062F\u0646
+        \u0628\u0647 \u067E\u0627\u0633\u06AF\u0627\u0647 \u0645\u062A\u0648\u0642\u0641
+        \u06A9\u0646\u06CC\u062F \u0648 \u067E\u0627\u0633\u06AF\u0627\u0647 \u0631\u0627
+        \u0633\u0627\u0644\u0645 \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F.
+        \u0627\u0628\u062A\u062F\u0627 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0627\u0646
+        \u0631\u0627 \u0622\u0645\u0627\u062F\u0647 \u06A9\u0646\u06CC\u062F\u061B
+        \u0647\u0646\u06AF\u0627\u0645 \u0622\u0645\u0648\u0632\u0634\u060C \u06A9\u0627\u0631\u0648\u0627\u0646
+        \u0645\u0646\u062A\u0638\u0631 \u0645\u06CC\u200C\u0645\u0627\u0646\u062F.
+        \u0647\u0634\u062F\u0627\u0631 \u0631\u0627 \u0628\u062E\u0648\u0627\u0646\u06CC\u062F
+        \u0648 \u0633\u067E\u0633 \u0627\u062F\u0627\u0645\u0647 \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F."
+    - key: mission.m03.clarity.engage
+      value: "\u062E\u0648\u062F\u0631\u0648\u0647\u0627\u06CC \u062F\u0634\u0645\u0646
+        \u0646\u0632\u062F\u06CC\u06A9 \u0645\u06CC\u200C\u0634\u0648\u0646\u062F.
+        \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0627\u0646 \u0631\u0627 \u06A9\u0646\u0627\u0631
+        \u062D\u0644\u0642\u0647\u0654 \u0632\u0631\u062F \u062F\u0631 \u062D\u0627\u0644\u062A
+        \u062D\u0641\u0638 \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F \u062A\u0627
+        \u0628\u0627 \u0648\u0631\u0648\u062F \u062F\u0634\u0645\u0646 \u0628\u0647
+        \u0628\u0631\u062F\u060C \u062E\u0648\u062F\u06A9\u0627\u0631 \u0634\u0644\u06CC\u06A9
+        \u06A9\u0646\u0646\u062F. \u0647\u0645\u0647\u0654 \u062E\u0648\u062F\u0631\u0648\u0647\u0627
+        \u0631\u0627 \u067E\u06CC\u0634 \u0627\u0632 \u067E\u0627\u0633\u06AF\u0627\u0647
+        \u0645\u062A\u0648\u0642\u0641 \u06A9\u0646\u06CC\u062F. \u067E\u0627\u0644\u0633
+        \u0631\u0627\u062F\u0627\u0631 \u062F\u06CC\u06AF\u0631\u06CC \u0644\u0627\u0632\u0645
+        \u0646\u06CC\u0633\u062A."
+    - key: mission.m03.clarity.hold
+      value: "\u0627\u06A9\u0646\u0648\u0646 \u062D\u0641\u0638 \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F.
+        \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0627\u0646 \u0628\u062F\u0648\u0646
+        \u062A\u0639\u0642\u06CC\u0628\u060C \u0628\u0647 \u062E\u0648\u062F\u0631\u0648\u0647\u0627\u06CC
+        \u062F\u0627\u062E\u0644 \u0628\u0631\u062F \u062E\u0648\u062F\u06A9\u0627\u0631
+        \u0634\u0644\u06CC\u06A9 \u0645\u06CC\u200C\u06A9\u0646\u0646\u062F. \u0645\u0633\u06CC\u0631
+        \u067E\u0627\u0633\u06AF\u0627\u0647 \u0631\u0627 \u062D\u0641\u0638 \u06A9\u0646\u06CC\u062F\u061B
+        \u062A\u0648\u0642\u0641\u060C \u0634\u0644\u06CC\u06A9 \u062E\u0648\u062F\u06A9\u0627\u0631
+        \u0631\u0627 \u0642\u0637\u0639 \u0645\u06CC\u200C\u06A9\u0646\u062F."
+    - key: mission.m03.clarity.main
+      value: "\u06A9\u0627\u0631\u0648\u0627\u0646 \u0628\u0627\u0642\u06CC\u200C\u0645\u0627\u0646\u062F\u0647
+        \u0631\u0627 \u0645\u062A\u0648\u0642\u0641 \u06A9\u0646\u06CC\u062F"
+    - key: mission.m03.clarity.move
+      value: "\u062D\u0631\u06A9\u062A \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F
+        \u0648 \u0633\u067E\u0633 \u0645\u062D\u0644 \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647
+        \u06A9\u0646\u0627\u0631 \u062C\u0627\u062F\u0647 \u0631\u0627 \u0644\u0645\u0633
+        \u06A9\u0646\u06CC\u062F. \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0627\u0646
+        \u0628\u0627\u06CC\u062F \u0645\u0633\u06CC\u0631 \u06A9\u0627\u0631\u0648\u0627\u0646
+        \u0631\u0627 \u067E\u0648\u0634\u0634 \u062F\u0647\u0646\u062F \u0648 \u062F\u0631
+        \u067E\u0627\u062F\u06AF\u0627\u0646 \u0645\u0646\u062A\u0638\u0631 \u0646\u0645\u0627\u0646\u0646\u062F."
+    - key: mission.m03.clarity.moving
+      value: "\u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0627\u0646 \u0628\u0647
+        \u0645\u0648\u0636\u0639 \u062F\u0641\u0627\u0639\u06CC \u0645\u06CC\u200C\u0631\u0648\u0646\u062F.
+        \u0645\u0646\u062A\u0638\u0631 \u0631\u0633\u06CC\u062F\u0646 \u0622\u0646\u200C\u0647\u0627
+        \u0628\u0645\u0627\u0646\u06CC\u062F\u061B \u0633\u067E\u0633 \u062D\u0641\u0638
+        \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F. \u062D\u0644\u0642\u0647\u0654
+        \u0632\u0631\u062F \u0645\u0642\u0635\u062F \u0631\u0627 \u0646\u0634\u0627\u0646
+        \u0645\u06CC\u200C\u062F\u0647\u062F. \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u0631\u0627\u062F\u0627\u0631 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A
+        \u0631\u0627 \u0645\u062A\u0648\u0642\u0641 \u0646\u0645\u06CC\u200C\u06A9\u0646\u062F."
+    - key: mission.m03.clarity.prepare
+      value: "\u0627\u0628\u062A\u062F\u0627 \u06A9\u0646\u0627\u0631 \u062C\u0627\u062F\u0647\u0654
+        \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647 \u0645\u0648\u0636\u0639
+        \u062F\u0641\u0627\u0639\u06CC \u0628\u0633\u0627\u0632\u06CC\u062F. \u0633\u0627\u062E\u062A
+        \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F \u062A\u0627 \u06AF\u0632\u06CC\u0646\u0647\u200C\u0647\u0627
+        \u0631\u0627 \u0628\u0628\u06CC\u0646\u06CC\u062F. \u062F\u0631 \u062F\u0631\u0633
+        \u0628\u0639\u062F \u0641\u0642\u0637 \u06CC\u06A9 \u0628\u0631\u062C \u06CC\u0627
+        \u0645\u0627\u0646\u0639 \u062C\u0627\u062F\u0647 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u06CC\u062F\u060C \u06CC\u0627 \u0627\u0632 \u0633\u0627\u062E\u062A
+        \u0628\u06AF\u0630\u0631\u06CC\u062F. \u0633\u0627\u062E\u062A \u0647\u0631
+        \u0633\u0647 \u0633\u0627\u0632\u0647 \u0644\u0627\u0632\u0645 \u0646\u06CC\u0633\u062A."
+    - key: mission.m03.clarity.radar
+      value: "\u0627\u0637\u0644\u0627\u0639\u0627\u062A \u0627\u062E\u062A\u06CC\u0627\u0631\u06CC:
+        \u067E\u0627\u0644\u0633 \u0631\u0627\u062F\u0627\u0631 \u062E\u0648\u062F\u0631\u0648\u0647\u0627\u06CC
+        \u0646\u0632\u062F\u06CC\u06A9 \u0631\u0627\u062F\u0627\u0631 \u0631\u0627
+        \u0622\u0634\u06A9\u0627\u0631 \u0645\u06CC\u200C\u06A9\u0646\u062F \u0648
+        \u062D\u0645\u0644\u0647 \u0646\u0645\u06CC\u200C\u06A9\u0646\u062F. \u06CC\u06A9
+        \u0628\u0627\u0631 \u0622\u0646 \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F
+        \u06CC\u0627 \u0627\u0632 \u0627\u06CC\u0646 \u062F\u0631\u0633 \u0628\u06AF\u0630\u0631\u06CC\u062F.
+        \u062F\u0648 \u0646\u0648\u0628\u062A \u0628\u0627 \u0641\u0627\u0635\u0644\u0647\u0654
+        \u06F6\u06F0 \u062B\u0627\u0646\u06CC\u0647 \u062F\u0627\u0631\u06CC\u062F\u061B
+        \u0628\u0631\u0627\u06CC \u062F\u0641\u0627\u0639 \u0645\u0646\u062A\u0638\u0631
+        \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u0631\u0627\u062F\u0627\u0631
+        \u0646\u0645\u0627\u0646\u06CC\u062F."
+    - key: mission.m03.clarity.select
+      value: "\u062F\u06A9\u0645\u0647\u0654 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u0645\u062F\u0627\u0641\u0639\u0627\u0646 \u0631\u0627 \u062F\u0631 \u067E\u0646\u0644
+        \u0622\u0631\u06CC\u0627 \u0628\u0632\u0646\u06CC\u062F. \u0647\u062F\u0641\u060C
+        \u062A\u0648\u0642\u0641 \u0647\u0631 \u062F\u0648 \u06A9\u0627\u0631\u0648\u0627\u0646
+        \u067E\u06CC\u0634 \u0627\u0632 \u0631\u0633\u06CC\u062F\u0646 \u0628\u0647
+        \u067E\u0627\u0633\u06AF\u0627\u0647 \u0627\u0633\u062A. \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u0631\u0627\u062F\u0627\u0631 \u0627\u062E\u062A\u06CC\u0627\u0631\u06CC
+        \u0627\u0633\u062A\u061B \u062F\u0641\u0627\u0639 \u0631\u0627 \u0627\u062F\u0627\u0645\u0647
+        \u062F\u0647\u06CC\u062F."
+    - key: mission.m03.clarity.vanguard
+      value: "\u06A9\u0627\u0631\u0648\u0627\u0646 \u0627\u0648\u0644 \u0631\u0627
+        \u0645\u062A\u0648\u0642\u0641 \u06A9\u0646\u06CC\u062F"
+    - key: mission.m03.clarity.wait
+      value: "\u062F\u0641\u0627\u0639 \u0622\u0645\u0627\u062F\u0647 \u0627\u0633\u062A.
+        \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0627\u0646 \u0631\u0627 \u0627\u06CC\u0646\u062C\u0627
+        \u062F\u0631 \u062D\u0627\u0644\u062A \u062D\u0641\u0638 \u0646\u06AF\u0647
+        \u062F\u0627\u0631\u06CC\u062F \u0648 \u0645\u0646\u062A\u0638\u0631 \u06A9\u0627\u0631\u0648\u0627\u0646
+        \u0628\u0645\u0627\u0646\u06CC\u062F\u061B \u06A9\u0644\u06CC\u06A9 \u062F\u06CC\u06AF\u0631\u06CC
+        \u0644\u0627\u0632\u0645 \u0646\u06CC\u0633\u062A. \u062D\u0644\u0642\u0647\u0654
+        \u0632\u0631\u062F \u0645\u0633\u06CC\u0631 \u062F\u0641\u0627\u0639 \u0631\u0627
+        \u0646\u0634\u0627\u0646 \u0645\u06CC\u200C\u062F\u0647\u062F. \u0632\u0645\u0627\u0646
+        \u0647\u0634\u062F\u0627\u0631\u060C \u0631\u0633\u06CC\u062F\u0646 \u062F\u0634\u0645\u0646
+        \u0631\u0627 \u062A\u062E\u0645\u06CC\u0646 \u0645\u06CC\u200C\u0632\u0646\u062F\u061B
+        \u0632\u0645\u0627\u0646 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u067E\u0627\u0644\u0633
+        \u0631\u0627\u062F\u0627\u0631 \u062C\u062F\u0627 \u0648 \u0627\u062E\u062A\u06CC\u0627\u0631\u06CC
+        \u0627\u0633\u062A."
     - key: mission.m03.class.Unit_Chr_Bombsuit_Male_01
       value: "\u0645\u062A\u062E\u0635\u0635 \u062E\u0646\u062B\u06CC\u200C\u0633\u0627\u0632\u06CC
         \u0628\u0645\u0628"
@@ -5610,6 +5792,8 @@ MonoBehaviour:
       value: "\u0628\u0631\u062C \u0646\u06AF\u0647\u0628\u0627\u0646\u06CC\u060C
         \u0645\u0627\u0646\u0639 \u06CC\u0627 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0627\u0646
         \u06A9\u0645\u06A9\u06CC"
+    - key: mission.m03.order.holding
+      value: "\u062F\u0631 \u062D\u0627\u0644 \u062D\u0641\u0638 \u0645\u0648\u0636\u0639"
     - key: mission.m03.ping.cooldown
       value: "\u0622\u0645\u0627\u062F\u0647 \u062A\u0627 {0} \u062B\u0627\u0646\u06CC\u0647\u0654
         \u062F\u06CC\u06AF\u0631"
@@ -5625,6 +5809,14 @@ MonoBehaviour:
       value: "\u0645\u06A9\u062B"
     - key: mission.m03.ping.ready
       value: "\u067E\u0627\u0644\u0633 \u0631\u0627\u062F\u0627\u0631 \xB7 {0} \u0646\u0648\u0628\u062A"
+    - key: mission.m03.ping.recharging_label
+      value: "\u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u0631\u0627\u062F\u0627\u0631"
+    - key: mission.m03.ping.requested
+      value: "\u062F\u0631\u062E\u0648\u0627\u0633\u062A \u0628\u0631\u0631\u0633\u06CC
+        \u0645\u062D\u062F\u0648\u062F\u0647\u0654 \u0631\u0627\u062F\u0627\u0631
+        \u0627\u0631\u0633\u0627\u0644 \u0634\u062F."
+    - key: mission.m03.ping.spent_label
+      value: "\u0631\u0627\u062F\u0627\u0631 \u0645\u0635\u0631\u0641 \u0634\u062F"
     - key: mission.m03.prepare
       value: "\u0622\u0645\u0627\u062F\u0647\u200C\u0633\u0627\u0632\u06CC \xB7 \u06A9\u0627\u0631\u0648\u0627\u0646
         \u067E\u0633 \u0627\u0632 \u062F\u0631\u0633 \u06F9 \u062D\u0631\u06A9\u062A
@@ -5639,6 +5831,10 @@ MonoBehaviour:
     - key: mission.m03.prepare.short
       value: "\u0622\u0645\u0627\u062F\u0647\u200C\u0633\u0627\u0632\u06CC \xB7 \u067E\u06CC\u0634\u0631\u0648\u06CC
         \u062F\u0634\u0645\u0646 \u0645\u062A\u0648\u0642\u0641 \u0627\u0633\u062A"
+    - key: mission.m03.radar.description
+      value: "\u062E\u0648\u062F\u0631\u0648\u0647\u0627\u06CC \u0632\u0645\u06CC\u0646\u06CC
+        \u062F\u0634\u0645\u0646 \u062F\u0631 \u0646\u0632\u062F\u06CC\u06A9\u06CC
+        \u0631\u0627 \u0634\u0646\u0627\u0633\u0627\u06CC\u06CC \u0645\u06CC\u200C\u06A9\u0646\u062F"
     - key: mission.m03.resources
       value: "\u06F5\u06F0\u066C\u06F0\u06F0\u06F0 \u0627\u0639\u062A\u0628\u0627\u0631
         \xB7 \u06F1\u06F0\u06F0 \u0645\u0635\u0627\u0644\u062D"
@@ -6352,9 +6548,9 @@ MonoBehaviour:
         \u0641\u0631\u0648\u062F \u2190 \u0628\u0627\u0644\u06AF\u0631\u062F \u2190
         \u062E\u0631\u0648\u062C"
     - key: mission.m04.tutorial.4.example
-      value: "\u06A9\u0627\u062F\u0631 \u0627\u0646\u062A\u062E\u0627\u0628 \u0631\u0627
-        \u062F\u0648\u0631 \u0647\u0631 \u0686\u0647\u0627\u0631 \u0646\u0641\u0631
-        \u0628\u06A9\u0634\u06CC\u062F."
+      value: "\u062F\u06A9\u0645\u0647\u0654 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u0647\u0645\u0647\u0654 \u0645\u062A\u062E\u0635\u0635\u0627\u0646 \u0631\u0627
+        \u062F\u0631 \u067E\u0646\u0644 \u0622\u0631\u06CC\u0627 \u0628\u0632\u0646\u06CC\u062F."
     - key: mission.m04.tutorial.4.mistake
       value: "\u0645\u062D\u0627\u0641\u0638\u0627\u0646 \u0645\u0633\u0644\u062D
         \u0631\u0627 \u0648\u0627\u0631\u062F \u0627\u06CC\u0646 \u0627\u0646\u062A\u062E\u0627\u0628
@@ -6514,14 +6710,14 @@ MonoBehaviour:
         \u0631\u0627 \u0646\u0634\u0627\u0646 \u0645\u06CC\u200C\u062F\u0647\u062F."
     - key: mission.m04.tutorial.selection_progress
       value: "\u0645\u062A\u062E\u0635\u0635\u0627\u0646 \u0627\u0646\u062A\u062E\u0627\u0628\u200C\u0634\u062F\u0647:
-        {0} \u0627\u0632 \u06F4. \xAB\u0627\u0646\u062A\u062E\u0627\u0628\xBB \u0631\u0627
-        \u0628\u0632\u0646\u06CC\u062F\u060C \u0633\u067E\u0633 \u06A9\u0627\u062F\u0631
-        \u0627\u0646\u062A\u062E\u0627\u0628 \u0631\u0627 \u062F\u0648\u0631 \u0647\u0631
-        \u0686\u0647\u0627\u0631 \u0645\u062A\u062E\u0635\u0635 \u063A\u06CC\u0631\u0645\u0633\u0644\u062D
-        \u0628\u06A9\u0634\u06CC\u062F. \u06A9\u0627\u062F\u0631\u060C \u0645\u062A\u062E\u0635\u0635\u0627\u0646
-        \u0631\u0627 \u0628\u0631 \u062E\u0648\u062F\u0631\u0648\u0647\u0627 \u0648
-        \u0645\u062D\u0627\u0641\u0638\u0627\u0646 \u0645\u0633\u0644\u062D \u0646\u0632\u062F\u06CC\u06A9
-        \u062A\u0631\u062C\u06CC\u062D \u0645\u06CC\u200C\u062F\u0647\u062F."
+        {0} \u0627\u0632 \u06F4. \u062F\u06A9\u0645\u0647\u0654 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u0647\u0645\u0647\u0654 \u0645\u062A\u062E\u0635\u0635\u0627\u0646 \u0631\u0627
+        \u0628\u0632\u0646\u06CC\u062F \u062A\u0627 \u062A\u06CC\u0645 \u0646\u062C\u0627\u062A
+        \u0628\u0627 \u0647\u0645 \u0627\u0646\u062A\u062E\u0627\u0628 \u0634\u0648\u062F.
+        \u067E\u0633 \u0627\u0632 \u0627\u0646\u062A\u062E\u0627\u0628 \u0647\u0631
+        \u0686\u0647\u0627\u0631 \u0646\u0641\u0631\u060C \u0631\u0627\u0647\u0646\u0645\u0627\u06CC
+        \u0632\u0631\u062F \u0628\u0639\u062F\u06CC \u0631\u0627 \u062F\u0646\u0628\u0627\u0644
+        \u06A9\u0646\u06CC\u062F."
     - key: mission.m05.access
       value: "\u06F8 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \xB7 \u0646\u0641\u0631\u0628\u0631
         \u0633\u0646\u06AF\u06CC\u0646"
@@ -7869,6 +8065,16 @@ MonoBehaviour:
         \u067E\u0648\u0634\u0634"
     - key: ui.aria.name
       value: "\u0622\u0631\u06CC\u0627"
+    - key: ui.aria.placement.body
+      value: "\u067E\u06CC\u0634\u200C\u0646\u0645\u0627\u06CC\u0634 \u0631\u0627
+        \u0628\u0647 \u0645\u062D\u0644 \u0633\u0628\u0632 \u0628\u0628\u0631\u06CC\u062F\u061B
+        \u062F\u0631 \u0635\u0648\u0631\u062A \u0646\u06CC\u0627\u0632 \u0628\u0686\u0631\u062E\u0627\u0646\u06CC\u062F
+        \u0648 \u0642\u0631\u0627\u0631\u062F\u0647\u06CC \u0633\u0627\u062E\u062A\u0645\u0627\u0646
+        \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F. \u0644\u063A\u0648 \u0634\u0645\u0627
+        \u0631\u0627 \u0628\u0647 \u062F\u0631\u0633 \u0628\u0631\u0645\u06CC\u200C\u06AF\u0631\u062F\u0627\u0646\u062F."
+    - key: ui.aria.placement.title
+      value: "\u062C\u0627\u06CC \u0633\u0627\u0632\u0647 \u0631\u0627 \u062A\u0623\u06CC\u06CC\u062F
+        \u06A9\u0646\u06CC\u062F"
     - key: ui.aria.player_control
       value: "\u06A9\u0646\u062A\u0631\u0644 \u0628\u0627\u0632\u06CC\u06A9\u0646"
     - key: ui.aria.player_override
@@ -7905,6 +8111,39 @@ MonoBehaviour:
       value: "\u0639\u0627\u062F\u06CC / \u0631\u0648 \u0628\u0647 \u067E\u0627\u06CC\u0627\u0646"
     - key: ui.aria.priority_age.normal_new
       value: "\u0639\u0627\u062F\u06CC / \u062C\u062F\u06CC\u062F"
+    - key: ui.aria.production_wait.body
+      value: "\u06AF\u0631\u0648\u0647 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631
+        \u0634\u0645\u0627 \u062F\u0631 \u0635\u0641 \u0622\u0645\u0648\u0632\u0634
+        \u0627\u0633\u062A. \u0645\u0646\u062A\u0638\u0631 \u067E\u0627\u06CC\u0627\u0646
+        \u0622\u0645\u0648\u0632\u0634 \u0628\u0645\u0627\u0646\u06CC\u062F\u061B
+        \u06A9\u0644\u06CC\u06A9 \u062F\u06CC\u06AF\u0631\u06CC \u0644\u0627\u0632\u0645
+        \u0646\u06CC\u0633\u062A. \u0645\u062F\u0627\u0641\u0639\u0627\u0646 \u0631\u0627
+        \u062F\u0631 \u062D\u0627\u0644\u062A \u062D\u0641\u0638 \u0646\u06AF\u0647
+        \u062F\u0627\u0631\u06CC\u062F. \u0628\u0627 \u0622\u0645\u0627\u062F\u0647\u200C\u0634\u062F\u0646
+        \u06AF\u0631\u0648\u0647\u060C \u062F\u0631\u0633 \u0628\u0639\u062F \u0622\u063A\u0627\u0632
+        \u0645\u06CC\u200C\u0634\u0648\u062F."
+    - key: ui.aria.production_wait.title
+      value: "\u0646\u06CC\u0631\u0648\u06CC \u06A9\u0645\u06A9\u06CC \u062F\u0631
+        \u062D\u0627\u0644 \u0622\u0645\u0648\u0632\u0634 \u0627\u0633\u062A"
+    - key: ui.aria.select_carrier
+      value: "\u0627\u0646\u062A\u062E\u0627\u0628 \u0646\u0641\u0631\u0628\u0631
+        \u0646\u062C\u0627\u062A"
+    - key: ui.aria.select_defenders
+      value: "\u0627\u0646\u062A\u062E\u0627\u0628 \u0645\u062F\u0627\u0641\u0639\u0627\u0646"
+    - key: ui.aria.select_group
+      value: "\u0627\u0646\u062A\u062E\u0627\u0628 \u06AF\u0631\u0648\u0647 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A"
+    - key: ui.aria.select_group.body
+      value: "\u062F\u06A9\u0645\u0647\u0654 \xAB{0}\xBB \u0631\u0627 \u062F\u0631
+        \u067E\u0627\u06CC\u06CC\u0646 \u0628\u0632\u0646\u06CC\u062F. \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC
+        \u0645\u0648\u0631\u062F\u0646\u06CC\u0627\u0632 \u0627\u06CC\u0646 \u062F\u0631\u0633
+        \u0628\u0627 \u0647\u0645 \u0627\u0646\u062A\u062E\u0627\u0628 \u0645\u06CC\u200C\u0634\u0648\u0646\u062F.
+        \u0633\u067E\u0633 \u0631\u0627\u0647\u0646\u0645\u0627\u06CC \u0632\u0631\u062F
+        \u0628\u0639\u062F\u06CC \u0631\u0627 \u062F\u0646\u0628\u0627\u0644 \u06A9\u0646\u06CC\u062F."
+    - key: ui.aria.select_group.title
+      value: "\u0646\u06CC\u0631\u0648\u0647\u0627\u06CC \u062E\u0648\u062F \u0631\u0627
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u062F"
+    - key: ui.aria.select_helicopter
+      value: "\u0627\u0646\u062A\u062E\u0627\u0628 \u0628\u0627\u0644\u06AF\u0631\u062F"
     - key: ui.aria.select_rifle_squad
       value: "\u06AF\u0631\u0648\u0647 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631
         \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u062F"
@@ -7914,6 +8153,8 @@ MonoBehaviour:
         \u062A\u0641\u0646\u06AF\u062F\u0627\u0631</color> \u0628\u0632\u0646\u06CC\u062F.\n\u0633\u067E\u0633
         \u0628\u0631\u0627\u06CC \u062D\u0631\u06A9\u062A \u0628\u0647 \u0646\u0634\u0627\u0646\u06AF\u0631\u060C
         <color=#00D1F3>\u062D\u0631\u06A9\u062A</color> \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F."
+    - key: ui.aria.select_specialists
+      value: "\u0627\u0646\u062A\u062E\u0627\u0628 \u0647\u0645\u0647\u0654 \u0645\u062A\u062E\u0635\u0635\u0627\u0646"
     - key: ui.aria.state.control
       value: "\u06A9\u0646\u062A\u0631\u0644"
     - key: ui.aria.state.idle

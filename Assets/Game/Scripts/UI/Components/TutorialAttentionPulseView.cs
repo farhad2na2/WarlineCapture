@@ -1,15 +1,17 @@
+using System;
 using UnityEngine;
 
 namespace Game.UI.Runtime
 {
-    // Presentation only: the owning tutorial supplies eligibility and progress; no input is consumed.
+    // Passive presentation, driven by the HUD after its controls have reflowed.
     [DisallowMultipleComponent]
     public sealed class TutorialAttentionPulseView : MonoBehaviour
     {
-        private V3GradientGraphic _border;
-        private V3GradientGraphic _contrast;
-        private int _progress;
-        private float _startedAt = -1f;
+        private TutorialFocusFrameGraphic border;
+        private Action prepareFrame;
+        private int progress;
+        private float startedAt = -1f, delay;
+        private bool eligible;
 
         internal static float Opacity(float elapsed, float delay, bool reducedMotion)
         {
@@ -19,55 +21,59 @@ namespace Game.UI.Runtime
             return .2f + .8f * (.5f - .5f * Mathf.Cos(phase));
         }
 
+        internal static void BindFrame(RectTransform target, Action prepare)
+        {
+            var view = target.GetComponent<TutorialAttentionPulseView>() ?? target.gameObject.AddComponent<TutorialAttentionPulseView>();
+            view.prepareFrame = prepare;
+        }
+
         internal static void Present(RectTransform target, float time, bool eligible, int progress, float delay)
         {
             if (target == null) return;
             var view = target.GetComponent<TutorialAttentionPulseView>();
             if (view == null && eligible) view = target.gameObject.AddComponent<TutorialAttentionPulseView>();
-            if (view != null) view.Apply(time, eligible, progress, delay);
+            if (view == null) return;
+            if (!eligible) { view.ResetPulse(); return; }
+            if (!view.eligible || view.progress != progress) view.startedAt = time;
+            view.eligible = true; view.progress = progress; view.delay = delay;
+            view.RenderAt(time);
         }
 
-        private void Apply(float time, bool eligible, int progress, float delay)
+        private void OnEnable() => Canvas.willRenderCanvases += RenderBeforeCanvas;
+        private void OnDisable()
         {
-            if (!eligible || !gameObject.activeInHierarchy) { ResetPulse(); return; }
-            if (_startedAt < 0 || _progress != progress) { _startedAt = time; _progress = progress; }
-            float opacity = Opacity(time - _startedAt, delay, SettingsService.LoadReducedMotionPreference());
-            if (_border == null)
+            Canvas.willRenderCanvases -= RenderBeforeCanvas;
+            ResetPulse();
+        }
+        // Placement validity, responsive sections and the HUD camera can all move
+        // controls after Update. Follow their final rendered geometry, not that snapshot.
+        private void RenderBeforeCanvas() => RenderAt(Time.unscaledTime);
+        internal void RenderAt(float time)
+        {
+            if (!eligible || !gameObject.activeInHierarchy) return;
+            prepareFrame?.Invoke();
+            if (!gameObject.activeInHierarchy) return;
+            float elapsed = time - startedAt;
+            float opacity = Opacity(elapsed, delay, SettingsService.LoadReducedMotionPreference());
+            if (border == null)
             {
-                var go = new GameObject("AttentionBorder", typeof(RectTransform), typeof(V3GradientGraphic));
+                var go = new GameObject("AttentionDoubleBorder", typeof(RectTransform), typeof(TutorialFocusFrameGraphic));
                 go.layer = gameObject.layer;
                 var rect = (RectTransform)go.transform;
-                rect.SetParent(transform, false);
-                rect.SetAsFirstSibling(); // Keep the pulse behind captions and button text.
+                rect.SetParent(transform, false); rect.SetAsFirstSibling();
                 rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one;
-                rect.offsetMin = new Vector2(-4, -4); rect.offsetMax = new Vector2(4, 4);
-                _border = go.GetComponent<V3GradientGraphic>();
-                _border.raycastTarget = false;
+                rect.offsetMin = rect.offsetMax = Vector2.zero;
+                border = go.GetComponent<TutorialFocusFrameGraphic>(); border.raycastTarget = false;
             }
-            _border.gameObject.SetActive(opacity > 0);
-            if (_contrast == null)
-            {
-                var go = new GameObject("AttentionContrast", typeof(RectTransform), typeof(V3GradientGraphic));
-                go.layer = gameObject.layer;
-                var rect = (RectTransform)go.transform; rect.SetParent(transform, false); rect.SetAsFirstSibling();
-                rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one;
-                rect.offsetMin = new Vector2(-7, -7); rect.offsetMax = new Vector2(7, 7);
-                _contrast = go.GetComponent<V3GradientGraphic>(); _contrast.raycastTarget = false;
-                _contrast.ConfigureCorners(Color.clear, Color.clear, Color.clear, Color.clear,
-                    new Color(.025f, .035f, .04f, 1), 16);
-            }
-            _contrast.gameObject.SetActive(opacity > 0);
-            _border.ConfigureCorners(Color.clear, Color.clear, Color.clear, Color.clear,
-                new Color(1f, .85f, .02f, .85f + .15f * opacity), 8f + 4f * opacity);
-            TutorialTapPointerView.Present((RectTransform)transform, time - _startedAt, opacity > 0);
+            border.gameObject.SetActive(opacity > 0);
+            border.SetIntensity(.85f + .15f * opacity);
+            TutorialTapPointerView.Present((RectTransform)transform, elapsed - delay, opacity > 0);
         }
 
-        private void OnDisable() => ResetPulse();
         private void ResetPulse()
         {
-            _startedAt = -1;
-            if (_border != null) _border.gameObject.SetActive(false);
-            if (_contrast != null) _contrast.gameObject.SetActive(false);
+            eligible = false; startedAt = -1;
+            if (border != null) border.gameObject.SetActive(false);
             TutorialTapPointerView.Present((RectTransform)transform, 0, false);
         }
     }

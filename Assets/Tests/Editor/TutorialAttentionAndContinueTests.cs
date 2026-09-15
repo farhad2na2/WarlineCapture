@@ -31,6 +31,31 @@ public sealed class TutorialAttentionAndContinueTests
         }
     }
 
+    [Test]
+    public void PlacementPointerFindsOpenCornerBesideMinimapAndFooter()
+    {
+        var safe = new Rect(8, 8, 1904, 1064);
+        var target = new Rect(1600, 44, 298, 219);
+        var obstacles = new[] { new Rect(1536, 285, 364, 250), new Rect(1400, 44, 185, 219),
+            new Rect(1190, 44, 190, 219) };
+        Assert.IsTrue(TutorialTapPointerLayout.TryPlace(target, safe, new Vector2(320, 56), 54, 9, 18,
+            obstacles, out var arrow, out var caption, out var side));
+        Assert.That(side, Is.EqualTo(TutorialPointerSide.AboveLeft));
+        var approach = (arrow.center - target.center).normalized;
+        float angle = Mathf.Atan2(approach.y, approach.x);
+        float rotatedSize = 54 * (Mathf.Abs(Mathf.Sin(angle)) + Mathf.Abs(Mathf.Cos(angle)));
+        foreach (float bounce in new[] { -18f, 0, 18f })
+        {
+            var center = arrow.center + approach * bounce;
+            var rendered = new Rect(center - Vector2.one * rotatedSize * .5f, Vector2.one * rotatedSize);
+            Assert.IsTrue(safe.Contains(rendered.min) && safe.Contains(rendered.max));
+            Assert.IsFalse(rendered.Overlaps(caption));
+            Assert.IsFalse(rendered.Overlaps(target));
+            foreach (var obstacle in obstacles) Assert.IsFalse(rendered.Overlaps(obstacle));
+        }
+        foreach (var obstacle in obstacles) Assert.IsFalse(caption.Overlaps(obstacle));
+    }
+
     private static void Check(Rect target, Rect safe, float width, Rect[] obstacles, TutorialPointerSide expected)
     {
         Assert.IsTrue(TutorialTapPointerLayout.TryPlace(target, safe, new Vector2(width, 30), 40, 8, 8,
@@ -86,6 +111,24 @@ public sealed class TutorialAttentionAndContinueTests
     }
 
     private static UiAssistantPanelModel Model(string body) => new(1, "", "", "", false, false, true, "Lesson", body, "", "CONTINUE", false, true, false, false, "", "");
+
+    public static void RunIndicatorRegression()
+    {
+        try
+        {
+            var pointer=new TutorialAttentionAndContinueTests();
+            pointer.PointerRotatesInsideEveryEdgeAndAvoidsOtherControls();
+            pointer.PlacementPointerFindsOpenCornerBesideMinimapAndFooter();
+            pointer.ChevronHasRenderableGeometry();
+            var clarity=new CampaignTutorialClarityTests();
+            clarity.AttentionPulseWaitsResetsAndNeverChangesHitAreas();
+            clarity.AttentionPulseRespectsReducedMotion();
+            clarity.EdgeButtonCaptionsStayInsideScreen();
+            Debug.Log("[TutorialIndicatorRegression] result=Passed safe-edges,idle-delay,progress-reset,reduced-motion,hit-areas,geometry");
+            MissionReadinessArchitectureValidation.Run();
+        }
+        catch(Exception error) {Debug.LogException(error); EditorApplication.Exit(1);}
+    }
 
     public static void RunAndPlay()
     {

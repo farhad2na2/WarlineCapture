@@ -43,7 +43,7 @@ public sealed class M02EstablishBaseResourceTests
             tests.DisabledMissionRuntimeLeavesResourcesUntouched();
             tests.AmbiguousPlayerResourceOwnerFailsClosed();
             tests.M02HudShowsMaterialsOilFuelWithoutCredits();
-            tests.M02KeepsUnavailableSquadControlsVisibleAndStaticBlue();
+            tests.M02KeepsUnavailableSquadControlsVisibleAndGrayscale();
             tests.AttemptInitializerDoesNotReferencePersistence();
             Debug.Log(Marker);
             ValidationExit.Passed();
@@ -284,7 +284,7 @@ public sealed class M02EstablishBaseResourceTests
     }
 
     [Test]
-    public void M02KeepsUnavailableSquadControlsVisibleAndStaticBlue()
+    public void M02KeepsUnavailableSquadControlsVisibleAndGrayscale()
     {
         GameObject railRoot = new("M02RightRail", typeof(RectTransform), typeof(MatchHudRightQuickRailView));
         GameObject trayRoot = new("M02SquadTray", typeof(RectTransform));
@@ -324,7 +324,6 @@ public sealed class M02EstablishBaseResourceTests
             trayRoot.SetActive(true);
             tray.ApplyMissionRestrictionVisibility(false, true, true, hideUnrelatedControls: true);
             Assert.IsTrue(cards[0].Button.gameObject.activeSelf);
-            Color? sharedBlueWash = null;
             for (int index = 1; index < cards.Length; index++)
             {
                 Assert.IsTrue(cards[index].Button.gameObject.activeSelf,
@@ -334,35 +333,24 @@ public sealed class M02EstablishBaseResourceTests
                 Assert.AreEqual("Warline/UI/Disabled Grayscale",
                     cards[index].FrameImage.material.shader.name,
                     $"M02 squad card {index} must use the shared disabled V3 treatment.");
-                Transform washTransform = cards[index].Button.transform.Find("MissionDisabledBlueWash");
-                Assert.NotNull(washTransform, $"M02 squad card {index} must own the static blue wash.");
-                Assert.IsTrue(washTransform.gameObject.activeSelf,
-                    $"M02 squad card {index} must show the static blue wash.");
-                Color washColor = washTransform.GetComponent<Image>().color;
-                Assert.Greater(washColor.b, washColor.r,
-                    $"M02 squad card {index} must be blue rather than neutral gray.");
-                if (sharedBlueWash.HasValue)
-                    Assert.AreEqual(sharedBlueWash.Value, washColor,
-                        $"M02 squad card {index} must match every other unavailable card.");
-                sharedBlueWash = washColor;
-                var wash = washTransform.GetComponent<Image>();
-                var originalShader = wash.material.shader;
-                // Reproduce competing cinematic and mission passes, including repeated
-                // updates and lock removal. The attack-helicopter card is index 2.
+                Assert.IsNull(cards[index].Button.transform.Find("MissionDisabledBlueWash"),
+                    "Unavailable cards must not create a separate colored overlay.");
                 for (int frame = 0; frame < 12; frame++)
                 {
                     UiDisabledMaterialUtility.SetDisabled(cards[index].Button.gameObject,
                         UiDisabledVisualReason.CinematicInteractionLock, frame % 3 != 2);
-                    Assert.AreEqual(originalShader, wash.material.shader,
-                        $"Card {index}: cinematic pass must not recolor the blue wash.");
-                    Assert.AreEqual(washColor, wash.color);
                     tray.SetSelectedSlot(MatchHudSquadTraySlot.Soldiers);
                     tray.FlashDisabled(MatchHudSquadTraySlot.AttackHelicopter);
-                    Assert.AreEqual(originalShader, wash.material.shader);
-                    Assert.AreEqual(washColor, wash.color);
-                    Assert.IsTrue(wash.gameObject.activeSelf);
+                    Assert.AreEqual("Warline/UI/Disabled Grayscale", cards[index].FrameImage.material.shader.name);
                     Assert.IsFalse(cards[index].Button.interactable);
                 }
+            }
+            tray.ApplyMissionRestrictionVisibility(false, false, false, hideUnrelatedControls: false);
+            for (int index = 1; index < cards.Length; index++)
+            {
+                Assert.IsTrue(cards[index].Button.interactable);
+                Assert.AreNotEqual("Warline/UI/Disabled Grayscale", cards[index].FrameImage.material.shader.name,
+                    "Unlocked cards must restore their authored appearance.");
             }
 
             GameObject matchHudPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(

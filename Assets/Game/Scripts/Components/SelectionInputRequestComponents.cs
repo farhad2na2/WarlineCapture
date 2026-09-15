@@ -145,6 +145,7 @@ namespace Game.Components
         public byte HasWorldPosition;
         public byte HasScreenPosition;
         public byte HasScreenRect;
+        public byte SelectMissionRole;
     }
 
     public struct RtsSelectionCommandResultElement : IBufferElementData

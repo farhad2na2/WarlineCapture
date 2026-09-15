@@ -13,6 +13,8 @@ namespace Game.Editor
         private const string ContinueMode = "Warline.M02.ContinueProbe";
         private static bool continueClicked, waitObserved, pointerCaptured;
         private static Vector3 pointerStart;
+        private static float pointerSampleStart, pointerTravel;
+        private static int pointerSamples;
         private static string continueLocale;
         public static void RunContinueEnglish() => StartContinue("en");
         public static void RunContinuePersian() => StartContinue("fa-IR");
@@ -41,14 +43,33 @@ namespace Game.Editor
                 var indicator = GameObject.Find("AriaAssistantTargetIndicatorRuntime");
                 var arrow = indicator != null ? indicator.transform.Find("AttentionTapPointer") : null;
                 if (arrow == null || !arrow.gameObject.activeInHierarchy) throw new InvalidOperationException("Plan B arrow is missing beside Continue.");
+                var frame = (RectTransform)indicator.transform;
+                var button = (RectTransform)aria.ContinueButton.transform;
+                var corners = new Vector3[4]; frame.GetWorldCorners(corners);
+                var buttonCorners = new Vector3[4]; button.GetWorldCorners(buttonCorners);
+                float scale = frame.GetComponentInParent<Canvas>().rootCanvas.scaleFactor;
+                if (Vector3.Distance((corners[0]+corners[2])*.5f,(buttonCorners[0]+buttonCorners[2])*.5f)>2*scale ||
+                    corners[0].x>buttonCorners[0].x || corners[0].y>buttonCorners[0].y ||
+                    corners[2].x<buttonCorners[2].x || corners[2].y<buttonCorners[2].y)
+                    throw new InvalidOperationException("Tutorial frame does not surround the final Continue button bounds.");
+                var caption = frame.Find("TopBorderCaption");
+                if (caption == null || !caption.gameObject.activeInHierarchy)
+                    throw new InvalidOperationException("Tutorial caption flickered off during a stable lesson.");
+                if(frame.GetComponentInChildren<TutorialFocusFrameGraphic>()==null)
+                    throw new InvalidOperationException("Double edge frame missing.");
                 if (!pointerCaptured)
                 {
-                    pointerStart = arrow.localPosition; pointerCaptured = true;
+                    pointerStart = arrow.position; pointerSampleStart=Time.unscaledTime; pointerTravel=0; pointerSamples=0;
+                    pointerCaptured = true;
                     ScreenCapture.CaptureScreenshot(Output + "/planb-pointer-a-" + GameLocalization.CurrentLocaleCode + ".png");
-                    nextAction = EditorApplication.timeSinceStartup + .6; return;
                 }
-                if (!Game.UI.Runtime.SettingsService.Load().Accessibility.ReducedMotion && Vector3.Distance(pointerStart, arrow.localPosition) < .1f)
-                    throw new InvalidOperationException("Plan B pointer did not animate.");
+                pointerSamples++;
+                pointerTravel=Mathf.Max(pointerTravel,Vector3.Distance(pointerStart,arrow.position));
+                if(Time.unscaledTime-pointerSampleStart<3f) {nextAction=0;return;}
+                if (!Game.UI.Runtime.SettingsService.Load().Accessibility.ReducedMotion && pointerTravel<5*scale)
+                    throw new InvalidOperationException("Plan B pointer did not visibly travel during three seconds.");
+                if(pointerSamples<20) throw new InvalidOperationException("Insufficient rendered frames for stability check.");
+                Log("PlanB stable rendered frames="+pointerSamples+" travel="+pointerTravel+" centered,double-edge,caption-visible");
                 ScreenCapture.CaptureScreenshot(Output + "/planb-pointer-b-" + GameLocalization.CurrentLocaleCode + ".png");
                 if (!Click(aria.ContinueButton)) return;
                 if (aria.ContinueButton.IsActive()) throw new InvalidOperationException("Continue did not hide immediately.");

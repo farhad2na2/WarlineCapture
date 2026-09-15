@@ -10,17 +10,23 @@ namespace Game.UI.Runtime
     {
         private RectTransform arrow, caption, target;
         private Canvas canvas;
+        private Transform obstacleTextRoot;
+        private readonly List<TextMeshProUGUI> obstacleTexts = new();
+        private readonly List<MatchHudMinimapView> obstacleMinimaps = new();
         private readonly Vector3[] corners = new Vector3[4];
         private readonly List<Rect> obstacles = new();
         private Rect arrowScreen, captionScreen, lastTarget, lastSafe;
+        private Vector2 captionSize;
         private TutorialPointerSide side;
-        private float elapsed, refreshAt;
+        private float refreshAt;
         private bool visible, placed;
 
-        internal static void BindCaption(RectTransform target, RectTransform caption)
+        internal static void BindCaption(RectTransform target, RectTransform caption, Transform obstacleTextRoot)
         {
             var view = target.GetComponent<TutorialTapPointerView>() ?? target.gameObject.AddComponent<TutorialTapPointerView>();
             view.caption = caption;
+            view.obstacleTextRoot = obstacleTextRoot;
+            view.refreshAt = -1;
         }
 
         internal static void Present(RectTransform target, float elapsed, bool visible)
@@ -28,8 +34,16 @@ namespace Game.UI.Runtime
             var view = target.GetComponent<TutorialTapPointerView>();
             if (view == null && visible) view = target.gameObject.AddComponent<TutorialTapPointerView>();
             if (view == null) return;
-            view.elapsed = elapsed; view.visible = visible;
+            view.visible = visible;
             view.Draw();
+        }
+
+        internal void SetCaptionSize(Vector2 size)
+        {
+            if (captionSize == size) return;
+            captionSize = size;
+            if (caption != null) caption.sizeDelta = size;
+            refreshAt = -1;
         }
 
         private void OnDisable() { visible = false; placed = false; if (arrow != null) arrow.gameObject.SetActive(false); }
@@ -68,13 +82,21 @@ namespace Game.UI.Runtime
                         if (bounds.Contains(screen.min) && bounds.Contains(screen.max)) continue;
                         obstacles.Add(bounds);
                     }
-                foreach (var text in canvas.GetComponentsInChildren<TMP_Text>(false))
+                obstacleTexts.Clear();
+                var textRoot = obstacleTextRoot != null ? obstacleTextRoot : canvas.transform;
+                textRoot.GetComponentsInChildren(false, obstacleTexts);
+                foreach (var text in obstacleTexts)
                     if (Visible(text.transform) && !text.transform.IsChildOf(transform) && !string.IsNullOrWhiteSpace(text.text) && text.color.a > .01f)
                         obstacles.Add(ScreenRect(text.rectTransform));
+                // Minimap input uses pointer interfaces rather than a Selectable button.
+                obstacleMinimaps.Clear();
+                textRoot.GetComponentsInChildren(false, obstacleMinimaps);
+                foreach (var map in obstacleMinimaps)
+                    if (map.MapRect != null && Visible(map.transform)) obstacles.Add(ScreenRect(map.MapRect));
                 Vector2 labelSize = caption != null ? ScreenRect(caption).size : Vector2.zero;
                 labelSize.x = Mathf.Min(labelSize.x, safe.width);
                 float size = Mathf.Clamp(Screen.height * .045f, 28, 54);
-                float travel = Mathf.Clamp(Screen.height * .008f, 4, 10);
+                float travel = Mathf.Clamp(Screen.height * .014f, 8, 18);
                 placed = TutorialTapPointerLayout.TryPlace(screen, safe, labelSize, size, margin, travel,
                     obstacles, out arrowScreen, out captionScreen, out side);
                 if (!placed && caption != null)
@@ -89,10 +111,11 @@ namespace Game.UI.Runtime
             arrow.gameObject.SetActive(placed);
             if (!placed) return;
             float bounce = SettingsService.LoadReducedMotionPreference() ? 0 :
-                Mathf.Clamp(Screen.height * .008f, 4, 10) * Mathf.Sin(elapsed * Mathf.PI * 2 / 1.6f);
-            Place(arrow, arrowScreen.center + TutorialTapPointerLayout.Outward(side) * bounce, arrowScreen.size);
-            arrow.localRotation = Quaternion.Euler(0, 0, side switch
-            { TutorialPointerSide.Above => 0, TutorialPointerSide.Below => 180, TutorialPointerSide.Left => 90, _ => -90 });
+                Mathf.Clamp(Screen.height * .014f, 8, 18) * Mathf.Sin(Time.unscaledTime * Mathf.PI * 2 / 1.2f);
+            var approach = (arrowScreen.center - screen.center).normalized;
+            Place(arrow, arrowScreen.center + approach * bounce, arrowScreen.size);
+            arrow.localRotation = Quaternion.Euler(0, 0, Vector2.SignedAngle(
+                Vector2.down, -approach));
             if (caption != null) { caption.gameObject.SetActive(true); Place(caption, captionScreen.center, captionScreen.size); }
         }
 
@@ -135,13 +158,21 @@ namespace Game.UI.Runtime
         protected override void OnPopulateMesh(VertexHelper vh)
         {
             vh.Clear(); Rect r = rectTransform.rect;
-            Vector2 a = r.center + new Vector2(-r.width * .35f, r.height * .18f);
-            Vector2 b = r.center + new Vector2(0, -r.height * .23f);
-            Vector2 c = r.center + new Vector2(r.width * .35f, r.height * .18f);
-            Segment(vh, a, b, r.width * .28f, new Color(.025f, .035f, .04f));
-            Segment(vh, b, c, r.width * .28f, new Color(.025f, .035f, .04f));
-            Segment(vh, a, b, r.width * .17f, new Color(1, .85f, .02f));
-            Segment(vh, b, c, r.width * .17f, new Color(1, .85f, .02f));
+            Arrow(vh,r,1f,new Color(.025f,.035f,.04f));
+            Arrow(vh,r,.82f,new Color(1,.79f,.015f));
+            Segment(vh,r.center+new Vector2(-r.width*.26f,-r.height*.04f),
+                r.center+new Vector2(0,-r.height*.32f),r.width*.04f,new Color(1,.96f,.5f));
+        }
+        private static void Arrow(VertexHelper vh,Rect r,float scale,Color color)
+        {
+            Vector2 P(float x,float y) => r.center+new Vector2(x*r.width,y*r.height)*scale;
+            int i=vh.currentVertCount;
+            vh.AddVert(P(0,-.48f),color,Vector2.zero); vh.AddVert(P(-.46f,0),color,Vector2.zero);
+            vh.AddVert(P(.46f,0),color,Vector2.zero); vh.AddTriangle(i,i+1,i+2);
+            i=vh.currentVertCount;
+            vh.AddVert(P(-.18f,-.06f),color,Vector2.zero); vh.AddVert(P(-.18f,.45f),color,Vector2.zero);
+            vh.AddVert(P(.18f,.45f),color,Vector2.zero); vh.AddVert(P(.18f,-.06f),color,Vector2.zero);
+            vh.AddTriangle(i,i+1,i+2); vh.AddTriangle(i,i+2,i+3);
         }
         private static void Segment(VertexHelper vh, Vector2 a, Vector2 b, float width, Color color)
         {

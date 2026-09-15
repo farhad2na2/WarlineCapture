@@ -7,22 +7,25 @@ namespace Game.UI.Runtime
 {
     internal sealed partial class MatchHudAssistantUiSystemHelper
     {
-        private bool _waitingForTutorialAction, _continueTutorialAction;
+        private bool _waitingForTutorialAction, _continueTutorialAction, _selectionActionRequested;
         private BuildPlacementConfirmationBarView _tutorialPlacement;
+        internal void BindPlacementConfirmation(BuildPlacementConfirmationBarView view) => _tutorialPlacement = view;
+        private bool HasPendingTutorialPlacement => _tutorialPlacement != null && _tutorialPlacement.HasPendingPlacement;
         private MatchHudSelectionPanelView _tutorialSelection;
         private ThreatAlertV3PopupView _tutorialWarning;
 
         private void TickNextTutorialAction()
         {
-            _waitingForTutorialAction = false; _continueTutorialAction = false;
+            _waitingForTutorialAction = false; _continueTutorialAction = false; _selectionActionRequested=false;
             bool managed = UsesNextTutorialAction;
             if(managed && UiShellRuntimeGateway.TryReadMatchHudCommandState(out var commandState))
                 _activeCommandMode=commandState.ActiveCommandMode;
-            bool placing = _activeCommandMode==TacticalCommandMode.Build && !_highlightPresentationSystem.IsBuildDrawerOpen;
+            bool placing = HasPendingTutorialPlacement;
             if (UiShellRuntimeGateway.IsMissionFieldGuidePresenting() || !managed || _embeddedTutorialView == null || (!_embeddedTutorialView.IsPresentationVisible && !placing && !_highlightPresentationSystem.IsBuildDrawerOpen) ||
                 !_lastPanelModel.HasRecommendation || _tutorialCinematicSuspended)
             { _highlightPresentationSystem.ClearDirectTutorialCue(); return; }
             int step=_lastPanelModel.TutorialStep;
+            if(ShowPendingPlacementInstruction(placing)) return;
             if(_lastPanelModel.TutorialStepCount==5) { ShowFirstContactNextAction(step); return; }
             if(_lastPanelModel.TutorialStepCount==8) {ShowBreachNextAction(step);return;}
             if(_lastPanelModel.TutorialStepCount==9)
@@ -47,12 +50,9 @@ namespace Game.UI.Runtime
                 case 5: ShowCommandOrDestination(_commandControlsView?.MoveButton,TacticalCommandMode.Move); break;
                 case 6: ShowSelectionOrControl(_commandControlsView?.HoldButton,"mission.m03.guide.control.8"); break;
                 case 7:
-                    bool resume=UiShellRuntimeGateway.TryReadMissionDefense(out var defense) && defense.RequiresHoldResume;
-                    ShowSelectionOrControl(resume ? _commandControlsView?.HoldButton : _commandControlsView?.StopButton,
-                        resume ? "mission.m03.guide.control.8" : "mission.m03.guide.control.10"); break;
+                    ShowSelectionOrControl(_commandControlsView?.HoldButton,"mission.m03.guide.control.8"); break;
                 case 8: Cue(_commandControlsView?.SupportButton,"mission.m03.guide.control.6"); break;
-                case 10: case 11: Cue(_embeddedTutorialView.ContinueButton,"tutorial.next.continue"); break;
-                case 12: Cue(_buttonRoot?.root.GetComponentInChildren<MissionDefenseHudView>(true)?.GuideButton,"mission.m03.guide.title"); break;
+                case 10: case 11: case 12: ShowDefenseBattleAction(); break;
                 default: _highlightPresentationSystem.ClearDirectTutorialCue(); break;
             }
         }
@@ -70,7 +70,7 @@ namespace Game.UI.Runtime
             {
                 if (UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var target) && !target.NeedsSelection)
                     _highlightPresentationSystem.ClearDirectTutorialCue();
-                else Cue(_highlightPresentationSystem.ResolveSquadTutorialControl(), "ui.guidance.select_squad");
+                else ShowSelectionTarget(default);
             }
             else if (step == 2) ShowCommandOrDestination(_commandControlsView?.MoveButton, TacticalCommandMode.Move);
             else if (step is 3 or 4) ShowEarlyMissionThreat();
@@ -91,17 +91,14 @@ namespace Game.UI.Runtime
 
         private void ShowConstructionCue(bool defense,bool placement)
         {
-            if(!_highlightPresentationSystem.IsBuildDrawerOpen && _activeCommandMode==TacticalCommandMode.Build)
+            if(HasPendingTutorialPlacement)
             {
-                if(_tutorialPlacement==null && _buttonRoot!=null)
-                    _tutorialPlacement=_buttonRoot.root.GetComponentInChildren<BuildPlacementConfirmationBarView>(true);
                 Cue(_tutorialPlacement?.ConfirmButton,"tutorial.next.confirm");
                 return; // An invalid footprint retains the existing world placement preview and reason.
             }
             Cue(_highlightPresentationSystem.ResolveBuildTutorialControl(defense,placement,out var key),key);
         }
 
-        private void ShowProductionCue() => Cue(_highlightPresentationSystem.ResolveProductionTutorialControl(out var key),key);
         private void Cue(Button button,string key)
         {
             if(button!=null && button==_embeddedTutorialView?.ContinueButton)
@@ -118,9 +115,10 @@ namespace Game.UI.Runtime
 
         private void ShowSelectionTarget(Vector3 position,bool group=false)
         {
-            if(_activeCommandMode!=TacticalCommandMode.Select && (group || _activeCommandMode!=TacticalCommandMode.None))
-                Cue(_commandControlsView?.SelectButton,"ui.guidance.select_squad");
-            else ShowTutorialWorld(position,true);
+            if(!UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var target) || !target.NeedsSelection) return;
+            _selectionActionRequested=true;
+            _embeddedTutorialView.SetSelectionActionAvailable(true,target.SelectionLabelKey);
+            Cue(_embeddedTutorialView.SelectionButton,target.SelectionLabelKey ?? "ui.aria.select_group");
         }
 
         private void ShowSelectionOrControl(Button button,string key)

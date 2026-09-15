@@ -1,0 +1,28 @@
+# M3 placement and lesson sequence follow-up — 15 September 2026
+
+The previous completion run skipped optional construction and reinforcement. Its success did not cover the user's later screenshot: an unfinished road-barrier preview with reinforcement instructions, and a placement guide offset from the button.
+
+## Changes
+
+- Retired the Stop exercise from active M3 guidance. Hold now leads to optional radar/reinforcement without cancelling automatic fire. Legacy lesson IDs remain stable for saves and recorded narration; the displayed progress counts eleven active lessons. A stale Stop-lesson UI can only suggest Hold. The full-journey probe fails if the retired lesson appears.
+- Recompute the guide immediately before Canvas rendering. The earlier HUD Update can precede placement validity reflow, responsive layout, and camera movement. The frame and arrow now follow the final button geometry. The new regression changes the actual target's position and scale after the earlier guide update, then validates the final Canvas result.
+- An active placement takes instruction priority. ARIA explains green position → rotate if needed → Place Building, or Cancel to return without spending resources. It cannot show reinforcement advice while asking the player to place a structure.
+- Skipping an optional lesson cancels its unfinished placement preview before advancing. It cannot leave that preview attached to the next lesson.
+- Queued reinforcement production says to wait for training; it no longer asks for another purchase. The mission still advances on actual produced units.
+- Replaced the selection prefab's hard-coded “Moving” player-control caption with the neutral localized label. Actual orders remain in the separate current-order field; there is no runtime hierarchy-string lookup to correct the caption.
+- Fixed the instruction scrollbar thumb retaining its default 100-pixel size, which created a cyan block over ARIA text. It now stretches within the narrow track; placement copy is also shorter.
+- New placement and training text is in the central English/Farsi localization catalog. Existing audio IDs remain stable; no new paid voice requests were made.
+
+## Validation
+
+Farsi expanded optional journey passed with wrapper exit 0 (`/private/tmp/warline-m03-optional-fa-final.log`): one real barrier, one four-person reinforcement squad, resource balance 34,000 credits / 65 materials, no Stop lesson after Hold, three-star defensive victory with zero civilian losses, timed finale, debrief and localized result/guide round trip. The placement frame/arrow passed 128 rendered-frame checks at 2400×1080. This run exposed the scrollbar issue, corrected afterwards. The final English pointer journey also passed with exit 0 (`/private/tmp/warline-m03-optional-en-final.log`): 114 rendered placement frames, one barrier and one reinforcement purchase through EventSystem hit testing, three stars, zero civilian losses, debrief and result/guide round trip. The captured English placement copy fits, and the animated double frame encloses the green button. The final Farsi capture on the shortened copy and narrow scrollbar also fits without clipping; its placement frame and animated arrow passed 91 rendered-frame checks with pointer confirmation. That final Farsi journey passed with exit 0 (`/private/tmp/warline-m03-optional-fa-v2-final.log`): barrier and rifle purchases via pointer hit testing, no Stop lesson, three-star victory, zero civilian losses, frozen-clock finale, three debrief panels, localized results and result/guide return. Fresh placement checks before this correction passed at both 1920×1080 and 2400×1080; those alone did not reproduce the screenshot. The new late-render regression and expanded optional journey are necessary coverage beyond those checks.
+
+The expanded journey actually builds a road barrier, verifies a visible, moving, screen-safe arrow and an enclosing frame over rendered frames, selects Soldiers → rifle card → Produce, verifies the resource debit and produced squad, and proceeds through defensive combat and results. The English run additionally uses EventSystem pointer hit testing for catalog/placement/production actions. Images and detailed logs remain under `/private/tmp`; none are added to Design.
+
+## QA scope and reproducibility
+
+These are automated Editor Play-mode journeys plus visual inspection of their captures. The placement journey stages a legal plot, then validates rendered guidance and pointer clicks; it does not certify finger dragging on a device. Android validation was not requested. The road barrier and reinforcement costs are checked against the current runtime budget; this pass does not change the economy.
+
+An intermediate regression reported the removed caption lookup because the validation copy retained a file that had become identical to Git HEAD and was omitted by dirty-file-only synchronization. The copy step was corrected, all 2,470 C# source files matched the project in both validation copies, and the complete regression suite was restarted. Earlier failed/timeout runs are not counted as passes.
+
+Final regression passed with wrapper exit 0 (`/private/tmp/warline-m03-placement-regression-v5.log`): all 139 architecture cases across nine fixtures, three M3 battle-state tests, seven selection lookup tests, plus final-render placement geometry, skip-preview cancellation, ARIA scrollbar/minimap layout and both edge-pointer fixtures. No test was weakened to bypass an implementation failure. Main Editor compilation reported `compiling=false`, `failed=false`; it was left out of Play mode. `git diff --check` passed.

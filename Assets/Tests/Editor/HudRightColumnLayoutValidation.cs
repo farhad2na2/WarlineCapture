@@ -96,6 +96,9 @@ public sealed class HudRightColumnLayoutValidation
                 aria.BodyText.text=string.Concat(Enumerable.Repeat(aria.BodyText.text+" ",8));
                 aria.RefreshContentLayout();Canvas.ForceUpdateCanvases();
                 Assert.That(aria.BodyText.GetComponentInParent<UnityEngine.UI.ScrollRect>().vertical,Is.True,"Very long copy scrolls without covering the dock.");
+                var scrollbar=aria.BodyText.GetComponentInParent<UnityEngine.UI.ScrollRect>().verticalScrollbar;
+                var thumbBounds=RectBounds(scrollbar.transform,scrollbar.handleRect);
+                Assert.That(thumbBounds.size.x,Is.LessThanOrEqualTo(((RectTransform)scrollbar.transform).rect.width+.1f),"Overflow thumb must not become a wide cyan panel over the instructions.");
                 var railBounds=RectBounds(dock.transform,(RectTransform)aria.transform);
                 Assert.That(railBounds.min.y-mapBounds.max.y,Is.GreaterThanOrEqualTo(11.99f),"ARIA must not collide with the independent map.");
             }

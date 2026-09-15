@@ -41,13 +41,11 @@ namespace Game.UI.Runtime
         private static readonly Color CardLabelStripColor = new(0f, 0f, 0f, 0.45f);
         private static readonly Color V3SelectedBorderColor = new Color32(0, 188, 224, 255);
         private static readonly Color V3NormalBorderColor = new Color32(48, 166, 69, 255);
-        private static readonly Color V3MissionDisabledBorderColor = new Color32(28, 166, 232, 255);
-        private static readonly Color V3MissionDisabledWashColor = new(0.015f, 0.30f, 0.68f, 0.48f);
+        private static readonly Color V3MissionDisabledBorderColor = new Color32(128, 139, 141, 255);
         private static readonly Color V3GuidanceYellow = new(1f, 0.72f, 0.02f, 1f);
         private readonly Color[] _frameBaseColors = new Color[5];
         private readonly Color[] _portraitBaseColors = new Color[5];
         private readonly bool[] _missionDisabled = new bool[5];
-        private readonly Image[] _missionDisabledWashes = new Image[5];
         private Action<MatchHudSquadTraySlot> _cardClicked;
         private Canvas _cachedCanvas;
         private RectTransform _assistantGuidanceCue;
@@ -220,7 +218,7 @@ namespace Game.UI.Runtime
             if (!TryGetCard(index, out _))
                 return;
 
-            // Unavailable mission cards use one persistent blue treatment. A click must not
+            // Unavailable mission cards use the shared grayscale treatment. A click must not
             // flash a single card and imply that another unavailable card is interactive.
             ApplyMissionDisabledTreatment(index, _missionDisabled[index]);
         }

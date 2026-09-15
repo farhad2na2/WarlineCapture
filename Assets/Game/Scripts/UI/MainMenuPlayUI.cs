@@ -115,6 +115,7 @@ namespace Game.UI.Runtime
             BindMatchHudThreatJumpPanel(null);
             _buildDrawerView = null;
             _buildPlacementConfirmationBarView = null;
+            _matchHudAssistantUiSystem.BindPlacementConfirmation(null);
             BindResourceExchangePopup(null);
             _closeBuildDrawerPopup = null;
             _closeFullMapPopup = null;
@@ -168,6 +169,7 @@ namespace Game.UI.Runtime
             TickGuidedHudRuntime();
             TickMatchHudThreatWarning(now);
             RefreshResourceExchangePopup();
+            _matchHudAssistantUiSystem.RenderAttention(now);
         }
 
         public void NotifyStaticMinimapChanged()
@@ -452,6 +454,7 @@ namespace Game.UI.Runtime
         public void BindBuildPlacementConfirmationBar(BuildPlacementConfirmationBarView buildPlacementConfirmationBarView)
         {
             _buildPlacementConfirmationBarView = buildPlacementConfirmationBarView;
+            _matchHudAssistantUiSystem.BindPlacementConfirmation(buildPlacementConfirmationBarView);
         }
 
 

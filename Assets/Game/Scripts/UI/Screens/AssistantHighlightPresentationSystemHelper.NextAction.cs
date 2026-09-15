@@ -26,6 +26,7 @@ namespace Game.UI.Runtime
         private string _directCaptionKey, _directCaptionLocale;
         internal Button ResolveSquadTutorialControl() => _squadGuidanceButton;
         internal bool IsBuildDrawerOpen => _buildDrawerView != null && _buildDrawerView.IsOpen;
+        internal bool HasPendingProduction => _buildDrawerCatalogRuntimeView != null && _buildDrawerCatalogRuntimeView.HasPendingProduction;
 
         internal void TickAttention(float time)
         {
@@ -69,6 +70,7 @@ namespace Game.UI.Runtime
             var cueCanvas = _screenTargetIndicator.GetComponent<Canvas>();
             cueCanvas.sortingLayerID = canvas != null ? canvas.sortingLayerID : _screenTargetCanvas.sortingLayerID;
             cueCanvas.sortingOrder = Mathf.Max(_screenTargetCanvas.sortingOrder + 50, (canvas != null ? canvas.sortingOrder : 0) + 2);
+            TutorialAttentionPulseView.BindFrame(_screenTargetIndicator, TickCommandCue);
             TickCommandCue();
         }
 
@@ -86,15 +88,12 @@ namespace Game.UI.Runtime
         private void ConfigureControlCaption(RectTransform caption,RectTransform button,Vector2 frameSize)
         {
             bool aria=button.GetComponentInParent<AriaTutorialBriefingView>()!=null;
-            float scale=(frameSize.y-20)/Mathf.Max(1,button.rect.height);
-            caption.gameObject.SetActive(true);
-            // Compact ARIA captions sit on the button's top edge, inside the reserved gap.
-            // Other controls retain their existing, larger battlefield/build captions.
-            caption.anchoredPosition=aria?new Vector2(0,-10):Vector2.zero;
-            caption.sizeDelta=aria ? new Vector2(frameSize.x-20,32*scale) :
-                new Vector2(Mathf.Clamp(frameSize.x-20,480,880),96);
-            _screenTargetLabel.fontSizeMin=aria?12*scale:36;
-            _screenTargetLabel.fontSizeMax=aria?17*scale:52;
+            // Guidance owns a pixel-space overlay; do not inherit the HUD's reference-canvas scale.
+            float scale=Mathf.Clamp(Screen.height/1080f,.75f,1.2f);
+            var pointer = caption.GetComponentInParent<TutorialTapPointerView>();
+            pointer?.SetCaptionSize(new Vector2((aria?320:360)*scale,(aria?44:56)*scale));
+            _screenTargetLabel.fontSizeMin=18*scale;
+            _screenTargetLabel.fontSizeMax=24*scale;
         }
 
         internal void ShowTutorialWorld(Vector3 target)

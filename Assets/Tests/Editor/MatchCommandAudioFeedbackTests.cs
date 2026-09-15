@@ -1,10 +1,12 @@
 using System;
+using System.Linq;
 using Game.Components;
 using Game.Configs;
 using Game.Runtime;
 using NUnit.Framework;
 using Unity.Entities;
 using UnityEngine;
+using UnityEditor;
 
 public sealed class MatchCommandAudioFeedbackTests
 {
@@ -24,6 +26,8 @@ public sealed class MatchCommandAudioFeedbackTests
             passed++;
             tests.AcceptedCommandVoices_ResolveExpectedAriaEvents();
             passed++;
+            tests.StopConfirmation_UsesLocalizedFullSentenceRecording();
+            passed++;
             tests.TryEmitCommandConfirmationVoice_EnqueuesVoiceRequest();
             passed++;
             tests.SelectionPanelCommandVoices_ResolveExpectedAriaEvents();
@@ -42,6 +46,21 @@ public sealed class MatchCommandAudioFeedbackTests
             Debug.LogError($"[MatchCommandAudioFeedbackValidation] result=Failed passed={passed}");
             ValidationExit.Exit(1);
         }
+    }
+
+    [Test]
+    public void StopConfirmation_UsesLocalizedFullSentenceRecording()
+    {
+        Assert.IsTrue(RtsSelectionCommandResultFlushCompositionSystemHelper.TryResolveCommandConfirmationVoiceEvent(
+            RtsSelectionCommandIntentKind.Stop, true, out var eventId, out _));
+        var catalog = AssetDatabase.LoadAssetAtPath<AudioEventCatalogConfig>("Assets/Game/Audio/Events/AudioEventCatalogConfig.asset");
+        var entry = catalog.Events.Single(e => e.EventId == eventId);
+        Assert.IsTrue(entry.HasLocalizedClips("fa-IR"));
+        var persian = AudioPlaybackSourceConfiguration.SelectClip(entry, "fa-IR");
+        var english = AudioPlaybackSourceConfiguration.SelectClip(entry, "en-US");
+        Assert.AreEqual("Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_stopped_selected_units_01_fa.wav", AssetDatabase.GetAssetPath(persian));
+        Assert.AreEqual("Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_stopped_selected_units_01.wav", AssetDatabase.GetAssetPath(english));
+        Assert.AreNotSame(persian, english);
     }
 
     [Test]
@@ -148,8 +167,8 @@ public sealed class MatchCommandAudioFeedbackTests
             AudioEventIds.VOARIAMessageTacticalBannerAcceptedHoldTitleHash);
         AssertCommandConfirmationVoiceResolved(
             RtsSelectionCommandIntentKind.Stop,
-            AudioEventIds.VOARIAMessageTacticalBannerAcceptedStopTitle,
-            AudioEventIds.VOARIAMessageTacticalBannerAcceptedStopTitleHash);
+            AudioEventIds.VOARIAMessageTacticalFeedbackStoppedSelectedUnits,
+            AudioEventIds.VOARIAMessageTacticalFeedbackStoppedSelectedUnitsHash);
         AssertCommandConfirmationVoiceResolved(
             RtsSelectionCommandIntentKind.Scan,
             AudioEventIds.VOARIAMessageTacticalBannerAcceptedScanTitle,

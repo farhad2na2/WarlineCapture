@@ -104,6 +104,7 @@ namespace Game.UI.Runtime
                 _defaultBody != (model.RecommendationBody ?? string.Empty)) continueConsumed = false;
             _tutorialStep = model.TutorialStep;
             _tutorialStepCount = model.TutorialStepCount;
+            _defenseTutorial = _tutorialStepCount==12 && UiShellRuntimeGateway.TryReadMissionDefense(out _);
             ApplyMissionLayout(_tutorialStepCount is 8 or 9 or 12,model.LargeTextEnabled);
             _recommendationKind = model.RecommendationKind;
             _rightToLeft = UiShellRuntimeGateway.Localization.IsRightToLeft;
@@ -249,21 +250,6 @@ namespace Game.UI.Runtime
             SetLocalizedText(bodyText, _currentInstructionBody);
             ApplyProgress(narrationPhase);
             RefreshContentLayout();
-        }
-
-        private void ApplyProgress(UiTutorialNarrationPhase narrationPhase)
-        {
-            if (progressText != null) progressText.gameObject.SetActive(_tutorialStepCount > 0);
-            int step = Mathf.Max(1, _tutorialStep);
-            if (_tutorialStepCount is not (8 or 12) && _tutorialStep == 2 && narrationPhase == UiTutorialNarrationPhase.WorldTarget)
-                step = 3;
-            else if (_tutorialStepCount is not (8 or 12) && _tutorialStep is 3 or 4)
-                step = narrationPhase == UiTutorialNarrationPhase.WorldTarget ? 5 : 4;
-
-            int count = Mathf.Max(step, _tutorialStepCount);
-            SetLocalizedText(
-                progressText,
-                UiShellRuntimeGateway.Localization.Format("ui.aria.step", "STEP {0}/{1}", step, count));
         }
 
         private void ApplyLanguagePresentation()

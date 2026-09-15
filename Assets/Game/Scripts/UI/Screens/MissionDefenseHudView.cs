@@ -91,14 +91,26 @@ namespace Game.UI.Runtime
             if(skipButton!=null) skipButton.gameObject.SetActive(!model.RequiresHoldResume && model.GuidanceId is 45004 or 45007 or 45008 or 45009);
             if(status!=null && (lastCharges!=model.Charges || lastCooldown!=model.CooldownSeconds || lastLocale!=UiShellRuntimeGateway.Localization.CurrentLocaleCode))
             {
-                string pingStatus=model.CooldownSeconds>0 ? (model.CooldownSeconds/60)+":"+(model.CooldownSeconds%60).ToString("00") : model.Charges.ToString();
-                status.SetLocalizedValue(pingStatus);lastCharges=model.Charges;lastCooldown=model.CooldownSeconds;
+                string pingStatus=model.Charges>0 && model.CooldownSeconds>0 ? (model.CooldownSeconds/60)+":"+(model.CooldownSeconds%60).ToString("00") : model.Charges.ToString();
+                status.SetLocalizedValue(pingStatus);
+                if(supportLabel!=null) supportLabel.SetLocalizedValue(UiShellRuntimeGateway.Localization.Get(
+                    model.Charges==0 ? "mission.m03.ping.spent_label" : model.CooldownSeconds>0 ? "mission.m03.ping.recharging_label" : "mission.m03.ping.label"));
+                var counter=status.GetComponent<TMPro.TMP_Text>();
+                if(counter!=null) {counter.fontSizeMin=22;counter.fontSizeMax=24;
+                    var rect=counter.rectTransform;rect.anchorMin=new Vector2(0,1);rect.anchorMax=Vector2.one;
+                    rect.pivot=new Vector2(.5f,1);rect.anchoredPosition=new Vector2(0,-6);rect.sizeDelta=new Vector2(-16,32);}
+                lastCharges=model.Charges;lastCooldown=model.CooldownSeconds;
             }
             lastLocale=UiShellRuntimeGateway.Localization.CurrentLocaleCode;
         }
         private void OpenGuide()=>UiShellRuntimeGateway.TryRequestMissionDefenseAction(UiMissionDefenseAction.OpenGuide);
         private void OpenWarning()=>UiShellRuntimeGateway.TryRequestMissionDefenseAction(UiMissionDefenseAction.OpenWarning);
-        private void Skip()=>UiShellRuntimeGateway.TryRequestMissionDefenseAction(UiMissionDefenseAction.SkipOptional);
+        private void Skip()
+        {
+            var placement=transform.root.GetComponentInChildren<BuildPlacementConfirmationBarView>(true);
+            if(placement!=null && placement.HasPendingPlacement) placement.CancelButton.onClick.Invoke();
+            UiShellRuntimeGateway.TryRequestMissionDefenseAction(UiMissionDefenseAction.SkipOptional);
+        }
         private void SkipCameraTour()=>UiShellRuntimeGateway.TryRequestMissionDefenseAction(UiMissionDefenseAction.SkipCameraTour);
         private void ReturnCamera()=>UiShellRuntimeGateway.TryRequestMissionDefenseAction(UiMissionDefenseAction.ReturnCamera);
     }

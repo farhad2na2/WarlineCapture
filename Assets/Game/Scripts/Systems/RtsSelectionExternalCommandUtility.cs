@@ -31,8 +31,10 @@ namespace Game.Runtime
 
         public bool SelectMissionSquad(
             RtsSelectionFocusCommandCompositionSystemHelper.Context context,
-            Entity representative)
+            in RtsSelectionCommandIntentRequestElement request)
         {
+            Entity representative = request.TargetEntity;
+            bool sameMissionRole = request.SelectMissionRole != 0;
             if (!context.TryGetEntityManager(out EntityManager em) ||
                 representative == Entity.Null ||
                 !em.Exists(representative) ||
@@ -61,9 +63,9 @@ namespace Game.Runtime
                 var factions = sourceChunk.GetNativeArray(ref factionsType);
                 for (int i = 0; i < entities.Length; i++)
                 {
-                    if (!roles[i].SessionToken.Equals(representativeRole.SessionToken) ||
-                        !roles[i].UnitGroupId.Equals(representativeRole.UnitGroupId) ||
+                    if (!MatchesMissionSelection(roles[i], representativeRole, sameMissionRole) ||
                         !FactionIdentity.IsPlayerControlled(factions[i].Id) ||
+                        em.HasComponent<UnitTransportPassenger>(entities[i]) ||
                         (em.HasComponent<UnitHealth>(entities[i]) &&
                          em.GetComponentData<UnitHealth>(entities[i]).Current <= 0))
                     {
@@ -104,5 +106,12 @@ namespace Game.Runtime
                 $"focusSquad result=True representative={representative} selected={_missionSquadSelectionScratch.Count}");
             return true;
         }
+
+        internal static bool MatchesMissionSelection(CampaignMissionUnitRoleComponent candidate,
+            CampaignMissionUnitRoleComponent representative, bool sameMissionRole) =>
+            candidate.SessionToken.Equals(representative.SessionToken) &&
+            (sameMissionRole && !representative.MissionRoleId.IsEmpty
+                ? candidate.MissionRoleId.Equals(representative.MissionRoleId)
+                : candidate.UnitGroupId.Equals(representative.UnitGroupId));
     }
 }

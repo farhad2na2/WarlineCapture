@@ -42,7 +42,8 @@ namespace Game.UI.Runtime
             bool alert=!tutorial && !opening && alertCopy!=null && alertCopy.gameObject.activeSelf && HasText(alertCopy);
             bool hasText=tutorial || opening || alert;
             doItButton.gameObject.SetActive(false);
-            int actionCount=(showMeButton.gameObject.activeSelf?1:0)+(ContinueButton.gameObject.activeSelf?1:0);
+            bool selectionActive=selectionButton!=null && selectionButton.gameObject.activeSelf;
+            int actionCount=(showMeButton.gameObject.activeSelf?1:0)+(ContinueButton.gameObject.activeSelf?1:0)+(selectionActive?1:0);
             bool hasActions=actionCount>0;
             float actionGap=ContinueButton.gameObject.activeSelf?44:16;
             float actionSpacing=hasActions?actionGap+actionCount*84:12;
@@ -53,7 +54,7 @@ namespace Game.UI.Runtime
             if(mapDock!=null && mapDock.Minimap!=null)
             {mapDock.Minimap.GetWorldCorners(mapCorners);available=-rail.InverseTransformPoint(mapCorners[1]).y-12;}
             int state=(hasActions?64:0)|(tutorial?1:0)|(opening?2:0)|(alert?4:0)|(_missionLayoutLarge?8:0)|
-                (utilityCount<<8)|(extractionCount<<12)|(actionCount<<16)|(ContinueButton.gameObject.activeSelf?32:0);
+                (utilityCount<<8)|(extractionCount<<12)|(actionCount<<16)|(ContinueButton.gameObject.activeSelf?32:0)|(selectionActive?128:0);
             if(!_layoutDirty && Mathf.Abs(measuredAvailable-available)<.1f && measuredState==state && measuredWidth==rail.rect.width && measuredFont==bodyText.font &&
                 measuredTitle==titleText.text && measuredBody==bodyText.text && measuredAlert==alertCopy?.text && measuredOpening==openingCopy?.text) return;
             bool newInstruction=measuredTitle!=titleText.text;
@@ -88,6 +89,7 @@ namespace Game.UI.Runtime
                 float textHeight=titleHeight+visibleBody+(titleHeight>0 && bodyHeight>0?8:0);
                 Place(contentActions,0,textHeight+actionGap,width,Mathf.Max(0,actionCount*84-12));
                 float actionY=0;
+                if(selectionActive) {Place((RectTransform)selectionButton.transform,0,actionY,width,72);actionY+=84;}
                 if(ContinueButton.gameObject.activeSelf) {Place((RectTransform)ContinueButton.transform,0,actionY,width,72);actionY+=84;}
                 Place((RectTransform)showMeButton.transform,0,actionY,width,72);
                 Place(briefingLayout,20,y,width,textHeight+(hasActions?actionSpacing-12:0));
@@ -140,6 +142,9 @@ namespace Game.UI.Runtime
             var trackImage=track.GetComponent<Image>();trackImage.color=new Color(.3f,.4f,.42f,.5f);trackImage.raycastTarget=false;
             var handle=new GameObject("Thumb",typeof(RectTransform),typeof(Image));
             handle.transform.SetParent(track.transform,false);
+            var thumbRect=(RectTransform)handle.transform;
+            thumbRect.anchorMin=Vector2.zero;thumbRect.anchorMax=Vector2.one;
+            thumbRect.offsetMin=thumbRect.offsetMax=Vector2.zero;
             var thumb=handle.GetComponent<Image>();thumb.color=new Color(0,.8f,.95f,1);thumb.raycastTarget=false;
             bodyScrollbar=track.GetComponent<Scrollbar>();bodyScrollbar.handleRect=(RectTransform)handle.transform;
             bodyScrollbar.targetGraphic=thumb;bodyScrollbar.direction=Scrollbar.Direction.BottomToTop;

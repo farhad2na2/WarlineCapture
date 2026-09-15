@@ -93,6 +93,8 @@ namespace Game.Runtime
             for(int i=0;i<warnings.Length;i++)
             {imminent|=warnings[i].Resolved==0 && warnings[i].Critical!=0; mainConfirmed|=warnings[i].ElementIndex==1 && warnings[i].Source!=ThreatWarningSourceKind.ScoutReport;}
             uint oldMask=defense.AcknowledgedGuidanceMask;
+            // Retain persisted lesson IDs, but never make players undo their defensive Hold.
+            defense.AcknowledgedGuidanceMask |= RetiredDefenseStopLessonMask;
             for(int i=0;i<definition.Defense.GuidanceSteps.Length;i++)
             {
                 ref var step=ref definition.Defense.GuidanceSteps[i];
@@ -149,6 +151,8 @@ namespace Game.Runtime
                 SourceEntity=friendly,CanShow=1,CanExecute=canExecute ? (byte)1 : (byte)0,WorldPosition=fork,HasWorldPosition=1,
                 SubtitlesEnabled=settings.SubtitlesEnabled,LargeTextEnabled=settings.LargeTextEnabled,HighContrastEnabled=settings.HighContrastEnabled
             };
+            ApplyDefenseBattleGuidance(em,root,selected,fork,ref next);
+            FocusDefenseBattleEntry(em,current,next);
             if(!ProjectionEquals(in current,in next) || current.Active==0 || current.Priority!=next.Priority ||
                 !current.Title.Equals(next.Title) || !current.Body.Equals(next.Body) || current.MissionSourceVersion!=next.MissionSourceVersion)
                 em.SetComponentData(root,next);

@@ -31,7 +31,10 @@ namespace Game.UI.Shell.Ecs
                 !em.HasComponent<LocalTransform>(guidance.SourceEntity)) return false;
             var actor=guidance.SourceEntity;
             target=new UiMissionTutorialTarget(em.GetComponentData<LocalTransform>(actor).Position,guidance.WorldPosition,
-                !em.HasComponent<SelectedUnitTag>(actor),IsTutorialActorMoving(em,actor));
+                !em.HasComponent<SelectedUnitTag>(actor),IsTutorialActorMoving(em,actor),1,
+                guidance.GuidanceId<45010 ? UiTutorialBattleAction.None :
+                guidance.RecommendationKind==AssistantRecommendationKind.Move ? UiTutorialBattleAction.Move :
+                guidance.RecommendationKind==AssistantRecommendationKind.DefensiveAlert ? UiTutorialBattleAction.Hold : UiTutorialBattleAction.Watch, selectionLabelKey:"ui.aria.select_defenders");
             return true;
         }
 
@@ -99,7 +102,8 @@ namespace Game.UI.Shell.Ecs
             if(step==9 && !TryGetLiveExtractionPosition(em,extraction.Aircraft,out destination)) return false;
             target=new UiMissionTutorialTarget(teamStep ? (selected>0 && selected<count ? missing : team) : actorPosition,destination,
                 teamStep ? selected!=count : !em.HasComponent<SelectedUnitTag>(actor),
-                teamStep ? moving : IsTutorialActorMoving(em,actor),teamStep?count:1);
+                teamStep ? moving : IsTutorialActorMoving(em,actor),teamStep?count:1,
+                selectionLabelKey:teamStep?"ui.aria.select_specialists":step>=8?"ui.aria.select_helicopter":"ui.aria.select_carrier");
             return true;
         }
 

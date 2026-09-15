@@ -45365,9 +45365,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'PLAYER CONTROL
-
-    Moving'
+  m_text: PLAYER CONTROL
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
   m_sharedMaterial: {fileID: -8208433976371812551, guid: dfd8cd8535233d749a6ceca49d7ff0b3, type: 2}
@@ -45451,10 +45449,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34d1bc35bee784a359f6d5470bc8c7e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3LocalizedTextBinding
-  localizationKey: ui.v3.player_control_moving.52836c27b2
-  englishFallback: 'PLAYER CONTROL
-
-    Moving'
+  localizationKey: ui.aria.player_control
+  englishFallback: PLAYER CONTROL
   observeRuntimeSourceChanges: 1
 --- !u!1 &9171280349907577112
 GameObject:

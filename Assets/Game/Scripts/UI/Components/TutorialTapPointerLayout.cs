@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Game.UI.Runtime
 {
-    public enum TutorialPointerSide { Above, Below, Left, Right }
+    public enum TutorialPointerSide { Above, Below, Left, Right, AboveLeft, AboveRight, BelowLeft, BelowRight }
 
     // All inputs are screen pixels, so canvas scale, cutouts and orientation use
     // the same bounds. Reserve the complete bounce envelope, not just one frame.
@@ -13,14 +13,14 @@ namespace Game.UI.Runtime
             float gap, float travel, IReadOnlyList<Rect> obstacles,
             out Rect arrow, out Rect caption, out TutorialPointerSide side)
         {
-            foreach (TutorialPointerSide candidate in System.Enum.GetValues(typeof(TutorialPointerSide)))
+            foreach (TutorialPointerSide candidate in new[] { TutorialPointerSide.Above, TutorialPointerSide.Below, TutorialPointerSide.Left, TutorialPointerSide.Right })
             {
                 Vector2 direction = Outward(candidate);
                 float targetExtent = (candidate == TutorialPointerSide.Above || candidate == TutorialPointerSide.Below) ? target.height / 2 : target.width / 2;
                 Vector2 center = target.center + direction * (targetExtent + gap + size / 2 + travel);
                 Rect pointer = new(center - Vector2.one * size / 2, Vector2.one * size);
                 float labelExtent = (candidate == TutorialPointerSide.Above || candidate == TutorialPointerSide.Below) ? captionSize.y / 2 : captionSize.x / 2;
-                Vector2 labelCenter = center + direction * (size / 2 + gap + labelExtent);
+                Vector2 labelCenter = center + direction * (size / 2 + travel + gap + labelExtent);
                 Rect label = new(labelCenter - captionSize / 2, captionSize);
                 // Labels may slide along an edge; the arrow always points at the target.
                 if ((candidate == TutorialPointerSide.Above || candidate == TutorialPointerSide.Below))
@@ -32,6 +32,37 @@ namespace Game.UI.Runtime
                 if (!Fits(envelope, safe, obstacles) || captionSize.sqrMagnitude > 0 && !Fits(label, safe, obstacles)) continue;
                 arrow = pointer; caption = label; side = candidate; return true;
             }
+            // A bottom-corner action can have a minimap above it and other actions beside it.
+            // Approach diagonally through the open world area, retaining the full bounce envelope.
+            foreach (var candidate in new[] { TutorialPointerSide.AboveLeft, TutorialPointerSide.AboveRight,
+                         TutorialPointerSide.BelowLeft, TutorialPointerSide.BelowRight })
+            {
+                var direction = Outward(candidate);
+                var signs = new Vector2(Mathf.Sign(direction.x), Mathf.Sign(direction.y));
+                var corner = target.center + Vector2.Scale(target.size * .5f, signs);
+                for (int reach = 0; reach < 4; reach++)
+                for (int axis = 0; axis < 2; axis++)
+                {
+                    var halfDiagonal = size * .707107f;
+                    var offset = Vector2.one * (halfDiagonal + gap + travel);
+                    if (axis == 0) offset.x += reach * size; else offset.y += reach * size;
+                    var center = corner + Vector2.Scale(offset, signs);
+                    var pointer = new Rect(center - Vector2.one * size * .5f, Vector2.one * size);
+                    var envelope = new Rect(center - Vector2.one * (halfDiagonal + travel),
+                        Vector2.one * (halfDiagonal + travel) * 2);
+                    if (!Fits(envelope, safe, obstacles)) continue;
+                    for (int labelAxis = 0; labelAxis < 2; labelAxis++)
+                    {
+                        var labelCenter = center;
+                        if (labelAxis == 0) labelCenter.x += signs.x * (halfDiagonal + travel + gap + captionSize.x * .5f);
+                        else labelCenter.y += signs.y * (halfDiagonal + travel + gap + captionSize.y * .5f);
+                        var label = new Rect(labelCenter - captionSize * .5f, captionSize);
+                        if (captionSize.sqrMagnitude > 0 &&
+                            (!Fits(label, safe, obstacles) || label.Overlaps(envelope) || label.Overlaps(target))) continue;
+                        arrow = pointer; caption = label; side = candidate; return true;
+                    }
+                }
+            }
             arrow = caption = default; side = default; return false;
         }
 
@@ -40,7 +71,11 @@ namespace Game.UI.Runtime
             TutorialPointerSide.Above => Vector2.up,
             TutorialPointerSide.Below => Vector2.down,
             TutorialPointerSide.Left => Vector2.left,
-            _ => Vector2.right
+            TutorialPointerSide.Right => Vector2.right,
+            TutorialPointerSide.AboveLeft => new Vector2(-1, 1).normalized,
+            TutorialPointerSide.AboveRight => new Vector2(1, 1).normalized,
+            TutorialPointerSide.BelowLeft => new Vector2(-1, -1).normalized,
+            _ => new Vector2(1, -1).normalized
         };
 
         private static bool Fits(Rect value, Rect safe, IReadOnlyList<Rect> obstacles)

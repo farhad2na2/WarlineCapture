@@ -41,8 +41,11 @@ public sealed partial class MatchHudAssistantUiSystemHelperTests
             var view = header.Find("AriaAssistantButton").GetComponent<AriaTutorialBriefingView>();
             var highlight = GetPrivateField<AssistantHighlightPresentationSystemHelper>(helper,"_highlightPresentationSystem");
             helper.ApplyReadModel(model); helper.TickHighlight(10);
-            Assert.IsNull(GetPrivateField<RectTransform>(highlight,"_directTutorialTarget"), "Select already accepted: indicate the unit instead.");
-            Assert.IsTrue(highlight.HasDirectTutorialTarget);
+            Assert.AreSame(view.SelectionButton.transform,GetPrivateField<RectTransform>(highlight,"_directTutorialTarget"), "Selection guidance targets the one-tap group button, never a world tap.");
+            view.SelectionButton.onClick.Invoke();
+            Assert.AreEqual(1,gateway.GroupSelectionRequests);
+            Assert.IsFalse(view.SelectionButton.gameObject.activeSelf,"An accepted group selection consumes the button immediately.");
+            Assert.IsFalse(highlight.HasDirectTutorialTarget,"Consumed selection cannot keep its tap guide active.");
             gateway.TutorialTarget = new UiMissionTutorialTarget(Vector3.zero,Vector3.right*10,false,false);
             helper.TickHighlight(11);
             Assert.AreSame((required == TacticalCommandMode.Move ? controls.MoveButton : controls.AttackButton).transform,
@@ -77,8 +80,10 @@ public sealed partial class MatchHudAssistantUiSystemHelperTests
         var helper=GetPrivateField<MatchHudAssistantUiSystemHelper>(ui,"_matchHudAssistantUiSystem");
         var view=header.Find("AriaAssistantButton").GetComponent<AriaTutorialBriefingView>();
         helper.ApplyReadModel(model); helper.TickHighlight(100);
-        Assert.IsTrue(view.ShowMeButton.interactable); view.ShowMeButton.onClick.Invoke();
-        Assert.AreEqual(gateway.TutorialTarget.Selection,gateway.LastTutorialFocus);
+        Assert.IsTrue(view.SelectionButton.IsInteractable());
+        view.SelectionButton.onClick.Invoke();
+        Assert.AreEqual(1,gateway.GroupSelectionRequests);
+        Assert.AreEqual(Vector3.zero,gateway.LastTutorialFocus,"Group selection does not ask for a world tap.");
         gateway.TutorialTarget=new UiMissionTutorialTarget(gateway.TutorialTarget.Selection,gateway.TutorialTarget.Destination,false,false);
         helper.TickHighlight(101);
         var popup=overlay.GetComponentInChildren<AriaCommandAssistantPopupView>(true);
@@ -141,24 +146,16 @@ public sealed partial class MatchHudAssistantUiSystemHelperTests
             var view=header.Find("AriaAssistantButton").GetComponent<AriaTutorialBriefingView>();
             var highlight=GetPrivateField<AssistantHighlightPresentationSystemHelper>(helper,"_highlightPresentationSystem");
             helper.ApplyReadModel(model);helper.TickHighlight(1);
-            Assert.AreSame(controls.SelectButton.transform,GetPrivateField<RectTransform>(highlight,"_directTutorialTarget"));
-            Assert.IsFalse(view.ShowMeButton.gameObject.activeSelf,"An already visible Select cue must hide Show Me.");
-            gateway.CommandMode=TacticalCommandMode.Select;helper.TickHighlight(2);
-            Assert.IsNull(GetPrivateField<RectTransform>(highlight,"_directTutorialTarget"),"Accepted Select must replace its stale UI cue with a world target.");
-            Assert.IsTrue(highlight.HasVisibleDirectTutorialTarget);
-            Assert.AreEqual((int)UnityEngine.Rendering.CompareFunction.Always,GetPrivateField<Material>(highlight,"_worldRingMaterial").GetInt("_ZTest"));
+            Assert.AreSame(view.SelectionButton.transform,GetPrivateField<RectTransform>(highlight,"_directTutorialTarget"));
             Assert.IsFalse(view.ShowMeButton.gameObject.activeSelf);
-            Assert.IsFalse(view.DoItButton.gameObject.activeSelf,"Do It must not toggle Select off while waiting for a drag gesture.");
-            camera.transform.position+=Vector3.right*1000;helper.TickHighlight(3);
-            Assert.IsTrue(view.ShowMeButton.gameObject.activeSelf,"Offscreen world target is a useful Show Me action.");
-            gateway.FocusCamera=null; // Accepted camera request completes on a later frame.
-            view.ShowMeButton.onClick.Invoke();
-            Assert.IsFalse(view.ShowMeButton.gameObject.activeSelf,"Hide immediately while the accepted camera move is in flight.");
-            camera.transform.position-=Vector3.right*1000;helper.TickHighlight(4);
-            Assert.IsFalse(view.ShowMeButton.gameObject.activeSelf,"Show Me disappears after revealing its target.");
-            gateway.TutorialTarget=new UiMissionTutorialTarget(Vector3.zero,Vector3.right*10,false,false,4);helper.TickHighlight(5);
-            Assert.IsFalse(highlight.HasDirectTutorialTarget,"A completed selection must clear its cue while the next lesson is projected.");
-            Assert.AreEqual((int)UnityEngine.Rendering.CompareFunction.LessEqual,GetPrivateField<Material>(highlight,"_worldRingMaterial").GetInt("_ZTest"));
+            camera.transform.position+=Vector3.right*1000;helper.TickHighlight(2);
+            Assert.AreSame(view.SelectionButton.transform,GetPrivateField<RectTransform>(highlight,"_directTutorialTarget"),"Offscreen soldiers still have an accessible group button.");
+            view.SelectionButton.onClick.Invoke();
+            Assert.AreEqual(1,gateway.GroupSelectionRequests);
+            gateway.TutorialTarget=new UiMissionTutorialTarget(Vector3.zero,Vector3.right*10,false,false,4);helper.TickHighlight(3);
+            Assert.IsFalse(highlight.HasDirectTutorialTarget,"Completed selection clears the guide while the next lesson is projected.");
+            Assert.IsFalse(view.SelectionButton.gameObject.activeSelf);
+
         }
         finally {ui.Dispose();UnityEngine.Object.DestroyImmediate(cameraObject);}
     }
@@ -183,11 +180,12 @@ public sealed partial class MatchHudAssistantUiSystemHelperTests
             var view=header.Find("AriaAssistantButton").GetComponent<AriaTutorialBriefingView>();
             helper.ApplyReadModel(model);helper.TickHighlight(1);
             Assert.IsFalse(view.DoItButton.gameObject.activeInHierarchy);
-            controls.SelectButton.onClick.Invoke();
-            Assert.AreEqual(1,selections,"The highlighted Select control activates selection before a boarding order.");
-            Assert.AreEqual(0,moves);
-            gateway.CommandMode=TacticalCommandMode.Select;helper.TickHighlight(2);
-            Assert.IsFalse(view.DoItButton.gameObject.activeSelf,"Dragging is the next action; Do It must not toggle selection off.");
+            view.SelectionButton.onClick.Invoke();
+            Assert.AreEqual(1,gateway.GroupSelectionRequests,"One tap selects specialists without changing command mode or boarding.");
+            Assert.AreEqual(0,selections);Assert.AreEqual(0,moves);
+            Assert.IsFalse(view.SelectionButton.gameObject.activeSelf);
+            Assert.IsFalse(view.DoItButton.gameObject.activeSelf);
+
         }
         finally {ui.Dispose();}
     }
@@ -195,6 +193,8 @@ public sealed partial class MatchHudAssistantUiSystemHelperTests
     private sealed partial class FakeAssistantPanelGateway : IUiMissionTutorialTargetGateway,IUiMissionTutorialFocusGateway,IUiMissionExtractionGateway
     {
         public bool HasTutorialTarget, Extraction, HasCommandState;
+        public int GroupSelectionRequests;
+        public bool TrySelectMissionTutorialGroup() {GroupSelectionRequests++;return HasTutorialTarget;}
         public TacticalCommandMode CommandMode;
         public Camera FocusCamera;
         public UiMissionTutorialTarget TutorialTarget;

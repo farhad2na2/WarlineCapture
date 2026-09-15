@@ -18,6 +18,7 @@ namespace Game.UI.Runtime
         private bool _localUiCueActive;
         private void ApplyScreenTargetIndicator(UiAssistantHighlightModel model)
         {
+            if (_directTutorialCue) return; // Typed next-action guidance owns its persistent frame.
             _commandCueActive = ShouldShowCommandCue(model);
             // World guidance owns a real world-space ring. Projecting a second cue onto the
             // overlay made ground markers render over the build drawer and ARIA panel. Only
@@ -48,7 +49,14 @@ namespace Game.UI.Runtime
             if (canvases.Length == 0)
                 return;
 
-            _screenTargetCanvas = canvases[canvases.Length - 1];
+            // A camera-space HUD canvas can be covered by M3's overlay ARIA rail,
+            // regardless of a nested canvas sorting order. Own an overlay root.
+            var overlay = new GameObject("AriaGuidanceOverlay", typeof(RectTransform), typeof(Canvas));
+            overlay.layer = _panelPulse.gameObject.layer;
+            _screenTargetCanvas = overlay.GetComponent<Canvas>();
+            _screenTargetCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            _screenTargetCanvas.sortingOrder = 32700;
+            if (Application.isPlaying) UnityEngine.Object.DontDestroyOnLoad(overlay);
             GameObject indicator = new(
                 "AriaAssistantTargetIndicatorRuntime",
                 typeof(RectTransform),
@@ -78,8 +86,8 @@ namespace Game.UI.Runtime
                 Color.clear,
                 Color.clear,
                 Color.clear,
-                V3GuidanceYellow,
-                7f);
+                Color.clear,
+                0f);
             background.raycastTarget = false;
 
             GameObject caption = new(
@@ -126,7 +134,7 @@ namespace Game.UI.Runtime
             _screenTargetLabel.raycastTarget = false;
             V3LocalizedTextBindingView localizedLabel = labelObject.AddComponent<V3LocalizedTextBindingView>();
             localizedLabel.Configure("ui.hud.aria_target", "ARIA TARGET");
-            TutorialTapPointerView.BindCaption(_screenTargetIndicator, captionRect);
+            TutorialTapPointerView.BindCaption(_screenTargetIndicator, captionRect, canvases[0].rootCanvas.transform);
             indicator.SetActive(false);
         }
 

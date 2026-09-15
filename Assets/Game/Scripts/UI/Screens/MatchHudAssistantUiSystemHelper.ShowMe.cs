@@ -12,6 +12,11 @@ namespace Game.UI.Runtime
             TickTutorialPresentation(unscaledTime);
             TickNextTutorialAction();
             RefreshShowMeAvailability();
+        }
+
+        // Called by the existing HUD update after all guided content and ARIA layout changes.
+        public void RenderAttention(float unscaledTime)
+        {
             _highlightPresentationSystem.TickAttention(unscaledTime);
             var showMe = _embeddedTutorialView?.ShowMeButton;
             TutorialAttentionPulseView.Present(showMe?.transform as RectTransform, unscaledTime,
@@ -46,6 +51,7 @@ namespace Game.UI.Runtime
         private void RefreshShowMeAvailability()
         {
             if (_embeddedTutorialView?.ShowMeButton == null) return;
+            if(!_selectionActionRequested) _embeddedTutorialView.SetSelectionActionAvailable(false);
             if (!UsesNextTutorialAction) { _embeddedTutorialView.ShowMeButton.gameObject.SetActive(true); _embeddedTutorialView.SetContinueAvailable(false); return; }
             if(_highlightPresentationSystem.HasVisibleDirectTutorialTarget) _tutorialFocusPendingUntil=0;
             bool focusing=_tutorialFocusPendingStep==_lastPanelModel.TutorialStep && Time.unscaledTime<_tutorialFocusPendingUntil;

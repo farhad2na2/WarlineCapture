@@ -6,6 +6,7 @@ namespace Game.UI.Runtime
 {
     public sealed partial class BuildDrawerCatalogRuntimeView
     {
+        internal bool HasPendingProduction => _pendingProductions.Count>0;
         // Resolve from live drawer state so manual clicks and ARIA use the same next control.
         internal Button ResolveBuildingTutorialTarget(bool defense, bool placement, out string captionKey)
         {

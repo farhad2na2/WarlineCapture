@@ -67,19 +67,10 @@ namespace Game.UI.Runtime
             if (!TryGetCard(index, out Card card) || card.Button == null)
                 return;
 
-            TintMissionDisabledGraphics(card, unavailable);
-
-            Image wash = EnsureMissionDisabledWash(index, card);
-            if (wash != null)
-            {
-                // Reassert the shared V3 overlay after the grayscale material pass so every
-                // unavailable card has the same static blue tint instead of a one-off flash.
-                wash.material = null;
-                wash.color = V3MissionDisabledWashColor;
-                wash.transform.SetAsLastSibling();
-                if (wash.gameObject.activeSelf != unavailable)
-                    wash.gameObject.SetActive(unavailable);
-            }
+            // Older prefabs may still contain the blue overlay. The shared grayscale
+            // material is the only disabled treatment, including during cinematics.
+            if (card.DisabledWash != null)
+                card.DisabledWash.gameObject.SetActive(false);
 
             V3GradientGraphic v3Frame = card.Button.GetComponentInChildren<V3GradientGraphic>(true);
             if (v3Frame != null)
@@ -90,60 +81,6 @@ namespace Game.UI.Runtime
                     : selected ? V3SelectedBorderColor : V3NormalBorderColor;
                 v3Frame.SetBorder(border, unavailable ? 5f : 3f);
             }
-        }
-
-        private static void TintMissionDisabledGraphics(Card card, bool unavailable)
-        {
-            if (!unavailable || card?.Button == null)
-                return;
-
-            Graphic[] graphics = card.Button.GetComponentsInChildren<Graphic>(true);
-            for (int graphicIndex = 0; graphicIndex < graphics.Length; graphicIndex++)
-            {
-                Graphic graphic = graphics[graphicIndex];
-                if (graphic == null || graphic is TMP_Text ||
-                    graphic.gameObject.name == "MissionDisabledBlueWash")
-                    continue;
-
-                UiDisabledMaterialStateView disabledState = graphic.GetComponent<UiDisabledMaterialStateView>();
-                Color source = disabledState != null ? disabledState.OriginalColor : graphic.color;
-                float neutral = Mathf.Clamp(source.grayscale, 0.42f, 0.82f);
-                Color disabledBlue = new(0.12f, 0.50f, 0.82f, source.a);
-                graphic.color = Color.Lerp(
-                    new Color(neutral, neutral, neutral, source.a),
-                    disabledBlue,
-                    0.46f);
-            }
-        }
-
-        private Image EnsureMissionDisabledWash(int index, Card card)
-        {
-            if (_missionDisabledWashes[index] != null)
-                return _missionDisabledWashes[index];
-
-            Transform existing = card.DisabledWash != null ? card.DisabledWash.transform : null;
-            GameObject washObject = existing != null
-                ? existing.gameObject
-                : new GameObject("MissionDisabledBlueWash", typeof(RectTransform), typeof(Image));
-            if (existing == null)
-                washObject.transform.SetParent(card.Button.transform, false);
-            washObject.layer = card.Button.gameObject.layer;
-            washObject.transform.SetAsLastSibling();
-            RectTransform rect = washObject.GetComponent<RectTransform>();
-            rect.anchorMin = Vector2.zero;
-            rect.anchorMax = Vector2.one;
-            rect.offsetMin = Vector2.zero;
-            rect.offsetMax = Vector2.zero;
-            Image wash = washObject.GetComponent<Image>();
-            var visualState = wash.GetComponent<UiDisabledMaterialStateView>() ??
-                wash.gameObject.AddComponent<UiDisabledMaterialStateView>();
-            visualState.PreserveAuthoredVisual = true;
-            wash.material = null;
-            wash.color = V3MissionDisabledWashColor;
-            wash.raycastTarget = false;
-            _missionDisabledWashes[index] = wash;
-            card.DisabledWash = wash;
-            return wash;
         }
 
     }

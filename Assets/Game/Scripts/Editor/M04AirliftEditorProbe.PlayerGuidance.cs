@@ -20,7 +20,7 @@ namespace Game.Editor
     {
         private const string PlayerVisualKey="Warline.M04.PlayerVisualOnly";
         private const string PlayerGuidanceKey="Warline.M04.PlayerGuidance";
-        private static int playerLesson,playerPartialStage,playerQueuedLesson,playerShows;
+        private static int playerLesson,playerPartialStage,playerQueuedLesson,playerShows,groupCaptureLesson;
         private const string ReplayOpeningKey="Warline.M04.ReplayOpening";
         private static int replayOpeningStage;
         public static void RunReplayOpeningFa(){RunPlayerGuidance("fa-IR");SessionState.SetBool(ReplayOpeningKey,true);}
@@ -48,7 +48,7 @@ namespace Game.Editor
             SessionState.SetString("Warline.M04.PlayerLocale",locale);SessionState.SetBool(PlayerGuidanceKey,true);
             SessionState.SetString("Warline.M04.ReadinessOutput","/private/tmp/warline-m04-guidance-"+locale);
             SessionState.SetBool(Both,false);SessionState.SetBool(Full,true);
-            playerLesson=playerPartialStage=playerQueuedLesson=playerShows=0;playerNext=playerLessonAt=0;
+            playerLesson=playerPartialStage=playerQueuedLesson=playerShows=groupCaptureLesson=0;playerNext=playerLessonAt=0;
             Run();
         }
         private static void TickPlayerGuidance(EntityManager em,Entity root,CampaignMissionExtractionState extraction)
@@ -91,14 +91,14 @@ namespace Game.Editor
                     throw new InvalidOperationException("Replay opening QA accidentally used a first-clear profile.");
                 if(!aria.BodyText.gameObject.activeInHierarchy || string.IsNullOrWhiteSpace(aria.BodyText.text) || !aria.TitleText.gameObject.activeInHierarchy || string.IsNullOrWhiteSpace(aria.TitleText.text))
                     throw new InvalidOperationException("M4 entry has no visible tutorial text.");
-                if(lesson==1 && (!uiCue || !aria.DoItButton.isActiveAndEnabled || !aria.DoItButton.interactable))
+                if(lesson==1 && (!uiCue || !aria.ContinueButton.isActiveAndEnabled || !aria.ContinueButton.interactable))
                     throw new InvalidOperationException("M4 opening needs a visible Continue cue and usable button.");
                 if(lesson==2 && !uiCue && !worldCue && !aria.ShowMeButton.gameObject.activeSelf)
                     throw new InvalidOperationException("Continuing the opening must reveal the next action.");
                 if(replayOpeningStage<lesson){replayOpeningStage=lesson;ScreenCapture.CaptureScreenshot(Output+"/replay-opening-"+lesson+".png");PlayerWait(1);return;}
                 if(lesson==2){SessionState.SetBool(ReplayOpeningKey,false);Complete(true,"Completed M4 profile with assistant Off: cinematic -> visible lesson one and Continue highlight -> lesson two next-action cue.");return;}
             }
-            if(lesson==1){PlayerClick(aria.DoItButton);return;}
+            if(lesson==1){PlayerClick(aria.ContinueButton);return;}
             if(lesson==10)
             {
                 if(aria.DoItButton.gameObject.activeSelf) throw new InvalidOperationException("Waiting lesson must not repeat the field-guide action.");
@@ -128,20 +128,11 @@ namespace Game.Editor
             }
             if(target.NeedsSelection)
             {
-                if(mode!=TacticalCommandMode.Select && (target.RequiredSelectionCount>1 || mode!=TacticalCommandMode.None))
-                {PlayerClick(controls.SelectButton);return;}
-                if(!worldCue){PlayerWait();return;}
-                if(target.RequiredSelectionCount>1)
-                {
-                    PlayerSelectBox(em,root,camera,input,lesson==4 && playerPartialStage==0);
-                    if(lesson==4 && playerPartialStage==0)playerPartialStage=1;
-                }
-                else
-                {
-                    var actor=lesson is 8 or 11?extraction.Aircraft:extraction.Carrier;
-                    if(!input.QueueFocusUnitCommandRequest(camera.WorldToScreenPoint((Vector3)em.GetComponentData<LocalTransform>(actor).Position+Vector3.up),Time.frameCount))
-                        throw new InvalidOperationException("Normal world selection request rejected.");
-                }
+                if(aria.SelectionButton==null || !aria.SelectionButton.IsActive()) {PlayerWait();return;}
+                if(worldCue) throw new InvalidOperationException("Selecting the lesson group must not show a world-tap marker.");
+                if(groupCaptureLesson!=lesson) {ScreenCapture.CaptureScreenshot(Output+"/group-selection-"+lesson+".png");groupCaptureLesson=lesson;PlayerWait(.5);return;}
+                PlayerClick(aria.SelectionButton);
+                if(lesson==4)playerPartialStage=3;
                 PlayerWait();return;
             }
             if(lesson is 2 or 4 or 8){PlayerWait();return;}
@@ -219,7 +210,7 @@ namespace Game.Editor
         private static void PlayerClick(Button button)
         {
             if(button==null || !button.isActiveAndEnabled || !button.IsInteractable())throw new InvalidOperationException("Tutorial requested an unavailable button: "+button?.name);
-            Debug.Log("[M04PlayerRoute] click="+button.name+" lesson="+playerLesson);button.onClick.Invoke();PlayerWait();
+            Debug.Log("[M04PlayerRoute] click="+button.name+" lesson="+playerLesson);if(button.name=="SelectMissionGroupButton") M03RadarWarningEditorLaunchProbe.ClickTutorialButton(button);else button.onClick.Invoke();PlayerWait();
         }
         private static void PlayerWait(double seconds=.75)=>playerNext=EditorApplication.timeSinceStartup+seconds;
     }

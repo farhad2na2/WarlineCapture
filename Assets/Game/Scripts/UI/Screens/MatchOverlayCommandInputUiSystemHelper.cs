@@ -247,45 +247,6 @@ namespace Game.UI.Runtime
                         "Board command unavailable."));
             }
 
-            private void BindCommandTabRuntimeFallbacks()
-            {
-                MatchOverlayCommandTabView[] tabs = _view.CommandTabGroup != null ? _view.CommandTabGroup.Tabs : null;
-                if (tabs == null)
-                    return;
-
-                for (int i = 0; i < tabs.Length; i++)
-                {
-                    Button button = tabs[i]?.Button;
-                    if (button == null)
-                        continue;
-
-                    Button capturedButton = button;
-                    bool scanAlias = IsScanAliasCommandButton(capturedButton);
-                    UnityEngine.Events.UnityAction action = () => OnCommandTabRuntimeClick(capturedButton, scanAlias);
-                    capturedButton.onClick.AddListener(action);
-                    _commandTabRuntimeListeners.Add((capturedButton, action));
-                }
-            }
-
-            private void UnbindCommandTabRuntimeFallbacks()
-            {
-                for (int i = 0; i < _commandTabRuntimeListeners.Count; i++)
-                    _commandTabRuntimeListeners[i].Button?.onClick.RemoveListener(_commandTabRuntimeListeners[i].Action);
-
-                _commandTabRuntimeListeners.Clear();
-            }
-
-            private void OnCommandTabRuntimeClick(Button button, bool scanAlias)
-            {
-                if (scanAlias)
-                {
-                    OnScanButtonClicked();
-                    return;
-                }
-
-                CaptureCommandUiClick();
-            }
-
             private void CaptureCommandUiClick()
             {
                 UIAudioEventGateway.Raise(UIAudioEventKind.ButtonPrimaryClick);
@@ -309,13 +270,6 @@ namespace Game.UI.Runtime
                         button == _view.HoldButton ||
                         button == _view.StopButton ||
                         button == _view.CommandWheelStopButton);
-            }
-
-            private bool IsScanAliasCommandButton(Button button)
-            {
-                return button != null &&
-                       !IsKnownCommandButton(button) &&
-                       string.Equals(button.name, "SupportCommand", StringComparison.OrdinalIgnoreCase);
             }
 
             private void CloseBuildDrawerIfOpen()

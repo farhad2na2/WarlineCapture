@@ -101,7 +101,7 @@ namespace Game.UI.Runtime
             _resourceGuidanceTarget = null;
             DestroyObject(_worldRingRoot);
             DestroyObject(_worldRingMaterial);
-            DestroyObject(_screenTargetIndicator != null ? _screenTargetIndicator.gameObject : null);
+            DestroyObject(_screenTargetCanvas != null ? _screenTargetCanvas.gameObject : null);
             _worldRingRoot = null;
             _worldRingRenderer = null;
             _worldAccentRenderers = null;
@@ -364,7 +364,7 @@ namespace Game.UI.Runtime
             }
 
             buttonRect.GetWorldCorners(_commandButtonCorners);
-            Canvas buttonCanvas = buttonRect.GetComponentInParent<Canvas>();
+            Canvas buttonCanvas = buttonRect.GetComponentInParent<Canvas>()?.rootCanvas;
             Camera buttonCamera = buttonCanvas == null || buttonCanvas.renderMode == RenderMode.ScreenSpaceOverlay
                 ? null
                 : buttonCanvas.worldCamera;
@@ -403,8 +403,7 @@ namespace Game.UI.Runtime
                 bounds.yMin + half.y,
                 bounds.yMax - half.y);
             SetAnchorsIfChanged(_screenTargetIndicator, new Vector2(0.5f, 0.5f));
-            SetAnchoredPositionIfChanged(_screenTargetIndicator, localPoint);
-            ClampCaptionToCanvas(caption, localPoint, bounds);
+            SetAnchoredPositionIfChanged(_screenTargetIndicator, localPoint - bounds.center);
             _screenTargetIndicator.localScale = Vector3.one;
             if (!_screenTargetIndicator.gameObject.activeSelf)
                 _screenTargetIndicator.gameObject.SetActive(true);

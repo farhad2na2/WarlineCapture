@@ -16,7 +16,7 @@ namespace Game.UI.Shell.Ecs
             if (focus.CalculateEntityCount()!=1) return false;
             em.SetComponentData(focus.GetSingletonEntity(),new RuntimeCameraFocusRequestComponent {
                 Requested=1, Smooth=1, SmoothTimeSeconds=.5f, UseExplicitPerspective=1,
-                Perspective=new float4(target.y+48f,65f,0f,55f), World=target });
+                Perspective=new float4(target.y+40f,65f,0f,40f), World=target });
             return true;
         }
     }

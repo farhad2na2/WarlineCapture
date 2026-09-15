@@ -10,7 +10,7 @@ namespace Game.UI.Shell.Ecs
             EntityManager entityManager,
             Entity selectionInput,
             in AssistantCommandIntentRequestElement request,
-            out int downstreamRequestId)
+            out int downstreamRequestId, bool sameMissionRole = false)
         {
             downstreamRequestId = 0;
             RtsSelectionInputRequestQueueComponent queue =
@@ -42,6 +42,7 @@ namespace Game.UI.Shell.Ecs
                     WorldPosition = request.WorldPosition,
                     HasSourceEntity = request.SourceEntity != Entity.Null ? (byte)1 : (byte)0,
                     HasTargetEntity = 1,
+                    SelectMissionRole = sameMissionRole ? (byte)1 : (byte)0,
                     HasWorldPosition = IsFinite(request.WorldPosition) ? (byte)1 : (byte)0
                 });
                 entityManager.SetComponentData(selectionInput, queue);

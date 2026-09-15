@@ -270,7 +270,7 @@ namespace Game.Runtime
                            context.TryFocusScreenPosition?.Invoke(new Vector2(request.ScreenPosition.x, request.ScreenPosition.y)) == true;
                 case RtsSelectionCommandIntentKind.FocusSquad:
                     return request.HasTargetEntity != 0 &&
-                           _externalCommandUtility.SelectMissionSquad(context, request.TargetEntity);
+                           _externalCommandUtility.SelectMissionSquad(context, request);
                 case RtsSelectionCommandIntentKind.SelectAll:
                     SelectAllVisiblePlayerUnits(context, VisibleUnitSelectionCameraSystemHelper.Filter.All);
                     return true;

@@ -16,15 +16,14 @@ namespace Game.UI.Runtime
                 case 3: case 10: case 11:
                     UiShellRuntimeGateway.TryRequestMissionDefenseAction(UiMissionDefenseAction.ContinueExplanation); break;
                 case 4:
-                    if(!_highlightPresentationSystem.IsBuildDrawerOpen && _activeCommandMode==Game.Tactical.Contracts.TacticalCommandMode.Build)
+                    if(HasPendingTutorialPlacement)
                         InvokeAvailable(_tutorialPlacement?.ConfirmButton);
                     else InvokeAvailable(_highlightPresentationSystem.ResolveBuildTutorialControl(true,true,out _));
                     break;
                 case 5: InvokeAvailable(_commandControlsView?.MoveButton); break;
                 case 6: InvokeAvailable(_commandControlsView?.HoldButton); break;
                 case 7:
-                    bool resume=UiShellRuntimeGateway.TryReadMissionDefense(out var model) && model.RequiresHoldResume;
-                    InvokeAvailable(resume ? _commandControlsView?.HoldButton : _commandControlsView?.StopButton); break;
+                    InvokeAvailable(_commandControlsView?.HoldButton); break;
                 case 12: UiShellRuntimeGateway.TryRequestMissionDefenseAction(UiMissionDefenseAction.OpenGuide); break;
                 case 8: UiShellRuntimeGateway.TryRequestMissionDefenseAction(UiMissionDefenseAction.RadarPing); break;
                 case 9: _highlightPresentationSystem.TryExecuteUiSurface(5,4); break;

@@ -957,7 +957,7 @@ namespace Game.Editor
             SetSprite(controlIcon, RequireSprite(V3UiFoundationBuilder.MatchPlayerIconPath), theme.TextPrimary);
             SetTopLeft(controlIcon.rectTransform, 12f, 6f, 28f, 28f);
             TMP_Text controlText = EnsureText(playerControl, "Label");
-            ConfigureText(controlText, "PLAYER CONTROL\nMoving", 14f, mediumFont, theme.TextPrimary, TextAlignmentOptions.MidlineLeft);
+            ConfigureText(controlText, "PLAYER CONTROL", 14f, mediumFont, theme.TextPrimary, TextAlignmentOptions.MidlineLeft);
             controlText.textWrappingMode = TextWrappingModes.Normal;
             controlText.fontStyle = FontStyles.Normal;
             SetTopLeft(controlText.rectTransform, 52f, 2f, 288f, 36f);

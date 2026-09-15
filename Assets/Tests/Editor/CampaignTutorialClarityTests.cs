@@ -139,18 +139,23 @@ public sealed class CampaignTutorialClarityTests
         {
             var rect = (RectTransform)go.transform; rect.sizeDelta = new Vector2(150, 64);
             TutorialAttentionPulseView.Present(rect, 10, true, 1, 4);
-            var border = rect.Find("AttentionBorder").GetComponent<V3GradientGraphic>();
+            var pulse = go.GetComponent<TutorialAttentionPulseView>();
+            pulse.RenderAt(10);
+            var border = rect.Find("AttentionDoubleBorder").GetComponent<TutorialFocusFrameGraphic>();
             Assert.IsFalse(border.gameObject.activeSelf);
             TutorialAttentionPulseView.Present(rect, 15.2f, true, 1, 4);
+            pulse.RenderAt(15.2f);
             Assert.IsTrue(border.gameObject.activeSelf);
             Assert.IsFalse(border.raycastTarget);
             Assert.AreEqual(new Vector2(150, 64), rect.sizeDelta); Assert.AreEqual(Vector3.one, rect.localScale);
             TutorialAttentionPulseView.Present(rect, 16, true, 2, 4);
+            pulse.RenderAt(16);
             Assert.IsFalse(border.gameObject.activeSelf, "A new action resets the idle delay.");
             TutorialAttentionPulseView.Present(rect, 20.5f, false, 2, 4);
             Assert.IsFalse(border.gameObject.activeSelf, "Hidden, disabled or waiting steps cannot pulse.");
             go.SetActive(false); go.SetActive(true);
             TutorialAttentionPulseView.Present(rect, 30, true, 2, 4);
+            pulse.RenderAt(30);
             Assert.IsFalse(border.gameObject.activeSelf, "Reappearing Show Me starts a fresh delay.");
         }
         finally { UnityEngine.Object.DestroyImmediate(go); }

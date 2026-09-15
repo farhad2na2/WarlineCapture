@@ -141,7 +141,7 @@ public sealed class SelectionUiReadModelLookupTests
         Assert.AreEqual(SelectionUiReadModelLookup.FocusedUnitUiStatus.Idle, _lookup.GetFocusedUnitUiStatus(_entityManager, autoTargetMissileUnit));
         Assert.AreEqual(SelectionUiReadModelLookup.FocusedUnitUiStatus.Engaged, _lookup.GetFocusedUnitUiStatus(_entityManager, engagedUnit));
         Assert.AreEqual(SelectionUiReadModelLookup.FocusedUnitUiStatus.Moving, _lookup.GetFocusedUnitUiStatus(_entityManager, movingUnit));
-        Assert.AreEqual(SelectionUiReadModelLookup.FocusedUnitUiStatus.Idle, _lookup.GetFocusedUnitUiStatus(_entityManager, holdingUnit));
+        Assert.AreEqual(SelectionUiReadModelLookup.FocusedUnitUiStatus.Holding, _lookup.GetFocusedUnitUiStatus(_entityManager, holdingUnit));
         Assert.AreEqual(SelectionUiReadModelLookup.FocusedUnitUiStatus.Idle, _lookup.GetFocusedUnitUiStatus(_entityManager, manualGuardUnit));
         StringAssert.Contains("MISSILE LAUNCHED", _lookup.ResolveHudSelectionStatus(_entityManager, missileUnit));
         StringAssert.Contains("MISSILE LAUNCHED", _lookup.ResolveHudSelectionStatus(_entityManager, commandedMissileUnit));
